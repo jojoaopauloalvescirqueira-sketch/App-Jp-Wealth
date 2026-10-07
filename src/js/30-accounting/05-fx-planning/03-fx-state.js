@@ -14,9 +14,36 @@ function fxEnvelopeIssue(){
   const p=fx.plan;if(p===null)return '';
   if(!p||typeof p!=='object'||Array.isArray(p)||!p.baseline||!p.current||!p.actuals||Array.isArray(p.actuals)||!Array.isArray(p.revisions)||!Array.isArray(p.contributions))return 'Estrutura do plano incompatível; nenhuma normalização automática será gravada.';
   if(!fxInputFinite(p.current.defaultMonthlyReturn)||+p.current.defaultMonthlyReturn<=-1)return 'Premissa de rentabilidade ausente ou inválida; não será convertida em zero.';
-  if(p.planningRevision!==undefined&&p.planningRevision!==2)return 'Revisão do planejamento desconhecida; somente leitura.';
+  for(const a of [p.baseline,p.current]){
+    for(const field of ['yearOverrides','monthOverrides','plannedContributions','absentMonths','recurringContributions']){
+      if(a[field]!==undefined&&(!a[field]||typeof a[field]!=='object'||Array.isArray(a[field])))return 'Premissas incompatíveis: '+field+'.';
+    }
+  }
+  if(p.planningRevision!==undefined&&![2,3].includes(p.planningRevision))return 'Revisão do planejamento desconhecida; somente leitura.';
   for(const key of ['scenarios','scenarioArchive','rebases','actualHistory'])if(p[key]!==undefined&&!Array.isArray(p[key]))return 'Histórico de planejamento incompatível: '+key+'.';
-  for(const rec of Object.values(p.actuals))if(!rec||fxValidateActualInput(rec).length)return 'Fechamento realizado incompleto; ausência não é resultado zero.';
+  if(fxValidateAssumptions(fxNormalizeAssumptions(p.baseline)).length)return 'Baseline incompleto ou inválido; preserve a origem antes de editar.';
+  if(fxValidateAssumptions(fxNormalizeAssumptions(p.current)).length)return 'Premissas mensais incompletas; ausência não será convertida em zero.';
+  if(p.current.absentMonths!==undefined&&(!p.current.absentMonths||typeof p.current.absentMonths!=='object'||Array.isArray(p.current.absentMonths)))return 'Mapa de previsões ausentes incompatível.';
+  const firstMonth=fxMonthKey(p.baseline.startMonth),lastMonth=fxAddMonths(firstMonth,+p.baseline.horizonMonths-1);
+  for(const [month,rec] of Object.entries(p.actuals)){
+    if(fxMonthKey(month)!==month||month<firstMonth||month>lastMonth)return 'Mês realizado incompatível ou fora do horizonte; preserve a origem antes de editar.';
+    if(!rec||fxValidateActualInput(rec).length)return 'Fechamento realizado incompleto; ausência não é resultado zero.';
+    if(rec.closureStatus!==undefined&&!['FINALIZED','REOPENED','REVIEW_REQUIRED'].includes(rec.closureStatus))return 'Estado de finalização desconhecido; preserve o registro.';
+  }
+  // Validate stored facts before the read-copy normalizer. Filtering a malformed
+  // ledger entry would turn an unknown deposit into a confirmed zero.
+  for(const c of p.contributions){
+    if(!c||typeof c!=='object'||Array.isArray(c)||fxMonthKey(c.month)!==c.month||c.month<firstMonth||c.month>lastMonth)
+      return 'Mês do depósito efetivo incompatível; nenhum lançamento será descartado silenciosamente.';
+    if(!['personal','prop'].includes(c.source)||!['USD','BRL'].includes(c.originalCurrency)||
+      !fxInputFinite(c.originalAmount)||+c.originalAmount<=0||!fxInputFinite(c.usdAmount)||+c.usdAmount<=0)
+      return 'Depósito efetivo incompleto ou inválido; ausência não é depósito zero.';
+    if(c.originalCurrency==='BRL'&&(!fxInputFinite(c.acquisitionFxRate)||+c.acquisitionFxRate<=0))
+      return 'Depósito em BRL sem taxa de aquisição válida; preserve o lançamento e confira sua origem.';
+    if(fxValidateContribution(c).length)return 'Depósito efetivo inconsistente com a conversão registrada.';
+    if(c.originalCurrency==='USD'&&Math.abs(+c.originalAmount-+c.usdAmount)>Math.max(.01,+c.originalAmount*1e-6))
+      return 'Depósito USD inconsistente com seu valor original.';
+  }
   return '';
 }
 function fxState(){return S.fxPlanning;}
@@ -86,7 +113,9 @@ function fxMutateState(fn){
   try{
     result=fn()||{};
     if(result.ok===false){restore();return {...result,persistido:false};}
-    if(S.fxPlanning.plan)S.fxPlanning.plan.planningRevision=2;
+    if(S.fxPlanning.plan)S.fxPlanning.plan.planningRevision=3;
+    const candidateIssue=fxEnvelopeIssue();
+    if(candidateIssue){restore();return {ok:false,persistido:false,errors:[candidateIssue]};}
   }catch(e){
     restore();hideStaleSavedTag();
     return {ok:false,persistido:false,errors:['Não foi possível aplicar a alteração. Nada foi gravado.']};
@@ -146,7 +175,10 @@ function fxPlanReviseAssumptions(next,note){
   return fxMutateState(()=>{
     const raw=fxActivePlanRaw();
     if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-    const merged=fxNormalizeAssumptions({...next,
+    const merged=fxNormalizeAssumptions({...raw.current,...next,
+      monthOverrides:{...(raw.current.monthOverrides||{}),...(next.monthOverrides||{})},
+      plannedContributions:{...(raw.current.plannedContributions||{}),...(next.plannedContributions||{})},
+      absentMonths:{...(raw.current.absentMonths||{}),...(next.absentMonths||{})},
       startMonth:raw.baseline.startMonth,
       horizonMonths:raw.baseline.horizonMonths,
       initialBalanceUsd:raw.baseline.initialBalanceUsd});
@@ -160,41 +192,78 @@ function fxPlanReviseAssumptions(next,note){
 // Fechamento mensal: contíguo desde o início do plano (fxNextOpenMonth). Editar
 // mês já fechado é permitido, auditado como FX_MONTH_ACTUAL_EDITED e preserva o
 // closedAt original — carimbo usado na reconstrução de forecasts anteriores.
-function fxPlanRecordActual(month,input){
+// Finalization is an explicit command, with a confirmed contribution review.
+// This same guard covers the legacy form and accounting imports.
+function fxPlanRecordActual(month,input={}){
+  return fxPlanFinalizeMonth(month,input);
+}
+function fxPlanFinalizeMonth(month,input={}){
   return fxMutateState(()=>{
-    const plan=fxActivePlan();
-    if(!plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
-    const key=fxMonthKey(month);
-    const rec=fxNormalizeActual(input);
-    const errors=fxValidateActualInput(rec);
-    const existing=key?!!plan.actuals[key]:false;
-    if(!key) errors.push('Mês inválido (use AAAA-MM).');
-    else if(!existing){
-      const next=fxNextOpenMonth(plan);
-      if(!next) errors.push('O horizonte do plano já está completamente fechado.');
-      else if(key!==next) errors.push(`Fechamentos são contíguos — o próximo mês aberto é ${next}.`);
-    }
-    if(errors.length) return {ok:false,errors};
-    const raw=fxActivePlanRaw(), now=new Date().toISOString();
-    const prev=(raw.actuals=raw.actuals||{})[key];
-    const source=input.source?structuredClone(input.source):{system:'MANUAL',...ledgerContext()};
-    const after={...(prev||{}), ...rec, source,version:(prev&&prev.version||0)+1,
-      closedAt:(prev&&prev.closedAt)?prev.closedAt:now, updatedAt:now};
+    const plan=fxActivePlan();if(!plan)return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const key=fxMonthKey(month),rec=fxNormalizeActual(input),errors=fxValidateActualInput(rec);
+    const prev=key&&(plan.actuals||{})[key];
+    if(input.inputType!==undefined&&!['rate','usd'].includes(input.inputType))errors.push('Tipo de entrada do realizado deve ser taxa ou USD.');
+    if(!key)errors.push('Mês inválido (use AAAA-MM).');
+    if(prev&&(prev.closureStatus||'FINALIZED')==='FINALIZED')errors.push('Mês finalizado. Reabra explicitamente com motivo antes de alterar o realizado.');
+    if(input.contributionsConfirmed!==true)errors.push('Confira e confirme os depósitos efetivos deste mês, inclusive quando forem zero.');
+    const next=fxNextOpenMonth(plan);
+    if(!next)errors.push('O horizonte do plano já está completamente finalizado.');
+    else if(key!==next)errors.push('Reconcilie cronologicamente. O próximo mês a finalizar é '+next+'.');
+    const confirmed=fxActualTimeline(plan),open=confirmed.length?confirmed[confirmed.length-1].close:plan.baseline.initialBalanceUsd;
+    if(!Number.isFinite(open))errors.push('Saldo de abertura indisponível. Reconcilie a base anterior.');
+    if(errors.length)return {ok:false,errors};
+    const contributions=fxContributionsByMonth(plan.contributions)[key]||{personalUsd:0,propUsd:0,totalUsd:0};
+    const computed=fxActualRow(key,rec,open,contributions);
+    if(!Number.isFinite(computed.close))return {ok:false,errors:['Resultado não finito. Confira valores e base antes de finalizar.']};
+    const raw=fxActivePlanRaw(),now=new Date().toISOString(),old=(raw.actuals||{})[key]||null;
+    const source=input.source?structuredClone(input.source):old&&old.source?structuredClone(old.source):{system:'MANUAL',...ledgerContext()};
+    const snapshot=Object.fromEntries(['month','open','rate','profit','personalUsd','propUsd','contributionUsd','close','inputType','derivedField','valuationFxRate'].map(k=>[k,computed[k]]));
+    const after={...(old||{}),...rec,source,closureStatus:'FINALIZED',contributionsConfirmed:true,
+      confirmedSnapshot:snapshot,contributionsSnapshot:structuredClone((raw.contributions||[]).filter(c=>fxMonthKey(c.month)===key)),confirmedAt:now,version:(old&&old.version||0)+1,
+      closedAt:old&&old.closedAt?old.closedAt:now,updatedAt:now};
+    delete after.reviewRequiredBy;delete after.reopenedAt;delete after.reopenNote;
     raw.actualHistory=raw.actualHistory||[];
-    raw.actualHistory.push({id:fxId('fxh'),month:key,at:now,before:prev?structuredClone(prev):null,after:structuredClone(after)});
-    raw.actuals[key]=after;
-    raw.updatedAt=now;
-    fxAudit(existing?'FX_MONTH_ACTUAL_EDITED':'FX_MONTH_ACTUAL_RECORDED',key,
-      rec.inputType==='usd'?`resultado ${rec.profitUsd} USD`:`taxa ${rec.returnRate}`);
-    return {ok:true};
+    raw.actualHistory.push({id:fxId('fxh'),month:key,at:now,action:old?'REFINALIZED':'FINALIZED',before:old?structuredClone(old):null,after:structuredClone(after)});
+    raw.actuals[key]=after;raw.updatedAt=now;
+    fxAudit(old?'FX_MONTH_REFINALIZED':'FX_MONTH_FINALIZED',key,String(input.notes||'Conferência mensal confirmada'));
+    return {ok:true,month:key,row:computed,nextOpenMonth:fxNextOpenMonth(fxActivePlan())};
   });
+}
+function fxPlanReconcileMonth(month,input={}){return fxPlanFinalizeMonth(month,input);}
+function fxPlanReopenMonth(month,note){
+  return fxMutateState(()=>{
+    const plan=fxActivePlan(),raw=fxActivePlanRaw(),key=fxMonthKey(month),rec=raw&&raw.actuals&&raw.actuals[key];
+    if(!plan||!rec)return {ok:false,errors:['Mês realizado não encontrado.']};
+    if(!String(note||'').trim())return {ok:false,errors:['Informe o motivo da reabertura.']};
+    if((rec.closureStatus||'FINALIZED')==='REOPENED')return {ok:false,errors:['Mês já reaberto. Preserve a edição atual.']};
+    const rows=fxForecastTimeline(plan),beforeRows=Object.fromEntries(rows.map(r=>[r.month,r])),now=new Date().toISOString(),affected=[];
+    const calculationSnapshot={actuals:structuredClone(raw.actuals),contributions:structuredClone(raw.contributions||[]),rebases:structuredClone(raw.rebases||[])};
+    raw.actualHistory=raw.actualHistory||[];
+    for(const [m,item] of Object.entries(raw.actuals).sort(([a],[b])=>a.localeCompare(b))){
+      if(m<key)continue;
+      const before=structuredClone(item),row=beforeRows[m];
+      if(!item.confirmedSnapshot&&row&&Number.isFinite(row.close))item.confirmedSnapshot=Object.fromEntries(['month','open','rate','profit','personalUsd','propUsd','contributionUsd','close','inputType','derivedField','valuationFxRate'].map(k=>[k,row[k]]));
+      if(m===key){item.closureStatus='REOPENED';item.reopenedAt=now;item.reopenNote=String(note).trim();}
+      else if((item.closureStatus||'FINALIZED')==='FINALIZED'){item.closureStatus='REVIEW_REQUIRED';item.reviewRequiredBy=key;}
+      else continue;
+      item.updatedAt=now;item.version=(item.version||0)+1;affected.push(m);
+      raw.actualHistory.push({id:fxId('fxh'),month:m,at:now,action:m===key?'REOPENED':'BASE_REVIEW_REQUIRED',note:String(note).trim(),before,after:structuredClone(item),...(m===key?{calculationSnapshot}:{} )});
+    }
+    raw.updatedAt=now;fxAudit('FX_MONTH_REOPENED',key,String(note).trim()+' · reconferência: '+affected.join(', '));
+    return {ok:true,month:key,affectedMonths:affected};
+  });
+}
+function fxContributionMonthIssue(raw,month){
+  const rec=raw.actuals&&raw.actuals[fxMonthKey(month)];
+  return rec&&(rec.closureStatus||'FINALIZED')!=='REOPENED'?'Depósitos de mês finalizado ou em reconciliação estão protegidos. Reabra o mês explicitamente antes de alterar.':'';
 }
 function fxPlanAddContribution(input){
   return fxMutateState(()=>{
     const raw=fxActivePlanRaw();
     if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
     const rec=fxNormalizeContribution({...input, id:'', createdAt:new Date().toISOString()});
-    const errors=fxValidateContribution(rec);
+    const errors=fxValidateContribution(rec),protectedIssue=fxContributionMonthIssue(raw,rec.month);
+    if(protectedIssue)errors.push(protectedIssue);
     if(errors.length) return {ok:false,errors};
     (raw.contributions=raw.contributions||[]).push(rec);
     raw.updatedAt=new Date().toISOString();
@@ -209,6 +278,8 @@ function fxPlanRemoveContribution(id){
     if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
     const idx=(raw.contributions||[]).findIndex(c=>c&&c.id===id);
     if(idx<0) return {ok:false,errors:['Aporte não encontrado.']};
+    const protectedIssue=fxContributionMonthIssue(raw,raw.contributions[idx].month);
+    if(protectedIssue)return {ok:false,errors:[protectedIssue]};
     const [gone]=raw.contributions.splice(idx,1);
     raw.updatedAt=new Date().toISOString();
     fxAudit('FX_CONTRIBUTION_REMOVED',fxMonthKey(gone&&gone.month)||null,
@@ -241,7 +312,7 @@ function fxReservePanelData(){
 }
 
 window.JPWFx.state={fxState,fxActivePlanRaw,fxActivePlan,fxPlanCreate,fxPlanDelete,
-  fxPlanReviseAssumptions,fxPlanRecordActual,fxPlanAddContribution,
+  fxPlanReviseAssumptions,fxPlanRecordActual,fxPlanFinalizeMonth,fxPlanReopenMonth,fxPlanReconcileMonth,fxPlanAddContribution,
   fxPlanRemoveContribution,fxOverviewLive,fxReservePanelData};
 
 // Commands below extend v1 without rewriting its baseline, historical revisions,
@@ -252,7 +323,7 @@ function fxPlanningReferences(){
 }
 function fxFutureMonth(raw,month){
   const key=fxMonthKey(month),next=fxNextOpenMonth(fxActivePlan());
-  return !!(key&&next&&key>=next&&key>=raw.baseline.startMonth&&key<fxAddMonths(raw.baseline.startMonth,raw.baseline.horizonMonths));
+  return !!(key&&next&&!(raw.actuals||{})[key]&&key>=next&&key>=raw.baseline.startMonth&&key<fxAddMonths(raw.baseline.startMonth,raw.baseline.horizonMonths));
 }
 function fxPlanReviseFromMonth(month,patch,note,scenarioId=null){
   month=fxMonthKey(month);
@@ -266,6 +337,9 @@ function fxPlanReviseFromMonth(month,patch,note,scenarioId=null){
     const before=scenario?scenario.assumptions:raw.current;
     const next=structuredClone(before);next.monthOverrides={...(next.monthOverrides||{})};next.plannedContributions={...(next.plannedContributions||{})};
     if(Object.prototype.hasOwnProperty.call(patch,'rate'))next.monthOverrides[month]=+patch.rate;
+    const wasAbsent=fxMonthIsAbsent(next,month);
+    if(wasAbsent&&['rate','personalUsd','propUsd'].some(k=>!Object.prototype.hasOwnProperty.call(patch,k)))return {ok:false,errors:['Preencha rentabilidade e os dois depósitos, inclusive zeros, para restaurar uma previsão retirada.']};
+    next.absentMonths={...(next.absentMonths||{})};delete next.absentMonths[month];
     const previous=fxPlannedContribution(next,month);
     next.plannedContributions[month]={personalUsd:patch.personalUsd===undefined?previous.personalUsd:+patch.personalUsd,propUsd:patch.propUsd===undefined?previous.propUsd:+patch.propUsd};
     if(scenario){scenario.revisions=scenario.revisions||[];scenario.revisions.push({at:new Date().toISOString(),month,note,before:structuredClone(scenario.assumptions),rebases:structuredClone(scenario.rebases||[])});scenario.assumptions=next;scenario.version=(scenario.version||0)+1;}
@@ -316,11 +390,33 @@ function fxPlanImportLedgerActual(month,options={}){
   if(!options.sourceVersion||options.sourceVersion!==preview.source.version)return {ok:false,errors:['A origem mudou ou a prévia não foi confirmada. Atualize antes de importar.']};
   const plan=fxActivePlan();if(!plan)return {ok:false,errors:['Nenhum plano ativo.']};
   const existing=plan.actuals[month];
+  if(existing&&(existing.closureStatus||'FINALIZED')==='FINALIZED')return {ok:false,errors:['Mês finalizado. Reabra antes de importar, mesmo quando a substituição foi confirmada.']};
   if(existing&&options.replace!==true)return {ok:false,errors:['Já existe realizado. Confirme explicitamente a substituição após revisar a origem.']};
   const row=fxForecastTimeline(plan).find(r=>r.month===month);
-  if(!row||Math.abs(row.open-preview.source.openingBalanceUsd)>0.005)return {ok:false,errors:['Saldo de abertura da Contabilidade difere do realizado/plano. Reconcilie a base antes de importar.']};
+  if(!row||!Number.isFinite(row.open)||Math.abs(row.open-preview.source.openingBalanceUsd)>0.005)return {ok:false,errors:['Saldo de abertura da Contabilidade difere do realizado/plano. Reconcilie a base antes de importar.']};
   const contributions=fxContributionsByMonth(plan.contributions)[month];
   if(contributions&&contributions.totalUsd!==0)return {ok:false,errors:['O mês tem aportes no planejamento. O ledger diário não discrimina fluxos; reconcilie antes de importar.']};
-  return fxPlanRecordActual(month,{inputType:'usd',profitUsd:preview.profitUsd,valuationFxRate:options.valuationFxRate||null,notes:options.notes||'Importação explícita da Contabilidade',source:preview.source});
+  return fxPlanRecordActual(month,{inputType:'usd',profitUsd:preview.profitUsd,valuationFxRate:options.valuationFxRate||null,notes:options.notes||'Importação explícita da Contabilidade',source:preview.source,contributionsConfirmed:options.contributionsConfirmed===true});
 }
 Object.assign(window.JPWFx.state,{fxEnvelopeIssue,fxPlanningReferences,fxPlanReviseFromMonth,fxPlanRebase,fxScenarioSave,fxScenarioDelete,fxPlanImportLedgerActual});
+
+// Removing a forecast is distinct from returning a monthly exception to defaults.
+function fxPlanMonthPremiseCommand(month,note,scenarioId,restore){
+  const key=fxMonthKey(month);
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();if(!raw||!fxFutureMonth(raw,key))return {ok:false,errors:['Selecione um mês projetado dentro do horizonte.']};
+    if(!String(note||'').trim())return {ok:false,errors:['Informe o motivo da alteração.']};
+    const scenario=scenarioId?(raw.scenarios||[]).find(s=>s.id===scenarioId):null;
+    if(scenarioId&&!scenario)return {ok:false,errors:['Cenário não encontrado.']};
+    const previous=scenario?scenario.assumptions:raw.current,next=structuredClone(previous),now=new Date().toISOString();
+    next.absentMonths={...(next.absentMonths||{})};
+    if(restore){delete next.absentMonths[key];if(next.monthOverrides)delete next.monthOverrides[key];if(next.plannedContributions)delete next.plannedContributions[key];}
+    else next.absentMonths[key]={reason:String(note).trim(),at:now};
+    if(scenario){scenario.revisions=scenario.revisions||[];scenario.revisions.push({at:now,month:key,note:String(note),before:structuredClone(previous),rebases:structuredClone(scenario.rebases||[])});scenario.assumptions=next;scenario.version=(scenario.version||0)+1;}
+    else fxState().plan=fxReviseAssumptions(raw,next,{note});
+    fxAudit(restore?'FX_MONTH_DEFAULTS_RESTORED':'FX_MONTH_FORECAST_REMOVED',key,String(note));return {ok:true,month:key};
+  });
+}
+function fxPlanClearMonth(month,note='Previsão retirada pelo usuário',scenarioId=null){return fxPlanMonthPremiseCommand(month,note,scenarioId,false);}
+function fxPlanRestoreMonth(month,note='Retorno explícito às premissas gerais',scenarioId=null){return fxPlanMonthPremiseCommand(month,note,scenarioId,true);}
+Object.assign(window.JPWFx.state,{fxPlanClearMonth,fxPlanRestoreMonth,fxPlanFinalizeMonth,fxPlanReopenMonth,fxPlanReconcileMonth});

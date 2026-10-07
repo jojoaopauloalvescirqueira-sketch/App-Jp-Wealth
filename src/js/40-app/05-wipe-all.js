@@ -17,7 +17,7 @@ async function wipeAllData(){
   // JP Wealth (removeAuxiliary:false preserva as preferências locais de interface;
   // removeCorrupted:false preserva cópias de recuperação existentes). Texto e
   // comportamento precisam coincidir numa ação irreversível.
-  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth deste navegador: ordens, fases, fechamentos, auditoria, configurações e tickets. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas.\n\nDigite APAGAR para continuar:');
+  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth registrada na chave principal deste navegador: ordens, fases, fechamentos, auditoria, configurações e tickets. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, cópias de recuperação existentes e originais PDF/HTML no arquivo de evidências são preservados. Para remover todo o armazenamento da origem pelo navegador, exporte antes o Backup Completo e o ZIP de evidências.\n\nDigite APAGAR para continuar:');
   if(p1===null) return;
   if(p1.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }
   const p2=prompt('Última confirmação. Digite APAGAR novamente:');
@@ -68,7 +68,7 @@ async function wipeAllData(){
   // §12: base excluída → tela inicial canônica (DEFAULT_START_ROUTE), nunca a tela em
   // que o operador por acaso estava quando confirmou a limpeza.
   if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
-  alert('A base do JP Wealth foi apagada e o painel voltou ao estado inicial. Preferências locais de interface e cópias de recuperação existentes foram preservadas.');
+  alert('A base do JP Wealth foi apagada e o painel voltou ao estado inicial. Preferências locais de interface, cópias de recuperação existentes e originais PDF/HTML do arquivo de evidências foram preservados.');
   });
 }
 function bindConfig(){

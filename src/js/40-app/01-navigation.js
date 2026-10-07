@@ -5,12 +5,12 @@
 // não persiste preferência, tela ou visão local.
 
 const NAV_FOREX_CHILDREN=Object.freeze([
-  Object.freeze({id:'forex-consolidated',label:'Visão geral',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-consolidated',label:'Desempenho',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-management-accounts',label:'Contas e Períodos',primary:'forex',child:'forex-management-accounts',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounts'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-history',label:'Histórico',primary:'forex',child:'forex-history',screen:'exec',localView:Object.freeze({surface:'exec',view:'history'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-history',label:'Histórico de operações',primary:'forex',child:'forex-history',screen:'exec',localView:Object.freeze({surface:'exec',view:'history'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-accounting',label:'Contabilidade',primary:'forex',child:'forex-accounting',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounting'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-planning',label:'Planejamento patrimonial',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'table'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])})
 ]);
 
@@ -186,6 +186,8 @@ function navApply(plan,target){
   if(plan.action==='context') fxSetContextExpanded(true);
   if(plan.action==='checklist') fxOpenChecklist(document.getElementById('execChecklistBtn'));
   if(plan.action==='motor') JPWForex.executionBoardUI.openTool('motor');
+  // A conclusão visual também acompanha o aceite retomado por um guard.
+  if(typeof shellNavigationApplied==='function')shellNavigationApplied(plan,target);
   return true;
 }
 

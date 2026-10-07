@@ -213,16 +213,27 @@ async function requestPinUnlock(operationEpoch=jpWealthPersistenceEpoch()){
     const p2=prompt('Confirme a senha:');
     if(p2!==p1){ alert('As senhas não coincidem. Nada foi alterado.'); return false; }
     const hash=await sha256Hex(p1);
-    if(jpWealthPersistenceIsBlocked() || operationEpoch!==jpWealthPersistenceEpoch()) return false;
+    if(jpWealthPersistenceIsBlocked() || jpWealthPersistenceOutcomeIsUnknown() || operationEpoch!==jpWealthPersistenceEpoch()) return false;
+    if(jpWealthPersistenceOutcomeIsUnknown())return false;
+    const previous=S.riskPinHash;
     S.riskPinHash=hash;
-    save();
+    let written=false;
+    try{written=save();}catch(error){
+      if(!jpWealthPersistenceOutcomeIsUnknown())S.riskPinHash=previous;
+      alert(jpWealthPersistenceOutcomeIsUnknown()?'A definição da senha tem resultado desconhecido. Confira a recuperação antes de alterar o perfil.':'A senha não foi gravada. O perfil permanece travado.');
+      return false;
+    }
+    if(written!==true){
+      if(!jpWealthPersistenceOutcomeIsUnknown())S.riskPinHash=previous;
+      alert('A senha não foi gravada. O perfil permanece travado.');return false;
+    }
     alert('Senha definida. Esta alteração de perfil está liberada — as próximas exigirão a senha.');
     return true;
   }
   const p=prompt('Digite a senha para alterar o perfil de risco desta conta:');
   if(p===null) return false;
   const h=await sha256Hex(p);
-  if(jpWealthPersistenceIsBlocked() || operationEpoch!==jpWealthPersistenceEpoch()) return false;
+  if(jpWealthPersistenceIsBlocked() || jpWealthPersistenceOutcomeIsUnknown() || operationEpoch!==jpWealthPersistenceEpoch()) return false;
   if(h!==S.riskPinHash){ alert('Senha incorreta. Perfil permanece travado.'); return false; }
   return true;
 }

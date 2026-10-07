@@ -63,7 +63,9 @@ def main():
             page.locator('#fxcConfirmIdentity').check();page.locator('#fxcConfirmImport').click()
             page.wait_for_function("S.fxConsolidated.receipts.length===1")
             test('confirmed HTML writes once without changing operational Forex',lambda:require(page.evaluate("S.fxConsolidated.accounts[0].deals.length===8&&JSON.stringify(S.forex)===__fxOp&&document.querySelector('#fxcImport').hidden")))
-            test('ledger projection displayed with provenance',lambda:require(page.evaluate("document.querySelector('#fxcCoverage').textContent.includes('Última importação:')&&document.querySelector('#fxcPanel-account').textContent.includes('85')&&document.querySelector('#fxcIdentity .fxc-chart svg')!==null")))
+            # Approved professional layout: import timestamp is shown once in account identity; methodology stays in coverage.
+            # Assert the exact stored receipt timestamp, preserving producer/value checks.
+            test('ledger projection displayed with provenance',lambda:require(page.evaluate("document.querySelector('#fxcIdentity .fxc-selection-meta').textContent.includes('Importado: '+S.fxConsolidated.receipts[0].importedAt)&&document.querySelector('#fxcCoverage').textContent.includes('Metodologia')&&document.querySelector('#fxcPanel-account').textContent.includes('85')&&document.querySelector('#fxcIdentity .fxc-chart')===null&&document.querySelectorAll('#fxcPanel-account [data-fxc-series=main] svg').length===1")))
             if args.output:
                 shots=Path(args.output).parent
                 page.screenshot(path=str(shots/'consolidated-account-light.png'),full_page=True)
@@ -108,7 +110,14 @@ def main():
             test('unassigned history visible without financial totals',lambda:require(page.locator('#fxcPanel-history').inner_text().find('unassigned-synthetic')>=0 and page.evaluate("JPWFXConsolidated.project(S.fxConsolidated,S.operationHistory.records,{source:'manual',accountId:'unassigned'}).metrics.netProfit.value===null")))
             page.evaluate("S.operationHistory.records=[{operationId:'historic-BRL-1',accountId:'fixture-A',currency:'BRL',netResult:25,closedAt:'2026-01-01T10:00:00Z'},{operationId:'historic-BRL-2',accountId:'fixture-A',currency:'BRL',netResult:75,closedAt:'2026-01-02T10:00:00Z'}];JPWFXConsolidated.render()")
             page.locator('#fxcAccount').select_option('fixture-A');page.locator('#fxcTab-account').click()
-            test('historical currency never comes from current account',lambda:require(page.evaluate("document.querySelector('#fxcPanel-account .fxc-months').textContent.includes('100 BRL')&&document.querySelector('#fxcPanel-account .fxc-chart').textContent.includes('100 BRL')&&document.querySelector('#fxcBars').textContent.includes('100 BRL')")))
+            def historical_currency():
+                require(page.evaluate("document.querySelector('#fxcPanel-account .fxc-months').textContent.includes('100 BRL')&&document.querySelector('#fxcPanel-account .fxc-chart').textContent.includes('100 BRL')"))
+                # The financial-distribution bars now belong to Statistics, not the opening view.
+                page.locator('#fxcTab-statistics').click()
+                # PROFESSIONAL-TEST: homogeneous result distributions replace
+                # the former mixed equity/deposit/profit bar scale.
+                require(page.evaluate("document.querySelector('#fxcPanel-statistics .fxc-distributions').textContent.includes('100 BRL')"))
+            test('historical currency never comes from current account',historical_currency)
             page.locator('#fxcMt5').click();page.locator('#fxcAccount').select_option('fixture-A');page.locator('#fxcTab-history').click()
             page.evaluate("S.fxConsolidated.accounts[0].deals.find(r=>r.ticket==='102').commission=null;S.fxConsolidated.accounts[0].deals.find(r=>r.ticket==='102').netResult=null;JPWFXConsolidated.render()")
             row=page.locator('#fxcPanel-history tbody tr').filter(has=page.locator('td:nth-child(2)',has_text='102')).first

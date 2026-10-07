@@ -577,7 +577,19 @@ def run_x2_unknown_and_prewrite(browser, url, failures):
             assert again['ok'] is False and again['persistido'] is None
             assert uncertain['pf']==after['pf'] and uncertain['log']==after['log'] and uncertain['raw']==after['raw']
             page.evaluate('() => {save=window.__x2originalSave;S.nocoda.x2Later=true;}')
-            assert page.evaluate('save()') is False, 'global UNKNOWN barrier was reopened'
+            # UNKNOWN is not a proven refusal: the boolean-compatible writer
+            # must raise its typed outcome and retain the no-retry barrier.
+            barrier=page.evaluate("""() => {
+              try {return {returned:save()};}
+              catch(error) {return {name:error.name,
+                status:error.persistenceResult&&error.persistenceResult.status,
+                unknown:jpWealthPersistenceOutcomeIsUnknown()};}
+            }""")
+            guarded=x2_snapshot(page)
+            assert barrier.get('name')=='JPWealthPersistenceUnknownError', 'UNKNOWN was treated as a boolean refusal'
+            assert barrier.get('status')=='UNKNOWN' and barrier.get('unknown') is True
+            assert guarded==after, 'global UNKNOWN barrier permitted a write or altered PF/log/disk'
+            x2_trace('typed-barrier-'+when,{'outcome':barrier,'noAdditionalWrite':guarded['writes']==after['writes']})
             page.reload(wait_until='load')
             expected=before['scenarios']+(1 if when=='after-write' else 0)
             assert page.evaluate('S.personalFinance.scenarios.length')==expected

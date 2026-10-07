@@ -3,6 +3,16 @@
   'use strict';
   const el=id=>document.getElementById(id);
   let view='calendar',valid=null,lastCanonical=null,revision=0;
+  jpwWorkspaceDraftProviders.set('nocuda-transfer',(reset=false)=>{
+    if(reset){lastCanonical=null;valid=null;el('nocudaPayload').value='';return [];}
+    const text=el('nocudaPayload').value;
+    return text?[{label:'NoCuda — parâmetros em conferência',provider:'nocuda-transfer',version:1,context:{route:'tools-nocuda'},baseReference:null,text}]:[];
+  });
+  window.JPWWorkspaceDrafts.registerRestorer('nocuda-transfer',{
+    inspect(item){return {compatible:typeof item.text==='string'&&item.text.length<=16384&&!el('nocudaPayload').value,reason:'Não pode existir outro desenho aberto; código recuperado precisa de nova validação.'};},
+    reopen(item){if(typeof closeSettingsModal==='function')closeSettingsModal();if(window.JPWNavigation?.navigate('tools-nocuda')===false)throw new Error('Navegação recusada.');
+      el('nocudaPayload').value=item.text;invalidate();status('Parâmetros recuperados, ainda não validados. Confira e valide antes de gerar.');el('nocudaPayload').focus();}
+  });
   function selectView(next){
     if(!['calendar','nocuda','leverage','normative'].includes(next))return;
     if(view==='normative'&&next!=='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.leave();

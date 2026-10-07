@@ -17,7 +17,8 @@ from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, assert_fixture_requests
 from forex_clarity_test import SEED
 from forex_execution_table_test import Server, Quiet, ready, field, persisted, order, set_field, HASH, prepare_drafts
-from forex_execution_workbook_test import hashes, seed, tool
+from forex_execution_workbook_test import hashes, seed
+from forex_execution_table_test import select_tool as tool
 from notes_launcher_test import launch_options, settle
 
 ROOT = Path(__file__).resolve().parents[1]

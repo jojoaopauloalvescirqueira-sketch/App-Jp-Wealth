@@ -11,7 +11,8 @@
 // progressiva e controle de backup, com a interface dizendo isso honestamente.
 //
 // Nenhuma função aqui lança para o chamador: tudo resolve em objetos de resultado/estado.
-// A ÚNICA base IndexedDB do projeto é esta; localStorage segue sendo o lar do estado S.
+// Esta base guarda somente permissões; o arquivo de evidências usa armazenamento próprio.
+// localStorage segue sendo o lar do estado S.
 const DG_FS_DB='jpwealth_fs';
 const DG_FS_STORE='handles';
 const DG_FS_KEY='exportDir';
@@ -22,23 +23,35 @@ function dgFsSupported(){
 }
 function dgFsOpenDb(){
   return new Promise((resolve,reject)=>{
-    let rq;
-    try{ rq=indexedDB.open(DG_FS_DB,1); }
-    catch(e){ reject(e); return; }
-    rq.onupgradeneeded=()=>{ rq.result.createObjectStore(DG_FS_STORE); };
-    rq.onsuccess=()=>resolve(rq.result);
-    rq.onerror=()=>reject(rq.error||new Error('IndexedDB indisponível.'));
-    rq.onblocked=()=>reject(new Error('IndexedDB bloqueado por outra aba.'));
+    let rq,settled=false;
+    const refuse=error=>{if(settled)return;settled=true;reject(error);};
+    try{rq=indexedDB.open(DG_FS_DB,1);}catch(error){refuse(error);return;}
+    rq.onupgradeneeded=()=>{if(!rq.result.objectStoreNames.contains(DG_FS_STORE))rq.result.createObjectStore(DG_FS_STORE);};
+    rq.onsuccess=()=>{
+      if(settled){rq.result.close();return;}
+      settled=true;rq.result.onversionchange=()=>rq.result.close();resolve(rq.result);
+    };
+    rq.onerror=()=>refuse(rq.error||new Error('IndexedDB indisponível.'));
+    rq.onblocked=()=>refuse(new Error('IndexedDB bloqueado por outra aba.'));
   });
 }
 function dgFsDbOp(mode,op){
-  // Uma transação curta por operação; o db fecha em seguida para nunca segurar bloqueio.
+  // Request success is provisional: an IndexedDB transaction can still abort.
   return dgFsOpenDb().then(db=>new Promise((resolve,reject)=>{
-    let rq;
-    try{ rq=op(db.transaction(DG_FS_STORE,mode).objectStore(DG_FS_STORE)); }
-    catch(e){ db.close(); reject(e); return; }
-    rq.onsuccess=()=>{ db.close(); resolve(rq.result); };
-    rq.onerror=()=>{ db.close(); reject(rq.error||new Error('Operação IndexedDB falhou.')); };
+    let transaction,request,value,error=null,settled=false;
+    const finish=(ok,failure)=>{if(settled)return;settled=true;db.close();ok?resolve(value):reject(failure||error||new Error('Transação IndexedDB abortada.'));};
+    try{
+      transaction=db.transaction(DG_FS_STORE,mode);
+      transaction.oncomplete=()=>finish(!error,error);
+      transaction.onabort=()=>finish(false,transaction.error);
+      transaction.onerror=()=>{error=transaction.error||new Error('Transação IndexedDB falhou.');};
+      request=op(transaction.objectStore(DG_FS_STORE));
+      request.onsuccess=()=>{value=request.result;};
+      request.onerror=()=>{error=request.error||new Error('Operação IndexedDB falhou.');};
+    }catch(failure){
+      try{transaction?.abort();}catch(_){}
+      finish(false,failure);
+    }
   }));
 }
 async function dgFsLoadHandle(){
@@ -52,8 +65,8 @@ async function dgFsStoreHandle(handle){
   dgFsHandleCache=handle;
 }
 async function dgFsClearHandle(){
-  try{ await dgFsDbOp('readwrite',store=>store.delete(DG_FS_KEY)); }catch(e){}
-  dgFsHandleCache=null;
+  try{await dgFsDbOp('readwrite',store=>store.delete(DG_FS_KEY));dgFsHandleCache=null;return true;}
+  catch(error){return false;}
 }
 // 'granted' | 'prompt' | 'denied' — implementações sem queryPermission caem em 'prompt'
 // (não presumir concessão que não se pode verificar).
@@ -100,29 +113,35 @@ async function dgFsStatus(){
 // Cancelamento do seletor NÃO corrompe nada (§17): retorna cancelled e o estado anterior
 // permanece intacto. Chamar somente de gesto do usuário.
 async function dgFsPickFolder(){
-  if(!dgFsSupported()) return {ok:false,reason:'unsupported'};
+  if(!dgFsSupported())return {ok:false,status:'REFUSED',reason:'unsupported'};
+  if(jpWealthPersistenceOutcomeIsUnknown())return {ok:false,status:'UNKNOWN',reason:'unknown',message:'Confira a recuperação antes de alterar a pasta.'};
+  if(jpWealthLoadRecoveryActive()||jpWealthPersistenceIsBlocked())return {ok:false,status:'REFUSED',reason:'blocked'};
+  const epoch=jpWealthPersistenceEpoch(),previousHandle=await dgFsLoadHandle();
   let handle;
-  try{
-    handle=await window.showDirectoryPicker({mode:'readwrite'});
-  }catch(e){
-    if(e && (e.name==='AbortError'||e.name==='NotAllowedError')) return {ok:false,reason:'cancelled'};
-    return {ok:false,reason:'error',message:e&&e.message?e.message:'Falha ao abrir o seletor de pasta.'};
+  try{handle=await window.showDirectoryPicker({mode:'readwrite'});}
+  catch(error){return {ok:false,status:'REFUSED',reason:error&&(error.name==='AbortError'||error.name==='NotAllowedError')?'cancelled':'error',message:error?.message||'Falha ao abrir o seletor de pasta.'};}
+  if(epoch!==jpWealthPersistenceEpoch()||jpWealthPersistenceIsBlocked())return {ok:false,status:'REFUSED',reason:'context_changed'};
+  try{await dgFsStoreHandle(handle);}
+  catch(error){return {ok:false,status:'REFUSED',reason:'error',message:'A autorização da pasta não foi confirmada pelo navegador: '+(error?.message||'erro desconhecido')};}
+  if(epoch!==jpWealthPersistenceEpoch()||jpWealthPersistenceIsBlocked()){
+    try{if(previousHandle)await dgFsStoreHandle(previousHandle);else if(await dgFsClearHandle()!==true)throw new Error('Autorização local não removida.');}catch(_){}
+    return {ok:false,status:'REFUSED',reason:'context_changed'};
   }
+  const previous=structuredClone(S.dataGovernance.storage),log=structuredClone(S.dataGovernance.changeLog);
+  let result;
   try{
-    await dgFsStoreHandle(handle);
-  }catch(e){
-    return {ok:false,reason:'error',message:'A pasta foi escolhida, mas o navegador não conseguiu guardar a autorização (IndexedDB): '+(e&&e.message?e.message:'erro desconhecido.')};
-  }
-  const st=S.dataGovernance.storage;
-  st.configured=true;
-  st.folderName=handle.name;
-  // A API não expõe o caminho completo por segurança; o nome da pasta é o que existe
-  // para mostrar. Metadado de exibição, nunca credencial (§6.1).
-  st.folderDisplayPath=handle.name;
-  st.configuredAt=new Date().toISOString();
-  if(typeof dgLogChange==='function') dgLogChange('storage','configured',handle.name,'Pasta padrão de exportação configurada: '+handle.name);
-  save();
-  return {ok:true,name:handle.name};
+    const st=S.dataGovernance.storage;
+    st.configured=true;st.folderName=handle.name;st.folderDisplayPath=handle.name;st.configuredAt=new Date().toISOString();
+    if(typeof dgLogChange==='function')dgLogChange('storage','configured',handle.name,'Pasta padrão de exportação configurada: '+handle.name);
+    result=jpWealthPersistDocument(S,{component:'folder-metadata'});
+  }catch(error){result={status:jpWealthPersistenceOutcomeIsUnknown()?'UNKNOWN':'REFUSED',erro:error};}
+  if(result.status==='CONFIRMED')return {ok:true,status:'CONFIRMED',name:handle.name};
+  if(result.status==='UNKNOWN')return {ok:false,status:'UNKNOWN',reason:'unknown',message:'A pasta foi escolhida, mas a confirmação dos metadados ficou desconhecida. Confira a recuperação; não repita às cegas.'};
+  S.dataGovernance.storage=previous;S.dataGovernance.changeLog=log;
+  let handleRestored=true;
+  try{if(previousHandle)await dgFsStoreHandle(previousHandle);else if(await dgFsClearHandle()!==true)throw new Error('Autorização local não removida.');}
+  catch(error){handleRestored=false;dgFsHandleCache=null;}
+  return {ok:false,status:'REFUSED',reason:'metadata_refused',message:'Os metadados da pasta não foram gravados. A escolha não foi confirmada.'+(handleRestored?'':' A autorização local precisa ser reassociada.')};
 }
 // Verificação NÃO destrutiva de acesso (§6/§17): permissão + sondagem real de leitura.
 // Uma pasta apagada do disco mantém handle e permissão válidos — só a sondagem revela

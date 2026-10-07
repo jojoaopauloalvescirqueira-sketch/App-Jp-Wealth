@@ -39,6 +39,54 @@
   function parameterWarnings(ids){return ids.map(id=>policy.get(id)).filter(row=>row&&row.homologationStatus!=='HOMOLOGATED'&&row.homologationStatus!=='NOT_APPLICABLE').map(row=>finding('PARAMETER_NOT_HOMOLOGATED','Valor documental '+row.id+': '+row.homologationStatus+'. Cálculo não homologa.',row.hostNorm));}
   function blockedParameters(ids,extra){return result('BLOCKED',null,'ACCOUNT_CURRENCY',ids.map(id=>finding(id+'_PENDING',id+' não possui valor vigente homologado; sem zero ou fallback.',policy.get(id).hostNorm,'BLOCKING')),extra);}
 
+  // Arithmetic on the canonical decimals received as Numbers, not on rounded
+  // intermediate differences. BigInts stay private and never enter a DTO.
+  function ddDecimal(number){
+    const [mantissa,exponent='0']=number.toString().split('e');
+    const dot=mantissa.indexOf('.'),places=dot<0?0:mantissa.length-dot-1;
+    return {integer:BigInt(mantissa.replace('.','')),exponent:Number(exponent)-places};
+  }
+  function ddRatioNumber(numerator,denominator){
+    let exponent=numerator.toString(2).length-denominator.toString(2).length;
+    if(exponent>=0?numerator<(denominator<<BigInt(exponent)):(numerator<<BigInt(-exponent))<denominator)exponent--;
+    if(exponent>1023)return Infinity;
+    if(exponent<-1075)return 0;
+    const shift=exponent<-1022?1074:52-exponent;
+    const n=shift>=0?numerator<<BigInt(shift):numerator;
+    const d=shift>=0?denominator:denominator<<BigInt(-shift);
+    let quotient=n/d;
+    const twiceRemainder=2n*(n%d);
+    if(twiceRemainder>d||(twiceRemainder===d&&(quotient&1n)!==0n))quotient++;
+    return Number(quotient)*2**(exponent<-1022?-1074:exponent-52);
+  }
+  function ddAdjacent(number,direction){
+    const view=new DataView(new ArrayBuffer(8));
+    view.setFloat64(0,number);
+    view.setBigUint64(0,view.getBigUint64(0)+(direction>0?1n:-1n));
+    return view.getFloat64(0);
+  }
+  function exactDrawdownPercent(si,equity,cashflow){
+    const parts=[si,equity,cashflow].map(ddDecimal);
+    const exponent=Math.min(...parts.map(p=>p.exponent));
+    const [initial,current,flow]=parts.map(p=>p.integer*10n**BigInt(p.exponent-exponent));
+    const numerator=(initial-current+flow)*100n;
+    if(numerator<=0n)return 0;
+    let value=ddRatioNumber(numerator,initial);
+    if(!finite(value))return value;
+    const boundaries=[...new Set([param('P-03'),...policy.phases.flatMap(p=>[p.ddMaxPercent,p.ddMaxPercent-param('P-04a')])])].filter(nonnegative);
+    const relations=boundaries.map(boundary=>{
+      const p=ddDecimal(boundary);
+      const left=p.exponent<0?numerator*10n**BigInt(-p.exponent):numerator;
+      const right=p.integer*initial*(p.exponent>0?10n**BigInt(p.exponent):1n);
+      return {boundary,sign:left<right?-1:left>right?1:0};
+    });
+    // Nearest-even can collapse a genuine crossing onto the exact limit. Keep
+    // its side using the adjacent Number; never introduce an epsilon band.
+    relations.forEach(({boundary,sign})=>{if(value===boundary&&sign!==0)value=ddAdjacent(boundary,sign);});
+    // Artificial policies can have no Number representing all required sides.
+    // Such a projection is unavailable rather than silently misclassified.
+    return relations.every(({boundary,sign})=>(value<boundary?-1:value>boundary?1:0)===sign)?value:NaN;
+  }
   function computeDrawdown(input){
     const x=input||{},unit='DD_PERCENT';
     const error=requireNumbers(x,['si','equity','netCashflow'],unit);if(error)return error;
@@ -47,7 +95,8 @@
     // Positive net cashflow means deposits minus withdrawals; neutralize only
     // the documented adjustment. This does not redefine the cycle reference.
     const adjustedEquity=x.equity-x.netCashflow;
-    return ok(Math.max(0,(x.si-adjustedEquity)/x.si*100),unit,[],{si:x.si,equity:x.equity,adjustedEquity,neutralizedCashflow:x.netCashflow});
+    if(!finite(adjustedEquity))return invalid('Equity ajustado não representável.',unit);
+    return ok(exactDrawdownPercent(x.si,x.equity,x.netCashflow),unit,[],{si:x.si,equity:x.equity,adjustedEquity,neutralizedCashflow:x.netCashflow});
   }
   function positionNotional(position){
     const p=position||{};

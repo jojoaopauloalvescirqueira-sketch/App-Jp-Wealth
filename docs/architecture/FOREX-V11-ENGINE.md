@@ -75,3 +75,13 @@ A recarga não transforma rascunho preenchido em ordem aberta, nem converte `Act
 ## Execution Board — contexto por instrumento (2026-09-15)
 
 A evolução local em [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md) separa projeções factuais, rascunhos RAM e escrita por linha. `orderInputs` compartilha `executionBoard.instrumentInputs`: contratos/conversões por conta/período/instrumento, com origem. `readModel` usa ATR vinculado ao instrumento da Gênese única; ATR global é legado não distribuído. Policy/engine não mudam. Observações e referências diárias são comandos versionados, não cálculo na UI. Estado e validação exatos pertencem aos recibos externos da campanha; aceite/homologação permanecem separados.
+
+## Precisão do DD e fronteiras — candidate 2026-10-06
+
+Contrato [CHG-DD](../work/CHG-JPW-DD-BOUNDARY-FIX-20261006.md): preserva `max(0, (SI − equity + cashflow documentado) × 100 / SI)`. A aritmética intermediária usa os decimais canônicos de `Number.toString()` efetivamente recebidos, em inteiros internos; não recupera precisão perdida antes da chamada. O resultado continua sendo Number e o DTO/schema permanece inalterado.
+
+A projeção para Number usa arredondamento binário nearest-even. Quando um cruzamento genuíno colapsaria sobre uma fronteira, o número representável adjacente conserva o lado da comparação. Não existe faixa epsilon, arredondamento de DD para casas monetárias ou alteração de limite. A conferência cobre P-03, todos os tetos de fase e as margens de retorno P-04a, incluindo zero em cenários sintéticos. Se não houver representação coerente ou se equity ajustado não for finito, o resultado fica NOT_COMPUTABLE.
+
+14% exatos permanecem em F4; deterioração genuína acima de 14% vai a F5; 22% exatos continuam BLOCKED com encerramento compulsório antes da consulta de fase. Retorno exige os mesmos limiares e evidências H4 existentes. Uma fase5 previamente gravada pelo defeito não é reparada silenciosamente: a leitura pode ter rawPhase4 e efetiva5/HELD até satisfazer a histerese. Picos históricos continuam monotônicos. Consulta/render não grava correções.
+
+Estatuto PDF pp32/51/52/54, Art4.1/6.1/6.3; P-01/P-03/P-04a/P-04b do Anexo permanecem intocados. Evidências, contraprovas e classificações brutas residem em `outputs/jpw-dd-boundary-fix-20261006`; testes gerais não substituem essas contraprovas nem homologam parâmetros.

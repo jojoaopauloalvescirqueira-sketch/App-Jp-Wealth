@@ -368,12 +368,15 @@ def audit_main_key_writers():
                     or 'localStorage[LSKEY]' in linha or 'keys=[LSKEY]' in linha):
                 escritores.append((rel, i))
     arquivos = sorted({e[0] for e in escritores})
-    assert arquivos == ['src/js/00-core/04-persistence.js', 'src/js/40-app/07-finalize-session.js'], \
+    assert arquivos == ['src/js/00-core/04-persistence.js'], \
         f'ponto NÃO CLASSIFICADO tocando a chave principal: {escritores}'
     # os pontos conhecidos fora de save() precisam da guarda de recuperação por perto
     finalize = (ROOT / 'src/js/40-app/07-finalize-session.js').read_text(encoding='utf-8')
-    assert finalize.count('jpWealthLoadRecoveryActive') >= 3, \
-        'guardas de recuperação ausentes em finalize-session (clearJPWealthLocalData, sessionCommitFinalizedState, openFinalizeSessionFlow)'
+    persistence = (ROOT / 'src/js/00-core/04-persistence.js').read_text(encoding='utf-8')
+    assert 'return jpWealthPersistDocument(estado,' in finalize, \
+        'finalização deve atravessar o escritor central verificado'
+    assert 'function jpWealthPersistDocument(' in persistence and 'jpWealthLoadRecoveryActive()' in persistence and 'jpWealthPersistenceOutcomeIsUnknown()' in persistence, \
+        'guardas de recuperação e desfecho desconhecido ausentes no escritor central'
     # contrato ALD-C3-PRE-PERSISTENCE: o mecanismo ativo de gravação final é o commit
     # com read-back; o helper antigo de regravação cega não pode voltar como mecanismo.
     assert 'function sessionCommitFinalizedState(' in finalize, \

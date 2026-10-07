@@ -309,9 +309,14 @@ function dashLayoutNormalizeV6(raw) {
   return { version: 6, screens };
 }
 
+let dashLayoutWriteUnknown=false;
 function dashLayoutSaveV6(full) {
-  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V6, JSON.stringify(full)); } catch (_) { return false; }
-  return true;
+  if(dashLayoutWriteUnknown)return false;
+  const payload=JSON.stringify(full);
+  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V6, payload); } catch (_) { return false; }
+  try { if(localStorage.getItem(JP_WIDGET_STORAGE_KEY_V6)===payload)return true; } catch (_) {}
+  dashLayoutWriteUnknown=true;
+  return false;
 }
 function dashLayoutClearAllPreferences() {
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V6); } catch (_) { /* silencioso */ }
@@ -454,8 +459,7 @@ function dashLayoutLoadFullState() {
         : widgets };
     });
     const candidate = dashLayoutNormalizeV6(promoted);
-    dashLayoutSaveV6(candidate);
-    try { localStorage.removeItem(chave); } catch (_) { /* silencioso */ }
+    if(dashLayoutSaveV6(candidate))try { localStorage.removeItem(chave); } catch (_) { /* preserve legacy on failure */ }
     return candidate;
   }
   const rawV2 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { return null; } })();
@@ -465,9 +469,8 @@ function dashLayoutLoadFullState() {
     const migratedDash = dashLayoutValidateV2Legacy(v2Parsed);
     if (migratedDash) {
       // `migratedDash` já veio promovido e validado por dashLayoutValidateV2Legacy.
-      const candidate = dashLayoutNormalizeV6({ version: 5, screens: { dash: { widgets: migratedDash } } });
-      dashLayoutSaveV6(candidate);
-      try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
+      const candidate = dashLayoutNormalizeV6({ version: 6, screens: { dash: { widgets: migratedDash } } });
+      if(dashLayoutSaveV6(candidate))try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* preserve legacy on failure */ }
       return candidate;
     }
     // v2 presente mas inválida — não promove, não apaga, cai no padrão completo
@@ -543,6 +546,24 @@ function dashLayoutBoot() {
 // `dirtyScreens` é o único critério de "tela alterada": comparação
 // estrutural (dashLayoutSnapshotsEqual) contra o snapshot, nunca visita.
 const dashLayoutState = { editing: false, activeScreenId: null, snapshots: null, dirtyScreens: null, drag: null, openPopover: null, lastDragEndAt: 0 };
+jpwWorkspaceDraftProviders.set('widget-layout',(reset=false)=>{
+  if(reset){if(dashLayoutState.editing)dashLayoutEndSession();return [];}
+  if(!dashLayoutState.editing||!dashLayoutState.dirtyScreens?.size)return [];
+  const screens={};for(const id of dashLayoutState.dirtyScreens)screens[id]=dashLayoutCurrentScreenState(id);
+  return [{label:'Widgets — organização não salva',provider:'widget-layout',version:1,baseReference:JSON.stringify(dashLayoutState.snapshots),context:{screenId:dashLayoutState.activeScreenId},text:JSON.stringify(screens)}];
+});
+window.JPWWorkspaceDrafts.registerRestorer('widget-layout',{
+  inspect(item){
+    try{const value=JSON.parse(item.text),base=JSON.parse(item.baseReference),current={};
+      JP_WIDGET_SCREEN_IDS.forEach(id=>{current[id]=dashLayoutCurrentScreenState(id);});
+      return {compatible:!dashLayoutState.editing&&!dashLayoutWriteUnknown&&JSON.stringify(current)===JSON.stringify(base)&&Object.entries(value).every(([id,w])=>JP_WIDGET_SCREEN_IDS.includes(id)&&dashLayoutValidateScreenWidgets(id,w)),reason:'A organização confirmada deve corresponder à versão original e não pode haver outra edição aberta.'};
+    }catch(_){return {compatible:false,reason:'Organização incompatível.'};}
+  },
+  reopen(item){dashLayoutEnterEdit();if(!dashLayoutState.editing)throw new Error('Abra uma área com widgets antes de recuperar.');
+    for(const [id,widgets] of Object.entries(JSON.parse(item.text))){dashLayoutApplyScreen(id,widgets);dashLayoutRecomputeDirty(id);}
+    dashLayoutUpdateBarInfo();
+  }
+});
 
 function dashLayoutPopoverLayer() { return document.getElementById('jpPopoverLayer'); }
 
@@ -988,7 +1009,7 @@ function dashLayoutFinish() {
     return;
   }
   if (!dashLayoutSaveV6(full)) {
-    dashLayoutShowBarError('Não foi possível salvar o layout — seus ajustes continuam nesta sessão.');
+    dashLayoutShowBarError(dashLayoutWriteUnknown?'Resultado do layout desconhecido. Ajustes preservados; recarregue e confira antes de gravar novamente.':'Não foi possível salvar o layout — seus ajustes continuam nesta sessão.');
     return;
   }
   if (dirty.includes('dash')) dashLayoutLogicalSlots = validatedByScreen.dash.map(w => ({ ...w }));

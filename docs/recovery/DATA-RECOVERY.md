@@ -35,7 +35,7 @@ As chaves da allowlist auxiliar são `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth
 A posição do botão flutuante pertence somente a este navegador/origem. A chave
 `jpwealth_notes_launcher_position_v1` contém `schemaVersion: 1` e coordenadas
 numéricas finitas `x` e `y` entre 0 e 1. Essa preferência fica fora de `S`, do
-schema de dados e do backup financeiro; notas, pastas e as três larguras já
+schema de dados financeiros, mas integra workspace.preferences do Backup Completo; notas, pastas e as três larguras já
 persistidas continuam no agregado existente. A apresentação central adapta as
 regiões de Pastas, Lista e Editor ao espaço disponível, sem regravar larguras
 por resize.
@@ -104,12 +104,21 @@ A pasta escolhida é destino de exportação; a base ativa permanece no perfil/o
 
 Importar substitui os dados da base e, quando o arquivo contém `workspace`, restaura também suas preferências. Recarregue após importar para aplicar todos os controladores visuais. Uma projeção interrompida exibe aviso e mantém um journal para tentar novamente na recarga; preserve o arquivo de origem. Backups antigos sem `workspace` preservam as preferências do destino. A porta recusa contêiner presente incompatível; ausência legítima em backup antigo segue o contrato legado. Em recusa de gravação, o estado anterior é preservado. Em desfecho desconhecido, pare novas gravações e examine a recuperação; não repita às cegas.
 
-Perfil/foto, layouts/navegação, posição do launcher, caches, permissões de pasta e rascunhos não salvos não acompanham a cópia financeira. Não prometa recuperação desses itens a partir do JSON de dados.
+O Backup Completo inclui perfil/foto, layouts/navegação, posição do launcher e rascunhos capturados em workspace, separadamente dos fatos confirmados. Caches e permissões de pasta não o acompanham. Originais PDF/HTML usam ZIP de evidências separado. Rascunhos sem contexto compatível permanecem somente para consulta/cópia. Não prometa recuperação de sessões, foco ou de arquivos que não foram arquivados.
 
 ## Recovery do Execution Board (2026-09-15)
 
 O checkpoint externo da campanha fica em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`: baseline.json, baseline-recovery.tar.gz, manifest/fingerprint/diff e relatório do candidate. Restaurar código somente nos caminhos próprios, por cópia seletiva verificada; não usar reset/stash ou tocar outras worktrees.
 
-Rascunhos de linhas/observações e lotes recusados de cotação existem somente em memória. Cancelar relê confirmação; recarga não promete recuperá-los. Backup guarda observações/referências confirmadas e snapshots históricos. UNKNOWN mantém recuperação existente contra retry cego. Nova geração/finalização invalida solicitações de cotações, e resposta tardia não recria dados. Consulte [Execution Board](../architecture/FOREX-EXECUTION-BOARD.md).
+Rascunhos de linhas/observações e lotes recusados de cotação existem em memória até serem capturados explicitamente num Backup Completo. Cancelar relê confirmação; uma recarga comum sem essa cópia não promete recuperá-los. Backup guarda observações/referências confirmadas e snapshots históricos. UNKNOWN mantém recuperação existente contra retry cego. Nova geração/finalização invalida solicitações de cotações, e resposta tardia não recria dados. Consulte [Execution Board](../architecture/FOREX-EXECUTION-BOARD.md).
 
 Cobertura das nove metas, formato, rascunhos e limites: [COMPLETE-BACKUP](../architecture/COMPLETE-BACKUP.md).
+
+
+## Candidate de confiabilidade 2026-10-06
+
+O resultado durável usa CONFIRMED/REFUSED/UNKNOWN, com barreira de novas gravações após escrita possivelmente aplicada sem conferência. Restauro valida formato, cobertura, tamanho e SHA-256 antes de modificar a base. Relatórios parciais não são backups completos. Consulte COMPLETE-BACKUP e SAVING-COVERAGE para a separação entre fatos, rascunhos, preferências e originais. A migração de widgets só remove a chave anterior após releitura exata da nova. A importação ou recuperação nunca confirma consentimento normativo.
+
+## Originais e limpeza da base
+
+A Zona de Perigo remove a chave principal e preserva os originais PDF/HTML em IndexedDB jpwealth_evidence_v1. Limpar a base principal não remove todo o armazenamento da origem. Exporte e confira o Backup Completo e o ZIP de evidências antes de remover o armazenamento pelo navegador.

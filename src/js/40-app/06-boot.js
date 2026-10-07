@@ -55,5 +55,9 @@ function boot(){
   }
 }
 $('modalOverlay').addEventListener('click',e=>{ if(e.target.id==='modalOverlay') closeModal(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+// Nested dialogs own a handled Escape. Closing an already hidden shared modal
+// would also notify its observers and incorrectly release the Settings backdrop.
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!e.defaultPrevented&&$('modalOverlay').classList.contains('show')) closeModal();
+});
 load(); if(S?.workspaceRecovery?.pending)jpwWorkspaceResume(); if(typeof initSessionCheckpoint==='function') initSessionCheckpoint(); bindParams(); bindContab(); bindConfig(); bindAcct(); bindFieldNotes(); boot();

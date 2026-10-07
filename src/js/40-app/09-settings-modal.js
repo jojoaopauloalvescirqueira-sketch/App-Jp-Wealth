@@ -911,5 +911,9 @@ initSettingsModal();
 jpwWorkspaceDraftProviders.set('profile',(reset=false)=>{
   if(reset){settingsProfileCancelAsync();settingsProfileState.blocked=null;settingsProfileReload();return [];}
   if(settingsProfileState.busy)throw new Error('Aguarde o processamento da foto antes de exportar.');
-  return settingsProfileDirty()?[{label:'Perfil — rascunho',text:JSON.stringify(settingsProfileState.draft)}]:[];
+  return settingsProfileDirty()?[{label:'Perfil — rascunho',provider:'profile',version:1,baseReference:settingsProfileState.raw,context:{key:SETTINGS_PROFILE_KEY},text:JSON.stringify(settingsProfileState.draft)}]:[];
+});
+window.JPWWorkspaceDrafts.registerRestorer('profile',{
+  inspect(item){try{const value=JSON.parse(item.text);return {compatible:!settingsProfileDirty()&&!settingsProfileState.busy&&localStorage.getItem(SETTINGS_PROFILE_KEY)===item.baseReference&&settingsProfileNameValid(value.displayName)&&settingsProfileAvatarValid(value.avatarDataUrl),reason:'O perfil original deve corresponder e não pode existir outra edição ou processamento de foto.'};}catch(_){return {compatible:false,reason:'Perfil incompatível.'};}},
+  reopen(item){openSettingsModal('account');beginSettingsProfileDraft();if(settingsProfileState.blocked)throw new Error('Perfil bloqueado.');settingsProfileState.draft=JSON.parse(item.text);renderSettingsProfile();settingsProfileSetStatus('Rascunho recuperado. Confira antes de salvar.','draft');}
 });

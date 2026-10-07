@@ -110,7 +110,7 @@ function load(){
   } else if(raw){
     let parsed=null, parseError=null;
     try{ parsed=JSON.parse(raw); }catch(e){ parseError=e; }
-    if(parseError || !parsed || typeof parsed!=='object'){
+    if(parseError || !parsed || typeof parsed!=='object' || Array.isArray(parsed)){
       // Antes, JSON inválido caía silenciosamente em DEFAULTS SEM cópia e SEM bloqueio —
       // o caminho mais destrutivo de todos: o primeiro save() apagava o original.
       enterLoadRecoveryMode('json-invalido', raw, parseError||new Error('conteúdo não é um objeto JSON'));
@@ -1227,6 +1227,7 @@ function paramsNormalizeState(){
   if(typeof S.params.inicio!=='string') S.params.inicio=String(S.params.inicio==null?'':S.params.inicio);
 }
 function migrate(){ // garante chaves novas se schema evoluir
+  if(!S || typeof S!=='object' || Array.isArray(S)) throw new Error('A base deve ser um documento JSON, não uma lista.');
   // Optional documentary metadata is validated before normalization, never inferred from global profiles.
   if(!jpwValidateAccountProfileExtensions(S))
     throw new Error('Metadados de conta ou perfil incompatíveis; preserve a base para revisão.');
@@ -1570,7 +1571,7 @@ function clearLoadRecoveryWarning(){
 // em 09-settings-modal.js (script 36) — ambos carregam DEPOIS deste arquivo (script 4).
 // Por isso a checagem de existência acontece no clique, não na criação do aviso.
 function persistenceAlertExportBackup(){
-  // Serializa o S em memória: não depende de nenhuma gravação anterior ter dado certo,
+  // Preserva fatos confirmados e alterações em memória em áreas distintas: não depende de uma gravação recente,
   // que é exatamente a razão de existir este botão. exportFullBackup() é async
   // (JPW-HJFGDE) e reporta as próprias falhas — inclusive a de serialização — com
   // alert interno, sem nunca rejeitar; o try/catch abaixo cobre apenas os ramos
@@ -1590,6 +1591,15 @@ function renderPersistenceFailureWarning(){
   el.className='persistence-alert is-failure';
   const serialize=jpWealthPersistenceFailure.kind==='serialize';
   const conflict=jpWealthPersistenceFailure.kind==='conflict';
+  const unknown=jpWealthPersistenceFailure.kind==='unknown';
+  if(unknown){
+    el.innerHTML='<p class="persistence-alert-title">Resultado da gravação desconhecido</p>'+
+      '<p class="persistence-alert-text">A escrita pode ter ocorrido, mas a conferência não foi concluída. Novas gravações estão bloqueadas. Preserve uma cópia de recuperação e confira a base; não repita a ação às cegas.</p>'+
+      '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertBackupBtn">Preservar recuperação</button></div>';
+    const btn=document.getElementById('persistenceAlertBackupBtn');
+    if(btn)btn.addEventListener('click',persistenceAlertExportBackup);
+    layoutPersistenceBanners();return;
+  }
   if(conflict){
     // Aviso HONESTO da guarda de concorrência (Camada 1): a gravação foi recusada
     // porque outra aba escreveu a base depois desta. Recarregar adota o documento
@@ -1621,7 +1631,7 @@ function renderPersistenceFailureWarning(){
   layoutPersistenceBanners();
 }
 function setPersistenceFailureState(error,kind){
-  kind=(kind==='serialize'||kind==='conflict')?kind:'storage';
+  kind=(kind==='serialize'||kind==='conflict'||kind==='unknown')?kind:'storage';
   jpWealthPersistenceFailure.count++;
   jpWealthPersistenceFailure.lastError=error||null;
   // Repinta na transição saudável→falha E quando o TIPO muda (storage⇄serialize) — o
@@ -1658,79 +1668,84 @@ function hideStaleSavedTag(){
   const stale=document.getElementById('savedTag');
   if(stale){ clearTimeout(saveTimer); stale.classList.remove('show'); }
 }
-function save(){
-  if(S?.workspaceRecovery?.pending&&!jpwWorkspaceRestoring)return false;
-  // Recuperação de carregamento (A-005) tem precedência sobre tudo: mesmo que algum
-  // fluxo reabra o portão genérico (importFullBackupFile e openOnboardingModal chamam
-  // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.
-  if(jpWealthLoadRecovery.active) return false;
-  // Precede o portão genérico: este não é reaberto por resumeJPWealthPersistence.
-  if(jpWealthPersistenceOutcomeUnknown) return false;
-  if(jpWealthPersistenceBlocked) return false;
-  // AQUI NAO SE CAPTURA A FASE DA CONTA. save() e chamado a cada TECLA nos campos
-  // numericos da grade, e um valor meio digitado produz uma Fase da Conta
-  // transitoria: digitar "1.09" passa por "1", cujo risco joga a conta para a
-  // Fase 4. Como a captura e monotonica, aquele pico era gravado como maximo
-  // OBSERVADO e nunca mais descia — o registro imutavel afirmava uma fase que a
-  // conta jamais atingiu.
-  //
-  // Persistir o valor corrente e uma coisa; afirmar historia e outra. A captura
-  // passou para os atos semanticamente CONFIRMADOS: edicao comprometida de campo
-  // (evento 'change', depois das guardas e das reversoes), resultado informado,
-  // ordem tornando-se operacional, destravamento de fase confirmado, e
-  // finalizacao. Todos chamam operationTouchAccountPhase() explicitamente.
-  // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
-  // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
-  // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez
-  // de prometer uma exportação que não vai funcionar.
-  let payload;
+// Resultado técnico da última tentativa. Sem nomes de conta ou valores financeiros.
+const jpWealthPersistenceContextId=globalThis.crypto?.randomUUID?.()||'session-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+let jpWealthPersistenceResult={status:'REFUSED',reason:'NOT_ATTEMPTED',component:'startup',context:jpWealthPersistenceContextId,epoch:0,at:null};
+function jpWealthPersistenceLastResult(){ return {...jpWealthPersistenceResult}; }
+function jpWealthPersistenceSetResult(status,reason,component,error){
+  jpWealthPersistenceResult={status,reason,component:component||'state',context:jpWealthPersistenceContextId,epoch:jpWealthSessionEpoch,at:new Date().toISOString()};
+  return {...jpWealthPersistenceResult,ok:status==='CONFIRMED',erro:error||null};
+}
+function jpWealthPersistenceSafeFeedback(result){
+  // Uma falha de desenho do aviso não muda o resultado durável da gravação.
   try{
-    // POLÍTICA DE SEGREDO: a senha de investidor NUNCA vai para armazenamento
-    // persistente. O replacer cobre accounts[].investorPassword, onboarding e qualquer
-    // site futuro que use o mesmo nome de campo — em memória o valor continua íntegro
-    // durante a sessão; no disco a chave grava sempre vazia.
-    payload=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
-  }catch(e){
-    console.error('JP Wealth: falha ao preparar (serializar) o estado para gravação.', e);
-    hideStaleSavedTag();
-    setPersistenceFailureState(e,'serialize');
-    return false;
-  }
-  // GUARDA DE CONCORRÊNCIA (Camada 1): se o disco não é mais o que esta aba conhece,
-  // outra aba gravou depois de nós. Gravar S inteiro agora apagaria o trabalho dela.
-  // Recusa com sinalização — perder UMA gravação visivelmente é estritamente melhor
-  // que perder o documento da outra aba em silêncio.
-  try{
-    const atual=localStorage.getItem(LSKEY);
-    if(atual!==jpWealthLastPersistedRaw){
-      const err=new Error('outra aba gravou a base depois desta; gravação recusada para não sobrescrever');
-      console.error('JP Wealth: conflito de concorrência entre abas detectado no save().', err);
+    if(result.status==='CONFIRMED'){
+      clearPersistenceFailureState();
+      const t=document.getElementById('savedTag');
+      if(t){t.classList.add('show');clearTimeout(saveTimer);saveTimer=setTimeout(()=>t.classList.remove('show'),1200);}
+    }else{
       hideStaleSavedTag();
-      setPersistenceFailureState(err,'conflict');
-      return false;
+      setPersistenceFailureState(result.erro||new Error(result.reason),result.status==='UNKNOWN'?'unknown':result.reason==='SERIALIZE'?'serialize':result.reason==='CONFLICT'?'conflict':'storage');
     }
-  }catch(e){
-    console.error('JP Wealth: falha ao ler o armazenamento na guarda de concorrência.', e);
-    hideStaleSavedTag();
-    setPersistenceFailureState(e,'storage');
-    return false;
-  }
-  // try estreito, cobrindo só a gravação: qualquer exceção posterior (ex.: #savedTag
-  // ausente) não deve ser relatada como falha de armazenamento.
+  }catch(error){console.error('JP Wealth: apresentação do estado de gravação indisponível.',error);}
+}
+function jpWealthPersistenceUnknownError(result){
+  const error=new Error('Gravação com resultado desconhecido. Confira a recuperação antes de repetir.');
+  error.name='JPWealthPersistenceUnknownError';error.persistenceResult=result;return error;
+}
+function jpWealthPersistDocument(state,options){
+  const opt=options||{},component=opt.component||'state';
+  const result=(status,reason,error)=>{
+    if(status==='UNKNOWN'&&!jpWealthPersistenceOutcomeUnknown)markJPWealthPersistenceOutcomeUnknown(reason);
+    const r=jpWealthPersistenceSetResult(status,reason,component,error);
+    if(reason==='WRITE_REFUSED'||reason==='SERIALIZE'){
+      const message=reason==='SERIALIZE'?'JP Wealth: falha ao preparar (serializar) o estado para gravação.':'JP Wealth: falha ao gravar o estado no armazenamento local.';
+      try{console.error(message,error||new Error(reason));}catch(ignored){}
+    }
+    // Deliberate guards already have their own recovery/modal explanation.
+    // Creating a second storage-error banner would misstate the cause and hide controls.
+    if(!opt.silent&&reason!=='LOAD_RECOVERY'&&reason!=='BLOCKED')jpWealthPersistenceSafeFeedback(r);
+    return r;
+  };
+  if(jpWealthPersistenceOutcomeUnknown)return result('UNKNOWN','PENDING_VERIFICATION');
+  if(opt.expectedEpoch!==undefined&&opt.expectedEpoch!==jpWealthSessionEpoch)return result('REFUSED','CONTEXT_CHANGED');
+  if(jpWealthLoadRecovery.active)return result('REFUSED','LOAD_RECOVERY');
+  if(jpWealthPersistenceBlocked&&!opt.allowBlocked)return result('REFUSED','BLOCKED');
+  if(state?.workspaceRecovery?.pending&&!(typeof jpwWorkspaceRestoring!=='undefined'&&jpwWorkspaceRestoring)&&!opt.allowWorkspaceRecovery)return result('REFUSED','WORKSPACE_RECOVERY');
+  if(!state||typeof state!=='object'||Array.isArray(state))return result('REFUSED','INVALID_ROOT');
+  let payload,before;
   try{
-    localStorage.setItem(LSKEY,payload);
-  }catch(e){
-    console.error('JP Wealth: falha ao gravar o estado no armazenamento local.', e);
-    hideStaleSavedTag();
-    setPersistenceFailureState(e,'storage');
-    return false;
+    payload=JSON.stringify(state,(k,v)=>k==='investorPassword'?'':v);
+    const root=JSON.parse(payload);
+    if(!root||typeof root!=='object'||Array.isArray(root))throw new Error('A serialização não produziu um documento JSON.');
   }
-  jpWealthLastPersistedRaw=payload;
-  clearPersistenceFailureState();
-  const t=document.getElementById('savedTag');
-  if(t){
-    t.classList.add('show');
-    clearTimeout(saveTimer); saveTimer=setTimeout(()=>t.classList.remove('show'),1200);
+  catch(error){return result('REFUSED','SERIALIZE',error);}
+  try{before=localStorage.getItem(LSKEY);}
+  catch(error){return result('REFUSED','READ_BEFORE_WRITE',error);}
+  const expected=Object.prototype.hasOwnProperty.call(opt,'expectedRaw')?opt.expectedRaw:jpWealthLastPersistedRaw;
+  if(before!==expected)return result('REFUSED','CONFLICT',new Error('Outra aba atualizou a base. A escrita foi recusada.'));
+  let writeError=null;
+  try{localStorage.setItem(LSKEY,payload);}
+  catch(error){writeError=error;}
+  let actual;
+  try{actual=localStorage.getItem(LSKEY);}
+  catch(error){return result('UNKNOWN','READ_AFTER_WRITE',error);}
+  if(actual===payload){
+    jpWealthAdoptPersistedRaw(payload);
+    return {...result('CONFIRMED','READBACK_MATCH'),payload};
   }
-  return true;
+  if(actual===before)return result('REFUSED',writeError?'WRITE_REFUSED':'WRITE_NOT_APPLIED',writeError||new Error('A escrita não foi aplicada.'));
+  return result('UNKNOWN','READBACK_DIVERGED',writeError||new Error('A releitura divergiu da escrita e da base anterior.'));
+}
+function jpWealthConfirmedStateSnapshot(){
+  if(jpWealthLastPersistedRaw===null)return null;
+  try{const value=JSON.parse(jpWealthLastPersistedRaw);return value&&typeof value==='object'&&!Array.isArray(value)?value:null;}
+  catch(error){return null;}
+}
+function save(){
+  // Compatibilidade: false só significa recusa comprovada, nunca possível escrita.
+  // Desenho não participa da decisão, e não há captura de fatos financeiros aqui.
+  const result=jpWealthPersistDocument(S,{component:'state'});
+  if(result.status==='UNKNOWN')throw jpWealthPersistenceUnknownError(result);
+  return result.status==='CONFIRMED';
 }

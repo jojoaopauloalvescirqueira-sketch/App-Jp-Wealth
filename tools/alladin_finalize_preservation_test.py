@@ -31,7 +31,8 @@ Casos:
             regravacao da aba de origem) tambem aborta: chave ausente e disco
             indeterminado, nao estado legado
   C12       a copia e profunda: mutar o estado antigo nao alcanca o preservado
-  C13       estado legado sem o agregado nao quebra o fluxo
+  C13       base legada incompleta e recusada sem mutacao; apos conferencia
+            explicita do documento completo, agregado padrao sobrevive ao ciclo
 
 Fixture: tools/fixtures/alladin_v2.json (100% sintetica).
 """
@@ -552,14 +553,76 @@ def main() -> int:
                     falhas.append(f"C12 pageerror: {erros}")
             executar(falhas, "C12", c12)
 
-            # ---- C13: estado legado, sem o agregado, nao quebra o fluxo ----
+            # ---- C13: FULL v2 nao completa legado silenciosamente ----
             def c13():
                 ctx, page, erros = abrir(browser, url)
-                padrao = page.evaluate("() => { delete S.alladin; save(); return JSON.stringify(DEFAULTS.alladin); }")
-                finalizar_fluxo_real(page, falhas, "C13")
-                depois = page.evaluate("() => JSON.stringify(S.alladin)")
-                if json.loads(depois) != json.loads(padrao):
-                    falhas.append(f"C13: estado sem agregado nao voltou ao DEFAULTS apos o ciclo ({depois[:80]})")
+                padrao = page.evaluate("""() => {
+                    delete S.alladin;
+                    if(save()!==true) throw new Error('C13 fixture legada nao confirmada');
+                    window.__c13Before={raw:localStorage.getItem(LSKEY),memory:JSON.stringify(S)};
+                    window.__c13Writes=[];window.__c13Broadcasts=0;
+                    const originalSet=Storage.prototype.setItem;
+                    Storage.prototype.setItem=function(key,value){
+                        if(this===localStorage) window.__c13Writes.push(key);
+                        return originalSet.call(this,key,value);
+                    };
+                    const originalNotify=sessionNotifyFinalized;
+                    sessionNotifyFinalized=function(){
+                        window.__c13Broadcasts++;
+                        return originalNotify.apply(null,arguments);
+                    };
+                    return JSON.stringify(DEFAULTS.alladin);
+                }""")
+                page.locator('#finalizeSessionBtn').click()
+                page.locator('#sessionExport').click()
+                page.wait_for_function("() => !!document.querySelector('#modalBox .session-error')")
+                recusado=page.evaluate("""() => ({
+                    stage:JPWBackup.status().stage,reason:JPWBackup.status().reason,
+                    memoryPreserved:JSON.stringify(S)===window.__c13Before.memory,
+                    diskPreserved:localStorage.getItem(LSKEY)===window.__c13Before.raw,
+                    missing:!Object.prototype.hasOwnProperty.call(JSON.parse(localStorage.getItem(LSKEY)),'alladin'),
+                    writes:window.__c13Writes,broadcasts:window.__c13Broadcasts,
+                    acknowledgment:!!document.getElementById('sessionExportAcknowledged'),
+                    proceed:!!document.getElementById('sessionProceed'),
+                    modal:document.getElementById('modalBox').textContent
+                })""")
+                if recusado['stage']!='REFUSED' or not all(word in (recusado['reason'] or '')
+                        for word in ('legada/incompleta','recuperação bruta','alladin')):
+                    falhas.append(f"C13: export incompleto deveria recusar com motivo e recuperacao: {recusado}")
+                if not all(recusado[key] for key in ('memoryPreserved','diskPreserved','missing')):
+                    falhas.append('C13: recusa modificou o legado ou completou Alladin silenciosamente')
+                # A epoch pode ser inicializada (excecao tecnica nominal do C6).
+                # Nem a base financeira nem um sinal de finalizacao podem ser escritos.
+                if LSKEY in recusado['writes'] or SINAL in recusado['writes'] or recusado['broadcasts']:
+                    falhas.append('C13: export recusado escreveu dados ou avisou outras abas')
+                if recusado['acknowledgment'] or recusado['proceed'] or 'não pode prosseguir' not in recusado['modal']:
+                    falhas.append('C13: fluxo aceitou encerramento sem backup completo')
+                print('C13 REFUSED EVIDENCE '+json.dumps(recusado,ensure_ascii=False),flush=True)
+                page.locator('#sessionCancel').click()
+                # Simula uma conferencia EXPLICITA da familia introduzida e o
+                # salvamento deliberado da base completa, nunca um default no export.
+                confirmado=page.evaluate("""() => {
+                    S.alladin=structuredClone(DEFAULTS.alladin);
+                    const saved=save();
+                    // Nao existe copia conferida: exige o caminho changed/export.
+                    setSessionCheckpointValue('synthetic:no-verified-backup-yet');
+                    return {saved,present:Object.prototype.hasOwnProperty.call(JSON.parse(localStorage.getItem(LSKEY)),'alladin')};
+                }""")
+                if confirmado!={'saved':True,'present':True}:
+                    falhas.append(f"C13: confirmacao explicita nao estabeleceu documento completo: {confirmado}")
+                entrada=finalizar_fluxo_real(page,falhas,'C13 confirmado explicitamente')
+                if entrada!='changed':
+                    falhas.append(f"C13: base completa deveria atravessar export real, veio {entrada}")
+                depois=page.evaluate("() => JSON.stringify(S.alladin)")
+                if not igual(depois,json.loads(padrao)) or not igual(do_disco(page),json.loads(padrao)):
+                    falhas.append('C13: agregado confirmado explicitamente nao sobreviveu em memoria/disco')
+                receipt=page.evaluate('jpWealthPersistenceLastResult()')
+                if receipt['status']!='CONFIRMED' or page.locator('#modalOverlay').is_visible():
+                    falhas.append(f"C13: ciclo da base completa nao foi confirmado: {receipt}")
+                page.reload(wait_until='load')
+                page.wait_for_function(PRONTO)
+                if not igual(page.evaluate('JSON.stringify(S.alladin)'),json.loads(padrao)) or not igual(do_disco(page),json.loads(padrao)):
+                    falhas.append('C13: agregado confirmado nao sobreviveu ao reload')
                 if erros:
                     falhas.append(f"C13 pageerror: {erros}")
             executar(falhas, "C13", c13)
@@ -665,7 +728,7 @@ def main() -> int:
           "future-schema intacto atraves do reload e ainda somente-leitura, Zona de Perigo continua apagando, "
           "sessao encerrada, sem chave nova nem contaminacao de auxiliar, dois ciclos por caminhos distintos, "
           "atomicidade com ordem e persistencia assertadas, cross-tab preserva do estado persistido sem "
-          "ressuscitar registro apagado, aborta bloqueado quando ilegivel, copia profunda, legado sem agregado)")
+          "ressuscitar registro apagado, aborta bloqueado quando ilegivel, copia profunda, legado incompleto recusado e confirmacao completa explicita)")
     return 0
 
 

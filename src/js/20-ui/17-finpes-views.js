@@ -97,3 +97,53 @@ finpesWatchModuleEntry();
 // Superfície pública consumida pelo controlador da faixa compartilhada
 // (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.
 window.JPWFin = { ui: { selectView: finpesSelectView, getView: finpesGetView } };
+// Inline financial commands still commit on change. Only their repaint waits
+// until the browser has completed Tab or the pointer gesture, so replacing
+// the form cannot swallow the next click or move focus to BODY.
+const finpesInlineRefreshes = new Map();
+let finpesInlinePointerDown = false;
+function finpesInlineIdentity(el){
+  if(!el) return null;
+  return Array.from(el.attributes).filter(a=>/^data-f[abcegin]-/.test(a.name) && a.name!=='data-fi-rule')
+    .map(a=>[a.name,a.value]);
+}
+function finpesScheduleInlineRefresh(root, render){
+  if(!root) return;
+  const pending=finpesInlineRefreshes.get(root);
+  if(pending) clearTimeout(pending.timer);
+  const task={timer:null,render};
+  const flush=()=>{
+    if(finpesInlinePointerDown) return;
+    finpesInlineRefreshes.delete(root);
+    if(!root.isConnected) return;
+    const active=document.activeElement, own=root.contains(active);
+    const identity=own?finpesInlineIdentity(active):null;
+    const draft=own&&'value' in active?{value:active.value,dirty:active.value!==active.defaultValue,
+      start:active.selectionStart,end:active.selectionEnd,direction:active.selectionDirection}:null;
+    const ghost=own&&active.dataset.fgRule?{rule:active.dataset.fgRule,field:active.dataset.fgCampo}:null;
+    const scrolls=[];
+    for(let node=active;own&&node;node=node.parentElement) if(node.scrollTop||node.scrollLeft) scrolls.push([node.id,node.scrollTop,node.scrollLeft]);
+    task.render();
+    if(!own || !identity?.length || document.activeElement.closest('dialog[open],.modal.show')) return;
+    let target=Array.from(root.querySelectorAll('input,select,button,textarea')).find(el=>identity.every(([name,value])=>el.getAttribute(name)===value));
+    if(!target&&ghost) target=Array.from(root.querySelectorAll('[data-fi-rule][data-fi-campo]'))
+      .find(el=>el.dataset.fiRule===ghost.rule&&el.dataset.fiCampo===ghost.field);
+    if(!target||target.disabled||target.closest('[hidden],[inert]')) return;
+    target.focus({preventScroll:true});
+    if(draft&&draft.dirty) target.value=draft.value;
+    if(draft&&typeof draft.start==='number'&&typeof target.setSelectionRange==='function')
+      try{target.setSelectionRange(draft.start,draft.end,draft.direction);}catch(_){}
+    for(const [id,top,left] of scrolls){const el=id&&document.getElementById(id);if(el){el.scrollTop=top;el.scrollLeft=left;}}
+  };
+  task.flush=flush;
+  finpesInlineRefreshes.set(root,task);
+  task.timer=setTimeout(flush,0);
+}
+document.addEventListener('pointerdown',()=>{finpesInlinePointerDown=true;},true);
+function finpesInlineEndPointer(){
+  finpesInlinePointerDown=false;
+  for(const task of finpesInlineRefreshes.values()){clearTimeout(task.timer);task.timer=setTimeout(task.flush,0);}
+}
+document.addEventListener('pointerup',finpesInlineEndPointer,true);
+document.addEventListener('pointercancel',finpesInlineEndPointer,true);
+window.addEventListener('blur',finpesInlineEndPointer);

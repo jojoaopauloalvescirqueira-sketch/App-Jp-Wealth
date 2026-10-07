@@ -124,7 +124,10 @@ def run_check(name: str, command: list[str]) -> dict[str, object]:
     except FileNotFoundError as exc:
         output, returncode = f"ENVIRONMENT_ERROR: {exc}", 127
     except subprocess.TimeoutExpired as exc:
-        output = (exc.stdout or "") + "\nENVIRONMENT_ERROR: timeout apos 900s"
+        partial = exc.stdout or ""
+        if isinstance(partial, bytes):
+            partial = partial.decode("utf-8", errors="replace")
+        output = partial + "\nENVIRONMENT_ERROR: timeout apos 900s"
         returncode = 124
     duration = round(time.monotonic() - started, 3)
     return {

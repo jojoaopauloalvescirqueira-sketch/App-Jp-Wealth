@@ -56,14 +56,19 @@ function renderAcct(){
   const box=$('acctPeriodSummary');if(!box)return;
   const m=acctModel(),api=window.JPWFx,refs=api&&api.state&&api.state.fxPlanningReferences?api.state.fxPlanningReferences():null;
   const percent=v=>Number.isFinite(v)?(v*100).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%':'indisponível';
-  const money=v=>Number.isFinite(v)?fmtMoney2(v):'Indisponível';
   const scope=window.JPWForex?.state?.operationalSelection?.()||{};
   const period=scope.accountId&&scope.periodId?window.JPWForex.state.accountContext(scope):null;
   const currency=period?.status==='OK'?period.value.currency:null;
-  box.innerHTML=`<p class="fxp-note">Conta ${esc(scope.accountId||'não selecionada')} · período ${esc(scope.periodId||'não registrado')} · moeda ${esc(currency||'não verificada')}</p><div class="metrics"><div class="metric"><div class="k">Saldo inicial book</div><div class="v sm">${money(m.saldoIni)}</div></div><div class="metric"><div class="k">Último saldo book</div><div class="v sm">${money(acctRealNow())}</div></div><div class="metric"><div class="k">Referência mensal do plano global</div><div class="v sm">${refs?percent(refs.monthly):'indisponível'}</div></div><div class="metric"><div class="k">Referência anual distinta</div><div class="v sm">${refs&&Array.isArray(refs.annualRange)?refs.annualRange.map(percent).join(' – '):'indisponível'}</div></div></div><p class="fxp-note">Fechamentos são fatos contábeis. Book, SI e equity são distintos. O plano global não atribui meta a esta conta.</p>`;
+  const account=(S.accounts||[]).find(a=>a.forexAccountId===scope.accountId)||S.forex?.accountContexts?.archivedAccounts?.[scope.accountId]?.record;
+  const money=v=>Number.isFinite(v)?fmtForexMoney(v,{currency}):'Indisponível';
+  box.innerHTML=`<header class="acct-context-heading"><div><p class="eb-eyebrow">FOREX · FECHAMENTOS</p><h1>Contabilidade</h1><p>${esc(account?.nome||'Conta não selecionada')} · Período desde ${esc(period?.value?.startedAt||'não informado')} · ${esc(currency||'Moeda não verificada')}</p></div><div class="metrics"><div class="metric"><div class="k">Saldo inicial book</div><div class="v sm">${money(m.saldoIni)}</div></div><div class="metric"><div class="k">Último saldo book</div><div class="v sm">${money(acctRealNow())}</div></div></div></header><p class="fxp-note">Fechamentos desta conta e período. Book, SI e equity são distintos; registrar um fechamento não confirma equity.</p>`;
+  for(const [id,label] of [['ldResult','Resultado do dia'],['ldSaldo','Saldo de fechamento']]){
+    const input=$(id),target=input?.closest('.field')?.querySelector('label');
+    if(target){target.textContent=label+' ('+(currency||'moeda não verificada')+')';target.htmlFor=id;}
+  }
   const detail=$('acctPeriodDetail'),toggle=$('acctPeriodToggle');if(detail)detail.style.display='none';if(toggle)toggle.hidden=true;
   const chart=$('rvpChart');
-  if(chart)chart.innerHTML='<p class="fxp-note">'+(m.available?'Projeção mensal disponível no Planejamento FX, com as premissas explícitas do plano.':'Sem plano explícito: projeção indisponível. Crie um plano no Planejamento FX.')+'</p><button type="button" id="acctGoPlanning">Abrir Planejamento</button>';
+  if(chart)chart.innerHTML='<div class="acct-planning-link"><p class="fxp-note">'+(m.available?'Consulte o plano global, suas premissas e a comparação mensal entre realizado e projetado.':'Sem plano explícito: projeção indisponível. Crie um plano com suas próprias premissas.')+'</p><button type="button" id="acctGoPlanning" class="reset-btn">Abrir Planejamento patrimonial</button></div><details class="acct-planning-reference"><summary>Referências do plano global</summary><p>Referência mensal: '+(refs?percent(refs.monthly):'indisponível')+' · Referência anual distinta: '+(refs&&Array.isArray(refs.annualRange)?refs.annualRange.map(percent).join(' – '):'indisponível')+'. O plano global não atribui meta a esta conta.</p></details>';
   if($('acctGoPlanning'))$('acctGoPlanning').onclick=()=>window.JPWNavigation.navigate('forex-planning');
   const proj=$('acctProjWrap');if(proj)proj.innerHTML='';
   const pace=$('dashCyclePace');if(pace)pace.innerHTML='<p class="fxp-note">Acompanhe ACTUAL × PLAN no Planejamento FX. As referências de retorno não determinam um ritmo obrigatório de execução.</p>';

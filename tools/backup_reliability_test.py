@@ -9,7 +9,7 @@ import argparse
 from datetime import datetime, timezone
 from functools import partial
 import hashlib
-from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import importlib.util
 import json
 import os
@@ -103,7 +103,8 @@ PREPARE = r"""() => {
 FACTS = r"""() => {
   const node=id=>{const el=document.getElementById(id);return el?{
     exists:true,text:el.textContent,state:el.dataset.state||'',visible:!!el.getClientRects().length}: {exists:false};};
-  return {state:JSON.stringify(S),raw:__br.nativeGet.call(localStorage,LSKEY),
+    return {state:JSON.stringify(S),raw:__br.nativeGet.call(localStorage,LSKEY),
+    exportStatus:window.JPWBackup.status(),
     governance:structuredClone(S.dataGovernance),due:dgBackupDue(),age:dgBackupAgeDays(),
     unknown:jpWealthPersistenceOutcomeIsUnknown(),blocked:jpWealthPersistenceIsBlocked(),
     recovery:jpWealthLoadRecoveryActive(),recoveryContext:{active:jpWealthLoadRecovery.active,
@@ -147,6 +148,13 @@ def refresh(page):
     settle(page)
 
 
+def save_unknown(page):
+    return page.evaluate("""() => {
+      try{return {returned:save(),threw:false};}
+      catch(error){return {threw:true,name:error.name,status:error.persistenceResult?.status};}
+    }""")
+
+
 def prepare(helper, browser, url):
     page = helper.prepare_page(browser, url)
     page.clock.set_fixed_time(datetime(2026, 9, 14, 15, 0, tzinfo=timezone.utc))
@@ -188,10 +196,10 @@ def confirmation(case, page, mode):
                    and not after['savedTag'], brief(after))
         checkpoint = after
         page.evaluate("() => {__br.mode='normal';__br.readFault=false;}")
-        attempt = page.evaluate('save()')
+        attempt = save_unknown(page)
         after_retry = page.evaluate(FACTS)
-        case.check('UNKNOWN prevents blind save and further writes', attempt is False
-                   and after_retry['writes'] == checkpoint['writes'] and after_retry['raw'] == checkpoint['raw'])
+        case.check('UNKNOWN prevents blind save and further writes', attempt == {'threw': True, 'name': 'JPWealthPersistenceUnknownError', 'status': 'UNKNOWN'}
+                   and after_retry['writes'] == checkpoint['writes'] and after_retry['raw'] == checkpoint['raw'], attempt)
         return
     case.check('refusal preserves original confirmation and log', after['governance'] == before['governance'])
     case.check('refusal preserves persisted document', after['raw'] == before['raw'])
@@ -249,7 +257,12 @@ EXPORT_SETUP = r"""mode => {
   dgDownloadViaAnchor=(name,blob)=>{__br.payload=blob;__br.fileEvents.push('download-started');return originalDownload(name,blob);};
   const handle={name:'SYNTHETIC-MOCK-ONLY',async getFileHandle(name){
     __br.fileEvents.push('getFileHandle');
-    return {async createWritable(){
+    return {async getFile(){
+      __br.fileEvents.push('getFile-readback');
+      const stored=__br.files.find(file=>file.name===name);
+      if(!stored)throw new DOMException('synthetic file absent','NotFoundError');
+      return new File([stored.blob],name,{type:stored.blob.type});
+    },async createWritable(){
       __br.fileEvents.push('createWritable');
       if(mode==='before-write')throw new Error('synthetic before write');
       let pending;
@@ -298,10 +311,12 @@ def export_phase(case, page, mode):
     case.check('completed export result remains usable', isinstance(meta, dict) and bool(meta.get('filename')), meta)
     if mode == 'download':
         case.check('download initiation is identified without physical-save claim', events['events'] == ['download-started']
-                   and 'iniciad' in text and 'arquivo salvo' not in text, text)
+                   and after['exportStatus']['stage'] == 'DOWNLOAD_REQUESTED'
+                   and 'solicitado' in text and 'arquivo salvo' not in text, text)
     else:
         case.check('folder mock writes and closes exactly once', events['files'] == 1
                    and events['events'].count('write') == 1 and events['events'].count('close-resolved') == 1, events)
+        case.check('folder mock file is read back before a verified result', events['events'].count('getFile-readback') == 1, events)
         case.check('no false no-file claim after close', 'nenhum arquivo' not in text, text)
     if mode == 'metadata-refused':
         case.check('refused metadata preserves RAM governance and disk', after['governance'] == before['governance'] and after['raw'] == before['raw'])
@@ -440,10 +455,10 @@ def import_fault(case, page, mode):
         case.check('indeterminate import does not blindly restore previous RAM', after['state'] != before['state']
                    and json.loads(after['state']).get('syntheticImportedMarker') == 'BR-IMPORTED-DIFFERENT')
         page.evaluate("() => {__br.mode='normal';__br.readFault=false;}")
-        attempt = page.evaluate('save()')
+        attempt = save_unknown(page)
         retry = page.evaluate(FACTS)
-        case.check('UNKNOWN refuses subsequent save without changing disk', attempt is False and retry['raw'] == after['raw']
-                   and retry['writes'] == after['writes'])
+        case.check('UNKNOWN refuses subsequent save without changing disk', attempt == {'threw': True, 'name': 'JPWealthPersistenceUnknownError', 'status': 'UNKNOWN'} and retry['raw'] == after['raw']
+                   and retry['writes'] == after['writes'], attempt)
     else:
         case.check('proven refusal restores entire previous RAM and disk', after['state'] == before['state'] and after['raw'] == before['raw'])
         case.check('proven refusal does not boot imported state', calls['boots'] == 0)
@@ -508,10 +523,9 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
     case.check('secret excluded from serialized artifact', 'BR-SYNTHETIC-SECRET' not in body and payload.get('segredosIncluidos') is False)
     case.check('all populated domains exported semantically intact', all(payload['state'][key] == value for key, value in expected.items()))
     case.check('unknown top-level field preserved', payload['state'].get('syntheticBackupExtension') == {'preserved': 'BR-UNKNOWN-FIELD'})
-    portable_aux={key:value for key,value in AUX.items() if key!='jpwealth.ui.ffNews.sourceUrl'}
+    portable_aux=dict(AUX)
     case.check('portable preferences exported without mutating source', all(key not in payload['state'] for key in AUX)
                and all(payload['workspace']['preferences'].get(key)==value for key,value in portable_aux.items())
-               and 'jpwealth.ui.ffNews.sourceUrl' not in payload['workspace']['preferences']
                and before['aux'] == after['aux'])
     case.observed.update(envelope_without_state={key: value for key, value in payload.items() if key != 'state'},
                         payload_sha256=digest(body), domain_hashes={key: digest(value) for key, value in expected.items()}, meta=meta)
@@ -528,7 +542,9 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
     try:
         target_aux = {**AUX,
             'jpwealth_local_profile_v1': '{"schemaVersion":1,"displayName":"BR-TARGET-PROFILE","avatarDataUrl":null}',
-            'jpwealth_notes_launcher_position_v1': '{"schemaVersion":1,"x":0.8,"y":0.3}'}
+            'jpwealth_notes_launcher_position_v1': '{"schemaVersion":1,"x":0.8,"y":0.3}',
+            'jpwealth.ui.ffNews.sourceUrl': 'https://example.invalid/BR-TARGET-FEED.json',
+            'jpwealth.syntheticExcludedPreference': 'BR-DESTINATION-ONLY'}
         target.evaluate('aux=>Object.entries(aux).forEach(([key,value])=>__br.nativeSet.call(localStorage,key,value))', target_aux)
         local_before = target.evaluate(FACTS)['aux']
         case.require('real import control exists in disposable target', target.locator('#importFullBackupInput').count() == 1)
@@ -545,7 +561,7 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
         case.check('unknown extension survives real import', disk.get('syntheticBackupExtension') == {'preserved': 'BR-UNKNOWN-FIELD'})
         case.check('import restores portable preferences and preserves excluded destination settings',
                    all(final['aux'].get(key)==value for key,value in portable_aux.items())
-                   and final['aux'].get('jpwealth.ui.ffNews.sourceUrl')==local_before.get('jpwealth.ui.ffNews.sourceUrl'))
+                   and final['aux'].get('jpwealth.syntheticExcludedPreference')==local_before.get('jpwealth.syntheticExcludedPreference'))
         helper.assert_fixture_requests(target.context)
         case.check('round-trip has no pageerror', not target.jpwealth_observed['pageerror'], target.jpwealth_observed['pageerror'])
     finally:

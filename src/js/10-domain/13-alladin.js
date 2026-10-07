@@ -159,57 +159,46 @@ function aldWriteBlockReason(){
 // TODO ato mutável do Alladin passa por aqui (invariante herdado do pfMutate,
 // 12-personal-finance.js:120). fn recebe S.alladin e aplica o ato COERENTE;
 // pode devolver {ok:false, erro} para recusar por validação — nesse caso NADA
-// foi mutado por contrato do chamador. save()===false é prova de não-escrita.
+// foi mutado por contrato do chamador. save()===false é prova de não-escrita; UNKNOWN mantém a barreira e não afirma rollback.
 //
 // HD-6 (decisão humana de 2026-08-20): dgLogChange é LOG OPERACIONAL
 // NÃO-CANÔNICO — não é o Audit Trail do Alladin e NÃO satisfaz ALD-I26
 // (deferred to ALD-07). Rótulo genérico por contrato de privacidade: ação +
 // recordId, nunca nome ou valor — o changeLog persiste e viaja no backup.
+function aldPersistenceUnknown(){return typeof jpWealthPersistenceOutcomeIsUnknown==='function'&&jpWealthPersistenceOutcomeIsUnknown();}
 function aldMutate(acao, fn, meta){
-  const bloqueio = aldWriteBlockReason();
-  if(bloqueio) return { ok:false, persistido:false, erro:bloqueio };
-  // INTEGRIDADE ESTRUTURAL antes de QUALQUER mutação (RT-H1/RT-H2). aldFindIn
-  // resolve por first-match: sobre um agregado cuja identidade esteja ambígua
-  // (id canônico duplicado), o ato operaria sobre um registro ARBITRÁRIO — e
-  // um saldo/posição já sairiam atribuídos a referência ambígua. Nenhuma escrita
-  // nova sobre agregado estruturalmente corrompido; fn nem chega a rodar.
-  const estrutural = aldIntegridadeEstrutural((typeof S==='object' && S) ? S.alladin : undefined);
-  if(estrutural.length) return { ok:false, persistido:false, erro:'ALD_INTEGRIDADE_ESTRUTURAL:'+estrutural[0] };
-  // SNAPSHOT antes de fn (correção da auditoria C2). Sem ele, `persistido:false`
-  // conviveria com o registro VIVO em memória: em modo de recuperação A-005, sob
-  // quota estourada ou com o portão de persistência fechado, save() devolve
-  // false — e o próximo save() de QUALQUER origem gravaria o registro fantasma
-  // que o sistema declarou não ter criado. O snapshot é a serialização do
-  // agregado, que é exatamente o que seria persistido.
-  const snapshot = JSON.stringify(S.alladin);
-  // SEQUENCIA anterior, nao comprimento (ALD-03-H0 · D-1): dgLogChange REATRIBUI
-  // o array ao podar no teto DG_CHANGELOG_MAX, e nesse caso 401→slice→400 devolve
-  // o mesmo comprimento de antes. Restaurar por comprimento seria, exatamente no
-  // teto, uma restauracao que nao restaura: a entrada do ato recusado sobreviveria
-  // e a mais antiga legitima seria evicta. Um ledger vive NO teto — la o ramo
-  // defeituoso seria o unico.
-  const logAntes = (S.dataGovernance && Array.isArray(S.dataGovernance.changeLog)) ? S.dataGovernance.changeLog.slice() : null;
-  const r = fn(S.alladin) || {};
-  if(r.ok===false){
-    // Recusa por validação: por contrato fn não mutou. Restaurar aqui é cinto
-    // de segurança — não licença para fn sujar o agregado.
-    if(JSON.stringify(S.alladin)!==snapshot) S.alladin = JSON.parse(snapshot);
-    return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
-  }
-  dgLogChange('alladin', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
-  const gravou = save();
-  if(gravou!==true){
-    S.alladin = JSON.parse(snapshot);
+  const bloqueio=aldWriteBlockReason();
+  if(bloqueio)return {ok:false,persistido:false,status:'REFUSED',erro:bloqueio};
+  if(aldPersistenceUnknown())return {ok:false,persistido:null,status:'UNKNOWN',erro:'persistencia indeterminada'};
+  const estrutural=aldIntegridadeEstrutural((typeof S==='object'&&S)?S.alladin:undefined);
+  if(estrutural.length)return {ok:false,persistido:false,status:'REFUSED',erro:'ALD_INTEGRIDADE_ESTRUTURAL:'+estrutural[0]};
+  const snapshot=JSON.stringify(S.alladin);
+  const logAntes=(S.dataGovernance&&Array.isArray(S.dataGovernance.changeLog))?S.dataGovernance.changeLog.slice():null;
+  const restore=()=>{
+    S.alladin=JSON.parse(snapshot);
     if(logAntes!==null){
-      // Restauracao IN-PLACE: preserva a identidade do array, que a poda troca.
-      const log = S.dataGovernance.changeLog;
-      if(Array.isArray(log)){ log.length = 0; for(const e of logAntes) log.push(e); }
-      else S.dataGovernance.changeLog = logAntes;
+      const log=S.dataGovernance.changeLog;
+      if(Array.isArray(log)){log.length=0;for(const entry of logAntes)log.push(entry);}
+      else S.dataGovernance.changeLog=logAntes;
     }
-    return { ...r, ok:false, persistido:false, erro:'persistencia recusada' };
+  };
+  let r={};
+  try{
+    r=fn(S.alladin)||{};
+    if(r.ok===false){restore();return {ok:false,persistido:false,status:'REFUSED',erro:r.erro||'ato recusado'};}
+    dgLogChange('alladin',String(acao||'ato'),String(r.recordId||''),String((meta&&meta.label)||acao||''));
+    const gravou=save();
+    if(gravou!==true){
+      if(aldPersistenceUnknown())return {...r,ok:false,persistido:null,status:'UNKNOWN',erro:'persistencia indeterminada'};
+      restore();return {...r,ok:false,persistido:false,status:'REFUSED',erro:'persistencia recusada'};
+    }
+    return {...r,ok:true,persistido:true,status:'CONFIRMED',erro:undefined};
+  }catch(error){
+    // Não anunciar rollback se uma escrita já pode ter ocorrido. A memória fica
+    // disponível para recuperação, e a barreira impede incorporação posterior.
+    if(aldPersistenceUnknown()||error?.persistenceResult?.status==='UNKNOWN')return {...r,ok:false,persistido:null,status:'UNKNOWN',erro:'persistencia indeterminada'};
+    restore();return {...r,ok:false,persistido:false,status:'REFUSED',erro:'ato interrompido: '+(error?.message||'erro desconhecido')};
   }
-  // Extras de fn ANTES, veredito DEPOIS: fn jamais sobrescreve ok/persistido/erro.
-  return { ...r, ok:true, persistido:true, erro:undefined };
 }
 
 // ============ ALLADIN · ALD-02 C2 — MODELO CADASTRAL =========================

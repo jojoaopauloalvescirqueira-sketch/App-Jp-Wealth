@@ -7,21 +7,32 @@
 // ---- Série planejada (baseline OU forecast puro de premissas) ---------------
 // Convenção aprovada (2026-08-11): resultado sobre o saldo de ABERTURA; aportes
 // depois do resultado. close = open + open*rate + aportes.
+// Availability accompanies every financial field. Null is absence, never zero.
+function fxTimelineRow(row){
+  const fields=['open','rate','profit','personalUsd','propUsd','contributionUsd','close'];
+  const overflow=fields.some(k=>typeof row[k]==='number'&&!Number.isFinite(row[k]));
+  fields.forEach(k=>{if(typeof row[k]==='number'&&!Number.isFinite(row[k]))row[k]=null;});
+  if(overflow){row.status=row.phase==='actual'?'REVIEW_REQUIRED':'BLOCKED';row.reasonCode='NON_FINITE_RESULT';row.reason='Resultado não finito; confira as premissas e a base.';row.blockedBy=row.month;}
+  row.availability=Object.fromEntries(fields.map(k=>[k,typeof row[k]==='number'&&Number.isFinite(row[k])]));
+  row.available=fields.filter(k=>k!=='rate').every(k=>row.availability[k]);
+  return row;
+}
 function fxPlannedTimeline(assumptions){
   const start=fxMonthKey(assumptions.startMonth);
   const horizon=Math.max(FX_HORIZON_MIN,Math.min(FX_HORIZON_MAX,Math.round(fxNum(assumptions.horizonMonths))));
   if(!start) return [];
-  const rows=[]; let open=Math.max(0,fxNum(assumptions.initialBalanceUsd));
+  const rows=[]; let open=fxInputFinite(assumptions.initialBalanceUsd)?+assumptions.initialBalanceUsd:null,blockedBy='';
   for(let t=0;t<horizon;t++){
-    const month=fxAddMonths(start,t);
-    const rate=fxResolveRate(assumptions,month);
-    const contrib=fxPlannedContribution(assumptions,month);
-    const profit=open*rate;
-    const close=open+profit+contrib.totalUsd;
-    rows.push({month, phase:'planned', open, rate, profit,
-      personalUsd:contrib.personalUsd, propUsd:contrib.propUsd,
-      contributionUsd:contrib.totalUsd, close});
-    open=close;
+    const month=fxAddMonths(start,t),absent=fxMonthIsAbsent(assumptions,month);
+    const rate=fxResolveRate(assumptions,month),contrib=fxPlannedContribution(assumptions,month);
+    const profit=open!==null&&rate!==null?open*rate:null;
+    const close=profit!==null&&contrib.totalUsd!==null?open+profit+contrib.totalUsd:null;
+    const reasonCode=absent?'FORECAST_ABSENT':open===null?'PREVIOUS_MONTH_UNAVAILABLE':rate===null||contrib.totalUsd===null?'PREMISE_INVALID':'';
+    rows.push(fxTimelineRow({month,phase:'planned',status:absent?'ABSENT':reasonCode?'BLOCKED':'PROJECTED',open,rate,profit,
+      personalUsd:contrib.personalUsd,propUsd:contrib.propUsd,contributionUsd:contrib.totalUsd,close,
+      reasonCode,reason:absent?'Previsão retirada deste mês.':reasonCode?'Encadeamento indisponível desde '+(blockedBy||month)+'.':'',blockedBy:reasonCode?(blockedBy||month):''}));
+    if(!Number.isFinite(close)&&!blockedBy)blockedBy=month;
+    open=Number.isFinite(close)?close:null;
   }
   return rows;
 }
@@ -45,71 +56,81 @@ function fxContributionsByMonth(contributions){
 // Álgebra idêntica ao MEI (R_aj = (V_t − V_{t−1} − F_t)/V_{t−1}):
 //   entrada 'rate' → profit = open*rate;  entrada 'usd' → rate = profit/open.
 // O campo não informado é DERIVADO e marcado como tal (derivedField).
+function fxActualRow(month,rec,open,contrib){
+  const inputType=rec.inputType==='usd'?'usd':'rate';
+  const profit=inputType==='usd'&&fxInputFinite(rec.profitUsd)?+rec.profitUsd:
+    inputType==='rate'&&open!==null&&fxInputFinite(rec.returnRate)?open*+rec.returnRate:null;
+  const rate=inputType==='rate'&&fxInputFinite(rec.returnRate)?+rec.returnRate:
+    profit!==null&&open>0?profit/open:null;
+  const close=open!==null&&profit!==null?open+profit+contrib.totalUsd:null;
+  return fxTimelineRow({month,phase:'actual',status:'FINALIZED',open,rate,profit,
+    personalUsd:contrib.personalUsd,propUsd:contrib.propUsd,contributionUsd:contrib.totalUsd,close,
+    inputType,derivedField:inputType==='usd'?'rate':'usd',valuationFxRate:rec.valuationFxRate||null,
+    notes:rec.notes||'',source:rec.source||null,closedAt:rec.closedAt||'',reasonCode:'',reason:'',blockedBy:'',
+    confirmedSnapshot:rec.confirmedSnapshot?structuredClone(rec.confirmedSnapshot):null});
+}
 function fxActualTimeline(plan,{asOf}={}){
-  const start=fxMonthKey(plan.baseline.startMonth); if(!start) return [];
-  const horizon=plan.baseline.horizonMonths;
-  const byMonth=fxContributionsByMonth(plan.contributions);
-  const rows=[]; let open=Math.max(0,fxNum(plan.baseline.initialBalanceUsd));
-  for(let t=0;t<horizon;t++){
-    const month=fxAddMonths(start,t);
-    const rec=(plan.actuals||{})[month];
-    if(!rec) break;                                   // realizado é contíguo desde o início
-    if(asOf&&String(rec.closedAt||'')>String(asOf)) break; // reconstrução "como era" (forecast anterior)
-    const contrib=byMonth[month]||{personalUsd:0,propUsd:0,totalUsd:0};
-    let rate,profit,derivedField;
-    if(rec.inputType==='usd'){
-      profit=fxNum(rec.profitUsd);
-      rate=open>0?profit/open:null;
-      derivedField='rate';
-    } else {
-      rate=fxNum(rec.returnRate);
-      profit=open*rate;
-      derivedField='usd';
-    }
-    const close=open+profit+contrib.totalUsd;
-    rows.push({month, phase:'actual', open, rate, profit,
-      personalUsd:contrib.personalUsd, propUsd:contrib.propUsd,
-      contributionUsd:contrib.totalUsd, close,
-      inputType:rec.inputType, derivedField,
-      valuationFxRate:rec.valuationFxRate||null, notes:rec.notes||''});
-    open=close;
+  const start=fxMonthKey(plan.baseline.startMonth);if(!start)return [];
+  const byMonth=fxContributionsByMonth(plan.contributions),rows=[];
+  let open=fxInputFinite(plan.baseline.initialBalanceUsd)?+plan.baseline.initialBalanceUsd:null;
+  for(let t=0;t<plan.baseline.horizonMonths;t++){
+    const month=fxAddMonths(start,t),rec=(plan.actuals||{})[month];
+    if(!rec||(rec.closureStatus||'FINALIZED')!=='FINALIZED'||open===null||fxValidateActualInput(rec).length)break;
+    if(asOf&&String(rec.closedAt||'')>String(asOf))break;
+    const row=fxActualRow(month,rec,open,byMonth[month]||{personalUsd:0,propUsd:0,totalUsd:0});
+    if(row.close===null||!Number.isFinite(row.close))break;
+    rows.push(row);open=row.close;
   }
   return rows;
 }
-// Próximo mês aberto para fechamento (mantém a contiguidade da série realizada).
 function fxNextOpenMonth(plan){
-  const done=fxActualTimeline(plan);
-  const idx=done.length;
+  if(!plan||!plan.baseline)return '';
+  const idx=fxActualTimeline(plan).length;
   return idx>=plan.baseline.horizonMonths?'':fxAddMonths(plan.baseline.startMonth,idx);
 }
 
-// ---- Forecast vigente (rolling forecast) -----------------------------------
-// Histórico realizado + projeção futura nascida do ÚLTIMO fechamento real, com as
-// premissas VIGENTES (plan.current). O baseline nunca participa deste cálculo —
-// preservação garantida por construção (requisito Baseline × Forecast × Realizado).
+// Includes all recorded actuals, even after reopening. An unconfirmed actual
+// never becomes a forecast, and its dependent values never gain implied validity.
 function fxForecastTimeline(plan,{assumptions,asOf,rebases}={}){
-  const premises=assumptions||plan.current;
-  const actual=fxActualTimeline(plan,{asOf});
-  const start=fxMonthKey(plan.baseline.startMonth); if(!start) return [];
-  const horizon=plan.baseline.horizonMonths;
-  const rows=actual.slice();
-  const anchors=rebases||plan.rebases||[];
-  let open=actual.length?actual[actual.length-1].close:Math.max(0,fxNum(plan.baseline.initialBalanceUsd));
-  for(let t=actual.length;t<horizon;t++){
+  const premises=assumptions||plan.current,start=fxMonthKey(plan.baseline.startMonth);if(!start)return [];
+  const byMonth=fxContributionsByMonth(plan.contributions),anchors=rebases||plan.rebases||[],rows=[];
+  let open=fxInputFinite(plan.baseline.initialBalanceUsd)?+plan.baseline.initialBalanceUsd:null;
+  let blockedBy='',reviewBlocked=false,actualContiguous=true;
+  for(let t=0;t<plan.baseline.horizonMonths;t++){
     const month=fxAddMonths(start,t);
+    let rec=(plan.actuals||{})[month];
+    if(rec&&asOf&&String(rec.closedAt||'')>String(asOf))rec=null;
+    if(rec){
+      const status=rec.closureStatus||'FINALIZED',contrib=byMonth[month]||{personalUsd:0,propUsd:0,totalUsd:0};
+      const row=fxActualRow(month,rec,actualContiguous?open:null,contrib);
+      if(status!=='FINALIZED'||!actualContiguous||open===null||fxValidateActualInput(rec).length){
+        row.status=status==='REOPENED'?'REOPENED':'REVIEW_REQUIRED';
+        row.reasonCode=status==='REOPENED'?'ACTUAL_REOPENED':'ACTUAL_BASE_REVIEW';
+        row.reason=status==='REOPENED'?'Realizado reaberto: exige conferência e nova finalização.':'Base em revisão: reconfirme cronologicamente após '+(blockedBy||month)+'.';
+        row.blockedBy=blockedBy||month;
+        row.profit=rec.inputType==='usd'&&fxInputFinite(rec.profitUsd)?+rec.profitUsd:null;
+        row.rate=rec.inputType!=='usd'&&fxInputFinite(rec.returnRate)?+rec.returnRate:null;
+        row.close=null;row.input=fxNormalizeActual(rec);fxTimelineRow(row);
+        if(!blockedBy)blockedBy=month;open=null;reviewBlocked=true;actualContiguous=false;
+      }else{open=row.close;}
+      rows.push(row);continue;
+    }
+    actualContiguous=false;
     const anchor=anchors.filter(a=>a.month===month).slice(-1)[0];
-    if(anchor&&fxInputFinite(anchor.openingBalanceUsd)&&+anchor.openingBalanceUsd>=0)open=+anchor.openingBalanceUsd;
-    const rate=fxResolveRate(premises,month);
-    const contrib=fxPlannedContribution(premises,month);
-    const profit=open*rate;
-    const close=open+profit+contrib.totalUsd;
-    rows.push({month, phase:'forecast', open, rate, profit,
-      personalUsd:contrib.personalUsd, propUsd:contrib.propUsd,
-      contributionUsd:contrib.totalUsd, close});
-    open=close;
+    if(!reviewBlocked&&anchor&&fxInputFinite(anchor.openingBalanceUsd)&&+anchor.openingBalanceUsd>=0){open=+anchor.openingBalanceUsd;blockedBy='';}
+    const absent=fxMonthIsAbsent(premises,month),rate=fxResolveRate(premises,month),contrib=fxPlannedContribution(premises,month);
+    const profit=open!==null&&rate!==null?open*rate:null;
+    const close=profit!==null&&contrib.totalUsd!==null?open+profit+contrib.totalUsd:null;
+    const reasonCode=absent?'FORECAST_ABSENT':reviewBlocked?'ACTUAL_BASE_REVIEW':open===null?'PREVIOUS_MONTH_UNAVAILABLE':rate===null||contrib.totalUsd===null?'PREMISE_INVALID':'';
+    rows.push(fxTimelineRow({month,phase:'forecast',status:absent?'ABSENT':reasonCode?'BLOCKED':'PROJECTED',open,rate,profit,
+      personalUsd:contrib.personalUsd,propUsd:contrib.propUsd,contributionUsd:contrib.totalUsd,close,
+      reasonCode,reason:absent?'Previsão retirada deste mês.':reasonCode?'Encadeamento indisponível desde '+(blockedBy||month)+'.':'',blockedBy:reasonCode?(blockedBy||month):''}));
+    if(!Number.isFinite(close)&&!blockedBy)blockedBy=month;
+    open=Number.isFinite(close)?close:null;
   }
   return rows;
 }
+function fxMonthlyTimeline(plan,options={}){return fxForecastTimeline(plan,options);}
 // Forecast como era numa revisão anterior: usa o snapshot preservado e apenas os
 // meses fechados até a data da revisão (closedAt ≤ supersededAt). Meses editados
 // depois são reconstrução aproximada — sinalizado na interface, não no motor.
@@ -126,15 +147,17 @@ function fxForecastAtRevision(plan,revisionIndex){
 // ---- Comparações (variância) -----------------------------------------------
 // Realizado × Baseline, Realizado × Forecast anterior, Forecast atual × Baseline
 // (requisito adicional). Nunca julga qualidade de execução — descreve trajetória.
-function fxVarianceRows(seriesA,seriesB){ // A − B, alinhado por mês
-  const byMonth={}; (seriesB||[]).forEach(r=>{byMonth[r.month]=r;});
+function fxVarianceRows(seriesA,seriesB){
+  const byMonth={};(seriesB||[]).forEach(r=>{byMonth[r.month]=r;});
   return (seriesA||[]).map(a=>{
-    const b=byMonth[a.month]; if(!b) return null;
-    const diffUsd=a.close-b.close;
-    return {month:a.month, aClose:a.close, bClose:b.close, diffUsd,
-      diffPct:b.close!==0?diffUsd/b.close:null,
-      rateDiff:(Number.isFinite(a.rate)&&Number.isFinite(b.rate))?a.rate-b.rate:null,
-      contributionDiffUsd:a.contributionUsd-b.contributionUsd};
+    const b=byMonth[a.month];if(!b)return null;
+    const available=Number.isFinite(a.close)&&Number.isFinite(b.close);
+    const diffUsd=available?a.close-b.close:null;
+    return {month:a.month,aClose:a.close,bClose:b.close,diffUsd,
+      diffPct:available&&b.close!==0?diffUsd/b.close:null,
+      rateDiff:Number.isFinite(a.rate)&&Number.isFinite(b.rate)?a.rate-b.rate:null,
+      contributionDiffUsd:Number.isFinite(a.contributionUsd)&&Number.isFinite(b.contributionUsd)?a.contributionUsd-b.contributionUsd:null,
+      available,reason:available?'':'Comparação indisponível: uma das bases está ausente ou em revisão.'};
   }).filter(Boolean);
 }
 
@@ -158,22 +181,24 @@ function fxCostBasis(contributions){
 
 // ---- Resumo anual (derivado das datas — nunca blocos hardcoded) ------------
 function fxAnnualSummary(rows){
-  const years={}; const order=[];
+  const years={};const order=[];
   (rows||[]).forEach(r=>{
-    const y=fxYearOf(r.month); if(!y) return;
-    if(!years[y]){ years[y]={year:y, open:r.open, close:r.close, profitUsd:0,
-      personalUsd:0, propUsd:0, contributionUsd:0, growthFactor:1, months:0,
-      phases:{planned:0,actual:0,forecast:0}}; order.push(y); }
-    const acc=years[y];
-    acc.close=r.close; acc.profitUsd+=r.profit; acc.personalUsd+=r.personalUsd;
-    acc.propUsd+=r.propUsd; acc.contributionUsd+=r.contributionUsd;
-    if(Number.isFinite(r.rate)) acc.growthFactor*=(1+r.rate);
+    const y=fxYearOf(r.month);if(!y)return;
+    if(!years[y]){years[y]={year:y,open:r.open,close:r.close,profitUsd:0,personalUsd:0,propUsd:0,
+      contributionUsd:0,growthFactor:1,months:0,availableMonths:0,phases:{planned:0,actual:0,forecast:0}};order.push(y);}
+    const acc=years[y];acc.close=r.close;acc.months++;
+    const complete=['open','close','profit','personalUsd','propUsd','contributionUsd','rate'].every(k=>Number.isFinite(r[k]))&&(!r.status||['PROJECTED','FINALIZED'].includes(r.status));
+    if(complete){acc.availableMonths++;acc.profitUsd+=r.profit;acc.personalUsd+=r.personalUsd;acc.propUsd+=r.propUsd;acc.contributionUsd+=r.contributionUsd;acc.growthFactor*=1+r.rate;}
     if(r.phase==='scenario'&&acc.phases.scenario==null)acc.phases.scenario=0;
-    acc.months++; if(acc.phases[r.phase]!=null) acc.phases[r.phase]++;
+    if(acc.phases[r.phase]!=null)acc.phases[r.phase]++;
   });
   return order.map(y=>{
-    const a=years[y];
-    return {...a, composedReturn:a.growthFactor-1}; // Π(1+r_t) − 1 dos meses do ano
+    const a=years[y],complete=a.availableMonths===a.months;
+    const subtotal={profitUsd:a.profitUsd,personalUsd:a.personalUsd,propUsd:a.propUsd,contributionUsd:a.contributionUsd};
+    return {...a,profitUsd:complete?a.profitUsd:null,personalUsd:complete?a.personalUsd:null,propUsd:complete?a.propUsd:null,
+      contributionUsd:complete?a.contributionUsd:null,growthFactor:complete?a.growthFactor:null,composedReturn:complete?a.growthFactor-1:null,
+      coverage:complete?'COMPLETE':'PARTIAL',available:complete,subtotal:complete?null:subtotal,
+      reason:complete?'':'Resumo parcial: '+a.availableMonths+' de '+a.months+' meses calculáveis.'};
   });
 }
 // Agregação cambial por ano sobre o ledger de aquisições.
@@ -204,21 +229,25 @@ function fxOverview(plan){
   const forecast=fxForecastTimeline(plan);
   const lastActual=actual.length?actual[actual.length-1]:null;
   const baselineAtLast=lastActual?baseline.find(r=>r.month===lastActual.month)||null:null;
+  const unresolvedActuals=Object.keys(plan.actuals||{}).filter(m=>!actual.some(r=>r.month===m));
   const totals=actual.reduce((acc,r)=>{acc.personalUsd+=r.personalUsd;acc.propUsd+=r.propUsd;acc.profitUsd+=r.profit;return acc;},
     {personalUsd:0,propUsd:0,profitUsd:0});
   const cost=fxCostBasis(plan.contributions);
   return {
-    baseline, actual, forecast,
+    baseline, actual, forecast, monthlyRows:forecast,
+    coverage:unresolvedActuals.length?'PARTIAL':'COMPLETE',unresolvedActuals,
+    lastConfirmedBalanceUsd:lastActual?lastActual.close:fxNum(plan.baseline.initialBalanceUsd),
     lastClosedMonth:lastActual?lastActual.month:'',
     nextOpenMonth:fxNextOpenMonth(plan),
-    currentBalanceUsd:lastActual?lastActual.close:fxNum(plan.baseline.initialBalanceUsd),
+    currentBalanceUsd:unresolvedActuals.length?null:lastActual?lastActual.close:fxNum(plan.baseline.initialBalanceUsd),
     baselineBalanceAtLastClose:baselineAtLast?baselineAtLast.close:null,
-    deviationUsd:(lastActual&&baselineAtLast)?lastActual.close-baselineAtLast.close:null,
-    deviationPct:(lastActual&&baselineAtLast&&baselineAtLast.close!==0)?(lastActual.close-baselineAtLast.close)/baselineAtLast.close:null,
-    contributedPersonalUsd:totals.personalUsd,
-    contributedPropUsd:totals.propUsd,
-    contributedTotalUsd:totals.personalUsd+totals.propUsd,
-    realizedProfitUsd:totals.profitUsd,
+    deviationUsd:(!unresolvedActuals.length&&lastActual&&baselineAtLast)?lastActual.close-baselineAtLast.close:null,
+    deviationPct:(!unresolvedActuals.length&&lastActual&&baselineAtLast&&baselineAtLast.close!==0)?(lastActual.close-baselineAtLast.close)/baselineAtLast.close:null,
+    contributedPersonalUsd:unresolvedActuals.length?null:totals.personalUsd,
+    contributedPropUsd:unresolvedActuals.length?null:totals.propUsd,
+    contributedTotalUsd:unresolvedActuals.length?null:totals.personalUsd+totals.propUsd,
+    realizedProfitUsd:unresolvedActuals.length?null:totals.profitUsd,
+    confirmedSubtotal:unresolvedActuals.length?{...totals}:null,
     costBasis:cost,
     varianceActualVsBaseline:fxVarianceRows(actual,baseline),
     varianceForecastVsBaseline:fxVarianceRows(forecast,baseline)
@@ -229,10 +258,10 @@ function fxOverview(plan){
 // e para as camadas de estado/UI.
 window.JPWFx={
   model:{fxMonthKey,fxMonthIndex,fxMonthFromIndex,fxAddMonths,fxYearOf,
-    fxNormalizeAssumptions,fxValidateAssumptions,fxResolveRate,fxPlannedContribution,
+    fxNormalizeAssumptions,fxValidateAssumptions,fxResolveRate,fxPlannedContribution,fxMonthIsAbsent,
     fxNormalizeActual,fxValidateActualInput,fxNormalizeContribution,fxValidateContribution,
     fxCreatePlan,fxReviseAssumptions,FX_HORIZON_MIN,FX_HORIZON_MAX},
-  engine:{fxPlannedTimeline,fxActualTimeline,fxForecastTimeline,fxForecastAtRevision,
+  engine:{fxPlannedTimeline,fxActualTimeline,fxForecastTimeline,fxMonthlyTimeline,fxTimelineRow,fxForecastAtRevision,
     fxNextOpenMonth,fxContributionsByMonth,fxVarianceRows,fxCostBasis,
     fxAnnualSummary,fxAnnualFxSummary,fxOverview}
 };

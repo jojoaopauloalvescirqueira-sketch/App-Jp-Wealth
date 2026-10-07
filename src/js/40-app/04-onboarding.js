@@ -1271,6 +1271,25 @@ function openOnboardingModal(mode, initialStep){
         version:(typeof DG_RESPONSIBILITY_VERSION!=='undefined')?DG_RESPONSIBILITY_VERSION:1};
       if(typeof dgLogChange==='function') dgLogChange('database','responsibility_accepted','','Termo de responsabilidade da base aceito');
     };
+    if(jpWealthPersistenceOutcomeIsUnknown()||jpWealthLoadRecoveryActive()||jpWealthPersistenceIsBlocked()){
+      alert('A configuração não pode ser gravada enquanto a recuperação está pendente.');return false;
+    }
+    const onboardingBefore=structuredClone(S);
+    let onboardingWritten=false;
+    const refuse=error=>{
+      if(onboardingWritten){alert('A configuração foi gravada, mas a interface não concluiu a atualização. Recarregue para conferir.');return true;}
+      if(!jpWealthPersistenceOutcomeIsUnknown())S=onboardingBefore;
+      alert(jpWealthPersistenceOutcomeIsUnknown()?'A configuração tem resultado desconhecido. O formulário permanece aberto. Confira a recuperação antes de repetir.':'A configuração não foi gravada. O formulário permanece aberto para nova conferência.');
+      return false;
+    };
+    const confirmWrite=()=>{
+      let written;
+      try{written=save();}catch(error){return refuse(error);}
+      if(written!==true)return refuse();
+      onboardingWritten=true;
+      closeModal();boot();if(isOnboardingFullyComplete())showOnboardingCompleteNotice();return true;
+    };
+    try{
     const nextOnboarding={done:true, operador:$('obOperador').value.trim(), supervisor:$('obSupervisor').value.trim(),
       corretora:broker.name, plataforma:plataformaVal, alavCorretora:alavVal, moedaBase:normalizeAccountCurrency($('obMoedaBase').value),
       brokerLogin:loginVal, investorPassword:passVal, brokerServer:serverVal,
@@ -1313,8 +1332,7 @@ function openOnboardingModal(mode, initialStep){
           plataforma:S.onboarding.plataforma, alavCorretora:S.onboarding.alavCorretora, brokerLogin:S.onboarding.brokerLogin,
           brokerServer:S.onboarding.brokerServer, investorPassword:'•••', saldoInicial:saldo, dataInicio, perfil:pr.name,
           equityProtector:S.onboarding.epStatus, epPlatform:S.onboarding.epPlatform}});
-      save(); closeModal(); boot(); if(isOnboardingFullyComplete()) showOnboardingCompleteNotice();
-      return true;
+      return confirmWrite();
     }
     const nextPeriodMeta={inicio:dataInicio, saldoIni:saldo, profile:pr.key, profileName:pr.name};
     if(Array.isArray(S.ledger) && S.ledger.length>0){
@@ -1369,8 +1387,8 @@ function openOnboardingModal(mode, initialStep){
         brokerServer:S.onboarding.brokerServer, investorPassword:'•••', saldo, perfil:pr.name,
         equityProtector:+onboardingEP(saldo,pr.key).ep.toFixed(2), epStatus:S.onboarding.epStatus,
         epPlatform:S.onboarding.epPlatform, objetivoAnual:+onboardingEP(saldo,pr.key).obj.toFixed(2)}});
-    save(); closeModal(); boot(); if(isOnboardingFullyComplete()) showOnboardingCompleteNotice();
-    return true;
+    return confirmWrite();
+    }catch(error){return refuse(error);}
   }
   function renderOnboardingFinalSummary(){
     const broker=BROKER_PARTNERS.find(b=>b.key===brokerSel);

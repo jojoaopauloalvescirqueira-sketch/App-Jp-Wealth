@@ -1,5 +1,5 @@
 // Consolidado FX: preparação em RAM e comandos explícitos sobre o escritor S.
-// Não seleciona a conta operacional, não grava arquivos originais e não migra
+// Não seleciona a conta operacional; originais ficam em IndexedDB separado após confirmação. Não migra
 // operações manuais. A prévia pública nunca é aceita como instrução de escrita.
 (function(root){
   'use strict';
@@ -455,7 +455,7 @@
       const preview=api.previewImport(S.fxConsolidated,cleanAccount(selected),clone(report),safeMeta);
       if(!preview.ok)return {...preview,persistido:false};
       const token=crypto.randomUUID();
-      pending={token,context:capture(selected),preview:clone(preview)};
+      pending={token,context:capture(selected),preview:clone(preview),original:meta.original||null};
       return {...clone(preview),token,persistido:false};
     }catch(error){return fail('Não foi possível preparar o relatório. Verifique o formato e a identidade da conta.');}
   }
@@ -474,7 +474,7 @@
     const attempt=pending;
     busy=true;
     try{
-      return await sessionAcquireWriteLock(()=>{
+      const confirmed=await sessionAcquireWriteLock(()=>{
         const issue=guard()||stale(attempt.context);
         if(issue)return jpWealthPersistenceOutcomeIsUnknown()?unknown('Consolidado FX já bloqueado por desfecho desconhecido.'):fail(issue);
         if(pending!==attempt)return fail('A importação foi cancelada.');
@@ -494,6 +494,17 @@
         if(result.ok){pending=null;return {...result,accountId:account.id,receipt:applied.receipt||null};}
         return result;
       });
+      if(confirmed.ok&&attempt.original&&confirmed.receipt){
+        // Archive failure must not turn a confirmed financial import into a
+        // false failure or encourage repeating the financial command.
+        let originalEvidence;
+        try{originalEvidence=root.JPWEvidence?await root.JPWEvidence.putOriginal(attempt.original,
+          {fileHash:attempt.preview.meta.fileHash,receiptId:confirmed.receipt.id}):
+          {status:'REFUSED',reason:'Arquivo de evidências indisponível. Guarde o original externamente.'};}
+        catch(error){originalEvidence={status:'REFUSED',reason:'Original não preservado; importação financeira permanece confirmada.'};}
+        return {...confirmed,originalEvidence};
+      }
+      return confirmed;
     }catch(error){
       return jpWealthPersistenceOutcomeIsUnknown()?unknown('Consolidado FX: confirmação interrompida.'):
         fail('A confirmação foi interrompida antes de concluir. Preserve a prévia e confira a sessão.');

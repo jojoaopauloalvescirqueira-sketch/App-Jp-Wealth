@@ -1,3 +1,9 @@
+# Candidate local — verificadores pendentes (2026-10-06)
+
+Pedido do proprietário: “Solucione todos os product fail pendentes”. Base1db5b703ca56d26c preservada; cópia jpw-product-fail-repair-20261006/candidate, branch codex/saving-reliability-20261006/HEADac3a2faffeb3. Contratos CHG-JPW-PENDING-FAIL-PRODUCT/TEST, brief correspondente. Fórmulas financeiras/MT5/dados intactos; guarda de leitura para contexto incompatível corrigida sem normalização/gravação. Expectativas obsoletas corrigidas somente mediante contrato já aprovado. Corrida de inicialização reproduzida com latência foi corrigida pela ordem declarada de reservas antes de onboarding/boot, sem mudar a matemática. Novos gates e auditoria dos bytes finais serão registrados no relatório externo; resultados anteriores permanecem históricos. EX5/execução nativa NOT_RUN, promoção/aceite humano separados. SOURCE REVISION UNKNOWN global herdada não é resolvida por este resumo delimitado.
+
+## Histórico preservado
+
 # Estado local — JPW Posições 1.15.0 (2026-10-01)
 
 Raiz `/private/tmp/jpw-cockpit-ui-20260930`, branch `codex/jpw-cockpit-ui-20260930`, HEAD `deffc5061fe2eff3d83b6f6e742fa105ac9c5b06`. [CHG-JPW-POSITIONS-TABLE-20261001](../work/CHG-JPW-POSITIONS-TABLE-20261001.md), A4/N3, autoriza tabela, contribuição nocional/equity e fechamento. Base local 1.14.0 preservada com 593/593 hashes e snapshot externo; 98 alterações herdadas conservadas. Candidate de fontes implementado; os recibos da validação final e da auditoria ficam fora do pacote público, na pasta de evidências indicada. Não declarar integração à main, aceite ou publicação. Nativo NOT_RUN; nenhum EX5 ou conta real. Resultados finais em `outputs/jpw-positions-table-v1150-20261001`. Fórmulas e schemas anteriores ficam protegidos; o mapa AGENTS legado continua dívida documental separada.

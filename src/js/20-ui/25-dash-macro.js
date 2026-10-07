@@ -147,12 +147,15 @@ function dmPlanningHTML(){
   if(!raw.baseline || !raw.current || !raw.actuals || !Array.isArray(raw.contributions)
     || model.fxValidateAssumptions(raw.baseline).length || model.fxValidateAssumptions(raw.current).length)
     return {html:dmNote('Planejamento indisponível — revise os dados no módulo.')};
-  const plan=window.JPWFx.engine.fxOverview(raw);
+  const plan=window.JPWFx.state.fxOverviewLive();
+  if(!plan)return {html:dmNote('Planejamento indisponível — preserve a base e confira os motivos no módulo.')};
+  const reviewing=Object.values(raw.actuals).some(rec=>['REOPENED','REVIEW_REQUIRED'].includes(rec.closureStatus));
+  const value=v=>Number.isFinite(v)?fmtMoney2(v):'Indisponível · base em revisão';
   return {html:plan.lastClosedMonth
-    ? dmRow('Resultado realizado', '<b>'+fmtMoney2(plan.realizedProfitUsd)+'</b>')
-      +dmRow('Desvio vs baseline', '<b>'+fmtMoney2(plan.deviationUsd)+'</b>')
-      +dmNote('Até '+pfMonthLabel(plan.lastClosedMonth)+' · valores em USD')
-    : dmNote('Plano aprovado · aguardando o primeiro fechamento mensal.')};
+    ? dmRow('Resultado realizado', '<b>'+value(plan.realizedProfitUsd)+'</b>')
+      +dmRow('Desvio vs baseline', '<b>'+value(plan.deviationUsd)+'</b>')
+      +dmNote('Até '+pfMonthLabel(plan.lastClosedMonth)+' · valores em USD'+(reviewing?' · realizados posteriores exigem reconferência.':''))
+    : dmNote(reviewing?'Realizado em revisão · reconfira os meses cronologicamente no Planejamento.':'Plano aprovado · aguardando o primeiro fechamento mensal.')};
 }
 
 // ---- FINANÇAS PESSOAIS ------------------------------------------------------

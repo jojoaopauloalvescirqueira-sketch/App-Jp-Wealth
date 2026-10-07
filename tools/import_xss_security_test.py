@@ -95,11 +95,11 @@ def estado_legitimo():
 
 
 def abrir(browser, url, seed=None):
-    ctx = browser.new_context(viewport={'width': 1280, 'height': 800})
+    ctx = browser.new_context(viewport={'width': 1280, 'height': 800}, service_workers='block')
     ctx.add_init_script('window.__onbShown = true;')
     if seed is not None:
         ctx.add_init_script(
-            "try{localStorage.setItem('jpwealth_v9_state',%s);}catch(e){}" % json.dumps(json.dumps(seed)))
+            "if(localStorage.getItem('jpwealth_v9_state')===null){localStorage.setItem('jpwealth_v9_state',%s);}" % json.dumps(json.dumps(seed)))
     page = ctx.new_page()
     page.route('**/api.frankfurter.dev/**', lambda r: r.fulfill(
         status=200, content_type='application/json', body='{"rates":{}}'))
@@ -108,6 +108,24 @@ def abrir(browser, url, seed=None):
     page.goto(url, wait_until='load')
     page.wait_for_timeout(600)
     return ctx, page
+
+
+def importar_arquivo(page, payload):
+    """Exercita Blob/FileReader, consentimento e escritor real; nenhum S direto."""
+    return page.evaluate("""async data => {
+      window.__xssAlerts=[];window.__xssConfirmations=[];
+      window.alert=message=>__xssAlerts.push(String(message));
+      window.confirm=message=>{__xssConfirmations.push(String(message));return true;};
+      const memory=JSON.stringify(S),disk=JSON.stringify(Object.fromEntries(
+        Object.keys(localStorage).sort().map(key=>[key,localStorage.getItem(key)])));
+      importFullBackupFile(new File([JSON.stringify(data)],'synthetic-xss.json',
+        {type:'application/json'}));
+      for(let i=0;i<300&&!__xssAlerts.length;i++)await new Promise(resolve=>setTimeout(resolve,10));
+      return {alerts:__xssAlerts,confirmations:__xssConfirmations,
+        unchanged:memory===JSON.stringify(S)&&disk===JSON.stringify(Object.fromEntries(
+          Object.keys(localStorage).sort().map(key=>[key,localStorage.getItem(key)]))),
+        executed:window.__JPW_XSS__===1,images:document.querySelectorAll('img[src="x"]').length};
+    }""", payload)
 
 
 def norma_runtime(page):
@@ -279,19 +297,48 @@ def suite_maliciosa(browser, url, rotulo):
     afirmar_canonico(sonda, f'{rotulo}/reload', norma_limpa)
     ctx.close()
 
-    # --- 3) Caminho real de IMPORTAÇÃO: normalizeImportedState() -------------
+    # --- 3) Arquivo parcial continua recusado, sem execução ou troca da base ---
     ctx, page = abrir(browser, url)
-    aplicado = page.evaluate("""(bruto) => {
-      const imported = normalizeImportedState(JSON.parse(bruto));
-      S = imported; migrate();
-      return { title:S.phases[0].title, cls:S.phases[0].cls,
-               nomes:S.instruments.map(i=>i.name) }; }""", json.dumps(estado_malicioso()))
-    assert aplicado['title'] == 'GRADE LEGADA 1', f'[{rotulo}] import não canonicalizou title LEGACY'
-    assert aplicado['cls'] == 'p1', f'[{rotulo}] import não canonicalizou cls'
-    assert not any('<' in n for n in aplicado['nomes']), f'[{rotulo}] import preservou marcação em name'
+    assert page.evaluate("() => {closeModal();window.__onbShown=true;S.onboarding.done=true;S.xssImportProbe='destination';return save();}") is True
+    partial = importar_arquivo(page, estado_malicioso())
+    assert partial['alerts'] and 'Arquivo parcial' in partial['alerts'][0], (rotulo, partial)
+    assert partial['unchanged'] and not partial['executed'] and partial['images'] == 0, (rotulo, partial)
+    assert not partial['confirmations'], 'parcial deve falhar antes do consentimento'
+
+    # --- 4) Backup FULL v2 completo malicioso: assinatura válida, todos os roots
+    # e FileReader real. Rejeitar o parcial acima não substitui testar o saneamento.
+    payload = page.evaluate("""async malicious => {
+      const full=JSON.parse(await dgBuildBackupBlob(2,'synthetic-xss-complete.json',
+        '2026-10-06T12:00:00Z').text());
+      const onboarding=full.state.onboarding;Object.assign(full.state,malicious);
+      full.state.onboarding={...onboarding,...malicious.onboarding,done:true};
+      full.state.xssImportProbe='signed malicious complete source';delete full.integrity;
+      full.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',
+        checksum:dgBackupSha256(dgBackupCanonical(full))};
+      if(dgBackupInspect(full).kind!=='FULL_V2')throw new Error('Fixture não completa');
+      return full;
+    }""", estado_malicioso())
+    tampered = json.loads(json.dumps(payload))
+    tampered['state']['params']['saldoIni'] = 77777
+    rejected = importar_arquivo(page, tampered)
+    assert rejected['alerts'] and 'checksum' in rejected['alerts'][0].lower(), (rotulo, rejected)
+    assert rejected['unchanged'] and not rejected['executed'] and not rejected['confirmations'], rejected
+    applied = importar_arquivo(page, payload)
+    assert any('com sucesso' in message for message in applied['alerts']), (rotulo, applied)
+    assert len(applied['confirmations']) == 1, (rotulo, applied)
+    assert page.evaluate("S.xssImportProbe") == 'signed malicious complete source'
+    assert page.evaluate("JSON.parse(localStorage.getItem(LSKEY)).xssImportProbe") == 'signed malicious complete source'
+    assert page.evaluate("localStorage.getItem(LSKEY).includes('__JPW_XSS__')"), 'payload não pode sumir e produzir PASS vazio'
     sonda = sondar(page)
     afirmar_seguro(sonda, f'{rotulo}/import')
     afirmar_canonico(sonda, f'{rotulo}/import', norma_limpa)
+    assert sonda['ordensFase0'] == 1, 'ordem legítima perdida no import real'
+    page.reload(wait_until='load')
+    page.wait_for_timeout(600)
+    assert page.evaluate('S.xssImportProbe') == 'signed malicious complete source'
+    sonda = sondar(page)
+    afirmar_seguro(sonda, f'{rotulo}/import/reload')
+    afirmar_canonico(sonda, f'{rotulo}/import/reload', norma_limpa)
     ctx.close()
 
 

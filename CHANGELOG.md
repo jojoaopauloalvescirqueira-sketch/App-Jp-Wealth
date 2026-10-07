@@ -1,4 +1,36 @@
+## 2026-10-06 — candidate: correção dos verificadores pendentes
+
+- Alinhamento de testes com UNKNOWN tipado, backup completo durável, UUID/releitura física, importação maliciosa completa e espera da exportação assíncrona; negativos preservados.
+- Distribuição: expectativas explícitas GENETRIX1.18.0/108membros, sem mudança em fontes/ZIP/estado nativo.
+- Executor: saída parcial em bytes no timeout não interrompe o recibo;900s/124/taxonomia intactos.
+- Dívidas Forex: juiz confrontado com seleção operacional explícita e ferramentas sob demanda; sem nova regra financeira.
+- Contexto incompleto ou de versão futura: validação antes de consultar membros; indisponibilidade sem crash, normalização ou gravação. Provas de leitura, ledger e finalização mensal com camadas canônicas.
+- Contratos/evidências separados; sem commit/publicação/alteração de dados reais.
+
+## Candidate local 2026-10-06 — saving reliability
+
+- Uniform verified persistence and UNKNOWN barriers; safe array rejection, Alladin rollback, finalization, onboarding/PIN and folder transactions.
+- Full backup v2, explicit legacy review, SHA-256, coverage, bounded imports, unique serialized exports and separate unconfirmed memory.
+- Structured drafts and explicit context-checked recovery; resilient PF fields, navigation/widget drafts and safe widget migration.
+- Exclusive local original evidence archive, pinned fflate ZIP, exact-hash reassociation and storage overview.
+- No publication, financial-formula/schema change or MT5 change. Raw validation and known limitations are external and candidate-specific.
+
 # Changelog
+
+## Candidate de Planejamento mensal — 2026-10-06
+
+- Tabela mensal como entrada, com rascunho, prévia pelo motor existente e Salvar/Cancelar explícitos.
+- Ausência de previsão separada de zero, depósitos recorrentes e preservação das exceções mensais.
+- Finalização protegida em todos os comandos; reabertura com motivo, revisão conservada e reconferência cronológica.
+- Extensão `planningRevision:3`, leitura da revisão 2 sem gravação e gráficos/resumos com lacunas explícitas.
+- [Contrato](docs/work/CHG-JPW-PLANNING-MONTHLY-20261006.md) e [uso](docs/architecture/PLANNING-MONTHLY.md). Fórmulas, contexto operacional e MT5 preservados. Candidate local, sem integração/publicação.
+
+## Candidate financeiro local — 2026-10-06
+
+- Corrige DD matematicamente exato que ultrapassava a fronteira por erro binário (14% virava F5) ou ficava abaixo do encerramento (22% não bloqueava).
+- Subtração e quociente usam os decimais efetivamente recebidos pelo motor; comparações preservam cruzamentos genuínos, sem tolerância nem arredondamento de decisão.
+- Histerese, registros antigos, SI, cashflows documentados, schemas, parâmetros PENDING e writers permanecem preservados.
+- Contrato N3/A4: [CHG-DD](docs/work/CHG-JPW-DD-BOUNDARY-FIX-20261006.md); evidências e limitações em diretório externo. Não constitui integração/publicação ou conformidade integral.
 
 ## 2026-09-09 — Dashboard oficial
 
@@ -1931,3 +1963,5 @@ do operador alterado numa pasta sincronizada, que é o cenário realista.
 
 ### Regras financeiras
 - Nenhuma regra, constante ou fórmula financeira foi deliberadamente alterada nesta etapa.
+
+Correção local adicional (2026-10-06): dependência de reservas carregada antes do cadastro e do boot, eliminando a corrida reproduzida com latência de script. Fonte matemática preservada; a rodada anterior fica histórica e o candidate requer novos recibos dos bytes finais.

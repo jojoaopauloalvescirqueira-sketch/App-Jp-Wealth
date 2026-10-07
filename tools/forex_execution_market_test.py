@@ -30,7 +30,10 @@ class Clock extends Date{constructor(...args){super(...(args.length?args:[ISO]))
 function env(){
   const handlers={};let saves=0,disk=null,mode='ok',epoch=1,unknown=false,blocked=false,calls=0;
   const c={structuredClone,Date:Clock,crypto,AbortController,setTimeout,clearTimeout,console,
-    addEventListener:(name,fn)=>{handlers[name]=fn;},dispatchEvent:()=>{},forexNewOperationPhases:()=>[],
+    addEventListener:(name,fn)=>{handlers[name]=fn;},dispatchEvent:()=>{},
+    // Dependency double for blank slots only; risk-profiles loads the real
+    // forexNewOperationPhases factory and its six policy-driven phases.
+    emptyOrders:n=>Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:null,status:''})),
     jpWealthPersistenceEpoch:()=>epoch,jpWealthPersistenceIsBlocked:()=>blocked,
     jpWealthPersistenceOutcomeIsUnknown:()=>unknown,markJPWealthPersistenceOutcomeUnknown:()=>{unknown=true;},
     save:()=>{saves++;if(mode==='refuse')return false;if(mode==='throw')throw new Error('synthetic unknown');
@@ -65,6 +68,23 @@ function quote(rate=1.25,extra={}){return {base:'EUR',quote:'USD',rate,reference
 function direct(e,rate=1.25,extra={}){return e.fx.state.recordDailyReferences({quotes:{EURUSD:quote(rate)},expectedRevision:0,expectedEpoch:1,...extra});}
 function rejected(r){assert.strictEqual(r.ok,false);assert.strictEqual(r.persistido,false);}
 function missing(r){assert.strictEqual(r.status,'NOT_COMPUTABLE');assert.strictEqual(r.value,null);}
+function prepareOrderContexts(e){
+  // Current lifecycle owns rows per confirmed account/period; legacy S.phases
+  // is not the destination of a new fact. Reconcile only synthetic observations.
+  for(const accountId of ['A','B']){
+    const fact=e.c.S.forex.accounts[accountId];
+    const r=e.fx.state.recordAccountPeriod({accountId,observationPeriodId:fact.periodId,
+      startedAt:'2026-09-01',currency:fact.currency,si:fact.si,openingBook:fact.si,source:'synthetic period'},
+      {reason:'synthetic explicit period reconciliation',expectedEpoch:1});
+    assert(r.ok,r.error);
+    const phases=e.fx.state.accountContext({accountId,periodId:fact.periodId}).value.phases;
+    assert.strictEqual(phases.length,6);
+    assert(phases.every(p=>p.policyVersion===e.fx.policy.version&&p.orders.length===1&&p.orders[0].par===''));
+  }
+}
+const firstOrder=()=>({pi:0,oi:0,expectedVersion:0,orderId:null,
+  changes:{id:'MARKET-001',brokerHash:'SYNTHETIC-HASH-001',par:'EURUSD',tipo:'BUY',status:'Aberta',lote:.01,entry:1.2,sl:1.1}});
+const accountPeriod=(e,accountId='A')=>e.c.S.forex.accountContexts.accounts[accountId].periods[accountId+'1'];
 async function test(name,fn){let fixture;try{fixture=env();}catch(error){checks.push({name,result:'TEST_HARNESS_FAIL',error:String(error.stack||error)});return;}
   try{await fn(fixture);checks.push({name,result:'PASS'});}catch(error){checks.push({name,result:'PRODUCT_FAIL',error:String(error.stack||error)});}}
 (async()=>{
@@ -205,24 +225,55 @@ await test('old provider date cannot replace a newer saved daily reference',e=>{
   assert.strictEqual(JSON.stringify(e.c.S),before);
 });
 await test('new operation captures chosen account and observational snapshots in one write',e=>{
-  assert(write(e).ok);assert(direct(e).ok);e.c.S.forex.activeAccountId='B';const count=e.saves;
-  const r=e.c.operationRecordOrders([{pi:0,oi:0,expectedVersion:0,orderId:null,changes:{status:'Aberta',lote:.01,entry:1.2,sl:1.1}}],{reason:'synthetic first fact',accountId:'A',periodId:'A1'});
-  assert(r.ok,r.error);assert.strictEqual(e.saves,count+1);assert.strictEqual(e.c.S.forex.activeAccountId,'A');
-  const o=e.c.S.phases[0].orders[0];assert.strictEqual(o.accountId,'A');assert.strictEqual(o.calculationInputs.instrumentObservation.price.value,1.2);
-  const snapshot=JSON.stringify(o.calculationInputs);assert(write(e,'price',1.4,{expectedRevision:1}).ok);assert.strictEqual(JSON.stringify(o.calculationInputs),snapshot);
+  prepareOrderContexts(e);assert(write(e).ok);assert(direct(e).ok);
+  e.c.S.forex.activeAccountId='B';assert(e.fx.state.selectOperationalContext('B','B1').ok);
+  const count=e.saves,before=JSON.stringify(e.c.S),legacy=JSON.stringify(e.c.S.phases),other=JSON.stringify(accountPeriod(e,'B'));
+  assert.strictEqual(e.fx.state.accountContext({accountId:'A',periodId:'A1'}).status,'OK');
+  assert.strictEqual(e.fx.state.operationalSelection().accountId,'B');
+  const stale=e.c.operationRecordOrders([firstOrder()],{reason:'synthetic stale scope',accountId:'A',periodId:'A1'});
+  rejected(stale);assert.match(stale.error,/difere da seleção atual/);
+  assert.strictEqual(e.saves,count);assert.strictEqual(JSON.stringify(e.c.S),before);
+  assert(e.fx.state.selectOperationalContext('A','A1').ok);
+  assert.strictEqual(e.saves,count);assert.strictEqual(JSON.stringify(e.c.S),before);
+  const r=e.c.operationRecordOrders([firstOrder()],{reason:'synthetic first fact',accountId:'A',periodId:'A1'});
+  assert(r.ok,r.error);assert.strictEqual(r.persistido,true);assert.strictEqual(e.saves,count+1);
+  assert.strictEqual(e.disk,JSON.stringify(e.c.S));assert.strictEqual(e.fx.state.operationalSelection().accountId,'A');
+  assert.strictEqual(e.c.S.forex.activeAccountId,'B');assert.strictEqual(JSON.stringify(e.c.S.phases),legacy);
+  assert.strictEqual(JSON.stringify(accountPeriod(e,'B')),other);
+  const p=accountPeriod(e),o=p.phases[0].orders[0];
+  assert.strictEqual(o.accountId,'A');assert.strictEqual(o.periodId,'A1');assert.strictEqual(o.currency,'USD');
+  assert.strictEqual(o.recordVersion,1);assert.strictEqual(o.revisions.length,1);assert.strictEqual(o.operationId,p.activeOperation.operationId);
+  assert.strictEqual(p.activeOperation.recordContext.accountId,'A');assert.strictEqual(p.activeOperation.recordContext.accountInputs.si,10000);
+  assert.strictEqual(o.calculationInputs.instrumentObservation.price.value,1.2);
+  assert.strictEqual(o.calculationInputs.dailyReference.rate,1.25);
+  const snapshot=JSON.stringify(o.calculationInputs),operationSnapshot=JSON.stringify(p.activeOperation.recordContext);
+  assert(write(e,'price',1.4,{expectedRevision:1}).ok);
+  assert.strictEqual(JSON.stringify(accountPeriod(e).phases[0].orders[0].calculationInputs),snapshot);
+  assert.strictEqual(JSON.stringify(accountPeriod(e).activeOperation.recordContext),operationSnapshot);
 });
 await test('existing operation cannot transfer by explicit selected scope',e=>{
-  e.c.S.activeOperation={operationId:'existing',recordContext:{accountId:'A',periodId:'A1',accountInputs:e.c.S.forex.accounts.A}};
-  const before=JSON.stringify(e.c.S);const r=e.c.operationRecordOrders([{pi:0,oi:0,changes:{status:'Aberta',lote:.01}}],{reason:'synthetic',accountId:'B',periodId:'B1'});
-  rejected(r);assert.strictEqual(JSON.stringify(e.c.S),before);
+  prepareOrderContexts(e);assert(e.fx.state.selectOperationalContext('A','A1').ok);
+  const recorded=e.c.operationRecordOrders([firstOrder()],{reason:'synthetic first fact',accountId:'A',periodId:'A1'});assert(recorded.ok,recorded.error);
+  const original=accountPeriod(e).phases[0].orders[0];assert(e.fx.state.selectOperationalContext('B','B1').ok);
+  const before=JSON.stringify(e.c.S),count=e.saves;
+  const r=e.c.operationRecordOrders([{pi:0,oi:0,orderId:original.orderId,expectedVersion:original.recordVersion,changes:{status:'Aberta',lote:.02}}],{reason:'synthetic stale order from A',accountId:'B',periodId:'B1'});
+  rejected(r);assert.match(r.error,/identidade ou versão/);assert.strictEqual(e.saves,count);
+  assert.strictEqual(JSON.stringify(e.c.S),before);assert.strictEqual(e.fx.state.operationalSelection().accountId,'B');
 });
 await test('row version mismatch refuses before persistence',e=>{
-  const r=e.c.operationRecordOrders([{pi:0,oi:0,expectedVersion:3,changes:{lote:.01}}],{reason:'synthetic'});assert.strictEqual(r.ok,false);assert.strictEqual(e.saves,0);
+  prepareOrderContexts(e);assert(e.fx.state.selectOperationalContext('A','A1').ok);
+  const before=JSON.stringify(e.c.S),count=e.saves;
+  const r=e.c.operationRecordOrders([{pi:0,oi:0,expectedVersion:3,changes:{lote:.01}}],{reason:'synthetic'});
+  rejected(r);assert.match(r.error,/identidade ou versão/);assert.strictEqual(e.saves,count);assert.strictEqual(JSON.stringify(e.c.S),before);
 });
 await test('refused first fact restores chosen account and snapshots atomically',e=>{
-  e.c.S.forex.activeAccountId='B';e.mode('refuse');const before=JSON.stringify(e.c.S);
-  rejected(e.c.operationRecordOrders([{pi:0,oi:0,changes:{status:'Aberta',lote:.01}}],{reason:'synthetic',accountId:'A',periodId:'A1'}));
-  assert.strictEqual(JSON.stringify(e.c.S),before);
+  prepareOrderContexts(e);assert(write(e).ok);assert(direct(e).ok);
+  assert(e.fx.state.selectOperationalContext('A','A1').ok);e.mode('refuse');
+  const before=JSON.stringify(e.c.S),disk=e.disk,count=e.saves;
+  const r=e.c.operationRecordOrders([firstOrder()],{reason:'synthetic refused first fact',accountId:'A',periodId:'A1'});
+  rejected(r);assert.match(r.error,/Gravação recusada/);assert.strictEqual(e.saves,count+1);
+  assert.strictEqual(JSON.stringify(e.c.S),before);assert.strictEqual(e.disk,disk);
+  assert.strictEqual(accountPeriod(e).activeOperation,null);assert.strictEqual(e.fx.state.operationalSelection().accountId,'A');
 });
 await test('JSON roundtrip retains unknown fields scope revisions references and unrelated data',e=>{
   assert(write(e).ok);assert(write(e,'atr',.012,{expectedRevision:1}).ok);assert(direct(e).ok);

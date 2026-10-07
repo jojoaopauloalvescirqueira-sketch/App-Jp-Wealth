@@ -149,9 +149,12 @@ function fdRatioHTML(bloqueado){
 }
 
 // ---- binds ------------------------------------------------------------------
-function fdAtoUI(r){
+function fdAtoUI(r, inlineField){
   if(r && r.ok===false && r.erro) alert('⛔ ' + r.erro);
-  finpesDebtsRender();
+  if(inlineField){
+    const key=fdCurrentKey();
+    finpesScheduleInlineRefresh(document.getElementById('finpesDebtsRoot'),()=>{if(fdCurrentKey()===key)finpesDebtsRender();});
+  }else finpesDebtsRender();
 }
 function fdBind(root, key, bloqueado){
   root.querySelectorAll('[data-fd-nav]').forEach(b=>b.addEventListener('click',()=>{
@@ -195,7 +198,7 @@ function fdBind(root, key, bloqueado){
       }
       const r = pfActUpdateCreditLineField(id, campo, valor);
       if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
-      fdAtoUI(r);
+      fdAtoUI(r, inp);
     });
   });
   root.querySelectorAll('[data-fc-del]').forEach(b=>b.addEventListener('click',()=>{

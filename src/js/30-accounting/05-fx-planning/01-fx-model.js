@@ -60,40 +60,55 @@ function fxId(prefix){ return prefix+'_'+Date.now().toString(36)+'_'+Math.random
 // baseline; `current` só revisa premissas de futuro (taxas, aportes, câmbio).
 
 // Precedência de rentabilidade: mês > ano > padrão (seção 7 da especificação).
+function fxMonthIsAbsent(assumptions,month){
+  return Object.prototype.hasOwnProperty.call(assumptions.absentMonths||{},month);
+}
 function fxResolveRate(assumptions,month){
+  if(fxMonthIsAbsent(assumptions,month)) return null;
   const mo=assumptions.monthOverrides||{};
-  if(Object.prototype.hasOwnProperty.call(mo,month)&&Number.isFinite(+mo[month])) return +mo[month];
+  if(Object.prototype.hasOwnProperty.call(mo,month)) return fxInputFinite(mo[month])&&+mo[month]>-1?+mo[month]:null;
   const yo=assumptions.yearOverrides||{}, year=fxYearOf(month);
-  if(Object.prototype.hasOwnProperty.call(yo,year)&&Number.isFinite(+yo[year])) return +yo[year];
-  return fxNum(assumptions.defaultMonthlyReturn,0);
+  if(Object.prototype.hasOwnProperty.call(yo,year)) return fxInputFinite(yo[year])&&+yo[year]>-1?+yo[year]:null;
+  return fxInputFinite(assumptions.defaultMonthlyReturn)&&+assumptions.defaultMonthlyReturn>-1?+assumptions.defaultMonthlyReturn:null;
 }
 function fxPlannedContribution(assumptions,month){
-  const rec=(assumptions.plannedContributions||{})[month]||{};
-  const personal=Math.max(0,fxNum(rec.personalUsd)), prop=Math.max(0,fxNum(rec.propUsd));
-  return {personalUsd:personal, propUsd:prop, totalUsd:personal+prop};
+  if(fxMonthIsAbsent(assumptions,month)) return {personalUsd:null,propUsd:null,totalUsd:null};
+  const rec=(assumptions.plannedContributions||{})[month]||assumptions.recurringContributions||{};
+  const personal=rec.personalUsd===undefined?0:fxInputFinite(rec.personalUsd)&&+rec.personalUsd>=0?+rec.personalUsd:null;
+  const prop=rec.propUsd===undefined?0:fxInputFinite(rec.propUsd)&&+rec.propUsd>=0?+rec.propUsd:null;
+  return {personalUsd:personal, propUsd:prop, totalUsd:personal!==null&&prop!==null?personal+prop:null};
 }
 function fxNormalizeAssumptions(raw){
   const src=raw&&typeof raw==='object'?raw:{};
   const startMonth=fxMonthKey(src.startMonth);
   const horizon=Math.round(fxNum(src.horizonMonths));
   const out={
+    ...structuredClone(src),
     startMonth,
     horizonMonths:Math.max(FX_HORIZON_MIN,Math.min(FX_HORIZON_MAX,horizon||0)),
     initialBalanceUsd:Math.max(0,fxNum(src.initialBalanceUsd)),
-    defaultMonthlyReturn:fxNum(src.defaultMonthlyReturn),
-    yearOverrides:{}, monthOverrides:{}, plannedContributions:{},
+    defaultMonthlyReturn:fxInputFinite(src.defaultMonthlyReturn)?+src.defaultMonthlyReturn:null,
+    yearOverrides:{}, monthOverrides:{}, plannedContributions:{}, absentMonths:{},
+    recurringContributions:{personalUsd:0,propUsd:0},
     projectedFxRate:fxNum(src.projectedFxRate,null)>0?+src.projectedFxRate:null
   };
   Object.entries(src.yearOverrides||{}).forEach(([y,r])=>{
-    if(/^\d{4}$/.test(y)&&Number.isFinite(+r)&&+r>-1) out.yearOverrides[y]=+r;
+    if(/^\d{4}$/.test(y)) out.yearOverrides[y]=fxInputFinite(r)&&+r>-1?+r:null;
   });
   Object.entries(src.monthOverrides||{}).forEach(([m,r])=>{
-    if(fxMonthKey(m)&&Number.isFinite(+r)&&+r>-1) out.monthOverrides[m]=+r;
+    if(fxMonthKey(m)) out.monthOverrides[m]=fxInputFinite(r)&&+r>-1?+r:null;
   });
   Object.entries(src.plannedContributions||{}).forEach(([m,rec])=>{
     const key=fxMonthKey(m); if(!key||!rec||typeof rec!=='object') return;
-    const personal=Math.max(0,fxNum(rec.personalUsd)), prop=Math.max(0,fxNum(rec.propUsd));
-    if(personal>0||prop>0) out.plannedContributions[key]={personalUsd:personal,propUsd:prop};
+    const personal=fxInputFinite(rec.personalUsd)&&+rec.personalUsd>=0?+rec.personalUsd:null;
+    const prop=fxInputFinite(rec.propUsd)&&+rec.propUsd>=0?+rec.propUsd:null;
+    out.plannedContributions[key]={...structuredClone(rec),personalUsd:personal,propUsd:prop};
+  });
+  const recurring=src.recurringContributions||{};
+  for(const field of ['personalUsd','propUsd']) if(recurring[field]!==undefined)
+    out.recurringContributions[field]=fxInputFinite(recurring[field])&&+recurring[field]>=0?+recurring[field]:null;
+  Object.entries(src.absentMonths||{}).forEach(([m,rec])=>{
+    if(fxMonthKey(m)) out.absentMonths[m]=rec&&typeof rec==='object'?structuredClone(rec):{reason:'Previsão retirada'};
   });
   return out;
 }
@@ -103,7 +118,11 @@ function fxValidateAssumptions(a){
   const h=Math.round(fxNum(a.horizonMonths));
   if(!(h>=FX_HORIZON_MIN&&h<=FX_HORIZON_MAX)) errors.push(`Horizonte deve estar entre ${FX_HORIZON_MIN} e ${FX_HORIZON_MAX} meses.`);
   if(!(fxNum(a.initialBalanceUsd)>0)) errors.push('Saldo inicial do planejamento deve ser maior que zero.');
-  if(!Number.isFinite(+a.defaultMonthlyReturn)||+a.defaultMonthlyReturn<=-1) errors.push('Rentabilidade padrão inválida (deve ser fração > −100%).');
+  if(!fxInputFinite(a.defaultMonthlyReturn)||+a.defaultMonthlyReturn<=-1) errors.push('Rentabilidade padrão inválida (deve ser fração > −100%).');
+  for(const [month,value] of Object.entries(a.monthOverrides||{})) if(!fxInputFinite(value)||+value<=-1) errors.push('Rentabilidade mensal inválida: '+month+'.');
+  for(const [year,value] of Object.entries(a.yearOverrides||{})) if(!fxInputFinite(value)||+value<=-1) errors.push('Rentabilidade anual inválida: '+year+'.');
+  for(const [month,c] of Object.entries(a.plannedContributions||{})) if(!c||['personalUsd','propUsd'].some(k=>!fxInputFinite(c[k])||+c[k]<0)) errors.push('Depósitos previstos inválidos: '+month+'.');
+  if(a.recurringContributions&&['personalUsd','propUsd'].some(k=>!fxInputFinite(a.recurringContributions[k])||+a.recurringContributions[k]<0)) errors.push('Depósitos recorrentes inválidos.');
   return errors;
 }
 
@@ -121,6 +140,7 @@ function fxNormalizeActual(raw){
   return {
     ...src,
     inputType,
+    closureStatus:src.closureStatus||'FINALIZED',
     returnRate:inputType==='rate'?rate:null,   // só a entrada original persiste;
     profitUsd:inputType==='usd'?usd:null,      // o derivado é recalculado sempre
     valuationFxRate:fxNum(src.valuationFxRate,null)>0?+src.valuationFxRate:null,
@@ -192,8 +212,9 @@ function fxCreatePlan({name,assumptions,now}){
     id:fxId('fxp'),
     name:String(name||'').trim()||'Planejamento FX',
     createdAt:ts, updatedAt:ts,
-    baseline:{...base, frozenAt:ts},        // congelado — nunca editado depois
-    current:{...base, revisedAt:ts},        // premissas vigentes do forecast
+    planningRevision:3,
+    baseline:{...structuredClone(base), frozenAt:ts},        // congelado — nunca editado depois
+    current:{...structuredClone(base), revisedAt:ts},        // premissas vigentes do forecast
     revisions:[],                           // snapshots leves de premissas anteriores
     actuals:{},                             // 'YYYY-MM' → fechamento realizado
     contributions:[]                        // ledger cambial (fonte única de aportes realizados)

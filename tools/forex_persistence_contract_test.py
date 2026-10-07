@@ -4,6 +4,10 @@
 Oráculos fixados antes do patch (CHG-FUNCTIONAL-RELIABILITY-20260911).
 App real servido da --root, Chromium isolado e fixtures nominais existentes.
 Não corrige nem classifica reservas como regra aprovada: caracteriza a discrepância.
+Lifecycle mensal adaptado explicitamente em CHG-JPW-PLANNING-TEST-CONTRACT-20261006:
+conferência de depósitos e fixture de correção já reaberta antes da falha física.
+Oráculos monetários, rollback, concorrência, desfecho desconhecido e escrita única
+permanecem intactos. O recibo bruto anterior não é reescrito por esta execução.
 """
 import argparse
 from functools import partial
@@ -72,14 +76,20 @@ SEED = """() => {
     if(name==='create') return api.fxPlanCreate({name:'Novo sintético',assumptions:{startMonth:'2026-01',horizonMonths:12,initialBalanceUsd:1000,defaultMonthlyReturn:0.01,projectedFxRate:5}});
     if(name==='delete') return api.fxPlanDelete();
     if(name==='revise') return api.fxPlanReviseAssumptions({...S.fxPlanning.plan.current,defaultMonthlyReturn:0.02},'revisão sintética');
-    if(name==='actual'||name==='edit') return api.fxPlanRecordActual('2026-01',{inputType:'usd',profitUsd:10,valuationFxRate:5,notes:'sintético'});
+    if(name==='actual'||name==='edit') return api.fxPlanRecordActual('2026-01',{inputType:'usd',profitUsd:10,valuationFxRate:5,notes:'sintético',contributionsConfirmed:true});
     if(name==='add') return api.fxPlanAddContribution({month:'2026-01',source:'personal',originalCurrency:'USD',originalAmount:25,acquisitionFxRate:null});
     if(name==='remove') return api.fxPlanRemoveContribution(S.fxPlanning.plan.contributions[0].id);
     throw new Error('ato desconhecido');
   };
   window.__prepare=(name)=>{
     if(name==='create') S.fxPlanning.plan=null;
-    if(name==='edit') S.fxPlanning.plan.actuals['2026-01']={inputType:'usd',profitUsd:5,returnRate:null,valuationFxRate:5,notes:'anterior',closedAt:'2026-02-01T00:00:00Z',updatedAt:'2026-02-01T00:00:00Z'};
+    // This case isolates a storage failure during correction, not authority to
+    // reopen. The synthetic month is explicitly REOPENED before installing the
+    // failing writer; real reopen/finalized guards are covered by the monthly
+    // board suite. Keep the original date and result used by the same oracle.
+    if(name==='edit') S.fxPlanning.plan.actuals['2026-01']={inputType:'usd',profitUsd:5,returnRate:null,valuationFxRate:5,notes:'anterior',
+      closureStatus:'REOPENED',reopenNote:'Fixture sintética reaberta antes da falha física',
+      closedAt:'2026-02-01T00:00:00Z',updatedAt:'2026-02-01T00:00:00Z'};
     if(name==='remove') S.fxPlanning.plan.contributions.push(fxNormalizeContribution({id:'fxc-existing',month:'2026-01',source:'personal',originalCurrency:'USD',originalAmount:25,createdAt:'2026-01-01T00:00:00Z'}));
     if(save()!==true) throw new Error('preparo não gravou');
   };
@@ -238,6 +248,7 @@ def main():
     def ui_actual(p,o):
         p.evaluate("() => {JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
         p.locator('#fxpActType').select_option('usd');p.locator('#fxpActValue').fill('10');p.locator('#fxpActNotes').fill('mensal sintético')
+        p.locator('#fxpActConfirmed').check()
         before=p.evaluate('__snap()');p.evaluate("__installFailure('quota')")
         p.locator('#fxpActBtn').click();o['error']=p.locator('#fxpActErr').inner_text();o['after']=p.evaluate('__snap()')
         assert o['error'] and p.locator('#fxpActValue').input_value()=='10'
@@ -250,10 +261,12 @@ def main():
     def rejected_draft_navigation(p,o):
         p.evaluate("() => {JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
         p.locator('#fxpActType').select_option('usd');p.locator('#fxpActValue').fill('10');p.locator('#fxpActNotes').fill('rascunho recusado')
+        p.locator('#fxpActConfirmed').check()
         p.evaluate("__installFailure('quota')");p.locator('#fxpActBtn').click()
         p.evaluate("() => {JPWNavigation.navigate('dashboard');JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
         o['after']={'value':p.locator('#fxpActValue').input_value(),'notes':p.locator('#fxpActNotes').input_value()}
         assert o['after']=={'value':'10','notes':'rascunho recusado'},o
+        assert p.locator('#fxpActConfirmed').is_checked(), 'conferência explícita perdida no rascunho recusado'
     def unknown_after_recovery(p,o):
         p.evaluate("__installFailure('quota')");r=p.evaluate("__act('actual')");assert r['ok'] is False
         p.evaluate('__restoreFailure()');p.evaluate("__installFailure('throw-after')")
@@ -262,11 +275,11 @@ def main():
         assert not o['after']['saved'] and not o['after']['recovered'],o
     def invalid_and_normal(p,o):
         before=p.evaluate('__snap()')
-        invalid=p.evaluate("() => [JPWFx.state.fxPlanRecordActual('2026-03',{inputType:'usd',profitUsd:1}),JPWFx.state.fxPlanAddContribution({month:'invalid',source:'personal',originalCurrency:'USD',originalAmount:25})]")
+        invalid=p.evaluate("() => [JPWFx.state.fxPlanRecordActual('2026-03',{inputType:'usd',profitUsd:1,contributionsConfirmed:true}),JPWFx.state.fxPlanAddContribution({month:'invalid',source:'personal',originalCurrency:'USD',originalAmount:25})]")
         after=p.evaluate('__snap()');o.update(invalid=invalid,before=before,after=after)
         assert all(r['ok'] is False for r in invalid)
         for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert before[key]==after[key]
-        result=p.evaluate("() => JPWFx.state.fxPlanRecordActual('2026-01',{inputType:'usd',profitUsd:0,notes:'zero explícito'})")
+        result=p.evaluate("() => JPWFx.state.fxPlanRecordActual('2026-01',{inputType:'usd',profitUsd:0,notes:'zero explícito',contributionsConfirmed:true})")
         assert result['ok'] is True
         assert p.evaluate('S.fxPlanning.plan.actuals["2026-01"].profitUsd')==0
         assert p.evaluate('fxOverviewLive().currentBalanceUsd')==1000
@@ -288,6 +301,7 @@ def main():
         p.set_viewport_size({'width':390,'height':844})
         p.evaluate("() => {JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
         p.locator('#fxpActType').select_option('usd');p.locator('#fxpActValue').fill('10')
+        p.locator('#fxpActConfirmed').check()
         p.evaluate("__installFailure('quota')");p.locator('#fxpActBtn').click()
         assert p.locator('#fxpActErr [role=alert]').is_visible()
         assert p.evaluate('document.activeElement.id')=='fxpActBtn'
@@ -348,10 +362,11 @@ def main():
         result=p.evaluate("__act('actual')");o.update(result=result,writes=p.evaluate('__physicalWrites'),after=p.evaluate('__snap()'))
         assert result.get('ok') is True and o['writes']==1,o
         assert len(json.loads(o['after']['fx'])['plan']['actuals'])==1
-        assert json.loads(o['after']['log'])[-1]['action']=='FX_MONTH_ACTUAL_RECORDED'
+        assert json.loads(o['after']['log'])[-1]['action']=='FX_MONTH_FINALIZED'
     def refused_reload(p,o):
         p.evaluate("() => {JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
         p.locator('#fxpActType').select_option('usd');p.locator('#fxpActValue').fill('10')
+        p.locator('#fxpActConfirmed').check()
         before=p.evaluate('__snap()');p.evaluate("__installFailure('quota')")
         p.locator('#fxpActBtn').focus();p.keyboard.press('Enter')
         assert p.locator('#fxpActErr').inner_text()
