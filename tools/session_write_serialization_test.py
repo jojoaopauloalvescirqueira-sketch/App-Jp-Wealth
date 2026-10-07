@@ -255,10 +255,11 @@ def main() -> int:
                     const caixa=document.getElementById('modalBox');
                     const res={ modal: caixa?(caixa.textContent||''):'',
                         broadcast: window.__tocadas.indexOf('jpwealth_session_wipe_signal_v1')!==-1,
-                        contas: S.accounts.length, bloqueada: jpWealthPersistenceIsBlocked() };
+                        contas: S.accounts.length, bloqueada: jpWealthPersistenceIsBlocked(),
+                        persistenceStatus: jpWealthPersistenceLastResult().status };
                     return res; }""")
                 doc_depois = page.evaluate("() => { localStorage.setItem = Object.getPrototypeOf(localStorage).setItem ? localStorage.setItem : localStorage.setItem; return localStorage.getItem('%s'); }" % LSKEY)
-                if "Nada foi apagado" not in r["modal"]:
+                if "A escrita do estado final foi recusada" not in r["modal"] or r["persistenceStatus"] != "REFUSED":
                     falhas.append(f"SH: a falha de persistencia nao mostrou recusa (modal={r['modal'][:80]!r})")
                 if r["broadcast"]:
                     falhas.append("SH: houve BROADCAST apesar de o commit ter falhado")
@@ -292,9 +293,9 @@ def main() -> int:
                 page.wait_for_timeout(700)
                 r = page.evaluate("""() => ({
                     modal: (document.getElementById('modalBox')||{}).textContent||'',
-                    contas: S.accounts.length,
+                    contas: S.accounts.length, persistenceStatus: jpWealthPersistenceLastResult().status,
                     doc: localStorage.getItem('%s') })""" % LSKEY)
-                if "Nada foi apagado" not in r["modal"]:
+                if "A escrita do estado final foi recusada" not in r["modal"] or r["persistenceStatus"] != "REFUSED":
                     falhas.append(f"SH2: setItem no-op nao foi detectado pelo read-back (modal={r['modal'][:80]!r})")
                 if r["contas"] == 0:
                     falhas.append("SH2: a sessao foi finalizada apesar de a gravacao ter sido um no-op")

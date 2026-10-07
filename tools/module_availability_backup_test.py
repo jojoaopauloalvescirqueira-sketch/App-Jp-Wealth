@@ -38,6 +38,17 @@ def submit(page, payload, cancelled=False):
     return page.evaluate('({alerts:__avAlerts,confirms:__avConfirms})')
 
 
+def valid_v2_fixture(page, payload):
+    # Intentional valid-content variations must carry their own integrity proof.
+    # Invalid-checksum rejection remains covered by the dedicated backup gauntlet.
+    return page.evaluate("""payload=>{
+      if(payload.formatVersion!==2)return payload;
+      delete payload.integrity;
+      payload.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(payload))};
+      return payload;
+    }""", payload)
+
+
 def financial(page):
     return page.evaluate('keys=>Object.fromEntries(keys.filter(k=>k in S).map(k=>[k,S[k]]))', FINANCIAL)
 
@@ -209,7 +220,7 @@ def main():
                 def consent_conflict():
                     context, page, errors, _ = current();before = state_and_storage(page)
                     page.evaluate("""key=>{const ask=window.confirm;window.confirm=message=>{const accepted=ask(message);
-                      if(accepted&&message.includes('Importar backup completo'))localStorage.setItem(key,JSON.stringify({schemaVersion:1,modules:{research:'frozen'}}));return accepted;};}""", KEY)
+                      if(accepted&&message.includes('Importar e substituir o estado atual'))localStorage.setItem(key,JSON.stringify({schemaVersion:1,modules:{research:'frozen'}}));return accepted;};}""", KEY)
                     receipt = submit(page, new_backup)
                     after = state_and_storage(page)
                     assert any('mudou desde a confirmação' in message for message in receipt['alerts']), receipt
@@ -227,6 +238,7 @@ def main():
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') == explicit
                     assert financial(page) == expected_financial(baseline_backup)
                     payload = copy.deepcopy(new_backup);payload['workspace']['preferences'][KEY] = None
+                    payload = valid_v2_fixture(page, payload)
                     receipt = submit(page, payload)
                     assert any('Alladin: Ativo → Congelado' in message for message in receipt['confirms']), receipt
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') is None
@@ -272,6 +284,7 @@ def main():
                     payload = copy.deepcopy(new_backup)
                     payload['workspace']['preferences'][KEY] = json.dumps({'schemaVersion':1,'modules':{'alladin':'frozen'}})
                     payload['workspace']['preferences']['jpw_fs'] = '2'
+                    payload = valid_v2_fixture(page, payload)
                     page.evaluate("""target=>{window.__originalPut=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){
                       if(k===target)throw new DOMException('Synthetic quota','QuotaExceededError');return __originalPut.call(this,k,v);};}""", failure_key)
                     receipt = submit(page, payload)

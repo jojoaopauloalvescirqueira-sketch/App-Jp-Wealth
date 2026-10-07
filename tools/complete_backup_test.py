@@ -105,15 +105,24 @@ def main():
                 assert c.evaluate("localStorage.getItem('jpw_fs')")=='2'
                 assert not c.errors,c.errors
                 print('PASS partial import, durable journal, reload recovery',flush=True)
-                legacy=json.loads(json.dumps(payload));legacy.pop('workspace');legacy['state'].pop('workspaceRecovery',None)
+                # A v2 payload with fields removed is corruption, not a legacy file.
+                tampered=json.loads(json.dumps(payload));tampered.pop('workspace')
+                rejected=a.evaluate('x=>{try{JPWBackup.inspect(x);return false;}catch(_){return true;}}',tampered)
+                assert rejected,'v2 tampering must fail closed'
+                def legacy_fixture(source):
+                    value=json.loads(json.dumps(source))
+                    for key in ('formatVersion','integrity','exportId','coverage'):value.pop(key,None)
+                    if 'workspace' in value:value['workspace']['schemaVersion']=1
+                    return value
+                legacy=legacy_fixture(payload);legacy.pop('workspace');legacy['state'].pop('workspaceRecovery',None)
                 d=page();d.evaluate("localStorage.setItem('jpw_fs','1')");restore(d,legacy)
                 assert d.evaluate("localStorage.getItem('jpw_fs')")=='1'
                 print('PASS legacy backup preserves destination preferences',flush=True)
-                old_workspace=json.loads(json.dumps(payload));old_workspace['workspace']['preferences'].pop('jpw_nav_glass_tint',None)
+                old_workspace=legacy_fixture(payload);old_workspace['workspace']['preferences'].pop('jpw_nav_glass_tint',None)
                 d2=page();d2.evaluate("localStorage.setItem('jpw_nav_glass_tint','88')");restore(d2,old_workspace)
                 assert d2.evaluate("localStorage.getItem('jpw_nav_glass_tint')")=='88'
                 print('PASS schema v1 workspace without glass tint preserves destination preference',flush=True)
-                old_submenu=json.loads(json.dumps(payload));old_submenu['workspace']['preferences'].pop('jpw_nav_submenu_rail',None)
+                old_submenu=legacy_fixture(payload);old_submenu['workspace']['preferences'].pop('jpw_nav_submenu_rail',None)
                 d3=page();d3.evaluate("localStorage.setItem('jpw_nav_submenu_rail','collapsed')");restore(d3,old_submenu)
                 assert d3.evaluate("localStorage.getItem('jpw_nav_submenu_rail')")=='collapsed'
                 print('PASS schema v1 workspace without submenu rail preserves destination preference',flush=True)
@@ -156,14 +165,16 @@ def main():
                 print('PASS preferences changed during export / before finalization are refused',flush=True)
                 for change in ['future','unknown-key','bad-image','bad-drafts','nested-pollution','bad-glass-tint','bad-submenu-rail']:
                     bad=json.loads(json.dumps(payload))
-                    if change=='future':bad['workspace']['schemaVersion']=2
+                    if change=='future':bad['workspace']['schemaVersion']=3
                     if change=='unknown-key':bad['workspace']['preferences']['foreign_app']='x'
                     if change=='bad-image':bad['workspace']['preferences']['jpwealth_local_profile_v1']=json.dumps(dict(schemaVersion=1,displayName='x',avatarDataUrl='data:image/jpeg;base64,YWJj'))
                     if change=='bad-drafts':bad['workspace']['drafts']=[{'label':'x','text':{}}]
                     if change=='nested-pollution':bad['workspace']['preferences']['jpwealth_galton_preferences_v1']='{"__proto__":{"x":1}}'
                     if change=='bad-glass-tint':bad['workspace']['preferences']['jpw_nav_glass_tint']='101'
                     if change=='bad-submenu-rail':bad['workspace']['preferences']['jpw_nav_submenu_rail']='wide'
-                    outcome=d.evaluate('''bad=>{const before=JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));try{normalizeImportedState(bad);return false;}catch(e){return before===JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));}}''',bad)
+                    # Conteúdo inválido assinado corretamente: provar a validação do
+                    # workspace, além do negativo separado de checksum adulterado.
+                    outcome=d.evaluate('''bad=>{delete bad.integrity;bad.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(bad))};const before=JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)]))),memory=JSON.stringify(S);try{normalizeImportedState(bad);return false;}catch(e){return memory===JSON.stringify(S)&&before===JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));}}''',bad)
                     assert outcome,change
                 print('PASS invalid workspace rejected before mutation',flush=True)
         browser.close()

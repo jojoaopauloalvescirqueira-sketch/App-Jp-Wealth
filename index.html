@@ -221,12 +221,15 @@ SOFTWARE.
     <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
          aria-hidden="true" hidden inert>
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
-        <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Visão geral</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Contas e Períodos</span><span class="nav-sub-item-desc">Cadastro, períodos e contexto operacional</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Preenchimento e acompanhamento das ordens</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-history"><span class="nav-sub-item-title">Histórico</span><span class="nav-sub-item-desc">Operações completas finalizadas</span></button>
+        <p class="forex-nav-group" data-forex-nav-group="follow">Acompanhar</p>
+        <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Desempenho</span><span class="nav-sub-item-desc">Resultado e evolução da conta</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-history"><span class="nav-sub-item-title">Histórico de operações</span><span class="nav-sub-item-desc">Consulta de operações finalizadas</span></button>
+        <p class="forex-nav-group" data-forex-nav-group="operate">Operar</p>
+        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Registro e acompanhamento das ordens</span></button>
+        <p class="forex-nav-group" data-forex-nav-group="manage">Administrar</p>
+        <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Contas e Períodos</span><span class="nav-sub-item-desc">Cadastro e contexto operacional</span></button>
         <button type="button" data-nav-item data-nav-child="forex-accounting"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Fechamentos e apuração do período</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento patrimonial</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
@@ -237,8 +240,8 @@ SOFTWARE.
             <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
           </button>
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
-            <span class="nav-sub-item-title">Fator de Correção</span>
-            <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
+            <span class="nav-sub-item-title">Motor de Lote</span>
+            <span class="nav-sub-item-desc">Consultar na Operação</span>
           </button>
         </div>
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
@@ -256,7 +259,7 @@ SOFTWARE.
             <span class="nav-sub-item-desc">Fechamentos e aportes</span>
           </button>
           <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="table">
-            <span class="nav-sub-item-title">Histórico/Tabela</span>
+            <span class="nav-sub-item-title">Tabela mensal</span>
             <span class="nav-sub-item-desc">Baseline, vigente e realizado</span>
           </button>
         </div>
@@ -375,6 +378,11 @@ SOFTWARE.
 <main id="appMain">
   <div id="shellPageHeader" class="shell-page-header">
     <p id="shellLocation" class="shell-location" aria-label="Localização atual">Dashboard</p>
+        <div id="forexTaskActions" class="forex-task-actions" hidden>
+      <button type="button" id="forexAreasToggle" class="forex-areas-toggle" aria-controls="execNavSubmenu" aria-expanded="false" hidden><span>Áreas do Forex</span><strong id="forexAreasCurrent">Desempenho</strong><span aria-hidden="true">⌄</span></button>
+      <button type="button" id="forexNotesToggle" class="reset-btn" aria-controls="mvpNotesDrawer" aria-haspopup="dialog">Notas</button>
+    </div>
+    <div id="forexAdvisorySlot"></div>
     <div id="navLocalSlot" aria-label="Visões da página"></div>
   </div>
   <div id="shellAnnouncement" class="sr-only" role="status" aria-live="polite"></div>
@@ -384,9 +392,9 @@ SOFTWARE.
     <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
   </div>
   <!-- ================= 01 EXECUTION BOARD ================= -->
-  <section class="screen" id="fxconsolidated" aria-label="Consolidado FX"></section>
+  <section class="screen" id="fxconsolidated" aria-label="Desempenho Forex"></section>
   <section class="screen" id="exec">
-    <header class="fx-operation-heading"><h1 data-route-focus>Painel Operacional</h1><button type="button" id="execChecklistBtn" aria-haspopup="dialog" aria-controls="forexChecklistDialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4M11 6h10M3 13l2 2 3-4M11 13h10M4 20h3m4 0h10"/></svg><span>Checklist pré-trade</span></button></header>
+    <header class="fx-operation-heading"><h1 data-route-focus>Operação</h1><button type="button" id="execChecklistBtn" aria-haspopup="dialog" aria-controls="forexChecklistDialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4M11 6h10M3 13l2 2 3-4M11 13h10M4 20h3m4 0h10"/></svg><span>Checklist pré-trade</span></button></header>
     <!-- WORKSPACES DO MÓDULO (segundo nível — contrato em
          docs/architecture/NAVIGATION-HIERARCHY.md).
 
@@ -640,7 +648,7 @@ SOFTWARE.
       <div class="params-grid">
         <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
         <div class="field"><label>Resultado do dia ($)</label><input type="number" step="0.01" id="ldResult" placeholder="0.00"><span class="note">Negativo se prejuízo. Zero é válido (dia neutro).</span></div>
-        <div class="field"><label>Saldo de fechamento ($)</label><input type="number" step="0.01" id="ldSaldo" placeholder="auto: anterior + resultado"><span class="note">Se vazio, calcula automaticamente. Atualiza o Saldo Mestre (book).</span></div>
+        <div class="field"><label>Saldo de fechamento ($)</label><input type="number" step="0.01" id="ldSaldo" placeholder="auto: anterior + resultado"><span class="note">Se vazio, calcula automaticamente. Atualiza o saldo contábil desta conta e período.</span></div>
       </div>
       <div class="field"><label>Nota (opcional)</label><input type="text" id="ldNota" placeholder="contexto do dia, eventos, decisões"></div>
       <div style="display:flex; align-items:center; gap:12px">
@@ -665,12 +673,9 @@ SOFTWARE.
       </div>
     </div>
     <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Real vs Projetado <span class="art">série mensal do Planejamento · dados realizados preservados</span></h2>
+      <h2>Planejamento patrimonial <span class="art">Projeção global, independente dos fechamentos desta conta</span></h2>
       <div id="rvpChart" style="width:100%"></div>
-      <details class="jp-p3">
-            <summary>Planejamento mensal · projetado e realizado</summary>
-            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
-          </details>
+      <div id="acctProjWrap" hidden inert></div>
     </div>
     <div id="acctPace" hidden aria-hidden="true"></div>
     </div>
@@ -1172,7 +1177,7 @@ SOFTWARE.
        evolução futura). Conteúdo renderizado por 30-accounting/05-fx-planning/05-fx-ui.js. -->
   <section class="screen" id="fxplan">
     <div class="card" id="fxPlanningCard">
-      <h2>Planejamento FX <span class="art">planejado × realizado × normativo · premissas do operador — não é promessa de retorno</span></h2>
+      <h2>Planejamento patrimonial <span class="art">planejado × realizado × normativo · premissas do operador — não é promessa de retorno</span></h2>
       <div id="fxPlanningRoot"></div>
     </div>
   </section>
@@ -1901,7 +1906,7 @@ SOFTWARE.
     <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
       <h2><svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>Notas <span class="art">tarefas e observações</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
-      <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
+      <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar base principal" na Zona de Perigo.</p>
       <div class="field" style="max-width:360px">
         <label>Botão flutuante de Notas</label>
         <div class="seg" id="mvpNotesVisibilitySeg" style="width:fit-content">
@@ -2004,8 +2009,8 @@ SOFTWARE.
            removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
            locais de interface (escala da fonte, estado da navegação, ícone do app) e não
            toca em cópias de recuperação existentes. -->
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
-      <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, cópias de recuperação existentes e originais PDF/HTML do arquivo de evidências são preservados. A remoção de todo o armazenamento da origem pelo navegador exige exportar antes o Backup Completo e o ZIP de evidências. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
+      <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar base principal</button>
     </div>
   </section>
 </main>
@@ -2363,6 +2368,7 @@ SOFTWARE.
 
 <script src="src/js/00-core/00-forex-policy.js"></script>
 <script src="src/js/10-domain/00-forex-engine.js"></script>
+<script src="src/js/10-domain/07-reserve-requirements.js"></script>
 <script src="src/js/00-core/01-risk-profiles.js"></script>
 <script src="src/js/00-core/02-platforms.js"></script>
 <script src="src/js/00-core/03-default-state.js"></script>
@@ -2371,6 +2377,8 @@ SOFTWARE.
 <script src="src/js/00-core/07-workspace-backup.js"></script>
 <script src="src/js/00-core/05-helpers.js"></script>
 <script src="src/js/00-core/06-storage-fs.js"></script>
+<script src="src/vendor/fflate/fflate-0.8.2.min.js"></script>
+<script src="src/js/00-core/09-evidence-archive.js"></script>
 <script src="src/js/10-domain/01-risk-instruments.js"></script>
 <script src="src/js/10-domain/00-forex-state.js"></script>
 <script src="src/js/10-domain/02-risk-calculations.js"></script>
@@ -2420,7 +2428,6 @@ SOFTWARE.
 <script src="src/js/40-app/18-galton-board/04-physics.js"></script>
 <script src="src/js/40-app/18-galton-board/05-renderer.js"></script>
 <script src="src/js/40-app/18-galton-board/06-controller.js"></script>
-<script src="src/js/10-domain/07-reserve-requirements.js"></script>
 <script src="src/js/10-domain/08-usd-brl-quote.js"></script>
 <script src="src/js/30-accounting/05-fx-planning/01-fx-model.js"></script>
 <script src="src/js/30-accounting/05-fx-planning/02-fx-engine.js"></script>

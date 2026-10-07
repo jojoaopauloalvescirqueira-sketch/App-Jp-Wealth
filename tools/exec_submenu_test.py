@@ -28,8 +28,8 @@ from notes_launcher_test import launch_options
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-planning", "forex-reserves"]
-EXPECTED_LABELS = ["Visão geral", "Contas e Períodos", "Operação", "Histórico", "Contabilidade", "Planejamento", "Reservas"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-history", "forex-operation", "forex-management-accounts", "forex-accounting", "forex-planning", "forex-reserves"]
+EXPECTED_LABELS = ["Desempenho", "Histórico de operações", "Operação", "Contas e Períodos", "Contabilidade", "Planejamento patrimonial", "Reservas"]
 EXPECTED_VIEWS = ["panel", "accounting", "history", "accounts", "motor"]
 EXPECTED_CONTEXT = {
     "forex-management-accounts": ["accounts", "motor"],
@@ -323,7 +323,7 @@ def run_focus_and_keyboard(page):
         "ArrowRight nao levou ao primeiro filho N2"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-management-accounts"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[1]
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0]
     page.keyboard.press("End")

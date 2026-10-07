@@ -99,11 +99,21 @@ def main():
         assert gate['savedPending'] == 'pending'
 
         # ---- 3. exportação Downloads: sequência SÓ avança com sucesso ---------------
+        # Backup Completo v2 não promove a base virgem em RAM. A recusa é uma
+        # propriedade testada; a fixture seguinte confirma explicitamente o documento.
+        virgin = page.evaluate("""async () => {
+          const before=JSON.stringify(S), raw=localStorage.getItem(LSKEY);
+          const meta=await exportFullBackup({quiet:true});
+          return {refused:meta===null,unchanged:before===JSON.stringify(S)
+            && raw===localStorage.getItem(LSKEY),status:JPWBackup.status().stage};
+        }""")
+        assert virgin['refused'] and virgin['unchanged'], virgin
+        assert page.evaluate('save()') is True, 'a fixture deve estar confirmada em disco'
         fluxo = page.evaluate("""async () => {
           const r = {};
           const metaA = await exportFullBackup();               // confirm()=false → sem senhas
           r.A = {dest: metaA.destination, seq: S.dataGovernance.export.lastSequence,
-                 nomeOk: /^JP_WEALTH_DB_000001_\\d{4}-\\d{2}-\\d{2}_\\d{4}\\.json$/.test(metaA.filename),
+                 nomeOk: /^JP_WEALTH_DB_000001_\\d{4}-\\d{2}-\\d{2}_\\d{4}_[0-9a-f-]{36}\\.json$/.test(metaA.filename),
                  log: S.dataGovernance.changeLog.length};
           const origDl = dgDownloadViaAnchor;
           dgDownloadViaAnchor = () => { throw new Error('falha simulada'); };
@@ -121,14 +131,26 @@ def main():
           const r = {};
           S.dataGovernance.storage = {configured:true, folderName:'Base de Dados',
             folderDisplayPath:'Base de Dados', configuredAt:'2026-08-08T00:00'};
-          const fake = {name:'Base de Dados'}, escritos = [];
+          if(save()!==true)throw new Error('Fixture de pasta não confirmada');
+          const arquivos=new Map(), fake = {name:'Base de Dados',
+            getFileHandle:async nome=>({getFile:async()=>arquivos.get(nome)})}, escritos = [];
           const oS = dgFsStatus, oE = dgFsFileExists, oW = dgFsWriteFile;
           dgFsStatus = async () => ({state:'authorized', handle:fake});
           let n = 0; dgFsFileExists = async () => (++n <= 2);   // seq 2 e 3 colidem
-          dgFsWriteFile = async (h, nome, blob) => { escritos.push(nome); };
+          dgFsWriteFile = async (h, nome, blob) => { escritos.push(nome);arquivos.set(nome,blob); };
           const metaC = await exportFullBackup();
           r.C = {dest: metaC.destination, seq: S.dataGovernance.export.lastSequence,
                  escritos: escritos.length, seqNoNome: escritos[0].includes('000004')};
+          // Bytes divergentes após escrita não são sucesso nem autorizam fallback.
+          const seqBeforeUnknown=S.dataGovernance.export.lastSequence;
+          const goodWrite=dgFsWriteFile,oldDownload=dgDownloadViaAnchor;let fallback=0;
+          dgFsWriteFile=async(h,nome,blob)=>{arquivos.set(nome,new Blob(['different bytes']));};
+          dgDownloadViaAnchor=()=>{fallback++;};
+          const unverified=await exportFullBackup({quiet:true});
+          r.U={refused:unverified===null,status:JPWBackup.status().stage,
+            sequenceUnchanged:S.dataGovernance.export.lastSequence===seqBeforeUnknown,
+            fallback};
+          dgFsWriteFile=goodWrite;dgDownloadViaAnchor=oldDownload;
           // permissão expirada → diálogo explícito; Downloads é escolha EXPLÍCITA
           dgFsStatus = async () => ({state:'prompt', handle:fake});
           const pMeta = exportFullBackup();
@@ -152,7 +174,8 @@ def main():
         }""")
         assert pasta['C'] == {'dest': 'folder', 'seq': 4, 'escritos': 1, 'seqNoNome': True}
         assert pasta['D']['dialogo'] and pasta['D']['dest'] == 'downloads-exception' and pasta['D']['seq'] == 5
-        assert pasta['D']['aviso'] == 'Nenhum arquivo foi exportado para a pasta configurada.'
+        assert pasta['U'] == {'refused': True, 'status': 'UNKNOWN', 'sequenceUnchanged': True, 'fallback': 0}
+        assert pasta['D']['aviso'] == 'Nenhuma exportação completa foi confirmada na pasta configurada.'
         assert pasta['E'] == {'meta': None, 'seq': 5, 'overlaySumiu': True}
 
         # ---- 4b. reentrância: duplo clique NUNCA gera duas exportações --------------
@@ -170,14 +193,16 @@ def main():
           // (1) pré-condição consciente: pasta configurada por esta seção
           S.dataGovernance.storage = {configured:true, folderName:'Corrida',
             folderDisplayPath:'Corrida', configuredAt:new Date().toISOString()};
+          if(save()!==true)throw new Error('Fixture concorrente não confirmada');
           // (2) filesystem mockado como AUTORIZADO — (3) nenhum diálogo nativo é aberto
           const oS=dgFsStatus, oE=dgFsFileExists, oW=dgFsWriteFile;
-          const fake={name:'Corrida'}, escritos=[];
+          const arquivos=new Map(),fake={name:'Corrida',
+            getFileHandle:async nome=>({getFile:async()=>arquivos.get(nome)})}, escritos=[];
           // (4) awaits suficientes para as duas chamadas realmente se sobreporem
           const espera = ms => new Promise(r => setTimeout(r, ms));
           dgFsStatus     = async () => { await espera(15); return {state:'authorized', handle:fake}; };
           dgFsFileExists = async (h,n) => { await espera(15); return escritos.includes(n); };
-          dgFsWriteFile  = async (h,n) => { await espera(40); escritos.push(n); };
+          dgFsWriteFile  = async (h,n,blob) => { await espera(40); escritos.push(n);arquivos.set(n,blob); };
           try {
             const seqAntes = S.dataGovernance.export.lastSequence;
             // (5) duas solicitações concorrentes
@@ -212,7 +237,8 @@ def main():
         # a seção devolve o estado de armazenamento como o encontrou (desconfigurado),
         # para não vazar a fixture 'Corrida' para as seções seguintes
         page.evaluate("""() => { S.dataGovernance.storage =
-          {configured:false, folderName:'', folderDisplayPath:'', configuredAt:''}; }""")
+          {configured:false, folderName:'', folderDisplayPath:'', configuredAt:''};
+          if(save()!==true)throw new Error('Fixture de destino não confirmada'); }""")
 
         # ---- 4c. FAIL-04: autoidentificação e continuidade após restore -------------
         # O arquivo exportado precisa declarar A PRÓPRIA exportação. Antes, o payload era
@@ -222,7 +248,7 @@ def main():
         fail04 = page.evaluate("""async () => {
           const r = {};
           const capturado = [];
-          const oDl = dgDownloadViaAnchor;
+          const oDl = dgDownloadViaAnchor, oConfirm=window.confirm;
           // captura o conteúdo do arquivo em vez de baixá-lo (sem tocar em Downloads)
           // síncrono de propósito: exportFullBackup não aguarda esta chamada, então um
           // push dentro de microtask chegaria tarde demais para o teste ler
@@ -231,6 +257,8 @@ def main():
             // destino LIMPO: sem pasta, sem suporte a FS → nenhuma sondagem de colisão
             const oSup = dgFsSupported; dgFsSupported = () => false;
             S.dataGovernance.storage = {configured:false, folderName:'', folderDisplayPath:'', configuredAt:''};
+            S.storageRestoreProbe='saved export source';
+            if(save()!==true)throw new Error('Fixture FULL não confirmada');
             try {
               // T1 — identidade interna do arquivo
               const m1 = await exportFullBackup({quiet:true});
@@ -248,12 +276,18 @@ def main():
               // T2/T3 — restore em destino vazio, caminho Downloads (sem sondagem)
               const backupTxt = await ult().blob.text();
               const seqDoArquivo = m1.sequence;
+              S.storageRestoreProbe='changed after export';
+              if(save()!==true)throw new Error('Contraprova de restore não confirmada');
+              window.confirm=()=>true;
               const f = new File([backupTxt], m1.filename, {type:'application/json'});
               importFullBackupFile(f);
-              await new Promise(res => setTimeout(res, 700));
+              for(let i=0;i<100&&S.storageRestoreProbe!=='saved export source';i++)
+                await new Promise(res=>setTimeout(res,20));
               r.T2 = { restaurouSeq: S.dataGovernance.export.lastSequence,
                        esperado: seqDoArquivo,
-                       ok: S.dataGovernance.export.lastSequence === seqDoArquivo };
+                       ok: S.dataGovernance.export.lastSequence === seqDoArquivo
+                         && S.storageRestoreProbe==='saved export source'
+                         && JSON.parse(localStorage.getItem(LSKEY)).storageRestoreProbe==='saved export source' };
               dgFsSupported = () => false;   // boot() do import não altera isto, mas explicitamos
               S.dataGovernance.storage = {configured:false, folderName:'', folderDisplayPath:'', configuredAt:''};
               const m2 = await exportFullBackup({quiet:true});
@@ -286,7 +320,7 @@ def main():
               const mOk = await exportFullBackup({quiet:true});
               r.T4.retomouEmNmais1 = mOk.sequence === antes.seq + 1;
             } finally { dgFsSupported = oSup; }
-          } finally { dgDownloadViaAnchor = oDl; }
+          } finally { dgDownloadViaAnchor = oDl;window.confirm=oConfirm; }
           return r;
         }""")
         assert fail04['T1']['identidadeCoerente'], fail04['T1']          # I9
@@ -377,7 +411,7 @@ def main():
         # sessão seguinte com o mesmo perfil de navegador.
         contexto = browser.new_context(viewport=VIEWPORT, service_workers='block')
         page = prepare_page(contexto, url)
-        page.evaluate("async () => { window.__onbShown = true; closeModal(); await exportFullBackup(); }")
+        page.evaluate("async () => { window.__onbShown = true; closeModal(); if(save()!==true)throw new Error('Fixture não confirmada'); await exportFullBackup(); }")
         gravado = page.evaluate("""() => ({seq: S.dataGovernance.export.lastSequence,
           arq: S.dataGovernance.export.lastExportFile,
           log: S.dataGovernance.changeLog.length})""")
@@ -436,6 +470,8 @@ def main():
           const bruto = localStorage.getItem('jpwealth_v9_state');
           return {
             gravou,
+            resultado:jpWealthPersistenceLastResult(),
+            aviso:(document.getElementById('persistenceAlert')||{}).textContent||'',
             saldo: S.params.saldoIni,
             ressuscitou: !!(bruto && bruto.includes('123456')),
           };
@@ -447,17 +483,12 @@ def main():
         assert not remoto['ressuscitou'], (
             'a gravação da aba remota ressuscitou a base apagada — a exclusão não se propagou'
         )
+        assert remoto['resultado']['status']=='REFUSED' and remoto['resultado']['reason']=='CONFLICT', remoto
+        assert 'Outra aba atualizou a base' in remoto['aviso'], remoto
         assert_no_errors(aba1.jpwealth_observed)
-        # A recusa da guarda emite console.error ESPERADO neste cenário — allowlist
-        # NOMINAL da mensagem de conflito na ABA2 (é ela que grava sobre o disco que
-        # não reconhece), provando que a mensagem ocorreu; qualquer outro erro de
-        # console continua reprovando.
-        obs2 = aba2.jpwealth_observed
-        conflitos = [x for x in obs2['console'] if x[0] == 'error'
-                     and 'conflito de concorrência entre abas detectado no save()' in x[1]]
-        assert conflitos, 'a guarda deveria ter emitido a mensagem de conflito neste cenário'
-        assert_no_errors({'console': [x for x in obs2['console'] if x not in conflitos],
-                          'pageerror': obs2['pageerror']})
+        # O escritor tipado informa recusa+causa e aviso acessível, em vez de
+        # console.error histórico. Qualquer erro de console não previsto reprova.
+        assert_no_errors(aba2.jpwealth_observed)
         assert_fixture_requests(contexto)
         aba1.close(); aba2.close()
         contexto.close()

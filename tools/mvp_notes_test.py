@@ -325,6 +325,7 @@ try:
           window.confirm = () => false;
         }""")
         click_id(page, 'exportFullBackupBtn')
+        page.wait_for_function('window.__lastBlob instanceof Blob')
         exported = page.evaluate("window.__lastBlob.text()")
         payload = json.loads(exported)
         assert 'mvpNotes' in payload['state']
@@ -539,6 +540,7 @@ try:
           window.confirm = () => false;
         }""")
         click_id(page, 'exportFullBackupBtn')
+        page.wait_for_function('window.__foldersBlob instanceof Blob && !dgExportEmAndamento')
         exported_folders = page.evaluate("window.__foldersBlob.text()")
         payload_folders = json.loads(exported_folders)
         assert payload_folders['state']['mvpNotes']['folders'], 'backup deveria incluir as pastas'

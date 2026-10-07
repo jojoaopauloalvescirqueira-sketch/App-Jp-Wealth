@@ -134,6 +134,81 @@
       notionalConversionRate:item?.conversion?.baseToAccountRate??null,
       provenance:{...clone(scope),instrumentId:item?.id||null,contract:clone(item?.contract||null),conversion:clone(item?.conversion||null)}};
   }
+  // Read-only chronology of facts already recorded by JP Wealth. These local
+  // timestamps are not broker execution times and missing history is not inferred.
+  function operationRecords(input){
+    const scope={accountId:input.scope?.accountId||null,periodId:input.scope?.periodId||null,
+      currency:input.account?.currency||input.scope?.currency||null};
+    const out={scope,source:'JPW_LOCAL_RECORDS',coverage:'EMPTY',issues:[],operations:[]};
+    const instant=value=>text(value)&&Number.isFinite(Date.parse(value))?value:null;
+    if(!Object.values(scope).every(text)){out.coverage='UNAVAILABLE';out.issues.push('Conta, período e moeda precisam estar identificados.');return out;}
+    const matches=context=>context&&context.accountId===scope.accountId&&context.periodId===scope.periodId&&
+      (context.currency||context.accountInputs?.currency)===scope.currency;
+    const history=Array.isArray(input.operationHistory)?input.operationHistory:[];
+    if(input.operationHistoryAvailable===false)out.issues.push('Histórico local ausente ou incompatível; não foi reconstruído.');
+    const active=input.operation,operations=[];
+    if(active?.operationId){
+      if(matches(active.recordContext))operations.push({record:active,status:'ACTIVE',rows:input.rows||[]});
+      else out.issues.push('Identidade da operação ativa incompleta; seus eventos não foram atribuídos a este contexto.');
+    }
+    for(const record of history){
+      if(record?.accountId!==scope.accountId||record?.periodId!==scope.periodId)continue;
+      if(!text(record.operationId)||record.currency!==scope.currency||record.recordContext&&!matches(record.recordContext)||
+        record.schemaVersion!=null&&![1,2].includes(record.schemaVersion)){
+        out.issues.push('Há operação encerrada deste período sem identidade ou moeda conciliada.');continue;
+      }
+      operations.push({record,status:'CLOSED',rows:(record.ordersSnapshot||[]).map(order=>({order,pi:null,oi:null}))});
+    }
+    const ids=new Map();for(const item of operations)ids.set(item.record.operationId,(ids.get(item.record.operationId)||0)+1);
+    for(const {record,status,rows} of operations){
+      if(ids.get(record.operationId)!==1){out.issues.push('Identidade de operação duplicada; cronologia não apresentada.');continue;}
+      const op={operationId:record.operationId,status,source:'JPW_LOCAL_RECORDS',coverage:'RECORDED',issues:[],events:[]};
+      const add=event=>{op.events.push({...event,index:op.events.length});if(!event.at)op.issues.push('Há registro sem horário interpretável; sua posição temporal é desconhecida.');};
+      const createdAt=instant(record.openedAt);
+      if(createdAt)add({kind:'OPERATION_CREATED',at:createdAt,reason:null,orderId:null,version:null,
+        timeSource:record.openedAtSource==='manual_legacy'?'Abertura informada manualmente no legado':'Abertura registrada no JP Wealth',
+        before:null,after:{operationId:record.operationId,openedAt:record.openedAt,openedAtSource:record.openedAtSource||null,recordContext:clone(record.recordContext||null)},target:null});
+      else op.issues.push('Abertura local sem data registrada; não inferida a partir da primeira ordem.');
+      const orderIds=new Map();for(const row of rows){const id=row.order?.orderId;if(text(id))orderIds.set(id,(orderIds.get(id)||0)+1);}
+      for(const row of rows){
+        const order=row.order||row.o||{};
+        if(order.recordStatus==='draft')continue;
+        if(!matches(order)||order.operationId!==record.operationId||!text(order.orderId)||orderIds.get(order.orderId)!==1){
+          op.issues.push('Há ordem sem identidade inequívoca neste registro; suas revisões não foram atribuídas.');continue;
+        }
+        const revisions=Array.isArray(order.revisions)?order.revisions:[];
+        if(!revisions.length)op.issues.push('Há ordem sem versões locais preservadas; seu passado não foi reconstruído.');
+        const versions=new Map();for(const revision of revisions)versions.set(revision?.version,(versions.get(revision?.version)||0)+1);
+        for(const revision of revisions){
+          const after=revision?.after,before=revision?.before;
+          if(after?.recordStatus==='draft')continue;
+          if(!matches(revision?.context)||revision.context.operationId!==record.operationId||!matches(after)||
+            after.operationId!==record.operationId||after.orderId!==order.orderId||!Number.isInteger(revision.version)||
+            revision.version<1||versions.get(revision.version)!==1){
+            op.issues.push('Há revisão sem vínculo ou versão inequívoca; ela não foi atribuída à operação.');continue;
+          }
+          const priorFact=before?.recordStatus==='recorded'||before?.recordStatus==='voided';
+          const kind=after.recordStatus==='voided'?'ORDER_VOIDED':after.status==='Fechada'&&before?.status!=='Fechada'?
+            'ORDER_CLOSED':priorFact?'ORDER_REVISED':'ORDER_RECORDED';
+          add({kind,at:instant(revision.recordedAt),timeSource:'Horário do registro local',reason:text(revision.reason)||null,
+            orderId:order.orderId,label:text(after.id)||text(order.id)||null,instrument:text(after.par)||null,version:revision.version,
+            before:clone(before||null),after:clone(after),context:clone(revision.context),
+            target:status==='ACTIVE'&&Number.isInteger(row.pi)&&Number.isInteger(row.oi)?{pi:row.pi,oi:row.oi,orderId:order.orderId}:null});
+        }
+      }
+      if(status==='CLOSED')add({kind:'OPERATION_CLOSED',at:instant(record.closedAt),reason:text(record.reason)||text(record.finalizationReason)||null,
+        timeSource:record.closedAtSource==='formal_confirmation'?'Confirmação formal local':'Encerramento informado no registro',
+        orderId:null,version:null,before:null,after:clone(record),target:null});
+      op.events.sort((a,b)=>a.at&&b.at?Date.parse(a.at)-Date.parse(b.at)||a.index-b.index:a.at?-1:b.at?1:a.index-b.index);
+      op.issues=[...new Set(op.issues)];if(op.issues.length)op.coverage='PARTIAL';
+      out.operations.push(op);
+    }
+    out.issues=[...new Set(out.issues)];
+    out.operations.sort((a,b)=>a.status!==b.status?(a.status==='ACTIVE'?-1:1):
+      (Date.parse(b.events.filter(e=>e.at).at(-1)?.at)||0)-(Date.parse(a.events.filter(e=>e.at).at(-1)?.at)||0));
+    out.coverage=out.issues.length||out.operations.some(op=>op.coverage==='PARTIAL')?'PARTIAL':out.operations.length?'RECORDED':'EMPTY';
+    return out;
+  }
   function project(input){
     const scope=clone(input.scope||{}), account=clone(input.account||null),currency=account?.currency||scope.currency||null,si=account?.si;
     const book=input.accountRecord,bookBalance=book?.currency===currency&&finite(book?.satu)?book.satu:null;
@@ -226,7 +301,7 @@
     const accountPhase=normativeAccountScoped?engineMetric(normative.accountPhase):engineMetric(fx.engine.resolveAccountPhase({ddPercent:number(drawdown)}));
     const phaseLimit=accountPhase.status==='OK'?fx.policy.phases[accountPhase.value-1]?.maxLeverage:null;
     const equityFloor=scoped&&finite(si)&&si>0&&finite(account.netCashflow)&&(account.netCashflow===0||account.cashflowAdjustmentRecorded===true)?si*(1-fx.policy.get('P-03').value/100)+account.netCashflow:null;
-    const result={selection:clone(input.selection||{}),scope,account,accountRecord:clone(book||null),operation:clone(input.operation||null),
+    const result={operationRecords:operationRecords(input),selection:clone(input.selection||{}),scope,account,accountRecord:clone(book||null),operation:clone(input.operation||null),
       capital:{si:metric(finite(si)?si:contextPeriod?.si,'ACCOUNT_CURRENCY',currency),equity:metric(account?.equity,'ACCOUNT_CURRENCY',currency),nominal:metric(account?.capitalNominal,'ACCOUNT_CURRENCY',currency),
         book:metric(book?.currency===currency?book?.satu:null,'ACCOUNT_CURRENCY',currency,'Saldo book deste período; não é equity flutuante.'),
         floating:absent('Equity e saldo book não têm observação simultânea conciliada.',undefined,currency),
@@ -291,9 +366,11 @@
       bookSource:lastBookRow?{label:'Último fechamento contábil confirmado',referenceDate:lastBookRow.data,recordedAt:lastBookRow.updatedAt||lastBookRow.createdAt||null,ledgerId:lastBookRow.id||null}:
         {label:'Saldo inicial contábil do período',observedAt:contextPeriod?.observedAt||null,referenceDate:contextPeriod?.startedAt||null}}:null;
     const normative=account?fx.state.read({accountId,periodId}):null;
-    return project({scope,account,contextPeriod,accountRecord:safeRecord,operation:op?{operationId:op.operationId,policySnapshot:clone(op.policySnapshot||null)}:null,
+    return project({scope,account,contextPeriod,accountRecord:safeRecord,operation:op?clone(op):null,
+      operationHistory:source.operationHistory?.schemaVersion===1&&Array.isArray(source.operationHistory.records)?clone(source.operationHistory.records):[],
+      operationHistoryAvailable:source.operationHistory==null||source.operationHistory.schemaVersion===1&&Array.isArray(source.operationHistory.records),
       selection:{accountId,periodId,operationId:scope.operationId,accountIndex,reason,requiresSelection:!accountId,requiresObservation:!account,lockedToOperation:false,accounts},
       rows:allRows,phases:clone(phases),instruments:resolveConversions((source.instruments||[]).map(i=>prepareInstrument(i,account,scope)),account||{currency:contextPeriod?.currency||null}),normative,findings,supported:fx.state.supported()});
   }
-  fx.executionBoard=Object.freeze({read,project,closedNetResult,instrumentInputs,previewOrder:orderGeometry});
+  fx.executionBoard=Object.freeze({read,project,operationRecords,closedNetResult,instrumentInputs,previewOrder:orderGeometry});
 })(globalThis);

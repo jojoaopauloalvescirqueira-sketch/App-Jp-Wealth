@@ -1,0 +1,12 @@
+/* Scoped storage/evidence surfaces; no financial colour or layout override. */
+.jpw-storage-overview{padding:0 0 24px;border-bottom:1px solid var(--border,#d2d9e2);margin-bottom:24px}
+.jpw-storage-overview .jpw-storage-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:16px}
+.jpw-storage-overview dl{margin:0;padding:16px;border:1px solid var(--border,#d2d9e2);border-radius:8px;min-width:0}
+.jpw-storage-overview dt{margin-bottom:4px;font-weight:600}.jpw-storage-overview dd{margin:0 0 12px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.jpw-storage-overview p,.jpw-evidence-status p{max-width:72ch;line-height:1.5;overflow-wrap:anywhere}
+.jpw-evidence-panel{margin-top:24px;padding-top:16px;border-top:1px solid var(--border,#d2d9e2)}
+.jpw-evidence-panel label,.jpw-evidence-status label{display:grid;gap:8px;margin:12px 0}
+.jpw-storage-overview button,.jpw-evidence-status button,.jpw-evidence-status input,.jpw-evidence-panel input{min-height:44px;max-width:100%}
+.jpw-evidence-status{margin-top:12px}.jpw-evidence-status button{white-space:normal}.jpw-storage-overview input[type=file],.jpw-evidence-status input[type=file]{width:100%;min-width:0;overflow:hidden}
+.jpw-storage-overview :focus-visible,.jpw-evidence-status :focus-visible{outline:2px solid #2878d0;outline-offset:3px}
+@media(pointer:coarse){.jpw-storage-overview button,.jpw-evidence-status button{min-height:48px}}

@@ -318,4 +318,5 @@ function ncSaveStudy() {
 // Superfície pública consumida pelo controlador de views do Execution Board.
 window.JPWNocodaUI = { render: renderNocodaStudies, hasDrafts:()=>ncDirty,
   backupDraft:()=>ncDirty?{instrumentId:ncSelectedId,draft:structuredClone(ncDraft)}:null,
+  restoreDraft(value){ncSelectedId=value.instrumentId;ncDraft=structuredClone(value.draft);ncDirty=true;renderNocodaStudies();},
   resetDraft:()=>{ncDirty=false;ncDraft=null;ncSelectedId=null;} };

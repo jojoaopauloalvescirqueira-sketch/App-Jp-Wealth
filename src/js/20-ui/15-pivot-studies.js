@@ -808,4 +808,5 @@ function pvBind(root) {
 // Superfície pública consumida pelo controlador de views do Execution Board.
 window.JPWPivotsUI = { render: renderPivotStudies, hasDrafts:()=>pvDirty||pvNewStudyOpen,
   backupDraft:()=>pvDirty||pvNewStudyOpen?{instrumentId:pvInstrumentId,studyId:pvStudyId,editingId:pvEditingId,draft:structuredClone(pvDraft),newStudy:pvNewStudyOpen?structuredClone(pvNewStudyDraft):null}:null,
+  restoreDraft(value){pvInstrumentId=value.instrumentId;pvStudyId=value.studyId;pvEditingId=value.editingId;pvDraft=structuredClone(value.draft);pvDirty=!!value.draft;pvNewStudyOpen=!!value.newStudy;pvNewStudyDraft=structuredClone(value.newStudy||{periodStart:'',periodEnd:''});renderPivotStudies();},
   resetDraft:()=>{pvCloseForm();pvNewStudyOpen=false;pvNewStudyDraft={periodStart:'',periodEnd:''};} };

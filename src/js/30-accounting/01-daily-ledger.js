@@ -286,6 +286,7 @@ function renderAuditLog(){
 function exportAudit(){
   const contasSemSegredo=S.accounts.map(a=>({...a, investorPassword: a.investorPassword?'••• (removida da exportação)':''}));
   const payload={
+    tipo:'jpwealth_partial_audit',formatVersion:1,coverage:'PARTIAL_AUDIT',
     exportadoEm:new Date().toISOString(), versao:'V9.1',
     params:S.params, cycleRealizado:S.cycleRealizado, quarantine:S.quarantine,
     protocolBreaches:S.protocolBreaches, transitionLog:S.transitionLog,
@@ -321,42 +322,123 @@ function exportAudit(){
 // lido do disco na abertura; todos os outros usos mantêm o comportamento de sempre (S).
 // Mapa descritivo do contrato local. O documento inteiro continua sendo exportado;
 // a lista não limita módulos futuros nem transporta preferências/capacidades locais.
+const JPW_BACKUP_FORMAT_VERSION=2;
+const JPW_BACKUP_MAX_BYTES=32*1024*1024;
+let dgBackupLastStatus={stage:'IDLE',at:null,filename:null,reason:null};
+function dgBackupSetStatus(stage,fields={}){
+  dgBackupLastStatus={...dgBackupLastStatus,...fields,stage,at:new Date().toISOString()};
+  try{window.dispatchEvent(new CustomEvent('jpw-backup-status',{detail:{...dgBackupLastStatus}}));}catch(error){}
+  return {...dgBackupLastStatus};
+}
+function dgBackupCanonical(value){
+  if(Array.isArray(value))return '['+value.map(item=>dgBackupCanonical(item)).join(',')+']';
+  if(value&&typeof value==='object')return '{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+dgBackupCanonical(value[key])).join(',')+'}';
+  return JSON.stringify(value);
+}
+// Portable SHA-256, including file:// where crypto.subtle availability differs.
+// This checksum identifies bytes/content consistency; it does not authenticate an author.
+function dgBackupSha256(text){
+  const bytes=new TextEncoder().encode(text),length=bytes.length;
+  const data=new Uint8Array(Math.ceil((length+9)/64)*64);data.set(bytes);data[length]=128;
+  const view=new DataView(data.buffer),bits=length*8;
+  view.setUint32(data.length-8,Math.floor(bits/4294967296));view.setUint32(data.length-4,bits>>>0);
+  const h=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const k=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const rotr=(v,n)=>(v>>>n)|(v<<(32-n)),w=new Uint32Array(64);
+  for(let offset=0;offset<data.length;offset+=64){
+    for(let i=0;i<16;i++)w[i]=view.getUint32(offset+i*4);
+    for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];w[i]=(w[i-16]+(rotr(x,7)^rotr(x,18)^(x>>>3))+w[i-7]+(rotr(y,17)^rotr(y,19)^(y>>>10)))>>>0;}
+    let [a,b,c,d,e,f,g,vh]=h;
+    for(let i=0;i<64;i++){const t1=(vh+(rotr(e,6)^rotr(e,11)^rotr(e,25))+((e&f)^(~e&g))+k[i]+w[i])>>>0,t2=((rotr(a,2)^rotr(a,13)^rotr(a,22))+((a&b)^(a&c)^(b&c)))>>>0;vh=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;}
+    [a,b,c,d,e,f,g,vh].forEach((value,i)=>h[i]=(h[i]+value)>>>0);
+  }
+  return h.map(value=>value.toString(16).padStart(8,'0')).join('');
+}
 function dgBackupCoverage(state){
   return {
-    storage:'localStorage', key:LSKEY,
-    sections:Object.keys(state).sort(),
-    includedWorkspace:['perfil e foto','preferências visuais','navegação e widgets','Notas e Laboratório','rascunhos para revisão'],
-    excluded:['investorPassword','caches públicos',
-      'permissão/handle da pasta','controles de sessão entre abas','cópias brutas de recuperação',
-      'simulação em execução e arquivos originais de importação'],
+    storage:'localStorage',key:LSKEY,kind:'CONFIRMED_STATE_AND_SEPARATE_WORKSPACE',sections:Object.keys(state).sort(),
+    includedWorkspace:['perfil e foto','preferências visuais e fonte de notícias','navegação e widgets','Notas e Laboratório','rascunhos separados para revisão'],
+    excluded:['investorPassword','caches públicos','permissão/handle da pasta','controles de sessão entre abas','cópias brutas de recuperação','simulação em execução','originais: arquivo ZIP de evidências separado'],
   };
 }
-function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
-  const stateExport=structuredClone(estadoFonte||S);
-  // Incondicional (política de segredo): não existe mais variante de backup com senha.
-  if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
-  if(stateExport.onboarding) stateExport.onboarding.investorPassword='';
-  if(stateExport.dataGovernance && stateExport.dataGovernance.export){
-    stateExport.dataGovernance.export.lastSequence=seq;
-    stateExport.dataGovernance.export.lastExportFile=filename;
-    stateExport.dataGovernance.export.lastExportAt=exportadoEm;
+function dgBackupRedacted(value){return JSON.parse(JSON.stringify(value,(key,item)=>key==='investorPassword'?'':item));}
+function dgBackupConfirmedSnapshot(estadoFonte){
+  const raw=localStorage.getItem(LSKEY),known=jpWealthLastPersistedRawGet();
+  let state;
+  if(estadoFonte){
+    if(raw===null)throw new Error('Não há documento durável para conferir a referência explícita de exportação.');
+    state=dgBackupRedacted(estadoFonte);
+    if(dgBackupCanonical(state)!==dgBackupCanonical(dgBackupRedacted(JSON.parse(raw))))throw new Error('A referência de exportação não corresponde à base salva.');
+  }else if(raw!==known)throw new Error('A base salva mudou ou não foi conferida. Recarregue e confira antes de exportar.');
+  else if(raw!==null)state=JSON.parse(raw);
+  else throw new Error('Ainda não há base confirmada para exportar. Confirme o cadastro/salvamento ou use a recuperação bruta para preservar material não confirmado.');
+  if(!state||typeof state!=='object'||Array.isArray(state))throw new Error('Base confirmada incompatível; preserve a recuperação bruta.');
+  return dgBackupRedacted(state);
+}
+function dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte){
+  const stateExport=dgBackupConfirmedSnapshot(estadoFonte),workspace=jpwWorkspaceCapture({recoverAvailability:true});
+  const confirmed=dgBackupCanonical(stateExport),memory=dgBackupCanonical(dgBackupRedacted(S));
+  if(!estadoFonte&&memory!==confirmed){
+    const pending=JSON.stringify(dgBackupRedacted(S));
+    for(let offset=0;offset<pending.length;offset+=900000)workspace.drafts.push({
+      label:'Estado em memória não confirmado — somente leitura/cópia (parte '+(1+offset/900000)+')',
+      text:pending.slice(offset,offset+900000),provider:'unconfirmed-memory',version:1,
+      context:jpwWorkspaceDraftContext(),baseReference:dgBackupSha256(confirmed),
+    });
+    jpwWorkspaceValidate(workspace);
   }
-  const payload={
-    tipo:'jpwealth_full_backup',
-    versao:'V9.1',
-    localStorageKey:LSKEY,
-    exportadoEm,
-    dataLocal:todayISO(),
-    segredosIncluidos:false, // política de segredo: sempre sem senha
-    build:typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:null,
-    cobertura:dgBackupCoverage(stateExport),
-    state:stateExport,
-    workspace:jpwWorkspaceCapture({recoverAvailability:true}),
-  };
-  const blob=new Blob([JSON.stringify(payload,(key,value)=>key==='investorPassword'?'':value,2)],{type:'application/json'});
-  blob.workspaceFingerprint=JSON.stringify(payload.workspace);
+  if(stateExport.dataGovernance&&stateExport.dataGovernance.export){
+    stateExport.dataGovernance.export.lastSequence=seq;stateExport.dataGovernance.export.lastExportFile=filename;stateExport.dataGovernance.export.lastExportAt=exportadoEm;
+  }
+  const missing=Object.keys(DEFAULTS).filter(key=>!Object.prototype.hasOwnProperty.call(stateExport,key));
+  if(missing.length)throw new Error('A base salva é legada/incompleta para Backup Completo v2. Preserve a recuperação bruta e confira explicitamente as famílias ausentes: '+missing.join(', ')+'.');
+  const payload={tipo:'jpwealth_full_backup',formatVersion:JPW_BACKUP_FORMAT_VERSION,versao:'V9.1',localStorageKey:LSKEY,
+    exportId:crypto.randomUUID(),exportadoEm,dataLocal:todayISO(),segredosIncluidos:false,
+    build:typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:null,cobertura:dgBackupCoverage(stateExport),state:stateExport,workspace};
+  payload.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(payload))};
+  const text=JSON.stringify(payload,null,2),blob=new Blob([text],{type:'application/json'});
+  if(blob.size>JPW_BACKUP_MAX_BYTES)throw new Error('Backup excede o limite de 32 MiB; preserve a recuperação bruta e examine os dados.');
+  // Finalization compares the user workspace, not the additional RAM recovery copy.
+  blob.workspaceFingerprint=workspace.sourceFingerprint;blob.checksum=payload.integrity.checksum;
+  blob.fileChecksum=dgBackupSha256(text);blob.confirmedSourceFingerprint=dgBackupSha256(confirmed);
+  dgBackupSetStatus('GENERATED',{filename,checksum:blob.checksum,reason:null,localRecordConfirmed:false});
   return blob;
 }
+function dgBackupInspect(raw){
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error('JSON inválido: raiz precisa ser um objeto.');
+  if(raw.tipo==='jpwealth_partial_audit'||raw.tipo==='jpwealth_recovery_backup'||raw.coverage==='PARTIAL_AUDIT'||raw.contas||raw.legacyUnreconciled)throw new Error('Relatório parcial ou recuperação de emergência não é Backup Completo. Nenhum dado será substituído.');
+  jpwWorkspaceCheckTree(raw);
+  const envelope=Object.prototype.hasOwnProperty.call(raw,'state')||Object.prototype.hasOwnProperty.call(raw,'tipo'),state=envelope?raw.state:raw;
+  if(!state||typeof state!=='object'||Array.isArray(state))throw new Error('Backup sem objeto de estado.');
+  dgBackupValidateTypedContainers(state);
+  if(raw.formatVersion!==undefined){
+    if(raw.formatVersion!==JPW_BACKUP_FORMAT_VERSION||raw.tipo!=='jpwealth_full_backup')throw new Error('Versão de formato de Backup Completo incompatível.');
+    const missing=Object.keys(DEFAULTS).filter(key=>!Object.prototype.hasOwnProperty.call(state,key));
+    if(missing.length)throw new Error('Backup Completo v2 parcial: faltam famílias obrigatórias: '+missing.join(', ')+'. Nada será completado silenciosamente.');
+    if(!raw.integrity||raw.integrity.algorithm!=='SHA-256'||raw.integrity.canonicalization!=='JPW_SORTED_JSON_V1'||!/^[a-f0-9]{64}$/.test(raw.integrity.checksum||''))throw new Error('Checksum de Backup Completo ausente ou inválido.');
+    const body={...raw};delete body.integrity;
+    if(dgBackupSha256(dgBackupCanonical(body))!==raw.integrity.checksum)throw new Error('Integridade divergente: o checksum SHA-256 não confere.');
+    if(!raw.cobertura||raw.cobertura.kind!=='CONFIRMED_STATE_AND_SEPARATE_WORKSPACE'||dgBackupCanonical(raw.cobertura.sections)!==dgBackupCanonical(Object.keys(state).sort()))throw new Error('Cobertura do Backup Completo incompatível com o conteúdo.');
+    return {kind:'FULL_V2',legacy:false,sections:Object.keys(state).sort(),missing:[]};
+  }
+  // Legacy recognition is explicit and conservative. A bare params-only audit
+  // cannot acquire the missing families by running migrate/defaults.
+  const required=envelope?['params','ledger','phases']:['params','ledger','phases','accounts','instruments'];
+  if(required.some(key=>!Object.prototype.hasOwnProperty.call(state,key)))throw new Error('Arquivo parcial: faltam famílias essenciais de um backup legado completo. Use um Backup Completo identificado.');
+  const missing=Object.keys(DEFAULTS).filter(key=>!Object.prototype.hasOwnProperty.call(state,key));
+  return {kind:envelope?'LEGACY_FULL_ENVELOPE':'LEGACY_FULL_STATE',legacy:true,sections:Object.keys(state).sort(),missing};
+}
+function dgBackupValidateTypedContainers(state){
+  for(const [key,definition] of Object.entries(DEFAULTS)){
+    if(!Object.prototype.hasOwnProperty.call(state,key))continue;
+    if(Array.isArray(definition)){
+      if(!Array.isArray(state[key]))throw new Error('Backup com '+key+' inválido: esperava lista.');
+    }else if(definition!==null&&typeof definition==='object'){
+      if(state[key]===null||typeof state[key]!=='object'||Array.isArray(state[key]))throw new Error('Backup com '+key+' inválido: esperava objeto.');
+    }
+  }
+}
+window.JPWBackup=Object.freeze({status:()=>({...dgBackupLastStatus}),inspect:dgBackupInspect,sha256:dgBackupSha256,maxBytes:JPW_BACKUP_MAX_BYTES});
 // Download tradicional (fallback §15 e escolha excepcional §7). Padrão endurecido:
 // âncora no DOM e revogação adiada — revogar de forma síncrona após click() corta o
 // download em alguns navegadores.
@@ -371,13 +453,17 @@ function dgDownloadViaAnchor(filename,blob){
 // Sucesso confirmado → e SÓ então o estado avança (§8.2): sequência, carimbo, arquivo,
 // changeLog e gravação. Uma exportação que falhou não deixa rastro de sucesso.
 function dgRegisterExportSuccess(seq,filename,exportadoEm,destino){
-  return dgCommitGovernance('export',()=>{
-    S.dataGovernance.export.lastSequence=seq;
-    S.dataGovernance.export.lastExportAt=exportadoEm;
-    S.dataGovernance.export.lastExportFile=filename;
-    dgLogChange('database','exported',filename,
-      destino==='folder'?'Base exportada para a pasta padrão':'Download da base iniciado pelo navegador');
-  });
+  // Export metadata must never promote a refused or merely edited RAM mutation.
+  // Commit it on the verified document; retain the RAM draft independently.
+  const candidate=dgBackupConfirmedSnapshot();
+  if(!candidate.dataGovernance?.export)return false;
+  candidate.dataGovernance.export.lastSequence=seq;
+  candidate.dataGovernance.export.lastExportAt=exportadoEm;
+  candidate.dataGovernance.export.lastExportFile=filename;
+  dgLogChange('database','exported',filename,destino==='folder'?'Arquivo de backup conferido na pasta padrão':'Download do backup solicitado ao navegador',candidate);
+  const result=jpWealthPersistDocument(candidate,{component:'backup-export-metadata'});
+  if(result.status==='CONFIRMED'){S.dataGovernance=structuredClone(candidate.dataGovernance);return true;}
+  return false;
 }
 // UI e registro local são posteriores à entrega: falhar aqui não desfaz o arquivo.
 function dgFinishExport(meta,quiet){
@@ -385,7 +471,8 @@ function dgFinishExport(meta,quiet){
   try{ registered=dgRegisterExportSuccess(meta.sequence,meta.filename,meta.exportedAt,meta.destination==='folder'?'folder':'downloads'); }
   catch(e){}
   meta.localRecordConfirmed=registered===true;
-  const delivery=meta.destination==='folder'?'Arquivo gravado na pasta de exportação':'Download iniciado — confira se o navegador salvou o arquivo';
+  const delivery=meta.destination==='folder'?'Arquivo conferido na pasta de exportação':'Download solicitado — confira se o navegador salvou o arquivo';
+  dgBackupSetStatus(meta.destination==='folder'?'FILE_VERIFIED':'DOWNLOAD_REQUESTED',{filename:meta.filename,checksum:meta.checksum||null,localRecordConfirmed:registered===true});
   const warning=registered?'':'\n\nO registro local desta exportação não foi confirmado. Preserve o arquivo e verifique o armazenamento antes de tentar novamente.';
   if(!quiet || !registered) alert(delivery+':\n\n'+meta.filename+warning);
   // Renderizadores async também podem rejeitar; nunca viram erro de entrega.
@@ -405,6 +492,7 @@ function dgFinishExport(meta,quiet){
 // nome de arquivo: a segunda gravação sobrescrevia a primeira, violando o §8.3.
 // Serializar por recusa é a correção honesta: a segunda tentativa não exporta nada,
 // diz o porquê, e nenhum estado é tocado.
+function dgBackupUniqueFileName(seq,when){return dgExportFileName(seq,when).replace(/\.json$/,'_'+crypto.randomUUID()+'.json');}
 let dgExportEmAndamento=false;
 async function exportFullBackup(opts){
   const quiet=!!(opts&&opts.quiet);
@@ -415,7 +503,9 @@ async function exportFullBackup(opts){
   }
   dgExportEmAndamento=true;
   try{
-    return await dgExportFullBackupInner(quiet,estadoFonte);
+    const execute=()=>dgExportFullBackupInner(quiet,estadoFonte);
+    if(navigator.locks?.request)return await navigator.locks.request('jpwealth:full-backup-export',execute);
+    return await execute();
   }finally{
     dgExportEmAndamento=false;
   }
@@ -426,7 +516,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
     // é montado quando sequência e nome forem definitivos (autoidentificação, FAIL-04).
     const segredosIncluidos=false; // política de segredo: sem pergunta, sem variante com senha
     const exportadoEm=new Date().toISOString();
-    const baseSeq=(S.dataGovernance&&S.dataGovernance.export&&S.dataGovernance.export.lastSequence)||0;
+    const baseSeq=dgBackupConfirmedSnapshot(estadoFonte).dataGovernance?.export?.lastSequence||0;
     const supported=typeof dgFsSupported==='function' && dgFsSupported();
     const configured=!!(S.dataGovernance&&S.dataGovernance.storage&&S.dataGovernance.storage.configured);
     // Caminho tradicional: navegador sem suporte, ou pasta nunca configurada. Não é o
@@ -435,10 +525,10 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
     // " (1)" em colisão dentro de Downloads; nunca sobrescreve (comportamento nativo).
     if(!supported || !configured){
       const seq=baseSeq+1;
-      const filename=dgExportFileName(seq,new Date());
+      const filename=dgBackupUniqueFileName(seq,new Date());
       const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
       dgDownloadViaAnchor(filename,blob);
-      return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads',workspaceFingerprint:blob.workspaceFingerprint},quiet);
+      return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads',workspaceFingerprint:blob.workspaceFingerprint,checksum:blob.checksum},quiet);
     }
     // Pasta configurada: resolver acesso. Enquanto o operador não resolver (ou optar por
     // Downloads explicitamente), NENHUM arquivo é gerado.
@@ -447,29 +537,33 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
       if(state==='authorized'){
         // nome progressivo com proteção física de colisão (§8.3): nunca sobrescrever;
         // em colisão a sequência avança até nome livre (teto de 1000 é rede de segurança)
-        let seq=baseSeq+1, filename=dgExportFileName(seq,new Date());
-        let writeAttempted=false,workspaceFingerprint=null;
+        let seq=baseSeq+1, filename=dgBackupUniqueFileName(seq,new Date());
+        let writeAttempted=false,workspaceFingerprint=null,checksum=null;
         try{
           let guard=0;
           while(await dgFsFileExists(handle,filename)){
-            seq++; filename=dgExportFileName(seq,new Date());
+            seq++; filename=dgBackupUniqueFileName(seq,new Date());
             if(++guard>1000) throw new Error('Não foi possível encontrar um nome de arquivo livre na pasta.');
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
           const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
-          workspaceFingerprint=blob.workspaceFingerprint;
+          workspaceFingerprint=blob.workspaceFingerprint;checksum=blob.checksum;
           writeAttempted=true;
           await dgFsWriteFile(handle,filename,blob);
+          const readBack=await (await handle.getFileHandle(filename,{create:false})).getFile();
+          if(readBack.size!==blob.size||dgBackupSha256(await readBack.text())!==blob.fileChecksum)throw new Error('Arquivo da pasta não corresponde ao conteúdo gerado.');
+          dgBackupSetStatus('FILE_VERIFIED',{filename,checksum,reason:null});
         }catch(e){
           if(writeAttempted){
+            dgBackupSetStatus('UNKNOWN',{filename,reason:'Escrita de arquivo sem conferência.'});
             alert('Não foi possível confirmar a conclusão do arquivo '+filename+'. O resultado da escrita é desconhecido. Confira a pasta antes de uma nova tentativa; nenhum download alternativo foi iniciado.');
             return null;
           }
           state='invalid';
           continue;
         }
-        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder',workspaceFingerprint},quiet);
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder',workspaceFingerprint,checksum},quiet);
       }
       // prompt | denied | missing | invalid → decisão explícita do operador (§7).
       // O diálogo vive em 40-app/16-storage-governance.js; sem ele (geometria degenerada
@@ -482,20 +576,47 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
       const decision=await dgExportRecoveryDialog(state);
       if(decision==='downloads'){
         const seq=baseSeq+1;
-        const filename=dgExportFileName(seq,new Date());
+        const filename=dgBackupUniqueFileName(seq,new Date());
         const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
       dgDownloadViaAnchor(filename,blob);
-        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception',workspaceFingerprint:blob.workspaceFingerprint},quiet);
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception',workspaceFingerprint:blob.workspaceFingerprint,checksum:blob.checksum},quiet);
       }
       if(decision==='retry'){ ({state,handle}=await dgFsStatus()); continue; }
       return null; // cancelado — nada foi exportado e nada mudou
     }
   }catch(e){
+    dgBackupSetStatus('REFUSED',{reason:e?.message||'Exportação não concluída.'});
     alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nVerifique o destino e os avisos antes de repetir. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos e notas).');
     return null;
   }
 }
+function dgBackupPreserveCompatibleFields(original,normalized){
+  if(!original||!normalized||typeof original!=='object'||typeof normalized!=='object')return;
+  if(Array.isArray(original)){
+    if(!Array.isArray(normalized))return;
+    original.forEach((item,index)=>{
+      const identified=item&&typeof item==='object'&&item.id!==undefined;
+      const target=identified?normalized.find(other=>other&&other.id===item.id):normalized[index];
+      if(!identified&&item&&typeof item==='object'&&!Array.isArray(item)){
+        if(original.length!==normalized.length||!target||typeof target!=='object')return;
+        const identity=Object.keys(item).filter(key=>Object.prototype.hasOwnProperty.call(target,key)&&!(item[key]&&typeof item[key]==='object'));
+        if(!identity.length||identity.some(key=>item[key]!==target[key]))return;
+      }
+      dgBackupPreserveCompatibleFields(item,target);
+    });return;
+  }
+  if(Array.isArray(normalized))return;
+  // A migration across explicit schemas may deliberately retire fields. Unknown
+  // compatible extensions are preserved only within the same schema contract.
+  if(original.schemaVersion!==undefined&&normalized.schemaVersion!==undefined&&original.schemaVersion!==normalized.schemaVersion)return;
+  for(const [key,value]of Object.entries(original)){
+    if(['__proto__','prototype','constructor','investorPassword'].includes(key))continue;
+    if(!Object.prototype.hasOwnProperty.call(normalized,key))normalized[key]=structuredClone(value);
+    else dgBackupPreserveCompatibleFields(value,normalized[key]);
+  }
+}
 function normalizeImportedState(raw){
+  dgBackupInspect(raw);
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) throw new Error('JSON inválido: raiz precisa ser um objeto.');
   const envelope=Object.prototype.hasOwnProperty.call(raw,'state') || Object.prototype.hasOwnProperty.call(raw,'tipo');
   if(envelope){
@@ -506,9 +627,6 @@ function normalizeImportedState(raw){
   const candidate=envelope?raw.state:raw;
   if(!candidate || typeof candidate!=='object' || Array.isArray(candidate)) throw new Error('Backup sem objeto de estado.');
   if(!candidate.params || typeof candidate.params!=='object' || Array.isArray(candidate.params)) throw new Error('Backup com params inválido.');
-  if(candidate.ledger && !Array.isArray(candidate.ledger)) throw new Error('Backup com ledger inválido.');
-  if(candidate.ledgerArchive && !Array.isArray(candidate.ledgerArchive)) throw new Error('Backup com ledgerArchive inválido.');
-  if(candidate.phases && !Array.isArray(candidate.phases)) throw new Error('Backup com phases inválido.');
   // Agregados que os renderizadores percorrem com .map/.forEach SEM guarda de
   // forma em migrate(). Sem esta recusa, um backup com `checklist:{}` atravessava
   // validação e migração inteiras sem lançar, e a exceção só estourava em boot() —
@@ -518,10 +636,7 @@ function normalizeImportedState(raw){
   // de gravação, sem faixa de aviso) — o operador ficava com a tela em branco.
   // Recusar ANTES de tocar em qualquer coisa é o mesmo contrato transacional que
   // as quatro linhas acima já expressavam.
-  for(const chave of ['checklist','accounts','instruments','profiles','ledgerArchive','transitionLog']){
-    if(chave in candidate && candidate[chave]!=null && !Array.isArray(candidate[chave]))
-      throw new Error('Backup com '+chave+' inválido: esperava lista.');
-  }
+  dgBackupValidateTypedContainers(candidate);
   // `alladin` e CONTEINER (objeto), nao lista — e era a unica chave cujo formato
   // nao era recusado na porta. Um array, um escalar ou um null EXPLICITO
   // atravessavam a validacao inteira e so eram normalizados depois, trocando o
@@ -551,14 +666,16 @@ function normalizeImportedState(raw){
     // A restauração não recalcula um saldo global a partir da conta que a UI
     // estava mostrando. A identidade histórica do backup permanece intacta.
     imported=structuredClone(S);
-    if(workspace)imported.workspaceRecovery={schemaVersion:1,pending:true,snapshot:workspace};
+    dgBackupPreserveCompatibleFields(candidate,imported);
+    if(workspace)imported.workspaceRecovery={...(imported.workspaceRecovery||{}),schemaVersion:1,pending:true,snapshot:workspace};
   }finally{
     S=current;
   }
   return imported;
 }
 function importFullBackupFile(file){
-  if(!file) return;
+  if(!file)return;
+  if(!Number.isFinite(file.size)||file.size<2||file.size>JPW_BACKUP_MAX_BYTES){alert('Arquivo de backup fora do limite permitido (até 32 MiB). Nada foi lido ou alterado.');return;}
   // TRANSACIONAL: nenhum portão muda antes de o candidato estar lido, validado,
   // normalizado E confirmado. A versão anterior chamava resumeJPWealthPersistence()
   // já na entrada — antes do FileReader — e um arquivo inválido deixava o portão
@@ -570,9 +687,10 @@ function importFullBackupFile(file){
   const reader=new FileReader();
   reader.onload=()=>{
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
-    let imported;
+    let imported,inspection;
     try{
-      imported=normalizeImportedState(JSON.parse(String(reader.result||'')));
+      const parsed=JSON.parse(String(reader.result||''));inspection=dgBackupInspect(parsed);
+      imported=normalizeImportedState(parsed);
     }catch(e){
       // Falha ANTES da aplicação: estado, portões e modo de recuperação intactos.
       alert('Backup inválido: '+(e&&e.message?e.message:'não foi possível ler o JSON.')+'\n\nNada foi alterado: o estado atual e as proteções de gravação permanecem exatamente como estavam.');
@@ -592,7 +710,8 @@ function importFullBackupFile(file){
       const changes=Object.keys(names).filter(id=>!previousAvailability.valid||previousAvailability.states[id]!==nextAvailability.states[id]);
       availabilityMessage=changes.length?'\n\nDisponibilidade após restaurar:\n'+changes.map(id=>names[id]+': '+(previousAvailability.valid?label(previousAvailability.states[id]):'configuração incompatível')+' → '+label(nextAvailability.states[id])).join('\n')+'\nIsso pode descongelar acessos. Não autoriza desenvolvimento.':'';
     }
-    if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?'+availabilityMessage)) return;
+    const preview=inspection.legacy?'Backup legado sem checksum: '+inspection.kind+'.\nFamílias presentes: '+inspection.sections.join(', ')+'.\nFamílias ausentes desta versão: '+(inspection.missing.join(', ')||'nenhuma')+'.\nConfira este conteúdo: os dados ausentes não estão no arquivo; campos introduzidos em versões posteriores receberão a estrutura inicial identificada.':'Backup Completo v2: checksum SHA-256 conferido. Registros confirmados e rascunhos permanecem separados.';
+    if(!confirm(preview+'\n\nImportar e substituir o estado atual deste navegador?'+availabilityMessage))return;
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
     // ALD-C3-PRE-PERSISTENCE: a substituição da base inteira roda dentro do writer
     // lock cross-tab (mesma serialização da finalização e do wipe). O corpo nunca

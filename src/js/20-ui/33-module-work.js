@@ -157,12 +157,21 @@
       if(id==='alladin'&&root.JPWAlladinUI?.workState().pending)entries.push({kind:'alladin',state:root.JPWAlladinUI.workState()});
       for(const node of moduleModals(id)){const values=fields(node);if(values.length)entries.push({kind:node.id,fields:values});}
       const pending=pendingFields(id);if(pending.length)entries.push({kind:'campos não confirmados',fields:pending.map(field=>fields({querySelectorAll:()=>[field]})[0]).filter(Boolean)});
-      if(entries.length)result.push({label:names[id]+' — trabalho de interface preservado para conferência',text:JSON.stringify(entries)});
+      if(entries.length)result.push({label:names[id]+' — trabalho de interface preservado para conferência',provider:'module-work',version:1,context:{moduleId:id},baseReference:JSON.stringify(id==='research'?{nocoda:S.nocoda,pivotStudies:S.pivotStudies}:id==='alladin'?S.alladin:id==='personal-finance'?S.personalFinance:S.forex),text:JSON.stringify(entries)});
     }
     return result;
   }
   root.JPWModuleWork=Object.freeze({hasPending,suspend,resume,claimModal,isSuspended:id=>suspended.has(id)});
   jpwWorkspaceDraftProviders.set('module-work',drafts);
+  root.JPWWorkspaceDrafts.registerRestorer('module-work',{
+    inspect(item){try{
+      const entries=JSON.parse(item.text),supported=item.context?.moduleId==='research'&&Array.isArray(entries)&&entries.length>0&&entries.every(entry=>['nocoda','pivots'].includes(entry.kind)&&entry.draft);
+      return {compatible:supported&&available('research')&&!hasPending('research')&&item.baseReference===JSON.stringify({nocoda:S.nocoda,pivotStudies:S.pivotStudies}),reason:supported?'O estudo original deve corresponder, sem outra edição aberta.':'Este formulário permanece disponível para leitura e cópia; sua reconstrução automática não é segura.'};
+    }catch(_){return {compatible:false,reason:'Contexto do estudo incompatível.'};}},
+    reopen(item){if(typeof closeSettingsModal==='function')closeSettingsModal();if(root.JPWNavigation?.navigate('research-forex')===false)throw new Error('Navegação recusada.');
+      for(const entry of JSON.parse(item.text)){if(entry.kind==='nocoda')root.JPWNocodaUI.restoreDraft(entry.draft);else root.JPWPivotsUI.restoreDraft(entry.draft);}
+    }
+  });
   for(const [id,ids]of Object.entries(screens))for(const key of ids){const node=byId(key);if(node)bind(node,id);}
   refresh();
   // New modal/form nodes are observed locally; input events are not intercepted

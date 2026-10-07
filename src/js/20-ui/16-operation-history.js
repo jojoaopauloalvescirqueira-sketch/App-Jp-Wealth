@@ -19,32 +19,49 @@
 var histState = { instrument:'all', direction:'all', result:'all', query:'', selected:null,archiveScope:'' };
 
 function histScope(){
-  const [accountId,periodId]=String(histState.archiveScope||'').split('|');
-  const archived=S.forex?.accountContexts?.archivedAccounts?.[accountId];
-  const period=S.forex?.accountContexts?.accounts?.[accountId]?.periods?.[periodId];
-  return archived&&period?{accountId,periodId,archived:true}:JPWForex.state.operationalSelection();
+  const explicit=!!histState.archiveScope;
+  const parts=explicit?String(histState.archiveScope).split('|'):null;
+  const selected=explicit?{accountId:parts[0],periodId:parts[1]}:JPWForex.state.operationalSelection();
+  const found=(!explicit||parts.length===2)&&histScopeOptions().find(item=>
+    item.accountId===selected.accountId&&item.periodId===selected.periodId);
+  // Uma escolha antiga/indisponível não autoriza consultar outra conta.
+  return found?{...found,valid:true,explicit}:{...selected,valid:false,explicit};
 }
 function histScopeLabel(scope){
+  if(!scope.valid)return scope.explicit?'Consulta indisponível · '+String(histState.archiveScope):'Conta e período não selecionados';
   const account=(S.accounts||[]).find(a=>a.forexAccountId===scope.accountId)||S.forex?.accountContexts?.archivedAccounts?.[scope.accountId]?.record;
   const period=S.forex?.accountContexts?.accounts?.[scope.accountId]?.periods?.[scope.periodId];
-  return [account?.nome||scope.accountId||'Conta não selecionada',period?.startedAt||'Período não identificado'].join(' · ');
+  return [account?.nome||account?.apelido||scope.accountId,period?.startedAt||scope.periodId,
+    period?.currency||'Moeda não informada',...(scope.archived?['arquivada']:[])].join(' · ');
+}
+function histScopeOptions(){
+  const envelope=S.forex?.accountContexts,archived=envelope?.archivedAccounts||{};
+  const accounts=[...(S.accounts||[]).filter(a=>a?.forexAccountId).map(record=>({accountId:record.forexAccountId,record,archived:false})),
+    ...Object.entries(archived).map(([accountId,entry])=>({accountId,record:entry?.record,archived:true}))];
+  return accounts.filter((account,index,all)=>all.findIndex(item=>item.accountId===account.accountId)===index)
+    .flatMap(account=>Object.entries(envelope?.accounts?.[account.accountId]?.periods||{})
+      .filter(([,period])=>period&&typeof period==='object')
+      .map(([periodId,period])=>({accountId:account.accountId,periodId,archived:account.archived,
+        name:account.record?.nome||account.record?.apelido||account.accountId,startedAt:period.startedAt,currency:period.currency})));
+}
+function histScopeOptionsHTML(){
+  const items=histScopeOptions(),value=String(histState.archiveScope||'');
+  const option=(key,label)=>'<option value="'+esc(key)+'"'+(value===key?' selected':'')+'>'+esc(label)+'</option>';
+  const missing=value&&!items.some(item=>item.accountId+'|'+item.periodId===value);
+  return option('','Conta e período operacionais')+
+    (missing?option(value,'Consulta indisponível · '+value):'')+
+    items.map(item=>option(item.accountId+'|'+item.periodId,[item.name,item.startedAt||item.periodId,
+      item.currency||'Moeda não informada',item.archived?'arquivada':'ativa'].join(' · '))).join('');
 }
 function histArchivePicker(){
-  const envelope=S.forex?.accountContexts,archived=envelope?.archivedAccounts||{};
-  const items=Object.entries(archived).flatMap(([accountId,entry])=>
-    Object.keys(envelope.accounts?.[accountId]?.periods||{}).map(periodId=>({accountId,periodId,
-      name:entry.record?.nome||entry.record?.apelido||accountId,startedAt:envelope.accounts[accountId].periods[periodId].startedAt})));
-  if(!items.length)return '';
-  return '<label>Consulta histórica <select id="histArchiveScope"><option value="">Conta operacional selecionada</option>'+
-    items.map(({accountId,periodId,name,startedAt})=>'<option value="'+esc(accountId+'|'+periodId)+'"'+
-      (histState.archiveScope===accountId+'|'+periodId?' selected':'')+'>'+esc(name+' · '+(startedAt||'Data pendente')+' · arquivada')+'</option>').join('')+
-    '</select></label>';
+  return '<label class="hist-scope-picker">Consultar conta e período <select id="histArchiveScope" aria-describedby="histScopeNote">'+
+    histScopeOptionsHTML()+'</select></label>';
 }
 
 function histRecords(){
   const h = S.operationHistory;
   const selection=histScope();
-  if(!selection.accountId||!selection.periodId)return [];
+  if(!selection.valid)return [];
   return (h && Array.isArray(h.records)) ? h.records.filter(r=>{
     const captured=histCapturedContext(r);
     return !captured.identityConflict&&captured.accountId===selection.accountId&&
@@ -322,10 +339,24 @@ function histRepaintResults(){
   const alvoStats = root.querySelector('#histStats');
   const alvoTabela = root.querySelector('#histTabela');
   if (!alvoStats || !alvoTabela) { renderOperationHistory(); return; }
-  const filtrados = histFilter(histRecords());
+  const focused=document.activeElement;
+  const focusedRow=focused?.matches('.hist-row')?focused.dataset.histId:null;
+  const focusedCopy=focused?.matches('[data-operation-copy]')?focused.dataset.operationCopy:null;
+  const records=histRecords(),filtrados = histFilter(records),selection=histScope();
+  const empty=root.querySelector('#histEmptyMessage');
+  if(empty){
+    empty.hidden=records.length>0;
+    empty.textContent=selection.valid?'Sem operações finalizadas neste período da conta.':
+      selection.explicit?'A conta ou o período escolhido não está disponível. Escolha outra consulta; a conta operacional permanece inalterada.':
+        'Selecione uma conta e um período na consulta para ver suas operações finalizadas.';
+  }
+  alvoStats.hidden=!records.length;alvoTabela.hidden=!records.length;
   alvoStats.innerHTML = histStatsHTML(filtrados);
   alvoTabela.innerHTML = histTableHTML(filtrados);
   histBindRows(root);
+  const focusTarget=focusedRow?root.querySelector('[data-hist-id="'+CSS.escape(focusedRow)+'"]'):
+    focusedCopy?root.querySelector('[data-operation-copy="'+CSS.escape(focusedCopy)+'"]'):null;
+  if(focusTarget&&!root.closest('[hidden],[inert]'))focusTarget.focus({preventScroll:true});
 }
 
 // MONTAGEM do workspace. Roda ao entrar na visao; a partir dai filtro, busca e
@@ -333,65 +364,59 @@ function histRepaintResults(){
 function renderOperationHistory(){
   const root = document.getElementById('execHistory');
   if (!root) return;
-  const todos = histRecords();
-  const selection=histScope(),unresolved=histUnresolvedRecords(),archivePicker=histArchivePicker();
+  const selection=histScope(),unresolved=histUnresolvedRecords();
   const legacy=unresolved.length?'<details class="card"><summary>Legado não conciliado · '+unresolved.length+
     ' operação(ões)</summary><p>Sem conta/período comprovados; fora dos totais da conta selecionada.</p><ul>'+
     unresolved.map(r=>'<li>'+esc(r.operationId||'ID ausente')+' · '+esc(r.closedAt||'Data ausente')+
       ' · '+esc(r.instrument||'Instrumento ausente')+'</li>').join('')+'</ul></details>':'';
 
-  if (!todos.length) {
-    const hasContext=!!selection.accountId&&!!selection.periodId;
-    root.innerHTML = '<div class="card"><h2>Histórico · '+esc(histScopeLabel(selection))+'</h2>' +
-      '<p id="histEmptyMessage" class="hist-empty-message">'+(hasContext?'Sem operações finalizadas neste período da conta.':'Selecione uma conta e um período para consultar suas operações finalizadas.')+'</p>'+
-      '<p class="hist-empty-message">O histórico reúne operações finalizadas do JP Wealth. Ordens em andamento continuam na Operação.</p>'+
-      '<div class="eb-actions"><button type="button" data-hist-route="forex-operation">Ver Operação</button><button type="button" data-hist-route="forex-management-accounts">Escolher conta e período</button></div>'+archivePicker+'</div>'+legacy;
-    root.querySelectorAll('[data-hist-route]').forEach(button=>{button.onclick=()=>JPWNavigation.navigate(button.dataset.histRoute);});
-    const picker=document.getElementById('histArchiveScope');if(picker)picker.addEventListener('change',()=>{
-      histState.archiveScope=picker.value;renderOperationHistory();document.getElementById('histArchiveScope')?.focus();});
-    return;
+  // Monta uma vez: renderizações, troca de consulta e ausência de registros
+  // preservam os mesmos controles, inclusive busca, foco e seleção do texto.
+  if(!root.querySelector('#histArchiveScope')){
+    root.innerHTML='<div class="card hist-workspace"><h2 id="histHeading" data-route-focus></h2>'+
+      '<div class="hist-consultation">'+histArchivePicker()+'</div>'+
+      '<p class="hist-scope-note" id="histScopeNote" role="status">Consulta somente de leitura. A conta e o período operacionais não mudam.</p>'+
+      '<div class="hist-filters">'+
+      '<label>Instrumento <select id="histInstrument"></select></label>'+
+      '<label>Direção <select id="histDirection"><option value="all">Todas</option><option value="BUY">BUY</option><option value="SELL">SELL</option></select></label>'+
+      '<label>Resultado <select id="histResult"><option value="all">Todos</option><option value="Positiva">Positivas</option><option value="Negativa">Negativas</option><option value="Neutra">Neutras</option><option value="Não informado">Não informados</option></select></label>'+
+      '<label>Buscar <input type="search" id="histQuery" placeholder="id, instrumento ou ordem"></label></div>'+
+      '<p id="histEmptyMessage" class="hist-empty-message" role="status"></p>'+
+      '<div class="hist-stats" id="histStats"></div><div class="jp-table-scroll" id="histTabela"></div>'+
+      '<details class="hist-help"><summary>Sobre este histórico</summary><p class="hist-history-description">Operações Únicas finalizadas: os números descrevem fatos observados e não projetam desempenho futuro. Ordens em andamento continuam na Operação.</p></details></div>'+
+      '<div id="histLegacy"></div>';
+    const liga=(id,campo)=>root.querySelector('#'+id).addEventListener('change',event=>{
+      histState[campo]=event.target.value;histRepaintResults();
+    });
+    liga('histInstrument','instrument');liga('histDirection','direction');liga('histResult','result');
+    root.querySelector('#histArchiveScope').addEventListener('change',event=>{
+      histState.archiveScope=event.target.value;histState.selected=null;renderOperationHistory();
+    });
+    root.querySelector('#histQuery').addEventListener('input',event=>{
+      histState.query=event.target.value;histRepaintResults();
+    });
   }
-
-  const filtrados = histFilter(todos);
-  // A lista de instrumentos vem de TODOS os registros, nao dos filtrados: um
-  // filtro nao pode apagar a propria opcao que permitiria desfaze-lo.
-  const instrumentos = [...new Set(todos.map(r => String(r.instrument || '')).filter(Boolean))].sort();
-
-  const opcao = (v, rot, atual) =>
-    '<option value="' + esc(v) + '"' + (atual === v ? ' selected' : '') + '>' + esc(rot) + '</option>';
-
-  root.innerHTML = '<div class="card">' +
-    '<h2>Histórico · '+esc(histScopeLabel(selection))+'</h2>' +
-    '<p class="expl">Memória institucional das Operações Únicas finalizadas. Registro histórico é evidência: ' +
-    'os números descrevem o que foi observado e não projetam desempenho futuro.</p>' +
-    '<div class="hist-stats" id="histStats">' + histStatsHTML(filtrados) + '</div>' +
-    '<div class="hist-filters">' +archivePicker+
-    '<label>Instrumento <select id="histInstrument">' + opcao('all', 'Todos', histState.instrument) +
-      instrumentos.map(i => opcao(i, i, histState.instrument)).join('') + '</select></label>' +
-    '<label>Direção <select id="histDirection">' + opcao('all', 'Todas', histState.direction) +
-      opcao('BUY', 'BUY', histState.direction) + opcao('SELL', 'SELL', histState.direction) + '</select></label>' +
-    '<label>Resultado <select id="histResult">' + opcao('all', 'Todas', histState.result) +
-      opcao('Positiva', 'Positivas', histState.result) + opcao('Negativa', 'Negativas', histState.result) +
-      opcao('Neutra', 'Neutras', histState.result) + opcao('Não informado', 'Não informados', histState.result) + '</select></label>' +
-    '<label>Buscar <input type="search" id="histQuery" value="' + esc(histState.query) +
-      '" placeholder="id, instrumento ou ordem"></label>' +
-    '</div>' +
-    '<div class="jp-table-scroll" id="histTabela">' + histTableHTML(filtrados) + '</div></div>'+legacy;
-
-  // Filtros e seleção mudam APENAS estado de apresentação. Nenhum caminho deste
-  // arquivo chama save(), muta S ou toca a memória institucional.
-  const liga = (id, campo) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', () => { histState[campo] = el.value; histRepaintResults(); });
-  };
-  liga('histInstrument', 'instrument');
-  liga('histDirection', 'direction');
-  liga('histResult', 'result');
-  const picker=document.getElementById('histArchiveScope');if(picker)picker.addEventListener('change',()=>{
-    histState.archiveScope=picker.value;renderOperationHistory();document.getElementById('histArchiveScope')?.focus();});
-  const q = document.getElementById('histQuery');
-  if (q) q.addEventListener('input', () => { histState.query = q.value; histRepaintResults(); });
-  histBindRows(root);
+  const heading=root.querySelector('#histHeading');
+  heading.textContent='Histórico de operações · '+histScopeLabel(selection);
+  const picker=root.querySelector('#histArchiveScope'),options=histScopeOptionsHTML();
+  // Não recriar nem mesmo as options em uma renderização sem mudança.
+  if(picker.__histOptions!==options){picker.innerHTML=options;picker.__histOptions=options;}
+  picker.value=String(histState.archiveScope||'');
+  picker.setAttribute('aria-invalid',String(selection.explicit&&!selection.valid));
+  const instrumentos=[...new Set(histRecords().map(record=>String(record.instrument||'')).filter(Boolean))].sort();
+  const currentInstrument=histState.instrument;
+  const instrumentOptions='<option value="all">Todos</option>'+
+    (currentInstrument!=='all'&&!instrumentos.includes(currentInstrument)?'<option value="'+esc(currentInstrument)+'">'+esc(currentInstrument+' · fora deste período')+'</option>':'')+
+    instrumentos.map(value=>'<option value="'+esc(value)+'">'+esc(value)+'</option>').join('');
+  const instrument=root.querySelector('#histInstrument');
+  if(instrument.__histOptions!==instrumentOptions){instrument.innerHTML=instrumentOptions;instrument.__histOptions=instrumentOptions;}
+  [['histInstrument','instrument'],['histDirection','direction'],['histResult','result'],['histQuery','query']].forEach(([id,key])=>{
+    const control=root.querySelector('#'+id);
+    if(control.value!==histState[key])control.value=histState[key];
+  });
+  const legacyHost=root.querySelector('#histLegacy');
+  if(legacyHost.__histHTML!==legacy){legacyHost.innerHTML=legacy;legacyHost.__histHTML=legacy;}
+  histRepaintResults();
 }
 
 // Contrato dos workspaces montados sob demanda (20-ui/13-exec-views.js).

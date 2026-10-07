@@ -10,6 +10,56 @@
 
 let fbMonth = null;          // 'YYYY-MM' exibido; null = resolver para o corrente
 let fbPendingPromptShown = false; // flag de SESSÃO do modal de pendências (F) — nunca persiste
+const fbPendingFields=new Map();
+function fbFieldIdentity(input,month){
+  for(const [prefix,collection] of [['fi','incomes'],['fe','expenses'],['fa','allocations']]){
+    const field=input.dataset[prefix+'Campo'],id=input.dataset[prefix+'Id'];
+    if(field&&id)return {month,collection,id,field,selector:`[data-${prefix}-campo="${CSS.escape(field)}"][data-${prefix}-id="${CSS.escape(id)}"]`};
+  }
+  return null;
+}
+function fbFieldBase(context){
+  const record=S.personalFinance?.months?.[context.month]?.[context.collection]?.find(row=>row.id===context.id);
+  return record?JSON.stringify(record[context.field]??null):null;
+}
+function fbRecoveryContextValid(context){
+  const fields={incomes:['name','projectedAmount','receivedAmount'],expenses:['name','targetAmount','expectedAmount','executedCash','executedCard'],allocations:['label','amount']};
+  if(!context||!pfMonthKeyValid(context.month)||typeof context.id!=='string'||!context.id||!fields[context.collection]?.includes(context.field))return false;
+  const prefix={incomes:'fi',expenses:'fe',allocations:'fa'}[context.collection];
+  return context.selector===`[data-${prefix}-campo="${CSS.escape(context.field)}"][data-${prefix}-id="${CSS.escape(context.id)}"]`;
+}
+function fbRestorePending(root,month){
+  for(const input of root.querySelectorAll('[data-fi-campo],[data-fe-campo],[data-fa-campo]'))input.dataset.fbDraftOriginal=input.value;
+  for(const draft of fbPendingFields.values())if(draft.context.month===month&&fbFieldBase(draft.context)===draft.baseReference){
+    const input=root.querySelector(draft.context.selector);if(input&&!input.disabled)input.value=draft.text;
+  }
+  if(root.dataset.fbDraftBound)return;root.dataset.fbDraftBound='true';
+  root.addEventListener('input',event=>{
+    const input=event.target,context=fbFieldIdentity(input,fbCurrentKey());if(!context)return;
+    const key=JSON.stringify(context),before=fbPendingFields.get(key);
+    if(input.value===input.dataset.fbDraftOriginal){fbPendingFields.delete(key);return;}
+    fbPendingFields.set(key,{label:'Finanças Pessoais — '+context.field+' ('+context.month+')',provider:'personal-finance-field',version:1,context,baseReference:before?.baseReference??fbFieldBase(context),text:input.value});
+  });
+  root.addEventListener('change',event=>{
+    const context=fbFieldIdentity(event.target,fbCurrentKey());if(!context)return;
+    const key=JSON.stringify(context),draft=fbPendingFields.get(key);
+    // Existing field command is the sole writer. A confirmed change or an
+    // explicit field rollback removes only this draft, never other editors.
+    if(draft&&(fbFieldBase(context)!==draft.baseReference||event.target.value===event.target.dataset.fbDraftOriginal))fbPendingFields.delete(key);
+  });
+}
+jpwWorkspaceDraftProviders.set('personal-finance-field',(reset=false)=>{if(reset)fbPendingFields.clear();return [...fbPendingFields.values()].map(item=>({...item}));});
+window.JPWWorkspaceDrafts.registerRestorer('personal-finance-field',{
+  inspect(item){const c=item.context;return {compatible:fbRecoveryContextValid(c)&&fbFieldBase(c)!==null&&fbFieldBase(c)===item.baseReference&&!fbPendingFields.has(JSON.stringify(c)),reason:'O registro, campo e valor original devem corresponder; uma edição aberta não será substituída.'};},
+  reopen(item){
+    if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance'))throw new Error('Finanças Pessoais está congelado.');
+    if(typeof closeSettingsModal==='function')closeSettingsModal();
+    if(window.JPWNavigation?.navigate('personal-finance')===false)throw new Error('Resolva a navegação pendente antes de recuperar.');
+    fbPendingFields.set(JSON.stringify(item.context),structuredClone(item));fbMonth=item.context.month;
+    finpesSelectView('mensal');finpesBudgetRender();
+    document.querySelector('#finpesBudgetRoot '+item.context.selector)?.focus();
+  }
+});
 
 function fbCurrentKey(){
   if(!fbMonth || !pfMonthKeyValid(fbMonth)) fbMonth = pfCurrentMonthKey();
@@ -44,6 +94,7 @@ function finpesBudgetRender(){
   html += '<div class="cp-budget-support">'+allocations+notes+'</div>';
   root.innerHTML = html;
   fbBind(root, key, materializado, bloqueado);
+  fbRestorePending(root,key);
 }
 
 // ---- cabeçalho: ← MÊS ANO → · Hoje -----------------------------------------
@@ -86,8 +137,8 @@ function fbIncomesHTML(key, materializado, bloqueado){
     const m = S.personalFinance.months[key];
     linhas = (m.incomes||[]).map(i=>`<div class="fb-row" data-income="${esc(i.id)}">
       <label class="cp-field"><span class="cp-field-label">Descrição</span><input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fi-campo="name" data-fi-id="${esc(i.id)}">${i.ruleId?'<span class="fb-rule-mark" title="Receita recorrente (regra vigente)">Recorrente</span>':''}</label>
-      <label class="cp-field"><span class="cp-field-label">Projetado</span>${fbMoneyInput(i.projectedAmount,`data-fi-campo="projectedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</label>
-      <label class="cp-field"><span class="cp-field-label">Recebido</span>${fbMoneyInput(i.receivedAmount,`data-fi-campo="receivedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Projetado</span>${fbMoneyInput(i.projectedAmount,`data-fi-campo="projectedAmount" data-fi-id="${esc(i.id)}" data-fi-rule="${esc(i.ruleId||'')}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Recebido</span>${fbMoneyInput(i.receivedAmount,`data-fi-campo="receivedAmount" data-fi-id="${esc(i.id)}" data-fi-rule="${esc(i.ruleId||'')}"`, bloqueado)}</label>
       <span class="fb-actions"><select class="fb-status-sel" aria-label="Estado da receita" ${bloqueado?'disabled':''} data-fi-status="${esc(i.id)}">
         ${['PROJETADA','RECEBIDA','CANCELADA'].map(st=>`<option value="${st}" ${st===i.status?'selected':''}>${st}</option>`).join('')}
       </select>
@@ -269,11 +320,14 @@ function fbMaybePendingPrompt(){
 }
 
 // ---- binds ------------------------------------------------------------------
-function fbAtoUI(r){
+function fbAtoUI(r, inlineField){
   // resposta padrão a um ato: recusa vira alert (bloqueio de regra, não erro
   // de campo de modal) + re-render para o DOM voltar ao estado real.
   if(r && r.ok===false && r.erro) alert('⛔ ' + r.erro);
-  finpesBudgetRender();
+  if(inlineField){
+    const key=fbCurrentKey();
+    finpesScheduleInlineRefresh(document.getElementById('finpesBudgetRoot'),()=>{if(fbCurrentKey()===key)finpesBudgetRender();});
+  }else finpesBudgetRender();
 }
 function fbParseMoneyOr(inp){
   // vazio = null (não informado); inválido/negativo = undefined (recusado)
@@ -294,7 +348,7 @@ function fbBindItemField(inp, campoKey, idKey, updateField){
     else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
     const r = updateField(id, campo, valor);
     if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
-    fbAtoUI(r);
+    fbAtoUI(r, inp);
   });
 }
 function fbBind(root, key){
@@ -320,7 +374,7 @@ function fbBind(root, key){
       const campo = inp.dataset.fgCampo, ruleId = inp.dataset.fgRule;
       const valor = fbParseMoneyOr(inp);
       if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; }
-      fbAtoUI(pfActEditGhost(key, ruleId, campo, valor));   // materializa + aplica
+      fbAtoUI(pfActEditGhost(key, ruleId, campo, valor), inp);   // materializa + aplica
     });
   });
   root.querySelectorAll('[data-fi-status]').forEach(sel=>{
@@ -328,7 +382,7 @@ function fbBind(root, key){
     sel.addEventListener('change',()=>{
       const r = pfActSetIncomeStatus(key, sel.dataset.fiStatus, sel.value);
       if(r.ok===false){ sel.value = sel.dataset.prevval || 'PROJETADA'; }
-      fbAtoUI(r);
+      fbAtoUI(r, sel);
     });
   });
   root.querySelectorAll('[data-fi-del]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -367,7 +421,7 @@ function fbBind(root, key){
       }
       const r = pfActSetExpenseInstallments(key, id, parc);
       if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
-      fbAtoUI(r);
+      fbAtoUI(r, inp);
     });
   });
   root.querySelectorAll('[data-fe-status]').forEach(sel=>{
@@ -375,7 +429,7 @@ function fbBind(root, key){
     sel.addEventListener('change',()=>{
       const r = pfActSetExpenseStatus(key, sel.dataset.feStatus, sel.value);
       if(r.ok===false){ sel.value = sel.dataset.prevval || 'PENDENTE'; }
-      fbAtoUI(r);
+      fbAtoUI(r, sel);
     });
   });
   root.querySelectorAll('[data-fe-del]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -407,7 +461,7 @@ function fbBind(root, key){
       else { valor = fbParseMoneyOr(inp); if(valor===undefined || valor===null){ if(valor===null) alert('⛔ Destinação exige valor — vazio não vale.'); inp.value = inp.dataset.prevval ?? ''; if(valor===null) return; return; } }
       const r = pfActUpdateAllocationField(key, id, campo, valor);
       if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
-      fbAtoUI(r);
+      fbAtoUI(r, inp);
     });
   });
   root.querySelectorAll('[data-fa-del]').forEach(btn=>btn.addEventListener('click',()=>{

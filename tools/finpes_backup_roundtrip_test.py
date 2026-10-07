@@ -87,6 +87,8 @@ def main():
                 HTMLAnchorElement.prototype.click = function(){};
             }""")
             page_a.locator('#exportFullBackupBtn').click()
+            # Cooperative Web Locks export is async; wait for actual Blob delivery.
+            page_a.wait_for_function('()=>window.__pfBlob instanceof Blob')
             exportado = page_a.evaluate("window.__pfBlob.text()")
             payload = json.loads(exportado)
             if payload.get("tipo") != "jpwealth_full_backup":

@@ -599,31 +599,24 @@ function emptyJPWealthState(preservado){
 }
 // COMMIT DURÁVEL do estado finalizado (B1+B2, substitui persistNotesAfterSessionWipe).
 // Write-before-clear: o documento final SUBSTITUI a chave principal — nada foi
-// removido antes, então uma falha aqui deixa o documento ANTERIOR intacto no disco.
+// removido antes. Uma recusa comprovada preserva o documento anterior; uma possível
+// escrita sem conferência é UNKNOWN e impede novas gravações até revisão.
 // A escrita é verificada por read-back EXATO da string gravada; falha silenciosa
-// (quota, setItem no-op, eviction) vira {ok:false} explícito — jamais um catch vazio
+// (quota, setItem no-op, eviction) vira REFUSED ou UNKNOWN explícito — jamais um catch vazio
 // seguido de aviso de sucesso. Aplica a MESMA política de segredo do save(): a senha
 // de investidor nunca vai ao armazenamento. Sucesso declara a forma nova à guarda de
 // concorrência (jpWealthAdoptPersistedRaw) para os fluxos seguintes desta aba.
-function sessionCommitFinalizedState(estado){
-  // Guarda A-005: escrita direta na chave principal jamais pode rodar em modo de
-  // recuperação — regravaria o banco problemático com o estado provisório.
-  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
-    return { ok:false, erro:new Error('banco em modo de recuperação — gravação direta recusada') };
-  }
-  let payload;
-  try{ payload=JSON.stringify(estado,(k,v)=>k==='investorPassword'?'':v); }
-  catch(e){ return { ok:false, erro:e }; }
-  try{ localStorage.setItem(LSKEY,payload); }
-  catch(e){ return { ok:false, erro:e }; }
-  let lido=null;
-  try{ lido=localStorage.getItem(LSKEY); }
-  catch(e){ return { ok:false, erro:e }; }
-  if(lido!==payload){
-    return { ok:false, erro:new Error('a releitura do documento gravado divergiu da escrita') };
-  }
-  if(typeof jpWealthAdoptPersistedRaw==='function') jpWealthAdoptPersistedRaw(payload);
-  return { ok:true, payload };
+function sessionFinalizationRecoveryJournal(previous,drafts){
+  const compatible=previous&&typeof previous==='object'&&!Array.isArray(previous)?previous:{};
+  const journal={...compatible,schemaVersion:1,pending:false,drafts};
+  // The restoration snapshot is no longer pending; compatible extensions survive.
+  delete journal.snapshot;
+  return journal;
+}
+function sessionCommitFinalizedState(estado,expectedRaw=jpWealthLastPersistedRawGet()){
+  // The flow deliberately holds the generic gate; recovery/unknown remain barred.
+  // This raw is revalidated inside the lock; the tab may have an older adopted revision.
+  return jpWealthPersistDocument(estado,{component:'session-finalization',allowBlocked:true,silent:true,expectedRaw});
 }
 function showSessionNotice(message){
   const el=$('sessionNotice'); if(!el) return;
@@ -691,12 +684,15 @@ function sessionExportError(error){
 }
 function renderSessionExportConfirmation(){
   const meta=sessionFinalizeExportMeta;
-  sessionModal('<h3>Exportação iniciada</h3>'+
-    '<p class="modal-sub">O backup completo foi preparado com a política existente de senhas de investidor.</p>'+
+  const verified=meta.destination==='folder';
+  const outcome=window.JPWBackup?.status?.();
+  sessionModal('<h3>Exportação iniciada · '+(verified?'arquivo conferido':'download solicitado')+'</h3>'+
+    '<p class="modal-sub">O backup reúne os fatos confirmados e mantém os rascunhos separados. Senhas de investidor não foram incluídas.</p>'+
+    (outcome?.localRecordConfirmed===false?'<p class="session-warning">O registro local desta exportação não foi confirmado. Isso não confirma nem desfaz a entrega do arquivo.</p>':'')+
     '<div class="session-export-facts"><div><span>Arquivo</span><code>'+esc(meta.filename)+'</code></div>'+
     '<div><span>Data e hora</span><b>'+esc(sessionFormatExportDate(meta.exportedAt))+'</b></div></div>'+
-    '<p class="session-warning">O navegador não consegue verificar fisicamente se o arquivo foi guardado. Localize o arquivo antes de continuar.</p>'+
-    '<label class="session-check-row"><input type="checkbox" id="sessionExportAcknowledged" '+(sessionFinalizeExportAcknowledged?'checked':'')+'> <span>Confirmo que o download foi concluído e que localizei o arquivo de backup.</span></label>'+
+    '<p class="session-warning">'+(verified?'O conteúdo do arquivo foi conferido na pasta. Mantenha uma cópia externa e localize o arquivo antes de continuar.':'O navegador solicitou o download, mas não confirma que ele foi guardado. Localize o arquivo antes de continuar.')+'</p>'+
+    '<label class="session-check-row"><input type="checkbox" id="sessionExportAcknowledged" '+(sessionFinalizeExportAcknowledged?'checked':'')+'> <span>Confirmo que localizei e conferi o arquivo de backup.</span></label>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionExportContinue" '+(sessionFinalizeExportAcknowledged?'':'disabled')+'>Continuar</button></div>');
   sessionCancelBinding();
   $('sessionExportAcknowledged').addEventListener('change',e=>{
@@ -727,7 +723,7 @@ async function beginSessionExport(){
     if(!meta) throw new Error('A exportação não foi confirmada. Verifique o aviso e o destino antes de tentar novamente. O encerramento não foi autorizado por esta tentativa.');
     if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
     if(jpWealthPersistenceOutcomeIsUnknown()) throw new Error('A gravação local tem resultado desconhecido. Preserve o arquivo e verifique a recuperação antes de encerrar.');
-    if(meta.workspaceFingerprint&&meta.workspaceFingerprint!==JSON.stringify(jpwWorkspaceCapture()))throw new Error('As preferências ou os rascunhos mudaram durante a exportação. Exporte uma nova cópia antes de encerrar.');
+    if(meta.workspaceFingerprint&&meta.workspaceFingerprint!==jpwWorkspaceFingerprint())throw new Error('As preferências ou os rascunhos mudaram durante a exportação. Exporte uma nova cópia antes de encerrar.');
     sessionFinalizeExportMeta=meta;
     sessionFinalizeExportFingerprint=sessionStateFingerprint();
     sessionFinalizeExportAcknowledged=false;
@@ -802,7 +798,7 @@ function openFinalizeSessionFlow(){
   // do broadcast. Não existe degradação para "finaliza só nesta aba".
   const preservado=sessionReadStable({ausenteAborta:false});
   if(!preservado.ok){ renderSessionPreservationError(preservado.erro); return; }
-  try{sessionPreservedWorkspaceFingerprint=JSON.stringify(jpwWorkspaceCapture());}catch(error){sessionPreservedWorkspaceFingerprint=null;}
+  try{sessionPreservedWorkspaceFingerprint=jpwWorkspaceFingerprint();}catch(error){sessionPreservedWorkspaceFingerprint=null;}
   sessionPreservedAlladin=preservado.valor;
   sessionPreservedEpoch=preservado.epoch;
   sessionPreservedRaw=(preservado.raw===undefined)?null:preservado.raw;
@@ -843,7 +839,7 @@ async function finalizeJPWealthSession(){
     renderSessionPreservationError(new Error('a preservação não foi capturada na abertura do fluxo'));
     return;
   }
-  let bloqueou=false, concluiu=false;
+  let bloqueou=false, concluiu=false, commitResult=null;
   try{
     await sessionAcquireWriteLock(async ()=>{
       // REVALIDAÇÃO DA REVISÃO dentro do lock — é isto que mata o TOCTOU: se outra
@@ -885,13 +881,13 @@ async function finalizeJPWealthSession(){
       blockJPWealthPersistence(); bloqueou=true;
       const workspace=jpwWorkspaceCapture();
       const expectedWorkspace=sessionFinalizeExportMeta?.workspaceFingerprint||sessionPreservedWorkspaceFingerprint;
-      if(expectedWorkspace&&expectedWorkspace!==JSON.stringify(workspace)){
+      if(expectedWorkspace&&expectedWorkspace!==jpwWorkspaceFingerprint()){
         sessionExportError(new Error('As preferências ou os rascunhos mudaram. Exporte uma nova cópia antes de encerrar.'));return;
       }
       const novoEstado=emptyJPWealthState(longitudinal);
-      novoEstado.workspaceRecovery={schemaVersion:1,pending:false,drafts:workspace.drafts};
-      const commit=sessionCommitFinalizedState(novoEstado);
-      if(!commit.ok){ renderSessionCommitError(commit.erro); return; }
+      novoEstado.workspaceRecovery=sessionFinalizationRecoveryJournal(novoEstado.workspaceRecovery,workspace.drafts);
+      const commit=commitResult=sessionCommitFinalizedState(novoEstado,atualRaw);
+      if(!commit.ok){ renderSessionCommitError(commit.erro,commit); return; }
       S=novoEstado;
       sessionResetAuxiliarySurfaces();
       jpwWorkspaceEdited.clear();
@@ -919,7 +915,7 @@ async function finalizeJPWealthSession(){
       showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
     });
   }catch(error){
-    renderSessionCommitError(error);
+    renderSessionCommitError(error,commitResult);
   }finally{
     if(bloqueou && !concluiu) resumeJPWealthPersistence();
   }
@@ -931,11 +927,13 @@ function renderSessionBaseChangedError(){
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Entendi</button></div>');
   sessionCancelBinding();
 }
-function renderSessionCommitError(error){
-  sessionModal('<h3>Não foi possível finalizar a sessão</h3>'+
-    '<p class="modal-sub">Nada foi apagado. O estado final não pôde ser gravado com confirmação neste navegador, então o encerramento foi interrompido com a base anterior intacta.</p>'+
-    '<div class="session-error" role="alert">Falha ao gravar o estado final: '+esc((error&&error.message)||'erro não identificado')+'</div>'+
-    '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
+function renderSessionCommitError(error,result){
+  const confirmed=result?.status==='CONFIRMED';
+  const unknown=result?.status==='UNKNOWN'||error?.persistenceResult?.status==='UNKNOWN'||jpWealthPersistenceOutcomeIsUnknown();
+  sessionModal('<h3>'+ (confirmed?'Finalização gravada · interface pendente':unknown?'Resultado da finalização desconhecido':'Não foi possível finalizar a sessão')+'</h3>'+
+    '<p class="modal-sub">'+(confirmed?'O estado final foi gravado e conferido. A interface não concluiu sua atualização; recarregue para consultar o documento confirmado.':unknown?'O navegador pode ter gravado o estado final, mas a conferência não foi concluída. Novas gravações estão bloqueadas. Preserve uma cópia de recuperação e confira a base antes de repetir.':'A escrita do estado final foi recusada antes de qualquer mudança confirmada. O encerramento não foi aplicado.')+'</p>'+
+    '<div class="session-error" role="alert">'+esc((error&&error.message)||result?.reason||'erro não identificado')+'</div>'+
+    '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">'+(unknown?'Entendi':'Cancelar')+'</button></div>');
   sessionCancelBinding();
 }
 function bindFinalizeSession(){

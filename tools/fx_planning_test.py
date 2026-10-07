@@ -399,24 +399,28 @@ def run_state_cases(browser, url):
         const dup = st.fxPlanCreate({name:'Segundo', assumptions:{
             startMonth:'2026-01', horizonMonths:12, initialBalanceUsd:1,
             defaultMonthlyReturn:0}});
-        const outOfOrder = st.fxPlanRecordActual('2026-03', {inputType:'rate', returnRate:0.01});
-        const close = st.fxPlanRecordActual('2026-01', {inputType:'rate', returnRate:0.01});
+        const outOfOrder = st.fxPlanRecordActual('2026-03', {inputType:'rate', returnRate:0.01, contributionsConfirmed:true});
         const contrib = st.fxPlanAddContribution({month:'2026-01', source:'personal',
             originalCurrency:'BRL', originalAmount:500, acquisitionFxRate:5.00});
+        const close = st.fxPlanRecordActual('2026-01', {inputType:'rate', returnRate:0.01, contributionsConfirmed:true});
+        const lockedEdit = st.fxPlanRecordActual('2026-01', {inputType:'usd', profitUsd:20, contributionsConfirmed:true});
+        const lockedDeposit = st.fxPlanAddContribution({month:'2026-01', source:'personal',
+            originalCurrency:'USD', originalAmount:100});
         // campos desconhecidos plantados direto no estado persistido
         S.fxPlanning.plan.customField = 'preservar';
         S.fxPlanning.plan.actuals['2026-01'].extensaoFutura = 'preservar-2';
         save();
         return {first: first.ok, dup: dup.errors || [], outOfOrder: outOfOrder.errors || [],
-                close: close.ok, contrib: contrib.ok};
+                close: close.ok, contrib: contrib.ok, lockedEdit:lockedEdit.ok, lockedDeposit:lockedDeposit.ok};
     }"""
     )
     assert created["first"], "criação do plano falhou"
     assert created["dup"], "segundo plano deveria ser recusado no MVP"
-    assert any("contíguos" in e for e in created["outOfOrder"]), (
+    assert any("2026-01" in e and "cronolog" in e for e in created["outOfOrder"]), (
         f"fechamento fora de ordem deveria falhar: {created['outOfOrder']}"
     )
     assert created["close"] and created["contrib"], "fechamento/aporte válidos falharam"
+    assert not created["lockedEdit"] and not created["lockedDeposit"], "finalizado deve proteger realizado e depósitos"
 
     page.reload()
     page.wait_for_function("() => window.JPWFx && window.JPWFx.state")
@@ -440,7 +444,7 @@ def run_state_cases(browser, url):
     assert after["lastClosed"] == "2026-01" and after["nextOpen"] == "2026-02", "meses após reload"
     assert after["custom"] == "preservar", "campo desconhecido do plano foi perdido"
     assert after["extensao"] == "preservar-2", "campo desconhecido do realizado foi perdido"
-    for expected_event in ("FX_PLAN_CREATED", "FX_MONTH_ACTUAL_RECORDED", "FX_CONTRIBUTION_RECORDED"):
+    for expected_event in ("FX_PLAN_CREATED", "FX_MONTH_FINALIZED", "FX_CONTRIBUTION_RECORDED"):
         assert expected_event in after["auditTypes"], f"auditoria sem {expected_event}"
     assert after["dgTouched"], "mutações FX devem marcar o changeLog da governança de backup"
     assert_close(after["avgFx"], 5.00, label="custo médio após reload")
@@ -488,10 +492,10 @@ def run_state_cases(browser, url):
 
 def run_ui_flow(browser, url):
     # NAV2-F/G: Planejamento é filho Forex. A rota canônica sempre entra em
-    # overview; o alias físico `fxplan` preserva a visão corrente.
+    # Tabela mensal; o alias físico `fxplan` preserva a visão corrente.
     context, page, observed = prepare_page(browser, url)
     assert page.evaluate("() => JPWNavigation.navigate('forex-planning')") is True
-    assert page.evaluate("() => JPWFx.ui.getView()") == "overview"
+    assert page.evaluate("() => JPWFx.ui.getView()") == "table"
     page.wait_for_selector("#fxpCreateBtn")
 
     # No estado vazio trocar visão é intenção visual, não criação de plano.
@@ -558,14 +562,15 @@ def run_ui_flow(browser, url):
 
     page.evaluate("() => JPWFx.ui.selectView('actuals')")
     page.wait_for_selector("#fxpActBtn")
-    page.fill("#fxpActValue", "-0,70")
-    page.click("#fxpActBtn")
-    page.wait_for_selector('#fxpActMonth option[value="2026-02"]', state="attached")
     page.fill("#fxpCMonth", "2026-01")
     page.fill("#fxpCAmount", "540")
     page.fill("#fxpCRate", "5,40")
     page.click("#fxpCBtn")
     page.wait_for_selector('button[data-fxp-del]')
+    page.fill("#fxpActValue", "-0,70")
+    page.check("#fxpActConfirmed")
+    page.click("#fxpActBtn")
+    page.wait_for_selector('#fxpActMonth option[value="2026-02"]', state="attached")
 
     page.evaluate("() => JPWFx.ui.selectView('overview')")
     page.wait_for_selector("#fxpMainChart svg")
@@ -575,6 +580,7 @@ def run_ui_flow(browser, url):
     assert "R$ 5,4000" in body_text, "câmbio médio de aquisição ausente na visão geral"
 
     page.evaluate("() => JPWFx.ui.selectView('table')")
+    page.click('.fxp-month-audit > summary')
     page.wait_for_selector(".fxp-tablewrap .fxp-badge-real")
     table_text = page.text_content("#fxPlanningRoot")
     assert "BASELINE" in table_text and "VIGENTE" in table_text, "tabela sem separação baseline/vigente"

@@ -15,36 +15,46 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INPUTS = ["src/js/00-core/00-forex-policy.js", "src/js/10-domain/00-forex-engine.js", "src/js/10-domain/02-risk-calculations.js", "src/js/10-domain/01-risk-instruments.js"]
+INPUTS = [
+    "src/js/00-core/00-forex-policy.js",
+    "src/js/10-domain/00-forex-engine.js",
+    "src/js/00-core/01-risk-profiles.js",
+    "src/js/10-domain/01-risk-instruments.js",
+    "src/js/10-domain/00-forex-state.js",
+    "src/js/10-domain/02-risk-calculations.js",
+    "src/js/10-domain/18-execution-board-model.js"
+]
 PROBE = r"""
 'use strict';
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const sandbox={structuredClone,QUOTE_CCY:{EURUSD:'USD'},quoteToUSD:()=>1,usdPerBase:()=>1,
- instFor:()=>({name:'EURUSD',cpl:100000}),quarantineActive:()=>false};vm.createContext(sandbox);
-const files=process.argv.slice(1);for(const name of files.slice(0,2))vm.runInContext(fs.readFileSync(name,'utf8'),sandbox,{filename:name});
-const fx=sandbox.JPWForex;fx.state={supported:()=>sandbox.isSupported,recordContext:function(target){
- if(arguments.length&&(!target||!target.accountId||!target.periodId))return {accountId:null,periodId:null,accountInputs:null,marketInputs:null};
- const f=sandbox.S.forex,id=target?target.accountId:f.activeAccountId,a=f.accounts[id];
- const account=a&&(!target||a.periodId===target.periodId)?a:null;
- return {accountId:account?id:null,periodId:account?account.periodId:null,accountInputs:account,marketInputs:null};},
- instrumentContext:function(target){
-  const record=sandbox.S.forex.instrumentContexts.records.find(r=>target&&r.accountId===target.accountId&&r.periodId===target.periodId&&r.instrumentId===target.instrumentId&&(!target.currency||r.currency===target.currency));
-  return sandbox.isSupported&&record?{status:'OK',value:structuredClone(record),observation:structuredClone(record),revision:record.revision,findings:[]}:{status:'NOT_COMPUTABLE',value:null,findings:[]};},
- dailyReference:()=>({status:'NOT_COMPUTABLE',value:null,findings:[]})};
-vm.runInContext(fs.readFileSync(files[2],'utf8'),sandbox,{filename:files[2]});
-vm.runInContext(fs.readFileSync(files[3],'utf8'),sandbox,{filename:files[3]});
-const rows=[];function test(name,fn){try{reset();fn();rows.push({name,result:'PASS'});}catch(error){rows.push({name,result:'PRODUCT_FAIL',error:String(error.stack||error)});}}
-function instrumentObservation(accountId,periodId,currency,rate){return {id:'synthetic-'+accountId,accountId,periodId,currency,instrumentId:'EURUSD',revision:1,
+// Only host dependencies are doubles. State, conversions, policy and arithmetic
+// are the production implementations; a write during any case is an error.
+const sandbox={structuredClone,crypto:require('crypto').webcrypto,quarantineActive:()=>false,
+ emptyOrders:n=>Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:null,status:''})),
+ jpWealthPersistenceEpoch:()=>1,jpWealthPersistenceOutcomeIsUnknown:()=>sandbox.__unknown,addEventListener:()=>{},save:()=>{sandbox.__writes++;throw Error('Read-only test attempted persistence');}};
+sandbox.__writes=0;vm.createContext(sandbox);
+const files=process.argv.slice(1);for(const name of files)vm.runInContext(fs.readFileSync(name,'utf8'),sandbox,{filename:name});
+const fx=sandbox.JPWForex;
+const rows=[];function test(name,fn){try{reset();fn();assert.strictEqual(sandbox.__writes,0);rows.push({name,result:'PASS'});}catch(error){rows.push({name,result:'PRODUCT_FAIL',error:String(error.stack||error)});}}
+function instrumentObservation(accountId,periodId,currency,rate){return {id:'synthetic-'+accountId,recordedAt:'2026-09-14T12:00:00Z',accountId,periodId,currency,instrumentId:'EURUSD',revision:1,
  price:{value:1,source:'synthetic manual',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'},
  contract:{contractSize:100000,source:'synthetic contract',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'},
  conversion:{quoteToAccountRate:rate,baseToAccountRate:rate,source:'synthetic conversion',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'}};}
-function reset(){sandbox.isSupported=true;sandbox.S={instruments:[{name:'EURUSD',cpl:100000,preco:1}],accounts:[{forexAccountId:'A',tipo:'MESTRE'},{forexAccountId:'B',tipo:'MESTRE'}],phases:[{orders:[]}],forex:{schemaVersion:1,activeAccountId:'A',accounts:{A:{si:10000,equity:9700,netCashflow:0,currency:'USD',periodId:'A1',capitalNominal:12000,observedAt:'2026-09-14T12:00:00Z'}},h4Closes:[],market:null,reserves:null,
- instrumentContexts:{schemaVersion:1,records:[instrumentObservation('A','A1','USD',1),instrumentObservation('B','B1','BRL',5)]}},activeOperation:null};}
+// Canonical recorded periods are supplied explicitly. Existing legacy order
+// scenarios retain the production read bridge through their captured identity;
+// no selected account is inferred onto unbound history or written during reads.
+function fixturePeriod(accountId,periodId,currency){return {accountId,periodId,currency,startedAt:'2026-09-01',si:10000,openingBook:10000,
+ phases:[],activeOperation:null,ledger:[],ledgerEvents:[],revision:1};}
+function reset(){sandbox.__writes=0;sandbox.__unknown=false;sandbox.S={instruments:[{name:'EURUSD',cpl:100000,preco:1}],accounts:[{forexAccountId:'A',tipo:'MESTRE'},{forexAccountId:'B',tipo:'SATELITE'}],phases:[{orders:[]}],forex:fx.state.empty(),activeOperation:{operationId:'synthetic-legacy-operation',recordContext:{accountId:'A',periodId:'A1',accountInputs:{currency:'USD'}}},period:{profile:'base'}};
+ const f=sandbox.S.forex;f.activeAccountId='A';f.accounts={A:{si:10000,equity:9700,netCashflow:0,currency:'USD',periodId:'A1',capitalNominal:12000,observedAt:'2026-09-14T12:00:00Z'}};
+ f.instrumentContexts={schemaVersion:1,records:[instrumentObservation('A','A1','USD',1),instrumentObservation('B','B1','BRL',5)]};
+ f.accountContexts.accounts={A:{accountId:'A',currentPeriodId:'A1',periods:{A1:fixturePeriod('A','A1','USD')}},B:{accountId:'B',currentPeriodId:'B1',periods:{B1:fixturePeriod('B','B1','BRL')}}};
+ assert.strictEqual(fx.state.supported(),true);assert.strictEqual(fx.state.selectOperationalContext('A','A1').ok,true);}
 const order=()=>({accountId:'A',periodId:'A1',currency:'USD',par:'EURUSD',tipo:'BUY',entry:1.1,sl:1,lote:.01,stopValidated:true,status:'Aberta',costs:0,costBasis:'SEPARATE_FROM_RESULT'});
-function read(){const before=JSON.stringify(sandbox.S),r=fx.readModel();assert.strictEqual(JSON.stringify(sandbox.S),before);return r;}
+function read(...args){const before=JSON.stringify(sandbox.S),r=fx.readModel(...args);assert.strictEqual(JSON.stringify(sandbox.S),before);assert.strictEqual(sandbox.__writes,0);return r;}
 function unknown(r){assert.notStrictEqual(r.status,'OK');assert.strictEqual(r.value,null);}
 function close(a,b){assert(Math.abs(a-b)<1e-8,a+' != '+b);}
-test('absent account does not imply known zero risk/commitment',()=>{sandbox.S.forex.activeAccountId=null;const m=read().metrics;unknown(m.aggregateRisk);unknown(m.committedRisk);});
+test('absent account does not imply known zero risk/commitment',()=>{sandbox.S.forex.activeAccountId=null;sandbox.S.accounts=[];const m=read().metrics;unknown(m.aggregateRisk);unknown(m.committedRisk);});
 test('account with explicitly empty record set yields factual zero',()=>{const m=read().metrics;close(m.aggregateRisk.value,0);close(m.committedRisk.value,0);});
 test('pending active missing remains unknown, not inactive',()=>{sandbox.S.phases[0].orders=[{...order(),status:'Pendente',amplifiesExposure:true}];unknown(read().metrics.aggregateRisk);unknown(read().metrics.committedRisk);});
 test('pending explicit inactive may contribute zero',()=>{sandbox.S.phases[0].orders=[{...order(),status:'Pendente',amplifiesExposure:true,pendingActive:false}];close(read().metrics.aggregateRisk.value,0);});
@@ -54,17 +64,38 @@ test('currency or period mismatch cannot become reconciled current risk',()=>{fo
 test('current recorded risk does not claim prior admission snapshot',()=>{sandbox.S.phases[0].orders=[order()];const m=read().metrics;close(m.aggregateRisk.value,100);unknown(m.admissionRisk);assert.notStrictEqual(m.admissionRisk.admissionBasis,'PRE_EXECUTION_SNAPSHOT');assert(m.admissionRisk.findings.some(f=>f.code==='ADMISSION_SNAPSHOT_MISSING'));});
 test('two conflicting nominal capitals require explicit reconciliation',()=>{sandbox.S.forex.reserves={accountId:'A',periodId:'A1',currency:'USD',capitalNominal:1000};const m=read().metrics.fcrRequirement;unknown(m);assert(m.findings.some(f=>f.code==='FCR_NOMINAL_CONFLICT'));});
 test('matching explicit nominal capital preserves FCR arithmetic',()=>{sandbox.S.forex.reserves={accountId:'A',periodId:'A1',currency:'USD',capitalNominal:12000};close(read().metrics.fcrRequirement.value,2640);});
-test('future unsupported aggregate is not interpreted using current policy',()=>{sandbox.isSupported=false;sandbox.S.forex.market={atrShort:2,atrLong:1};const m=read();unknown(m.metrics.aggregateRisk);unknown(m.metrics.vrm);assert.strictEqual(m.canRecord,false);});
-test('reserve observations from another period/currency do not fund current compliance',()=>{sandbox.S.forex.reserves={accountId:'A',periodId:'A0',currency:'EUR',capitalNominal:12000,fcrConstituted:5000,feoConstituted:5000,verificationRecorded:true,verifiedAt:'2026-09-14T12:00:00Z',fcrLiquidityDays:1,feoLiquidityDays:1};const m=read();assert.strictEqual(m.reserves.totalConstituted,null);unknown(m.metrics.fcrStatus);assert(m.findings.some(f=>f.code==='RESERVE_CONTEXT_UNRESOLVED'));assert(m.reserves.unmatchedObservation);});
-test('explicit unknown account/period never falls back to selected account',()=>{unknown(fx.readModel(null).metrics.drawdown);unknown(fx.readModel({accountId:'MISSING',periodId:'A1'}).metrics.drawdown);unknown(fx.readModel({accountId:'A',periodId:'A0'}).metrics.drawdown);});
-test('explicit recorded other account returns its phase, not selected phase',()=>{sandbox.S.forex.accounts.B={...sandbox.S.forex.accounts.A,periodId:'B1',equity:8500};const m=fx.readModel({accountId:'B',periodId:'B1'});assert.strictEqual(m.accountId,'B');close(m.metrics.drawdown.value,15);assert.strictEqual(m.accountPhase.value,5);});
-test('order risk and notional keep recorded USD context when BRL account selected',()=>{sandbox.S.forex.accounts.B={...sandbox.S.forex.accounts.A,currency:'BRL',usdToAccountRate:5,periodId:'B1'};sandbox.S.forex.activeAccountId='B';close(sandbox.orderRisk(order()),100);close(sandbox.orderNotional(order()),1000);});
+test('future unsupported aggregate is not interpreted using current policy',()=>{
+ const variants=[()=>{sandbox.S.forex.schemaVersion=2;sandbox.S.forex.market={atrShort:2,atrLong:1};},
+  ()=>{sandbox.S.forex.accountContexts={schemaVersion:9,opaque:{preserve:'synthetic-future'}};},
+  ()=>{sandbox.S.forex.accountContexts={schemaVersion:1,revision:0,accounts:null};},
+  ()=>{sandbox.S.forex.accountContexts={schemaVersion:1,revision:0,accounts:[]};}];
+ for(const variant of variants)for(const unknownWrite of [false,true]){
+  reset();variant();sandbox.__unknown=unknownWrite;const before=JSON.stringify(sandbox.S);
+  const m=read(),selection=fx.state.operationalSelection(),profile=fx.state.accountProfileContext({accountId:'A',periodId:'A1'});
+  unknown(m.metrics.aggregateRisk);unknown(m.metrics.vrm);assert.strictEqual(m.canRecord,false);
+  assert.strictEqual(selection.accountId,null);assert.strictEqual(selection.periodId,null);assert.strictEqual(selection.reason,'FOREX_SCHEMA_UNSUPPORTED');
+  assert.strictEqual(profile.status,'NOT_COMPUTABLE');assert.strictEqual(profile.current,null);assert.strictEqual(profile.period,null);
+  assert.strictEqual(JSON.stringify(sandbox.S),before);assert.strictEqual(sandbox.__writes,0);assert.strictEqual(sandbox.__unknown,unknownWrite);
+ }
+});
+test('reserve observations from another period/currency do not fund current compliance',()=>{
+ for(const delta of [{periodId:'A0',currency:'EUR'},{periodId:'A1',currency:'EUR'}]){
+  sandbox.S.forex.reserves={accountId:'A',...delta,capitalNominal:12000,fcrConstituted:5000,feoConstituted:5000,verificationRecorded:true,verifiedAt:'2026-09-14T12:00:00Z',fcrLiquidityDays:1,feoLiquidityDays:1};
+  const preserved=JSON.stringify(sandbox.S.forex.reserves),m=read();assert.strictEqual(m.reserves.totalConstituted,null);unknown(m.metrics.fcrStatus);unknown(m.metrics.feoStatus);
+  assert.strictEqual(JSON.stringify(sandbox.S.forex.reserves),preserved);
+  if(delta.periodId==='A1'){assert(m.findings.some(f=>f.code==='RESERVE_CONTEXT_UNRESOLVED'));assert(m.reserves.unmatchedObservation);}
+  else {assert.strictEqual(m.reserves.unmatchedObservation,null);assert.strictEqual(Object.keys(m.reserves.observations).length,0);}
+ }
+});
+test('explicit unknown account/period never falls back to selected account',()=>{unknown(read(null).metrics.drawdown);unknown(read({accountId:'MISSING',periodId:'A1'}).metrics.drawdown);unknown(read({accountId:'A',periodId:'A0'}).metrics.drawdown);});
+test('explicit recorded other account returns its phase, not selected phase',()=>{sandbox.S.forex.accounts.B={...sandbox.S.forex.accounts.A,periodId:'B1',equity:8500};const m=read({accountId:'B',periodId:'B1'});assert.strictEqual(m.accountId,'B');close(m.metrics.drawdown.value,15);assert.strictEqual(m.accountPhase.value,5);});
+test('order risk and notional keep recorded USD context when BRL account selected',()=>{sandbox.S.forex.accounts.B={...sandbox.S.forex.accounts.A,currency:'BRL',usdToAccountRate:5,periodId:'B1'};sandbox.S.forex.activeAccountId='B';assert.strictEqual(fx.state.selectOperationalContext('B','B1').ok,true);close(sandbox.orderRisk(order()),100);close(sandbox.orderNotional(order()),1000);});
 test('order risk and notional use explicit BRL context, not selected USD',()=>{sandbox.S.forex.accounts.B={...sandbox.S.forex.accounts.A,currency:'BRL',usdToAccountRate:5,periodId:'B1'};const o={...order(),accountId:'B',periodId:'B1',currency:'BRL'};close(sandbox.orderRisk(o),500);close(sandbox.orderNotional(o),5000);});
 test('order adapters reject missing account/period/currency instead of current fallback',()=>{for(const delta of [{accountId:null},{periodId:null},{currency:null},{currency:'BRL'},{accountId:'MISSING'}]){const o={...order(),...delta};assert.strictEqual(sandbox.orderRisk(o),null);assert.strictEqual(sandbox.orderNotional(o),null);}});
 test('legacy Active and unclassified populated order cannot silently imply zero exposure',()=>{for(const status of ['Active','']){sandbox.S.phases[0].orders=[{...order(),status}];const m=read();unknown(m.metrics.aggregateRisk);unknown(m.metrics.leverage);assert.strictEqual(m.orders.total,1);assert(m.findings.some(f=>f.code==='ORDER_STATUS_UNRESOLVED'));}});
 test('explicit filled draft is not an operational fact and is never promoted on read',()=>{sandbox.S.phases[0].orders=[{...order(),status:'',recordStatus:'draft'}];const m=read();close(m.metrics.aggregateRisk.value,0);assert.strictEqual(m.orders.total,0);});
 
-function moneyProjection(){sandbox.activeRiskMatrix=()=>Array.from({length:6},(_,i)=>({nome:'F'+(i+1),alav:1}));sandbox.activeProfileFator=()=>1;sandbox.activeMDDLimit=()=>.22;fx.state.read=()=>fx.readModel();return sandbox.compute();}
+function moneyProjection(){const before=JSON.stringify(sandbox.S);const result=sandbox.compute();assert.strictEqual(JSON.stringify(sandbox.S),before);assert.strictEqual(sandbox.__writes,0);return result;}
 test('draft conflicting with operational or legacy status stays visible and unresolved',()=>{for(const status of ['Aberta','Fechada','Pendente','Active']){sandbox.S.phases[0].orders=[{...order(),status,recordStatus:'draft',result:100}];const m=read();unknown(m.metrics.aggregateRisk);unknown(m.metrics.committedRisk);unknown(m.metrics.leverage);assert.strictEqual(m.orders.total,1);assert(m.findings.some(f=>f.code==='ORDER_STATUS_UNRESOLVED'));assert.strictEqual(moneyProjection().netOp,null);}});
 test('unknown nonempty order status does not disappear as no exposure',()=>{sandbox.S.phases[0].orders=[{...order(),status:'UNRECOGNIZED_LEGACY'}];const m=read();unknown(m.metrics.aggregateRisk);assert.strictEqual(m.orders.total,1);});
 test('voided fact is not resurrected by status conflict handling',()=>{sandbox.S.phases[0].orders=[{...order(),status:'Aberta',recordStatus:'voided'}];const m=read();assert.strictEqual(m.orders.total,0);close(m.metrics.aggregateRisk.value,0);});

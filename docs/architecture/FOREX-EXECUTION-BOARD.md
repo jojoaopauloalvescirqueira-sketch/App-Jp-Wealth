@@ -137,3 +137,27 @@ A grade mantém vinte colunas, ID/Instrumento fixos e rolagem própria. Desktop 
 Fases mostram nome, quantidade, Diagnósticos e + Ordem em uma faixa; fases vazias não criam outra linha. Detalhe fechado não reserva espaço. Campos de HASH, custos, resultado e justificativa continuam montados uma vez, no detalhe da própria ordem, aberto automaticamente quando uma validação requer o campo. Salvar e Cancelar dependem de edição e dos bloqueios existentes. Ações preservam nomes acessíveis e foco útil depois de salvar/cancelar. Rascunhos RAM e comandos do domínio permanecem os mesmos.
 
 Um estado Não salvo por ordem evita duplicação de mensagens; cabeçalhos distinguem diagnósticos de prévia e risco confirmado. Não arredondar ou ocultar valores para obter o layout. Funções financeiras, registros, schemas e MT5 não mudam. O focal `tools/forex_execution_proportions_test.py` complementa o workbook; oráculos financeiros antigos permanecem e falhas anteriores são reportadas sem reclassificação. Recibos, medidas, capturas, fingerprint e rollback são externos ao produto.
+
+## Candidate visual — risco por ordem (2026-10-05)
+
+Contrato CHG-JPW-FOREX-VISUAL-RISK-20261005, base ac3a2fa. O cartão de exposição passa a incluir barras horizontais das ordens abertas confirmadas do contexto. O consumidor usa `rows[].operationalRisk` e o total `operational.exposure`; nominal e percentual sobre saldo contábil registrado são os mesmos da grade. Nunca usa risco percentual SI como substituto. Pendentes conservam sua parcela separada.
+
+Mostrar inicialmente as seis maiores ordens calculáveis e dar acesso a todas e aos motivos das indisponíveis. Zero confirmado difere de ausência; cobertura incompleta não permite mostrar subtotal como total. Barra é um acesso ao detalhe já existente, sem criar editor ou comando de gravação. Rascunhos não alteram barras; confirmação de salvar atualiza a leitura.
+
+Expansão é estado visual transitório da sessão. Em largura útil >=960px, resumo e barras ficam lado a lado; de768 a959px empilhados; abaixo de768px começam recolhidos. Preferência explícita de expansão sobrevive resize/navegação sem nova chave persistida. A grade mantém vinte colunas e seu contrato14/36desktop16/48toque. Domínio, contexto, unidades e persistências permanecem inalterados; DD14 conhecido segue fora do delta.
+
+## Candidate: registros documentados da operação (2026-10-05)
+
+CHG-JPW-FOREX-PROFESSIONAL-RECORDS-20261005 acrescenta `operationRecords` ao read model, exclusivamente para apresentação. Não altera fórmulas, dados salvos, versões de schema ou comandos. O envelope de `operationHistory` permanece schema1; a versão2 de cada snapshot de operação é um contrato distinto.
+
+A cronologia concilia conta, período, moeda e identidade de operação. Usa criação local preservada, revisões imutáveis das ordens e snapshots de finalização do mesmo contexto. Horários, razões ou revisões ausentes permanecem desconhecidos; duplicação/conflito não são reconciliados por inferência. Eventos locais não certificam sequência ou horários da corretora.
+
+O disclosure Registros da operação permite selecionar a ativa ou uma encerrada do período em RAM, abrir detalhes somente leitura e localizar uma ordem corrente após reconferir sua identidade. Consulta não remonta os campos de edição nem atualiza valores confirmados por rascunhos; rolagem e seleção são preservadas quando a projeção não muda. O seletor não aplica contexto operacional. Vinte colunas e proporções 14/36 desktop e16/48 toque permanecem.
+
+Resultados dos testes, auditoria e fingerprint pertencem à entrega externa `outputs/jpw-forex-professional-panel-20261005`; não presumir aceite de implementação a partir desta descrição. O defeito financeiro DD14 permanece fora do delta.
+
+## Ferramentas sob demanda — candidate 2026-10-05
+
+#ebToolsToggle expande #ebToolsBody, inicialmente hidden/inert. Os mesmos controles continuam montados ao fechar; openTool revela a região antes de selecionar a aba, inclusive no alias Motor. O estado de apresentação não integra S/storage. A grade mantém vinte colunas, 14/36 no desktop e16/48 no toque, IDs e escritores. Bases detalhadas ficam em disclosures, mas bloqueios e valores confirmados permanecem explícitos.
+
+O launcher de Notas no Forex é um botão no fluxo da página; o lembrete de backup usa o mesmo nó e handlers em #forexAdvisorySlot. Fora do Forex o comportamento anterior e suas preferências permanecem. A mudança não confirma backup nem produz fatos financeiros.

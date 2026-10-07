@@ -88,8 +88,13 @@ def ready(page):
 def table(page): return page.locator('#ebOrderScroll')
 
 def select_tool(page, name):
+    # Approved task design: tools now begin collapsed; use the visible command.
+    if not page.locator('#ebToolsBody').is_visible():
+        page.locator('#ebToolsToggle').click()
+        settle(page)
     page.locator(f'[data-eb-tool="{name}"]').click()
     settle(page)
+    assert page.locator('#'+{'matrix':'ebToolMatrix','rootn':'ebToolRootN','motor':'ebToolMotor'}[name]).is_visible(),name
 
 def prepare_drafts(page):
     """Synthetic layout setup authorized separately from the financial fixtures.
@@ -157,7 +162,7 @@ def run(page, artifacts, results, skip_matrix=False):
     saved=persisted(page);summary=page.locator('#executionBoardRisk').inner_text()
     set_field(page,'sl','1.192')
     assert page.locator('[data-eb-row="0:0"] [data-eb-calc="atrMultiple"]').inner_text()=='4×'
-    assert 'não salva' in page.locator('[data-eb-preview="0:0"]').inner_text()
+    assert page.locator('[data-eb-preview="0:0"]').inner_text()=='Não salvo'
     assert persisted(page)==saved and page.locator('#executionBoardRisk').inner_text()==summary
     assert not page.evaluate("JPWNavigation.navigate('forex-history')")
     assert page.locator('#executionBoardDialog').is_visible()

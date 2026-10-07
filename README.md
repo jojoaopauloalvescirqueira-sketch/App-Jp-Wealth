@@ -1,5 +1,11 @@
 # Jp Wealth Built on Method
 
+Candidate local de **edição mensal do Planejamento Patrimonial (06/10/2026)**: a Tabela mensal permite editar e salvar um mês, retirar sua previsão sem fabricar zeros e finalizar realizados em azul claro. Reabertura preserva a versão anterior e pede reconferência cronológica dos meses seguintes. O planejamento continua global em USD, com salvamento explícito e sem importação de valores privados do Excel. [Uso, contratos e rollback](docs/architecture/PLANNING-MONTHLY.md). Evidências e limitações ficam no diretório externo `jpw-planning-monthly-20261006`; não constitui integração ou publicação.
+
+Candidate financeiro local (06/10/2026): correção da precisão do DD sobre SI e das suas comparações de fase, encerramento e histerese. [Contrato e limites](docs/work/BRIEF-JPW-DD-BOUNDARY-FIX-20261006.md). Evidências antes/depois em `jpw-dd-boundary-fix-20261006`. Não reescreve observações, histórico de fase ou parâmetros; integração e publicação não fazem parte desta revisão.
+
+Candidate local de correções de interface (06/10/2026): continuidade de teclado e clique em Finanças Pessoais, navegação protegida por rascunhos, camadas de Notas/Configurações e preservação da leitura/edição no Forex. [Escopo e limites](docs/work/BRIEF-JPW-INTERFACE-BUGFIX-20261006.md). Resultados e pendências ficam nos recibos externos de `jpw-interface-bugfix-20261006`; esta revisão não muda cálculos, schemas, regras de gravação ou MT5 e não constitui publicação.
+
 Completion pass local em avaliação: Dashboard de orientação, bancadas NoCoda/Pivots, orçamento com resumo e registros, Laboratório com palco e análise, coleções Alladin e escrita focada. Rotas e dados preservados. Evidências e limites: [direção Apple→JP Wealth](docs/architecture/APPLE-EXPERIENCE-DIRECTION.md).
 Preserva módulos, contratos financeiros, preferências e a navegação superior
 opcional. Estado e limites em [CURRENT-STATE](docs/governance/CURRENT-STATE.md);
@@ -286,7 +292,7 @@ integração ou publicação; escopo e gates em
 
 ### Backup local e avisos
 
-Configurações → Dados e Segurança → Backup e Recuperação explica a base local e a pasta de exportação. O JSON completo preserva os dados dos módulos, com cobertura e exclusões descritas; ele não transporta perfil/foto nem todas as personalizações do navegador. Exportação, confirmação humana de backup e gravação local têm estados separados. Falhas do calendário permanecem visíveis nas superfícies que consomem seu cache. A aplicação não promete notificações quando estiver fechada. [Contrato](docs/architecture/DB-STORAGE-GOVERNANCE.md).
+Configurações → Dados e Segurança → Backup e Recuperação explica a base local e a pasta de exportação. O JSON completo preserva os dados dos módulos, com cobertura e exclusões descritas; ele inclui perfil/foto e as preferências cobertas pelo workspace; originais PDF/HTML viajam num ZIP separado, e permissões de pasta precisam ser concedidas novamente. Exportação, confirmação humana de backup e gravação local têm estados separados. Falhas do calendário permanecem visíveis nas superfícies que consomem seu cache. A aplicação não promete notificações quando estiver fechada. [Contrato](docs/architecture/DB-STORAGE-GOVERNANCE.md).
 
 ### Comunicação in-app reconciliada
 
@@ -297,3 +303,32 @@ O sino reúne as condições existentes dos módulos sem substituir seus avisos 
 O site e o Execution Board mais recentes foram combinados com os fontes **JPW GENETRIX 1.18.0**, incluindo os módulos 1.17.0 e Histórico Pessoal. A distribuição permanece somente de fontes; compilação, EX5 e execução nativa seguem `NOT_RUN`. O Supervisor separado permanece `OBSERVE` por padrão e tem execução restrita a demonstração hedging explicitamente armada; esta integração não o instala nem o arma.
 
 Os achados financeiros de fronteira DD/fase da auditoria de 2026-10-02 permanecem abertos. Commit, merge e push preservam o trabalho autorizado, sem significar aprovação financeira, aceite operacional ou publicação. Recibo e reversão: [integração](docs/work/INTEGRATION-20261002.md).
+
+### Candidate local — evolução da conta e risco visual no Forex
+
+Revisão de apresentação baseada em `ac3a2fa`: Visão geral concentra evolução em um gráfico e Operação apresenta risco confirmado por ordem junto do resumo. Dados consultados continuam separados do contexto operacional; não há nova fonte de preços nem mudança de fórmula. Gráficos usam fatos confirmados, identificam lacunas e permitem consulta por teclado/toque e tabela.
+
+Contratos: `docs/work/CHG-JPW-FOREX-VISUAL-RISK-20261005.md` e contrato de testes separado. Evidências e rollback em `outputs/jpw-forex-visual-risk-20261005` do projeto local, fora da distribuição. Candidate e integração/publicação são etapas distintas; falhas financeiras herdadas, inclusive DD14, não são reclassificadas.
+
+### Candidate local — painel profissional Forex (2026-10-05)
+
+A apresentação analítica agora reúne evolução, drawdown histórico do saldo e resultados mensais; Movimentos, Estatísticas e Risco mantêm seus acessos. Fonte MT5/Manual, período e cobertura qualificam cada leitura. Atalhos temporais não rebasam a curva acumulada, resumos não inventam eventos e uma fotografia de equity não vira histórico.
+
+Operação conserva grade e risco confirmado e acrescenta consulta dos registros locais de criação/revisão/encerramento, sem modificar rascunhos ou fatos. Esta revisão não altera cálculos, coleta MT5 ou schemas. Contratos, limites e evidências são separados; candidate não equivale a publicação ou aprovação financeira. Veja `docs/work/BRIEF-JPW-FOREX-PROFESSIONAL-20261005.md` e as seções datadas da arquitetura Consolidado/Execution Board.
+
+## Candidate local — Forex por tarefa
+
+O redesign agrupa os sete destinos em Acompanhar, Operar e Administrar, preservando as rotas. Desempenho distingue conta em análise da operacional. Ferramentas da Operação abrem sob demanda sem descartar rascunhos; Histórico permite consulta transitória por conta e período. Contabilidade, Reservas e Planejamento preservam os mesmos comandos. Ver CHG-JPW-FOREX-TASK-DESIGN-20261005 e contrato separado de testes em docs/work. Implementação local não comprova integração, publicação ou aceite; os recibos brutos e limitações estão na entrega externa jpw-forex-task-design-20261005. DD14 conhecido permanece separado.
+
+
+## Candidate local — salvamento e recuperação (2026-10-06)
+
+Backup Completo v2 contém a base confirmada, 21 preferências e rascunhos separados, com cobertura e SHA-256; não confunda auditoria parcial ou recuperação bruta com esse arquivo. Reabrir campos requer conferência, sem salvamento automático. Originais PDF/HTML usam IndexedDB exclusivo e ZIP separado, por hash. Configurações → armazenamento/backup mostra cobertura, uso, resultado e próximo passo. Dados continuam locais à origem; não há sincronização entre dispositivos. Contratos e limites: docs/architecture/COMPLETE-BACKUP.md e SAVING-COVERAGE.md. Este candidate não foi publicado; resultados brutos e limitações ficam na entrega externa jpw-saving-reliability-20261006.
+
+## Candidate local — correção dos verificadores pendentes (2026-10-06)
+
+Revisão da build 1db5b703ca56d26c: expectativas dos testes de persistência/backup acompanham o contrato confirmado, recusado ou desconhecido, backup completo durável com checksum e exportação assíncrona. Testes de distribuição conferem fontes GENETRIX1.18.0 e108membros; seus bytes não foram alterados. O executor conserva saídas parciais de timeout. Recibos anteriores seguem históricos, sem reclassificação. Contratos CHG-JPW-PENDING-FAIL-PRODUCT/TEST; evidências externas jpw-product-fail-repair-20261006. Validação final e aceite não são substituídos por este texto.
+
+Contextos Forex incompletos ou incompatíveis agora são recusados antes da leitura de membros, sem preencher nem salvar a base. Integrações de leitura financeira, contabilidade/planejamento e backup têm regressões próprias além do full. Resultados e pendências continuam vinculados ao relatório externo dos bytes finais.
+
+Correção local adicional (2026-10-06): dependência de reservas carregada antes do cadastro e do boot, eliminando a corrida reproduzida com latência de script. Fonte matemática preservada; a rodada anterior fica histórica e o candidate requer novos recibos dos bytes finais.

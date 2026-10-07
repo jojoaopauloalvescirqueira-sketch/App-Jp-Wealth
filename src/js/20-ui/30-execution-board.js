@@ -6,6 +6,8 @@
   const drafts=new Map(), expanded=new Set(), expandedPhases=new Set();
   let instrumentChoice=null,tableSignature=null,leaving=false,toolChoice='matrix';
   let epoch=jpWealthPersistenceEpoch(),dialog=null,dialogReturn=null,observationDirty=false;
+  let riskChartExpanded=null,riskAllExpanded=false,riskChartWidth=0,toolsExpanded=false;
+  let recordsProjection=null,recordsScope=null,recordsChoice=null,recordsMarkup=null;
   const num=v=>typeof v==='number'&&Number.isFinite(v);
   const el=id=>document.getElementById(id);
   const key=(pi,oi)=>pi+':'+oi;
@@ -14,10 +16,15 @@
   const draftKey=(pi,oi)=>{const s=fx.state.operationalSelection();
     return [s.accountId||'',s.periodId||'',pi+':'+oi].join('|');};
   const signature=o=>JSON.stringify(o);
+  function declaredDate(value){
+    const text=String(value||''),match=text.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}:\d{2})(:\d{2})?(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?$/);
+    if(!match)return text;
+    return `${match[3]}/${match[2]}/${match[1]}${match[4]?', '+match[4]+(match[5]||'')+(match[6]||'')+(match[7]?(match[7]==='Z'?' UTC':' UTC'+match[7]):' · fuso não informado'):''}`;
+  }
   function contextLabel(scope){
     const account=(S.accounts||[]).find(a=>a.forexAccountId===scope?.accountId)||S.forex?.accountContexts?.archivedAccounts?.[scope?.accountId]?.record;
     const captured=S.forex?.accountContexts?.accounts?.[scope?.accountId]?.periods?.[scope?.periodId];
-    return [account?.nome||scope?.accountId||'Conta não capturada',captured?.startedAt||'Período não capturado'].join(' · ');
+    return [account?.nome||scope?.accountId||'Conta não capturada',declaredDate(captured?.startedAt)||'Período não capturado'].join(' · ');
   }
   const n=(v,d=2)=>num(v)?v.toLocaleString('pt-BR',{maximumFractionDigits:d}):'Não calculável';
   const label={id:'ID interno',brokerHash:'HASH da corretora',par:'Instrumento',tipo:'Direção',role:'Papel',lote:'Lote',entry:'Entrada',sl:'Stop',tp:'Alvo',status:'Estado',result:'Resultado',costs:'Custos assinados',costBasis:'Tratamento dos custos',stopValidated:'Stop validado',amplifiesExposure:'Pendente amplia exposição',pendingActive:'Pendente ativa'};
@@ -93,15 +100,18 @@
   function provenance(m){
     const s=m?.source, detail=typeof s==='object'&&s?s:m||{};
     const parts=[typeof s==='string'?s:detail.label||detail.source||detail.kind];
-    if(detail.referenceDate)parts.push('Referência '+detail.referenceDate);
-    if(detail.observedAt)parts.push('Observada '+detail.observedAt);
-    else if(detail.recordedAt)parts.push('Registrada '+detail.recordedAt);
-    if(detail.fetchedAt)parts.push('Consultada '+detail.fetchedAt);
+    if(detail.referenceDate)parts.push('Referência '+declaredDate(detail.referenceDate));
+    if(detail.observedAt)parts.push('Observada '+declaredDate(detail.observedAt));
+    else if(detail.recordedAt)parts.push('Registrada '+declaredDate(detail.recordedAt));
+    if(detail.fetchedAt)parts.push('Consultada '+declaredDate(detail.fetchedAt));
     return parts.filter(Boolean).join(' · ');
   }
-  function metric(title,m,{id='',note='',limit=null}={}){
+  function metric(title,m,{id='',note='',limit=null,compact=false}={}){
     const valid=num(m?.value),source=provenance(m),track=valid&&num(limit)&&limit>0;
-    return `<div class="eb-metric"${id?` data-eb-metric="${esc(id)}"`:''}><span>${esc(title)}</span><strong>${esc(format(m))}</strong>${num(m?.percent)?`<small>${esc(n(m.percent))}% ${m.percentBasis==='BOOK_BALANCE'?'do saldo atual':'do SI'}</small>`:''}${track?`<meter min="0" max="${limit}" value="${Math.max(0,Math.min(limit,m.value))}" aria-label="${esc(title)}" title="${esc(format(m))} · limite ${esc(String(limit))}"></meter>`:''}<small>${esc(valid?(note||source):reason(m))}</small>${valid&&source&&note?`<small>${esc(source)}</small>`:''}</div>`;
+    return `<div class="eb-metric"${id?` data-eb-metric="${esc(id)}"`:''}><span>${esc(title)}</span><strong>${esc(format(m))}</strong>${num(m?.percent)?`<small>${esc(n(m.percent))}% ${m.percentBasis==='BOOK_BALANCE'?'do saldo atual':'do SI'}</small>`:''}${track?`<meter min="0" max="${limit}" value="${Math.max(0,Math.min(limit,m.value))}" aria-label="${esc(title)}" title="${esc(format(m))} · limite ${esc(String(limit))}"></meter>`:''}${compact?'':`<small>${esc(valid?(note||source):reason(m))}</small>${valid&&source&&note?`<small>${esc(source)}</small>`:''}`}</div>`;
+  }
+  function metricBasis(title,m,note=''){
+    return `<div><dt>${esc(title)}</dt><dd>${esc(num(m?.value)?[note,provenance(m)].filter(Boolean).join(' · ')||'Origem não informada.':reason(m))}</dd></div>`;
   }
   function updateHTML(id,html){
     const node=el(id);if(!node||node.innerHTML===html)return;
@@ -131,6 +141,11 @@
       }
       const host=document.createElement('div');host.id=region;card.append(host);
       if(id==='execConsolidadoCard'){
+        host.innerHTML='<div class="eb-exposure-layout"><div id="ebExposureSummary"></div><section id="ebRiskChart" class="eb-risk-chart" aria-labelledby="ebRiskChartTitle"><header class="eb-risk-head"><div><h4 id="ebRiskChartTitle">Risco confirmado por ordem</h4><p id="ebRiskChartState" role="status"></p></div><button type="button" id="ebRiskChartToggle" class="reset-btn" data-eb-risk-chart-toggle aria-controls="ebRiskChartBody" aria-expanded="false">Ver distribuição do risco</button></header><div id="ebRiskChartBody" hidden><div id="ebRiskChartContent"></div></div></section></div><section id="ebOperationRecords" class="eb-operation-records" aria-label="Registros da operação"></section>';
+        if(typeof ResizeObserver==='function')new ResizeObserver(entries=>{
+          const width=entries[0]?.contentRect?.width;
+          if(num(width)&&width>0){riskChartWidth=width;applyRiskChartState();}
+        }).observe(host);
         const actions=legacy.querySelector('.lifo-actions');if(actions){actions.classList.add('eb-actions');card.append(actions);}
       }
     }
@@ -152,6 +167,9 @@
       if(typeof ResizeObserver==='function')new ResizeObserver(entries=>sizeWorkbook(entries[0]?.contentRect?.width)).observe(phaseCard);
     }
     grid.addEventListener('click',onClick);
+    el('ebOperationRecords')?.addEventListener('change',event=>{
+      if(event.target.id==='ebRecordsOperation'){recordsChoice=event.target.value;renderOperationRecords(recordsProjection);}
+    });
     el('phaseContainer').addEventListener('input',onInput);
     el('phaseContainer').addEventListener('change',onInput);
     el('phaseContainer').addEventListener('toggle',event=>{
@@ -169,10 +187,12 @@
     const profileName=profile?.period?.name||'Perfil do período não informado';
     const account=m.accountRecord||m.account||{},capital=m.capital||{},risk=m.risk||{},op=m.operational||{};
     const selectedPeriod=period().value;
-    const dateLabel=selectedPeriod?.startedAt||'Período pendente';
+    const dateLabel=declaredDate(selectedPeriod?.startedAt)||'Período pendente';
     updateHTML('ebNextAction',`<strong>${m.executionEligibility?.status==='OK'?'Elegibilidade informada pelo motor': 'Execução normativa bloqueada'}</strong><span>${!m.scope?.periodId?'Selecione a conta e confirme um período em Contas e Período.':m.canRecord?'O registro factual está disponível. Revise os dados e salve cada linha explicitamente.':'Registro indisponível nesta versão. Preserve a base.'}${m.executionEligibility?.reason?`<small>${esc(m.executionEligibility.reason)}</small>`:''}</span><button type="button" data-eb-parameters>Ver motivos e parâmetros</button>`);
-    updateHTML('executionBoardAccount',`<div class="eb-section-head"><div><p class="eb-eyebrow">CONTA E PERÍODO</p><h3>${esc(account.name||m.selection?.accountId||'Selecione uma conta')}</h3></div><button type="button" class="reset-btn" data-eb-manage>Gerenciar em Contas e Período</button></div><div class="eb-capital-strip">${metric('Capital de referência · SI',capital.si,{id:'referenceCapital'})}${metric('Saldo atual registrado',capital.book)}${metric('Equity observada',capital.equity)}${metric('Drawdown',capital.drawdown)}</div><p class="eb-context-line">${esc([account.platform,account.login,m.scope?.currency].filter(Boolean).join(' · '))} · Período desde ${esc(dateLabel)} · ${esc(profileName)} · Fase da conta: ${esc(fx.policy.phases[(risk.accountPhase?.value||0)-1]?.name||(risk.accountPhase?.compulsoryClose?'Encerramento compulsório':'Não calculável'))}</p>`);
-    updateHTML('executionBoardRisk',`<div class="eb-section-head"><div><p class="eb-eyebrow">RESUMO OPERACIONAL</p><h3>Exposição da conta</h3></div><span class="eb-confirmed">Registros confirmados</span></div><div class="eb-operational-strip">${metric('Hard Stop · Equity Protector',capital.stopoutEquity,{id:'hardStop',note:'Piso de equity: SI × 78% + movimentações conciliadas. Limite de 22%; não aciona a corretora.'})}${metric('Total Exposure · Exposição total',op.exposure,{id:'totalExposure',note:'Risco até o stop das ordens abertas. Percentual sobre o saldo atual registrado.'})}${metric('Compensed Exposure · Compensada',op.compensated,{id:'compensedExposure',note:'Exposição total menos resultado líquido realizado das defesas. Perdas aumentam a exposição.'})}${metric('Alavancagem utilizada',op.leverage,{id:'usedLeverage',note:'Nocional bruto das posições abertas ÷ saldo atual registrado.'})}</div><details class="eb-findings"><summary>Ver bases de cálculo e proteções</summary><p>O resumo usa o saldo contábil registrado deste período. Atualize a Contabilidade quando houver novos lançamentos; saldo e equity são informações diferentes.</p><div class="eb-metrics">${metric('Saldo inicial do período',capital.si)}${metric('Nocional bruto',op.grossNotional)}${metric('Pendentes ampliadoras',risk.pending)}${metric('Alavancagem normativa',risk.leverage,{note:'Base normativa: menor valor entre saldo inicial e equity.'})}${metric('Risco comprometido',risk.committed)}${metric('Capacidade prudencial',risk.prudentialRemaining)}</div><p>A compensação econômica não amplia os limites normativos. Registrar fatos não autoriza execução.</p><ul>${(m.findings||[]).map(f=>`<li>${esc(f.message||f.reason||f.code||String(f))}</li>`).join('')}</ul><div class="eb-actions"><button type="button" class="reset-btn" data-eb-motor>Ver dimensionamento</button><button type="button" class="reset-btn" data-eb-parameters>Ver parâmetros</button></div></details>`);
+    updateHTML('executionBoardAccount',`<div class="eb-section-head"><div><p class="eb-eyebrow">EM OPERAÇÃO · CONTA E PERÍODO</p><h3>${esc(account.name||m.selection?.accountId||'Selecione uma conta')}</h3></div><button type="button" class="reset-btn" data-eb-manage>Gerenciar em Contas e Período</button></div><div class="eb-capital-strip">${metric('Capital de referência · SI',capital.si,{id:'referenceCapital',compact:true})}${metric('Saldo atual registrado',capital.book,{compact:true})}${metric('Equity observada',capital.equity,{compact:true})}${metric('Drawdown',capital.drawdown,{compact:true})}</div><p class="eb-context-line">${esc([account.platform,account.login,m.scope?.currency].filter(Boolean).join(' · '))} · Período desde ${esc(dateLabel)} · ${esc(profileName)} · Fase da conta: ${esc(fx.policy.phases[(risk.accountPhase?.value||0)-1]?.name||(risk.accountPhase?.compulsoryClose?'Encerramento compulsório':'Não calculável'))}</p><details class="eb-findings eb-account-bases"><summary>Bases, qualidade e motivos da conta</summary><dl class="eb-metric-bases">${metricBasis('Capital de referência · SI',capital.si)}${metricBasis('Saldo atual registrado',capital.book)}${metricBasis('Equity observada',capital.equity)}${metricBasis('Drawdown',capital.drawdown)}</dl></details>`);
+    updateHTML('ebExposureSummary',`<div class="eb-section-head"><div><p class="eb-eyebrow">RESUMO OPERACIONAL</p><h3>Exposição da conta</h3></div><span class="eb-confirmed">Registros confirmados</span></div><div class="eb-operational-strip">${metric('Hard Stop · Equity Protector',capital.stopoutEquity,{id:'hardStop',compact:true})}${metric('Total Exposure · Exposição total',op.exposure,{id:'totalExposure',compact:true})}${metric('Compensed Exposure · Compensada',op.compensated,{id:'compensedExposure',compact:true})}${metric('Alavancagem utilizada',op.leverage,{id:'usedLeverage',compact:true})}</div><details class="eb-findings"><summary>Bases, qualidade e proteções do risco</summary><dl class="eb-metric-bases">${metricBasis('Hard Stop · Equity Protector',capital.stopoutEquity,'Piso de equity: SI × 78% + movimentações conciliadas. Limite de 22%; não aciona a corretora.')}${metricBasis('Total Exposure · Exposição total',op.exposure,'Risco até o stop das ordens abertas. Percentual sobre o saldo atual registrado.')}${metricBasis('Compensed Exposure · Compensada',op.compensated,'Exposição total menos resultado líquido realizado das defesas. Perdas aumentam a exposição.')}${metricBasis('Alavancagem utilizada',op.leverage,'Nocional bruto das posições abertas ÷ saldo atual registrado.')}</dl><p>O resumo usa o saldo contábil registrado deste período. Atualize a Contabilidade quando houver novos lançamentos; saldo e equity são informações diferentes.</p><div class="eb-metrics">${metric('Saldo inicial do período',capital.si)}${metric('Nocional bruto',op.grossNotional)}${metric('Pendentes ampliadoras',risk.pending)}${metric('Alavancagem normativa',risk.leverage,{note:'Base normativa: menor valor entre saldo inicial e equity.'})}${metric('Risco comprometido',risk.committed)}${metric('Capacidade prudencial',risk.prudentialRemaining)}</div><p>A compensação econômica não amplia os limites normativos. Registrar fatos não autoriza execução.</p><ul>${(m.findings||[]).map(f=>`<li>${esc(f.message||f.reason||f.code||String(f))}</li>`).join('')}</ul><div class="eb-actions"><button type="button" class="reset-btn" data-eb-motor>Ver dimensionamento</button><button type="button" class="reset-btn" data-eb-parameters>Ver parâmetros</button></div></details>`);
+    renderRiskChart(m);
+    renderOperationRecords(m.operationRecords);
     renderInstruments(m);
     renderPhases(m);
     const supported=fx.state.supported();
@@ -182,12 +202,130 @@
     if(el('exec')?.classList.contains('active')&&typeof renderHeaderReadout==='function')
       renderHeaderReadout(compute());
   }
+  const recordLabels={OPERATION_CREATED:'Operação registrada',ORDER_RECORDED:'Ordem registrada',ORDER_REVISED:'Revisão salva',
+    ORDER_CLOSED:'Encerramento da ordem registrado',ORDER_VOIDED:'Ordem anulada',OPERATION_CLOSED:'Operação finalizada'};
+  function recordTime(value){
+    if(!value)return 'Horário não informado';
+    // Keep the declared calendar fields and offset; unknown timezone stays unknown.
+    return declaredDate(value);
+  }
+  function renderOperationRecords(projection){
+    const host=el('ebOperationRecords');if(!host)return;
+    recordsProjection=projection||null;
+    const scope=JSON.stringify(projection?.scope||null);
+    if(scope!==recordsScope){recordsChoice=null;recordsScope=scope;}
+    const operations=projection?.operations||[];
+    if(!operations.some(op=>op.operationId===recordsChoice))recordsChoice=operations[0]?.operationId||null;
+    const selected=operations.find(op=>op.operationId===recordsChoice),events=selected?.events||[];
+    const issues=[...(projection?.issues||[]),...(selected?.issues||[])];
+    const coverage=projection?.coverage==='UNAVAILABLE'?'Contexto indisponível':issues.length?'Cobertura local parcial':
+      operations.length?'Registros locais disponíveis':'Nenhuma operação documentada neste período';
+    const selector=operations.length?`<label class="eb-records-choice" for="ebRecordsOperation">Operação neste período<select id="ebRecordsOperation">${operations.map(op=>`<option value="${esc(op.operationId)}" ${op.operationId===recordsChoice?'selected':''}>${op.status==='ACTIVE'?'Em andamento':'Encerrada'} · ${esc(recordTime(op.events.find(event=>event.kind==='OPERATION_CREATED')?.at))} · ${esc(op.operationId)}</option>`).join('')}</select></label>`:'';
+    const markup=`<details id="ebRecordsDisclosure"><summary><span>Registros da operação</span><small>${esc(coverage)}</small></summary><div class="eb-records-body"><p class="eb-records-note">Acontecimentos documentados no JP Wealth. Não representam todos os eventos da corretora. Rascunhos não integram esta sequência.</p>${selector}${issues.length?`<ul class="eb-records-issues">${[...new Set(issues)].map(message=>'<li>'+esc(message)+'</li>').join('')}</ul>`:''}${selected?`<p class="eb-records-context">${esc(selected.operationId)} · ${events.length} ${events.length===1?'registro':'registros'} · ordem cronológica; horários desconhecidos ao final.</p>`:''}${events.length?`<ol id="ebRecordsList" class="eb-records-list" tabindex="0" aria-label="Acontecimentos locais da operação">${events.map((event,index)=>`<li data-eb-record-kind="${event.kind}"><div class="eb-records-event"><strong>${esc(recordLabels[event.kind]||'Registro local')}${event.label?' · '+esc(event.label):''}</strong><time ${event.at?'datetime="'+esc(event.at)+'"':''}>${esc(recordTime(event.at))}</time><span>${esc(event.instrument||event.timeSource||'Registro local')}${event.version?' · versão '+esc(String(event.version)):''}</span><p>${esc(event.reason||'Motivo não preservado neste registro.')}</p></div><button type="button" id="ebRecordDetail-${index}" class="reset-btn" data-eb-record-detail="${index}" aria-label="Ver registro: ${esc(recordLabels[event.kind]||'Registro local')}${event.label?' · '+esc(event.label):''}">Ver registro</button></li>`).join('')}</ol>`:'<p class="eb-records-empty">Não há acontecimentos conciliados para apresentar. Datas e revisões ausentes não serão reconstruídas.</p>'}</div></details>`;
+    // Opening a disclosure or scrolling the list must not cause the next quote
+    // repaint to replace focused controls or reset the reader's position.
+    if(markup!==recordsMarkup){
+      const scroll=el('ebRecordsList')?.scrollTop||0;
+      updateHTML('ebOperationRecords',markup);recordsMarkup=markup;
+      if(el('ebRecordsList'))el('ebRecordsList').scrollTop=scroll;
+    }
+  }
+  function showOperationRecord(index){
+    const operation=recordsProjection?.operations?.find(op=>op.operationId===recordsChoice),event=operation?.events?.[index];
+    if(!event||dialog?.open)return;
+    const fields=Object.keys(label).filter(field=>JSON.stringify(event.before?.[field])!==JSON.stringify(event.after?.[field]));
+    const value=v=>v===null||v===undefined||v===''?'Não informado':typeof v==='object'?JSON.stringify(v):String(v);
+    const changes=fields.length?`<div class="eb-record-change-scroll"><table class="eb-record-change-table"><caption>Campos registrados · versão ${esc(String(event.version||''))}</caption><thead><tr><th scope="col">Campo</th><th scope="col">Antes</th><th scope="col">Depois</th></tr></thead><tbody>${fields.map(field=>`<tr><th scope="row">${esc(label[field])}</th><td>${esc(value(event.before?.[field]))}</td><td>${esc(value(event.after?.[field]))}</td></tr>`).join('')}</tbody></table></div>`:'';
+    const target=event.target,selected=fx.state.operationalSelection(),currentOrder=target?current(target.pi,target.oi):null;
+    const canLocate=target&&currentOrder?.orderId===target.orderId&&currentOrder?.operationId===operation.operationId&&
+      selected.accountId===recordsProjection.scope.accountId&&selected.periodId===recordsProjection.scope.periodId;
+    const box=openDialog(`<h2 id="ebDialogTitle">${esc(recordLabels[event.kind]||'Registro da operação')}</h2><p>Consulta somente de leitura · ${esc(operation.operationId)}</p><dl class="eb-record-facts"><div><dt>Horário</dt><dd>${esc(recordTime(event.at))}</dd></div><div><dt>Origem do horário</dt><dd>${esc(event.timeSource)}</dd></div><div><dt>Motivo preservado</dt><dd>${esc(event.reason||'Não informado no registro')}</dd></div>${event.orderId?`<div><dt>Identidade local da ordem</dt><dd>${esc(event.orderId)}</dd></div>`:''}</dl>${changes}<details class="eb-record-raw"><summary>Dados técnicos do registro preservado</summary><pre>${esc(JSON.stringify({antes:event.before,depois:event.after,contexto:event.context||recordsProjection.scope},null,2))}</pre></details><p>Este registro local não comprova horário de execução na corretora. Consultar não modifica a ordem nem seu rascunho.</p><div class="eb-dialog-actions">${canLocate?'<button type="button" id="ebRecordLocate">Localizar ordem na grade</button>':''}<button type="button" id="ebDialogClose">Fechar registro</button></div>`);
+    el('ebDialogClose').onclick=()=>box.close();
+    if(canLocate)el('ebRecordLocate').onclick=()=>{
+      const nowScope=fx.state.operationalSelection(),nowOrder=current(target.pi,target.oi);
+      if(nowScope.accountId!==recordsProjection.scope.accountId||nowScope.periodId!==recordsProjection.scope.periodId||
+        nowOrder?.orderId!==target.orderId||nowOrder?.operationId!==operation.operationId){
+        el('ebRecordLocate').disabled=true;el('ebRecordLocate').textContent='Contexto alterado · reabra o registro';return;
+      }
+      box.close();setDetail(target.pi,target.oi,true);
+      const heading=el(`ebDetail-${target.pi}-${target.oi}`)?.querySelector('h4');
+      if(heading){heading.tabIndex=-1;heading.scrollIntoView({block:'nearest',inline:'nearest'});heading.focus({preventScroll:true});}
+    };
+    el('ebDialogClose').focus();
+  }
+  function applyRiskChartState(){
+    const chart=el('ebRiskChart'),body=el('ebRiskChartBody'),toggle=el('ebRiskChartToggle');
+    if(!chart||!body||!toggle)return;
+    const open=riskChartExpanded===null?(riskChartWidth>=768||body.contains(document.activeElement)):riskChartExpanded;
+    body.hidden=!open;toggle.setAttribute('aria-expanded',String(open));
+    toggle.textContent=open?'Recolher gráfico':'Ver distribuição do risco';
+    chart.classList.toggle('is-expanded',open);
+    const bars=el('ebRiskBars');
+    if(bars){
+      const items=[...bars.querySelectorAll('[data-eb-risk-row]')];
+      items.forEach((item,index)=>{item.hidden=!riskAllExpanded&&index>=6;});
+      bars.classList.toggle('is-all',riskAllExpanded);
+      const all=el('ebRiskShowAll');if(all){
+        all.hidden=items.length<=6;all.setAttribute('aria-expanded',String(riskAllExpanded));
+        all.textContent=riskAllExpanded?'Mostrar os 6 maiores':`Ver todas as ordens (${items.length} calculáveis)`;
+      }
+    }
+  }
+  function renderRiskChart(m){
+    const saved=(m.rows||[]).filter(row=>row.order?.recordStatus!=='draft'&&row.order?.recordStatus!=='voided');
+    const open=saved.filter(row=>row.order.status==='Aberta'),pending=saved.filter(row=>row.order.status==='Pendente');
+    const sameScope=row=>['accountId','periodId','operationId','currency'].every(field=>
+      !!m.scope?.[field]&&row.order?.[field]===m.scope[field]);
+    // The model has already reconciled rows. Unresolved facts without a known
+    // matching identity are reported as a gap, never attributed to this operation.
+    const unresolved=(m.unresolved||[]).filter(row=>row.order?.recordStatus!=='draft'&&row.order?.recordStatus!=='voided');
+    const unresolvedOpen=unresolved.filter(row=>sameScope(row)&&row.order.status==='Aberta');
+    const unresolvedPending=unresolved.filter(row=>sameScope(row)&&row.order.status==='Pendente');
+    const unresolvedOther=unresolved.filter(row=>sameScope(row)&&!['Aberta','Pendente'].includes(row.order.status));
+    const unassigned=unresolved.filter(row=>!sameScope(row));
+    const calculable=row=>row.operationalRisk?.status==='OK'&&num(row.operationalRisk.value)&&row.operationalRisk.value>=0&&
+      !!row.operationalRisk.currency&&row.operationalRisk.currency===m.scope?.currency;
+    const known=open.filter(calculable).sort((a,b)=>b.operationalRisk.value-a.operationalRisk.value||a.pi-b.pi||a.oi-b.oi);
+    const unavailable=[...open.filter(row=>!calculable(row)),...unresolvedOpen];
+    const missingPercent=known.some(row=>!num(row.operationalRisk.percent));
+    const complete=m.complete===true&&!unavailable.length&&!missingPercent&&m.operational?.exposure?.status==='OK';
+    const state=!open.length&&!unresolvedOpen.length?(complete?'empty':'unavailable'):known.length?(complete?'complete':'partial'):'unavailable';
+    const stateLabel={complete:'Leitura completa',partial:'Leitura parcial',unavailable:'Leitura indisponível',empty:'Sem ordens abertas'}[state];
+    const totalOpen=open.length+unresolvedOpen.length;
+    el('ebRiskChart').dataset.ebRiskState=state;
+    el('ebRiskChartState').textContent=`${stateLabel} · ${known.length} de ${totalOpen} ordens abertas calculáveis`;
+    const identity=row=>{
+      const order=row.order||{},direction={BUY:'Compra',SELL:'Venda'}[order.tipo]||'Direção não informada';
+      return `${order.id?'ID '+order.id:'Ordem '+(row.pi+1)+'.'+(row.oi+1)} · ${order.par||'Instrumento não informado'} · ${direction}`;
+    };
+    const role=row=>({GENESIS:'Gênese',DEFENSE:'Defesa',OTHER:'Outro'}[row.order?.role]||'Papel não declarado');
+    const detailButton=(row,content,attributes='')=>`<button type="button" id="ebRiskOrder-${row.pi}-${row.oi}" data-eb-risk-detail="${key(row.pi,row.oi)}" ${attributes} title="Abrir detalhes da ordem">${content}</button>`;
+    const maximum=known.length?known[0].operationalRisk.value:0;
+    const bars=known.map((row,index)=>{
+      const risk=row.operationalRisk,percent=num(risk.percent)?`${n(risk.percent)}% do saldo registrado`:'Percentual indisponível · saldo válido necessário';
+      // Width is a visual comparison only; nominal/percentage come unchanged from the model.
+      const width=maximum>0?100*(risk.value/maximum):0;
+      const phase=m.phases?.find(item=>item.index===row.pi)?.name||`Fase ${row.pi+1}`;
+      return `<li data-eb-risk-row="${key(row.pi,row.oi)}" data-risk-value="${risk.value}" data-risk-percent="${num(risk.percent)?risk.percent:''}" ${!riskAllExpanded&&index>=6?'hidden':''}>${detailButton(row,`<span class="eb-risk-identity"><strong>${esc(identity(row))}</strong><small>${esc(role(row))} · ${esc(phase)}</small></span><span class="eb-risk-value"><strong>${esc(format(risk))}</strong><small>${esc(percent)}</small></span><span class="eb-risk-track" aria-hidden="true"><span style="width:${width}%"></span></span>`)}</li>`;
+    }).join('');
+    const total=m.operational?.exposure;
+    const totalText=total?.status==='OK'&&num(total.value)?`Exposição aberta confirmada do contexto: ${format(total)}${num(total.percent)?' · '+n(total.percent)+'% do saldo registrado':''}.`:
+      `Exposição aberta total indisponível: ${reason(total)}`;
+    const unavailableHTML=unavailable.length?`<details id="ebRiskUnavailableDetails" class="eb-risk-unavailable"><summary>${unavailable.length} ${unavailable.length===1?'ordem indisponível':'ordens indisponíveis'} · ver motivos</summary><ul id="ebRiskUnavailable">${unavailable.map(row=>`<li data-eb-risk-unavailable="${key(row.pi,row.oi)}">${detailButton(row,esc(identity(row)))}<p>${esc(row.reason||reason(row.operationalRisk))}</p></li>`).join('')}</ul></details>`:'';
+    const pendingRows=[...pending,...unresolvedPending];
+    const pendingHTML=pendingRows.length?`<section id="ebRiskPending" class="eb-risk-pending" aria-labelledby="ebRiskPendingTitle" data-eb-risk-pending-count="${pendingRows.length}"><h5 id="ebRiskPendingTitle">Pendentes · ${pendingRows.length}</h5><p>Separadas das barras · risco no contexto: ${esc(format(m.risk?.pending))}${m.risk?.pending?.status==='OK'?'':'. '+esc(reason(m.risk?.pending))}</p><details id="ebRiskPendingDetails"><summary>Ver pendentes</summary><ul>${pendingRows.map(row=>`<li>${detailButton(row,esc(identity(row)))}<small>${esc(role(row))} · ${row.reason?'Não conciliada · '+esc(row.reason):'Pendente'}</small></li>`).join('')}</ul></details></section>`:'';
+    const details=new Map([...el('ebRiskChartContent').querySelectorAll('details[id]')].map(node=>[node.id,node.open]));
+    updateHTML('ebRiskChartContent',`<p class="eb-risk-basis">Moeda da conta · % do saldo registrado${known.length>6?' · 6 maiores primeiro':''}.</p>${!complete?'<p class="eb-risk-coverage">Leitura parcial: barras disponíveis não são um total; ausências não são zero.</p>':''}${missingPercent?'<p class="eb-risk-coverage">Há valores nominais sem base válida para o percentual.</p>':''}${unassigned.length?`<p class="eb-risk-coverage">${unassigned.length} ${unassigned.length===1?'fato sem contexto conciliado':'fatos sem contexto conciliado'}: sem atribuição a esta operação.</p>`:''}${unresolvedOther.length?`<p class="eb-risk-coverage">${unresolvedOther.length} ${unresolvedOther.length===1?'outro fato não conciliado':'outros fatos não conciliados'} neste contexto. ${esc([...new Set(unresolvedOther.map(row=>row.reason))].filter(Boolean).join(' '))}</p>`:''}${known.length?`<ol id="ebRiskBars" class="eb-risk-bars" aria-label="Risco confirmado por ordem aberta" tabindex="0">${bars}</ol><button type="button" id="ebRiskShowAll" class="reset-btn" data-eb-risk-all-toggle aria-controls="ebRiskBars" aria-expanded="${riskAllExpanded}" ${known.length<=6?'hidden':''}>Ver todas as ordens (${known.length} calculáveis)</button>`:`<p class="eb-risk-empty">${state==='empty'?'Nenhuma ordem aberta registrada neste contexto.':'Sem ordens abertas calculáveis. Confira os motivos e os registros confirmados.'}</p>`}${unavailableHTML}${pendingHTML}<details id="ebRiskBasisDetails" class="eb-risk-source"><summary>Fonte e leitura das barras</summary><p class="eb-risk-total">${esc(totalText)}</p><p>Barras comparadas à maior ordem calculável; não representam um limite autorizado. Fonte: mesma versão salva e mesma projeção da grade. Alterar um rascunho não atualiza este gráfico.</p></details>`);
+    for(const detail of el('ebRiskChartContent').querySelectorAll('details[id]'))detail.open=details.get(detail.id)===true;
+    if(!riskChartWidth)riskChartWidth=el('executionBoardRisk')?.clientWidth||0;
+    applyRiskChartState();
+  }
   function renderInstruments(m){
     const instruments=m.instruments||[];
     if(!instruments.some(x=>x.id===instrumentChoice))instrumentChoice=instruments[0]?.id||null;
     const item=instruments.find(x=>x.id===instrumentChoice)||{};
     if(!el('ebTools')){
-      el('executionBoardInstruments').innerHTML='<section id="ebTools" aria-label="Ferramentas da operação"><div class="eb-section-head"><h3>Ferramentas da operação</h3><div class="eb-tool-tabs" role="tablist" aria-label="Ferramenta">'+[['matrix','Matriz Hexafásica','ebToolMatrix'],['rootn','Raiz N','ebToolRootN'],['motor','Motor de Lote','ebToolMotor']].map(([k,t,id])=>`<button type="button" role="tab" id="ebToolTab-${k}" data-eb-tool="${k}" aria-controls="${id}" aria-selected="false" tabindex="-1">${t}</button>`).join('')+'</div></div><div class="eb-tool-toolbar"><label>Instrumento<select id="ebInstrumentSelect" aria-label="Instrumento das ferramentas"></select></label><div class="eb-actions"><button type="button" class="reset-btn" data-eb-observation>Preço / ATR</button><button type="button" class="reset-btn" data-eb-update-quotes>Atualizar referência diária</button><button type="button" class="reset-btn" data-eb-retry-quotes hidden>Repetir gravação</button></div><p id="ebQuoteStatus" role="status"></p></div>'+[['matrix','ebToolMatrix'],['rootn','ebToolRootN'],['motor','ebToolMotor']].map(([k,id])=>`<div id="${id}" class="eb-tool-panel" role="tabpanel" aria-labelledby="ebToolTab-${k}" hidden inert></div>`).join('')+'</section>';
+      el('executionBoardInstruments').innerHTML='<section id="ebTools" aria-label="Ferramentas da operação"><div class="eb-tools-disclosure"><div><h3>Ferramentas da operação</h3><p>Matriz, Raiz N e Motor de Lote</p></div><button type="button" id="ebToolsToggle" class="reset-btn" data-eb-tools-toggle aria-expanded="false" aria-controls="ebToolsBody">Abrir ferramentas</button></div><div id="ebToolsBody" hidden inert><div class="eb-section-head"><div class="eb-tool-tabs" role="tablist" aria-label="Ferramenta">'+[['matrix','Matriz Hexafásica','ebToolMatrix'],['rootn','Raiz N','ebToolRootN'],['motor','Motor de Lote','ebToolMotor']].map(([k,t,id])=>`<button type="button" role="tab" id="ebToolTab-${k}" data-eb-tool="${k}" aria-controls="${id}" aria-selected="false" tabindex="-1">${t}</button>`).join('')+'</div></div><div class="eb-tool-toolbar"><label>Instrumento<select id="ebInstrumentSelect" aria-label="Instrumento das ferramentas"></select></label><div class="eb-actions"><button type="button" class="reset-btn" data-eb-observation>Preço / ATR</button><button type="button" class="reset-btn" data-eb-update-quotes>Atualizar referência diária</button><button type="button" class="reset-btn" data-eb-retry-quotes hidden>Repetir gravação</button></div><p id="ebQuoteStatus" role="status"></p></div>'+[['matrix','ebToolMatrix'],['rootn','ebToolRootN'],['motor','ebToolMotor']].map(([k,id])=>`<div id="${id}" class="eb-tool-panel" role="tabpanel" aria-labelledby="ebToolTab-${k}" hidden inert></div>`).join('')+'</div></section>';
       el('ebInstrumentSelect').onchange=()=>{instrumentChoice=el('ebInstrumentSelect').value;renderInstruments(model());};
       el('ebTools').querySelector('[role="tablist"]').addEventListener('keydown',event=>{
         const keys=['matrix','rootn','motor'],index=keys.indexOf(event.target.dataset.ebTool);if(index<0)return;
@@ -218,10 +356,18 @@
       if(button){button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;}
     }
   }
+  function setToolsExpanded(value){
+    toolsExpanded=!!value;
+    const body=el('ebToolsBody'),toggle=el('ebToolsToggle');if(!body||!toggle)return;
+    if(!toolsExpanded&&body.contains(document.activeElement))toggle.focus({preventScroll:true});
+    body.hidden=!toolsExpanded;body.inert=!toolsExpanded;
+    toggle.setAttribute('aria-expanded',String(toolsExpanded));
+    toggle.textContent=toolsExpanded?'Recolher ferramentas':'Abrir ferramentas';
+  }
   function openTool(choice){
     if(!['matrix','rootn','motor'].includes(choice))return false;
     if(!el('ebTools')){prepareShell();renderInstruments(model());}
-    toolChoice=choice;applyTool();el('ebToolTab-'+choice)?.focus({preventScroll:true});
+    toolChoice=choice;setToolsExpanded(true);applyTool();el('ebToolTab-'+choice)?.focus({preventScroll:true});
     el('ebTools')?.scrollIntoView({block:'nearest',inline:'nearest'});return true;
   }
   function field(pi,oi,o,f,choices){
@@ -474,6 +620,22 @@
   }
   function onClick(event){
     const button=event.target.closest('button');if(!button)return;
+    if(button.hasAttribute('data-eb-record-detail')){showOperationRecord(Number(button.dataset.ebRecordDetail));return;}
+    if(button.hasAttribute('data-eb-tools-toggle')){setToolsExpanded(!toolsExpanded);return;}
+    if(button.hasAttribute('data-eb-risk-chart-toggle')){
+      riskChartExpanded=button.getAttribute('aria-expanded')!=='true';applyRiskChartState();return;
+    }
+    if(button.hasAttribute('data-eb-risk-all-toggle')){
+      riskAllExpanded=!riskAllExpanded;applyRiskChartState();return;
+    }
+    if(button.hasAttribute('data-eb-risk-detail')){
+      const [pi,oi]=(button.dataset.ebRiskDetail||'').split(':').map(Number),detail=el(`ebDetail-${pi}-${oi}`);
+      if(detail){
+        setDetail(pi,oi,true);
+        const heading=detail.querySelector('h4');
+        if(heading){heading.tabIndex=-1;heading.scrollIntoView({block:'nearest',inline:'nearest'});heading.focus({preventScroll:true});}
+      }return;
+    }
     if(button.hasAttribute('data-eb-phase-jump')){
       if(el('execWidgetGrid').hidden&&!JPWNavigation.navigateLocal('exec','panel'))return;
       const pi=Number(button.dataset.ebPhaseJump),phase=el('ebPhase-'+pi);
@@ -524,8 +686,31 @@
   });
   root.addEventListener('beforeunload',event=>{if(hasDrafts()){event.preventDefault();event.returnValue='';}});
   fx.executionBoardUI={render,renderPhases,hasDrafts,openTool,
-    backupDrafts:()=>hasDrafts()?{rows:[...drafts.entries()],observation:observationDirty&&el('ebObservationForm')?Object.fromEntries(new FormData(el('ebObservationForm'))):null,diagnostics:observationDirty&&el('ebDiagnosticForm')?Object.fromEntries(new FormData(el('ebDiagnosticForm'))):null,instrumentId:instrumentChoice,selection:fx.state.operationalSelection()}:null,saveRow,cancelRow,requestLeave,guardNavigation,
+    backupDrafts:()=>hasDrafts()?{rows:[...drafts.entries()],observation:observationDirty&&el('ebObservationForm')?Object.fromEntries(new FormData(el('ebObservationForm'))):null,diagnostics:observationDirty&&el('ebDiagnosticForm')?Object.fromEntries(new FormData(el('ebDiagnosticForm'))):null,instrumentId:instrumentChoice,selection:fx.state.operationalSelection(),baseReference:signature(period().value)}:null,saveRow,cancelRow,requestLeave,guardNavigation,
     discard(){drafts.clear();expanded.clear();expandedPhases.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
     getSelection:()=>({accountId:fx.state.operationalSelection().accountId,instrumentId:instrumentChoice})};
+  window.JPWWorkspaceDrafts.registerRestorer('execution-board',{
+    inspect(item){
+      try{const value=JSON.parse(item.text),selection=fx.state.operationalSelection();
+        const compatible=!hasDrafts()&&value.selection?.accountId===selection.accountId&&value.selection?.periodId===selection.periodId&&value.baseReference===signature(period().value)&&Array.isArray(value.rows)&&value.rows.every(([id,draft])=>{
+          const parts=id.split('|'),[pi,oi]=parts[2].split(':').map(Number);
+          return parts[0]===selection.accountId&&parts[1]===selection.periodId&&Number.isInteger(pi)&&Number.isInteger(oi)&&draft.before===signature(current(pi,oi));});
+        return {compatible,reason:'Conta, período e versões originais devem corresponder, sem outra edição aberta.'};
+      }catch(_){return {compatible:false,reason:'Rascunho de operação incompatível.'};}
+    },
+    reopen(item){
+      if(root.JPWModuleAvailability&&!root.JPWModuleAvailability.canAccess('forex'))throw new Error('Forex está congelado.');
+      if(typeof closeSettingsModal==='function')closeSettingsModal();
+      if(root.JPWNavigation?.navigate('forex-operation')===false)throw new Error('Navegação recusada; resolva o rascunho existente.');
+      const value=JSON.parse(item.text);epoch=jpWealthPersistenceEpoch();instrumentChoice=value.instrumentId;
+      for(const [id,draft] of value.rows)drafts.set(id,structuredClone(draft));
+      tableSignature=null;render();
+      for(const [formId,fields] of [['ebObservationForm',value.observation],['ebDiagnosticForm',value.diagnostics]])if(fields){
+        for(const [name,text] of Object.entries(fields)){const input=el(formId)?.elements.namedItem(name);if(input)input.value=text;}
+        observationDirty=true;
+      }
+      el('ebOrderScroll')?.querySelector('input:not([disabled])')?.focus();
+    }
+  });
   render();
 })(globalThis);

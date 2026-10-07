@@ -2641,3 +2641,32 @@ jpwWorkspaceDraftProviders.set('notes',(reset=false)=>{
   if(Object.keys(mvpNotesUI.folderNameDrafts).length)result.push({label:'Notas — pastas em edição',text:JSON.stringify(mvpNotesUI.folderNameDrafts)});
   return result;
 });
+const mvpNotesOriginalDraftProvider=jpwWorkspaceDraftProviders.get('notes');
+jpwWorkspaceDraftProviders.set('notes',(reset=false)=>mvpNotesOriginalDraftProvider(reset).map(item=>{
+  const kind=item.label.includes('aparência')?'appearance':item.label.includes('pastas')?'folders':'note';
+  return {...item,provider:'notes',version:1,context:{kind},baseReference:kind==='appearance'?mvpNotesAppearanceState.raw:JSON.stringify(S.mvpNotes)};
+}));
+function mvpNotesRecoveryDraftValid(value,kind){
+  if(!value||typeof value!=='object'||Array.isArray(value))return false;
+  if(kind==='appearance')return Object.keys(MVP_NOTES_APPEARANCE_VALUES).every(k=>MVP_NOTES_APPEARANCE_VALUES[k].includes(value[k]));
+  if(kind==='folders')return Object.entries(value).every(([key,name])=>
+    typeof name==='string'&&name.length<=80&&(key==='new'||(key.startsWith('rename:')&&!!mvpNotesFolderById(key.slice(7)))));
+  if(kind!=='note'||typeof value.content!=='string'||value.content.length>20000||mvpNotesValidateNewNote(value))return false;
+  return value.selectedId===null||(typeof value.selectedId==='string'&&mvpNotesItems().some(row=>row.id===value.selectedId));
+}
+window.JPWWorkspaceDrafts.registerRestorer('notes',{
+  inspect(item){try{const value=JSON.parse(item.text),kind=item.context?.kind;
+    const base=kind==='appearance'?mvpNotesAppearanceState.raw:JSON.stringify(S.mvpNotes);
+    return {compatible:['appearance','folders','note'].includes(kind)&&item.baseReference===base&&!mvpNotesUI.draftDirty&&!Object.keys(mvpNotesUI.folderNameDrafts).length&&!mvpNotesAppearanceState.editing&&mvpNotesRecoveryDraftValid(value,kind),reason:'Notas, campos válidos e preferências originais devem corresponder, sem outra edição aberta.'};
+  }catch(_){return {compatible:false,reason:'Rascunho de Notas incompatível.'};}},
+  reopen(item){const value=JSON.parse(item.text),kind=item.context.kind;
+    if(kind==='appearance'){openSettingsModal('interface');mvpNotesAppearanceState.draft=value;mvpNotesAppearanceState.editing=true;mvpNotesAppearanceControls();mvpNotesApplyAppearance();return;}
+    if(typeof closeSettingsModal==='function')closeSettingsModal();openMvpNotesDrawer();
+    if(kind==='folders'){mvpNotesUI.folderNameDrafts=value;renderMvpNotesFolderNav();return;}
+    const selectedId=value.selectedId;delete value.selectedId;
+    const original=selectedId?mvpNotesItems().find(row=>row.id===selectedId):null;
+    if(selectedId&&!original)throw new Error('Nota original indisponível.');
+    mvpNotesUI.selectedId=selectedId||null;mvpNotesUI.draftOriginal=original?mvpNotesDraftFromItem(original):mvpNotesNewDraft();mvpNotesUI.draft=value;mvpNotesUI.draftDirty=true;mvpNotesUI.stage='editor';
+    renderMvpNotesList();renderMvpNotesEditor();mvpNotesApplyStage();mvpn('mvpNoteContent')?.focus();
+  }
+});

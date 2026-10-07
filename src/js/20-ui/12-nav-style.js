@@ -280,6 +280,20 @@ function initNavLayoutChoice(){
 const NAV_ORDER_KEY='jpw_nav_order';
 const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','forex','personal-finance','alladin','tools']);
 const navOrderState={confirmed:[],draft:[],raw:null,editing:false,blocked:null,note:'',restoreRequested:false};
+jpwWorkspaceDraftProviders.set('navigation-order',(reset=false)=>{
+  if(reset){navOrderState.editing=false;return [];}
+  return navOrderDirty()?[{label:'Navegação — ordem não salva',provider:'navigation-order',version:1,baseReference:navOrderState.raw,context:{key:NAV_ORDER_KEY},text:JSON.stringify(navOrderState.draft)}]:[];
+});
+window.JPWWorkspaceDrafts.registerRestorer('navigation-order',{
+  inspect(item){
+    try{return {compatible:!navOrderDirty()&&navOrderValid(JSON.parse(item.text))&&localStorage.getItem(NAV_ORDER_KEY)===item.baseReference,reason:'Confira a ordem original; uma edição já aberta ou preferência diferente impede a reabertura.'};}catch(_){return {compatible:false,reason:'Ordem incompatível ou armazenamento indisponível.'};}
+  },
+  reopen(item){
+    beginNavOrderPreview();if(navOrderState.blocked)throw new Error('Ordem bloqueada para edição.');
+    navOrderState.draft=JSON.parse(item.text);navOrderState.editing=true;applyNavOrder(navOrderState.draft);
+    openSettingsModal('editor');renderNavOrderEditor('Rascunho recuperado. Conferir e Salvar ordem continua obrigatório.');
+  }
+});
 function navOrderValid(value){
   return Array.isArray(value)&&value.length===NAV_ORDER_DEFAULT.length&&
     new Set(value).size===value.length&&value.every(id=>NAV_ORDER_DEFAULT.includes(id));

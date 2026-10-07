@@ -35,7 +35,7 @@ FOREX_CHILDREN = [
     ("forex-operation", "exec", "panel"),
     ("forex-history", "exec", "history"),
     ("forex-accounting", "exec", "accounting"),
-    ("forex-planning", "fxplan", "overview"),
+    ("forex-planning", "fxplan", "table"),
     ("forex-reserves", "fxreserves", None),
 ]
 

@@ -135,7 +135,7 @@ def run_suite(browser, url, rotulo):
     page.locator('#headerConfigBtn').focus()
     assert page.evaluate("document.activeElement.id") == 'headerConfigBtn'
 
-    # ---- 4. backup durante a falha usa o S em memória, não o disco ----
+    # ---- 4. backup distingue fatos confirmados de RAM ainda não confirmada ----
     page.evaluate("""() => {
       window.__blob = null;
       window.URL.createObjectURL = (b) => { window.__blob = b; return 'blob:persist-test'; };
@@ -144,12 +144,15 @@ def run_suite(browser, url, rotulo):
       window.confirm = () => false;   // exporta sem senhas
     }""")
     page.locator('#persistenceAlertBackupBtn').click()
+    page.wait_for_function('()=>window.__blob instanceof Blob')
     exportado = page.evaluate("window.__blob ? window.__blob.text() : null")
     assert exportado, f'[{rotulo}] o botão do aviso deveria acionar a exportação existente'
     import json as _json
     payload = _json.loads(exportado)
-    assert payload['state']['params']['saldoIni'] == 22222, \
-        'o backup deve refletir o estado em memória (22222), não o último gravado (11111)'
+    assert payload['state']['params']['saldoIni'] == 11111, 'fatos confirmados devem manter a última gravação'
+    memory_chunks=[d['text'] for d in payload['workspace']['drafts'] if d.get('provider')=='unconfirmed-memory']
+    assert memory_chunks and _json.loads(''.join(memory_chunks))['params']['saldoIni']==22222, 'RAM recusada deve ser recuperável separadamente'
+    assert payload['formatVersion']==2 and payload['integrity']['algorithm']=='SHA-256'
 
     # ---- 5. recuperação: volta a true, grava, encerra o estado de falha ----
     restore_storage(page)
@@ -163,6 +166,8 @@ def run_suite(browser, url, rotulo):
     assert 'restabelecida' in a['texto'].lower(), a['texto']
 
     # ---- 6. uma nova falha ainda é detectada depois da recuperação ----
+    # WRITE_REFUSED exige um candidato diferente da gravação já confirmada.
+    page.evaluate("S.params.saldoIni += 1")
     break_storage(page)
     assert page.evaluate('save()') is False
     a = alert_facts(page)
@@ -186,8 +191,9 @@ def run_suite(browser, url, rotulo):
     erros = [t for (tipo, t) in page.jpwealth_observed['console'] if tipo == 'error']
     assert any('serializar' in t.lower() for t in erros), erros
     # o clique no botão não pode virar exceção não tratada — o catch interno avisa
-    page.evaluate("window.__msgSerial = null; window.alert = m => { window.__msgSerial = String(m); }")
+    page.evaluate("() => { window.__msgSerial = null; window.alert = m => { window.__msgSerial = String(m); }; }")
     page.locator('#persistenceAlertBackupBtn').click()
+    page.wait_for_function('()=>window.__msgSerial!==null')
     assert page.evaluate("window.__msgSerial") is not None, 'o clique deveria produzir orientação, não exceção'
     assert 'anote manualmente' in page.evaluate("window.__msgSerial")
     assert not page.jpwealth_observed['pageerror'], page.jpwealth_observed['pageerror']
@@ -199,11 +205,15 @@ def run_suite(browser, url, rotulo):
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state').includes('__cicloTeste')") is False
 
     # ---- 6c. corrida do timer: nova falha durante a janela de "restabelecida" ----
+    # WRITE_REFUSED exige um candidato diferente da gravação já confirmada.
+    page.evaluate("S.params.saldoIni += 1")
     break_storage(page)
     assert page.evaluate('save()') is False
     restore_storage(page)
     assert page.evaluate('save()') is True          # "Gravação restabelecida" + timer de 6s
     assert 'restabelecida' in alert_facts(page)['texto'].lower()
+    # WRITE_REFUSED exige um candidato diferente da gravação já confirmada.
+    page.evaluate("S.params.saldoIni += 1")
     break_storage(page)
     assert page.evaluate('save()') is False         # nova falha ANTES dos 6s
     page.wait_for_timeout(6600)                     # espera além do prazo do timer antigo
@@ -216,10 +226,14 @@ def run_suite(browser, url, rotulo):
     assert page.evaluate('save()') is True
 
     # ---- 6d. falha → recuperação → recuperação de novo: sem timers concorrentes ----
+    # WRITE_REFUSED exige um candidato diferente da gravação já confirmada.
+    page.evaluate("S.params.saldoIni += 1")
     break_storage(page)
     page.evaluate('save()')
     restore_storage(page)
     assert page.evaluate('save()') is True          # recuperação 1 (timer 1)
+    # WRITE_REFUSED exige um candidato diferente da gravação já confirmada.
+    page.evaluate("S.params.saldoIni += 1")
     break_storage(page)
     page.evaluate('save()')
     restore_storage(page)

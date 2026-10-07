@@ -96,6 +96,7 @@ def assert_safe_copy_checkpoint(page):
 
 def complete_export_step(page):
     click_id(page, 'sessionExport')
+    page.locator('#sessionExportAcknowledged').wait_for(state='visible')
     assert 'exportação iniciada' in modal_text(page)
     assert page.locator('#sessionExportAcknowledged').count() == 1
     assert not page.locator('#sessionExportContinue').is_enabled()
@@ -411,6 +412,7 @@ def run_dist_suite(browser, url):
     assert_safe_copy_checkpoint(page)
     click_id(page, 'finalizeSessionBtn')
     click_id(page, 'sessionExportNow')
+    page.locator('#sessionExportAcknowledged').wait_for(state='visible')
     assert 'exportação iniciada' in modal_text(page)
     page.locator('#sessionExportAcknowledged').check()
     click_id(page, 'sessionExportContinue')

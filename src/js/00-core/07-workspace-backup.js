@@ -4,11 +4,45 @@ const JPW_WORKSPACE_KEYS=Object.freeze([
   'jpw_module_availability_v1','jpw_fs','jpw_expl','jpw_rail','jpw_nav_submenu_rail','jpw_nav','jpw_nav_layout','jpw_nav_order','jpw_nav_glass_tint',
   'jpwealth.ui.widgetLayouts.v6','jpwealth.ui.widgetLayouts.v5','jpwealth.ui.widgetLayouts.v4',
   'jpwealth.ui.widgetLayouts.v3','jpwealth.ui.widgetLayout.v2',
-  'jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_galton_preferences_v1'
+  'jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_galton_preferences_v1',
+  'jpwealth.ui.ffNews.sourceUrl'
 ]);
 const jpwWorkspaceEdited=new Map();
 let jpwWorkspaceRestoring=false;
 const jpwWorkspaceDraftProviders=new Map();
+const jpwWorkspaceDraftRestorers=new Map();
+// Each adapter checks its own original record/context. Restore epochs legitimately
+// change; a global epoch comparison would incorrectly reject every imported draft.
+function jpwWorkspaceDraftContext(){
+  const selection=window.JPWForex?.state?.operationalSelection?.()||{};
+  return {accountId:selection.accountId||null,periodId:selection.periodId||null};
+}
+function jpwWorkspaceDraftBaseReference(value){
+  return JSON.stringify(value===undefined?null:value,(key,item)=>key==='investorPassword'?'':item);
+}
+window.JPWWorkspaceDrafts=Object.freeze({
+  registerRestorer(id,adapter){
+    if(typeof id!=='string'||!id||!adapter||typeof adapter.inspect!=='function'||typeof adapter.reopen!=='function')throw new Error('Adaptador de retomada inválido.');
+    jpwWorkspaceDraftRestorers.set(id,adapter);
+  },
+  context:jpwWorkspaceDraftContext,baseReference:jpwWorkspaceDraftBaseReference,
+  inspect(item){
+    const adapter=jpwWorkspaceDraftRestorers.get(item?.provider);
+    if(!adapter)return {compatible:false,reason:'Este rascunho está disponível para leitura e cópia. Não há adaptador seguro para reabrir seus campos.'};
+    try{
+      if(!['nocuda-transfer','personal-finance-field'].includes(item.provider))jpwWorkspaceCheckTree(JSON.parse(item.text));
+      jpwWorkspaceCheckTree(item);
+      const result=adapter.inspect(structuredClone(item));
+      if(!result||typeof result.compatible!=='boolean')return {compatible:false,reason:'O contexto não pôde ser conferido.'};
+      return result;
+    }catch(error){return {compatible:false,reason:'Contexto não conferido: '+error.message};}
+  },
+  reopen(item){
+    const inspection=this.inspect(item);if(!inspection.compatible)return {ok:false,reason:inspection.reason};
+    try{return jpwWorkspaceDraftRestorers.get(item.provider).reopen(structuredClone(item))||{ok:true};}
+    catch(error){return {ok:false,reason:'Não foi possível reabrir o rascunho: '+error.message};}
+  }
+});
 function jpwWorkspaceObject(value){return !!value&&typeof value==='object'&&!Array.isArray(value);}
 function jpwWorkspaceCheckTree(value,depth=0){
   if(depth>30)throw new Error('Estrutura de preferências muito profunda.');
@@ -39,12 +73,17 @@ function jpwWorkspaceJpegHeader(bytes){
   throw new Error('Dimensões JPEG indisponíveis.');
 }
 function jpwWorkspaceValidate(value){
-  if(!jpwWorkspaceObject(value)||value.schemaVersion!==1||!jpwWorkspaceObject(value.preferences)||!Array.isArray(value.drafts))throw new Error('Formato de retomada incompatível.');
+  if(!jpwWorkspaceObject(value)||![1,2].includes(value.schemaVersion)||!jpwWorkspaceObject(value.preferences)||!Array.isArray(value.drafts))throw new Error('Formato de retomada incompatível.');
   const text=JSON.stringify(value);if(text.length>4000000)throw new Error('Retomada excede 4 MB.');
   jpwWorkspaceCheckTree(value);
   for(const [key,raw] of Object.entries(value.preferences)){
     if(!JPW_WORKSPACE_KEYS.includes(key)||!(raw===null||typeof raw==='string')||(raw&&raw.length>2000000))throw new Error('Preferência de retomada inválida.');
     if(raw===null)continue;
+    if(key==='jpwealth.ui.ffNews.sourceUrl'){
+      if(raw.length>2048)throw new Error('Endereço de notícias muito longo.');
+      const url=new URL(raw);if(!['https:','http:'].includes(url.protocol)||url.username||url.password)throw new Error('Endereço de notícias inválido ou com credenciais.');
+      continue;
+    }
     if(key==='jpw_module_availability_v1')window.JPWModuleAvailability.validate(raw);
     if(key==='jpw_nav_glass_tint'&&!/^(?:0|[1-9]\d?|100)$/.test(raw))throw new Error('Transparência do Liquid Glass inválida.');
     if(key==='jpw_nav_submenu_rail'&&!['expanded','collapsed'].includes(raw))throw new Error('Largura da lateral em níveis inválida.');
@@ -67,6 +106,10 @@ function jpwWorkspaceValidate(value){
   if(value.drafts.length>500)throw new Error('Muitos rascunhos para um único backup.');
   for(const item of value.drafts){
     if(!jpwWorkspaceObject(item)||typeof item.label!=='string'||item.label.length>300||typeof item.text!=='string'||item.text.length>1000000)throw new Error('Rascunho de retomada inválido.');
+    if(item.provider!==undefined&&(typeof item.provider!=='string'||item.provider.length>100))throw new Error('Origem de rascunho inválida.');
+    if(item.version!==undefined&&item.version!==1)throw new Error('Versão de rascunho não suportada.');
+    if(item.context!==undefined&&item.context!==null&&!jpwWorkspaceObject(item.context))throw new Error('Contexto de rascunho inválido.');
+    if(item.baseReference!==undefined&&item.baseReference!==null&&(typeof item.baseReference!=='string'||item.baseReference.length>1000000))throw new Error('Referência original de rascunho inválida.');
   }
   return structuredClone(value);
 }
@@ -79,16 +122,26 @@ function jpwWorkspaceDrafts(){
     const text=el.type==='checkbox'||el.type==='radio'?String(el.checked):String(el.value);
     drafts.push({...item,text});
   }
-  for(const provider of jpwWorkspaceDraftProviders.values())drafts.push(...provider());
+  for(const [id,provider] of jpwWorkspaceDraftProviders)drafts.push(...provider().map(item=>({provider:id,version:1,...item})));
   const execution=window.JPWForex?.executionBoardUI?.backupDrafts?.();
-  if(execution)drafts.push({label:'Operação — edição não confirmada',text:JSON.stringify(execution)});
+  if(execution)drafts.push({label:'Operação — edição não confirmada',text:JSON.stringify(execution),provider:'execution-board',version:1,context:jpwWorkspaceDraftContext()});
   return drafts.filter((item,index,all)=>all.findIndex(other=>other.label===item.label&&other.text===item.text)===index);
 }
-function jpwWorkspaceCapture(options={}){
+function jpwWorkspaceSourceSnapshot(){
   if(S?.workspaceRecovery?.pending)return jpwWorkspaceValidate(S.workspaceRecovery.snapshot);
   const preferences={};
   for(const key of JPW_WORKSPACE_KEYS)preferences[key]=localStorage.getItem(key);
-  const drafts=jpwWorkspaceDrafts();
+  return {schemaVersion:2,preferences,drafts:jpwWorkspaceDrafts()};
+}
+// A checkpoint records source strings, including an invalid preference awaiting
+// explicit recovery. It does not validate, apply or silently repair that value.
+function jpwWorkspaceFingerprint(){return JSON.stringify(jpwWorkspaceSourceSnapshot());}
+function jpwWorkspaceCapture(options={}){
+  const source=jpwWorkspaceSourceSnapshot(),fingerprint=JSON.stringify(source);
+  if(S?.workspaceRecovery?.pending){
+    Object.defineProperty(source,'sourceFingerprint',{value:fingerprint});return source;
+  }
+  const {preferences,drafts}=source;
   const key=window.JPWModuleAvailability.KEY,raw=preferences[key];
   if(!window.JPWModuleAvailability.inspect(raw).valid){
     if(!options.recoverAvailability)throw new Error('Disponibilidade de módulos inválida. Use o Backup Completo para exportar uma cópia de recuperação, com confirmação.');
@@ -96,7 +149,9 @@ function jpwWorkspaceCapture(options={}){
     delete preferences[key];
     for(let at=0;at<Math.max(raw.length,1);at+=900000)drafts.push({label:'Configuração de disponibilidade inválida — não aplicada (parte '+(1+at/900000)+')',text:raw.slice(at,at+900000)});
   }
-  return jpwWorkspaceValidate({schemaVersion:1,preferences,drafts});
+  const snapshot=jpwWorkspaceValidate({schemaVersion:2,preferences,drafts});
+  Object.defineProperty(snapshot,'sourceFingerprint',{value:fingerprint});
+  return snapshot;
 }
 function jpwWorkspaceAdoptImport(){
   jpwWorkspaceEdited.clear();
@@ -122,7 +177,8 @@ function jpwWorkspaceResume(){
       if(localStorage.getItem(key)!==value)throw new Error('Preferência não confirmada: '+key);
     }
     const previous=S.workspaceRecovery;
-    S.workspaceRecovery={schemaVersion:1,pending:false,drafts:snapshot.drafts};
+    S.workspaceRecovery={...previous,schemaVersion:1,pending:false,drafts:snapshot.drafts};
+    delete S.workspaceRecovery.snapshot;
     if(save()!==true||localStorage.getItem(LSKEY)!==jpWealthLastPersistedRawGet()){
       S.workspaceRecovery=previous;
       throw new Error('Não foi possível confirmar a retomada.');
@@ -142,7 +198,7 @@ function jpwWorkspaceResume(){
 function jpwWorkspaceCaptureField(event){
   const el=event.target;
   if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement||el instanceof HTMLSelectElement)||el.closest('#workspaceDraftDialog'))return;
-  if(el.closest('#settingsProfileForm,#mvpNotesDrawer,#ebObservationForm')||el.hasAttribute('data-eb-field'))return;
+  if(el.closest('#settingsProfileForm,#mvpNotesDrawer,#ebObservationForm')||el.matches('[data-fi-campo],[data-fe-campo],[data-fa-campo],#nocudaPayload,[data-f],[data-eb-reason]')||el.hasAttribute('data-eb-field'))return;
   const identity=[el.id,el.name,el.autocomplete,el.type,...Object.keys(el.dataset)].join(' ');
   if(/password|senha|secret|token|credential|pin|file|hidden|search|filter|session/i.test(identity))return;
   const label=(el.labels?.[0]?.textContent||el.getAttribute('aria-label')||el.id||el.name||Object.entries(el.dataset).map(([k,v])=>k+':'+v).join(' ')).trim().slice(0,300);
@@ -155,10 +211,23 @@ function jpwWorkspaceShowDrafts(){
   if(dialog)dialog.remove();
   dialog=document.createElement('dialog');dialog.id='workspaceDraftDialog';
   const title=document.createElement('h3');title.id='workspaceDraftTitle';title.textContent='Rascunhos recuperados';dialog.setAttribute('aria-labelledby',title.id);dialog.append(title);
-  const hint=document.createElement('p');hint.textContent='Conteúdo em edição guardado no backup. Revise e copie para o formulário correspondente. Estes rascunhos não registram operações automaticamente.';dialog.append(hint);
+  const hint=document.createElement('p');hint.textContent='Rascunhos separados dos registros confirmados. Confira a origem, a base e o contexto antes de reabrir campos. Nenhum comando será executado e nada será salvo automaticamente.';dialog.append(hint);
   for(const item of S?.workspaceRecovery?.drafts||[]){
     const label=document.createElement('label');label.textContent=item.label;
     const area=document.createElement('textarea');area.readOnly=true;area.value=item.text;area.rows=4;label.append(area);dialog.append(label);
+    const inspection=window.JPWWorkspaceDrafts.inspect(item);
+    const reason=document.createElement('p');reason.textContent=inspection.reason||'Contexto e referência original compatíveis.';dialog.append(reason);
+    if(item.context){const context=document.createElement('pre');context.textContent='Contexto: '+JSON.stringify(item.context,null,2);dialog.append(context);}
+    if(inspection.compatible){
+      const reopen=document.createElement('button');reopen.type='button';reopen.textContent='Conferir e reabrir campos';
+      reopen.onclick=()=>{
+        if(!confirm('Reabrir somente os campos deste rascunho, após conferir o contexto? Os fatos confirmados permanecem preservados; salvar continuará sendo uma ação explícita.'))return;
+        const current=window.JPWWorkspaceDrafts.inspect(item);
+        if(!current.compatible){reason.textContent=current.reason;return;}
+        dialog.close();const result=window.JPWWorkspaceDrafts.reopen(item);
+        if(result?.ok===false){alert(result.reason||result.error||'Rascunho não reaberto.');dialog.showModal();}
+      };dialog.append(reopen);
+    }
   }
   const close=document.createElement('button');close.type='button';close.textContent='Fechar';close.className='modal-btn confirm';close.onclick=()=>dialog.close();
   const actions=document.createElement('div');actions.className='workspace-draft-actions';actions.append(close);dialog.append(actions);

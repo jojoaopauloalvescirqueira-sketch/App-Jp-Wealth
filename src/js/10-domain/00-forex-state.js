@@ -239,14 +239,16 @@
     return masters.length===1?masters[0].forexAccountId:null;
   }
   function operationalSelection(){
+    const accounts=(S.accounts||[]).filter(x=>text(x?.forexAccountId)).map(x=>({accountId:x.forexAccountId,
+      name:x.nome||x.forexAccountId,type:x.tipo||null,currency:x.platformCurrency||null}));
+    if(!supported())return {accountId:null,periodId:null,reason:'FOREX_SCHEMA_UNSUPPORTED',requiresSelection:true,accounts};
     if(operationalHold&&operationalHold.epoch!==jpWealthPersistenceEpoch())operationalHold=null;
     const explicit=operationalAccountId&&registeredAccount(operationalAccountId)?operationalAccountId:null;
     const accountId=explicit||defaultOperationalAccount();
     const a=accountId?contextEnvelope(raw()).accounts[accountId]:null;
     const periodId=operationalPeriodId&&a?.periods?.[operationalPeriodId]?operationalPeriodId:a?.currentPeriodId||null;
     const selected=operationalHold?operationalHold.selection:{accountId,periodId,reason:explicit?'EXPLICIT':accountId?'UNIQUE_MASTER':'SELECTION_REQUIRED',requiresSelection:!accountId};
-    return {...selected,accounts:(S.accounts||[]).filter(x=>text(x?.forexAccountId)).map(x=>({accountId:x.forexAccountId,
-        name:x.nome||x.forexAccountId,type:x.tipo||null,currency:x.platformCurrency||null}))};
+    return {...selected,accounts};
   }
   function withPreservedOperationalContext(command){
     // Preserve the effective pair, including an absent period, while a cadastro or
@@ -279,10 +281,11 @@
   }
   function accountProfileContext(target){
     const accountId=text(target?.accountId),periodId=text(target?.periodId)||null;
-    const account=registeredAccount(accountId),p=contextEnvelope(raw()).accounts[accountId]?.periods?.[periodId];
+    const account=registeredAccount(accountId);
     const missing=(code,message)=>({status:'NOT_COMPUTABLE',accountId:accountId||null,periodId,
       current:null,next:null,period:null,hasPendingChange:false,legacyName:null,findings:[{code,message}]});
     if(!supported()||!account)return missing('PROFILE_ACCOUNT_UNAVAILABLE','Conta ausente, ambígua ou incompatível.');
+    const p=contextEnvelope(raw()).accounts[accountId]?.periods?.[periodId];
     if(periodId&&!p)return missing('PROFILE_PERIOD_UNAVAILABLE','O período não pertence à conta consultada.');
     const assignment=account.riskProfileAssignment;
     if(!validProfileAssignment(assignment,accountId))return missing('PROFILE_ASSIGNMENT_INVALID','A atribuição de perfil exige revisão.');

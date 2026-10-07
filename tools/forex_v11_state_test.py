@@ -7,7 +7,8 @@ local editor friction is never treated as approver authentication.
 """
 import argparse
 from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import hashlib
 import json
 from pathlib import Path

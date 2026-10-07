@@ -1,3 +1,49 @@
+# Correção dos PRODUCT_FAIL pendentes — 2026-10-06
+
+Pedido humano atual: “Solucione todos os product fail pendentes”. Candidate isolado na cópia jpw-product-fail-repair-20261006/candidate, branch herdada codex/saving-reliability-20261006, HEAD ac3a2faffeb398357ff105adbf1d47f70ca309bd. Base 1db5b703ca56d26c, 749 arquivos/fingerprint ce450e0ba50b51388794e52a0840c830f3934b0bbf40d1945fd3701f8becfdb3 preservada, snapshot e recibos anteriores conservados. Preflight --allow-dirty somente após inventário dos deltas herdados. SOURCE REVISION UNKNOWN no contexto histórico permanece, não usado como realidade atual.
+
+O objetivo é remover causas reproduzidas nas cinco falhas gerais e duas MT5 host; investigar intermitência do import e falha do executor de timeout. Não haverá alteração de norma/fórmulas, dados reais, configuração global, execução MT5, EX5, commit, branch, push, merge ou publicação.
+
+Contratos: CHG-JPW-PENDING-FAIL-PRODUCT/TEST e BRIEF-JPW-PENDING-FAIL de 20261006.
+
+## Histórico preservado
+
+# Tarefa corrente — salvamento, backup e recuperação (2026-10-06)
+
+Implementação explícita autorizada pelo proprietário. Contratos CHG-JPW-SAVING-INTEGRITY, SAVING-UI e SAVING-TEST-CONTRACT de 20261006; brief correspondente. Base 4525c1f0755a2ec8 e 63 alterações anteriores preservadas externamente. Candidate isolado, dados sintéticos, sem Git/publicação/MT5. Preflight edit com --allow-dirty após inventário e confirmação da origem das alterações herdadas. Achados e resultados anteriores permanecem separados.
+
+## Histórico preservado
+
+# Tarefa vigente — correção da precisão financeira do DD
+
+Contrato: [CHG-JPW-DD-BOUNDARY-FIX-20261006](CHG-JPW-DD-BOUNDARY-FIX-20261006.md). Autorização do proprietário: “Corrija a falha financeira conhecida”. Compreensão, fontes, escopo e rollback: [brief](BRIEF-JPW-DD-BOUNDARY-FIX-20261006.md). Candidate isolado; norma, política, persistência e testes existentes preservados.
+
+## Histórico anterior preservado
+
+# Tarefa corrente — rastreamento e correção de bugs de interface (2026-10-06)
+
+Pedido humano explícito: rastrear e corrigir bugs da interface. CHG-JPW-INTERFACE-BUGFIX-20261006, N1/A2; base3ea4d24e6b8c3bf7 preservada, escopo somente UI. Fontes financeiras, MT5, persistência e juízes não são alterados. Evidências externas em jpw-interface-bugfix-20261006. Sem Git/publicação.
+
+## Histórico preservado
+
+# Tarefa corrente — Forex por tarefa (2026-10-05)
+
+CHG-JPW-FOREX-TASK-DESIGN-20261005 e contrato separado de testes. Candidate local; base df2caa32013cb2cc preservada. Não representa integração ou publicação.
+
+## Histórico preservado
+
+# Tarefa ativa — painel profissional Forex (2026-10-05)
+
+Candidate isolado; objetivo/autoridade/escopo e testes nos três CHGs JPW-FOREX-PROFESSIONAL e brief correspondente. Baseline preservada em outputs/jpw-forex-professional-panel-20261005/baseline.* fora do candidate. Somente dados sintéticos; sem fórmulas, escrita financeira, MT5 ou integração. Delta implementado; candidate em validação local, com fingerprint, recibos brutos, auditoria e limitações na entrega externa. Resultados anteriores não validam os novos bytes. Aceite manual e integração permanecem separados.
+
+# Tarefa ativa — evolução da conta e risco visual
+
+Base ac3a2fa; candidate local codex/forex-visual-risk-20261005. Produto N1/A2 e testes N3/A4 nos CHGs FOREX-VISUAL-RISK de 20261005. Autorização: implementação do plano; sem Git/publicação, dados reais ou alteração financeira. Candidate implementado para avaliação local. Recibos brutos, auditoria, fingerprint e rollback permanecem no diretório externo outputs/jpw-forex-visual-risk-20261005. A conclusão de cada verificação deve ser lida nesses recibos, sem inferir aprovação pela presença desta interface. DD14 herdado permanece; promoção e publicação não estão autorizadas nesta etapa.
+
+---
+
+## Contexto anterior preservado
+
 # Tarefa ativa local — Operação com proporções de planilha
 
 Candidate local de 2026-10-05, base a47ebee, branch codex/operation-proportions-20261005.

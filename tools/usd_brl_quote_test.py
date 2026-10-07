@@ -102,7 +102,7 @@ def seed_plan(page):
           originalCurrency: 'BRL', originalAmount: 51000, acquisitionFxRate: 5.10});
         // Mes fechado SEM valuationFxRate: o presente cai na referencia externa
         st.fxPlanRecordActual('2026-01', {inputType: 'rate', returnRate: 0,
-          profitUsd: null, valuationFxRate: null, notes: ''});
+          profitUsd: null, valuationFxRate: null, notes: '', contributionsConfirmed: true});
         const l = st.fxOverviewLive();
         return {ok: true, saldo: l.currentBalanceUsd,
                 medio: l.costBasis.weightedAverageFx};
@@ -229,9 +229,10 @@ def caso_historico_nao_reprecifica(browser, url):
     try:
         assert seed_plan(page)["ok"]
         page.evaluate(
-            """() => window.JPWFx.state.fxPlanRecordActual('2026-01', {
+            """() => { window.JPWFx.state.fxPlanReopenMonth('2026-01', 'Conferência da taxa histórica na fixture');
+              return window.JPWFx.state.fxPlanRecordActual('2026-01', {
                 inputType: 'rate', returnRate: 0, profitUsd: null,
-                valuationFxRate: 5.40, notes: ''})"""
+                valuationFxRate: 5.40, notes: '', contributionsConfirmed: true}); }"""
         )
         refresh(page)  # referencia corrente 5,20
         conv = page.evaluate(

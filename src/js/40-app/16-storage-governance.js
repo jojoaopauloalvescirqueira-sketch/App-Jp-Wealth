@@ -8,6 +8,85 @@ function dgFmtDateTime(iso){
   try{ return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso)); }
   catch(e){ return String(iso); }
 }
+// Presentation reads confirmed storage and independent recovery/evidence stores.
+// Navigating here never commits financial facts.
+async function renderDgSavingOverview(container){
+  if(!container||!container.isConnected)return;
+  const token=(container._savingOverviewGeneration||0)+1;container._savingOverviewGeneration=token;
+  let section=container.querySelector('#dgSavingOverview');
+  if(!section){section=document.createElement('section');section.id='dgSavingOverview';section.className='jpw-storage-overview';container.prepend(section);}
+  let drafts=null,baseBytes=null,captureError='';
+  try{const workspace=typeof jpwWorkspaceCapture==='function'?jpwWorkspaceCapture():null;drafts=Array.isArray(workspace?.drafts)?workspace.drafts.length:null;}
+  catch(error){captureError=error.message||'Captura indisponível.';}
+  try{const raw=localStorage.getItem(LSKEY);baseBytes=raw===null?0:new Blob([raw]).size;}catch(error){}
+  const typed=typeof jpWealthPersistenceLastResult==='function'?jpWealthPersistenceLastResult():null;
+  const exportState=window.JPWBackup?.status?.()||{stage:'IDLE'};
+  const labels={IDLE:'Nenhuma exportação nesta sessão',GENERATED:'Cópia gerada',DOWNLOAD_REQUESTED:'Download solicitado — confira o arquivo',FILE_VERIFIED:'Arquivo conferido',REFUSED:'Exportação recusada',UNKNOWN:'Resultado desconhecido — conferir antes de repetir'};
+  const fmt=bytes=>{if(bytes===null)return 'não apurado';if(bytes<1024)return bytes+' B';const small=bytes<1024*1024;return new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2}).format(bytes/(small?1024:1024*1024))+(small?' KiB':' MiB');};
+  const recovered=Array.isArray(S.workspaceRecovery?.drafts)?S.workspaceRecovery.drafts.length:0;
+  const pendingDrafts=drafts===null?null:Math.max(0,drafts-recovered);
+  const resultLabels={CONFIRMED:'Gravação confirmada',REFUSED:'Gravação recusada',UNKNOWN:'Resultado desconhecido — conferir recuperação'};
+  const reasonLabels={NOT_ATTEMPTED:'Sem gravação nesta sessão',READBACK_MATCH:'conteúdo relido e conferido',PENDING_VERIFICATION:'conferência pendente',LOAD_RECOVERY:'base em recuperação',BLOCKED:'sessão bloqueada',WORKSPACE_RECOVERY:'rascunhos aguardam conferência',INVALID_ROOT:'formato inválido',SERIALIZE:'conteúdo não serializado',READ_BEFORE_WRITE:'leitura inicial indisponível',CONFLICT:'outra aba atualizou a base',READ_AFTER_WRITE:'não foi possível conferir após gravar',WRITE_REFUSED:'armazenamento recusou a gravação',WRITE_NOT_APPLIED:'escrita não aplicada',READBACK_DIVERGED:'conteúdo relido divergente'};
+  const outcome=!typed?.at?'Sem gravação nesta sessão':resultLabels[typed.status]||dgPersistenceStatus().text;
+  section.innerHTML='<h4>Salvamento e recuperação</h4><div class="jpw-storage-metrics">'+
+    '<dl><dt>Base registrada</dt><dd>'+esc(fmt(baseBytes))+'</dd><dt>Último resultado</dt><dd>'+esc(outcome)+(typed?.at&&typed?.reason?' · '+esc(reasonLabels[typed.reason]||'conferência técnica disponível na recuperação'):'')+'</dd></dl>'+
+    '<dl><dt>Edições pendentes para exportação</dt><dd>'+esc(pendingDrafts===null?'não conferidas':String(pendingDrafts))+' · em memória, separadas dos fatos</dd><dt>Rascunhos já recuperados</dt><dd>'+esc(String(recovered))+' · material de recuperação</dd><dt>Exportação nesta sessão</dt><dd id="dgSavingExportStage">'+esc(labels[exportState.stage]||exportState.stage)+'</dd></dl>'+
+    '</div><p>Backup Completo inclui registros confirmados, perfil/foto, preferências e rascunhos recuperáveis em áreas separadas. Reabrir rascunhos exige conferir seu contexto; não os transforma em registros.</p>'+
+    (captureError?'<p role="status">Captura de rascunhos não concluída: '+esc(captureError)+'</p>':'')+
+    '<p class="dg-status-note">Neste endereço: '+esc(location.protocol==='file:'?'arquivo local; disponibilidade depende do navegador':location.origin)+'. Outro endereço, porta ou dispositivo terá outra base. A pasta de exportação não sincroniza os dados.</p>'+
+    '<p class="dg-status-note">Uma recarga comum não recupera edições que existem apenas na memória. Exportar o Backup Completo ou Finalizar Sessão captura os rascunhos disponíveis; salve a cópia externa antes de sair. Os rascunhos já recuperados podem ser conferidos abaixo, sem salvar automaticamente.</p>'+
+    '<div class="dg-actions"><button type="button" class="reset-btn" id="dgSavingDrafts" '+(recovered?'':'disabled')+'>Ver rascunhos já recuperados</button></div>'+
+    '<details class="dg-detail"><summary>O que fica fora do Backup Completo?</summary><p>Permissões de pasta, senhas, caches públicos, simulações em execução e foco/rolagem. PDF/HTML originais têm o ZIP de evidências separado abaixo; documentos normativos e arquivos MT5 pertencem à distribuição do programa.</p></details>'+
+    '<section class="jpw-evidence-panel" aria-labelledby="dgEvidenceHeading"><h4 id="dgEvidenceHeading">Originais de relatórios</h4><p>PDF/HTML ficam em IndexedDB exclusivo, vinculados ao SHA-256 dos comprovantes. O conteúdo não é executado. Exportar este ZIP não substitui o Backup Completo.</p>'+
+    '<p id="dgEvidenceSummary">Conferindo cobertura dos originais…</p><p id="dgOriginQuota">Espaço do endereço: apuração pendente.</p>'+
+    '<div class="dg-actions"><button type="button" class="reset-btn" id="dgEvidenceExport">Exportar ZIP de originais</button></div>'+
+    '<label>Restaurar ZIP de originais<input type="file" id="dgEvidenceFile" accept=".zip,application/zip"></label>'+
+    '<button type="button" class="reset-btn" id="dgEvidenceImport">Conferir e restaurar originais</button>'+
+    '<p id="dgEvidenceResult" role="status" aria-live="polite"></p></section>';
+  section.querySelector('#dgSavingDrafts').onclick=()=>{
+    if(typeof jpwWorkspaceShowDrafts==='function')jpwWorkspaceShowDrafts();
+    else alert('A recuperação de rascunhos não está disponível nesta versão.');
+  };
+  const action=async(which)=>{
+    const output=section.querySelector('#dgEvidenceResult'),button=section.querySelector(which==='export'?'#dgEvidenceExport':'#dgEvidenceImport');
+    if(!window.JPWEvidence){output.textContent='Arquivo de evidências indisponível.';return;}
+    let file;if(which==='import'){
+      file=section.querySelector('#dgEvidenceFile').files[0];
+      if(!file){output.textContent='Escolha o ZIP de evidências.';return;}
+      if(!confirm('Conferir e restaurar somente os PDF/HTML originais deste ZIP? A base financeira não será importada. Todos os hashes serão validados antes da gravação.'))return;
+    }
+    button.disabled=true;output.textContent='Conferindo…';
+    let result;try{result=await (which==='export'?window.JPWEvidence.exportArchive():window.JPWEvidence.restoreArchive(file));}
+    catch(error){result={status:'REFUSED',reason:'A operação não pôde ser conferida. Preserve o arquivo e tente novamente após verificar o armazenamento.'};}
+    if(!section.isConnected||container._savingOverviewGeneration!==token)return;
+    button.disabled=false;output.textContent=result.reason;
+    if(result.status==='CONFIRMED')await updateEvidenceSummary();
+  };
+  section.querySelector('#dgEvidenceExport').onclick=()=>action('export');
+  section.querySelector('#dgEvidenceImport').onclick=()=>action('import');
+  async function updateEvidenceSummary(){
+    const state=window.JPWEvidence?await window.JPWEvidence.summary():{status:'REFUSED',reason:'Arquivo de evidências indisponível.'};
+    if(!section.isConnected||container._savingOverviewGeneration!==token)return;
+    const receipts=Array.isArray(S.fxConsolidated?.receipts)?S.fxConsolidated.receipts:[],hashes=new Set(state.items?.map(r=>r.fileHash)||[]);
+    const covered=receipts.filter(r=>hashes.has(r.fileHash)).length;
+    section.querySelector('#dgEvidenceSummary').textContent=state.status==='CONFIRMED'
+      ?state.count+' original(is) indexado(s) · '+fmt(state.bytes)+' · '+covered+'/'+receipts.length+' comprovantes com hash presente. A integridade dos bytes é conferida na leitura do comprovante e na exportação. Os anteriores podem exigir reassociação.'
+      :'Cobertura indisponível: '+state.reason;
+  }
+  updateEvidenceSummary();
+  try{
+    const estimate=await navigator.storage?.estimate?.();
+    if(section.isConnected&&container._savingOverviewGeneration===token)section.querySelector('#dgOriginQuota').textContent=estimate
+      ?'Espaço total deste endereço: '+fmt(estimate.usage??null)+' utilizado / '+fmt(estimate.quota??null)+' estimado. Inclui caches; quota não garante retenção. Mantenha cópias externas.'
+      :'O navegador não informou sua quota. Mantenha cópias externas.';
+  }catch(error){if(section.isConnected&&container._savingOverviewGeneration===token)section.querySelector('#dgOriginQuota').textContent='Quota não disponível. Mantenha cópias externas.';}
+}
+window.addEventListener('jpw-backup-status',()=>{
+  const target=document.getElementById('dgSavingExportStage');if(!target)return;
+  const state=window.JPWBackup?.status?.(),labels={IDLE:'Nenhuma exportação nesta sessão',GENERATED:'Cópia gerada',DOWNLOAD_REQUESTED:'Download solicitado — confira o arquivo',FILE_VERIFIED:'Arquivo conferido',REFUSED:'Exportação recusada',UNKNOWN:'Resultado desconhecido — conferir antes de repetir'};
+  target.textContent=labels[state?.stage]||state?.stage||'Não conferido';
+});
+
 // ---- diálogo de recuperação da exportação (§6.4/§6.5/§7) -------------------------
 // Chamado por exportFullBackup() quando a pasta configurada não está acessível.
 // Resolve com: 'retry' (acesso possivelmente recuperado — tentar de novo),
@@ -37,7 +116,7 @@ function dgExportRecoveryDialog(state){
       '<h3 id="dgRecoveryTitle">'+esc(titulo)+'</h3>'+
       '<p class="dg-dialog-sub">'+esc(corpo)+'</p>'+
       '<div class="dg-folder-fact"><span>'+(missing?'Pasta anteriormente configurada':'Pasta padrão')+'</span><b>'+esc(nome)+'</b></div>'+
-      '<p class="dg-dialog-warn">Nenhum arquivo foi exportado para a pasta configurada.</p>'+
+      '<p class="dg-dialog-warn">Nenhuma exportação completa foi confirmada na pasta configurada.</p>'+
       '<div class="dg-dialog-actions">'+
       (missing
         ? '<button type="button" class="modal-btn confirm" id="dgActLocate">Localizar esta pasta</button>'
@@ -154,7 +233,7 @@ async function renderDgStorageCard(){
     '<details class="dg-detail"><summary>Local e cobertura do backup</summary><p>'+esc(location.protocol==='file:'?'Arquivo local — a separação do armazenamento depende do navegador.':'Endereço: '+location.origin)+'</p>'+
     '<p>Base: localStorage · '+esc(LSKEY)+'. O navegador não informa um caminho físico estável para esse banco.</p>'+
     '<p>Inclui os dados registrados de Forex, Finanças Pessoais, Alladin, NoCoda, Pivots e Notas, com pastas, históricos e configurações pertencentes à base.</p>'+
-    '<p>Não inclui perfil/foto, posição de Notas, personalizações locais de navegação/layout, caches, permissões de pasta ou rascunhos ainda não salvos. Senhas são removidas.</p></details>'+
+    '<p>Inclui também perfil/foto, preferências de navegação/layout, aparência de Notas e rascunhos capturados, separados dos fatos confirmados. Não inclui originais PDF/HTML, caches, permissões de pasta ou simulações. Senhas são removidas.</p></details>'+
     '<h4>Pasta de exportação</h4>'+statusHtml+
     '<h4>Exportação e backup</h4>'+
     '<dl class="dg-facts">'+
@@ -169,10 +248,11 @@ async function renderDgStorageCard(){
     '</dl>'+
     '<p class="dg-status-note">Exportar gera uma cópia da base; <b>backup confirmado</b> é a sua declaração de que uma cópia adequada está guardada — são eventos distintos.</p>'+
     '<div class="dg-actions"><button type="button" class="reset-btn" id="dgCardConfirmBackup">Confirmar que possuo backup atualizado</button></div>';
+  renderDgSavingOverview(box);
   const pickBtn=box.querySelector('#dgCardPick');
   if(pickBtn) pickBtn.addEventListener('click',async()=>{
     const r=await dgFsPickFolder();
-    if(!r.ok && r.reason==='error') alert(r.message||'Não foi possível configurar a pasta.');
+    if(!r.ok && r.reason!=='cancelled') alert(r.message||'Não foi possível configurar a pasta.');
     renderDgStorageCard();
   });
   const reauthBtn=box.querySelector('#dgCardReauth');
@@ -232,7 +312,7 @@ async function renderDgFolderPanel(box){
     const act=btn.dataset.dgAct;
     if(act==='pick'){
       const r=await dgFsPickFolder();
-      if(!r.ok && r.reason==='error') alert(r.message||'Não foi possível configurar a pasta.');
+      if(!r.ok && r.reason!=='cancelled') alert(r.message||'Não foi possível configurar a pasta.');
     }else if(act==='reauth'){
       const handle=await dgFsLoadHandle();
       if(handle) await dgFsRequestPermission(handle);

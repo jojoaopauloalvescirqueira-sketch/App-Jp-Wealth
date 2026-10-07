@@ -46,6 +46,12 @@ def seed(page):
 
 
 def tool(page, name):
+    # Tools are deliberately on demand; use their public disclosure before tabs.
+    if page.locator('#ebToolsBody').evaluate('e=>e.hidden'):
+        page.locator('#ebToolsToggle').click()
+        settle(page)
+    assert page.locator('#ebToolsToggle').get_attribute('aria-expanded') == 'true'
+    assert page.locator('#ebToolsBody').evaluate('e=>!e.hidden && !e.inert')
     page.locator(f'[data-eb-tool="{name}"]').click()
     settle(page)
     assert page.locator('#'+PANELS[name]).is_visible(), name
@@ -148,6 +154,8 @@ def tools_and_lot_bases(page, out, observed):
     editor.evaluate("e=>{e.focus();e.setSelectionRange(2,4)}")
     scroll = page.locator('#ebOrderScroll')
     scroll.evaluate('e=>{e.scrollLeft=370;window.__workbookScroll=e.scrollLeft}')
+    assert page.locator('#ebToolsToggle').get_attribute('aria-expanded') == 'false'
+    assert page.locator('#ebToolsBody').evaluate('e=>e.hidden && e.inert')
     for name, panel in PANELS.items():
         tool(page, name)
         assert page.locator(f'[data-eb-tool="{name}"]').get_attribute('aria-selected') == 'true'
@@ -170,6 +178,10 @@ def tools_and_lot_bases(page, out, observed):
     assert 'SI' in page.locator('#ebToolMotor').inner_text()
     assert 'equity' in page.locator('#ebToolMotor').inner_text().lower()
     for call in ["JPWNavigation.navigate('motor')", "JPWNavigation.navigateLocal('exec','motor')", "JPWExec.ui.selectView('motor')"]:
+        page.locator('#ebToolsToggle').click()
+        settle(page)
+        assert page.locator('#ebToolsBody').evaluate('e=>e.hidden && e.inert')
+        assert field(page, 'entry').input_value() == '1.2345' and persisted(page) == before
         assert page.evaluate(call), call
         settle(page)
         assert page.locator('#ebToolMotor').is_visible() and page.locator('#executionBoard').is_visible()
@@ -188,7 +200,8 @@ def tools_and_lot_bases(page, out, observed):
     assert persisted(page) == before
     page.locator('#ebTools').screenshot(path=str(out/'integrated-tools.png'))
     observed.update(initialNormal=item['initialNormal']['value'], currentNormal=item['currentNormal']['value'],
-                    independentBases=True, aliasesPreserveDrafts=True, tabsWriteNothing=True)
+                    independentBases=True, aliasesPreserveDrafts=True, tabsWriteNothing=True,
+                    toolsInitiallyCollapsed=True, publicDisclosureAndAliasesPreserveDrafts=True)
 
 
 def matrix_boundaries(page, out, observed):

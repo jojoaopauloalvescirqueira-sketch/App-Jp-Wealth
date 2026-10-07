@@ -596,7 +596,7 @@ def assert_resumos_preenchidos(browser,url):
         r=page.evaluate("""() => {
           const st=JPWFx.state;
           const created=st.fxPlanCreate({name:'Plano de teste',assumptions:{startMonth:'2026-01',horizonMonths:24,initialBalanceUsd:1000,defaultMonthlyReturn:0.01,projectedFxRate:5.4}});
-          const closed=st.fxPlanRecordActual('2026-01',{inputType:'rate',returnRate:0.02});
+          const closed=st.fxPlanRecordActual('2026-01',{inputType:'rate',returnRate:0.02,contributionsConfirmed:true});
           const expected=st.fxOverviewLive();
           const before=JSON.stringify(S);
           JPWDashMacro.render();

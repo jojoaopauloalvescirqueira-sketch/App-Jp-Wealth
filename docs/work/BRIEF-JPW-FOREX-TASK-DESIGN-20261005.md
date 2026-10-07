@@ -1,0 +1,9 @@
+# Brief — Forex por tarefa
+
+Base: df2caa32013cb2cc, 8614331da300e688fbcf231c687976bea91733ac781ff0817fabd1ffc7c2ccfb; 725 arquivos/links e 21 alterações preexistentes preservados. Candidate copiado isoladamente; branch herdada codex/forex-professional-panel-20261005; main não modificada. Snapshot em /Users/joaopauloalves/Library/Mobile Documents/com~apple~CloudDocs/99X - Codex/Migracao-2026-10-05/Projetos Work/g-p-6a4fc0aa51dc8191af013579f37179a3/outputs/jpw-forex-task-design-20261005/baseline.tar.gz.
+
+O JP Wealth registra fatos financeiros e explica risco sem converter registro em autorização. Forex reúne consulta, gestão e registro operacional. UI projeta modelos canônicos; navegação e consulta só alteram RAM. Hoje contexto/controles empilhados distanciam gráficos e grade; Histórico só possui consulta independente de arquivadas. O novo comportamento agrupa tarefas, compacta contexto, abre ferramentas sob demanda e permite consultar todos os períodos sem aplicação. Consumidores: shell nos quatro layouts, views Forex, regras de foco/rascunho e importação. Não modificar modelos, schemas, writers, financeiro, MT5, gates nem preferências persistidas.
+
+Fonte: AGENTS/CONTEXT-MAP/FOREX-V11-ENGINE e X1/X2 lidos; Harness no caminho migrado /Users/joaopauloalves/Library/Mobile Documents/iCloud~md~obsidian/Documents/2 - TRABALHO/7C - SOFTWARE/A0 - HARNESS - JP Wealth MASTER SPECIFICATION.md, SHA256 b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95, §§12–19/36–48. UI: navigation children; histScope e archivePicker; executionBoardUI render/prepareShell; consolidated renderAccount/render; accounting renderAcct. Especificação: plano humano integral aprovado na conversa.
+
+Teste: dois contextos e dados sintéticos; nenhum dado real. Reproduzir antes/depois de mesmas fixtures, focais, regressões, standard/full brutos e revisão independente. Gate financeiro DD14 histórico preservado. Sem commit/push/merge/publicação.

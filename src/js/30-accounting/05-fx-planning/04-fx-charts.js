@@ -26,6 +26,7 @@ const FX_DASH_FORECAST='2 3';
 // era exatamente esse vazamento que este ticket corrige.
 // O custo médio de aquisição não entra aqui: é conceito contábil, não cotação.
 function fxChartConvert(row,mode,ctx){
+  if(!row || !Number.isFinite(row.close) || row.availability==='UNAVAILABLE') return null;
   if(mode!=='brl') return row.close;
   const c=(ctx&&typeof ctx==='object')?ctx:{projectedRate:ctx};
   let rate;
@@ -35,6 +36,24 @@ function fxChartConvert(row,mode,ctx){
     else rate=null;                                                      // sem taxa histórica
   } else rate=c.projectedRate;                                           // futuro
   return rate>0?row.close*rate:null;
+}
+
+// Keep the calendar slots. A missing or unconfirmed month ends a segment;
+// it must never be connected to a later observation across the gap.
+function fxChartSegments(points){
+  const segments=[]; let segment=[];
+  for(const point of points){
+    if(!Number.isFinite(point.y)){
+      if(segment.length) segments.push(segment);
+      segment=[]; continue;
+    }
+    if(segment.length && point.i!==segment[segment.length-1].i+1){
+      segments.push(segment); segment=[];
+    }
+    segment.push(point);
+  }
+  if(segment.length) segments.push(segment);
+  return segments;
 }
 
 function fxDrawMainChart(box,plan,ov,mode){
@@ -55,12 +74,17 @@ function fxDrawMainChart(box,plan,ov,mode){
   const presentMonth=ov.lastClosedMonth||null;
   const ctxBase={projectedRate:baseRate||currRate, currentRate:presentRate, presentMonth};
   const ctxCurr={projectedRate:currRate, currentRate:presentRate, presentMonth};
-  const basePts=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxBase)})).filter(p=>p.y!=null);
-  const series=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxCurr),phase:r.phase})).filter(p=>p.y!=null);
+  const baseSlots=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxBase)}));
+  const slots=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxCurr),phase:r.phase}));
+  const basePts=baseSlots.filter(p=>Number.isFinite(p.y));
+  const series=slots.filter(p=>Number.isFinite(p.y));
   const actualPts=series.filter(p=>p.phase==='actual');
-  // a projeção parte do último ponto real para a linha não abrir buraco visual
-  const forecastPts=actualPts.length?series.slice(actualPts.length-1):series;
+  const lastActual=actualPts.length?actualPts[actualPts.length-1].i:null;
+  const actualSegments=fxChartSegments(slots.map(p=>({...p,y:p.phase==='actual'?p.y:null})));
+  const forecastSegments=fxChartSegments(slots.map(p=>({...p,y:p.phase!=='actual'||p.i===lastActual?p.y:null})));
+  const baselineSegments=fxChartSegments(baseSlots);
   const ys=[...basePts.map(p=>p.y),...series.map(p=>p.y)];
+  if(!ys.length){ box.innerHTML='<p class="fxp-note">Trajetória indisponível: não há saldos calculáveis nesta janela. Confira os motivos na tabela mensal.</p>'; return; }
   let ymin=Math.min(...ys), ymax=Math.max(...ys);
   const pad=(ymax-ymin)*0.08||Math.max(1,ymax*0.02); ymin-=pad; ymax+=pad;
   // Razão declarada, nunca deformação (handoff spec §01/§03): 9:4 é invariante
@@ -89,9 +113,9 @@ function fxDrawMainChart(box,plan,ov,mode){
     <line x1="${X(lastIdx).toFixed(1)}" x2="${X(lastIdx).toFixed(1)}" y1="${T}" y2="${H-B}" stroke="var(--ink-faint)" stroke-dasharray="2 3" opacity=".7"/>
     <text x="${Math.max(L+52,Math.min(W-R-52,X(lastIdx))).toFixed(1)}" y="${T-3}" font-size="8" fill="var(--ink-dim)" text-anchor="middle">histórico ⇥ projeção</text>`:'';
   const dots=actualPts.map(p=>`<circle cx="${X(p.i).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="1.8" fill="var(--f1)"/>`).join('');
-  const realArea=actualPts.length>1
-    ?`<path d="${CH.area(path(actualPts),X(actualPts[0].i),X(actualPts[actualPts.length-1].i),H-B)}" fill="var(--f1)" opacity=".14"/>`:'';
-  const endF=series[series.length-1], endB=basePts[basePts.length-1];
+  const realArea=actualSegments.filter(s=>s.length>1).map(s=>`<path d="${CH.area(path(s),X(s[0].i),X(s[s.length-1].i),H-B)}" fill="var(--f1)" opacity=".14"/>`).join('');
+  const endF=slots.length&&Number.isFinite(slots[slots.length-1].y)?slots[slots.length-1]:null;
+  const endB=baseSlots.length&&Number.isFinite(baseSlots[baseSlots.length-1].y)?baseSlots[baseSlots.length-1]:null;
   const stats=CH.stats(L,T,[
     {mark:'─',label:'Realizado',value:actualPts.length?money(actualPts[actualPts.length-1].y):'—',color:'var(--f1)'},
     // Marcadores espelham o padrão real do traço (P6): pontilhado ≠ tracejado
@@ -109,9 +133,9 @@ function fxDrawMainChart(box,plan,ov,mode){
   box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Trajetória patrimonial: baseline, projeção vigente e realizado" style="width:100%;height:auto;font-family:var(--mono)">
     <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="var(--bg)"/>
     ${grid}${xLabels}${transition}${realArea}
-    <path d="${path(basePts)}" fill="none" stroke="var(--violet)" stroke-width="1" stroke-dasharray="${FX_DASH_BASELINE}"/>
-    <path d="${path(forecastPts)}" fill="none" stroke="var(--f2)" stroke-width="1" stroke-dasharray="${FX_DASH_FORECAST}"/>
-    ${actualPts.length>1?`<path d="${path(actualPts)}" fill="none" stroke="var(--f1)" stroke-width="1.2"/>`:''}${dots}
+    ${baselineSegments.map(s=>`<path d="${path(s)}" fill="none" stroke="var(--violet)" stroke-width="1" stroke-dasharray="${FX_DASH_BASELINE}"/>`).join('')}
+    ${forecastSegments.map(s=>`<path d="${path(s)}" fill="none" stroke="var(--f2)" stroke-width="1" stroke-dasharray="${FX_DASH_FORECAST}"/>`).join('')}
+    ${actualSegments.filter(s=>s.length>1).map(s=>`<path d="${path(s)}" fill="none" stroke="var(--f1)" stroke-width="1.2"/>`).join('')}${dots}
     ${callouts}${stats}
   </svg>`;
 }
@@ -136,19 +160,23 @@ function fxMainChartSummaryText(plan,ov,mode){
   const pRate=brl?fxPresentRate(ov):1;
   const fRate=brl?(plan.current.projectedFxRate||0):1;
   const brlFmt=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
-  const presente=v=>(brl&&pRate>0)?brlFmt(v*pRate):fmtMoney2(v);
-  const futuro=v=>(brl&&fRate>0)?brlFmt(v*fRate):fmtMoney2(v);
+  const presente=v=>!Number.isFinite(v)?'indisponível':(brl&&pRate>0)?brlFmt(v*pRate):fmtMoney2(v);
+  const futuro=v=>!Number.isFinite(v)?'indisponível':(brl&&fRate>0)?brlFmt(v*fRate):fmtMoney2(v);
   const endF=ov.forecast[ov.forecast.length-1], endB=ov.baseline[ov.baseline.length-1];
   const parts=[];
   if(ov.lastClosedMonth){
     parts.push(`Realizado até ${ov.lastClosedMonth}: ${presente(ov.currentBalanceUsd)}.`);
     if(ov.baselineBalanceAtLastClose!=null)
-      parts.push(`O baseline original previa ${presente(ov.baselineBalanceAtLastClose)} para o mesmo mês (desvio ${presente(ov.deviationUsd||0)}).`);
+      parts.push(`O baseline original previa ${presente(ov.baselineBalanceAtLastClose)} para o mesmo mês (desvio ${presente(ov.deviationUsd)}).`);
     parts.push('A projeção futura parte do saldo efetivamente realizado, com as premissas vigentes.');
     if(brl&&!(pRate>0))
       parts.push('Valores presentes exibidos em USD: não há referência USD/BRL corrente disponível, e a premissa de câmbio futuro não serve para marcar o presente.');
-  } else parts.push('Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
+  } else parts.push((ov.forecast||[]).some(r=>r.phase==='actual')
+    ?'Realizados em revisão: ainda não há sequência contígua reconfirmada. Confira os meses na tabela.'
+    :'Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
   if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${futuro(endF.close)} × baseline ${futuro(endB.close)}.`);
+  const incomplete=(ov.forecast||[]).filter(r=>!Number.isFinite(r.close));
+  if(incomplete.length) parts.push(`Cobertura incompleta: ${incomplete.length} mês(es) sem saldo confirmado ou projetável. As curvas não atravessam essas lacunas.`);
   if(brl&&pRate>0&&fRate>0&&Math.abs(pRate-fRate)>1e-9)
     parts.push(`Presente convertido a R$ ${pRate.toFixed(4).replace('.',',')} e futuro a R$ ${fRate.toFixed(4).replace('.',',')} — taxas de tempos diferentes, não divergência.`);
   if(brl) parts.push('Conversão BRL pela premissa/valuation informadas — nunca pelo custo médio de aquisição.');
@@ -168,20 +196,20 @@ function fxDrawReturnsChart(box,ov){
   // Razão 24:5 invariante (handoff spec §01): se não couber, o gráfico some
   // para dentro do disclosure — nunca é espremido.
   const W=720,H=150,L=CH.L,R=CH.R,T=CH.T,B=28;
-  const vals=rows.flatMap(r=>[r.rate,baseByMonth[r.month]||0,0]);
+  const vals=rows.flatMap(r=>[r.rate,baseByMonth[r.month],0]).filter(Number.isFinite);
   let ymin=Math.min(...vals), ymax=Math.max(...vals);
   const pad=(ymax-ymin)*0.15||0.005; ymin-=pad; ymax+=pad;
   const Y=v=>T+(1-(v-ymin)/((ymax-ymin)||1))*(H-T-B);
   const slot=(W-L-R)/rows.length, bw=Math.min(14,slot*0.32);
   const pctTxt=v=>(v*100).toFixed(2).replace('.',',')+'%';
   const bars=rows.map((r,i)=>{
-    const x0=L+i*slot+slot/2, planned=baseByMonth[r.month]||0, y0=Y(0);
+    const x0=L+i*slot+slot/2, planned=baseByMonth[r.month], y0=Y(0);
     const bar=(v,x,color,hatch)=>{
       const y=Y(v), top=Math.min(y,y0), h=Math.abs(y0-y)||0.5;
       return `<rect x="${(x-bw/2).toFixed(1)}" y="${top.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${color}" ${hatch?'opacity=".45"':''}/>`;
     };
     const label=i%Math.max(1,Math.round(rows.length/8))===0?`<text x="${x0.toFixed(1)}" y="${H-B+12}" font-size="8" fill="var(--ink-faint)" text-anchor="middle">${r.month}</text>`:'';
-    return bar(planned,x0-bw*0.55,'var(--violet)',true)+bar(r.rate,x0+bw*0.55,r.rate>=0?'var(--f1)':'var(--f4)')+label;
+    return (Number.isFinite(planned)?bar(planned,x0-bw*0.55,'var(--violet)',true):'')+bar(r.rate,x0+bw*0.55,r.rate>=0?'var(--f1)':'var(--f4)')+label;
   }).join('');
   const grid=CH.gridY(W,L,R,Y,CH.ticks(ymin,ymax,4),pctTxt);
   const zero=`<line x1="${L}" x2="${W-R}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="var(--ink-faint)" opacity=".6"/>`;
@@ -194,8 +222,8 @@ function fxDrawReturnsChart(box,ov){
     ${grid}${zero}${bars}${stats}
   </svg>
   <details style="margin-top:6px"><summary style="cursor:pointer;font-size:var(--fs-sm);color:var(--ink-dim)">Valores mês a mês (texto)</summary>
-    <p style="font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.7">${rows.map(r=>`${r.month}: planejado ${pctTxt(baseByMonth[r.month]||0)}, realizado ${pctTxt(r.rate)}`).join(' · ')}</p>
+    <p style="font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.7">${rows.map(r=>`${r.month}: planejado ${Number.isFinite(baseByMonth[r.month])?pctTxt(baseByMonth[r.month]):'indisponível'}, realizado ${pctTxt(r.rate)}`).join(' · ')}</p>
   </details>`;
 }
 
-window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert,fxPresentRate};
+window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert,fxPresentRate,fxChartSegments};

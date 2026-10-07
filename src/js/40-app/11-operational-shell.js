@@ -1,6 +1,7 @@
 // Shell de apresentação sobre o resolver existente. A composição é uma
 // preferência por navegador; não participa do estado ou do backup financeiro.
-const shellUI = { open:false, opener:null, inerted:[], overflow:'' };
+const shellUI = { open:false, opener:null, inerted:[], overflow:'', forexSubHome:null };
+let shellNavigationIntent=null,shellNavigationSerial=0;
 const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener:null };
 const submenuUI = { level:1, surface:null, context:null, openers:[], temporary:false, direction:'forward' };
 // var permite que o bootstrap do bundle portátil consulte a prontidão sem TDZ.
@@ -14,7 +15,7 @@ const SIDEBAR_TIMING=Object.freeze({open:400,leave:300,motion:180});
 const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','forex-planning','research-forex']);
 const SUBMENU_TITLES=Object.freeze({
   exec:'Forex',finpes:'Finanças Pessoais',research:'Research',tools:'Ferramentas e Serviços',
-  'forex-management-accounts':'Contas e Período','forex-planning':'Planejamento','research-forex':'Forex'
+  'forex-management-accounts':'Contas e Períodos','forex-planning':'Planejamento patrimonial','research-forex':'Forex'
 });
 const NAV_SUBMENU_SURFACES = {
   exec:()=>window.JPWExec&&window.JPWExec.ui,
@@ -416,6 +417,7 @@ function syncNavSubCurrent(screen){
 function syncShellLocation(){
   if(!window.JPWNavigation)return;
   const c=window.JPWNavigation.current();
+  document.documentElement.dataset.activePrimary=c.primary||'';
   const primary=document.querySelector('#nav > .tab[data-primary="'+c.primary+'"]');
   const parts=[primary?primary.querySelector('.lbl').textContent.trim():'Dashboard'];
   const child=c.child&&document.querySelector('[data-nav-child="'+c.child+'"] .nav-sub-item-title');
@@ -427,13 +429,59 @@ function syncShellLocation(){
   if(local&&parts[parts.length-1]!==local.textContent.trim())parts.push(local.textContent.trim());
   const el=document.getElementById('shellLocation'),text=parts.join(' / ');
   if(el&&el.textContent!==text)el.textContent=text;
+  syncForexAreasTrigger();
+  syncForexAdvisory();
+}
+// O lembrete conserva nó, ações e política de backup; só muda de composição.
+function syncForexAdvisory(){
+  const slot=document.getElementById('forexAdvisorySlot');
+  if(!slot||!window.JPWNavigation)return;
+  const current=window.JPWNavigation.current();
+  const active=current.primary==='forex'&&current.screen!=='fxplan';
+  slot.hidden=!active;
+  const banner=document.getElementById('dgBackupBanner');
+  if(!banner)return;
+  const host=active?slot:document.body;
+  if(banner.parentNode===host)return;
+  const focused=banner.contains(document.activeElement)?document.activeElement:null;
+  host.append(banner);
+  if(focused?.isConnected&&!focused.closest('[hidden],[inert]'))focused.focus({preventScroll:true});
+}
+// Acionador compacto do mesmo N2. Nenhuma rota, campo ou preferência é copiada.
+function syncForexAreasTrigger(){
+  const button=document.getElementById('forexAreasToggle');
+  if(!button||!window.JPWNavigation)return;
+  const current=window.JPWNavigation.current(),label=document.getElementById('forexAreasCurrent');
+  const actions=document.getElementById('forexTaskActions');
+  if(actions)actions.hidden=current.primary!=='forex';
+  button.hidden=current.primary!=='forex'||!shellMobile();
+  const child=window.JPWNavigation.children('forex').find(route=>route.id===current.child);
+  if(label)label.textContent=child?.label||'Desempenho';
+  button.setAttribute('aria-expanded',String(shellUI.open&&!document.getElementById('execNavSubmenu')?.hidden));
+}
+function openForexAreas(opener,options){
+  if(!shellMobile()||!shellRequireModule('forex',opener))return;
+  if(shellSidebar())sidebarOpenSurface('exec',{pin:true});
+  else if(shellSubmenu())submenuOpenSurface(document.getElementById('execNavTrigger'));
+  else{navSubUI.collapsed=null;syncNavSubState();}
+  if(shellTopbar()){
+    const shell=document.getElementById('navSubShell');
+    // No superior o N2 mora fora da gaveta. Emprestar o próprio nó inclui
+    // seus destinos no isolamento e no ciclo de Tab já existentes.
+    if(!shellUI.forexSubHome)shellUI.forexSubHome={parent:shell.parentNode,next:shell.nextSibling};
+    document.getElementById('nav').append(shell);
+  }
+  openShellMenu(opener);syncShellViewport();
+  const items=[...document.querySelectorAll('#execNavSubmenu .nav-sub-level-primary [data-nav-item]')].filter(shellFocusAvailable);
+  (options?.focus==='last'?items[items.length-1]:items.find(item=>item.getAttribute('aria-current')==='page')||items[0])?.focus({preventScroll:true});
 }
 // The existing readout belongs to Forex. Navigation only changes its
 // presentation; the normal render still owns phase and calculated metrics.
 function syncForexContext(){
   const row=document.getElementById('gdContextRow');
   if(!row||!window.JPWNavigation)return;
-  const active=window.JPWNavigation.current().primary==='forex';
+  const current=window.JPWNavigation.current();
+  const active=current.primary==='forex'&&current.screen!=='fxplan';
   row.hidden=!active;row.inert=!active;
   if(active&&typeof renderHeaderReadout==='function')renderHeaderReadout();
 }
@@ -634,20 +682,63 @@ function shellFocusCurrentScreen(){
     if(r.bottom>innerHeight||r.top<0)el.scrollIntoView({block:'nearest'});
   }
 }
+// A intenção pertence à interação; o resolver continua sendo a única autoridade
+// de aceite. Guards assíncronos retomam a mesma conclusão sem repetir navegação.
+function shellAwaitNavigation(requested,complete){
+  const intent={requested,complete,opener:document.activeElement};shellNavigationIntent=intent;return intent;
+}
+function shellTrackNavigationGuard(intent){
+  if(shellNavigationIntent!==intent)return;
+  const dialog=document.querySelector('dialog[open]');
+  if(!dialog){shellNavigationIntent=null;return;}
+  dialog.addEventListener('close',()=>{
+    if(shellNavigationIntent!==intent)return;
+    shellNavigationIntent=null;
+    // A lateral suspende N2 enquanto o dialog está aberto. Seu observer deve
+    // repintá-lo antes de devolver o foco após Permanecer/Escape.
+    requestAnimationFrame(()=>{
+      if(sidebarBlocked()||shellFocusAvailable(document.activeElement))return;
+      if(shellFocusAvailable(intent.opener))intent.opener.focus({preventScroll:true});
+      else if(!shellUI.open)shellFocusCurrentScreen();
+    });
+  },{once:true});
+}
+function shellFinishNavigation(){
+  if(shellSubmenu()&&submenuUI.temporary){submenuResetExploration();syncSubmenuPresentation();}
+  syncNavSubState();
+  if(shellUI.open)closeShellMenu({restoreFocus:false});
+  shellFocusCurrentScreen();
+}
+function shellNavigationApplied(plan,target){
+  const intent=shellNavigationIntent?.requested===plan.requested?shellNavigationIntent:null;
+  if(intent)shellNavigationIntent=null;
+  const primary=target instanceof HTMLElement&&target.matches('#nav > .tab,.brand-home[data-route]');
+  if(!intent&&!primary)return;
+  const serial=++shellNavigationSerial,current=window.JPWNavigation.current();
+  // O evento close do dialog restaura seu acionador. Concluir no próximo frame
+  // deixa o foco final com o destino aceito, inclusive após descarte/salvamento.
+  requestAnimationFrame(()=>{
+    const active=window.JPWNavigation.current();
+    if(serial!==shellNavigationSerial||active.requested!==current.requested||active.screen!==current.screen||sidebarBlocked())return;
+    if(intent){intent.complete();return;}
+    navSubUI.collapsed=null;syncNavSubState();
+    if(shellUI.open&&shellGlass()&&navSubUI.screen)return;
+    shellFinishNavigation();
+  });
+}
 function selectNavSubItem(item){
   if(!item||!window.JPWNavigation)return false;
   if(shellSubmenu()&&submenuUI.level===2&&SUBMENU_CONTEXTS.has(item.dataset.navChild))return submenuOpenContext(item,{focus:true});
+  const requested=item.dataset.navChild||item.dataset.navRoute||
+    (item.dataset.navLocalSurface?item.dataset.navLocalSurface+':'+item.dataset.navLocalView:'finpes:'+item.dataset.navSubView);
+  const intent=shellAwaitNavigation(requested,shellFinishNavigation);
   let accepted=false;
   if(item.dataset.navChild)accepted=window.JPWNavigation.navigate(item.dataset.navChild);
   else if(item.dataset.navRoute)accepted=window.JPWNavigation.navigate(item.dataset.navRoute);
   else if(item.dataset.navLocalSurface)accepted=window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
   else if(item.dataset.navSubView)accepted=window.JPWNavigation.navigateLocal('finpes',item.dataset.navSubView);
-  if(!accepted)return false;
-  if(shellSubmenu()&&submenuUI.temporary){submenuResetExploration();syncSubmenuPresentation();}
-  syncNavSubState();
-  if(shellUI.open)closeShellMenu({restoreFocus:false});
-  shellFocusCurrentScreen();
-  return true;
+  shellTrackNavigationGuard(intent);
+  return accepted;
 }
 function syncShellViewport(){
   const sidebar=document.getElementById('appSidebar'),nav=document.getElementById('nav');if(!sidebar||!nav)return;
@@ -669,6 +760,7 @@ function syncShellViewport(){
     else el.removeAttribute('aria-hidden');
   });
   const toggle=shellEl('[data-shell-menu-toggle]');if(toggle)toggle.setAttribute('aria-controls',glass?'gdTopbarNavSlot':topbar?'nav':'appSidebar');
+  syncForexAreasTrigger();
   if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
 function openShellMenu(opener){
@@ -689,7 +781,7 @@ function openShellMenu(opener){
   document.getElementById('sidebarBackdrop').hidden=false;
   shellUI.overflow=document.body.style.overflow;document.body.style.overflow='hidden';
   const header=document.querySelector('body > header');
-  let targets=[...document.body.children].filter(el=>el!==(shellTopbar()?header:root)&&el.id!=='sidebarBackdrop'&&!['SCRIPT','STYLE'].includes(el.tagName));
+  let targets=[...document.body.children].filter(el=>el!==(shellTopbar()?header:root)&&el.id!=='sidebarBackdrop'&&!['SCRIPT','STYLE','DIALOG'].includes(el.tagName));
   // No superior a gaveta está no header: isolar seus irmãos, nunca o ancestral do diálogo.
   if(shellTopbar())targets.push(...[...header.children].filter(el=>el.id!=='gdTopbarNavSlot'));
   shellUI.inerted=targets.map(el=>[el,el.inert]);shellUI.inerted.forEach(([el])=>el.inert=true);
@@ -705,9 +797,16 @@ function closeShellMenu(options){
   const btn=shellEl('[data-shell-menu-toggle]');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Abrir menu de telas');
   document.getElementById('sidebarBackdrop').hidden=true;
   shellUI.inerted.forEach(([el,was])=>el.inert=was);shellUI.inerted=[];
+  const focusBeforeReturn=document.activeElement;
+  if(shellUI.forexSubHome){
+    const {parent,next}=shellUI.forexSubHome;
+    parent.insertBefore(document.getElementById('navSubShell'),next?.parentNode===parent?next:null);
+    shellUI.forexSubHome=null;
+  }
   document.body.style.overflow=shellUI.overflow;syncShellViewport();
+  if(!sidebarBlocked()&&document.activeElement!==focusBeforeReturn&&shellFocusAvailable(focusBeforeReturn))focusBeforeReturn.focus({preventScroll:true});
   const opener=shellUI.opener;shellUI.opener=null;
-  if((!options||options.restoreFocus!==false)&&opener&&opener.isConnected)opener.focus();
+  if((!options||options.restoreFocus!==false)&&shellFocusAvailable(opener))opener.focus();
 }
 function shellMoveFocus(event){
   const group=event.target.closest('[data-nav-context],.nav-sub-level-primary,.nav-sub-menu');if(!group)return;
@@ -732,6 +831,12 @@ function submenuMoveFocus(event){
 function initOperationalShell(){
   const sidebar=document.getElementById('appSidebar');if(!sidebar||sidebar.dataset.ready)return;
   sidebar.dataset.ready='true';
+  // A governança cria o aviso depois deste script e pode recriá-lo após uma
+  // recarga. Observar só a adição direta evita vigiar conteúdo financeiro.
+  new MutationObserver(records=>{
+    if(records.some(record=>[...record.addedNodes].some(node=>node.nodeType===Node.ELEMENT_NODE&&node.id==='dgBackupBanner')))
+      syncForexAdvisory();
+  }).observe(document.body,{childList:true});
   document.querySelectorAll('#navSubShell .nav-sub-contexts').forEach(host=>{
     host.id=host.closest('.nav-sub-menu').id.replace('NavSubmenu','NavContexts');
 
@@ -742,6 +847,10 @@ function initOperationalShell(){
   const alladinTabs=document.getElementById('alladinTabs');
   if(alladinTabs)new MutationObserver(syncShellLocation).observe(alladinTabs,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
   document.addEventListener('click',event=>{
+    const forexNotes=event.target.closest('#forexNotesToggle');
+    if(forexNotes){if(typeof openMvpNotesDrawer==='function')openMvpNotesDrawer(forexNotes);return;}
+    const forexAreas=event.target.closest('#forexAreasToggle');
+    if(forexAreas){shellUI.open?closeShellMenu():openForexAreas(forexAreas);return;}
     const toggle=event.target.closest('[data-shell-menu-toggle]');
     if(toggle){shellUI.open?closeShellMenu():openShellMenu(toggle);return;}
     if(event.target.closest('#sidebarClose,#sidebarBackdrop')){closeShellMenu();return;}
@@ -750,21 +859,11 @@ function initOperationalShell(){
     if(expander){navSubUI.open?closeNavSub():openNavSub(expander.dataset.navExpand);return;}
     const item=event.target.closest('[data-nav-item],[data-nav-sub-view]');
     if(item){selectNavSubItem(item);return;}
-    if(event.target.closest('#nav > .tab')){
-      if(!shellModuleAvailable(event.target.closest('#nav > .tab').dataset.primary))return;
-      if((shellSubmenu()||shellSidebar())&&event.target.closest('#nav > .tab').dataset.navSurface)return;
-      navSubUI.collapsed=null;
-      syncNavSubState();
-      if(shellUI.open&&shellGlass()&&navSubUI.screen)return;
-      if(shellUI.open)closeShellMenu({restoreFocus:false});
-      shellFocusCurrentScreen();
-      return;
-    }
-    if(shellUI.open&&event.target.closest('#brandHomeBtn,#headerActions .header-action')){closeShellMenu({restoreFocus:false});return;}
-    if(shellUI.open&&shellGlass()&&!event.target.closest('body > header'))closeShellMenu();
+    if(shellUI.open&&event.target.closest('#headerActions .header-action')){closeShellMenu({restoreFocus:false});return;}
+    if(shellUI.open&&shellGlass()&&!event.target.closest('body > header,dialog'))closeShellMenu();
   });
   document.addEventListener('keydown',event=>{
-    if(shellSidebar()&&sidebarBlocked())return;
+    if(sidebarBlocked())return;
     if(sidebarHandleKey(event))return;
     if(shellSubmenu()){
       const primary=event.target.closest('#nav > .tab');
@@ -788,10 +887,22 @@ function initOperationalShell(){
       event.preventDefault();
       const key=expander.dataset.navExpand||expander.id.replace('NavTrigger','');
       if(!shellRequireModule(submenuPrimaryForSurface(key),expander))return;
-      // Em mobile superior o N2 fica no fluxo, fora da gaveta.
-      if(shellTopbar()&&shellUI.open)closeShellMenu({restoreFocus:false});
-      if(shellHorizontal()&&key!==navSubUI.screen)expander.click();
-      openNavSub(key,{focus:event.key==='ArrowUp'?'last':true});return;
+      const layout=document.documentElement.getAttribute('data-navigation'),compact=shellCompact();
+      const focus=event.key==='ArrowUp'?'last':true;
+      const complete=()=>{
+        // Uma preferência/breakpoint alterado enquanto o diálogo estava aberto
+        // não deve reabrir a composição anterior nem focar um controle oculto.
+        if(document.documentElement.getAttribute('data-navigation')!==layout||shellCompact()!==compact){shellFinishNavigation();return;}
+        if(shellTopbar()&&shellMobile()&&key==='exec'){openForexAreas(expander,{focus});return;}
+        if(shellTopbar()&&shellUI.open)closeShellMenu({restoreFocus:false});
+        openNavSub(key,{focus});
+      };
+      const primary=submenuPrimaryForSurface(key);
+      if(shellHorizontal()&&window.JPWNavigation.current().primary!==primary){
+        const intent=shellAwaitNavigation(window.JPWNavigation.resolve(expander).requested,complete);
+        expander.click();shellTrackNavigationGuard(intent);return;
+      }
+      complete();return;
     }
     if(event.key==='Escape'&&navSubUI.open&&event.target.closest('#navSubShell')){event.preventDefault();closeNavSub({restoreFocus:true});return;}
     shellMoveFocus(event);

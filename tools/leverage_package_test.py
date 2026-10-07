@@ -334,6 +334,8 @@ def main() -> None:
         assert build(root) == first
 
         bad_version = (root / VERSION_HEADER).read_bytes()
+        valid_version = ('#define JPW_PRODUCT_VERSION "' + template["version"] + '"').encode()
+        assert bad_version.count(valid_version) == 1, "runtime-version mutation must change exactly one declaration"
         mismatched_version = bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.18.0"',
                                                 b'#define JPW_PRODUCT_VERSION "1.9.0"')
         assert mismatched_version != bad_version, "negative version fixture did not mutate the input"

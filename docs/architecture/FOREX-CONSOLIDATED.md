@@ -164,3 +164,31 @@ CHG-FOREX-CONTAS-PERIODO-20260923 centraliza gestão no destino interno preserva
 Preparação e observação continuam em `beginAccountSetup/saveSetupPeriod/saveSetupObservation`, com confirmação por etapa, recusa e UNKNOWN distintos. Reabrir usa a mesma conta. Consulta não seleciona operacionalmente: `JPWForex.accountsUI.useContext` passa pelas guardas antes de aplicar o par. Importação usa as mesmas APIs, nenhum ticket é transformado em ordem manual. O candidate anterior de onboarding não foi integrado nem copiado.
 
 O gesto explícito de iniciar cadastro/preparação estabelece somente uma geração de sessão ausente usando `sessionEpochCurrent()` e sua releitura canônica. Consulta não inicializa geração. Valor vazio, leitura indisponível, UNKNOWN, recuperação ou sessão bloqueada continuam recusados; geração existente não é rotacionada. Isso não reinicia o aplicativo nem altera dados financeiros.
+
+## Candidate visual — 2026-10-05
+
+Contrato CHG-JPW-FOREX-VISUAL-RISK-20261005, base ac3a2fa. A conta consultada continua independente da seleção operacional; MT5 e Manual usam suas projeções existentes e separadas. Três indicadores antecedem uma única curva principal (crescimento/saldo MT5 ou resultado realizado manual). Radar, distribuições e comparações permanecem em Estatísticas, sem miniatura duplicada de crescimento. Histórico de equity ausente não produz curva substituta.
+
+O componente visual recebe observações prontas. Datas completas e coerentes usam distância temporal proporcional; referências ambíguas ou incompatíveis são explicitamente sequência de registros. Horários sem zona não recebem conversão presumida. Lacunas interrompem segmentos; uma observação produz ponto, não tendência. Mouse, toque e teclado consultam valores exatos; a tabela permanece acessível. Não há suavização, preenchimento de dados nem gravação financeira na interação.
+
+A plotagem tem altura estável de aproximadamente 320px ou 240px em área estreita. Textos são HTML separado da geometria SVG. Fonte, cobertura e importação qualificam a série; resize apenas ajusta apresentação. Validação desta revisão fica no relatório externo do candidate, sem promover evidências antigas.
+
+## Candidate profissional — painel integrado (2026-10-05)
+
+Contratos JPW-FOREX-PROFESSIONAL de apresentação, projeção e testes; candidate isolado derivado do visual 0b165ab8911f1f3b. Não representa integração, publicação ou aceite financeiro.
+
+As quatro áreas preservam IDs `account/history/statistics/risks` e passam a exibir Painel, Movimentos, Estatísticas e Risco. Painel reúne KPI do período, curva principal e drawdown histórico do saldo com domínio temporal e consulta sincronizados. O DD é desenhado para baixo mantendo seu valor percentual original positivo. A ausência de série não cria uma curva. Saldo/equity informados conservam período/origem; não são apresentados como observações ao vivo.
+
+Filtros All/12m/3m/custom consultam `project`, sem novo motor. Atalhos usam a última data efetivamente disponível. KPI de crescimento pertence ao período; curva MT5 permanece acumulada desde a origem, recortada sem rebase. Resumo sem eventos não fornece novos subperíodos. Datas incompatíveis usam sequência declarada; leituras coincidentes distinguem evento/ticket. As tabelas alternativas preservam valores sem arredondamento e lacunas.
+
+Mapa mensal usa exclusivamente `breakdowns.monthly/years`, com unidade selecionada, zero distinto de ausência e total observado produzido pelo modelo. Clique em mês/instrumento/direção filtra somente Movimentos. Resumos sem eventos explicam a impossibilidade de abrir os registros. A busca da tabela não altera os indicadores. Marcas de caixa vêm de lançamentos efetivos de balance, sem alterar crescimento ou resultado.
+
+Distribuições mostram somente resultado líquido por instrumento/direção, em escala homogênea. Estatísticas identificam deals de saída, incluindo parcial/reversão/Close By; Manual identifica operações locais finalizadas. Custos e caixa têm grupos próprios e não são novamente adicionados ao líquido. Detalhe de movimento separa identificação, execução, resultado/custos e proveniência, com dados técnicos expansíveis.
+
+Estado de apresentação permanece em RAM: filtros, consulta, seleção, expansão e ordenação não escrevem fatos. Conta em análise e conta operacional mantêm fontes independentes. As explicações distinguem drawdown de saldo (inclui caixa), drawdown informado no relatório e DD operacional. Os produtores financeiros, importadores, schemas e comandos existentes permanecem inalterados. Limite conhecido DD14 não é corrigido por esta interface.
+
+## Delta de apresentação por tarefa — 2026-10-05
+
+A rota forex-consolidated continua canônica; seu nome visível é Desempenho. Contexto separa Em análise/Em operação, conserva fonte/moeda/cobertura e apresenta datas sem conversão implícita de fuso. Cobertura conserva os horários declarados. Painel/Movimentos/Estatísticas/Risco usam os mesmos produtores; os quatro controles ocupam duas linhas estreitas. Estatísticas agrupam disponibilidade e desenham negativos à esquerda do zero, sem alterar netProfit. O aviso de importação é dispensável em RAM; a ação de preparar conta continua acessível.
+
+O Histórico local mantém a rota forex-history e histState.archiveScope como consulta RAM de qualquer conta/período conhecido. Ausência explícita recusa resultados, não troca pela operacional. IDs, filtros e foco permanecem estáveis. O menu se organiza com títulos sem novo nível interativo.

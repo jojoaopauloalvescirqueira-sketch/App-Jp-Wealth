@@ -14,58 +14,76 @@
       "path": "src/js/10-domain/00-forex-engine.js",
       "section": "FOREX V11 · pure versioned engine",
       "order": 2,
-      "sha256": "754206ed07b9c7b30964bceb6438e5670582bdf06db807a53322ee56cb78e00a"
+      "sha256": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e"
     },
     {
       "order": 3,
+      "path": "src/js/10-domain/07-reserve-requirements.js",
+      "section": "RESERVAS ESTATUTÁRIAS · FCR/FEO (FUNÇÃO PURA COMPARTILHADA)",
+      "sha256": "2c1a9d00cce4bda29e87be28398ae7fcd864e3c172f6df69b05246221a5d6a95"
+    },
+    {
+      "order": 4,
       "path": "src/js/00-core/01-risk-profiles.js",
       "section": "PERFIS DE RISCO V10.0 (fonte única)",
       "sha256": "dbac835cead6b9f9d3807c7d02a7f45773e9c35466771480701efee5725de70e"
     },
     {
-      "order": 4,
+      "order": 5,
       "path": "src/js/00-core/02-platforms.js",
       "section": "PLATAFORMAS (fonte central para contas)",
       "sha256": "4d05633be18f223ee8440dbae841141c29848db53aee9ae5f5fea47d1a50c817"
     },
     {
-      "order": 5,
+      "order": 6,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
       "sha256": "4f7381a9f9fbf29c077120aab14564bb28867f1bb490ff1b50ba79ec0d0d9593"
     },
     {
-      "order": 6,
+      "order": 7,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "b3a038d8e55bae94a3294dbcf718537e8f6d1f0a4e44f91da970b69aba624411"
+      "sha256": "e1fe97c3ce24f7749825fcea30c23d5c4c201307ae92f4382be9e0b84e25f82d"
     },
     {
       "path": "src/js/00-core/08-module-availability.js",
       "section": "Module availability · local preference",
-      "order": 7,
+      "order": 8,
       "sha256": "55241f8e5a7360dc26533c9a1a2d59aa2dfa0d780cf22408165f1c92f8b33237"
     },
     {
       "path": "src/js/00-core/07-workspace-backup.js",
       "section": "Portable workspace backup",
-      "order": 8,
-      "sha256": "47e365204d48e9960652d83519991a4f459dca65830aa5ee967ba4e325c97412"
+      "order": 9,
+      "sha256": "bedf27116fab90e0d5aab82dc77461e8f9a22ea76858e493400d4c28d2804a89"
     },
     {
-      "order": 9,
+      "order": 10,
       "path": "src/js/00-core/05-helpers.js",
       "section": "HELPERS",
       "sha256": "e3198d6e5ecec9676e24e054424cd6a98ac129178754d263270ae53cc97216db"
     },
     {
-      "order": 10,
+      "order": 11,
       "path": "src/js/00-core/06-storage-fs.js",
       "section": "ARMAZENAMENTO EM PASTA (File System Access + IndexedDB)",
-      "sha256": "47987d67285b2ff4f4bae2d5713bde3f1b08170ef01aa6dfc97f7b6068719587"
+      "sha256": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7"
     },
     {
-      "order": 11,
+      "path": "src/vendor/fflate/fflate-0.8.2.min.js",
+      "section": "Local original-evidence archive",
+      "order": 12,
+      "sha256": "c3b34f2e9f5e74d4d7d64e01cac7a0c01954c6c406414d42185c7b53d6875ddf"
+    },
+    {
+      "path": "src/js/00-core/09-evidence-archive.js",
+      "section": "Local original-evidence archive",
+      "order": 13,
+      "sha256": "0a2741062e89b1992abd23accea74fbae0cc193f39eb1c5f6282de0b55a14a0a"
+    },
+    {
+      "order": 14,
       "path": "src/js/10-domain/01-risk-instruments.js",
       "section": "MOTOR DE RISCO POR INSTRUMENTO",
       "sha256": "7f3992fd253e8b83dd6b63108add8b9c212f11a796654faffa87606a9db7663b"
@@ -73,185 +91,185 @@
     {
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
-      "order": 12,
-      "sha256": "e834f82cba85def0c5667a2dcf0ca7cadbfaaa87dbefc5583ad717c655707502"
+      "order": 15,
+      "sha256": "190b1f914f31fc11bfcc61db5ee8898696fde894bbdad106b3edea60b5541680"
     },
     {
-      "order": 13,
+      "order": 16,
       "path": "src/js/10-domain/02-risk-calculations.js",
       "section": "CÁLCULOS",
       "sha256": "78b106e981fc83950758a3323b222c2e390d23549c15ddb02223c05126ff9703"
     },
     {
-      "order": 14,
+      "order": 17,
       "path": "src/js/20-ui/01-header-readout.js",
       "section": "TOP BAR · LEITURA DE ESTADO",
       "sha256": "8081c4b4a644cfc8728de519c3c8aaec6ae19dbe7feb0b94918f7dbc17ad8e20"
     },
     {
-      "order": 15,
+      "order": 18,
       "path": "src/js/20-ui/02-sidebar.js",
       "section": "SIDEBAR · COLAPSO",
       "sha256": "e3483db32bdcf6f99f24daf572ea8e20846d143401c5e8bb6baa331d3bce6879"
     },
     {
-      "order": 16,
+      "order": 19,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
       "sha256": "7c50b754390e7515df48fc96626d2391f0b7c4fcb96ac4110f82be984b92e077"
     },
     {
-      "order": 17,
+      "order": 20,
       "path": "src/js/20-ui/04-operational-clearance.js",
       "section": "OPERATIONAL CLEARANCE — veredito executivo (N1)",
       "sha256": "da4c3f9bd553dffb87f5079ff26f7405daba3e220137d246cd724d82c43db750"
     },
     {
-      "order": 18,
+      "order": 21,
       "path": "src/js/20-ui/05-execution-clearance.js",
       "section": "EXECUTION CLEARANCE — veredito antes dos termômetros",
       "sha256": "538eac18c2e7e93ba8df4fdb06cec68e923fbb46aaf230f66240cee31b2fe4af"
     },
     {
-      "order": 19,
+      "order": 22,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
       "sha256": "0109c2e754813b08293185f7b2fb32fccb15731c398bd13651794682709cc6dc"
     },
     {
-      "order": 20,
+      "order": 23,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "3805e06e3d5371728a909e13523fba494e7e8e50a7ebcc4be6c1d39ce182463c"
+      "sha256": "9d18b9dd123c0c1e2e3219f93a8428310b0d8dc882cc18a2383a1332e52a6355"
     },
     {
-      "order": 21,
+      "order": 24,
       "path": "src/js/20-ui/06-chart-terminal-chrome.js",
       "section": "GRÁFICOS · CROMO PADRÃO DE TERMINAL",
       "sha256": "0223f08d7abfcce1f8f9c841f81b445c2c9ba4fac296565ea7e1140f4e38f842"
     },
     {
-      "order": 22,
+      "order": 25,
       "path": "src/js/20-ui/07-chart-crosshair-tooltip.js",
       "section": "GRÁFICOS · CROSSHAIR + TOOLTIP",
       "sha256": "007aa37da1993837fc3be68cd1a2baf4280310ec4aebe8c8cd025b6006c7a1e3"
     },
     {
-      "order": 23,
+      "order": 26,
       "path": "src/js/20-ui/08-input-bindings.js",
       "section": "INPUT BINDINGS",
       "sha256": "bb0eeb381249145171d7e20f4c7eb0e99c3260323b7968b41b32bc3a35d131aa"
     },
     {
-      "order": 24,
+      "order": 27,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "8e745cee2f484a026ccaa04b53d0b4a10c3989f1206141e786a5a1940071d473"
+      "sha256": "8d87a15cb78ea814d81ec8798286deeac16e17c58f5fb1105aad82b14e7db78b"
     },
     {
-      "order": 25,
+      "order": 28,
       "path": "src/js/10-domain/05-brokers-prop-firms.js",
       "section": "CORRETORAS/PROP FIRMS PARCEIRAS (fonte central)",
       "sha256": "d87c0db5b9abe3d6a31c661462dcda7e68212afa077440ef4e3a8b1c636b21c3"
     },
     {
-      "order": 26,
+      "order": 29,
       "path": "src/js/30-accounting/02-accounting-engine.js",
       "section": "MOTOR DA CONTABILIDADE (perfis V10 centralizados)",
-      "sha256": "5893b5a806f73ba62fb51fe9ab32a5fe9af4c105a69da70990246912930ea829"
+      "sha256": "24b0433432fddcefe685655951f1eed6dcca0536be8738d9fb43c94872e39ea0"
     },
     {
-      "order": 27,
+      "order": 30,
       "path": "src/js/30-accounting/03-mei-jp.js",
       "section": "MEI-JP · MODELO ESTATÍSTICO INSTITUCIONAL",
       "sha256": "ce8b231b6c25f719a5afe319d0504d0f094128ffa00a370d35ca49197589af27"
     },
     {
-      "order": 28,
+      "order": 31,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
       "sha256": "c710bbac4511e6ac37315aa11eef86f34d15eaafd94f21a84b8305d48501232c"
     },
     {
-      "order": 29,
+      "order": 32,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "a3f95c1032e02cbc44472d94f7a3667e04cec82e07857a54f4562598ea82a197"
+      "sha256": "243dac27a94f61512fca85b0fbb3859c1d20cbcdd3f0769218e049565e7c0748"
     },
     {
-      "order": 30,
+      "order": 33,
       "path": "src/js/40-app/02-reset.js",
       "section": "RESET (dupla confirmação APAGAR — SET 6)",
       "sha256": "43fe62ef9cd1efd3b5f05034b31a593e7dcd04565c8078cb69bc69e72420137b"
     },
     {
-      "order": 31,
+      "order": 34,
       "path": "src/js/40-app/03-theme.js",
       "section": "TEMA claro/escuro (SET 4)",
       "sha256": "3f3c899c9abf56d819e81b664cf11f5aee969e9936d82ae49ac2f125f3fcc2b3"
     },
     {
-      "order": 32,
+      "order": 35,
       "path": "src/js/20-ui/09-contextual-help.js",
       "section": "EXPLICAÇÃO DE CAMPO SOB DEMANDA ([i])",
       "sha256": "b221ce7943a59a5febca8044b62944f81a7e08d059f848ac417a558042fe84b2"
     },
     {
-      "order": 33,
+      "order": 36,
       "path": "src/js/20-ui/10-font-scale.js",
       "section": "ESCALA TIPOGRÁFICA · 3 degraus fechados",
       "sha256": "b1dd06b7b322a9814863cd0109650ecf2baeff5619c4af9ee1cee30a42baaa78"
     },
     {
-      "order": 34,
+      "order": 37,
       "path": "src/js/10-domain/06-quarantine.js",
       "section": "Configurações · quarentena reversível (SET 5a)",
       "sha256": "08975bcc4c59a25a4348b6ae997bb2ff26e93644c50d95b4f7fae952c4682a38"
     },
     {
-      "order": 35,
+      "order": 38,
       "path": "src/js/20-ui/11-phase-posture.js",
       "section": "Postura ofensiva/defensiva por fase (SET 2)",
       "sha256": "ca4258642cc1a05ddfbe56e9ee502862eb9f915944b242e7d1cb9d11fef22e5c"
     },
     {
-      "order": 36,
+      "order": 39,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "a9246599db0b0e95ae02071fa2eaca1903e6513c3367d527997c4289caa3bd17"
+      "sha256": "0d09b7689323283a23d300188785ada4c22af16f846dfa58cd4af500beb4b348"
     },
     {
-      "order": 37,
+      "order": 40,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "e1f7879ec7548ad033d802b3066825f5fbb65f52d30a7a2e0c9ef63375cfb706"
+      "sha256": "8c2a378e3f2bfa3b69237f98e2878faeb4b5483de11101caf5130dd853e084d7"
     },
     {
-      "order": 38,
+      "order": 41,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "6732a8754746fc2cf43f6efa24959c8ab3f600c18c20311e5eb6b4e8bb22da9e"
+      "sha256": "e91c282c00067b1250b0a75166c524fb664a500b6311655e08368b8cecdb6d68"
     },
     {
-      "order": 39,
+      "order": 42,
       "path": "src/js/40-app/06-app-icons.js",
       "section": "PWA · MARCA CONJUNTA (Vermelho/Preto, cabeçalho e instalação)",
       "sha256": "40e5ada4a6887eea186bb4bbfaf3003973b81b9af6901a8bcfc67c2e3285fba3"
     },
     {
-      "order": 40,
+      "order": 43,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "972b82d6f04f2415c4126d1d0b06c76de23b98ba96c479b738e3382d7c48e657"
+      "sha256": "c33175b2a8954031ced6ebe1ac13e9feec59db7743a01b68ffa13caa0fcf2b07"
     },
     {
-      "order": 41,
+      "order": 44,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "c9e983c51fc3e837474bfdf4233b187bcaff3497b9dfbd1df6dae9441e0b986c"
+      "sha256": "250747c3234768862542cc2c48dc22d184f3c1592b7167ebcf676e44659bf6a3"
     },
     {
-      "order": 42,
+      "order": 45,
       "path": "src/js/40-app/08-educational-content.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · BASE EDUCACIONAL LOCAL",
       "sha256": "877a1fd18350c797f21a9c356d3b439deef397871550154eda454b43dc4f2f23"
@@ -259,221 +277,215 @@
     {
       "path": "src/js/40-app/09-profile-avatar-catalog.js",
       "section": "PERFIL · galeria local de retratos",
-      "order": 43,
+      "order": 46,
       "sha256": "2ef8f6552bcce28cad7fe76ea8a9330b3983051e43db29f51bf1d4ddf6275e2a"
     },
     {
-      "order": 44,
+      "order": 47,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "1d4842692d58b16524ab210208447601bc75aab91b802be6ba21203f5f03775e"
+      "sha256": "a21e5993a30b9cbe77371553140ddc8229d5bfdcf3a150e5ac80dc602a127647"
     },
     {
-      "order": 45,
+      "order": 48,
       "path": "src/js/40-app/10-dashboard-immersive.js",
       "section": "DASHBOARD IMERSIVO · modo, carrossel e navegação interna (N1)",
       "sha256": "2dadd3ee1bcddd57fc9fe50954a475d54046d7055e65ce441e23dd16daca8b1e"
     },
     {
-      "order": 46,
+      "order": 49,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "794830288014f7d5487ef55e9c072e2dc67db73749bd1080c923e6e885c7d067"
+      "sha256": "3b69863e10be08e2a73ded3c89a644403264c90dfb4c04ed04d1b2c436fc6440"
     },
     {
-      "order": 47,
+      "order": 50,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
       "sha256": "658e693366d5f993db9ed5715ff786a8f7442b900508d867597027912e0cdd73"
     },
     {
-      "order": 48,
+      "order": 51,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "f359218db68466d10e72f812295641ec56693ee619deed1954445ccbe50653e0"
+      "sha256": "4b3ee2c6a31ed2d301e66304b33b0531c6f57e8074c50da7cf7d95c3daf9a97e"
     },
     {
-      "order": 49,
+      "order": 52,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "2f7c10215009f8e0fef156351c5aea98dd9ebfc0c781eff427129d9ddf5ba8d9"
+      "sha256": "ae06568aa1874f5e4a3a7d6ec60a081a9c60c4d9e04401f5cb1c5ee23faa7772"
     },
     {
-      "order": 50,
+      "order": 53,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
       "sha256": "8763f9c7d00a45b6bcc11b96d80acb115dae4d9ebb0e6b42ad5f32657b4264e3"
     },
     {
-      "order": 51,
+      "order": 54,
       "path": "src/js/40-app/16-storage-governance.js",
       "section": "GOVERNANÇA DE ARMAZENAMENTO — UI (JPW-HJFGDE)",
-      "sha256": "d8bb795430cbbc4207bf2492eb0784dfba39091ce03844be4cb4f43bef2f0c18"
+      "sha256": "77515ef414977dd57b6a04c8a365bb2543966701633103b84d574247a3ab09e7"
     },
     {
-      "order": 52,
+      "order": 55,
       "path": "src/js/40-app/17-economic-calendar.js",
       "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
       "sha256": "8bb7d6f307613d07e3f987f0785073e8ee709ac50837372223b06182f0584618"
     },
     {
-      "order": 53,
+      "order": 56,
       "path": "src/vendor/planck/planck-1.5.0.min.js",
       "section": "GALTON BOARD · PLANCK.JS 1.5.0 VENDORIZADO (MIT)",
       "sha256": "69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974"
     },
     {
-      "order": 54,
+      "order": 57,
       "path": "src/js/40-app/18-galton-board/01-config.js",
       "section": "GALTON BOARD · CONFIGURACAO, PRESETS E GEOMETRIA",
       "sha256": "91412690159c995cadbbfad517bcefa6c495aca91c502e8bf0345a003ccae180"
     },
     {
-      "order": 55,
+      "order": 58,
       "path": "src/js/40-app/18-galton-board/02-rng.js",
       "section": "GALTON BOARD · PRNG DETERMINISTICO",
       "sha256": "88e21a92006eaa4650be783909237aee35304878b2d9805e239d87fc68e09c53"
     },
     {
-      "order": 56,
+      "order": 59,
       "path": "src/js/40-app/18-galton-board/03-statistics.js",
       "section": "GALTON BOARD · ESTATISTICA E REFERENCIA BINOMIAL",
       "sha256": "38157b5f6b21f17af4b63731ab4efa1375b4dc8cc34979305813fe3b97df7e63"
     },
     {
-      "order": 57,
+      "order": 60,
       "path": "src/js/40-app/18-galton-board/04-physics.js",
       "section": "GALTON BOARD · MOTOR FISICO PLANCK.JS",
       "sha256": "f121106f11dff0dbdf11307afb2ea6eb5bcb9c6ad80a9d85eafd9f3258a46f3a"
     },
     {
-      "order": 58,
+      "order": 61,
       "path": "src/js/40-app/18-galton-board/05-renderer.js",
       "section": "GALTON BOARD · RENDERER CANVAS HIDPI",
       "sha256": "2e1f1a47c89cc0cdae7c04d51de708bb1a56a72f657ca0fe6d6a4c882b742762"
     },
     {
-      "order": 59,
+      "order": 62,
       "path": "src/js/40-app/18-galton-board/06-controller.js",
       "section": "GALTON BOARD · UI, LIFECYCLE E PREFERENCIAS ISOLADAS",
       "sha256": "1439457dd5f2e6cad8918cabc5f044fc30ee03dc29977038fedf46366b556141"
     },
     {
-      "order": 60,
-      "path": "src/js/10-domain/07-reserve-requirements.js",
-      "section": "RESERVAS ESTATUTÁRIAS · FCR/FEO (FUNÇÃO PURA COMPARTILHADA)",
-      "sha256": "2c1a9d00cce4bda29e87be28398ae7fcd864e3c172f6df69b05246221a5d6a95"
-    },
-    {
-      "order": 61,
+      "order": 63,
       "path": "src/js/10-domain/08-usd-brl-quote.js",
       "section": "REFERÊNCIA USD/BRL CORRENTE (JPW-FGDEKM)",
       "sha256": "ad7a775c149e0363c8f7a8c498447896f6ac53dfd6c931393d808544a65b6e96"
     },
     {
-      "order": 62,
+      "order": 64,
       "path": "src/js/30-accounting/05-fx-planning/01-fx-model.js",
       "section": "PLANEJAMENTO FX · MODELO DE DOMÍNIO",
-      "sha256": "e79528d99b8c8d3118a003797228361ad4f336af7bc43c67cc3605bfcf8ddbfb"
-    },
-    {
-      "order": 63,
-      "path": "src/js/30-accounting/05-fx-planning/02-fx-engine.js",
-      "section": "PLANEJAMENTO FX · MOTOR MATEMÁTICO PURO",
-      "sha256": "57fd2ee01ed261472343b57039363a803310394532d6e3c28ffe61d962138024"
-    },
-    {
-      "order": 64,
-      "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
-      "section": "PLANEJAMENTO FX · ESTADO E MUTAÇÕES",
-      "sha256": "c1046742f9a9d84fc64f1633d71d974010174aee3238feca8df5e6bd85eb50d7"
+      "sha256": "2e00cfca44f07e6552b0782a7226a8a490bf1165bbc5bbaf07c4991088540a4d"
     },
     {
       "order": 65,
-      "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
-      "section": "PLANEJAMENTO FX · GRÁFICOS SVG",
-      "sha256": "abe47815efd71b5c8eefc69dee9561bf96d417cd02f303813bc5a21ea334e4f7"
+      "path": "src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+      "section": "PLANEJAMENTO FX · MOTOR MATEMÁTICO PURO",
+      "sha256": "b95ad597ab5eb3e3ef9b4727da797d25dc259552f235f3ea14ebdbe703f525ca"
     },
     {
       "order": 66,
-      "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
-      "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "97f51dcd19b93440fb64ece7b6075a3aec9e5b956123bc9f1eab9371f8c324c9"
+      "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
+      "section": "PLANEJAMENTO FX · ESTADO E MUTAÇÕES",
+      "sha256": "0b8f3bde46820b639d1dc364ec42e6f1b45e0269946c92500f5bdcf246e7a5b8"
     },
     {
       "order": 67,
+      "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+      "section": "PLANEJAMENTO FX · GRÁFICOS SVG",
+      "sha256": "517a6a6c9d62ad6005c3e1626f184c5fc681d8099f14560802140ebfca2a6bfa"
+    },
+    {
+      "order": 68,
+      "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+      "section": "PLANEJAMENTO FX · INTERFACE",
+      "sha256": "561652b1f602ece5c932c5a6833a70a026697f83550325ffdf11ade2d6bc3863"
+    },
+    {
+      "order": 69,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
       "sha256": "b334bf77c684c8a05f39a76ce64a1638f02c374c062b8924a6a601476391bcc7"
     },
     {
-      "order": 68,
+      "order": 70,
       "path": "src/js/10-domain/09-nocoda-geometry.js",
       "section": "NOCODA · geometria do canal (dominio puro)",
       "sha256": "268858faa34378c4dd3c90827699e59d48a1022a1f2287e6bc840bf51265147f"
     },
     {
-      "order": 69,
+      "order": 71,
       "path": "src/js/20-ui/14-nocoda-studies.js",
       "section": "ESTUDOS NOCODA · interface do workspace",
-      "sha256": "8b5863e6f4367a4843b1b3ddc86ae267db0a165852ee0a51dc11889971b2d70a"
+      "sha256": "66c546fa9585b8c4dc30103817bf8c5b97ea8e77580cd7bb5e8a3b0a1c9c730d"
     },
     {
-      "order": 70,
+      "order": 72,
       "path": "src/js/10-domain/10-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · nucleo matematico e estatistico (dominio puro)",
       "sha256": "b2853c1f1856965d6d5b164fb7732e1c386f53e2aa6fda56cf3d1a222eaa3fb5"
     },
     {
-      "order": 71,
+      "order": 73,
       "path": "src/js/20-ui/15-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · interface do workspace",
-      "sha256": "cbea35a45be9f96a1ae37ed45039216f1a1723a8b824714dfcc93b3f1311adac"
+      "sha256": "dea4aaf8625cabfbb19b3bcc3b35f8e875987f24024da322c9d2a99768c2411c"
     },
     {
-      "order": 72,
+      "order": 74,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
       "sha256": "dd127015a76a1161c5fc262b3731f6fad795597194c0ed17b02fbd95f52c0f66"
     },
     {
-      "order": 73,
+      "order": 75,
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
-      "sha256": "9ac12d98368ed062b319373becaa0559d020852138af74130c53fba1eb5995bb"
+      "sha256": "4efe785de509f413fdb309ce21eb1e8bc808463353f12e46bddc14f6edcc2686"
     },
     {
-      "order": 74,
+      "order": 76,
       "path": "src/js/10-domain/12-personal-finance.js",
       "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
       "sha256": "4d56f313fc7ebbf8c45cb87b8b0416f18bbc8a94b82ea036887de1d58a9e9032"
     },
     {
-      "order": 75,
+      "order": 77,
       "path": "src/js/20-ui/17-finpes-views.js",
       "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
-      "sha256": "329505ff95efa1a9ee135ca4bb56214a3c2b7fe3e976f208257ebeeab23da695"
-    },
-    {
-      "order": 76,
-      "path": "src/js/20-ui/18-finpes-budget.js",
-      "section": "FINANCAS PESSOAIS · Orcamento Mensal (PF-02): renderizador do workspace mensal",
-      "sha256": "29a857805b7518b87fce3eac76464765ed89f4bdc26ab5a666fecf75cc6ffd89"
-    },
-    {
-      "order": 77,
-      "path": "src/js/20-ui/19-finpes-debts.js",
-      "section": "FINANCAS PESSOAIS · Dividas & Credito (PF-03): renderizador do workspace",
-      "sha256": "d2118e9c5ad397611ba6d061068a4c4b32fc8b1cc0fc65b81c7e848168bafa73"
+      "sha256": "3916e5e21c02817a5883bce84ab64f39fb579873f3a951f2e42ad38c062fa6b9"
     },
     {
       "order": 78,
+      "path": "src/js/20-ui/18-finpes-budget.js",
+      "section": "FINANCAS PESSOAIS · Orcamento Mensal (PF-02): renderizador do workspace mensal",
+      "sha256": "2a99714bdea59e6c7ddde327b7bb745833f35e743e1d6668a6b539c49daee350"
+    },
+    {
+      "order": 79,
+      "path": "src/js/20-ui/19-finpes-debts.js",
+      "section": "FINANCAS PESSOAIS · Dividas & Credito (PF-03): renderizador do workspace",
+      "sha256": "3c042b7b90a5909de0e61144c213b49e3fd06884646857a3d89040b021de7b1f"
+    },
+    {
+      "order": 80,
       "path": "src/js/20-ui/20-finpes-comparison.js",
       "section": "FINANCAS PESSOAIS · Comparativo Mensal (PF-04): renderizador read-only",
       "sha256": "85c6df4651dfc83047f30df5262dddd9786c8f9f297f26af9fc30a21f673ad30"
     },
     {
-      "order": 79,
+      "order": 81,
       "path": "src/js/20-ui/21-finpes-scenarios.js",
       "section": "FINANCAS PESSOAIS · Cenarios (PF-05): hipoteses comparaveis por horizonte",
       "sha256": "18715f24622a32c77a04c4d22aa442ad4cefcdc1fa977b7fc175496079e7cd87"
@@ -481,34 +493,34 @@
     {
       "path": "src/js/20-ui/22-finpes-overview.js",
       "sha256": "21eebce0f8a70feca61ff1f0547ea7fb35ecfb525ea5455aa23b2ec2a31f4e35",
-      "order": 80
+      "order": 82
     },
     {
       "path": "src/js/10-domain/13-alladin.js",
       "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
-      "sha256": "d7a677e5bc4875406aa809b7094ded0fa93b8a5844a2cf1f748325f5e5af079a",
-      "order": 81
+      "sha256": "6b5cdc3593207873dc77c76315d0bad44b44436c0eeb0703cfdc8b4a63cf9146",
+      "order": 83
     },
     {
-      "order": 82,
+      "order": 84,
       "path": "src/js/20-ui/23-research-views.js",
       "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
       "sha256": "4a0b9f3a59e815576dc1335609c88a817c6b9f12823a0060e24eb745f0ecc721"
     },
     {
-      "order": 83,
+      "order": 85,
       "path": "src/js/20-ui/24-alladin-views.js",
       "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
       "sha256": "74da048037848e4ecd3183b9a441f7c18efb52d4d6e021bcb8cc665ba6c9a2b3"
     },
     {
-      "order": 84,
+      "order": 86,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "254a33e2f5b928c55819c74bf78b65a54237f4aaf571f576afb1d1a4e93b9366"
+      "sha256": "82fd2d8fb9d22ecd9ab7f70a63350a68bcf22db79bc51e4140473b5b4115415d"
     },
     {
-      "order": 85,
+      "order": 87,
       "path": "src/js/40-app/18-notification-center.js",
       "section": "NOTIFICATIONS · central local de avisos e mensagens de sessao",
       "sha256": "0b8091f5ce15376a3ab190ec41e4d439ceefd06bdd65ef557dc965c178ccf1a7"
@@ -516,85 +528,85 @@
     {
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
-      "order": 86,
-      "sha256": "5270d3eeb37ae5d3fa27868871737835720c1492f83df7a6b1999a3a0908f150"
+      "order": 88,
+      "sha256": "12ad8aeb30ed0fb8d28979ff3978fd904258c0996c1fb2bb19621e46c695b674"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
       "section": "CONSOLIDADO FX · local analytical history",
-      "order": 87,
+      "order": 89,
       "sha256": "b815e8c4cf16b08b9e5e1e727e411753bb72cb044bf06cd84f3eb677a4be3b7e"
     },
     {
       "path": "src/js/40-app/24-fx-consolidated-import.js",
       "section": "CONSOLIDADO FX · local analytical history",
-      "order": 88,
-      "sha256": "2bc7338943e6fa628a4217d7a4db83cb7d13df8b86b78cea7948716bc901532c"
+      "order": 90,
+      "sha256": "b99ba4d2107841c7c3b2d2181df66dc8b9b1455be2380f6b04769836add3e50e"
     },
     {
       "path": "src/js/40-app/25-fx-consolidated-pdf.js",
       "section": "CONSOLIDADO FX · local analytical history",
-      "order": 89,
+      "order": 91,
       "sha256": "016236f4dc85ca4e101b143904a03f8754635871af07bb454ba898812dbef10f"
     },
     {
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
-      "order": 90,
-      "sha256": "be2fd52766819b4fa790b7a0e5b4684136fb34eeb712e8b536871aecfdb2650c"
+      "order": 92,
+      "sha256": "0bd5b31da176cb63dc0bbd28a2b599554d23968b1a28386c1762adbb02f1fb5f"
     },
     {
       "path": "src/js/10-domain/19-execution-market.js",
       "section": "Execution Board · scoped observations and factual presentation",
-      "order": 91,
+      "order": 93,
       "sha256": "c5511f91a328f671b7491098288f90a23d8f357d67ab47868c2b68f1769fd081"
     },
     {
       "path": "src/js/10-domain/18-execution-board-model.js",
       "section": "Execution Board · scoped observations and factual presentation",
-      "order": 92,
-      "sha256": "da4e440ed7f1aa13d3fe04627eeb9c9ab9631ea0e5a078d2b0f3eaa163417503"
+      "order": 94,
+      "sha256": "380335798e74316f5035ae64a7f6b23c5f4aea240987c2ef8e5098e117a72ba1"
     },
     {
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
-      "order": 93,
-      "sha256": "c5ffa6b545aeee6b7c7eb10f82bd54082bb8b3a2e31864371a4ec3ae104cd289"
+      "order": 95,
+      "sha256": "d023ca3254086e9ee1a82471023854a70947cb70d97cb2a5f6916bb8f82ddbe0"
     },
     {
       "path": "src/js/10-domain/16-nocuda-transfer.js",
       "section": "Nocuda Tool · local drawing transfer",
-      "order": 94,
+      "order": 96,
       "sha256": "f70d4b16b25c63cd75eedf65a7e873455fcb43ec5186957a26a7302cc2c1a7cb"
     },
     {
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
-      "order": 95,
-      "sha256": "fd7fb04092fc05c78e5c2c3a1e4d9a51e3472b12d57a2b0df2ff0590d9f82845"
+      "order": 97,
+      "sha256": "bedc1bcf863dea99f99ad43a0c89b374ad676fe18f211e69b6beae520fc68ac5"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",
       "section": "Estrutura Normativa · local PDF reader",
-      "order": 96,
+      "order": 98,
       "sha256": "beaf00bb9f531496914d7147fd619bb6448cb761df6a6c6bc44a47f3dd3d3f8d"
     },
     {
       "path": "src/js/20-ui/31-forex-accounts.js",
       "section": "Contas e Período · gestão contextual de contas CFDs",
-      "order": 97,
-      "sha256": "1552c1802d125097147f0e25c2cfb8cde2b510744650f54ba26313893c956e87"
+      "order": 99,
+      "sha256": "2aab5fda4525f02f8d9c701fee28fac733578028cc7020b444e5336cb4688fd5"
     },
     {
       "path": "src/js/20-ui/33-module-work.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 98,
-      "sha256": "3106ee8020fc6f9920b1260926d525da5495a8a3a5d884ba9a0f27fe000aa4fc"
+      "order": 100,
+      "sha256": "f8a9f15893b3df6a691d3be14c329fe148f0e66e04027e3ae89346673f275a88"
     },
     {
       "path": "src/js/20-ui/32-module-availability.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 99,
+      "order": 101,
       "sha256": "c8bf4d2169885378efdc1f0ba9a03571f8cd8bd8c4b5c4da948d3b10c71ed261"
     }
   ],
