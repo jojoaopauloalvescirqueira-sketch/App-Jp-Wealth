@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MQL = ROOT / "mt5/jpw-alavancagem-atual/MQL5"
 INCLUDE = MQL / "Include/JPWealth"
 EA = MQL / "Experts/JPWealth/JPW_Alavancagem_Observer.mq5"
+RUNTIME = INCLUDE / "JPW_Genetrix_Observer_Runtime.mqh"
 
 
 def function(source: str, name: str) -> str:
@@ -43,6 +44,7 @@ bool MathIsValidNumber(double value){return std::isfinite(value);}
 double MathFloor(double value){return std::floor(value);}
 int StringLen(const string&value){return (int)value.size();}
 constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+constexpr int JPW_PERSONAL_UNAVAILABLE=0;
 template<class T> int ArraySize(const std::vector<T>&a){return (int)a.size();}
 template<class T> int ArrayResize(std::vector<T>&a,int n){a.resize(n);return n;}
 string IntegerToString(long x){return std::to_string(x);}
@@ -86,6 +88,7 @@ bool JPWObserverEpisodeKey(const string&,const string&,long,long,string&key){key
 bool JPWObserverStoreStart(JPWObserverDeal&,const string&,long,ulong,bool,string&reason){
  store_calls++;if(store_failures-->0){reason="synthetic ATR temporarily unavailable";return false;}return true;}
 int timer_kills=0,lease_releases=0,presence_releases=0,database_closes=0;
+void FileClose(int){}
 void EventKillTimer(){timer_kills++;}void JPWStopRiskReleaseSessionLease(){lease_releases++;}
 void JPWStopRiskPresenceRelease(){presence_releases++;}
 bool deactivate_ok=true;
@@ -173,7 +176,8 @@ def main() -> int:
     if not compiler:
         print("JPW_TEST_RESULT: ENVIRONMENT_ERROR")
         return 2
-    source = EA.read_text()
+    source = RUNTIME.read_text()
+    wrapper = EA.read_text()
     core = "\n".join((INCLUDE / f"JPW_Alavancagem_{name}.mqh").read_text()
                      for name in ("Store_Result", "Diagnostics_Core"))
     core = re.sub(r"^#include[^\n]*", "", core, flags=re.MULTILINE)
@@ -185,9 +189,13 @@ def main() -> int:
     state = re.sub(r"(JPWObserver\w+) (g_\w+)\[\];", r"std::vector<\1> \2;", state)
     names = [name for name in re.findall(r"^(?:void|bool|int|ulong) (JPWObserver\w+)\(", source, re.MULTILINE)
              if name.startswith(("JPWObserverDiagnostic", "JPWObserverTerminalDiagnostic", "JPWObserverFlushDiagnostics", "JPWObserverScheduleReconstruction", "JPWObserverReconstruct"))]
-    bodies = "\n".join(function(source, name) for name in names) + function(source, "OnDeinit")
+    bodies = "\n".join(function(source, name) for name in names) + function(source, "JPWObserverRuntimeDetach") + function(wrapper, "OnDeinit")
     bodies = bodies.replace("JPWObserverDeal deals[],start;", "std::vector<JPWObserverDeal> deals;JPWObserverDeal start;")
-    cpp = SHIM + core + BOUNDARY + state + bodies + MAIN
+    # The shutdown fixture models an attached runtime for each distinct session.
+    # Financial and scheduler assertions remain unchanged after lifecycle extraction.
+    main_fixture = MAIN.replace("int main(){", "int main(){ g_observer_runtime_attached=true;")
+    main_fixture = main_fixture.replace("g_db=3;OnDeinit(0);", "g_db=3;g_observer_runtime_attached=true;OnDeinit(0);")
+    cpp = SHIM + core + BOUNDARY + state + bodies + main_fixture
     print("EA_SOURCE_SHA256:", hashlib.sha256(source.encode()).hexdigest())
     with tempfile.TemporaryDirectory(prefix="jpw-scheduler-") as temporary:
         path,binary=Path(temporary)/"scheduler.cpp",Path(temporary)/"scheduler"

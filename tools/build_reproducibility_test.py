@@ -13,7 +13,7 @@ arquivos rastreados pelo Git e de qualquer input oficial já declarado no manife
 é tocada.
 """
 from pathlib import Path
-import base64, hashlib, json, os, re, shutil, subprocess, sys, tempfile
+import base64, hashlib, importlib.util, json, os, re, shutil, subprocess, sys, tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -39,6 +39,27 @@ BRAND_BUILD_INPUTS = (
 LEVERAGE_MANIFEST = 'downloads/jpw-alavancagem-atual/manifest.json'
 LEVERAGE_BUILDER = 'tools/build_leverage_package.py'
 
+
+def artefatos_nativos_declarados(leverage):
+    native = leverage.get('nativeArtifact')
+    if native is None:
+        return []
+    assert isinstance(native, dict), 'declaracao de artefato nativo invalida'
+    records = native['artifacts']
+    expected = {rel[:-4] + '.ex5' for rel in leverage['sourceFiles'] if rel.endswith('.mq5')}
+    assert isinstance(records, list) and len(records) == len(expected), 'conjunto nativo declarado invalido'
+    assert {item['path'] for item in records} == expected, 'conjunto nativo nao corresponde aos fontes'
+    spec = importlib.util.spec_from_file_location('jpw_repro_checked_native', ROOT / LEVERAGE_BUILDER)
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    for item in records:
+        rel = item['path']
+        assert isinstance(rel, str) and rel.endswith('.ex5'), 'extensao nativa invalida'
+        source = builder.checked_file(ROOT, rel, 'mt5/jpw-alavancagem-atual/MQL5/')
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == item['sha256'], (
+            'input nativo diferente da evidencia', rel)
+    return records
+
 LIXO = {
     'icons/.DS_Store': b'\x00\x01Finder junk' + b'\xff' * 64,   # o caso real que quebrou
     '.DS_Store': b'\x00\x01raiz' + b'\xee' * 32,
@@ -62,6 +83,10 @@ def arquivos_do_candidato():
     arquivos.update((LEVERAGE_MANIFEST, LEVERAGE_BUILDER))
     arquivos.update(leverage['sourceFiles'])
     arquivos.update(item['path'] for item in leverage['downloads'].values() if item['available'])
+    # Native inputs may be newly integrated and not yet tracked by Git. Copy
+    # exactly the manifest declarations; the real builder still checks every
+    # source fingerprint, path, architecture and artifact SHA-256.
+    arquivos.update(item['path'] for item in artefatos_nativos_declarados(leverage))
     return sorted(arquivos)
 
 def montar(destino: Path, arquivos):
@@ -93,6 +118,8 @@ def fatos(destino: Path):
         'manifest': (destino / 'src/js/manifest.json').read_bytes(),
         'leverage_manifest': (destino / LEVERAGE_MANIFEST).read_bytes(),
         'leverage_source': (destino / leverage['downloads']['source']['path']).read_bytes(),
+        'leverage_compiled': ((destino / leverage['downloads']['compiled']['path']).read_bytes()
+                              if leverage['downloads']['compiled']['available'] else None),
     }
 
 def main():
@@ -119,6 +146,7 @@ def main():
         assert a['manifest'] == b['manifest'], 'lixo alterou os hashes do manifest'
         assert a['leverage_manifest'] == b['leverage_manifest'], 'lixo alterou o manifesto de alavancagem'
         assert a['leverage_source'] == b['leverage_source'], 'lixo alterou o ZIP de fontes de alavancagem'
+        assert a['leverage_compiled'] == b['leverage_compiled'], 'lixo alterou o ZIP compilado de alavancagem'
 
         # ---- 3. contraprova: mudar um INPUT OFICIAL deve mudar o Build ID ----
         montar(alterado, arquivos)
@@ -170,6 +198,43 @@ def main():
                                cwd=alterado, capture_output=True, text=True)
             assert r.returncode != 0, f'input oficial ausente deveria interromper o build: {relative}'
             assert 'input oficial do build ausente' in (r.stdout + r.stderr), (relative, r.stdout + r.stderr)
+
+        # ---- 6. declared EX5 remains mandatory and bound to its exact digest ----
+        native = leverage.get('nativeArtifact')
+        native_controls = []
+        if native is not None:
+            assert a['leverage_compiled'] is not None, 'artefatos nativos declarados sem ZIP compilado'
+            records = native['artifacts']
+            assert records, 'conjunto nativo declarado vazio'
+            for record in records:
+                rel = record['path']
+                assert rel in arquivos, f'input nativo ausente do fixture: {rel}'
+                assert hashlib.sha256((limpo / rel).read_bytes()).hexdigest() == record['sha256'], rel
+            for control, record, reason in (
+                ('missing', records[0], 'Arquivo declarado ausente ou inseguro'),
+                ('tampered', records[-1], 'Artefato nativo vazio ou diferente da evidencia'),
+            ):
+                destino = raiz / ('native-' + control)
+                montar(destino, arquivos)
+                target = destino / record['path']
+                if control == 'missing':
+                    target.unlink()
+                else:
+                    content = target.read_bytes()
+                    assert content, 'controle nativo exige arquivo nao vazio'
+                    target.write_bytes(bytes([content[0] ^ 1]) + content[1:])
+                r = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'],
+                                   cwd=destino, capture_output=True, text=True)
+                assert r.returncode != 0 and reason in (r.stdout + r.stderr), (
+                    control, record['path'], r.returncode, r.stdout, r.stderr)
+                native_controls.append({'control': control, 'path': record['path'],
+                                        'returncode': r.returncode, 'result': 'EXPECTED_REFUSAL'})
+        else:
+            assert a['leverage_compiled'] is None, 'fallback sem prova nativa deve permanecer sem ZIP compilado'
+        print(json.dumps({'native_declared_inputs': len(native['artifacts']) if native else 0,
+                          'compiled_zip_deterministic': a['leverage_compiled'] == b['leverage_compiled'],
+                          'compiled_fallback_preserved': native is not None or a['leverage_compiled'] is None,
+                          'native_integrity_controls': native_controls}, indent=2))
 
         canonico = a['build_id'].split("'")[1]
         print(f'BUILD REPRODUCIBILITY OK — Build ID canonico {canonico}; '

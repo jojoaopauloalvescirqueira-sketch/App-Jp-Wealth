@@ -222,3 +222,16 @@ contagens descritivas antigas em QUALITY-GATES não alteram o script nem substit
 a evidência executada. Não foi alterada a política ou composição dos gates.
 Uso explícito das skills no caso Calendário não prova descoberta automática,
 compreensão em outras sessões, compatibilidade Claude ou índice atualizado.
+
+## GENETRIX — integração focal 1.20.0
+
+Para desenvolvimento MT5, partir de `mt5/jpw-alavancagem-atual/AGENTS.md`,
+`GENETRIX_CORE_1_20_0.md` e `harness/REPOSITORY_INTEGRATION.md` nesse componente.
+Monitor reúne Observer e Accountant; Supervisor7x é separado/opcional; Conta
+e NoCuda são indicadores. Os produtores legados existem para rollback.
+Os fontes/recursos MQL da integração são exatamente os do candidato1.20.0
+compilado33/33; execução MT5 e instalação permanecemNOT_RUN.
+Harness1.0 éCANDIDATE com pilotoR2FAIL e1.0.1NOT_ADOPTED. As referências
+históricas anteriores mantêm sua revisão; não substituem este mapa focal.
+Fonte de evidências: `docs/validation/genetrix-1.20.0/`. Não há nova autoridade
+financeira, atualização de política V11, negociação ou reindexação implícita.

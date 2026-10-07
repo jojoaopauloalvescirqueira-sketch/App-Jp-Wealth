@@ -291,8 +291,8 @@ JPW_GENESIS_STORE_STATE JPWGenesisReadText(const string filename,
    content="";
    const int handle=FileOpen(filename,FILE_READ|FILE_BIN);
    if(handle==INVALID_HANDLE) return(JPW_GENESIS_IO_ERROR);
-   const long size=FileSize(handle);
-   if(size<=0 || size>JPW_GENESIS_MAX_BYTES)
+   const ulong size=FileSize(handle);
+   if(size==0 || size>(ulong)JPW_GENESIS_MAX_BYTES)
      { FileClose(handle); return(JPW_GENESIS_INVALID); }
    uchar bytes[];
    if(ArrayResize(bytes,(int)size)!=(int)size ||

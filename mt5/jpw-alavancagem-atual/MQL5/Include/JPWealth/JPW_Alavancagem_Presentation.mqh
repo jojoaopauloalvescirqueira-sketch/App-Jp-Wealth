@@ -1,6 +1,7 @@
 #ifndef JPW_ALAVANCAGEM_PRESENTATION_MQH
 #define JPW_ALAVANCAGEM_PRESENTATION_MQH
 #include <JPWealth/JPW_Genetrix_Brand.mqh>
+#include <JPWealth/JPW_UI_Design.mqh>
 // Indicator runtime component; included after its instance state.
 
 // Focus belongs to the last explicitly clicked component, not merely to an
@@ -99,6 +100,8 @@ void JPWClearPanel()
    for(int i=0;i<g_panel_count;i++) ObjectDelete(0,g_panel_prefix+IntegerToString(i));
    ObjectDelete(0,g_panel_prefix+"RAIZ_DETAILS_BUTTON");
    ObjectDelete(0,g_panel_prefix+"HUD_BG");
+   ObjectDelete(0,g_panel_prefix+"RAIZ_UI_HUD_LABEL");
+   JPWUIDesignDeleteIcon(g_panel_prefix+"RAIZ_UI_HUD_ICON");
    g_panel_count=0;
   }
 
@@ -108,7 +111,7 @@ void JPWRenderHUD()
    const int chart_width=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS);
    const int chart_height=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
    if(chart_width<80 || chart_height<40) { JPWClearPanel(); return; }
-   const int pad=6;
+   const int pad=JPWUIDesignPx(8);
    if(!TextSetFont("Arial",-10*InpFontSize,FW_NORMAL))
      { JPWClearPanel(); return; }
    const color chart_background=(color)ChartGetInteger(0,CHART_COLOR_BACKGROUND);
@@ -120,16 +123,19 @@ void JPWRenderHUD()
    if(!TextGetSize("Mg",measured,text_height) || text_height==0)
      { JPWClearPanel(); return; }
    const int font_height=(int)text_height;
-   const int gap=(prefs.density==0 ? 2 : font_height/2+2);
+   const int gap=(prefs.density==0 ? JPWUIDesignPx(4) : font_height/2+JPWUIDesignPx(4));
    const int row_height=font_height+gap;
    const int button_font=(InpFontSize>12 ? 12 : InpFontSize);
    if(!TextSetFont("Arial",-10*button_font,FW_NORMAL))
      { JPWClearPanel(); return; }
    uint button_text_width=0,button_text_height=0;
-   if(!TextGetSize("Genetrix",button_text_width,button_text_height))
+   const string launcher_label="Genetrix · Conta";
+   if(!TextGetSize(launcher_label,button_text_width,button_text_height))
      { JPWClearPanel(); return; }
-   const int button_height=(int)button_text_height+8;
-   const int button_width=(int)button_text_width+2*pad;
+   const int button_height=JPWUIDesignControlHeight((int)button_text_height);
+   const int button_width=JPWUIDesignButtonWidth(launcher_label,button_font,true);
+   const int icon_size=JPWUIDesignPx(16);
+   const int icon_gap=JPWUIDesignPx(8);
    if(!TextSetFont("Arial",-10*InpFontSize,FW_NORMAL))
      { JPWClearPanel(); return; }
    const int width=JPWPanelHUDReservedWidth(chart_width,font_height,pad,button_width);
@@ -202,7 +208,7 @@ void JPWRenderHUD()
                      prefs.corner==CORNER_RIGHT_LOWER);
    const bool right=(prefs.corner==CORNER_RIGHT_UPPER ||
                      prefs.corner==CORNER_RIGHT_LOWER);
-   const int header_safe=(font_height*3+10>44 ? font_height*3+10 : 44);
+   const int header_safe=(font_height*3+10>JPWUIDesignPx(44) ? font_height*3+10 : JPWUIDesignPx(44));
    const int inset_y=(!lower && InpOffsetY<header_safe ? header_safe : InpOffsetY);
    if(!JPWPanelHUD(chart_width,chart_height,width,height,InpOffsetX,inset_y,right,lower,hud))
      { JPWClearPanel(); return; }
@@ -259,8 +265,27 @@ void JPWRenderHUD()
    ObjectSetInteger(0,button,OBJPROP_ZORDER,4);
    ObjectSetInteger(0,button,OBJPROP_SELECTABLE,false);
    ObjectSetInteger(0,button,OBJPROP_HIDDEN,true);
-   ObjectSetString(0,button,OBJPROP_TEXT,"Genetrix");
-   ObjectSetString(0,button,OBJPROP_TOOLTIP,"Open metric cards, data status and visual settings.");
+   // The legacy button owns the entire click target. Decorative children have
+   // lower click priority and never become independent actions or routes.
+   ObjectSetString(0,button,OBJPROP_TEXT,"");
+   ObjectSetString(0,button,OBJPROP_TOOLTIP,launcher_label+" · Leituras, dados e ajustes da conta.");
+   const color launcher_ink=JPWPanelAccentColor(chart_background);
+   JPWUIDesignIcon(g_panel_prefix+"RAIZ_UI_HUD_ICON",hud.x+2*pad,
+      y+pad+(button_height-icon_size)/2,icon_size,launcher_ink,false);
+   const string launcher_text=g_panel_prefix+"RAIZ_UI_HUD_LABEL";
+   if(ObjectFind(0,launcher_text)<0) ObjectCreate(0,launcher_text,OBJ_LABEL,0,0,0);
+   ObjectSetInteger(0,launcher_text,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+   ObjectSetInteger(0,launcher_text,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER);
+   ObjectSetInteger(0,launcher_text,OBJPROP_XDISTANCE,hud.x+2*pad+icon_size+icon_gap);
+   ObjectSetInteger(0,launcher_text,OBJPROP_YDISTANCE,y+pad+(button_height-(int)button_text_height)/2);
+   ObjectSetInteger(0,launcher_text,OBJPROP_COLOR,launcher_ink);
+   ObjectSetInteger(0,launcher_text,OBJPROP_FONTSIZE,button_font);
+   ObjectSetInteger(0,launcher_text,OBJPROP_ZORDER,3);
+   ObjectSetInteger(0,launcher_text,OBJPROP_SELECTABLE,false);
+   ObjectSetInteger(0,launcher_text,OBJPROP_HIDDEN,true);
+   ObjectSetString(0,launcher_text,OBJPROP_FONT,"Arial");
+   ObjectSetString(0,launcher_text,OBJPROP_TEXT,launcher_label);
+   ObjectSetString(0,launcher_text,OBJPROP_TOOLTIP,launcher_label);
   }
 
 void JPWRenderCurrentDisplay()
@@ -312,10 +337,18 @@ string JPWRaizUI(const string suffix)
 string JPWActionObject(const int action)
   { return(JPWRaizUI("BUTTON_"+IntegerToString(action))); }
 
+// Ephemeral focus scope. Rebuilds may retain a valid action in the same route,
+// but a reused numeric ID in another route never inherits keyboard authority.
+int g_details_focus_route=-1;
+
 void JPWRaizPanelDestroy()
   {
    // Destroyed EDIT objects no longer own keyboard input; drafts are saved by the caller.
    g_editing_field=false;
+   if(!g_raiz_details_open || g_details_focus_route!=g_raiz_tab)
+     { g_focus_action=-1; g_details_focus_route=-1; }
+   // Registration is cleared below: until redraw, even a retained same-route
+   // ID is not a valid target because its graphical object no longer exists.
    // Delete every object owned by this dialog, including new tab/table
    // controls. Iterate backwards because ObjectDelete changes enumeration.
    const string owned=g_panel_prefix+"RAIZ_UI_";
@@ -332,7 +365,7 @@ bool JPWRaizCreateLabel(const string suffix,const string value,
   {
    const string name=JPWRaizUI(suffix);
    if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_LABEL,0,0,0)) return(false);
-   const int font=(font_size>0 ? font_size : g_details_font);
+   const int font=(font_size>0 ? font_size : g_details_font+(suffix=="PH_TITLE" ? 1 : 0));
    const string shown=JPWFitText(value,g_details_rect.x+g_details_rect.width-g_details_pad-x,font);
    // Visual role is explicit in owned object names, never inferred from a
    // translated financial message or from the metric's numeric value.
@@ -389,10 +422,13 @@ bool JPWRaizCreateSurface(const string suffix,const int x,const int y,
           ObjectSetInteger(0,name,OBJPROP_HIDDEN,true));
   }
 
+void JPWFocusRegister(const int action);
+
 bool JPWRaizCreateEdit(const int index,const int x,const int y,const int width)
   {
    const string name=JPWRaizUI("EDIT_"+IntegerToString(index));
    if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_EDIT,0,0,0)) return(false);
+   JPWFocusRegister(-1000-index);
    return(ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
           ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x) &&
           ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y) &&
@@ -404,6 +440,7 @@ bool JPWRaizCreateEdit(const int index,const int x,const int y,const int width)
           ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,g_details_border) &&
           ObjectSetInteger(0,name,OBJPROP_ZORDER,4) &&
           ObjectSetInteger(0,name,OBJPROP_READONLY,false) &&
+          ObjectSetInteger(0,name,OBJPROP_SELECTABLE,true) &&
           ObjectSetInteger(0,name,OBJPROP_HIDDEN,true) &&
           ObjectSetString(0,name,OBJPROP_FONT,"Arial") &&
           ObjectSetString(0,name,OBJPROP_TEXT,g_raiz_fields[index]));
@@ -411,19 +448,47 @@ bool JPWRaizCreateEdit(const int index,const int x,const int y,const int width)
 
 void JPWFocusRegister(const int action)
   {
+   if(g_details_focus_route!=g_raiz_tab)
+     {
+      g_focus_action=-1; g_editing_field=false; g_focus_count=0;
+      g_details_focus_route=g_raiz_tab;
+     }
    for(int i=0;i<g_focus_count;i++) if(g_focus_actions[i]==action) return;
    if(g_focus_count<128) g_focus_actions[g_focus_count++]=action;
+  }
+
+string JPWFocusObject(const int action)
+  { return(action<=-1000 ? JPWRaizUI("EDIT_"+IntegerToString(-1000-action)) :
+      JPWRaizUI("BUTTON_"+IntegerToString(action))); }
+
+bool JPWFocusRegistered(const int action)
+  {
+   for(int i=0;i<g_focus_count;i++) if(g_focus_actions[i]==action) return(true);
+   return(false);
+  }
+
+bool JPWFocusValid(const int action)
+  {
+   if(!g_raiz_details_open || action==-1 || g_details_focus_route!=g_raiz_tab ||
+      !JPWFocusRegistered(action)) return(false);
+   const string name=JPWFocusObject(action);
+   if(ObjectFind(0,name)<0) return(false);
+   return(ObjectGetInteger(0,name,OBJPROP_TYPE)==(action<=-1000 ? OBJ_EDIT : OBJ_BUTTON));
   }
 
 void JPWFocusPaint()
   {
    for(int i=0;i<g_focus_count;i++)
      {
-      const string name=JPWRaizUI("BUTTON_"+IntegerToString(g_focus_actions[i]));
+      const int action=g_focus_actions[i];
+      const string name=JPWFocusObject(action);
+      const bool focused=(action==g_focus_action && JPWFocusValid(action));
+      if(action<=-1000)
+         ObjectSetInteger(0,name,OBJPROP_SELECTED,focused);
       const bool card_title=(g_focus_actions[i]>=JPW_ACTION_CARD_FIRST &&
                             g_focus_actions[i]<JPW_ACTION_CARD_FIRST+JPW_COCKPIT_METRIC_COUNT);
       ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,
-                       g_focus_actions[i]==g_focus_action ?
+                       focused ?
                        JPWPanelAccentColor((color)ChartGetInteger(0,CHART_COLOR_BACKGROUND)) :
                        (card_title ? g_details_card : g_details_border));
      }
@@ -433,18 +498,27 @@ void JPWFocusStep(const bool backward)
   {
    if(g_focus_count==0) return;
    int current=-1;
-   for(int i=0;i<g_focus_count;i++) if(g_focus_actions[i]==g_focus_action) current=i;
-   current=(current<0 ? (backward ? g_focus_count-1 : 0) :
-            (current+(backward ? g_focus_count-1 : 1))%g_focus_count);
-   g_focus_action=g_focus_actions[current]; JPWFocusPaint(); ChartRedraw(0);
+   if(JPWFocusValid(g_focus_action))
+      for(int i=0;i<g_focus_count;i++) if(g_focus_actions[i]==g_focus_action) current=i;
+   for(int step=0;step<g_focus_count;step++)
+     {
+      current=(current<0 ? (backward ? g_focus_count-1 : 0) :
+               (current+(backward ? g_focus_count-1 : 1))%g_focus_count);
+      if(!JPWFocusValid(g_focus_actions[current])) continue;
+      g_focus_action=g_focus_actions[current];
+      g_editing_field=(g_focus_action<=-1000);
+      JPWFocusPaint(); ChartRedraw(0); return;
+     }
+   g_focus_action=-1; g_editing_field=false;
+   JPWFocusPaint(); ChartRedraw(0);
   }
 
 bool JPWRaizCreateButton(const int index,const string value,
                           const int x,const int y,const int width)
   {
-   JPWFocusRegister(index);
    const string name=JPWRaizUI("BUTTON_"+IntegerToString(index));
    if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_BUTTON,0,0,0)) return(false);
+   JPWFocusRegister(index);
    const color background=(color)ChartGetInteger(0,CHART_COLOR_BACKGROUND);
    const bool primary=(index==JPW_ACTION_APPLY || index==JPW_ACTION_REFRESH ||
       (index==JPW_ACTION_LEGACY_APPLY &&
@@ -471,7 +545,7 @@ bool JPWRaizCreateButton(const int index,const string value,
           ObjectSetInteger(0,name,OBJPROP_ZORDER,4) &&
           ObjectSetInteger(0,name,OBJPROP_HIDDEN,true) &&
           ObjectSetString(0,name,OBJPROP_FONT,"Arial") &&
-          ObjectSetString(0,name,OBJPROP_TEXT,JPWFitText(value,width-4,g_details_font)) &&
+          ObjectSetString(0,name,OBJPROP_TEXT,JPWFitText(value,width-2*JPWUIDesignPx(8),g_details_font)) &&
           ObjectSetString(0,name,OBJPROP_TOOLTIP,value));
   }
 
@@ -1067,6 +1141,8 @@ string JPWPersonalRowCaption(JPWPersonalRow &row)
   }
 void JPWPersonalDetailLines(const int width,string &lines[])
   {
+   if(!g_personal_available || g_personal_detail_seq<=0 || g_personal_detail.sequence!=g_personal_detail_seq)
+     { JPWDetailsWrap("Detalhe em carregamento ou indisponível; nenhum registro anterior foi apresentado.",width,lines); return; }
    JPWPersonalRow row=g_personal_detail;
    JPWDetailsWrap(JPWPersonalRowCaption(row),width,lines);
    JPWDetailsWrap("Conta registrada: "+g_personal_scope+" · sequência "+IntegerToString(row.sequence)+" · SHA-256 "+row.digest,width,lines);
@@ -1078,8 +1154,10 @@ void JPWPersonalDetailLines(const int width,string &lines[])
          " · SL "+(episode.subject.sl_readable ? JPWPersonalNum(episode.subject.sl) : "indisponível")+" · TP "+JPWPersonalNum(episode.subject.tp),width,lines);
       JPWDetailsWrap("Primeira observação: "+TimeToString((datetime)episode.first_wall,TIME_DATE|TIME_SECONDS)+" UTC · última: "+
          TimeToString((datetime)episode.last_wall,TIME_DATE|TIME_SECONDS)+" UTC · solicitações: "+IntegerToString(episode.requested_count),width,lines);
-      JPWDetailsWrap("Último aviso solicitado: "+IntegerToString(episode.last_requested_wall)+" UTC epoch · próximo prazo: "+
-         IntegerToString(episode.next_wall)+" · vínculo demonstrado: "+(episode.subject.link_id=="" ? "indisponível" : episode.subject.link_id),width,lines);
+      JPWDetailsWrap("Último aviso solicitado: "+(episode.last_requested_wall>0 ?
+         TimeToString((datetime)episode.last_requested_wall,TIME_DATE|TIME_SECONDS)+" UTC" : "nenhum registrado")+
+         " · próximo prazo: "+(episode.next_wall>0 ? TimeToString((datetime)episode.next_wall,TIME_DATE|TIME_SECONDS)+" UTC" : "indisponível")+
+         " · vínculo demonstrado: "+(episode.subject.link_id=="" ? "indisponível" : episode.subject.link_id),width,lines);
       JPWDetailsWrap("Resolução: "+(episode.resolution=="" ? "episódio ativo" : episode.resolution)+". Sem SL registrado na corretora não certifica infração nem avalia stop virtual.",width,lines);
      }
    else if(row.category=="PEAK" && JPWPersonalDecodePeak(row.payload,peak))
@@ -1103,15 +1181,29 @@ void JPWPersonalRenderBody(const int x,const int body_y,const int inner,const in
    const int half=(inner-g_details_pad)/2;
    if(body_height<2*g_details_control+g_details_line)
      { JPWRaizCreateLabel("PH_SMALL","Amplie o gráfico para consultar o histórico",x,body_y); return; }
-   JPWRaizCreateButton(JPW_ACTION_HISTORY_ACCOUNT,"Conta "+IntegerToString(g_personal_account_index+1)+"/"+
-      IntegerToString(ArraySize(g_personal_accounts))+" · próxima",x,body_y,half);
+   JPWRaizCreateButton(JPW_ACTION_HISTORY_ACCOUNT,(g_personal_account_index>=0 ?
+      "Conta "+IntegerToString(g_personal_account_index+1)+"/"+IntegerToString(ArraySize(g_personal_accounts))+" · próxima" :
+      "Contas locais · consultar"),x,body_y,half);
    JPWRaizCreateButton(JPW_ACTION_HISTORY_REFRESH,"Atualizar consulta",x+half+g_details_pad,body_y,half);
    int y=body_y+g_details_control+g_details_pad;
-   const int room=body_height-g_details_control-g_details_pad;
+   const int room=body_height-g_details_control-g_details_pad-g_details_line;
    string lines[];
-   JPWDetailsWrap(JPWPersonalScopeLabel()+" · "+StringSubstr(g_personal_scope,0,12)+"…",inner,lines);
-   if(g_personal_scope==g_personal_operating_key) JPWDetailsWrap(g_personal_live_notice,inner,lines);
-   if(!g_personal_available) JPWDetailsWrap("Consulta indisponível: "+g_personal_reason,inner,lines);
+   const string title=(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL ? "Detalhe do registro #"+IntegerToString(g_personal_detail_seq) :
+      (g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT ? "Exportar histórico" : JPWPersonalSectionName()));
+   JPWRaizCreateLabel("PH_TITLE",title,x,y); y+=g_details_line;
+   JPWDetailsWrap(JPWPersonalScopeLabel()+" · "+(g_personal_scope=="" ? "identidade indisponível" : StringSubstr(g_personal_scope,0,12)+"…"),inner,lines);
+   if(g_personal_scope==g_personal_operating_key && g_personal_operating_key!="")
+      JPWDetailsWrap("Monitoramento agora: "+g_personal_live_notice,inner,lines);
+   if(!g_personal_available)
+     {
+      JPWDetailsWrap((g_personal_read_requested ? "Carregando · " : "Consulta indisponível · ")+g_personal_reason,inner,lines);
+      JPWDetailsWrap(g_personal_read_requested ? "A conta e a seleção foram preservadas; as ações sobre registros aguardam a leitura." :
+         "Use Atualizar consulta para tentar novamente. Ausência de dados não significa zero.",inner,lines);
+     }
+   else if(g_personal_read_wall>0)
+      JPWDetailsWrap("Consulta concluída: "+TimeToString((datetime)g_personal_read_wall,TIME_DATE|TIME_SECONDS)+" UTC · registro local",inner,lines);
+   else JPWDetailsWrap("Horário da consulta indisponível",inner,lines);
+   if(!g_personal_available) { /* Keep the loading/error message, no prior content. */ }
    else if(g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT)
      {
       JPWDetailsWrap("Exportação da conta selecionada, sem trocar a conta ativa. CSV para consulta; JSON versionado para backup integral, com sequência e integridade.",inner,lines);
@@ -1121,17 +1213,25 @@ void JPWPersonalRenderBody(const int x,const int body_y,const int inner,const in
    else if(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL && g_personal_detail_seq>0) JPWPersonalDetailLines(inner,lines);
    else if(g_personal_category=="SUMMARY")
      {
-      JPWDetailsWrap("Maior alavancagem observada desde "+TimeToString((datetime)g_personal_summary.started_wall,TIME_DATE|TIME_SECONDS)+" UTC",inner,lines);
-      JPWDetailsWrap("Current: "+JPWPersonalPeakLabel(g_personal_summary.current),inner,lines);
-      JPWDetailsWrap("Estimated (separado): "+JPWPersonalPeakLabel(g_personal_summary.estimated),inner,lines);
+      JPWDetailsWrap("Maior alavancagem observada desde "+(g_personal_summary.started_wall>0 ?
+         TimeToString((datetime)g_personal_summary.started_wall,TIME_DATE|TIME_SECONDS)+" UTC" : "início indisponível"),inner,lines);
+      JPWDetailsWrap("Máximo observado · Current",inner,lines);
+      JPWDetailsWrap(JPWPersonalPeakLabel(g_personal_summary.current),inner,lines);
+      JPWDetailsWrap("Estimated · registro separado",inner,lines);
+      JPWDetailsWrap(JPWPersonalPeakLabel(g_personal_summary.estimated),inner,lines);
       JPWDetailsWrap("Nocional bruto aberto / equity. Pendentes ficam na fotografia e não entram na alavancagem utilizada.",inner,lines);
-      JPWDetailsWrap("Últimos registros: "+IntegerToString(g_personal_summary.active_episodes)+" episódios ativos / "+
+      JPWDetailsWrap("Ocorrências: "+IntegerToString(g_personal_summary.active_episodes)+" episódios ativos / "+
          IntegerToString(g_personal_summary.total_episodes)+" episódios registrados · interrupções conhecidas: "+
          IntegerToString(g_personal_summary.gaps)+" · sequência: "+IntegerToString(g_personal_summary.sequence),inner,lines);
       JPWDetailsWrap("Cobertura começa na ativação deste componente; não reconstrói períodos antigos e pode perder picos entre observações. Registro não prova fase, conformidade ou estado psicológico.",inner,lines);
      }
-   else JPWDetailsWrap(JPWPersonalSectionName()+" · registros em ordem decrescente; cada linha abre o detalhe.",inner,lines);
-   const bool list=(g_personal_available && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY && g_personal_category!="SUMMARY");
+   else
+     {
+      JPWDetailsWrap("Mais recentes primeiro · selecione uma linha para consultar sua evidência.",inner,lines);
+      if(ArraySize(g_personal_rows)==0) JPWDetailsWrap("Nenhum registro nesta seção/página da consulta concluída.",inner,lines);
+     }
+   const bool list=(g_personal_available && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY &&
+      g_personal_category!="SUMMARY" && ArraySize(g_personal_rows)>0);
    int rows=MathMax(1,room/g_details_line);
    if(list)
      {
@@ -1154,8 +1254,64 @@ void JPWPersonalRenderBody(const int x,const int body_y,const int inner,const in
       g_cockpit_page=JPWPanelClamp(g_cockpit_page,0,pages-1);
       for(int i=0;i<rows && i<60 && g_cockpit_page*rows+i<ArraySize(lines);i++)
          JPWRaizCreateLabel("PH_TEXT_"+IntegerToString(i),lines[g_cockpit_page*rows+i],x,y+i*g_details_line);
-      JPWRaizCreateLabel("PAGE","Página "+IntegerToString(g_cockpit_page+1)+"/"+IntegerToString(pages),x,footer_y-g_details_line);
+      JPWRaizCreateLabel("PAGE",(g_personal_read_requested && !g_personal_available ? "Carregando · " : "")+
+         "Página "+IntegerToString(g_cockpit_page+1)+"/"+IntegerToString(pages),x,footer_y-g_details_line);
      }
+  }
+
+void JPWMonitorAppendModule(const string label,JPWMonitorModuleStatus &module,
+                            const bool present,const ulong now_ms,const int inner,
+                            string &lines[],const bool accounting=false)
+  {
+   JPWDetailsWrap(label+": "+JPWMonitorUIStage(module,present,now_ms)+
+      " · qualidade literal "+module.quality,inner,lines);
+   JPWDetailsWrap("Última captura: "+JPWMonitorUITime(module.observed_utc,module.observed_mono_ms,now_ms)+
+      ". Motivo: "+(module.reason=="" ? "não informado" : module.reason),inner,lines);
+   if(module.state==JPW_MONITOR_PREPARING)
+      JPWDetailsWrap("Preparação desta tentativa: "+IntegerToString(module.progress)+
+         "% · não é cobertura histórica.",inner,lines);
+   if(!present || module.state!=JPW_MONITOR_CURRENT || !JPWMonitorUICaptureRecent(module,now_ms))
+      JPWDetailsWrap("Orientação: "+JPWMonitorUIGuidance(module,present,accounting),inner,lines);
+  }
+
+void JPWMonitorAppendComponents(const int inner,string &lines[])
+  {
+   // All producer diagnostics were accepted by Coordinator, never read on paint.
+   // Presence is independent of every financial metric and of historical coverage.
+   JPWDetailsWrap("Componentes da conta",inner,lines);
+   JPWDetailsWrap("GENETRIX · Núcleo da conta reúne monitoramento e contabilidade; observa a conta inteira desta instalação, a partir de um gráfico de apoio dedicado.",inner,lines);
+   if(!g_monitor_ui_available || g_monitor_ui_context=="" || g_monitor_ui_context!=g_diagnostic_context)
+     {
+      JPWDetailsWrap("Núcleo ausente ou indisponível · "+g_monitor_ui_reason,inner,lines);
+      JPWDetailsWrap("Confira JPW_Genetrix_Monitor no gráfico de apoio e a aba Experts. Um diagnóstico ausente não prova que todos os produtores estejam desligados; confira também as métricas e instâncias legadas.",inner,lines);
+     }
+   else
+     {
+      JPWMonitorSnapshot status=g_monitor_ui;
+      const ulong now_ms=GetTickCount64();
+      const bool present=status.live && status.active && status.heartbeat_mono_ms>0 &&
+         now_ms>=(ulong)status.heartbeat_mono_ms &&
+         now_ms-(ulong)status.heartbeat_mono_ms<=JPW_MONITOR_STATUS_MAX_AGE_MS;
+      JPWDetailsWrap("Função declarada: "+status.role+" · produto "+status.product_version+
+         " · build "+status.build_id,inner,lines);
+      JPWDetailsWrap("Gráfico produtor: "+IntegerToString(status.chart_id)+" · owner "+
+         StringSubstr(status.publisher_token,0,12)+"… · contexto "+StringSubstr(status.account_key,0,12)+"…",inner,lines);
+      JPWDetailsWrap("Presença: "+(present ? "sinal recente com lease compatível" : "atual não confirmada; registro anterior")+
+         " na última consulta. Heartbeat: "+JPWMonitorUITime(status.heartbeat_utc,status.heartbeat_mono_ms,now_ms)+
+         ". Heartbeat não renova capturas nem prova atividade contínua.",inner,lines);
+      if(status.product_version!=JPW_PRODUCT_VERSION)
+         JPWDetailsWrap("Versão do produtor diferente da interface. Confira manifesto e compatibilidade; não misture arquivos para forçar funcionamento.",inner,lines);
+      if(status.role=="Legacy Observer")
+         JPWDetailsWrap("Produtor legado identificado. Não o mantenha ativo junto ao novo Monitor; faça a troca preservando os registros.",inner,lines);
+      JPWMonitorAppendModule("Monitoramento · risco dos stops",status.stop_risk,present,now_ms,inner,lines);
+      JPWMonitorAppendModule("Monitoramento · Histórico Pessoal e avisos",status.personal,present,now_ms,inner,lines);
+      JPWMonitorAppendModule("Contabilidade · ciclos e compensado",status.ledger,present,now_ms,inner,lines,true);
+      JPWMonitorAppendModule("Monitoramento · snapshots Raiz N de execução",status.raiz,present,now_ms,inner,lines);
+      JPWDetailsWrap("Ciclo técnico: "+IntegerToString(status.last_cycle_ms)+" ms; ultrapassagens registradas "+
+         IntegerToString(status.overruns)+". Timer solicitado não garante despacho pontual.",inner,lines);
+     }
+   JPWDetailsWrap("Instalação padrão: um JPW_Genetrix_Monitor no gráfico de apoio; retire Observer e Accountant legados normalmente. Não precisa habilitar negociação. Fechar o Cockpit mantém o EA; fechar ou substituir o gráfico do EA interrompe o acompanhamento.",inner,lines);
+   JPWDetailsWrap("Supervisor 7x é separado e opcional; não é requisito das sete métricas. Estado salvo não comprova executor ativo ou armamento atual. A interface não o instala, arma ou negocia.",inner,lines);
   }
 
 void JPWRenderCockpit()
@@ -1173,9 +1329,10 @@ void JPWRenderCockpit()
    if(text_height>32)
       JPWPanelCockpit(chart_width,chart_height,1040,
                       MathMax(760,24*(int)text_height),g_details_rect);
-   g_details_pad=((int)text_height/2>6 ? (int)text_height/2 : 6);
+   g_details_pad=((int)text_height/2>JPWUIDesignPx(8) ? (int)text_height/2 : JPWUIDesignPx(8));
    g_details_line=(int)text_height+g_details_pad;
-   g_details_control=(int)text_height+2*g_details_pad;
+   g_details_control=JPWUIDesignControlHeight((int)text_height);
+   const int header_height=(g_details_control>g_details_line ? g_details_control : g_details_line);
    const color chart_background=(color)ChartGetInteger(0,CHART_COLOR_BACKGROUND);
    g_details_text=JPWPanelInk(chart_background);
    g_details_surface=JPWPanelWindowSurface(chart_background);
@@ -1198,13 +1355,13 @@ void JPWRenderCockpit()
    ObjectSetInteger(0,bg,OBJPROP_ZORDER,1);
    ObjectSetInteger(0,bg,OBJPROP_SELECTABLE,false);
    ObjectSetInteger(0,bg,OBJPROP_HIDDEN,true);
-   const int min_structure=2*g_details_control+g_details_line+4*g_details_pad;
-   if(g_details_rect.height<min_structure || inner<110)
+   const int min_structure=2*g_details_control+header_height+4*g_details_pad;
+   if(g_details_rect.height<min_structure || inner<JPWUIDesignPx(110))
      {
       const int room=g_details_rect.height-2*g_details_pad;
       const int close_height=(room<g_details_control ? room : g_details_control);
       if(room>g_details_control+g_details_line)
-         JPWRaizCreateLabel("TITLE",JPW_PRODUCT_NAME+" · amplie o gráfico",x,top+g_details_pad);
+         JPWRaizCreateLabel("TITLE","Conta · amplie o gráfico",x,top+g_details_pad);
       const int close_width=(inner<g_details_control ? inner : g_details_control);
       if(close_height>0 && close_width>0)
         {
@@ -1218,7 +1375,7 @@ void JPWRenderCockpit()
    // Stable visual regions separate orientation, content and actions. They are
    // presentation objects only; all metric values still come from the snapshot.
    JPWRaizCreateSurface("HEADER",left+1,top+1,g_details_rect.width-2,
-                         g_details_line+g_details_pad-2,g_details_chrome);
+                         header_height+2*g_details_pad-2,g_details_chrome);
    const string section=((g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY || g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT) ? "Histórico Pessoal" :
       (g_raiz_tab==JPW_SIGNAL_ROUTE ? "Preparar mensagem" :
       (g_raiz_tab==JPW_ROUTE_OVERVIEW ? "Visão geral" :
@@ -1229,21 +1386,36 @@ void JPWRenderCockpit()
       (g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW ? "Stops" :
       (g_raiz_tab==JPW_ROUTE_RAIZN ? "Raiz N" : "Sistema")))))))));
    JPWGenetrixHeader(JPWRaizUI("BRAND_LOGO"),JPWRaizUI("TITLE"),
-      x,top+g_details_pad,inner-g_details_control-g_details_pad,g_details_line,
-      g_details_font+2,g_details_text,JPWPanelDarkBackground(chart_background),_Symbol+" · "+section,4);
-   const int nav_y=top+g_details_pad+g_details_line;
-   const string tabs[6]={"Visão geral","Stops","Raiz N","Sistema","Ajustes","Histórico Pessoal"};
-   const string short_tabs[6]={"Geral","Stops","Raiz N","Sistema","Ajustes","Histórico"};
+      x,top+g_details_pad,inner-g_details_control-g_details_pad,header_height,
+      g_details_font+2,g_details_text,JPWPanelDarkBackground(chart_background),"Conta · "+section+" · "+_Symbol,4);
+   const int nav_y=top+2*g_details_pad+header_height;
+   string tabs[6]={"Visão geral","Stops","Raiz N","Sistema","Ajustes","Histórico Pessoal"};
    const int tab_actions[6]={JPW_ACTION_TAB_FIRST,JPW_ACTION_TAB_STOPS,JPW_ACTION_TAB_RAIZN,
       JPW_ACTION_TAB_SYSTEM,JPW_ACTION_TAB_SETTINGS,JPW_ACTION_TAB_HISTORY};
-   const bool stacked=(inner<600);
-   const int nav_columns=(stacked ? 3 : 6);
+   const int nav_columns=JPWUIDesignNavColumns(tabs,6,inner,g_details_font,g_details_pad);
+   const int nav_rows=(6+nav_columns-1)/nav_columns;
    const int nav_width=(inner-(nav_columns-1)*g_details_pad)/nav_columns;
+   const int close_size=g_details_control;
+   // Header actions occupy their own row before any navigation is drawn.
+   JPWRaizCreateButton(JPW_ACTION_HEADER_CLOSE,"×",left+g_details_rect.width-g_details_pad-close_size,
+                       top+g_details_pad,close_size);
+   ObjectSetString(0,JPWActionObject(JPW_ACTION_HEADER_CLOSE),OBJPROP_TOOLTIP,
+      "Fechar cockpit · Esc. Não interrompe o EA observador quando ativo.");
+   const int nav_end=nav_y+nav_rows*(g_details_control+g_details_pad);
+   if(nav_end+g_details_control+2*g_details_pad>top+g_details_rect.height)
+     {
+      const int exit_y=top+g_details_rect.height-g_details_pad-g_details_control;
+      if(nav_y+g_details_line+g_details_pad<exit_y)
+         JPWRaizCreateLabel("FEEDBACK","Amplie o gráfico para ver as seis seções",x,nav_y);
+      JPWRaizCreateButton(JPW_ACTION_CLOSE,"Fechar",x,exit_y,inner);
+      g_raiz_panel_built=true; JPWFocusPaint();
+      return;
+     }
    for(int i=0;i<6;i++)
      {
       const int col=i%nav_columns,row=i/nav_columns;
       const int width=nav_width,nav_x=x+col*(nav_width+g_details_pad);
-      JPWRaizCreateButton(tab_actions[i],(nav_width<100 ? short_tabs[i] : tabs[i]),
+      JPWRaizCreateButton(tab_actions[i],tabs[i],
                           nav_x,nav_y+row*(g_details_control+g_details_pad),width);
       const bool active=(i==0 ? (g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) :
          (i==1 ? (g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW) :
@@ -1268,20 +1440,18 @@ void JPWRenderCockpit()
      }
    ObjectSetString(0,JPWActionObject(JPW_ACTION_TAB_FIRST),OBJPROP_TOOLTIP,
                    "Teclas 1–7: cartões; setas: páginas; Esc: fechar.");
-   const int close_size=(g_details_control>24 ? g_details_control : 24);
-   // The close button stays visible even when content has to paginate.
-   JPWRaizCreateButton(JPW_ACTION_HEADER_CLOSE,"×",left+g_details_rect.width-g_details_pad-close_size,
-                       top+g_details_pad,close_size);
-   const int body_y=nav_y+(stacked ? 2 : 1)*(g_details_control+g_details_pad);
+   const int body_y=nav_y+nav_rows*(g_details_control+g_details_pad);
    const int footer_y=top+g_details_rect.height-g_details_pad-g_details_control;
+   const int paging_height=(g_details_control+g_details_pad>g_details_line ?
+      g_details_control+g_details_pad : g_details_line);
    const int reserved=(g_raiz_tab==JPW_ROUTE_SETTINGS || (g_raiz_tab==JPW_ROUTE_OVERVIEW && (g_cockpit_pref_invalid || g_personal_live_count>0 || g_personal_live_state==3)) ?
-                       2*g_details_line : g_details_line);
+                       MathMax(2*g_details_line,paging_height) : paging_height);
    const int body_height=footer_y-g_details_pad-body_y-reserved;
    const int footer_button=(inner-2*g_details_pad)/3;
-   JPWRaizCreateSurface("FOOTER",left+1,footer_y-g_details_line-g_details_pad/2,
+   JPWRaizCreateSurface("FOOTER",left+1,footer_y-paging_height-g_details_pad/2,
                          g_details_rect.width-2,
                          g_details_rect.y+g_details_rect.height-footer_y+
-                         g_details_line+g_details_pad/2-2,g_details_chrome);
+                         paging_height+g_details_pad/2-2,g_details_chrome);
    if(body_height<g_details_control || footer_button<35)
      {
       if(body_y+g_details_line<footer_y)
@@ -1297,7 +1467,7 @@ void JPWRenderCockpit()
      }
    if(g_raiz_tab==JPW_ROUTE_OVERVIEW)
      {
-      const int columns=(inner>=600 ? 2 : 1);
+      const int columns=(inner>=JPWUIDesignPx(600) ? 2 : 1);
       const int card_width=(inner-(columns-1)*g_details_pad)/columns;
       const int card_height=g_details_control+3*g_details_line+2*g_details_pad;
       const int card_stride=card_height+g_details_pad;
@@ -1598,6 +1768,7 @@ void JPWRenderCockpit()
         }
       else if(g_raiz_tab==JPW_ROUTE_SYSTEM)
         {
+         JPWMonitorAppendComponents(inner,lines);
          JPWDetailsWrap(JPWGenetrixLedgerHealth(),inner,lines);
          JPWDetailsWrap(JPWGenetrixRiskSummary(),inner,lines);
          JPWDetailsWrap(JPW_PRODUCT_NAME+" "+JPW_PRODUCT_VERSION+" · cálculo "+JPW_CALCULATION_VERSION+
@@ -1632,9 +1803,7 @@ void JPWRenderCockpit()
             ". Amostra financeira Stop risk: "+
             (g_stop_quality==JPW_VIEW_CURRENT ? "Current" : "N/A · "+g_stop_reason)+
             ". Um sinal não valida o total nem prova cobertura contínua.",inner,lines);
-         JPWDetailsWrap("Ativação manual nesta instalação: Expert Advisors > JPWealth > " +
-            "JPW_Alavancagem_Observer; anexe a um gráfico aberto, confira a mesma " +
-            "versão e leia a aba Experts. Não precisa habilitar negociação.",inner,lines);
+         JPWDetailsWrap("Ativação do núcleo nesta instalação: Expert Advisors > JPWealth > JPW_Genetrix_Monitor, em gráfico de apoio dedicado. Não inicie Observer ou Accountant legados junto dele; confira o motivo de cada módulo e a aba Experts.",inner,lines);
          JPWDetailsWrap("Trilha técnica: "+(g_diagnostic_state==JPW_STORE_VALID ? "acessível" :
             (g_diagnostic_state==JPW_STORE_ABSENT ? "ainda ausente" : "indisponível/atenção"))+
             ". "+g_diagnostic_summary+" "+g_diagnostic_reason,inner,lines);
@@ -1718,16 +1887,14 @@ void JPWRenderCockpit()
       JPWRaizCreateButton(JPW_ACTION_CLOSE,"Fechar",x+2*(footer_button+g_details_pad),footer_y,footer_button);
      }
    // Paging is visible on every screen; disabled end clicks are harmless.
-   const int pager_width=(inner>180 ? 48 : 28);
+   const int pager_width=(inner>JPWUIDesignPx(180) ? JPWUIDesignPx(48) : JPWUIDesignPx(32));
    const bool position_scroll=(g_raiz_tab==JPW_ROUTE_STOPS && !g_stops_show_pending);
    const int previous_action=(position_scroll ? JPW_ACTION_POSITIONS_UP : JPW_ACTION_PREVIOUS);
    const int next_action=(position_scroll ? JPW_ACTION_POSITIONS_DOWN : JPW_ACTION_NEXT);
    JPWRaizCreateButton(previous_action,position_scroll ? "↑" : "‹",x+inner-2*pager_width-g_details_pad,
-                        footer_y-g_details_line,pager_width);
+                        footer_y-paging_height,pager_width);
    JPWRaizCreateButton(next_action,position_scroll ? "↓" : "›",x+inner-pager_width,
-                        footer_y-g_details_line,pager_width);
-   ObjectSetInteger(0,JPWActionObject(previous_action),OBJPROP_YSIZE,g_details_line);
-   ObjectSetInteger(0,JPWActionObject(next_action),OBJPROP_YSIZE,g_details_line);
+                        footer_y-paging_height,pager_width);
    g_raiz_panel_built=true; JPWFocusPaint();
   }
 
@@ -1751,8 +1918,13 @@ void JPWRenderRaizDetails()
    if(!JPWPanelDialog(chart_width,chart_height,(int)text_height,(int)text_width/2,
                      g_details_rect,g_details_pad,g_details_line,g_details_control,
                      content_y,content_height,footer_y)) return;
+   g_details_pad=((int)text_height/2>JPWUIDesignPx(8) ? (int)text_height/2 : JPWUIDesignPx(8));
+   g_details_line=(int)text_height+g_details_pad;
+   g_details_control=JPWUIDesignControlHeight((int)text_height);
+   const int header_height=(g_details_control>g_details_line ? g_details_control : g_details_line);
    const int left=g_details_rect.x,top=g_details_rect.y,width=g_details_rect.width;
    const int x=left+g_details_pad,inner=width-2*g_details_pad;
+   footer_y=top+g_details_rect.height-g_details_pad-g_details_control;
    const string bg=JPWRaizUI("BG");
    if(ObjectFind(0,bg)<0 && !ObjectCreate(0,bg,OBJ_RECTANGLE_LABEL,0,0,0)) return;
    ObjectSetInteger(0,bg,OBJPROP_CORNER,CORNER_LEFT_UPPER);
@@ -1767,40 +1939,71 @@ void JPWRenderRaizDetails()
    ObjectSetInteger(0,bg,OBJPROP_BACK,false);
    ObjectSetInteger(0,bg,OBJPROP_ZORDER,1);
    ObjectSetInteger(0,bg,OBJPROP_HIDDEN,true);
+   if(g_details_rect.height<2*g_details_control+header_height+4*g_details_pad ||
+      inner<JPWUIDesignPx(110))
+     {
+      const int room=g_details_rect.height-2*g_details_pad;
+      const int close_height=(room<g_details_control ? room : g_details_control);
+      const int close_width=(inner<g_details_control ? inner : g_details_control);
+      if(room>g_details_control+g_details_line)
+         JPWRaizCreateLabel("TITLE","Conta · amplie o gráfico",x,top+g_details_pad);
+      if(close_height>0 && close_width>0)
+        {
+         JPWRaizCreateButton(JPW_ACTION_HEADER_CLOSE,"×",x,
+            top+g_details_rect.height-g_details_pad-close_height,close_width);
+         ObjectSetInteger(0,JPWActionObject(JPW_ACTION_HEADER_CLOSE),OBJPROP_YSIZE,close_height);
+        }
+      g_raiz_panel_built=true;
+      return;
+     }
    JPWRaizCreateSurface("HEADER",left+1,top+1,width-2,
-                        g_details_line+g_details_pad-2,g_details_chrome);
+                        header_height+2*g_details_pad-2,g_details_chrome);
    JPWRaizCreateSurface("FOOTER",left+1,footer_y-g_details_line,
                         width-2,top+g_details_rect.height-footer_y+g_details_line-2,
                         g_details_chrome);
-   const int close_size=(g_details_control>24 ? g_details_control : 24);
-   const string legacy_title=_Symbol+" · "+
+   const int close_size=g_details_control;
+   const string legacy_title="Conta · "+
       (g_raiz_tab==JPW_ROUTE_LEGACY_SUMMARY ? "Resumo" : (g_raiz_tab==JPW_ROUTE_LEGACY_NF ? "N/F legado" :
-       (g_raiz_tab==JPW_ROUTE_FACTOR ? "F diagnóstico" : "Cenários avançados")));
+       (g_raiz_tab==JPW_ROUTE_FACTOR ? "F diagnóstico" : "Cenários avançados")))+" · "+_Symbol;
    JPWGenetrixHeader(JPWRaizUI("BRAND_LOGO"),JPWRaizUI("TITLE"),x,top+g_details_pad,
-      inner-close_size-g_details_pad,g_details_line,g_details_font,g_details_text,
-      JPWPanelDarkBackground(chart_background),legacy_title,4);
+      inner-close_size-g_details_pad,header_height,g_details_font,g_details_text,
+      JPWPanelDarkBackground(background),legacy_title,4);
    JPWRaizCreateButton(JPW_ACTION_HEADER_CLOSE,"×",
                        left+width-g_details_pad-close_size,top+g_details_pad,close_size);
    ObjectSetString(0,JPWActionObject(JPW_ACTION_HEADER_CLOSE),OBJPROP_TOOLTIP,"Fechar cockpit sem aplicar alterações");
-   const int nav_y=top+g_details_pad+g_details_line;
-   const int nav_width=(inner-3*g_details_pad)/4;
+   const int nav_y=top+2*g_details_pad+header_height;
+   string legacy_nav[4]={"← Cockpit","F 1,5/1,8","N/F legado","Avançado"};
+   string legacy_actions[3]={"Declarar","Vincular","Comparar"};
+   const bool compact_actions=(g_details_rect.compact && g_raiz_tab<=JPW_ROUTE_BIND);
+   const int nav_count=(compact_actions ? 3 : 4);
+   const int nav_columns=(compact_actions ?
+      JPWUIDesignNavColumns(legacy_actions,3,inner,g_details_font,g_details_pad) :
+      JPWUIDesignNavColumns(legacy_nav,4,inner,g_details_font,g_details_pad));
+   const int nav_rows=(nav_count+nav_columns-1)/nav_columns;
+   const int nav_width=(inner-(nav_columns-1)*g_details_pad)/nav_columns;
    const int action_width=(inner-2*g_details_pad)/3;
+   content_y=nav_y+nav_rows*(g_details_control+g_details_pad)+
+      (g_details_rect.compact ? 0 : g_details_control+g_details_pad);
+   content_height=footer_y-g_details_pad-(g_details_rect.compact ? 0 : 2*g_details_line)-content_y;
    if(nav_width>0 && content_height>0)
      {
       if(g_details_rect.compact && g_raiz_tab<=JPW_ROUTE_BIND)
         {
-         JPWRaizCreateButton(JPW_ACTION_DECLARE,"Declarar",x,nav_y,action_width);
-         JPWRaizCreateButton(JPW_ACTION_BIND,"Vincular",x+action_width+g_details_pad,nav_y,action_width);
-         JPWRaizCreateButton(JPW_ACTION_COMPARE,"Comparar",x+2*(action_width+g_details_pad),nav_y,action_width);
+         const int actions[3]={JPW_ACTION_DECLARE,JPW_ACTION_BIND,JPW_ACTION_COMPARE};
+         for(int i=0;i<3;i++)
+            JPWRaizCreateButton(actions[i],legacy_actions[i],
+               x+(i%nav_columns)*(nav_width+g_details_pad),
+               nav_y+(i/nav_columns)*(g_details_control+g_details_pad),nav_width);
         }
       else
         {
-         JPWRaizCreateButton(JPW_ACTION_HOME,"← Cockpit",x,nav_y,nav_width);
-         JPWRaizCreateButton(JPW_ACTION_FACTOR,"F 1,5/1,8",x+nav_width+g_details_pad,nav_y,nav_width);
-         JPWRaizCreateButton(JPW_ACTION_LEGACY_NF,"N/F legado",x+2*(nav_width+g_details_pad),nav_y,nav_width);
-         JPWRaizCreateButton(JPW_ACTION_ADVANCED,"Avançado",x+3*(nav_width+g_details_pad),nav_y,nav_width);
+         const int actions[4]={JPW_ACTION_HOME,JPW_ACTION_FACTOR,JPW_ACTION_LEGACY_NF,JPW_ACTION_ADVANCED};
+         for(int i=0;i<4;i++)
+            JPWRaizCreateButton(actions[i],legacy_nav[i],
+               x+(i%nav_columns)*(nav_width+g_details_pad),
+               nav_y+(i/nav_columns)*(g_details_control+g_details_pad),nav_width);
         }
-      const int action_y=nav_y+g_details_control+g_details_pad;
+      const int action_y=nav_y+nav_rows*(g_details_control+g_details_pad);
       if(!g_details_rect.compact && g_raiz_tab<=JPW_ROUTE_BIND)
         {
          JPWRaizCreateButton(JPW_ACTION_DECLARE,"Declarar",x,action_y,action_width);
@@ -1958,7 +2161,7 @@ void JPWRenderRaizDetails()
    if(g_details_rect.compact)
       JPWGenetrixHeader(JPWRaizUI("BRAND_LOGO"),JPWRaizUI("TITLE"),x,top+g_details_pad,
          inner-close_size-g_details_pad,g_details_line,g_details_font,g_details_text,
-         JPWPanelDarkBackground(chart_background),_Symbol+" · "+IntegerToString(g_raiz_page+1)+"/"+IntegerToString(g_raiz_pages),4);
+         JPWPanelDarkBackground(background),_Symbol+" · "+IntegerToString(g_raiz_page+1)+"/"+IntegerToString(g_raiz_pages),4);
    // Footer remains inside the rectangle even when no body row fits.
    const int button_width=(inner-3*g_details_pad)/4;
    if(button_width>0)

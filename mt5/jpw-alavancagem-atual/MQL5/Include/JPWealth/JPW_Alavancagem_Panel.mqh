@@ -26,7 +26,7 @@ color JPWPanelChromeSurface(const color background)
 color JPWPanelCardSurface(const color background)
   { return(JPWPanelDarkBackground(background) ? C'34,39,47' : C'255,255,255'); }
 color JPWPanelBorderColor(const color background)
-  { return(JPWPanelDarkBackground(background) ? C'102,110,122' : C'185,193,204'); }
+  { return(JPWPanelDarkBackground(background) ? C'116,124,136' : C'128,135,147'); }
 color JPWPanelInk(const color background)
   { return(JPWPanelDarkBackground(background) ? C'232,234,238' : C'39,45,53'); }
 color JPWPanelMutedText(const color background)

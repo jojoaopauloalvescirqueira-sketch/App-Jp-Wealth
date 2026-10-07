@@ -16,6 +16,10 @@ int g_ncf_reference_tf=PERIOD_H1,g_ncf_level=32,g_ncf_record_revision=0;
 string g_ncf_key="",g_ncf_id="",g_ncf_selected_source="",g_ncf_notice="";
 string g_ncf_clone="",g_ncf_observation_payload="";
 long g_ncf_original_mask=0,g_ncf_source_created=0;
+// Restoration belongs to the object we hid, independently of later selection.
+string g_ncf_restore_source="",g_ncf_restore_reason="";
+long g_ncf_restore_created=0,g_ncf_restore_mask=0;
+bool g_ncf_restore_requested=false;
 ulong g_ncf_history_checked_ms=0;
 bool g_ncf_history_conflict=false,g_ncf_import_was_armed=false,g_ncf_records_dirty=true;
 int g_ncf_catalog_offset=0; bool g_ncf_catalog_more=false,g_ncf_catalog_all=true;
@@ -161,28 +165,48 @@ void JPWNCFDraw()
    g_ncf_ui.source_tf=EnumToString((ENUM_TIMEFRAMES)g_ncf_reference_tf);
    g_ncf_ui.status=JPWNCFPhaseText();
    g_ncf_ui.reason=(g_ncf_notice=="" ? "Medidas N/A até validação nativa; importar não certifica o método." : g_ncf_notice);
+   if(g_ncf_restore_reason!="") g_ncf_ui.reason+=" · "+g_ncf_restore_reason;
    JPWNoCudaFiboUIDraw(g_nocuda_prefix,g_ncf_ui);
   }
 void JPWNCFNormalizeVisibility(JPWNCFSnapshot &source)
   {
-   if(!g_ncf_hidden) return;
-   if(source.timeframes==OBJ_NO_PERIODS) source.timeframes=g_ncf_original_mask;
+   if(!g_ncf_hidden || source.source_name!=g_ncf_restore_source ||
+      source.source_created!=g_ncf_restore_created) return;
+   if(source.timeframes==OBJ_NO_PERIODS) source.timeframes=g_ncf_restore_mask;
    else
      {
-      // The user changed visibility in the native dialog. Their setting wins.
-      g_ncf_hidden=false;
+      // A confirmed native edit to visibility wins over our temporary hide.
+      g_ncf_hidden=false; g_ncf_restore_source=""; g_ncf_restore_requested=false;
+      g_ncf_restore_reason="";
       if(g_ncf_clone!="") { ObjectDelete(0,g_ncf_clone); g_ncf_clone=""; }
      }
   }
 void JPWNCFRestoreOriginalVisibility()
   {
-   if(g_ncf_hidden && ObjectFind(0,g_ncf_selected_source)>=0 &&
-      ObjectGetInteger(0,g_ncf_selected_source,OBJPROP_CREATETIME)==g_ncf_source_created)
+   if(g_ncf_restore_source=="") return;
+   g_ncf_restore_requested=true;
+   const string source=g_ncf_restore_source;
+   long created=0,mask=0;
+   if(ObjectFind(0,source)<0 || !ObjectGetInteger(0,source,OBJPROP_CREATETIME,0,created) ||
+      created!=g_ncf_restore_created)
      {
-      if(!ObjectSetInteger(0,g_ncf_selected_source,OBJPROP_TIMEFRAMES,g_ncf_original_mask) ||
-         ObjectGetInteger(0,g_ncf_selected_source,OBJPROP_TIMEFRAMES)!=g_ncf_original_mask)
-         g_ncf_notice="Visibilidade original não restaurada; confira o Fibonacci manualmente.";
+      g_ncf_restore_reason="Restauração pendente de "+source+": origem ausente ou substituída; nenhum outro objeto foi alterado.";
+      return;
      }
+   if(!ObjectGetInteger(0,source,OBJPROP_TIMEFRAMES,0,mask))
+     { g_ncf_restore_reason="Visibilidade de "+source+" indisponível; restauração pendente."; return; }
+   bool restored=(mask==g_ncf_restore_mask);
+   // A visible mask changed by the operator is authoritative; do not undo it.
+   if(mask!=OBJ_NO_PERIODS && mask!=g_ncf_restore_mask) restored=true;
+   if(!restored)
+      restored=ObjectSetInteger(0,source,OBJPROP_TIMEFRAMES,g_ncf_restore_mask) &&
+         ObjectGetInteger(0,source,OBJPROP_TIMEFRAMES,0,mask) && mask==g_ncf_restore_mask;
+   if(!restored)
+     {
+      g_ncf_restore_reason="Visibilidade original de "+source+" não restaurada; nova tentativa no timer. Confira a origem manualmente.";
+      return;
+     }
+   g_ncf_restore_source=""; g_ncf_restore_requested=false; g_ncf_restore_reason="";
    g_ncf_hidden=false;
   }
 bool JPWNCFFrozenTimelineMatches(const JPWNCFSnapshot &old,const JPWNCFSnapshot &now)
@@ -256,11 +280,13 @@ void JPWNCFInit()
 void JPWNCFShutdown()
   {
    JPWNCFRestoreOriginalVisibility();
+   if(g_ncf_restore_source!="") Print("GENETRIX: ",g_ncf_restore_reason," Confira a origem; ao remover o indicador não há timer para retentar.");
    if(g_ncf_clone!="") ObjectDelete(0,g_ncf_clone);
    JPWUIRelease(g_nocuda_prefix); JPWNoCudaFiboUIClear(g_nocuda_prefix);
   }
 void JPWNCFTimer()
   {
+   if(g_ncf_restore_requested) JPWNCFRestoreOriginalVisibility();
    if(!JPWNCFContextCurrent()) { JPWNCFDraw(); return; }
    if(g_ncf_ui.open) JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
    JPWNCFQuote();
@@ -350,7 +376,8 @@ void JPWNCFAction(const string action)
    JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
    if(JPWNoCudaFiboUIActions(action)) { if(action=="FC_SETTINGS_APPLY") JPWNCFPaint(); return; }
    if(action=="FC_OPEN")
-     { if(!JPWUIAcquire(g_nocuda_prefix)) return; g_ncf_mode=true; g_ncf_ui.open=true; g_nocuda_panel_open=false;
+     { if(!g_ncf_mode) JPWNoCudaReadJustification();
+       if(!JPWUIAcquire(g_nocuda_prefix)) return; g_ncf_mode=true; g_ncf_ui.open=true; g_nocuda_panel_open=false;
        JPWNoCudaUIClear(g_nocuda_prefix); if(g_nocuda_canvas_ready) {g_nocuda_canvas.Destroy();g_nocuda_canvas_ready=false;}
        JPWNCFReloadCatalog(); JPWNCFReloadRecords(); JPWNCFPaint(); }
    else if(action=="FC_CLOSE" || action=="FC_MINIMIZE") { g_ncf_ui.open=false; JPWUIRelease(g_nocuda_prefix); }
@@ -361,7 +388,9 @@ void JPWNCFAction(const string action)
      { const string selected=JPWNoCudaFiboUIActionID(action);
        if(selected=="") return;
        if(selected!=g_ncf_selected_source && (g_ncf_link || g_ncf_hidden)) JPWNCFDetach("Escolha de outra origem exige novo vínculo explícito.");
-       g_ncf_selected_source=selected; g_ncf_import=false; JPWNCFReloadCatalog(); }
+       g_ncf_selected_source=selected;
+       if(g_ncf_restore_source!=selected) g_ncf_hidden=false;
+       g_ncf_import=false; JPWNCFReloadCatalog(); }
    else if(action=="FC_REFERENCE_TF")
      { if(g_ncf_link) { g_ncf_notice="Desvincule antes de mudar o período da referência."; return; }
        const int tf[6]={PERIOD_M15,PERIOD_M30,PERIOD_H1,PERIOD_H4,PERIOD_D1,PERIOD_W1}; int at=0;
@@ -378,13 +407,23 @@ void JPWNCFAction(const string action)
        if(g_ncf_clone!="") ObjectDelete(0,g_ncf_clone); JPWNoCudaFiboUIClear(g_nocuda_prefix); }
    else if(action=="FC_UNLINK") JPWNCFDetach("Vínculo interrompido por escolha explícita. Revisões preservadas.");
    else if(action=="FC_SYNC_PAUSE" && g_ncf_has)
-     { JPWNCFHead next; string reason="";
-       if(!JPWNCFContextCurrent()) return;
-       if(JPWNCFSetPaused(g_ncf_key,g_ncf_id,g_ncf_head.generation,true,next,reason)==JPW_NCF_VALID)
-          { g_ncf_head=next; JPWNCFSyncPause(g_ncf_sync); }
-       else g_ncf_notice=reason; }
+     {
+      // The user pauses this session even if the durable checkpoint is busy.
+      JPWNCFSyncPause(g_ncf_sync); g_ncf_import_was_armed=false;
+      JPWNCFHead next; string reason="";
+      if(!JPWNCFContextCurrent()) return;
+      const JPWNCFStatus status=JPWNCFSetPaused(g_ncf_key,g_ncf_id,g_ncf_head.generation,true,next,reason);
+      if(status==JPW_NCF_VALID)
+        { g_ncf_head=next; g_ncf_notice="Acompanhamento pausado; estado gravado. Use Retomar para acompanhar novamente."; }
+      else g_ncf_notice="Pausado nesta sessão; gravação da pausa não confirmada"+
+         (reason=="" ? ". Banco ocupado ou indisponível." : ": "+reason)+
+         " Repetir Pausar tenta gravar; Retomar exige ação explícita.";
+     }
    else if((action=="FC_SYNC_RESUME" || action=="FC_REFRESH_SOURCE") && g_ncf_has)
      {
+      // Refresh verifies the source without overriding the user's local pause,
+      // including a pause whose durable checkpoint previously failed.
+      const bool follow=(action=="FC_SYNC_RESUME" || g_ncf_sync.armed);
       JPWNCFSnapshot captured; string reason="";
       if(g_ncf_selected_source!=g_ncf_saved.source_name ||
          JPWNCFCapture(0,g_ncf_saved.source_name,g_ncf_saved.reference_tf,g_nocuda_symbol,g_nocuda_feed,captured,reason)!=JPW_NCF_VALID ||
@@ -403,19 +442,38 @@ void JPWNCFAction(const string action)
          JPWNCFSyncAccept(g_ncf_sync,JPWNCFSourceWire(captured)); JPWNCFReloadRecords();
         }
       if(!JPWNCFContextCurrent()) return;
-      if(JPWNCFSetPaused(g_ncf_key,g_ncf_id,g_ncf_head.generation,false,next,reason)!=JPW_NCF_VALID) { g_ncf_notice=reason; return; }
-      g_ncf_head=next; g_ncf_link=true; g_ncf_sync.armed=true;
-      JPWNCFSyncObserve(g_ncf_sync,JPWNCFSourceWire(captured),GetTickCount64());
-      JPWNCFSyncFinished(g_ncf_sync,GetTickCount64(),JPWNCFSourceWire(captured)); g_ncf_notice="Origem conferida; mudança será estabilizada antes de gravar.";
+      if(JPWNCFSetPaused(g_ncf_key,g_ncf_id,g_ncf_head.generation,!follow,next,reason)!=JPW_NCF_VALID) { g_ncf_notice=reason; return; }
+      g_ncf_head=next; g_ncf_link=true;
+      if(follow)
+        {
+         g_ncf_sync.armed=true;
+         JPWNCFSyncObserve(g_ncf_sync,JPWNCFSourceWire(captured),GetTickCount64());
+         JPWNCFSyncFinished(g_ncf_sync,GetTickCount64(),JPWNCFSourceWire(captured));
+         g_ncf_notice="Origem conferida; mudança será estabilizada antes de gravar.";
+        }
+      else
+        { JPWNCFSyncPause(g_ncf_sync); g_ncf_import_was_armed=false;
+          g_ncf_notice="Origem conferida; acompanhamento permanece pausado. Use Retomar para acompanhar novamente."; }
      }
    else if((action=="FC_SOURCE_HIDE" || action=="FC_SOURCE_SHOW") && g_ncf_link)
      {
       const bool hide=action=="FC_SOURCE_HIDE";
       if(ObjectGetInteger(0,g_ncf_selected_source,OBJPROP_CREATETIME)!=g_ncf_source_created)
          { JPWNCFDetach("Origem substituída; comando recusado."); return; }
-      if(ObjectSetInteger(0,g_ncf_selected_source,OBJPROP_TIMEFRAMES,hide ? OBJ_NO_PERIODS : g_ncf_original_mask) &&
-         ObjectGetInteger(0,g_ncf_selected_source,OBJPROP_TIMEFRAMES)==(hide ? OBJ_NO_PERIODS : g_ncf_original_mask)) g_ncf_hidden=hide;
-      else g_ncf_notice="Visibilidade não confirmada.";
+      if(!hide) JPWNCFRestoreOriginalVisibility();
+      else
+        {
+         if(g_ncf_restore_source!="" && (g_ncf_restore_requested ||
+            g_ncf_restore_source!=g_ncf_selected_source || g_ncf_restore_created!=g_ncf_source_created))
+           { g_ncf_notice="Restauração anterior pendente; confira a origem antes de ocultar outra."; return; }
+         g_ncf_restore_source=g_ncf_selected_source; g_ncf_restore_created=g_ncf_source_created;
+         g_ncf_restore_mask=g_ncf_original_mask;
+         const bool sent=ObjectSetInteger(0,g_ncf_selected_source,OBJPROP_TIMEFRAMES,OBJ_NO_PERIODS);
+         long mask=0; const bool read=ObjectGetInteger(0,g_ncf_selected_source,OBJPROP_TIMEFRAMES,0,mask);
+         g_ncf_hidden=(sent && read && mask==OBJ_NO_PERIODS);
+         if(!g_ncf_hidden)
+           { g_ncf_restore_requested=true; g_ncf_restore_reason="Ocultação não confirmada; visibilidade original será conferida novamente."; }
+        }
       JPWNCFPaint();
      }
    else if(action=="FC_LEVEL_APPLY")
@@ -514,7 +572,8 @@ bool JPWNCFHandleEvent(const int id,const long &lparam,const double &dparam,cons
   {
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=JPWUIOwner()) return(true);
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=g_nocuda_prefix)
-     { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui); g_ncf_ui.open=false;
+     { if(!g_ncf_mode) JPWNoCudaReadJustification();
+       JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui); g_ncf_ui.open=false;
        g_nocuda_panel_open=false; JPWNoCudaUIClear(g_nocuda_prefix); JPWNCFDraw(); return(true); }
    if(!g_ncf_mode && !(id==CHARTEVENT_OBJECT_CLICK && sparam==JPWNoCudaFiboUIName(g_nocuda_prefix,"FC_OPEN"))) return(false);
    if(id==CHARTEVENT_OBJECT_DELETE && sparam==g_ncf_selected_source && g_ncf_link)
@@ -540,7 +599,8 @@ bool JPWNCFHandleEvent(const int id,const long &lparam,const double &dparam,cons
       JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
    if(JPWNoCudaFiboUIHandleGeometry(g_nocuda_prefix,id,lparam,dparam,sparam)) { JPWNCFDraw(); return(true); }
    if(id==CHARTEVENT_OBJECT_ENDEDIT && StringFind(sparam,g_nocuda_prefix+"FC_")==0)
-     { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui); g_fc_editing=""; return(true); }
+     { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+       if(g_fc_editing==sparam) g_fc_editing=""; return(true); }
    if(id==CHARTEVENT_OBJECT_CLICK)
      {
       const string action=JPWNoCudaFiboUIHitAction(g_nocuda_prefix,sparam);
@@ -549,15 +609,21 @@ bool JPWNCFHandleEvent(const int id,const long &lparam,const double &dparam,cons
           JPWNCFAction(action);
           if(g_ncf_mode) JPWNCFDraw(); else { JPWNoCudaPaint(); JPWNoCudaDrawUI(); }
           return(true); }
-      g_fc_editing=""; return(true);
+      g_fc_editing=""; g_fc_focus=""; return(true);
      }
    if(id==CHARTEVENT_KEYDOWN && g_ncf_ui.open && JPWUIOwns(g_nocuda_prefix))
      {
       if(lparam==9) { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+         if(g_fc_editing!="" && ObjectFind(0,g_fc_editing)>=0)
+            ObjectSetInteger(0,g_fc_editing,OBJPROP_SELECTED,false);
          g_fc_focus=JPWNoCudaFiboUIFocusCycle(g_fc_focus,((int)TerminalInfoInteger(TERMINAL_KEYSTATE_SHIFT)&0x8000)!=0);
-         g_fc_editing=(ObjectGetInteger(0,g_fc_focus,OBJPROP_TYPE)==OBJ_EDIT ? g_fc_focus : ""); JPWNCFDraw(); }
+         g_fc_editing=(g_fc_focus!="" && ObjectFind(0,g_fc_focus)>=0 &&
+            ObjectGetInteger(0,g_fc_focus,OBJPROP_TYPE)==OBJ_EDIT ? g_fc_focus : "");
+         if(g_fc_editing!="") ObjectSetInteger(0,g_fc_editing,OBJPROP_SELECTED,true);
+         JPWNCFDraw(); }
       else if(lparam==27) { JPWNCFAction("FC_CLOSE"); JPWNCFDraw(); }
-      else if(lparam==13 && g_fc_editing=="") { JPWNCFAction(JPWNoCudaFiboUIHitAction(g_nocuda_prefix,g_fc_focus)); JPWNCFDraw(); }
+      else if(lparam==13 && g_fc_editing=="" && ObjectFind(0,g_fc_focus)>=0 &&
+         ObjectGetInteger(0,g_fc_focus,OBJPROP_TYPE)==OBJ_BUTTON) { JPWNCFAction(JPWNoCudaFiboUIHitAction(g_nocuda_prefix,g_fc_focus)); JPWNCFDraw(); }
       return(true);
      }
    if(id==CHARTEVENT_CHART_CHANGE) { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui); JPWNCFPaint(); JPWNCFDraw(); }

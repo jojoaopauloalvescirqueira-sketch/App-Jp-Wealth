@@ -1272,17 +1272,26 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,
    if(JPWUIOwner()!="" && !JPWUIOwns(g_nocuda_prefix) &&
       (id==CHARTEVENT_CLICK || id==CHARTEVENT_KEYDOWN || id==CHARTEVENT_OBJECT_DRAG)) return;
    if(id==CHARTEVENT_OBJECT_ENDEDIT && StringFind(sparam,g_nocuda_prefix+"UI_")==0)
-     { JPWNoCudaReadJustification(); g_nocuda_ui_editing=""; return; }
-   if(id==CHARTEVENT_KEYDOWN && g_nocuda_panel_open && g_nocuda_panel_focus && JPWUIOwns(g_nocuda_prefix) && g_nocuda_ui_editing=="")
+     { JPWNoCudaReadJustification();
+       if(g_nocuda_ui_editing==sparam) g_nocuda_ui_editing=""; return; }
+   if(id==CHARTEVENT_KEYDOWN && g_nocuda_panel_open && g_nocuda_panel_focus && JPWUIOwns(g_nocuda_prefix))
      {
       if(lparam==27) { JPWNoCudaAction(g_nocuda_prefix+"UI_CLOSE"); return; }
       if(lparam==9)
         {
+         JPWNoCudaReadJustification();
+         if(g_nocuda_ui_editing!="" && ObjectFind(0,g_nocuda_ui_editing)>=0)
+            ObjectSetInteger(0,g_nocuda_ui_editing,OBJPROP_SELECTED,false);
          const bool reverse=(((int)TerminalInfoInteger(TERMINAL_KEYSTATE_SHIFT)&0x8000)!=0);
          g_nocuda_ui_focus=JPWNoCudaUIFocusCycle(g_nocuda_prefix,g_nocuda_ui_focus,reverse);
+         g_nocuda_ui_editing=(g_nocuda_ui_focus!="" && ObjectFind(0,g_nocuda_ui_focus)>=0 &&
+            ObjectGetInteger(0,g_nocuda_ui_focus,OBJPROP_TYPE)==OBJ_EDIT ? g_nocuda_ui_focus : "");
+         if(g_nocuda_ui_editing!="") ObjectSetInteger(0,g_nocuda_ui_editing,OBJPROP_SELECTED,true);
          JPWNoCudaDrawUI(); return;
         }
-      if(lparam==13 && StringFind(g_nocuda_ui_focus,g_nocuda_prefix+"UI_")==0)
+      if(lparam==13 && g_nocuda_ui_editing=="" && ObjectFind(0,g_nocuda_ui_focus)>=0 &&
+         ObjectGetInteger(0,g_nocuda_ui_focus,OBJPROP_TYPE)==OBJ_BUTTON &&
+         StringFind(g_nocuda_ui_focus,g_nocuda_prefix+"UI_")==0)
         { JPWNoCudaAction(g_nocuda_ui_focus); return; }
      }
    if(id==CHARTEVENT_OBJECT_DRAG)
@@ -1294,7 +1303,8 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,
         {
          g_nocuda_panel_focus=true;
          if(sparam==g_nocuda_prefix+"UI_JUST" || sparam==g_nocuda_prefix+"UI_DATE" ||
-            sparam==g_nocuda_prefix+"UI_LEVEL_INPUT") g_nocuda_ui_editing=sparam;
+            sparam==g_nocuda_prefix+"UI_LEVEL_INPUT")
+           { g_nocuda_ui_editing=sparam; g_nocuda_ui_focus=sparam; }
          else
            { g_nocuda_ui_editing="";
              if(ObjectGetInteger(0,sparam,OBJPROP_TYPE)==OBJ_BUTTON) g_nocuda_ui_focus=sparam; }

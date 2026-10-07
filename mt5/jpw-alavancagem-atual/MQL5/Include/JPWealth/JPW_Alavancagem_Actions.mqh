@@ -365,8 +365,8 @@ void JPWRaizSwitchTab(const int tab)
       JPWRenderHUD();
      }
    JPWRaizSaveVisibleFields();
-   JPWRaizPanelDestroy();
    g_raiz_tab=tab;
+   JPWRaizPanelDestroy();
    if(tab==JPW_ROUTE_PERSONAL_HISTORY || tab==JPW_ROUTE_PERSONAL_DETAIL || tab==JPW_ROUTE_PERSONAL_EXPORT)
       JPWPersonalRequestRead();
    g_raiz_page=0;
@@ -646,7 +646,7 @@ void JPWOpenCockpit(const int metric=-1)
 void JPWPersonalHistoryMove(const int direction)
   {
    if(g_personal_category=="SUMMARY") { g_cockpit_page+=direction; }
-   else if(direction>0 && g_personal_button_count>0)
+   else if(direction>0 && g_personal_available && !g_personal_read_requested && g_personal_button_count>0)
      {
       if(ArrayResize(g_personal_cursor,g_personal_cursor_page+1)!=g_personal_cursor_page+1)
         { g_personal_reason="Capacidade de navegação indisponível; registros preservados."; return; }
@@ -683,8 +683,9 @@ bool JPWPersonalHandleClick(const string target)
              JPWRaizPanelDestroy(); JPWRenderRaizDetails(); }
       return(true);
      }
-   for(int i=0;i<g_personal_button_count;i++) if(target==JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST+i))
-     { g_personal_detail_seq=g_personal_button_seq[i]; JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_DETAIL); return(true); }
+   if(g_personal_available && !g_personal_read_requested && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
+      for(int i=0;i<g_personal_button_count;i++) if(target==JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST+i))
+        { g_personal_detail_seq=g_personal_button_seq[i]; JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_DETAIL); return(true); }
    if(target==JPWActionObject(JPW_ACTION_PRIMARY))
      {
       if(g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
@@ -742,22 +743,49 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       return;
      }
    if(id==CHARTEVENT_OBJECT_ENDEDIT) g_editing_field=false;
-   if(id==CHARTEVENT_OBJECT_CLICK) g_editing_field=(StringFind(sparam,JPWRaizUI("EDIT_"))==0);
+   if(id==CHARTEVENT_OBJECT_CLICK)
+     {
+      g_editing_field=(StringFind(sparam,JPWRaizUI("EDIT_"))==0);
+      if(g_editing_field)
+         for(int i=0;i<21;i++) if(sparam==JPWRaizUI("EDIT_"+IntegerToString(i)))
+            {
+             g_focus_action=(JPWFocusValid(-1000-i) ? -1000-i : -1);
+             g_editing_field=(g_focus_action<=-1000); break;
+            }
+      if(!g_editing_field)
+         for(int i=0;i<g_focus_count;i++)
+            if(sparam==JPWFocusObject(g_focus_actions[i]) && JPWFocusValid(g_focus_actions[i]))
+              { g_focus_action=g_focus_actions[i]; break; }
+     }
    if(id==CHARTEVENT_OBJECT_ENDEDIT && g_raiz_details_open)
      {
       for(int i=0;i<21;i++)
          if(sparam==JPWRaizUI("EDIT_"+IntegerToString(i)))
            { g_raiz_fields[i]=ObjectGetString(0,sparam,OBJPROP_TEXT); return; }
      }
-   if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && !g_editing_field)
+   if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open)
      {
       if(lparam==9)
-        { const bool shift=(((int)TerminalInfoInteger(TERMINAL_KEYSTATE_SHIFT)&0x8000)!=0);
-          JPWFocusStep(shift); return; }
-      if(lparam==13 && g_focus_action>=0)
+        {
+          // Leaving an edit changes only the in-memory draft; it is not Apply.
+          if(g_editing_field) JPWRaizSaveVisibleFields();
+          g_editing_field=false;
+          const bool shift=(((int)TerminalInfoInteger(TERMINAL_KEYSTATE_SHIFT)&0x8000)!=0);
+          JPWFocusStep(shift);
+          g_editing_field=(g_focus_action<=-1000);
+          return;
+         }
+      if(g_editing_field && (lparam==13 || lparam==27))
+        {
+         JPWRaizSaveVisibleFields();
+         const int field=-1000-g_focus_action;
+         if(field>=0 && field<21) ObjectSetInteger(0,JPWRaizUI("EDIT_"+IntegerToString(field)),OBJPROP_SELECTED,false);
+         g_editing_field=false; return;
+        }
+      if(lparam==13 && !g_editing_field && g_focus_action>=0)
         { const long unused=0; const double d=0.0;
           const string target=JPWRaizUI("BUTTON_"+IntegerToString(g_focus_action));
-          if(ObjectFind(0,target)>=0) JPWHandleChartEvent(CHARTEVENT_OBJECT_CLICK,unused,d,target);
+          if(JPWFocusValid(g_focus_action)) JPWHandleChartEvent(CHARTEVENT_OBJECT_CLICK,unused,d,target);
           return; }
      }
    if(id==CHARTEVENT_KEYDOWN && g_editing_field) return;

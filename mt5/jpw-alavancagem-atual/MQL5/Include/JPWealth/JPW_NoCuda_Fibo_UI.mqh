@@ -4,6 +4,8 @@
 // Presentation only: receives accepted strings/identities from the controller.
 // No account, candle, native-channel or study-store reads occur in this file.
 #include <JPWealth/JPW_Genetrix_Brand.mqh>
+#include <JPWealth/JPW_UI_Design.mqh>
+#include <JPWealth/JPW_NoCuda_UI.mqh>
 
 struct JPWNoCudaFiboUIItem
   { string id; string title; string detail; string state; bool selected; };
@@ -35,7 +37,7 @@ struct JPWNoCudaFiboUIPrefs
 struct JPWNoCudaFiboUILayout
   {
    int x; int y; int width; int height; int pad; int line; int button;
-   int body_y; int body_height; int footer_y; int inner;
+   int body_y; int body_height; int footer_y; int inner; int nav_columns; int nav_rows;
    bool narrow; bool usable;
   };
 
@@ -57,14 +59,14 @@ int JPWNoCudaFiboUITextWidth(const string value,const int font)
   {
    uint w=0,h=0;
    if(TextSetFont("Arial",-10*font) && TextGetSize(value,w,h)) return((int)w);
-   return(StringLen(value)*MathMax(5,font*6/10));
+   return(StringLen(value)*MathMax(JPWUIDesignPx(5),JPWUIDesignPx(font*6/10)));
   }
 int JPWNoCudaFiboUILine(const int font)
   {
    uint w=0,h=0;
    if(TextSetFont("Arial",-10*font) && TextGetSize("Ag",w,h) && h>0)
-      return(MathMax(font+4,(int)h+6));
-   return(font+10);
+      return(MathMax(JPWUIDesignPx(font+4),(int)h+JPWUIDesignPx(8)));
+   return(JPWUIDesignPx(font+12));
   }
 bool JPWNoCudaFiboUIDark()
   {
@@ -156,7 +158,7 @@ void JPWNoCudaFiboUIButton(const string prefix,const string action,const int x,c
    ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,name==g_fc_focus ? g_fc_accent : g_fc_border);
    ObjectSetInteger(0,name,OBJPROP_STATE,false);
    JPWNoCudaFiboUISetText(name,OBJPROP_FONT,"Arial");
-   JPWNoCudaFiboUISetText(name,OBJPROP_TEXT,JPWNoCudaFiboUIFit(text,w-12,g_fc_draft.font));
+   JPWNoCudaFiboUISetText(name,OBJPROP_TEXT,JPWNoCudaFiboUIFit(text,w-JPWUIDesignPx(24),g_fc_draft.font));
    JPWNoCudaFiboUISetText(name,OBJPROP_TOOLTIP,text);
    const int n=ArraySize(g_fc_actions); ArrayResize(g_fc_actions,n+1); ArrayResize(g_fc_action_ids,n+1);
    g_fc_actions[n]=action; g_fc_action_ids[n]=item_id;
@@ -170,7 +172,8 @@ void JPWNoCudaFiboUIFinish(const string prefix)
       bool keep=false;
       for(int k=0;k<ArraySize(g_fc_keep);k++) if(g_fc_keep[k]==name) { keep=true; break; }
       if(!keep)
-        { ObjectDelete(0,name); if(g_fc_focus==name) g_fc_focus="";
+        { if(StringFind(name,"_DESIGN_ICON")>=0) JPWUIDesignDeleteIcon(name);
+          else ObjectDelete(0,name); if(g_fc_focus==name) g_fc_focus="";
           if(g_fc_editing==name) g_fc_editing=""; }
      }
   }
@@ -242,16 +245,23 @@ void JPWNoCudaFiboUICalculateLayout()
    g_fc_layout.x=g_fc_draft.x; g_fc_layout.y=g_fc_draft.y;
    g_fc_layout.width=g_fc_draft.width; g_fc_layout.height=g_fc_draft.height;
    g_fc_layout.line=JPWNoCudaFiboUILine(g_fc_draft.font);
-   g_fc_layout.pad=(g_fc_draft.density==1 ? 8 : 12);
-   g_fc_layout.button=MathMax(28,g_fc_layout.line+6);
+   g_fc_layout.pad=JPWUIDesignPx(g_fc_draft.density==1 ? 8 : 12);
+   g_fc_layout.button=JPWUIDesignControlHeight(g_fc_layout.line);
    g_fc_layout.inner=g_fc_layout.width-2*g_fc_layout.pad;
-   g_fc_layout.narrow=g_fc_layout.inner<650;
-   const int header=g_fc_layout.button+8+(g_fc_layout.narrow ? 0 : g_fc_layout.line)+g_fc_layout.button+16;
+   g_fc_layout.narrow=g_fc_layout.inner<JPWUIDesignPx(650);
+   string tabs[5]={"Canal","Agora","Projeção","Registro","Aparência"};
+   const int gap=JPWUIDesignPx(8);
+   g_fc_layout.nav_columns=JPWUIDesignNavColumns(tabs,5,g_fc_layout.inner,g_fc_draft.font,gap);
+   g_fc_layout.nav_rows=(5+g_fc_layout.nav_columns-1)/g_fc_layout.nav_columns;
+   const int header=g_fc_layout.button+JPWUIDesignPx(16)+
+      (g_fc_layout.narrow ? 0 : g_fc_layout.line)+g_fc_layout.nav_rows*(g_fc_layout.button+gap)+gap;
    g_fc_layout.body_y=g_fc_layout.y+header;
-   // Reserve an independent bottom strip for the resize handle.
-   g_fc_layout.footer_y=g_fc_layout.y+g_fc_layout.height-g_fc_layout.button-g_fc_layout.pad-16;
-   g_fc_layout.body_height=MathMax(0,g_fc_layout.footer_y-g_fc_layout.body_y-8);
-   g_fc_layout.usable=g_fc_layout.inner>=140 && g_fc_layout.body_height>=2*g_fc_layout.line;
+   // Reserve an independent minimum target strip for the resize handle.
+   g_fc_layout.footer_y=g_fc_layout.y+g_fc_layout.height-g_fc_layout.button-g_fc_layout.pad-JPWUIDesignPx(40);
+   g_fc_layout.body_height=MathMax(0,g_fc_layout.footer_y-g_fc_layout.body_y-gap);
+   g_fc_layout.usable=g_fc_layout.inner>=JPWUIDesignPx(140) &&
+      JPWUIDesignButtonWidth("Aparência",g_fc_draft.font)<=g_fc_layout.inner &&
+      g_fc_layout.body_height>=2*g_fc_layout.line;
    g_fc_visible_lines=MathMax(1,g_fc_layout.body_height/g_fc_layout.line);
   }
 string JPWNoCudaFiboUIHitAction(const string prefix,const string object)
@@ -272,7 +282,8 @@ string JPWNoCudaFiboUIFocusCycle(const string current,const bool reverse)
      {
       const string name=g_fc_keep[(at+(reverse ? -i : i)+2*count)%count];
       const long kind=ObjectGetInteger(0,name,OBJPROP_TYPE);
-      if(kind==OBJ_BUTTON || kind==OBJ_EDIT) return(name);
+      if(ObjectFind(0,name)>=0 && (kind==OBJ_BUTTON ||
+         (kind==OBJ_EDIT && !ObjectGetInteger(0,name,OBJPROP_READONLY)))) return(name);
      }
    return("");
   }
@@ -384,7 +395,7 @@ void JPWNoCudaFiboUIRow(const string prefix,const string id,const string label,
    else
      {
       const int split=w/3;
-      JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_LABEL"),x,y,split-8,label,g_fc_draft.font,g_fc_muted);
+      JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_LABEL"),x,y,split-JPWUIDesignPx(8),label,g_fc_draft.font,g_fc_muted);
       if(numeric) JPWNoCudaFiboUIValue(JPWNoCudaFiboUIName(prefix,id+"_VALUE"),x+split,y,w-split,value);
       else JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_VALUE"),x+split,y,w-split,value,g_fc_draft.font,g_fc_ink);
      }
@@ -423,26 +434,27 @@ void JPWNoCudaFiboUIRenderMetric(const string prefix,const string id,const strin
 void JPWNoCudaFiboUICard(const string prefix,const string id,const string title,
                        const JPWNoCudaFiboUIMetric &m,const int x,const int y,const int width)
   {
-   const int line=g_fc_layout.line,font=g_fc_draft.font;
-   JPWNoCudaFiboUIBox(JPWNoCudaFiboUIName(prefix,id+"_CARD"),x,y,width,8*line,
+   const int line=g_fc_layout.line,font=g_fc_draft.font,pad=JPWUIDesignPx(8);
+   const int control_rows=(g_fc_layout.button+line-1)/line,content_y=y+control_rows*line;
+   JPWNoCudaFiboUIBox(JPWNoCudaFiboUIName(prefix,id+"_CARD"),x,y,width,(control_rows+7)*line,
       g_fc_card,m.highlight ? g_fc_accent : g_fc_border);
-   JPWNoCudaFiboUIButton(prefix,"FC_USE_"+id,x+8,y+4,width-16,line,
+   JPWNoCudaFiboUIButton(prefix,"FC_USE_"+id,x+pad,y,width-2*pad,g_fc_layout.button,
       title+(m.highlight ? " · Mais próxima" : ""),m.highlight);
-   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_LINE"),x+8,y+line,width-16,
+   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_LINE"),x+pad,content_y,width-2*pad,
       m.label+" · nível "+m.raw_level,font,g_fc_muted);
-   JPWNoCudaFiboUIValue(JPWNoCudaFiboUIName(prefix,id+"_PRICE"),x+8,y+2*line,width-16,m.valid ? m.price : "N/A");
+   JPWNoCudaFiboUIValue(JPWNoCudaFiboUIName(prefix,id+"_PRICE"),x+pad,content_y+line,width-2*pad,m.valid ? m.price : "N/A");
    string captions[3]={"Nominal","Pontos","Distância %"};
    string values[3]={m.nominal,m.points,m.percent};
    for(int i=0;i<3;i++)
      {
       const int split=width/3;
       JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_CAP_"+IntegerToString(i)),
-         x+8,y+(i+3)*line,split-8,captions[i],font,g_fc_muted);
+         x+pad,content_y+(i+2)*line,split-pad,captions[i],font,g_fc_muted);
       JPWNoCudaFiboUIValue(JPWNoCudaFiboUIName(prefix,id+"_VAL_"+IntegerToString(i)),
-         x+split,y+(i+3)*line,width-split-8,m.valid ? values[i] : "N/A");
+         x+split,content_y+(i+2)*line,width-split-pad,m.valid ? values[i] : "N/A");
      }
-   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_STATE"),x+8,y+6*line,width-16,m.state,font,g_fc_muted);
-   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_REASON"),x+8,y+7*line,width-16,m.reason,font,g_fc_muted);
+   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_STATE"),x+pad,content_y+5*line,width-2*pad,m.state,font,g_fc_muted);
+   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_REASON"),x+pad,content_y+6*line,width-2*pad,m.reason,font,g_fc_muted);
   }
 
 // Virtual body layout is measured before it is rendered. Changing the viewport
@@ -484,11 +496,12 @@ void JPWNoCudaFiboUIBody(const string prefix,const JPWNoCudaFiboView &v)
           JPWNoCudaFiboUIRenderMetric(prefix,"ABOVE","Linha acima",v.above); }
       else
         {
-         int y=0; if(JPWNoCudaFiboUIRowVisible(8,y))
+         int y=0; const int card_rows=(g_fc_layout.button+g_fc_layout.line-1)/g_fc_layout.line+7;
+         if(JPWNoCudaFiboUIRowVisible(card_rows,y))
            {
-            const int x=g_fc_layout.x+g_fc_layout.pad,w=(g_fc_layout.inner-12)/2;
+            const int x=g_fc_layout.x+g_fc_layout.pad,gap=JPWUIDesignPx(12),w=(g_fc_layout.inner-gap)/2;
             JPWNoCudaFiboUICard(prefix,"BELOW","Linha abaixo",v.below,x,y,w);
-            JPWNoCudaFiboUICard(prefix,"ABOVE","Linha acima",v.above,x+w+12,y,w);
+            JPWNoCudaFiboUICard(prefix,"ABOVE","Linha acima",v.above,x+w+gap,y,w);
            }
         }
       JPWNoCudaFiboUIRow(prefix,"NEAREST","Mais próxima",v.nearest.label+" · nível "+v.nearest.raw_level+" · "+(v.nearest.valid ? v.nearest.price : "N/A"));
@@ -548,50 +561,70 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
    const bool dark=JPWNoCudaFiboUIDark();
    g_fc_ink=dark ? C'232,236,241' : C'37,43,52'; g_fc_muted=dark ? C'181,189,200' : C'85,96,111';
    g_fc_surface=dark ? C'25,29,36' : C'248,250,252'; g_fc_chrome=dark ? C'39,45,54' : C'233,238,244';
-   g_fc_card=dark ? C'32,38,48' : C'255,255,255'; g_fc_border=dark ? C'99,112,131' : C'171,184,200';
+   g_fc_card=dark ? C'32,38,48' : C'255,255,255'; g_fc_border=dark ? C'99,112,131' : C'128,135,147';
    g_fc_accent=dark ? C'72,96,130' : C'48,70,102';
    JPWNoCudaFiboUICalculateLayout();
    const int cw=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),ch=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
    if(!v.open)
      {
-      const int bw=MathMin(MathMax(110,JPWNoCudaFiboUITextWidth("NoCuda",g_fc_draft.font)+24),MathMax(24,cw-16));
-      const int bh=MathMin(g_fc_layout.button,MathMax(24,ch-16));
-      const int corner=g_fc_draft.launcher;
-      JPWNoCudaFiboUIButton(prefix,"FC_OPEN",corner==1 || corner==3 ? cw-bw-8 : 8,
-         corner>=2 ? ch-bh-8 : 40,bw,bh,"NoCuda");
+      const string label="NoCuda · Gráficos";
+      const int bw=JPWUIDesignButtonWidth(label,g_fc_draft.font,true),bh=g_fc_layout.button;
+      const int corner=g_fc_draft.launcher,gap=JPWUIDesignPx(8);
+      JPWNoCudaUIRememberHUD(cw,ch);
+      JPWNoCudaUIRect place;
+      const int desired_x=(corner==1 || corner==3 ? cw-bw-gap : gap);
+      const int desired_y=(corner>=2 ? ch-bh-gap : JPWUIDesignPx(40));
+      if(!JPWNoCudaUILauncherAt(cw,ch,bw,bh,desired_x,desired_y,place))
+        {
+         g_fc_notice="NoCuda · Gráficos: espaço livre insuficiente; amplie o gráfico. Rascunho preservado.";
+         JPWNoCudaFiboUIFinish(prefix); return;
+        }
+      if(g_fc_notice=="NoCuda · Gráficos: espaço livre insuficiente; amplie o gráfico. Rascunho preservado.") g_fc_notice="";
+      JPWNoCudaFiboUIButton(prefix,"FC_OPEN",place.x,place.y,bw,bh,"");
+      const int icon=JPWUIDesignPx(16),inset=JPWUIDesignPx(12);
+      const string icon_name=JPWNoCudaFiboUIName(prefix,"FC_OPEN_DESIGN_ICON");
+      JPWNoCudaFiboUIKeep(icon_name);
+      JPWUIDesignIcon(icon_name,place.x+inset,place.y+(bh-icon)/2,icon,g_fc_ink,true);
+      JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"FC_OPEN_LABEL"),
+         place.x+inset+icon+gap,place.y+(bh-g_fc_layout.line)/2,
+         bw-2*inset-icon-gap,label,g_fc_draft.font,g_fc_ink,false);
+      JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_OPEN"),OBJPROP_TOOLTIP,label);
       JPWNoCudaFiboUIFinish(prefix); return;
      }
    const int x=g_fc_layout.x,y=g_fc_layout.y,w=g_fc_layout.width,h=g_fc_layout.height;
    const int pad=g_fc_layout.pad,bh=g_fc_layout.button,line=g_fc_layout.line,inner=g_fc_layout.inner;
    JPWNoCudaFiboUIBox(JPWNoCudaFiboUIName(prefix,"BACKGROUND"),x,y,w,h,g_fc_surface,g_fc_border);
-   if(inner<2*bh+12 || h<2*bh+24)
+   if(inner<2*bh+JPWUIDesignPx(16) || h<2*bh+JPWUIDesignPx(24) ||
+      g_fc_layout.body_y+2*line>g_fc_layout.footer_y ||
+      JPWUIDesignButtonWidth("Aparência",g_fc_draft.font)>inner)
      {
       // Preserve an escape hatch even when the user shrinks the frame beyond
       // the minimum content area. This is not a successful usable dashboard.
       g_fc_layout.usable=false; g_fc_scroll_max=0;
-      const int small=MathMax(12,MathMin(28,MathMin(w-8,h-8)));
-      JPWNoCudaFiboUIButton(prefix,"FC_HEADER_CLOSE",x+w-small-4,y+4,small,small,"×");
-      if(h>=small+2*line+12 && inner>0)
-         JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"UNUSABLE"),x+pad,y+small+8,inner,
+      const int small=MathMax(1,MathMin(JPWUIDesignPx(32),MathMin(w-JPWUIDesignPx(8),h-JPWUIDesignPx(8))));
+      JPWNoCudaFiboUIButton(prefix,"FC_HEADER_CLOSE",x+w-small-JPWUIDesignPx(4),y+JPWUIDesignPx(4),small,small,"×");
+      if(h>=small+2*line+JPWUIDesignPx(12) && inner>0)
+         JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"UNUSABLE"),x+pad,y+small+JPWUIDesignPx(8),inner,
             "Área insuficiente · maximize a janela",g_fc_draft.font,g_fc_muted);
       JPWNoCudaFiboUIFinish(prefix); return;
      }
    JPWNoCudaFiboUIBox(JPWNoCudaFiboUIName(prefix,"HEADER"),x+1,y+1,w-2,g_fc_layout.body_y-y-2,g_fc_chrome,g_fc_chrome);
-   const int close_w=MathMax(28,bh),title_w=MathMax(0,inner-2*close_w-12);
-   JPWNoCudaFiboUIButton(prefix,"FC_HEADER_CLOSE",x+w-pad-close_w,y+6,close_w,bh,"×");
-   JPWNoCudaFiboUIButton(prefix,"FC_HEADER_MINIMIZE",x+w-pad-2*close_w-6,y+6,close_w,bh,"−");
-   JPWNoCudaFiboUIButton(prefix,"FC_DRAG",x+pad,y+6,title_w,bh,"");
+   const int gap=JPWUIDesignPx(8),close_w=bh,title_w=MathMax(0,inner-2*close_w-gap);
+   JPWNoCudaFiboUIButton(prefix,"FC_HEADER_CLOSE",x+w-pad-close_w,y+gap,close_w,bh,"×");
+   JPWNoCudaFiboUIButton(prefix,"FC_HEADER_MINIMIZE",x+w-pad-2*close_w-gap,y+gap,close_w,bh,"−");
+   JPWNoCudaFiboUIButton(prefix,"FC_DRAG",x+pad,y+gap,title_w,bh,"");
    const string brand_logo=JPWNoCudaFiboUIName(prefix,"LOGO");
    const string brand_title=JPWNoCudaFiboUIName(prefix,"TITLE");
    JPWNoCudaFiboUIKeep(brand_logo); JPWNoCudaFiboUIKeep(brand_title);
-   JPWGenetrixHeader(brand_logo,brand_title,x+pad+8,y+10,MathMax(0,title_w-16),
-      MathMax(0,bh-4),g_fc_draft.font,g_fc_ink,dark,"NoCuda · "+v.symbol,1006);
+   JPWGenetrixHeader(brand_logo,brand_title,x+pad+gap,y+gap+JPWUIDesignPx(4),MathMax(0,title_w-2*gap),
+      MathMax(0,bh-JPWUIDesignPx(8)),g_fc_draft.font,g_fc_ink,dark,"NoCuda · Gráficos · Fibonacci · "+v.symbol,1006);
    if(!g_fc_layout.narrow)
-      JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"STATUS"),x+pad,y+bh+10,inner,v.status+" · "+v.source_name,g_fc_draft.font,g_fc_muted);
-   const int ty=g_fc_layout.body_y-bh-8;
+      JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"STATUS"),x+pad,y+bh+2*gap,inner,v.status+" · "+v.source_name,g_fc_draft.font,g_fc_muted);
+   const int ty=g_fc_layout.body_y-g_fc_layout.nav_rows*(bh+gap)-gap;
    string tabs[5]={"Canal","Agora","Projeção","Registro","Aparência"};
-   const int tw=(inner-16)/5;
-   for(int i=0;i<5;i++) JPWNoCudaFiboUIButton(prefix,"FC_TAB_"+IntegerToString(i),x+pad+i*(tw+4),ty,tw,bh,tabs[i],v.tab==i);
+   const int columns=g_fc_layout.nav_columns,tw=(inner-(columns-1)*gap)/columns;
+   for(int i=0;i<5;i++) JPWNoCudaFiboUIButton(prefix,"FC_TAB_"+IntegerToString(i),
+      x+pad+(i%columns)*(tw+gap),ty+(i/columns)*(bh+gap),tw,bh,tabs[i],v.tab==i);
    if(g_fc_tab!=v.tab) { g_fc_scroll=0; g_fc_tab=v.tab; }
    g_fc_line_cursor=0;
    if(!g_fc_layout.usable)
@@ -606,13 +639,14 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
       g_fc_scroll=JPWNoCudaFiboUIClamp(g_fc_scroll,0,g_fc_scroll_max);
       g_fc_measure_pass=false; g_fc_line_cursor=0; JPWNoCudaFiboUIBody(prefix,v);
      }
-   const int arrow_w=MathMin(48,inner/7),action_w=(inner-2*arrow_w-18)/2;
+   const int arrow_w=MathMin(JPWUIDesignPx(40),inner/7),action_w=(inner-2*arrow_w-3*gap)/2;
    JPWNoCudaFiboUIButton(prefix,"FC_SCROLL_UP",x+pad,g_fc_layout.footer_y,arrow_w,bh,"↑");
-   JPWNoCudaFiboUIButton(prefix,"FC_SCROLL_DOWN",x+pad+arrow_w+4,g_fc_layout.footer_y,arrow_w,bh,"↓");
-   const int fx=x+pad+2*arrow_w+10;
+   JPWNoCudaFiboUIButton(prefix,"FC_SCROLL_DOWN",x+pad+arrow_w+gap,g_fc_layout.footer_y,arrow_w,bh,"↓");
+   const int fx=x+pad+2*arrow_w+2*gap;
    JPWNoCudaFiboUIButton(prefix,v.tab==4 ? "FC_SETTINGS_APPLY" : "FC_CLOSE",fx,g_fc_layout.footer_y,action_w,bh,v.tab==4 ? "Aplicar" : "Fechar",v.tab==4);
-   JPWNoCudaFiboUIButton(prefix,v.tab==4 ? "FC_SETTINGS_CANCEL" : "FC_MINIMIZE",fx+action_w+6,g_fc_layout.footer_y,action_w,bh,v.tab==4 ? "Cancelar" : "Recolher");
-   JPWNoCudaFiboUIButton(prefix,"FC_RESIZE",x+w-18,y+h-18,14,14,"↘");
+   JPWNoCudaFiboUIButton(prefix,v.tab==4 ? "FC_SETTINGS_CANCEL" : "FC_MINIMIZE",fx+action_w+gap,g_fc_layout.footer_y,action_w,bh,v.tab==4 ? "Cancelar" : "Recolher");
+   const int handle=JPWUIDesignPx(32);
+   JPWNoCudaFiboUIButton(prefix,"FC_RESIZE",x+w-handle-gap,y+h-handle-gap,handle,handle,"↘");
    JPWNoCudaFiboUIFinish(prefix);
   }
 

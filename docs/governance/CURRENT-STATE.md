@@ -395,3 +395,7 @@ Focais financeiros: referências do Motor 34/34 PASS; projeção 116/116 PASS; M
 **Aceite bloqueado** por DD14, divergência de captura inicial no focal Market e intermitência Galton no gate obrigatório. Policy, engine, state, Estatuto/Anexo, gates e fixtures canônicas permanecem iguais ao snapshot. As falhas não foram escondidas no renderer nem removidas dos testes. As 182 alterações preexistentes permanecem preservadas; SOURCE REVISION UNKNOWN herdado continua explícito.
 
 Relatório, recibos, capturas comparativas, fingerprint e rollback: `/Users/joaopauloalves/.codex/.chatgpt-projects/g-p-6a4fc0aa51dc8191af013579f37179a3/outputs/jpw-execution-board-20261001/REPORT.md` e `CANDIDATE.json`. Não houve commit, integração, publicação, alteração do MT5 ou acesso a perfil financeiro real.
+
+## GENETRIX — candidato de integração 2026-10-07
+
+Base de trabalho4ef5f00019acd32fe1dde633e924dcc1569596dd. Integração focal do produto1.20.0/MQL1.200/cálculo1.9.0, com Monitor único recomendado e Supervisor opcional. A autorização humana pede GitHub com a última versão; não inclui instalação, armamento ou publicação operacional. Fontes/EX5/recibos e documentação em `docs/validation/genetrix-1.20.0/`; contrato em `docs/work/CHG-GENETRIX-1-20-INTEGRATION-20261007.md`. Compilação33/33 dos MQL idênticos demonstrada; runtime0/3NOT_RUN e aceiteINCONCLUSIVE. HIS-AC20PRODUCT_FAIL3/3 e limites do harnessCANDIDATE permanecem. Esta seção é uma fotografia de preparação; resultados posteriores devem vir do recibo desta integração, não das versões anteriores.

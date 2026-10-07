@@ -1,3 +1,23 @@
+# Mapa ativo — GENETRIX 1.20.0 / Harness de engenharia 1.0.0 candidato
+
+Antes de desenvolver, diagnosticar ou revisar, leia integralmente [harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md](harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md), o Core aplicável e as dependências ali indicadas. Se não houver acesso, registre a limitação. Selecione critérios aplicáveis, confirme fontes/versões, congele o contrato e não transforme instruções em novas permissões. Manual: [harness/MANUAL_DE_ATIVACAO.md](harness/MANUAL_DE_ATIVACAO.md).
+
+| Componente atual | Função e local recomendado |
+|---|---|
+| JPW_Genetrix_Monitor | Núcleo observador de toda a conta: monitoramento/histórico e contabilidade de ciclos; um gráfico de apoio; não negocia. |
+| JPW_Alavancagem_Atual | Indicador Genetrix · Conta: resumo de sete leituras e Cockpit; gráficos de trabalho. |
+| JPW_NoCuda_Channels | Indicador NoCuda · Gráficos: estudos geométricos, sem sinais ou certificação estatística. |
+| JPW_Genetrix_Supervisor | Proteção 7x separada e opcional; não necessária às leituras; permanece no contrato de observação/armamento explícito em demo. |
+| Observer e Accountant | Produtores legados preservados para rollback; não instalar juntos ao Monitor como novos escritores concorrentes. |
+
+Leia [GENETRIX_CORE_1_20_0.md](GENETRIX_CORE_1_20_0.md) para os contratos atuais. Alavancagem, flutuante, Genesis SL e Raiz N de uma e duas semanas permanecem no indicador; Risco dos stops depende de monitoramento; Compensado depende de ciclo/custos/cobertura contábil. Fechar Cockpit mantém o núcleo; remover o EA/fechar seu gráfico ou terminal interrompe a cobertura.
+
+Este pacote acrescenta somente instruções: nenhuma fórmula, API, schema, preferência, autorização ou instalação financeira é alterada. O piloto do harness possui recibos próprios; a compilação histórica da base 1.20.0 não comprova execução desta entrega. Consulte relatórios externos para resultados.
+
+# Referências históricas preservadas
+
+O conteúdo abaixo foi conservado byte a byte como contexto histórico. Seus números de versão, mapas de seis métricas, produtor Observer e estados NOT_RUN referem-se às revisões declaradas e não substituem o mapa ativo acima.
+
 # Revisão candidata 1.18.0 — Histórico Pessoal
 
 Escopo adicional em `JPW_PersonalHistory_*`: Observer como produtor único, SQLite próprio, Cockpit como consumidor, avisos locais SL==0/60s e recordes observados. Contrato específico em [GENETRIX_PERSONAL_HISTORY.md](GENETRIX_PERSONAL_HISTORY.md). Os módulos PersonalHistory e o Observer não negociam, homologam parâmetros ou certificam cumprimento do Estatuto. O Supervisor separado herdado de 1.17.0 mantém seu contrato próprio de demo explicitamente armada; esta entrega não o arma. Os guias históricos abaixo são preservados; a preferência atual é V3 de sete métricas, com seis abas incluindo Histórico Pessoal. Fonte 1.18.0 é candidato, compilação/EX5/MT5 `NOT_RUN`.

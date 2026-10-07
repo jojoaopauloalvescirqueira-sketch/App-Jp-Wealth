@@ -190,13 +190,9 @@ bool JPWRaizNReadLiveBase(JPWRaizNLiveProvider &provider,
      { sample.reason="Cotacao anterior a serie H4"; return(false); }
 
    double atr=0.0;
-   const bool cached=(cache.valid && cache.context_key==context_key &&
-      cache.symbol==symbol && cache.current_open==before.current_open &&
-      cache.closed_open==before.closed_open && cache.bars==before.bars &&
-      cache.calculated==before.calculated && cache.synchronized &&
-      before.synchronized);
-   if(cached) atr=cache.atr;
-   else if(!provider.ReadClosedATR(atr))
+   // Bar times/counts cannot witness revisions of historical prices. Read the
+   // closed ATR for every accepted collection; cache retains context only.
+   if(!provider.ReadClosedATR(atr))
      { cache.valid=false; sample.reason="ATR H4 indisponivel"; return(false); }
    if(atr==EMPTY_VALUE || !MathIsValidNumber(atr) || atr<=0.0)
      { cache.valid=false; sample.reason="ATR H4 invalido"; return(false); }

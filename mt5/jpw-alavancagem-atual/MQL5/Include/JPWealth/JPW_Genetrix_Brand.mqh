@@ -1,6 +1,7 @@
 #ifndef JPW_GENETRIX_BRAND_MQH
 #define JPW_GENETRIX_BRAND_MQH
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
+#include <JPWealth/JPW_UI_Design.mqh>
 
 // Presentation only. The bitmap is derived from the existing website wordmark.
 // No account reads, preferences, financial records or model state live here.
@@ -24,10 +25,17 @@ string JPWGenetrixHeaderText(const string section,const int width,const int font
   {
    const string full=JPW_PRODUCT_NAME+(section=="" ? "" : " · "+section);
    if(JPWGenetrixTextWidth(full,font)<=width) return(full);
-   if(JPWGenetrixTextWidth(JPW_PRODUCT_NAME,font)<=width) return(JPW_PRODUCT_NAME);
-   if(JPWGenetrixTextWidth("GENETRIX",font)<=width) return("GENETRIX");
-   if(JPWGenetrixTextWidth("JPW",font)<=width) return("JPW");
-   return(""); // The escape control remains independent of this small title area.
+   // Location/function comes before optional branding. Never spend the scarce
+   // title area on only the product name when the complete section still fits.
+   if(section!="" && JPWGenetrixTextWidth(section,font)<=width) return(section);
+   if(section!="")
+     {
+      const int separator=StringFind(section," · ");
+      const string module=(separator>0 ? StringSubstr(section,0,separator) : section);
+      if(JPWGenetrixTextWidth(module,font)<=width) return(module);
+     }
+   if(section=="" && JPWGenetrixTextWidth(JPW_PRODUCT_NAME,font)<=width) return(JPW_PRODUCT_NAME);
+   return(""); // An independent exit remains available in reduced layouts.
   }
 
 bool JPWGenetrixHeader(const string logo_name,const string text_name,
@@ -42,9 +50,9 @@ bool JPWGenetrixHeader(const string logo_name,const string text_name,
    int widths[4]={147,184,221,295},heights[4]={16,20,24,32};
    string scales[4]={"100","125","150","200"};
    while(variant>0 && heights[variant]>height) variant--;
-   const int gap=MathMax(8,font);
+   const int gap=JPWUIDesignPx(12);
    const string full=JPW_PRODUCT_NAME+(section=="" ? "" : " · "+section);
-   const int label_width=JPWGenetrixTextWidth(JPW_PRODUCT_NAME,font);
+   const int label_width=JPWGenetrixTextWidth(full,font);
    bool branded=false;
    if(height>=heights[variant] && width>=widths[variant]+gap+label_width)
      {

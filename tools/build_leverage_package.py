@@ -118,6 +118,15 @@ def stamp_source_build(root: Path, sources: list[str], product_version: str) -> 
     return build_id
 
 
+# Documentation formats are allowed only for these declared harness documents.
+# This does not broaden runtime resources or admit arbitrary JSON/PDF/TXT files.
+HARNESS_DOCUMENTS = frozenset({
+    PRODUCT + "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt",
+    PRODUCT + "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf",
+    PRODUCT + "harness/contracts/ENG-AC01-12.json",
+})
+
+
 def build(root: Path = ROOT) -> dict:
     manifest_file = checked_file(root, MANIFEST_PATH, OUTPUT)
     manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
@@ -177,7 +186,9 @@ def build(root: Path = ROOT) -> dict:
         raise ValueError("Estados de validacao incompletos")
     # Validate all declared paths/types before updating even the generated ID.
     for relative in sources:
-        if PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh") and relative not in EMBEDDED_RESOURCES:
+        if (PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh")
+                and relative not in EMBEDDED_RESOURCES
+                and relative not in HARNESS_DOCUMENTS):
             raise ValueError(f"Tipo de fonte inesperado: {relative}")
         source = checked_file(root, relative, PRODUCT)
         if source.suffix in (".mq5", ".mqh"):
@@ -205,7 +216,9 @@ def build(root: Path = ROOT) -> dict:
     manifest["runtimeBuildId"] = stamp_source_build(root, sources, manifest["version"])
     members = []
     for relative in sources:
-        if PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh") and relative not in EMBEDDED_RESOURCES:
+        if (PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh")
+                and relative not in EMBEDDED_RESOURCES
+                and relative not in HARNESS_DOCUMENTS):
             raise ValueError(f"Tipo de fonte inesperado: {relative}")
         source = checked_file(root, relative, PRODUCT)
         members.append((relative.removeprefix(PRODUCT), source.read_bytes()))

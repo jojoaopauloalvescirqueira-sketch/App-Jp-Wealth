@@ -56,8 +56,8 @@ template<class... A> string StringFormat(const char*fmt,A...args){char out[80];
 long g_stop_genesis_identifier=0,g_stop_genesis_ticket=0,g_stop_genesis_opened_msc=0;
 bool g_stop_genesis_closed=false;
 string g_panel_prefix="JPW_TEST_";
-bool g_raiz_panel_built=true,g_editing_field=false;
-int g_focus_count=0;
+bool g_raiz_panel_built=true,g_editing_field=false,g_raiz_details_open=false;
+int g_focus_count=0,g_focus_action=-1,g_details_focus_route=-1,g_raiz_tab=7;
 std::vector<string> objects;
 int ObjectsTotal(int,int,int){return (int)objects.size();}
 string ObjectName(int,int index,int,int){return objects.at(index);}
@@ -150,10 +150,23 @@ int main(){
           "JPW_TEST_RAIZ_UI_BUTTON_60","JPW_TEST_RAIZ_UI_BUTTON_80",
           "JPW_TEST_RAIZ_UI_STOP_TOTAL","JPW_TEST_RAIZ_UI_STOP_SCOPE",
           "JPW_COCKPIT_PREF_V2","OTHER_RAIZ_UI_BUTTON_80"};
+ g_focus_count=3;g_focus_action=40;g_details_focus_route=7;g_editing_field=true;
  JPWRaizPanelDestroy();
+ check(g_focus_count==0&&g_focus_action==-1&&g_details_focus_route==-1&&!g_editing_field,
+       "closed dialog clears registration, action, route and editing authority");
  check(objects.size()==2 && objects[0]=="JPW_COCKPIT_PREF_V2"&&
        objects[1]=="OTHER_RAIZ_UI_BUTTON_80"&&!g_raiz_panel_built,
        "production destroy removes all dialog objects including Stop buttons only");
+ // Same-route redraw may retain a logical selection, but registration and
+ // objects are gone until a fresh render, so it cannot be an active target.
+ g_raiz_details_open=true;g_raiz_panel_built=true;g_focus_count=2;
+ g_focus_action=40;g_details_focus_route=7;g_raiz_tab=7;g_editing_field=true;
+ objects.push_back("JPW_TEST_RAIZ_UI_BUTTON_40");JPWRaizPanelDestroy();
+ check(g_focus_count==0&&g_focus_action==40&&g_details_focus_route==7&&!g_editing_field&&objects.size()==2,
+       "same-route redraw retains only logical action while clearing objects and registration");
+ g_raiz_tab=8;g_focus_action=40;g_details_focus_route=7;g_focus_count=1;JPWRaizPanelDestroy();
+ check(g_focus_action==-1&&g_details_focus_route==-1&&g_focus_count==0,
+       "route change clears reused numeric action identity");
  std::cout<<"STOP_UI_SCOPE: "<<checks-failures<<" PASS / "<<failures<<" FAIL; MT5 NOT_RUN\n";
  return failures?1:0;
 }

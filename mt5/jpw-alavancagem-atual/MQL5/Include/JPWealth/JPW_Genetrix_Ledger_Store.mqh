@@ -391,4 +391,193 @@ bool JPWLedgerCommitCollection(const int db,JPWLedgerDeal &incoming[],JPWLedgerO
    if(!ok) { DatabaseTransactionRollback(db); if(reason=="") reason="Transação/releitura recusada"; }
    return(ok);
   }
+// Unified monitor staging is connection-local TEMP only. Main raw revisions,
+// projections and the generation pointer still commit in one transaction.
+bool JPWLedgerPreparationTables(const int db,string &reason)
+  {
+   reason="";
+   string sql="DROP TABLE IF EXISTS temp.jpw_old_deals; DROP TABLE IF EXISTS temp.jpw_old_orders;";
+   sql+="DROP TABLE IF EXISTS temp.jpw_work_deals; DROP TABLE IF EXISTS temp.jpw_work_orders;";
+   sql+="DROP TABLE IF EXISTS temp.jpw_old_projection; DROP TABLE IF EXISTS temp.jpw_projection;";
+   sql+="DROP TABLE IF EXISTS temp.jpw_old_faults; DROP TABLE IF EXISTS temp.jpw_faults;";
+   sql+="CREATE TEMP TABLE jpw_old_deals(ticket INTEGER PRIMARY KEY,revision INTEGER,payload TEXT,digest TEXT,observed INTEGER);";
+   sql+="CREATE TEMP TABLE jpw_old_orders(ticket INTEGER PRIMARY KEY,revision INTEGER,payload TEXT,digest TEXT,observed INTEGER);";
+   sql+="CREATE TEMP TABLE jpw_work_deals(ticket INTEGER PRIMARY KEY,revision INTEGER,payload TEXT,digest TEXT,observed INTEGER,seen INTEGER,native_payload TEXT,native_digest TEXT,changed INTEGER);";
+   sql+="CREATE TEMP TABLE jpw_work_orders(ticket INTEGER PRIMARY KEY,revision INTEGER,payload TEXT,digest TEXT,observed INTEGER,seen INTEGER,native_payload TEXT,native_digest TEXT,changed INTEGER);";
+   sql+="CREATE TEMP TABLE jpw_old_projection(rowno INTEGER PRIMARY KEY,payload TEXT,digest TEXT);";
+   sql+="CREATE TEMP TABLE jpw_projection(rowno INTEGER PRIMARY KEY,payload TEXT,digest TEXT);";
+   sql+="CREATE TEMP TABLE jpw_old_faults(ticket INTEGER PRIMARY KEY,code TEXT);";
+   sql+="CREATE TEMP TABLE jpw_faults(ticket INTEGER PRIMARY KEY,code TEXT);";
+   sql+="INSERT INTO temp.jpw_old_faults SELECT ticket,code FROM main.ledger_faults;";
+   sql+="INSERT INTO temp.jpw_faults SELECT ticket,code FROM main.ledger_faults;";
+   if(!JPWLedgerSQL(db,sql)) { reason="Staging temporário indisponível; base preservada"; return(false); }
+   return(true);
+  }
+string JPWLedgerPreparationTable(const int table,const bool old)
+  { return(old ? (table==0 ? "temp.jpw_old_deals" : "temp.jpw_old_orders") :
+                 (table==0 ? "temp.jpw_work_deals" : "temp.jpw_work_orders")); }
+bool JPWLedgerStageOld(const int db,const int table,const long ticket,const long revision,
+                      const string payload,const string digest,const long observed)
+  {
+   if(table<0 || table>1 || ticket<=0 || revision<1) return(false);
+   string actual=""; if(!JPWRaizNHash(payload,actual) || actual!=digest) return(false);
+   string sql="INSERT INTO "; sql+=JPWLedgerPreparationTable(table,true); sql+=" VALUES(?1,?2,?3,?4,?5)";
+   if(!JPWLedgerWriteBound(db,sql,ticket,revision,payload,digest,observed)) return(false);
+   sql="INSERT INTO "; sql+=JPWLedgerPreparationTable(table,false); sql+=" VALUES(?1,?2,?3,?4,?5,0,'','',0)";
+   return(JPWLedgerWriteBound(db,sql,ticket,revision,payload,digest,observed));
+  }
+// native=1 is a historical source witness; native=2 is a current pending.
+// native=0 changes derived/tombstone state without rewriting source evidence.
+bool JPWLedgerStageRaw(const int db,const int table,const long ticket,const string payload,
+                      const int native,string &reason)
+  {
+   reason=""; if(table<0 || table>1 || ticket<=0 || native<0 || native>2) return(false);
+   string digest=""; if(!JPWRaizNHash(payload,digest)) return(false);
+   long revision=0; string old="",old_digest="";
+   string sql="SELECT revision,payload,digest FROM "; sql+=JPWLedgerPreparationTable(table,true); sql+=" WHERE ticket=?1";
+   int q=DatabasePrepare(db,sql); if(q==INVALID_HANDLE || !DatabaseBind(q,0,ticket)) { if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(false); }
+   ResetLastError(); bool found=DatabaseRead(q),ok=true;
+   if(found) ok=DatabaseColumnLong(q,0,revision) && DatabaseColumnText(q,1,old) && DatabaseColumnText(q,2,old_digest) && revision>0 && revision<LONG_MAX;
+   else ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA);
+   DatabaseFinalize(q); if(!ok) return(false);
+   int changed=(!found || old!=payload ? 1 : 0); if(changed!=0) revision++;
+   int seen=0; string witnessed="",witness_hash="";
+   sql="SELECT seen,native_payload,native_digest FROM "; sql+=JPWLedgerPreparationTable(table,false); sql+=" WHERE ticket=?1";
+   q=DatabasePrepare(db,sql); if(q==INVALID_HANDLE || !DatabaseBind(q,0,ticket)) { if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(false); }
+   ResetLastError(); bool staged=DatabaseRead(q);
+   if(staged) ok=DatabaseColumnInteger(q,0,seen) && DatabaseColumnText(q,1,witnessed) && DatabaseColumnText(q,2,witness_hash);
+   else ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA);
+   DatabaseFinalize(q); if(!ok) return(false);
+   if(native==1)
+     { if(witnessed!="") { reason="Ticket histórico duplicado na captura"; return(false); }
+       witnessed=payload; witness_hash=digest; seen=1; }
+   else if(native==2 && seen==0) seen=2;
+   sql="INSERT OR REPLACE INTO "; sql+=JPWLedgerPreparationTable(table,false); sql+=" VALUES(?1,?2,?3,?4,0,?5,?6,?7,?8)";
+   q=DatabasePrepare(db,sql);
+   ok=q!=INVALID_HANDLE && DatabaseBind(q,0,ticket) && DatabaseBind(q,1,revision) && DatabaseBind(q,2,payload) &&
+      DatabaseBind(q,3,digest) && DatabaseBind(q,4,seen) && DatabaseBind(q,5,witnessed) && DatabaseBind(q,6,witness_hash) && DatabaseBind(q,7,changed);
+   if(ok) { ResetLastError(); DatabaseRead(q); ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA); }
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
+   if(ok && table==0 && native==1)
+     { q=DatabasePrepare(db,"DELETE FROM temp.jpw_faults WHERE ticket=?1"); ok=q!=INVALID_HANDLE && DatabaseBind(q,0,ticket);
+       if(ok) { ResetLastError(); DatabaseRead(q); ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA); } if(q!=INVALID_HANDLE) DatabaseFinalize(q); }
+   return(ok);
+  }
+bool JPWLedgerStageWitness(const int db,const int table,const long ticket,const string payload,string &reason)
+  {
+   reason=""; string sql="SELECT native_payload,native_digest FROM "; sql+=JPWLedgerPreparationTable(table,false); sql+=" WHERE ticket=?1";
+   int q=DatabasePrepare(db,sql); string expected="",digest="",actual="";
+   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,ticket) && DatabaseRead(q) && DatabaseColumnText(q,0,expected) &&
+      DatabaseColumnText(q,1,digest) && expected!="" && JPWRaizNHash(payload,actual) && actual==digest && expected==payload;
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
+   if(!ok) reason="Conteúdo histórico mudou entre fatias/revalidação; tentativa invalidada";
+   return(ok);
+  }
+bool JPWLedgerStageProjection(const int db,const int row,const string payload,const bool old)
+  {
+   string digest=""; if(row<0 || !JPWRaizNHash(payload,digest)) return(false);
+   int q=DatabasePrepare(db,old ? "INSERT INTO temp.jpw_old_projection VALUES(?1,?2,?3)" : "INSERT INTO temp.jpw_projection VALUES(?1,?2,?3)");
+   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,row) && DatabaseBind(q,1,payload) && DatabaseBind(q,2,digest);
+   if(ok) { ResetLastError(); DatabaseRead(q); ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA); }
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(ok);
+  }
+bool JPWLedgerStageDelete(const int db,const long ticket,string &reason)
+  {
+   int q=DatabasePrepare(db,"SELECT payload,seen FROM temp.jpw_work_deals WHERE ticket=?1");
+   if(q==INVALID_HANDLE || !DatabaseBind(q,0,ticket)) { if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(false); }
+   ResetLastError(); bool found=DatabaseRead(q),ok=true; string raw=""; int seen=0;
+   if(found) ok=DatabaseColumnText(q,0,raw) && DatabaseColumnInteger(q,1,seen);
+   else ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA);
+   DatabaseFinalize(q); if(!ok) return(false); if(found && seen==1) return(true);
+   if(found) { JPWLedgerDeal d; if(!JPWLedgerDecodeDeal(raw,d)) return(false); d.deleted=1;
+     if(!JPWLedgerStageRaw(db,0,ticket,JPWLedgerEncodeDeal(d),0,reason)) return(false); }
+   q=DatabasePrepare(db,found ? "DELETE FROM temp.jpw_faults WHERE ticket=?1" :
+      "INSERT OR IGNORE INTO temp.jpw_faults VALUES(?1,'DELETE_ORIGIN_UNKNOWN')");
+   ok=q!=INVALID_HANDLE && DatabaseBind(q,0,ticket);
+   if(ok) { ResetLastError(); DatabaseRead(q); ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA); }
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(ok);
+  }
+bool JPWLedgerStageScalar(const int db,const string sql,long &value)
+  { int q=DatabasePrepare(db,sql); bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,value);
+    if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(ok); }
+bool JPWLedgerPreparationBaseMatches(const int db,const string key,const long generation,
+                                   const string payload,const string digest,string &reason)
+  {
+   int q=DatabasePrepare(db,"SELECT schema_version,generation,payload,digest FROM main.ledger_meta WHERE id=1 AND account_key=?1");
+   int schema=0; long actual_generation=0; string actual_payload="",actual_digest="";
+   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,key) && DatabaseRead(q) && DatabaseColumnInteger(q,0,schema) &&
+      DatabaseColumnLong(q,1,actual_generation) && DatabaseColumnText(q,2,actual_payload) && DatabaseColumnText(q,3,actual_digest) &&
+      schema==JPW_LEDGER_SCHEMA && actual_generation==generation && actual_payload==payload && actual_digest==digest;
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
+   long bad=0;
+   for(int table=0;ok && table<2;table++)
+     {
+      string main_table=(table==0 ? "main.ledger_deals" : "main.ledger_orders");
+      string old_table=JPWLedgerPreparationTable(table,true);
+      string sql="SELECT COUNT(*) FROM "; sql+=main_table;
+      sql+=" m LEFT JOIN "; sql+=old_table;
+      sql+=" o ON m.ticket=o.ticket WHERE o.ticket IS NULL OR m.revision<>o.revision OR m.payload<>o.payload OR m.digest<>o.digest OR m.observed<>o.observed";
+      ok=JPWLedgerStageScalar(db,sql,bad) && bad==0;
+      sql="SELECT COUNT(*) FROM "; sql+=old_table; sql+=" o LEFT JOIN "; sql+=main_table; sql+=" m ON o.ticket=m.ticket WHERE m.ticket IS NULL";
+      ok=ok && JPWLedgerStageScalar(db,sql,bad) && bad==0;
+     }
+   string sql="SELECT COUNT(*) FROM main.ledger_projection m LEFT JOIN temp.jpw_old_projection o ON m.rowno=o.rowno WHERE m.generation=";
+   sql+=JPWLedgerInt(generation); sql+=" AND (o.rowno IS NULL OR m.payload<>o.payload OR m.digest<>o.digest)";
+   if(ok && generation>0) ok=JPWLedgerStageScalar(db,sql,bad) && bad==0;
+   sql="SELECT COUNT(*) FROM temp.jpw_old_projection o LEFT JOIN main.ledger_projection m ON o.rowno=m.rowno AND m.generation=";
+   sql+=JPWLedgerInt(generation); sql+=" WHERE m.rowno IS NULL";
+   if(ok && generation>0) ok=JPWLedgerStageScalar(db,sql,bad) && bad==0;
+   if(ok) ok=JPWLedgerStageScalar(db,"SELECT COUNT(*) FROM main.ledger_faults m LEFT JOIN temp.jpw_old_faults o ON m.ticket=o.ticket WHERE o.ticket IS NULL OR m.code<>o.code",bad) && bad==0 &&
+      JPWLedgerStageScalar(db,"SELECT COUNT(*) FROM temp.jpw_old_faults o LEFT JOIN main.ledger_faults m ON m.ticket=o.ticket WHERE m.ticket IS NULL",bad) && bad==0;
+   if(!ok) reason="Base persistida mudou/corrompeu durante preparação; escrita recusada";
+   return(ok);
+  }
+bool JPWLedgerPublishPrepared(const int db,JPWLedgerView &view,const string composition,const int count,
+                            const long generation,const string prior_payload,const string prior_digest,string &reason)
+  {
+   reason=""; if(generation<0 || generation>=LONG_MAX-1 || count<0 || count>JPW_LEDGER_MAX_CYCLES) return(false);
+   if(!DatabaseTransactionBegin(db)) { reason="Ledger ocupado; publicação não iniciada"; return(false); }
+   bool ok=JPWLedgerPreparationBaseMatches(db,view.account_key,generation,prior_payload,prior_digest,reason);
+   // Invariant audit is rechecked under the publication lock, before writes.
+   long bad=0;
+   if(ok) ok=JPWLedgerStageScalar(db,"SELECT COUNT(*) FROM (SELECT ticket,MAX(revision) AS last_revision FROM main.ledger_deal_revisions GROUP BY ticket) r LEFT JOIN main.ledger_deals d ON d.ticket=r.ticket WHERE d.ticket IS NULL OR d.revision<>r.last_revision",bad) && bad==0 &&
+      JPWLedgerStageScalar(db,"SELECT COUNT(*) FROM main.ledger_deals d LEFT JOIN main.ledger_deal_revisions r ON r.ticket=d.ticket AND r.revision=d.revision WHERE r.ticket IS NULL OR r.payload<>d.payload OR r.digest<>d.digest",bad) && bad==0;
+   string wall=JPWLedgerInt(view.observed_utc),sql="INSERT INTO main.ledger_deal_revisions SELECT ticket,revision,payload,digest,";
+   sql+=wall; sql+=" FROM temp.jpw_work_deals WHERE changed=1";
+   if(ok) ok=JPWLedgerSQL(db,sql);
+   sql="INSERT OR REPLACE INTO main.ledger_deals SELECT ticket,revision,payload,digest,"; sql+=wall; sql+=" FROM temp.jpw_work_deals WHERE changed=1";
+   if(ok) ok=JPWLedgerSQL(db,sql);
+   sql="INSERT OR REPLACE INTO main.ledger_orders SELECT ticket,revision,payload,digest,"; sql+=wall; sql+=" FROM temp.jpw_work_orders WHERE changed=1";
+   if(ok) ok=JPWLedgerSQL(db,sql) && JPWLedgerSQL(db,"DELETE FROM main.ledger_faults; INSERT INTO main.ledger_faults SELECT ticket,code FROM temp.jpw_faults");
+   view.generation=generation+1;
+   sql="INSERT INTO main.ledger_projection SELECT "; sql+=JPWLedgerInt(view.generation); sql+=",rowno,payload,digest FROM temp.jpw_projection";
+   if(ok) ok=JPWLedgerSQL(db,sql);
+   string raw=JPWLedgerEncodeView(view,count,composition),digest="";
+   if(ok) ok=JPWRaizNHash(raw,digest);
+   int q=INVALID_HANDLE;
+   if(ok) { q=DatabasePrepare(db,"UPDATE main.ledger_meta SET generation=?1,payload=?2,digest=?3 WHERE id=1 AND account_key=?4 AND generation=?5");
+      ok=q!=INVALID_HANDLE && DatabaseBind(q,0,view.generation) && DatabaseBind(q,1,raw) && DatabaseBind(q,2,digest) &&
+         DatabaseBind(q,3,view.account_key) && DatabaseBind(q,4,generation);
+      if(ok) { ResetLastError(); DatabaseRead(q); ok=(GetLastError()==ERR_DATABASE_NO_MORE_DATA); }
+      if(q!=INVALID_HANDLE) DatabaseFinalize(q); }
+   sql="DELETE FROM main.ledger_projection WHERE generation<"; sql+=JPWLedgerInt(view.generation-1);
+   if(ok) ok=JPWLedgerSQL(db,sql);
+   sql="SELECT COUNT(*) FROM main.ledger_projection WHERE generation="; sql+=JPWLedgerInt(view.generation);
+   if(ok) ok=JPWLedgerStageScalar(db,sql,bad) && bad==count;
+   sql="SELECT COUNT(*) FROM temp.jpw_projection p LEFT JOIN main.ledger_projection m ON m.generation=";
+   sql+=JPWLedgerInt(view.generation); sql+=" AND m.rowno=p.rowno WHERE m.rowno IS NULL OR p.payload<>m.payload OR p.digest<>m.digest";
+   if(ok) ok=JPWLedgerStageScalar(db,sql,bad) && bad==0;
+   if(ok) { q=DatabasePrepare(db,"SELECT generation,payload,digest FROM main.ledger_meta WHERE id=1");
+      long checked=0; string checked_raw="",checked_digest="";
+      ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,checked) && DatabaseColumnText(q,1,checked_raw) &&
+         DatabaseColumnText(q,2,checked_digest) && checked==view.generation && checked_raw==raw && checked_digest==digest;
+      if(q!=INVALID_HANDLE) DatabaseFinalize(q); }
+   if(ok) { JPWLedgerView checked; JPWLedgerCycle rows[]; string checked_composition="";
+      ok=JPWLedgerReadProjection(db,view.account_key,checked,rows,checked_composition,reason) &&
+         checked.generation==view.generation && checked_composition==composition; }
+   if(ok) ok=DatabaseTransactionCommit(db);
+   if(!ok) { DatabaseTransactionRollback(db); view.generation=generation;
+      if(reason=="") reason="Publicação/releitura atômica recusada; geração anterior preservada"; }
+   return(ok);
+  }
 #endif
