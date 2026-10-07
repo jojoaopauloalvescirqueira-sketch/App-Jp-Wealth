@@ -113,7 +113,18 @@ EXPECTED.update("MQL5/Include/JPWealth/JPW_Genetrix_"+name+".mqh" for name in
 EXPECTED.update("MQL5/Experts/JPWealth/JPW_Genetrix_"+name+".mq5" for name in ("Supervisor","Accountant"))
 EXPECTED.update("MQL5/Scripts/JPWealth/JPW_Genetrix_"+name+"_Tests.mq5" for name in ("Risk","Ledger"))
 EXPECTED.add("GENETRIX_7X_LEDGER.md")
-assert len(EXPECTED) == 100
+# Explicit 1.18.0 additions retain all 100 previously distributed members.
+EXPECTED.update("MQL5/Include/JPWealth/JPW_PersonalHistory_" + name + ".mqh"
+                for name in ("Controller", "Core", "Export", "Store", "Terminal", "UI"))
+EXPECTED.add("MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5")
+EXPECTED.add("GENETRIX_PERSONAL_HISTORY.md")
+assert len(EXPECTED) == 108
+EXPECTED_COVERAGE = (
+    "CANDIDATE 1.18.0 — Histórico Pessoal observador, forward-only por conta/instalação; "
+    "alertas locais SL==0/60s, máximos Current/Estimated com fotografia, consulta CSV/backupJSON. "
+    "Fontes isolados; compilação/EX5/MT5 NOT_RUN; nenhuma instalação/publicação/ativação. "
+    "Base 1.17.0 RC2 preservada; estados normativos permanecem."
+)
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -167,15 +178,18 @@ def route_and_inspect(page):
     assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
     assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeveragePage').text_content()
     assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeveragePage').text_content()
-    assert MANIFEST['version'] == '1.17.0'
+    assert MANIFEST['version'] == '1.18.0'
     assert MANIFEST['productName'] == 'JPW GENETRIX'
     assert 'Da origem da operação' in page.locator('#jpwLeverageOverview').text_content()
     assert 'medidas do Fibonacci importado permanecem indisponíveis' in page.locator('#jpwGenetrixDefinition').text_content()
-    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 100
-    for phrase in ('NoCuda Channels', 'seis métricas', 'Stop risk',
-                   'saldo atual é informativo', 'Saldo Inicial de Referência',
-                   'P-21 canônico permanece PENDING'):
-        assert phrase in MANIFEST['coverage']
+    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 108
+    assert MANIFEST['coverage'] == EXPECTED_COVERAGE
+    assert MANIFEST['nativeArtifact'] is None
+    assert MANIFEST['genetrixCandidate']['native'] == 'NOT_RUN'
+    assert MANIFEST['downloads']['compiled']['available'] is False
+    for kind in ('mathematics', 'compilation', 'terminal'):
+        assert MANIFEST['validation'][kind]['status'] == 'pending'
+        assert 'NOT_RUN' in MANIFEST['validation'][kind]['detail']
     assert set(page.locator('[data-jpw-leverage-meta="version"]').all_text_contents()) == {MANIFEST['version']}
     assert all(MANIFEST['validation']['mathematics']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="mathematics"]').all_text_contents())
     assert all(MANIFEST['validation']['compilation']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="compilation"]').all_text_contents())
@@ -304,6 +318,19 @@ def verify_guide(page):
     expected_destinations["JPW_NoCuda_Logo.bmp"] = "MQL5/Images/JPWealth/ · recurso incorporado na compilação"
     expected_destinations["JPW_Genetrix_Brand.mqh"] = "MQL5/Include/JPWealth/"
     expected_destinations.update({"JPW_Genetrix_Logo_"+theme+"_"+str(scale)+".bmp": "MQL5/Images/JPWealth/ · recurso incorporado na compilação" for theme in ("Light", "Dark") for scale in (100,125,150,200)})
+    expected_destinations.update({"JPW_Genetrix_" + name + ".mqh": "MQL5/Include/JPWealth/"
+                                  for name in ("Ledger_Bridge", "Ledger_Core", "Ledger_Store", "Ledger_Terminal",
+                                               "Risk_Core", "Risk_Store", "Risk_Terminal", "UI")})
+    expected_destinations.update({"JPW_Genetrix_" + name + ".mq5": "MQL5/Experts/JPWealth/"
+                                  for name in ("Accountant", "Supervisor")})
+    expected_destinations.update({"JPW_PersonalHistory_" + name + ".mqh": "MQL5/Include/JPWealth/"
+                                  for name in ("Controller", "Core", "Export", "Store", "Terminal", "UI")})
+    expected_destinations.update({name: "MQL5/Scripts/JPWealth/" for name in
+                                  ("JPW_Genetrix_Ledger_Tests.mq5", "JPW_Genetrix_Risk_Tests.mq5",
+                                   "JPW_PersonalHistory_Tests.mq5")})
+    expected_destinations.update({name: "Referência no ZIP · não copiar para MQL5" for name in
+                                  ("AGENTS.md", "GENETRIX_7X_LEDGER.md", "GENETRIX_PERSONAL_HISTORY.md", "README.md")})
+    assert len(expected_destinations) == rows.count() == 107
     assert {row.locator('th').text_content(): row.locator('td').text_content()
             for row in rows.all()} == expected_destinations
     assert 'não são compilados separadamente' in page.locator('#jpwLeverageCompile').text_content()
@@ -343,11 +370,11 @@ def verify_guide(page):
     assert 'InpUpdateSeconds' in guide and '30 segundos' in guide and '5 segundos' in guide
     assert 'não garante intervalos exatos' in guide
     assert 'DD / saldo: 3,00%' in guide and 'não é uma linha adicional' in guide
-    assert 'seis linhas pequenas e cinzas' in guide
+    assert 'sete linhas pequenas e cinzas' in guide
     assert 'O Cockpit separa resumo, Stops, Raiz N' in guide
     cockpit = page.locator('#jpwLeverageCockpit').text_content()
     assert page.locator('#jpwLeverageCockpit').count() == 1
-    for phrase in ('seis cartões', 'Estado dos dados', 'última captura registrada',
+    for phrase in ('sete cartões', 'Estado dos dados', 'última captura registrada',
                    'LAST · NOT ACTIVE',
                    'não comprova que o EA está ativo agora', 'Cockpit → Ajustes',
                    'Restaurar padrão', 'gráfico atual', 'modelo/template do MT5',
@@ -443,7 +470,7 @@ def verify_guide(page):
     assert 'amostra vencedora em UTC do relógio do computador' in viewer
     assert 'não uma série temporal' in viewer
     assert 'DD / saldo atual ou estimado' in viewer
-    assert 'não altera as seis linhas do gráfico' in viewer
+    assert 'não altera as sete linhas do gráfico' in viewer
     assert 'Ausência de registro não significa máximo zero' in viewer
     assert 'MDD pico-a-vale' in viewer
     assert 'Experts' in viewer and 'arquivos locais de log' in viewer
@@ -627,7 +654,9 @@ def verify_archive(raw):
     assert len(raw) == SOURCE['bytes']
     assert sha256(raw).hexdigest() == SOURCE['sha256']
     with ZipFile(BytesIO(raw)) as bundle:
-        names = set(bundle.namelist())
+        listed_names = bundle.namelist()
+        names = set(listed_names)
+        assert len(listed_names) == len(names) == 108
         assert EXPECTED == names, names
         assert names == {Path(path).relative_to('mt5/jpw-alavancagem-atual').as_posix()
                          for path in MANIFEST['sourceFiles']}, names
