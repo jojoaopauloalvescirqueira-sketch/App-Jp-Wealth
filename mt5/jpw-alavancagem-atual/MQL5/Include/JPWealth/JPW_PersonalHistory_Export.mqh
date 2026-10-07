@@ -58,17 +58,17 @@ bool JPWPersonalBackupBuild(const string key,string &json,string &reason)
   {
    json=""; reason=""; JPWPersonalStoreContext ctx;
    if(!JPWPersonalOpen(key,false,"",0,0,ctx)) { reason=ctx.reason; return(false); }
-   if(!DatabaseTransactionBegin(ctx.db)) { JPWPersonalClose(ctx,0,0); reason="Backup ocupado"; return(false); }
+   bool valid=JPWPersonalIntegrity(ctx.db,reason);
    int q=DatabasePrepare(ctx.db,"SELECT sequence,started_wall,last_wall FROM ph_meta WHERE id=1");
    long sequence=0,started=0,last=0;
-   bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,sequence) && DatabaseColumnLong(q,1,started) && DatabaseColumnLong(q,2,last);
+   bool ok=valid && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,sequence) && DatabaseColumnLong(q,1,started) && DatabaseColumnLong(q,2,last) && started>0 && last>=started;
    if(q!=INVALID_HANDLE) DatabaseFinalize(q);
    string body=JPWPersonalBackupHead(key,sequence,started,last); long count=0;
    q=DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows ORDER BY sequence");
    ok=ok && q!=INVALID_HANDLE; ResetLastError();
    if(q!=INVALID_HANDLE) while(ok && DatabaseRead(q))
      {
-      JPWPersonalRow row; ok=JPWPersonalReadRow(q,row) && row.sequence==count+1;
+      JPWPersonalRow row; ok=JPWPersonalReadRow(q,row,key) && row.sequence==count+1;
       if(!ok) break;
       if(count>0) body+=",\n"; body+=JPWPersonalBackupRow(row); count++;
       if(StringLen(body)>JPW_PERSONAL_BACKUP_MAX_CHARS) { reason="Backup excede capacidade desta exportação; dados preservados"; ok=false; break; }
@@ -77,7 +77,7 @@ bool JPWPersonalBackupBuild(const string key,string &json,string &reason)
    if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA && count==sequence;
    if(q!=INVALID_HANDLE) DatabaseFinalize(q);
    body+="\n]"; string digest=""; if(ok) ok=JPWPersonalHash(body,digest);
-   if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
+   ok=JPWPersonalReadFinish(ctx,ok);
    JPWPersonalClose(ctx,0,0);
    if(ok) json=body+",\n\"sha256\":\""+digest+"\"\n}";
    else if(reason=="") reason="Backup não confirmado; integridade/seq recusada";
@@ -119,7 +119,8 @@ bool JPWPersonalBackupParse(const string json,string &key,long &started,long &la
          JPWPersonalBackupValue(lines[i],"sha256",row.digest);
       row.sequence=StringToInteger(seq); row.wall=StringToInteger(wall); string actual="";
       string canonical=JPWPersonalBackupRow(row)+(i<total-4 ? "," : "");
-      ok=ok && row.sequence==count+1 && row.wall>0 && JPWPersonalHash(row.payload,actual) && actual==row.digest && canonical==lines[i];
+      ok=ok && row.sequence==count+1 && JPWPersonalEnvelopeValid(row.category,row.item_id,row.wall,row.payload,key) &&
+         JPWPersonalHash(row.payload,actual) && actual==row.digest && canonical==lines[i];
       if(!ok) { ArrayResize(rows,0); reason="Linha/sequência/checksum do backup recusada"; return(false); }
       int n=ArraySize(rows); if(ArrayResize(rows,n+1)!=n+1) { ArrayResize(rows,0); reason="Capacidade de recuperação"; return(false); }
       rows[n]=row; if(count>0) body+=",\n"; body+=JPWPersonalBackupRow(row); count++;
@@ -185,20 +186,20 @@ bool JPWPersonalExport(const string key,const bool backup,string &path,string &r
    else
      {
       JPWPersonalStoreContext ctx;
-      ok=JPWPersonalOpen(key,false,"",0,0,ctx) && DatabaseTransactionBegin(ctx.db);
+      ok=JPWPersonalOpen(key,false,"",0,0,ctx);
       string header="account_key;sequence;category;item_id;observed_utc_seconds;subject_kind;subject_id_text;ticket_text;symbol;state;leverage;quality;payload;sha256\r\n";
       if(ok) ok=JPWPersonalWriteText(file,header);
       int q=ok ? DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows ORDER BY sequence") : INVALID_HANDLE;
       ok=ok && q!=INVALID_HANDLE; ResetLastError();
       if(q!=INVALID_HANDLE) while(ok && DatabaseRead(q))
         {
-         JPWPersonalRow row; ok=JPWPersonalReadRow(q,row); if(!ok) break;
+         JPWPersonalRow row; ok=JPWPersonalReadRow(q,row,key); if(!ok) break;
          string line=JPWPersonalCSVRow(key,row);
          ok=JPWPersonalWriteText(file,line); ResetLastError();
         }
       if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA;
       if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-      if(ctx.db!=INVALID_HANDLE) { if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db); JPWPersonalClose(ctx,0,0); }
+      if(ctx.db!=INVALID_HANDLE) { ok=JPWPersonalReadFinish(ctx,ok); JPWPersonalClose(ctx,0,0); }
      }
    ResetLastError(); FileFlush(file); if(GetLastError()!=0) ok=false; FileClose(file);
    if(!ok) { reason="Exportação incompleta; arquivo parcial preservado, sem confirmação de backup"; return(false); }

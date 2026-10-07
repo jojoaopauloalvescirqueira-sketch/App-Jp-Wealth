@@ -130,9 +130,9 @@ def check_narrow_chart(hud: str) -> None:
     require('if(visible==0)' in hud and 'Open Cockpit' in hud,
             'all-hidden configuration must retain a visible cockpit launcher')
     require('const int font_height=(int)text_height;' in hud and
-            'const int header_safe=(font_height*3+10>44 ? font_height*3+10 : 44);' in hud and
+            'const int header_safe=(font_height*3+10>JPWUIDesignPx(44) ? font_height*3+10 : JPWUIDesignPx(44));' in hud and
             'const int inset_y=(!lower && InpOffsetY<header_safe ? header_safe : InpOffsetY);' in hud,
-            'upper HUD must use stable text height below the native instrument heading')
+            'upper HUD must use stable measured text height and a DPI-scaled 44 px reserve below the native instrument heading')
     require('JPWPanelHUD(' in hud and 'const int height=active*row_height+button_height+3*pad;' in hud,
             'all four corners must fit the complete block including its button')
 
@@ -227,20 +227,34 @@ def check_cockpit_navigation(source: str) -> None:
     cockpit = body_of(source, 'void JPWRenderCockpit()')
     event = body_of(source, 'void JPWHandleChartEvent(')
     size = re.search(r'JPWPanelCockpit\(chart_width,chart_height,(\d+),(\d+),g_details_rect\)', cockpit)
+    # 1.19 names stable route/action IDs while keeping the original semantics.
+    required_ids = {"JPW_ROUTE_OVERVIEW":7, "JPW_ROUTE_SETTINGS":10,
+                    "JPW_ROUTE_STOPS":11, "JPW_ROUTE_RAIZN":12,
+                    "JPW_ROUTE_STOP_ROW":14, "JPW_ACTION_CLOSE":37,
+                    "JPW_ACTION_TAB_FIRST":40, "JPW_ACTION_TAB_STOPS":41,
+                    "JPW_ACTION_TAB_RAIZN":42, "JPW_ACTION_TAB_SYSTEM":43,
+                    "JPW_ACTION_TAB_SETTINGS":44, "JPW_ACTION_TAB_HISTORY":120}
+    for name, value in required_ids.items():
+        require(re.search(r'\b'+name+r'\s*=\s*'+str(value)+r'\b', source) is not None,
+                f'stable route/action identity changed: {name}')
     require(size is not None and int(size[1]) >= 1000 and int(size[2]) >= 700 and
-            'if(g_details_rect.height<min_structure || inner<110)' in cockpit and
-            'JPWRaizCreateButton(37,"×"' in cockpit and
-            'Amplie o gráfico para ver o cockpit' in cockpit,
-            'tiny viewport must retain a reachable close control and readable hint')
-    require('g_raiz_tab==7 ? "Visão geral"' in cockpit and
-            'g_raiz_tab==11 || g_raiz_tab==14 ? "Stops"' in cockpit and
-            'g_raiz_tab==12 ? "Raiz N"' in cockpit and
-            'g_raiz_tab==10 ? "Ajustes"' in cockpit and
+            'if(g_details_rect.height<min_structure || inner<JPWUIDesignPx(110))' in cockpit and
+            'JPWRaizCreateButton(JPW_ACTION_CLOSE,"×"' in cockpit and
+            'Conta · amplie o gráfico' in cockpit and
+            'if(close_height>0 && close_width>0)' in cockpit and
+            'OBJPROP_YSIZE,close_height' in cockpit,
+            'tiny viewport must retain a reachable bounded close control and readable hint')
+    require('g_raiz_tab==JPW_ROUTE_OVERVIEW ? "Visão geral"' in cockpit and
+            'g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW ? "Stops"' in cockpit and
+            'g_raiz_tab==JPW_ROUTE_RAIZN ? "Raiz N"' in cockpit and
+            'g_raiz_tab==JPW_ROUTE_SETTINGS ? "Ajustes"' in cockpit and
             'JPWRaizCreateButton(tab_actions[i]' in cockpit and
-            'const string tabs[6]' in cockpit and 'Histórico Pessoal' in cockpit and
-            'const int tab_actions[6]={40,41,42' in cockpit and '43,44,120' in cockpit,
-            'cockpit must retain all five existing tabs and add Histórico Pessoal with stable actions')
-    require('if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=7)' in event and
+            'string tabs[6]' in cockpit and 'Histórico Pessoal' in cockpit and
+            'const int tab_actions[6]={JPW_ACTION_TAB_FIRST,JPW_ACTION_TAB_STOPS,JPW_ACTION_TAB_RAIZN,' in cockpit and
+            'JPW_ACTION_TAB_SYSTEM,JPW_ACTION_TAB_SETTINGS,JPW_ACTION_TAB_HISTORY' in cockpit and
+            'JPWUIDesignNavColumns(tabs,6,inner,g_details_font,g_details_pad)' in cockpit,
+            'cockpit must retain all six tabs, stable actions and content-measured navigation')
+    require('if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=JPW_ROUTE_OVERVIEW)' in event and
             'if(!JPWDetailsContextCurrent()) return;' in event and
             'lparam==37 || lparam==39' in event and
             'lparam>=49 && lparam<=55' in event,
@@ -510,6 +524,7 @@ def check_live_config_and_details(source: str) -> None:
 
 def main() -> None:
     source = expanded_source(INDICATOR)
+    raw_source = source
     # Legacy routes retain their numeric protocol; naming them must not remove
     # the existing characterization of legacy edit/navigation paths.
     for name, value in re.findall(r"(JPW_(?:ROUTE|ACTION)_\w+)=(\d+)", source):
@@ -522,7 +537,7 @@ def main() -> None:
     check_six_labels_and_lifecycle(source, render)
     check_same_chart_dialog_cleanup(source)
     check_live_sample_invalidation(source)
-    check_cockpit_navigation(source)
+    check_cockpit_navigation(raw_source)
     check_defaults_and_status_source(source)
     check_account_metrics_source(source, render)
     check_genesis_source(source, render)

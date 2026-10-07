@@ -61,3 +61,8 @@ npm-debug.log*
 *.tar.gz
 *.tgz
 *.7z
+
+# Exact GENETRIX candidate downloads: deterministic, hash-bound to the manifest.
+# Other archives remain excluded; native runtime/installation are still pending.
+!downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.20.0.zip
+!downloads/jpw-alavancagem-atual/JPW_Alavancagem_Atual_Compilado_v1.20.0.zip

@@ -33,6 +33,7 @@ HOST = (
     "leverage_stop_risk_test", "leverage_stop_ui_test",
     "leverage_reliability_test", "leverage_diagnostics_test",
     "leverage_scheduler_test",
+    "core_monitor_judge", "core_replay_judge", "core_preparation_judge",
 )
 DISTRIBUTION = ("leverage_package_test", "leverage_page_test")
 
@@ -59,6 +60,8 @@ def input_hashes(root: Path = ROOT) -> dict[str, str]:
     paths: set[Path] = set()
     for pattern in (
         "mt5/jpw-alavancagem-atual/**/*", "tools/leverage_*.py",
+        "tools/core_*_judge.py", "tools/jpw_genetrix_ledger_test.py",
+        "tests/fixtures/genetrix/*.json",
         "tools/build_leverage_package.py", "tools/browser_bootstrap_fixture.py",
         "downloads/jpw-alavancagem-atual/*", ".github/workflows/mt5-host.yml",
         "requirements-dev.txt", "src/**/*", "index.html", "build-id.js",

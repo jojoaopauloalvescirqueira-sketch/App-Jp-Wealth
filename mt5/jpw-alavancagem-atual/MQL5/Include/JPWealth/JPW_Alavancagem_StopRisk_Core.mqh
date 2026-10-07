@@ -139,7 +139,12 @@ bool JPWStopRiskAggregate(JPWStopRiskSample &sample,JPWStopRiskRow &rows[],
         { reason="Soma monetaria invalida"; return(false); }
      }
    total=positions_money+pending_money;
-   percent_balance=100.0*total/sample.balance;
+   // Keep the usual evaluation (including tiny ratios). If scaling the total
+   // overflows, divide first; a representable percentage must not become N/A
+   // solely because of an intermediate product.
+   const double scaled_total=100.0*total;
+   percent_balance=(MathIsValidNumber(scaled_total) ? scaled_total/sample.balance :
+                    (total/sample.balance)*100.0);
    if(!MathIsValidNumber(total) || total<0.0 ||
       !MathIsValidNumber(percent_balance) || percent_balance<0.0)
      { reason="Risco ou percentual invalido"; return(false); }

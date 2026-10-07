@@ -1,5 +1,6 @@
 #ifndef JPW_ALAVANCAGEM_COORDINATOR_MQH
 #define JPW_ALAVANCAGEM_COORDINATOR_MQH
+#include <JPWealth/JPW_Genetrix_Monitor_UI.mqh>
 // Indicator runtime component; included after its instance state.
 long g_indicator_diagnostic_instance=0;
 
@@ -137,14 +138,16 @@ void JPWGenetrixCollectLedger()
       JPWGenetrixInvalidate(reason=="" ? "Ledger indisponível ou de outro contexto" : reason,false);
       g_compensated_quality=JPW_VIEW_NA;
      }
-   else if(ArrayResize(g_genetrix_cycles,ArraySize(cycles))!=ArraySize(cycles) ||
-           (ArraySize(cycles)>0 && ArrayCopy(g_genetrix_cycles,cycles)!=ArraySize(cycles)))
+   else if(ArrayResize(g_genetrix_cycles,ArraySize(cycles))!=ArraySize(cycles))
      {
       JPWGenetrixInvalidate("Não foi possível aceitar o catálogo integral de ciclos",false);
       g_compensated_quality=JPW_VIEW_NA;
      }
    else
      {
+      // JPWLedgerCycle contains strings. ArrayCopy does not support structures
+      // with initialization requirements; use same-type element assignment.
+      for(int i=0;i<ArraySize(cycles);i++) g_genetrix_cycles[i]=cycles[i];
       const string prior=g_genetrix_selected_cycle;
       g_genetrix_view=view;
       g_genetrix_ledger_available=true;
@@ -169,8 +172,34 @@ void JPWGenetrixCollectLedger()
      }
   }
 
+void JPWCollectMonitorDiagnostics()
+  {
+   // A technical read is queued outside paint; financial samples and the
+   // producer heartbeat/capture timestamps remain untouched.
+   if(!g_raiz_details_open || g_raiz_tab!=JPW_ROUTE_SYSTEM) return;
+   const ulong now=GetTickCount64();
+   if(g_monitor_ui_context==g_diagnostic_context && now<g_monitor_ui_next_ms) return;
+   JPWAccount before,after;
+   if(!g_account_known || g_diagnostic_context=="" || !JPWReadAccount(before) ||
+      !JPWAccountsEqual(g_account,before))
+     { JPWMonitorUIInvalidate("Conta indisponível ou alterada; diagnóstico anterior descartado"); return; }
+   const string context=g_diagnostic_context;
+   JPWMonitorSnapshot snapshot; string reason="";
+   const bool found=JPWMonitorReadStatus(context,snapshot,reason);
+   if(!JPWReadAccount(after) || !JPWAccountsEqual(before,after) ||
+      g_diagnostic_context!=context || (found && snapshot.account_key!=context))
+     { JPWMonitorUIInvalidate("Conta mudou durante a consulta; diagnóstico descartado"); return; }
+   if(found) { g_monitor_ui=snapshot; g_monitor_ui_available=true; }
+   else { ZeroMemory(g_monitor_ui); g_monitor_ui_available=false; }
+   g_monitor_ui_context=context;
+   g_monitor_ui_reason=reason;
+   g_monitor_ui_next_ms=GetTickCount64()+1000;
+  }
+
 void JPWRefreshRequestedRecords()
   {
+   if(!JPWCoordinatorBudgetRemaining()) return;
+   JPWCollectMonitorDiagnostics();
    if(!JPWCoordinatorBudgetRemaining()) return;
    JPWPersonalCollectUI();
    if(!JPWCoordinatorBudgetRemaining()) return;
@@ -543,6 +572,7 @@ void JPWDetailsReadStopRisk()
 
 void JPWInvalidateIdentityPresentation()
   {
+   JPWMonitorUIInvalidate("Identidade alterada; diagnóstico anterior descartado");
    JPWPersonalInvalidateContext();
    JPWGenetrixInvalidate("Identidade alterada; ledger anterior descartado");
    g_compensated_quality=JPW_VIEW_NA;

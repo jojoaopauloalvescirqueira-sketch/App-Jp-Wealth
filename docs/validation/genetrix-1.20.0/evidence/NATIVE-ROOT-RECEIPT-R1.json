@@ -1,0 +1,350 @@
+{
+  "utc": "2026-10-06T12:54:53.794285+00:00",
+  "status": "COMPILATION_PASS",
+  "targets_required": 33,
+  "targets_observed": 33,
+  "diagnostics": "0 errors /0 warnings for each target",
+  "cpu": "X64 Regular",
+  "compiler_sha256": "68d8f87dcdb443cb851a75839ae68ed606b0b661995cde8218156778db5244c2",
+  "input_freeze": "NATIVE-INPUT-FREEZE-R1.json",
+  "inputs_unchanged": true,
+  "mqlSourceFingerprint": "1290186a730aaaf8f1d5645318ff8c814a7dc821e419d9eb3c16015cadf1d783",
+  "runtimeBuildId": "8a01094f354dc52ed37e14d585b6625d11dc62614a5019aa74d5dc8da7497f1e",
+  "targets": [
+    {
+      "target": "Experts/JPWealth/JPW_Alavancagem_Observer.mq5",
+      "source_sha256": "63ad1caa3228e915ba50eb2e6404e58993911412e11a68eae50a3f2100d9366c",
+      "log_sha256": "adc9b7d2650d2e5c5507c3486301e95561ce6c4e19580c861fb2ec65748368a5",
+      "ex5_sha256": "968f4e0a3042db19f3fdab1b4ad3d50f565d1b38b10420bfac6c8eba49b69c2c",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 11649,
+      "bytes": 283550
+    },
+    {
+      "target": "Experts/JPWealth/JPW_Genetrix_Accountant.mq5",
+      "source_sha256": "eff085079eca0cc7108ec18c01f120f06f4567d3daed650927681234e3e97e24",
+      "log_sha256": "3a8279a3f89c39e21e092c0b3b2061721ef784705a2cb0bd53308614db4e0cd9",
+      "ex5_sha256": "535d6920007e1129a7f93a89dc435037afbcb1dc0bc94cbb02b7d147c8784ee5",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 4883,
+      "bytes": 103238
+    },
+    {
+      "target": "Experts/JPWealth/JPW_Genetrix_Monitor.mq5",
+      "source_sha256": "400ed73f161eb6693d01d8d48bb1a0cc5b8a864d00a8add235972f543344e5e8",
+      "log_sha256": "e8fa7f7e50c485280cbe3ac57083419fe384853e43b0fab13cecb65f433aed4a",
+      "ex5_sha256": "023e30f14cef4e322646fd89f46b7e7552916f5cff8ebe7785234b27afd28702",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 15995,
+      "bytes": 439222
+    },
+    {
+      "target": "Experts/JPWealth/JPW_Genetrix_Supervisor.mq5",
+      "source_sha256": "fe803f551b7f7d5f35f3e5b1f89937bb12259ae97b1787e4cac3a99260f51d95",
+      "log_sha256": "a826f5a2a7e0193761a950c61b4462bee506d3ba199528530aba41a620e64333",
+      "ex5_sha256": "1e49bd631b210c115127363bf90d9f5824ed7703f346f6917ee62a14f0c06660",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 5041,
+      "bytes": 122728
+    },
+    {
+      "target": "Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+      "source_sha256": "039eaa4d7ff98eea464c303a7bf5a4290e1223a4eefdf8a23fe4704c06a8fd0b",
+      "log_sha256": "9f997c430fe076afc8ce84b68dc0290fe613383a8b79ee47547b23906c44f040",
+      "ex5_sha256": "01c1f3cdbd647970029fa1f493bbcd9ad63230e1359a9b46cd9d8d601e51127c",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 29261,
+      "bytes": 1002050
+    },
+    {
+      "target": "Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "source_sha256": "1ac4b9cd039fc223998ad67e896d32e5535c9bc78cd6a4fe7c2adf2cb2e2b4ba",
+      "log_sha256": "ae6eff4810458282e91307aeb9e51011b528710bd2d89ef5b9022426273bf439",
+      "ex5_sha256": "036588649c176ea72d2e81de078afab8e05cadd185c4c13abc040aef31f57ea5",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 11369,
+      "bytes": 459246
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5",
+      "source_sha256": "56a9b7af025b1429b074238990415a12334814ac0cd4e438656c6320aba10327",
+      "log_sha256": "5896a66561aaad865435ce40df79876fd60868f55d124d28bd8ac4a38a47fa06",
+      "ex5_sha256": "26fa831d110fc1b419ee8dbccc65bad56631fb6bf0f044feefd40d2086baf91d",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2853,
+      "bytes": 42776
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5",
+      "source_sha256": "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
+      "log_sha256": "1dee48f09f825b91e6ef2fea2b939a49e4deca30eca275b5b2aabf5e14a3e74c",
+      "ex5_sha256": "994677b914fc3a816f1b495c7a0922f521976e884ee972dec10d94445165b2d3",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2481,
+      "bytes": 39828
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5",
+      "source_sha256": "8b50f01a9e9deea1dc29b12cad6ee70012b49abda84bb9dae4e81a18e19184bb",
+      "log_sha256": "f86d58808df007491326028dfbde48e93fd0be6faa1bd7d157223b0477d2babc",
+      "ex5_sha256": "b37ec10d47fee5e53ffd56085e0e829c2eb8714bc0ce311d3d47f64177394e14",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2889,
+      "bytes": 52004
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.mq5",
+      "source_sha256": "bbec66651e0535fb7e4b52bfddb130295a439e32ff9019aac982ebab94891ae2",
+      "log_sha256": "6a340ddeee1e2ba34e391ac59557cc86f64bc7d6d9336b15d413aa67b663fd49",
+      "ex5_sha256": "ff44761659bb81b450413b803a77210b405aedbb4c06be166d3175c011e3aed3",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1501,
+      "bytes": 15104
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5",
+      "source_sha256": "ad92555cc30c23fdd9f9c93ac0c5ddca79c79365398707a4637ffee655d4e6d8",
+      "log_sha256": "4cf08fba60dcb85a49e1a1bdb3e365714924151c55093690d0e16fe1f48f5ac3",
+      "ex5_sha256": "5ed955439c64f5f0a5effaa7f6009688dc846de03df4c7f930d9f816584da3de",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 3076,
+      "bytes": 61048
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.mq5",
+      "source_sha256": "e20241aecbb6598a41f048de75c0fad50190cf9a78ca19cc863e65f696672c72",
+      "log_sha256": "e35844f6e8d34a151f5dcc2f8cf5b36640b343503325bf7ce196ea296181a3e8",
+      "ex5_sha256": "7a85dac28b06caf14b3c40ec7498177121a6d2c2d57bafba88c19d98a7a6f123",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2072,
+      "bytes": 39344
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.mq5",
+      "source_sha256": "ddc970066a98bb16dff88119794e91af947973cd5ca897b4e86d899dee0c648b",
+      "log_sha256": "50431443c90b2c1cef26ff07abed7b5ff9c3821142ac5e5d24bccf3293a761f8",
+      "ex5_sha256": "b6bf3158951e5064332dcc42a3a65a4ddb35198876aad56e3a63f83a90c1fbf4",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1357,
+      "bytes": 9426
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5",
+      "source_sha256": "baa3f9f47a8e047fe626fa22af696301d4210a7ebf61be735507c29316d7ec34",
+      "log_sha256": "852d068dc405ff9b10783916ea6f30a977c1dac4aa9433e6c9cf285fc8fcc651",
+      "ex5_sha256": "df529411f65d3f51e0235e3abbef5e6680a2710538d1f40f1e9929aa73e00226",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2640,
+      "bytes": 52748
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.mq5",
+      "source_sha256": "8e247c0457ae8b9aca78d8151516f7864859675fe8f0c624cb0800c2717dfa7a",
+      "log_sha256": "319c352ca78163312b2cb6d58af433c14f89fca28e3a13827ddf2115b0e08986",
+      "ex5_sha256": "2f2b2b5c4705fa298cb97441e1dcbdc9d03a11c409fed2049d493a3a649fc213",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2594,
+      "bytes": 39710
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5",
+      "source_sha256": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
+      "log_sha256": "eafe99a0ad27dffdc6ee0926fe9fc8afa13a267cf920646f59a0f5f0f70a9902",
+      "ex5_sha256": "5bd8bffa155b578c5bfdff67993274394b816154cbe7f51f7c58db85c4379e23",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 5195,
+      "bytes": 105846
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5",
+      "source_sha256": "53779e5d00dc6f9e903dca760406173182025bd903196cc6029eb38b3e11fb7a",
+      "log_sha256": "9ffcbdd9674b2a21f6d4c8cf5682e02961e509bea69c3851d9d62062b52ecd86",
+      "ex5_sha256": "6219262ff3708c2b46e33cd125aa138a46ca4803c798900ff1df41c430f7ce03",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2998,
+      "bytes": 54816
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5",
+      "source_sha256": "55c9fd37a7d8829ddda11955b888eb9722179d01e8607edb769a78a9a0a1071e",
+      "log_sha256": "6f4dbb63298967cf2556b03574c1c3af058af42f3b5b65e63d0c4c56a0097601",
+      "ex5_sha256": "868d1a3d02b0789bd0121499cd2da72c674877d41ebf7e89afe804de38853e28",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2097,
+      "bytes": 21050
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+      "source_sha256": "3de62cd34a13673f6c23474127e16839dba378c1439fb05b53650f4488fee0b7",
+      "log_sha256": "be8b7f400af33706aff27c95fcac177e37a7f4f58b7b5b3ed8854ec003b29c8a",
+      "ex5_sha256": "21861e4ffdfc08c322248055f7a8f793ab26cf96e65abe1d7b8b341d57cefbe4",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1784,
+      "bytes": 23320
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5",
+      "source_sha256": "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
+      "log_sha256": "5134cf30a5de62239b89c03800db35fd9227d69080e5bbea11639f8c39a90b24",
+      "ex5_sha256": "dd815ea88e2282fd97cdceca6a5ffae3b22ad1765c2e3feb8db6cb8b41ea0c1e",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 5035,
+      "bytes": 101872
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5",
+      "source_sha256": "e61a63c5c203c10991301fb3ca4867578d695f1db0db52fc2538ee99d939a6dc",
+      "log_sha256": "aeb1cab867eedd75e532d30c58ae869fe34896ec75bc38a0a523bab2e2e4bb92",
+      "ex5_sha256": "276cae52cbf94288d599f0e69703dfa7f877c7eac59d5ff8ae1a3181415b11a8",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1152,
+      "bytes": 7626
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5",
+      "source_sha256": "2b1a92faf049a187b65d94e060ec2270cdd140477251935d3a7639b89429e1a4",
+      "log_sha256": "63c6ec68207cb9959f7748607f956021c0ca7383555b3b96fed36ba89f5f6277",
+      "ex5_sha256": "c44879d9d51c70303ad493b68f7fc96e220df5baa4c865da6887975572d7ddd2",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2648,
+      "bytes": 51716
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Tests.mq5",
+      "source_sha256": "db1e18181fe075f9892084076600a5f8b53cdb8970396f6d87f54165864d225d",
+      "log_sha256": "caa37413c9130f81da157de9743fae8e5e7f6f31fb23d2f0ed947f229d55e317",
+      "ex5_sha256": "4ac8c39baddde23a6e081b7df6dba393adb17fbb6c673b8619998ce70a63067e",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 3005,
+      "bytes": 65570
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.mq5",
+      "source_sha256": "bc4ee943ed3b2a783001af586835f9cc8b776b56b9c0b97ef0abe23cebc34b6c",
+      "log_sha256": "3b7f5c37f3827bf22021f55c05e36f5e023aa339b8cda2ca816cdc43c91da00a",
+      "ex5_sha256": "5b86ccb55aef03936bf6b7a35019b94c00695ff8b71f33227b42af49048ab0af",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 3801,
+      "bytes": 72318
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.mq5",
+      "source_sha256": "805c33daf4ba09be9c53a8ea9649ced243ea4cffad7467c40e231b5a1b04afd5",
+      "log_sha256": "decd9c62d204d13644edc0944500a896be62e15cac8b001f1510677443f0b838",
+      "ex5_sha256": "fed3b1882dfa5c5286fd5e06cca8b68221565eb9623ef5704a53e271289b79d2",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2199,
+      "bytes": 38948
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_Genetrix_Risk_Tests.mq5",
+      "source_sha256": "53056a0025cb359cc19ea202d4312921a2348bb1fb1e4c63e91e97482f60c41b",
+      "log_sha256": "120a0d0a177829404b79da9cd631891f462a6728aae17712edf2086c5dc0e4b3",
+      "ex5_sha256": "88cecc8fe30d2c228377857b41d02b09e96be388b266e70e02964c076a0ae95b",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2089,
+      "bytes": 36340
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5",
+      "source_sha256": "24fe2d818ea18a88e8688133a3295592ff064d60a1e8868a184e7b0100bd15f6",
+      "log_sha256": "798d5e6f7bae555db0e06b753d7c3d6922fb1ad5314aa39fb263bb9886a391ee",
+      "ex5_sha256": "51e286deab532c502c00654d16257ffa36ebbcc88bd440d74fcfdc98c0546ebf",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1385,
+      "bytes": 10428
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5",
+      "source_sha256": "e8b0c1e87ebbb240e9d3e583097ed746cb873231bdcbd65a1eba26b437c49f61",
+      "log_sha256": "8eb0b0d5b73887bc3ea840d1ece798a49672a528b8beac56ca75f94be8b5f496",
+      "ex5_sha256": "64ffedc88b1d25bce5bb153a394bded89c6996f1a3b7706fa27a4ed60674ac82",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1985,
+      "bytes": 34860
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5",
+      "source_sha256": "a70aae42b8be574654b5b306bfa7515ee79a37b264ee7b0b3d026cb48bc6cf24",
+      "log_sha256": "796d4dc374da8adcbc3853fc2408b838efeded2165f3771f6582a3ec2110e5e0",
+      "ex5_sha256": "3f63c2e62a3589f5557ad15fd82700f70168c0873ea405a608c0e16380a4dfe0",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2183,
+      "bytes": 32502
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5",
+      "source_sha256": "721774eadb99e86df51c459004b1e33575202e5bb25cce4a8cca523ebea69c0a",
+      "log_sha256": "c1dd1302333ee6a949302caaa308b4a90f19cad6c9ff9f3e481629ae0d415ea2",
+      "ex5_sha256": "f65f15557af28bc867e5fbbf96e2114726f26b47b39f1e9e16f5f9e05511576f",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1721,
+      "bytes": 19960
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5",
+      "source_sha256": "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
+      "log_sha256": "7e79609a18dcc87d72539034b45940ba1da91197e150555a083b4c517862de77",
+      "ex5_sha256": "6e4741f3e2fb94936f9d0e4d707f4dc259d0beb5000fdd1db8b3e8630c1ffecf",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 2147,
+      "bytes": 47662
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
+      "source_sha256": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+      "log_sha256": "3f7d92374bf01a61a66d7b2f7756f2429a63e6d7550aaac5d3e71bfe461c2fbd",
+      "ex5_sha256": "de0b502a234402628404f2b203f75de2248259c6ba8a1cb88fa39bc13e1211d6",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 1801,
+      "bytes": 20100
+    },
+    {
+      "target": "Scripts/JPWealth/JPW_SignalCopy_Tests.mq5",
+      "source_sha256": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
+      "log_sha256": "15351f339739af6aaa76045f95a61841df0d2d3dbe7bc7db9e22e6ad30634335",
+      "ex5_sha256": "5b477cacc061a85329af9f71ae075a4bc887204bad8bfe57cea9881fc3f12814",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 3206,
+      "bytes": 76572
+    }
+  ],
+  "raw_process_codes": "All1; these are preserved and do not determine success. Complete native logs and new artifacts are the criteria.",
+  "runtime": "NOT_RUN",
+  "operational_migration": "NOT_RUN",
+  "native_critical_sessions": "0/3",
+  "independent_review": "Separate review required"
+}

@@ -1,8 +1,44 @@
-# JPW GENETRIX — fontes MT5 v1.18.0
+# JPW GENETRIX — fontes MT5 v1.20.0
 
 **Da origem da operação à leitura do risco.**
 
-## Candidato 1.18.0: Histórico Pessoal
+## Candidato 1.20.0 — um núcleo da conta
+
+A instalação recomendada usa **um EA principal `JPW_Genetrix_Monitor` em gráfico de apoio dedicado**, reunindo as funções anteriormente distribuídas entre Observer e Accountant. O núcleo observa toda a conta, registra o Histórico Pessoal e publica a contabilidade dos ciclos; **não envia solicitações de negociação**.
+
+| Onde | Programa | Função |
+| --- | --- | --- |
+| Gráfico de apoio reservado | `JPW_Genetrix_Monitor` | Risco dos stops, observações, alertas sem SL, máximos observados, ledger e flutuante compensado. |
+| Gráficos de trabalho | `JPW_Alavancagem_Atual` — **Genetrix · Conta** | Resumo financeiro, Cockpit e leitura das publicações do núcleo. |
+| Gráficos de trabalho | `JPW_NoCuda_Channels` — **NoCuda · Gráficos** | Estudos geométricos, canais e registros técnicos. |
+| Outro gráfico, opcional | `JPW_Genetrix_Supervisor` | Proteção adicional em 7x. Continua em observação e não é requisito das leituras. |
+| Preservados para rollback | Observer e Accountant separados | Produtores anteriores; não executar simultaneamente com o Monitor. |
+
+**O MT5 aceita um EA por gráfico.** Usar um gráfico de apoio evita substituir o EA de negociação de um gráfico de trabalho. Os dois indicadores podem coexistir no mesmo gráfico. Fechar o Cockpit mantém resumo e coleta; fechar o gráfico do Monitor, substituir seu EA ou encerrar o terminal interrompe o acompanhamento. Consulte [GENETRIX_CORE_1_20_0.md](GENETRIX_CORE_1_20_0.md).
+
+**Estado desta integração:** produto 1.20.0, MQL 1.200, cálculo 1.9.0; NoCuda 1.30. Foram compilados os **33 programas em MetaEditor 6230, X64 Regular, com zero erros e zero avisos**, com fontes, logs e executáveis vinculados por hashes. O ZIP compilado contém os 33 `.ex5` e este README; o ZIP de fontes não contém executáveis. Os recibos estão em `docs/validation/genetrix-1.20.0/evidence/` no repositório.
+
+**Execução e aceite permanecem distintos:** 0/3 sessões críticas MT5, instalação `NOT_RUN`, aceite completo `INCONCLUSIVE`, seleção/cópia nativas `NOT_RUN`. A falha histórica `HIS-AC20: PRODUCT_FAIL 3/3` permanece registrada. Compilação não comprova popup, som, interface, cobertura contábil ou comportamento da corretora. O Supervisor não foi armado. Não tratar esta revisão candidata como release operacional aprovada.
+
+### Harness interno de engenharia
+
+A pasta [harness](harness/REPOSITORY_INTEGRATION.md) contém o protocolo canônico Markdown, TXT/PDF equivalentes, [manual de ativação](harness/MANUAL_DE_ATIVACAO.md), contratos de aceitação e modelos de registros. São instruções documentais para desenvolvimento e revisão, **não IA executada pelo Cockpit**. Não copiar README, AGENTS, manuais ou `harness/` para `MQL5`. A versão do harness é independente da versão do produto; estados e falhas dos pilotos não se tornam aprovação por integração no GitHub.
+
+## Base visual preservada 1.19.0
+
+Dois acessos: **Genetrix · Conta** para o resumo e Cockpit; **NoCuda · Gráficos** para os estudos técnicos. Cabeçalhos, abas, proporções, DPI e circulação lógica do teclado foram revistos. Consulte [GENETRIX_UI_1_19_0.md](GENETRIX_UI_1_19_0.md) para uso, limites e rollback. Produto 1.19.0, MQL 1.190, cálculo 1.9.0; NoCuda mantém versão interna 1.30. Fórmulas, schemas e preferências preservados.
+
+A base visual 1.19.0 está preservada no candidato 1.20.0. As descrições e os estados históricos abaixo permanecem identificados com suas revisões; não substituem os recibos da integração atual. A compilação atual está demonstrada, enquanto interação, migração e aceite continuam pendentes.
+
+## Candidato 1.18.2: correção de compilação
+
+Corrige duas referências fora de escopo nos cabeçalhos legados da Raiz N e mantém `FileSize()` em `ulong` nos quatro leitores, rejeitando tamanhos inválidos antes das conversões menores. Preserva os reparos da 1.18.1, incluindo a cópia do catálogo por elemento. Consulte [GENETRIX_COMPILE_FIX_1_18_2.md](GENETRIX_COMPILE_FIX_1_18_2.md) para conjunto coerente de arquivos, compilação isolada e rollback. Os resultados desta revisão são registrados em recibos próprios; compilação nativa e aceite operacional permanecem `NOT_RUN` sem evidência dos fontes exatos. Não foi instalado, ativado ou publicado.
+
+## Base preservada 1.18.1: correções e design do Histórico Pessoal
+
+Esta revisão corrige os defeitos reproduzidos de snapshot, validação de registros/cobertura, pausa local, restauração de visibilidade e navegação com dados antigos. Acrescenta releitura do ATR fechado, cópia dos ciclos por elemento e cálculo equivalente de percentual sem overflow intermediário. O Histórico Pessoal distingue consulta, produtor, qualidade dos máximos e disponibilidade. Consulte [GENETRIX_REPAIR_1_18_1.md](GENETRIX_REPAIR_1_18_1.md) para limites, validação e rollback. A aprovação local depende dos recibos externos do candidato congelado; compilação, EX5 e MT5 continuam `NOT_RUN`. Não foi instalado ou publicado.
+
+## Base 1.18.0 preservada: Histórico Pessoal
 
 Observador com ocorrências sem SL, reavisos locais de 60 segundos e máximos Current/Estimated acompanhados de fotografia, por conta/instalação. Consulta, exportação CSV e backup JSON no Cockpit. Veja [GENETRIX_PERSONAL_HISTORY.md](GENETRIX_PERSONAL_HISTORY.md). Candidato isolado; validação nativa e aceite operacional `NOT_RUN`, sem EX5. O Histórico Pessoal não negocia nem arma o supervisor.
 
@@ -20,7 +56,7 @@ Seus componentes reúnem alavancagem atual, resultado flutuante, distância ao s
 
 O módulo NoCuda acompanha estudos geométricos e incorpora o trabalho com canais de Fibonacci. Na versão atual, as medidas do Fibonacci importado permanecem indisponíveis até comprovação da correspondência nativa.
 
-O Genetrix combina indicadores, um EA observador e scripts auxiliares. A atuação desses componentes anteriores é informativa e local; não executa negociações nem envia mensagens aos grupos. O site distribui arquivos e orientação, sem receber dados da conta.
+O Genetrix combina dois indicadores, o EA Monitor e scripts auxiliares. O Monitor reúne monitoramento e contabilidade e não negocia nem envia mensagens. O Supervisor separado é opcional e mantém restrições próprias; esta entrega não o arma. O site distribui arquivos e orientação, sem receber dados da conta.
 
 Implementação em fontes, compilação, execução no MT5 e aceite operacional são estados separados. O programa não certifica automaticamente a conformidade de uma operação com o Estatuto ou com o Método NoCuda.
 
@@ -41,8 +77,7 @@ O pacote também inclui **JPW NoCuda Channels**, um segundo indicador para
 acompanhar um canal de Fibonacci desenhado por você e consultar seus metadados.
 O desenho manual por fechamentos permanece como modo legado. Ele pode ficar no
 mesmo gráfico que o Cockpit, mas tem botão, desenho e registro próprios. O
-desenho funciona sem o EA observador; o EA continua necessário para a linha
-Stop risk do Cockpit.
+desenho funciona sem o Monitor. Stop risk e flutuante compensado dependem de publicações válidas dos respectivos módulos do Monitor; sua presença não basta para conferir atualidade ou completude.
 O Cockpit também permite **Preparar mensagem** sobre uma posição aberta ou
 ordem pendente escolhida pelo usuário. O catálogo é lido diretamente do MT5,
 sem depender do EA. A mensagem permanece numa prévia local até uma ação
@@ -73,11 +108,7 @@ Estatuto. Sem amostra recente e íntegra do EA observador, mostra `N/A`.
   métricas e registro local, testes de perfil técnico e verificação das
   unidades dos contratos em contas USC. O script de consulta mostra, sob
   demanda, o máximo de DD/saldo já observado nesta instalação e conta.
-- **Expert Advisor (EA):** pode reagir a eventos do terminal. O observador
-  deste pacote registra fatos de execução e calcula localmente o risco
-  hipotético dos stops; não envia, modifica ou cancela ordens. As cinco
-  leituras anteriores funcionam sem ele; a sexta fica `N/A` sem sua amostra
-  atual e íntegra.
+- **Expert Advisor (EA):** reage aos eventos do terminal. O Monitor reúne Observer e Accountant num gráfico de apoio, sem negociar. Stop risk, Histórico Pessoal e contabilidade têm estados independentes. O Supervisor opcional fica em outro gráfico e não é requisito do resumo.
 - **.mq5:** fonte principal; **.mqh:** arquivo de apoio (include);
   **.ex5:** programa compilado que o MT5 executa.
 
@@ -86,17 +117,9 @@ scripts que executam uma verificação pontual.
 
 ## 2. Baixe e extraia
 
-Este pacote contém **fontes**. Confira no site a versão, o SHA-256 e os estados
-separados de teste matemático, compilação e execução no MT5. Um download
-compilado só é oferecido quando existem `.ex5` reais; compilação não equivale
-à validação da leitura da corretora. Resultados das versões anteriores não
-validam automaticamente os fontes da versão 1.18.0. Não há `.ex5` desta revisão
-para distribuição sem compilação nativa comprovada dos fontes exatos.
-**1.18.0 identifica o pacote e a identidade de execução do Cockpit/observador
-recompilados desta fonte.** O cabeçalho compartilhado usa MQL `1.180`;
-o componente NoCuda desta revisão declara `1.30`. Confira também o
-fingerprint do pacote; o número da versão não comprova qual EX5
-está instalado no terminal.
+Há dois pacotes separados: **fontes para desenvolvimento** e **compilados para ensaio isolado**. Ambos têm versão, tamanho e SHA-256 no manifesto e no site. O compilado só contém os 33 executáveis vinculados aos mesmos fontes/logs e o README; compilação nativa não equivale a validação da conta ou da interface.
+
+**1.20.0 identifica o produto**, o cabeçalho compartilhado usa MQL **1.200**, o cálculo permanece **1.9.0** e NoCuda declara **1.30**. Confira o fingerprint e os hashes, pois número de versão ou captura de tela não identifica o EX5 anexado. Execução crítica 0/3, instalação NOT_RUN e aceite INCONCLUSIVE permanecem nos recibos atuais.
 
 A revisão 1.16.1 adota a identidade pública **JPW GENETRIX**, com a logo vermelha do site nos cabeçalhos. Os nomes dos arquivos e das pastas permanecem iguais para preservar a instalação e os registros. No gráfico, o botão **Genetrix** abre o Cockpit; em Ctrl+I, os indicadores se identificam pela nova marca. No Navegador do MT5, procure os nomes técnicos `JPW_Alavancagem_Atual` e `JPW_NoCuda_Channels`. A logo está incorporada nos fontes/recursos; sua apresentação em MT5 e DPI depende da validação nativa dos bytes desta revisão, ainda **NOT_RUN**.
 
@@ -204,7 +227,7 @@ Trabalhe na pasta extraída, não na visualização interna do ZIP.
 | `JPW_Alavancagem_Positions.mqh` | `MQL5/Include/JPWealth/` |
 | `JPW_Alavancagem_Positions_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_Diagnostics_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
-| `JPW_Alavancagem_Observer.mq5` | `MQL5/Experts/JPWealth/` (necessário para Stop risk; opcional para as outras leituras) |
+| `JPW_Alavancagem_Observer.mq5` | `MQL5/Experts/JPWealth/` — legado para rollback; não usar junto do Monitor |
 | `JPW_Alavancagem_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_Metrics_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_Profile_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
@@ -227,6 +250,55 @@ Trabalhe na pasta extraída, não na visualização interna do ZIP.
 | `JPW_NoCuda_Fibo_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_NoCuda_Fibo_Lab.mq5` | `MQL5/Scripts/JPWealth/` (laboratório isolado) |
 
+
+### Destinos adicionais do núcleo e documentação
+
+| Arquivo | Destino |
+| --- | --- |
+| `JPW_Genetrix_Monitor_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Monitor_Status.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Monitor_UI.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Observer_Runtime.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Accountant_Runtime.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Ledger_Preparation.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_UI_Design.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Monitor.mq5` | `MQL5/Experts/JPWealth/` — núcleo; gráfico de apoio dedicado |
+| `JPW_Genetrix_Supervisor.mq5` | `MQL5/Experts/JPWealth/` — opcional; outro gráfico; não armar |
+| `JPW_Genetrix_Accountant.mq5` | `MQL5/Experts/JPWealth/` — legado para rollback; não usar junto do Monitor |
+| `GENETRIX_REPAIR_1_18_1.md` | Referência no ZIP — não copiar para `MQL5` |
+| `GENETRIX_COMPILE_FIX_1_18_2.md` | Referência no ZIP — não copiar para `MQL5` |
+| `GENETRIX_UI_1_19_0.md` | Referência no ZIP — não copiar para `MQL5` |
+| `GENETRIX_CORE_1_20_0.md` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/MANUAL_DE_ATIVACAO.md` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/contracts/ENG-AC01-12.json` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/contracts/TEMPLATES.md` | Referência no ZIP — não copiar para `MQL5` |
+| `harness/REPOSITORY_INTEGRATION.md` | Referência no ZIP — não copiar para `MQL5` |
+
+| `JPW_Genetrix_Ledger_Bridge.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Ledger_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Ledger_Store.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Ledger_Terminal.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Risk_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Risk_Store.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Risk_Terminal.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_UI.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_PersonalHistory_Controller.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_PersonalHistory_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_PersonalHistory_Export.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_PersonalHistory_Store.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_PersonalHistory_Terminal.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_PersonalHistory_UI.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Ledger_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_Genetrix_Risk_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_PersonalHistory_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `README.md` | Referência no ZIP — não copiar para `MQL5` |
+| `AGENTS.md` | Referência no ZIP — não copiar para `MQL5` |
+| `GENETRIX_7X_LEDGER.md` | Referência no ZIP — não copiar para `MQL5` |
+| `GENETRIX_PERSONAL_HISTORY.md` | Referência no ZIP — não copiar para `MQL5` |
+
 **Não substitua a pasta MQL5 inteira.** Se um arquivo JPWealth do mesmo nome já
 existir, preserve uma cópia antes de atualizar somente esse arquivo. Não
 substitua arquivos de outros indicadores ou robôs. O README e o `AGENTS.md`
@@ -235,7 +307,7 @@ deve ser copiado para `MQL5`.
 
 Se usar um pacote compilado, os `.ex5` incluídos vão para as mesmas pastas dos
 respectivos `.mq5`: indicador em `Indicators/JPWealth`, scripts em
-`Scripts/JPWealth` e observador opcional em `Experts/JPWealth`.
+`Scripts/JPWealth` e Monitor em `Experts/JPWealth`, no gráfico de apoio. Toda a pasta `harness/` permanece fora de MQL5.
 
 **Resultado esperado:** arquivos nas subpastas da mesma instalação, mantendo
 intacto o restante do conteúdo do MT5.
@@ -268,8 +340,7 @@ intacto o restante do conteúdo do MT5.
    `JPW_Alavancagem_StopRisk_Tests.mq5` e
    `JPW_Alavancagem_Diagnostics_Tests.mq5` e
    `JPW_SignalCopy_Tests.mq5`, na pasta Scripts/JPWealth.
-   Compile também `MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5`
-   se for usar a captura opcional de execuções. Compilar não anexa o EA.
+   Compile `MQL5/Experts/JPWealth/JPW_Genetrix_Monitor.mq5` para o núcleo observacional. Compilar não anexa o EA. Observer e Accountant separados são preservados para rollback; Supervisor é opcional e separado.
 6. Para desenhar canais, abra também
    `MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5` e pressione **F7**.
    Compile `JPW_NoCuda_Core_Tests.mq5`, `JPW_NoCuda_Store_Tests.mq5` e
@@ -628,22 +699,13 @@ migrados, aplicados silenciosamente aos horizontes 1W/2W ou reescritos. Cenário
 entrada conserva rótulo retrospectivo; vínculo e comparação com SL continuam
 exigindo escolha explícita. O símbolo do gráfico não escolhe uma operação.
 
-### Use o EA observador para capturas e Stop risk
+### Use o núcleo para monitoramento, histórico e contabilidade
 
-`JPW_Alavancagem_Observer` é um **EA observador local** separado. É opcional
-para as cinco leituras anteriores e necessário para a amostra da sexta linha
-`Stop risk`. Em MT5 isolado, depois de compilar, atualize o Navegador e anexe-o
-**uma vez** em
-**Expert Advisors → JPWealth** a um gráfico aberto **da mesma instalação do
-terminal** em que está o indicador. Um gráfico dedicado facilita verificar se
-o EA continua anexado; fechá-lo ou substituí-lo por outro EA interrompe a
-observação. A ativação é manual, não feita pelo indicador nem por esta página.
-Verifique em **Experts** seu
-estado e a identidade da instalação/conta antes de considerar uma captura
-concluída. Ele não envia ordens, não altera stops e não precisa de permissão
-para negociar; as condições de carregamento/eventos do EA ainda precisam ser
-confirmadas em execução nativa isolada. Não o instale na sessão operacional
-para suprir uma validação pendente.
+Em MT5 isolado, anexe **uma instância `JPW_Genetrix_Monitor`** a um gráfico de apoio reservado, na mesma conta e instalação dos indicadores. Não substitua o EA de negociação de um gráfico de trabalho. Antes da migração, interrompa Observer e Accountant separados, preservando arquivos, configurações e registros para rollback; produtores simultâneos podem bloquear o módulo afetado. O Supervisor é opcional, em outro gráfico, e não é requisito das leituras.
+
+Confira em **Experts** e **Cockpit → Sistema → Componentes da conta** versão, gráfico responsável, presença confirmada, última captura e estados de cada módulo. Contabilidade em preparação, cobertura parcial, produtor concorrente e leitura histórica são problemas distintos. Núcleo ativo não significa que todas as sete leituras estejam disponíveis.
+
+O Monitor não envia ordens ou altera SL/TP. Fechar o Cockpit não interrompe a coleta, mas fechar seu gráfico, substituir o EA ou encerrar o terminal interrompe o acompanhamento. A migração operacional ainda está `NOT_RUN`; teste primeiro os mesmos bytes no ambiente isolado e não arme o Supervisor para suprir uma validação pendente.
 
 O observador registra o **primeiro negócio executado** de cada episódio
 lógico como `P0` inicial e, em processo separado, apura o risco hipotético até
@@ -1173,12 +1235,12 @@ lista manualmente se quiser restaurar a organização anterior.
 | Não aparece no Navegador | Pasta de dados da instância aberta, destino correto, geração do .ex5 e Atualizar no Navegador. |
 | Include não encontrado | Confira os arquivos .mqh em MQL5/Include/JPWealth; compile o .mq5 principal. |
 | Genesis SL: N/A | Confirme conexão, ticket da referência e SL vigente. Se a seleção automática for ambígua, informe um ticket positivo nas Entradas. Registro corrompido ou incompatível bloqueia reinferência. Em netting OTC, o rótulo é Position SL. |
-| Stop risk: N/A · Check Observer | Não há confirmação recente do EA para esta instalação e conta. Confira em Navegador → Expert Advisors → JPWealth se `JPW_Alavancagem_Observer` da mesma versão está anexado a um gráfico aberto deste terminal; consulte Experts. O indicador não ativa o EA. Mesmo com todos os SLs preenchidos, ainda é necessária uma amostra completa do EA. |
+| Stop risk: N/A · Check Observer | Não há confirmação recente do EA para esta instalação e conta. Confira em Navegador → Expert Advisors → JPWealth se `JPW_Genetrix_Monitor` da mesma versão está anexado ao gráfico de apoio aberto deste terminal; consulte Experts. O indicador não ativa o EA. Mesmo com todos os SLs preenchidos, ainda é necessária uma amostra completa do EA. |
 | EA presente, Stop risk: N/A | Abra Cockpit → Stops/Sistema para distinguir primeira amostra pendente de falha de publicação. Confira Experts, SLs de posições e pendentes, composição estável e suporte do tipo de ordem. Uma parcela inválida impede o total; netting não fornece total auditável por operação. Amostra antiga fica só como `LAST · NOT ACTIVE` no menu. |
 | Stops: “Amplie para ler a tabela” | A versão anterior usa um limite de altura que pode bloquear a tabela antes de consultar posições. Confira o EX5 instalado; até atualizar, reduzir `InpCockpitFontSize` nas Entradas pode liberar a visualização. A versão 1.10.1 pagina linhas compactas e mantém os detalhes acessíveis. |
 | Raiz N 1W/2W: N/A | Confira símbolo exato, Bid/Ask, tick novo após inicialização, ATR(55) H4, sessões/calendário e o estado da preferência F. Falta de cobertura ou conflito não é zero. Registro F corrompido, incompatível ou inacessível exige tratamento explícito; não recebe padrão silencioso. Um calendário recorrente válido continua Estimated. |
 | Probabilidade de não toque ausente | O Cockpit só mostra o cálculo teórico para F válido. Não use a porcentagem como probabilidade de um SL existente ou como validação observada da corretora. N/F legado não altera 1W/2W. |
-| Observador sem captura | Confira se o EA opcional está realmente anexado, a conta/instalação e Experts. Histórico tardio só pode gerar Reconstructed quando completo; falha de evento, ATR ou banco não é captura concluída. |
+| Observador sem captura | Confira se o Monitor está anexado ao gráfico de apoio, a conta/instalação e Experts. Supervisor não é necessário. Histórico tardio só pode gerar Reconstructed quando completo; falha de evento, ATR ou banco não é captura concluída. |
 | Linhas encavaladas ou Cockpit antigo | Confira a versão dos fontes compilados e do EX5 anexado. O ZIP de fontes não instala EX5. Recompile a revisão identificada e anexe novamente em MT5 isolado; uma captura de tela não prova os bytes instalados. |
 | Preferência visual inválida | Confira Cockpit → Ajustes. O aviso trata da apresentação do gráfico; não redefine os registros financeiros. Mesmo sem linhas visíveis, o botão Genetrix deve permanecer acessível. |
 | NoCuda: Projeção diária N/A | Confira a data, fonte H1/H4 para futuro, limite de 30 dias, cobertura histórica e grade semanal. Em Fibonacci importado, UNVERIFIED_NATIVE mantém medidas N/A até a prova nativa. O motivo identifica o dado faltante; nenhuma barra futura é inventada. |

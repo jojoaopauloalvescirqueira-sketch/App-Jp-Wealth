@@ -8254,7 +8254,7 @@ html[data-shell="global-dashboard"] #jpwLeveragePage>.genetrix-masthead{display:
 #jpwLeveragePage :is(p,li,dd) strong{color:var(--ink);font-weight:650}
 #jpwLeveragePage code{font-size:.88em;overflow-wrap:anywhere;color:var(--ink)}
 #jpwLeveragePage .cp-kicker{font-size:11px;line-height:1.4;font-weight:700;letter-spacing:.055em;color:var(--ink-dim)}
-#jpwLeveragePage .genetrix-hero{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:46px;align-items:center;padding:38px 0 42px;scroll-margin-top:110px}
+#jpwLeveragePage .genetrix-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:46px;align-items:center;padding:38px 0 42px;scroll-margin-top:110px}
 #jpwLeveragePage .genetrix-hero-copy h2{font-size:clamp(36px,4vw,56px);letter-spacing:-1.9px;line-height:1.08;margin:17px 0 25px}
 #jpwLeveragePage .genetrix-hero-copy>p:first-of-type{font-size:18px;line-height:1.65;max-width:46ch}
 #jpwLeveragePage .genetrix-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 16px}
@@ -8288,7 +8288,8 @@ html[data-shell="global-dashboard"] #jpwLeveragePage>.genetrix-masthead{display:
 #jpwLeveragePage .genetrix-status-band button span{color:inherit}
 #jpwLeveragePage .genetrix-introduction{margin:0 0 36px}
 #jpwLeveragePage .genetrix-introduction>h2{font-size:36px;letter-spacing:-1.1px;max-width:24ch;margin:10px 0 30px}
-#jpwLeveragePage .genetrix-components{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+#jpwLeveragePage .genetrix-components{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:32px}
+#jpwLeveragePage .genetrix-components a{max-width:100%;min-width:0;overflow-wrap:anywhere;white-space:normal}
 #jpwLeveragePage .genetrix-components article{min-width:0;padding-top:20px;border-top:1px solid var(--line)}
 #jpwLeveragePage .genetrix-component-number{font-size:13px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
 #jpwLeveragePage .genetrix-components h3{margin:8px 0 10px}

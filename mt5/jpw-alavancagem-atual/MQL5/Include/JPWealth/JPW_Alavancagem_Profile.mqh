@@ -202,8 +202,8 @@ bool JPWProfileReadText(const string filename,string &content)
    content="";
    const int handle=FileOpen(filename,FILE_READ|FILE_BIN);
    if(handle==INVALID_HANDLE) return(false);
-   const long size=FileSize(handle);
-   if(size<=0 || size>JPW_PROFILE_MAX_BYTES)
+   const ulong size=FileSize(handle);
+   if(size==0 || size>(ulong)JPW_PROFILE_MAX_BYTES)
      { FileClose(handle); return(false); }
    uchar bytes[];
    if(ArrayResize(bytes,(int)size)!=(int)size ||

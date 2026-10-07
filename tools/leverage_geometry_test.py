@@ -36,6 +36,24 @@ def cockpit_target(source: str) -> tuple[int, int]:
         raise AssertionError("Cockpit renderer must pass a measurable size to JPWPanelCockpit")
     return int(match[1]), int(match[2])
 
+DESIGN = MQL / "Include/JPWealth/JPW_UI_Design.mqh"
+
+
+def design_helpers(full: bool = False) -> str:
+    """Replay production scaling; only TerminalInfoInteger is a controlled host API."""
+    source = DESIGN.read_text()
+    signatures = ["double JPWUIDesignScale()", "int JPWUIDesignPx(const int logical)"]
+    if full:
+        signatures += ["int JPWUIDesignControlHeight(const int measured_text_height)",
+                       "int JPWUIDesignTextWidth(const string label,const int font)",
+                       "int JPWUIDesignButtonWidth(const string label,const int font,const bool icon=false)"]
+    cpp = "constexpr int TERMINAL_SCREEN_DPI=41;\nint mock_screen_dpi=96;\nlong TerminalInfoInteger(int property){return property==TERMINAL_SCREEN_DPI?mock_screen_dpi:0;}\ndouble MathRound(double value){return std::round(value);}\n"
+    cpp += "\n".join(signature + "{" + body_of(source, signature.split("(")[0]) + "}"
+                      for signature in signatures)
+    if full:
+        cpp += "template<size_t N> int JPWUIDesignNavColumns(string (&labels)[N],const int count,const int inner,const int font,const int gap){" + body_of(source, "int JPWUIDesignNavColumns(") + "}\n"
+    return cpp
+
 SHIM = r'''
 #include <cmath>
 #include <iostream>
@@ -266,6 +284,7 @@ LAYOUT_MAIN = r'''
 int main(){
  int cases=0;
  for(int dpi: {100,125,150,200})for(int width:{240,390,720})for(int height:{24,29,42,50,70,87,100,140,240}){
+   mock_screen_dpi=96*dpi/100;
    g_details_control=(24*dpi+99)/100;g_details_line=(18*dpi+99)/100;g_details_pad=(5*dpi+99)/100;
    if(height<g_details_control)continue;
    const int y=70,footer=y+height+g_details_line+g_details_pad;
@@ -294,6 +313,7 @@ int main(){
  }
  // The enlarged desktop cockpit must show all seven overview cards (including the original six) at the
  // default measured font; larger text may paginate but never overlap chrome.
+ mock_screen_dpi=96;
  JPWPanelRect desktop;
  if(!JPWPanelCockpit(1440,900,__COCKPIT_WIDTH__,__COCKPIT_HEIGHT__,desktop))return 1;
  for(int measured:{16,32}){
@@ -371,7 +391,7 @@ def presentation_layout_replay(compiler: str) -> int:
     desired_width,desired_height=cockpit_target(source)
     layout_main=(LAYOUT_MAIN.replace("__COCKPIT_WIDTH__",str(desired_width))
                             .replace("__COCKPIT_HEIGHT__",str(desired_height)))
-    cpp+=shim+"void RenderOverview"+signature+"{"+overview+"}\n"+layout_main
+    cpp+=design_helpers()+shim+"void RenderOverview"+signature+"{"+overview+"}\n"+layout_main
     print("PRESENTATION_LAYOUT_SOURCE_SHA256:",hashlib.sha256(source.encode()).hexdigest())
     with tempfile.TemporaryDirectory(prefix="jpw-presentation-layout-") as temporary:
         path,binary=Path(temporary)/"layout.cpp",Path(temporary)/"layout"
@@ -384,6 +404,8 @@ def presentation_layout_replay(compiler: str) -> int:
 
 
 HUD_SHIM = r'''
+#include <cmath>
+#include <vector>
 #include <iostream>
 #include <map>
 #include <string>
@@ -398,18 +420,20 @@ constexpr int OBJPROP_CORNER=1,OBJPROP_XDISTANCE=2,OBJPROP_YDISTANCE=3,
  OBJPROP_XSIZE=4,OBJPROP_YSIZE=5,OBJPROP_BGCOLOR=6,OBJPROP_COLOR=7,
  OBJPROP_BORDER_TYPE=8,OBJPROP_BACK=9,OBJPROP_ZORDER=10,OBJPROP_SELECTABLE=11,
  OBJPROP_HIDDEN=12,OBJPROP_ANCHOR=13,OBJPROP_FONTSIZE=14,OBJPROP_FONT=15,
- OBJPROP_TEXT=16,OBJPROP_TOOLTIP=17,OBJPROP_BORDER_COLOR=18;
+ OBJPROP_TEXT=16,OBJPROP_TOOLTIP=17,OBJPROP_BORDER_COLOR=18,OBJPROP_TYPE=19,OBJPROP_SELECTED=20,OBJPROP_BMPFILE=21;
+constexpr int OBJ_EDIT=5,OBJ_BITMAP_LABEL=4;
 int chart_width=800,chart_height=400;
 long ChartGetInteger(int,int property){
  if(property==CHART_WIDTH_IN_PIXELS)return chart_width;
  if(property==CHART_HEIGHT_IN_PIXELS)return chart_height;
  return 0xffffff;
 }
+int StringLen(const string&s){int count=0;for(unsigned char c:s)if((c&0xC0)!=0x80)count++;return count;}
 int measured_font=8;
-bool TextSetFont(const string&,int size,int){measured_font=-size/10;return measured_font>0;}
+bool TextSetFont(const string&,int size,int=0){measured_font=-size/10;return measured_font>0;}
 bool TextGetSize(const string&value,uint&width,uint&height){
  int glyph=measured_font>8?measured_font:8;
- width=(uint)value.size()*glyph;
+ width=(uint)StringLen(value)*glyph;
  height=(uint)(measured_font*3/2>12?measured_font*3/2:12);
  return true;
 }
@@ -420,6 +444,8 @@ bool ObjectCreate(int,const string&name,int,int,int,int){objects[name]=Object{};
 bool ObjectDelete(int,const string&name){objects.erase(name);return true;}
 bool ObjectSetInteger(int,const string&name,int property,long value){objects[name].number[property]=value;return true;}
 bool ObjectSetString(int,const string&name,int property,const string&value){objects[name].text[property]=value;return true;}
+long ObjectGetInteger(int,const string&name,int property){return property==OBJPROP_TYPE?objects[name].number[-1]:objects[name].number[property];}
+void ChartRedraw(int){}
 string IntegerToString(int value){return std::to_string(value);}
 template<class A,class B>A MathMax(A a,B b){return a>b?a:(A)b;}
 template<class A,class B>A MathMin(A a,B b){return a<b?a:(A)b;}
@@ -495,14 +521,25 @@ int main(){
    std::cerr<<"FAIL HUD resize escaped chart bounds\n";return 1;
  }
  const Shot narrow=DrawHUD(400,240,CORNER_RIGHT_UPPER,0,false);
- if(!InBounds(narrow,400,240)||narrow.width>180){
-   std::cerr<<"FAIL HUD obscures narrow chart width\n";return 1;
+ // Independent design reference: 16 Unicode characters at the controlled 8px metric,
+ // 24px margins + 24px icon reservation + 2*8px HUD padding = 192px.
+ // A labelled essential action may exceed 45% only by its measured minimum.
+ const int independent_launcher_minimum=16*8+24+24+2*8;
+ if(!InBounds(narrow,400,240)||narrow.width!=independent_launcher_minimum){
+   std::cerr<<"FAIL HUD obscures narrow chart width: observed="<<narrow.width<<" expected="<<independent_launcher_minimum<<"\n";return 1;
  }
  InpFontSize=40;
- const Shot large_font=DrawHUD(200,160,CORNER_RIGHT_UPPER,0,false);
  const string cockpit_button=g_panel_prefix+"RAIZ_DETAILS_BUTTON";
- if(!InBounds(large_font,200,160)||!objects.count(cockpit_button)){
-   std::cerr<<"FAIL large-font HUD lost cockpit access\n";return 1;
+ // Same original 200px width, now compared to an explicit content minimum:
+ // font clamp12 * 16 controlled Unicode glyphs +24+24+16 =256 >184 available.
+ // This is no native Arial-width or universal accessibility claim.
+ const Shot insufficient=DrawHUD(200,160,CORNER_RIGHT_UPPER,0,false);
+ if(insufficient.width!=-1||objects.count(cockpit_button)||g_panel_count!=0){
+   std::cerr<<"FAIL insufficient large-font HUD retained a stale click target\n";return 1;
+ }
+ const Shot large_font=DrawHUD(400,160,CORNER_RIGHT_UPPER,0,false);
+ if(!InBounds(large_font,400,160)||!objects.count(cockpit_button)){
+   std::cerr<<"FAIL sufficient large-font HUD lost cockpit access\n";return 1;
  }
  const auto&button=objects[cockpit_button].number;
  if(button.at(OBJPROP_XDISTANCE)<large_font.x || button.at(OBJPROP_YDISTANCE)<large_font.y ||
@@ -510,7 +547,26 @@ int main(){
     button.at(OBJPROP_YDISTANCE)+button.at(OBJPROP_YSIZE)>large_font.y+large_font.height){
    std::cerr<<"FAIL large-font cockpit button escapes HUD\n";return 1;
  }
+ ObjectCreate(0,"FOREIGN_STUDY_OBJECT",OBJ_LABEL,0,0,0);
+ chart_width=200;chart_height=160;JPWRenderHUD();
+ if(objects.size()!=1||!objects.count("FOREIGN_STUDY_OBJECT")||g_panel_count!=0){
+   std::cerr<<"FAIL no-space cleanup destroyed foreign study or kept own HUD objects\n";return 1;
+ }
  InpFontSize=8;
+ int header_cases=0;
+ for(int percent:{100,125,150,200})for(int text_font:{8,16})for(int corner:{0,2})for(int offset:{0,220}){
+   mock_screen_dpi=96*percent/100;InpFontSize=text_font;InpOffsetY=offset;
+   const Shot shot=DrawHUD(1600,1200,corner,0,false);
+   const int measured=text_font*3/2>12?text_font*3/2:12;
+   const int scaled_reserve=(44*percent+50)/100;
+   const int expected_header=measured*3+10>scaled_reserve?measured*3+10:scaled_reserve;
+   const int expected_inset=offset>expected_header?offset:expected_header;
+   if(!InBounds(shot,1600,1200)||shot.y!=expected_inset){
+      std::cerr<<"FAIL measured/DPI-scaled upper HUD reserve "<<percent<<" "<<text_font<<" "<<corner<<" "<<offset<<"\n";return 1;}
+   header_cases++;
+ }
+ mock_screen_dpi=96;InpOffsetY=40;InpFontSize=8;
+ std::cout<<"HOST_HEADER_RESERVE: "<<header_cases<<" independent DPI/font/corner/offset cases PASS\n";
  std::cout<<"HOST_HUD_STABILITY: "<<scenarios<<" full refresh pairs and one summary pair PASS; "
              "narrow and large-font bounds PASS; native MT5 redraw/DPI NOT_RUN\n";
  return 0;
@@ -525,7 +581,9 @@ def hud_layout_replay(compiler: str) -> int:
                    lambda m: str(int(m[1]) | (int(m[2]) << 8) | (int(m[3]) << 16)), panel)
     renderer = "void JPWClearPanel(){" + body_of(source, "void JPWClearPanel()") + "}\n"
     renderer += "void JPWRenderHUD(){" + body_of(source, "void JPWRenderHUD()") + "}\n"
-    cpp = HUD_SHIM + panel + renderer + HUD_MAIN
+    # Bitmap resource painting is a native boundary, not tested by the host fixture.
+    decoration = 'bool JPWUIDesignIcon(const string name,const int x,const int y,const int size,const color,const bool){ObjectCreate(0,name,4,0,0,0);ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x);ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y);ObjectSetInteger(0,name,OBJPROP_XSIZE,size);ObjectSetInteger(0,name,OBJPROP_YSIZE,size);return true;}\nvoid JPWUIDesignDeleteIcon(const string name){ObjectDelete(0,name);}\n'
+    cpp = HUD_SHIM + design_helpers(full=True) + decoration + panel + renderer + HUD_MAIN
     print("HUD_RENDER_SOURCE_SHA256:", hashlib.sha256(source.encode()).hexdigest())
     with tempfile.TemporaryDirectory(prefix="jpw-hud-stability-") as temporary:
         path, binary = Path(temporary) / "hud.cpp", Path(temporary) / "hud"
@@ -574,6 +632,9 @@ def capture_overview(destination: Path) -> int:
         ("bool JPWCreateProtectedValue", "bool JPWCreateProtectedValue(const string suffix,const string value,const int x,const int y,const int width,const int font_size=0)"),
         ("bool JPWRaizCreateSurface", "bool JPWRaizCreateSurface(const string suffix,const int x,const int y,const int width,const int height,const color fill)"),
         ("void JPWFocusRegister", "void JPWFocusRegister(const int action)"),
+        ("string JPWFocusObject", "string JPWFocusObject(const int action)"),
+        ("bool JPWFocusRegistered", "bool JPWFocusRegistered(const int action)"),
+        ("bool JPWFocusValid", "bool JPWFocusValid(const int action)"),
         ("void JPWFocusPaint", "void JPWFocusPaint()"),
         ("bool JPWRaizCreateButton", "bool JPWRaizCreateButton(const int index,const string value,const int x,const int y,const int width)"),
     ]
@@ -592,17 +653,19 @@ def capture_overview(destination: Path) -> int:
 constexpr int JPW_SIGNAL_ROUTE=16;
 void JPWSignalRenderBody(int,int,int,int,int){}
 bool g_stops_show_pending=false,g_positions_operation_only=false;
+int g_personal_live_count=0,g_personal_live_state=-1;string g_personal_live_notice;
 int g_stop_button_count=0;
 int InpCockpitFontSize=11,g_details_font=11,g_details_pad=8,g_details_line=24,g_details_control=32;
-int g_cockpit_selected=0,g_cockpit_page=0,g_focus_action=-1,g_focus_count=0,g_focus_actions[128];
+int g_cockpit_selected=0,g_cockpit_page=0,g_focus_action=-1,g_focus_count=0,g_focus_actions[128],g_details_focus_route=-1;
+bool g_editing_field=false;
 double g_factor_draft=1.5;
 bool g_cockpit_pref_invalid=false,g_raiz_panel_built=false;string g_cockpit_pref_notice;
 JPWPanelRect g_details_rect;
 color g_details_text,g_details_surface,g_details_chrome,g_details_card,g_details_border;
 string _Symbol="SYNTHETIC.H1";
 std::u32string Unicode(const string&s){std::wstring_convert<std::codecvt_utf8<char32_t>,char32_t> c;return c.from_bytes(s);}
-int StringLen(const string&s){return static_cast<int>(Unicode(s).size());}
-string StringSubstr(const string&s,int from,int size){std::wstring_convert<std::codecvt_utf8<char32_t>,char32_t> c;return c.to_bytes(Unicode(s).substr(from,size));}
+
+string StringSubstr(const string&s,int from,int size=-1){std::wstring_convert<std::codecvt_utf8<char32_t>,char32_t> c;return c.to_bytes(Unicode(s).substr(from,size));}
 int StringFind(const string&s,const string&needle){const size_t i=s.find(needle);return i==string::npos?-1:static_cast<int>(i);}
 string Esc(const string&s){std::ostringstream o;for(unsigned char c:s){if(c=='"'||c=='\\')o<<'\\'<<c;else if(c=='\n')o<<"\\n";else if(c<32)o<<' ';else o<<c;}return o.str();}
 string RGB(long c){std::ostringstream o;o<<"rgb("<<(c&255)<<","<<((c>>8)&255)<<","<<((c>>16)&255)<<")";return o.str();}
@@ -632,6 +695,8 @@ int main(){
  for(int i=0;i<6;i++){g_cockpit_snapshot.metric[i].title=titles[i];g_cockpit_snapshot.metric[i].value=values[i];
    g_cockpit_snapshot.metric[i].reason=i==3||i==4?"Calendário semanal projetado":"Dados disponíveis na amostra";
    g_cockpit_snapshot.metric[i].quality=i==3||i==4?JPW_VIEW_ESTIMATED:JPW_VIEW_CURRENT;}
+ g_cockpit_snapshot.metric[6].title="Flutuante compensado";g_cockpit_snapshot.metric[6].value="N/A";
+ g_cockpit_snapshot.metric[6].reason="Cobertura contábil não fornecida neste fixture";g_cockpit_snapshot.metric[6].quality=JPW_VIEW_NA;
  std::cout<<"{\"kind\":\"HOST_OBJECT_CAPTURE_NOT_NATIVE_MT5\",\"cases\":[";
  bool first=true;
  for(int w:{1000,390})for(bool dark:{false,true}){
@@ -644,7 +709,14 @@ int main(){
  std::cout<<"]}\n";
 }
 '''
-    cpp = "long capture_background=0xffffff;\n" + shim + panel + enums + globals_and_apis + creators + capture_main
+    brand_source = (MQL / "Include/JPWealth/JPW_Genetrix_Brand.mqh").read_text()
+    brand_signatures = ["int JPWGenetrixTextWidth(const string text,const int font)",
+                        "string JPWGenetrixHeaderText(const string section,const int width,const int font)",
+                        "bool JPWGenetrixHeader(const string logo_name,const string text_name,const int x,const int y,const int width,const int height,const int font,const color ink,const bool dark,const string section,const int zorder=4)"]
+    brand = "const string JPW_PRODUCT_NAME=\"GENETRIX\";\n" + "\n".join(
+        signature + "{" + body_of(brand_source, signature.split("(")[0]) + "}"
+        for signature in brand_signatures)
+    cpp = "long capture_background=0xffffff;\n" + shim + panel + enums + globals_and_apis + design_helpers(full=True) + brand + creators + capture_main
     with tempfile.TemporaryDirectory(prefix="jpw-cockpit-capture-") as temporary:
         path, binary = Path(temporary) / "capture.cpp", Path(temporary) / "capture"
         path.write_text(cpp, encoding="utf-8")
@@ -661,6 +733,7 @@ int main(){
     captured["sources"] = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
                             for path in (PRESENTATION, FILES[0])}
     destination.parent.mkdir(parents=True, exist_ok=True)
+    captured["native_bitmap_resource_painting"]="NOT_RUN"
     destination.write_text(json.dumps(captured, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("COCKPIT_OBJECT_CAPTURE:", destination, ";", len(captured["cases"]), "synthetic cases; native NOT_RUN")
     return 0

@@ -391,8 +391,8 @@ JPW_RAIZN_STATE JPWRaizNReadText(const string filename,string &content)
    content="";
    const int handle=FileOpen(filename,FILE_READ|FILE_BIN);
    if(handle==INVALID_HANDLE) return(JPW_RAIZN_IO_ERROR);
-   const long size=FileSize(handle);
-   if(size<=0 || size>JPW_RAIZN_MAX_BYTES)
+   const ulong size=FileSize(handle);
+   if(size==0 || size>(ulong)JPW_RAIZN_MAX_BYTES)
      { FileClose(handle); return(JPW_RAIZN_INVALID); }
    uchar bytes[];
    if(ArrayResize(bytes,(int)size)!=(int)size ||

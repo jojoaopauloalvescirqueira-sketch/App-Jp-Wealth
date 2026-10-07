@@ -23,6 +23,8 @@ os.chdir(ROOT)
 MANIFEST = json.loads((ROOT / 'downloads/jpw-alavancagem-atual/manifest.json').read_text())
 SOURCE = MANIFEST['downloads']['source']
 ARCHIVE = ROOT / SOURCE['path']
+COMPILED = MANIFEST['downloads']['compiled']
+COMPILED_ARCHIVE = ROOT / COMPILED['path']
 EVIDENCE_DIR = Path(os.environ['JPW_LEVERAGE_EVIDENCE_DIR']) if os.environ.get('JPW_LEVERAGE_EVIDENCE_DIR') else None
 EXPECTED = {
     'README.md',
@@ -118,12 +120,29 @@ EXPECTED.update("MQL5/Include/JPWealth/JPW_PersonalHistory_" + name + ".mqh"
                 for name in ("Controller", "Core", "Export", "Store", "Terminal", "UI"))
 EXPECTED.add("MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5")
 EXPECTED.add("GENETRIX_PERSONAL_HISTORY.md")
-assert len(EXPECTED) == 108
+# Explicit 1.20.0 inventory: 120 original candidate members + seven harness references.
+EXPECTED.update("MQL5/Include/JPWealth/" + name for name in (
+    "JPW_Genetrix_Monitor_Core.mqh", "JPW_Genetrix_Monitor_Status.mqh", "JPW_Genetrix_Monitor_UI.mqh",
+    "JPW_Genetrix_Observer_Runtime.mqh", "JPW_Genetrix_Accountant_Runtime.mqh",
+    "JPW_Genetrix_Ledger_Preparation.mqh", "JPW_UI_Design.mqh"))
+EXPECTED.add("MQL5/Experts/JPWealth/JPW_Genetrix_Monitor.mq5")
+EXPECTED.update(("GENETRIX_REPAIR_1_18_1.md", "GENETRIX_COMPILE_FIX_1_18_2.md",
+                 "GENETRIX_UI_1_19_0.md", "GENETRIX_CORE_1_20_0.md"))
+HARNESS_MEMBERS = {
+    "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md",
+    "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt",
+    "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf",
+    "harness/MANUAL_DE_ATIVACAO.md", "harness/contracts/ENG-AC01-12.json",
+    "harness/contracts/TEMPLATES.md", "harness/REPOSITORY_INTEGRATION.md",
+}
+EXPECTED.update(HARNESS_MEMBERS)
+assert len(EXPECTED) == 127
+EXPECTED_EX5 = {name[:-4] + ".ex5" for name in EXPECTED if name.endswith(".mq5")}
+assert len(EXPECTED_EX5) == 33
 EXPECTED_COVERAGE = (
-    "CANDIDATE 1.18.0 — Histórico Pessoal observador, forward-only por conta/instalação; "
-    "alertas locais SL==0/60s, máximos Current/Estimated com fotografia, consulta CSV/backupJSON. "
-    "Fontes isolados; compilação/EX5/MT5 NOT_RUN; nenhuma instalação/publicação/ativação. "
-    "Base 1.17.0 RC2 preservada; estados normativos permanecem."
+    "CANDIDATE 1.20.0 — Monitor Observer+Accountant; cálculo1.9.0. "
+    "Compilação nativa33/33,0erros0avisos. Testes locais e limites nos recibos;"
+    "0/3 sessões críticas MT5, instalação/aceiteNOT_RUN."
 )
 
 
@@ -178,26 +197,48 @@ def route_and_inspect(page):
     assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
     assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeveragePage').text_content()
     assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeveragePage').text_content()
-    assert MANIFEST['version'] == '1.18.0'
+    assert MANIFEST['version'] == '1.20.0'
     assert MANIFEST['productName'] == 'JPW GENETRIX'
     assert 'Da origem da operação' in page.locator('#jpwLeverageOverview').text_content()
     assert 'medidas do Fibonacci importado permanecem indisponíveis' in page.locator('#jpwGenetrixDefinition').text_content()
-    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 108
+    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 127
     assert MANIFEST['coverage'] == EXPECTED_COVERAGE
-    assert MANIFEST['nativeArtifact'] is None
-    assert MANIFEST['genetrixCandidate']['native'] == 'NOT_RUN'
-    assert MANIFEST['downloads']['compiled']['available'] is False
-    for kind in ('mathematics', 'compilation', 'terminal'):
+    native = MANIFEST['nativeArtifact']
+    assert native['sourceFingerprint'] == MANIFEST['mqlSourceFingerprint']
+    assert native['cpu'] == 'X64 Regular' and '6230' in native['compiler']
+    assert native['evidence'] and len(native['artifacts']) == 33
+    native_records = {Path(item['path']).relative_to('mt5/jpw-alavancagem-atual').as_posix(): item['sha256']
+                      for item in native['artifacts']}
+    assert set(native_records) == EXPECTED_EX5
+    for name, expected_hash in native_records.items():
+        assert re.fullmatch('[a-f0-9]{64}', expected_hash)
+        assert sha256((ROOT/'mt5/jpw-alavancagem-atual'/name).read_bytes()).hexdigest() == expected_hash
+    assert MANIFEST['genetrixCandidate']['native'] == 'COMPILATION_PASS_33_OF_33_RUNTIME_NOT_RUN'
+    assert MANIFEST['downloads']['compiled']['available'] is True
+    assert MANIFEST['validation']['compilation']['status'] == 'passed'
+    assert '33/33' in MANIFEST['validation']['compilation']['detail']
+    for kind in ('mathematics', 'terminal', 'clipboard'):
         assert MANIFEST['validation'][kind]['status'] == 'pending'
-        assert 'NOT_RUN' in MANIFEST['validation'][kind]['detail']
+    assert MANIFEST['integration']['runtime'] == MANIFEST['integration']['installation'] == 'NOT_RUN'
+    assert MANIFEST['integration']['complete_acceptance'] == 'INCONCLUSIVE'
+    assert MANIFEST['integration']['historical_HIS_AC20'] == 'PRODUCT_FAIL_3_OF_3'
+    limits = page.locator('[data-genetrix-panel="validation"]').text_content()
+    for phrase in ('33 executáveis', '0/3', 'NOT_RUN', 'INCONCLUSIVE', 'HIS-AC20', 'PRODUCT_FAIL 3/3'):
+        assert phrase in limits, phrase
+    assert MANIFEST['validation']['clipboard']['detail'] in page.locator('[data-jpw-leverage-meta="clipboard"]').text_content()
+    overview = page.locator('#jpwGenetrixArchitecture').text_content()
+    for phrase in ('JPW_Genetrix_Monitor', 'Genetrix · Conta', 'NoCuda · Gráficos',
+                   'Observer e Accountant', 'rollback', 'Supervisor 7x', 'outro gráfico'):
+        assert phrase in overview, phrase
+    assert 'Compilado · execução MT5 pendente' in page.locator('[data-jpw-leverage-meta="native-summary"]').text_content()
     assert set(page.locator('[data-jpw-leverage-meta="version"]').all_text_contents()) == {MANIFEST['version']}
     assert all(MANIFEST['validation']['mathematics']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="mathematics"]').all_text_contents())
     assert all(MANIFEST['validation']['compilation']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="compilation"]').all_text_contents())
     assert all(MANIFEST['validation']['terminal']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="terminal"]').all_text_contents())
     assert page.locator('[data-jpw-leverage-download="source"]').is_enabled()
     assert set(page.locator('[data-jpw-leverage-meta="source-sha"]').all_text_contents()) == {SOURCE['sha256']}
-    assert page.locator('[data-jpw-leverage-download="compiled"]').is_disabled()
-    assert all(MANIFEST['downloads']['compiled']['reason'] in value for value in page.locator('[data-jpw-leverage-meta="compiled-status"]').all_text_contents())
+    assert page.locator('[data-jpw-leverage-download="compiled"]').is_enabled()
+    assert all(COMPILED['filename'] in value for value in page.locator('[data-jpw-leverage-meta="compiled-status"]').all_text_contents())
     assert page.evaluate("JPWNavigation.navigateLocal('tools','leverage')")
     assert page.evaluate("JPWNavigation.current().canonical") == 'tools-leverage'
 
@@ -225,12 +266,12 @@ def verify_guide(page):
         'Indicators', 'Include', 'Scripts', 'Experts', 'Images']
     open_area(page, 'install')
     assert page.locator('.leverage-package--source [data-jpw-leverage-download="source"]').is_enabled()
-    assert page.locator('.leverage-package--compiled [data-jpw-leverage-download="compiled"]').is_disabled()
+    assert page.locator('.leverage-package--compiled [data-jpw-leverage-download="compiled"]').is_enabled()
     open_area(page, 'validation')
     validation = page.locator('[data-genetrix-panel="validation"]')
     assert validation.locator('[data-jpw-leverage-meta="version"]').text_content() == MANIFEST['version']
     assert SOURCE['filename'] in validation.locator('[data-jpw-leverage-meta="source-status"]').text_content()
-    assert MANIFEST['downloads']['compiled']['reason'] in validation.locator('[data-jpw-leverage-meta="compiled-status"]').text_content()
+    assert COMPILED['filename'] in validation.locator('[data-jpw-leverage-meta="compiled-status"]').text_content()
     validation_hash = validation.locator('.genetrix-validation-integrity > summary')
     validation_hash.focus(); page.keyboard.press('Enter')
     assert validation_hash.evaluate('n=>n.parentElement.open')
@@ -285,7 +326,7 @@ def verify_guide(page):
         'JPW_Alavancagem_StopRisk_Store.mqh': 'MQL5/Include/JPWealth/',
         'JPW_Alavancagem_StopRisk_Terminal.mqh': 'MQL5/Include/JPWealth/',
         'JPW_Alavancagem_Observer_Presence.mqh': 'MQL5/Include/JPWealth/',
-        'JPW_Alavancagem_Observer.mq5': 'MQL5/Experts/JPWealth/ (necessário para Stop risk; opcional para as outras leituras)',
+        'JPW_Alavancagem_Observer.mq5': 'MQL5/Experts/JPWealth/ · legado para rollback; não usar junto do Monitor',
         'JPW_Alavancagem_Tests.mq5': 'MQL5/Scripts/JPWealth/',
         'JPW_Alavancagem_Metrics_Tests.mq5': 'MQL5/Scripts/JPWealth/',
         'JPW_Alavancagem_Verificar_USC.mq5': 'MQL5/Scripts/JPWealth/',
@@ -330,7 +371,17 @@ def verify_guide(page):
                                    "JPW_PersonalHistory_Tests.mq5")})
     expected_destinations.update({name: "Referência no ZIP · não copiar para MQL5" for name in
                                   ("AGENTS.md", "GENETRIX_7X_LEDGER.md", "GENETRIX_PERSONAL_HISTORY.md", "README.md")})
-    assert len(expected_destinations) == rows.count() == 107
+    expected_destinations['JPW_Genetrix_Accountant.mq5'] = 'MQL5/Experts/JPWealth/ · legado para rollback; não usar junto do Monitor'
+    expected_destinations['JPW_Genetrix_Supervisor.mq5'] = 'MQL5/Experts/JPWealth/ · opcional; outro gráfico; não armar nesta validação'
+    expected_destinations['JPW_Genetrix_Monitor.mq5'] = 'MQL5/Experts/JPWealth/ · núcleo recomendado; gráfico de apoio dedicado'
+    expected_destinations.update({name: 'MQL5/Include/JPWealth/' for name in (
+        'JPW_Genetrix_Monitor_Core.mqh', 'JPW_Genetrix_Monitor_Status.mqh', 'JPW_Genetrix_Monitor_UI.mqh',
+        'JPW_Genetrix_Observer_Runtime.mqh', 'JPW_Genetrix_Accountant_Runtime.mqh',
+        'JPW_Genetrix_Ledger_Preparation.mqh', 'JPW_UI_Design.mqh')})
+    expected_destinations.update({name: 'Referência no ZIP · não copiar para MQL5' for name in
+        {'GENETRIX_REPAIR_1_18_1.md', 'GENETRIX_COMPILE_FIX_1_18_2.md', 'GENETRIX_UI_1_19_0.md',
+         'GENETRIX_CORE_1_20_0.md'} | HARNESS_MEMBERS})
+    assert len(expected_destinations) == rows.count() == 126
     assert {row.locator('th').text_content(): row.locator('td').text_content()
             for row in rows.all()} == expected_destinations
     assert 'não são compilados separadamente' in page.locator('#jpwLeverageCompile').text_content()
@@ -385,7 +436,7 @@ def verify_guide(page):
                    'preserva as fórmulas e os registros locais'):
         assert phrase in cockpit, phrase
     assert page.locator('#jpwLeverageCockpit .leverage-cockpit-map dt').all_text_contents() == [
-        'Visão geral', 'Stops', 'Raiz N', 'Sistema', 'Ajustes']
+        'Visão geral', 'Stops', 'Raiz N', 'Sistema', 'Histórico Pessoal', 'Ajustes']
     cockpit_guide = page.locator('#jpwLeverageCockpit').text_content()
     for phrase in ('tabela única', 'ticket completo', 'volume', 'Leverage individual', 'nocional bruto', 'equity', 'Operação', 'Conta', 'rolagem', 'Fechar', 'Esc', 'NOT_RUN'):
         assert phrase in cockpit_guide, phrase
@@ -409,7 +460,7 @@ def verify_guide(page):
                    'Tick, zoom, rolagem e consulta não criam revisões',
                    '90% do gráfico', 'Compacta · Ampla · Maximizada',
                    'padrão 11', '9 a 24', 'UNVERIFIED_NATIVE', 'N/A', 'NOT_RUN',
-                   'sem EX5 ou prontidão operacional comprovada',
+                   'geometria importada, interação e prontidão operacional continuam pendentes',
                    'referência geométrica inclinada', 'se o canal for mantido',
                    'não prevê onde estará a cotação', '12h e média dos extremos podem diferir',
                    'AAAA.MM.DD', 'Data do servidor', 'Linha selecionada', 'Consultar dia'):
@@ -499,7 +550,7 @@ def verify_guide(page):
     assert 'sem alegar janela iniciada no presente verificado' in raiz
     assert 'calendário datado aprovado' in raiz and 'Estimated' in raiz
     assert 'Esta revisão não traz hash de calendário aprovado' in raiz
-    assert 'JPW_Alavancagem_Observer.mq5' in raiz
+    assert 'JPW_Genetrix_Monitor' in raiz
     assert 'não envia ordens nem altera stops' in raiz
     assert 'Reconstructed' in raiz and 'preço da decisão humana' in raiz
     # Legacy scenarios are supplementary content in the new advanced disclosure.
@@ -656,7 +707,7 @@ def verify_archive(raw):
     with ZipFile(BytesIO(raw)) as bundle:
         listed_names = bundle.namelist()
         names = set(listed_names)
-        assert len(listed_names) == len(names) == 108
+        assert len(listed_names) == len(names) == 127
         assert EXPECTED == names, names
         assert names == {Path(path).relative_to('mt5/jpw-alavancagem-atual').as_posix()
                          for path in MANIFEST['sourceFiles']}, names
@@ -664,20 +715,45 @@ def verify_archive(raw):
             assert bundle.read(name) == (ROOT / 'mt5/jpw-alavancagem-atual' / name).read_bytes(), name
 
 
-def download_from_page(page):
+def verify_compiled_archive(raw):
+    assert len(raw) == COMPILED['bytes']
+    assert sha256(raw).hexdigest() == COMPILED['sha256']
+    native = {Path(item['path']).relative_to('mt5/jpw-alavancagem-atual').as_posix(): item['sha256']
+              for item in MANIFEST['nativeArtifact']['artifacts']}
+    assert set(native) == EXPECTED_EX5
+    with ZipFile(BytesIO(raw)) as bundle:
+        names = bundle.namelist()
+        assert len(names) == len(set(names)) == 34
+        assert set(names) == EXPECTED_EX5 | {'README.md'}
+        assert bundle.read('README.md') == (ROOT/'mt5/jpw-alavancagem-atual/README.md').read_bytes()
+        for name in EXPECTED_EX5:
+            content = bundle.read(name)
+            assert len(content) >= 1024
+            assert sha256(content).hexdigest() == native[name]
+            assert content == (ROOT/'mt5/jpw-alavancagem-atual'/name).read_bytes()
+
+
+def download_from_page(page, kind='source'):
     open_area(page, 'install')
+    if kind == 'compiled':
+        disclosure = page.locator('.genetrix-compiled-details')
+        if not disclosure.evaluate('n=>n.open'):
+            disclosure.locator(':scope > summary').click()
+    record = SOURCE if kind == 'source' else COMPILED
     with page.expect_download() as pending:
-        page.locator('[data-jpw-leverage-download="source"]').click()
+        page.locator('[data-jpw-leverage-download="'+kind+'"]').click()
     artifact = pending.value
-    assert artifact.suggested_filename == SOURCE['filename']
+    assert artifact.suggested_filename == record['filename']
     raw = Path(artifact.path()).read_bytes()
-    verify_archive(raw)
+    (verify_archive if kind == 'source' else verify_compiled_archive)(raw)
     assert 'verificado' in page.locator('#jpwLeverageDownloadStatus').text_content()
 
 
 def main():
     assert SOURCE['available'] is True and ARCHIVE.is_file(), 'source package not built'
     verify_archive(ARCHIVE.read_bytes())
+    assert COMPILED['available'] is True and COMPILED_ARCHIVE.is_file(), 'compiled package not built'
+    verify_compiled_archive(COMPILED_ARCHIVE.read_bytes())
     # Same static bytes/assertions; existing bounded transport avoids dropped
     # bootstrap scripts under concurrent local loads. No retry or fallback.
     server = BrowserFixtureServer(('127.0.0.1', 0), Quiet)
@@ -692,6 +768,9 @@ def main():
         with urlopen(origin + '/' + SOURCE['path']) as response:
             assert response.status == 200
             verify_archive(response.read())
+        with urlopen(origin + '/' + COMPILED['path']) as response:
+            assert response.status == 200
+            verify_compiled_archive(response.read())
         with sync_playwright() as playwright:
             chrome = Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
             launch_options = {'executable_path': str(chrome)} if chrome.is_file() else {}
@@ -704,6 +783,7 @@ def main():
                     route_and_inspect(page)
                     verify_guide(page)
                     download_from_page(page)
+                    download_from_page(page, 'compiled')
                     assert page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})') == before
                     assert not errors, errors
                     print('PASS', name, 'route, metadata, bytes and extraction', flush=True)
@@ -725,6 +805,26 @@ def main():
                         page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
                         assert not count
                         print('PASS HTTP equal-size tampered ZIP refused by SHA-256',flush=True)
+                        page.unroute('**/' + SOURCE['path'])
+                        page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=404, body='missing'))
+                        # Navigation coverage intentionally closed disclosures. Re-establish
+                        # the negative case's visible UI precondition through its summary.
+                        compiled_disclosure = page.locator('.genetrix-compiled-details')
+                        if not compiled_disclosure.evaluate('n=>n.open'):
+                            compiled_disclosure.locator(':scope > summary').click()
+                        compiled_button = page.locator('[data-jpw-leverage-download="compiled"]')
+                        assert compiled_button.is_visible() and compiled_button.is_enabled()
+                        compiled_button.click()
+                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').dataset.state==='error'")
+                        assert 'não encontrado' in page.locator('#jpwLeverageDownloadStatus').text_content()
+                        assert not count
+                        page.unroute('**/' + COMPILED['path'])
+                        changed = bytearray(COMPILED_ARCHIVE.read_bytes()); changed[-1] ^= 1
+                        page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=200, body=bytes(changed), content_type='application/zip'))
+                        compiled_button.click()
+                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
+                        assert not count
+                        print('PASS HTTP native missing/tampered archive refused; no download', flush=True)
                 finally:
                     context.close()
             for layout in ('sidebar', 'topbar', 'glass', 'submenu'):
@@ -772,8 +872,9 @@ def main():
                 wait_bootstrap(page)
                 route_and_inspect(page)
                 download_from_page(page)
+                download_from_page(page, 'compiled')
                 assert not errors, errors
-                print('PASS PWA offline route and archive', flush=True)
+                print('PASS PWA offline route and source/native archives', flush=True)
             finally:
                 context.close()
             browser.close()

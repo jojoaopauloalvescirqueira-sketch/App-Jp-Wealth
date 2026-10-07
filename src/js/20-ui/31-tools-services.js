@@ -127,9 +127,10 @@
     set('source-availability',validEntry(manifest.downloads.source)?'Fontes disponíveis':'Fontes indisponíveis');
     const nativeStages=['compilation','terminal'].map(stage=>manifest.validation[stage]?.status);
     set('native-summary',nativeStages.every(state=>state==='passed')?'Evidências nativas registradas':
+      manifest.validation.compilation?.status==='passed'&&manifest.validation.terminal?.status==='pending'?'Compilado · execução MT5 pendente':
       nativeStages.some(state=>state==='pending')?'Validação nativa pendente':'Validação nativa não informada');
     set('coverage',typeof manifest.coverage==='string'&&manifest.coverage?manifest.coverage:'Cobertura não informada.');
-    for(const stage of ['mathematics','compilation','terminal']){
+    for(const stage of ['mathematics','compilation','terminal','clipboard']){
       const item=manifest.validation[stage];
       const state=item&&item.status==='passed'?'Executada':item&&item.status==='pending'?'Pendente':'Não informada';
       const detail=item&&typeof item.detail==='string'&&item.detail?item.detail:'';

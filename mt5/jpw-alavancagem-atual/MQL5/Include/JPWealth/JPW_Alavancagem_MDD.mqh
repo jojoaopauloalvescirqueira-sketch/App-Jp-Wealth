@@ -249,8 +249,8 @@ JPW_MDD_STATE JPWMDDReadText(const string filename,string &content)
    content="";
    const int handle=FileOpen(filename,FILE_READ|FILE_BIN);
    if(handle==INVALID_HANDLE) return(JPW_MDD_IO_ERROR);
-   const long size=FileSize(handle);
-   if(size<=0 || size>JPW_MDD_MAX_BYTES)
+   const ulong size=FileSize(handle);
+   if(size==0 || size>(ulong)JPW_MDD_MAX_BYTES)
      { FileClose(handle); return(JPW_MDD_INVALID); }
    uchar bytes[];
    if(ArrayResize(bytes,(int)size)!=(int)size ||

@@ -1,0 +1,353 @@
+{
+  "schema": "jpw/core-acceptance/v1",
+  "version": "1.0",
+  "frozen_utc": "2026-10-06T12:08:17.673180+00:00",
+  "baseline": "1.19.0 R3",
+  "candidate": "1.20.0",
+  "status": "DESIGNED/NOT_RUN",
+  "attempts_per_case": 3,
+  "native_critical_sessions": 3,
+  "cooperative_budget_ms": 500,
+  "accounting_slice_ms": 100,
+  "timer_requested_seconds": 1,
+  "per_deal_and_order_limit": 50000,
+  "critical_failure_blocks_approval": true,
+  "cases": [
+    {
+      "id": "CORE-AC01",
+      "title": "Unified runtime",
+      "fixture_preconditions": "One lifecycle/timer; both producers enabled; no executor.",
+      "expected": "Both observational modules work; no trading request.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC02",
+      "title": "Whole-account scope",
+      "fixture_preconditions": "Positions and pending orders outside chart symbol.",
+      "expected": "Scope and independent symbol/direction groups preserved.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC03",
+      "title": "Multiple consumers",
+      "fixture_preconditions": "Different charts read one producer.",
+      "expected": "No duplicate writer; chart selections preserved.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC04",
+      "title": "Optional Supervisor",
+      "fixture_preconditions": "Supervisor absent; trading permission disabled.",
+      "expected": "Monitoring and accounting do not require Supervisor.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC05",
+      "title": "Numeric parity",
+      "fixture_preconditions": "Frozen 1.19.0 fixture outputs.",
+      "expected": "Values, units, cycles, members and summation order match.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC06",
+      "title": "Partial fills/costs",
+      "fixture_preconditions": "Entry costs, partial exits, swap, fees, rollover.",
+      "expected": "No duplicate costs; closed Genesis retained.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC07",
+      "title": "Cycles/selection",
+      "fixture_preconditions": "Linked pending orders, ties, closure and later new cycle.",
+      "expected": "Canonical cycle IDs and selection semantics preserved.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC08",
+      "title": "Incomplete coverage",
+      "fixture_preconditions": "False flags, missing origin/cost evidence, invalid balance.",
+      "expected": "Partial/N/A explicit; no fabricated net result/percentage.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC09",
+      "title": "Isolated ledger failure",
+      "fixture_preconditions": "Fail ledger attach, collection and commit.",
+      "expected": "Healthy monitoring continues; no partial generation published.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC10",
+      "title": "Corruption",
+      "fixture_preconditions": "Corrupt synthetic database/projection/checksum.",
+      "expected": "Refuse and preserve original data; no silent reset.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC11",
+      "title": "Busy database",
+      "fixture_preconditions": "Competing synthetic writer/read lock.",
+      "expected": "Affected module unavailable; do not steal locks.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC12",
+      "title": "Disconnect",
+      "fixture_preconditions": "Lose/recover connection with stale data.",
+      "expected": "Lose Current; revalidate; never turn missing into zero.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC13",
+      "title": "Restart",
+      "fixture_preconditions": "Stop during preparation, restart and remove EA.",
+      "expected": "Keep committed generation; no automatic arm or alert backlog.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC14",
+      "title": "Account switch",
+      "fixture_preconditions": "Identity changes during collection/callback.",
+      "expected": "Discard draft; no event/coverage leakage across accounts.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC15",
+      "title": "Duplicate instances",
+      "fixture_preconditions": "Two monitors claim same account/install.",
+      "expected": "One effective producer/notifier; conflict explicit.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC16",
+      "title": "Legacy producers",
+      "fixture_preconditions": "Old Observer/Accountant own valid leases/locks.",
+      "expected": "Respect existing owners; no competing publication.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC17",
+      "title": "Large history",
+      "fixture_preconditions": "50000 deals and 50000 orders separately; limit+1.",
+      "expected": "Resumable progress; original limits; refuse overflow.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC18",
+      "title": "Event burst",
+      "fixture_preconditions": "Reordering/corrections/deletes/queue loss; finite burst.",
+      "expected": "Coverage failure explicit; reconcile and complete when stable.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC19",
+      "title": "Shared selection",
+      "fixture_preconditions": "History selection reset between slices; unchanged count with changed costs.",
+      "expected": "Confirm selection/content; invalidate changed preparation.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC20",
+      "title": "Scheduler fairness",
+      "fixture_preconditions": "Controlled clock, continuously due monitoring/accounting.",
+      "expected": "Due work serviced; preparation progresses; overruns recorded.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC21",
+      "title": "Cockpit/NoCuda",
+      "fixture_preconditions": "Open/close/alternate windows, themes and sizes.",
+      "expected": "Keep summary/drawings; closing Cockpit does not stop EA.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC22",
+      "title": "Preferences",
+      "fixture_preconditions": "Previous preferences and selection after consumer restart.",
+      "expected": "Compatible IDs/keys; no reset or mutation by navigation.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC23",
+      "title": "Stale data",
+      "fixture_preconditions": "Live heartbeat with stale capture and old Supervisor record.",
+      "expected": "Presence separate from data; old record proves no current arm.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CORE-AC24",
+      "title": "Support chart",
+      "fixture_preconditions": "Minimize/close/replace EA; consumer on different chart.",
+      "expected": "Minimization verified natively; interruption invalidates Current.",
+      "required_evidence": [
+        "candidate hash",
+        "new process/session identity",
+        "fixture hash",
+        "observable assertions or native trace"
+      ],
+      "critical_failure": "Violation of mandatory expected behavior or insufficient evidence presented as PASS",
+      "execution": "NOT_RUN"
+    }
+  ]
+}

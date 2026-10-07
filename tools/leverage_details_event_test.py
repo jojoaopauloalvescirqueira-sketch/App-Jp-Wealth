@@ -36,10 +36,14 @@ constexpr int CHARTEVENT_CHART_CHANGE=1, CHARTEVENT_OBJECT_ENDEDIT=2, CHARTEVENT
 ulong mock_focus_clock=1000;
 ulong GetTickCount64(){return mock_focus_clock;}
 long MathAbs(long value){return std::abs(value);}
-constexpr int OBJPROP_TOOLTIP=10;
+constexpr int OBJPROP_TOOLTIP=10,OBJPROP_SELECTED=11,OBJPROP_BORDER_COLOR=12;
+constexpr int CHART_COLOR_BACKGROUND=13;using color=int;
+long ChartGetInteger(int,int){return 0xffffff;}
+color JPWPanelAccentColor(color){return 0x735128;}
+color g_details_card=0xffffff,g_details_border=0xcccccc;
 constexpr int OBJPROP_TEXT=1,OBJPROP_STATE=2,JPW_RAIZN_VALID=1,JPW_RAIZN_ABSENT=0;
 constexpr int OBJPROP_CORNER=3,OBJPROP_XDISTANCE=4,OBJPROP_YDISTANCE=5,OBJPROP_FONTSIZE=6;
-constexpr int OBJPROP_SELECTABLE=7,OBJPROP_HIDDEN=8,OBJPROP_TYPE=9,OBJ_LABEL=1,CORNER_LEFT_UPPER=0,InpCorner=0;
+constexpr int OBJPROP_SELECTABLE=7,OBJPROP_HIDDEN=8,OBJPROP_TYPE=9,OBJ_LABEL=1,OBJ_BUTTON=2,OBJ_EDIT=3,CORNER_LEFT_UPPER=0,InpCorner=0;
 constexpr double JPW_RAIZN_FACTOR_DEFAULT=1.5;
 long StringToInteger(const string&s){try{return std::stol(s);}catch(...){return 0;}}
 int StringFind(const string&s,const string& needle){auto pos=s.find(needle);return pos==string::npos?-1:(int)pos;}
@@ -90,12 +94,14 @@ JPWAccount g_account,g_raiz_draft_account,current_account;
 Config g_live_config; Scenario g_raiz_scenario;
 FactorPreference g_factor_preference;
 bool g_refresh_requested=false,g_record_read_requested=false,g_editing_field=false;
-int g_focus_action=-1,g_focus_count=0,g_hud_summary_source=-1;
+int g_focus_action=-1,g_focus_count=0,g_focus_actions[128],g_details_focus_route=-1,g_hud_summary_source=-1;
 string g_sample_context="synthetic-context",g_export_preview,g_export_result;
 bool g_export_preview_requested=false,g_export_requested=false;
 int g_diagnostic_pending=0;constexpr int JPW_DIAG_SETTINGS_APPLIED=8;
 void JPWQueueDiagnostic(int code){g_diagnostic_pending|=(1<<code);}
-void JPWFocusStep(bool){}
+void JPWFocusRegister(const int action);
+bool JPWFocusValid(const int action);
+void JPWFocusStep(const bool backward);
 bool g_jpw_focus_suspended=false;
 std::vector<string> owner_events;
 bool EventChartCustom(int,int,long,double,const string&owner){owner_events.push_back(owner);return true;}
@@ -115,23 +121,25 @@ int g_factor_state=JPW_RAIZN_ABSENT;
 std::array<string,21> g_raiz_fields;
 string g_panel_prefix="INSTANCE_",_Symbol="NZDUSD.exact",g_raiz_draft_symbol,g_raiz_draft_expected_id,g_raiz_feedback,g_factor_reason,g_panel_value,g_panel_status;
 std::map<string,string> objects;
+std::map<string,std::map<int,long>> object_numbers;
+int preference_write_calls=0;
 int refreshes=0,apply=0,factor_apply=0,legacy_apply=0,bind=0,compare=0,drawn_account=0,metric_account=0,mdd_reads=0,destructions=0,hud_renders=0;
 bool account_available=true,flip_after_mdd=false;
 string JPWRaizUI(const string&s){return g_panel_prefix+"RAIZ_UI_"+s;}
 bool JPWReadAccount(JPWAccount&a){a=current_account;return account_available;}
 bool JPWAccountsEqual(JPWAccount&a,JPWAccount&b){return a.id==b.id;}
-bool ObjectSetInteger(int,const string&,int,long){return true;}
+bool ObjectSetInteger(int,const string&name,int property,long value){if(!objects.count(name))return false;object_numbers[name][property]=value;return true;}
 int ObjectFind(int,const string&name){return objects.count(name)?0:-1;}
-int ObjectGetInteger(int,const string&,int){return OBJ_LABEL;}
+int ObjectGetInteger(int,const string&name,int property){auto n=object_numbers.find(name);if(n==object_numbers.end())return property==OBJPROP_TYPE?OBJ_LABEL:0;auto p=n->second.find(property);return p==n->second.end()?(property==OBJPROP_TYPE?OBJ_LABEL:0):(int)p->second;}
 string ObjectGetString(int,const string&name,int){return objects[name];}
-bool ObjectCreate(int,const string&name,int,int,int,int){objects[name]="";return true;}
-bool ObjectSetString(int,const string&name,int,const string &value){objects[name]=value;return true;}
-bool ObjectDelete(int,const string&name){objects.erase(name);return true;}
+bool ObjectCreate(int,const string&name,int type,int,int,int){objects[name]="";object_numbers[name][OBJPROP_TYPE]=type;return true;}
+bool ObjectSetString(int,const string&name,int,const string &value){if(name==JPW_COCKPIT_PREF_OBJECT)preference_write_calls++;objects[name]=value;return true;}
+bool ObjectDelete(int,const string&name){objects.erase(name);object_numbers.erase(name);return true;}
+int ObjectsTotal(int,int,int){return (int)objects.size();}
+string ObjectName(int,int index,int,int){auto i=objects.begin();std::advance(i,index);return i->first;}
 void ChartRedraw(int){}
 int JPWPanelClamp(int v,int a,int b){return v<a?a:(v>b?b:v);}
-void JPWRaizPanelDestroy(){for(auto i=objects.begin();i!=objects.end();){
- if(i->first.find("RAIZ_UI_")!=string::npos)i=objects.erase(i);else ++i;}
- g_raiz_panel_built=false;destructions++;}
+void JPWRaizPanelDestroy();
 bool JPWDetailsContextCurrent();
 void JPWRenderRaizDetails(){if(g_raiz_details_open&&JPWDetailsContextCurrent()){drawn_account=metric_account;g_raiz_panel_built=true;}}
 void JPWRender(const string&,const string&){JPWRenderRaizDetails();}
@@ -292,6 +300,8 @@ int main(){
  click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");click(JPWRaizUI("BUTTON_44"));
  const string coexist_pref=objects[JPW_COCKPIT_PREF_OBJECT];
  const int coexist_writes=apply+legacy_apply+factor_apply;
+ const int coexist_preference_writes=preference_write_calls;
+ JPWFocusRegister(JPW_ACTION_APPLY);ObjectCreate(0,JPWActionObject(JPW_ACTION_APPLY),OBJ_BUTTON,0,0,0);
  g_focus_action=JPW_ACTION_APPLY;objects[JPWActionObject(JPW_ACTION_APPLY)]="Apply";
  click("JPWNC_UI_EDIT_DATE");
  OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
@@ -299,19 +309,22 @@ int main(){
  OnChartEvent(CHARTEVENT_KEYDOWN,27,0.,"");
  check(g_raiz_details_open&&g_raiz_tab==JPW_ROUTE_SETTINGS&&
        objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref&&
-       apply+legacy_apply+factor_apply==coexist_writes,
+       apply+legacy_apply+factor_apply==coexist_writes&&preference_write_calls==coexist_preference_writes,
        "NoCuda editor cannot activate Apply, Tab or Escape in an open cockpit");
  objects[JPWRaizUI("EDIT_17")]="typed draft";
  OnChartEvent(CHARTEVENT_OBJECT_ENDEDIT,0,0.,JPWRaizUI("EDIT_17"));
  check(g_raiz_fields[17]=="typed draft","late owned ENDEDIT preserves the user's field data");
  OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
  check(objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref&&
-       apply+legacy_apply+factor_apply==coexist_writes,
+       apply+legacy_apply+factor_apply==coexist_writes&&preference_write_calls==coexist_preference_writes,
        "late owned ENDEDIT does not regain shortcuts after a foreign click");
+ JPWFocusRegister(-1017);ObjectCreate(0,JPWRaizUI("EDIT_17"),OBJ_EDIT,0,0,0);
+ objects[JPWRaizUI("EDIT_17")]="typed draft";
  click(JPWRaizUI("EDIT_17"));
  OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
- check(g_editing_field&&objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref,
-       "an owned editor keeps its native typing guard");
+ check(!g_editing_field&&g_raiz_fields[17]=="typed draft"&&
+       objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref&&apply+legacy_apply+factor_apply==coexist_writes&&preference_write_calls==coexist_preference_writes,
+       "Enter ends the owned editor in memory without applying or persisting settings");
  OnChartEvent(CHARTEVENT_OBJECT_ENDEDIT,0,0.,JPWRaizUI("EDIT_17"));
  check(!g_editing_field&&g_raiz_fields[17]=="typed draft",
        "owned ENDEDIT still ends editing and captures the field");
@@ -378,12 +391,13 @@ int main(){
  g_cockpit_draft.visible_mask=17;g_cockpit_draft.density=1;
  objects[JPWRaizUI("EDIT_17")]="draft kept across owner change";g_raiz_panel_built=true;
  const int focus_refreshes=refreshes,focus_writes=apply+legacy_apply+factor_apply;
+ const int focus_preference_writes=preference_write_calls;
  check(JPWUIAcquire("NOCUDA_TEST_")&&JPWUIOwns("NOCUDA_TEST_"),"real chart-local owner transfers to NoCuda");
  OnChartEvent(CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT,0,0.,"NOCUDA_TEST_");
  check(!g_raiz_details_open&&g_jpw_focus_suspended&&g_cockpit_draft.visible_mask==17&&
        g_raiz_fields[17]=="draft kept across owner change","focus transfer hides Cockpit and preserves its unsaved fields and visual draft");
  OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
- check(apply+legacy_apply+factor_apply==focus_writes&&refreshes==focus_refreshes,"foreign owner never applies or collects from Cockpit keys");
+ check(apply+legacy_apply+factor_apply==focus_writes&&preference_write_calls==focus_preference_writes&&refreshes==focus_refreshes,"foreign owner never applies or collects from Cockpit keys");
  JPWOpenCockpit();
  check(g_raiz_details_open&&!g_jpw_focus_suspended&&JPWUIOwns(g_panel_prefix)&&g_raiz_tab==JPW_ROUTE_SETTINGS&&
        g_cockpit_draft.visible_mask==17&&g_raiz_fields[17]=="draft kept across owner change","same-context reopen resumes suspended draft without repopulation");
@@ -392,6 +406,33 @@ int main(){
        "queued stale ownership event cannot hide the currently reacquired Cockpit or discard its draft");
  JPWUIRelease("NOCUDA_TEST_");check(JPWUIOwns(g_panel_prefix),"stale module cannot release another component's ownership");
  check(!owner_events.empty()&&owner_events.back()==g_panel_prefix,"acquisition emits owner evidence for the other chart module");
+ // New 1.19 focus scope: real helpers plus synthetic native object APIs.
+ const int focus_action=JPW_ACTION_APPLY;
+ JPWRaizSwitchTab(JPW_ROUTE_SETTINGS);g_raiz_details_open=true;
+ JPWFocusRegister(focus_action);ObjectCreate(0,JPWFocusObject(focus_action),OBJ_BUTTON,0,0,0);
+ check(JPWFocusValid(focus_action),"registered same-route button is a valid focus target");
+ const int before_rejected_writes=apply+legacy_apply+factor_apply;
+ const int before_rejected_preference_writes=preference_write_calls;
+ g_focus_action=focus_action;g_raiz_tab=JPW_ROUTE_FACTOR;
+ check(!JPWFocusValid(focus_action),"same numeric action from another route has no focus authority");
+ OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
+ check(apply+legacy_apply+factor_apply==before_rejected_writes&&preference_write_calls==before_rejected_preference_writes,"Enter cannot apply a reused ID from another route");
+ g_raiz_tab=JPW_ROUTE_SETTINGS;ObjectDelete(0,JPWFocusObject(focus_action));
+ check(!JPWFocusValid(focus_action),"missing object cannot be a keyboard target");
+ ObjectCreate(0,JPWFocusObject(focus_action),OBJ_LABEL,0,0,0);
+ check(!JPWFocusValid(focus_action),"label occupying a button identity is rejected");
+ ObjectCreate(0,JPWFocusObject(focus_action),OBJ_BUTTON,0,0,0);g_focus_count=0;
+ check(!JPWFocusValid(focus_action),"unregistered object cannot inherit prior focus");
+ JPWFocusRegister(-1017);ObjectCreate(0,JPWFocusObject(-1017),OBJ_BUTTON,0,0,0);
+ check(!JPWFocusValid(-1017),"edit identity with a button type is rejected");
+ ObjectCreate(0,JPWFocusObject(-1017),OBJ_EDIT,0,0,0);
+ check(JPWFocusValid(-1017),"registered editor requires actual editor object type");
+ JPWFocusRegister(focus_action);ObjectCreate(0,JPWFocusObject(focus_action),OBJ_BUTTON,0,0,0);
+ g_focus_action=-1;JPWFocusStep(false);
+ check(g_focus_action==-1017&&g_editing_field,"Tab focuses the real registered editor");
+ JPWFocusStep(false);check(g_focus_action==focus_action&&!g_editing_field,"next Tab focuses button without applying");
+ JPWFocusStep(true);check(g_focus_action==-1017&&g_editing_field,"Shift Tab returns to editor without applying");
+ check(apply+legacy_apply+factor_apply==before_rejected_writes&&preference_write_calls==before_rejected_preference_writes,"focus traversal never writes settings");
  std::cout<<"HOST_DETAILS_EVENT: "<<checks-failures<<" PASS / "<<failures<<" FAIL\n";
  return failures?1:0;
 }
@@ -400,7 +441,11 @@ int main(){
 def main():
     source=expanded_source(IND);store=STORE.read_text()
     cockpit=expanded_source(COCKPIT).replace('string part[];', 'std::vector<string> part;')
-    sigs=['bool JPWCockpitAcceptChartEvent(const int id,const long &lparam,\n                                const double &dparam,const string &object_name)',
+    sigs=['void JPWRaizPanelDestroy()', 'void JPWFocusRegister(const int action)',
+          'string JPWFocusObject(const int action)', 'bool JPWFocusRegistered(const int action)',
+          'bool JPWFocusValid(const int action)', 'void JPWFocusPaint()',
+          'void JPWFocusStep(const bool backward)',
+          'bool JPWCockpitAcceptChartEvent(const int id,const long &lparam,\n                                const double &dparam,const string &object_name)',
           'bool JPWDetailsContextCurrent()', 'void JPWCockpitLoadPrefs()',
           'bool JPWCockpitSavePrefs(JPWCockpitPrefs &candidate)',
           'void JPWRaizSaveVisibleFields()', 'void JPWRaizSwitchTab(const int tab)',
