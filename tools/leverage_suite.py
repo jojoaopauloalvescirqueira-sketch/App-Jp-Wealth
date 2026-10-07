@@ -64,6 +64,7 @@ def input_hashes(root: Path = ROOT) -> dict[str, str]:
         "tests/fixtures/genetrix/*.json",
         "tools/build_leverage_package.py", "tools/browser_bootstrap_fixture.py",
         "downloads/jpw-alavancagem-atual/*", ".github/workflows/mt5-host.yml",
+        "docs/validation/genetrix-1.20.0/**/*",
         "requirements-dev.txt", "src/**/*", "index.html", "build-id.js",
         "sw.js", "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
     ):
