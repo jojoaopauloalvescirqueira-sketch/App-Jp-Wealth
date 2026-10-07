@@ -10,17 +10,135 @@ import zipfile
 from build_leverage_package import ROOT, MANIFEST_PATH, COMPILED_ARTIFACT, VERSION_HEADER, build
 
 
+# Explicit release contract, frozen independently of the generated manifest.
+# Do not derive this oracle from sourceFiles: same-count substitutions must fail.
+EXPECTED_MEMBERS = {
+    "AGENTS.md",
+    "GENETRIX_7X_LEDGER.md",
+    "GENETRIX_PERSONAL_HISTORY.md",
+    "MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5",
+    "MQL5/Experts/JPWealth/JPW_Genetrix_Accountant.mq5",
+    "MQL5/Experts/JPWealth/JPW_Genetrix_Supervisor.mq5",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo.provenance.md",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_100.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_125.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_150.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_200.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_100.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_125.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_150.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_200.bmp",
+    "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Observer_Presence.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Panel.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Observer.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Samples.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Bridge.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_Genetrix_UI.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh",
+    "MQL5/Include/JPWealth/JPW_SignalCopy_Controller.mqh",
+    "MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh",
+    "MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh",
+    "MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh",
+    "MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh",
+    "MQL5/Include/JPWealth/JPW_UI_Focus.mqh",
+    "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+    "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Genetrix_Risk_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5",
+    "README.md",
+}
+
+
 def main() -> None:
     template = json.loads((ROOT / MANIFEST_PATH).read_text(encoding="utf-8"))
-    assert template["version"] == "1.17.0"
+    expected_sources = {"mt5/jpw-alavancagem-atual/" + member for member in EXPECTED_MEMBERS}
+    assert len(EXPECTED_MEMBERS) == 108
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 108
+    assert set(template["sourceFiles"]) == expected_sources, "source inventory differs from the explicit release contract"
+    assert template["version"] == "1.18.0"
     version_source = (ROOT / VERSION_HEADER).read_text(encoding="utf-8")
-    assert '#define JPW_PRODUCT_VERSION "1.17.0"' in version_source
-    assert '#define JPW_PRODUCT_MQL_VERSION "1.170"' in version_source
+    assert '#define JPW_PRODUCT_VERSION "1.18.0"' in version_source
+    assert '#define JPW_PRODUCT_MQL_VERSION "1.180"' in version_source
     assert '#define JPW_CALCULATION_VERSION "1.9.0"' in version_source
     nocuda_source = (ROOT / "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5").read_text(encoding="utf-8")
     assert '#property version   "1.30"' in nocuda_source
     readme = (ROOT / "mt5/jpw-alavancagem-atual/README.md").read_text(encoding="utf-8")
-    for phrase in ('fontes MT5 v1.17.0', 'MQL `1.170`', 'declara `1.30`',
+    for phrase in ('fontes MT5 v1.18.0', 'MQL `1.180`', 'declara `1.30`',
                    'cálculo financeiro continua **1.9.0**', 'NOT_RUN'):
         assert phrase in readme, phrase
     assert "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh" in template["sourceFiles"]
@@ -88,7 +206,16 @@ def main() -> None:
         "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
     }
     nocuda |= fibo
-    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 100
+    # Versioned expectations are independent of the generated ZIP/manifest.
+    # Preserve all earlier contracts and require each new observer component.
+    personal_history = {
+        "mt5/jpw-alavancagem-atual/GENETRIX_PERSONAL_HISTORY.md",
+        *("mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_" + name + ".mqh"
+          for name in ("Controller", "Core", "Export", "Store", "Terminal", "UI")),
+        "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
+    }
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 108
+    assert personal_history <= set(template["sourceFiles"])
     assert nocuda <= set(template["sourceFiles"])
     brands = {"mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Genetrix_Logo_" +
               theme + "_" + str(scale) + ".bmp" for theme in ("Light", "Dark")
@@ -98,7 +225,10 @@ def main() -> None:
     assert template["productName"] == "JPW GENETRIX"
     assert '#define JPW_PRODUCT_NAME "JPW GENETRIX"' in version_source
     assert '#define JPW_PRODUCT_TAGLINE "Da origem da operação à leitura do risco."' in version_source
-    for phrase in ("1.17.0", "UNVERIFIED_NATIVE", "H1/H4", "N/A", "NOT_RUN"):
+    for phrase in ("CANDIDATE 1.18.0", "Histórico Pessoal observador", "forward-only",
+                   "por conta/instalação", "SL==0/60s", "Current/Estimated", "CSV/backupJSON",
+                   "compilação/EX5/MT5 NOT_RUN", "nenhuma instalação/publicação/ativação",
+                   "estados normativos permanecem"):
         assert phrase in template["coverage"], phrase
     for phrase in ("Fibonacci acompanhado", "UNVERIFIED_NATIVE", "| 5 | −0,50 |", "H1 e H4", "não prevê"):
         assert phrase in readme, phrase
@@ -130,11 +260,12 @@ def main() -> None:
         assert first["runtimeBuildId"].encode() in payloads[version_member]
         source = first["downloads"]["source"]
         assert source["available"] and not first["downloads"]["compiled"]["available"]
-        assert source["filename"] == "JPW_Genetrix_Fontes_v1.17.0.zip"
+        assert source["filename"] == "JPW_Genetrix_Fontes_v1.18.0.zip"
         content = (root / source["path"]).read_bytes()
         assert len(content) == source["bytes"]
         assert hashlib.sha256(content).hexdigest() == source["sha256"]
         with zipfile.ZipFile(BytesIO(content)) as archive:
+            assert len(archive.namelist()) == len(set(archive.namelist())) == len(payloads)
             assert set(archive.namelist()) == set(payloads)
             assert all(archive.read(name) == expected for name, expected in payloads.items())
             assert "AGENTS.md" in archive.namelist()
@@ -203,7 +334,10 @@ def main() -> None:
         assert build(root) == first
 
         bad_version = (root / VERSION_HEADER).read_bytes()
-        (root / VERSION_HEADER).write_bytes(bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.17.0"', b'#define JPW_PRODUCT_VERSION "1.9.0"'))
+        mismatched_version = bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.18.0"',
+                                                b'#define JPW_PRODUCT_VERSION "1.9.0"')
+        assert mismatched_version != bad_version, "negative version fixture did not mutate the input"
+        (root / VERSION_HEADER).write_bytes(mismatched_version)
         try:
             build(root)
         except ValueError as error:
@@ -378,8 +512,8 @@ def main() -> None:
                 raise AssertionError(f"archive built without {required_current}")
             absent.write_bytes(content)
 
-        for required_nocuda in nocuda:
-            absent = root / required_nocuda
+        for required_component in nocuda | personal_history:
+            absent = root / required_component
             content = absent.read_bytes()
             absent.unlink()
             try:
@@ -387,7 +521,7 @@ def main() -> None:
             except (ValueError, FileNotFoundError):
                 pass
             else:
-                raise AssertionError(f"archive built without {required_nocuda}")
+                raise AssertionError(f"archive built without {required_component}")
             absent.write_bytes(content)
 
         missing = root / template["sourceFiles"][2]
