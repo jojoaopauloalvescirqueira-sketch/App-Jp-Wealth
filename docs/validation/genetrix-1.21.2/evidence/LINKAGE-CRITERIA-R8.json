@@ -1,0 +1,12 @@
+{
+  "revision": "R8-LINKAGE-CRITERIA-FROZEN",
+  "beforeSha256": "e9a445c66df1ceb0323cf7707d66119cb76179bc7e6ffa61d1698927883886dd",
+  "failure": "CI Linux host risk test cannot link SHA256 without libcrypto",
+  "required": {
+    "darwin": "same original compiler flags; no -lcrypto required by CommonCrypto",
+    "nonDarwin": "include -lcrypto after source/object inputs; retain -std=c++17 -Wall -Wextra -Werror",
+    "criteria": "no changes to C++ fixtures, assertions, expected values, classification or MQL sources",
+    "trials": "three fresh local risk processes plus host; native compilation/execution remain NOT_RUN; actual Linux confirmation requires CI"
+  },
+  "baseCommit": "90b39df7a9d6097970a82013cd4e0c9b6e5fee02"
+}

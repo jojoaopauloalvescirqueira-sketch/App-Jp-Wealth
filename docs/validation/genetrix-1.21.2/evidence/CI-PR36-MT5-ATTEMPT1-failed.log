@@ -1,0 +1,95 @@
+mt5-host	Run MT5 host and distribution checks	﻿2026-10-09T02:05:02.1912921Z ##[group]Run python tools/leverage_suite.py --scope all --artifact tools/.artifacts/mt5-host.json
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1913542Z ^[[36;1mpython tools/leverage_suite.py --scope all --artifact tools/.artifacts/mt5-host.json^[[0m
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1974707Z shell: /usr/bin/bash -e {0}
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1974932Z env:
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1975163Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1975555Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1975941Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1976283Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1976622Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1976972Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.1977261Z ##[endgroup]
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:02.2791819Z [RUN] leverage_suite_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:04.5626214Z [PASS] leverage_suite_test (2.283s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:04.5626581Z [RUN] leverage_panel_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:12.6682277Z [PASS] leverage_panel_test (8.106s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:12.6682577Z [RUN] leverage_cockpit_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:13.0721824Z [PASS] leverage_cockpit_test (0.404s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:13.0722193Z [RUN] leverage_details_event_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:13.7470626Z [PASS] leverage_details_event_test (0.675s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:13.7470990Z [RUN] leverage_geometry_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:14.9553553Z [PASS] leverage_geometry_test (1.208s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:14.9553904Z [RUN] leverage_config_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:15.9765298Z [PASS] leverage_config_test (1.021s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:15.9765597Z [RUN] leverage_factor_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:16.7177162Z [PASS] leverage_factor_test (0.741s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:16.7177663Z [RUN] leverage_horizon_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:17.0459500Z [PASS] leverage_horizon_test (0.328s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:17.0459782Z [RUN] leverage_live_adapter_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:17.6174912Z [PASS] leverage_live_adapter_test (0.571s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:17.6175240Z [RUN] leverage_observer_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:17.9010757Z [PASS] leverage_observer_test (0.284s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:17.9011132Z [RUN] leverage_stop_risk_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:18.1991716Z [PASS] leverage_stop_risk_test (0.298s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:18.1992093Z [RUN] leverage_stop_ui_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:18.8201066Z [PASS] leverage_stop_ui_test (0.621s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:18.8201411Z [RUN] leverage_reliability_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:19.3909595Z [PASS] leverage_reliability_test (0.571s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:19.3909923Z [RUN] leverage_diagnostics_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:20.0556423Z [PASS] leverage_diagnostics_test (0.665s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:20.0556800Z [RUN] leverage_scheduler_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:21.6177127Z [PASS] leverage_scheduler_test (1.562s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:21.6177644Z [RUN] core_monitor_judge
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:22.1348707Z [PASS] core_monitor_judge (0.517s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:22.1349075Z [RUN] core_replay_judge
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:24.0940904Z [PASS] core_replay_judge (1.959s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:24.0941430Z [RUN] core_preparation_judge
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:24.9590060Z [PASS] core_preparation_judge (0.865s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:24.9590421Z [RUN] jpw_genetrix_ledger_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:25.8134020Z [PASS] jpw_genetrix_ledger_test (0.854s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:25.8134307Z [RUN] jpw_genetrix_risk_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:26.5133148Z [TEST_HARNESS_FAIL] jpw_genetrix_risk_test (0.7s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:26.5133539Z [RUN] jpw_personal_history_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:28.0859212Z [PASS] jpw_personal_history_test (1.573s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:28.0859598Z [RUN] jpw_genetrix_ui_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:28.5864085Z [PASS] jpw_genetrix_ui_test (0.5s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:28.5864371Z [RUN] jpw_genetrix_brand_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:29.9565040Z [PASS] jpw_genetrix_brand_test (1.37s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:29.9565425Z [RUN] jpw_positions_ui_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:32.6418399Z [PASS] jpw_positions_ui_test (2.685s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:32.6418721Z [RUN] jpw_mt5_design_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:32.9088626Z [PASS] jpw_mt5_design_test (0.267s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:32.9089004Z [RUN] jpw_signal_copy_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:33.5873716Z [PASS] jpw_signal_copy_test (0.678s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:33.5874087Z [RUN] jpw_signal_copy_ui_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:34.4047278Z [PASS] jpw_signal_copy_ui_test (0.817s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:34.4047818Z [RUN] jpw_signal_copy_adapter_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:35.5224029Z [PASS] jpw_signal_copy_adapter_test (1.118s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:35.5224317Z [RUN] jpw_nocuda_core_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:35.7924070Z [PASS] jpw_nocuda_core_test (0.27s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:35.7924384Z [RUN] jpw_nocuda_projection_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:36.1974036Z [PASS] jpw_nocuda_projection_test (0.405s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:36.1974426Z [RUN] jpw_nocuda_store_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:36.2243538Z [PASS] jpw_nocuda_store_test (0.027s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:36.2243737Z [RUN] jpw_nocuda_fibo_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:36.5451279Z [PASS] jpw_nocuda_fibo_test (0.321s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:36.5451652Z [RUN] jpw_nocuda_fibo_terminal_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:37.0259870Z [PASS] jpw_nocuda_fibo_terminal_test (0.481s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:37.0260247Z [RUN] jpw_nocuda_fibo_store_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:37.0770364Z [PASS] jpw_nocuda_fibo_store_test (0.051s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:37.0770634Z [RUN] jpw_nocuda_fibo_store_runtime_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:37.7692280Z [PASS] jpw_nocuda_fibo_store_runtime_test (0.692s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:37.7692694Z [RUN] jpw_nocuda_fibo_controller_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:38.8154694Z [PASS] jpw_nocuda_fibo_controller_test (1.046s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:38.8155045Z [RUN] jpw_nocuda_fibo_ui_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:42.5416652Z [PASS] jpw_nocuda_fibo_ui_test (3.726s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:42.5417017Z [RUN] jpw_nocuda_integration_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:45.8863923Z [PASS] jpw_nocuda_integration_test (3.345s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:45.8864204Z [RUN] leverage_package_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:47.6683629Z [PASS] leverage_package_test (1.782s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:05:47.6683894Z [RUN] leverage_page_test
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:06:21.2089708Z [PASS] leverage_page_test (33.54s)
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:06:21.3730956Z RECEIPT: /home/runner/work/App-Jp-Wealth/App-Jp-Wealth/tools/.artifacts/mt5-host.json
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:06:21.3731500Z SUMMARY: {"PASS": 39, "PRODUCT_FAIL": 0, "TEST_HARNESS_FAIL": 1, "ENVIRONMENT_ERROR": 0, "BASELINE_FAIL": 0, "NOT_RUN": 0}
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:06:21.3731833Z Native compilation/execution NOT_RUN; web full gate remains separate.
+mt5-host	Run MT5 host and distribution checks	2026-10-09T02:06:21.3802883Z ##[error]Process completed with exit code 1.

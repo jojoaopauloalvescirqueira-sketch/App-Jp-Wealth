@@ -1,0 +1,26 @@
+[
+  {
+    "attempt": 1,
+    "pid": 75787,
+    "exitCode": 0,
+    "result": "PASS",
+    "passedAssertions": 51,
+    "nativeExecution": "NOT_RUN"
+  },
+  {
+    "attempt": 2,
+    "pid": 75807,
+    "exitCode": 0,
+    "result": "PASS",
+    "passedAssertions": 51,
+    "nativeExecution": "NOT_RUN"
+  },
+  {
+    "attempt": 3,
+    "pid": 75821,
+    "exitCode": 0,
+    "result": "PASS",
+    "passedAssertions": 51,
+    "nativeExecution": "NOT_RUN"
+  }
+]
