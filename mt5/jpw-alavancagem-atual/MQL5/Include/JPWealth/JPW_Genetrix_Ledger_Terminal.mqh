@@ -117,16 +117,17 @@ bool JPWLedgerReadLive(JPWLedgerPosition &positions[],JPWLedgerOrder &orders[],b
 bool JPWLedgerComposition(JPWLedgerPosition &positions[],JPWLedgerOrder &orders[],
                          const string key,const double balance,const long margin,string &digest)
   {
+   digest="";
    string rows[];
    for(int i=0;i<ArraySize(positions);i++)
      {
-      int n=ArraySize(rows); ArrayResize(rows,n+1);
+      int n=ArraySize(rows); if(ArrayResize(rows,n+1)!=n+1) return(false);
       rows[n]="P|"+JPWLedgerInt(positions[i].identifier)+"|"+JPWLedgerInt(positions[i].ticket)+"|"+
          JPWLedgerHex(positions[i].symbol)+"|"+JPWLedgerInt(positions[i].side)+"|"+JPWLedgerNum(positions[i].volume);
      }
    for(int i=0;i<ArraySize(orders);i++) if(orders[i].state==1 || orders[i].state==4)
      {
-      int n=ArraySize(rows); ArrayResize(rows,n+1);
+      int n=ArraySize(rows); if(ArrayResize(rows,n+1)!=n+1) return(false);
       rows[n]="O|"+JPWLedgerInt(orders[i].ticket)+"|"+JPWLedgerHex(orders[i].symbol)+"|"+
          JPWLedgerInt(orders[i].side)+"|"+JPWLedgerNum(orders[i].volume)+"|"+JPWLedgerInt(orders[i].state);
      }
@@ -152,7 +153,8 @@ bool JPWLedgerCollectTerminal(JPWLedgerDeal &deals[],JPWLedgerOrder &orders[],
    bool first_fresh=false,last_fresh=false; JPWLedgerPosition first[]; JPWLedgerOrder active[];
    if(!JPWLedgerReadLive(first,active,first_fresh,reason)) return(false);
    string first_digest="";
-   if(!JPWLedgerComposition(first,active,view.account_key,view.balance,view.margin_mode,first_digest)) return(false);
+   if(!JPWLedgerComposition(first,active,view.account_key,view.balance,view.margin_mode,first_digest))
+     { reason="Composição contábil indisponível; preparação não confirmada"; return(false); }
    datetime end=TimeTradeServer(); if(end<=0) end=TimeCurrent();
    if(end<=0 || !HistorySelect(0,end)) { reason="Seleção histórica indisponível"; return(false); }
    int count=HistoryDealsTotal(),order_count=HistoryOrdersTotal();
@@ -177,8 +179,11 @@ bool JPWLedgerCollectTerminal(JPWLedgerDeal &deals[],JPWLedgerOrder &orders[],
    if(!JPWLedgerReadLive(positions,last_active,last_fresh,reason)) return(false);
    string after_key="",after_currency=""; double after_balance=0; long after_margin=AccountInfoInteger(ACCOUNT_MARGIN_MODE);
    if(!JPWLedgerIdentity(after_key,after_currency) || after_key!=view.account_key || after_currency!=view.currency ||
-      !JPWLedgerAccountDouble(ACCOUNT_BALANCE,after_balance) || after_balance!=view.balance || after_margin!=view.margin_mode ||
-      !JPWLedgerComposition(positions,last_active,after_key,after_balance,after_margin,composition) || composition!=first_digest)
+      !JPWLedgerAccountDouble(ACCOUNT_BALANCE,after_balance) || after_balance!=view.balance || after_margin!=view.margin_mode)
+     { reason="Conta/composição mudou durante a captura"; return(false); }
+   if(!JPWLedgerComposition(positions,last_active,after_key,after_balance,after_margin,composition))
+     { reason="Composição contábil indisponível; preparação não confirmada"; return(false); }
+   if(composition!=first_digest)
      { reason="Conta/composição mudou durante a captura"; return(false); }
    for(int i=0;i<ArraySize(last_active);i++)
      {

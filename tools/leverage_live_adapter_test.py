@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Execute the MQL-compatible collector against an explicit 1.18.1 host oracle.
+"""Execute the MQL-compatible collector against the frozen 1.21.2 judge candidate.
 
 This is a host behavioral test, NOT MetaEditor compilation/native MT5 evidence.
 The collector, native-provider bodies and financial assertions are unchanged.
-Two legacy call-count expectations are adapted in the translated script only;
-one host call-count expectation follows the documented per-capture ATR reread.
-Every transformation and original/derived hash is reported. The distributed
-MQL script and EX5 are never modified or reported as a native behavioral PASS.
+The original MQL test candidate contains explicit per-capture ATR reread
+expectations and same-metadata correction controls. No script expectations are
+rewritten by this host bridge. One native-provider synthetic call-count follows
+the same contract. Every transformation and source hash is reported. This test
+does not modify EX5 or claim native behavioral PASS.
 Terminal API calls are synthetic. A deliberately stale host-only cache mutant
 must fail the same-metadata ATR correction and unavailable-ATR controls.
 """
@@ -137,30 +138,9 @@ int main() {
 '''
 
 
-SCRIPT_HOST_TRANSFORMS = [
-    {
-        "original_line": 129,
-        "before": 'fake.atr_reads==1,"unchanged confirmed H4 uses ATR cache"',
-        "after": 'fake.atr_reads==2,"unchanged H4 rereads closed ATR (HOST_COMPAT 1.18.1)"',
-        "basis": "GENETRIX_REPAIR_1_18_1.md:16,38; per-capture ATR reread",
-    },
-    {
-        "original_line": 139,
-        "before": 'sample.current && sample.bar_time==172800 && fake.atr_reads==2,',
-        "after": 'sample.current && sample.bar_time==172800 && fake.atr_reads==3,',
-        "basis": "GENETRIX_REPAIR_1_18_1.md:16,38; third accepted capture",
-    },
-    {
-        "before": '"JPW_Alavancagem_RaizN_Live_Tests PASS: "',
-        "after": '"HOST_COMPAT_1_18_1 translated legacy script PASS: "',
-        "basis": "identify the adapted host script; no original/native PASS claim",
-    },
-    {
-        "before": '"JPW_Alavancagem_RaizN_Live_Tests FAIL: "',
-        "after": '"HOST_COMPAT_1_18_1 translated legacy script FAIL: "',
-        "basis": "identify the adapted host script; preserve original raw R2 failure",
-    },
-]
+# R1.21.2: official MQL judge carries the reviewed per-capture expectations.
+# No host-only expected-answer substitutions; prior raw remains in baseline.
+SCRIPT_HOST_TRANSFORMS = []
 HOST_MAIN_TRANSFORM = {
     "before": "sample.bar_time==172800 && api_buffer_reads==2,",
     "after": "sample.bar_time==172800 && api_buffer_reads==4,",
@@ -250,7 +230,7 @@ def compile_and_run(compiler: str, directory: Path, name: str, source: str) -> s
     print(result.stdout, end="")
     print(result.stderr, end="")
     if result.returncode:
-        print(f"HOST_COMPILATION: PRODUCT_FAIL; input={name}; exit={result.returncode}")
+        print(f"HOST_COMPILATION: TEST_HARNESS_FAIL; input={name}; exit={result.returncode}")
         return result
     result = subprocess.run([str(executable)], text=True, capture_output=True,
                             check=False, timeout=30)
@@ -266,7 +246,7 @@ def main() -> int:
         return 2
     sources = [path.read_text(encoding="utf-8") for path in FILES]
     original_script = sources[2]
-    sources[2] = adapted_script(original_script)
+    sources[2] = original_script
     control, reference = correction_control()
     host_main = MAIN.replace("  OnStart();", "  OnStart();\n  HostATRContentCorrectionControl();", 1)
     body = "\n".join(re.sub(r"^\s*#(?:include|property)\b[^\n]*", "", s,
@@ -281,6 +261,7 @@ def main() -> int:
                       "script_host_compatible_sha256": hashlib.sha256(sources[2].encode()).hexdigest(),
                       "host_control_reference": reference,
                       "original_script_native_execution": "NOT_RUN",
+                      "official_mql_judge_revision": "1.21.2-CANDIDATE",
                       "legacy_r2_raw_result": "PRODUCT_FAIL_PRESERVED",
                       "financial_assertions": "UNCHANGED"}, indent=2))
     version = subprocess.run([compiler, "--version"], text=True, capture_output=True, check=False)

@@ -37,6 +37,8 @@ input double InpPipSize=0.0;
 input bool InpTechnicalLog=false;
 
 string g_panel_prefix="";
+bool g_panel_instance_admitted=false; // Rejected copies never clean another instance.
+bool g_details_content_dirty=true;
 long g_collection_sequence=0;
 string g_sample_context="";
 string g_diagnostic_context="";
@@ -86,7 +88,7 @@ string g_genesis_value="N/A",g_genesis_reason="Aguardando referência";
 string g_raiz_value="N/A",g_scale2_value="N/A";
 string g_raiz_reason="Aguardando dados",g_scale2_reason="Aguardando dados";
 string g_leverage_reason="Aguardando dados";
-string g_stop_value="N/A",g_stop_reason="Aguardando EA observador";
+string g_stop_value="N/A",g_stop_reason="Aguardando monitoramento do núcleo Monitor";
 string g_stop_detail="Nenhuma amostra atual e coerente de risco dos stops.";
 JPWObserverPresenceState g_stop_observer_presence=JPW_OBSERVER_CONTEXT_UNAVAILABLE;
 bool g_stops_show_pending=false;
@@ -196,6 +198,9 @@ void JPWClearRaizLiveSample(const string reason);
 void JPWRenderRaizDetails();
 void JPWRenderCockpit();
 void JPWRaizPanelDestroy();
+void JPWRaizSaveVisibleFields();
+void JPWInvalidateDialogContent(const int route=-1);
+void JPWSignalSaveDraft();
 void JPWCollectStopRisk();
 void JPWDetailsReadStopRisk();
 bool JPWCoordinatorBudgetRemaining();
@@ -215,6 +220,9 @@ void JPWRenderStopsTable(const int x,const int body_y,const int inner,
 bool JPWGenetrixHandleCycleEvent(const int id,const long key,const string object_name)
   {
    if(!g_raiz_details_open || !JPWUIOwns(g_panel_prefix) || !JPWDetailsContextCurrent()) return(false);
+   // This dispatcher runs before the general Cockpit action guard. Retained
+   // controls from an incomplete draw must not acquire selection authority.
+   if(g_details_render_reason!="") return(false);
    JPWAccount event_account;
    if(!JPWReadAccount(event_account) || !JPWAccountsEqual(g_account,event_account) ||
       g_cockpit_snapshot.symbol!=_Symbol)
@@ -223,7 +231,7 @@ bool JPWGenetrixHandleCycleEvent(const int id,const long key,const string object
       JPWRenderCurrentDisplay(); return(true);
      }
    string target=object_name;
-   if(id==CHARTEVENT_KEYDOWN && key==13 && !g_editing_field &&
+   if(id==CHARTEVENT_KEYDOWN && key==13 && !g_editing_field && JPWFocusValid(g_focus_action) &&
       ((g_focus_action>=JPW_ACTION_LEDGER_CYCLE_FIRST &&
         g_focus_action<JPW_ACTION_LEDGER_CYCLE_FIRST+g_genetrix_cycle_button_count) ||
        (g_cockpit_selected==6 && g_raiz_tab==JPW_ROUTE_METRIC && g_focus_action==JPW_ACTION_SECONDARY) ||
@@ -235,7 +243,7 @@ bool JPWGenetrixHandleCycleEvent(const int id,const long key,const string object
       target==JPWActionObject(JPW_ACTION_SECONDARY))
      {
       if(ObjectFind(0,target)<0) return(true);
-      ObjectSetInteger(0,target,OBJPROP_STATE,false);
+      JPWUIDesignSetInteger(target,OBJPROP_STATE,false);
       JPWRaizSwitchTab(JPW_ROUTE_LEDGER_CYCLES); return(true);
      }
    if(g_raiz_tab!=JPW_ROUTE_LEDGER_CYCLES) return(false);
@@ -243,20 +251,20 @@ bool JPWGenetrixHandleCycleEvent(const int id,const long key,const string object
       if(target==JPWActionObject(JPW_ACTION_LEDGER_CYCLE_FIRST+j))
         {
          if(ObjectFind(0,target)<0) return(true);
-         ObjectSetInteger(0,target,OBJPROP_STATE,false);
+         JPWUIDesignSetInteger(target,OBJPROP_STATE,false);
          const int selected=JPWGenetrixFindCycle(g_genetrix_cycles,g_genetrix_cycle_button_id[j]);
          if(JPWGenetrixSelectCycle(selected))
            { g_cockpit_selected=6; JPWBuildPresentation(g_panel_value,g_panel_status);
              JPWRaizSwitchTab(JPW_ROUTE_METRIC); }
          else
            { g_genetrix_ledger_reason="Ciclo não disponível nesta leitura; atualize o ledger";
-             JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); }
+             JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); }
          return(true);
         }
    if(target==JPWActionObject(JPW_ACTION_PRIMARY) || target==JPWActionObject(JPW_ACTION_SECONDARY))
      {
       if(ObjectFind(0,target)<0) return(true);
-      ObjectSetInteger(0,target,OBJPROP_STATE,false);
+      JPWUIDesignSetInteger(target,OBJPROP_STATE,false);
       g_cockpit_selected=6;
       JPWRaizSwitchTab(target==JPWActionObject(JPW_ACTION_PRIMARY) ? JPW_ROUTE_METRIC : JPW_ROUTE_OVERVIEW);
       return(true);
@@ -271,6 +279,20 @@ int OnInit()
       return(INIT_PARAMETERS_INCORRECT);
    if(InpGenesisTicket<0 || !MathIsValidNumber(InpPipSize) || InpPipSize<0.0)
       return(INIT_PARAMETERS_INCORRECT);
+   // One retained object namespace per chart. Check before prefix assignment,
+   // template cleanup, preference reads or acquisition of any shared resource.
+   IndicatorSetString(INDICATOR_SHORTNAME,JPW_PRODUCT_NAME+" · Cockpit "+JPW_PRODUCT_VERSION);
+   int copies=0;
+   for(int i=0;i<ChartIndicatorsTotal(0,0);i++)
+     {
+      const string installed=ChartIndicatorName(0,0,i);
+      if(StringFind(installed,JPW_PRODUCT_NAME+" · Cockpit")==0 ||
+         installed=="JPW_Alavancagem_Atual") copies++;
+     }
+   if(copies>1)
+     { Print("GENETRIX · Conta: mantenha uma instância por gráfico. A instância existente foi preservada.");
+       return(INIT_FAILED); }
+   g_panel_instance_admitted=true;
    g_panel_prefix=StringFormat("JPW_LEV_%I64d_",ChartID());
    JPWCockpitRemoveForeignHUD(g_panel_prefix);
    // Templates can restore a transient dialog under this same ChartID.
@@ -345,12 +367,15 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
    // Another indicator's focused editor must not activate Cockpit shortcuts.
    // All non-key events retain the existing identity/field/event handling.
    if(!JPWCockpitAcceptChartEvent(id,lparam,dparam,sparam)) return;
-   if(JPWGenetrixHandleCycleEvent(id,lparam,sparam)) return;
-   JPWHandleChartEvent(id,lparam,dparam,sparam);
+   JPWUIDesignBeginPass();
+   if(!JPWGenetrixHandleCycleEvent(id,lparam,sparam))
+      JPWHandleChartEvent(id,lparam,dparam,sparam);
+   JPWUIDesignEndPass();
   }
 
 void OnDeinit(const int reason)
   {
+   if(!g_panel_instance_admitted || g_panel_prefix=="") return;
    EventKillTimer();
    JPWUIRelease(g_panel_prefix);
    JPWSignalClear();
@@ -368,6 +393,8 @@ void OnDeinit(const int reason)
      }
    JPWIndicatorTerminalDiagnostic(g_diagnostic_context,JPW_DIAG_SESSION_END);
    if(g_raiz_atr_handle!=INVALID_HANDLE) IndicatorRelease(g_raiz_atr_handle);
+   JPWUIDesignBeginPass();
    JPWRaizPanelDestroy();
    JPWClearPanel();
+   JPWUIDesignEndPass();
   }

@@ -89,9 +89,13 @@ bool JPWPersonalSubjectValid(JPWPersonalSubject &subject)
   }
 string JPWPersonalSubjectKey(JPWPersonalSubject &subject)
   { return(JPWPersonalInt(subject.kind)+":"+subject.id); }
+bool JPWPersonalTryEventAdd(JPWPersonalEvent &events[],const string type,const string id,const long wall,const string payload)
+  { int size=ArraySize(events); if(ArrayResize(events,size+1)!=size+1) return(false);
+    events[size].type=type; events[size].episode_id=id; events[size].wall=wall; events[size].payload=payload;
+    return(true); }
+// Legacy source compatibility. Internal producers use the checked variant.
 void JPWPersonalEventAdd(JPWPersonalEvent &events[],const string type,const string id,const long wall,const string payload)
-  { int size=ArraySize(events); if(ArrayResize(events,size+1)==size+1)
-     { events[size].type=type; events[size].episode_id=id; events[size].wall=wall; events[size].payload=payload; } }
+  { JPWPersonalTryEventAdd(events,type,id,wall,payload); }
 bool JPWPersonalCaptureInventoryValid(JPWPersonalCapture &capture,JPWPersonalSubject &subjects[])
   {
    if(!capture.connected || !capture.stable || !capture.inventory_valid || capture.account_key=="" ||
@@ -121,7 +125,7 @@ bool JPWPersonalIsDue(JPWPersonalCapture &capture,JPWPersonalEpisode &episode,bo
   }
 // due[] contains indexes, not tickets. Caller marks requests AFTER fresh
 // reconciliation, independently of whether a persistence write succeeds.
-bool JPWPersonalReconcile(JPWPersonalCapture &capture,JPWPersonalSubject &subjects[],
+bool JPWPersonalPrepareReconcile(JPWPersonalCapture &capture,JPWPersonalSubject &subjects[],
                            JPWPersonalEpisode &episodes[],JPWPersonalEvent &events[],int &due[])
   {
    ArrayResize(events,0); ArrayResize(due,0);
@@ -138,7 +142,8 @@ bool JPWPersonalReconcile(JPWPersonalCapture &capture,JPWPersonalSubject &subjec
          episodes[i].state=JPW_PERSONAL_NO_LONGER_PRESENT; episodes[i].resolved_wall=capture.wall_seconds;
          if(capture.wall_seconds>episodes[i].last_wall) episodes[i].last_wall=capture.wall_seconds;
          episodes[i].resolution="NO_LONGER_PRESENT";
-         JPWPersonalEventAdd(events,"NO_LONGER_PRESENT",episodes[i].episode_id,capture.wall_seconds,""); continue;
+         if(!JPWPersonalTryEventAdd(events,"NO_LONGER_PRESENT",episodes[i].episode_id,capture.wall_seconds,"")) return(false);
+         continue;
         }
       bool changed=(episodes[i].subject.ticket!=subjects[found].ticket || episodes[i].subject.volume!=subjects[found].volume ||
          episodes[i].subject.sl!=subjects[found].sl || episodes[i].subject.tp!=subjects[found].tp ||
@@ -150,7 +155,7 @@ bool JPWPersonalReconcile(JPWPersonalCapture &capture,JPWPersonalSubject &subjec
         {
          episodes[i].state=JPW_PERSONAL_SL_PRESENT; episodes[i].resolved_wall=capture.wall_seconds;
          episodes[i].resolution="RESOLVED_SL_PRESENT";
-         JPWPersonalEventAdd(events,"RESOLVED_SL_PRESENT",episodes[i].episode_id,capture.wall_seconds,"");
+         if(!JPWPersonalTryEventAdd(events,"RESOLVED_SL_PRESENT",episodes[i].episode_id,capture.wall_seconds,"")) return(false);
         }
      }
    for(int i=0;i<ArraySize(subjects);i++)
@@ -169,13 +174,29 @@ bool JPWPersonalReconcile(JPWPersonalCapture &capture,JPWPersonalSubject &subjec
          item.first_wall=capture.wall_seconds; item.last_wall=capture.wall_seconds; item.resolved_wall=0;
          item.last_requested_wall=0; item.next_wall=0; item.next_mono=0; item.mono_ready=false;
          item.requested_count=0; item.resolution=""; episodes[found]=item;
-         JPWPersonalEventAdd(events,"NO_SL_DETECTED",item.episode_id,capture.wall_seconds,subjects[i].link_id);
+         if(!JPWPersonalTryEventAdd(events,"NO_SL_DETECTED",item.episode_id,capture.wall_seconds,subjects[i].link_id)) return(false);
         }
       bool inconsistent=false;
       if(JPWPersonalIsDue(capture,episodes[found],inconsistent))
         { int count=ArraySize(due); if(ArrayResize(due,count+1)!=count+1) return(false); due[count]=found; }
-      if(inconsistent) JPWPersonalEventAdd(events,"CLOCK_INCONSISTENT",episodes[found].episode_id,capture.wall_seconds,"");
+      if(inconsistent && !JPWPersonalTryEventAdd(events,"CLOCK_INCONSISTENT",episodes[found].episode_id,capture.wall_seconds,"")) return(false);
      }
+   return(true);
+  }
+// A failed event/due allocation must not consume a transition in live memory.
+// Prepare on a private projection and publish only when every required row exists.
+bool JPWPersonalReconcile(JPWPersonalCapture &capture,JPWPersonalSubject &subjects[],
+                           JPWPersonalEpisode &episodes[],JPWPersonalEvent &events[],int &due[])
+  {
+   ArrayResize(events,0); ArrayResize(due,0);
+   JPWPersonalEpisode prepared[];
+   int count=ArraySize(episodes);
+   if(ArrayResize(prepared,count)!=count) return(false);
+   for(int i=0;i<count;i++) prepared[i]=episodes[i];
+   if(!JPWPersonalPrepareReconcile(capture,subjects,prepared,events,due) ||
+      ArrayResize(episodes,ArraySize(prepared))!=ArraySize(prepared))
+     { ArrayResize(events,0); ArrayResize(due,0); return(false); }
+   for(int i=0;i<ArraySize(prepared);i++) episodes[i]=prepared[i];
    return(true);
   }
 void JPWPersonalMarkRequested(JPWPersonalCapture &capture,JPWPersonalEpisode &episode)

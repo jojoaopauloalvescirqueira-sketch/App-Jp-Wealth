@@ -7,34 +7,49 @@ void JPWSignalFooter(const int x,const int width,const int footer,
                       const int first,const string first_text,
                       const int second,const string second_text)
   {
-   const int button=(width-2*g_details_pad)/3;
-   JPWRaizCreateButton(first,first_text,x,footer,button);
-   JPWRaizCreateButton(second,second_text,x+button+g_details_pad,footer,button);
-   JPWRaizCreateButton(JPW_ACTION_CLOSE,"Fechar",x+2*(button+g_details_pad),footer,button);
+   int actions[3]={first,second,JPW_ACTION_CLOSE}; string labels[3]={first_text,second_text,"Fechar"};
+   JPWDialogFooterButtons(actions,labels,3,x,footer,width);
   }
 
 void JPWSignalPager(const int x,const int width,const int footer,const int pages)
   {
-   const int button=(width>180 ? 40 : 24);
-   JPWRaizCreateButton(JPW_SIGNAL_INFO,"Estado · "+IntegerToString(g_cockpit_page+1)+"/"+
-                       IntegerToString(pages),x,footer-g_details_line,width-2*button-2*g_details_pad);
-   ObjectSetInteger(0,JPWActionObject(JPW_SIGNAL_INFO),OBJPROP_YSIZE,g_details_line);
-   ObjectSetString(0,JPWActionObject(JPW_SIGNAL_INFO),OBJPROP_TOOLTIP,g_signal_notice);
-   JPWRaizCreateButton(JPW_ACTION_PREVIOUS,"‹",x+width-2*button-g_details_pad,
-                       footer-g_details_line,button);
-   JPWRaizCreateButton(JPW_ACTION_NEXT,"›",x+width-button,footer-g_details_line,button);
-   ObjectSetInteger(0,JPWActionObject(JPW_ACTION_PREVIOUS),OBJPROP_YSIZE,g_details_line);
-   ObjectSetInteger(0,JPWActionObject(JPW_ACTION_NEXT),OBJPROP_YSIZE,g_details_line);
+   const int button=JPWUIDesignPx(48),gap=g_details_pad;
+   const string state="Estado · "+IntegerToString(g_cockpit_page+1)+"/"+IntegerToString(pages);
+   const bool stacked=(width<JPWUIDesignButtonWidth("Estado · 999/999",g_details_font)+2*button+2*gap);
+   const int pager_top=footer-(stacked ? 2*g_details_control+2*gap : g_details_control+gap);
+   const int state_width=(stacked ? width : width-2*button-2*gap);
+   JPWRaizCreateButton(JPW_SIGNAL_INFO,state,x,pager_top,state_width);
+   JPWPresentationSetString(JPWActionObject(JPW_SIGNAL_INFO),OBJPROP_TOOLTIP,g_signal_notice);
+   const int arrows_y=(stacked ? pager_top+g_details_control+gap : pager_top);
+   JPWRaizCreateButton(JPW_ACTION_PREVIOUS,"‹",x+width-2*button-gap,arrows_y,button);
+   JPWRaizCreateButton(JPW_ACTION_NEXT,"›",x+width-button,arrows_y,button);
   }
 
 void JPWSignalWrappedPage(const string text,const int x,const int y,
                           const int width,const int height,const int footer)
   {
-   string raw[]; string lines[]; StringSplit(text,'\n',raw);
+   string raw[]; string lines[];
+   if(StringSplit(text,'\n',raw)<0)
+     {
+      JPWRaizCreateLabel("SIGNAL_EMPTY","Texto: N/A · preparação indisponível",x,y);
+      JPWPresentationFailure("Texto indisponível: separação do conteúdo falhou. Feche e reabra Conta.");
+      return;
+     }
    for(int i=0;i<ArraySize(raw);i++)
      {
-      if(raw[i]=="") { const int n=ArraySize(lines); ArrayResize(lines,n+1); lines[n]=""; }
+      if(raw[i]=="")
+        {
+         const int n=ArraySize(lines);
+         if(ArrayResize(lines,n+1)!=n+1)
+           {
+            JPWRaizCreateLabel("SIGNAL_EMPTY","Texto: N/A · memória insuficiente",x,y);
+            JPWPresentationFailure("Texto indisponível: memória insuficiente. Feche e reabra Conta.");
+            return;
+           }
+         lines[n]="";
+        }
       else JPWDetailsWrap(raw[i],width,lines);
+      if(!g_details_inventory_complete) return;
      }
    const int capacity=(height/g_details_line>0 ? height/g_details_line : 1);
    const int pages=(ArraySize(lines)+capacity-1)/capacity;
@@ -48,19 +63,23 @@ bool JPWSignalCopyField(const int x,const int y,const int width,const int height
   {
    if(width<1 || height<g_details_control || g_signal_message=="" || g_signal_stale) return(false);
    const string name=JPWRaizUI("EDIT_SIGNAL_COPY");
-   if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_EDIT,0,0,0)) return(false);
-   const bool made=ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
-      ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x) && ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y) &&
-      ObjectSetInteger(0,name,OBJPROP_XSIZE,width) && ObjectSetInteger(0,name,OBJPROP_YSIZE,height) &&
-      ObjectSetInteger(0,name,OBJPROP_COLOR,g_details_text) && ObjectSetInteger(0,name,OBJPROP_BGCOLOR,g_details_card) &&
-      ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,g_details_border) &&
-      ObjectSetInteger(0,name,OBJPROP_FONTSIZE,g_details_font) && ObjectSetInteger(0,name,OBJPROP_READONLY,true) &&
-      ObjectSetInteger(0,name,OBJPROP_ZORDER,5) && ObjectSetInteger(0,name,OBJPROP_HIDDEN,true) &&
-      ObjectSetString(0,name,OBJPROP_FONT,"Arial") && ObjectSetString(0,name,OBJPROP_TEXT,g_signal_message) &&
-      ObjectSetString(0,name,OBJPROP_TOOLTIP,"Texto inteiro; clique, selecione e use Ctrl+C. Cópia multilinha ainda não validada no MT5.");
+   if(!JPWPresentationEnsure(name,OBJ_EDIT)) return(false);
+   JPWFocusRegister(JPW_FOCUS_SIGNAL_COPY);
+   const bool preserve_selection=(g_editing_field && g_focus_action==JPW_FOCUS_SIGNAL_COPY &&
+      ObjectGetString(0,name,OBJPROP_TEXT)==g_signal_message);
+   const bool made=JPWPresentationSetInteger(name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
+      JPWPresentationSetInteger(name,OBJPROP_XDISTANCE,x) && JPWPresentationSetInteger(name,OBJPROP_YDISTANCE,y) &&
+      JPWPresentationSetInteger(name,OBJPROP_XSIZE,width) && JPWPresentationSetInteger(name,OBJPROP_YSIZE,height) &&
+      JPWPresentationSetInteger(name,OBJPROP_COLOR,g_details_text) && JPWPresentationSetInteger(name,OBJPROP_BGCOLOR,g_details_card) &&
+      JPWPresentationSetInteger(name,OBJPROP_BORDER_COLOR,g_details_border) &&
+      JPWPresentationSetInteger(name,OBJPROP_FONTSIZE,g_details_font) && JPWPresentationSetInteger(name,OBJPROP_READONLY,true) &&
+      JPWPresentationSetInteger(name,OBJPROP_ZORDER,5) && JPWPresentationSetInteger(name,OBJPROP_HIDDEN,true) &&
+      JPWPresentationSetString(name,OBJPROP_FONT,"Arial") &&
+      (preserve_selection || JPWPresentationSetString(name,OBJPROP_TEXT,g_signal_message)) &&
+      JPWPresentationSetString(name,OBJPROP_TOOLTIP,"Texto inteiro; clique, selecione e use Ctrl+C. Cópia multilinha ainda não validada no MT5.");
    // This verifies the object property, not the OS clipboard or its multiline UI.
    if(!made || ObjectGetString(0,name,OBJPROP_TEXT)!=g_signal_message)
-     { ObjectDelete(0,name); return(false); }
+     { JPWUIDesignDelete(name); return(false); }
    return(true);
   }
 
@@ -87,15 +106,18 @@ void JPWSignalRoleEditor(const int x,const int y,const int width,const int heigh
    const string name=JPWRaizUI("EDIT_SIGNAL_ROLE");
    const bool room=(height>=g_details_line+g_details_control);
    if(room) JPWRaizCreateLabel("SIGNAL_ROLE_HINT","0 = Gênese; 1 = Defesa 1; 2 = Defesa 2…",x,y);
-   if(ObjectFind(0,name)<0) ObjectCreate(0,name,OBJ_EDIT,0,0,0);
-   ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-   ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x); ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y+(room ? g_details_line : 0));
-   ObjectSetInteger(0,name,OBJPROP_XSIZE,width); ObjectSetInteger(0,name,OBJPROP_YSIZE,g_details_control);
-   ObjectSetInteger(0,name,OBJPROP_COLOR,g_details_text); ObjectSetInteger(0,name,OBJPROP_BGCOLOR,g_details_card);
-   ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,g_details_border); ObjectSetInteger(0,name,OBJPROP_FONTSIZE,g_details_font);
-   ObjectSetInteger(0,name,OBJPROP_READONLY,false); ObjectSetInteger(0,name,OBJPROP_ZORDER,5);
-   ObjectSetString(0,name,OBJPROP_FONT,"Arial"); ObjectSetString(0,name,OBJPROP_TEXT,g_signal_role_draft);
-   ObjectSetString(0,name,OBJPROP_TOOLTIP,"Digite 0 para Gênese, ou o número da Defesa (1–511). Papel só para a mensagem; registro financeiro preservado.");
+   if(!JPWPresentationEnsure(name,OBJ_EDIT)) return;
+   JPWFocusRegister(JPW_FOCUS_SIGNAL_ROLE);
+   JPWPresentationSetInteger(name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+   JPWPresentationSetInteger(name,OBJPROP_XDISTANCE,x); JPWPresentationSetInteger(name,OBJPROP_YDISTANCE,y+(room ? g_details_line : 0));
+   JPWPresentationSetInteger(name,OBJPROP_XSIZE,width); JPWPresentationSetInteger(name,OBJPROP_YSIZE,g_details_control);
+   JPWPresentationSetInteger(name,OBJPROP_COLOR,g_details_text); JPWPresentationSetInteger(name,OBJPROP_BGCOLOR,g_details_card);
+   JPWPresentationSetInteger(name,OBJPROP_BORDER_COLOR,g_details_border); JPWPresentationSetInteger(name,OBJPROP_FONTSIZE,g_details_font);
+   JPWPresentationSetInteger(name,OBJPROP_READONLY,false); JPWPresentationSetInteger(name,OBJPROP_ZORDER,5);
+   JPWPresentationSetString(name,OBJPROP_FONT,"Arial");
+   if(!g_editing_field || g_focus_action!=JPW_FOCUS_SIGNAL_ROLE)
+      JPWPresentationSetString(name,OBJPROP_TEXT,g_signal_role_draft);
+   JPWPresentationSetString(name,OBJPROP_TOOLTIP,"Digite 0 para Gênese, ou o número da Defesa (1–511). Papel só para a mensagem; registro financeiro preservado.");
    JPWSignalPager(x,width,footer,1);
    JPWSignalFooter(x,width,footer,JPW_SIGNAL_ROLE_APPLY,"Aplicar papel",JPW_SIGNAL_ROLE_CANCEL,"Cancelar");
   }
@@ -128,7 +150,17 @@ void JPWSignalRenderBody(const int x,const int y,const int width,const int heigh
       int indices[];
       for(int i=0;i<ArraySize(g_signal_rows);i++)
          if(g_signal_rows[i].kind==g_signal_kind)
-           { const int n=ArraySize(indices); ArrayResize(indices,n+1); indices[n]=i; }
+           {
+            const int n=ArraySize(indices);
+            if(ArrayResize(indices,n+1)!=n+1)
+              {
+               JPWRaizCreateLabel("SIGNAL_EMPTY","Catálogo: N/A · memória insuficiente",x,row_y);
+               JPWSignalFooter(x,width,footer,JPW_SIGNAL_UPDATE,"Atualizar",JPW_SIGNAL_BACK,"Visão geral");
+               JPWPresentationFailure("Catálogo de mensagens indisponível: memória insuficiente. Feche e reabra Conta.");
+               return;
+              }
+            indices[n]=i;
+           }
       const int pages=(ArraySize(indices)+capacity-1)/capacity;
       g_cockpit_page=JPWPanelClamp(g_cockpit_page,0,(pages>0 ? pages-1 : 0));
       if(ArraySize(indices)==0)
@@ -213,7 +245,7 @@ void JPWSignalRenderBody(const int x,const int y,const int width,const int heigh
       const bool field=JPWSignalCopyField(x,top,width,available);
       if(!field) JPWSignalWrappedPage("Campo de cópia indisponível; cópia integral não confirmada.\n"+g_signal_message,
                                       x,top,width,available,footer);
-      JPWSignalPager(x,width,footer,1);
+      else JPWSignalPager(x,width,footer,1);
       JPWSignalFooter(x,width,footer,JPW_SIGNAL_BACK,"Ver prévia",JPW_SIGNAL_SAVE,"Salvar texto local"); return;
      }
    JPWSignalWrappedPage(g_signal_message=="" ? g_signal_notice : g_signal_message,x,top,width,available,footer);
@@ -224,7 +256,7 @@ bool JPWSignalHandleClick(const string object)
   {
    if(g_raiz_tab!=JPW_SIGNAL_ROUTE) return(false);
    if(object==JPWActionObject(JPW_ACTION_PREVIOUS) || object==JPWActionObject(JPW_ACTION_NEXT)) return(false);
-   for(int i=101;i<320;i++) if(object==JPWActionObject(i)) ObjectSetInteger(0,object,OBJPROP_STATE,false);
+   for(int i=101;i<320;i++) if(object==JPWActionObject(i)) JPWPresentationSetInteger(object,OBJPROP_STATE,false);
    if(object==JPWActionObject(JPW_SIGNAL_INFO))
      { JPWSignalSaveDraft(); g_signal_show_notice=!g_signal_show_notice; g_cockpit_page=0; }
    else if(object==JPWActionObject(JPW_SIGNAL_ROLE_CANCEL))

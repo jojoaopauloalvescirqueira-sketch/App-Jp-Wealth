@@ -129,8 +129,9 @@ void JPWPersonalControllerMergeRestored(JPWPersonalEpisode &restored[])
          if(restored[i].episode_id!=g_ph_episodes[found].episode_id)
            {
             JPWPersonalEvent links[];
-            JPWPersonalEventAdd(links,"RECOVERY_EPISODE_LINK",restored[i].episode_id,(long)TimeGMT(),g_ph_episodes[found].episode_id);
-            JPWPersonalControllerQueue(links);
+            if(JPWPersonalTryEventAdd(links,"RECOVERY_EPISODE_LINK",restored[i].episode_id,(long)TimeGMT(),g_ph_episodes[found].episode_id))
+               JPWPersonalControllerQueue(links);
+            else JPWPersonalControllerProblem("Histórico incompleto — vínculo de recuperação sem memória",true);
            }
          g_ph_episodes[found]=restored[i];
         }
@@ -283,8 +284,9 @@ void JPWPersonalControllerNotifyDue(JPWPersonalCapture &capture,int &due[],const
    if(channel_error)
      {
       JPWPersonalEvent errors[];
-      JPWPersonalEventAdd(errors,"NOTIFICATION_CHANNEL_ERROR",group,(long)TimeGMT(),result);
-      JPWPersonalControllerQueue(errors);
+      if(JPWPersonalTryEventAdd(errors,"NOTIFICATION_CHANNEL_ERROR",group,(long)TimeGMT(),result))
+         JPWPersonalControllerQueue(errors);
+      else JPWPersonalControllerProblem("Histórico incompleto — falha do canal não registrada por memória",true);
      }
    g_ph_notification_error=channel_error;
   }
@@ -315,12 +317,15 @@ void JPWPersonalControllerTick(const ulong started)
    g_ph_dirty=false; g_ph_last_accepted=now;
    if(!writer || !g_ph_loaded) g_ph_incomplete=true;
    g_ph_memory_state=true;
-   JPWPersonalEvent events[]; int due[];
-   if(!JPWPersonalReconcile(capture,subjects,g_ph_episodes,events,due))
-     { g_ph_gap=true; g_ph_live_count=-1; JPWPersonalControllerProblem("Inventário não reconciliado; nenhum alerta ou máximo novo",false); return; }
-   JPWPersonalControllerCompletionEvidence(events,started);
+   JPWPersonalEvent events[]; int due[]; JPWPersonalEpisode prepared[];
+   const int previous_count=ArraySize(g_ph_episodes);
+   if(ArrayResize(prepared,previous_count)!=previous_count)
+     { g_ph_live_count=-1; JPWPersonalControllerProblem("Histórico incompleto — preparação sem memória",true); return; }
+   for(int i=0;i<previous_count;i++) prepared[i]=g_ph_episodes[i];
+   if(!JPWPersonalPrepareReconcile(capture,subjects,prepared,events,due))
+     { g_ph_gap=true; g_ph_live_count=-1; JPWPersonalControllerProblem("Inventário/eventos não reconciliados; nenhum alerta ou máximo novo",true); return; }
    string context_id=""; bool context_needed=false;
-   JPWPersonalHash(capture.details,context_id);
+   const bool context_valid=JPWPersonalHash(capture.details,context_id);
    for(int i=0;i<ArraySize(events);i++) if(events[i].type=="NO_SL_DETECTED")
      {
       context_needed=true;
@@ -328,7 +333,13 @@ void JPWPersonalControllerTick(const ulong started)
      }
    // A shared immutable witness avoids repeating an entire account photograph
    // for every subject that is detected in the same accepted observation.
-   if(context_needed) JPWPersonalEventAdd(events,"INVENTORY_CONTEXT",context_id,capture.wall_seconds,capture.details);
+   if(context_needed && (!context_valid ||
+      !JPWPersonalTryEventAdd(events,"INVENTORY_CONTEXT",context_id,capture.wall_seconds,capture.details)))
+     { g_ph_live_count=-1; JPWPersonalControllerProblem("Histórico incompleto — contexto da ocorrência não preparado",true); return; }
+   if(ArrayResize(g_ph_episodes,ArraySize(prepared))!=ArraySize(prepared))
+     { g_ph_live_count=-1; JPWPersonalControllerProblem("Histórico incompleto — episódios sem memória",true); return; }
+   for(int i=0;i<ArraySize(prepared);i++) g_ph_episodes[i]=prepared[i];
+   JPWPersonalControllerCompletionEvidence(events,started);
    JPWPersonalControllerQueue(events);
    int changed=0;
    JPWPersonalPeakAccept(capture,capture.details,g_ph_current,g_ph_estimated_peak,changed);

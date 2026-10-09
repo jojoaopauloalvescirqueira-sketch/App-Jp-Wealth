@@ -454,6 +454,7 @@ def main():
           'bool JPWRaizPositiveNumber(const string raw,double &value)',
           'bool JPWLivePositiveFactor(const string raw,double &value)',
           'void JPWOpenCockpit(const int metric=-1)',
+          'void JPWHandleChartEventBody(const int id,const long &lparam,const double &dparam,const string &sparam)',
           'void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)',
           'void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)']
     positions=(COCKPIT.parent/'JPW_Alavancagem_Positions.mqh').read_text()
@@ -466,11 +467,15 @@ def main():
     with tempfile.TemporaryDirectory(prefix='jpw-details-') as folder:
         cpp=Path(folder)/'details.cpp';exe=Path(folder)/'details'
         focus=(COCKPIT.parent/'JPW_UI_Focus.mqh').read_text()
-        cpp.write_text(SHIM.replace('struct JPWAccount',cockpit+'\nstruct JPWAccount',1)+focus+'\n'.join(bodies)+MAIN)
+        cpp.write_text(SHIM.replace('struct JPWAccount',cockpit+'\nstruct JPWAccount',1)+focus+'void JPWHandleChartEvent(const int,const long&,const double&,const string&);\n'+'\n'.join(bodies)+MAIN)
         compiler=shutil.which('clang++') or shutil.which('g++')
         if not compiler: raise SystemExit('ENVIRONMENT_ERROR: no host C++ compiler')
         for cmd in [[compiler,'-std=c++17','-Wall','-Wextra',str(cpp),'-o',str(exe)],[str(exe)]]:
             proc=subprocess.run(cmd,capture_output=True,text=True);print(proc.stdout,end='');print(proc.stderr,end='')
             if proc.returncode: raise SystemExit(proc.returncode)
     print('NATIVE_MT5_CLICKS: NOT_RUN\nEXIT_CODE: 0')
-if __name__=='__main__':main()
+if __name__=='__main__':
+    import sys
+    from leverage_host_runtime import details_adapter
+    details_adapter(sys.modules[__name__])
+    main()

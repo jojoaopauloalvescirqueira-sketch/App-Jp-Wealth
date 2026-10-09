@@ -1,0 +1,170 @@
+[
+  {
+    "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+    "actual": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+    "recorded": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+    "match": true,
+    "classification": "MQL_JUDGE_ONLY"
+  },
+  {
+    "path": "tools/jpw_genetrix_brand_test.py",
+    "actual": "5d81b73ea342bf53b7f8e00a68208b7df8a37b73f42abad2dbd8cf28b5000c36",
+    "recorded": "5d81b73ea342bf53b7f8e00a68208b7df8a37b73f42abad2dbd8cf28b5000c36",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_genetrix_ui_test.py",
+    "actual": "1e7dcb87f2811cc2e62a306483e88f0b0525b9645706cb48ad6529a4b623b69a",
+    "recorded": "1e7dcb87f2811cc2e62a306483e88f0b0525b9645706cb48ad6529a4b623b69a",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_mt5_design_test.py",
+    "actual": "b4fb50e8505632237271b47e2af509129fe33f7b5435da154bc32f7d35db2aae",
+    "recorded": "b4fb50e8505632237271b47e2af509129fe33f7b5435da154bc32f7d35db2aae",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_nocuda_fibo_controller_test.py",
+    "actual": "8577d09bcd7edaea4ad909f300d7ef199a960b6dd1f99e71be006eea42e680b3",
+    "recorded": "8577d09bcd7edaea4ad909f300d7ef199a960b6dd1f99e71be006eea42e680b3",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_nocuda_fibo_ui_test.py",
+    "actual": "5b535663ea5469834dd32ae0449ccd91b19f68afe8cdc201bd122e055df9ee62",
+    "recorded": "5b535663ea5469834dd32ae0449ccd91b19f68afe8cdc201bd122e055df9ee62",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_nocuda_integration_test.py",
+    "actual": "1f3b2ba71d8a0152fea6443d823c0eb44b430bdc3d721fc6ba91852dc4bd64b5",
+    "recorded": "1f3b2ba71d8a0152fea6443d823c0eb44b430bdc3d721fc6ba91852dc4bd64b5",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_personal_history_test.py",
+    "actual": "48faa02b9a42fe95335de257ae4301498220d12fef2ae3591ff5a28adae37f38",
+    "recorded": "48faa02b9a42fe95335de257ae4301498220d12fef2ae3591ff5a28adae37f38",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_positions_ui_test.py",
+    "actual": "a5989781f8a87d0b9de12bce06939d48ff6705b440e9b4f2c0508d40e24176f7",
+    "recorded": "a5989781f8a87d0b9de12bce06939d48ff6705b440e9b4f2c0508d40e24176f7",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/jpw_signal_copy_ui_test.py",
+    "actual": "c1aaa05690a60273102728611c3f307ec7204f582971574b4a8318eff1804769",
+    "recorded": "c1aaa05690a60273102728611c3f307ec7204f582971574b4a8318eff1804769",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_details_event_test.py",
+    "actual": "ac4af51b831ff03439ffa64c74cbea79cd59ad45a1d4bd51b765ac3f862e6e23",
+    "recorded": "ac4af51b831ff03439ffa64c74cbea79cd59ad45a1d4bd51b765ac3f862e6e23",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_geometry_test.py",
+    "actual": "ade5b90d2dcd62bc91724373d7982e50beab914b2190184005db1bc38e1febd6",
+    "recorded": "ade5b90d2dcd62bc91724373d7982e50beab914b2190184005db1bc38e1febd6",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_host_layout.py",
+    "actual": "cb17b9329aefeba20933c49ab6e6a310490cbfc9c18e082f1f5ba4d2368a1ac7",
+    "recorded": "cb17b9329aefeba20933c49ab6e6a310490cbfc9c18e082f1f5ba4d2368a1ac7",
+    "match": true,
+    "classification": "new_host_bridge"
+  },
+  {
+    "path": "tools/leverage_host_runtime.py",
+    "actual": "114186b7d68dbe01363e84e4890575ffb935d607df9cd7c7a3957918ed21d8ad",
+    "recorded": "114186b7d68dbe01363e84e4890575ffb935d607df9cd7c7a3957918ed21d8ad",
+    "match": true,
+    "classification": "new_host_bridge"
+  },
+  {
+    "path": "tools/leverage_host_shim.py",
+    "actual": "d72191cbefad549986f89966bdf9f496b23707477c6d6d007cbdf432ccffa95c",
+    "recorded": "d72191cbefad549986f89966bdf9f496b23707477c6d6d007cbdf432ccffa95c",
+    "match": true,
+    "classification": "new_host_bridge"
+  },
+  {
+    "path": "tools/leverage_live_adapter_test.py",
+    "actual": "49327579fc61a0e87a18b727f6c707d2102f9745e1f784825c70c26918413389",
+    "recorded": "49327579fc61a0e87a18b727f6c707d2102f9745e1f784825c70c26918413389",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_package_test.py",
+    "actual": "0ac1d03487f7bee32e48f4473a1fc52c768374c7cf6c990d4458b2b77b6b1a32",
+    "recorded": "0ac1d03487f7bee32e48f4473a1fc52c768374c7cf6c990d4458b2b77b6b1a32",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_panel_test.py",
+    "actual": "daf57b16c92abeb3e9ef299cdf908ef0ab71ab0083c26a830419401ae84658bc",
+    "recorded": "daf57b16c92abeb3e9ef299cdf908ef0ab71ab0083c26a830419401ae84658bc",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_reliability_test.py",
+    "actual": "557d0996a9c30f7eac003de27256c0ccaebe4944cbd3183300bc849598dd7e4a",
+    "recorded": "557d0996a9c30f7eac003de27256c0ccaebe4944cbd3183300bc849598dd7e4a",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_scheduler_test.py",
+    "actual": "2f64e63e9f12711651caeb2642e54ec28032ae802d78a7ab489675a74ebad498",
+    "recorded": "2f64e63e9f12711651caeb2642e54ec28032ae802d78a7ab489675a74ebad498",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_stop_ui_test.py",
+    "actual": "aa9c6e591e92841a381fff8156bb360f30c2d9c1fa7e2c74a54bcbec32da822d",
+    "recorded": "aa9c6e591e92841a381fff8156bb360f30c2d9c1fa7e2c74a54bcbec32da822d",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_suite.py",
+    "actual": "bc0d036ce48678d62b395185caf2049aa03dccaaa50725e341de322dff7e9bc3",
+    "recorded": "bc0d036ce48678d62b395185caf2049aa03dccaaa50725e341de322dff7e9bc3",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_suite_test.py",
+    "actual": "7b2c09a3b6129ab0a5b0a97486088728f8cb10530adff4de171a497df63f20f2",
+    "recorded": "7b2c09a3b6129ab0a5b0a97486088728f8cb10530adff4de171a497df63f20f2",
+    "match": true,
+    "classification": "JUDGE_REVISION"
+  },
+  {
+    "path": "tools/leverage_page_test.py",
+    "actual": "0aed9390fbb0016e34870668a4980c00e21cf4378227fdfda6743072ad327f72",
+    "recorded": "0aed9390fbb0016e34870668a4980c00e21cf4378227fdfda6743072ad327f72",
+    "match": true,
+    "classification": "JUDGE_REVISION_PAGE_SOURCE_ONLY"
+  }
+]

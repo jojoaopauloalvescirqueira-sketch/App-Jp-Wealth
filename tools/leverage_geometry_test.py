@@ -740,6 +740,6 @@ int main(){
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3 and sys.argv[1] == "--capture-overview":
-        raise SystemExit(capture_overview(Path(sys.argv[2])))
-    raise SystemExit(main())
+    import sys
+    from leverage_host_layout import geometry
+    raise SystemExit(geometry(sys.modules[__name__]).main())

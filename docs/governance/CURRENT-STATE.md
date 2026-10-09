@@ -1,3 +1,31 @@
+# Estado focal — GENETRIX 1.21.2 no site — 2026-10-08
+
+Source revision representada: `7f0828488b2fc0ea62dc7c421174799cda47a34a`
+
+A âncora acima identifica a base Git da transferência. Os fontes representados nesta árvore são 1.21.2, identificados pelo ZIP e fingerprint abaixo. O estágio de commit, push e merge deve ser conferido pelo recibo Git/PR vinculado em INTEGRATION; a versão dos fontes, isoladamente, não comprova essas ações. O escopo desta fotografia é GENETRIX; os estados históricos dos demais módulos permanecem separados.
+
+Raiz `/private/tmp/jpw-genetrix-site-1-21-2-20261008`; branch `codex/genetrix-1-21-2-site-20261008`. Contrato: [CHG 1.21.2](../work/CHG-GENETRIX-1-21-2-SITE-20261008.md). [Estado e proveniência da integração](../validation/genetrix-1.21.2/INTEGRATION.md). Pedido de integração e Git registrados; publicação externa permanece separada.
+
+| Camada | Estado observado neste checkpoint |
+|---|---|
+| Produto/distribuição local | Fontes CANDIDATE 1.21.2, MQL 1.212, cálculo 1.9.0; 132 membros canônicos |
+| Fonte e runtime | Fingerprint 111 fontes/recursos `9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6`; não é prova de runtime MT5 |
+| ZIP fonte | SHA256 `a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261`; 760092 bytes |
+| Compilação 1.21.2 | NOT_RUN; sem EX5 atual distribuído |
+| Runtime/clipboard/instalação MT5 | BLOCKED / NOT_RUN conforme evidência própria; nenhum armamento |
+| Web/MT5 host da integração final | MT5 host R3: 40/40 PASS; full web R3: 57/57 PASS. Simulação de host não é runtime MT5 |
+| Git/hosting | Commit/push/merge autorizados; estágio observado e recibo Git/PR em INTEGRATION. Nenhum deploy externo presumido |
+| Harness | 1.0 CANDIDATE; piloto R2 FAIL e R5 restrito preservados; 1.0.1 NOT_ADOPTED |
+| Histórico 1.20 | Compilação MetaEditor 6230 e seus recibos permanecem históricos; não validam 1.21.2 |
+
+Arquitetura vigente do pacote: indicador **Genetrix · Conta** para as sete leituras e Cockpit; **Monitor** em gráfico de apoio para monitoramento/histórico e contabilidade; **NoCuda · Gráficos** para estudos; **Supervisor 7x** opcional separado e não armado. O Monitor não contém rotinas de negociação. Observer/Accountant legados são referência/rollback, não instalação recomendada conjunta no mesmo gráfico.
+
+Campos indisponíveis, custos parciais, Current/Estimated e estados PENDING / NOT_HOMOLOGATED / BLOCKED mantêm seus significados. Cabeçalhos antigos entre os 132 membros são fotografias congeladas; a seleção atual está no manifesto e nesta integração. Não resolver divergência normativa nem preencher pendência por número de versão.
+
+Esta seção expira se identidade/branch/manifesto/pacote/tarefa/ambiente mudar. O guard de revisão Git não demonstra frescor do delta não commitado, carregamento dos documentos ou execução nativa; exigir recibos do mesmo candidate.
+
+## Fotografias anteriores preservadas — não estado focal atual
+
 # Candidate local — verificadores pendentes (2026-10-06)
 
 Pedido do proprietário: “Solucione todos os product fail pendentes”. Base1db5b703ca56d26c preservada; cópia jpw-product-fail-repair-20261006/candidate, branch codex/saving-reliability-20261006/HEADac3a2faffeb3. Contratos CHG-JPW-PENDING-FAIL-PRODUCT/TEST, brief correspondente. Fórmulas financeiras/MT5/dados intactos; guarda de leitura para contexto incompatível corrigida sem normalização/gravação. Expectativas obsoletas corrigidas somente mediante contrato já aprovado. Corrida de inicialização reproduzida com latência foi corrigida pela ordem declarada de reservas antes de onboarding/boot, sem mudar a matemática. Novos gates e auditoria dos bytes finais serão registrados no relatório externo; resultados anteriores permanecem históricos. EX5/execução nativa NOT_RUN, promoção/aceite humano separados. SOURCE REVISION UNKNOWN global herdada não é resolvida por este resumo delimitado.

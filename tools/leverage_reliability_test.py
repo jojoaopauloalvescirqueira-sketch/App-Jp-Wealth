@@ -242,7 +242,8 @@ void JPWRenderHUD(){draws++;}void JPWRenderRaizDetails(){}void ChartRedraw(int){
 void JPWGenetrixPresentMetric(){g_cockpit_snapshot.metric[6].title="Flutuante compensado";
  g_cockpit_snapshot.metric[6].value="N/A";g_cockpit_snapshot.metric[6].quality=JPW_VIEW_NA;}
 '''
-    return samples + cockpit + context + "\n".join(functions)
+    from leverage_host_runtime import passes
+    return samples + cockpit + context + passes() + "\n".join(functions)
 
 
 def presentation_replay(compiler: str, samples: str) -> int:

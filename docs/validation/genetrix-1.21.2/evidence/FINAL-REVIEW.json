@@ -1,0 +1,78 @@
+{
+  "review_id": "GENETRIX-SITE-1.21.2-INDEPENDENT-R5",
+  "result": "PASS",
+  "scope": "Source candidate and local site integration readiness; not MT5 operational approval or publication",
+  "reviewer_role": "Read-only package/provenance/consumer reviewer, distinct from integration authors; shared task context, not blind",
+  "base_sha": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
+  "frozen_candidate_fingerprint": "ad70b6bd11d614265c82eed4f53d85ecc97fd478ae7d27354c6624749358840c",
+  "fingerprint_method": "SHA256 UTF8 json.dumps(files, sort_keys=True) with default separators",
+  "frozen_input_count": 847,
+  "frozen_inputs_match": true,
+  "runtime_R3_unchanged": true,
+  "source_zip": {
+    "sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "bytes": 760092,
+    "members": 132,
+    "runtime_inputs": 111,
+    "runtime_fingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6"
+  },
+  "judge_adoption": {
+    "records": 24,
+    "existing_before": 21,
+    "new_bridge_before_absent": 3,
+    "before_matches_main": true,
+    "after_matches_frozen_candidate": true,
+    "financial_expectations_not_modified_by_integration": true
+  },
+  "independently_executed": {
+    "consumer_processes": 3,
+    "http_manifest_and_zip_exact": true,
+    "embedded_build_id_and_portable_payload_exact": true,
+    "only_source_embedded": true,
+    "official_builder_fixture_directories": 3,
+    "official_builder_same_python_process": true,
+    "builder_exact_idempotent_and_unproven_ex5_rejected": true
+  },
+  "reviewed_execution_receipts": {
+    "web_full": {
+      "PASS": 57,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "host_suite": {
+      "PASS": 40,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "host_inputs_unchanged": true,
+    "ui_author_attempts": 4,
+    "all_ui_attempts_exit_0": true
+  },
+  "documentary_scope": {
+    "documents": 6,
+    "local_links_checked": 59,
+    "broken_links": 0,
+    "states_and_roles_consistent": true,
+    "historical_checkpoints_preserved": true
+  },
+  "blocking_findings_in_reviewed_scope": [],
+  "limitations": {
+    "native_compilation": "NOT_RUN",
+    "native_execution": "NOT_RUN/BLOCKED",
+    "operational_readiness": "BLOCKED_NATIVE_VALIDATION",
+    "external_publication": "NOT_RUN",
+    "git_commit_push_merge": "NOT_RUN at this review checkpoint; verify subsequent receipts",
+    "harness": "CANDIDATE, historic pilot FAIL preserved"
+  },
+  "subsequent_evidence_adoption": {
+    "classification": "N0-D if limited to truthful report/receipt links and Git evidence",
+    "runtime_or_judge_changes_allowed_by_this_review": false,
+    "required": "Preserve this freeze; freeze new documentation/evidence layer; revalidate hashes and affected controls if code changes"
+  }
+}

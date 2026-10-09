@@ -210,7 +210,7 @@ void JPWRefreshRequestedRecords()
       if(g_export_preview!="" && JPWDiagExport(g_diagnostic_context,g_export_preview,path,reason)==JPW_STORE_VALID)
          g_export_result="Exportação local gravada: "+path;
       else g_export_result="Exportação não concluída: "+reason;
-      JPWRaizSaveVisibleFields(); JPWRaizPanelDestroy();
+      JPWInvalidateDialogContent();
      }
    if(!JPWCoordinatorBudgetRemaining()) return;
    if(g_export_preview_requested)
@@ -219,7 +219,7 @@ void JPWRefreshRequestedRecords()
       string reason="";
       if(JPWDiagPreview(g_diagnostic_context,g_export_preview,reason)!=JPW_STORE_VALID)
          { g_export_preview=""; g_export_result="Prévia indisponível: "+reason; }
-      JPWRaizSaveVisibleFields(); JPWRaizPanelDestroy();
+      JPWInvalidateDialogContent();
      }
    if(!g_record_read_requested || !g_raiz_details_open) return;
    while(g_record_read_stage<5 && JPWCoordinatorBudgetRemaining())
@@ -238,7 +238,7 @@ void JPWRefreshRequestedRecords()
       g_record_read_stage++;
      }
    if(g_record_read_stage>=5) { g_record_read_stage=0; g_record_read_requested=false; }
-   JPWRaizSaveVisibleFields(); JPWRaizPanelDestroy();
+   JPWInvalidateDialogContent();
   }
 
 bool JPWConfirmAcceptedContext()
@@ -354,13 +354,17 @@ void JPWStopRiskRefreshRowView()
    if(g_stop_ready)
      {
       sample=g_stop_sample;
-      ArrayResize(rows,ArraySize(g_stop_rows));
+      if(ArrayResize(rows,ArraySize(g_stop_rows))!=ArraySize(g_stop_rows))
+        { g_raiz_tab=JPW_ROUTE_STOPS; g_cockpit_page=0; g_stop_selected_row=-1;
+          g_stop_detail="Memória insuficiente para consultar os stops; tente novamente."; return; }
       for(int i=0;i<ArraySize(rows);i++) rows[i]=g_stop_rows[i];
      }
    else if(g_stop_last_ready)
      {
       historical=true; sample=g_stop_last_sample;
-      ArrayResize(rows,ArraySize(g_stop_last_rows));
+      if(ArrayResize(rows,ArraySize(g_stop_last_rows))!=ArraySize(g_stop_last_rows))
+        { g_raiz_tab=JPW_ROUTE_STOPS; g_cockpit_page=0; g_stop_selected_row=-1;
+          g_stop_last_reason="Memória insuficiente para consultar o histórico de stops."; return; }
       for(int i=0;i<ArraySize(rows);i++) rows[i]=g_stop_last_rows[i];
      }
    else
@@ -368,8 +372,10 @@ void JPWStopRiskRefreshRowView()
    const int rebound=JPWStopRiskRebindIndex(chosen,rows);
    if(rebound<0)
      { g_raiz_tab=JPW_ROUTE_STOPS; g_cockpit_page=0; g_stop_selected_row=-1; return; }
+   if(ArrayResize(g_stop_table_rows,ArraySize(rows))!=ArraySize(rows))
+     { g_raiz_tab=JPW_ROUTE_STOPS; g_cockpit_page=0; g_stop_selected_row=-1;
+       g_stop_detail="Memória insuficiente para atualizar a tabela de stops; tente novamente."; return; }
    g_stop_table_sample=sample;
-   ArrayResize(g_stop_table_rows,ArraySize(rows));
    for(int i=0;i<ArraySize(rows);i++) g_stop_table_rows[i]=rows[i];
    g_stop_selected_row=rebound;
    g_stop_table_historical=historical;
@@ -483,8 +489,9 @@ void JPWCollectStopRisk()
      { JPWStopRiskUnavailableWithPresence(reason); return; }
    if(!JPWReadAccount(after) || !JPWAccountsEqual(before,after))
      { JPWStopRiskUnavailable("Conta alterada durante a leitura"); return; }
+   if(ArrayResize(g_stop_rows,ArraySize(rows))!=ArraySize(rows))
+     { JPWStopRiskUnavailable("Memória insuficiente para preparar a amostra de stops"); return; }
    g_stop_sample=sample;
-   ArrayResize(g_stop_rows,ArraySize(rows));
    for(int i=0;i<ArraySize(rows);i++) g_stop_rows[i]=rows[i];
    g_stop_ready=true; // The sample can still be N/A for an ambiguous operation.
    string live_digest="";
@@ -559,8 +566,9 @@ void JPWDetailsReadStopRisk()
      { g_stop_last_reason=reason; return; }
    if(!JPWReadAccount(after) || !JPWAccountsEqual(before,after))
      { g_stop_last_reason="Conta alterada durante a consulta"; return; }
+   if(ArrayResize(g_stop_last_rows,ArraySize(rows))!=ArraySize(rows))
+     { g_stop_last_reason="Memória insuficiente para preparar o histórico de stops."; return; }
    g_stop_last_sample=sample;
-   ArrayResize(g_stop_last_rows,ArraySize(rows));
    for(int i=0;i<ArraySize(rows);i++) g_stop_last_rows[i]=rows[i];
    g_stop_last_ready=true;
    g_stop_last_scope_valid=JPWStopRiskResolveScope(before,rows,g_stop_last_scope_symbol,
@@ -682,12 +690,13 @@ void JPWMonitorStopRisk()
       JPWInvalidateIdentityPresentation();
    if(g_raiz_details_open && g_raiz_tab>=JPW_ROUTE_OVERVIEW)
      {
-      // The cockpit is an inspection of the current collector cycle. Rebuild
-      // it after every Stop risk check, even when other metrics are throttled.
+      // Update accepted Stop risk content without destroying editors in other
+      // routes. The presentation layer compares content and evidence state.
       if((g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW) && stop_was_ready && !g_stop_ready)
          JPWDetailsReadStopRisk();
       JPWStopRiskRefreshRowView();
-      JPWRaizSaveVisibleFields(); JPWRaizPanelDestroy();
+      JPWInvalidateDialogContent(JPW_ROUTE_STOPS);
+      JPWInvalidateDialogContent(JPW_ROUTE_STOP_ROW);
      }
    g_numeric_values[5]=g_stop_total_money;
    g_numeric_valid[5]=(g_stop_quality==JPW_VIEW_CURRENT);

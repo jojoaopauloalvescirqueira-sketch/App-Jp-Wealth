@@ -1,5 +1,20 @@
 # Mapa de contexto para agentes
 
+## Rota focal GENETRIX 1.21.2 — 2026-10-08
+
+Para trabalhar no GENETRIX, comece pelo [estado focal](CURRENT-STATE.md), [tarefa](../work/ACTIVE-TASK.md), [contrato 1.21.2](../work/CHG-GENETRIX-1-21-2-SITE-20261008.md) e [integração/proveniência](../validation/genetrix-1.21.2/INTEGRATION.md). A base Git é7f082848 mais o delta/fingerprint expressamente identificado; não herdar aprovação de runtime ou instalação.
+
+- Fonte produtiva/distribuição: `mt5/jpw-alavancagem-atual/` e `downloads/jpw-alavancagem-atual/manifest.json`; versão 1.21.2 / MQL 1.212/cálculo 1.9.0, source-only. Conferir hashes antes de desenvolver.
+- Conta: indicador `JPW_Alavancagem_Atual`; sete leituras e Cockpit. Monitoramento/histórico e contabilidade recebem produção do `JPW_Genetrix_Monitor` em gráfico de apoio.
+- Gráficos: `JPW_NoCuda_Channels` e estudos; nenhum sinal/ordem é autorizado por desenho. Supervisor 7x é separado, opcional, não requisito de leitura, sem armamento nesta integração.
+- Instrução especializada: `mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md`, fornecida integralmente ao agente quando aplicável. Status CANDIDATE; Core/MetaQuotes/modelo/Nocuda são dependências distintas, sem norma criada pelo prompt.
+- Compatibilidade documental: AGENTS e `harness/REPOSITORY_INTEGRATION.md` dentro do pacote canônico conservam fotografias antigas. Use o mapeamento de [INTEGRATION](../validation/genetrix-1.21.2/INTEGRATION.md); não reescreva os 132 membros para ajustar rótulos ou transformar histórico em aceite atual.
+- Evidências1.20: `docs/validation/genetrix-1.20.0/`, inclusive logs/hash/recibos. São históricas e não sustentam EX5 ou runtime 1.21.2. Novos testes locais/native requerem seus próprios candidate e recibos.
+
+Este roteamento é referência documental. Não altera autoridade, precedência normativa, scripts, gates ou permissões. As rotas gerais abaixo conservam suas âncoras históricas e precisam ser confrontadas com o disco quando forem pertinentes.
+
+## Mapa geral anterior preservado
+
 Revisão focal em 2026-09-11: base Git `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe` mais delta
 local da estabilização. Identidade e limites em `CURRENT-STATE.md`; fotografia de
 2026-09-09 preservada no histórico Git/V2, não prova de estado atual.

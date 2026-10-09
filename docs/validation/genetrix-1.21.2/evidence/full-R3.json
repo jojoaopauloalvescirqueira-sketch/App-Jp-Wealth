@@ -1,0 +1,573 @@
+{
+  "schema_version": 1,
+  "tier": "full",
+  "started_at": "2026-10-08T22:39:47-03:00",
+  "finished_at": "2026-10-08T22:55:06-03:00",
+  "git": {
+    "branch": "codex/genetrix-1-21-2-site-20261008",
+    "head": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
+    "dirty": true,
+    "status": [
+      "M .gitignore",
+      " M CHANGELOG.md",
+      " M build-id.js",
+      " M dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      " M docs/governance/CONTEXT-MAP.md",
+      " M docs/governance/CURRENT-STATE.md",
+      " M docs/work/ACTIVE-TASK.md",
+      " M downloads/jpw-alavancagem-atual/manifest.json",
+      " M index.html",
+      " D mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Accountant.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Monitor.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Supervisor.ex5",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Preparation.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Terminal.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh",
+      " M mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_UI_Design.mqh",
+      " D mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.ex5",
+      " M mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.ex5",
+      " M mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.ex5",
+      " M mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Genetrix_Risk_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.ex5",
+      " D mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.ex5",
+      " M mt5/jpw-alavancagem-atual/README.md",
+      " M tools/jpw_genetrix_brand_test.py",
+      " M tools/jpw_genetrix_ui_test.py",
+      " M tools/jpw_mt5_design_test.py",
+      " M tools/jpw_nocuda_fibo_controller_test.py",
+      " M tools/jpw_nocuda_fibo_ui_test.py",
+      " M tools/jpw_nocuda_integration_test.py",
+      " M tools/jpw_personal_history_test.py",
+      " M tools/jpw_positions_ui_test.py",
+      " M tools/jpw_signal_copy_ui_test.py",
+      " M tools/leverage_details_event_test.py",
+      " M tools/leverage_geometry_test.py",
+      " M tools/leverage_live_adapter_test.py",
+      " M tools/leverage_package_test.py",
+      " M tools/leverage_page_test.py",
+      " M tools/leverage_panel_test.py",
+      " M tools/leverage_reliability_test.py",
+      " M tools/leverage_scheduler_test.py",
+      " M tools/leverage_stop_ui_test.py",
+      " M tools/leverage_suite.py",
+      " M tools/leverage_suite_test.py",
+      "?? docs/validation/genetrix-1.21.2/",
+      "?? docs/work/CHG-GENETRIX-1-21-2-SITE-20261008.md",
+      "?? downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip",
+      "?? mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_20_1.md",
+      "?? mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_21_0.md",
+      "?? mt5/jpw-alavancagem-atual/GENETRIX_CORRECTIONS_1_21_2.md",
+      "?? mt5/jpw-alavancagem-atual/GENETRIX_REVIEW_1_21_1.md",
+      "?? tools/leverage_host_layout.py",
+      "?? tools/leverage_host_runtime.py",
+      "?? tools/leverage_host_shim.py"
+    ]
+  },
+  "checks": [
+    {
+      "name": "preflight",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/agent_preflight.py --mode audit --allow-dirty",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.164,
+      "output_tail": "PREFLIGHT PASS\n- branch: codex/genetrix-1-21-2-site-20261008\n- HEAD: 7f0828488b2f\n- rastreados: 867\n- alteracoes: 88\n- scripts no manifest: 101\n- AVISO: arvore possui 88 alteracao(oes); confirme autoria e escopo\n- AVISO: SOURCE REVISION UNKNOWN — CURRENT-STATE.md nao declara source revision representada; frescor material nao estabelecido\n"
+    },
+    {
+      "name": "structure",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/validate_project.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.866,
+      "output_tail": "VALIDACAO OK - 101 arquivos JS, 670 IDs estaticos, portatil reconstruido.\n"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.541,
+      "output_tail": ""
+    },
+    {
+      "name": "preflight-context",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/preflight_context_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.155,
+      "output_tail": "[PASS] caso1_head_igual_source\n[PASS] caso2_context_only\n[PASS] caso3_fora_da_allowlist\n[PASS] caso4a_campo_ausente\n[PASS] caso4b_malformado\n[PASS] caso4c_sha_inexistente\n[PASS] caso5_nao_ancestral\nPREFLIGHT CONTEXT OK — TRUE/FALSE/UNKNOWN distintos; UNKNOWN != FALSE; reconciliacao contextual (context-only) nao dispara falso positivo.\n"
+    },
+    {
+      "name": "navigation-ia",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/navigation_ia_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.432,
+      "output_tail": "NAVIGATION IA TEST PASS — NAV1..NAV3, primários/filhos, compatibilidade, storage e Alladin isolados\n"
+    },
+    {
+      "name": "dashboard-macro",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/dashboard_macro_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 139.85,
+      "output_tail": "DASHBOARD SURFACES PASS 320-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 320-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 390-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 390-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 601-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 601-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 768-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 768-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 900-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 900-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1024-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1024-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1440-light-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1440-dark-sidebar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 320-light-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 320-dark-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 901-light-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 901-dark-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1024-light-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1024-dark-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1100-light-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1100-dark-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1440-light-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1440-dark-topbar-expanded-csszoom1-long0\nDASHBOARD SURFACES PASS 1440-light-sidebar-collapsed-csszoom1-long0\nDASHBOARD SURFACES PASS 1440-dark-sidebar-collapsed-csszoom1-long0\nDASHBOARD SURFACES PASS 390-light-sidebar-expanded-csszoom1.25-long1\nDASHBOARD SURFACES PASS 390-dark-sidebar-expanded-csszoom1.25-long1\nDASHBOARD SURFACES PASS 1440-light-sidebar-expanded-csszoom1.25-long1\nDASHBOARD SURFACES PASS 1440-dark-sidebar-expanded-csszoom1.25-long1\nDASHBOARD MACRO TEST PASS — quatro cards, layout isolado, semantica fail-closed, CA-12 e responsividade\n"
+    },
+    {
+      "name": "research-navigation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/research_navigation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 11.001,
+      "output_tail": "SETTINGS_LAB_RELOCATION [{\"mode\": \"sidebar\", \"width\": 1440, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"sidebar\", \"width\": 390, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"topbar\", \"width\": 1440, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"topbar\", \"width\": 390, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"glass\", \"width\": 1440, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"glass\", \"width\": 390, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"submenu\", \"width\": 1440, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}, {\"mode\": \"submenu\", \"width\": 390, \"primary\": \"dashboard\", \"roots\": 1, \"inSettings\": true, \"active\": true, \"focusInSettings\": true, \"title\": \"Laboratório de Probabilidade\", \"overflow\": -15}]\nPASS research_navigation_test — R3-A..R3-I + browser desktop/mobile light/dark\n"
+    },
+    {
+      "name": "smoke",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/smoke_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 17.679,
+      "output_tail": "SMOKE OK — estado vazio, resets, ledger real, onboarding, 6 rotas semânticas e Notas do MVP verificados.\n"
+    },
+    {
+      "name": "settings",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/settings_modal_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 20.755,
+      "output_tail": "SETTINGS IDENTITY {\"root\": \"/private/tmp/jpw-genetrix-site-1-21-2-20261008\", \"test_sha256\": \"2ebe9164b485f9f94a582d488b4ccfaf3eee2a5864df391bfe2e19dec3563f36\", \"source_sha256\": {\"index.html\": \"81e1665a69da3c421f9ff0a5a03eda7243479158dbb0e453c16b1d0a013103e0\", \"src/styles/app.css\": \"33f854e8eb5212a04b926dfe506f5d990b9cbcf4832f2ce5e3ead25bda8da3c0\", \"src/js/40-app/09-settings-modal.js\": \"a21e5993a30b9cbe77371553140ddc8229d5bfdcf3a150e5ac80dc602a127647\", \"src/js/40-app/07-finalize-session.js\": \"c33175b2a8954031ced6ebe1ac13e9feec59db7743a01b68ffa13caa0fcf2b07\", \"build-id.js\": \"dcc6fedfc286654a1da759d4011ebf0dab374096e9ef3296d83b50d15b3da9c2\"}}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — absent, explicit save, history, keyboard, reload, name safety, S/backup isolation\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — quota/no-op refuse false success; draft and unknown fields preserved\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — malformed/future/unreadable records preserved without writes\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — unconfirmed/truncated write blocks retry and retains draft\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — second-tab save blocks stale draft; explicit cancellation adopts current value\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — PNG/JPEG/WebP normalization, replacement/removal, image limits and invalid bytes\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE PASS — invalid stored avatar fallback and explicit repair\nSETTINGS IDENTITY AFTER {\"index.html\": \"81e1665a69da3c421f9ff0a5a03eda7243479158dbb0e453c16b1d0a013103e0\", \"src/styles/app.css\": \"33f854e8eb5212a04b926dfe506f5d990b9cbcf4832f2ce5e3ead25bda8da3c0\", \"src/js/40-app/09-settings-modal.js\": \"a21e5993a30b9cbe77371553140ddc8229d5bfdcf3a150e5ac80dc602a127647\", \"src/js/40-app/07-finalize-session.js\": \"c33175b2a8954031ced6ebe1ac13e9feec59db7743a01b68ffa13caa0fcf2b07\", \"build-id.js\": \"dcc6fedfc286654a1da759d4011ebf0dab374096e9ef3296d83b50d15b3da9c2\"}\nSETTINGS MODAL OK — existing contracts and requested profile scenarios verified: all\n"
+    },
+    {
+      "name": "brand-identity-contract",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/brand_identity_contract_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.163,
+      "output_tail": "BRAND_IDENTITY_CONTRACT PASS\n"
+    },
+    {
+      "name": "brand-identity-browser",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/brand_identity_browser_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.283,
+      "output_tail": "BRAND_IDENTITY_BROWSER PASS\n"
+    },
+    {
+      "name": "statute-documentary",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/statute_documentary_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 11.04,
+      "output_tail": "STATUTE DOCUMENTARY OK — f4609b23c6d86bd8: 7 aceites, leitor aprovado, 4 consultas PWA online/offline e 2 downloads standalone offline.\n"
+    },
+    {
+      "name": "galton-board",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/galton_board_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.731,
+      "output_tail": "GALTON_PARTIAL_INIT [{\"failure\": \"engine\", \"deferred\": false, \"error\": \"JPW synthetic engine failure\", \"injected\": true, \"errorCount\": 0, \"published\": false, \"mounted\": false, \"observers\": 0, \"liveSignals\": 0, \"liveEngines\": 0, \"liveRenderers\": 0, \"stateUnchanged\": true, \"storageUnchanged\": true, \"retrySingle\": true}, {\"failure\": \"engine\", \"deferred\": true, \"error\": \"Uncaught Error: JPW synthetic engine failure\", \"injected\": true, \"errorCount\": 1, \"published\": false, \"mounted\": false, \"observers\": 0, \"liveSignals\": 0, \"liveEngines\": 0, \"liveRenderers\": 0, \"stateUnchanged\": true, \"storageUnchanged\": true, \"retrySingle\": true}, {\"failure\": \"render\", \"deferred\": false, \"error\": \"JPW synthetic render failure\", \"injected\": true, \"errorCount\": 0, \"published\": false, \"mounted\": false, \"observers\": 0, \"liveSignals\": 0, \"liveEngines\": 0, \"liveRenderers\": 0, \"stateUnchanged\": true, \"storageUnchanged\": true, \"retrySingle\": true}, {\"failure\": \"render\", \"deferred\": true, \"error\": \"Uncaught Error: JPW synthetic render failure\", \"injected\": true, \"errorCount\": 1, \"published\": false, \"mounted\": false, \"observers\": 0, \"liveSignals\": 0, \"liveEngines\": 0, \"liveRenderers\": 0, \"stateUnchanged\": true, \"storageUnchanged\": true, \"retrySingle\": true}]\nGALTON_DEFERRED_LIFECYCLE [{\"action\": \"removed\", \"firstNull\": true, \"secondNull\": true, \"mounts\": 0, \"active\": false, \"stateUnchanged\": true, \"storageUnchanged\": true}, {\"action\": \"hidden\", \"firstNull\": true, \"secondNull\": true, \"mounts\": 0, \"active\": false, \"stateUnchanged\": true, \"storageUnchanged\": true}, {\"action\": \"repeat\", \"firstNull\": true, \"secondNull\": true, \"mounts\": 1, \"active\": true, \"stateUnchanged\": true, \"storageUnchanged\": true}]\nA13_CONTINUITY_NAV {\"route\": \"dashboard\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"forex-overview\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"personal-finance\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"alladin\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"research-others\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"research-forex\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"dashboard\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"forex-overview\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"personal-finance\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"alladin\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"research-others\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_NAV {\"route\": \"research-forex\", \"navigated\": true, \"returned\": true, \"out\": {\"same\": true, \"destroyed\": false, \"active\": false, \"raf\": 0, \"observers\": 0, \"debugRaf\": 0, \"engineSame\": true, \"signalSame\": true, \"signalAborted\": false, \"preserved\": true, \"prefsPreserved\": true, \"stagedPreserved\": true, \"running\": false, \"paused\": true, \"stayedPreserved\": true}, \"back\": {\"same\": true, \"active\": true, \"running\": false, \"paused\": true, \"raf\": 0, \"lastAt\": 0, \"preserved\": true, \"label\": \"Continuar\", \"observers\": 1, \"mounts\": 13, \"roots\": 1, \"headerInert\": true}, \"stateUnchanged\": true, \"storageUnchanged\": true}\nA13_CONTINUITY_RESUME {\"running\": true, \"same\": true, \"firstUnchanged\": true, \"progressed\": true, \"boundedSteps\": 2, \"expectedMax\": 3, \"noDroppedTime\": true, \"paused\": true, \"raf\": 0}\nA13_CONTINUITY_PASS {\"routes\": 12, \"settingsCycles\": 4, \"resources\": {\"oneHandler\": true, \"mountsUnchanged\": true, \"destroysUnchanged\": true, \"sameSignal\": true, \"stateUnchanged\": true, \"storageUnchanged\": true}, \"reset\": {\"same\": true, \"engineReplaced\": true, \"oldReleased\": true, \"empty\": true, \"staged\": 0, \"raf\": 0, \"manualPaused\": true}, \"finalizationHook\": {\"destroyed\": true, \"aborted\": true, \"engineNull\": true, \"unpublished\": true, \"raf\": 0, \"observers\": 0, \"noLive\": true, \"staleWriteBlocked\": true, \"preferenceUnchanged\": true}, \"recreated\": {\"newController\": true, \"running\": true, \"queued\": 1}, \"reload\": {\"empty\": true, \"manualPaused\": true, \"running\": false, \"raf\": 0}}\nGALTON BOARD PASS — geometria/configuracao, PRNG/estatistica, passo fixo e corpos rigidos deterministas, contabilizacao unica/remocao, persistencia isolada e UI real responsiva/acessivel/lifecycle verificados.\n"
+    },
+    {
+      "name": "fx-planning",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/fx_planning_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.075,
+      "output_tail": "FX PLANNING TEST PASS\n"
+    },
+    {
+      "name": "exec-submenu",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/exec_submenu_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 11.634,
+      "output_tail": "EXEC SUBMENU TEST PASS\n"
+    },
+    {
+      "name": "nocoda",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/nocoda_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.498,
+      "output_tail": "NOCODA TEST PASS\n"
+    },
+    {
+      "name": "pivot-studies",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/pivot_studies_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.339,
+      "output_tail": "PIVOT STUDIES TEST PASS\n"
+    },
+    {
+      "name": "order-guards",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/order_guards_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.88,
+      "output_tail": "ORDER GUARDS TEST PASS\n"
+    },
+    {
+      "name": "operation-identity",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/operation_identity_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.453,
+      "output_tail": "OPERATION IDENTITY TEST PASS — two accounts, factual birth, correction, legacy separation and reload\n"
+    },
+    {
+      "name": "operation-finalize",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/operation_finalize_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.45,
+      "output_tail": "OPERATION FINALIZE TEST PASS — 30 scoped safety contracts\n"
+    },
+    {
+      "name": "operation-history",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/operation_history_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.029,
+      "output_tail": "OPERATION HISTORY TEST PASS\n"
+    },
+    {
+      "name": "operation-wiring",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/operation_wiring_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.422,
+      "output_tail": "OPERATION WIRING TEST PASS — 24 DOM and context contracts\n"
+    },
+    {
+      "name": "phases-visibility",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/phases_visibility_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.317,
+      "output_tail": "PASS seis grades atuais e quatro LEGACY; registro disponível; render sem writes\n"
+    },
+    {
+      "name": "exec-three-column",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/exec_three_column_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.878,
+      "output_tail": "PASS  faixas compactas responsivas, valores legiveis, IDs e personalizacao do Editor preservados\n"
+    },
+    {
+      "name": "finpes-foundation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_foundation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.247,
+      "output_tail": "----------------------------------------\nException occurred during processing of request from ('127.0.0.1', 61621)\n----------------------------------------\nException occurred during processing of request from ('127.0.0.1', 61620)\n----------------------------------------\nException occurred during processing of request from ('127.0.0.1', 61622)\nTraceback (most recent call last):\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 683, in process_request_thread\n    self.finish_request(request, client_address)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 360, in finish_request\n    self.RequestHandlerClass(request, client_address, self)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 660, in __init__\n    super().__init__(*args, **kwargs)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 747, in __init__\n    self.handle()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 434, in handle\n    self.handle_one_request()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 422, in handle_one_request\n    method()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 667, in do_GET\n    self.copyfile(f, self.wfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 867, in copyfile\n    shutil.copyfileobj(source, outputfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py\", line 208, in copyfileobj\n    fdst_write(buf)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 826, in write\n    self._sock.sendall(b)\nBrokenPipeError: [Errno 32] Broken pipe\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 683, in process_request_thread\n    self.finish_request(request, client_address)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 360, in finish_request\n    self.RequestHandlerClass(request, client_address, self)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 660, in __init__\n    super().__init__(*args, **kwargs)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 747, in __init__\n    self.handle()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 434, in handle\n    self.handle_one_request()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 422, in handle_one_request\n    method()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 667, in do_GET\n    self.copyfile(f, self.wfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 867, in copyfile\n    shutil.copyfileobj(source, outputfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py\", line 208, in copyfileobj\n    fdst_write(buf)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 826, in write\n    self._sock.sendall(b)\nBrokenPipeError: [Errno 32] Broken pipe\n----------------------------------------\n----------------------------------------\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 683, in process_request_thread\n    self.finish_request(request, client_address)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 360, in finish_request\n    self.RequestHandlerClass(request, client_address, self)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 660, in __init__\n    super().__init__(*args, **kwargs)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 747, in __init__\n    self.handle()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 434, in handle\n    self.handle_one_request()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 422, in handle_one_request\n    method()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 667, in do_GET\n    self.copyfile(f, self.wfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 867, in copyfile\n    shutil.copyfileobj(source, outputfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py\", line 208, in copyfileobj\n    fdst_write(buf)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 826, in write\n    self._sock.sendall(b)\nBrokenPipeError: [Errno 32] Broken pipe\n----------------------------------------\n----------------------------------------\nException occurred during processing of request from ('127.0.0.1', 63657)\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 683, in process_request_thread\n    self.finish_request(request, client_address)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 360, in finish_request\n    self.RequestHandlerClass(request, client_address, self)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 660, in __init__\n    super().__init__(*args, **kwargs)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 747, in __init__\n    self.handle()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 434, in handle\n    self.handle_one_request()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 422, in handle_one_request\n    method()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 667, in do_GET\n    self.copyfile(f, self.wfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 867, in copyfile\n    shutil.copyfileobj(source, outputfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py\", line 208, in copyfileobj\n    fdst_write(buf)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 826, in write\n    self._sock.sendall(b)\nBrokenPipeError: [Errno 32] Broken pipe\n----------------------------------------\n----------------------------------------\nException occurred during processing of request from ('127.0.0.1', 63658)\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 683, in process_request_thread\n    self.finish_request(request, client_address)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 360, in finish_request\n    self.RequestHandlerClass(request, client_address, self)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 660, in __init__\n    super().__init__(*args, **kwargs)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 747, in __init__\n    self.handle()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 434, in handle\n    self.handle_one_request()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 422, in handle_one_request\n    method()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 667, in do_GET\n    self.copyfile(f, self.wfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py\", line 867, in copyfile\n    shutil.copyfileobj(source, outputfile)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py\", line 208, in copyfileobj\n    fdst_write(buf)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py\", line 826, in write\n    self._sock.sendall(b)\nBrokenPipeError: [Errno 32] Broken pipe\n----------------------------------------\nFINPES FOUNDATION TEST PASS — forma reparada, conteudo intocado, unidade jamais reinterpretada\n"
+    },
+    {
+      "name": "finpes-finalize-preservation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_finalize_preservation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.237,
+      "output_tail": "FINPES FINALIZE PRESERVATION TEST PASS — agregados confirmados inteiros; desbloqueio de sessão encerrado\n"
+    },
+    {
+      "name": "finpes-backup-roundtrip",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_backup_roundtrip_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.418,
+      "output_tail": "FINPES BACKUP ROUNDTRIP TEST PASS — export/import em contexto isolado preserva o agregado ao centavo\n"
+    },
+    {
+      "name": "finpes-navigation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_navigation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.567,
+      "output_tail": "FINPES NAVIGATION TEST PASS — personal-finance, posição visual default 04, cinco destinos, fronteira do dominio, hidden/inert, navegacao sem escrita, sentinela visual\n"
+    },
+    {
+      "name": "finpes-budget",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_budget_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 17.881,
+      "output_tail": "FINPES BUDGET TEST PASS\n"
+    },
+    {
+      "name": "finpes-debt-credit",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_debt_credit_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.86,
+      "output_tail": "FINPES DEBT CREDIT TEST PASS\n"
+    },
+    {
+      "name": "finpes-comparison",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_comparison_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.916,
+      "output_tail": "FINPES COMPARISON TEST PASS\n"
+    },
+    {
+      "name": "finpes-scenarios",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_scenarios_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 36.323,
+      "output_tail": "X2 EVIDENCE refusal-retry: {\"first\": {\"recordId\": \"pfs_mv0b07e5_nbhsx5\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"retry\": {\"recordId\": \"pfs_mv0b07eq_brb2k3\", \"ok\": true, \"persistido\": true, \"erro\": null}, \"beforeCount\": 1, \"refusedCount\": 1, \"finalCount\": 2, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true}\nX2 EVIDENCE quota: {\"result\": {\"recordId\": \"pfs_mv0b08fc_tr0r9z\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"globalKind\": \"storage\"}\nX2 EVIDENCE read: {\"result\": {\"recordId\": \"pfs_mv0b09ht_bxqhm2\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"globalKind\": \"storage\"}\nX2 EVIDENCE serialize: {\"result\": {\"recordId\": \"pfs_mv0b0aii_esn1fz\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"globalKind\": \"serialize\"}\nX2 EVIDENCE generic: {\"result\": {\"recordId\": \"pfs_mv0b0bhe_5vaqf6\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"globalKind\": null}\nX2 EVIDENCE recovery: {\"result\": {\"recordId\": \"pfs_mv0b0chk_xk9w9d\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"globalKind\": null}\nX2 EVIDENCE conflict: {\"result\": {\"recordId\": \"pfs_mv0b0da4_o4ma2x\", \"ok\": false, \"persistido\": false, \"erro\": \"persistencia recusada\"}, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"globalKind\": \"conflict\"}\nX2 EVIDENCE before-write: {\"first\": {\"recordId\": \"pfs_mv0b0e94_1a06j8\", \"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"again\": {\"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"unknown\": true, \"tentativeCount\": 2, \"noSecondAct\": true, \"diskChanged\": false}\nX2 EVIDENCE typed-barrier-before-write: {\"outcome\": {\"name\": \"JPWealthPersistenceUnknownError\", \"status\": \"UNKNOWN\", \"unknown\": true}, \"noAdditionalWrite\": true}\nX2 EVIDENCE after-write: {\"first\": {\"recordId\": \"pfs_mv0b0f9y_fsxy5o\", \"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"again\": {\"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"unknown\": true, \"tentativeCount\": 2, \"noSecondAct\": true, \"diskChanged\": true}\nX2 EVIDENCE typed-barrier-after-write: {\"outcome\": {\"name\": \"JPWealthPersistenceUnknownError\", \"status\": \"UNKNOWN\", \"unknown\": true}, \"noAdditionalWrite\": true}\nX2 EVIDENCE prewrite-log: {\"result\": {\"ok\": false, \"persistido\": false, \"erro\": \"Não foi possível aplicar a alteração. Nada foi gravado.\"}, \"pfRollback\": true, \"logRollback\": true}\nX2 EVIDENCE ui-refused-dark: {\"draft\": {\"name\": \"Synthetic retry UI\", \"kind\": \"PESSIMISTA\", \"horizon\": \"2027-03\"}, \"alert\": \"⛔ persistencia recusada\", \"modal\": true, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true}\nX2 EVIDENCE ui-refused-light: {\"draft\": {\"name\": \"Synthetic retry UI\", \"kind\": \"PESSIMISTA\", \"horizon\": \"2027-03\"}, \"alert\": \"⛔ persistencia recusada\", \"modal\": true, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true}\nX2 EVIDENCE act-income_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-income_update_name: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-income_update_money: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-income_status: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-income_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-month_materialize_edit_ghost: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-recurrence_off: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-recurrence_on: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-expense_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-expense_update_name: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-expense_update_money: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-expense_status: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-expense_installments: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-expense_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-allocation_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-allocation_update_label: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-allocation_update_amount: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-allocation_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-note_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-note_status: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-note_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-debt_snapshot: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-debt_snapshot_remove: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-debt_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-debt_update: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-debt_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-credit_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-credit_update_text: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-credit_update_money: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-credit_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_update: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_item_add: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_item_update_name: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_item_update_amount: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_item_delete: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE act-scenario_from_month: {\"control\": true, \"refused\": false, \"pfRollback\": true, \"logRollback\": true, \"diskUnchanged\": true, \"retry\": true}\nX2 EVIDENCE nonboolean-undefined: {\"first\": {\"recordId\": \"pfs_mv0b0mer_g122we\", \"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"second\": {\"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"noRetry\": true}\nX2 EVIDENCE nonboolean-null: {\"first\": {\"recordId\": \"pfs_mv0b0n84_umji9m\", \"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"second\": {\"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"noRetry\": true}\nX2 EVIDENCE nonboolean-0: {\"first\": {\"recordId\": \"pfs_mv0b0ojt_6ofhkj\", \"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"second\": {\"ok\": false, \"persistido\": null, \"bloqueado\": true, \"erro\": \"Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.\"}, \"noRetry\": true}\nX2 EVIDENCE clone-refusal: {\"result\": {\"ok\": false, \"persistido\": false, \"erro\": \"Não foi possível preparar a alteração. Nada foi aplicado.\"}, \"unchanged\": true}\nX2 EVIDENCE unknown-ui-False: {\"noRetry\": true, \"reloadCount\": 1}\nX2 EVIDENCE unknown-ui-True: {\"noRetry\": true, \"reloadCount\": 2}\nFINPES SCENARIOS TEST PASS\n"
+    },
+    {
+      "name": "finpes-overview",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finpes_overview_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.471,
+      "output_tail": "FINPES OVERVIEW TEST PASS\n"
+    },
+    {
+      "name": "usd-brl-quote",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/usd_brl_quote_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.03,
+      "output_tail": "concorrencia: 3 refresh() simultaneos -> 1 request (sucesso), 1 request (falha)\nUSD/BRL QUOTE TEST PASS\n"
+    },
+    {
+      "name": "alladin-unit",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_unit_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.535,
+      "output_tail": "alladin_unit_test PASS (U1-U26: moeda, ids, gate, owners/isSelf, regimes, cripto, symbolHistory, falha parcial, integridade; S2: quantity canonica e espelho do par reversal<->original sondados direto; Chromium isolado, zero rede, zero DOM)\n"
+    },
+    {
+      "name": "alladin-ledger",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_ledger_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.079,
+      "output_tail": "alladin_ledger_test PASS (L1-L56: deposito/saque e saldo derivado; transferencia internacomo UM registro que nao altera o patrimonio global — o caso canonico; flowScope como perimetro, persistido e validado; reversal preservando o original e somando zero, com suas cinco proibicoes e sem campo economico do chamador; recusas de referencia, moeda e valor; dedupe fail-closed; conta inativa recusa lancamento novo mas mantem historico e reversao; qualidade bloqueante nunca vira saldo parcial; ordem economica em vez da ordem do array; write gate transacional e schema futuro fechado; DRAFT ausente; zero derivado persistido; S2: BUY/SELL como UM registro de duas pernas sem flowScope, exemplo canonico 6990, SELL liquido negativo representavel, reversal copiando a economia byte-igual, consistencia cruzada do par na leitura (amount/tipo/campos/refs/flowScope adulterados viram BLOCKING), overflow recusado na escrita e acumulador com guarda por passo, quantity canonica de grafia unica, instrumentFamily congelada apos referencia; HARDENING read-side: id/dedupe duplicados, dois reversals do mesmo original, pareamento status<->reversal, saldo sob schema futuro e container nao-array viram BLOCKING, enquanto fato legitimo duplicado sem dedupe segue somando; AMENDMENT: id canonico duplicado (cash/instrument/account/asset/tx) bloqueia leitura E recusa escrita; S3: FEE/TAX standalone debitam exato, revertem para zero, nao tem flowScope nem vinculo a trade, e recusam todo campo de trade — dupla contagem irrepresentavel; S4: ADJUSTMENT_CREDIT/DEBIT como diferenca de caixa sem contraparte, com reason obrigatorio e proprio, zero vinculo e zero campo de trade, revertendo para zero; e a COMPLETUDE do cash delta — tipo legivel sem entrada na tabela vira BLOCKING com ALD_CASH_DELTA_AUSENTE em vez de zero implicito)\n"
+    },
+    {
+      "name": "alladin-position",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_position_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.483,
+      "output_tail": "alladin_position_test PASS (P1-P23: posicao derivada por instrumentId+accountId; soma/subtracao decimal exata em BigInt com canonicalizacao; zero sai da colecao; reversal neutraliza exatamente apos consistencia do par; duas caixas do mesmo Account somam UMA posicao e custodias distintas separam; negativo fiel sem semantica de short; adulteracao, orfandade cadastral, moeda divergente e schema futuro viram BLOCKING; saida deterministica; derivado alem de 64 chars sai exato; HARDENING: id duplicado e container nao-array bloqueiam; AMENDMENT: id canonico duplicado bloqueia posicao E recusa escrita; S3: FEE/TAX standalone nao movem posicao e o BUY mantem fees/taxes embutidos; S4: ADJUSTMENT tampouco move posicao — nao esta em ALD_PAPEL_DELTA e nao pode carregar instrumento nem quantidade, nem por escrita nem por adulteracao)\n"
+    },
+    {
+      "name": "alladin-foundation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_foundation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 26.176,
+      "output_tail": "alladin_foundation_test PASS (A-J + M,P,Q,R,F2,S,T,U,V,V2,W,W2,X,X2: cadeia v1->v6, round-trip completo, fail-closed, rollback pre-Alladin/C1 e mixed-build do S1 sobre v4, carimbos v3->v4, v4->v6 e v5->v6 preservando ledger povoado byte a byte, mixed-build v4<-v5 (FEE) e v5<-v6 (ADJUSTMENT) fechando escrita sem confundir dado futuro com corrupcao, reload, falha parcial, XSS/privacidade, backup)\n"
+    },
+    {
+      "name": "alladin-finalize-preservation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_finalize_preservation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 35.752,
+      "output_tail": "C13 REFUSED EVIDENCE {\"stage\": \"REFUSED\", \"reason\": \"A base salva é legada/incompleta para Backup Completo v2. Preserve a recuperação bruta e confira explicitamente as famílias ausentes: alladin.\", \"memoryPreserved\": true, \"diskPreserved\": true, \"missing\": true, \"writes\": [\"jpwealth_base_epoch_v1\"], \"broadcasts\": 0, \"acknowledgment\": false, \"proceed\": false, \"modal\": \"Exportação não concluídaA base não será considerada protegida e a exclusão não pode prosseguir.A exportação não foi confirmada. Verifique o aviso e o destino antes de tentar novamente. O encerramento não foi autorizado por esta tentativa.CancelarTentar novamente\"}\nALLADIN FINALIZE PRESERVATION TEST PASS (C1-C17: preservacao integral em memoria e disco, future-schema intacto atraves do reload e ainda somente-leitura, Zona de Perigo continua apagando, sessao encerrada, sem chave nova nem contaminacao de auxiliar, dois ciclos por caminhos distintos, atomicidade com ordem e persistencia assertadas, cross-tab preserva do estado persistido sem ressuscitar registro apagado, aborta bloqueado quando ilegivel, copia profunda, legado incompleto recusado e confirmacao completa explicita)\n"
+    },
+    {
+      "name": "session-epoch-protocol",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/session_epoch_protocol_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 18.24,
+      "output_tail": "SESSION EPOCH PROTOCOL TEST PASS (E1-E16: replay pos-wipe rejeitado, entrega tardia rejeitada, finalize legitimo aceito, efeito unico nos dois transportes, import invalida geracao anterior, mixed-build nos dois sentidos, seqlock, fail-closed local, bootstrap deterministico convergente, wipe/import legados estabelecem geracao, falha de geracao nao regrava base obsoleta, geracao fora do backup, importacao real rotaciona, empate/retrocesso de relogio nao engana)\n"
+    },
+    {
+      "name": "session-write-serialization",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/session_write_serialization_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 20.11,
+      "output_tail": "SESSION WRITE SERIALIZATION TEST PASS (SA stale-tab abortada com a escrita alheia preservada, SB critical section serializado entre abas, SC/SD/SK degraded explicito honesto e funcional, SE wipe async por clique real, SH commit falho sem sucesso/broadcast e doc intacto, SH2 no-op detectado pelo read-back, SA2 backup do ramo changed representa o disco, SI early-returns remotos sem read-only permanente e sem regravacao, SJ epoch com confirmacao estrita e bootstrap convergente, SC1 camada 1 recusa lost update com aviso honesto)\n"
+    },
+    {
+      "name": "alladin-ui-readonly",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_ui_readonly_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.903,
+      "output_tail": "ALLADIN UI READONLY TEST PASS (A-O + S1-P..S1-T: rota, 4 destinos cadastrais congelados + 3 economicos (ALD-05-S1), default Instrumentos, cadastro C2 real, empty states textuais, zero conteudo economico NOS PAINEIS CADASTRAIS, zero save(), S e storage byte-identicos, READ_ONLY com projecao sem normalizar, snapshots desacoplados, ausencia nao materializa, refresh nao escreve, Caixa cadastral, teclado/mobile, DOM estavel)\n"
+    },
+    {
+      "name": "alladin-ui-crud",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_ui_crud_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 44.177,
+      "output_tail": "ALLADIN UI CRUD TEST PASS (S2-C C1-C8/P1-P9: a rede sobrevive a troca de familia e sai so por gesto explicito, sem viajar no patch quando nao mudou; vocabulario fechado desconhecido abre no valor cru com rotulo honesto, nunca e normalizado em silencio, e a recusa do dominio vem com rota de correcao; Account e CashAccount preservam o rascunho em validacao local, recusa do dominio, write gate tardio e persistencia recusada, sem notice de sucesso; rotulos de lifecycle iguais ao catalogo do dominio e valor fora dele exibido cru) + \n(S2-B I1-I12/A1-A15/WT1-WT5/R1-R8: Instrument e Asset criados e editados pelo modal real; moeda imutavel fora do patch; symbolHistory mantido SO pelo dominio e historico ilegivel recusado com honestidade; CRYPTO exige rede com fonte unica; identificadores externos com linha vazia omitida e meio-preenchida recusada; owners em basis points por aritmetica inteira (66,67+33,33=100%), soma>100 recusada, parcial e nome duplicado como aviso pos-sucesso; tags e data round-trip; lifecycleStatus jamais editavel; patch-diff envia so o alterado; taxonomia de avisos com duplicidade em decisao, informativos preservados e codigo desconhecido exibido cru; copia distinta para criacao e edicao) + \n(W1-W15 / S2A-1..12: Account e CashAccount criados e editados pelo modal real com persistencia provada em memoria e disco; DC-4 pos-criacao com registro ja persistido, decisao explicita obrigatoria, Escape/backdrop suspensos e inativacao via setRecordStatus; referencia inativa exibida honesta sem troca silenciosa; recusas referenciais sem status falso; status x4 pela linha com confirmacao; cancelamentos zero-write; write gate na abertura e no submit sem falso sucesso; double submit nao duplica; zero conteudo economico; focus trap, retorno de foco e mobile)\n"
+    },
+    {
+      "name": "alladin-ui-ledger",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_ui_ledger_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 26.376,
+      "output_tail": "alladin_ui_ledger_test PASS (E1-E16 + E12b: sete destinos com os quatro cadastrais intactos e sem conteudo economico; Lancamentos na ORDEM do read-model, dez eventTypes rotulados, reason do ajuste visivel, effectiveAt e recordedAt ambos visiveis fora de tooltip, transferencia com as duas pernas e caixas homonimas desambiguadas, original e estorno ambos presentes; saldo identico a saldoDeCaixa() e quantity byte-identica ao read-model, negativa fiel sem semantica de short e string longa integra; BLOCKING x EMPTY provado nos DOIS sentidos, seis vetores de corrupcao bloqueando, e a sentinela impedindo que um ledger silenciosamente filtrado seja projetado como normal; zero save(), S e storage byte-identicos, acessibilidade por role/aria/teclado e bloqueio textual)\n"
+    },
+    {
+      "name": "alladin-ui-tx-write",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_ui_tx_write_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 14.942,
+      "output_tail": "alladin_ui_tx_write_test PASS (TX-A..TX-N: porta unica com um addTransaction e um save por submit; payload sem currency/flowScope/unitPrice/ids/status/dedupe; dinheiro exclusivamente por money.parse em minor units (1.234,56 -> 123456, parseFloat morreria); quantity VERBATIM — 1.50 recusada sem correcao com draft intacto, 1.5 persistida byte-igual, sinal recusado; os NOVE tipos criados pelo modal real; ajuste com reason proprio, note independente e zero flowScope; transfer com destino sem pre-filtro e recusas do dominio para mesma conta e moedas distintas; double submit inerte; cancelar zero-write byte a byte; write gate na abertura e no submit tardio sem falso sucesso; BLOCKING nao convida escrita e EMPTY legitimo convida; pos-sucesso comparado aos read-models sem recalculo; datas fixas deterministicas)\n"
+    },
+    {
+      "name": "alladin-ui-tx-reverse",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/alladin_ui_tx_reverse_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 10.148,
+      "output_tail": "alladin_ui_tx_reverse_test PASS (RV-A..RV-H: Estornar so em POSTED nao-REVERSAL sem estorno existente, '—' nas linhas REVERSED/REVERSAL, disabled sob write gate, BLOCKING sem tabela nem acao; modal com o original em READ-ONLY (zero inputs economicos) e so data/motivo/nota editaveis, sem dedupeKey; porta unica — 1 reverseTransaction, 0 addTransaction, 1 save do dominio — com payload apenas de campos autorizados; sucesso refletido pelos READ-MODELS (original Estornado, REVERSAL visivel, Saldos e Posicoes identicos ao dominio); corrida entre abrir e confirmar recusada com mensagem inequivoca de estorno ja existente; data invalida recusada com draft intacto; cancelar zero-write byte a byte; double-submit inerte; submit tardio sob schema futuro recusado sem falso sucesso; original byte-identico apos abrir/cancelar e com economia intacta no sucesso; datas fixas)\n"
+    },
+    {
+      "name": "session-finalization",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/finalize_session_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 56.217,
+      "output_tail": "FINALIZE IDENTITY {\"root\": \"/private/tmp/jpw-genetrix-site-1-21-2-20261008\", \"test_sha256\": \"f8446d62e9e135940d60496a9b6e2dbd9a0b92b9b4acd12215d2644c9d22dd46\", \"settings_helper_sha256\": \"2ebe9164b485f9f94a582d488b4ccfaf3eee2a5864df391bfe2e19dec3563f36\", \"source_sha256\": {\"index.html\": \"81e1665a69da3c421f9ff0a5a03eda7243479158dbb0e453c16b1d0a013103e0\", \"src/styles/app.css\": \"33f854e8eb5212a04b926dfe506f5d990b9cbcf4832f2ce5e3ead25bda8da3c0\", \"src/js/40-app/07-finalize-session.js\": \"c33175b2a8954031ced6ebe1ac13e9feec59db7743a01b68ffa13caa0fcf2b07\", \"src/js/40-app/09-settings-modal.js\": \"a21e5993a30b9cbe77371553140ddc8229d5bfdcf3a150e5ac80dc602a127647\", \"build-id.js\": \"dcc6fedfc286654a1da759d4011ebf0dab374096e9ef3296d83b50d15b3da9c2\", \"dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html\": \"a183120518aa326bf32ade93817ce6c30e1cdbb97bd3df8ef446f7d8051ccd81\"}}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE FINALIZE PASS — local draft/image callback invalidated, unrelated key preserved\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE FINALIZE PASS — real second-tab event, pending callback and reload cannot resurrect identity\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE FINALIZE PASS — removal refusal explicitly reported; operational protocol unchanged\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE FINALIZE PASS — local draft/image callback invalidated, unrelated key preserved\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE FINALIZE PASS — real second-tab event, pending callback and reload cannot resurrect identity\nSETTINGS LANDMARK {\"mainIds\": [\"appMain\"], \"label\": \"settingsPageTitle\", \"tabIndex\": -1, \"hasClass\": true, \"inDialog\": true}\nPROFILE FINALIZE PASS — removal refusal explicitly reported; operational protocol unchanged\nFINALIZE IDENTITY AFTER {\"index.html\": \"81e1665a69da3c421f9ff0a5a03eda7243479158dbb0e453c16b1d0a013103e0\", \"src/styles/app.css\": \"33f854e8eb5212a04b926dfe506f5d990b9cbcf4832f2ce5e3ead25bda8da3c0\", \"src/js/40-app/07-finalize-session.js\": \"c33175b2a8954031ced6ebe1ac13e9feec59db7743a01b68ffa13caa0fcf2b07\", \"src/js/40-app/09-settings-modal.js\": \"a21e5993a30b9cbe77371553140ddc8229d5bfdcf3a150e5ac80dc602a127647\", \"build-id.js\": \"dcc6fedfc286654a1da759d4011ebf0dab374096e9ef3296d83b50d15b3da9c2\", \"dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html\": \"a183120518aa326bf32ade93817ce6c30e1cdbb97bd3df8ef446f7d8051ccd81\"}\nFINALIZE SESSION OK — fingerprint, gate assíncrono, reload, duas abas, caches externos, fonte/monólito, Notas do MVP e console/pageerror verificados.\n"
+    },
+    {
+      "name": "storage-governance",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/storage_governance_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.136,
+      "output_tail": "STORAGE GOVERNANCE TEST OK — schema, sequência, colisão, diálogo, termo, 30 dias, migração, wipe (local e entre abas) e persistência verificados.\n"
+    },
+    {
+      "name": "persistence-failure",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/persistence_failure_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.776,
+      "output_tail": "PERSISTENCE FAILURE OK — caminho saudável, primeira falha, falhas repetidas, backup em memória, recuperação e redetecção verificados (modular e portátil).\n"
+    },
+    {
+      "name": "persistence-recovery",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/persistence_recovery_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 45.041,
+      "output_tail": "PERSISTENCE RECOVERY OK — estado válido, JSON inválido, falha de migração, saves de boot, download bruto, importação válida/inválida, base vazia (aceita/cancelada/falha de gravação) e recarregamento sem duplicação verificados (modular e portátil).\n"
+    },
+    {
+      "name": "investor-password",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/investor_password_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.975,
+      "output_tail": "INVESTOR PASSWORD OK — memória de sessão funciona; localStorage, checkpoint, backup e migração de estados antigos nunca carregam o segredo (modular e portátil).\n"
+    },
+    {
+      "name": "import-xss",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/import_xss_security_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 17.294,
+      "output_tail": "IMPORT XSS OK — backup adulterado não executa nem injeta DOM ativo; metadata LEGACY é inerte, matriz histórica não altera registry/projeções e a base legítima atravessa intacta (modular e portátil).\n"
+    },
+    {
+      "name": "state-integrity",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/state_integrity_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.1,
+      "output_tail": "STATE INTEGRITY TEST PASS\n"
+    },
+    {
+      "name": "async-generation",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/async_generation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.278,
+      "output_tail": "ASYNC GENERATION OK — FX normal persiste; wipe durante fetch vence e a continuação antiga não regrava; ciclo novo volta a persistir; recuperação intacta; Notas preservadas no Finalizar Sessão (modular e portátil).\n"
+    },
+    {
+      "name": "build-reproducibility",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/build_reproducibility_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 40.12,
+      "output_tail": "{\n  \"native_declared_inputs\": 0,\n  \"compiled_zip_deterministic\": true,\n  \"compiled_fallback_preserved\": true,\n  \"native_integrity_controls\": []\n}\nBUILD REPRODUCIBILITY OK — Build ID canonico f4609b23c6d86bd8; 7 artefatos locais ignorados (.DS_Store na raiz/icons/src, swap e undo de editor, diretorio ignorado) nao alteram Build ID, monolito nem manifest; mudanca real de fonte/documento altera; originais incorporados identicos; input oficial ausente interrompe o build.\n"
+    },
+    {
+      "name": "service-worker-upgrade",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/service_worker_upgrade_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 14.261,
+      "output_tail": "application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:53:59.341613+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/sw.js\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:54:00.178771+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/sw.js\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:54:01.825434+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/index.html?build=new\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:54:01.830767+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/sw.js\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:54:03.383699+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/index.html?build=new\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:54:03.605333+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/sw.js\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    },\n    {\n      \"timestamp\": \"2026-10-09T01:54:05.276348+00:00\",\n      \"method\": \"GET\",\n      \"url\": \"/sw.js\",\n      \"query\": \"\",\n      \"request_headers\": {\n        \"Host\": \"127.0.0.1:59864\",\n        \"Connection\": \"keep-alive\",\n        \"Cache-Control\": \"max-age=0\",\n        \"Accept\": \"*/*\",\n        \"Service-Worker\": \"script\",\n        \"Sec-Fetch-Site\": \"same-origin\",\n        \"Sec-Fetch-Mode\": \"same-origin\",\n        \"Sec-Fetch-Dest\": \"serviceworker\",\n        \"Referer\": \"http://127.0.0.1:59864/index.html?offline=new\",\n        \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\",\n        \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n        \"Accept-Language\": \"en-US,en;q=0.9\",\n        \"If-Modified-Since\": \"Fri, 09 Oct 2026 01:53:53 GMT\"\n      },\n      \"service_worker_script\": true,\n      \"status\": 200,\n      \"content_type\": \"application/javascript; charset=utf-8\",\n      \"cache_control\": \"no-cache, max-age=0, must-revalidate\",\n      \"etag\": \"\\\"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\\\"\",\n      \"last_modified\": \"Fri, 09 Oct 2026 01:53:53 GMT\",\n      \"published_build\": \"new\",\n      \"disk_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\",\n      \"sent_body_sha256\": \"010d2ec36d6dd4f36f6a3b05c331fc46910e7bf9cbe4da4724efb27c3e836330\"\n    }\n  ],\n  \"observed\": {\n    \"console\": [\n      {\n        \"page\": \"old-a\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"old-a\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"old-b\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"old-offline\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"discovery\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"new-online\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"new-online\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      },\n      {\n        \"page\": \"new-offline\",\n        \"type\": \"verbose\",\n        \"text\": \"[DOM] Password forms should have (optionally hidden) username fields for accessibility: (More info: https://goo.gl/9p2vKq) %o\"\n      }\n    ],\n    \"pageerror\": [],\n    \"requestfailed\": []\n  }\n}\nPWA UPGRADE OK — waiting conservador, duas abas, build íntegro, offline e cache externo verificados.\n"
+    },
+    {
+      "name": "mvp-notes",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/mvp_notes_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 60.121,
+      "output_tail": "MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos), ações em massa sobre o recorte visível (JPW-436587: contagem, exclusão de concluídas/descartadas, Markdown único, preâmbulo de governança do lote, leitura pura, casos vazios, visão Concluído, rascunho sujo, nota legada, nome de pasta hostil e ausência de rede), Notas (JPW-NPQRST menu ⋯ moderno com Copiar/Concluir/Exportar/Excluir, foco, Escape, clique fora e instância única; JPW-QRNPKM críticos no topo com critério secundário preservado e sem gravar posição; JPW-785634 nomenclatura Notas sem migração de storage) e monólito verificados.\n"
+    }
+  ],
+  "summary": {
+    "PASS": 57,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  }
+}
