@@ -18,6 +18,9 @@ import time
 from decimal import Decimal
 from pathlib import Path
 
+import sys
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
 import jpw_personal_history_oracle as oracle
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,7 +74,18 @@ def extract_function(source: str, name: str) -> str:
 def ui_source() -> str:
     ui, presentation, actions = UI.read_text(), PRESENTATION.read_text(), ACTIONS.read_text()
     globals_only = ui[ui.index('string g_personal_scope'):ui.index('void JPWPersonalRequestRead')]
-    parts = [(SUPPORT / "ui_seams.cpp").read_text(), translate(globals_only)]
+    parts = [(SUPPORT / "ui_seams.cpp").read_text(), r"""
+using ENUM_OBJECT_PROPERTY_INTEGER=int;
+// Same forward declaration/default as indicator line202.
+void JPWInvalidateDialogContent(const int route=-1);
+bool g_details_content_dirty=false,g_details_inventory_complete=true;
+string g_details_render_reason="";
+bool host_design_write_ok=true;
+bool JPWUIDesignSetInteger(const string& name,int prop,long value){return host_design_write_ok&&ObjectSetInteger(0,name,prop,value);}
+"""]
+    for helper in ["JPWInvalidateDialogContent", "JPWPresentationFailure", "JPWPresentationSetInteger"]:
+        parts.append(translate(extract_function(presentation, helper)))
+    parts.append(translate(globals_only))
     for name in ['JPWPersonalRequestRead', 'JPWPersonalRequestExport', 'JPWPersonalInvalidateContext', 'JPWPersonalResetPage', 'JPWPersonalScopeLabel', 'JPWPersonalPeakLabel']:
         parts.append(translate(extract_function(ui, name)))
     parts.append("#define JPWPersonalExport host_ui_export\n" + translate(extract_function(ui, "JPWPersonalCollectUI")) + "\n#undef JPWPersonalExport")
@@ -79,7 +93,33 @@ def ui_source() -> str:
         parts.append(translate(extract_function(presentation, name)))
     for name in ['JPWRaizSwitchTab', 'JPWPersonalHistoryMove', 'JPWPersonalHandleClick']:
         parts.append(translate(extract_function(actions, name)))
-    parts.append((SUPPORT / "ui_cases.cpp").read_text())
+    ui_cases=(SUPPORT / "ui_cases.cpp").read_text()
+    old_click='JPWPersonalRenderBody(0,0,300,170,200);REQUIRE(JPWPersonalHandleClick'
+    refreshed=r"""
+REQUIRE(g_personal_read_requested&&!g_personal_available&&g_personal_rows.empty(),"new query invalidates old rows while pending");
+REQUIRE(!JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST)),"old row cannot open while query pending");
+// Explicit synthetic completion of the requested page, same frozen eight rows.
+g_personal_read_requested=false;g_personal_available=true;g_personal_rows.resize(8);
+for(int i=0;i<8;i++){g_personal_rows[i].sequence=800-i;g_personal_rows[i].category="ALERT";g_personal_rows[i].wall=1000;g_personal_rows[i].payload="INTENT|";}
+"""
+    assert old_click in ui_cases
+    ui_cases=ui_cases.replace(old_click,refreshed+old_click,1)
+    ui_cases=ui_cases.replace('g_personal_available=false;g_personal_reason="synthetic corruption preserved";', 'g_personal_read_requested=false;g_personal_available=false;g_personal_reason="synthetic corruption preserved";')
+    # Route change queues a detail read and clears rows; model that completion too.
+    detail='g_personal_detail=g_personal_rows[0];'
+    assert detail in ui_cases
+    ui_cases=ui_cases.replace(detail,'g_personal_read_requested=false;g_personal_available=true;g_personal_detail.sequence=800;g_personal_detail.category="ALERT";g_personal_detail.wall=1000;g_personal_detail.payload="INTENT|";')
+    extra=r"""
+g_raiz_details_open=true;g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;g_details_content_dirty=false;
+JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);REQUIRE(!g_details_content_dirty,"new route invalidation does not dirty unrelated visible view");
+JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);REQUIRE(g_details_content_dirty,"new route invalidation dirties visible view");
+g_raiz_details_open=false;g_details_content_dirty=false;JPWInvalidateDialogContent(-1);REQUIRE(!g_details_content_dirty,"closed dialog stays clean");
+host_design_write_ok=false;g_details_inventory_complete=true;g_details_render_reason="";
+REQUIRE(!JPWPresentationSetInteger("fixture",OBJPROP_STATE,false)&&!g_details_inventory_complete&&!g_details_render_reason.empty(),"failed native property write invalidates frame explicitly");
+host_design_write_ok=true;REQUIRE(JPWPresentationSetInteger("fixture",OBJPROP_STATE,false),"successful property delegation retained");
+"""
+    assert 'host_forbid_io=false;' in ui_cases
+    parts.append(ui_cases.replace('host_forbid_io=false;',extra+'\nhost_forbid_io=false;'))
     return '\n'.join(parts)
 
 

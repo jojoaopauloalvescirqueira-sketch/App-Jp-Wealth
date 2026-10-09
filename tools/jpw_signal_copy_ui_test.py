@@ -7,9 +7,12 @@ is production code; native reads/files/widgets are isolated compatibility APIs.
 from __future__ import annotations
 import argparse, hashlib, json, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
+import sys, os
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+
 import leverage_config_test as base
 import jpw_signal_copy_test as core
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=source_root()
 MQL=ROOT/'mt5/jpw-alavancagem-atual/MQL5'
 INC=MQL/'Include/JPWealth'
 FILES=core.FILES[:4]+[INC/'JPW_SignalCopy_Controller.mqh',INC/'JPW_SignalCopy_UI.mqh']
@@ -76,6 +79,24 @@ bool JPWSignalCollectMetrics(JPWSignalCapture&,std::vector<JPWSignalRow>&,int,JP
  m.leverage_quality=m.root_quality=m.quote_quality=m.floating_quality=1;
  why=fail_metrics?"ATR indisponível":"";return !fail_metrics;}
 datetime TimeGMT(){return 1790875200;}
+'''
+SIGNAL_BRIDGE=r'''
+constexpr int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001,TERMINAL_SCREEN_DPI=1,FW_NORMAL=0;
+bool g_editing_field=false,g_details_inventory_complete=true;
+int g_focus_action=-1;
+string g_details_render_reason;
+std::vector<int> registered_focus;
+void JPWFocusRegister(int id){registered_focus.push_back(id);}
+void JPWInvalidateDialogContent(int=-1){}
+void JPWPresentationFailure(const string&r){g_details_inventory_complete=false;g_details_render_reason=r;}
+bool JPWPresentationSetInteger(const string&n,int p,long v){return ObjectSetInteger(0,n,p,v);}
+bool JPWPresentationSetString(const string&n,int p,const string&s){return ObjectSetString(0,n,p,s);}
+bool JPWPresentationEnsure(const string&n,int type){if(ObjectFind(0,n)>=0)return true;return ObjectCreate(0,n,type,0,0,0)&&ObjectFind(0,n)>=0;}
+bool JPWUIDesignDelete(const string&n){return ObjectDelete(0,n);}
+long TerminalInfoInteger(int){return 96;}
+double MathRound(double v){return std::round(v);}
+bool TextSetFont(const string&,int,int){return true;}
+bool TextGetSize(const string&s,uint&w,uint&h){w=s.size()*8;h=16;return true;}
 '''
 MAIN=r'''
 void JPWRaizSwitchTab(const int tab){g_raiz_tab=tab;g_cockpit_page=0;}
@@ -168,13 +189,23 @@ def main():
     source='\n'.join(core.translate(p.read_text()) for p in FILES[:4])
     controller=core.translate(FILES[4].read_text()).replace('"%I64d"','"%ld"')
     ui=core.translate(FILES[5].read_text())
+    from leverage_panel_test import body_of
+    presentation=(INC/'JPW_Alavancagem_Presentation.mqh').read_text()
+    design=(INC/'JPW_UI_Design.mqh').read_text()
+    def function(text,sig):return sig+'{'+body_of(text,sig.split('(')[0])+'}\n'
+    extra=SIGNAL_BRIDGE
+    extra+='struct JPWUIDesignTextMeasure {string label; int font; int dpi; int width; bool ready;}; JPWUIDesignTextMeasure g_jpw_ui_text_measure[128];\n'
+    for sig in ('uint JPWUIDesignHash(const string value)','double JPWUIDesignScale()','int JPWUIDesignPx(const int logical)','int JPWUIDesignTextWidth(const string label,const int font)','int JPWUIDesignButtonWidth(const string label,const int font,const bool icon=false)'):
+        extra+=function(design,sig)
+    extra+='template<class L>int JPWUIDesignNavColumns(L &labels,const int count,const int inner,const int font,const int gap){'+body_of(design,'int JPWUIDesignNavColumns(')+'}\n'
+    extra+='template<class A,class L>void JPWDialogFooterButtons(A &actions,L &labels,const int count,const int x,const int footer,const int width){'+body_of(presentation,'void JPWDialogFooterButtons(')+'}\n'
     identity={'kind':'HOST_SYNTHETIC_NOT_MT5','source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in FILES},'native_copy':'NOT_RUN'}
     if args.evidence_dir: args.evidence_dir.mkdir(parents=True,exist_ok=False)
     receipts=[]
     with tempfile.TemporaryDirectory(prefix='jpw-signal-ui-') as tmp:
         tmp=Path(tmp);cpp=tmp/'ui.cpp';binary=tmp/'ui';files=tmp/'isolated-files';files.mkdir()
         prefix=core.EXTRA_SHIM.split('int main(){')[0]
-        cpp.write_text(base.SHIM+'\n'+prefix+'\n'+source+'\n'+SHIM+'\n'+controller+'\n'+ui+'\n'+MAIN)
+        cpp.write_text(base.SHIM+'\n'+prefix+'\n'+source+'\n'+SHIM+'\n'+extra+'\n'+controller+'\n'+ui+'\n'+MAIN)
         if args.evidence_dir: shutil.copy2(cpp,args.evidence_dir/'ui.cpp')
         for cmd in ([compiler,'-std=c++17','-Wno-deprecated-declarations',str(cpp),'-o',str(binary)]+([] if sys.platform=='darwin' else ['-lcrypto']),[str(binary),str(files)]):
             result=subprocess.run(cmd,text=True,capture_output=True,timeout=90)

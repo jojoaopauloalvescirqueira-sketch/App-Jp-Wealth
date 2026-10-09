@@ -15,6 +15,8 @@ def main() -> int:
     cases = [
         (0, "PASS; native compilation NOT_RUN", "PASS"),
         (1, "assertion failed", "PRODUCT_FAIL"),
+        (1, "host.cpp:82: error: undeclared identifier; 1 error generated.", "TEST_HARNESS_FAIL"),
+        (1, "FAIL stale sample advertised Current", "PRODUCT_FAIL"),
         (1, "JPW_TEST_RESULT: BASELINE_FAIL", "BASELINE_FAIL"),
         (1, "ModuleNotFoundError: playwright", "ENVIRONMENT_ERROR"),
         (0, "JPW_TEST_RESULT: PRODUCT_FAIL", "TEST_HARNESS_FAIL"),

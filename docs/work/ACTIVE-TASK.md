@@ -1,3 +1,17 @@
+# Tarefa ativa focal — integrar GENETRIX 1.21.2 — 2026-10-08
+
+Contrato/brief: [CHG-GENETRIX-1-21-2-SITE-20261008](CHG-GENETRIX-1-21-2-SITE-20261008.md), com trilha dedicada N3 dos juízes. Pedido: “integre esse a última versão do site”; Git já autorizado por “Execute commit, push e merge”, sob gates separados. Sem hosting externo, instalação MT5, negociação, armamento ou homologação.
+
+Raiz `/private/tmp/jpw-genetrix-site-1-21-2-20261008`, branch `codex/genetrix-1-21-2-site-20261008`, base `7f0828488b2fc0ea62dc7c421174799cda47a34a`. Esta árvore representa os fontes 1.21.2. Conferir o estágio atual de gates, commit, push e merge e seu recibo Git/PR em INTEGRATION; a presença dos arquivos não demonstra essas ações. Fontes canônicas 132 membros preservadas, cálculo 1.9.0 e sete leituras Conta; Monitor recomendado e Supervisor opcional separado. Não interpretar os cabeçalhos históricos do pacote como estado atual.
+
+Entrega atual: ZIP fontes 1.21.2 SHA256 `a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261`, 760092 bytes; fingerprint 111 fontes/recursos `9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6`. Compilado 1.21.2 indisponível: compilação NOT_RUN, runtime BLOCKED / NOT_RUN conforme percurso, instalação NOT_RUN. Harness 1.0 CANDIDATE, R2 FAIL/R5 parcial históricos conservados. EX5/provas 1.20 ficam no acervo histórico.
+
+Escopo documental deste autor: CHG, esta nota, blocos focais CURRENT-STATE/CONTEXT-MAP, topo do CHANGELOG e [INTEGRATION](../validation/genetrix-1.21.2/INTEGRATION.md). Normas, fórmulas, schemas, dados e 132 membros não são editados. MT5 host final R3 foi conferido: 40/40 PASS, inputs atuais íntegros; web full R3 57/57 PASS; revisão independente em registro próprio. Nenhum resultado de versões anteriores é transferido.
+
+Rollback e critérios no contrato. Expira quando raiz/branch/base/inventário/objetivo ou autoridade mudar materialmente. As tarefas abaixo conservam suas datas e evidências; não descrevem esta integração.
+
+## Histórico anterior preservado
+
 # Correção dos PRODUCT_FAIL pendentes — 2026-10-06
 
 Pedido humano atual: “Solucione todos os product fail pendentes”. Candidate isolado na cópia jpw-product-fail-repair-20261006/candidate, branch herdada codex/saving-reliability-20261006, HEAD ac3a2faffeb398357ff105adbf1d47f70ca309bd. Base 1db5b703ca56d26c, 749 arquivos/fingerprint ce450e0ba50b51388794e52a0840c830f3934b0bbf40d1945fd3701f8becfdb3 preservada, snapshot e recibos anteriores conservados. Preflight --allow-dirty somente após inventário dos deltas herdados. SOURCE REVISION UNKNOWN no contexto histórico permanece, não usado como realidade atual.

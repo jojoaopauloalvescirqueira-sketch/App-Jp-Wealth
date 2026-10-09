@@ -13,11 +13,14 @@ import subprocess
 import tempfile
 import sys
 import tarfile
+import sys, os
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+
 from leverage_panel_test import body_of
 from leverage_geometry_test import HUD_SHIM
 from leverage_source import expanded_source
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=source_root()
 INC=ROOT/'mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth'
 PRESENT=INC/'JPW_Alavancagem_Presentation.mqh'
 
@@ -32,8 +35,8 @@ using ulong=unsigned long;
 using datetime=long;
 constexpr int JPW_SIGNAL_ROUTE=16,ACCOUNT_MARGIN_MODE_RETAIL_HEDGING=2;
 constexpr int POSITION_TYPE_BUY=0,POSITION_TYPE_SELL=1,JPW_STOP_RISK_POSITION=1,JPW_STOP_RISK_PENDING=2;
-constexpr int OBJPROP_STATE=19,TIME_DATE=1,TIME_SECONDS=2;
-constexpr int OBJ_BITMAP_LABEL=5,OBJPROP_BMPFILE=20,TERMINAL_SCREEN_DPI=1;
+constexpr int OBJPROP_STATE=23,TIME_DATE=1,TIME_SECONDS=2;
+constexpr int TERMINAL_SCREEN_DPI=1;
 int InpCockpitFontSize=16,g_details_font=16,g_details_pad=16,g_details_line=48,g_details_control=64;
 int text_override=32,dpi=150;
 long TerminalInfoInteger(int){return dpi*96/100;}
@@ -65,18 +68,31 @@ template<class T>int ArrayResize(std::vector<T>&a,int n){a.resize(n);return n;}
 bool MathIsValidNumber(double v){return std::isfinite(v);}
 bool JPWFinitePositive(double v){return std::isfinite(v)&&v>0;}
 int StringCompare(const string&a,const string&b){return a==b?0:a<b?-1:1;}
-int StringLen(const string&s){int n=0;for(unsigned char c:s)if((c&0xc0)!=0x80)n++;return n;}
+
 string StringSubstr(const string&s,int from,int count){return s.substr(from,count);}
-int StringFind(const string&s,const string&n){auto i=s.find(n);return i==string::npos?-1:(int)i;}
+int StringFind(const string&s,const string&n,int start=0){auto i=s.find(n,start);return i==string::npos?-1:(int)i;}
 int StringReplace(string&s,const string&a,const string&b){int n=0;size_t at=0;while((at=s.find(a,at))!=string::npos){s.replace(at,a.size(),b);at+=b.size();n++;}return n;}
 template<class T>string StringFormat(const char*fmt,T value){if(string(fmt)=="%I64u")return std::to_string((ulong)value);char out[128];std::snprintf(out,sizeof(out),fmt,value);return out;}
 string DoubleToString(double v,int digits){std::ostringstream o;o<<std::fixed<<std::setprecision(digits)<<v;return o.str();}
 string JPWFormatPercent(double v,bool){return DoubleToString(v,2)+"%";}
-void ChartRedraw(int){}
+
 void JPWSignalRenderBody(int,int,int,int,int){}
 string TimeToString(long,int){return "synthetic time";}
 '''
 
+POSITION_BRIDGE=r'''
+int g_details_focus_route=-1;bool g_editing_field=false,g_details_inventory_complete=true,g_details_frame_active=false;
+string g_details_render_reason;bool g_details_content_dirty=true;
+const int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001;
+const int JPW_SIGNAL_CONFIRM=270,JPW_SIGNAL_PREPARE=271,JPW_SIGNAL_SAVE=272,JPW_SIGNAL_ROLE_APPLY=273;
+int g_personal_live_count=0,g_personal_live_state=-1;
+string JPWPersonalSectionName(){return "fixture";}
+void JPWPresentationFailure(const string&r){g_details_render_reason=r;g_details_inventory_complete=false;}
+bool JPWPresentationKeep(const string&){return true;}
+bool JPWPresentationEnsure(const string&n,int kind){return JPWUIDesignEnsure(n,kind);}
+bool JPWPresentationSetInteger(const string&n,int p,long v){return JPWUIDesignSetInteger(n,p,v);}
+bool JPWPresentationSetString(const string&n,int p,const string&v){return JPWUIDesignSetString(n,p,v);}
+'''
 MAIN=r'''
 int checks=0,failures=0;
 void check(bool ok,const string&what){checks++;if(!ok){failures++;std::cerr<<"FAIL "<<what<<'\n';}}
@@ -97,6 +113,10 @@ void draw(int width=1198,int height=938,int font=16,int scale=150,int override_t
 bool inside(const Object&o){auto p=o.number;return p[OBJPROP_XDISTANCE]>=g_details_rect.x&&
  p[OBJPROP_YDISTANCE]>=g_details_rect.y&&p[OBJPROP_XDISTANCE]+p[OBJPROP_XSIZE]<=g_details_rect.x+g_details_rect.width&&
  p[OBJPROP_YDISTANCE]+p[OBJPROP_YSIZE]<=g_details_rect.y+g_details_rect.height;}
+bool physical_exit(const string&n){auto it=objects.find(n);if(it==objects.end())return false;const auto&p=it->second.number;
+ for(int key:{OBJPROP_XDISTANCE,OBJPROP_YDISTANCE,OBJPROP_XSIZE,OBJPROP_YSIZE})if(!p.count(key))return false;
+ return p.at(OBJPROP_XSIZE)>0&&p.at(OBJPROP_YSIZE)>0&&p.at(OBJPROP_XDISTANCE)>=0&&p.at(OBJPROP_YDISTANCE)>=0&&
+ p.at(OBJPROP_XDISTANCE)+p.at(OBJPROP_XSIZE)<=chart_width&&p.at(OBJPROP_YDISTANCE)+p.at(OBJPROP_YSIZE)<=chart_height;}
 int main(){
  reset();draw();
  check(g_stop_button_count==10,"reported 32px text / 1040x760 cockpit displays all ten positions in one tab");
@@ -153,7 +173,15 @@ int main(){
   g_cockpit_prefs.corner=corner;
   reset(12);draw(width,938,font,scale,0);cases++;
   check(inside(objects[JPWActionObject(45)])||text("BUTTON_37")=="×","close accessible across measured fonts / DPI / narrow charts");
-  check(g_stop_button_count>0,"at least one current position reachable in every feasible constrained chart");
+  if(g_stop_button_count==0){
+   check(physical_exit(JPWActionObject(45))||physical_exit(JPWActionObject(37)),"insufficient viewport retains real bounded close control");
+   bool explained=false;for(const auto&o:objects)if(o.second.text.count(OBJPROP_TEXT)){
+    string t=o.second.text.at(OBJPROP_TEXT);if(t.find("Amplie")!=string::npos||t.find("amplie")!=string::npos)explained=true;}
+   check(explained,"insufficient viewport explains why positions are unavailable");
+   check(g_position_views.size()==12&&g_positions_view.catalog_valid,"insufficient viewport preserves entire account catalogue");
+   check(g_cockpit_prefs.corner==corner&&InpCockpitFontSize==font,"insufficient viewport preserves settings");
+   draw(3000,2000,font,scale,0);check(g_stop_button_count>0,"enlarging viewport restores positions from same catalogue");
+  }else check(g_stop_button_count>0,"a current position is reachable in feasible viewport");
   for(int j=0;j<g_stop_button_count;j++)check(g_position_button_ticket[j]!=0,"rendered row has immutable click identity");
  }
  std::cout<<"POSITIONS_UI_RENDER: "<<checks-failures<<" PASS / "<<failures<<" FAIL; "<<cases<<" font/DPI/viewports; native MT5 NOT_RUN\n";
@@ -180,9 +208,12 @@ def main():
  structs=model[model.index('struct JPWPositionView'):model.index('JPWPositionView g_position_views')]
  risk=(INC/'JPW_Alavancagem_StopRisk_Core.mqh').read_text()
  riskstructs=risk[risk.index('struct JPWStopRiskRow'):risk.index('void JPWStopRiskClearSample')]
- shim=HUD_SHIM.replace('constexpr int JPW_COCKPIT_METRIC_COUNT=6,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1','constexpr int JPW_COCKPIT_METRIC_COUNT=6,JPW_OBSERVER_NOT_CONFIRMED=1')
+ shim=HUD_SHIM.replace('constexpr int JPW_COCKPIT_METRIC_COUNT=7,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1','constexpr int JPW_COCKPIT_METRIC_COUNT=7,JPW_OBSERVER_NOT_CONFIRMED=1')
  shim=shim.replace('bool TextGetSize(const string&value,uint&width,uint&height){','extern int dpi,text_override;\nbool TextGetSize(const string&value,uint&width,uint&height){')
  shim=shim.replace('int glyph=measured_font>8?measured_font:8;\n width=(uint)value.size()*glyph;\n height=(uint)(measured_font*3/2>12?measured_font*3/2:12);', 'int count=0;for(unsigned char c:value)if((c&0xc0)!=0x80)count++;\n height=text_override>0?(uint)text_override:(uint)((measured_font*4*dpi+299)/300);\n width=(uint)(count*(height*0.48));')
+ # The original text-metric replacement matched the pre-Unicode HUD shim.
+ # Bind its same documented synthetic metric formula to the current function.
+ shim=re.sub(r'bool TextGetSize\(const string&value,uint&width,uint&height\)\{.*?\n\}', r'bool TextGetSize(const string&value,uint&width,uint&height){int count=0;for(unsigned char c:value)if((c&0xc0)!=0x80)count++; height=text_override>0?(uint)text_override:(uint)((measured_font*4*dpi+299)/300); width=(uint)(count*(height*0.48));return true;}',shim,flags=re.S)
  shim=shim.replace('bool ObjectCreate(int,const string&name,int,int,int,int){objects[name]=Object{};return true;}', 'bool ObjectCreate(int,const string&name,int type,int,int,int){objects[name]=Object{};objects[name].number[-1]=type;return true;}')
  signatures=[
  ('string JPWFitText','string JPWFitText(const string text,const int available,const int font_size)'),
@@ -191,7 +222,7 @@ def main():
  ('bool JPWRaizCreateLabel','bool JPWRaizCreateLabel(const string suffix,const string value,const int x,const int y,const int font_size=0)'),
  ('bool JPWCreateProtectedValue','bool JPWCreateProtectedValue(const string suffix,const string value,const int x,const int y,const int width,const int font_size=0)'),
  ('bool JPWRaizCreateSurface','bool JPWRaizCreateSurface(const string suffix,const int x,const int y,const int width,const int height,const color fill)'),
- ('void JPWFocusRegister','void JPWFocusRegister(const int action)'),('void JPWFocusPaint','void JPWFocusPaint()'),
+ ('void JPWFocusRegister','void JPWFocusRegister(const int action)'),('string JPWFocusObject','string JPWFocusObject(const int action)'),('bool JPWFocusRegistered','bool JPWFocusRegistered(const int action)'),('bool JPWFocusValid','bool JPWFocusValid(const int action)'),('void JPWFocusPaint','void JPWFocusPaint()'),
  ('bool JPWRaizCreateButton','bool JPWRaizCreateButton(const int index,const string value,const int x,const int y,const int width)'),
  ('string JPWPositionTicket','string JPWPositionTicket(const ulong ticket)'),
  ('string JPWPositionLeverageText','string JPWPositionLeverageText(JPWPositionView &row)'),
@@ -205,6 +236,13 @@ def main():
   body=body_of(source,marker).replace('int indexes[];','std::vector<int> indexes;')
   creators+=sig+'{'+body+'}\n'
  creators='string JPWStopRiskMoney(double);\nstring JPWFormatLeverage(double);\n'+creators
+ creators='string JPWRaizUI(const string);\n'+creators
+ for sig in ('void JPWCockpitFooterContract(int &actions[],string &labels[])','int JPWDialogFooterMinimum(string &labels[],const int count)','void JPWDialogFooterButtons(int &actions[],string &labels[],const int count,const int x,const int footer,const int width)'):
+  f=sig+'{'+body_of(source,sig.split('(')[0])+'}\n'
+  # Both dynamic/fixed arrays are references with preserved indexing/count in host.
+  f=f.replace('int &actions[]','A &actions').replace('string &labels[]','L &labels')
+  f=('template<class A,class L>' if 'A &actions' in f else 'template<class L>')+f
+  creators+=f
  creators='bool JPWPositionsViewCurrent(const string context,const ulong now){'+body_of(model,'bool JPWPositionsViewCurrent(')+'}\n'+creators
  core=(INC/'JPW_Alavancagem_Core.mqh').read_text()
  creators+='string JPWFormatLeverage(const double leverage){'+body_of(core,'string JPWFormatLeverage(')+'}\n'
@@ -223,7 +261,7 @@ def main():
   renderer=body_of(baseline,'void JPWRenderCockpit()')
  else:renderer=body_of(source,'void JPWRenderCockpit()')
  prefix=renderer[:renderer.index('   if(g_raiz_tab==JPW_ROUTE_OVERVIEW)\n')]
- footer=renderer[renderer.index('   if(g_raiz_tab==JPW_ROUTE_SETTINGS)\n'):]
+ footer=renderer[renderer.index('   JPWDialogFooterButtons(footer_actions'):]
  creators+='void RenderStopsWindow(){'+prefix+('' if baseline_mode else 'JPWRenderPositionsTable(x,body_y,inner,body_height,footer_y);\n')+footer+'}\n'
  test_main=MAIN
  if baseline_mode:
@@ -234,7 +272,10 @@ int main(){chart_width=1198;chart_height=938;g_raiz_tab=JPW_ROUTE_STOPS;objects.
  if(!objects.count(header)){std::cout<<"BASELINE_CLOSE: PRODUCT_FAIL — production header close overwritten by footer on same object name; native NOT_RUN\n";return 1;}
  return 0;}
 """
- cpp='using ulong=unsigned long;\n'+shim+'\n'+panel+'\n'+enums+'\n'+structs+'\n'+riskstructs+'\n'+SHIM+'\n'+brand+'\n'+creators+'\n'+test_main
+ from leverage_host_shim import DESIGN_API_SHIM
+ extra_api=DESIGN_API_SHIM.replace('FW_NORMAL=400,','')+'\nusing ENUM_OBJECT=int;using ENUM_OBJECT_PROPERTY_STRING=int;using ENUM_OBJECT_PROPERTY_INTEGER=int;\n'
+ runtime=POSITION_BRIDGE
+ cpp='using ulong=unsigned long;\n'+shim+'\n'+panel+'\n'+enums+'\n'+structs+'\n'+riskstructs+'\n'+SHIM+'\n'+extra_api+'\n'+translate_arrays(brand).replace('int JPWUIDesignNavColumns(std::vector<string>& labels','template<class L> int JPWUIDesignNavColumns(L &labels')+'\n'+runtime+'\n'+translate_arrays(creators)+'\n'+test_main
  with tempfile.TemporaryDirectory(prefix='jpw-positions-ui-') as tmp:
   src=Path(tmp)/'ui.cpp';exe=Path(tmp)/'ui';src.write_text(cpp)
   for cmd in ([compiler,'-std=c++17','-Wall','-Wextra',str(src),'-o',str(exe)],[str(exe)]):

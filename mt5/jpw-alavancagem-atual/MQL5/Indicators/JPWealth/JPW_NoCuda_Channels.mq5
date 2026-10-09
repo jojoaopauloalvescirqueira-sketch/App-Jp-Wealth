@@ -664,8 +664,21 @@ void JPWNoCudaDrawUI()
       (g_nocuda_has_view ? g_nocuda_view.justification : "") :
       (g_nocuda_is_draft ? g_nocuda_justification :
        (g_nocuda_has_view ? g_nocuda_view.justification : "")));
-   JPWNoCudaUIRender(g_nocuda_prefix,view);
-   JPWNCFDraw();
+   // One NoCuda launcher at a time. The manual anchor-pick return remains
+   // available while that workflow owns the chart; otherwise FC_OPEN also
+   // offers the existing explicit Manual route inside the Fibonacci panel.
+   if(view.open || view.pick>0)
+     {
+      JPWNoCudaUIRender(g_nocuda_prefix,view);
+      if(ArraySize(g_fc_previous)>0 || ArraySize(g_fc_keep)>0 || g_fc_deferred_prune)
+         JPWNoCudaFiboUIClear(g_nocuda_prefix);
+     }
+   else
+     {
+      if(ArraySize(g_nocuda_ui_previous)>0 || ArraySize(g_nocuda_ui_kept)>0 || g_nocuda_ui_deferred_prune)
+         JPWNoCudaUIClear(g_nocuda_prefix);
+      JPWNCFDraw();
+     }
    static string last_layout_reason="";
    if(g_nocuda_ui_launcher_reason!=last_layout_reason)
      { if(g_nocuda_ui_launcher_reason!="") Print(g_nocuda_ui_launcher_reason);
@@ -1002,6 +1015,9 @@ ENUM_TIMEFRAMES JPWNoCudaNextTf(const ENUM_TIMEFRAMES tf)
 void JPWNoCudaAction(const string object)
   {
    const string name=StringSubstr(object,StringLen(g_nocuda_prefix));
+   // A partial frame cannot present a study action as ready. Keep the explicit
+   // exit/return control usable while preserving the user's current draft.
+   if(!g_nocuda_ui_inventory_complete && name!="UI_CLOSE" && name!="UI_OPEN") return;
    if(name=="UI_OPEN")
      { JPWNoCudaReadJustification(); g_nocuda_skip_field_capture=true;
        g_nocuda_panel_focus=true; g_nocuda_ui_editing="";
@@ -1268,6 +1284,33 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,
   {
    if(_Symbol!=g_nocuda_symbol || AccountInfoString(ACCOUNT_SERVER)!=g_nocuda_feed)
      { g_nocuda_pending_pick=false; JPWNoCudaClearDaily(); return; }
+   // Capture and route native edits before the button-oriented Fibonacci router.
+   // Enter/Esc finish a draft field; they never confirm or save a study.
+   if(id==CHARTEVENT_OBJECT_ENDEDIT &&
+      (StringFind(sparam,g_nocuda_prefix+"UI_")==0 || StringFind(sparam,g_nocuda_prefix+"FC_")==0))
+      JPWUIDesignForget(sparam);
+   if(g_ncf_mode && g_ncf_ui.open && JPWUIOwns(g_nocuda_prefix))
+     {
+      if(id==CHARTEVENT_KEYDOWN && g_fc_editing!="" && (lparam==13 || lparam==27))
+        {
+         JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+         if(lparam==27)
+           { if(ObjectFind(0,g_fc_editing)>=0) ObjectSetInteger(0,g_fc_editing,OBJPROP_SELECTED,false);
+             g_fc_editing=""; }
+         return;
+        }
+      if(id==CHARTEVENT_OBJECT_CLICK && StringFind(sparam,g_nocuda_prefix+"FC_")==0 &&
+         ObjectFind(0,sparam)>=0 && ObjectGetInteger(0,sparam,OBJPROP_TYPE)==OBJ_EDIT)
+        {
+         JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+         g_fc_focus=sparam; g_fc_editing=sparam;
+         ObjectSetInteger(0,sparam,OBJPROP_SELECTED,true); JPWNCFDraw(); return;
+        }
+      if((id==CHARTEVENT_OBJECT_CLICK || id==CHARTEVENT_MOUSE_WHEEL) && g_fc_editing!="")
+        { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+          if(ObjectFind(0,g_fc_editing)>=0) ObjectSetInteger(0,g_fc_editing,OBJPROP_SELECTED,false);
+          g_fc_editing=""; }
+     }
    if(JPWNCFHandleEvent(id,lparam,dparam,sparam)) return;
    if(JPWUIOwner()!="" && !JPWUIOwns(g_nocuda_prefix) &&
       (id==CHARTEVENT_CLICK || id==CHARTEVENT_KEYDOWN || id==CHARTEVENT_OBJECT_DRAG)) return;
@@ -1276,7 +1319,15 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,
        if(g_nocuda_ui_editing==sparam) g_nocuda_ui_editing=""; return; }
    if(id==CHARTEVENT_KEYDOWN && g_nocuda_panel_open && g_nocuda_panel_focus && JPWUIOwns(g_nocuda_prefix))
      {
-      if(lparam==27) { JPWNoCudaAction(g_nocuda_prefix+"UI_CLOSE"); return; }
+      if(lparam==27)
+        { JPWNoCudaReadJustification();
+          if(g_nocuda_ui_editing!="")
+            { if(ObjectFind(0,g_nocuda_ui_editing)>=0)
+                 ObjectSetInteger(0,g_nocuda_ui_editing,OBJPROP_SELECTED,false);
+              g_nocuda_ui_editing=""; return; }
+          JPWNoCudaAction(g_nocuda_prefix+"UI_CLOSE"); return; }
+      if(lparam==13 && g_nocuda_ui_editing!="")
+        { JPWNoCudaReadJustification(); return; }
       if(lparam==9)
         {
          JPWNoCudaReadJustification();

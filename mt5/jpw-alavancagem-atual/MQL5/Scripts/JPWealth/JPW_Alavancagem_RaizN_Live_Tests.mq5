@@ -126,7 +126,7 @@ void JPWRaizLiveTestCalculationAndCache()
    JPWRaizLiveAssert(JPWRaizLiveNear(sample.percent,1.3693063937629155) &&
                     JPWRaizLiveNear(sample.distance,2.738612787525831),
                     "price changes percentage, not ATR distance");
-   JPWRaizLiveAssert(fake.atr_reads==1,"unchanged confirmed H4 uses ATR cache");
+   JPWRaizLiveAssert(fake.atr_reads==2,"each capture rereads closed ATR, including unchanged H4");
    fake.before.closed_open=fake.before.current_open;
    fake.before.current_open+=14400;
    fake.before.bars++;
@@ -136,7 +136,7 @@ void JPWRaizLiveTestCalculationAndCache()
    fake.now=fake.quote_time+1000;
    fake.atr=0.8;
    JPWRaizLiveAssert(JPWRaizNReadLive(fake,cache,"synthetic-account-A",30,1.25,sample) &&
-                    sample.current && sample.bar_time==172800 && fake.atr_reads==2,
+                    sample.current && sample.bar_time==172800 && fake.atr_reads==3,
                     "new H4 refreshes ATR at newly closed bar");
    JPWRaizLiveAssert(JPWRaizLiveNear(sample.percent,2.738612787525831),"new H4 ATR used");
 
@@ -248,12 +248,50 @@ void JPWRaizLiveTestInvalid()
                     "failed collection carries no prior value as valid");
   }
 
+// Juiz candidato1.21.2: referências independentes previamente congeladas.
+// ATR0.4/0.8 * sqrt(30) *1.25, P0=100; mesmo metadata/tick entre capturas.
+// O provedor sintético não lê o terminal. Falha deve invalidar resultado/cache.
+void JPWRaizLiveTestATRContentCorrection()
+  {
+   JPWRaizNLiveFake fake;
+   fake.Reset();
+   JPWRaizNLiveCache cache;
+   JPWRaizNLiveResetCache(cache);
+   JPWRaizNLiveSample sample;
+   const datetime current_open=fake.before.current_open;
+   const datetime closed_open=fake.before.closed_open;
+   const int bars=fake.before.bars;
+   const int calculated=fake.before.calculated;
+   const long quote=fake.quote_time,now=fake.now;
+   JPWRaizLiveAssert(JPWRaizNReadLive(fake,cache,"synthetic-ATR-content",30,1.25,sample) &&
+                    sample.current && fake.atr_reads==1 &&
+                    JPWRaizLiveNear(sample.distance,2.738612787525830567284848914004) &&
+                    JPWRaizLiveNear(sample.percent,2.738612787525830567284848914004),
+                    "independent initial ATR content reference");
+   fake.atr=0.8;
+   JPWRaizLiveAssert(JPWRaizNReadLive(fake,cache,"synthetic-ATR-content",30,1.25,sample) &&
+                    sample.current && fake.atr_reads==2 && JPWRaizLiveNear(sample.atr,0.8) &&
+                    JPWRaizLiveNear(sample.distance,5.477225575051661134569697828008) &&
+                    JPWRaizLiveNear(sample.percent,5.477225575051661134569697828008),
+                    "corrected ATR content with unchanged metadata is used");
+   JPWRaizLiveAssert(fake.before.current_open==current_open && fake.before.closed_open==closed_open &&
+                    fake.before.bars==bars && fake.before.calculated==calculated &&
+                    fake.quote_time==quote && fake.now==now && fake.bid==99.0 && fake.ask==101.0,
+                    "ATR correction changes only ATR content");
+   fake.atr_ok=false;
+   JPWRaizLiveAssert(!JPWRaizNReadLive(fake,cache,"synthetic-ATR-content",30,1.25,sample) &&
+                    !cache.valid && !sample.current && fake.atr_reads==3 &&
+                    sample.p0==0.0 && sample.atr==0.0 && sample.distance==0.0 && sample.percent==0.0,
+                    "unavailable corrected ATR leaves no Current or stale numeric result");
+  }
+
 void OnStart()
   {
    JPWRaizLiveTestCalculationAndCache();
    JPWRaizLiveTestSharedHorizonSample();
    JPWRaizLiveTestQuality();
    JPWRaizLiveTestInvalid();
+   JPWRaizLiveTestATRContentCorrection();
    if(g_raiz_live_failures==0)
       Print("JPW_Alavancagem_RaizN_Live_Tests PASS: ",g_raiz_live_passes," asserts");
    else Print("JPW_Alavancagem_RaizN_Live_Tests FAIL: ",g_raiz_live_failures,

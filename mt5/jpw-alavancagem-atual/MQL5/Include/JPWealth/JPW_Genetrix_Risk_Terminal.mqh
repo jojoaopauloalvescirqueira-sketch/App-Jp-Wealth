@@ -78,7 +78,8 @@ bool JPWRiskOneGross(JPWAccount &account,JPWPosition &row,const double entry,JPW
    gross=0.0;
    if(!JPWWithinBudget(started)) return(false);
    JPWInstrument one[],later; JPWPosition rows[]; double scales[];
-   ArrayResize(one,1); ArrayResize(rows,1); ArrayResize(scales,1); rows[0]=row;
+   if(ArrayResize(one,1)!=1 || ArrayResize(rows,1)!=1 || ArrayResize(scales,1)!=1) return(false);
+   rows[0]=row;
    if(!JPWReadSpecification(row.symbol,one[0])) return(false);
    JPW_MODEL model=JPW_MODEL_NONE; if(JPWClassify(one[0],model)!=JPW_OK) return(false);
    scales[0]=1.0;

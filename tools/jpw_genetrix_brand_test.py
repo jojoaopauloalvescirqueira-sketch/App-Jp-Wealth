@@ -12,10 +12,15 @@ import struct
 import subprocess
 import tempfile
 
+
+import sys, os
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+
 from jpw_nocuda_fibo_ui_test import SHIM
 from leverage_source import expanded_source
 
-ROOT = Path(__file__).resolve().parents[1]
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+ROOT = source_root()
 BASE = ROOT / 'mt5/jpw-alavancagem-atual/MQL5'
 HEADER = BASE / 'Include/JPWealth/JPW_Genetrix_Brand.mqh'
 IMAGES = BASE / 'Images/JPWealth'
@@ -97,16 +102,30 @@ def main():
         assert '#include <JPWealth/JPW_Genetrix_Brand.mqh>' in path.read_text()
         assert 'JPWGenetrixHeader(' in path.read_text()
     presentation = consumers[0].read_text()
-    assert 'TextGetSize("Genetrix",button_text_width,button_text_height)' in presentation
-    assert 'ObjectSetString(0,button,OBJPROP_TEXT,"Genetrix")' in presentation
+    assert re.search(r'const\s+string\s+launcher_label\s*=\s*"Genetrix · Conta"\s*;', presentation), "actual labelled launcher required"
+    assert 'TextGetSize(launcher_label,button_text_width,button_text_height)' in presentation, "launcher label must be measured"
+    direct = ('ObjectSetString(0,launcher_text,OBJPROP_TEXT,launcher_label)' in presentation or
+              'JPWPresentationSetString(launcher_text,OBJPROP_TEXT,launcher_label)' in presentation)
+    painted = 'JPWPresentationSetString(launcher_text,OBJPROP_TEXT,painted_label)' in presentation
+    assert direct or painted, "measured label must be assigned"
+    if painted:
+        assert 'string painted_label=launcher_label;' in presentation, "painted caption originates from full functional label"
+        assert 'TextGetSize(painted_label,button_text_width,button_text_height)' in presentation, "painted caption must itself be measured"
+        assert re.search(r'if\(button_width>button_budget\)\s*\{\s*painted_label="Conta";', presentation), "compact caption requires demonstrated width shortage"
+        assert 'JPWPresentationSetString(launcher_text,OBJPROP_TOOLTIP,launcher_label)' in presentation, "compact caption retains full identity"
+        writes = re.findall(r'(?<![A-Za-z_])painted_label\s*=\s*([^;]+);', presentation)
+        assert writes == ['launcher_label','"Conta"'], "caption substitutions remain explicit and bounded"
+    if direct and 'JPWPresentationSetString(launcher_text,OBJPROP_TEXT,launcher_label)' in presentation or painted:
+        wrapper = re.search(r'bool\s+JPWPresentationSetString\s*\([^)]*\)\s*\{[^}]*\}', presentation, re.S)
+        assert wrapper and 'JPWUIDesignSetString(name,property,value)' in wrapper.group(0), "assignment wrapper must forward exact property/value"
     assert 'JPWDetailsWrap(JPW_PRODUCT_TAGLINE,inner,lines)' in presentation
     source = re.sub(r'^#(?:if.*|endif.*|resource.*)\n', '', source, flags=re.M)
     source = re.sub(r'^#define\s+(JPW_GENETRIX_BRAND_MQH|JPW_ALAVANCAGEM_VERSION_MQH)\s*\n', '', source, flags=re.M)
-    shim = SHIM.replace('bool ObjectSetString(int,const string&n,int p,const string&v){',
+    shim = SHIM.replace('int StringFind(const string&s,const string&n){auto p=s.find(n);','int StringFind(const string&s,const string&n,int start=0){auto p=s.find(n,start);').replace('bool ObjectSetString(int,const string&n,int p,const string&v){',
                         'bool refuse_bitmap=false;\nbool ObjectSetString(int,const string&n,int p,const string&v){if(refuse_bitmap&&p==OBJPROP_BMPFILE)return false;')
     with tempfile.TemporaryDirectory(prefix='jpw-genetrix-brand-') as folder:
         path = Path(folder)
-        (path / 'brand.cpp').write_text(shim + source + MAIN)
+        (path / 'brand.cpp').write_text(complete_design_shim(shim) + translate_arrays(source) + MAIN)
         compiled = subprocess.run([compiler, '-std=c++17', '-O1', str(path / 'brand.cpp'), '-o', str(path / 'brand')], text=True, capture_output=True)
         if compiled.returncode:
             print(compiled.stderr)

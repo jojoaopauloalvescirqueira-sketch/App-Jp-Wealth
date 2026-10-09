@@ -15,11 +15,7 @@
 #resource "\\Images\\JPWealth\\JPW_Genetrix_Logo_Dark_200.bmp"
 
 int JPWGenetrixTextWidth(const string text,const int font)
-  {
-   uint width=0,height=0;
-   if(TextSetFont("Arial",-10*font) && TextGetSize(text,width,height)) return((int)width);
-   return(StringLen(text)*MathMax(6,font));
-  }
+  { return(JPWUIDesignTextWidth(text,font)); }
 
 string JPWGenetrixHeaderText(const string section,const int width,const int font)
   {
@@ -30,6 +26,11 @@ string JPWGenetrixHeaderText(const string section,const int width,const int font
    if(section!="" && JPWGenetrixTextWidth(section,font)<=width) return(section);
    if(section!="")
      {
+      const int first=StringFind(section," · ");
+      const int last=(first>=0 ? StringFind(section," · ",first+3) : -1);
+      // Hide an instrument suffix before discarding the functional section.
+      const string functional=(last>0 ? StringSubstr(section,0,last) : section);
+      if(JPWGenetrixTextWidth(functional,font)<=width) return(functional);
       const int separator=StringFind(section," · ");
       const string module=(separator>0 ? StringSubstr(section,0,separator) : section);
       if(JPWGenetrixTextWidth(module,font)<=width) return(module);
@@ -44,7 +45,7 @@ bool JPWGenetrixHeader(const string logo_name,const string text_name,
                        const string section,const int zorder=4)
   {
    if(width<=0 || height<=0)
-     { ObjectDelete(0,logo_name); ObjectDelete(0,text_name); return(false); }
+     { JPWUIDesignDelete(logo_name); JPWUIDesignDelete(text_name); return(false); }
    const int screen_dpi=(int)TerminalInfoInteger(TERMINAL_SCREEN_DPI);
    int variant=(screen_dpi>=168 ? 3 : (screen_dpi>=132 ? 2 : (screen_dpi>=108 ? 1 : 0)));
    int widths[4]={147,184,221,295},heights[4]={16,20,24,32};
@@ -52,50 +53,48 @@ bool JPWGenetrixHeader(const string logo_name,const string text_name,
    while(variant>0 && heights[variant]>height) variant--;
    const int gap=JPWUIDesignPx(12);
    const string full=JPW_PRODUCT_NAME+(section=="" ? "" : " · "+section);
-   const int label_width=JPWGenetrixTextWidth(full,font);
+   const int label_width=JPWGenetrixTextWidth(section!="" ? section : full,font);
    bool branded=false;
    if(height>=heights[variant] && width>=widths[variant]+gap+label_width)
      {
       const string resource=(string)"::Images\\JPWealth\\JPW_Genetrix_Logo_"+
          (dark ? "Dark_" : "Light_")+scales[variant]+".bmp";
-      if(ObjectFind(0,logo_name)<0) ObjectCreate(0,logo_name,OBJ_BITMAP_LABEL,0,0,0);
-      branded=ObjectFind(0,logo_name)>=0 &&
-         ObjectSetString(0,logo_name,OBJPROP_BMPFILE,resource);
+      branded=JPWUIDesignEnsure(logo_name,OBJ_BITMAP_LABEL) &&
+         JPWUIDesignSetString(logo_name,OBJPROP_BMPFILE,resource);
       if(branded)
         {
-         ObjectSetInteger(0,logo_name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-         ObjectSetInteger(0,logo_name,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER);
-         ObjectSetInteger(0,logo_name,OBJPROP_XDISTANCE,x);
-         ObjectSetInteger(0,logo_name,OBJPROP_YDISTANCE,y+(height-heights[variant])/2);
-         ObjectSetInteger(0,logo_name,OBJPROP_XSIZE,widths[variant]);
-         ObjectSetInteger(0,logo_name,OBJPROP_YSIZE,heights[variant]);
-         ObjectSetInteger(0,logo_name,OBJPROP_SELECTABLE,false);
-         ObjectSetInteger(0,logo_name,OBJPROP_HIDDEN,true);
-         ObjectSetInteger(0,logo_name,OBJPROP_BACK,false);
-         ObjectSetInteger(0,logo_name,OBJPROP_ZORDER,zorder);
-         ObjectSetString(0,logo_name,OBJPROP_TOOLTIP,JPW_PRODUCT_NAME);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_XDISTANCE,x);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_YDISTANCE,y+(height-heights[variant])/2);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_XSIZE,widths[variant]);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_YSIZE,heights[variant]);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_SELECTABLE,false);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_HIDDEN,true);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_BACK,false);
+         JPWUIDesignSetInteger(logo_name,OBJPROP_ZORDER,zorder);
+         JPWUIDesignSetString(logo_name,OBJPROP_TOOLTIP,JPW_PRODUCT_NAME);
         }
      }
-   if(!branded) ObjectDelete(0,logo_name);
+   if(!branded) JPWUIDesignDelete(logo_name);
    const int offset=(branded ? widths[variant]+gap : 0);
-   const string caption=JPWGenetrixHeaderText(section,width-offset,font);
-   if(caption=="") { ObjectDelete(0,text_name); return(branded); }
-   if(ObjectFind(0,text_name)<0) ObjectCreate(0,text_name,OBJ_LABEL,0,0,0);
-   if(ObjectFind(0,text_name)<0) return(branded);
-   ObjectSetInteger(0,text_name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-   ObjectSetInteger(0,text_name,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER);
-   ObjectSetInteger(0,text_name,OBJPROP_XDISTANCE,x+offset);
-   ObjectSetInteger(0,text_name,OBJPROP_YDISTANCE,y);
-   ObjectSetInteger(0,text_name,OBJPROP_XSIZE,width-offset);
-   ObjectSetInteger(0,text_name,OBJPROP_YSIZE,height);
-   ObjectSetInteger(0,text_name,OBJPROP_FONTSIZE,font);
-   ObjectSetInteger(0,text_name,OBJPROP_COLOR,ink);
-   ObjectSetInteger(0,text_name,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,text_name,OBJPROP_HIDDEN,true);
-   ObjectSetInteger(0,text_name,OBJPROP_ZORDER,zorder);
-   ObjectSetString(0,text_name,OBJPROP_FONT,"Arial");
-   ObjectSetString(0,text_name,OBJPROP_TEXT,caption);
-   ObjectSetString(0,text_name,OBJPROP_TOOLTIP,full);
+   const string caption=(branded && section!="" ? section : JPWGenetrixHeaderText(section,width-offset,font));
+   if(caption=="") { JPWUIDesignDelete(text_name); return(branded); }
+   if(!JPWUIDesignEnsure(text_name,OBJ_LABEL)) return(branded);
+   JPWUIDesignSetInteger(text_name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+   JPWUIDesignSetInteger(text_name,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER);
+   JPWUIDesignSetInteger(text_name,OBJPROP_XDISTANCE,x+offset);
+   JPWUIDesignSetInteger(text_name,OBJPROP_YDISTANCE,y);
+   JPWUIDesignSetInteger(text_name,OBJPROP_XSIZE,width-offset);
+   JPWUIDesignSetInteger(text_name,OBJPROP_YSIZE,height);
+   JPWUIDesignSetInteger(text_name,OBJPROP_FONTSIZE,font);
+   JPWUIDesignSetInteger(text_name,OBJPROP_COLOR,ink);
+   JPWUIDesignSetInteger(text_name,OBJPROP_SELECTABLE,false);
+   JPWUIDesignSetInteger(text_name,OBJPROP_HIDDEN,true);
+   JPWUIDesignSetInteger(text_name,OBJPROP_ZORDER,zorder);
+   JPWUIDesignSetString(text_name,OBJPROP_FONT,"Arial");
+   JPWUIDesignSetString(text_name,OBJPROP_TEXT,caption);
+   JPWUIDesignSetString(text_name,OBJPROP_TOOLTIP,full);
    return(branded);
   }
 #endif

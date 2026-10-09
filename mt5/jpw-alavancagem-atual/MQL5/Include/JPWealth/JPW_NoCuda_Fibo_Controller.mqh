@@ -94,7 +94,12 @@ void JPWNCFQuote()
 void JPWNCFReloadCatalog()
   {
    string names[]; const int count=JPWNCFCatalog(0,names);
-   ArrayResize(g_ncf_ui.sources,MathMax(0,count));
+   if(count<0 || ArrayResize(g_ncf_ui.sources,count)!=count)
+     {
+      ArrayResize(g_ncf_ui.sources,0);
+      g_ncf_notice="Catálogo indisponível; nenhuma seleção automática. Reabra o NoCuda para tentar novamente.";
+      return;
+     }
    for(int i=0;i<count;i++)
      {
       g_ncf_ui.sources[i].id=names[i]; g_ncf_ui.sources[i].title=names[i];
@@ -105,17 +110,21 @@ void JPWNCFReloadCatalog()
          ": "+DoubleToString(ObjectGetDouble(0,names[i],OBJPROP_PRICE,j),(int)SymbolInfoInteger(g_nocuda_symbol,SYMBOL_DIGITS));
       g_ncf_ui.sources[i].detail=coordinates;
      }
-   if(count<0) g_ncf_notice="Catálogo indisponível; nenhuma seleção automática.";
   }
 void JPWNCFReloadRecords()
   {
-   ArrayResize(g_ncf_ui.records,0); string reason="";
+   ArrayResize(g_ncf_ui.records,0); g_ncf_records_dirty=true; string reason="";
    JPWNCFCatalogRow rows[];
    const string study=(!g_ncf_catalog_all && g_ncf_has ? g_ncf_id : "");
    const JPWNCFStatus status=JPWNCFCatalogPage(g_ncf_key,g_nocuda_symbol,study,g_ncf_catalog_offset,20,rows,g_ncf_catalog_more,reason);
    if(status!=JPW_NCF_VALID && status!=JPW_NCF_ABSENT)
       { g_ncf_notice="Catálogo indisponível: "+reason; return; }
-   ArrayResize(g_ncf_ui.records,ArraySize(rows));
+   if(ArrayResize(g_ncf_ui.records,ArraySize(rows))!=ArraySize(rows))
+     {
+      ArrayResize(g_ncf_ui.records,0); g_ncf_catalog_more=false;
+      g_ncf_notice="Registros indisponíveis: memória insuficiente para preparar a lista. Estudos preservados; use Atualizar registros.";
+      return;
+     }
    for(int i=0;i<ArraySize(rows);i++)
      {
       const bool is_study=rows[i].kind=="study",is_note=rows[i].kind=="observation";
@@ -370,17 +379,32 @@ void JPWNCFConfirmImport()
    g_ncf_sync.armed=true; JPWNCFSyncAccept(g_ncf_sync,JPWNCFSourceWire(verify));
    JPWNCFRememberStudy(); JPWNCFReloadRecords(); JPWNCFInvalidateMeasures();
   }
+string JPWNCFActionPrerequisite(const string action)
+  {
+   if(action=="FC_TOUCH_SAVE" && !g_ncf_has)
+      return("Selecione um estudo em Registro ou importe e confirme um canal antes de gravar a observação. O texto informado foi preservado.");
+   if(action=="FC_RESTORE_RECORD" && (!g_ncf_has || g_ncf_record_revision<=0))
+      return("Selecione um estudo e uma versão em Registro antes de restaurar. Nenhum registro foi alterado.");
+   if((action=="FC_SOURCE_HIDE" || action=="FC_SOURCE_SHOW") && !g_ncf_link)
+      return("Confira e confirme o vínculo com o canal na aba Canal antes de mudar sua visibilidade.");
+   if((action=="FC_SYNC_RESUME" || action=="FC_SYNC_PAUSE" || action=="FC_REFRESH_SOURCE") && !g_ncf_has)
+      return("Selecione um estudo em Registro ou importe e confirme um canal para conferir ou acompanhar sua origem.");
+   return("");
+  }
 void JPWNCFAction(const string action)
   {
    if(!JPWNCFContextCurrent()) return;
    JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+   const string prerequisite=JPWNCFActionPrerequisite(action);
+   if(prerequisite!="") { g_ncf_notice=prerequisite; return; }
    if(JPWNoCudaFiboUIActions(action)) { if(action=="FC_SETTINGS_APPLY") JPWNCFPaint(); return; }
    if(action=="FC_OPEN")
      { if(!g_ncf_mode) JPWNoCudaReadJustification();
        if(!JPWUIAcquire(g_nocuda_prefix)) return; g_ncf_mode=true; g_ncf_ui.open=true; g_nocuda_panel_open=false;
        JPWNoCudaUIClear(g_nocuda_prefix); if(g_nocuda_canvas_ready) {g_nocuda_canvas.Destroy();g_nocuda_canvas_ready=false;}
        JPWNCFReloadCatalog(); JPWNCFReloadRecords(); JPWNCFPaint(); }
-   else if(action=="FC_CLOSE" || action=="FC_MINIMIZE") { g_ncf_ui.open=false; JPWUIRelease(g_nocuda_prefix); }
+   else if(action=="FC_CLOSE" || action=="FC_MINIMIZE")
+     { JPWNoCudaFiboUIEndInteraction(); g_ncf_ui.open=false; JPWUIRelease(g_nocuda_prefix); }
    else if(StringFind(action,"FC_TAB_")==0)
      { g_ncf_ui.tab=(int)StringToInteger(StringSubstr(action,7));
        if(g_ncf_ui.tab==3) JPWNCFReloadRecords(); }
@@ -573,7 +597,8 @@ bool JPWNCFHandleEvent(const int id,const long &lparam,const double &dparam,cons
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=JPWUIOwner()) return(true);
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=g_nocuda_prefix)
      { if(!g_ncf_mode) JPWNoCudaReadJustification();
-       JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui); g_ncf_ui.open=false;
+       JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+       JPWNoCudaFiboUIEndInteraction(); g_ncf_ui.open=false;
        g_nocuda_panel_open=false; JPWNoCudaUIClear(g_nocuda_prefix); JPWNCFDraw(); return(true); }
    if(!g_ncf_mode && !(id==CHARTEVENT_OBJECT_CLICK && sparam==JPWNoCudaFiboUIName(g_nocuda_prefix,"FC_OPEN"))) return(false);
    if(id==CHARTEVENT_OBJECT_DELETE && sparam==g_ncf_selected_source && g_ncf_link)

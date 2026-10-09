@@ -15,10 +15,13 @@ import shutil
 import subprocess
 import tempfile
 
+import sys, os
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+
 from leverage_panel_test import body_of
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = source_root()
 PRESENTATION = ROOT / "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh"
 INDICATOR = ROOT / "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5"
 
@@ -131,7 +134,7 @@ def main() -> int:
     }}, indent=2), flush=True)
     with tempfile.TemporaryDirectory(prefix="jpw-mt5-ui-focus-") as temporary:
         path, binary = Path(temporary) / "focus.cpp", Path(temporary) / "focus"
-        path.write_text(SHIM + helper + wrapper + MAIN, encoding="utf-8")
+        path.write_text(SHIM + "\nvoid JPWUIDesignBeginPass(){} void JPWUIDesignEndPass(){}\n" + helper + wrapper + MAIN, encoding="utf-8")
         for cmd in ([compiler, "-std=c++17", "-Wall", "-Wextra", str(path), "-o", str(binary)], [str(binary)]):
             result = subprocess.run(cmd, text=True, capture_output=True, check=False, timeout=60)
             print(result.stdout, end=""); print(result.stderr, end="")

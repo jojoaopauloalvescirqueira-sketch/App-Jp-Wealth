@@ -10,10 +10,13 @@ import re
 import shutil
 import subprocess
 import tempfile
+import sys, os
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+
 from leverage_cockpit_test import SHIM
 from leverage_panel_test import body_of
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = source_root()
 INC = ROOT / "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth"
 IND = ROOT / "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5"
 
@@ -93,7 +96,14 @@ bool g_raiz_details_open=true,g_editing_field=false,g_refresh_requested=false,ow
 bool target_exists=true;
 int g_raiz_tab=JPW_ROUTE_METRIC,g_cockpit_selected=6,g_focus_action=-1,g_cockpit_page=0;
 int g_details_control=24,g_details_line=18,g_details_pad=6,g_details_font=11;
-int draws=0;
+int draws=0; string g_details_render_reason=""; bool g_details_inventory_complete=true;
+void JPWInvalidateDialogContent(int=-1){}
+void JPWRaizSaveVisibleFields(){}
+bool JPWUIDesignSetInteger(const string&,int,bool){return true;}
+bool g_details_frame_active=true;
+void JPWPresentationFailure(const string&r){g_details_render_reason=r;g_details_inventory_complete=false;}
+bool JPWFocusValid(int action){return target_exists;}
+bool JPWPresentationSetString(const string&n,int p,const string&s){return true;}
 bool JPWUIOwns(const string&){return owns_ui;}
 bool JPWDetailsContextCurrent(){return true;}
 bool JPWReadAccount(JPWAccount &a){a.id=account_matches?1:2;return true;}
@@ -194,7 +204,7 @@ int main(){
  check(JPWGenetrixHandleCycleEvent(CHARTEVENT_KEYDOWN,13,"")&&g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES,"list accessible by Enter");
  g_focus_action=100;check(JPWGenetrixHandleCycleEvent(CHARTEVENT_KEYDOWN,13,"")&&g_genetrix_selected_cycle=="a","cycle selection by Enter");
  g_raiz_tab=JPW_ROUTE_METRIC;g_focus_action=JPW_ACTION_SECONDARY;target_exists=false;
- check(JPWGenetrixHandleCycleEvent(CHARTEVENT_KEYDOWN,13,"")&&g_raiz_tab==JPW_ROUTE_METRIC,"removed control cannot activate a stale keyboard target");target_exists=true;
+ check(!JPWGenetrixHandleCycleEvent(CHARTEVENT_KEYDOWN,13,"")&&g_raiz_tab==JPW_ROUTE_METRIC,"removed control cannot activate a stale keyboard target");target_exists=true;
  owns_ui=false;check(!JPWGenetrixHandleCycleEvent(CHARTEVENT_OBJECT_CLICK,0,JPWActionObject(21)),"foreign focus cannot select");owns_ui=true;
  account_matches=false;check(JPWGenetrixHandleCycleEvent(CHARTEVENT_OBJECT_CLICK,0,JPWActionObject(21))&&!g_genetrix_ledger_available&&g_genetrix_selected_cycle=="","account change discards financial view and selection before event");account_matches=true;
  fresh();JPWGenetrixCollectLedger();bridge_ok=false;JPWGenetrixCollectLedger();JPWGenetrixPresentMetric();
@@ -292,13 +302,13 @@ def main():
        ("int JPWPanelClamp(const int value,const int low,const int high)",
         "int JPWPanelPageCount(const int total,const int rows)"))
     render = "void render_selector(int x,int body_y,int inner,int body_height,int footer_y){" + body_of(
-        presentation, "else if(g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES)") + "}"
+        body_of(presentation,"void JPWRenderCockpit()"), "else if(g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES)") + "}"
     wrapping = "\n".join(signature + "{" + body_of(presentation, signature) + "}" for signature in
         ("void JPWDetailsAppendLine(const string row,string &lines[])",
          "void JPWDetailsWrap(const string paragraph,const int width,string &lines[])"))
     details = "std::vector<string> render_details_lines(const int inner){string lines[];" + body_of(presentation, "         if(i==6)") + "return lines;}"
     page_start = presentation.index("      const int rows=(body_height/g_details_line>0 ? body_height/g_details_line : 1);")
-    page_end = presentation.index("\n     }\n   if(g_raiz_tab==JPW_ROUTE_SETTINGS)", page_start)
+    page_end = presentation.index("\n     }\n   JPWDialogFooterButtons(footer_actions", page_start)
     detail_pager = "void render_details_page(string &lines[],const int x,const int body_y,const int body_height,const int footer_y){" + presentation[page_start:page_end] + "}"
     actions = (INC / "JPW_Alavancagem_Actions.mqh").read_text()
     pager_event = "void pager_branch(const string sparam){" + body_of(actions, "   if(sparam==JPWActionObject(JPW_ACTION_PREVIOUS) || sparam==JPWActionObject(JPW_ACTION_NEXT))") + "}"

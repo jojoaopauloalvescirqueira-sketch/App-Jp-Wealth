@@ -191,7 +191,8 @@ bool JPWRiskGrossAtEntry(JPWPosition &row,JPWInstrument &instrument,JPWQuote &qu
       routes[index]=forced;
      }
    JPWPosition rows[]; JPWInstrument specifications[]; double scales[];
-   ArrayResize(rows,1); ArrayResize(specifications,1); ArrayResize(scales,1);
+   if(ArrayResize(rows,1)!=1 || ArrayResize(specifications,1)!=1 || ArrayResize(scales,1)!=1)
+      return(false);
    rows[0]=row; specifications[0]=instrument; scales[0]=scale;
    bool row_estimated=false; long oldest=0;
    if(JPWGrossReading(rows,specifications,scenario,target,now_ms,30,clock_valid,connected,

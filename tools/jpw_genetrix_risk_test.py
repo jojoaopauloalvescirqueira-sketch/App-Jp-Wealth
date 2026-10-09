@@ -15,6 +15,7 @@ import re
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -213,6 +214,8 @@ def run(evidence: Path | None) -> int:
         work = Path(folder)
         cpp = work/'risk.cpp'; exe = work/'risk-tests'; cpp.write_text(source)
         compile_command = [compiler,'-std=c++17','-Wall','-Wextra','-Werror',str(cpp),'-o',str(exe)]
+        if sys.platform != 'darwin':
+            compile_command.append('-lcrypto')
         compilation = subprocess.run(compile_command,text=True,capture_output=True)
         execution = None if compilation.returncode else subprocess.run([str(exe),str(work/'synthetic-files')],text=True,capture_output=True)
         result = {'test':'jpw_genetrix_risk_pure','scope':'CORE_STORE_AND_CANCEL_TERMINAL_REAL_BODY_SYNTHETIC_APIS',

@@ -2,6 +2,7 @@
 #define JPW_ALAVANCAGEM_ACTIONS_MQH
 // Indicator runtime component; included after its instance state.
 #include <JPWealth/JPW_UI_Focus.mqh>
+void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
 
 void JPWCockpitLoadPrefs()
   {
@@ -134,7 +135,7 @@ void JPWFactorSelect(const double factor)
    g_factor_draft=factor;
    g_raiz_feedback="F "+(factor==1.8 ? "1,8" : "1,5")+
                    " selecionado no rascunho. Aplicar confirma; Cancelar descarta.";
-   JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0);
+   JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails();
   }
 
 void JPWFactorApply()
@@ -215,8 +216,10 @@ void JPWLiveApply()
 
 void JPWRaizSaveVisibleFields()
   {
+   if(g_panel_prefix=="") return;
    JPWSignalSaveDraft();
-   if(!g_raiz_panel_built) return;
+   // A failed draw can leave a live edit. Capture owned fields independently
+   // of whether the latest visual passage completed; this is draft-only.
    for(int i=0;i<21;i++)
      {
       const string name=JPWRaizUI("EDIT_"+IntegerToString(i));
@@ -357,7 +360,7 @@ bool JPWRaizNativeATR(const datetime decision,double &atr,datetime &bar_open,
 
 void JPWRaizSwitchTab(const int tab)
   {
-   if(g_raiz_tab==JPW_SIGNAL_ROUTE && tab!=JPW_SIGNAL_ROUTE) JPWSignalClear();
+   JPWRaizSaveVisibleFields();
    if(g_raiz_tab==JPW_ROUTE_SETTINGS && tab!=JPW_ROUTE_SETTINGS)
      {
       g_cockpit_draft=g_cockpit_prefs;
@@ -372,7 +375,7 @@ void JPWRaizSwitchTab(const int tab)
    g_raiz_page=0;
    g_cockpit_page=0;
    JPWRenderRaizDetails();
-   ChartRedraw(0);
+
   }
 
 void JPWRaizFeedback(const string message)
@@ -621,13 +624,20 @@ void JPWOpenCockpit(const int metric=-1)
   {
    // Opening/navigation uses the accepted snapshot. Explicit Refresh schedules
    // a coordinator cycle; no account financial collection occurs here.
-   if(!g_account_known || g_sample_context=="") { g_refresh_requested=true; return; }
+   if(!g_account_known || g_sample_context=="")
+     {
+      g_refresh_requested=true;
+      // An explicit click deserves a next step even when identity is missing.
+      // Never open a financial view by relaxing its account-context guard.
+      Alert("Genetrix · Conta: leitura da conta ainda indisponível. Confira a conexão do MT5 e as abas Experts/Diário; depois clique em Conta novamente.");
+      return;
+     }
    const bool resume=g_jpw_focus_suspended && g_raiz_draft_account_known &&
                      g_raiz_draft_symbol==_Symbol && JPWAccountsEqual(g_raiz_draft_account,g_account);
    if(!JPWUIAcquire(g_panel_prefix)) return;
    if(resume)
      { g_jpw_focus_suspended=false; g_raiz_details_open=true;
-       JPWRenderRaizDetails(); ChartRedraw(0); return; }
+       JPWRenderRaizDetails(); return; }
    g_jpw_focus_suspended=false;
    g_raiz_draft_account=g_account; g_raiz_draft_account_known=true;
    g_raiz_draft_symbol=_Symbol;
@@ -639,7 +649,7 @@ void JPWOpenCockpit(const int metric=-1)
    g_cockpit_selected=(metric>=0 && metric<JPW_COCKPIT_METRIC_COUNT ? metric : 0);
    g_cockpit_draft=g_cockpit_prefs;
    g_cockpit_page=0; g_raiz_feedback="";
-   JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0);
+   JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails();
   }
 
 // History actions only request IO. They never select the terminal's account.
@@ -656,7 +666,7 @@ void JPWPersonalHistoryMove(const int direction)
      }
    else if(direction<0 && g_personal_cursor_page>0)
      { g_personal_cursor_page--; g_personal_before=g_personal_cursor[g_personal_cursor_page]; JPWPersonalRequestRead(); }
-   JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0);
+   JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails();
   }
 bool JPWPersonalHandleClick(const string target)
   {
@@ -665,7 +675,7 @@ bool JPWPersonalHandleClick(const string target)
    if(g_raiz_tab!=JPW_ROUTE_PERSONAL_HISTORY && g_raiz_tab!=JPW_ROUTE_PERSONAL_DETAIL &&
       g_raiz_tab!=JPW_ROUTE_PERSONAL_EXPORT) return(false);
    if(ObjectFind(0,target)<0) return(false);
-   ObjectSetInteger(0,target,OBJPROP_STATE,false);
+   JPWPresentationSetInteger(target,OBJPROP_STATE,false);
    if(target==JPWActionObject(JPW_ACTION_HISTORY_ACCOUNT))
      {
       if(ArraySize(g_personal_accounts)>0)
@@ -675,12 +685,12 @@ bool JPWPersonalHandleClick(const string target)
       return(true);
      }
    if(target==JPWActionObject(JPW_ACTION_HISTORY_REFRESH))
-     { JPWPersonalRequestRead(); JPWRaizPanelDestroy(); JPWRenderRaizDetails(); return(true); }
+     { JPWPersonalRequestRead(); JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return(true); }
    if(target==JPWActionObject(JPW_ACTION_PREVIOUS) || target==JPWActionObject(JPW_ACTION_NEXT))
      {
       if(g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY) JPWPersonalHistoryMove(target==JPWActionObject(JPW_ACTION_PREVIOUS) ? -1 : 1);
       else { g_cockpit_page+=(target==JPWActionObject(JPW_ACTION_PREVIOUS) ? -1 : 1);
-             JPWRaizPanelDestroy(); JPWRenderRaizDetails(); }
+             JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); }
       return(true);
      }
    if(g_personal_available && !g_personal_read_requested && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
@@ -698,7 +708,7 @@ bool JPWPersonalHandleClick(const string target)
       else if(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL)
         { g_personal_detail_seq=0; JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_HISTORY); }
       else { JPWPersonalRequestExport(1);
-             JPWRaizPanelDestroy(); JPWRenderRaizDetails(); }
+             JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); }
       return(true);
      }
    if(target==JPWActionObject(JPW_ACTION_SECONDARY))
@@ -707,13 +717,13 @@ bool JPWPersonalHandleClick(const string target)
         { g_personal_export_result=""; JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_EXPORT); }
       else if(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL) JPWPersonalRequestRead();
       else { JPWPersonalRequestExport(2);
-             JPWRaizPanelDestroy(); JPWRenderRaizDetails(); }
+             JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); }
       return(true);
      }
    return(false);
   }
 
-void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
+void JPWHandleChartEventBody(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=JPWUIOwner()) return;
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=g_panel_prefix)
@@ -723,7 +733,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
          JPWRaizSaveVisibleFields();
          g_jpw_focus_suspended=true;
          g_raiz_details_open=false;
-         JPWRaizPanelDestroy(); JPWRenderHUD(); ChartRedraw(0);
+         JPWRaizPanelDestroy(); JPWRenderHUD();
         }
       return;
      }
@@ -738,7 +748,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
    if(id==CHARTEVENT_CHART_CHANGE)
      {
       if(g_raiz_details_open)
-        { JPWRaizSaveVisibleFields(); JPWRaizPanelDestroy(); }
+        { JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); }
       JPWRenderCurrentDisplay();
       return;
      }
@@ -746,19 +756,14 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
    if(id==CHARTEVENT_OBJECT_CLICK)
      {
       g_editing_field=(StringFind(sparam,JPWRaizUI("EDIT_"))==0);
-      if(g_editing_field)
-         for(int i=0;i<21;i++) if(sparam==JPWRaizUI("EDIT_"+IntegerToString(i)))
-            {
-             g_focus_action=(JPWFocusValid(-1000-i) ? -1000-i : -1);
-             g_editing_field=(g_focus_action<=-1000); break;
-            }
-      if(!g_editing_field)
-         for(int i=0;i<g_focus_count;i++)
-            if(sparam==JPWFocusObject(g_focus_actions[i]) && JPWFocusValid(g_focus_actions[i]))
-              { g_focus_action=g_focus_actions[i]; break; }
+      for(int i=0;i<g_focus_count;i++)
+         if(sparam==JPWFocusObject(g_focus_actions[i]) && JPWFocusValid(g_focus_actions[i]))
+           { g_focus_action=g_focus_actions[i]; g_editing_field=(g_focus_action<=-1000); break; }
      }
    if(id==CHARTEVENT_OBJECT_ENDEDIT && g_raiz_details_open)
      {
+      if(sparam==JPWRaizUI("EDIT_SIGNAL_ROLE")) { JPWSignalSaveDraft(); return; }
+      if(sparam==JPWRaizUI("EDIT_SIGNAL_COPY")) return;
       for(int i=0;i<21;i++)
          if(sparam==JPWRaizUI("EDIT_"+IntegerToString(i)))
            { g_raiz_fields[i]=ObjectGetString(0,sparam,OBJPROP_TEXT); return; }
@@ -778,8 +783,8 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       if(g_editing_field && (lparam==13 || lparam==27))
         {
          JPWRaizSaveVisibleFields();
-         const int field=-1000-g_focus_action;
-         if(field>=0 && field<21) ObjectSetInteger(0,JPWRaizUI("EDIT_"+IntegerToString(field)),OBJPROP_SELECTED,false);
+         if(JPWFocusValid(g_focus_action))
+            JPWPresentationSetInteger(JPWFocusObject(g_focus_action),OBJPROP_SELECTED,false);
          g_editing_field=false; return;
         }
       if(lparam==13 && !g_editing_field && g_focus_action>=0)
@@ -794,7 +799,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       g_cockpit_draft=g_cockpit_prefs;
       g_cockpit_reset_requested=false;
       JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
-      g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD(); ChartRedraw(0); return;
+      g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD(); return;
      }
    if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=JPW_ROUTE_OVERVIEW)
      {
@@ -805,17 +810,24 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
         {
          const int maximum=MathMax(0,g_positions_total_rows-g_positions_visible_rows);
          g_positions_scroll=JPWPanelClamp(g_positions_scroll+(lparam==38 ? -1 : 1),0,maximum);
-         JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return;
+         JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return;
         }
       if((lparam==37 || lparam==39) && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
         { JPWPersonalHistoryMove(lparam==37 ? -1 : 1); return; }
       if((lparam==37 || lparam==39))
         { g_cockpit_page+=(lparam==37 ? -1 : 1);
-          JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
+          JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
       if((g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) && lparam>=49 && lparam<=55)
         { g_cockpit_selected=(int)(lparam-49); JPWRaizSwitchTab(JPW_ROUTE_METRIC); return; }
      }
    if(id!=CHARTEVENT_OBJECT_CLICK) return;
+   // A retained failed pass must not authorize a stale-looking action. Keep
+   // explicit exits and the launcher usable while capture can be retried.
+   if(g_raiz_details_open && g_details_render_reason!="" &&
+      sparam!=g_panel_prefix+"RAIZ_DETAILS_BUTTON" &&
+      sparam!=JPWActionObject(JPW_ACTION_CLOSE) &&
+      sparam!=JPWActionObject(JPW_ACTION_HEADER_CLOSE) &&
+      sparam!=JPWActionObject(JPW_ACTION_LEGACY_CANCEL)) return;
    for(int metric=0;metric<JPW_COCKPIT_METRIC_COUNT;metric++)
       if(sparam==g_panel_prefix+IntegerToString(metric))
         {
@@ -827,7 +839,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
         }
    if(sparam==g_panel_prefix+"RAIZ_DETAILS_BUTTON")
      {
-      ObjectSetInteger(0,sparam,OBJPROP_STATE,false);
+      JPWPresentationSetInteger(sparam,OBJPROP_STATE,false);
       if(g_raiz_details_open)
         {
          g_cockpit_draft=g_cockpit_prefs; g_cockpit_reset_requested=false;
@@ -835,7 +847,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
          g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD();
         }
       else JPWOpenCockpit();
-      ChartRedraw(0); return;
+      return;
      }
    if(!g_raiz_details_open) return;
    if(!JPWDetailsContextCurrent()) return;
@@ -843,7 +855,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
    if(JPWPersonalHandleClick(sparam)) return;
    for(int i=0;i<100;i++)
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(i)))
-        { ObjectSetInteger(0,sparam,OBJPROP_STATE,false); break; }
+        { JPWPresentationSetInteger(sparam,OBJPROP_STATE,false); break; }
    if(sparam==JPWActionObject(JPW_ACTION_TAB_FIRST)) { JPWRaizSwitchTab(JPW_ROUTE_OVERVIEW); return; }
    if(sparam==JPWActionObject(JPW_ACTION_TAB_STOPS))
      { g_record_read_requested=true; JPWRaizSwitchTab(JPW_ROUTE_STOPS); return; }
@@ -873,7 +885,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
               {
                const int found=JPWPositionsViewFind(g_position_button_ticket[i],g_position_button_identifier[i]);
                if(found<0 || !JPWPositionsViewCurrent(g_sample_context,GetTickCount64()))
-                 { g_refresh_requested=true; JPWRaizPanelDestroy(); JPWRenderRaizDetails(); return; }
+                 { g_refresh_requested=true; JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
                g_position_detail_ticket=g_position_views[found].ticket;
                g_position_detail_identifier=g_position_views[found].identifier;
                g_position_detail_open=true;
@@ -891,7 +903,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       const int maximum=MathMax(0,g_positions_total_rows-g_positions_visible_rows);
       g_positions_scroll=JPWPanelClamp(g_positions_scroll+
          (sparam==JPWActionObject(JPW_ACTION_POSITIONS_UP) ? -1 : 1),0,maximum);
-      JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return;
+      JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return;
      }
    if(sparam==JPWActionObject(JPW_ACTION_PRIMARY))
      {
@@ -931,7 +943,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
           JPWRaizSwitchTab(JPW_ROUTE_EXPORT); }
       else if(g_raiz_tab==JPW_ROUTE_EXPORT)
         { if(g_export_preview!="") { g_export_requested=true; g_export_result="Exportação solicitada."; }
-          JPWRaizPanelDestroy(); JPWRenderRaizDetails(); }
+          JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); }
       else if(g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW)
         { g_stops_show_pending=true; JPWRaizSwitchTab(JPW_ROUTE_STOPS); }
       else if(g_raiz_tab==JPW_ROUTE_RAIZN) JPWRaizSwitchTab(JPW_ROUTE_SCENARIOS);
@@ -942,13 +954,13 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
      {
       if(g_cockpit_pref_invalid && !g_cockpit_reset_requested)
         { g_cockpit_pref_notice="Preferência inválida preservada. Use Restaurar antes de aplicar.";
-          JPWRaizPanelDestroy(); JPWRenderRaizDetails(); return; }
+          JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
       if(!JPWCockpitSavePrefs(g_cockpit_draft))
         { g_cockpit_pref_notice=(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)>=0 &&
              ObjectGetInteger(0,JPW_COCKPIT_PREF_OBJECT,OBJPROP_TYPE)!=OBJ_LABEL ?
              "Nome da preferência ocupado por outro tipo de objeto; remova-o manualmente." :
              "Falha ao salvar; configuração anterior preservada.");
-          JPWRaizPanelDestroy(); JPWRenderRaizDetails(); return; }
+          JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
       g_cockpit_reset_requested=false;
       JPWRenderHUD(); JPWRaizSwitchTab(JPW_ROUTE_OVERVIEW); return;
      }
@@ -957,25 +969,25 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
        JPWRenderHUD(); JPWRaizSwitchTab(JPW_ROUTE_OVERVIEW); return; }
    if(sparam==JPWActionObject(JPW_ACTION_RESET) && g_raiz_tab==JPW_ROUTE_SETTINGS)
      { JPWCockpitDefault(g_cockpit_draft,(int)InpCorner); g_cockpit_reset_requested=true;
-       JPWRenderHUD(); JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
+       JPWRenderHUD(); JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
    if(sparam==JPWActionObject(JPW_ACTION_CORNER) && g_raiz_tab==JPW_ROUTE_SETTINGS)
      { g_cockpit_draft.corner=JPWCockpitNextCorner(g_cockpit_draft.corner);
-       JPWRenderHUD(); JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
+       JPWRenderHUD(); JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
    if(sparam==JPWActionObject(JPW_ACTION_DENSITY) && g_raiz_tab==JPW_ROUTE_SETTINGS)
      { g_cockpit_draft.density=1-g_cockpit_draft.density;
-       JPWRenderHUD(); JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
+       JPWRenderHUD(); JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
    for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++)
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_VISIBILITY_FIRST+i)) && g_raiz_tab==JPW_ROUTE_SETTINGS)
         { g_cockpit_draft.visible_mask^=(1<<i);
-          JPWRenderHUD(); JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
+          JPWRenderHUD(); JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
    if(sparam==JPWActionObject(JPW_ACTION_CLOSE) ||
       sparam==JPWActionObject(JPW_ACTION_HEADER_CLOSE))
      { g_cockpit_draft=g_cockpit_prefs; g_cockpit_reset_requested=false;
        JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
-       g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD(); ChartRedraw(0); return; }
+       g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD(); return; }
    if(sparam==JPWActionObject(JPW_ACTION_PREVIOUS) || sparam==JPWActionObject(JPW_ACTION_NEXT))
      { g_cockpit_page+=(sparam==JPWActionObject(JPW_ACTION_PREVIOUS) ? -1 : 1);
-       JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
+       JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
    // Every navigation path captures edits; only Apply can write configuration.
    if(sparam==JPWActionObject(JPW_ACTION_HOME))
      { JPWRaizSaveVisibleFields(); g_refresh_requested=true; if(!g_raiz_details_open) return;
@@ -989,7 +1001,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
      {
       JPWRaizSaveVisibleFields(); g_refresh_requested=true; if(!g_raiz_details_open) return;
       g_record_read_requested=true;
-      JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return;
+      JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return;
      }
    if(sparam==JPWActionObject(JPW_ACTION_DECLARE) && g_raiz_tab<=JPW_ROUTE_BIND)
       { JPWRaizSwitchTab(JPW_ROUTE_DECLARE); return; }
@@ -1000,7 +1012,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       JPWRaizSaveVisibleFields();
       const int delta=(sparam==JPWActionObject(JPW_ACTION_LEGACY_PREVIOUS) ? -1 : 1);
       g_raiz_page=JPWPanelClamp(g_raiz_page+delta,0,g_raiz_pages-1);
-      JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return;
+      JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return;
      }
    if(sparam==JPWActionObject(JPW_ACTION_LEGACY_APPLY))
      {
@@ -1017,7 +1029,13 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
    if(sparam==JPWActionObject(JPW_ACTION_LEGACY_CANCEL))
      {
       JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
-      g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); ChartRedraw(0);
+      g_raiz_draft_expected_id=""; JPWRaizPanelDestroy();
      }
+  }
+void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
+  {
+   JPWUIDesignBeginPass();
+   JPWHandleChartEventBody(id,lparam,dparam,sparam);
+   JPWUIDesignEndPass();
   }
 #endif

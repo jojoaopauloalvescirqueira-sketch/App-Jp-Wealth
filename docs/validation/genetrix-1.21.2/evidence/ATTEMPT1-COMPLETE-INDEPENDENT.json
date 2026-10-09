@@ -1,0 +1,36 @@
+{
+  "review_id": "CI-PR36-ATTEMPT1-COMPLETE",
+  "head_sha": "90b39df7a9d6097970a82013cd4e0c9b6e5fee02",
+  "quality": {
+    "run": 37872820109,
+    "conclusion": "success",
+    "tier": "standard",
+    "summary": {
+      "PASS": 46,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "independently_seen_pass_lines": 46,
+    "log_sha256": "56f84e79155f8bf0ddefef279efe75177348d092538379f64bde7074770c5804",
+    "finished": "2026-10-09T02:17:07Z"
+  },
+  "mt5_host": {
+    "run": 37872820141,
+    "conclusion": "failure",
+    "summary": {
+      "PASS": 39,
+      "TEST_HARNESS_FAIL": 1,
+      "PRODUCT_FAIL": 0
+    },
+    "reason": "Linux risk judge command missing -lcrypto, failure before assertion execution"
+  },
+  "combined": "DO_NOT_MERGE_THIS_HEAD; required MT5 Host failed",
+  "limits": [
+    "Quality result belongs only to head90b39df and synthetic merge b871ca; no transfer to upcoming linker revision",
+    "Standard quality gate is not full local gate",
+    "Ubuntu host does not prove native MetaEditor or MT5 execution"
+  ]
+}

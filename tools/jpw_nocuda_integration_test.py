@@ -18,7 +18,8 @@ import unittest
 from leverage_source import expanded_source
 
 
-ROOT = Path(__file__).resolve().parents[1]
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+ROOT = source_root()
 INCLUDE = ROOT / "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth"
 CORE = INCLUDE / "JPW_NoCuda_Core.mqh"
 TERMINAL = INCLUDE / "JPW_NoCuda_Terminal.mqh"
@@ -302,9 +303,10 @@ constexpr int CHARTEVENT_OBJECT_ENDEDIT=24,CHARTEVENT_KEYDOWN=25;
 constexpr int TERMINAL_KEYSTATE_SHIFT=18,OBJPROP_TYPE=2,OBJ_BUTTON=3,OBJ_LABEL=1;
 constexpr int OBJPROP_TOOLTIP=9,OBJPROP_XDISTANCE=10,OBJPROP_YDISTANCE=11,OBJPROP_HIDDEN=12,OBJPROP_SELECTABLE=13;
 std::map<string,string> focus_objects;
+std::map<string,int> focus_types;
 std::vector<string> focus_events;
 int ObjectFind(int,const string&name){return focus_objects.count(name)?0:-1;}
-bool ObjectCreate(int,const string&name,int,int,int,int){focus_objects[name]="";return true;}
+bool ObjectCreate(int,const string&name,int type,int,int,int){focus_objects[name]="";focus_types[name]=type;return true;}
 bool ObjectSetInteger(int,const string&,int,long){return true;}
 bool ObjectSetString(int,const string&name,int,const string&value){focus_objects[name]=value;return true;}
 bool ObjectDelete(int,const string&name){return focus_objects.erase(name)>0;}
@@ -315,7 +317,7 @@ bool g_ncf_mode=false;int ncf_dispatch_calls=0;
 bool JPWNCFHandleEvent(int,const long&,const double&,const string&){ncf_dispatch_calls++;return g_ncf_mode;}
 int shift_key=0;
 int TerminalInfoInteger(int) { return shift_key; }
-int ObjectGetInteger(int,const string&name,int) { return focus_objects.count(name)?OBJ_LABEL:OBJ_BUTTON; }
+int ObjectGetInteger(int,const string&name,int property) { if(property==OBJPROP_TYPE)return focus_types.count(name)?focus_types[name]:OBJ_LABEL;return 0; }
 string JPWNoCudaUIFocusCycle(const string& prefix,const string&,bool reverse) { return prefix+(reverse ? "UI_CLOSE" : "UI_PAGE_NEXT"); }
 constexpr int OBJPROP_TEXT=1;
 string ObjectGetString(int,const string&name,int) { return focus_objects.count(name)?focus_objects[name]:"0.5"; }
@@ -326,7 +328,9 @@ int JPWNoCudaUIMeasurePages() { return 2; }
 int select_calls=0;
 void JPWNoCudaSelectLineAt(int,int) { ++select_calls; }
 void JPWNoCudaReadJustification() {}
-void JPWNoCudaDrawUI() { ++ui_calls; }
+void JPWNoCudaDrawUI() { ++ui_calls;
+ if(g_nocuda_panel_open){ObjectCreate(0,g_nocuda_prefix+"UI_PAGE_NEXT",OBJ_BUTTON,0,0,0);ObjectCreate(0,g_nocuda_prefix+"UI_CLOSE",OBJ_BUTTON,0,0,0);}
+ }
 void ChartRedraw(int) {}
 void JPWNoCudaNewDraft() { g_nocuda_is_draft=true; }
 void JPWNoCudaEditDraft() { g_nocuda_is_draft=true; }
@@ -343,6 +347,20 @@ void JPWNoCudaDragAnchor(const string&) { ++drag_calls; }
 void JPWNoCudaSaveChartState() { ++chart_save_calls; }
 '''
 
+
+# Inactive Fibo boundary retained from R1: new callback references need a
+# correctly shaped seam even when legacy mode is being replayed. No native-Fibo
+# behavior is inferred from these definitions.
+ACTION_SHIM += r'''
+struct HostInactiveFiboView { bool open=false; };
+HostInactiveFiboView g_ncf_ui;
+bool g_nocuda_ui_inventory_complete=true;
+string g_fc_editing="",g_fc_focus="";
+constexpr int CHARTEVENT_MOUSE_WHEEL=23;
+void JPWUIDesignForget(const string&) {}
+void JPWNoCudaFiboUIFieldCapture(const string&,HostInactiveFiboView&) {}
+void JPWNCFDraw() {}
+'''
 
 ACTION_CASES = r'''
 void object_click(const string& name) {
@@ -544,7 +562,11 @@ std::unordered_map<string,Rect> controls;
 std::unordered_map<string,string> labels;
 std::vector<string> object_order;
 int chart_width=800,chart_height=404,measured_line=12,background=0xffffff,current_font=100;
-long TerminalInfoInteger(int) { return measured_line*96/12; }
+// Synthetic font/DPI changes resize glyph bounds even when the retained UI
+// correctly does not resend unchanged font/text properties. This is a native
+// display-metric seam, not a product geometry or expected-answer substitution.
+void text_bounds(Rect& r);
+long TerminalInfoInteger(int) { for(auto& item:controls)text_bounds(item.second);return measured_line*96/12; }
 int creates=0,deletes=0,text_writes=0;
 bool g_nocuda_is_draft=true;
 string g_nocuda_prefix="JPWNC_TEST_",g_nocuda_justification="",g_nocuda_date="",g_nocuda_level_input="";
@@ -601,7 +623,7 @@ bool ObjectSetString(int,const string& name,int prop,const string& value) {
  if(prop==OBJPROP_TEXT) { r.text=value;labels[name]=value;++text_writes;text_bounds(r); }
  if(prop==OBJPROP_TOOLTIP) r.tooltip=value; return true;
 }
-string IntegerToString(int v) { return std::to_string(v); }
+string IntegerToString(long v) { return std::to_string(v); }
 int StringLen(const string& v) { return int(v.size()); }
 string StringSubstr(const string& v,int start,int length) { return v.substr(start,length); }
 string StringSubstr(const string& v,int start) { return v.substr(start); }
@@ -1157,7 +1179,7 @@ class NoCudaIntegration(unittest.TestCase):
             source = Path(temp) / "actions.cpp"
             binary = Path(temp) / "actions"
             focus=(UI.parent/"JPW_UI_Focus.mqh").read_text()
-            source.write_text(ACTION_SHIM + focus + production + ACTION_CASES,
+            source.write_text(ACTION_SHIM.replace("OBJ_BUTTON=3", "OBJ_BUTTON=3,OBJ_EDIT=4").replace("OBJPROP_SELECTABLE=13;", "OBJPROP_SELECTABLE=13,OBJPROP_SELECTED=14;") + focus + production + ACTION_CASES,
                               encoding="utf-8")
             compile_result = subprocess.run(
                 [compiler, "-std=c++17", "-Wall", "-Wextra", "-Werror",
@@ -1373,7 +1395,7 @@ int main() {{
         with tempfile.TemporaryDirectory(prefix="jpw-nocuda-ui-") as temp:
             source = Path(temp) / "ui.cpp"
             binary = Path(temp) / "ui"
-            source.write_text(UI_SHIM + production + UI_CASES,
+            source.write_text(complete_design_shim(UI_SHIM.replace("constexpr int OBJPROP_FONT=101", "constexpr int OBJPROP_READONLY=105;\nconstexpr int OBJPROP_FONT=101")) + translate_arrays(production) + UI_CASES,
                               encoding="utf-8")
             compile_result = subprocess.run(
                 [compiler, "-std=c++17", "-Wall", "-Wextra", "-Werror",

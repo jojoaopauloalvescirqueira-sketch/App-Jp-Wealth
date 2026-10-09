@@ -1,0 +1,724 @@
+{
+  "scope": "Authored HTML integration; not independent judgment",
+  "revision": "R3",
+  "base": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
+  "branch": "codex/genetrix-1-21-2-site-20261008",
+  "html_sha256": "81e1665a69da3c421f9ff0a5a03eda7243479158dbb0e453c16b1d0a013103e0",
+  "changed_product_files": [
+    "index.html"
+  ],
+  "preservation": {
+    "DOM_ID_order": true,
+    "DOM_ID_count": 671,
+    "JS_unchanged": true,
+    "CSS_unchanged": true
+  },
+  "source_package": {
+    "available": true,
+    "path": "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip",
+    "filename": "JPW_Genetrix_Fontes_v1.21.2.zip",
+    "sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "bytes": 760092
+  },
+  "compiled_available": false,
+  "native_compilation": "NOT_RUN",
+  "native_execution": "NOT_RUN/BLOCKED",
+  "external_publication": "NOT_RUN",
+  "all_attempts": [
+    {
+      "attempt": 1,
+      "execution": "COMPLETED_EXIT_0",
+      "classification": "PASS",
+      "process_id": null,
+      "terminal_sample": null,
+      "log": "attempt-1.log",
+      "log_sha256": "0d821587fcc0d5f0b7cc53136577b88c4a16643a41a59c2f198f9f7f2494016b",
+      "markers": [
+        "PAGE_NATIVE_COMPILATION: NOT_RUN; source-only candidate; no prior EX5 accepted",
+        "PAGE_LOCAL_INTEGRATION: PASS",
+        "PAGE_EXTERNAL_PUBLICATION: NOT_RUN; localhost/file/portable tests do not prove publication",
+        "JPW_TEST_RESULT: PASS"
+      ],
+      "screenshots": 35,
+      "observed_metadata": [
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "execution": "COMPLETED_EXIT_0",
+      "classification": "PASS",
+      "process_id": 71242,
+      "terminal_sample": "attempt-2-process-sample.txt",
+      "log": "attempt-2.log",
+      "log_sha256": "0d821587fcc0d5f0b7cc53136577b88c4a16643a41a59c2f198f9f7f2494016b",
+      "markers": [
+        "PAGE_NATIVE_COMPILATION: NOT_RUN; source-only candidate; no prior EX5 accepted",
+        "PAGE_LOCAL_INTEGRATION: PASS",
+        "PAGE_EXTERNAL_PUBLICATION: NOT_RUN; localhost/file/portable tests do not prove publication",
+        "JPW_TEST_RESULT: PASS"
+      ],
+      "screenshots": 35,
+      "observed_metadata": [
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        }
+      ],
+      "teardown_observation": "Delayed completion: sampled waiting in Playwright/greenlet after assertion log; eventually completed exit0 before targeted termination. Cause not determined; no signal sent."
+    },
+    {
+      "attempt": 3,
+      "execution": "COMPLETED_EXIT_0",
+      "classification": "PASS",
+      "process_id": null,
+      "terminal_sample": null,
+      "log": "attempt-3.log",
+      "log_sha256": "0d821587fcc0d5f0b7cc53136577b88c4a16643a41a59c2f198f9f7f2494016b",
+      "markers": [
+        "PAGE_NATIVE_COMPILATION: NOT_RUN; source-only candidate; no prior EX5 accepted",
+        "PAGE_LOCAL_INTEGRATION: PASS",
+        "PAGE_EXTERNAL_PUBLICATION: NOT_RUN; localhost/file/portable tests do not prove publication",
+        "JPW_TEST_RESULT: PASS"
+      ],
+      "screenshots": 35,
+      "observed_metadata": [
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": 4,
+      "execution": "COMPLETED_EXIT_0",
+      "classification": "PASS",
+      "process_id": null,
+      "terminal_sample": null,
+      "log": "attempt-4.log",
+      "log_sha256": "0d821587fcc0d5f0b7cc53136577b88c4a16643a41a59c2f198f9f7f2494016b",
+      "markers": [
+        "PAGE_NATIVE_COMPILATION: NOT_RUN; source-only candidate; no prior EX5 accepted",
+        "PAGE_LOCAL_INTEGRATION: PASS",
+        "PAGE_EXTERNAL_PUBLICATION: NOT_RUN; localhost/file/portable tests do not prove publication",
+        "JPW_TEST_RESULT: PASS"
+      ],
+      "screenshots": 35,
+      "observed_metadata": [
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        },
+        {
+          "version": [
+            "1.21.2",
+            "1.21.2",
+            "1.21.2"
+          ],
+          "source_hash": [
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+            "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+          ],
+          "source_hash_mismatch": false,
+          "file_table_missing": [],
+          "file_table_unexpected": [],
+          "native_summary": [
+            "Validação nativa pendente"
+          ]
+        }
+      ]
+    }
+  ],
+  "manual_visual_inspection": [
+    "attempt-1/overview-1440-light.png",
+    "attempt-1/validation-390-dark.png",
+    "attempt-1/validation-1440-light.png",
+    "attempt-1/install-1440-dark.png",
+    "attempt-1/validation-320-light.png",
+    "attempt-1/overview-390-dark.png"
+  ],
+  "manual_visual_limit": "Six representative screenshots viewed; geometric bounds and remaining layouts validated by browser assertions; no claim that all captured screenshots were visually inspected.",
+  "summary": "4 attempts preserved, all4 completed exit0/PASS. Attempt2 delayed in teardown and was not promoted until exit confirmed."
+}

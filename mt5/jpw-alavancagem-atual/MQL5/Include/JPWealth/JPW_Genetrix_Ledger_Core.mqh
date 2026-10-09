@@ -299,7 +299,9 @@ bool JPWLedgerBuild(JPWLedgerDeal &deals[],JPWLedgerOrder &orders[],
         { reason="Posição viva inválida"; return(false); }
    JPWLedgerEvent events[]; JPWLedgerMember members[];
    int order_cycle[]; bool order_active[];
-   ArrayResize(order_cycle,ArraySize(orders)); ArrayResize(order_active,ArraySize(orders));
+   if(ArrayResize(order_cycle,ArraySize(orders))!=ArraySize(orders) ||
+      ArrayResize(order_active,ArraySize(orders))!=ArraySize(orders))
+     { reason="Memória insuficiente para reconciliar pendentes; nenhuma projeção confirmada"; return(false); }
    for(int o=0;o<ArraySize(orders);o++)
      {
       order_cycle[o]=-1; order_active[o]=false;
