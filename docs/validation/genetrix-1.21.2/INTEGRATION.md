@@ -114,3 +114,9 @@ Integração Git terá registro próprio. Estes resultados locais não comprovam
 ## Adoção documental do parecer final
 
 O parecer independente final foi recebido após os gates R3 e o congelamento R5. Seus 847 inputs foram conferidos sem divergência; a revisão aprovou a integração de fontes/site e conservou compilação MT5 `NOT_RUN` e aceite operacional `BLOCKED_NATIVE_VALIDATION`. A adoção deste parecer e recibos é camada documental N0-D, sem alteração de código, juiz, critérios ou pacote. Commit, push e merge serão demonstrados pelos recibos Git posteriores; este checkpoint não os presume.
+
+## R7 — normalização exclusiva de fim de arquivo
+
+O check do diff já preparado para commit identificou linhas vazias excedentes no fim de dois helpers novos: `leverage_host_layout.py` e `leverage_host_runtime.py`. O check anterior, feito antes de preparar os novos arquivos, não examinava esses arquivos. O primeiro commit foi conservado, sem reescrita; a correção seguinte remove apenas essas linhas vazias excedentes. As árvores sintáticas Python são idênticas antes/depois, sem mudança de critérios ou resultados esperados. Os 24 hashes da tabela acima continuam identificando os bytes recebidos da origem. [Delta atual de formatação](evidence/formatting-R7.json) registra os novos hashes e a reexecução terá recibo próprio; gates anteriores permanecem preservados, sem afirmar identidade byte a byte desta revisão com R3. Fontes MQL, ZIP, manifesto e site permanecem idênticos ao candidato aprovado.
+
+R7 foi concluído: [host 40/40 PASS](evidence/mt5-host-R7.json), [fast 4/4 PASS](evidence/fast-R7.json) e [parecer suplementar independente PASS](evidence/EOF-ONLY-SUPPLEMENT.md). O full web 57/57 R3 permanece aplicável à página, runtime web e seus juízes, que não mudaram. Compilação e execução MT5 continuam `NOT_RUN/BLOCKED`.

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "tier": "fast",
+  "started_at": "2026-10-08T23:03:46-03:00",
+  "finished_at": "2026-10-08T23:03:53-03:00",
+  "git": {
+    "branch": "codex/genetrix-1-21-2-site-20261008",
+    "head": "dfc3f80841bf52a429896a054453dbdc49894cd6",
+    "dirty": true,
+    "status": [
+      "M docs/validation/genetrix-1.21.2/INTEGRATION.md",
+      " M tools/leverage_host_layout.py",
+      " M tools/leverage_host_runtime.py",
+      "?? docs/validation/genetrix-1.21.2/evidence/EOF-ONLY-CONSUMERS.json",
+      "?? docs/validation/genetrix-1.21.2/evidence/EOF-ONLY-INDEPENDENT.json",
+      "?? docs/validation/genetrix-1.21.2/evidence/EOF-ONLY-SUPPLEMENT.md",
+      "?? docs/validation/genetrix-1.21.2/evidence/formatting-R7.json"
+    ]
+  },
+  "checks": [
+    {
+      "name": "preflight",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/agent_preflight.py --mode audit --allow-dirty",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.215,
+      "output_tail": "PREFLIGHT PASS\n- branch: codex/genetrix-1-21-2-site-20261008\n- HEAD: dfc3f80841bf\n- rastreados: 865\n- alteracoes: 7\n- scripts no manifest: 101\n- AVISO: arvore possui 7 alteracao(oes); confirme autoria e escopo\n- AVISO: POTENTIAL MATERIAL CHANGE AFTER SOURCE REVISION: 113 caminho(s) alterado(s) apos 7f0828488b2fc0ea62dc7c421174799cda47a34a fora dos caminhos reconhecidos como reconciliacao contextual; executar avaliacao de impacto agentico e reconciliar o contexto se aplicavel\n"
+    },
+    {
+      "name": "structure",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/validate_project.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.677,
+      "output_tail": "VALIDACAO OK - 101 arquivos JS, 670 IDs estaticos, portatil reconstruido.\n"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.191,
+      "output_tail": ""
+    },
+    {
+      "name": "preflight-context",
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 tools/preflight_context_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.674,
+      "output_tail": "[PASS] caso1_head_igual_source\n[PASS] caso2_context_only\n[PASS] caso3_fora_da_allowlist\n[PASS] caso4a_campo_ausente\n[PASS] caso4b_malformado\n[PASS] caso4c_sha_inexistente\n[PASS] caso5_nao_ancestral\nPREFLIGHT CONTEXT OK — TRUE/FALSE/UNKNOWN distintos; UNKNOWN != FALSE; reconciliacao contextual (context-only) nao dispara falso positivo.\n"
+    }
+  ],
+  "summary": {
+    "PASS": 4,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  }
+}

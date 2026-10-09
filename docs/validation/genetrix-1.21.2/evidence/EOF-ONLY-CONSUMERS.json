@@ -1,0 +1,28 @@
+{
+  "against_R3_changed_inputs": [
+    "tools/leverage_host_layout.py",
+    "tools/leverage_host_runtime.py"
+  ],
+  "Python_bytecode": [
+    {
+      "path": "tools/leverage_host_layout.py",
+      "compiled_python_code_objects_identical": true,
+      "compiled_python_before_sha256": "2678f69245796efa8beca820fa60331c53511084042192150b035264aff0fb50",
+      "compiled_python_after_sha256": "2678f69245796efa8beca820fa60331c53511084042192150b035264aff0fb50"
+    },
+    {
+      "path": "tools/leverage_host_runtime.py",
+      "compiled_python_code_objects_identical": true,
+      "compiled_python_before_sha256": "53346d7b921dce753f16eaaae84d6f3e328f2977dcb877327b0a1eca1b7c6a42",
+      "compiled_python_after_sha256": "53346d7b921dce753f16eaaae84d6f3e328f2977dcb877327b0a1eca1b7c6a42"
+    }
+  ],
+  "source_zip_sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+  "source_zip_bytes": 760092,
+  "source_fingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6",
+  "source_hashes_current_match": true,
+  "nativeArtifact": null,
+  "compiled_available": false,
+  "native_state": "COMPILE_NOT_RUN_RUNTIME_BLOCKED",
+  "current_EX5": 0
+}

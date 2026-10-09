@@ -102,5 +102,3 @@ def scheduler_adapter(module):
  g_raiz_details_open=false;
 """, 1)
     return module
-
-

@@ -321,5 +321,3 @@ int main(){
     for sig in ("void JPWStopRiskUnavailable(const string reason)","void JPWAcceptMetric(const int metric)","void JPWMonitorStopRisk()"):
         cpp+=fn(coordinator,sig)
     return compile_cpp(cpp+main,"stop-refresh")
-
-
