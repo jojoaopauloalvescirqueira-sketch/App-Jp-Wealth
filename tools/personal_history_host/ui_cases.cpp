@@ -11,6 +11,7 @@ REQUIRE(g_personal_button_count>0&&g_personal_button_count<8,"renderer exposes s
 long last_visible=g_personal_button_seq[g_personal_button_count-1];REQUIRE(last_visible>g_personal_rows.back().sequence,"last visible differs from loaded tail fixture");
 g_personal_read_requested=false;JPWPersonalHistoryMove(1);REQUIRE(g_personal_before==last_visible&&g_personal_cursor_page==1&&g_personal_read_requested,"next page cursor follows visible tail no hidden skip");
 JPWPersonalHistoryMove(-1);REQUIRE(g_personal_before==0&&g_personal_cursor_page==0,"previous page restores saved cursor");
+REQUIRE(g_personal_read_requested&&!g_personal_available&&g_personal_rows.empty(),"new query invalidates old rows while pending");
 REQUIRE(!JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST)),"pending read refuses obsolete row action");
 JPWPersonalCollectUI();REQUIRE(g_personal_available&&!g_personal_read_requested&&g_personal_rows.size()==8,"real coordinator completes exact previous-page read");
 JPWPersonalRenderBody(0,0,300,170,200);REQUIRE(JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST))&&g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL&&g_personal_detail_seq==800,"real row action opens selected detail generation");

@@ -111,21 +111,10 @@ bool host_ui_detail(const string&,long sequence,JPWPersonalRow& out,string& reas
     for name in ['JPWRaizSwitchTab', 'JPWPersonalHistoryMove', 'JPWPersonalHandleClick']:
         parts.append(translate(extract_function(actions, name)))
     ui_cases=(SUPPORT / "ui_cases.cpp").read_text()
-    old_click='JPWPersonalRenderBody(0,0,300,170,200);REQUIRE(JPWPersonalHandleClick'
-    refreshed=r"""
-REQUIRE(g_personal_read_requested&&!g_personal_available&&g_personal_rows.empty(),"new query invalidates old rows while pending");
-REQUIRE(!JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST)),"old row cannot open while query pending");
-// Explicit synthetic completion of the requested page, same frozen eight rows.
-g_personal_read_requested=false;g_personal_available=true;g_personal_rows.resize(8);
-for(int i=0;i<8;i++){g_personal_rows[i].sequence=800-i;g_personal_rows[i].category="ALERT";g_personal_rows[i].wall=1000;g_personal_rows[i].payload="INTENT|";}
-"""
-    assert old_click in ui_cases
-    ui_cases=ui_cases.replace(old_click,refreshed+old_click,1)
-    ui_cases=ui_cases.replace('g_personal_available=false;g_personal_reason="synthetic corruption preserved";', 'g_personal_read_requested=false;g_personal_available=false;g_personal_reason="synthetic corruption preserved";')
-    # Route change queues a detail read and clears rows; model that completion too.
-    detail='g_personal_detail=g_personal_rows[0];'
-    assert detail in ui_cases
-    ui_cases=ui_cases.replace(detail,'g_personal_read_requested=false;g_personal_available=true;g_personal_detail.sequence=800;g_personal_detail.category="ALERT";g_personal_detail.wall=1000;g_personal_detail.payload="INTENT|";')
+    # The merged fixture completes page/detail reads through the real production
+    # coordinator and explicit synthetic IO primitives. Do not inject the older
+    # manual completion, which would bypass those request identity checks.
+    assert 'JPWPersonalCollectUI();REQUIRE(g_personal_available' in ui_cases
     extra=r"""
 g_raiz_details_open=true;g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;g_details_content_dirty=false;
 JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);REQUIRE(!g_details_content_dirty,"new route invalidation does not dirty unrelated visible view");

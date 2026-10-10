@@ -1,3 +1,9 @@
+# Integração autorizada — 2026-10-09
+
+Trabalho implementado do site aaac928 e GENETRIX 1.21.2 de main 89113f8 reunidos na branch existente. Validação da combinação e Git em andamento nesta fotografia. [Estado atual](docs/governance/CURRENT-STATE.md) e [contrato](docs/work/CHG-JPW-INTEGRATION-20261009.md). Proposta de aplicações futuras dos gráficos não implementada. Sem deploy, negociação ou dados pessoais. Evidências finais externas em outputs/jpw-integration-20261009; exigir recibo Git atual antes de afirmar conclusão.
+
+## Handoff histórico preservado
+
 # Candidate de correcao de comportamento — handoff local
 
 Base 7f0828488b2fc0ea62dc7c421174799cda47a34a, onboarding anterior f70839305b2d7fb8 preservado. Raiz /private/tmp/jpw-behavior-fixes-20261008/candidate; branch herdada, sem operacoes Git. Tarefa autorizada: corrigir os cinco bugs da auditoria, as falhas adicionais reproduzidas de recuperacao, pico de drawdown, motivos/encerramento e reflow, e reconciliar contexto/fixtures; contratos ACTIVE-TASK/brief. Os recibos finais externos definem o resultado de cada correcao; nenhum PASS intermediario substitui o replay dos bytes congelados. Autores financeiros/PF/testes separados; root gera derivados e gates congelados. Somente dados sinteticos; estados/norma/MT5 protegidos.
