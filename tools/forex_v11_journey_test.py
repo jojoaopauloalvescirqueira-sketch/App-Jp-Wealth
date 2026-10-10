@@ -2,7 +2,7 @@
 """Focal V11 views and commands, synthetic data and nominal network fixtures."""
 import argparse
 from functools import partial
-from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import hashlib,json,threading,traceback
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -36,24 +36,38 @@ def journey(page,out,label):
     assert actual(page)==before,'navigation changed operational state'
     assert page.evaluate('JPWForex.state.read().account') is None
     assert 'Não calculável' in page.locator('#forexV11Overview').inner_text()
-    goto(page,'params');form=page.locator('#fxAccountFacts')
-    form.locator('[name=accountIndex]').select_option('0')
-    fill(form,{'si':10000,'equity':9700,'capitalNominal':12000,'netCashflow':0,'source':'Synthetic broker statement','observedAt':'2026-09-14T12:00','reason':'Synthetic observation'})
+    # Current account preparation is explicit, independent of the onboarding choice.
+    page.evaluate("""() => {
+      const a={forexAccountId:'V11-SYNTHETIC',nome:'Conta V11 sintética',tipo:'MESTRE',platform:'MT5',platformLogin:'DEMO-000',platformCurrency:'USD'};
+      a.riskProfileAssignment=JPWForex.state.createRiskProfileAssignment(a,'base',{source:'Synthetic fixture',declaredBy:'Synthetic operator',reason:'Declared profile'});
+      S.accounts=[a];if(save()!==true)throw Error('Synthetic cadastro refused');
+      const period=JPWForex.state.recordAccountPeriod({accountId:a.forexAccountId,startedAt:'2026-09-01',currency:'USD',si:10000,openingBook:10000,source:'Synthetic period',activateCurrentPeriod:true},{reason:'Explicit synthetic period'});
+      if(!period.ok)throw Error(JSON.stringify(period));
+      window.__v11scope={accountId:a.forexAccountId,periodId:S.forex.accountContexts.accounts[a.forexAccountId].currentPeriodId};
+      if(!JPWForex.state.selectOperationalContext(__v11scope.accountId,__v11scope.periodId).ok)throw Error('Context refused');render();
+    }""")
+    goto(page,'forex-management-accounts')
+    page.locator('#fxAccountFacts').evaluate("e=>e.closest('details').open=true")
+    form=page.locator('#fxAccountFacts')
+    assert form.locator('[name=accountIndex]').is_disabled()
+    assert form.locator('[name=accountIndex]').input_value()=='0', 'Account observation is bound to the examined cadastro'
+    fill(form,{'equity':9700,'capitalNominal':12000,'netCashflow':0,'source':'Synthetic broker statement','observedAt':'2026-09-14T12:00','reason':'Synthetic observation'})
     form.get_by_role('button',name='Registrar observação',exact=True).click()
     assert form.locator('[role=status]').inner_text()=='Registro confirmado.'
     model=page.evaluate('JPWForex.state.read()');assert model['account']['si']==10000 and model['metrics']['drawdown']['value']==3 and model['accountPhase']['value']==2,model
     assert model['executionEligibility']['status']=='BLOCKED'
     page.evaluate('closeSettingsModal()');goto(page,'forex-operation')
+    assert page.evaluate("JPWForex.executionBoardUI.openTool('rootn')")
     page.locator('#ebInstrumentSelect').select_option('EURUSD')
     page.locator('[data-eb-observation]').click()
     market=page.locator('#ebObservationForm');fill(market,{'atrShort':2,'atrLong':1,'observedAt':'2026-09-14T12:00','source':'Synthetic H4 series','reason':'Synthetic volatility'})
     market.get_by_role('button',name='Salvar observação',exact=True).click()
     assert not market.is_visible()
-    assert page.evaluate("""() => {const c=JPWForex.state.recordContext(),m=JPWForex.state.instrumentContext({...c,instrumentId:'EURUSD'}).value;
+    assert page.evaluate("""() => {const c=JPWForex.state.operationalSelection(),m=JPWForex.state.instrumentContext({...c,instrumentId:'EURUSD'}).value;
       return JPWForex.engine.computeVRM({atrShort:m.atr.short,atrLong:m.atr.long}).value;}""")==2
     assert page.evaluate('JPWForex.state.read().metrics.vrm.value') is None, 'no declared genesis: never assign ATR implicitly'
     page.evaluate('closeSettingsModal()');goto(page,'forex-reserves')
-    form=page.locator('#fxReserveFacts');fill(form,{'capitalNominal':12000,'fcrConstituted':2600,'feoConstituted':3000,'sixMonthExpenseAmount':3000,'expensePeriod':'2026-03 to 2026-08','determinationReference':'Synthetic six-month approved expense ledger','fcrLiquidityDays':1,'feoLiquidityDays':2,'verifiedAt':'2026-09-14T12:00','source':'Synthetic reserve report','reason':'Synthetic reserve observation'})
+    form=page.locator('#fxReserveFacts');form.evaluate("e=>e.closest('details').open=true");fill(form,{'capitalNominal':12000,'fcrConstituted':2600,'feoConstituted':3000,'sixMonthExpenseAmount':3000,'expensePeriod':'2026-03 to 2026-08','determinationReference':'Synthetic six-month approved expense ledger','fcrLiquidityDays':1,'feoLiquidityDays':2,'verifiedAt':'2026-09-14T12:00','source':'Synthetic reserve report','reason':'Synthetic reserve observation'})
     for key in ['determinationRecorded','expensesApproved','verificationRecorded']:form.locator('[name='+key+']').check()
     form.get_by_role('button',name='Registrar reservas',exact=True).click()
     assert form.locator('[role=status]').inner_text()=='Registro confirmado.'
@@ -72,11 +86,13 @@ def journey(page,out,label):
     assert page.locator('#hdrEquity').inner_text()==page.evaluate('fmtForexMoney(JPWForex.state.read().account.equity,JPWForex.state.read().account,0)'), 'context bar lost the observed equity on navigation'
     page.screenshot(path=str(out/(label+'-overview.png')),full_page=True)
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),'page overflow'
-    goto(page,'params')
-    assert page.locator('#forexEnginePanel').is_visible()
+    goto(page,'forex-management-accounts')
+    page.locator('#fxAccountFacts').evaluate("e=>e.closest('details').open=true")
+    assert page.locator('#fxAccountFacts').is_visible()
     page.locator('#fxAccountFacts [name=si]').focus();page.keyboard.press('Tab')
     assert page.evaluate('document.activeElement.name')=='equity','account form keyboard order'
     page.screenshot(path=str(out/(label+'-engine.png')),full_page=True)
+    goto(page,'params')
     page.locator('#fxOperationBudget').evaluate("form=>form.closest('details').open=true")
     budget=page.locator('#fxOperationBudget')
     fill(budget,{'amount':500,'declaredBy':'Synthetic operator','declaredAt':'2026-09-14T12:00','source':'Synthetic declared budget','reason':'Budget before first software record'})
@@ -89,7 +105,8 @@ def journey(page,out,label):
     assert actual(page)==before_budget
     goto(page,'params')
     # Existing command seeds the same factual operation the grade form identifies.
-    result=page.evaluate("operationRecordOrder(0,0,{par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:0.01,entry:1.1,sl:1,tp:1.2,status:'Aberta',stopValidated:true,costs:0,costBasis:'SEPARATE_FROM_RESULT'},{reason:'Synthetic grade journey'})")
+    added=page.evaluate('operationAddDraft(0)');assert added['ok'],added
+    result=page.evaluate("operationRecordOrder(0,0,{id:'V11-GENESIS',brokerHash:'SYNTHETIC-GENESIS',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:0.01,entry:1.1,sl:1,tp:1.2,status:'Aberta',stopValidated:true,costs:0,costBasis:'SEPARATE_FROM_RESULT'},{reason:'Synthetic grade journey'})")
     assert result['ok'],result
     assert page.evaluate('JPWForex.state.read().metrics.vrm.value')==2
     page.locator('#fxGridFacts').evaluate("form=>form.closest('details').open=true")
@@ -99,19 +116,34 @@ def journey(page,out,label):
     assert page.evaluate('JPWForex.state.read().activeGridPhase.value')==2
     # A filled draft remains a draft across the actual save/load path.
     added=page.evaluate("operationAddDraft(0)");assert added['ok'],added
-    draft=page.evaluate("operationRecordOrder(0,1,{par:'EURUSD',tipo:'BUY',lote:0.01,entry:1.1,sl:1,status:''},{reason:'Synthetic recoverable draft'})")
+    draft=page.evaluate("operationRecordOrder(0,1,{id:'V11-DRAFT',brokerHash:'SYNTHETIC-DRAFT',par:'EURUSD',tipo:'BUY',lote:0.01,entry:1.1,sl:1,status:''},{reason:'Synthetic recoverable draft'})")
     assert draft['ok'],draft
-    assert page.evaluate("S.phases[0].orders[1].recordStatus")=='draft'
-    before_orders=page.evaluate('JSON.stringify(S.phases)')
+    assert page.evaluate("JPWForex.state.accountContext(__v11scope).value.phases[0].orders[1].recordStatus")=='draft'
+    before_orders=page.evaluate('JSON.stringify(JPWForex.state.accountContext(__v11scope).value.phases)')
     # Compare the operational envelope after the existing real reload path.
     before=actual(page);page.reload();fixture.wait_bootstrap(page);fixture.settle(page)
-    assert page.evaluate('JSON.stringify(S.phases)')==before_orders,'load promoted or altered a filled draft'
+    page.evaluate("window.__v11scope=JPWForex.state.operationalSelection()")
+    assert page.evaluate('JSON.stringify(JPWForex.state.accountContext(__v11scope).value.phases)')==before_orders,'load promoted or altered a filled draft'
     after=actual(page);assert json.loads(before['document'])['forex']==json.loads(after['document'])['forex'],'forex aggregate changed on reload'
     assert json.loads(before['stored'])['forex']==json.loads(after['stored'])['forex'],'stored forex aggregate changed on reload'
     # Currency is explicit; a new period must not borrow the old reserve balances.
+    before=actual(page)
     result=page.evaluate("""() => {
       const a=JPWForex.state.read().account;
       return JPWForex.state.recordAccountFacts({...a,accountIndex:0,currency:'BRL',usdToAccountRate:5,newPeriod:true},{reason:'Synthetic BRL period'});
+    }""")
+    assert result['ok'] is False and result['persistido'] is False,result
+    assert actual(page)==before,'active operation period replacement must preserve all facts'
+    # The current contract protects an active period. A different, explicitly
+    # registered BRL account proves unit isolation without bypassing that guard.
+    result=page.evaluate("""() => {
+      const a={forexAccountId:'V11-BRL',nome:'Conta BRL sintética',tipo:'PRÓPRIA',platform:'MT5',platformCurrency:'BRL'};
+      S.accounts.push(a);if(save()!==true)throw Error('BRL registration refused');
+      const p=JPWForex.state.recordAccountPeriod({accountId:a.forexAccountId,startedAt:'2026-10-01',currency:'BRL',si:50000,openingBook:50000,source:'Synthetic BRL period',activateCurrentPeriod:true},{reason:'Explicit BRL scope'});
+      if(!p.ok)return p;
+      const id=S.forex.accountContexts.accounts[a.forexAccountId].currentPeriodId;
+      const selected=JPWForex.state.selectOperationalContext(a.forexAccountId,id);if(!selected.ok)return selected;
+      return JPWForex.state.recordAccountFacts({accountIndex:1,accountId:a.forexAccountId,currency:'BRL',si:50000,equity:48500,capitalNominal:60000,netCashflow:0,usdToAccountRate:5,observedAt:'2026-10-01T12:00:00Z',source:'Synthetic BRL observation'},{reason:'Independent BRL observation'});
     }""")
     assert result['ok'],result
     page.evaluate('render()');goto(page,'forex-overview')

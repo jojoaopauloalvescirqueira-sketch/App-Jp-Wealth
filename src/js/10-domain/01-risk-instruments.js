@@ -58,25 +58,31 @@ function getSavedOnboardingStepStatus(step){
       return (String(ob.operador||'').trim() && String(ob.supervisor||'').trim() && (S.params.saldoIni||0)>0 && String(S.params.inicio||'').trim())?'complete':'pending';
     case 'instit':
       if(!ob.corretora) return 'pending';
-      if(!(String(ob.brokerLogin||'').trim() && String(ob.investorPassword||'').trim() && String(ob.brokerServer||'').trim() && String(ob.plataforma||'').trim() && String(ob.alavCorretora||'').trim())) return 'warning';
+      if(!(String(ob.brokerLogin||'').trim() && String(ob.brokerServer||'').trim() && String(ob.plataforma||'').trim() && String(ob.alavCorretora||'').trim())) return 'warning';
       if(isProp && !(String(ob.propDailyDrawdown||'').trim() && String(ob.propMaxDrawdown||'').trim() && ob.restrictiveRuleAccepted)) return 'warning';
       return 'complete';
     case 'risk':
-      return (S.period&&S.period.profile)?'complete':'pending';
+      return (S.period&&S.period.profile)?(getActiveRiskProfile(S.period.profile).status==='PENDING'?'warning':'complete'):'pending';
     case 'reserves': {
-      if(!(String(ob.reserveFcrCurrent||'').trim() && String(ob.reserveMonthlyExpenses||'').trim() && String(ob.reserveFeoCurrent||'').trim() && ob.reserveSegregationAccepted)) return 'pending';
-      const fcrBad=ob.reserveFcrStatus && ob.reserveFcrStatus!=='Regular';
-      const feoBad=ob.reserveFeoStatus && ob.reserveFeoStatus!=='Regular';
-      if((fcrBad||feoBad) && !ob.reserveDeficitAccepted) return 'critical';
-      return (fcrBad||feoBad)?'warning':'complete';
+      const amount=value=>{const raw=String(value??'').trim().replace(',','.');const n=Number(raw);return raw&&Number.isFinite(n)&&n>=0?n:null;};
+      const fcr=amount(ob.reserveFcrCurrent),feo=amount(ob.reserveFeoCurrent);
+      const fcrRequired=amount(ob.reserveFcrRequired),feoRequired=amount(ob.reserveFeoRequired);
+      if(fcr===null||feo===null||amount(ob.reserveMonthlyExpenses)===null||!ob.reserveSegregationAccepted)return 'pending';
+      const deficit=(fcrRequired!==null&&fcr<fcrRequired)||(feoRequired!==null&&feo<feoRequired);
+      if(deficit&&!ob.reserveDeficitAccepted)return 'critical';
+      return deficit||fcrRequired===null||feoRequired===null?'warning':'complete';
     }
     case 'cash':
       if(!(ob.centralCashStatus && ob.centralCashCustody && ob.fcrLiquidity && ob.feoLiquidity && ob.cashLedgerStatus && ob.centralCashPolicyAccepted)) return 'pending';
+      if(ob.centralCashCustody==='Outra'&&!String(ob.centralCashCustodyOther||'').trim())return 'pending';
+      if((['D+2','Acima de D+2','Não definido'].includes(ob.fcrLiquidity)||['Acima de D+2','Não definido'].includes(ob.feoLiquidity))&&!String(ob.centralCashNotes||'').trim())return 'pending';
       if(ob.centralCashStatus==='Não.') return ob.centralCashNoAccepted?'warning':'critical';
       if(ob.centralCashStatus==='Em implantação.' || ob.cashLedgerStatus==='Registro parcial' || ob.cashLedgerStatus==='Ainda não existe registro formal') return 'warning';
       return 'complete';
     case 'protect':
       if(!(ob.epStatus && ob.epRestrictiveAccepted)) return 'pending';
+      if(ob.epStatus==='Não se aplica a esta conta.'&&!String(ob.epNotes||'').trim())return 'pending';
+      if(isProp&&(!ob.epPropDailyEnabled||(ob.epPropDailyEnabled==='Sim.'&&(!String(ob.epDailyLimit||'').trim()||!ob.epPropDailyBase))))return 'pending';
       if(ob.epStatus==='Ainda vou configurar antes de iniciar o período.') return 'critical';
       if(ob.epStatus==='Não vou utilizar.') return ob.epNoConfigAccepted?'warning':'critical';
       if(ob.epStatus==='Sim, vou utilizar.' && (!ob.epPlatform || ob.epPlatform==='Nenhuma.' || (ob.epPlatform==='Outra.'&&!String(ob.epPlatformOther||'').trim()))) return 'warning';
@@ -86,7 +92,7 @@ function getSavedOnboardingStepStatus(step){
       // não muda o status (o cartão da Central acompanha o estado real do acesso).
       return (S.dataGovernance&&S.dataGovernance.responsibility&&S.dataGovernance.responsibility.accepted)?'complete':'pending';
     case 'consent':
-      return (ob.consentAccepted && ob.summaryAccepted && String(ob.consentOperator||ob.operador||'').trim())?'complete':'pending';
+      return (ob.consentAccepted && ob.consentVersion===JPW_NORMATIVE_CONSENT_VERSION && ob.summaryAccepted && String(ob.consentOperator||ob.operador||'').trim())?'complete':'pending';
   }
   return 'pending';
 }
@@ -136,7 +142,7 @@ function renderExecutionOnboardingWarning(){
   if(st.complete){ el.classList.remove('show'); return; }
   el.classList.add('show');
   const txt=$('execOnboardingGovText');
-  if(txt) txt.textContent=`O Formulário de Início possui ${st.incompleteSteps.length} seção(ões) pendente(s). Revise antes de considerar o período plenamente autorizado.`;
+  if(txt) txt.textContent=`O Formulário de Início possui ${st.incompleteSteps.length} seção(ões) pendente(s). Revise a documentação e as pendências; cadastro completo não autoriza operação.`;
   const btn=$('execOnboardingGovBtn');
   if(btn) btn.onclick=openFirstIncompleteOnboarding;
 }

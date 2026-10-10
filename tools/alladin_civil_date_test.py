@@ -102,7 +102,7 @@ def main():
                 require(observed["idDelta"] == 1 and observed["saveDelta"] == 1, str(observed))
                 require(observed["diskEqualsMemory"] and observed["balance"] == (0 if operation == "reverse" else 100), str(observed))
             else:
-                require(r == {"ok": False, "persistido": False, "erro": "ALD_EFFECTIVE_AT_INVALIDA"}, str(observed))
+                require(r == {"ok": False, "persistido": False, "status": "REFUSED", "erro": "ALD_EFFECTIVE_AT_INVALIDA"}, str(observed))
                 require(observed["unchanged"] and observed["diskUnchanged"], str(observed))
                 require(observed["idDelta"] == observed["saveDelta"] == observed["countDelta"] == 0, str(observed))
             return observed
@@ -181,7 +181,7 @@ def main():
             errors = []
             try:
                 bootstrap.install_bootstrap(ctx)
-                ctx.add_init_script("window.__onbShown=true;")
+                ctx.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
                 p = ctx.new_page()
                 p.on("pageerror", lambda error: errors.append(str(error)))
                 p.goto(url, wait_until="load")
@@ -250,7 +250,7 @@ def main():
             errors = []
             try:
                 bootstrap.install_bootstrap(ctx)
-                ctx.add_init_script("window.__onbShown=true;")
+                ctx.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
                 p = ctx.new_page()
                 p.on("pageerror", lambda error: errors.append(str(error)))
                 p.goto(url, wait_until="load")

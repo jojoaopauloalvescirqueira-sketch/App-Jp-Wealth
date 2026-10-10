@@ -16,7 +16,7 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 from dashboard_macro_test import launch_browser
 from dashboard_forex_relocation_test import serve
 from navigation_layout_choice_test import boot, clean, finish_context, go, raw, ready, settle
-from forex_execution_table_test import SEED as BOARD_SEED, HASH, field, order, set_field
+from forex_execution_table_test import SEED as BOARD_SEED, HASH, field, order, set_field, prepare_drafts
 from forex_accounts_workspace_test import SEED as ACCOUNTS_SEED
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -220,7 +220,7 @@ def run_drafts(browser,url,evidence,capture,artifacts):
     """Actual unchanged domain guards, with synthetic unsaved UI inputs."""
     context,page,observed=boot(browser,url,'sidebar')
     try:
-        page.evaluate(BOARD_SEED);settle(page)
+        page.evaluate(BOARD_SEED);settle(page);prepare_drafts(page)
         set_field(page,'id','SIDEBAR-DRAFT')
         assert page.evaluate('JPWForex.executionBoardUI.hasDrafts()'), 'fixture did not create a real draft'
         instrument(page);before=snapshot(page)
@@ -264,7 +264,7 @@ def run_drafts(browser,url,evidence,capture,artifacts):
     finally:finish_context(context)
     context,page,observed=boot(browser,url,'sidebar',rail='collapsed')
     try:
-        page.evaluate(BOARD_SEED);settle(page)
+        page.evaluate(BOARD_SEED);settle(page);prepare_drafts(page)
         set_field(page,'id','SIDEBAR-COLLAPSED-DRAFT')
         assert page.evaluate('JPWForex.executionBoardUI.hasDrafts()')
         instrument(page);before=snapshot(page)
@@ -399,11 +399,13 @@ def run_modals(browser,url,evidence,capture,artifacts):
         # Only the explicit layout actions above may change their preference.
         assert {k:v for k,v in raw(page).items() if k!='jpw_nav_layout'}=={k:v for k,v in saved.items() if k!='jpw_nav_layout'}
         page.locator('#toolsNavTrigger').hover();page.wait_for_timeout(100)
-        page.locator('#headerNotesBtn').click();page.locator('#mvpNotesDrawer').wait_for(state='visible')
+        page.evaluate("openSettingsModal('interface')");page.locator('#mvpNotesOpenFromSettingsBtn').click();page.locator('#mvpNotesDrawer').wait_for(state='visible')
         page.wait_for_timeout(450)
         assert page.get_attribute('html','data-sidebar-overlay')!='true','pending hover survived Notes'
         assert page.locator('#nav').evaluate('e=>e.inert')
         page.locator('#mvpNotesCloseBtn').click();settle(page)
+        assert page.locator('#mvpNotesOpenFromSettingsBtn').evaluate('e=>e===document.activeElement')
+        page.locator('#settingsCloseBtn').click();settle(page)
         assert not page.locator('#nav').evaluate('e=>e.inert')
         page.locator('#brandHomeBtn').focus();page.locator('#toolsNavTrigger').hover();page.wait_for_timeout(100)
         modal_before=snapshot(page)

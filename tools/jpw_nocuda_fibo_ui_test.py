@@ -26,6 +26,7 @@ SHIM = r'''
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iomanip>
 using string=std::string; using color=int; using uint=unsigned int;
 using ENUM_OBJECT=int; using ENUM_OBJECT_PROPERTY_STRING=int;
 constexpr int OBJ_LABEL=1,OBJ_EDIT=2,OBJ_BUTTON=3,OBJ_RECTANGLE_LABEL=4,OBJ_BITMAP_LABEL=5;
@@ -36,23 +37,41 @@ constexpr int OBJPROP_TYPE=0,OBJPROP_CORNER=1,OBJPROP_XDISTANCE=2,OBJPROP_YDISTA
  OBJPROP_TEXT=17,OBJPROP_TOOLTIP=18,OBJPROP_BMPFILE=19;
 constexpr int CORNER_LEFT_UPPER=0,ANCHOR_LEFT_UPPER=0,CHART_COLOR_BACKGROUND=1,
  CHART_WIDTH_IN_PIXELS=2,CHART_HEIGHT_IN_PIXELS=3,CHARTEVENT_OBJECT_CLICK=1,CHARTEVENT_MOUSE_MOVE=2;
-constexpr int OBJPROP_BACK=20,TERMINAL_SCREEN_DPI=1;
+constexpr int OBJPROP_BACK=20,OBJPROP_SELECTED=21,TERMINAL_SCREEN_DPI=1;
 struct Object { int type=0;std::map<int,long> number;std::map<int,string> text; };
 std::map<string,Object> objects;
 int chart_width=1440,chart_height=1000,dpi=100,measured_font=11,pref_writes=0;
 int background=0xffffff;
 long TerminalInfoInteger(int){return dpi*96/100;}
+
+double MathRound(double value){return std::round(value);}
+double MathSqrt(double value){return std::sqrt(value);}
+uint StringGetCharacter(const string&value,int index){return (unsigned char)value.at(index);}
+uint ColorToARGB(color value,int alpha){return ((uint)alpha<<24)|(uint(value)&0xffffff);}
+constexpr int COLOR_FORMAT_ARGB_NORMALIZE=1;
+template<class T>void ArrayInitialize(std::vector<T>&values,int value){std::fill(values.begin(),values.end(),value);}
+std::map<string,std::vector<uint>> icon_resources;
+bool ResourceCreate(const string&name,const std::vector<uint>&pixels,int width,int height,int,int,int,int){
+ if(width<=0||height<=0||pixels.size()!=size_t(width*height))return false;
+ icon_resources[name]=pixels;return true;
+}
+bool ResourceFree(const string&name){return icon_resources.erase(name)>0;}
+
 double MathMax(double a,double b){return std::max(a,b);}
 double MathMin(double a,double b){return std::min(a,b);}
 template<class T>int ArraySize(const std::vector<T>&a){return (int)a.size();}
 template<class T>int ArrayResize(std::vector<T>&a,int n){a.resize(n);return n;}
 int StringLen(const string&s){return (int)s.size();}
-int StringFind(const string&s,const string&n){auto p=s.find(n);return p==string::npos?-1:(int)p;}
+int StringFind(const string&s,const string&n,int start=0){auto p=s.find(n,start);return p==string::npos?-1:(int)p;}
 string StringSubstr(const string&s,int p,int count=-1){return p>(int)s.size()?"":s.substr(p,count<0?string::npos:(size_t)count);}
 string IntegerToString(long n){return std::to_string(n);}
+long ChartID(){return 123456;}
+string StringFormat(const string&,long id){return "JPW_LEV_"+std::to_string(id)+"_HUD_BG";}
+string DoubleToString(double value,int digits){std::ostringstream out;out<<std::fixed<<std::setprecision(digits)<<value;return out.str();}
 long StringToInteger(const string&s){try{return std::stol(s);}catch(...){return 0;}}
 int StringSplit(const string&s,char delimiter,std::vector<string>&a){a.clear();std::stringstream ss(s);string v;while(std::getline(ss,v,delimiter))a.push_back(v);return (int)a.size();}
-bool TextSetFont(const string&,int size){measured_font=std::abs(size)/10;return true;}
+constexpr int FW_NORMAL=0;
+bool TextSetFont(const string&,int size,int=0){measured_font=std::abs(size)/10;return true;}
 bool TextGetSize(const string&s,uint&w,uint&h){int chars=0;for(unsigned char c:s)if((c&0xc0)!=0x80)chars++;h=(uint)((measured_font*4*dpi+299)/300);w=(uint)(chars*h*.48);return true;}
 long ChartGetInteger(int,int p){return p==CHART_WIDTH_IN_PIXELS?chart_width:p==CHART_HEIGHT_IN_PIXELS?chart_height:background;}
 int ObjectFind(int,const string&n){return objects.count(n)?1:-1;}
@@ -60,8 +79,9 @@ bool ObjectCreate(int,const string&n,int type,int,int,int){objects[n]=Object{};o
 bool ObjectDelete(int,const string&n){return objects.erase(n)>0;}
 long ObjectGetInteger(int,const string&n,int p){auto i=objects.find(n);if(i==objects.end())return 0;return p==OBJPROP_TYPE?i->second.type:i->second.number[p];}
 string ObjectGetString(int,const string&n,int p){auto i=objects.find(n);return i==objects.end()?"":i->second.text[p];}
-bool ObjectSetInteger(int,const string&n,int p,long v){objects[n].number[p]=v;return true;}
-bool ObjectSetString(int,const string&n,int p,const string&v){objects[n].text[p]=v;if(n=="JPW_NOCUDA_FIBO_VISUAL_V1"&&p==OBJPROP_TOOLTIP)pref_writes++;return true;}
+void native_text_geometry(Object& obj){if(obj.type!=OBJ_LABEL)return;int old=measured_font;measured_font=obj.number[OBJPROP_FONTSIZE];uint w=0,h=0;TextGetSize(obj.text[OBJPROP_TEXT],w,h);obj.number[OBJPROP_XSIZE]=w;obj.number[OBJPROP_YSIZE]=h;measured_font=old;}
+bool ObjectSetInteger(int,const string&n,int p,long v){objects[n].number[p]=v;if(p==OBJPROP_FONTSIZE)native_text_geometry(objects[n]);return true;}
+bool ObjectSetString(int,const string&n,int p,const string&v){objects[n].text[p]=v;if(p==OBJPROP_TEXT)native_text_geometry(objects[n]);if(p==OBJPROP_BMPFILE&&icon_resources.count(v)){long size=long(std::sqrt(icon_resources[v].size()));objects[n].number[OBJPROP_XSIZE]=size;objects[n].number[OBJPROP_YSIZE]=size;}if(n=="JPW_NOCUDA_FIBO_VISUAL_V1"&&p==OBJPROP_TOOLTIP)pref_writes++;return true;}
 int ObjectsTotal(int,int,int){return (int)objects.size();}
 string ObjectName(int,int i,int,int){auto p=objects.begin();std::advance(p,i);return p->first;}
 '''
@@ -172,10 +192,10 @@ int main(){
  int cases=0;
  for(int font=9;font<=24;font++)for(int scale:{100,125,150,200})for(int width:{320,390,800,1440})for(int height:{420,720,1080})for(int theme:{0,1}){
   reset(width,height,font,scale);background=theme?0x171b21:0xffffff;v=fixture();v.tab=2;JPWNoCudaFiboUIDraw(P,v);cases++;
-  check(inside(objects[name("FC_HEADER_CLOSE")])&&inside(objects[name("FC_CLOSE")]),"pinned close controls stay within responsive window");
+  check(inside(objects[name("FC_HEADER_CLOSE")])&&(!g_fc_layout.usable||inside(objects[name("FC_CLOSE")])),"pinned close controls stay within responsive window; infeasible shell keeps header hatch");
   check(contrast(g_fc_ink,g_fc_surface)>=4.5&&contrast(g_fc_muted,g_fc_surface)>=4.5,"text theme contrast meets 4.5 to 1 threshold");
   check(contrast(0xffffff,g_fc_accent)>=4.5,"active button uses readable white ink in both themes");
-  check(ObjectGetInteger(0,name("FC_RESIZE"),OBJPROP_YDISTANCE)>=ObjectGetInteger(0,name("FC_CLOSE"),OBJPROP_YDISTANCE)+g_fc_layout.button,"resize handle does not overlap footer actions");
+  if(g_fc_layout.usable)check(ObjectFind(0,name("FC_RESIZE"))>=0&&ObjectFind(0,name("FC_CLOSE"))>=0&&ObjectGetInteger(0,name("FC_RESIZE"),OBJPROP_YDISTANCE)>=ObjectGetInteger(0,name("FC_CLOSE"),OBJPROP_YDISTANCE)+g_fc_layout.button,"resize handle does not overlap footer actions in a usable shell");
   if(!g_fc_layout.usable){constrained++;check(ObjectFind(0,name("UNUSABLE"))>=0,"infeasible viewport is explicitly unavailable, never counted as functional success");continue;}
   usable++;bool reached[5]={false,false,false,false,false};bool date_seen=false,query_seen=false;
   for(int at=0;at<=g_fc_scroll_max;at++){
@@ -213,6 +233,9 @@ def main():
     source = source.replace('JPWNoCudaFiboUIItem sources[];', 'std::vector<JPWNoCudaFiboUIItem> sources;').replace('JPWNoCudaFiboUIItem records[];', 'std::vector<JPWNoCudaFiboUIItem> records;')
     source = source.replace('string g_fc_keep[],g_fc_actions[],g_fc_action_ids[];', 'std::vector<string> g_fc_keep,g_fc_actions,g_fc_action_ids;')
     source = source.replace('string f[];', 'std::vector<string> f;')
+    source = re.sub(r'\b(uint|string) &(\w+)\[\]',r'std::vector<\1> &\2',source)
+    source = re.sub(r'\b(uint|string) (\w+)\[\];',r'std::vector<\1> \2;',source)
+    source = source.replace('int JPWUIDesignNavColumns(std::vector<string> &labels,','template<class Labels> int JPWUIDesignNavColumns(Labels &labels,')
     with tempfile.TemporaryDirectory(prefix='jpw-nocuda-fibo-ui-') as folder:
         path = Path(folder)
         (path / 'ui.cpp').write_text(SHIM + source + MAIN)

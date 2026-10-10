@@ -53,6 +53,7 @@ const PRECACHE_URLS = [
   './src/js/20-ui/04-operational-clearance.js', './src/js/20-ui/05-execution-clearance.js',
   './src/js/10-domain/03-phase-transitions.js', './src/js/10-domain/04-stop-statistics.js',
   './src/js/20-ui/06-chart-terminal-chrome.js', './src/js/20-ui/07-chart-crosshair-tooltip.js',
+  './src/js/20-ui/08-scenario-fan.js',
   './src/js/20-ui/08-input-bindings.js', './src/js/30-accounting/01-daily-ledger.js',
   './src/js/10-domain/05-brokers-prop-firms.js', './src/js/30-accounting/02-accounting-engine.js',
   './src/js/30-accounting/03-mei-jp.js', './src/js/30-accounting/04-patrimonial-simulation.js',

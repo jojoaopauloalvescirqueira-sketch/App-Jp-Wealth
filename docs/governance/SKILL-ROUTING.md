@@ -67,3 +67,9 @@ resolvem para a mesma skill dentro desta raiz. Uso explícito: `$jpw-design`
 quando oferecido pelo cliente, ou leitura do caminho acima. Arquivo/link não
 prova carregamento automático nem compatibilidade entre clientes. Contrato:
 [X1-DESIGN-INSTALL-20260910](../work/X1-DESIGN-INSTALL-20260910.md).
+
+Recorte de gráficos de cenários: após a X1, abrir o
+[catálogo JPW Scenario Fan](../design/SCENARIO-FAN.md), relacionado ao
+Planejamento FX (`JPW-FEAT-0011`) no Atlas. Ele localiza o componente e seus
+limites; não aciona novas fontes financeiras, permissões, dependências ou gates.
+Sua adoção focal está no CHG-SCENARIO-FAN-CONTROL, sem alterar a filosofia X1.

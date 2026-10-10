@@ -85,6 +85,7 @@ string TerminalInfoString(int){return "SYNTHETIC_INSTALLATION";}
 unsigned long GetMicrosecondCount(){static unsigned long n=10000;return ++n;}
 bool ChartSetInteger(long,int,long){return true;}
 int CopyRates(const string&,int,int shift,int count,std::vector<MqlRates>&out){if(flip_feed_during_rates){synthetic_feed="SYNTHETIC_RACE_FEED";flip_feed_during_rates=false;}if(shift<0||count!=1||shift>=(int)times.size())return 0;out.resize(1);out[0]={times[times.size()-1-shift],1.1,1.3,1.0,1.2};return 1;}
+void JPWNoCudaReadJustification(){}
 void JPWNoCudaUIClear(const string&){}
 bool JPWUIAcquire(const string&p){ui_owner=p;return true;}
 bool JPWUIOwns(const string&p){return ui_owner==p;}
@@ -145,7 +146,8 @@ JPWNCFAction("FC_SOURCE_0");JPWNCFAction("FC_SYNC_RESUME");NCFCheck(g_ncf_link,"
 times[3]++;elapsed=40000;JPWNCFTimer();NCFCheck(!g_ncf_sync.armed&&g_ncf_head.revision==3,"history correction suspends without new revision");times=seed.opens;
 JPWNCFAction("FC_SYNC_RESUME");NCFCheck(!g_ncf_sync.armed,"resume alone cannot accept corrected history");
 objects["native"].ints[{OBJPROP_TIMEFRAMES,0}]=2048;
-JPWNCFAction("FC_REFRESH_SOURCE");NCFCheck(g_ncf_sync.armed&&g_ncf_head.revision==4,"explicit history revision accepted");
+JPWNCFAction("FC_REFRESH_SOURCE");NCFCheck(!g_ncf_sync.armed&&g_ncf_head.paused==1&&g_ncf_head.revision==4,"explicit history revision accepted while preserving paused follow mode");
+JPWNCFAction("FC_SYNC_RESUME");NCFCheck(g_ncf_sync.armed&&g_ncf_head.revision==4,"explicit resume follows the accepted history without another revision");
 NCFCheck(g_ncf_original_mask==2048&&g_ncf_saved.timeframes==2048,"explicit history acceptance updates restore mask");
 JPWNCFAction("FC_SOURCE_HIDE");NCFCheck(g_ncf_hidden&&objects["native"].ints[{OBJPROP_TIMEFRAMES,0}]==0,"history revision source can be hidden");
 JPWNCFAction("FC_SOURCE_SHOW");NCFCheck(!g_ncf_hidden&&objects["native"].ints[{OBJPROP_TIMEFRAMES,0}]==2048,"show after history revision restores its updated visibility");
@@ -231,7 +233,7 @@ def main():
     shim=ct.SHIM.replace('string StringFormat(const char* fmt,double value)','template<class T> string StringFormat(const char* fmt,T value)')
     termshim=term.SHIM.replace('void ResetLastError(){error=0;}int GetLastError(){return error;}','').replace('int error=0,period=60,copy_count=0,mode=0;','int period=60,copy_count=0,mode=0;').replace('error=1','last_error=1')
     termshim=termshim.replace('int period=60,copy_count=0,mode=0;', 'int period=60,copy_count=0,mode=0;string synthetic_feed="TEST_ONLY";bool flip_feed_during_time=false,flip_feed_during_rates=false;').replace('std::vector<long>&out){copy_count++;', 'std::vector<long>&out){if(flip_feed_during_time){synthetic_feed="SYNTHETIC_RACE_FEED";flip_feed_during_time=false;}copy_count++;')
-    termshim=termshim.replace('OBJPROP_LEVELWIDTH};','OBJPROP_LEVELWIDTH,OBJPROP_XDISTANCE,OBJPROP_YDISTANCE};').replace('OBJPROP_LEVELTEXT};','OBJPROP_LEVELTEXT,OBJPROP_TOOLTIP};')
+    termshim=termshim.replace('OBJPROP_LEVELWIDTH};','OBJPROP_LEVELWIDTH,OBJPROP_XDISTANCE,OBJPROP_YDISTANCE,OBJPROP_SELECTED};').replace('OBJPROP_LEVELTEXT};','OBJPROP_LEVELTEXT,OBJPROP_TOOLTIP};')
     termshim=termshim.replace('long t1,double p1,long t2,double p2','long t1=0,double p1=0,long t2=0,double p2=0')
     core=db.transform(ct.CORE.read_text());store=db.transform(db.STORE.read_text());terminal=(INC/'JPW_NoCuda_Fibo_Terminal.mqh').read_text()
     terminal=re.sub(r'^#include.*\n','',terminal,flags=re.M).replace('string &names[]','std::vector<string> &names').replace('datetime times[];','std::vector<datetime> times;').replace('datetime verify[];','std::vector<datetime> verify;')
@@ -247,7 +249,7 @@ def main():
     legacy_defs=db.transform(legacy[legacy.index('struct JPWNoCudaRecord'):legacy.index('bool JPWNoCudaStoreNewStudyId')])
     legacy_defs=re.sub(r'uchar (\w+)\[\];',r'std::vector<uchar> \1;',legacy_defs)
     dbshim=db.DBSHIM.replace('int payload_selects=0,catalog_reads=0;', 'int payload_selects=0,catalog_reads=0,catalog_page_queries=0;').replace('int DatabasePrepare(int h,const string&q){', 'int DatabasePrepare(int h,const string&q){if(q.rfind("SELECT c.kind",0)==0)catalog_page_queries++;')
-    code=shim+dbshim+termshim+core+store+db.DBREAD+terminal+types+UISEAMS+sync+controller+legacy_defs+CONTEXTSEAMS+clear_anchors+context_reset+fixture+TEST
+    code=shim+dbshim+termshim+'\nconstexpr int OBJ_BUTTON=100;\n'+core+store+db.DBREAD+terminal+types+UISEAMS+sync+controller+legacy_defs+CONTEXTSEAMS+clear_anchors+context_reset+fixture+TEST
     with tempfile.TemporaryDirectory(prefix='jpw-ncf-controller-')as temp:
         src=Path(temp)/'controller.cpp';src.write_text(code);exe=Path(temp)/'controller';flags=['-lsqlite3']+([]if sys.platform=='darwin'else['-lcrypto'])
         compiled=subprocess.run([compiler,'-std=c++17','-Wall','-Wextra','-Werror','-Wno-deprecated-declarations',str(src),'-o',str(exe),*flags],text=True,capture_output=True)

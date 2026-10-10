@@ -310,7 +310,7 @@ def run_lifecycle(browser, url, evidence, baseline_url):
     context, page, observed = boot(browser, url)
     try:
         output = operational_cases(page)
-        assert [entry["clearance"]["status"] for entry in output] == ["pending", "clear", "blocked", "blocked"]
+        assert [entry["clearance"]["status"] for entry in output] == ["blocked"]*4
         if baseline_url:
             bc, bp, be = boot(browser, baseline_url)
             try:
@@ -326,11 +326,17 @@ def run_lifecycle(browser, url, evidence, baseline_url):
         # These inputs are existing immediate-edit controls. Exercise the actual
         # input handler before taking the state snapshot; navigation must not
         # issue an additional write or replace those nodes.
-        page.locator("#iAtr55").evaluate("el=>{const details=el.closest('details');if(details)details.open=true}")
-        page.locator("#iAtr55").fill("0.00777")
-        assert page.evaluate("S.atr55") == 0.00777
+        # The former global ATR control is retained hidden/inert. Use the
+        # canonical account/period observation before the no-write boundary.
+        from forex_execution_table_test import SEED
+        scope=page.evaluate(SEED)
+        page.evaluate("""scope=>{const old=JPWForex.state.instrumentContext({...scope,instrumentId:'EURUSD'}).value;
+          const result=JPWForex.state.recordInstrumentContext({...scope,instrumentId:'EURUSD',expectedRevision:old.revision,componentChanges:{atr:{short:.00777,long:.001,timeframe:'H4',unit:'PRICE',source:'Synthetic lifecycle ATR',observedAt:'2026-09-23T12:00:00Z'}}},{reason:'Synthetic lifecycle observation',expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:old.revision});
+          if(!result.ok)throw Error(JSON.stringify(result));render();JPWNavigation.navigate('motor');}""",scope)
+        assert page.locator('#ebToolMotor').is_visible()
+        page.locator('#ebToolsBody').evaluate('el=>el.dataset.syntheticLifecycle="preserved"')
         page.evaluate("""() => {
-          window.__sidebarNodeSentinels=['execClearanceCard','phaseContainer','iAtr55','motorWidgetGrid','fxOverviewWidgets']
+          window.__sidebarNodeSentinels=['execClearanceCard','phaseContainer','ebToolsBody','motorWidgetGrid','fxOverviewWidgets']
             .map(id=>document.getElementById(id));
           window.__sidebarStorageOps=[];
         }""")
@@ -345,18 +351,18 @@ def run_lifecycle(browser, url, evidence, baseline_url):
         assert raw_storage(page) == initial_raw
         assert page.evaluate("window.__sidebarStorageOps") == []
         assert page.evaluate("window.__sidebarNodeSentinels.every(el=>el.isConnected && document.getElementById(el.id)===el)")
-        assert page.locator("#iAtr55").input_value() == "0.00777"
-        assert page.locator("#iAtr55").evaluate("el=>el.closest('details').open")
+        assert page.locator('#ebToolsBody').get_attribute('data-synthetic-lifecycle')=='preserved'
+        assert page.evaluate("JPWForex.state.instrumentContext({...JPWForex.state.operationalSelection(),instrumentId:'EURUSD'}).value.atr.short") == .00777
         assert page.evaluate("""() => {const ids=[...document.querySelectorAll('[id]')].map(e=>e.id);
           return ids.filter((id,index)=>ids.indexOf(id)!==index)}""") == []
         assert page.locator("#gdDashMain > [data-layout-card]").count() == 2
         assert page.locator("#fxOverviewWidgets > [data-layout-card]").count() == 4
-        expected_contexts = {"motor": "forex-management-accounts", "forex-planning": "forex-planning",
+        expected_contexts = { "forex-planning": "forex-planning",
                              "pivots": "research-forex"}
-        for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Dashboard"]),
-                             ("forex-operation", ["Forex", "Execution Board"]),
+        for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Desempenho"]),
+                             ("forex-operation", ["Forex", "Operação"]),
                              ("forex-reconciliation", ["Forex", "Contabilidade"]), ("forex-planning", ["Forex", "Planejamento"]),
-                             ("motor", ["Forex", "Contas e Período", "Fator de Correção"]), ("research-stocks-br", ["Research", "Ações"]),
+                             ("motor", ["Forex", "Operação"]), ("research-stocks-br", ["Research", "Ações"]),
                              ("pivots", ["Research", "Forex", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:
             go(page, route)
             location = page.locator("#shellLocation").inner_text()
@@ -463,7 +469,16 @@ def run_visual(browser, url, evidence, capture, artifacts):
                 for route, label in [("dashboard", "dashboard"), ("forex-overview", "forex")]:
                     go(page, route)
                     assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+1"), (width, theme, route, "overflow")
-                    assert page.locator("#shellLocation").is_visible()
+                    # Forex mobile removes the duplicate breadcrumb; the page title
+                    # and the real Areas control still expose the current workspace.
+                    if width <= 900 and route == "forex-overview":
+                        assert not page.locator("#shellLocation").is_visible()
+                        assert page.locator("#fxconsolidated .fxc-toolbar h1").is_visible()
+                        assert page.locator("#fxconsolidated .fxc-toolbar h1").inner_text() == "Desempenho"
+                        assert page.locator("#forexAreasToggle").is_visible()
+                        assert "Forex" in page.locator("#shellLocation").inner_text()
+                    else:
+                        assert page.locator("#shellLocation").is_visible()
                     if width > 900:
                         assert page.locator("#appSidebar").is_visible()
                         assert page.evaluate("appSidebar.getBoundingClientRect().right<=appMain.getBoundingClientRect().left+1")

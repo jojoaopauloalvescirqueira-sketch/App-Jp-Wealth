@@ -64,6 +64,12 @@ o comportamento atual/desejado, consumidores, limites e prova necessária.
 O relatório anterior de X1 pode sustentar compatibilidade na revisão examinada;
 não prova correção atual, carregamento desta skill ou aceite humano.
 
+Para trajetórias patrimoniais e comparação visual de cenários, consulte o
+[catálogo JPW Scenario Fan](../../docs/design/SCENARIO-FAN.md) e depois o adapter
+do Planejamento. É um componente de apresentação com séries preparadas;
+faixa entre hipóteses não é intervalo probabilístico. A referência não amplia
+autoridade, não substitui os motores e não comprova validação do candidate.
+
 ## Responsabilidades e execução
 
 - X1 responde pela filosofia, interação, hierarquia e integridade visual do

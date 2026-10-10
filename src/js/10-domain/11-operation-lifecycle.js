@@ -111,7 +111,7 @@ function operationVoidOrder(pi,oi,reason){
     return JPWForex.state.deleteAccountOrderDraft({...selected,pi,oi},{reason:reason||'Excluir rascunho',
       expectedEpoch:jpWealthPersistenceEpoch()});
   if(!String(reason||'').trim())return {ok:false,persistido:false,error:'Informe o motivo da anulação.'};
-  return operationRecordOrder(pi,oi,{recordStatus:'voided'},{reason,...selected});
+  return operationRecordOrder(pi,oi,{recordStatus:'voided'},{...selected,reason});
 }
 function operationRecordFeedback(result){
   if(result.ok)return true;

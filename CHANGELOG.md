@@ -1,3 +1,14 @@
+# Candidate local 2026-10-08 — trajetórias patrimoniais
+
+- JPW Scenario Fan local em SVG: realizado, PLAN, até dois cenários salvos e baseline opcional, sem escrita durante consulta.
+- Comparação independente da edição mensal, com lacunas e conversões próprias preservadas; faixa entre hipóteses, sem probabilidade implícita.
+- Consulta mensal por teclado, toque e mouse, tabela alternativa e catálogo [SCENARIO-FAN](docs/design/SCENARIO-FAN.md).
+- Candidate isolado; fórmulas, schemas e MT5 preservados. Verificação e limitações nos recibos externos, sem integração ou publicação.
+
+# Candidate local 2026-10-08 — comportamento e recuperacao
+
+Delta delimitado da auditoria: consultas contabeis por contexto, confirmacao de depositos ACTUAL, leitura de reservas, recuperacao de edicoes PF, protecao de campos compativeis do backup e explicacoes da sessao. Contraprovas adicionais tratam captura monotona do pico por conta/periodo, preservacao do motivo de anulacao, recibo integral de encerramento e dois cortes de layout. Formulas, estados normativos e bytes MT5 preservados; controle ativo e hashes Atlas reconciliados; fixtures superadas tratadas em contrato separado. Novos resultados e limitacoes dependem dos recibos dos bytes finais, fora do produto; nao implica publicacao/aceite. Historico anterior abaixo preservado.
+
 ## 2026-10-06 — candidate: correção dos verificadores pendentes
 
 - Alinhamento de testes com UNKNOWN tipado, backup completo durável, UUID/releitura física, importação maliciosa completa e espera da exportação assíncrona; negativos preservados.

@@ -10,6 +10,7 @@ from collections import Counter
 from functools import partial
 import hashlib
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
@@ -50,8 +51,13 @@ SETUP = """theme => {
   if(document.querySelector('#themeSeg button.on')?.dataset.themeVal!==document.documentElement.dataset.theme)throw Error('Synthetic theme fixture and selected control disagree');
   S.params.saldoIni=10000;S.params.saldoAtu=10200;
   S.params.inicio='2026-01-01';
-  S.ledger=[{data:'2026-01-03',saldo:10123,resultado:123,nota:'fixture'},
-            {data:'2026-01-17',saldo:10200,resultado:77,nota:'fixture'}];
+  S.ledger=[];
+  S.accounts=[{forexAccountId:'DESIGN-A',nome:'Conta sintética de geometria',tipo:'MESTRE',platformCurrency:'USD'}];
+  const yes=r=>{if(!r.ok)throw Error(JSON.stringify(r));return r;};
+  yes(JPWForex.state.recordAccountPeriod({accountId:'DESIGN-A',startedAt:'2026-01-01',currency:'USD',si:10000,openingBook:10000,source:'Synthetic chart fixture',activateCurrentPeriod:true},{reason:'Synthetic chart fixture'}));
+  yes(JPWForex.state.selectOperationalAccount('DESIGN-A'));
+  yes(JPWLedger.record({data:'2026-01-03',saldo:10123,resultado:123,nota:'Synthetic chart fixture'}));
+  yes(JPWLedger.record({data:'2026-01-17',saldo:10200,resultado:77,nota:'Synthetic chart fixture'}));
   S.onboarding={...S.onboarding,done:false};render();renderDash();
   JPWNavigation.navigate('dashboard');
 }"""
@@ -81,12 +87,14 @@ class Checks:
 
 
 def navigate(page, route):
+    if route not in {'probability-lab','research-probability-lab','galton-board'} and page.locator('#settingsOverlay.show').count():
+        page.locator('#settingsCloseBtn').click()
     if not page.evaluate('(r)=>JPWNavigation.navigate(r)', route):
         raise AssertionError('Public navigation refused ' + route)
 
 
 def dashboard(page, c):
-    for key, route, primary in [('forex','forex-overview','forex'),
+    for key, route, primary in [('forex','forex-consolidated','forex'),
                                 ('personal-finance','personal-finance','personal-finance'),
                                 ('research','research-forex','research'),('alladin','alladin','alladin')]:
         navigate(page,'dashboard')
@@ -112,9 +120,11 @@ def forex(page,c):
     for row in result:
         c.check('Forex readiness precedes secondary tools '+row['id'],row['owner'] and row['before'] and row['bottom']<=row['quickTop']+1,row)
     c.check('Forex context shown',page.locator('#gdContextRow').is_visible())
-    for route in ['research-probability-lab','dashboard']:
-        navigate(page,route)
-        c.check('Forex context absent '+route,not page.locator('#gdContextRow').is_visible())
+    before=page.evaluate('JPWNavigation.current()')
+    navigate(page,'research-probability-lab')
+    c.check('Lab modal has no Forex context and preserves the prior route',page.locator('#settingsModal #gdContextRow').count()==0 and page.evaluate('JPWNavigation.current()')==before and page.locator('#settingsGaltonSlot').is_visible())
+    navigate(page,'dashboard')
+    c.check('Forex context absent dashboard',not page.locator('#gdContextRow').is_visible())
 
 
 SETTINGS_PAGES = ['general','appearance-interface','method-governance','operations',
@@ -151,6 +161,7 @@ SETTINGS_GEOMETRY = r"""() => {
 
 
 def settings_geometry_checks(page,check,prefix='Settings'):
+    page.evaluate("document.getElementById('settingsContent').scrollTop=0")
     g=page.evaluate(SETTINGS_GEOMETRY)
     zoom=g['cssZoom']
     def verify(name,ok,detail=None):check(prefix+' '+name,bool(ok),detail)
@@ -208,12 +219,20 @@ def settings_visual_pages(page,check,observe=None,long=False):
         page.locator('#settingsMenu .settings-menu-item>span:not(.settings-menu-symbol)').evaluate_all("es=>es.forEach(e=>e.textContent+=' · identificação sintética extensa')")
         name=page.locator('#settingsProfileName').evaluate("e=>{const r=e.getBoundingClientRect(),p=e.closest('button').getBoundingClientRect(),s=getComputedStyle(e);return {inside:r.right<=p.right,overflow:s.overflow,whiteSpace:s.whiteSpace,ellipsis:s.textOverflow}}")
         check('Settings long profile name remains inside sidebar',name['inside'] and name['overflow']=='hidden' and name['whiteSpace']=='nowrap' and name['ellipsis']=='ellipsis',name)
-    check('Settings keeps seven primary categories',page.locator('#settingsMenu [data-settings-category]').count()==7)
+    expected=['general','appearance-interface','method-governance','operations','forex-preferences','knowledge','data-security','about']
+    check('Settings keeps eight current primary categories',page.locator('#settingsMenu [data-settings-category]').evaluate_all('es=>es.map(e=>e.dataset.settingsCategory)')==expected)
     g=settings_geometry_checks(page,check,'Settings list')
     if observe:observe('categories',g)
     for target in SETTINGS_PAGES:
         page.evaluate('(id)=>settingsNavigate(id,{push:true,focus:true})',target)
         page.wait_for_timeout(20)
+        if target=='tool-check':
+            check('Settings Checklist opens its native dialog',page.locator('#forexChecklistDialog').evaluate('e=>e.open') and page.locator('#forexChecklistTitle').inner_text()=='Checklist pré-trade')
+            page.locator('#forexChecklistClose').click()
+            page.wait_for_function("settingsState.open&&!settingsState.suspended&&document.activeElement.id==='settingsOpenChecklist'")
+            check('Settings Checklist returns focus to its visible launcher',page.locator('#settingsOpenChecklist').is_visible() and page.locator('#settingsOpenChecklist').evaluate('e=>e===document.activeElement'))
+            check('Settings Checklist opening and closing preserves data/preferences',page.evaluate(SNAPSHOT)==before)
+        page.evaluate("document.getElementById('settingsContent').scrollTop=0")
         check('Settings page is the requested destination '+target,page.evaluate('settingsState.active')==target)
         if long:
             page.evaluate("""() => {
@@ -385,7 +404,7 @@ def charts(page,c):
 
 def lab(page,c):
     navigate(page,'research-probability-lab')
-    root=page.locator('#researchGaltonSlot [data-galton-root]')
+    root=page.locator('#settingsGaltonSlot [data-galton-root]')
     c.check('Lab has one instance',root.count()==1 and page.locator('[data-galton-root]').count()==1)
     order=root.evaluate("e=>{const a=e.querySelector('.galton-controls'),b=e.querySelector('.galton-stage');return {before:!!(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING),bottom:a.getBoundingClientRect().bottom,top:b.getBoundingClientRect().top}}")
     c.check('Lab controls precede canvas in DOM and view',order['before'] and order['bottom']<=order['top']+1,order)
@@ -433,7 +452,7 @@ def run(args):
                 name=f'{width}-{theme}-zoom{zoom}'
                 c=Checks(name);reports.append({'case':name,'assertions':c.items})
                 context=browser.new_context(viewport={'width':width,'height':1000},has_touch=True,service_workers='block',reduced_motion='reduce')
-                install_bootstrap(context);context.add_init_script('window.__onbShown=true;')
+                install_bootstrap(context);context.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
                 page=context.new_page();errors=[];console=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 page.on('console',lambda m:console.append(m.text) if m.type=='error' else None)

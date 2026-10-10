@@ -82,8 +82,8 @@ def main():
 
         # ---- 2. gate do termo de responsabilidade no onboarding ---------------------
         gate = page.evaluate("""() => {
-          window.__onbShown = true; closeModal(); openOnboardingModal('new');
-          document.getElementById('modalConfirm').click();
+          window.__onbShown = true; closeModal(); openOnboardingModal('new','database');
+          document.getElementById('obStepNext').click();
           const r1 = {
             etapa: (document.querySelector('.onb-step.active')||{}).dataset?.onbstep,
             err: document.getElementById('obDbRespErr').classList.contains('show'),

@@ -50,9 +50,8 @@ conferência ou restauração explícita. Falha comprovada conserva o valor ante
 e o movimento vale apenas na sessão; desfecho desconhecido exige recarregar e
 conferir. Campos desconhecidos de um envelope v1 compatível são preservados.
 
-**Finalizar sessão remove essa preferência**, invalida movimentos e gravações
-pendentes pela geração auxiliar da sessão e preserva notas, pastas e larguras.
-A nova configuração da posição exige recarregar após finalizar. Importação e
+**Finalizar sessão preserva a posição confirmada e a aparência de Notas**, incluídas em `workspace.preferences` do Backup Completo; encerra prévias e movimentos temporários e preserva notas, pastas e larguras.
+A exportação Markdown é parcial: não transporta essas preferências. Cancelar a prévia não remove a configuração confirmada. Após Finalizar, os controladores retomam a configuração guardada conforme seu ciclo de recarga. Importação e
 a limpeza de dados da Zona de Perigo preservam a preferência local. As gravações
 utilizam o lock existente quando há Web Locks, além da comparação do valor
 anterior e do epoch; sem Web Locks, permanece a limitação de concorrência entre

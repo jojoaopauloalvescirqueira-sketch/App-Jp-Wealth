@@ -17,6 +17,68 @@ let fxpHorizonWin=24;
 // não de dado — o resumo anual segue calculado sobre o horizonte inteiro.
 let fxpHistFilter='all';
 let fxpScenarioId=null;
+// Comparison is independent of the editing layer and never enters S/backup.
+const fxpChartComparison={scope:null,scenarioIds:[],baseline:false,selectedMonth:null};
+function fxpSyncChartComparison(live){
+  const scope=JSON.stringify([jpWealthPersistenceEpoch(),live?.plan.id||null]);
+  if(fxpChartComparison.scope!==scope){fxpChartComparison.scope=scope;fxpChartComparison.scenarioIds=[];fxpChartComparison.baseline=false;fxpChartComparison.selectedMonth=null;}
+  const available=new Set((live?.plan.scenarios||[]).map(item=>item.id));
+  fxpChartComparison.scenarioIds=fxpChartComparison.scenarioIds.filter(id=>available.has(id)).slice(0,2);
+  return {scenarioIds:[...fxpChartComparison.scenarioIds],baseline:fxpChartComparison.baseline};
+}
+function fxpChartControlsHTML(live){
+  const selection=fxpSyncChartComparison(live),scenarios=live.plan.scenarios||[];
+  return `<div class="fxp-chart-controls" role="group" aria-label="Janela e moeda das trajetórias">
+    ${fxpHorizonHTML(live.plan)}
+    ${['usd','brl'].map(mode=>`<button type="button" class="reset-btn fxp-mode${fxpChartMode===mode?' fxp-mode-on':''}" data-fxp-cur="${mode}" aria-pressed="${fxpChartMode===mode}">${mode.toUpperCase()}</button>`).join('')}</div>
+    <details class="fxp-chart-comparison"><summary>Comparar hipóteses · ${selection.scenarioIds.length} de 2 cenários</summary>
+    <fieldset><legend>Cenários salvos · escolha até dois</legend>${scenarios.length?scenarios.map(item=>`<label><input type="checkbox" data-fxp-compare-scenario value="${esc(item.id)}" ${selection.scenarioIds.includes(item.id)?'checked':''}> ${esc(item.name||'Cenário sem nome')}</label>`).join(''):'<p class="fxp-note">Nenhum cenário salvo. Crie uma hipótese em Editar projeção para compará-la aqui.</p>'}</fieldset>
+    <label><input type="checkbox" data-fxp-compare-baseline ${selection.baseline?'checked':''}> Mostrar baseline original como referência</label>
+    <p class="fxp-note" data-fxp-compare-status role="status">PLAN permanece visível. Comparar não altera a camada em edição nem salva dados.</p></details>`;
+}
+function fxpChartWindow(live){
+  const n=Math.min(fxpHorizonWin||live.forecast.length,live.forecast.length);
+  return n<live.forecast.length?{...live,forecast:live.forecast.slice(0,n),baseline:live.baseline.slice(0,n)}:live;
+}
+function fxpRefreshChart(root,live=fxpDisplayLive(root)){
+  const box=root.querySelector('#fxpMainChart');if(!box||!live)return;
+  const options={...fxpSyncChartComparison(live),reading:jpWealthPersistenceOutcomeIsUnknown()?'previous':'current'},windowed=fxpChartWindow(live);
+  const scope=fxpChartComparison.scope;
+  if(box.dataset.fxpComparisonScope!==scope)window.JPWScenarioFan?.destroy(box);
+  box.dataset.fxpComparisonScope=scope;
+  options.selectedMonth=fxpChartComparison.selectedMonth;
+  options.onInspect=reading=>{if(fxpChartComparison.scope===scope)fxpChartComparison.selectedMonth=reading.month;};
+  window.JPWFx.charts.fxDrawMainChart(box,live.plan,windowed,fxpChartMode,options);
+  const summary=root.querySelector('#fxpMainChartSummary');
+  if(summary){summary.classList.add('jpw-chart-sr-only');summary.textContent=window.JPWFx.charts.fxMainChartSummaryText(live.plan,windowed,fxpChartMode,options);}
+}
+function fxpBindChartControls(root,live){
+  const status=root.querySelector('[data-fxp-compare-status]');
+  const update=()=>{
+    const selection=fxpSyncChartComparison(live);
+    root.querySelectorAll('[data-fxp-compare-scenario]').forEach(input=>{input.checked=selection.scenarioIds.includes(input.value);input.disabled=selection.scenarioIds.length>=2&&!input.checked;});
+    const disclosure=root.querySelector('.fxp-chart-comparison > summary');if(disclosure)disclosure.textContent='Comparar hipóteses · '+selection.scenarioIds.length+' de 2 cenários';
+    if(status)status.textContent=selection.scenarioIds.length===2?'Dois cenários selecionados. Desmarque um para escolher outro. PLAN permanece visível.':'PLAN permanece visível. Comparar não altera a camada em edição nem salva dados.';
+  };
+  root.querySelectorAll('[data-fxp-compare-scenario]').forEach(input=>input.addEventListener('change',()=>{
+    fxpSyncChartComparison(live);
+    if(input.checked&&!fxpChartComparison.scenarioIds.includes(input.value)&&fxpChartComparison.scenarioIds.length<2)fxpChartComparison.scenarioIds.push(input.value);
+    if(!input.checked)fxpChartComparison.scenarioIds=fxpChartComparison.scenarioIds.filter(id=>id!==input.value);
+    update();fxpRefreshChart(root,live);
+  }));
+  root.querySelector('[data-fxp-compare-baseline]')?.addEventListener('change',event=>{fxpChartComparison.baseline=event.target.checked;fxpRefreshChart(root,live);});
+  root.querySelectorAll('[data-fxp-cur]').forEach(button=>button.addEventListener('click',()=>{
+    fxpChartMode=button.dataset.fxpCur;
+    root.querySelectorAll('[data-fxp-cur]').forEach(item=>{const on=item.dataset.fxpCur===fxpChartMode;item.classList.toggle('fxp-mode-on',on);item.setAttribute('aria-pressed',String(on));});
+    fxpRefreshChart(root,live);
+  }));
+  root.querySelectorAll('[data-fxp-win]').forEach(button=>button.addEventListener('click',()=>{
+    fxpHorizonWin=+button.dataset.fxpWin;
+    root.querySelectorAll('[data-fxp-win]').forEach(item=>{const on=+item.dataset.fxpWin===fxpHorizonWin;item.classList.toggle('fxp-mode-on',on);item.setAttribute('aria-pressed',String(on));});
+    fxpRefreshChart(root,live);
+  }));
+  update();fxpRefreshChart(root,live);
+}
 let fxpSelectedMonth=null;
 let fxpLedgerPreview=null;
 // One transient presentation per view/context. Navigation never persists it.
@@ -365,13 +427,11 @@ function fxpOverviewHTML(live){
 
     <section class="fxp-block">
       <div class="fxp-block-head">
-        <h3>Trajetória patrimonial</h3>
-        <span class="art">baseline × projeção vigente × realizado</span>
+        <span class="art">Realizado · PLAN · hipóteses salvas</span>
         <span class="fxp-spacer"></span>
-        ${fxpHorizonHTML(plan)}
-        <button type="button" class="reset-btn fxp-mode${fxpChartMode==='usd'?' fxp-mode-on':''}" data-fxp-cur="usd" aria-pressed="${fxpChartMode==='usd'}">USD</button>
-        <button type="button" class="reset-btn fxp-mode${fxpChartMode==='brl'?' fxp-mode-on':''}" data-fxp-cur="brl" aria-pressed="${fxpChartMode==='brl'}">BRL</button>
+
       </div>
+      ${fxpChartControlsHTML(live)}
       <div id="fxpMainChart"></div>
       <p class="fxp-note" id="fxpMainChartSummary"></p>
     </section>
@@ -961,7 +1021,7 @@ function fxpTableHTML(live){
   return `<section class="fxp-month-board" aria-labelledby="fxpMonthlyTableTitle"><div class="fxp-block-head"><h3 id="fxpMonthlyTableTitle">Tabela mensal</h3><span class="fxp-note">Global · USD · ${fxpScenarioId?'SCENARIO':'PLAN + realizado'}</span></div>${fxpUnknownNoticeHTML()}<p class="fxp-note">Edite depósitos e rentabilidade na linha. Digitar cria uma prévia; somente Salvar mês ou Finalizar mês grava. Finalizados ficam protegidos.</p>
     <div class="fxp-modes fxp-histfilter" role="group" aria-label="Filtro da tabela mensal">${[['all','Todos'],['actual','Realizados'],['forecast','Projetados']].map(([k,label])=>`<button type="button" data-fxp-hist="${k}" class="reset-btn" aria-pressed="${fxpHistFilter===k}">${label}</button>`).join('')}</div>
     <div class="fxp-month-scroll" tabindex="0" aria-label="Grade mensal, rolagem própria"><table class="fxp-month-table"><caption>Previsões e realizados, com bases separadas e edição mensal explícita</caption><thead><tr><th scope="col">Mês</th><th scope="col">Estado</th><th scope="col">Saldo inicial<br>USD</th><th scope="col">Depósito pessoal<br>USD</th><th scope="col">Depósito Prop<br>USD</th><th scope="col">Rentabilidade<br>%</th><th scope="col">Resultado<br>USD</th><th scope="col">Saldo final<br>USD</th><th scope="col">Ações</th></tr></thead><tbody>${html}</tbody></table></div></section>
-    <section class="fxp-block fxp-month-charts"><div class="fxp-block-head"><h3>${jpWealthPersistenceOutcomeIsUnknown()?'Trajetória da leitura anterior · atualização indeterminada':'Trajetória confirmada e projeção'}</h3><span class="fxp-note">Lacunas permanecem indisponíveis.</span></div>${fxpUnknownNoticeHTML()}<div id="fxpMainChart"></div><p id="fxpMainChartSummary" class="fxp-note"></p></section>
+    <section class="fxp-block fxp-month-charts"><div class="fxp-block-head"><span class="fxp-note">Versões salvas · lacunas permanecem indisponíveis.</span></div>${fxpUnknownNoticeHTML()}${fxpChartControlsHTML(live)}<div id="fxpMainChart"></div><p id="fxpMainChartSummary" class="fxp-note"></p></section>
     <details class="fxp-month-audit"><summary>Resumo anual, baseline e auditoria completa</summary>${fxpAuditTableHTML(live)}</details>`;
 }
 function fxpMonthlyRefresh(root,live){
@@ -1048,8 +1108,7 @@ function fxpActivateOverview(root,live){
   fxpWireQuoteOnce();
   fxpBindQuote(root);
   const m=fxpQuote(); if(m) m.refresh(false);
-  root.querySelectorAll('[data-fxp-cur]').forEach(b=>b.addEventListener('click',()=>{ fxpChartMode=b.dataset.fxpCur; renderFxPlanning(); }));
-  root.querySelectorAll('[data-fxp-win]').forEach(b=>b.addEventListener('click',()=>{ fxpHorizonWin=+b.dataset.fxpWin; renderFxPlanning(); }));
+  fxpBindChartControls(root,live);
   // Atalhos da lateral: levam para onde o dado é editado, sem duplicar formulário.
   const ob=root.querySelector('#fxpGoOnboarding');
   if(ob) ob.addEventListener('click',()=>{
@@ -1059,15 +1118,6 @@ function fxpActivateOverview(root,live){
   });
   const led=root.querySelector('#fxpGoLedger');
   if(led) led.addEventListener('click',()=>{ fxpView='actuals'; renderFxPlanning(); });
-  // Recorte visual da janela: fatia as séries JÁ calculadas. O motor não é
-  // consultado de novo e nada persistido muda.
-  const nWin=Math.min(fxpHorizonWin||live.forecast.length,live.forecast.length);
-  const janela=nWin<live.forecast.length
-    ? {...live, forecast:live.forecast.slice(0,nWin), baseline:live.baseline.slice(0,nWin)}
-    : live;
-  window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,janela,fxpChartMode);
-  const summary=root.querySelector('#fxpMainChartSummary');
-  if(summary) summary.textContent=window.JPWFx.charts.fxMainChartSummaryText(live.plan,janela,fxpChartMode);
   // Estado máximo (≥1120) abre o segundo gráfico; abaixo disso ele nasce
   // recolhido. Medido no container real, não na janela — é o painel que sabe
   // quanto espaço tem. O usuário pode abrir a qualquer largura.
@@ -1117,15 +1167,15 @@ function fxpLedgerImportHTML(live){
   const context=ledgerContext(),accounts=(S.accounts||[]).filter(a=>a.forexAccountId).map(a=>({id:a.forexAccountId,name:a.nome||a.forexAccountId}));
   for(const [id,entry] of Object.entries(S.forex?.accountContexts?.archivedAccounts||{}))if(!accounts.some(a=>a.id===id))accounts.push({id,name:(entry.record?.nome||id)+' · arquivada'});
   if(context.accountId&&!accounts.some(a=>a.id===context.accountId))accounts.push({id:context.accountId,name:'Identidade de origem não conciliada'});
-  return `<section class="fxp-block fxp-ledger-import"><h3>Importar ACTUAL da Contabilidade</h3><p class="fxp-note">Confira conta, período e completude. Revisar origem cria uma prévia; importar confirma este fechamento. A importação guarda os IDs e versões de origem; alterações posteriores na Contabilidade não sobrescrevem este fechamento.</p><div class="params-grid"><label>Mês<input type="month" id="fxpLedgerMonth" value="${live.nextOpenMonth||live.lastClosedMonth||''}"></label><label>Conta de origem<select id="fxpLedgerAccount"><option value="">Selecione uma conta</option>${accounts.map(a=>`<option value="${esc(a.id)}" ${a.id===context.accountId?'selected':''}>${esc(a.name)}</option>`).join('')}</select></label><label>Período de origem<select id="fxpLedgerPeriod">${fxpLedgerPeriodOptions(context.accountId,context.periodId)}</select></label></div><label><input type="checkbox" id="fxpLedgerComplete"> Confirmo que os fechamentos deste mês estão completos para esta conta e período</label><button type="button" id="fxpLedgerPreviewBtn">Revisar origem</button><pre id="fxpLedgerPreview" aria-live="polite"></pre><label><input type="checkbox" id="fxpLedgerReplace"> Autorizar substituição explícita se já houver ACTUAL neste mês</label><button type="button" id="fxpLedgerImportBtn" disabled>Importar fechamento revisado</button><div id="fxpLedgerImportErr" role="status"></div></section>`;
+  return `<section class="fxp-block fxp-ledger-import"><h3>Importar ACTUAL da Contabilidade</h3><p class="fxp-note">Confira conta, período, completude e depósitos efetivos. Revisar origem cria uma prévia; importar confirma este fechamento. A importação guarda os IDs e versões de origem; alterações posteriores na Contabilidade não sobrescrevem este fechamento.</p><div class="params-grid"><label>Mês<input type="month" id="fxpLedgerMonth" value="${live.nextOpenMonth||live.lastClosedMonth||''}"></label><label>Conta de origem<select id="fxpLedgerAccount"><option value="">Selecione uma conta</option>${accounts.map(a=>`<option value="${esc(a.id)}" ${a.id===context.accountId?'selected':''}>${esc(a.name)}</option>`).join('')}</select></label><label>Período de origem<select id="fxpLedgerPeriod">${fxpLedgerPeriodOptions(context.accountId,context.periodId)}</select></label></div><label><input type="checkbox" id="fxpLedgerComplete"> Confirmo que os fechamentos deste mês estão completos para esta conta e período</label><label><input type="checkbox" id="fxpLedgerContributionsConfirmed"> Conferi os depósitos efetivos deste mês, inclusive se forem zero.</label><button type="button" id="fxpLedgerPreviewBtn">Revisar origem</button><pre id="fxpLedgerPreview" aria-live="polite" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre><label><input type="checkbox" id="fxpLedgerReplace"> Autorizar substituição explícita se já houver ACTUAL neste mês</label><button type="button" id="fxpLedgerImportBtn" disabled>Importar fechamento revisado</button><div id="fxpLedgerImportErr" role="status"></div></section>`;
 }
 function fxpBindLedgerImport(root){
   const g=id=>root.querySelector('#'+id);
-  const options=()=>({accountId:g('fxpLedgerAccount').value.trim(),periodId:g('fxpLedgerPeriod').value.trim(),complete:g('fxpLedgerComplete').checked});
+  const options=()=>({accountId:g('fxpLedgerAccount').value.trim(),periodId:g('fxpLedgerPeriod').value.trim(),complete:g('fxpLedgerComplete').checked,contributionsConfirmed:g('fxpLedgerContributionsConfirmed').checked});
   fxpLedgerPreview=null;
   g('fxpLedgerAccount').addEventListener('change',()=>{g('fxpLedgerPeriod').innerHTML=fxpLedgerPeriodOptions(g('fxpLedgerAccount').value);fxpLedgerPreview=null;g('fxpLedgerImportBtn').disabled=true;g('fxpLedgerPreview').textContent='Conta alterada. Selecione o período e revise a origem novamente.';});
-  root.querySelectorAll('#fxpLedgerMonth,#fxpLedgerAccount,#fxpLedgerPeriod,#fxpLedgerComplete').forEach(el=>el.addEventListener('input',()=>{fxpLedgerPreview=null;g('fxpLedgerImportBtn').disabled=true;}));
-  g('fxpLedgerPreviewBtn').onclick=()=>{fxpLedgerPreview=window.JPWLedger.monthlyActual(g('fxpLedgerMonth').value,options());const p=fxpLedgerPreview;g('fxpLedgerPreview').textContent=p.status+' · '+p.source.rows.length+' fechamentos\n'+(p.issues.length?p.issues.join('\n'):'Abertura '+fxpBoardMoney(p.source.openingBalanceUsd)+' · resultado '+fxpBoardMoney(p.profitUsd)+' · fechamento '+fxpBoardMoney(p.source.closingBalanceUsd));g('fxpLedgerImportBtn').disabled=p.status!=='COMPLETE';};
+  root.querySelectorAll('#fxpLedgerMonth,#fxpLedgerAccount,#fxpLedgerPeriod,#fxpLedgerComplete,#fxpLedgerContributionsConfirmed').forEach(el=>el.addEventListener('input',()=>{fxpLedgerPreview=null;g('fxpLedgerImportBtn').disabled=true;}));
+  g('fxpLedgerPreviewBtn').onclick=()=>{fxpLedgerPreview=window.JPWLedger.monthlyActual(g('fxpLedgerMonth').value,options());const p=fxpLedgerPreview;g('fxpLedgerPreview').textContent=p.status+' · '+p.source.rows.length+' fechamentos\n'+(p.issues.length?p.issues.join('\n'):'Abertura '+fxpBoardMoney(p.source.openingBalanceUsd)+' · resultado '+fxpBoardMoney(p.profitUsd)+' · fechamento '+fxpBoardMoney(p.source.closingBalanceUsd))+(g('fxpLedgerContributionsConfirmed').checked?'':'\nConfira e confirme os depósitos efetivos deste mês, inclusive quando forem zero.');g('fxpLedgerImportBtn').disabled=p.status!=='COMPLETE'||!g('fxpLedgerContributionsConfirmed').checked;};
   g('fxpLedgerImportBtn').onclick=()=>{
     const res=window.JPWFx.state.fxPlanImportLedgerActual(g('fxpLedgerMonth').value,{...options(),sourceVersion:fxpLedgerPreview&&fxpLedgerPreview.source.version,replace:g('fxpLedgerReplace').checked});
     if(!res.ok){fxpRememberDraft(root,'ledgerImport','fxpLedgerImportErr',res);return;}fxpForgetDraft('ledgerImport');renderFxPlanning();
@@ -1139,6 +1189,8 @@ function renderFxPlanning({restoreViewFocus=false}={}){
   // Such teardown events must never be captured under the incoming context.
   fxpRendering=true;
   try{
+  // Release observers/listeners before replacing the old chart subtree.
+  window.JPWScenarioFan?.destroy(root.querySelector('#fxpMainChart'));
   fxpRetainUnknownPresentation(root);
   const presentation=fxpCapturePresentation(root);
   fxpRememberPresentation(root,presentation);
@@ -1151,6 +1203,7 @@ function renderFxPlanning({restoreViewFocus=false}={}){
   const issue=unknown?'':window.JPWFx.state.fxEnvelopeIssue();
   if(issue){root.innerHTML=fxpErrHTML([issue]);return;}
   const live=fxpDisplayLive(root);
+  fxpSyncChartComparison(live);
   if(!unknown){root.__fxpConfirmedRead={epoch:jpWealthPersistenceEpoch(),planId:live?.plan.id||null,live:live?structuredClone(live):null};delete root.dataset.fxpReading;}
   if(fxpScenarioId&&!live?.plan.scenarios?.some(scenario=>scenario.id===fxpScenarioId))fxpScenarioId=null;
   const scope={epoch:jpWealthPersistenceEpoch(),planId:live?.plan.id||null,scenarioId:fxpScenarioId};
@@ -1187,7 +1240,7 @@ function renderFxPlanning({restoreViewFocus=false}={}){
     root.querySelectorAll('[data-fxp-hist]').forEach(b=>b.addEventListener('click',()=>{ fxpHistFilter=b.dataset.fxpHist; renderFxPlanning(); }));
   if(fxpView==='table'||fxpView==='planning'&&!fxpScenarioId) fxpBindPlanning(root,live);
   fxpBindMonthlyBoard(root,live);
-  if(fxpView==='table'||fxpView==='planning'&&fxpScenarioId){window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,live,fxpChartMode);const summary=root.querySelector('#fxpMainChartSummary');if(summary)summary.textContent=window.JPWFx.charts.fxMainChartSummaryText(live.plan,live,fxpChartMode);}
+  if(fxpView==='table'||fxpView==='planning'&&fxpScenarioId)fxpBindChartControls(root,live);
   if(fxpView==='actuals') fxpBindActuals(root,live);
   if(fxpView==='planning'||fxpView==='table')fxpBindTimeline(root,live);
   if(fxpView==='actuals')fxpBindLedgerImport(root);
@@ -1200,7 +1253,8 @@ function renderFxPlanning({restoreViewFocus=false}={}){
 // Superfície estritamente visual para o submenu hierárquico do shell. As
 // chaves são os quatro modos já existentes; não persiste estado, não chama o
 // engine e não cria uma segunda fonte de verdade financeira.
-window.JPWFx.ui={renderFxPlanning,selectView:fxpSelectView,getView:fxpGetView};
+window.JPWFx.ui={renderFxPlanning,selectView:fxpSelectView,getView:fxpGetView,
+  chartComparison:()=>({scenarioIds:[...fxpChartComparison.scenarioIds],baseline:fxpChartComparison.baseline})};
 // Primeira pintura + repintura ao entrar na tela (dados normativos do painel de
 // reservas podem ter mudado via Formulário de Início).
 renderFxPlanning();

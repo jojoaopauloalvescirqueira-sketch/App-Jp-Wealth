@@ -300,11 +300,12 @@ string g_nocuda_level_input="",g_nocuda_ui_editing="",g_nocuda_ui_focus="";
 int g_nocuda_ui_pages=5;
 constexpr int CHARTEVENT_OBJECT_ENDEDIT=24,CHARTEVENT_KEYDOWN=25;
 constexpr int TERMINAL_KEYSTATE_SHIFT=18,OBJPROP_TYPE=2,OBJ_BUTTON=3,OBJ_LABEL=1;
-constexpr int OBJPROP_TOOLTIP=9,OBJPROP_XDISTANCE=10,OBJPROP_YDISTANCE=11,OBJPROP_HIDDEN=12,OBJPROP_SELECTABLE=13;
+constexpr int OBJPROP_TOOLTIP=9,OBJPROP_XDISTANCE=10,OBJPROP_YDISTANCE=11,OBJPROP_HIDDEN=12,OBJPROP_SELECTABLE=13,OBJPROP_SELECTED=14,OBJ_EDIT=4;
 std::map<string,string> focus_objects;
+std::map<string,int> focus_object_types;
 std::vector<string> focus_events;
 int ObjectFind(int,const string&name){return focus_objects.count(name)?0:-1;}
-bool ObjectCreate(int,const string&name,int,int,int,int){focus_objects[name]="";return true;}
+bool ObjectCreate(int,const string&name,int type,int,int,int){focus_objects[name]="";focus_object_types[name]=type;return true;}
 bool ObjectSetInteger(int,const string&,int,long){return true;}
 bool ObjectSetString(int,const string&name,int,const string&value){focus_objects[name]=value;return true;}
 bool ObjectDelete(int,const string&name){return focus_objects.erase(name)>0;}
@@ -315,7 +316,7 @@ bool g_ncf_mode=false;int ncf_dispatch_calls=0;
 bool JPWNCFHandleEvent(int,const long&,const double&,const string&){ncf_dispatch_calls++;return g_ncf_mode;}
 int shift_key=0;
 int TerminalInfoInteger(int) { return shift_key; }
-int ObjectGetInteger(int,const string&name,int) { return focus_objects.count(name)?OBJ_LABEL:OBJ_BUTTON; }
+int ObjectGetInteger(int,const string&name,int prop) { return prop==OBJPROP_TYPE&&focus_object_types.count(name)?focus_object_types[name]:0; }
 string JPWNoCudaUIFocusCycle(const string& prefix,const string&,bool reverse) { return prefix+(reverse ? "UI_CLOSE" : "UI_PAGE_NEXT"); }
 constexpr int OBJPROP_TEXT=1;
 string ObjectGetString(int,const string&name,int) { return focus_objects.count(name)?focus_objects[name]:"0.5"; }
@@ -491,9 +492,12 @@ int main() {
   const int prior_keyboard_ui=ui_calls;
   OnChartEvent(CHARTEVENT_KEYDOWN,9,0.0,"");
   check(ui_calls==prior_keyboard_ui,"keyboard outside own focus does not navigate");
-  g_nocuda_panel_focus=true;g_nocuda_ui_editing="JPWNC_TEST_UI_DATE";
+  g_nocuda_is_draft=true;g_nocuda_panel_focus=true;g_nocuda_ui_editing="JPWNC_TEST_UI_DATE";
   OnChartEvent(CHARTEVENT_KEYDOWN,27,0.0,"");
-  check(g_nocuda_panel_open && ui_calls==prior_keyboard_ui,"Escape during field edit is not intercepted");
+  check(!g_nocuda_panel_open && g_nocuda_is_draft,"Escape during field edit closes the panel preserving its draft");
+  object_click("JPWNC_TEST_UI_OPEN");
+  for(const auto& name:{"JPWNC_TEST_UI_PAGE_NEXT","JPWNC_TEST_UI_CLOSE"}){focus_objects[name]="synthetic visible button";focus_object_types[name]=OBJ_BUTTON;}
+  g_nocuda_panel_focus=true;
   g_nocuda_ui_editing="";shift_key=0;OnChartEvent(CHARTEVENT_KEYDOWN,9,0.0,"");
   check(g_nocuda_ui_focus=="JPWNC_TEST_UI_PAGE_NEXT","Tab focuses a visible own button");
   g_nocuda_measure_page=0;g_nocuda_tab=1;OnChartEvent(CHARTEVENT_KEYDOWN,13,0.0,"");
@@ -529,6 +533,7 @@ UI_SHIM = r'''
 #include <algorithm>
 #include <fstream>
 #include <cstdlib>
+#include <cmath>
 using string=std::string; using color=int; using uint=unsigned int;
 using ENUM_OBJECT=int; using ENUM_OBJECT_PROPERTY_STRING=int;
 constexpr int CHART_WIDTH_IN_PIXELS=1,CHART_HEIGHT_IN_PIXELS=2,CHART_COLOR_BACKGROUND=3;
@@ -537,7 +542,7 @@ constexpr int OBJ_BITMAP_LABEL=5,OBJPROP_BMPFILE=104,OBJPROP_BACK=15,OBJPROP_ZOR
 constexpr int OBJPROP_CORNER=1,OBJPROP_XDISTANCE=2,OBJPROP_YDISTANCE=3,OBJPROP_XSIZE=4,OBJPROP_YSIZE=5;
 constexpr int OBJPROP_BGCOLOR=6,OBJPROP_COLOR=7,OBJPROP_SELECTABLE=8,OBJPROP_HIDDEN=9,OBJPROP_ANCHOR=10;
 constexpr int OBJPROP_FONTSIZE=11,OBJPROP_BORDER_COLOR=12,OBJPROP_STATE=13,OBJPROP_TYPE=14;
-constexpr int OBJPROP_FONT=101,OBJPROP_TEXT=102,OBJPROP_TOOLTIP=103;
+constexpr int OBJPROP_FONT=101,OBJPROP_TEXT=102,OBJPROP_TOOLTIP=103,OBJPROP_READONLY=105;
 constexpr int CORNER_LEFT_UPPER=0,ANCHOR_LEFT_UPPER=0;
 struct Rect { int x=0,y=0,w=0,h=0,type=0,font=10,ink=0,fill=0,corner=0; string text,tooltip; bool state=false; };
 std::unordered_map<string,Rect> controls;
@@ -545,6 +550,20 @@ std::unordered_map<string,string> labels;
 std::vector<string> object_order;
 int chart_width=800,chart_height=404,measured_line=12,background=0xffffff,current_font=100;
 long TerminalInfoInteger(int) { return measured_line*96/12; }
+
+double MathRound(double value){return std::round(value);}
+double MathSqrt(double value){return std::sqrt(value);}
+uint StringGetCharacter(const string&value,int index){return (unsigned char)value.at(index);}
+uint ColorToARGB(color value,int alpha){return ((uint)alpha<<24)|(uint(value)&0xffffff);}
+constexpr int COLOR_FORMAT_ARGB_NORMALIZE=1;
+template<class T>void ArrayInitialize(std::vector<T>&values,int value){std::fill(values.begin(),values.end(),value);}
+std::unordered_map<string,std::vector<uint>> icon_resources;
+bool ResourceCreate(const string&name,const std::vector<uint>&pixels,int width,int height,int,int,int,int){
+ if(width<=0||height<=0||pixels.size()!=size_t(width*height))return false;
+ icon_resources[name]=pixels;return true;
+}
+bool ResourceFree(const string&name){return icon_resources.erase(name)>0;}
+
 int creates=0,deletes=0,text_writes=0;
 bool g_nocuda_is_draft=true;
 string g_nocuda_prefix="JPWNC_TEST_",g_nocuda_justification="",g_nocuda_date="",g_nocuda_level_input="";
@@ -553,7 +572,8 @@ int MathMax(int a,int b) { return std::max(a,b); }
 int MathMin(int a,int b) { return std::min(a,b); }
 template<typename T> int ArraySize(const std::vector<T>& a) { return int(a.size()); }
 template<typename T> int ArrayResize(std::vector<T>& a,int n) { a.resize(n); return n; }
-bool TextSetFont(const string&,int size) { current_font=std::abs(size); return true; }
+constexpr int FW_NORMAL=0;
+bool TextSetFont(const string&,int size,int=0) { current_font=std::abs(size); return true; }
 bool TextGetSize(const string& text,unsigned int& w,unsigned int& h) {
  h=measured_line*current_font/100; w=int(text.size())*measured_line*current_font/210; return true;
 }
@@ -642,7 +662,11 @@ int main() {
    for(int page=0;page<40;page++) {
     v.page=page;v.measure_page=page;JPWNoCudaUIRender("JPWNC_TEST_",v);
     if(!controls.count("JPWNC_TEST_UI_BG")) {
-     fallback=true;++checks;if(!controls.count("JPWNC_TEST_UI_OPEN")) ++failures;
+     fallback=true;++checks;
+     if(!controls.count("JPWNC_TEST_UI_OPEN")) {
+      const int margin=JPWUIDesignPx(8),lw=JPWUIDesignButtonWidth("NoCuda · Gráficos",10,true),lh=JPWNoCudaUIButtonHeight();
+      if((width>=lw+2*margin&&chart_height>=lh+2*margin)||g_nocuda_ui_launcher_reason.find("espaço livre insuficiente")==string::npos){++failures;std::cerr<<"FAIL feasible fallback launcher omitted or missing unavailable reason\n";}
+     }
      break;
     }
     ++checks;if(controls.count("JPWNC_TEST_UI_OPEN")) {++failures;std::cerr<<"FAIL launcher under open modal\n";}
@@ -703,7 +727,16 @@ int main() {
     controls[companion]=hud;
     v.status="Marque A · preço sintético 1.10000";JPWNoCudaUIRender("JPWNC_TEST_",v);
     ++checks;++coexist_checks;
-    if(!controls.count("JPWNC_TEST_UI_OPEN")) {++failures;std::cerr<<"FAIL no accessible coexistence launcher "<<width<<"x"<<height<<" font "<<measured<<" corner "<<corner<<"\n";continue;}
+    if(!controls.count("JPWNC_TEST_UI_OPEN")) {
+     const int margin=JPWUIDesignPx(8),lw=JPWUIDesignButtonWidth("NoCuda · Gráficos",10,true),lh=JPWNoCudaUIButtonHeight();
+     bool fits=false;
+     // With a single reserved rectangle, a fit exists iff one of its four
+     // exterior strips can contain the whole button within the chart margins.
+     if(width>=lw+2*margin&&height>=lh+2*margin)
+       fits=(hud.x-margin>=lw||width-margin-hud.x-hud.w>=lw||hud.y-margin>=lh||height-margin-hud.y-hud.h>=lh);
+     if(fits||g_nocuda_ui_launcher_reason.find("espaço livre insuficiente")==string::npos){++failures;std::cerr<<"FAIL feasible launcher omitted or unavailable reason absent\n";}
+     continue;
+    }
     const Rect launcher=controls.at("JPWNC_TEST_UI_OPEN");
     ++checks;++coexist_checks;if(JPWNoCudaUILauncherReservationChanged()) {++failures;std::cerr<<"FAIL reservation not remembered\n";}
     // Late attach/remove and move are the only triggers, not financial prose.
@@ -729,12 +762,12 @@ int main() {
  chart_width=390;chart_height=404;measured_line=12;v.open=false;v.pick=0;
  JPWNoCudaUIRender("JPWNC_TEST_",v);++checks;++coexist_checks;
  const auto standalone=controls.at("JPWNC_TEST_UI_OPEN");
- if(standalone.x!=12 || standalone.y!=chart_height-JPWNoCudaUIButtonHeight()-12) ++failures;
+ if(standalone.x!=JPWUIDesignPx(12) || standalone.y!=chart_height-JPWNoCudaUIButtonHeight()-JPWUIDesignPx(12)) ++failures;
  // Panel-height fallback keeps access and never overlays a companion HUD.
  controls[companion]={};controls[companion].type=OBJ_RECTANGLE_LABEL;controls[companion].w=366;controls[companion].h=90;
  controls[companion].x=12;controls[companion].y=130;chart_width=390;chart_height=260;measured_line=32;v.open=true;v.pick=1;
  JPWNoCudaUIRender("JPWNC_TEST_",v);++checks;++coexist_checks;
- if(!controls.count("JPWNC_TEST_UI_OPEN") || overlaps(controls.at("JPWNC_TEST_UI_OPEN"),controls.at(companion))) ++failures;
+ if(controls.count("JPWNC_TEST_UI_OPEN")){if(overlaps(controls.at("JPWNC_TEST_UI_OPEN"),controls.at(companion))) ++failures;}else if(g_nocuda_ui_launcher_reason.empty()) ++failures;
  ObjectDelete(0,companion);++checks;++coexist_checks;if(!JPWNoCudaUILauncherReservationChanged()) ++failures;
  // No physically available area produces an explicit reason, not silent disappearance.
  chart_width=100;chart_height=90;measured_line=32;controls[companion]={};controls[companion].type=OBJ_RECTANGLE_LABEL;
@@ -760,8 +793,13 @@ int main() {
  ObjectSetString(0,g_nocuda_ui_editing,OBJPROP_TEXT,"2026.10.12");
  JPWNoCudaReadJustification();++checks;
  if(g_nocuda_date!="2026.10.12") ++failures;
+ v.date=g_nocuda_date; // current controller projection after the real capture
  chart_height=424;measured_line=26;JPWNoCudaUIRender("JPWNC_TEST_",v);++checks;
- if(!controls.count("JPWNC_TEST_UI_DATE") || ObjectGetString(0,"JPWNC_TEST_UI_DATE",OBJPROP_TEXT)!="2026.10.12") {++failures;std::cerr<<"FAIL resize date edit loss\n";}
+ if(controls.count("JPWNC_TEST_UI_DATE")){
+  if(ObjectGetString(0,"JPWNC_TEST_UI_DATE",OBJPROP_TEXT)!="2026.10.12"){++failures;std::cerr<<"FAIL resize date edit loss\n";}
+ }else if(g_nocuda_date!="2026.10.12"||g_nocuda_ui_editing!=""||!controls.count("JPWNC_TEST_UI_OPEN")){++failures;std::cerr<<"FAIL unavailable resize loses date or leaves dangling edit\n";}
+ chart_height=724;v.measure_page=1;JPWNoCudaUIRender("JPWNC_TEST_",v);++checks;
+ if(!controls.count("JPWNC_TEST_UI_DATE")||ObjectGetString(0,"JPWNC_TEST_UI_DATE",OBJPROP_TEXT)!="2026.10.12"){++failures;std::cerr<<"FAIL resized date does not return intact\n";}
  g_nocuda_ui_editing="";
  if(const char* directory=std::getenv("JPW_NOCUDA_VISUAL_DIR")) {
   for(int width:{960,390}) for(int measured:{12,32}) {
@@ -1363,6 +1401,9 @@ int main() {{
         production = re.sub(r'^#define\s+(JPW_NOCUDA_UI_MQH|JPW_GENETRIX_BRAND_MQH|JPW_ALAVANCAGEM_VERSION_MQH)\s*\n', '', production, flags=re.MULTILINE)
         production = re.sub(r"string\s+&([a-z_]+)\[\]", r"std::vector<string>& \1", production)
         production = re.sub(r"string\s+([a-z_]+)\[\];", r"std::vector<string> \1;", production)
+        production = re.sub(r"uint\s+&([a-z_]+)\[\]",r"std::vector<uint>& \1",production)
+        production = re.sub(r"uint\s+([a-z_]+)\[\];",r"std::vector<uint> \1;",production)
+        production = production.replace("int JPWUIDesignNavColumns(std::vector<string>& labels,","template<class Labels> int JPWUIDesignNavColumns(Labels &labels,")
         # Convert native color literals exactly, retaining the palette in the
         # optional JSON preview of the production presenter objects.
         production = re.sub(r"C'(\d+),(\d+),(\d+)'", lambda m: str(int(m[1])+(int(m[2])<<8)+(int(m[3])<<16)), production)

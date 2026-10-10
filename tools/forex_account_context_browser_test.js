@@ -14,9 +14,25 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
   try{
     const context=await browser.newContext({serviceWorkers:'block'}),page=await context.newPage(),errors=[];
     page.on('pageerror',error=>errors.push(error.stack));
+    // Disposable file context: nominal bootstrap only, never live market data.
+    const unexpected=[];
+    await context.route('**/*',async route=>{
+      const request=route.request(),url=request.url(),u=new URL(url);
+      if(['file:','data:','blob:'].includes(u.protocol))return route.continue();
+      let payload;
+      if(request.method()==='GET'&&url==='https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json')payload={version:1,generated_at:'2026-09-10T00:00:00Z',events:[]};
+      else if(request.method()==='GET'&&/^https:\/\/api\.frankfurter\.dev\/v2\/rate\/(EUR\/USD|GBP\/USD|AUD\/USD|NZD\/USD|USD\/JPY|USD\/CHF|USD\/CAD|AUD\/CAD|USD\/BRL)$/.test(url)){
+        const [base,quote]=u.pathname.split('/').slice(-2);payload={date:'2026-09-10',base,quote,rate:1};
+      }else{unexpected.push({url,method:request.method()});return route.abort('blockedbyclient');}
+      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(payload)});
+    });
+
     await page.goto(pathToFileURL(path.join(root,'index.html')).href,{waitUntil:'domcontentloaded'});
-    await page.waitForTimeout(500);
+    await page.waitForFunction(()=>typeof ffNewsInFlight!=='undefined'&&!ffNewsInFlight&&!document.getElementById('fxUpdateBtn')?.disabled);
+    check('bootstrap uses only nominal requests',unexpected,[]);
     check('cold boot has no page errors',errors,[]);
+    await page.locator('#jpwWelcomeClose').waitFor({state:'visible'});
+    await page.locator('#jpwWelcomeClose').click();
     const seed=await page.evaluate(()=>{
       window.__onbShown=true;closeModal();
       S=structuredClone(DEFAULTS);migrate();S.onboarding.done=true;
@@ -72,7 +88,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
       const saveOrder=(accountId,periodId,id,result)=>{
         x.selectOperationalAccount(accountId);x.selectOperationalPeriod(accountId,periodId);
         const c=x.accountContext({accountId,periodId});
-        return x.recordAccountOrders([{pi:0,oi:0,changes:{id,par:'EURUSD',tipo:'BUY',role:'GENESIS',
+        return x.recordAccountOrders([{pi:0,oi:0,changes:{id,brokerHash:'SYNTHETIC-'+id,par:'EURUSD',tipo:'BUY',role:'GENESIS',
           lote:.01,entry:1.1,sl:1,tp:1.2,status:'Fechada',result,costs:0,
           costBasis:'INCLUDED_IN_RESULT',stopValidated:true}}],
           {accountId,periodId,reason:'synthetic recorded fact',expectedRevision:c.revision,
@@ -196,6 +212,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
     cases.push('stale factor draft explains refusal');
     const backup=await page.evaluate(async()=>{
       S.forex.accountContexts.extension={opaque:['synthetic extension']};
+      if(save()!==true)throw Error('Synthetic extension write refused');
       const source=structuredClone(S),blob=dgBuildBackupBlob(1,'synthetic.json',new Date().toISOString(),source);
       const envelope=JSON.parse(await blob.text()),restored=normalizeImportedState(envelope);
       const malformed=structuredClone(envelope);malformed.state.forex.accountContexts.schemaVersion=99;
@@ -243,7 +260,9 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
     check('archive preserves historical account context',archive.context,true);
     check('archive preserves scoped finalized history',archive.history,['SYNTH_B']);
     check('archived account is not operationally selectable',archive.reselect,false);
-    check('unique remaining Mestre remains default',archive.selected,'SYNTH_A');
+    check('archiving selected account does not silently activate another',archive.selected,null);
+    const explicitAgain=await page.evaluate(({a})=>{const raw=localStorage.getItem(LSKEY),r=JPWForex.state.selectOperationalContext('SYNTH_A',a);return {ok:r.ok,account:JPWForex.state.operationalSelection().accountId,unchanged:raw===localStorage.getItem(LSKEY)};},seed);
+    check('explicit remaining Mestre re-selection is transient',explicitAgain,{ok:true,account:'SYNTH_A',unchanged:true});
     const archivedHistory=await page.evaluate(({b})=>{
       histState.archiveScope='SYNTH_B|'+b;renderOperationHistory();
       const rows=histRecords(),picker=document.getElementById('histArchiveScope');
@@ -254,7 +273,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
     },seed);
     check('archived historical operation can be consulted read-only',archivedHistory.rows,['SYNTH_B']);
     check('archived history picker identifies the archived period',archivedHistory.picker,'SYNTH_B|'+seed.b);
-    assert(archivedHistory.heading.includes('SYNTH_B'),'archived history heading');cases.push('archived history heading identifies B');
+    assert(archivedHistory.heading.includes('Conta B sintética')&&archivedHistory.heading.includes('2026-09-01')&&archivedHistory.heading.includes('USD'),'archived history heading retains human account, period and currency');cases.push('archived history heading identifies B');
     check('historical consultation leaves operational selection unchanged',archivedHistory.operational,'SYNTH_A');
     const legacy=await page.evaluate(({a})=>{
       const x=JPWForex.state,before=x.accountContext({accountId:'SYNTH_A',periodId:a}).value.ledger.length;
@@ -311,6 +330,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
     check('synthetic browser flow has no page errors',errors,[]);
     const second=await context.newPage(),secondErrors=[];second.on('pageerror',e=>secondErrors.push(e.message));
     await second.goto(pathToFileURL(path.join(root,'index.html')).href,{waitUntil:'domcontentloaded'});
+    await second.waitForFunction(()=>typeof ffNewsInFlight!=='undefined'&&!ffNewsInFlight&&!document.getElementById('fxUpdateBtn')?.disabled);
     const selectionProof=await second.evaluate(()=>{
       window.__onbShown=true;closeModal();S=structuredClone(DEFAULTS);migrate();S.onboarding.done=true;
       S.forex=JPWForex.state.empty();
@@ -343,7 +363,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
       const prospect=JPWForex.state.budgetSnapshot({accountId:'USD_MASTER',periodId:usdId,operationId:null});
       const uiBudget={confirmed:prospect.status==='OK',currency:prospect.currency,
         message:budgetForm.querySelector('.fx-engine-response').textContent};
-      const firstOp=JPWForex.state.recordAccountOrders([{pi:0,oi:0,changes:{id:'FIRST-OP',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:.01,
+      const firstOp=JPWForex.state.recordAccountOrders([{pi:0,oi:0,changes:{id:'FIRST-OP',brokerHash:'SYNTHETIC-FIRST-OP',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:.01,
         entry:1.1,sl:1,tp:1.2,status:'Aberta',result:null,costs:0,costBasis:'INCLUDED_IN_RESULT'}}],
         {accountId:'USD_MASTER',periodId:usdId,reason:'synthetic first operation'});
       if(!firstOp.ok)throw Error(JSON.stringify(firstOp));
@@ -353,7 +373,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
         openingBook:900,source:'synthetic later period',activateCurrentPeriod:false},{reason:'synthetic later period'});
       if(!other.ok)throw Error(JSON.stringify(other));
       const laterId=Object.keys(eb.USD_MASTER.periods).find(x=>x!==usdId),later=eb.USD_MASTER.periods[laterId];
-      const secondOp=JPWForex.state.recordAccountOrders([{pi:0,oi:0,changes:{id:'SECOND-OP',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:.01,
+      const secondOp=JPWForex.state.recordAccountOrders([{pi:0,oi:0,changes:{id:'SECOND-OP',brokerHash:'SYNTHETIC-SECOND-OP',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:.01,
         entry:1.1,sl:1,tp:1.2,status:'Aberta',result:null,costs:0,costBasis:'INCLUDED_IN_RESULT'}}],
         {accountId:'USD_MASTER',periodId:laterId,reason:'synthetic concurrent operation'});
       const activate=JPWForex.state.recordAccountPeriod({accountId:'USD_MASTER',startedAt:'2026-11-01',currency:'USD',si:800,
@@ -384,6 +404,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
     check('second synthetic page has no page errors',secondErrors,[]);
     const third=await context.newPage(),thirdErrors=[];third.on('pageerror',e=>thirdErrors.push(e.message));
     await third.goto(pathToFileURL(path.join(root,'index.html')).href,{waitUntil:'domcontentloaded'});
+    await third.waitForFunction(()=>typeof ffNewsInFlight!=='undefined'&&!ffNewsInFlight&&!document.getElementById('fxUpdateBtn')?.disabled);
     const budgetRollback=await third.evaluate(()=>{
       window.__onbShown=true;closeModal();S=structuredClone(DEFAULTS);migrate();S.onboarding.done=true;
       S.accounts=[{forexAccountId:'ROLLBACK_M',nome:'Mestre rollback',tipo:'MESTRE',platformCurrency:'USD'}];
@@ -397,7 +418,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
         {reason:'synthetic budget rollback'});
       if(!declared.ok)throw Error(declared.error);
       const before=JSON.stringify(S.forex),normal=save;
-      const order=()=>x.recordAccountOrders([{pi:0,oi:0,changes:{id:'ROLLBACK-ORDER',par:'EURUSD',tipo:'BUY',
+      const order=()=>x.recordAccountOrders([{pi:0,oi:0,changes:{id:'ROLLBACK-ORDER',brokerHash:'SYNTHETIC-ROLLBACK-ORDER',par:'EURUSD',tipo:'BUY',
         role:'GENESIS',lote:.01,entry:1.1,sl:1,tp:1.2,status:'Aberta',result:null,costs:0,
         costBasis:'INCLUDED_IN_RESULT'}}],{accountId:'ROLLBACK_M',periodId,reason:'synthetic first fact'});
       save=()=>false;const refused=order();save=normal;
@@ -414,6 +435,7 @@ function check(name,actual,expected){assert.deepStrictEqual(actual,expected,name
     check('explicit retry records first order and association',budgetRollback.retry,true);
     check('retried operation reads associated budget',budgetRollback.attached,'OK');
     check('third synthetic page has no page errors',thirdErrors,[]);
+    check('no unrecognized network requests',unexpected,[]);
     console.log('PASS '+cases.length+'/'+cases.length+' synthetic account-context browser contracts');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error.stack||String(error));process.exitCode=1});

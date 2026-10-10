@@ -9,6 +9,7 @@ import ast
 import functools
 import hashlib
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 import os
 from pathlib import Path

@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from functools import partial
 import hashlib
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 import math
 import os

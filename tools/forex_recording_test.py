@@ -8,29 +8,63 @@ This suite distinguishes recording facts from normative execution permission.
 import argparse
 from functools import partial
 import hashlib
-from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 from pathlib import Path
 import sys
 import threading
+import time
 from playwright.sync_api import sync_playwright
 import notes_launcher_test as launcher
 
 ROOT=Path(__file__).resolve().parents[1]
-SEED="""() => {
-  S.phases=JPWForex.state.newOperationPhases();
+SEED=r"""options => {
+  closeModal();closeSettingsModal();window.__onbShown=true;
+  S.phases=JPWForex.state.newOperationPhases().slice(0,4);
   S.phases.forEach(p=>p.orders=emptyOrders(2));
+  S.accounts=[{forexAccountId:'RECORD-A',nome:'Conta sintética A',tipo:'MESTRE'}];
   S.forex=JPWForex.state.empty();S.activeOperation=null;
-  S.operationHistory={schemaVersion:1,records:[]};S.cycleRealizado=0;S.transitionLog=[];
-  S.phaseUnlocked=[true,false,false,false,false,false];
+  S.operationHistory={schemaVersion:2,records:[]};S.cycleRealizado=0;S.transitionLog=[];
+  S.phaseUnlocked=[true,false,false,false];
   window.__alerts=[];window.alert=msg=>__alerts.push(String(msg));window.prompt=()=> 'Correção sintética justificada';window.confirm=()=>true;
-  window.__fact=(patch={})=>({id:'FATO',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:1,entry:1.1,sl:1.09,tp:1.2,result:null,status:'Aberta',costs:-2,costBasis:'SEPARATE_FROM_RESULT',stopValidated:true,...patch});
+  window.__fact=(patch={})=>({id:'FATO',brokerHash:'SYNTHETIC-9007199254740993',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:1,entry:1.1,sl:1.09,tp:1.2,result:null,status:'Aberta',costs:-2,costBasis:'SEPARATE_FROM_RESULT',stopValidated:true,...patch});
+  const api=JPWForex.state, yes=r=>{if(!r?.ok)throw Error(JSON.stringify(r));return r;};
+  window.__period=(scope=api.operationalSelection())=>S.forex.accountContexts?.accounts?.[scope.accountId]?.periods?.[scope.periodId];
+  window.__populate=()=>{
+    const scope=api.operationalSelection(), p=__period(scope);
+    for(let pi=0;pi<6;pi++)while(p.phases[pi].orders.length<2)yes(api.addAccountOrderDraft({...scope,pi},{reason:'Synthetic empty row'}));
+  };
+  window.__observe=(input,options={reason:'Synthetic observation'})=>{
+    const index=input.accountIndex, account=S.accounts[index], currency=input.currency;
+    if(!account.forexAccountId)account.forexAccountId='RECORD-'+index;
+    let a=S.forex.accountContexts?.accounts?.[account.forexAccountId];
+    if(!a){
+      yes(api.recordAccountPeriod({accountId:account.forexAccountId,startedAt:'2026-01-01',currency,si:input.si,openingBook:input.si,source:'Synthetic period opening',activateCurrentPeriod:true},{reason:'Synthetic explicit account period'}));
+      a=S.forex.accountContexts.accounts[account.forexAccountId];
+    }
+    const previous=api.operationalSelection();
+    yes(api.selectOperationalContext(account.forexAccountId,a.currentPeriodId));
+    const r=api.recordAccountFacts({...input,periodId:input.newPeriod?undefined:a.currentPeriodId},options);
+    if(r.ok){const c=api.recordContext();yes(api.selectOperationalContext(c.accountId,c.periodId));__populate();}
+    else if(previous.accountId&&previous.periodId)yes(api.selectOperationalContext(previous.accountId,previous.periodId));
+    return r;
+  };
   if(save()!==true)throw Error('Synthetic setup refused');
+  if(!options.legacy){
+    const currency=options.currency||'USD';
+    yes(__observe({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency,usdToAccountRate:5,source:'Synthetic initial observation',observedAt:'2026-09-01T00:00:00Z'},{reason:'Synthetic initial observation'}));
+  }
+  window.__finalize=entry=>{openFinalizeOperationModal();return finalizeOperation(entry);};
+  window.__initialScope=api.operationalSelection();
+  window.__legacyBefore=JSON.stringify({phases:S.phases,op:S.activeOperation,period:S.period,ledger:S.ledger});
   render();renderPhases();navigateToScreen('forex-operation');
 }"""
 
-def seed(page):
-    page.evaluate(SEED)
+def seed(page, test=None):
+    name=test.__name__ if test else ''
+    legacy=name in ('legacy_finalization','unknown_reference_never_backfilled','legacy_explicit_mixed_currency_refused')
+    currency='BRL' if name in ('v11_result_does_not_mix_legacy_cycle','order_risk_keeps_recorded_currency','roles_and_currency_labels') else 'USD'
+    page.evaluate(SEED,{'legacy':legacy,'currency':currency})
 
 def result(page, script):
     return page.evaluate('() => {'+script+'}')
@@ -56,12 +90,13 @@ def record_blocked(page):
     assert r['unlocked']==[True]*6,r
 
 def render_and_typing(page):
-    page.evaluate("() => {S.phases=S.phases.slice(0,4);S.phases[0].orders[0]=__fact();S.phaseUnlocked=[true,true,true,true];save();renderPhases();}")
+    assert_ok(result(page,"return operationRecordOrder(0,0,__fact(),{reason:'Synthetic current fact'});"))
+    page.evaluate('() => renderPhases()')
     before=launcher.snapshot(page)
     page.evaluate('() => {for(let i=0;i<4;i++){render();renderPhases();} }')
     launcher.unchanged(page,before,'render legacy is read-only')
-    assert page.locator('#phaseContainer [data-f="par"]:enabled').count()==8
-    assert 'LEGACY' in page.locator('#phaseContainer').inner_text()
+    assert page.locator('#phaseContainer [data-f="par"]:enabled').count()==7
+    assert page.evaluate('S.phases.length')==4 and page.evaluate('__period().phases.length')==6
     page.locator('[data-p="0"][data-o="0"][data-f="id"]').fill('draft in DOM')
     launcher.unchanged(page,before,'typing does not save')
     page.locator('[data-p="0"][data-o="0"][data-f="id"]').blur()
@@ -69,16 +104,16 @@ def render_and_typing(page):
     page.locator('[data-eb-detail="0:0"]').evaluate('details=>details.open=true')
     page.locator('[data-eb-reason="0:0"]').fill('Correção sintética justificada')
     page.locator('[data-eb-save-row="0:0"]').click()
-    r=result(page,"return S.phases[0].orders[0];")
-    assert r['id']=='draft in DOM' and r['revisions'][0]['before']['id']=='FATO',r
-    assert r['policySnapshot']['policyVersion']=='LEGACY_UNRESOLVED',r
+    r=result(page,"return __period().phases[0].orders[0];")
+    assert r['id']=='draft in DOM' and r['revisions'][1]['before']['id']=='FATO',r
+    assert r['policySnapshot']['statuteVersion']=='V11',r
 
 def version_and_void(page):
     r=result(page,"""
-      const a=operationRecordOrder(0,0,__fact(),{reason:'Registrar execução'}),id=S.phases[0].orders[0].orderId;
+      const a=operationRecordOrder(0,0,__fact(),{reason:'Registrar execução'}),id=__period().phases[0].orders[0].orderId;
       const b=operationRecordOrder(0,0,{lote:2},{reason:'Corrigir volume executado'});
       const c=operationVoidOrder(0,0,'Duplicidade identificada');
-      const order=structuredClone(S.phases[0].orders[0]);const count=S.phases[0].orders.length;
+      const order=structuredClone(__period().phases[0].orders[0]);const count=__period().phases[0].orders.length;
       const d=operationRecordOrder(0,0,{lote:3},{reason:'Não pode reescrever anulação'});
       return {a,b,c,d,id,order,count,live:operationLiveOrders().length,ready:operationCanFinalize(),preflight:operationPreflight()};
     """)
@@ -90,7 +125,7 @@ def version_and_void(page):
     assert r['ready']['ok'] and r['preflight']['estado']=='ready',r
 
 def draft_delete(page):
-    r=result(page,"const before=S.phases[0].orders.length;const a=operationAddDraft(0);const id=S.phases[0].orders.at(-1).orderId;const b=operationVoidOrder(0,before,'Rascunho descartado');return {a,b,before,after:S.phases[0].orders.length,id,active:S.activeOperation};")
+    r=result(page,"const before=__period().phases[0].orders.length;const a=operationAddDraft(0);const id=__period().phases[0].orders.at(-1).orderId;const b=operationVoidOrder(0,before,'Rascunho descartado');return {a,b,before,after:__period().phases[0].orders.length,id,active:__period().activeOperation};")
     assert_ok(r['a']);assert_ok(r['b']);assert r['id'] and r['before']==r['after'] and r['active'] is None,r
 
 def malformed_refused(page):
@@ -131,7 +166,7 @@ def close_zero_and_refusal(page):
     assert result(page,'return JSON.stringify(S);')==before
     assert page.locator('#closeResultInput').input_value()=='0'
     page.evaluate('() => {save=__realSave;}');page.locator('#modalConfirm').click()
-    r=result(page,'return S.phases[0].orders[0];')
+    r=result(page,'return __period().phases[0].orders[0];')
     assert r['status']=='Fechada' and r['result']==0 and r['recordVersion']==2,r
 
 def mutation_refusal_retry(page):
@@ -140,7 +175,7 @@ def mutation_refusal_retry(page):
       save=()=>false;const a=operationRecordOrder(0,0,__fact(),{reason:'Registro'});
       const after=JSON.stringify(S),afterRaw=localStorage.getItem(LSKEY);save=real;
       const b=operationRecordOrder(0,0,__fact(),{reason:'Registro'});
-      return {a,b,unchanged:before===after,rawSame:raw===afterRaw,version:S.phases[0].orders[0].recordVersion};
+      return {a,b,unchanged:before===after,rawSame:raw===afterRaw,version:__period().phases[0].orders[0].recordVersion};
     """)
     assert not r['a']['ok'] and r['unchanged'] and r['rawSame'],r
     assert_ok(r['b']);assert r['version']==1,r
@@ -193,41 +228,43 @@ def execution_browser_quote_cancel_late_response(page):
 
 def execution_browser_atomic_account_scope(page):
     r=result(page,"""
-      const observe=index=>JPWForex.state.recordAccountFacts({accountIndex:index,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic execution scope',observedAt:'2026-09-14T12:00:00Z'},{reason:'Contexto de conta sintético'});
+      const observe=index=>__observe({accountIndex:index,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic execution scope',observedAt:'2026-09-14T12:00:00Z'},{reason:'Contexto de conta sintético'});
       const first=observe(0),a=JPWForex.state.recordContext();
       S.accounts.push({nome:'Outra conta sintética',tipo:'SATELITE'});const second=observe(S.accounts.length-1),b=JPWForex.state.recordContext();
+      JPWForex.state.selectOperationalContext(a.accountId,a.periodId);
       const start=__notesLauncherWrites.length;
       const recorded=operationRecordOrders([{pi:0,oi:0,changes:__fact(),expectedVersion:0}],{reason:'Conta escolhida na confirmação do fato',accountId:a.accountId,periodId:a.periodId});
       const documentWrites=__notesLauncherWrites.slice(start).filter(w=>w.area==='local'&&w.method==='setItem'&&w.key===LSKEY).length;
       const saved=JSON.parse(localStorage.getItem(LSKEY)),before=JSON.stringify(S),writes=__notesLauncherWrites.length;
       const transfer=operationRecordOrders([{pi:0,oi:0,changes:{id:'Tentativa de transferência'}}],{reason:'Destino divergente',accountId:b.accountId,periodId:b.periodId});
       return {first,second,recorded,transfer,documentWrites,a,b,savedAccount:saved.forex.activeAccountId,
-        orderAccount:saved.phases[0].orders[0].accountId,operationAccount:saved.activeOperation.recordContext.accountId,
+        orderAccount:saved.forex.accountContexts.accounts[a.accountId].periods[a.periodId].phases[0].orders[0].accountId,operationAccount:saved.forex.accountContexts.accounts[a.accountId].periods[a.periodId].activeOperation.recordContext.accountId,
         same:before===JSON.stringify(S)&&writes===__notesLauncherWrites.length};
     """)
     for key in ('first','second','recorded'):assert_ok(r[key])
     assert r['a']['accountId']!=r['b']['accountId'] and r['documentWrites']==1,r
-    assert r['savedAccount']==r['orderAccount']==r['operationAccount']==r['a']['accountId'],r
+    assert r['savedAccount']==r['b']['accountId'] and r['orderAccount']==r['operationAccount']==r['a']['accountId'],r
+    assert page.evaluate('JPWForex.state.operationalSelection().accountId')==r['a']['accountId'],r
     assert not r['transfer']['ok'] and r['same'],r
 
 def context_and_extensions(page):
     r=result(page,"""
-      S.phases[0].orders[0]={...__fact(),customExtension:{keep:['synthetic']}};
-      const a=operationRecordOrder(0,0,{result:10,status:'Fechada'},{reason:'Fechamento legado'});
-      const o=S.phases[0].orders[0],id=o.orderId,policy=JSON.stringify(o.policySnapshot),version=o.recordVersion;
+      const a=operationRecordOrder(0,0,__fact({result:10,status:'Fechada'}),{reason:'Current factual closure'});
+      __period().phases[0].orders[0].customExtension={keep:['synthetic']};if(save()!==true)throw Error('Synthetic extension refused');
+      const o=__period().phases[0].orders[0],id=o.orderId,policy=JSON.stringify(o.policySnapshot),version=o.recordVersion;
       renderPhases();renderPhases();const b=operationRecordOrder(0,0,{result:12},{reason:'Correção de resultado'});
-      return {a,b,o:S.phases[0].orders[0],id,policy,version};
+      return {a,b,o:__period().phases[0].orders[0],id,policy,version};
     """)
     assert_ok(r['a']);assert_ok(r['b']);o=r['o']
-    assert o['orderId']==r['id'] and o['policySnapshot']['policyVersion']=='LEGACY_UNRESOLVED',r
+    assert o['orderId']==r['id'] and o['policySnapshot']['statuteVersion']=='V11' and r['policy']==__import__('json').dumps(o['policySnapshot'],ensure_ascii=False,separators=(',',':')),r
     assert o['customExtension']=={'keep':['synthetic']} and len(o['revisions'])==2,r
-    assert o['revisions'][0]['context']['status']=='NOT_COMPUTABLE' and o['revisions'][0]['context']['accountInputs'] is None,r
-    assert o['revisions'][1]['before']['result']==10,r
+    assert o['revisions'][0]['context']['accountId']==o['accountId'] and o['revisions'][0]['context']['periodId']==o['periodId'] and o['revisions'][0]['context']['currency']=='USD',r
+    assert o['revisions'][1]['before']['result']==10 and o['revisions'][1]['after']['result']==12,r
 
 def pending_and_costs(page):
     r=result(page,"""
       const a=operationRecordOrder(0,0,__fact({status:'Pendente',pendingActive:true,amplifiesExposure:true,costs:-5}),{reason:'Pendente ampliadora'});
-      const o=S.phases[0].orders[0],input=JPWForex.orderInputs(o,{currency:'USD'}),before=operationCanFinalize();
+      const o=__period().phases[0].orders[0],input=JPWForex.orderInputs(o,{currency:'USD'}),before=operationCanFinalize();
       const b=operationVoidOrder(0,0,'Pendente cancelada');return {a,b,input,before,after:operationCanFinalize(),o};
     """)
     assert_ok(r['a']);assert_ok(r['b']);assert r['input']['active'] and r['input']['kind']=='AMPLIFYING' and r['input']['stopValid'],r
@@ -235,75 +272,90 @@ def pending_and_costs(page):
 
 def conflicted_finalization(page):
     r=result(page,"""
-      JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic thesis context',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta observada antes dos fatos'});
+      __observe({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic thesis context',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta observada antes dos fatos'});
       operationRecordOrder(0,0,__fact({status:'Fechada',result:50}),{reason:'Fechamento A'});
       operationRecordOrder(1,0,__fact({status:'Fechada',result:-20,par:'GBPUSD',tipo:'SELL'}),{reason:'Fechamento divergente'});
-      S.activeOperation.openedAt='2026-01-01T12:00:00.000Z';S.activeOperation.openedAtSource='manual_legacy';
-      const ids=operationLiveOrders().map(x=>x.o.orderId),a=finalizeOperation({defenseCount:0});
-      return {a,ids,phases:S.phases.length,orders:operationLiveOrders().length,history:S.operationHistory.records.length,cycle:S.cycleRealizado};
+      __period().activeOperation.openedAt='2026-01-01T12:00:00.000Z';__period().activeOperation.openedAtSource='manual_legacy';
+      const ids=operationLiveOrders().map(x=>x.o.orderId),a=__finalize({defenseCount:0});
+      return {a,ids,phases:__period().phases.length,orders:operationLiveOrders().length,history:S.operationHistory.records.length,cycle:S.cycleRealizado};
     """)
     assert_ok(r['a']);h=r['a']['record'];assert r['phases']==6 and r['orders']==0 and r['history']==1 and r['cycle']==0,r
-    assert h['netResult']==30 and h['resultConsolidation']=='CONTEXTUAL_HISTORY',r
+    assert sum(o['result'] for o in h['ordersSnapshot'])==30 and sum(o['costs'] for o in h['ordersSnapshot'])==-4 and h['netResult']==26 and h['resultConsolidation']=='CONTEXTUAL_HISTORY',r
     assert h['instrument'] is None and h['direction'] is None and len(h['complianceFindings'])==2,r
     assert [o['orderId'] for o in h['ordersSnapshot']]==r['ids'],r
     assert all(o['revisions'] for o in h['ordersSnapshot']) and h['recordContext']['statuteVersion']=='V11',r
     assert h['finalizationContext']['status']=='OK' and h['currency']=='USD',r
 
 def legacy_finalization(page):
+    page.evaluate("""() => {
+      S.phases[2].orders[1]=__fact({status:'Fechada',result:17});
+      S.activeOperation={operationId:'legacy_synthetic_stable',openedAt:'2026-01-01T12:00:00Z',openedAtSource:'manual_legacy',adoptedLegacyAt:'2026-01-02T00:00:00Z',maxAccountPhaseReached:null,policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'}};
+      if(save()!==true)throw Error('Synthetic legacy setup refused');
+    }""")
+    before=launcher.snapshot(page)
     r=result(page,"""
-      S.phases=S.phases.slice(0,4);S.phases[2].orders[1]=__fact({status:'Fechada',result:17});
-      S.activeOperation={operationId:'legacy_synthetic_stable',openedAt:'2026-01-01T12:00:00.000Z',openedAtSource:'manual_legacy',adoptedLegacyAt:'2026-01-02T00:00:00.000Z',maxAccountPhaseReached:null};
-      const before=JSON.stringify(S),review=operationBuildSnapshot(S.activeOperation,{defenseCount:0}).record;
-      const readOnly=before===JSON.stringify(S),a=finalizeOperation({defenseCount:0});
-      return {a,review,readOnly,phases:S.phases.length};
+      const preview=JPWForex.state.legacyAccountPreview(),a=finalizeOperation({defenseCount:0});
+      render();renderPhases();return {a,preview,global:S.phases,op:S.activeOperation,history:S.operationHistory.records.length,live:operationLiveOrders()};
     """)
-    assert_ok(r['a']);h=r['a']['record'];assert r['readOnly'] and r['phases']==6,r
-    assert h['policySnapshot']['policyVersion']=='LEGACY_UNRESOLVED' and h['maxGridPhaseReached'] is None,r
-    assert h['ordersSnapshot'][0]['orderId']==r['review']['ordersSnapshot'][0]['orderId'],r
-    assert h['ordersSnapshot'][0]['phase']==3 and h['ordersSnapshot'][0]['gridIndex']==1,r
+    assert not r['a']['ok'] and r['a']['motivo']=='no_identity',r
+    assert len(r['global'])==4 and r['global'][2]['orders'][1]['result']==17,r
+    assert r['op']['policySnapshot']['policyVersion']=='LEGACY_UNRESOLVED' and r['op']['operationId']=='legacy_synthetic_stable',r
+    assert r['preview']['source']['phases']==r['global'] and r['history']==0 and r['live']==[],r
+    assert all(a['status']=='UNRECONCILED' for a in r['preview']['associations']),r
+    launcher.unchanged(page,before,'unbound four-phase legacy is read-only and cannot be finalized into the current account')
 
 def captured_reference_balance(page):
     r=result(page,"""
-      const observe=(si,newPeriod)=>JPWForex.state.recordAccountFacts({accountIndex:0,si,equity:si,netCashflow:0,cashflowAdjustmentRecorded:true,currency:'USD',source:'synthetic-account',observedAt:'2026-09-14T12:00:00Z',newPeriod},{reason:'Observação explícita'});
+      const observe=(si,newPeriod)=>__observe({accountIndex:0,si,equity:si,netCashflow:0,cashflowAdjustmentRecorded:true,currency:'USD',source:'synthetic-account',observedAt:'2026-09-14T12:00:00Z',newPeriod},{reason:'Observação explícita'});
       const account=observe(10000,false),order=operationRecordOrder(0,0,__fact({status:'Fechada',result:50}),{reason:'Fato confirmado'});
-      const captured=structuredClone(S.activeOperation.recordContext),changed=observe(20000,true);
-      const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
-      return {account,order,changed,captured,finalized};
+      const captured=structuredClone(__period().activeOperation.recordContext),beforeChange=JSON.stringify(S),changed=observe(20000,true),unchanged=beforeChange===JSON.stringify(S);
+      const finalized=__finalize({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
+      return {account,order,changed,captured,finalized,unchanged};
     """)
-    for key in ('account','order','changed','finalized'):assert_ok(r[key])
+    for key in ('account','order','finalized'):assert_ok(r[key])
+    assert not r['changed']['ok'] and r['unchanged'],r
     h=r['finalized']['record']
     assert h['referenceBalance']==10000 and h['referenceBalanceType']=='account_si_at_first_record',r
     assert h['referenceBalanceProvenance']=='CAPTURED_ACCOUNT_OBSERVATION' and h['finalizationContext']['accountInputs']['si']==10000,r
     assert h['recordContext']['periodId']==h['finalizationContext']['periodId']==r['captured']['periodId'],r
-    assert h['ordersSnapshot'][0]['revisions'][0]['context']['accountInputs']['si']==10000,r
+    assert h['ordersSnapshot'][0]['revisions'][0]['context']['accountId']==r['captured']['accountId'] and h['ordersSnapshot'][0]['revisions'][0]['context']['periodId']==r['captured']['periodId'],r
 
 def unknown_reference_never_backfilled(page):
+    page.evaluate("""() => {
+      S.phases[0].orders[0]=__fact({status:'Fechada',result:5});
+      S.activeOperation={operationId:'historical-without-monetary-context',policySnapshot:{policyVersion:'V11'},recordContext:{accountId:null,periodId:null,accountInputs:null}};
+      if(save()!==true)throw Error('Synthetic historical fact refused');
+    }""")
     r=result(page,"""
-      const order=operationRecordOrder(0,0,__fact({status:'Fechada',result:5}),{reason:'Fato sem conta conciliada'});
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:20000,equity:20000,netCashflow:0,currency:'USD',source:'synthetic-account',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação posterior'});
-      const before=JSON.stringify(S),finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});return {order,account,finalized,unchanged:before===JSON.stringify(S),op:S.activeOperation,orders:operationLiveOrders().map(x=>x.o),history:S.operationHistory.records.length};
+      const legacy=JSON.stringify({phases:S.phases,op:S.activeOperation});
+      const account=__observe({accountIndex:0,si:20000,equity:20000,netCashflow:0,currency:'USD',source:'synthetic-account',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação posterior'});
+      const same=legacy===JSON.stringify({phases:S.phases,op:S.activeOperation});
+      const monetary=operationMonetaryContext(S.activeOperation,[{o:S.phases[0].orders[0],pi:0,oi:0}]);
+      const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
+      return {account,same,monetary,finalized,op:S.activeOperation,orders:S.phases[0].orders,live:operationLiveOrders(),history:S.operationHistory.records.length};
     """)
-    for key in ('order','account'):assert_ok(r[key])
-    assert not r['finalized']['ok'] and r['finalized']['motivo']=='monetary_context_missing',r
-    assert r['unchanged'] and r['history']==0 and r['op']['recordContext']['accountInputs'] is None,r
-    assert r['orders'][0].get('accountId') is None,r
+    assert_ok(r['account'])
+    assert r['same'] and not r['monetary']['ok'] and r['monetary']['motivo']=='monetary_context_missing',r
+    assert not r['finalized']['ok'] and r['finalized']['motivo']=='no_identity' and r['history']==0 and r['live']==[],r
+    assert r['op']['recordContext']['accountInputs'] is None and r['orders'][0].get('accountId') is None,r
     before=launcher.snapshot(page);page.evaluate('() => openFinalizeOperationModal()')
-    assert 'a conta selecionada não preenche vínculos históricos ausentes' in page.locator('#modalBox').inner_text()
-    launcher.unchanged(page,before,'missing monetary context explains refusal without changing facts')
+    assert 'Selecione uma conta/período com operação registrada' in page.locator('#modalBox').inner_text()
+    launcher.unchanged(page,before,'a later observation cannot promote facts with missing historical monetary identity')
 
 def account_period_scoped_finalization(page):
     r=result(page,"""
-      const observe=(index,si,equity,currency='USD')=>JPWForex.state.recordAccountFacts({accountIndex:index,si,equity,netCashflow:0,cashflowAdjustmentRecorded:true,currency,usdToAccountRate:0.9,source:'synthetic account context',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
+      const observe=(index,si,equity,currency='USD')=>__observe({accountIndex:index,si,equity,netCashflow:0,cashflowAdjustmentRecorded:true,currency,usdToAccountRate:0.9,source:'synthetic account context',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
       const a=observe(0,10000,10000),birth=operationRecordOrder(0,0,__fact({status:'Fechada',result:5}),{reason:'Fato na conta A'});
-      const captured=structuredClone(S.activeOperation.recordContext);
+      const captured=structuredClone(__period().activeOperation.recordContext);
       S.accounts.push({nome:'Synthetic account B',tipo:'MESTRE'});
-      const b=observe(S.accounts.length-1,20000,17000,'EUR');
+      const b=observe(S.accounts.length-1,20000,17000,'EUR'),selected=S.forex.activeAccountId;
+      JPWForex.state.selectOperationalContext(captured.accountId,captured.periodId);
       const continuation=operationRecordOrder(1,0,__fact({role:'DEFENSE',status:'Fechada',result:7}),{reason:'Continuação da operação A'});
-      S.activeOperation.openedAt='2026-01-01T00:00:00Z';S.activeOperation.openedAtSource='manual_legacy';
-      const liveMax=S.activeOperation.maxAccountPhaseReached,selected=S.forex.activeAccountId;
+      __period().activeOperation.openedAt='2026-01-01T00:00:00Z';__period().activeOperation.openedAtSource='manual_legacy';
+      const liveMax=__period().activeOperation.maxAccountPhaseReached;
       const before=JSON.stringify(S);openFinalizeOperationModal();
       const preview=operationFinalizeReview.op.maxAccountPhaseReached,readonly=before===JSON.stringify(S);
-      const finalized=finalizeOperation({defenseCount:0});
+      const finalized=__finalize({defenseCount:0});
       return {a,b,birth,continuation,captured,selected,liveMax,preview,readonly,finalized};
     """)
     for key in ('a','b','birth','continuation','finalized'):assert_ok(r[key])
@@ -316,53 +368,58 @@ def account_period_scoped_finalization(page):
 
 def factual_input_versioning(page):
     r=result(page,"""
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic conversion',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
+      const account=__observe({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic conversion',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
       const ins=instFor('USDJPY'),accountId=S.forex.activeAccountId,periodId=S.forex.accounts[accountId].periodId;
       const observeInstrument=(price,contractSize,expectedRevision)=>JPWForex.state.recordInstrumentContext({accountId,periodId,instrumentId:'USDJPY',expectedRevision,
         componentChanges:{price:{value:price,source:'synthetic recorded price',observedAt:'2026-09-14T12:00:00Z'},
           contract:{contractSize,source:'synthetic instrument specification',observedAt:'2026-09-14T12:00:00Z'}}},{reason:'Observação explícita do instrumento'});
       const initialInstrument=observeInstrument(100,100000,0);
       const birth=operationRecordOrder(0,0,__fact({par:'USDJPY',entry:110,sl:109,status:'Fechada',result:5}),{reason:'Fato e cotação observados'});
-      const original=structuredClone(S.phases[0].orders[0]),context=structuredClone(S.activeOperation.recordContext);
+      const original=structuredClone(__period().phases[0].orders[0]),context=structuredClone(__period().activeOperation.recordContext);
       const revisedInstrument=observeInstrument(200,10000,1);
       const corrected=operationRecordOrder(0,0,{result:6},{reason:'Correção registrada em outro instante'});
-      const revised=structuredClone(S.phases[0].orders[0]);ins.preco=400;ins.cpl=5000;
-      renderPhases();const same=JSON.stringify(revised)===JSON.stringify(S.phases[0].orders[0]);
-      const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
+      const revised=structuredClone(__period().phases[0].orders[0]);ins.preco=400;ins.cpl=5000;
+      renderPhases();const same=JSON.stringify(revised)===JSON.stringify(__period().phases[0].orders[0]);
+      const finalized=__finalize({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
       return {account,initialInstrument,revisedInstrument,birth,corrected,original,revised,context,same,finalized};
     """)
     for key in ('account','initialInstrument','revisedInstrument','birth','corrected','finalized'):assert_ok(r[key])
     old=r['original']['calculationInputs'];new=r['revised']['calculationInputs'];h=r['finalized']['record']['ordersSnapshot'][0]
     assert r['same'] and old['conversionRate']==0.01 and old['contractSize']==100000,r
     assert new['conversionRate']==0.005 and new['contractSize']==10000,r
-    assert old['provenance']==new['provenance']=='OBSERVED_AT_RECORDING',r
+    assert old['provenance']==new['provenance']=='RECORDED_FACT_WITHOUT_EXECUTION_CLEARANCE',r
     assert old['currency']=='USD' and old['accountId']==r['context']['accountId'] and old['periodId']==r['context']['periodId'],r
     assert h['revisions'][0]['after']['calculationInputs']==old and h['revisions'][1]['before']['calculationInputs']==old,r
     assert h['calculationInputs']==new and h['revisions'][1]['after']['calculationInputs']==new,r
 
 def unresolved_period_never_selected_fallback(page):
     r=result(page,"""
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:8400,netCashflow:0,currency:'USD',source:'synthetic scope',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
+      const account=__observe({accountIndex:0,si:10000,equity:8400,netCashflow:0,currency:'USD',source:'synthetic scope',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
       const birth=operationRecordOrder(0,0,__fact({status:'Fechada',result:5}),{reason:'Fato confirmado'});
-      S.activeOperation.recordContext.periodId='synthetic-unresolved-period';S.activeOperation.maxAccountPhaseReached=null;
-      const original=JSON.stringify(S),review=operationCaptureReview(S.activeOperation),snapshot=operationBuildSnapshot(review,{defenseCount:0});
-      return {account,birth,unchanged:original===JSON.stringify(S),review,snapshot};
+      const scope=JPWForex.state.operationalSelection(),p=__period(scope);
+      p.activeOperation.recordContext.periodId='synthetic-unresolved-period';p.activeOperation.maxAccountPhaseReached=null;
+      const before=JSON.stringify(S),context=JPWForex.state.recordContext({accountId:scope.accountId,periodId:'synthetic-unresolved-period'}),review=operationCaptureReview(p.activeOperation);
+      const monetary=operationMonetaryContext(p.activeOperation,[{o:p.phases[0].orders[0]}]);
+      const snapshot=finalizeOperation({defenseCount:0});
+      return {account,birth,unchanged:before===JSON.stringify(S),context,review,monetary,snapshot,supported:JPWForex.state.supported()};
     """)
     assert_ok(r['account']);assert_ok(r['birth'])
     assert r['unchanged'] and r['review']['maxAccountPhaseReached'] is None,r
-    assert not r['snapshot']['ok'] and r['snapshot']['motivo']=='monetary_context_conflict',r
+    assert not r['supported'] and r['context']['status']=='NOT_COMPUTABLE' and r['context']['accountInputs'] is None,r
+    assert not r['monetary']['ok'] and r['monetary']['motivo']=='monetary_context_conflict',r
+    assert not r['snapshot']['ok'] and r['snapshot']['motivo']=='no_identity',r
 
 def account_observation_captures_peak(page):
     r=result(page,"""
-      const observe=(equity,at)=>JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity,netCashflow:0,currency:'USD',source:'synthetic phase observation',observedAt:at},{reason:'Equity confirmada'});
+      const observe=(equity,at)=>__observe({accountIndex:0,si:10000,equity,netCashflow:0,currency:'USD',source:'synthetic phase observation',observedAt:at},{reason:'Equity confirmada'});
       const birthAccount=observe(10000,'2026-09-12T00:00:00Z');
       const birthOrder=operationRecordOrder(0,0,__fact({status:'Fechada',result:5}),{reason:'Operação A'});
-      const peak=observe(8000,'2026-09-12T04:00:00Z'),maxAtPeak=S.activeOperation.maxAccountPhaseReached;
+      const peak=observe(8000,'2026-09-12T04:00:00Z'),maxAtPeak=__period().activeOperation.maxAccountPhaseReached;
       const h4a=JPWForex.state.recordH4({ddPercent:0,closedAt:'2026-09-12T08:00:00Z',source:'synthetic candle'},{reason:'Fechamento H4 confirmado'});
       const h4b=JPWForex.state.recordH4({ddPercent:0,closedAt:'2026-09-12T12:00:00Z',source:'synthetic candle'},{reason:'Fechamento H4 confirmado'});
       const recovered=observe(10000,'2026-09-12T16:00:00Z');
-      const current=JPWForex.state.read().accountPhase.value,maxAfterRecovery=S.activeOperation.maxAccountPhaseReached;
-      const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
+      const current=JPWForex.state.read().accountPhase.value,maxAfterRecovery=__period().activeOperation.maxAccountPhaseReached;
+      const finalized=__finalize({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
       return {birthAccount,birthOrder,peak,h4a,h4b,recovered,maxAtPeak,current,maxAfterRecovery,finalized};
     """)
     for key in ('birthAccount','birthOrder','peak','h4a','h4b','recovered','finalized'):assert_ok(r[key])
@@ -370,24 +427,24 @@ def account_observation_captures_peak(page):
 
 def account_peak_refusal_retry(page):
     r=result(page,"""
-      const observe=equity=>JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity,netCashflow:0,currency:'USD',source:'synthetic phase observation',observedAt:'2026-09-12T00:00:00Z'},{reason:'Equity confirmada'});
+      const observe=equity=>__observe({accountIndex:0,si:10000,equity,netCashflow:0,currency:'USD',source:'synthetic phase observation',observedAt:'2026-09-12T00:00:00Z'},{reason:'Equity confirmada'});
       observe(10000);operationRecordOrder(0,0,__fact(),{reason:'Operação A'});
       const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY),real=window.save;window.save=()=>false;
       const refused=observe(8000);window.save=real;
       const rollback=before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY),retry=observe(8000);
-      return {refused,rollback,retry,max:S.activeOperation.maxAccountPhaseReached};
+      return {refused,rollback,retry,max:__period().activeOperation.maxAccountPhaseReached};
     """)
     assert not r['refused']['ok'] and r['refused']['persistido'] is False and r['rollback'],r
     assert_ok(r['retry']);assert r['max']==5,r
 
 def account_peak_unknown(page):
     r=result(page,"""
-      const observe=equity=>JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity,netCashflow:0,currency:'USD',source:'synthetic phase observation',observedAt:'2026-09-12T00:00:00Z'},{reason:'Equity confirmada'});
+      const observe=equity=>__observe({accountIndex:0,si:10000,equity,netCashflow:0,currency:'USD',source:'synthetic phase observation',observedAt:'2026-09-12T00:00:00Z'},{reason:'Equity confirmada'});
       observe(10000);operationRecordOrder(0,0,__fact(),{reason:'Operação A'});
       const real=window.save;window.save=()=>{throw Error('synthetic unknown outcome');};
       const unknown=observe(8000);window.save=real;
       const candidate=JSON.stringify(S),writes=__notesLauncherWrites.length,retry=observe(10000);
-      return {unknown,retry,max:S.activeOperation.maxAccountPhaseReached,blocked:jpWealthPersistenceOutcomeIsUnknown(),same:candidate===JSON.stringify(S),noWrite:writes===__notesLauncherWrites.length};
+      return {unknown,retry,max:__period().activeOperation.maxAccountPhaseReached,blocked:jpWealthPersistenceOutcomeIsUnknown(),same:candidate===JSON.stringify(S),noWrite:writes===__notesLauncherWrites.length};
     """)
     assert not r['unknown']['ok'] and r['unknown']['persistido'] is None and r['blocked'],r
     assert r['max']==5 and r['same'] and r['noWrite'] and not r['retry']['ok'],r
@@ -395,105 +452,112 @@ def account_peak_unknown(page):
 def v11_result_does_not_mix_legacy_cycle(page):
     r=result(page,"""
       S.cycleRealizado=123;
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'BRL',usdToAccountRate:5,source:'synthetic currency scope',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta BRL observada'});
+      const account=__observe({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'BRL',usdToAccountRate:5,source:'synthetic currency scope',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta BRL observada'});
       const birth=operationRecordOrder(0,0,__fact({status:'Fechada',result:100}),{reason:'Resultado BRL'});
-      const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
+      const finalized=__finalize({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
       return {account,birth,finalized,legacyCycle:S.cycleRealizado,history:S.operationHistory.records.length};
     """)
     for key in ('account','birth','finalized'):assert_ok(r[key])
     h=r['finalized']['record']
-    assert r['legacyCycle']==123 and r['history']==1 and h['netResult']==100,r
+    assert r['legacyCycle']==123 and r['history']==1 and h['netResult']==98 and h['ordersSnapshot'][0]['result']==100 and h['ordersSnapshot'][0]['costs']==-2,r
     assert h['currency']=='BRL' and h['accountId']==h['recordContext']['accountId'] and h['periodId']==h['recordContext']['periodId'],r
 
 def migrated_reference_identity(page):
     r=result(page,"""
-      const first=operationRecordOrder(0,0,__fact({status:'Migrada'}),{reason:'Referência do espelho legado'});
-      const op=structuredClone(S.activeOperation),count=JPWForex.state.read().orders.raw.length;
-      const actual=operationRecordOrder(1,0,__fact({status:'Fechada',result:17}),{reason:'Fechamento do fato efetivo'});
-      const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
-      return {first,op,count,actual,finalized};
+      S.phases[0].orders[0]=__fact({status:'Migrada'});
+      const legacy=JSON.stringify(S.phases),before=JPWForex.state.read().orders.raw.length;
+      const actual=operationRecordOrder(1,0,__fact({status:'Fechada',result:17}),{reason:'Fechamento do fato efetivo'}),op=structuredClone(__period().activeOperation);
+      const finalized=__finalize({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
+      return {op,before,actual,finalized,legacySame:legacy===JSON.stringify(S.phases)};
     """)
-    for key in ('first','actual','finalized'):assert_ok(r[key])
-    assert r['op']['operationId'] and r['op']['openedAt'] is None and r['op']['policySnapshot']['policyVersion']=='LEGACY_UNRESOLVED',r
-    assert r['count']==0 and r['finalized']['record']['netResult']==17,r
-    assert [o['status'] for o in r['finalized']['record']['ordersSnapshot']]==['Migrada','Fechada'],r
+    assert_ok(r['actual']);assert_ok(r['finalized'])
+    assert r['op']['operationId'] and r['op']['policySnapshot']['statuteVersion']=='V11' and r['before']==0 and r['legacySame'],r
+    assert r['finalized']['record']['netResult']==15 and r['finalized']['record']['ordersSnapshot'][0]['result']==17 and r['finalized']['record']['ordersSnapshot'][0]['costs']==-2,r
+    assert [o['status'] for o in r['finalized']['record']['ordersSnapshot']]==['Fechada'],r
 
 def roles_and_currency_labels(page):
     r=result(page,"""
       const known={accountId:'synthetic-a',periodId:'synthetic-p',currency:'USD'};
       S.phases[0].orders[0]={...__fact({role:'DEFENSE',status:'Fechada',result:100}),...known};
       S.phases[0].orders[1]={...__fact({role:'GENESIS',status:'Fechada',result:100}),...known,currency:'BRL'};
-      renderPhases();const mixed=phasePositiveResults(0).text;
+      const mixed=phasePositiveResults(0).text;
       const roles=[operationOrderLabel(0,0,S.phases[0].orders[0]),operationOrderLabel(0,1,S.phases[0].orders[1])];
-      S.phases[0].orders[0].currency='BRL';renderPhasesLite(0);
-      // The Board now shows net results separately; preserve the positive-result
-      // legacy oracle in its domain helper instead of an obsolete UI cell.
-      return {mixed,roles,total:phasePositiveResults(0).text,html:document.getElementById('phaseContainer').innerText};
+      S.phases[0].orders[0].currency='BRL';const total=phasePositiveResults(0).text;
+      const first=operationRecordOrder(0,0,__fact({role:'DEFENSE',status:'Fechada',result:100}),{reason:'Fato BRL defesa'});
+      const second=operationRecordOrder(0,1,__fact({id:'GENESIS-BRL',role:'GENESIS',status:'Fechada',result:100}),{reason:'Fato BRL gênese'});
+      renderPhases();return {mixed,roles,total,first,second,net:JPWForex.executionBoard.read().economics.closedNetAll,html:document.getElementById('phaseContainer').innerText};
     """)
+    assert_ok(r['first']);assert_ok(r['second'])
     assert r['roles'][0].startswith('DEFESA') and r['roles'][1].startswith('GÊNESE'),r
     assert r['mixed']=='Não consolidado: conta, período ou moeda não conciliados',r
-    assert 'R$' in r['total'] and '200,00' in r['total'] and 'Resultado líquido' in r['html'],r
+    assert 'R$' in r['total'] and '200,00' in r['total'] ,r
+    assert r['net']['status']=='OK' and r['net']['value']==196,r
     assert 'Lucro técnico realizado' not in r['html'] and 'Risco confirmado' in r['html'],r
 
 def order_risk_keeps_recorded_currency(page):
     r=result(page,"""
-      const observe=(index,currency,rate)=>JPWForex.state.recordAccountFacts({accountIndex:index,si:10000,equity:10000,netCashflow:0,currency,usdToAccountRate:rate,source:'synthetic risk currency',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta explicitamente observada'});
+      const observe=(index,currency,rate)=>__observe({accountIndex:index,si:10000,equity:10000,netCashflow:0,currency,usdToAccountRate:rate,source:'synthetic risk currency',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta explicitamente observada'});
       const account=observe(0,'BRL',5);instFor('EURUSD').preco=1.1;instFor('EURUSD').cpl=100000;
-      const birth=operationRecordOrder(0,0,__fact(),{reason:'Fato da conta BRL'}),before=orderRisk(S.phases[0].orders[0]);
+      const birth=operationRecordOrder(0,0,__fact(),{reason:'Fato da conta BRL'}),savedOrder=structuredClone(__period().phases[0].orders[0]),savedScope=JPWForex.state.operationalSelection(),before=orderRisk(savedOrder);
       S.accounts.push({nome:'Synthetic USD B',tipo:'MESTRE'});const other=observe(S.accounts.length-1,'USD',1);
-      const after=orderRisk(S.phases[0].orders[0]);renderPhases();
-      return {account,birth,other,before,after,text:document.querySelector('[data-eb-row-risk="0:0"]').textContent};
+      const stateBefore=JSON.stringify(S),after=orderRisk(savedOrder),readOnly=stateBefore===JSON.stringify(S);JPWForex.state.selectOperationalContext(savedScope.accountId,savedScope.periodId);renderPhases();
+      return {account,birth,other,before,after,readOnly,text:document.querySelector('[data-eb-row-risk="0:0"]').textContent};
     """)
     for key in ('account','birth','other'):assert_ok(r[key])
-    assert abs(r['before']-5000)<0.001 and abs(r['after']-5000)<0.001,r
+    assert r['readOnly'] and abs(r['before']-5000)<0.001 and abs(r['after']-5000)<0.001,r
     assert 'R$' in r['text'] and '5.000' in r['text'],r
 
 def mixed_context_cannot_finalize_as_one_currency(page):
     r=result(page,"""
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic mixed import',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta USD observada'});
+      const account=__observe({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic mixed import',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta USD observada'});
       const birth=operationRecordOrder(0,0,__fact({status:'Fechada',result:100}),{reason:'Fato USD'});
-      S.phases[1].orders[0]={...structuredClone(S.phases[0].orders[0]),orderId:'synthetic-other-fact',currency:'BRL',accountId:'synthetic-other-account',periodId:'synthetic-other-period'};
-      save();const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY);
+      const p=__period();p.phases[1].orders[0]={...structuredClone(p.phases[0].orders[0]),orderId:'synthetic-other-fact',currency:'BRL',accountId:'synthetic-other-account',periodId:'synthetic-other-period'};
+      const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY),writes=__notesLauncherWrites.length;
+      const monetary=operationMonetaryContext(p.activeOperation,[{o:p.phases[0].orders[0]},{o:p.phases[1].orders[0]}]);
       const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
-      return {account,birth,finalized:{ok:finalized.ok,motivo:finalized.motivo,net:finalized.record?.netResult,currency:finalized.record?.currency},
-        unchanged:before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY),count:operationLiveOrders().length,history:S.operationHistory.records.length};
+      return {account,birth,monetary,finalized,supported:JPWForex.state.supported(),unchanged:before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY)&&writes===__notesLauncherWrites.length,count:p.phases.flatMap(x=>x.orders).filter(o=>o.status==='Fechada').length,history:S.operationHistory.records.length};
     """)
     assert_ok(r['account']);assert_ok(r['birth'])
-    assert not r['finalized']['ok'] and r['finalized']['motivo']=='monetary_context_conflict',r
+    assert not r['monetary']['ok'] and r['monetary']['motivo']=='monetary_context_conflict',r
+    assert not r['supported'] and not r['finalized']['ok'] and r['finalized']['motivo']=='no_identity',r
     assert r['unchanged'] and r['count']==2 and r['history']==0,r
 
 def legacy_explicit_mixed_currency_refused(page):
-    r=result(page,"""
-      S.phases=S.phases.slice(0,4);
+    page.evaluate("""() => {
       S.phases[0].orders[0]=__fact({status:'Fechada',result:100,currency:'USD'});
       S.phases[1].orders[0]=__fact({status:'Fechada',result:100,currency:'BRL'});
       S.activeOperation={operationId:'synthetic-legacy-mixed',openedAt:'2026-01-01T00:00:00Z',openedAtSource:'manual_legacy',policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'}};
-      const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY),a=finalizeOperation({defenseCount:0});
-      return {a,same:before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY),count:operationLiveOrders().length};
+      if(save()!==true)throw Error('Synthetic mixed legacy refused');
+    }""")
+    before=launcher.snapshot(page)
+    r=result(page,"""
+      const facts=[{o:S.phases[0].orders[0]},{o:S.phases[1].orders[0]}];
+      return {monetary:operationMonetaryContext(S.activeOperation,facts),a:finalizeOperation({defenseCount:0}),preview:JPWForex.state.legacyAccountPreview(),live:operationLiveOrders()};
     """)
-    assert not r['a']['ok'] and r['a']['motivo']=='monetary_context_conflict' and r['same'] and r['count']==2,r
+    assert not r['monetary']['ok'] and r['monetary']['motivo']=='monetary_context_conflict',r
+    assert not r['a']['ok'] and r['a']['motivo']=='no_identity' and r['live']==[],r
+    assert [r['preview']['source']['phases'][i]['orders'][0]['result'] for i in (0,1)]==[100,100],r
+    launcher.unchanged(page,before,'mixed historical currency is neither consolidated nor promoted')
 
 def orphan_context_does_not_bind_new_operation(page):
     r=result(page,"""
-      const observe=(index,currency,rate)=>JPWForex.state.recordAccountFacts({accountIndex:index,si:10000,equity:10000,netCashflow:0,currency,usdToAccountRate:rate,source:'synthetic orphan context',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta observada'});
-      observe(0,'USD',1);operationRecordOrder(0,0,__fact(),{reason:'Operação A original'});
-      const a=structuredClone(S.activeOperation.recordContext);S.activeOperation.operationId='synthetic-orphan-a';
-      S.phases.forEach(p=>p.orders=emptyOrders(2));
-      S.accounts.push({nome:'Synthetic B',tipo:'MESTRE'});observe(S.accounts.length-1,'BRL',5);
-      const selected=S.forex.activeAccountId,recorded=operationRecordOrder(0,0,__fact(),{reason:'Nova operação B'});
-      const newborn={id:S.activeOperation.operationId,accountId:S.activeOperation.recordContext.accountId,orderAccountId:S.phases[0].orders[0].accountId};
-      S.phases.forEach(p=>p.orders=emptyOrders(2));
-      S.activeOperation={operationId:'synthetic-adopted-a',recordContext:a,adoptedLegacyAt:'2026-09-12T00:00:00Z',policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'}};
-      const adoptedRecord=operationRecordOrder(0,0,__fact(),{reason:'Fato na entidade adotada'});
-      return {recorded,newborn,selected,a:a.accountId,adoptedRecord,adopted:{id:S.activeOperation.operationId,accountId:S.phases[0].orders[0].accountId}};
+      const first=operationRecordOrder(0,0,__fact(),{reason:'Operação A original'});
+      const scopeA=JPWForex.state.operationalSelection(),opA=structuredClone(__period().activeOperation);
+      const voided=operationVoidOrder(0,0,'Fato A anulado, identidade permanece até finalizar');
+      S.accounts.push({forexAccountId:'RECORD-B',nome:'Synthetic B',tipo:'MESTRE'});
+      const observed=__observe({accountIndex:1,si:10000,equity:10000,netCashflow:0,currency:'BRL',usdToAccountRate:5,source:'synthetic B',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta B observada'});
+      S.activeOperation={operationId:'synthetic-adopted-global-a',recordContext:opA.recordContext,adoptedLegacyAt:'2026-09-12T00:00:00Z',policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'}};
+      const legacy=JSON.stringify(S.activeOperation),recorded=operationRecordOrder(0,0,__fact(),{reason:'Nova operação B'});
+      const b=__period().activeOperation,order=__period().phases[0].orders[0],retained=__period(scopeA);
+      return {first,voided,observed,recorded,a:opA.operationId,aAccount:scopeA.accountId,b:b.operationId,bAccount:b.recordContext.accountId,orderAccount:order.accountId,orderCurrency:order.currency,aRetained:retained.activeOperation.operationId,aStatus:retained.phases[0].orders[0].recordStatus,legacySame:legacy===JSON.stringify(S.activeOperation)};
     """)
-    assert_ok(r['recorded']);assert_ok(r['adoptedRecord'])
-    assert r['newborn']['id']!='synthetic-orphan-a' and r['newborn']['accountId']==r['newborn']['orderAccountId']==r['selected']!=r['a'],r
-    assert r['adopted']['id']=='synthetic-adopted-a' and r['adopted']['accountId']==r['a'],r
+    for key in ('first','voided','observed','recorded'):assert_ok(r[key])
+    assert r['a']!=r['b'] and r['aAccount']!=r['bAccount']==r['orderAccount'] and r['orderCurrency']=='BRL',r
+    assert r['aRetained']==r['a'] and r['aStatus']=='voided' and r['legacySame'],r
 
 def prepare_budget(page,declare=True):
     r=result(page,"""
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic budget account',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta observada'});
+      const account=__observe({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic budget account',observedAt:'2026-09-12T00:00:00Z'},{reason:'Conta observada'});
       const c=JPWForex.state.recordContext();
       window.__budgetScope={accountId:c.accountId,periodId:c.periodId,currency:'USD',operationId:null};
       window.__declareBudget=(extra={})=>JPWForex.state.recordOperationBudget({...__budgetScope,amount:500,source:'synthetic signed declaration',declaredBy:'Synthetic manager',declaredAt:'2026-09-12T04:00:00Z',...extra},{reason:'Declaração explícita'});
@@ -506,8 +570,9 @@ def first_record_attaches_budget(page):
     prepare_budget(page)
     r=result(page,"""
       const recorded=operationRecordOrder(0,0,__fact(),{reason:'Primeiro fato confirmado'});
-      const o=S.phases[0].orders[0],c=S.activeOperation.recordContext;
-      return {recorded,opId:S.activeOperation.operationId,order:o,budget:c.operationBudgetSnapshot,rows:S.forex.operationBudgets};
+      const o=__period().phases[0].orders[0],c=__period().activeOperation.recordContext;
+      const budget=JPWForex.state.budgetSnapshot({accountId:c.accountId,periodId:c.periodId,currency:'USD',operationId:o.operationId});
+      return {recorded,opId:__period().activeOperation.operationId,order:o,budget,rows:S.forex.operationBudgets,context:c,eligibility:JPWForex.state.read().executionEligibility.status};
     """)
     assert_ok(r['recorded']);b=r['budget'];o=r['order']
     assert b['status']=='OK' and b['value']==500 and b['currency']=='USD' and len(r['rows'])==1,r
@@ -515,7 +580,8 @@ def first_record_attaches_budget(page):
     assert b['declaration']['association']['firstRecordedAt']==o['revisions'][0]['recordedAt'],r
     assert b['declaration']['association']['doesNotProveExternalPreExecution'] is True,r
     assert b['declaration']['versions'][0]['recordingTiming']=='BEFORE_FIRST_SOFTWARE_RECORD',r
-    assert o['operationBudgetSnapshot']==o['revisions'][0]['context']['operationBudgetSnapshot']==b,r
+    assert o['revisions'][0]['context']['accountId']==b['declaration']['accountId'] and o['revisions'][0]['context']['periodId']==b['declaration']['periodId'],r
+    assert r['eligibility']=='BLOCKED',r
 
 def budget_attachment_refusal_retry(page):
     prepare_budget(page)
@@ -524,7 +590,7 @@ def budget_attachment_refusal_retry(page):
       const refused=operationRecordOrder(0,0,__fact(),{reason:'Primeiro fato recusado'});window.save=real;
       const rollback=before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY),unbound=S.forex.operationBudgets[0].operationId;
       const retried=operationRecordOrder(0,0,__fact(),{reason:'Repetição confirmada'});
-      return {refused,rollback,unbound,retried,opId:S.activeOperation.operationId,budgets:S.forex.operationBudgets};
+      return {refused,rollback,unbound,retried,opId:__period().activeOperation.operationId,budgets:S.forex.operationBudgets};
     """)
     assert not r['refused']['ok'] and r['refused']['persistido'] is False and r['rollback'] and r['unbound'] is None,r
     assert_ok(r['retried']);assert len(r['budgets'])==1 and r['budgets'][0]['operationId']==r['opId'],r
@@ -535,7 +601,7 @@ def budget_attachment_unknown(page):
       const real=window.save;window.save=()=>{throw Error('synthetic unknown');};
       const unknown=operationRecordOrder(0,0,__fact(),{reason:'Primeiro fato indeterminado'});window.save=real;
       const candidate=JSON.stringify(S),writes=__notesLauncherWrites.length,retry=operationRecordOrder(0,0,{lote:2},{reason:'Não repetir candidato indeterminado'});
-      return {unknown,retry,same:candidate===JSON.stringify(S),noWrite:writes===__notesLauncherWrites.length,opId:S.activeOperation.operationId,budget:S.forex.operationBudgets[0],blocked:jpWealthPersistenceOutcomeIsUnknown()};
+      return {unknown,retry,same:candidate===JSON.stringify(S),noWrite:writes===__notesLauncherWrites.length,opId:__period().activeOperation.operationId,budget:S.forex.operationBudgets[0],blocked:jpWealthPersistenceOutcomeIsUnknown()};
     """)
     assert not r['unknown']['ok'] and r['unknown']['persistido'] is None and r['blocked'],r
     assert not r['retry']['ok'] and r['same'] and r['noWrite'] and r['budget']['operationId']==r['opId'],r
@@ -543,24 +609,25 @@ def budget_attachment_unknown(page):
 def later_budget_does_not_backfill_first_snapshot(page):
     prepare_budget(page,declare=False)
     r=result(page,"""
-      const first=operationRecordOrder(0,0,__fact(),{reason:'Fato sem declaração anterior'}),op=S.activeOperation;
-      const original=structuredClone(op.recordContext.operationBudgetSnapshot);
+      const first=operationRecordOrder(0,0,__fact(),{reason:'Fato sem declaração anterior'}),op=__period().activeOperation;
+      const scope={...__budgetScope,operationId:op.operationId};
+      const original=JPWForex.state.budgetSnapshot(scope),birth=JSON.stringify(op.recordContext),firstRevision=JSON.stringify(__period().phases[0].orders[0].revisions[0]);
       const declaration=__declareBudget({operationId:op.operationId});
       const correction=operationRecordOrder(0,0,{lote:0.5},{reason:'Fato corrigido após declaração'});
-      return {first,declaration,correction,original,birth:S.activeOperation.recordContext.operationBudgetSnapshot,current:S.phases[0].orders[0].operationBudgetSnapshot,firstRevision:S.phases[0].orders[0].revisions[0].context.operationBudgetSnapshot};
+      return {first,declaration,correction,original,birthSame:birth===JSON.stringify(__period().activeOperation.recordContext),firstRevisionSame:firstRevision===JSON.stringify(__period().phases[0].orders[0].revisions[0]),current:JPWForex.state.budgetSnapshot(scope),order:__period().phases[0].orders[0]};
     """)
     for key in ('first','declaration','correction'):assert_ok(r[key])
-    assert r['original']['status']=='NOT_COMPUTABLE' and r['original']==r['birth']==r['firstRevision'],r
+    assert r['original']['status']=='NOT_COMPUTABLE' and r['birthSame'] and r['firstRevisionSame'],r
     assert r['current']['value']==500 and r['current']['declaration']['versions'][0]['recordingTiming']=='RETROSPECTIVE_DECLARATION',r
     assert r['current']['declaration']['versions'][0]['doesNotProveExternalPreExecution'] is True,r
-
+    assert r['order']['revisions'][0]['after']['lote']==1 and r['order']['revisions'][1]['after']['lote']==0.5,r
 
 def prepare_review_observation(page):
     r=result(page,"""
-      const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:9100,netCashflow:0,currency:'USD',source:'synthetic',observedAt:'2026-09-14T12:00:00Z'},{reason:'Equity confirmada'});
+      const account=__observe({accountIndex:0,si:10000,equity:9100,netCashflow:0,currency:'USD',source:'synthetic',observedAt:'2026-09-14T12:00:00Z'},{reason:'Equity confirmada'});
       const order=operationRecordOrder(0,0,__fact({status:'Fechada',result:5}),{reason:'Fechamento'});
-      S.activeOperation.maxAccountPhaseReached=null;delete S.activeOperation.phaseCaptureFault;
-      S.activeOperation.openedAt='2026-01-01T00:00:00Z';S.activeOperation.openedAtSource='manual_legacy';save();
+      __period().activeOperation.maxAccountPhaseReached=null;delete __period().activeOperation.phaseCaptureFault;
+      __period().activeOperation.openedAt='2026-01-01T00:00:00Z';__period().activeOperation.openedAtSource='manual_legacy';save();
       return {account,order};
     """)
     assert_ok(r['account']);assert_ok(r['order'])
@@ -592,7 +659,7 @@ def review_cancel_no_capture(page):
     prepare_review_observation(page)
     before=launcher.snapshot(page)
     page.evaluate('() => openFinalizeOperationModal()')
-    r=result(page,'return {live:S.activeOperation.maxAccountPhaseReached,preview:operationFinalizeReview.op.maxAccountPhaseReached};')
+    r=result(page,'return {live:__period().activeOperation.maxAccountPhaseReached,preview:operationFinalizeReview.op.maxAccountPhaseReached};')
     assert r['live'] is None and r['preview']==2,r
     launcher.unchanged(page,before,'opening review cannot capture in S')
     page.locator('#modalCancel').click()
@@ -619,7 +686,8 @@ def stale_review_requires_new_review(page):
     assert_ok(r['edit']);assert not r['finalize']['ok'] and r['finalize']['motivo']=='review_stale' and r['same'] and r['history']==0,r
     page.locator('#modalCancel').click();page.evaluate('() => openFinalizeOperationModal()')
     page.locator('#finalDefenses').fill('0');page.locator('#finalConfirm').fill('FECHADO');page.locator('#modalConfirm').click()
-    assert page.evaluate('S.operationHistory.records[0].netResult')==7
+    assert page.evaluate('S.operationHistory.records[0].netResult')==5
+    assert page.evaluate('S.operationHistory.records[0].ordersSnapshot[0].result')==7
 
 
 CASES=[record_blocked,render_and_typing,version_and_void,draft_delete,malformed_refused,planning_percent_display,unsupported_schema_read_only,
@@ -640,7 +708,8 @@ def hashes(root):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,default=ROOT);parser.add_argument('--out',type=Path);parser.add_argument('--case');parser.add_argument('--portable',action='store_true');args=parser.parse_args()
     root=args.root.resolve();launcher.ROOT=root
-    report={'suite':'forex-recording-v11','inputs_before':hashes(root),'cases':[]}
+    started=time.monotonic()
+    report={'suite':'forex-recording-v11','inputs_before':hashes(root),'test_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'argv':sys.argv,'cases':[]}
     server=ThreadingHTTPServer(('127.0.0.1',0),partial(launcher.Quiet,directory=str(root)));threading.Thread(target=server.serve_forever,daemon=True).start()
     try:
       with sync_playwright() as pw:
@@ -652,9 +721,9 @@ def main():
           try:
             target='dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html' if args.portable else 'index.html'
             page,observed=launcher.prepare(context,f'http://127.0.0.1:{server.server_port}/{target}')
-            row['build']=page.evaluate('JP_WEALTH_BUILD_ID');seed(page);test(page)
-            if test in (unknown_barrier,execution_browser_unknown_quote_barrier,account_peak_unknown,budget_attachment_unknown,orphan_context_does_not_bind_new_operation):
-                expected=('[operação] identidade órfã descartada (sem ordens operacionais): synthetic-orphan-a' if test is orphan_context_does_not_bind_new_operation else '[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas: registro Forex')
+            row['build']=page.evaluate('JP_WEALTH_BUILD_ID');seed(page,test);test(page)
+            if test in (unknown_barrier,execution_browser_unknown_quote_barrier,account_peak_unknown,budget_attachment_unknown):
+                expected='[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas: registro Forex'
                 if test is execution_browser_unknown_quote_barrier:
                     expected='[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas: retorno do registro Forex'
                 assert observed=={'pageerror':[],'console':[expected]},observed
@@ -667,6 +736,7 @@ def main():
         browser.close()
     finally:
       server.shutdown();server.server_close();report['inputs_after']=hashes(root);report['source_unchanged']=report['inputs_before']==report['inputs_after']
+      report['durationSeconds']=time.monotonic()-started
       if args.out:
         args.out.parent.mkdir(parents=True,exist_ok=True)
         with args.out.open('x') as stream:json.dump(report,stream,ensure_ascii=False,indent=2)

@@ -2,16 +2,19 @@ void ui_case(const string& id){
 if(id!="HIS-AC20"){Print("UI_NOT_RUN|",id);return;}int start=host_asserts;
 host_forbid_io=true;g_personal_operating_key="synthetic-account-A";g_personal_scope="synthetic-account-B";
 g_personal_accounts={"synthetic-account-A","synthetic-account-B"};g_personal_account_index=1;
-g_personal_available=true;g_personal_category="EPISODE";g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;
+g_personal_available=true;g_personal_read_requested=false;g_personal_category="ALERT";g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;
 g_personal_rows.resize(8);for(int i=0;i<8;i++){g_personal_rows[i].sequence=800-i;g_personal_rows[i].category="ALERT";g_personal_rows[i].wall=1000;g_personal_rows[i].payload="INTENT|";}
+host_ui_read_rows=g_personal_rows;
 int pref=g_cockpit_prefs;string operating=g_personal_operating_key;
 JPWPersonalRenderBody(0,0,300,170,200);
 REQUIRE(g_personal_button_count>0&&g_personal_button_count<8,"renderer exposes subset fitting instrumented measured layout");
 long last_visible=g_personal_button_seq[g_personal_button_count-1];REQUIRE(last_visible>g_personal_rows.back().sequence,"last visible differs from loaded tail fixture");
 g_personal_read_requested=false;JPWPersonalHistoryMove(1);REQUIRE(g_personal_before==last_visible&&g_personal_cursor_page==1&&g_personal_read_requested,"next page cursor follows visible tail no hidden skip");
 JPWPersonalHistoryMove(-1);REQUIRE(g_personal_before==0&&g_personal_cursor_page==0,"previous page restores saved cursor");
+REQUIRE(!JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST)),"pending read refuses obsolete row action");
+JPWPersonalCollectUI();REQUIRE(g_personal_available&&!g_personal_read_requested&&g_personal_rows.size()==8,"real coordinator completes exact previous-page read");
 JPWPersonalRenderBody(0,0,300,170,200);REQUIRE(JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST))&&g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL&&g_personal_detail_seq==800,"real row action opens selected detail generation");
-g_personal_detail=g_personal_rows[0];g_personal_detail.digest=string(64,'a');std::vector<string>lines;JPWPersonalDetailLines(300,lines);bool receipt=false;
+JPWPersonalCollectUI();REQUIRE(g_personal_available&&!g_personal_read_requested&&g_personal_detail.sequence==800,"real coordinator completes selected detail before projection");g_personal_detail.digest=string(64,'a');std::vector<string>lines;JPWPersonalDetailLines(300,lines);bool receipt=false;
 for(auto& line:lines)if(line.find("não comprova")!=string::npos)receipt=true;REQUIRE(receipt,"detail states requested calls cannot prove human delivery");
 g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;JPWPersonalRenderBody(0,0,300,170,200);REQUIRE(JPWPersonalHandleClick(JPWActionObject(JPW_ACTION_HISTORY_ACCOUNT))&&g_personal_scope=="synthetic-account-A"&&g_personal_operating_key==operating&&g_personal_read_requested,"historical selector requests read never switches operating context");
 g_personal_available=true; // synthetic successful asynchronous read of selected A
@@ -33,7 +36,7 @@ JPWPersonalInvalidateContext();REQUIRE(!g_personal_available&&g_personal_operati
 REQUIRE(JPWPersonalScopeLabel().find("em confirmação")!=string::npos,"no operating identity cannot be labelled current account");
 g_personal_operating_key=operating;
 REQUIRE(g_cockpit_prefs==pref,"history navigation and export do not change existing visual prefs");
-g_personal_available=false;g_personal_reason="synthetic corruption preserved";g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;JPWPersonalRenderBody(0,0,300,170,200);
+host_ui_read_valid=false;g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;JPWPersonalRequestRead();JPWPersonalCollectUI();REQUIRE(!g_personal_available&&!g_personal_read_requested,"real coordinator refuses the synthetic corrupted read");JPWPersonalRenderBody(0,0,300,170,200);
 bool unavailable=false,historical=false;for(auto& line:host_labels){if(line.second.find("indisponível")!=string::npos)unavailable=true;if(line.second.find("histórica")!=string::npos)historical=true;}
 REQUIRE(unavailable&&g_personal_button_count==0,"unavailable history no normal financial rows");
 g_personal_scope="synthetic-account-B";REQUIRE(JPWPersonalScopeLabel().find("histórica")!=string::npos,"historical query labelled explicitly");

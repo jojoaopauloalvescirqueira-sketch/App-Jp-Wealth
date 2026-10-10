@@ -147,10 +147,10 @@ def main():
             page.evaluate("() => closeModal()")
             page.locator('[data-fi-cfg]').first.focus()
             record("X1-01 external close releases focus", page.locator('[data-fi-cfg]').first.evaluate("el=>el===document.activeElement"))
-            page.evaluate("() => openTransitionModal(2)")
+            page.evaluate("() => fdOpenDebtModal(null)")
             page.locator("#modalCancel").focus()
             page.keyboard.press("Escape")
-            record("X1-01 shared modal Escape preserved", not page.locator("#modalOverlay").is_visible())
+            record("X1-01 debt modal Escape preserved", not page.locator("#modalOverlay").is_visible())
 
             for width in (1440, 390, 320):
                 page.set_viewport_size({"width": width, "height": 950 if width == 1440 else 844})
@@ -164,12 +164,12 @@ def main():
                     ratio = contrast(colors["fg"], colors["bg"])
                     record("X1-03 contrast " + name, ratio >= 4.5, {**colors, "ratio": ratio})
                     capture(page, "dashboard-" + name)
-                    page.evaluate("() => {navigateToScreen('research-forex');}")
-                    page.locator('#research [data-ecal-role="filters"]').wait_for(state="visible")
+                    page.evaluate("() => {navigateToScreen('tools-calendar');}")
+                    page.locator('#execEcal [data-ecal-role="filters"]').wait_for(state="visible")
                     for surface in ("workspace", "modal"):
                         if surface == "modal":
                             page.evaluate("() => openEconomicCalendar(document.activeElement)")
-                        selector = '#ecalFilters' if surface == "modal" else '#research [data-ecal-role="filters"]'
+                        selector = '#ecalFilters' if surface == "modal" else '#execEcal [data-ecal-role="filters"]'
                         group = page.locator(selector)
                         rects = group.locator("button").evaluate_all("""els=>els.map(el=>{const r=el.getBoundingClientRect();return {text:el.textContent,x:r.x,right:r.right,y:r.y,width:r.width,height:r.height};})""")
                         record("X1-04 controls visible " + surface + " " + name, len(rects) == 5 and all(r["x"] >= 0 and r["right"] <= width + 1 and r["height"] >= 24 for r in rects), rects)

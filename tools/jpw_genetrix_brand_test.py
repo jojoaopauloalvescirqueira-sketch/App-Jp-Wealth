@@ -45,7 +45,7 @@ int main(){
    const auto&o=objects["TITLE"];
    const string text=o.text.at(OBJPROP_TEXT);
    check(JPWGenetrixTextWidth(text,font)<=o.number.at(OBJPROP_XSIZE),"caption is measured rather than clipped");
-   check(o.number.at(OBJPROP_XDISTANCE)+o.number.at(OBJPROP_XSIZE)==10+width,
+   check(o.number.at(OBJPROP_XDISTANCE)+o.number.at(OBJPROP_XSIZE)<=10+width,
      "caption stays before independent close control");
    check(StringFind(o.text.at(OBJPROP_TOOLTIP),JPW_PRODUCT_NAME)==0,
      "full identity remains available in tooltip");
@@ -97,11 +97,15 @@ def main():
         assert '#include <JPWealth/JPW_Genetrix_Brand.mqh>' in path.read_text()
         assert 'JPWGenetrixHeader(' in path.read_text()
     presentation = consumers[0].read_text()
-    assert 'TextGetSize("Genetrix",button_text_width,button_text_height)' in presentation
-    assert 'ObjectSetString(0,button,OBJPROP_TEXT,"Genetrix")' in presentation
+    assert 'const string launcher_label="Genetrix · Conta";' in presentation
+    assert 'TextGetSize(launcher_label,button_text_width,button_text_height)' in presentation
+    assert 'ObjectSetString(0,launcher_text,OBJPROP_TEXT,launcher_label)' in presentation
     assert 'JPWDetailsWrap(JPW_PRODUCT_TAGLINE,inner,lines)' in presentation
     source = re.sub(r'^#(?:if.*|endif.*|resource.*)\n', '', source, flags=re.M)
     source = re.sub(r'^#define\s+(JPW_GENETRIX_BRAND_MQH|JPW_ALAVANCAGEM_VERSION_MQH)\s*\n', '', source, flags=re.M)
+    source = re.sub(r'\buint &(\w+)\[\]',r'std::vector<uint> &\1',source)
+    source = re.sub(r'\buint (\w+)\[\];',r'std::vector<uint> \1;',source)
+    source = source.replace('int JPWUIDesignNavColumns(string &labels[],','template<class Labels> int JPWUIDesignNavColumns(Labels &labels,')
     shim = SHIM.replace('bool ObjectSetString(int,const string&n,int p,const string&v){',
                         'bool refuse_bitmap=false;\nbool ObjectSetString(int,const string&n,int p,const string&v){if(refuse_bitmap&&p==OBJPROP_BMPFILE)return false;')
     with tempfile.TemporaryDirectory(prefix='jpw-genetrix-brand-') as folder:

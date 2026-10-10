@@ -1,3 +1,11 @@
+# Candidate de correcao de comportamento — handoff local
+
+Base 7f0828488b2fc0ea62dc7c421174799cda47a34a, onboarding anterior f70839305b2d7fb8 preservado. Raiz /private/tmp/jpw-behavior-fixes-20261008/candidate; branch herdada, sem operacoes Git. Tarefa autorizada: corrigir os cinco bugs da auditoria, as falhas adicionais reproduzidas de recuperacao, pico de drawdown, motivos/encerramento e reflow, e reconciliar contexto/fixtures; contratos ACTIVE-TASK/brief. Os recibos finais externos definem o resultado de cada correcao; nenhum PASS intermediario substitui o replay dos bytes congelados. Autores financeiros/PF/testes separados; root gera derivados e gates congelados. Somente dados sinteticos; estados/norma/MT5 protegidos.
+
+Relatorio e provas atuais fora dos fontes: outputs/jpw-behavior-fixes-20261008. Revalidar fingerprint/recibos antes de usar resultados. Native MT5/ambientes fisicos continuam pendentes. Aceite final, integracao/publicacao e commit nao autorizados nesta tarefa.
+
+## Handoff anterior preservado
+
 # Completion pass local — APPLE01, 2026-09-12
 
 last_verified: 2026-09-12
@@ -138,3 +146,18 @@ do candidate; não presumir PASS nem compatibilidade Claude pela existência de 
 
 Preservar trabalho/stash. Nenhum commit/push/PR/merge/deploy autorizado.
 Próximo gate após evidências: revisão e teste/aceite humano do candidate; não integrar.
+# Incremento corrente — JPW Scenario Fan (2026-10-08)
+
+Retomar por [CURRENT-STATE](docs/governance/CURRENT-STATE.md) e
+[ACTIVE-TASK](docs/work/ACTIVE-TASK.md), conferindo o disco antes de qualquer ação.
+Base local preservada `1591f527ada923d4`; incremento em
+`/private/tmp/jpw-scenario-fan-20261008/candidate`. O histórico abaixo permanece
+como registro da sessão anterior, não como estado corrente.
+
+O padrão [SCENARIO-FAN](docs/design/SCENARIO-FAN.md) está aplicado ao Planejamento.
+Produto N1/A2 e descoberta N3/A4 separados; gate estrutural legado conserva sua
+allowlist, com delta da skill revisado separadamente. Seleção e consulta são
+transitórias; motores, dados pessoais e MT5 não foram alterados. Evidências desta
+campanha ficam em `/private/tmp/jpw-scenario-fan-20261008`, fora do produto.
+Não inferir aprovação completa a partir da documentação. Verificar recibos,
+fingerprint e auditoria final. Sem Git, integração ou publicação nesta tarefa.

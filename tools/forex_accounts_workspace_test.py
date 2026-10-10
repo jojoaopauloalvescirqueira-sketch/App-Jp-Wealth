@@ -4,7 +4,8 @@ No real browser profile or financial data. Functional assertions precede capture
 """
 import argparse, json, hashlib, threading, traceback
 from functools import partial
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -77,7 +78,9 @@ def main():
       run('explicit-cadastro-establishes-only-absent-epoch',registry_epoch)
       def drafts(page,ctx):
         page.evaluate("JPWNavigation.navigate('forex-operation')")
-        field=page.locator('[data-p="0"][data-o="0"][data-f="id"]');field.evaluate("e=>{e.closest('details').open=true}");field.fill('NÃO SALVO')
+        added=page.evaluate('operationAddDraft(0)');assert added['ok'],added
+        page.evaluate('JPWForex.executionBoardUI.render()')
+        field=page.locator('[data-p="0"][data-f="id"]');field.fill('NÃO SALVO')
         before=snap(page);page.evaluate("JPWForex.accountsUI.useContext('CONTA-B',__periodB)")
         assert page.locator('#ebLeaveStay').is_visible();page.locator('#ebLeaveStay').click()
         assert page.evaluate('JPWForex.state.operationalSelection().accountId')=='CONTA-A'
@@ -107,7 +110,7 @@ def main():
         for layout in ['sidebar','topbar','glass','submenu']:
           # Public setting followed by its controller, same existing nodes.
           page.evaluate("l=>{localStorage.setItem('jpw_nav_layout',l);mountNavigationLayout(l);}",layout)
-          assert page.evaluate("JPWNavigation.children('forex').slice(0,3).map(x=>x.label)")==['Visão geral','Contas e Períodos','Operação']
+          assert page.evaluate("JPWNavigation.children('forex').slice(0,3).map(x=>x.label)")==['Desempenho','Contas e Períodos','Operação']
           for alias in ['contas','forex-account','forex-management-accounts']:
             assert page.evaluate('(a)=>JPWNavigation.navigate(a)',alias)
             assert page.locator('#forexAccountsWorkspace').is_visible()

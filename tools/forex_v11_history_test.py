@@ -83,10 +83,22 @@ def browser_cases():
             build=page.evaluate("typeof JP_WEALTH_BUILD_ID==='undefined'?null:JP_WEALTH_BUILD_ID")
             results=page.evaluate(CASES)
             page.evaluate("""() => {
+              // Current history consults confirmed account/period identity. Legacy contextless
+              // rows are segregated, not silently attributed to the selected account.
+              S.accounts=[{forexAccountId:'A',nome:'Conta A sintética',tipo:'MESTRE'},
+                {forexAccountId:'B',nome:'Conta B sintética',tipo:'PRÓPRIA'}];S.forex=JPWForex.state.empty();
+              for(const [id,currency] of [['A','USD'],['B','BRL']]){
+                const created=JPWForex.state.recordAccountPeriod({accountId:id,startedAt:'2026-01-01',currency,si:10000,openingBook:10000,source:'Fixture sintética',activateCurrentPeriod:true},{reason:'Fixture sintética'});
+                if(!created.ok)throw Error(created.error);
+              }
+              const pa=S.forex.accountContexts.accounts.A.currentPeriodId,pb=S.forex.accountContexts.accounts.B.currentPeriodId;
+              if(!JPWForex.state.selectOperationalContext('A',pa).ok)throw Error('Synthetic context refused');
               S.operationHistory={schemaVersion:1,records:[
-                {operationId:'synthetic_usd',accountId:'A',periodId:'P1',currency:'USD',netResult:100,ordersSnapshot:[]},
-                {operationId:'synthetic_brl',accountId:'B',periodId:'P2',currency:'BRL',netResult:200,ordersSnapshot:[]},
-                {operationId:'synthetic_unknown',netResult:null,ordersSnapshot:[]} ]};
+                {operationId:'synthetic_usd',accountId:'A',periodId:pa,currency:'USD',netResult:100,ordersSnapshot:[]},
+                {operationId:'synthetic_brl',accountId:'B',periodId:pb,currency:'BRL',netResult:200,ordersSnapshot:[]},
+                {operationId:'synthetic_unknown',accountId:'A',periodId:pa,currency:'USD',netResult:null,ordersSnapshot:[]},
+                {operationId:'synthetic_unresolved',netResult:null,ordersSnapshot:[]} ]};
+              if(histUnresolvedRecords().length!==1)throw Error('Unresolved history was attributed to a current account');
               histState={instrument:'all',direction:'all',result:'all',query:'',selected:null};
               window.__historyBefore={state:JSON.stringify(S),storage:JSON.stringify({...localStorage})};
               JPWNavigation.navigateLocal('exec','history');

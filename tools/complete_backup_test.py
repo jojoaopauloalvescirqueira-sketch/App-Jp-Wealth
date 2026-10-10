@@ -20,7 +20,11 @@ def main():
     with sync_playwright() as p:
         browser=launch_browser(p)
         def page(path='index.html'):
-            ctx=browser.new_context();install_bootstrap(ctx);q=ctx.new_page();q.errors=[];q.alerts=[]
+            ctx=browser.new_context(service_workers='block');install_bootstrap(ctx)
+            # Suppress the first-access overlay before startup timers can race
+            # the isolated financial fixture or replace its session dialog.
+            ctx.add_init_script('window.__onbShown=true;')
+            q=ctx.new_page();q.errors=[];q.alerts=[]
             q.on('pageerror',lambda e:q.errors.append(str(e)))
             q.on('dialog',lambda d:(q.alerts.append(d.message),d.accept()))
             q.goto(f'http://127.0.0.1:{server.server_port}/{path}');wait_bootstrap(q)
@@ -148,11 +152,15 @@ def main():
                 g.evaluate("""async()=>{
                   S.onboarding.done=true;save();localStorage.setItem('jpw_fs','1');openFinalizeSessionFlow();
                   const finish=dgFinishExport;
-                  dgFinishExport=function(meta,quiet){localStorage.setItem('jpw_fs','2');return finish(meta,quiet);};
+                  window.__exportPreferenceChanges=0;
+                  dgFinishExport=function(meta,quiet){__exportPreferenceChanges++;localStorage.setItem('jpw_fs','2');return finish(meta,quiet);};
                   await beginSessionExport();
                 }""")
-                assert 'mudaram durante a exportação' in g.locator('#modalBox').inner_text()
+                assert g.evaluate('__exportPreferenceChanges')==1
+                assert 'mudaram durante a exportação' in g.locator('#modalBox').inner_text(),g.locator('#modalBox').inner_text()
                 assert g.evaluate('sessionFinalizeExportMeta') is None
+                assert g.evaluate("localStorage.getItem('jpw_fs')")=='2'
+                assert not g.evaluate('jpWealthPersistenceIsBlocked()')
                 h=page()
                 h.evaluate("""async()=>{
                   S.onboarding.done=true;save();localStorage.setItem('jpw_fs','1');openFinalizeSessionFlow();

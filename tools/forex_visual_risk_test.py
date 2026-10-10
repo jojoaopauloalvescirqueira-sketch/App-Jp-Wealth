@@ -31,6 +31,50 @@ SOURCES = ['index.html','build-id.js','src/js/manifest.json','src/styles/app.css
     'src/js/10-domain/11-operation-lifecycle.js','src/js/40-app/24-fx-consolidated-import.js']
 
 
+class BrowserValue:
+    """Complete cloned DTO stays in the browser; existing Python oracles read it.
+
+    No fields are projected away or numbers converted. The native Playwright
+    scalar decoder preserves undefined/None, NaN, infinities and dates. Keeping
+    the entire structuredClone avoids expanding the large provenance graph at
+    the protocol boundary. Explicit logging materializes its complete object.
+    """
+    def __init__(self, handle):
+        self.handle=handle
+        self.is_array=handle.evaluate('Array.isArray')
+
+    def __len__(self):
+        return self.handle.evaluate('v=>Array.isArray(v)?v.length:Object.keys(v).length')
+
+    def __iter__(self):
+        if self.is_array:
+            for index in range(len(self)):yield self[index]
+        else:
+            yield from self.handle.evaluate('v=>Object.keys(v)')
+
+    def __getitem__(self, key):
+        if self.is_array:
+            if isinstance(key,slice):return [self[i] for i in range(*key.indices(len(self)))]
+            if not isinstance(key,int):raise TypeError('list indices must be integers or slices')
+            key=int(key)
+            if key<0:key+=len(self)
+            if key<0 or key>=len(self):raise IndexError(key)
+        elif not isinstance(key,str):
+            raise KeyError(key)
+        exists=self.handle.evaluate('(v,key)=>Object.prototype.hasOwnProperty.call(v,key)',key)
+        if not exists:
+            if self.is_array:return None  # Native Playwright decodes an array hole as undefined/None.
+            raise KeyError(key)
+        value=self.handle.evaluate_handle('(v,key)=>v[key]',key)
+        if value.evaluate('v=>v!==null && typeof v==="object" && (Array.isArray(v)||Object.getPrototypeOf(v)===Object.prototype||Object.getPrototypeOf(v)===null)'):
+            return BrowserValue(value)
+        try:return value.json_value()
+        finally:value.dispose()
+
+    def to_plain(self):
+        return self.handle.json_value()
+
+
 def hashes(root):
     return {name: hashlib.sha256((root/name).read_bytes()).hexdigest() for name in SOURCES}
 
@@ -57,7 +101,7 @@ def risk_seed(page,count=1,patches=None):
     page.evaluate(SEED)
     settle(page)
     prepare_drafts(page)
-    saved=page.evaluate("""({count,patches})=>{
+    saved=BrowserValue(page.evaluate_handle("""({count,patches})=>{
       const require=r=>{if(!r?.ok)throw Error(JSON.stringify(r));return r;};
       const scope=JPWForex.state.operationalSelection();
       const edits=[];
@@ -71,8 +115,8 @@ def risk_seed(page,count=1,patches=None):
           costBasis:'SEPARATE_FROM_RESULT',stopValidated:true,...(patches[n]||{})}});
       }
       if(edits.length)require(operationRecordOrders(edits,{reason:'Synthetic visual-risk factual fixture'}));
-      JPWForex.executionBoardUI.render();return JPWForex.executionBoard.read();
-    }""",{'count':count,'patches':patches or {}})
+      JPWForex.executionBoardUI.render();return structuredClone(JPWForex.executionBoard.read());
+    }""",{'count':count,'patches':patches or {}}))
     settle(page)
     assert len([r for r in saved['rows'] if r['order']['status']=='Aberta'])==sum(1 for i in range(count) if (patches or {}).get(str(i),{}).get('status','Aberta')=='Aberta')
     return saved
@@ -122,7 +166,7 @@ def risk_populations(page,out,observed):
             assert_risk_values(page,model,6)
         assert financial(page)==before,'Expand/collapse wrote financial facts'
         shot(page,out,'risk-'+str(count)+'-orders','#ebRiskChart')
-        observed['populations'].append({'count':count,'top':values,'canonicalTotal':model['operational']['exposure']})
+        observed['populations'].append({'count':count,'top':values,'canonicalTotal':model['operational']['exposure'].to_plain()})
 
 
 def risk_coverage(page,out,observed):
@@ -140,7 +184,7 @@ def risk_coverage(page,out,observed):
     assert model['operational']['exposure']['value'] is None,'Partial total must not be computed as subtotal'
     assert 'parcial' in page.locator('#ebRiskChart').inner_text().lower()
     assert financial(page)==before
-    observed['partial']={'bars':values,'pending':model['risk']['pending'],'unavailable':page.locator('#ebRiskUnavailable').inner_text()}
+    observed['partial']={'bars':values,'pending':model['risk']['pending'].to_plain(),'unavailable':page.locator('#ebRiskUnavailable').inner_text()}
     shot(page,out,'risk-partial-zero-pending','#ebRiskChart')
     model=risk_seed(page,1,{'0':{'sl':0,'stopValidated':False}});shown_body(page)
     assert page.locator('#ebRiskChart').get_attribute('data-eb-risk-state')=='unavailable'
@@ -148,7 +192,7 @@ def risk_coverage(page,out,observed):
     model=risk_seed(page,0);shown_body(page)
     assert page.locator('#ebRiskChart').get_attribute('data-eb-risk-state')=='empty'
     assert not risk_dom(page)
-    observed['empty']=model['operational']['exposure']
+    observed['empty']=model['operational']['exposure'].to_plain()
 
 
 def risk_draft_detail(page,out,observed):
@@ -181,7 +225,7 @@ def risk_context(page,out,observed):
     assert len(risk_dom(page))==6
     # A second synthetic, explicitly registered account/period. Every displayed
     # fact goes through the existing writers; presentation never applies a scope.
-    second=page.evaluate("""()=>{
+    second=BrowserValue(page.evaluate_handle("""()=>{
       const require=r=>{if(!r?.ok)throw Error(JSON.stringify(r));return r;};
       S.accounts.push({forexAccountId:'VISUAL-B',nome:'Outro contexto sintético',tipo:'MESTRE',platformCurrency:'USD',platform:'MT5',platformLogin:'TEST-002'});
       if(save()!==true)throw Error('Synthetic second account refused');
@@ -197,8 +241,8 @@ def risk_context(page,out,observed):
         conversion:{baseToAccountRate:1.2,quoteToAccountRate:1,source:'Synthetic B conversion',observedAt:at}
       }},{reason:'Synthetic B references',expectedEpoch:jpWealthPersistenceEpoch()}));
       require(operationRecordOrder(0,0,{id:'OTHER-SCOPE',brokerHash:'SYNTHETIC-OTHER-SCOPE',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:.01,entry:1.2,sl:1.17,tp:1.26,result:null,status:'Aberta',costs:0,costBasis:'SEPARATE_FROM_RESULT',stopValidated:true},{reason:'Synthetic factual B order'}));
-      return JPWForex.executionBoard.read();
-    }""")
+      return structuredClone(JPWForex.executionBoard.read());
+    }"""))
     before=financial(page)
     page.evaluate('JPWForex.executionBoardUI.render()');settle(page)
     assert page.locator('#ebRiskChartToggle').get_attribute('aria-expanded')=='true','Explicit session expansion lost on context change'
@@ -434,11 +478,14 @@ def touch(page,out,observed):
     assert selection['value']!=initial,'Touch did not change the selected observation'
     assert selection['selected']==selection['value'],'Touch cursor and selected point disagree'
     assert selection['aria']==selection['output']
-    assert selection['date'] in selection['output'] and selection['exact'] in selection['output'],selection
+    raw_date=selection['date']
+    declared_date=f'{raw_date[8:10]}/{raw_date[5:7]}/{raw_date[:4]}, {raw_date[11:]} · fuso não informado'
+    assert declared_date in selection['output'] and selection['exact'] in selection['output'],selection
     assert financial(page)==before,'Touch inspection wrote financial facts'
     observed['touchSelection']=selection
     chart.locator('details.fxc-chart-values summary').tap();settle(page)
     assert chart.locator('tbody tr').count()>0
+    assert chart.locator(f'tr[data-fxc-value-row="{selection["value"]}"] td').first.inner_text()==selection['date'],'Original declared timestamp changed in the values table'
     assert financial(page)==before
     shot(page,out,'overview-touch','#fxcPanel-account')
     observed['touch']='390px coarse: risk disclosure/all rows, resize retention, chart cursor/table'

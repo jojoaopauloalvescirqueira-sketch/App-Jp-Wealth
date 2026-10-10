@@ -30,7 +30,8 @@ SEED = r"""() => {
   window.__onbShown=true;closeModal();window.__alerts=[];
   window.alert=message=>__alerts.push(String(message));window.confirm=()=>true;
   const instruments=structuredClone(S.instruments);
-  S=structuredClone(DEFAULTS);migrate();S.instruments=instruments;S.onboarding.done=true;
+  const dailyReferences=structuredClone(S.forex.dailyReferences);
+  S=structuredClone(DEFAULTS);migrate();S.instruments=instruments;S.forex.dailyReferences=dailyReferences;S.onboarding.done=true;
   S.accounts=[
     {forexAccountId:'fx_A',nome:'Mestre sintética',tipo:'MESTRE',broker:'Synthetic Broker',platform:'MetaTrader 5',platformLogin:'10001',investorPassword:'',sini:10000,satu:10100,perfil:'Base',perfilLocked:true},
     {forexAccountId:'fx_B',nome:'Outra sintética',tipo:'PRÓPRIA',broker:'Synthetic Broker',platform:'MetaTrader 5',platformLogin:'20002',investorPassword:'',sini:5000,satu:5000,perfil:'Base',perfilLocked:true},
@@ -233,12 +234,14 @@ CASES = {
       __assert(__same(before,__snap()),'Backup preparation changed S');
       for(const value of [null,[],17]){
         const bad=structuredClone(exported);bad.state.fxConsolidated=value;let refused=false;
+        delete bad.integrity;bad.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(bad))};
         try{normalizeImportedState(bad);}catch(error){refused=true;}
         __assert(refused&&__same(before,__snap()),'Invalid present aggregate replaced base');
       }
       const future=structuredClone(exported);
       future.state.fxConsolidated={schemaVersion:99,unknown:{preserve:true},accounts:'future-opaque'};
       future.state.operationHistory={schemaVersion:99,records:'future-history-opaque',custom:[null,0]};
+      delete future.integrity;future.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(future))};
       const next=normalizeImportedState(future);
       __assert(__same(next.fxConsolidated,future.state.fxConsolidated),'Future MT5 normalized');
       __assert(__same(next.operationHistory,future.state.operationHistory),'Future manual normalized');
@@ -278,6 +281,11 @@ class Quiet(SimpleHTTPRequestHandler):
         pass
 
 
+class Server(ThreadingHTTPServer):
+    request_queue_size = 128
+    daemon_threads = True
+
+
 def hashes(root):
     return {name: hashlib.sha256((root/name).read_bytes()).hexdigest() for name in SOURCES}
 
@@ -285,7 +293,7 @@ def hashes(root):
 def finalize(page):
     page.locator('#finalizeSessionBtn').click()
     page.locator('#sessionHasCopy').click()
-    assert 'consolidado fx' in page.locator('#modalBox').inner_text().lower()
+    assert 'históricos Forex continuarão armazenados' in page.locator('#modalBox').inner_text()
     page.locator('#sessionProceed').click()
     page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO')
     page.locator('#sessionDeleteConfirm').click()
@@ -301,7 +309,7 @@ def main():
     if args.out.exists():parser.error('Evidence exists; choose a new path')
     evidence={'root':str(root),'environment':'Chromium isolated contexts; loopback app; intercepted economic bootstrap',
               'sources_before':hashes(root),'test_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'cases':[]}
-    server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(root)))
+    server=Server(('127.0.0.1',0),partial(Quiet,directory=str(root)))
     threading.Thread(target=server.serve_forever,daemon=True).start()
     url=f'http://127.0.0.1:{server.server_port}/index.html'
 
@@ -339,25 +347,28 @@ def main():
 
     def lifecycle(page,context,record):
         page.evaluate("async()=>{await __import();await __fcs.api.saveDefaultAccount('fx_A');markSessionCheckpoint();}")
-        before=page.evaluate('__snap()')
         # A second actual app page must adopt the durable finalized document.
         second=context.new_page();second.goto(url);wait_bootstrap(second)
         second.evaluate('()=>{window.__onbShown=true;closeModal();}')
+        # Loading the second tab may migrate/confirm a legacy observation in
+        # this fixture. Finalization preserves the latest confirmed document.
+        before=page.evaluate("()=>{const document=JSON.parse(localStorage.getItem(LSKEY));return {...__snap(),accounts:document.accounts,forex:document.forex};}")
         page.evaluate('markSessionCheckpoint()')
         finalize(page)
-        second.wait_for_function('S.accounts.length===0&&S.onboarding.done===false')
+        second.wait_for_function("document.getElementById('sessionNotice').textContent.includes('Sessão finalizada em outra aba')")
         after=page.evaluate('__snap()')
         remote=second.evaluate('()=>({fx:S.fxConsolidated,manual:S.operationHistory,accounts:S.accounts,forex:S.forex})')
         assert after['manual']==before['manual']
         assert after['fx']['receipts']==before['fx']['receipts'] and after['fx']['defaultAccountId']=='fx_A'
-        assert after['accounts']==[] and remote['accounts']==[]
+        assert after['accounts']==before['accounts'] and remote['accounts']==before['accounts']
+        assert after['forex']==before['forex'] and remote['forex']==before['forex']
         assert remote['fx']==after['fx'] and remote['manual']==after['manual']
         catalog=page.evaluate('JPWFXConsolidated.accounts()')
-        assert all(account['archived'] and account['liveIndex'] is None for account in catalog)
+        assert all(not account['archived'] and account['liveIndex'] is not None for account in catalog)
         assert not any('sini' in account or 'satu' in account or 'investorPassword' in account for account in after['fx']['accounts'])
         page.reload();wait_bootstrap(page)
         reloaded=page.evaluate('()=>({fx:S.fxConsolidated,manual:S.operationHistory,accounts:S.accounts})')
-        assert reloaded['fx']==after['fx'] and reloaded['manual']==after['manual'] and reloaded['accounts']==[]
+        assert reloaded['fx']==after['fx'] and reloaded['manual']==after['manual'] and reloaded['accounts']==before['accounts']
         return {'before':before,'after':after,'remote':remote,'catalog':catalog,'reloaded':reloaded}
 
     def cross_tab_conflict(page,context,record):
@@ -373,7 +384,7 @@ def main():
         page.evaluate("async()=>{await __import();window.__backup=JSON.parse(await dgBuildBackupBlob(1,'synthetic.json','2026-01-31T12:00:00Z').text());S.fxConsolidated=__fcs.api.emptyState();S.operationHistory={schemaVersion:1,records:[]};save();}")
         expected=page.evaluate('({fx:__backup.state.fxConsolidated,manual:__backup.state.operationHistory})')
         page.evaluate("importFullBackupFile(new File([JSON.stringify(__backup)],'synthetic-backup.json',{type:'application/json'}))")
-        page.wait_for_function("__alerts.some(message=>message==='Backup importado com sucesso.')")
+        page.wait_for_function("__alerts.some(message=>message==='Backup importado com sucesso. Recarregue para aplicar todas as preferências visuais.')")
         after=page.evaluate('__snap()')
         assert after['fx']==expected['fx'] and after['manual']==expected['manual']
         return {'expected':expected,'after':after}
@@ -397,14 +408,15 @@ def main():
         page.wait_for_function("document.getElementById('sessionNotice').textContent.includes('Sessão finalizada')")
         after=page.evaluate('__snap()')
         assert after['fx']['receipts']==imported['fx']['receipts']
-        assert after['manual']==imported['manual'] and after['accounts']==[]
+        assert after['manual']==imported['manual'] and after['accounts']==imported['accounts'] and after['forex']==imported['forex']
         return {'imported':imported,'after':after}
 
     def failed_visual_cleanup(page,context,record):
+        before=page.evaluate('__snap()')
         page.evaluate("()=>{__fcs.api.reset=()=>{throw Error('Synthetic visual cleanup failure');};}")
         finalize(page)
         after=page.evaluate('__snap()')
-        assert after['accounts']==[] and len(after['manual']['records'])==1
+        assert after['accounts']==before['accounts'] and after['manual']==before['manual'] and after['forex']==before['forex']
         return {'after':after}
 
     def wipe(page,context,record):

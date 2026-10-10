@@ -74,7 +74,24 @@ def ui_source() -> str:
     parts = [(SUPPORT / "ui_seams.cpp").read_text(), translate(globals_only)]
     for name in ['JPWPersonalRequestRead', 'JPWPersonalRequestExport', 'JPWPersonalInvalidateContext', 'JPWPersonalResetPage', 'JPWPersonalScopeLabel', 'JPWPersonalPeakLabel']:
         parts.append(translate(extract_function(ui, name)))
-    parts.append("#define JPWPersonalExport host_ui_export\n" + translate(extract_function(ui, "JPWPersonalCollectUI")) + "\n#undef JPWPersonalExport")
+    # UI facet keeps the production coordinator and its request identity checks.
+    # Its IO readers are explicit synthetic primitives, just like host_ui_export;
+    # real Store/SQLite readers remain exercised by the independent Store facets.
+    parts.append(r"""
+std::vector<JPWPersonalRow> host_ui_read_rows;bool host_ui_read_valid=true;
+bool host_ui_accounts(std::vector<string>& keys){keys={"synthetic-account-A","synthetic-account-B"};return true;}
+bool host_ui_summary(const string& key,JPWPersonalSummary& summary){summary.account_key=key;if(!host_ui_read_valid){summary.reason="synthetic corruption preserved";return false;}return true;}
+bool host_ui_page(const string&,const string& category,long before,int limit,std::vector<JPWPersonalRow>& rows,string& reason){
+ rows.clear();for(auto& row:host_ui_read_rows)if(row.category==category&&(before==0||row.sequence<before)&&int(rows.size())<limit)rows.push_back(row);reason="";return true;
+}
+bool host_ui_detail(const string&,long sequence,JPWPersonalRow& out,string& reason){for(auto& row:host_ui_read_rows)if(row.sequence==sequence){out=row;reason="";return true;}return false;}
+""")
+    macros = {'JPWPersonalExport':'host_ui_export','JPWPersonalListAccounts':'host_ui_accounts',
+              'JPWPersonalReadSummary':'host_ui_summary','JPWPersonalReadPage':'host_ui_page',
+              'JPWPersonalReadDetail':'host_ui_detail'}
+    parts.append('\n'.join('#define '+name+' '+seam for name,seam in macros.items())+'\n'+
+                 translate(extract_function(ui, "JPWPersonalCollectUI"))+'\n'+
+                 '\n'.join('#undef '+name for name in macros))
     for name in ['JPWPersonalSectionName', 'JPWPersonalRowCaption', 'JPWPersonalDetailLines', 'JPWPersonalRenderBody']:
         parts.append(translate(extract_function(presentation, name)))
     for name in ['JPWRaizSwitchTab', 'JPWPersonalHistoryMove', 'JPWPersonalHandleClick']:

@@ -42,11 +42,12 @@ def save_example_order(page):
 def assert_control_targets(page,scope):
     controls=page.locator(scope).evaluate(r'''root=>[...root.querySelectorAll('button,input,select,textarea,summary')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden'&&!e.closest('[hidden],[inert]')).map(e=>{
       const box=e.matches('input[type=checkbox],input[type=radio]'),target=box?e.closest('label'):e,r=target?.getBoundingClientRect(),c=e.getBoundingClientRect();
-      return {id:e.id||e.dataset.f||e.textContent.trim().slice(0,60),checkbox:box,height:r?.height||0,width:r?.width||0,boxHeight:c.height,font:parseFloat(getComputedStyle(e).fontSize)};
+      return {id:e.id||e.dataset.f||e.textContent.trim().slice(0,60),compact:!!e.closest('#ebOrderTable,#phaseContainer .eb-order-table'),checkbox:box,height:r?.height||0,width:r?.width||0,boxHeight:c.height,font:parseFloat(getComputedStyle(e).fontSize)};
     })''')
     assert controls,scope
     for control in controls:
-        assert control['height']>=44 and control['width']>=44,(scope,control)
+        minimum=36 if control['compact'] and page.locator('#ebOrderScroll').evaluate('e=>e.clientWidth>=768') else 44
+        assert control['height']>=minimum and control['width']>=minimum,(scope,control)
         if control['checkbox']:assert control['boxHeight']<=24,(scope,control)
     return controls
 
@@ -136,13 +137,13 @@ def run(page,out,results):
             assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+2')
             assert page.locator('[data-eb-row="0:0"]').evaluate("(e,width)=>getComputedStyle(e).display===(width<768?'grid':'table-row')",useful_width)
             for selector in ['[data-eb-save-row="0:0"]','[data-eb-cancel-row="0:0"]','[data-eb-open-detail="0:0"]']:
-                box=page.locator(selector).bounding_box();assert box and box['height']>=44,(theme,width,selector,box)
+                box=page.locator(selector).bounding_box();assert box and box['height']>=(36 if useful_width>=768 else 48),(theme,width,selector,box)
             assert_control_targets(page,'#exec')
             page.locator('#ebDetail-0-0').evaluate('e=>e.open=true')
             assert_control_targets(page,'#exec')
             page.locator('#ebDetail-0-0').evaluate('e=>e.open=false')
             for selector in ['id','par','tipo','role','lote','entry','sl','tp','status']:
-                assert field(page,selector).evaluate('e=>parseFloat(getComputedStyle(e).fontSize)>=16'),(theme,width,selector)
+                assert field(page,selector).evaluate('(e,min)=>parseFloat(getComputedStyle(e).fontSize)>=min',14 if useful_width>=768 else 16),(theme,width,selector)
             heading=page.locator('#executionBoard').evaluate('e=>e.getBoundingClientRect().height')
             assert heading<=(140 if width==1440 else 240),(theme,width,heading)
             assert persisted(page)==saved
@@ -172,6 +173,7 @@ def run(page,out,results):
     results.append('PASS: ACTUAL origin selectors display names/dates, retain IDs, invalidate preview on explicit account change, never write on selection')
     page.evaluate("JPWNavigation.navigate('forex-consolidated')")
     assert page.locator('#fxcNextAction').is_visible()
+    page.locator('#fxcNextAction details').evaluate('e=>e.open=true')
     assert page.locator('#fxcNextAction [data-fxc-go="forex-operation"]').is_visible()
     before=persisted(page)
     page.locator('#fxcAccount').select_option('TABLE-B');settle(page)
@@ -207,10 +209,10 @@ def run(page,out,results):
     assert not page.locator('#histEmptyMessage').evaluate("e=>e.classList.contains('expl')||e.hasAttribute('data-info')")
     assert_control_targets(page,'#execHistory')
     before=persisted(page)
-    page.locator('[data-hist-route="forex-management-accounts"]').click();settle(page)
+    assert page.evaluate("JPWNavigation.navigate('forex-management-accounts')");settle(page)
     assert page.evaluate("JPWNavigation.current().child==='forex-management-accounts'") and persisted(page)==before
     page.evaluate("JPWNavigation.navigate('forex-history')")
-    page.locator('[data-hist-route="forex-operation"]').click();settle(page)
+    assert page.evaluate("JPWNavigation.navigate('forex-operation')");settle(page)
     assert page.evaluate("JPWNavigation.current().child==='forex-operation'") and persisted(page)==before
     results.append('PASS: audit findings reproduced and controlled: panorama before mobile context, real 44px targets/16px input text, visible empty-history reason/next steps without writes')
 

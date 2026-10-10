@@ -337,9 +337,17 @@ def run(args):
                                 if mode == 'submenu':
                                     while page.get_attribute('html', 'data-submenu-level') != '1':
                                         page.locator('#submenuNavBack').click()
+                                route_before=page.evaluate('JPWNavigation.current()')
                                 page.locator(f'#nav > [data-primary="{module}"]').click()
-                                if mode == 'submenu' and module not in {'dashboard', 'alladin'}:
-                                    if module == 'research':
+                                if mode in {'submenu','sidebar'} and module not in {'dashboard', 'alladin'}:
+                                    assert page.evaluate('JPWNavigation.current()') == route_before, 'Parent disclosure navigated before child selection'
+                                    if mode=='sidebar':
+                                        child=destinations[module]
+                                        if module=='personal-finance':
+                                            page.locator('[data-nav-sub-view="overview"]:visible').click()
+                                        else:
+                                            page.locator(f'[data-nav-child="{child}"]:visible').click()
+                                    elif module == 'research':
                                         page.locator('[data-nav-child="research-forex"]').click()
                                         page.locator('[data-nav-context="research-forex"] [data-nav-local-view="nocoda"]').click()
                                     elif module == 'forex':
