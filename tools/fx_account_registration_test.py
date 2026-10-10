@@ -7,7 +7,7 @@ Exit status reflects assertions; no real account, file, economic API or profile.
 """
 import argparse, hashlib, json, sys, threading, traceback
 from functools import partial
-from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests

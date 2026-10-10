@@ -5,7 +5,8 @@ Uses the existing real-browser bootstrap fixture and synthetic state only.
 import argparse
 from functools import partial
 import hashlib
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 from pathlib import Path
 import threading
@@ -65,14 +66,14 @@ CASES = {
   __assert(risk.accountId===null&&risk.orders.total===0&&risk.account===null,'Risk model consumed prepared period');
   __assert(board.scope.periodId===null&&board.findings.some(f=>f.code==='BOARD_PERIOD_UNREGISTERED'),'Board model considers period selected');
   JPWForex.executionBoardUI.renderPhases();
-  __assert(document.querySelectorAll('#phaseContainer .eb-order-table').length===0&&document.querySelectorAll('#phaseContainer [data-eb-save-row]').length===0,'Board exposes operable rows before use');
+  __assert(document.querySelectorAll('#phaseContainer .eb-order-table').length===1&&document.querySelectorAll('#phaseContainer input,#phaseContainer select,#phaseContainer [data-eb-save-row],#phaseContainer [data-eb-add-phase]').length===0,'Board exposes operable rows before use');
   __assert(JPWNavigation.navigate('forex-management-accounts')===true,'Accounts route refused');
   JPWForex.accountsUI.examine('fx_A',prepared.periodId);
   __assert(__state.operationalSelection().periodId===null,'Examination activated prepared period');
   const use=document.getElementById('fxAccountsUse');__assert(use&&!use.disabled,'Use action unavailable');use.click();
   __assert(__state.operationalSelection().periodId===prepared.periodId,'Explicit use did not activate period');
   JPWForex.executionBoardUI.renderPhases();
-  __assert(__state.accountContext(__state.operationalSelection()).status==='OK'&&document.querySelectorAll('#phaseContainer .eb-order-table').length===6,'Use did not expose selected phases');
+  __assert(__state.accountContext(__state.operationalSelection()).status==='OK'&&document.querySelectorAll('#phaseContainer .eb-order-table').length===1&&document.querySelectorAll('#phaseContainer tbody.eb-phase-group').length===6,'Use did not expose selected phases');
   return {before:{record:record.status,riskAccount:risk.accountId,boardPeriod:board.scope.periodId},after:__state.operationalSelection(),legacyOmissionPreserved:true};
  }""",
  'preparation-unknown-retains-pair-and-epoch-reset-releases-hold':r"""()=>{

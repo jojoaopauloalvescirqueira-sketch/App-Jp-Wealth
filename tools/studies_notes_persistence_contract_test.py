@@ -59,8 +59,16 @@ PREPARE = r"""({caseName,nc,pv}) => {
   }
   if(save()!==true) throw Error('Synthetic checkpoint failed');
   window.__realSave=save;window.__realSet=Storage.prototype.setItem;window.__saveCalls=[];
+  window.__storageWriteAttempts=0;window.__storageCommittedWrites=0;
   window.__operation=caseName;window.__mode='normal';
-  Storage.prototype.setItem=function(k,v){if(k===LSKEY&&window.__mode==='quota')throw new DOMException('synthetic quota','QuotaExceededError');return window.__realSet.call(this,k,v);};
+  Storage.prototype.setItem=function(k,v){
+    if(this===localStorage&&k===LSKEY){
+      window.__storageWriteAttempts++;
+      if(window.__mode==='quota')throw new DOMException('synthetic quota','QuotaExceededError');
+      const result=window.__realSet.call(this,k,v);window.__storageCommittedWrites++;return result;
+    }
+    return window.__realSet.call(this,k,v);
+  };
   save=function(){
     if(window.__mode==='false'){window.__saveCalls.push(false);return false;}
     if(window.__mode==='throw-before')throw Error('synthetic exception before write');
@@ -75,6 +83,7 @@ SNAPSHOT = r"""() => {
   return {aggregate:structuredClone(c.startsWith('nc-')?S.nocoda:c.startsWith('pv-')?S.pivotStudies:S.mvpNotes),
     raw:localStorage.getItem(LSKEY),log:JSON.stringify(S.dataGovernance.changeLog),
     other:JSON.stringify(S.personalFinance),unknown:jpWealthPersistenceOutcomeIsUnknown(),calls:window.__saveCalls.slice(),
+    storageWriteAttempts:window.__storageWriteAttempts,storageCommittedWrites:window.__storageCommittedWrites,
     failure:jpWealthPersistenceFailure.kind,alerts:window.__alerts.slice(),
     banner:document.getElementById('persistenceAlert')?.className,
     savedTag:document.getElementById('savedTag')?.classList.contains('show'),
@@ -516,7 +525,15 @@ def run_banner_keyboard(browser,url,theme,width,height,artifact):
             backup=json.loads(page.evaluate('window.__blob.text()'))
             check(backup['state']['mvpNotes']==before['aggregate'],'backup exported transient or altered Notes',failures)
             after_export=preserved('backup')
-            check(after_export['calls']==[False,False],'backup bookkeeping did not make exactly one refused save',failures)
+            # Export bookkeeping persists its confirmed candidate directly;
+            # it no longer dispatches through the ambient save() function.
+            bookkeeping=page.evaluate('structuredClone(dgBackupLastStatus)')
+            check(after_export['calls']==refused['calls']
+                  and after_export['storageWriteAttempts']==refused['storageWriteAttempts']+1
+                  and after_export['storageCommittedWrites']==refused['storageCommittedWrites']
+                  and bookkeeping['localRecordConfirmed'] is False
+                  and bookkeeping['stage']=='DOWNLOAD_REQUESTED',
+                  'backup bookkeeping did not make exactly one refused storage write',failures)
     page.keyboard.press('Escape');preserved('cancel discard')
     check(page.evaluate('window.__confirms.length')==1,'Escape did not retain explicit dirty-discard protection',failures)
     page.evaluate("jpWealthLoadRecovery.active=true;jpWealthLoadRecovery.raw='{\"synthetic\":true}';renderLoadRecoveryWarning()")
@@ -612,7 +629,10 @@ def main():
     args=parser.parse_args();root=args.root.resolve();os.chdir(root)
     class Quiet(SimpleHTTPRequestHandler):
         def log_message(self,*args):pass
-    server=ThreadingHTTPServer(('127.0.0.1',0),Quiet)
+    class Server(ThreadingHTTPServer):
+        request_queue_size=128
+        daemon_threads=True
+    server=Server(('127.0.0.1',0),Quiet)
     threading.Thread(target=server.serve_forever,daemon=True).start()
     results=[]
     tasks=[(case,'quota') for case in CASES]

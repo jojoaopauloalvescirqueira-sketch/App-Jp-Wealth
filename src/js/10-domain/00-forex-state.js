@@ -569,6 +569,7 @@
           firstFactOfNewOperation=false;
         }
       }
+      if(typeof operationTouchAccountPhase==='function')operationTouchAccountPhase(p.activeOperation);
       p.revision++;e.revision++;f.accountContexts=e;
     });
   }
@@ -591,19 +592,18 @@
       if(live.some(o=>o.status!=='Fechada'||!finite(o.result)||o.accountId!==accountId||
         o.periodId!==periodId||o.currency!==p.currency||o.operationId!==op.operationId))
         throw new Error('Ordens abertas, resultados ausentes ou vínculos divergentes; fatos preservados.');
-      const sourceIds=live.map(o=>o.orderId).sort(),snapshotIds=record.ordersSnapshot.map(o=>o.orderId).sort();
-      if(JSON.stringify(sourceIds)!==JSON.stringify(snapshotIds))
-        throw new Error('As ordens mudaram depois da revisão.');
-      // IDs alone do not bind a receipt to the confirmed monetary facts.
-      // Reconstruct the exact rows that the review displays, including phase,
-      // position, source revision, prices, costs and historical policy.
+      // Bind the receipt to the complete reviewed trace, including voided and
+      // migrated rows. Only the live rows above authorize monetary closure.
       const expectedRows=p.phases.flatMap((ph,pi)=>(ph.orders||[]).map((o,oi)=>({o,pi,oi})))
-        .filter(({o})=>['Aberta','Fechada','Pendente'].includes(o.status)&&o.recordStatus!=='voided')
+        .filter(({o})=>['Aberta','Fechada','Pendente','Migrada'].includes(o.status))
         .map(({o,pi,oi})=>({...clone(o),orderId:o.orderId||(op.operationId+'_legacy_'+pi+'_'+oi),
           phase:pi+1,gridIndex:oi,label:typeof o.id==='string'?o.id:'',
           policySnapshot:clone(o.policySnapshot||{policyVersion:'LEGACY_UNRESOLVED'}),
           openedAt:typeof o.openedAt==='string'?o.openedAt:null,
           closedAt:typeof o.closedAt==='string'?o.closedAt:null}));
+      const sourceIds=expectedRows.map(o=>o.orderId).sort(),snapshotIds=record.ordersSnapshot.map(o=>o.orderId).sort();
+      if(JSON.stringify(sourceIds)!==JSON.stringify(snapshotIds))
+        throw new Error('As ordens mudaram depois da revisão.');
       if(JSON.stringify(expectedRows)!==JSON.stringify(record.ordersSnapshot))
         throw new Error('O comprovante diverge dos fatos confirmados; reabra a revisão.');
       const closedAt=Date.parse(record.closedAt),openedAt=Date.parse(record.openedAt||op.openedAt);
@@ -864,8 +864,11 @@
       }
       // Account observations are confirmed facts too. Capture a transient peak
       // in the operation's own account/period before a later recovery hides it.
-      // activeOperation participates in the same refusal rollback as the fact.
-      if(typeof operationTouchAccountPhase==='function')operationTouchAccountPhase();
+      // The contextual operation participates in the same rollback as the fact.
+      // A legacy operation is eligible only when its captured scope is exact.
+      const op=a.periods[fact.periodId].activeOperation||
+        (S.activeOperation?.recordContext?.accountId===key&&S.activeOperation?.recordContext?.periodId===fact.periodId?S.activeOperation:null);
+      if(typeof operationTouchAccountPhase==='function')operationTouchAccountPhase(op);
     });
   }
   function selectAccount(accountId){

@@ -3,6 +3,7 @@ import argparse,json,os,threading
 from pathlib import Path
 from functools import partial
 from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap,wait_bootstrap,assert_fixture_requests
 from design_experience_test import Quiet,SETUP,ALLADIN_SEED,settings_geometry_checks
@@ -122,7 +123,7 @@ def run_research_focal(page, check, prefix="research"):
 
 def completion_checks(page, check, prefix):
  # Deliberately new presentation requirements; V2 remains the preserved before.
- page.evaluate("JPWNavigation.navigate('dashboard')")
+ page.evaluate("closeSettingsModal();JPWNavigation.navigate('dashboard')")
  check(prefix+' panorama chapters',page.locator('.dm-card').count()==4 and page.locator('.cp-panorama-index a').count()==4)
  check(prefix+' dashboard headers and data fit their chapter',page.evaluate("""() => [...document.querySelectorAll('.dm-card')].every(e=>{const b=e.getBoundingClientRect(),h=e.querySelector('.dm-card-head').getBoundingClientRect(),d=e.querySelector('.dm-body').getBoundingClientRect();return h.width>80&&d.width>b.width*.5&&h.left>=b.left-1&&h.right<=b.right+1&&h.top>=b.top-1&&h.bottom<=b.bottom+1})"""))
  check(prefix+' dashboard symbols stay compact',page.evaluate("() => [...document.querySelectorAll('.cp-area-mark')].every(e=>e.getBoundingClientRect().width<=28)"))
@@ -144,11 +145,11 @@ def completion_checks(page, check, prefix):
  check(prefix+' lab canvas before statistics in DOM',page.evaluate("() => !!(document.querySelector('[data-galton-canvas]').compareDocumentPosition(document.querySelector('.galton-metrics'))&Node.DOCUMENT_POSITION_FOLLOWING)"))
  check(prefix+' lab execute before canvas',page.evaluate("() => !!(document.querySelector('[data-galton-action=execute]').compareDocumentPosition(document.querySelector('[data-galton-canvas]'))&Node.DOCUMENT_POSITION_FOLLOWING)"))
  check(prefix+' one simulation canvas',page.locator('[data-galton-canvas]').count()==1)
- page.evaluate("JPWNavigation.navigate('nocoda')")
+ page.evaluate("closeSettingsModal();JPWNavigation.navigate('nocoda')")
  check(prefix+' study figure exists without fabricated data',page.locator('#ncPreview').count()==1 and page.locator('#ncPreviewCaption').count()==1)
  page.evaluate("JPWNavigation.navigate('pivots')")
  check(prefix+' study library and creation remain accessible',page.locator('#pvNewStudyBtn').is_visible())
- page.evaluate("JPWNavigation.navigate('dashboard')")
+ page.evaluate("closeSettingsModal();JPWNavigation.navigate('dashboard')")
  page.locator('#headerConfigBtn').click()
  check(prefix+' settings has two semantic grouped lists',page.locator('.cp-settings-collections>section').count()==2)
  check(prefix+' settings preserves five destinations',page.locator('[data-settings-panel=general] [data-nav-to]').count()==5)
@@ -165,8 +166,11 @@ def completion_checks(page, check, prefix):
  }"""))
  page.keyboard.press('Escape')
  page.locator('#headerNotesBtn').click()
- check(prefix+' notes keeps collection and writing context',page.locator('.cp-notes-intro').is_visible() and page.locator('#mvpNotesEditorEmpty').count()==1)
- page.keyboard.press('Escape')
+ if page.evaluate('innerWidth')<=600:page.locator('[data-mvp-folder=all]').click()
+ check(prefix+' notes keeps collection and writing context',page.locator('#mvpNotesViewTitle').is_visible() and page.locator('#mvpNotesListPane .mvpn-empty').is_visible() and page.locator('#mvpNotesEditorEmpty').count()==1)
+ # Mobile Escape moves from collection to folders; the close control closes the drawer.
+ page.locator('#mvpNotesCloseBtn').click()
+ page.wait_for_function("!document.getElementById('mvpNotesOverlay').classList.contains('open')")
 
 def run(a):
  rows=[]
@@ -178,13 +182,13 @@ def run(a):
    b=p.chromium.launch(headless=True,executable_path=os.environ.get('JP_WEALTH_CHROMIUM'))
    for w in a.widths:
     for theme in ['light','dark']:
-     c=b.new_context(viewport={'width':w,'height':1000},service_workers='block',reduced_motion='reduce');install_bootstrap(c);c.add_init_script('window.__onbShown=true');page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+     c=b.new_context(viewport={'width':w,'height':1000},service_workers='block',reduced_motion='reduce');install_bootstrap(c);c.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));");page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
      page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page);page.evaluate(SETUP,theme);page.evaluate(ALLADIN_SEED)
      prefix=f'{w}/{theme}'
      for id,label in [('headerNotificationsBtn','Notificações'),('headerConfigBtn','Configurações'),('finalizeSessionBtn','Finalizar sessão')]:
       button=page.locator('#'+id)
       check(prefix+' compact named action '+id,button.locator('.header-action-label').count()==0 and button.get_attribute('title')==label and label.casefold() in (button.get_attribute('aria-label') or '').casefold())
-      check(prefix+' icon and touch target '+id,button.evaluate("e=>{const r=e.getBoundingClientRect(),s=e.querySelector('svg[aria-hidden=\"true\"]')?.getBoundingClientRect();return !!s&&r.width===44&&r.height===44&&s.width>=16&&s.width<=18}"))
+      check(prefix+' icon and touch target '+id,button.evaluate("e=>{const r=e.getBoundingClientRect(),s=e.querySelector('svg[aria-hidden=\"true\"]')?.getBoundingClientRect();return !!s&&r.width===44&&r.height===44&&s.width>=19&&s.width<=21}"))
      check(prefix+' notes leaves header',page.locator('#headerActions #headerNotesBtn').count()==0 and page.locator('#headerActions .header-action').count()==4)
      notes=page.locator('body > #mvpNotesLauncher #headerNotesBtn')
      check(prefix+' floating notes remains named',notes.count()==1 and notes.get_attribute('title')=='Notas' and (notes.get_attribute('aria-label') or '').startswith('Abrir notas'))
@@ -195,6 +199,7 @@ def run(a):
       check(prefix+' text contrast '+selector,contrast is not None and contrast['ratio']>=4.5,contrast)
      before=page.evaluate('JSON.stringify(S)')
      for route in ['dashboard','forex-overview','personal-finance','ecal','nocoda','pivots','probability-lab','alladin','dashboard']:
+      page.evaluate('closeSettingsModal()')
       check(prefix+' destination '+route,page.evaluate('(r)=>JPWNavigation.navigate(r)',route))
       check(prefix+' no page overflow '+route,page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))
      check(prefix+' navigation retains domain state',before==page.evaluate('JSON.stringify(S)'))
@@ -202,6 +207,7 @@ def run(a):
      try: run_research_focal(page,check,prefix)
      except Exception as exc:
       rows.append({"name":prefix+" research interrupted","result":"PRODUCT_FAIL" if isinstance(exc,AssertionError) else "TEST_HARNESS_FAIL","detail":str(exc)}); print(rows[-1],flush=True)
+     page.evaluate('closeSettingsModal()');page.evaluate('() => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
      page.locator('#headerConfigBtn').focus();page.keyboard.press('Enter');check(prefix+' settings keyboard opens',page.locator('#settingsModal').is_visible());page.keyboard.press('Escape');page.wait_for_function("document.activeElement.id==='headerConfigBtn'",timeout=2000);check(prefix+' settings returns focus',page.evaluate("document.activeElement.id==='headerConfigBtn'"))
      check(prefix+' no uncaught errors',not errors,errors);assert_fixture_requests(c);c.close()
    b.close()

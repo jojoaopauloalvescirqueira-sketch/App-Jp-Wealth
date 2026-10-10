@@ -9,7 +9,21 @@ Base de produto: **484228189cc3f5f4c297f29f88f2b2ed541a3afd**, build **88c0cb1ce
 **Evidência desta autoria: inspeção de código/documentos, sem execução de runtime, teste de navegador, gravação operacional ou consulta de rede.** Os resultados futuros serão registrados fora de docs, no diretório evidence do piloto, ligados ao candidate e ao comando realmente executados; sua existência ou aprovação não é presumida aqui. Gabaritos independentes e perguntas reservadas não foram lidos. O texto não substitui os arquivos originais; confirme fonte/hash antes de implementar.
 
 
-## Revisão focal corrente — 2026-09-11
+## Reconciliação focal corrente — 2026-10-08
+
+As três fichas e seus endpoints foram relidos nos fontes desta cópia isolada. Os
+hashes abaixo identificam esses bytes; a revision é a âncora Git `7f0828488b2fc0ea62dc7c421174799cda47a34a`,
+com os deltas de onboarding e correção ainda não integrados. A fotografia textual
+anterior e os metadados completos estão no snapshot de baseline e em
+`evidence/control/FEATURE-ATLAS-before.md`, junto do delta de metadados.
+
+Esta manutenção corrige frescor estrutural e descrições de acesso superadas;
+não acrescenta fichas, executa Graphify, amplia autoridade nem atribui prova de
+runtime às relações. Permanecem três fichas de 27 famílias e AUD-05/P2 aberto.
+Resultados de testes novos possuem recibos externos próprios; a autoria
+histórica e seus NOT_RUN abaixo permanecem distintos.
+
+## Revisão focal histórica — 2026-09-11
 
 Base Git `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe` **mais delta local de estabilização**.
 Os hashes nos blocos abaixo identificam as fontes correntes inspecionadas; o campo
@@ -41,7 +55,7 @@ IDs JPW-FEAT são propostas estáveis do Atlas, sem renomeação no runtime. Nes
 | JPW-FEAT-0008 | Forex | Cálculo de lote | Identificada; ficha pendente |
 | JPW-FEAT-0009 | Forex | Apuração | Identificada; ficha pendente |
 | JPW-FEAT-0010 | Forex | Finalização e histórico | Identificada; ficha pendente |
-| JPW-FEAT-0011 | Forex | Planejamento FX | Identificada; ficha pendente |
+| JPW-FEAT-0011 | Forex | Planejamento FX | Identificada; ficha pendente; [relação focal Scenario Fan](#jpw-feat-0011-scenario-fan) |
 | JPW-FEAT-0012 | Finanças Pessoais | Orçamento | Identificada; ficha pendente |
 | JPW-FEAT-0013 | Finanças Pessoais | Dívidas e crédito | Identificada; ficha pendente |
 | JPW-FEAT-0014 | Finanças Pessoais | Comparações | Identificada; ficha pendente |
@@ -69,7 +83,7 @@ Totais por grupo: Dashboard 2; Forex 6; Finanças Pessoais 5; Research 2; Alladi
 | Ações · B3 (stocks-br) | placeholder, sem conteúdo publicado | Rotas RESEARCH_VIEWS e texto de dmResearchHTML inspecionados nesta revisão |
 | Stocks (stocks-global) | placeholder, sem conteúdo publicado | Mesmas fontes; não comprova pesquisa de ações implementada |
 | REITs (reits) | placeholder, sem conteúdo publicado | Mesmas fontes |
-| Others (others) | placeholder, sem conteúdo publicado | Mesmas fontes |
+| Others (others) | alias legado interno; removido dos submenus e links do Dashboard | O owner mantém o alvo de compatibilidade, sem destino público novo |
 
 Exclusões: nenhuma auditoria financeira integral/V11, conta real, histórico operacional, segredo, backup privado, serviço econômico acessado ou completude do grafo. Integrações não encontradas no recorte não viram prova universal de ausência. A ampliação do inventário deve cruzar atos, persistência, boot/timers e testes pertinentes, além do menu.
 
@@ -78,6 +92,24 @@ Exclusões: nenhuma auditoria financeira integral/V11, conta real, histórico op
 Do usuário ao código: escolha ID/família, leia A–D e siga F/metadados. Do componente ao impacto: busque neste arquivo seu caminho ou símbolo; confira todos os endpoints origin/target e condições das fichas encontradas. A relação é direcionada: ler resultado não é gravar o produtor; dois consumidores não provam comunicação entre si. Os blocos abaixo registram relações reconstruídas por leitura, não traces de execução.
 
 Uma mudança em fonte/hash, contrato, identidade ou consumidor material marca a ficha needs-review até cotejo direto; renomeação não equivale à remoção da capacidade. Não reescrever automaticamente o Atlas ou seus índices. Sugestão é proposta, não tarefa aprovada. Se índice estiver ausente, use busca textual e leitura dos originais; não invoque Graphify nem reconstrua caches. A revisão documental não substitui CURRENT-STATE/handoff e não fecha AUD-05.
+
+<a id="jpw-feat-0011-scenario-fan"></a>
+### JPW-FEAT-0011 — relação focal com JPW Scenario Fan
+
+Recorte autorizado em 08/10/2026: [catálogo de design](../design/SCENARIO-FAN.md).
+O Planejamento fornece séries mensais de ACTUAL, PLAN e SCENARIO pelo motor
+`src/js/30-accounting/05-fx-planning/02-fx-engine.js`; o adapter de apresentação
+`04-fx-charts.js` prepara unidade, disponibilidade, contexto e conversão e
+encaminha o modelo ao componente `JPWScenarioFan`. A UI `05-fx-ui.js` mantém
+a seleção de comparação separada da camada de edição. O componente recebe
+valores prontos e não chama o writer nem altera premissas, schema ou fórmulas.
+
+Esta relação é descritiva e focal, sem quarto bloco `atlas-json`, ficha A–H
+completa ou expansão da cobertura histórica 3/27. O catálogo é a referência
+única do componente; confirmar seus caminhos e o código antes de reutilizar.
+Testes novos e o exercício independente de descoberta terão recibos próprios:
+esta adição não transforma documentação, roteamento ou leitura em validação
+de runtime, integração ou aceite. Graphify e índices não foram executados.
 
 <a id="jpw-feat-0001"></a>
 ## JPW-FEAT-0001 — Calendário Econômico compartilhado
@@ -91,7 +123,7 @@ Oferecer eventos públicos de alto impacto como contexto informativo ao propriet
 Fluxo: necessidade de contexto → abertura/seleção de agenda → leitura do cache validado → filtro/ordenação → renderização segura → eventos, ausência de dados ou vazio verdadeiro. Em paralelo, o domínio do feed decide a revalidação → fetch → validação → tentativa de cache → repintura comum.
 
 - initFfNewsDomain instala listener online, ciclo de 5 minutos e tique de 1 minuto, repinta e chama ffNewsFetch(false) no carregamento. O ciclo de 5 minutos só solicita fetch com aba visível; o de 1 minuto só repinta. Intervalo de consulta não é idade máxima do cache.
-- openEconomicCalendar chama ffNewsFetch(false); **researchSelectView('calendar') chama apenas o renderizador do workspace**, sem fetch próprio. Assim, selecionar Research não implica consulta imediata; o domínio compartilhado continua responsável por boot/poll/online e atualização manual.
+- openEconomicCalendar chama ffNewsFetch(false). O owner Research atual renderiza NoCoda/Pivots; o Calendário tem owner/rota próprios na navegação compartilhada. researchSelectView não expõe calendar como view atual. O domínio do feed continua responsável por boot/poll/online e atualização manual; a existência de um alias não prova uma nova aquisição.
 - Cache estruturalmente válido com 10 minutos: ffNewsFetch(false) não busca. Com 40 minutos: considera desatualizado e tenta buscar, salvo solicitação em andamento. O limite é idade **maior que** 30 minutos. Atualização manual usa force=true, ainda respeitando in-flight.
 - ffNewsFetch usa fetch com cache HTTP no-store, exige HTTP ok e JSON de formato válido. Sanitização aceita payload.version=1/events e filtra eventos com título/país/data válidos, impacto High e USD/EUR/JPY/GBP. ffNewsWriteCache guarda o payload recebido e fetchedAt; ffNewsReadCache sanitiza novamente ao ler. Não afirmar que a carga persistida é previamente reduzida à lista limpa.
 - Sucesso e falha chegam ao finally, que libera in-flight e chama ffNewsRenderAll. Este repinta widget, chama ecalRenderIfOpen e agenda Dashboard. A ausência do widget não impede a atualização das outras superfícies.
@@ -140,11 +172,11 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
   "implementation": "available",
   "evidence_level": "code-inspected",
   "freshness": "verified-for-revision",
-  "revision": "fcbb25767073a4ab08a9f0ac2ac16069a3008bfe",
+  "revision": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
   "sources": [
     {
       "path": "src/js/40-app/15-ff-news.js",
-      "sha256": "621e7617626ba6c0f5f1ae30156576770bc6bf79a6fb195321748ab90543e9fe",
+      "sha256": "8763f9c7d00a45b6bcc11b96d80acb115dae4d9ebb0e6b42ad5f32657b4264e3",
       "symbols": [
         "ffNewsSourceUrl",
         "ffNewsSanitizeEvents",
@@ -159,7 +191,7 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
     },
     {
       "path": "src/js/40-app/17-economic-calendar.js",
-      "sha256": "c2bb4b881b67eda573820eacf8304f8db93df88316d893eed82d0e9c1911da74",
+      "sha256": "8bb7d6f307613d07e3f987f0785073e8ee709ac50837372223b06182f0584618",
       "symbols": [
         "ecalEvents",
         "ecalRenderRoot",
@@ -171,7 +203,7 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
     },
     {
       "path": "src/js/20-ui/23-research-views.js",
-      "sha256": "09da5babc3957e15bf6b4db09263f7b998b28a1094b33dc396ad9ec1ca09473e",
+      "sha256": "4a0b9f3a59e815576dc1335609c88a817c6b9f12823a0060e24eb745f0ecc721",
       "symbols": [
         "researchSelectView",
         "RESEARCH_VIEW_RENDERERS"
@@ -179,7 +211,7 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
     },
     {
       "path": "src/js/20-ui/25-dash-macro.js",
-      "sha256": "294a052b592c9310c308d8f9d3cad0c488322f8b4a809da9ce86cd0ac3947076",
+      "sha256": "82fd2d8fb9d22ecd9ab7f70a63350a68bcf22db79bc51e4140473b5b4115415d",
       "symbols": [
         "dmResearchHTML"
       ]
@@ -257,8 +289,8 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
       "evidence": "src/js/20-ui/25-dash-macro.js#dmResearchHTML"
     }
   ],
-  "revision_scope": "Git baseline plus uncommitted closure candidate; exact source hashes below, not a commit of the delta",
-  "candidate_manifest": "/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json"
+  "revision_scope": "Git baseline plus preserved onboarding and isolated behavior-fixes delta; code inspection only, exact source hashes recorded, not integration or runtime acceptance",
+  "candidate_manifest": "/private/tmp/jpw-behavior-fixes-20261008/candidate-fingerprint.json"
 }
 ```
 
@@ -325,11 +357,11 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
   "implementation": "available",
   "evidence_level": "code-inspected",
   "freshness": "verified-for-revision",
-  "revision": "fcbb25767073a4ab08a9f0ac2ac16069a3008bfe",
+  "revision": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
   "sources": [
     {
       "path": "src/js/20-ui/24-alladin-views.js",
-      "sha256": "75c7ed72b542ef47e8b398c086957ca9cf2b52e26ca214823874ae1405944cc6",
+      "sha256": "74da048037848e4ecd3183b9a441f7c18efb52d4d6e021bcb8cc665ba6c9a2b3",
       "symbols": [
         "initAlladinCrud",
         "alladinSubmit",
@@ -343,7 +375,7 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
     },
     {
       "path": "src/js/10-domain/13-alladin.js",
-      "sha256": "d7a677e5bc4875406aa809b7094ded0fa93b8a5844a2cf1f748325f5e5af079a",
+      "sha256": "6b5cdc3593207873dc77c76315d0bad44b44436c0eeb0703cfdc8b4a63cf9146",
       "symbols": [
         "aldParseMoney",
         "aldNormalizeTransactionFields",
@@ -359,14 +391,14 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
     },
     {
       "path": "src/js/00-core/04-persistence.js",
-      "sha256": "8edc9517a426cdd9ef48354116e16447fbab5cb8ac30d4d19d1c979fee6cda0c",
+      "sha256": "8bf9ea95c507e67a87f2c7374c3b9a56620d8db686adbc79ef1279e132e11b38",
       "symbols": [
         "save"
       ]
     },
     {
       "path": "docs/architecture/ALLADIN.md",
-      "sha256": "6dc70be6918a58693e5d42142c0f9ed2b96fc2e380bf3db6c68aa91b9122426f",
+      "sha256": "f417013c35cf5481e4468821bf5bea4ee3e7733439d42d1114809902391a1a91",
       "symbols": [
         "Superado em 2026-08-31",
         "ALD-05 S2",
@@ -460,8 +492,8 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
       "evidence": "src/js/20-ui/24-alladin-views.js#alladinRenderPositions"
     }
   ],
-  "revision_scope": "Git baseline plus uncommitted closure candidate; exact source hashes below, not a commit of the delta",
-  "candidate_manifest": "/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json"
+  "revision_scope": "Git baseline plus preserved onboarding and isolated behavior-fixes delta; code inspection only, exact source hashes recorded, not integration or runtime acceptance",
+  "candidate_manifest": "/private/tmp/jpw-behavior-fixes-20261008/candidate-fingerprint.json"
 }
 ```
 
@@ -519,11 +551,11 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
   "implementation": "available",
   "evidence_level": "code-inspected",
   "freshness": "verified-for-revision",
-  "revision": "fcbb25767073a4ab08a9f0ac2ac16069a3008bfe",
+  "revision": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
   "sources": [
     {
       "path": "src/js/20-ui/14-nocoda-studies.js",
-      "sha256": "84fe93663de458bb843ecb0bc491e11af2a2a9ccacd42688f33804df766096b0",
+      "sha256": "66c546fa9585b8c4dc30103817bf8c5b97ea8e77580cd7bb5e8a3b0a1c9c730d",
       "symbols": [
         "renderNocodaStudies",
         "ncDraftFrom",
@@ -546,7 +578,7 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
     },
     {
       "path": "src/js/10-domain/01-risk-instruments.js",
-      "sha256": "7dee71a663bd9f4bd2190673901df352db879b7d0379e1d81d079dc4e0d8e4e5",
+      "sha256": "f778f6e26bb00e3a7036c28df5cae357b097a7470f064da88b57161dd570713c",
       "symbols": [
         "instrumentCatalog",
         "instrumentId",
@@ -556,28 +588,28 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
     },
     {
       "path": "src/js/20-ui/15-pivot-studies.js",
-      "sha256": "25b25a39bd39eb721eb4d411a255d0756271eaffbc78a656b3768b59bc7176a9",
+      "sha256": "dea4aaf8625cabfbb19b3bcc3b35f8e875987f24024da322c9d2a99768c2411c",
       "symbols": [
         "pvInstrumentOptions"
       ]
     },
     {
       "path": "src/js/20-ui/25-dash-macro.js",
-      "sha256": "294a052b592c9310c308d8f9d3cad0c488322f8b4a809da9ce86cd0ac3947076",
+      "sha256": "82fd2d8fb9d22ecd9ab7f70a63350a68bcf22db79bc51e4140473b5b4115415d",
       "symbols": [
         "dmResearchHTML"
       ]
     },
     {
       "path": "src/js/10-domain/03-phase-transitions.js",
-      "sha256": "d0741b26ed5701fcb6a758856ab4d679a7d054c1585492325c46975362fd90fd",
+      "sha256": "b6e07b345656faec3c278f1de181e93a3ca0a04dd6d708ff1dfb78614e85a859",
       "symbols": [
         "orderGateMsg"
       ]
     },
     {
       "path": "src/js/00-core/04-persistence.js",
-      "sha256": "8edc9517a426cdd9ef48354116e16447fbab5cb8ac30d4d19d1c979fee6cda0c",
+      "sha256": "8bf9ea95c507e67a87f2c7374c3b9a56620d8db686adbc79ef1279e132e11b38",
       "symbols": [
         "save",
         "nocodaNormalizeState"
@@ -679,7 +711,7 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
       "evidence": "src/js/10-domain/09-nocoda-geometry.js#nocodaGeometry"
     }
   ],
-  "revision_scope": "Git baseline plus uncommitted closure candidate; exact source hashes below, not a commit of the delta",
-  "candidate_manifest": "/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json"
+  "revision_scope": "Git baseline plus preserved onboarding and isolated behavior-fixes delta; code inspection only, exact source hashes recorded, not integration or runtime acceptance",
+  "candidate_manifest": "/private/tmp/jpw-behavior-fixes-20261008/candidate-fingerprint.json"
 }
 ```

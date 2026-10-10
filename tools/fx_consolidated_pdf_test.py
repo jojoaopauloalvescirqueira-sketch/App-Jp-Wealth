@@ -8,7 +8,8 @@ from __future__ import annotations
 import argparse, ast, base64, hashlib, json, shutil, subprocess, sys, tempfile, threading
 from pathlib import Path
 from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
 
@@ -50,7 +51,18 @@ class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*_): pass
 
 
+def copy_build_dependencies(target):
+    # The official generator now builds the traced Genetrix package as well.
+    # Copy its complete declared inputs into the disposable build, never stub it.
+    for folder in ('assets','downloads','mt5','manifests'):
+        shutil.copytree(ROOT/folder,target/folder,dirs_exist_ok=True)
+    destination=target/'tools/build_leverage_package.py'
+    destination.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copy2(ROOT/'tools/build_leverage_package.py',destination)
+
+
 def build_copy(target):
+    copy_build_dependencies(target)
     manifest=json.loads((ROOT/'src/js/manifest.json').read_text())
     if not any(x['path']==ADAPTER for x in manifest['files']):manifest['files'].append({'path':ADAPTER})
     manifest['runtimeAssets']=[{'path':p,'sha256':hashlib.sha256((ROOT/p).read_bytes()).hexdigest(),'type':'module' if p.endswith('/pdf.mjs') else 'worker' if p.endswith('/pdf.worker.mjs') else 'metadata'} for p in ASSETS]

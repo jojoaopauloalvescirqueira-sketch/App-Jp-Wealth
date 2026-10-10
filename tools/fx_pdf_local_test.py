@@ -6,7 +6,7 @@ All builds and browser state are disposable; this test never reads owner reports
 from __future__ import annotations
 import argparse, base64, hashlib, json, shutil, subprocess, sys, tempfile, threading
 from functools import partial
-from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
@@ -65,8 +65,10 @@ def summary_two_page_pdf():
 
 
 def build(target):
+    from fx_consolidated_pdf_test import copy_build_dependencies
+    copy_build_dependencies(target)
     for folder in ['src','assets','manifests','docs/normative']:
-        shutil.copytree(ROOT/folder,target/folder)
+        shutil.copytree(ROOT/folder,target/folder,dirs_exist_ok=True)
     for name in ['index.html','sw.js','tools/rebuild_monolith.py']:
         dst=target/name;dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/name,dst)
     def run():

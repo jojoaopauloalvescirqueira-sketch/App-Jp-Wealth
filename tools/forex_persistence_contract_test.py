@@ -65,6 +65,9 @@ SEED = """() => {
   S.dataGovernance.changeLog=Array.from({length:400},(_,i)=>({id:'dg-old-'+i,ts:'2025-01-01T00:00:00Z',entity:'synthetic',action:'historical',recordId:'',label:''}));
   if(save()!==true) throw new Error('seed não gravou');
   window.__saveReal=save;
+  window.__barrierWriterAttempts=0;
+  const observedSetItem=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(k,v){if(this===localStorage&&k===LSKEY)window.__barrierWriterAttempts++;return observedSetItem.call(this,k,v);};
   window.__period=(state=S)=>{const a=state.forex.accountContexts.accounts['PERSIST-A'];return a.periods[a.currentPeriodId];};
   window.__snap=()=>({fx:JSON.stringify(S.fxPlanning),ledger:JSON.stringify(__period().ledger),
     legacyLedger:JSON.stringify(S.ledger),
@@ -189,6 +192,16 @@ def main():
             reloaded=p.evaluate("() => ({fx:JSON.stringify(S.fxPlanning),log:JSON.stringify(S.dataGovernance.changeLog)})")
             o['reloaded']=reloaded;assert reloaded['fx']==committed['fx'] and reloaded['log']==committed['log']
         return run
+    def assert_unknown_save_barrier(p,o,label):
+        # save() exposes UNKNOWN through its typed exception, rather than the
+        # proven-refusal false result. Observe the real writer and durable base.
+        before=p.evaluate('({writes:__barrierWriterAttempts,raw:localStorage.getItem(LSKEY)})')
+        result=p.evaluate("""()=>{try{return {returned:save()};}catch(error){return {name:error.name,result:error.persistenceResult};}}""")
+        after=p.evaluate('({writes:__barrierWriterAttempts,raw:localStorage.getItem(LSKEY),unknown:jpWealthPersistenceOutcomeIsUnknown()})')
+        o[label]={'before':before,'result':result,'after':after}
+        assert result.get('name')=='JPWealthPersistenceUnknownError',result
+        assert result.get('result',{}).get('status')=='UNKNOWN' and result['result']['reason']=='PENDING_VERIFICATION',result
+        assert after['unknown'] and after['writes']==before['writes'] and after['raw']==before['raw'],after
     def uncertain(action,mode):
         def run(p,o):
             before=p.evaluate('__snap()');p.evaluate('__installFailure',mode)
@@ -203,8 +216,8 @@ def main():
             calls=p.evaluate('__saveCalls');retry=p.evaluate('__act',action);o['retry']=retry
             assert retry.get('ok') is False and p.evaluate('__saveCalls')==calls,retry
             assert p.evaluate('__snap().fx')==after['fx']
-            p.evaluate('__restoreFailure()');assert p.evaluate('save()') is False
-            p.evaluate('resumeJPWealthPersistence()');assert p.evaluate('save()') is False
+            p.evaluate('__restoreFailure()');assert_unknown_save_barrier(p,o,'restoredWriterBarrier')
+            p.evaluate('resumeJPWealthPersistence()');assert_unknown_save_barrier(p,o,'resumedWriterBarrier')
             p.reload();wait_bootstrap(p)
             persisted=p.evaluate("() => Object.keys(S.fxPlanning.plan.actuals)")
             assert persisted==(['2026-01'] if mode=='throw-after' else []),persisted
@@ -228,7 +241,7 @@ def main():
                 else:assert after['raw']==before['raw']
                 calls=p.evaluate('__saveCalls');p.locator('[data-ledger-void]' if delete else '#ldAddBtn').click()
                 assert p.evaluate('__saveCalls')==calls
-                p.evaluate('__restoreFailure()');assert p.evaluate('save()') is False
+                p.evaluate('__restoreFailure()');assert_unknown_save_barrier(p,o,'restoredWriterBarrier')
             else:
                 for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert after[key]==before[key],key
                 if not delete:assert p.locator('#ldResult').input_value()=='-100' and p.locator('#ldNota').input_value()=='rascunho sintético'

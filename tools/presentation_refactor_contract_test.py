@@ -15,41 +15,50 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = {
-    "pf": ["src/js/10-domain/12-personal-finance.js", "src/js/20-ui/18-finpes-budget.js"],
+    "pf": ["src/js/10-domain/12-personal-finance.js", "src/js/20-ui/17-finpes-views.js", "src/js/20-ui/18-finpes-budget.js"],
     "alladin": ["src/js/20-ui/24-alladin-views.js"],
     "settings": ["src/js/40-app/09-settings-modal.js"],
     "fx": ["src/js/30-accounting/05-fx-planning/05-fx-ui.js"],
 }
 COMMON = r"""
-window.__t={events:[],errors:[],writes:0};
+window.__t={events:[],errors:[],writes:0,draftReads:0,pfContext:null};
+window.jpwWorkspaceDraftProviders=new Map();
+window.JPWWorkspaceDrafts={registerRestorer(){}};
+window.jpWealthPersistenceOutcomeIsUnknown=()=>false;
 window.esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 window.$=id=>document.getElementById(id);
+window.todayISO=()=>"2026-09-01";
 window.JPWAlladin={leitura:{}}; window.JPWFx={state:{},charts:{}};
 window.addEventListener('error',e=>{__t.errors.push(e.message);e.preventDefault();});
 window.save=()=>{__t.writes++;throw new Error('UNEXPECTED_WRITE');};
-Object.defineProperty(window,'S',{get(){throw new Error('UNEXPECTED_FINANCIAL_READ');}});
+Object.defineProperty(window,'S',{get(){if(__t.pfContext){__t.draftReads++;return __t.pfContext;}throw new Error('UNEXPECTED_FINANCIAL_READ');}});
 Object.defineProperty(window,'localStorage',{get(){throw new Error('UNEXPECTED_STORAGE');}});
 Object.defineProperty(window,'sessionStorage',{get(){throw new Error('UNEXPECTED_STORAGE');}});
 """
-PF = r"""c=>{
-  document.body.innerHTML='<div id="fixture"><input id="field"></div>';
-  const root=$('fixture'),inp=$('field'),prefix=c.kind==='income'?'fi':'fe';
+PF = r"""async c=>{
+  document.body.innerHTML='<div id="finpesBudgetRoot"><input id="field"></div>';
+  const root=$('finpesBudgetRoot'),inp=$('field'),prefix=c.kind==='income'?'fi':'fe';
   inp.setAttribute('data-'+prefix+'-campo',c.field);inp.setAttribute('data-'+prefix+'-id','initial-id');
-  inp.value=c.old;__t.events=[];__t.errors=[];
+  inp.value=c.old;__t.events=[];__t.errors=[];__t.draftReads=0;
+  const field=c.changedField||c.field,old=field==='name'?c.old:parseBRLCents(c.old);
+  const record=Object.freeze({id:'event-id',[field]:old});
+  const month=Object.freeze({incomes:Object.freeze(c.kind==='income'?[record]:[]),expenses:Object.freeze(c.kind==='expense'?[record]:[])});
+  __t.pfContext=Object.freeze({personalFinance:Object.freeze({moneyUnit:'BRL_CENTS',months:Object.freeze({'2026-09':month})})});
+  const before=JSON.stringify(__t.pfContext);fbMonth='2026-09';fbPendingFields.clear();
   window.alert=message=>__t.events.push(['alert',message,inp.value]);
   finpesBudgetRender=()=>__t.events.push(['render',inp.value]);
   pfActUpdateIncomeField=()=>{throw new Error('EARLY_CAPTURE');};
   pfActUpdateExpenseField=()=>{throw new Error('EARLY_CAPTURE');};
-  fbBind(root,'2026-09');
-  const act=(kind,...args)=>{__t.events.push(['act',kind,...args]);if(c.throw)throw new Error('DOMAIN_TEST_FAILURE');return c.refuse?{ok:false,erro:'RECUSA_SINTÉTICA'}:{ok:true};};
+  fbBind(root,'2026-09');fbRestorePending(root,'2026-09');
+  const act=(kind,...args)=>{__t.events.push(['act',kind,...args]);if(c.throw)throw new Error('DOMAIN_TEST_FAILURE');return c.refuse?{ok:false,persistido:false,erro:'RECUSA_SINTÉTICA'}:{ok:true,persistido:true};};
   pfActUpdateIncomeField=(...a)=>act('income',...a);pfActUpdateExpenseField=(...a)=>act('expense',...a);
   if(c.focus!==false)inp.focus();
   inp.setAttribute('data-'+prefix+'-id','event-id');
   if(c.changedField)inp.setAttribute('data-'+prefix+'-campo',c.changedField);
-  inp.value=c.value;inp.dispatchEvent(new Event('change',{bubbles:true}));
+  inp.value=c.value;inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,0));
   const first={events:JSON.parse(JSON.stringify(__t.events)),errors:__t.errors.slice(),value:inp.value,focus:document.activeElement===inp,prev:inp.dataset.prevval??null};
-  if(c.repeat){__t.events=[];inp.value=c.value;inp.dispatchEvent(new Event('change',{bubbles:true}));first.repeated=JSON.parse(JSON.stringify(__t.events));}
-  return {...first,writes:__t.writes};
+  if(c.repeat){__t.events=[];inp.value=c.value;inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,0));first.repeated=JSON.parse(JSON.stringify(__t.events));}
+  return {...first,writes:__t.writes,draftReads:__t.draftReads,unchanged:before===JSON.stringify(__t.pfContext),pending:[...fbPendingFields.values()]};
 }"""
 INVALID = '⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.'
 NEGATIVE = '⛔ Valor negativo não é aceito: a direção já é do campo.'
@@ -75,20 +84,21 @@ def check_pf(page):
               (dict(kind='expense', field='name', old='x', value='y', throw=True), 'y', None)]
     for case, expected, message in cases:
         got = page.evaluate(PF, case)
-        restored = case['old'] if case.get('focus', True) else ''
+        retained = case['value']
         if message:
             want = [['alert', message, case['value']]]
-            assert got['value'] == restored
+            assert got['value'] == retained
         else:
             want = [['act', case['kind'], '2026-09', 'event-id', case.get('changedField', case['field']), expected]]
             if case.get('refuse'):
-                want += [['alert', '⛔ RECUSA_SINTÉTICA', restored], ['render', restored]]
-                assert got['value'] == restored
+                want += [['alert', '⛔ RECUSA_SINTÉTICA', retained]]
+                assert got['value'] == retained
             elif not case.get('throw'):
                 want += [['render', case['value']]]
                 assert got['value'] == case['value']
         assert got['events'] == want, (case, got, want)
-        assert got['writes'] == 0
+        assert got['writes'] == 0 and got['unchanged'] and got['draftReads'] > 0
+        assert bool(got['pending']) == bool(message or case.get('refuse') or case.get('throw')), (case,got)
         assert bool(got['errors']) == bool(case.get('throw')), (case, got)
         if case.get('throw'):
             assert len(got['errors']) == 1 and 'DOMAIN_TEST_FAILURE' in got['errors'][0]
@@ -143,7 +153,7 @@ def check_alladin(page):
 
 SETTINGS = r"""c=>{
   if(!c.keepRoot)document.body.innerHTML=c.root===false?'':'<div id="settingsSearchResults"></div>';
-  if(c.keepRoot && !$('settingsSearchResults').querySelector('button'))throw new Error('MISSING_PRIOR_RESULTS_FIXTURE');
+  if(c.keepRoot){settingsState.query='Item';renderSettingsSearch();if(!$('settingsSearchResults').querySelector('button'))throw new Error('MISSING_PRIOR_RESULTS_FIXTURE');}
   __t.events=[];__t.errors=[];
   const entries=c.entries.map(x=>Object.freeze({...x}));Object.freeze(entries);
   settingsSearchEntries=()=>{__t.events.push(['index']);return entries;};
@@ -190,15 +200,17 @@ def check_settings(page):
 
 FX_SETUP = r"""()=>{
   window.__fx={live:{plan:{name:'Sintético',baseline:{startMonth:'2026-01',horizonMonths:32}},forecast:Array.from({length:32},(_,i)=>({id:'f'+i})),baseline:Array.from({length:32},(_,i)=>({id:'b'+i}))},callback:null,sync:false};
+  window.jpWealthPersistenceEpoch=()=>0;window.fxActivePlanRaw=()=>__fx.live?.plan||null;JPWFx.state.fxEnvelopeIssue=()=>null;
+  fxpReferenceHTML=()=>'';fxpTimelineEditorHTML=()=>'';fxpBindTimeline=()=>{};fxpBindLedgerImport=()=>{};fxpLedgerImportHTML=()=>'';
   JPWFx.state.fxOverviewLive=()=>{__t.events.push(['read']);return __fx.live;};
   fxpOverviewHTML=()=>{__t.events.push(['html','overview']);return '<button id="fxpQuoteRefresh">Refresh</button><button data-fxp-cur="brl">BRL</button><button data-fxp-win="12">12m</button><button id="fxpGoOnboarding">Settings</button><button id="fxpGoLedger">Ledger</button><canvas id="fxpMainChart"></canvas><p id="fxpMainChartSummary"></p><details id="fxpReturnsBox"><canvas id="fxpReturnsChart"></canvas></details>';};
-  fxpPlanningHTML=()=>{__t.events.push(['html','planning']);return 'planning';};fxpActualsHTML=()=>{__t.events.push(['html','actuals']);return 'actuals';};fxpTableHTML=()=>{__t.events.push(['html','table']);return '<button data-fxp-hist="actual">History</button>';};
+  fxpPlanningHTML=()=>{__t.events.push(['html','planning']);return 'planning';};fxpActualsHTML=()=>{__t.events.push(['html','actuals']);return 'actuals';};fxpTableHTML=()=>{__t.events.push(['html','table']);return '<button data-fxp-hist="actual">History</button><canvas id="fxpMainChart"></canvas><p id="fxpMainChartSummary"></p>';};
   fxpCreateFormHTML=()=>{__t.events.push(['html','empty']);return 'empty';};
   fxpBindCreate=()=>__t.events.push(['bind','empty']);fxpBindPlanning=()=>__t.events.push(['bind','planning']);fxpBindActuals=()=>__t.events.push(['bind','actuals']);
   const quoteBind=fxpBindQuote;fxpBindQuote=root=>{__t.events.push(['bind','quote']);quoteBind(root);};
   JPWMarket={usdBrl:{onChange(fn){__t.events.push(['wire']);__fx.callback=fn;},refresh(force){__t.events.push(['refresh',force]);if(__fx.throw)throw new Error('REFRESH_TEST_FAILURE');if(__fx.switchView){fxpView=__fx.switchView;__fx.switchView=null;}if(__fx.sync){__fx.sync=false;__fx.callback();}}}};
   JPWFx.charts={fxDrawMainChart(node,plan,live,mode){__fx.identities.push([node===document.getElementById('fxpMainChart'),plan===__fx.live.plan,live===__fx.live,live.forecast===__fx.live.forecast,live.baseline===__fx.live.baseline]);__t.events.push(['main',node.id,plan===__fx.live.plan,live.forecast.map(x=>x.id),live.baseline.map(x=>x.id),mode]);},fxMainChartSummaryText(plan,live,mode){__t.events.push(['summary',plan===__fx.live.plan,live.forecast.length,mode]);return 'resumo sintético';},fxDrawReturnsChart(node,live){__t.events.push(['returns',node.id,live===__fx.live]);}};
-  openSettingsModal=(category,opener)=>__t.events.push(['settings',category,opener.id]);
+  window.JPWNavigation={navigate:route=>__t.events.push(['navigate',route])};
   document.body.innerHTML='<div id="fxPlanningCard"><div id="fxPlanningRoot" style="width:1120px"></div></div>';
 }"""
 FX_RUN = r"""c=>{__t.events=[];__t.errors=[];__fx.identities=[];if(c.switchView)__fx.switchView=c.switchView;if(c.fullWindow)fxpHorizonWin=100;if(c.width)$('fxPlanningRoot').style.width=c.width+'px';if(c.sync)__fx.sync=true;if(c.throw)__fx.throw=true;
@@ -217,10 +229,10 @@ def check_fx(page):
            (dict(click='#fxpQuoteRefresh'),[['refresh',True]]),
            (dict(click='[data-fxp-cur]'),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl')),
            (dict(click='[data-fxp-win]'),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',12)),
-           (dict(click='#fxpGoOnboarding'),[['settings','general','fxpGoOnboarding']]),
+           (dict(click='#fxpGoOnboarding'),[['navigate','forex-reserves']]),
            (dict(click='#fxpGoLedger'),[['read'],['html','actuals'],['bind','actuals']]),
            (dict(view='planning'),[['read'],['html','planning'],['bind','planning']]),
-           (dict(view='table'),[['read'],['html','table']]),
+           (dict(view='table'),[['read'],['html','table'],['html','planning'],['bind','planning']]+fx_draw('brl',32)[:2]),
            (dict(view='unknown'),[]),
            (dict(view='overview',width=1120,sync=True),[['read'],['html','overview'],['bind','quote'],['refresh',False],['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',12)+fx_draw('brl',12)),
            (dict(click='[data-fxp-cur]'),([['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',12))*2),
@@ -237,9 +249,16 @@ def check_fx(page):
         assert got['error']==('REFRESH_TEST_FAILURE' if case.get('throw') else None)
         assert not got['errors'] and got['writes']==0
         if got['view']=='overview' and not case.get('throw'):
-            assert got['open']==(expected_width>=1120)
+            assert got['open'] is True, got  # Same-context presentation retains the previously open chart.
             assert got['summary']=='resumo sintético'
         rows.append(dict(case=case,observation=got))
+    # A new presentation scope starts collapsed at 1119px; same-context reflow
+    # above retained the user's previous open state without a financial write.
+    page.evaluate("()=>{fxpPresentationByScope.clear();const root=$('fxPlanningRoot');root.innerHTML='';delete root.__fxpPresentationScope;}")
+    fresh=page.evaluate(FX_RUN,dict(view='overview',width=1119))
+    assert fresh['open'] is False and fresh['writes']==0 and not fresh['errors'],fresh
+    assert fresh['events']==[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',32),fresh
+    rows.append(dict(case='fresh-narrow-context-starts-collapsed',observation=fresh))
     page.evaluate('()=>{window.JPWMarket=null;}')
     got=page.evaluate(FX_RUN,dict(view='overview'))
     assert got['events']==[['read'],['html','overview'],['bind','quote']]+fx_draw('brl',32)
@@ -288,7 +307,7 @@ def check_pf_live(browser):
                 selector=f'[data-{prefix}-campo="{field}"]'
                 page.evaluate('()=>{__live.saves=0;__live.renders=0;__live.alerts=[];}')
                 inp=page.locator(selector).first
-                inp.focus();inp.fill(value);inp.press('Tab')
+                inp.focus();inp.fill(value);inp.press('Tab');page.wait_for_timeout(80)
                 got=page.evaluate("""([collection,field,selector])=>{
                   const record=S.personalFinance.months[__live.key][collection][0];
                   const saved=JSON.parse(localStorage.getItem('jpwealth_v9_state')).personalFinance.months[__live.key][collection][0];
@@ -304,16 +323,16 @@ def check_pf_live(browser):
                 assert got['saves']==got['renders']==(1 if accepted else 0),got
                 assert got['alerts']==([] if accepted else [INVALID]),got
                 rows.append(dict(case=[prefix,value],observation=got))
-            # Real domain refusal of an empty name must render the confirmed value.
+            # A refused edit retains its text/draft while RAM and disk keep the confirmed name.
             selector=f'[data-{prefix}-campo="name"]'
             page.evaluate('()=>{__live.saves=0;__live.renders=0;__live.alerts=[];}')
-            inp=page.locator(selector).first;inp.focus();inp.fill('');inp.press('Tab')
+            inp=page.locator(selector).first;inp.focus();inp.fill('');inp.press('Tab');page.wait_for_timeout(80)
             got=page.evaluate("""([collection,selector])=>({
               value:S.personalFinance.months[__live.key][collection][0].name,
               saved:JSON.parse(localStorage.getItem('jpwealth_v9_state')).personalFinance.months[__live.key][collection][0].name,
               display:document.querySelector(selector).value,saves:__live.saves,renders:__live.renders,alerts:__live.alerts})""",[collection,selector])
             name='Receita sintética' if prefix=='fi' else 'Despesa sintética'
-            assert got==dict(value=name,saved=name,display=name,saves=0,renders=1,
+            assert got==dict(value=name,saved=name,display='',saves=0,renders=0,
                 alerts=['⛔ descrição obrigatória' if prefix=='fi' else '⛔ nome da despesa obrigatório']),got
             rows.append(dict(case=[prefix,'domain-refusal'],observation=got))
         assert_fixture_requests(context);assert not errors,errors
@@ -346,6 +365,7 @@ def main():
                 context.route('**/*',lambda route:(requests.append(route.request.url),route.abort()))
                 page=context.new_page();page.set_content('<!doctype html><html><body></body></html>');page.add_script_tag(content=COMMON)
                 for source in SOURCES[area]:page.add_script_tag(content=(ROOT/source).read_text())
+                assert not page.evaluate('__t.errors'), {'area':area,'loadErrors':page.evaluate('__t.errors')}
                 result['observations'][area]=CHECKS[area](page)
                 assert not requests,requests
                 context.close();print(f'PASS {area}: {len(result["observations"][area])} literal contract observations',flush=True)

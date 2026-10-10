@@ -47,15 +47,18 @@
 - Valores dos controles passam por allowlist e limites antes de geometria, Planck e
   persistencia. A feature nao interpreta HTML importado e nao integra APIs
   financeiras.
-- A unica chave nova e `jpwealth_galton_preferences_v1`. Ela e auxiliar, isolada de
-  `jpwealth_v9_state`, `S`, `DEFAULTS`, backups e schema financeiro. Nao persiste
+- A chave `jpwealth_galton_preferences_v1` e auxiliar, isolada de
+  `jpwealth_v9_state`, `S`, `DEFAULTS` e schema financeiro. O Backup Completo
+  inclui sua preferencia confirmada no workspace; exportacoes parciais possuem
+  cobertura propria. Nao persiste
   bolas, fila, histograma, resultado ou estado intermediario.
 - JSON malformado, envelope top-level incompativel, schema ausente/desconhecido,
   leitura indisponivel, quota ou falha de escrita preservam o payload, bloqueiam a
   chave e nunca disparam `save()`, wipe ou fallback do estado financeiro.
-- `Finalizar sessao` remove a chave pela allowlist
-  `JP_WEALTH_AUX_STORAGE_KEYS`; um epoch de wipe invalida controllers antigos para
-  que outra aba nao ressuscite preferencias removidas. Nenhuma rotina usa
+- `Finalizar sessao` preserva a preferencia confirmada e encerra os processos
+  da sessao. A limpeza total explicita preserva as preferencias auxiliares
+  (`removeAuxiliary:false`); seu epoch invalida controllers antigos para que
+  outra aba nao ressuscite dados financeiros removidos. Nenhuma rotina usa
   `localStorage.clear()`.
 - `jpwealth_base_epoch_v1` e a unica chave de CONTROL PLANE: identifica a geracao
   da base para que uma notificacao emitida antes de uma limpeza total nao possa
@@ -63,7 +66,8 @@
   backup e nao e restaurada por importacao. O valor inicial e o sentinel
   reservado `BASE-V0-LEGACY`; rotacoes usam aleatoriedade criptografica.
   Deliberadamente NAO integra `JP_WEALTH_AUX_STORAGE_KEYS`: precisa sobreviver ao
-  `Finalizar sessao` e rotacionar no wipe, o oposto do regime auxiliar.
+  `Finalizar sessao` e rotacionar na limpeza total; sua exclusao do backup
+  difere das preferencias auxiliares recuperaveis.
 - Escritores do documento principal sao serializados entre abas pela Web Locks
   API quando disponivel (lock `jpwealth_state_writer_v1` no critical section de
   finalizacao/wipe/importacao). Sem a API o modo e DEGRADED: resta a guarda

@@ -4,7 +4,7 @@ The same entry oracles can run against --root baseline; failures remain evidence
 """
 import argparse, hashlib, json, threading, traceback
 from functools import partial
-from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -44,6 +44,8 @@ def main():
             def go(target):require(page.evaluate('(t)=>JPWNavigation.navigate(t)',target));page.wait_for_timeout(60)
             test('seven destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
             page.locator('#execNavTrigger').click()
+            assert page.evaluate("JPWNavigation.current().canonical==='dashboard'"), 'Parent exploration navigated'
+            page.locator('#execNavSubmenu [data-nav-child="forex-consolidated"]').click()
             test('Forex default is Consolidado',lambda:require(page.evaluate("JPWNavigation.current().canonical==='forex-consolidated'&&document.querySelector('#fxconsolidated').classList.contains('active')")))
             go('forex-overview')
             test('legacy overview shows context in Consolidado',lambda:require(page.evaluate("JPWNavigation.current().screen==='fxconsolidated'&&document.querySelector('#fxconsolidated #execOverview')===__overviewNode&&!__overviewNode.hidden")))
@@ -52,7 +54,7 @@ def main():
                 if page.locator('#fxContextToggle').get_attribute('aria-expanded')=='true':page.locator('#fxContextToggle').click()
                 test('labels distinguish analytic and operational accounts',lambda:require(page.locator('label',has=page.locator('#fxcAccount')).inner_text().startswith('Conta em análise') and 'Outra sintética' in page.locator('#fxOperationalSummary').inner_text(),str({'analytic':page.locator('label',has=page.locator('#fxcAccount')).inner_text(),'operational':page.locator('#fxOperationalSummary').inner_text()[:180]})))
                 test('analytic Mestre differs from operational B',lambda:require(page.evaluate("document.querySelector('#fxcAccount').value==='fx_A'&&S.forex.activeAccountId==='fx_B'")))
-                page.locator('#fxcManual').click();page.locator('#fxcFrom').fill('2026-01-01');page.locator('#fxcTab-history').click()
+                page.locator('#fxcManual').click();page.locator('#fxcFrom').evaluate("e=>e.closest('details').open=true");page.locator('#fxcFrom').fill('2026-01-01');page.locator('#fxcTab-history').click()
                 page.evaluate('window.__filterNode=document.querySelector("#fxcFrom");window.__layoutBefore=localStorage.getItem(`jpwealth.ui.widgetLayouts.v6`);')
                 for _ in range(3):page.locator('#fxContextToggle').click();page.locator('#fxContextToggle').click()
                 test('context toggles preserve controls, filters and layout',lambda:require(page.evaluate("document.querySelector('#fxcFrom')===__filterNode&&__filterNode.value==='2026-01-01'&&document.querySelector('#fxcTab-history').getAttribute('aria-selected')==='true'&&localStorage.getItem(`jpwealth.ui.widgetLayouts.v6`)===__layoutBefore")))
@@ -68,9 +70,10 @@ def main():
                 page.locator('#fxcCancelImport').click()
                 go('forex-operation')
                 page.evaluate("execSetView('panel');JPWForex.executionBoardUI.render()")
-                page.evaluate('document.querySelector("#phaseContainer details[data-phase=\\"0\\"]").open=true')
+                added=page.evaluate('operationAddDraft(0)');assert added['ok'],added
+                page.evaluate('JPWForex.executionBoardUI.render()')
                 # Existing order form remains mounted, even without a populated operation.
-                draft=page.locator('#phaseContainer [data-p="0"][data-o="0"][data-f="id"]')
+                draft=page.locator('#phaseContainer [data-p="0"][data-f="id"]')
                 if draft.count():draft.fill('Synthetic draft')
                 page.evaluate('window.__opNodes=[...document.querySelectorAll("#exec input")];window.__opValues=__opNodes.map(e=>e.value);')
                 trigger=page.locator('#execChecklistBtn');trigger.focus();page.keyboard.press('Enter');page.locator('#forexChecklistDialog').wait_for(state='visible')
@@ -97,10 +100,12 @@ def main():
                 # lets the later history route remain a distinct accounting view.
                 test('operation draft blocks local Accounts',lambda:require(page.evaluate("!JPWNavigation.navigate('contas')&&JPWExec.ui.getView()==='panel'&&document.querySelector('#executionBoardDialog')?.open")))
                 page.locator('#ebLeaveStay').click()
-                test('operation draft blocks local Motor',lambda:require(page.evaluate("!JPWNavigation.navigateLocal('exec','motor')&&JPWExec.ui.getView()==='panel'&&document.querySelector('#executionBoardDialog')?.open")))
+                before_tool=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),draft:document.querySelector(\'#phaseContainer [data-p="0"][data-f="id"]\').value})')
+                test('same-surface Motor opens without losing draft',lambda:require(page.evaluate("JPWNavigation.navigateLocal('exec','motor')&&JPWExec.ui.getView()==='panel'&&!document.querySelector('#ebToolsBody').hidden&&!document.querySelector('#executionBoardDialog')?.open")))
+                test('Motor preserves confirmed facts and pending text',lambda:require(page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),draft:document.querySelector(\'#phaseContainer [data-p="0"][data-f="id"]\').value})')==before_tool))
+                test('pending order guards history',lambda:require(page.evaluate("!JPWNavigation.navigate('history')&&document.querySelector('#executionBoardDialog')?.open")))
                 page.locator('#ebLeaveDiscard').click();page.wait_for_timeout(80)
-                test('explicit discard completes requested Motor navigation',lambda:require(page.evaluate("JPWExec.ui.getView()==='motor'&&!document.querySelector('#executionBoardDialog').open")))
-                go('history')
+                test('explicit discard completes requested history navigation',lambda:require(page.evaluate("JPWExec.ui.getView()==='history'&&!document.querySelector('#executionBoardDialog').open")))
                 test('operation history has independent workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='history'&&document.querySelector('#execHistory').parentElement.id==='exec'&&document.querySelector('#contab').hidden&&document.querySelector('#executionBoard').hidden&&!document.querySelector('#execHistory').hidden")))
                 go('forex-reconciliation');test('canonical accounting opens its own workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#contab').closest('#exec')")))
                 # Existing customized v6 preference: moved widgets retain identity/order.
@@ -143,9 +148,9 @@ def main():
                     page.set_viewport_size({'width':w,'height':1000});page.evaluate('(t)=>document.documentElement.dataset.theme=t',theme)
                     test(f'contained {w} {theme}',lambda:require(page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')))
                     boxes=page.evaluate("['.fxc-workspace','#fxOperationalContext'].map(s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})")
-                    test(f'context placement {w} {theme}',lambda:require(boxes[1]['x']>boxes[0]['x'] if w>1000 else boxes[1]['y']<boxes[0]['y']))
+                    test(f'collapsed context summary remains accessible {w} {theme}',lambda:require(page.locator('#fxOperationalSummary').is_visible() and page.locator('#fxContextToggle').get_attribute('aria-expanded')=='false'))
                     page.screenshot(path=str(args.output.parent/f'journey-{w}-{theme}.png'),full_page=True)
-                    page.locator('#fxContextToggle').click();test(f'expanded contained {w} {theme}',lambda:require(page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')));page.screenshot(path=str(args.output.parent/f'expanded-{w}-{theme}.png'),full_page=True);page.locator('#fxContextToggle').click()
+                    page.locator('#fxContextToggle').click();test(f'expanded context precedes analysis {w} {theme}',lambda:require(page.locator('#fxOperationalContext').evaluate("e=>getComputedStyle(e).order==='-1'")));test(f'expanded contained {w} {theme}',lambda:require(page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')));page.screenshot(path=str(args.output.parent/f'expanded-{w}-{theme}.png'),full_page=True);page.locator('#fxContextToggle').click()
                     go('check');test(f'checklist contained {w} {theme}',lambda:require(page.locator('#forexChecklistDialog').evaluate('(e)=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1}')))
                     test(f'checklist heading and close visible {w} {theme}',lambda:require(page.locator('#forexChecklistTitle').evaluate('(e)=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}') and page.locator('#forexChecklistClose').evaluate('(e)=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}')))
                     page.screenshot(path=str(args.output.parent/f'checklist-{w}-{theme}.png'))

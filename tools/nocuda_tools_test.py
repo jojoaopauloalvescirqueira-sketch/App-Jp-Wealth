@@ -8,6 +8,7 @@ import os
 import socket
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap
 
@@ -44,7 +45,7 @@ try:
         context,page,errors=boot(browser,target)
         baseline=state(page)
         check(mode+' routes',page.evaluate("JPWNavigation.navigate('tools-nocuda')"))
-        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-nocuda','tools-leverage'])
+        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-nocuda','tools-leverage','tools-normative'])
         page.click('#nocudaExample');wire=page.locator('#nocudaCanonical').input_value()
         check(mode+' preview49',page.locator('#nocudaPreview line').count()==49)
         check(mode+' anchors3',page.locator('#nocudaAnchors tr').count()==3)
@@ -63,7 +64,7 @@ try:
         if mode == 'portable':
             expected_icons = "imgs=>imgs.length===2&&imgs.every(img=>img.src.startsWith('data:image/png;base64,'))"
         check(mode+' no injection',page.locator('#nocudaTool img').evaluate_all(expected_icons))
-        check(mode+' drawing excluded from backup drafts',page.evaluate("jpwWorkspaceDrafts().every(x=>!x.text.includes('NOCUDA|'))"))
+        check(mode+' drawing included as unvalidated recovery draft',page.evaluate("jpwWorkspaceDrafts().some(x=>x.provider==='nocuda-transfer'&&x.context.route==='tools-nocuda'&&x.text===document.getElementById('nocudaPayload').value)"))
         page.click('#nocudaRestore')
         with page.expect_download() as dl:page.click('#nocudaEditable')
         generated=Path(dl.value.path()).read_text()

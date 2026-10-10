@@ -82,6 +82,18 @@ try:
         assert facts['iconPicker'] is True, facts
         assert facts['iconConfig'] is True, facts
         assert 'jp-wealth.webmanifest' in facts['manifestHref'], facts
+        # CHG-JPW-ONBOARDING-BOOT-EXPECTATION: acolhida aprovada; legado é explícito.
+        assert page.locator('#jpwWelcome').is_visible(), 'first boot must present the welcome'
+        welcome_ids=['jpwWelcomeStart','jpwWelcomeRestore','jpwWelcomeExplore']
+        assert all(page.locator('#'+key).is_visible() for key in welcome_ids), 'three welcome choices must be visible'
+        assert page.locator('#obOperador').count()==0 and page.locator('#obSupervisor').count()==0, 'legacy form must not auto-open'
+        welcome_before=page.evaluate('() => ({state:JSON.stringify(S),disk:localStorage.getItem(LSKEY),epoch:sessionEpochRead()})')
+        page.locator('#jpwWelcomeClose').click()
+        page.wait_for_timeout(50)
+        welcome_after=page.evaluate('() => ({state:JSON.stringify(S),disk:localStorage.getItem(LSKEY),epoch:sessionEpochRead()})')
+        assert welcome_before==welcome_after, 'dismissing welcome must not save or accept consent'
+        assert not page.locator('#modalOverlay').evaluate('el=>el.classList.contains("show")'), 'welcome close must dismiss overlay'
+        page.evaluate("openOnboardingModal('new')")
         empty=page.evaluate('''() => ({
           monthly: document.querySelector('#mqlMonthly')?.textContent || '',
           ret: document.querySelector('#dRetAcum')?.textContent || '',

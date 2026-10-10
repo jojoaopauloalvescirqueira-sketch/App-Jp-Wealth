@@ -130,7 +130,13 @@ def verify_load(browser, server, url, delay, portable=False):
         page.on('response', script_response)
         page.goto(url + (PORTABLE if portable else ''), wait_until='load')
         wait_bootstrap(page)
+        # Virgin boot now opens the choice screen. Reserve dependency remains
+        # required by the explicitly preserved period form, not by boot consent.
+        page.locator('#jpwWelcomeStart').wait_for(state='visible')
+        welcome_before=page.evaluate('({state:JSON.stringify(S),persisted:localStorage.getItem(LSKEY)})')
+        page.evaluate("()=>{closeModal();openOnboardingModal('new');}")
         page.locator('#modalOverlay.show #obOperador').wait_for(state='visible')
+        assert welcome_before==page.evaluate('({state:JSON.stringify(S),persisted:localStorage.getItem(LSKEY)})')
         before = page.evaluate('({state: JSON.stringify(S), persisted: localStorage.getItem(LSKEY)})')
         assert page.evaluate('typeof reserveRequirementsCalc') == 'function'
         assert page.evaluate('Object.keys(S.forex?.accountContexts?.accounts || {}).length') == 0

@@ -26,7 +26,7 @@ const FX_DASH_FORECAST='2 3';
 // era exatamente esse vazamento que este ticket corrige.
 // O custo médio de aquisição não entra aqui: é conceito contábil, não cotação.
 function fxChartConvert(row,mode,ctx){
-  if(!row || !Number.isFinite(row.close) || row.availability==='UNAVAILABLE') return null;
+  if(!row || !Number.isFinite(row.close) || row.availability==='UNAVAILABLE' || row.availability?.close===false) return null;
   if(mode!=='brl') return row.close;
   const c=(ctx&&typeof ctx==='object')?ctx:{projectedRate:ctx};
   let rate;
@@ -35,7 +35,8 @@ function fxChartConvert(row,mode,ctx){
     else if(c.presentMonth && row.month===c.presentMonth) rate=c.currentRate; // presente
     else rate=null;                                                      // sem taxa histórica
   } else rate=c.projectedRate;                                           // futuro
-  return rate>0?row.close*rate:null;
+  const converted=rate>0?row.close*rate:null;
+  return Number.isFinite(converted)?converted:null;
 }
 
 // Keep the calendar slots. A missing or unconfirmed month ends a segment;
@@ -56,88 +57,91 @@ function fxChartSegments(points){
   return segments;
 }
 
-function fxDrawMainChart(box,plan,ov,mode){
-  if(!box) return;
-  const brl=mode==='brl';
-  const baseRate=plan.baseline.projectedFxRate||null;
-  const currRate=plan.current.projectedFxRate||null;
-  if(brl&&!(currRate>0)){
-    box.innerHTML='<p style="font-size:var(--fs-sm);color:var(--ink-faint)">Defina a premissa de câmbio projetado (Planejamento) para visualizar em BRL.</p>';
-    return;
+// Presentation adapter: canonical rows stay authoritative. Comparison uses
+// saved scenario assumptions, never a monthly draft or the scenario editor.
+function fxScenarioFanModel(plan,ov,mode,{scenarioIds=[],baseline=false,reading='current'}={}){
+  const previous=reading==='previous';
+  const rows=Array.isArray(ov?.forecast)?ov.forecast:[];
+  const months=rows.map(row=>row.month);
+  const presentMonth=ov?.lastClosedMonth||null;
+  const currentRate=typeof currentUsdBrlRate==='function'?currentUsdBrlRate():null;
+  const ctx=projectedRate=>({projectedRate,currentRate,presentMonth});
+  const firstProjection=rows.find(row=>row.phase!=='actual')?.month||null;
+  const point=(row,context,visible=true)=>{
+    const validState=row?.phase==='actual'?(!row.status||row.status==='FINALIZED')&&!!presentMonth&&row.month<=presentMonth:
+      !['ABSENT','BLOCKED','REOPENED','REVIEW_REQUIRED','UNAVAILABLE'].includes(row?.status);
+    const value=visible&&validState?fxChartConvert(row,mode,context):null;
+    const reason=!visible?'Esta camada não contém um valor para este mês.':
+      row?.reason||(!validState?(row?.phase==='actual'?'Realizado em revisão: não é um saldo confirmado.':'Projeção indisponível: confira o estado e as premissas na tabela.'):
+        value===null&&(mode==='brl'&&Number.isFinite(row?.close))?'Taxa de conversão BRL indisponível para este mês.':
+        value===null?'Saldo indisponível neste mês.':'');
+    return {month:row?.month,value,state:visible?(row?.status||(row?.phase==='actual'?'FINALIZED':'PROJECTED')):'NOT_APPLICABLE',reason,
+      origin:row?.phase==='actual'?(validState?'ACTUAL · registro confirmado':'ACTUAL · registro em revisão'):row?.phase==='scenario'?'SCENARIO · premissas salvas':'PLAN · premissas salvas'};
+  };
+  const currCtx=ctx(plan?.current?.projectedFxRate);
+  const actual={id:'actual',kind:'actual',name:previous?'Realizado · leitura anterior':'Realizado confirmado',revision:plan?.updatedAt||'',points:rows.map(row=>point(row,currCtx,row.phase==='actual'))};
+  const projected=(source,context)=>{
+    const byMonth=new Map(source.map(row=>[row.month,row]));
+    return months.map(month=>{
+      const row=byMonth.get(month)||{month,close:null,status:'UNAVAILABLE',reason:'Mês fora da cobertura desta hipótese.'};
+      // Only the last contiguous confirmed actual is an anchor. Reopened or
+      // later recorded months do not gain validity from a neighboring value.
+      return point(row,context,row.phase!=='actual'||!!firstProjection&&month===presentMonth||row.phase==='actual'&&row.status&&row.status!=='FINALIZED');
+    });
+  };
+  const series=[actual,{id:'plan',kind:'plan',name:previous?'PLAN · leitura anterior':'PLAN · vigente',revision:plan?.updatedAt||'',points:projected(rows,currCtx)}];
+  const selected=[...new Set(scenarioIds)].slice(0,2);
+  for(const id of selected){
+    const scenario=(plan?.scenarios||[]).find(item=>item.id===id);if(!scenario)continue;
+    const scenarioRows=window.JPWFx.engine.fxScenarioTimeline(plan,scenario);
+    const item={id:scenario.id,kind:'scenario',name:scenario.name||'Cenário sem nome',revision:scenario.updatedAt||scenario.createdAt||'',
+      points:projected(scenarioRows,ctx(scenario.assumptions?.projectedFxRate))};
+    item.points.forEach(p=>{if(p.origin.startsWith('PLAN'))p.origin='SCENARIO · '+item.name+' · premissas salvas';});
+    series.push(item);
   }
-  const months=ov.forecast.map(r=>r.month);
-  const n=months.length; if(!n){ box.innerHTML=''; return; }
-  // Contexto temporal compartilhado pelas duas séries: a referência corrente
-  // vale só para o último mês fechado (a fotografia de agora); cada série
-  // projeta com a SUA premissa (baseline original × vigente).
-  const presentRate=(typeof currentUsdBrlRate==='function')?currentUsdBrlRate():null;
-  const presentMonth=ov.lastClosedMonth||null;
-  const ctxBase={projectedRate:baseRate||currRate, currentRate:presentRate, presentMonth};
-  const ctxCurr={projectedRate:currRate, currentRate:presentRate, presentMonth};
-  const baseSlots=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxBase)}));
-  const slots=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxCurr),phase:r.phase}));
-  const basePts=baseSlots.filter(p=>Number.isFinite(p.y));
-  const series=slots.filter(p=>Number.isFinite(p.y));
-  const actualPts=series.filter(p=>p.phase==='actual');
-  const lastActual=actualPts.length?actualPts[actualPts.length-1].i:null;
-  const actualSegments=fxChartSegments(slots.map(p=>({...p,y:p.phase==='actual'?p.y:null})));
-  const forecastSegments=fxChartSegments(slots.map(p=>({...p,y:p.phase!=='actual'||p.i===lastActual?p.y:null})));
-  const baselineSegments=fxChartSegments(baseSlots);
-  const ys=[...basePts.map(p=>p.y),...series.map(p=>p.y)];
-  if(!ys.length){ box.innerHTML='<p class="fxp-note">Trajetória indisponível: não há saldos calculáveis nesta janela. Confira os motivos na tabela mensal.</p>'; return; }
-  let ymin=Math.min(...ys), ymax=Math.max(...ys);
-  const pad=(ymax-ymin)*0.08||Math.max(1,ymax*0.02); ymin-=pad; ymax+=pad;
-  // Razão declarada, nunca deformação (handoff spec §01/§03): 9:4 é invariante
-  // até o container ficar abaixo de 480, quando troca para 3:2 — mais ALTO,
-  // nunca mais achatado. A largura do viewBox cai junto no estado estreito: o
-  // SVG escala uniformemente, e mantendo 720 a fonte de 8 unidades renderizaria
-  // a ~4px num container de 375. Piso de plotagem da spec (180) respeitado nos
-  // dois estados: 320−36=284 e 240−36=204.
-  const estreito=box.clientWidth>0 && box.clientWidth<480;
-  const W=estreito?360:720, H=estreito?240:320;
-  const L=CH.L,R=CH.R,T=CH.T,B=CH.B;
-  const X=i=>L+(n>1?i/(n-1):0)*(W-L-R);
-  const Y=v=>T+(1-(v-ymin)/((ymax-ymin)||1))*(H-T-B);
-  const path=pts=>pts.map((p,k)=>(k?'L':'M')+X(p.i).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
-  const money=v=>brl?'R$'+Math.round(v).toLocaleString('pt-BR'):fmtMoney(v);
-  // Ordem de sacrifício §09: no estado estreito as linhas de grade caem de 5
-  // para 3 e os rótulos intermediários do eixo X somem.
-  const grid=CH.gridY(W,L,R,Y,CH.ticks(ymin,ymax,estreito?2:4),money);
-  // eixo X: até 6 rótulos de mês igualmente espaçados
-  const stepX=Math.max(1,Math.round(n/(estreito?3:6)));
-  // rótulos presos ao quadro para não recortarem nas bordas do SVG
-  const clampX=x=>Math.max(L+22,Math.min(W-R-22,x));
-  const xLabels=months.map((m,i)=>i%stepX===0?`<text x="${clampX(X(i)).toFixed(1)}" y="${H-B+12}" font-size="8" fill="var(--ink-faint)" text-anchor="middle">${m}</text>`:'').join('');
-  const lastIdx=actualPts.length?actualPts[actualPts.length-1].i:null;
-  const transition=lastIdx!=null?`
-    <line x1="${X(lastIdx).toFixed(1)}" x2="${X(lastIdx).toFixed(1)}" y1="${T}" y2="${H-B}" stroke="var(--ink-faint)" stroke-dasharray="2 3" opacity=".7"/>
-    <text x="${Math.max(L+52,Math.min(W-R-52,X(lastIdx))).toFixed(1)}" y="${T-3}" font-size="8" fill="var(--ink-dim)" text-anchor="middle">histórico ⇥ projeção</text>`:'';
-  const dots=actualPts.map(p=>`<circle cx="${X(p.i).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="1.8" fill="var(--f1)"/>`).join('');
-  const realArea=actualSegments.filter(s=>s.length>1).map(s=>`<path d="${CH.area(path(s),X(s[0].i),X(s[s.length-1].i),H-B)}" fill="var(--f1)" opacity=".14"/>`).join('');
-  const endF=slots.length&&Number.isFinite(slots[slots.length-1].y)?slots[slots.length-1]:null;
-  const endB=baseSlots.length&&Number.isFinite(baseSlots[baseSlots.length-1].y)?baseSlots[baseSlots.length-1]:null;
-  const stats=CH.stats(L,T,[
-    {mark:'─',label:'Realizado',value:actualPts.length?money(actualPts[actualPts.length-1].y):'—',color:'var(--f1)'},
-    // Marcadores espelham o padrão real do traço (P6): pontilhado ≠ tracejado
-    // longo. Antes ambos usavam '┄' e a legenda só se resolvia pela cor. O
-    // rótulo fica curto de propósito — a coluna de valores começa em x=168 e
-    // texto mais longo passa por baixo dela; a descrição em palavras vai no
-    // resumo textual abaixo do gráfico, onde há espaço.
-    {mark:'┈',label:'Projeção vigente',value:endF?money(endF.y):'—',color:'var(--f2)'},
-    {mark:'╌',label:'Baseline original',value:endB?money(endB.y):'—',color:'var(--violet)'},
-    // A coluna de valores acompanha a largura do viewBox: 168 num quadro de 360
-    // cairia quase no meio, e o rótulo passaria por baixo do número.
-  ],estreito?120:168);
-  const callouts=(endF?CH.callout(W,R,Y(endF.y),money(endF.y),'var(--f2)'):'')
-    +(actualPts.length?CH.callout(W,R,Y(actualPts[actualPts.length-1].y),money(actualPts[actualPts.length-1].y),'var(--f1)'):'');
-  box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Trajetória patrimonial: baseline, projeção vigente e realizado" style="width:100%;height:auto;font-family:var(--mono)">
-    <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="var(--bg)"/>
-    ${grid}${xLabels}${transition}${realArea}
-    ${baselineSegments.map(s=>`<path d="${path(s)}" fill="none" stroke="var(--violet)" stroke-width="1" stroke-dasharray="${FX_DASH_BASELINE}"/>`).join('')}
-    ${forecastSegments.map(s=>`<path d="${path(s)}" fill="none" stroke="var(--f2)" stroke-width="1" stroke-dasharray="${FX_DASH_FORECAST}"/>`).join('')}
-    ${actualSegments.filter(s=>s.length>1).map(s=>`<path d="${path(s)}" fill="none" stroke="var(--f1)" stroke-width="1.2"/>`).join('')}${dots}
-    ${callouts}${stats}
-  </svg>`;
+  if(baseline){
+    const item={id:'baseline',kind:'baseline',name:'Baseline original',revision:plan?.baseline?.frozenAt||'',
+      points:months.map(month=>point((ov?.baseline||[]).find(row=>row.month===month)||{month,close:null,status:'UNAVAILABLE'},ctx(plan?.baseline?.projectedFxRate)))};
+    item.points.forEach(p=>{p.origin='BASELINE original · versão congelada'+(item.revision?' em '+item.revision:'');});
+    series.push(item);
+  }
+  if(previous)for(const item of series)for(const p of item.points){
+    p.state+=' · leitura anterior';
+    p.origin='Leitura anterior à gravação indeterminada · '+p.origin;
+  }
+  const money=value=>!Number.isFinite(value)?'indisponível':mode==='brl'
+    ?'R$ '+value.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):fmtMoney2(value);
+  const parts=previous?['Leitura anterior à gravação indeterminada. A tentativa não foi confirmada; os valores abaixo não incluem sua atualização.']:[];
+  if(presentMonth){
+    const last=actual.points.find(p=>p.month===presentMonth);
+    parts.push('Realizado até '+presentMonth+': '+money(last?.value)+'.');
+    if(mode==='brl'&&last&&last.value===null&&Number.isFinite(ov.currentBalanceUsd))parts.push('Saldo confirmado de origem em USD: '+fmtMoney2(ov.currentBalanceUsd)+'. A conversão BRL está indisponível; a premissa futura não marca o realizado.');
+  }else parts.push(rows.some(row=>row.phase==='actual')
+    ?'Realizados em revisão: ainda não há sequência contígua reconfirmada. Confira os meses na tabela.'
+    :'Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
+  const finalMonth=months[months.length-1];
+  if(finalMonth){
+    const last=series[1].points.find(p=>p.month===finalMonth);
+    parts.push('Fim do horizonte exibido ('+finalMonth+'): projeção vigente '+money(last?.value)+'.');
+    for(const item of series.filter(item=>item.kind==='scenario'||item.kind==='baseline')){
+      parts.push(item.name+': '+money(item.points.find(p=>p.month===finalMonth)?.value)+'.');
+    }
+  }
+  const incomplete=rows.filter(row=>!Number.isFinite(row.close)||row.phase==='actual'&&row.status&&row.status!=='FINALIZED');
+  if(incomplete.length)parts.push('Cobertura incompleta: '+incomplete.length+' mês(es) sem saldo confirmado ou projetável. As curvas não atravessam essas lacunas.');
+  parts.push('A faixa entre hipóteses selecionadas compara saldos condicionais; não representa probabilidade ou intervalo de confiança.');
+  parts.push('Depósitos integram o patrimônio: variação patrimonial não equivale a rentabilidade.');
+  if(mode==='brl')parts.push('Cada trajetória usa sua própria premissa futura de câmbio; realizados conservam a valuation informada ou a referência corrente apenas no último mês fechado.');
+  return {identity:plan?.id||'planning',revision:plan?.updatedAt||plan?.baseline?.frozenAt||'',
+    unit:mode==='brl'?'BRL':'USD',title:previous?'Trajetórias patrimoniais · leitura anterior':'Trajetórias patrimoniais',months,series,readingStatus:previous?'PREVIOUS':'CURRENT',
+    projectionStartMonth:firstProjection,origin:previous?'Planejamento patrimonial global · leitura anterior à tentativa de gravação indeterminada':'Planejamento patrimonial global · versões salvas',summary:parts.join(' ')};
+}
+function fxDrawMainChart(box,plan,ov,mode,options={}){
+  if(!box)return;
+  const model=fxScenarioFanModel(plan,ov,mode,options);
+  if(!window.JPWScenarioFan){box.textContent='Visualização indisponível: o componente de trajetórias não foi carregado.';return;}
+  window.JPWScenarioFan.render(box,model,{selectedMonth:options.selectedMonth,onInspect:options.onInspect,formatValue:value=>mode==='brl'
+    ?'R$ '+value.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):fmtMoney2(value)});
 }
 
 // Taxa que converte a FOTOGRAFIA PRESENTE: a do próprio mês fechado quando o
@@ -153,43 +157,15 @@ function fxPresentRate(ov){
   return live>0?live:null;
 }
 // Resumo textual do gráfico principal — alternativa acessível obrigatória.
-function fxMainChartSummaryText(plan,ov,mode){
-  const brl=mode==='brl';
-  // Duas taxas, dois tempos (JPW-FGDEKM). Antes havia UMA — a premissa futura —
-  // aplicada inclusive ao patrimônio presente, que era o defeito central.
-  const pRate=brl?fxPresentRate(ov):1;
-  const fRate=brl?(plan.current.projectedFxRate||0):1;
-  const brlFmt=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
-  const presente=v=>!Number.isFinite(v)?'indisponível':(brl&&pRate>0)?brlFmt(v*pRate):fmtMoney2(v);
-  const futuro=v=>!Number.isFinite(v)?'indisponível':(brl&&fRate>0)?brlFmt(v*fRate):fmtMoney2(v);
-  const endF=ov.forecast[ov.forecast.length-1], endB=ov.baseline[ov.baseline.length-1];
-  const parts=[];
-  if(ov.lastClosedMonth){
-    parts.push(`Realizado até ${ov.lastClosedMonth}: ${presente(ov.currentBalanceUsd)}.`);
-    if(ov.baselineBalanceAtLastClose!=null)
-      parts.push(`O baseline original previa ${presente(ov.baselineBalanceAtLastClose)} para o mesmo mês (desvio ${presente(ov.deviationUsd)}).`);
-    parts.push('A projeção futura parte do saldo efetivamente realizado, com as premissas vigentes.');
-    if(brl&&!(pRate>0))
-      parts.push('Valores presentes exibidos em USD: não há referência USD/BRL corrente disponível, e a premissa de câmbio futuro não serve para marcar o presente.');
-  } else parts.push((ov.forecast||[]).some(r=>r.phase==='actual')
-    ?'Realizados em revisão: ainda não há sequência contígua reconfirmada. Confira os meses na tabela.'
-    :'Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
-  if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${futuro(endF.close)} × baseline ${futuro(endB.close)}.`);
-  const incomplete=(ov.forecast||[]).filter(r=>!Number.isFinite(r.close));
-  if(incomplete.length) parts.push(`Cobertura incompleta: ${incomplete.length} mês(es) sem saldo confirmado ou projetável. As curvas não atravessam essas lacunas.`);
-  if(brl&&pRate>0&&fRate>0&&Math.abs(pRate-fRate)>1e-9)
-    parts.push(`Presente convertido a R$ ${pRate.toFixed(4).replace('.',',')} e futuro a R$ ${fRate.toFixed(4).replace('.',',')} — taxas de tempos diferentes, não divergência.`);
-  if(brl) parts.push('Conversão BRL pela premissa/valuation informadas — nunca pelo custo médio de aquisição.');
-  // Chave de leitura do traço (P6): descreve em palavras o padrão de cada série,
-  // para que a distinção não dependa de enxergar a diferença entre as cores.
-  parts.push('Leitura das linhas: realizado em traço contínuo, baseline original em tracejado longo, projeção vigente em pontilhado.');
-  return parts.join(' ');
+function fxMainChartSummaryText(plan,ov,mode,options={}){
+  return fxScenarioFanModel(plan,ov,mode,options).summary;
 }
 
 // Rentabilidade mensal: barras Planejado (baseline) × Realizado, meses fechados
 // (janela das últimas 24). Sem mês fechado, mensagem — nunca série demonstrativa.
 function fxDrawReturnsChart(box,ov){
   if(!box) return;
+  window.JPWScenarioFan?.destroy(box);
   const baseByMonth={}; ov.baseline.forEach(r=>{baseByMonth[r.month]=r.rate;});
   const rows=ov.actual.filter(r=>Number.isFinite(r.rate)).slice(-24);
   if(!rows.length){ box.innerHTML='<p style="font-size:var(--fs-sm);color:var(--ink-faint)">Sem fechamentos ainda — as barras Planejado × Realizado aparecem a partir do primeiro mês fechado.</p>'; return; }
@@ -226,4 +202,4 @@ function fxDrawReturnsChart(box,ov){
   </details>`;
 }
 
-window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert,fxPresentRate,fxChartSegments};
+window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert,fxPresentRate,fxChartSegments,fxScenarioFanModel};

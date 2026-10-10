@@ -12,6 +12,7 @@ from collections import Counter
 from functools import partial
 import hashlib
 from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
@@ -22,6 +23,7 @@ from design_experience_test import Quiet, SETUP, ALLADIN_SEED, settings_visual_p
 from design_pf_comparison_test import seed as seed_pf
 from studies_notes_persistence_contract_test import NC, PV
 from nocoda_test import fill_anchors
+from notes_experience_test import open_notes
 
 SURFACES = [
     ('dashboard', 'dashboard', None), ('forex', 'forex-overview', None),
@@ -62,7 +64,7 @@ def populate(page,root):
     }""",PV)
     note_creator(root)(page,'task','Conferência sintética de proporção','Texto de leitura com descrição detalhada.\nNenhum dado real foi utilizado.','medium','open')
     page.keyboard.press('Escape')
-    page.evaluate('closeModal()')
+    page.evaluate('closeModal();closeSettingsModal()')
 
 MEASURE = r"""() => {
  const visible=e=>e.getBoundingClientRect().width>0&&e.getBoundingClientRect().height>0&&getComputedStyle(e).visibility!=='hidden'&&!e.closest('[inert]');
@@ -105,7 +107,7 @@ def run(args):
                     context=pw.chromium.launch_persistent_context(str(profile.resolve()),headless=False,no_viewport=True,args=['--window-size=1440,1000'],service_workers='block',reduced_motion='reduce')
                 else:
                     context=browser.new_context(viewport={'width':width,'height':1000},service_workers='block',reduced_motion='reduce')
-                install_bootstrap(context); context.add_init_script('window.__onbShown=true')
+                install_bootstrap(context); context.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
                 page=context.pages[0] if context.pages else context.new_page(); errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 try:
@@ -118,7 +120,9 @@ def run(args):
                         if args.areas and name not in args.areas: continue
                         key=f'{label}-{name}'
                         try:
-                            page.evaluate('closeModal()')
+                            if page.locator('#forexChecklistDialog').count() and page.locator('#forexChecklistDialog').evaluate('e=>e.open'):
+                                page.locator('#forexChecklistClose').click()
+                            page.evaluate('closeModal();closeSettingsModal()')
                             check(key+' route accessible',page.evaluate('(r)=>JPWNavigation.navigate(r)',route))
                             if isinstance(local,list):check(key+' local accessible',page.evaluate('([s,v])=>JPWNavigation.navigateLocal(s,v)',local))
                             if name=='pf-budget' and page.locator('#modalOverlay').is_visible():
@@ -129,7 +133,9 @@ def run(args):
                                 if page.evaluate('innerWidth')<=760:
                                     if args.screenshots:page.screenshot(path=str(args.output/f'{key}-categories.png'),animations='disabled')
                                     # The mobile list is a first-class Settings state.
-                            if local=='notes':page.locator('#headerNotesBtn').click()
+                            if local=='notes':
+                                notes_opener='headerNotesBtn' if page.locator('#headerNotesBtn').is_visible() else 'mvpNotesOpenFromSettingsBtn'
+                                open_notes(page)
                             page.wait_for_timeout(80)
                             before=page.evaluate('JSON.stringify({S,storage:Object.entries(localStorage).sort()})')
                             if long and name!='settings':
@@ -172,8 +178,9 @@ def run(args):
                             after=page.evaluate('JSON.stringify({S,storage:Object.entries(localStorage).sort()})')
                             check(key+' measurement preserves data/preferences',before==after)
                             if local in ['settings','notes']:
-                                page.keyboard.press('Escape')
-                                opener='headerConfigBtn' if local=='settings' else 'headerNotesBtn'
+                                if local=='notes':page.locator('#mvpNotesCloseBtn').click()
+                                else:page.locator('#settingsCloseBtn').click()
+                                opener='headerConfigBtn' if local=='settings' else notes_opener
                                 page.wait_for_timeout(80)
                                 check(key+' close restores focus',page.evaluate('(id)=>document.activeElement.id===id',opener))
                             print(key,flush=True)
@@ -194,7 +201,7 @@ def run(args):
                         check(label+' invalid field preserves PF',snapshot==page.evaluate('JSON.stringify(S.personalFinance)'))
                         if args.screenshots:page.screenshot(path=str(args.output/f'{label}-pf-error-dialog.png'),animations='disabled')
                         page.keyboard.press('Escape');check(label+' dialog cancellation returns focus',trigger.evaluate('e=>e===document.activeElement'))
-                        page.locator('#headerNotesBtn').click()
+                        open_notes(page)
                         if page.locator('[data-mvp-folder=all]').is_visible():page.locator('[data-mvp-folder=all]').click()
                         if not page.locator('#mvpNoteContent').is_visible():page.locator('[data-mvp-note-id]:visible').first.click()
                         check(label+' populated ticket editor',page.locator('#mvpNoteContent').is_visible())

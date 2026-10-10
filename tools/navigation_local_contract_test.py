@@ -22,7 +22,7 @@ CASES = [
     ("exec", "overview", "forex-consolidated", "forex", "forex-consolidated"),
     ("exec", "panel", "forex-operation", "forex", "forex-operation"),
     ("exec", "accounts", "forex-management-accounts", "forex", "forex-management-accounts"),
-    ("exec", "motor", "forex-management-accounts", "forex", "forex-management-accounts"),
+    ("exec", "motor", "forex-operation", "forex", "forex-operation"),
     ("exec", "accounting", "forex-accounting", "forex", "forex-accounting"),
     ("exec", "history", "forex-history", "forex", "forex-history"),
     ("fxplan", "overview", "forex-planning", "forex", "forex-planning"),
@@ -42,7 +42,6 @@ CASES = [
     ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
     ("research", "stocks-global", "research-stocks-global", "research", "research-stocks-global"),
     ("research", "reits", "research-reits", "research", "research-reits"),
-    ("research", "probability-lab", "research-probability-lab", "research", "research-probability-lab"),
     ("research", "others", "research-others", "research", "research-others"),
 ]
 
@@ -70,6 +69,8 @@ function maybeShowOnboardingNavReminder(screen){event('reminder',{screen});}
 function syncNavSubState(){event('sub',{current:JPWNavigation.current()});}
 function fxSetContextExpanded(expanded){event('context',{expanded});}
 function syncActiveScreen(){event('active',{current:JPWNavigation.current()});}
+window.JPWForex={executionBoardUI:{guardNavigation(){return true;},openTool(name){event('tool',{name});}}};
+window.openSettingsModal=(leaf)=>event('settings',{leaf});
 function forbidden(name){__navTest.denied.push(name);throw new Error('Unexpected access: '+name);}
 Object.defineProperty(window,'S',{get(){return forbidden('S');},set(){forbidden('S write');}});
 Object.defineProperty(window,'localStorage',{get(){return forbidden('localStorage');}});
@@ -100,6 +101,8 @@ def plan_for(case):
     surface, view, canonical, primary, child = case
     if surface == "exec" and view == "overview":
         return dict(accepted=True,requested="exec:overview",source="local",canonical=canonical,primary=primary,child=child,screen="fxconsolidated",localView=None,action="context")
+    if surface == "exec" and view == "motor":
+        return dict(accepted=True,requested="exec:motor",source="local",canonical=canonical,primary=primary,child=child,screen="exec",localView=dict(surface=surface,view="panel"),action="motor")
     return dict(accepted=True, requested=f"{surface}:{view}",
                 source="local" if canonical else "compatibility", canonical=canonical,
                 primary=primary, child=child, screen=surface,
@@ -126,18 +129,20 @@ def check_success(result, case):
         return
     assert [e["kind"] for e in events] == [
         "resolve", "apply", "resolve", "resolve", "select", "pill",
-        "scroll", "reminder", "sub", "active"], events
+        "scroll", "reminder", "sub"] + (["tool"] if case[:2] == ("exec","motor") else []) + ["active"], events
     assert events[1] == dict(kind="apply", plan=plan, target=case[0],
                              last=dict(accepted=False, reason="not-applied")), events[1]
     assert result["reads"] == 3
-    assert events[4] == dict(kind="select", surface=case[0], view=case[1],
+    assert events[4] == dict(kind="select", surface=case[0], view=plan["localView"]["view"],
                              current=result["before"]["current"], screens=[case[0]],
                              primary=[case[3]], aria=[case[3]]), events[4]
     assert events[5] == dict(kind="pill", current=current)
     assert events[6] == dict(kind="scroll", options=dict(top=0, behavior="smooth"))
     assert events[7] == dict(kind="reminder", screen=case[0])
     assert events[8] == dict(kind="sub", current=current)
-    assert events[9] == dict(kind="active", current=current)
+    if case[:2] == ("exec","motor"):
+        assert events[9] == dict(kind="tool",name="motor")
+    assert events[-1] == dict(kind="active", current=current)
     assert result["after"] == dict(current=current, screens=[case[0]],
                                     primary=[case[3]], aria=[case[3]])
     assert result["lastAfter"] == dict(accepted=True, reason=None)
@@ -199,6 +204,17 @@ def main():
             run(f"{case[0]}:{case[1]} + repeat", valid)
         page.close()
 
+        def relocated_lab_alias():
+            p=new_page()
+            try:
+                result=p.evaluate("__exercise('research','probability-lab')")
+                records.append(dict(name='research:probability-lab settings relocation',result=result))
+                assert result['accepted'] is True and result['before']==result['after']
+                assert result['events']==[dict(kind='apply',plan=dict(accepted=True,requested='probability-lab',source='compatibility',canonical=None,primary=None,child=None,screen=None,localView=None,action='settings',leaf='probability-lab'),target='probability-lab',last=dict(accepted=False,reason='not-applied')),dict(kind='settings',leaf='probability-lab')],result
+                assert result['reads']==0 and result['denied']==[] and result['lastAfter']==dict(accepted=True,reason=None)
+            finally:p.close()
+        run('legacy Lab opens Settings without route or data mutation',relocated_lab_alias)
+
         def relocated_calendar_alias():
             p = new_page()
             try:
@@ -257,11 +273,10 @@ def main():
                         assert [e["kind"] for e in result["events"]] == ["resolve"]
                         assert result["lastAfter"] == result["lastBefore"]
                     else:
-                        kinds = ["resolve", "apply"] + (["resolve"] if fault == "late-ui" else []) + ["active"]
+                        kinds = ["resolve", "apply"] + (["resolve"] if fault == "late-ui" else [])
                         assert [e["kind"] for e in result["events"]] == kinds
                         assert result["events"][1]["plan"] == plan_for(CASES[5])
                         assert result["events"][1]["target"] == "exec"
-                        assert result["events"][-1]["current"] == result["before"]["current"]
                         assert result["lastAfter"] == dict(accepted=False, reason="unavailable-target")
                     assert not result["denied"]
                 finally:

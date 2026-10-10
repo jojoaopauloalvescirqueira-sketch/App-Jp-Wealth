@@ -811,11 +811,11 @@ function currentAccountPhaseIdx(){ const p=accountPhaseProbe(); return p.ok?p.id
 
 // Captura PROSPECTIVA e MONOTÔNICA da maior Fase da Conta atingida.
 //
-// Chamada de dentro de save() — o menor ponto autoritativo do projeto. Não é
-// render (que nunca deve gravar estado) e não é um listener por tela: é o único
-// lugar por onde TODA mutação persistida passa, incluindo caminhos que nenhuma
-// enumeração de call sites cobriria. O máximo passa a refletir estados que o
-// sistema efetivamente comprometeu ao disco.
+// Chamada nos atos que confirmam ordens e observações, com a entidade da conta
+// e período do ato. Caminhos legados mantêm S.activeOperation como padrão.
+// Não é render (que nunca deve gravar estado) nem listener por tela. A captura
+// participa da transação e de seu rollback; o máximo confirmado reflete os
+// estados que o sistema efetivamente comprometeu ao disco.
 //
 // ESTE CAMPO NÃO É TELEMETRIA. A Fase da Conta máxima é memória prospectiva:
 // se não for capturada no instante em que ocorre, é irreconstruível depois. Por
@@ -835,8 +835,7 @@ function currentAccountPhaseIdx(){ const p=accountPhaseProbe(); return p.ok?p.id
 // A marca não é limpa por um sucesso posterior: se a captura falhou uma vez, o
 // máximo pode estar subestimado para sempre, e apagar a evidência disso seria
 // exatamente o tipo de mentira que este projeto combate.
-function operationTouchAccountPhase(){
-  const op=S.activeOperation;
+function operationTouchAccountPhase(op=S.activeOperation){
   if(!op || typeof op!=='object' || Array.isArray(op)) return;
   const probe=accountPhaseProbe({accountId:op.recordContext&&op.recordContext.accountId,periodId:op.recordContext&&op.recordContext.periodId});
   if(!probe.ok){

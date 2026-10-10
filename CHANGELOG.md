@@ -1,3 +1,18 @@
+# 2026-10-09 — integração autorizada do site e GENETRIX
+
+Site validado e GENETRIX 1.21.2 reunidos; conflitos dos juízes MT5 reconciliados com a versão mais recente, mantendo os contratos e controles dessa integração anterior. Validação da combinação e envio Git registrados separadamente; sem publicação.
+
+# Candidate local 2026-10-08 — trajetórias patrimoniais
+
+- JPW Scenario Fan local em SVG: realizado, PLAN, até dois cenários salvos e baseline opcional, sem escrita durante consulta.
+- Comparação independente da edição mensal, com lacunas e conversões próprias preservadas; faixa entre hipóteses, sem probabilidade implícita.
+- Consulta mensal por teclado, toque e mouse, tabela alternativa e catálogo [SCENARIO-FAN](docs/design/SCENARIO-FAN.md).
+- Candidate isolado; fórmulas, schemas e MT5 preservados. Verificação e limitações nos recibos externos, sem integração ou publicação.
+
+# Candidate local 2026-10-08 — comportamento e recuperacao
+
+Delta delimitado da auditoria: consultas contabeis por contexto, confirmacao de depositos ACTUAL, leitura de reservas, recuperacao de edicoes PF, protecao de campos compativeis do backup e explicacoes da sessao. Contraprovas adicionais tratam captura monotona do pico por conta/periodo, preservacao do motivo de anulacao, recibo integral de encerramento e dois cortes de layout. Formulas, estados normativos e bytes MT5 preservados; controle ativo e hashes Atlas reconciliados; fixtures superadas tratadas em contrato separado. Novos resultados e limitacoes dependem dos recibos dos bytes finais, fora do produto; nao implica publicacao/aceite. Historico anterior abaixo preservado.
+
 ## 2026-10-08 — candidate: GENETRIX 1.21.2 no site
 
 - Transposição dos 132 membros canônicos e distribuição de fontes 1.21.2; cálculo 1.9.0 preservado. Monitor recomendado, Conta/NoCuda distintos e Supervisor 7x opcional separado.

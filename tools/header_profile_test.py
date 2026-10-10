@@ -6,6 +6,7 @@ import json
 import threading
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap
@@ -112,7 +113,7 @@ def main():
                                 assert len(buttons)==4 and all(b['x']>=0 and b['right']<=width for b in buttons), facts
                                 assert all(buttons[i]['right']<=buttons[i+1]['x']+1 for i in range(3)), facts
                                 assert all(abs(b['w']-44)<1 and abs(b['h']-44)<1 for b in buttons), facts
-                                assert all(abs(b['visual']-17)<1 for b in (buttons[0],buttons[1],buttons[3])), facts
+                                assert all(abs(b['visual']-20)<1 for b in (buttons[0],buttons[1],buttons[3])), facts
                                 assert abs(buttons[2]['visual']-30)<1, facts
                                 assert page.locator('#headerActions .header-action-label').count()==0
                                 for selector in ('#headerNotificationsBtn','#headerConfigBtn','#headerProfileBtn','#finalizeSessionBtn'):

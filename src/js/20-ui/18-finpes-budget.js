@@ -28,36 +28,57 @@ function fbRecoveryContextValid(context){
   const prefix={incomes:'fi',expenses:'fe',allocations:'fa'}[context.collection];
   return context.selector===`[data-${prefix}-campo="${CSS.escape(context.field)}"][data-${prefix}-id="${CSS.escape(context.id)}"]`;
 }
+function fbRememberFieldPending(input,month){
+  const context=fbFieldIdentity(input,month);if(!context)return;
+  const key=JSON.stringify(context),before=fbPendingFields.get(key);
+  if(!before&&input.value===input.dataset.fbDraftOriginal)return;
+  fbPendingFields.set(key,{...before,label:'Finanças Pessoais — '+context.field+' ('+context.month+')',provider:'personal-finance-field',version:1,context,
+    baseReference:before?.baseReference??fbFieldBase(context),originalText:before?.originalText??input.dataset.fbDraftOriginal,text:input.value});
+}
+function fbFieldResult(input,result){
+  const context=fbFieldIdentity(input,fbCurrentKey());if(!context)return;
+  const key=JSON.stringify(context),draft=fbPendingFields.get(key);
+  if(result?.ok===true&&result.persistido===true)fbPendingFields.delete(key);
+  else if(draft&&result?.persistido===null)draft.unconfirmedReference=fbFieldBase(context);
+}
 function fbRestorePending(root,month){
   for(const input of root.querySelectorAll('[data-fi-campo],[data-fe-campo],[data-fa-campo]'))input.dataset.fbDraftOriginal=input.value;
-  for(const draft of fbPendingFields.values())if(draft.context.month===month&&fbFieldBase(draft.context)===draft.baseReference){
+  for(const draft of fbPendingFields.values())if(draft.context.month===month&&(fbFieldBase(draft.context)===draft.baseReference||
+    (jpWealthPersistenceOutcomeIsUnknown()&&fbFieldBase(draft.context)===draft.unconfirmedReference))){
     const input=root.querySelector(draft.context.selector);if(input&&!input.disabled)input.value=draft.text;
   }
   if(root.dataset.fbDraftBound)return;root.dataset.fbDraftBound='true';
   root.addEventListener('input',event=>{
-    const input=event.target,context=fbFieldIdentity(input,fbCurrentKey());if(!context)return;
-    const key=JSON.stringify(context),before=fbPendingFields.get(key);
-    if(input.value===input.dataset.fbDraftOriginal){fbPendingFields.delete(key);return;}
-    fbPendingFields.set(key,{label:'Finanças Pessoais — '+context.field+' ('+context.month+')',provider:'personal-finance-field',version:1,context,baseReference:before?.baseReference??fbFieldBase(context),text:input.value});
+    fbRememberFieldPending(event.target,fbCurrentKey());
   });
-  root.addEventListener('change',event=>{
+  root.addEventListener('keydown',event=>{
+    if(event.key!=='Escape'||!event.isTrusted)return;
     const context=fbFieldIdentity(event.target,fbCurrentKey());if(!context)return;
     const key=JSON.stringify(context),draft=fbPendingFields.get(key);
-    // Existing field command is the sole writer. A confirmed change or an
-    // explicit field rollback removes only this draft, never other editors.
-    if(draft&&(fbFieldBase(context)!==draft.baseReference||event.target.value===event.target.dataset.fbDraftOriginal))fbPendingFields.delete(key);
+    if(!draft)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    // Cancel only the edit, using its original displayed value. Never revert S
+    // or decide whether an UNKNOWN write reached storage.
+    event.target.value=draft.originalText??event.target.dataset.fbDraftOriginal;
+    event.target.dataset.fbDraftOriginal=event.target.value;
+    fbPendingFields.delete(key);
   });
 }
 jpwWorkspaceDraftProviders.set('personal-finance-field',(reset=false)=>{if(reset)fbPendingFields.clear();return [...fbPendingFields.values()].map(item=>({...item}));});
 window.JPWWorkspaceDrafts.registerRestorer('personal-finance-field',{
-  inspect(item){const c=item.context;return {compatible:fbRecoveryContextValid(c)&&fbFieldBase(c)!==null&&fbFieldBase(c)===item.baseReference&&!fbPendingFields.has(JSON.stringify(c)),reason:'O registro, campo e valor original devem corresponder; uma edição aberta não será substituída.'};},
+  inspect(item){const c=item.context;return {compatible:!jpWealthPersistenceOutcomeIsUnknown()&&fbRecoveryContextValid(c)&&fbFieldBase(c)!==null&&fbFieldBase(c)===item.baseReference&&!fbPendingFields.has(JSON.stringify(c)),reason:jpWealthPersistenceOutcomeIsUnknown()?'Verifique o resultado da gravação antes de recuperar; o texto continua disponível para consulta e cópia.':'O registro, campo e valor original devem corresponder; uma edição aberta não será substituída.'};},
   reopen(item){
     if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance'))throw new Error('Finanças Pessoais está congelado.');
     if(typeof closeSettingsModal==='function')closeSettingsModal();
     if(window.JPWNavigation?.navigate('personal-finance')===false)throw new Error('Resolva a navegação pendente antes de recuperar.');
-    fbPendingFields.set(JSON.stringify(item.context),structuredClone(item));fbMonth=item.context.month;
+    fbMonth=item.context.month;
     finpesSelectView('mensal');finpesBudgetRender();
-    document.querySelector('#finpesBudgetRoot '+item.context.selector)?.focus();
+    const input=document.querySelector('#finpesBudgetRoot '+item.context.selector);
+    if(!input||input.disabled)throw new Error('O campo original não está disponível para recuperação.');
+    // Imported metadata is untrusted. Capture the canonical displayed value,
+    // including money formatting, before placing pending text in the editor.
+    const draft=structuredClone(item);draft.originalText=input.value;delete draft.unconfirmedReference;
+    fbPendingFields.set(JSON.stringify(item.context),draft);input.value=draft.text;input.focus();
   }
 });
 
@@ -117,7 +138,7 @@ function fbHeaderHTML(key, materializado){
 // Linha materializada: inputs inline (commit no change, um campo = um ato).
 // Linha fantasma (mês virtual): projeção da regra; editar materializa o mês.
 // Dinheiro: exibido por formatBRLCents, editado como texto e parseado por
-// parseBRLCents — vazio = null, inválido/negativo recusado com reversão.
+// parseBRLCents — vazio = null, inválido/negativo recusado sem gravar.
 // Sentinela de LEITURA (PF-CLOSE-02): unidade desconhecida NAO autoriza
 // interpretar o inteiro guardado como BRL. A estrutura da tela permanece
 // legivel — nomes, status, parcelas, coberturas, notas —, mas todo montante
@@ -321,9 +342,12 @@ function fbMaybePendingPrompt(){
 
 // ---- binds ------------------------------------------------------------------
 function fbAtoUI(r, inlineField){
-  // resposta padrão a um ato: recusa vira alert (bloqueio de regra, não erro
-  // de campo de modal) + re-render para o DOM voltar ao estado real.
+  // Resposta padrão a um ato: alert explica a recusa; só o campo com adaptador
+  // de rascunho conserva a edição. Os demais controles mantêm seu repaint.
   if(r && r.ok===false && r.erro) alert('⛔ ' + r.erro);
+  // A refused/unknown inline command keeps its editor and pending text. No
+  // repaint is needed: REFUSED already rolled facts back; UNKNOWN is blocked.
+  if(inlineField&&fbFieldIdentity(inlineField,fbCurrentKey())&&r?.ok===false)return;
   if(inlineField){
     const key=fbCurrentKey();
     finpesScheduleInlineRefresh(document.getElementById('finpesBudgetRoot'),()=>{if(fbCurrentKey()===key)finpesBudgetRender();});
@@ -340,14 +364,17 @@ function fbParseMoneyOr(inp){
 // Receitas e despesas materializadas compartilham este protocolo de edição.
 // Ghosts, status e destinações têm contratos diferentes e mantêm seus binds.
 function fbBindItemField(inp, campoKey, idKey, updateField){
+  inp.title='A alteração é salva ao sair do campo. Escape cancela o rascunho deste campo.';
   inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
   inp.addEventListener('change',()=>{
+    if(inp.value===inp.dataset.fbDraftOriginal&&!fbPendingFields.has(JSON.stringify(fbFieldIdentity(inp,fbCurrentKey()))))return;
+    fbRememberFieldPending(inp,fbCurrentKey());
     const campo = inp.dataset[campoKey], id = inp.dataset[idKey];
     let valor;
     if(campo==='name') valor = inp.value;
-    else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
+    else { valor = fbParseMoneyOr(inp); if(valor===undefined)return; }
     const r = updateField(id, campo, valor);
-    if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+    fbFieldResult(inp,r);
     fbAtoUI(r, inp);
   });
 }
@@ -453,14 +480,17 @@ function fbBind(root, key){
     fbAtoUI(pfActAddAllocation(key, { label, amount: c }));
   });
   root.querySelectorAll('[data-fa-campo]').forEach(inp=>{
+    inp.title='A alteração é salva ao sair do campo. Escape cancela o rascunho deste campo.';
     inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
     inp.addEventListener('change',()=>{
+      if(inp.value===inp.dataset.fbDraftOriginal&&!fbPendingFields.has(JSON.stringify(fbFieldIdentity(inp,fbCurrentKey()))))return;
+      fbRememberFieldPending(inp,fbCurrentKey());
       const campo = inp.dataset.faCampo, id = inp.dataset.faId;
       let valor;
       if(campo==='label') valor = inp.value;
-      else { valor = fbParseMoneyOr(inp); if(valor===undefined || valor===null){ if(valor===null) alert('⛔ Destinação exige valor — vazio não vale.'); inp.value = inp.dataset.prevval ?? ''; if(valor===null) return; return; } }
+      else { valor = fbParseMoneyOr(inp); if(valor===undefined || valor===null){ if(valor===null) alert('⛔ Destinação exige valor — vazio não vale.'); return; } }
       const r = pfActUpdateAllocationField(key, id, campo, valor);
-      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbFieldResult(inp,r);
       fbAtoUI(r, inp);
     });
   });

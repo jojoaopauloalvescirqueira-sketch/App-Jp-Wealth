@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from functools import partial
 import hashlib
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
@@ -396,7 +397,8 @@ def unknown_gate(page, _dialogs):
     page.locator('#notificationReadAll').click()
     page.locator('#notificationClose').click()
     assert page.evaluate('jpWealthPersistenceOutcomeIsUnknown()')
-    assert page.evaluate('save()') is False
+    outcome=page.evaluate("() => {try{return {returned:save()};}catch(error){return {name:error.name};}}")
+    assert outcome == {'name':'JPWealthPersistenceUnknownError'}, outcome
     unchanged(page, before)
     return {'unknown_preserved': True, 'save_refused': True}
 

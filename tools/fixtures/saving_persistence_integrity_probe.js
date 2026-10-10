@@ -8,6 +8,32 @@ const pin=fs.readFileSync(root+'/src/js/10-domain/04-stop-statistics.js','utf8')
 const onboarding=fs.readFileSync(root+'/src/js/40-app/04-onboarding.js','utf8');
 const cases=[];
 function context(){const values=new Map();let reads=0;const ctx={console:{error(){},warn(){},log(){}},document:{getElementById(){return null}},DEFAULTS:{params:{saldoIni:10000}},structuredClone,Date,setTimeout,clearTimeout,TextEncoder,crypto:crypto.webcrypto,window:{},jpwWorkspaceRestoring:false,__values:values,__read(){reads++;return values.get('jpwealth_v9_state')??null},__reads(){return reads},__write(v){values.set('jpwealth_v9_state',v)}};ctx.localStorage={getItem(k){return k==='jpwealth_v9_state'?ctx.__read():values.get(k)??null},setItem(k,v){if(k==='jpwealth_v9_state')ctx.__write(String(v));else values.set(k,String(v))},key(i){return [...values.keys()][i]},get length(){return values.size}};vm.createContext(ctx);vm.runInContext(core,ctx);vm.runInContext('S={params:{saldoIni:10000},dataGovernance:{changeLog:[]}};jpWealthAdoptPersistedRaw(null);',ctx);return ctx;}
+// Complete UI closure for the persistence probe. Production step validation,
+// session identity, epoch and preview fingerprint all run before the writer.
+// Browser fields and unrelated reserve/profile inputs remain nominal adapters.
+function installOnboardingCommit(c){
+ const values={obSaldo:'10000',obData:'2026-10-01',obMoedaBase:'USD',obOperador:'Synthetic operator',obSupervisor:'Synthetic reviewer'};
+ const fields=new Map();
+ c.$=id=>{if(!fields.has(id))fields.set(id,{id,value:values[id]||'synthetic',type:id==='obConsent'||id==='obDbResp'?'checkbox':'text',checked:true,closest(){return null},classList:{add(){},remove(){}},setAttribute(){},removeAttribute(){},focus(){},querySelectorAll(){return []}});return fields.get(id)};
+ for(const id of [...Object.keys(values),'obConsent','obDbResp'])c.$(id);
+ c.__onbBox={dataset:{onboardingSession:'legacy'},querySelectorAll(){return [...fields.values()]}};
+ Object.assign(c,{brokerLogin:'synthetic-login',brokerServer:'synthetic-server',plataforma:'MT5',alavCorretora:'1:30',institutionType:'broker',riskProfileAccepted:true,
+  reserveFcrCurrent:'0',reserveMonthlyExpenses:'0',reserveFeoCurrent:'0',reserveSegregationAccepted:true,reserveDeficitAccepted:true,
+  centralCashStatus:'Não.',centralCashNoAccepted:true,centralCashCustody:'Conta segregada sintética',centralCashCustodyOther:'',fcrLiquidity:'D+0',feoLiquidity:'D+0',cashLedgerStatus:'Registro parcial',centralCashNotes:'',centralCashPolicyAccepted:true,
+  epStatus:'Não vou utilizar.',epNoConfigAccepted:true,epRestrictiveAccepted:true});
+ const risk=fs.readFileSync(root+'/src/js/10-domain/01-risk-instruments.js','utf8');
+ vm.runInContext(risk.slice(risk.indexOf('const ONBOARDING_STEPS='),risk.indexOf('function savedOnboardingBroker(')),c);
+ vm.runInContext(`const box=__onbBox,formSession={};box._jpwOnboardingSession=formSession;
+  const openedEpoch=jpWealthPersistenceEpoch(),openedBaseEpoch=null,readBaseEpoch=()=>null;
+  const onbSteps=ONBOARDING_STEPS.map(step=>step.key);let summaryAccepted=true;`,c);
+ vm.runInContext(onboarding.slice(onboarding.indexOf('  const hasSelectedInstitution ='),onboarding.indexOf('  let obPlatformWrap=')),c);
+ vm.runInContext(onboarding.slice(onboarding.indexOf('  const reserveNumber='),onboarding.indexOf('  const reserveCalc=')),c);
+ vm.runInContext(onboarding.slice(onboarding.indexOf('  const liquidityTooSlow='),onboarding.indexOf('  const liquidityLabel=')),c);
+ vm.runInContext(onboarding.slice(onboarding.indexOf('  function stepErrors('),onboarding.indexOf('  function getOnboardingStepStatus(')),c);
+ vm.runInContext(onboarding.slice(onboarding.indexOf('  function paintSummary('),onboarding.indexOf('  function bindSummaryConfirmationModal(')),c);
+ vm.runInContext(onboarding.slice(onboarding.indexOf('  function commitOnboardingStart('),onboarding.indexOf('  function renderOnboardingFinalSummary(')),c);
+ vm.runInContext('let validatedSteps=[];const validateOriginal=validateStep;validateStep=step=>{validatedSteps.push(step);return validateOriginal(step)};',c);
+}
 async function test(name,fn){try{await fn();cases.push({name,status:'PASS'})}catch(e){cases.push({name,status:'FAIL',error:e.stack});}}
 (async()=>{
 await test('array root remains untouched and blocks save',()=>{const c=context();c.__values.set('jpwealth_v9_state','[]');vm.runInContext('renderLoadRecoveryWarning=()=>{};load()',c);assert.strictEqual(vm.runInContext('jpWealthLoadRecoveryActive()',c),true);assert.strictEqual(c.__values.get('jpwealth_v9_state'),'[]');assert.strictEqual(vm.runInContext('save()',c),false)});
@@ -34,14 +60,14 @@ for(const mode of ['new','edit'])await test('onboarding '+mode+' refuses write w
  c.$=id=>({checked:true,value:id==='obMoedaBase'?'USD':id==='obData'?'2026-10-01':'synthetic',classList:{add(){}}});
  Object.assign(c,{showOnboardingStep(){},getActiveRiskProfile(){return {key:'base',mensal:0.1,anual:1,mdd:.22,name:'base'}},BROKER_PARTNERS:[{key:'synthetic',name:'synthetic'}],brokerSel:'synthetic',profSel:'base',ob:{},consentMatchesCurrentVersion:false,localDateTimeISO(){return '2026-10-06T12:00:00'},todayISO(){return '2026-10-06'},fmtPct(){return '22%'},reserveCalc(){return {}},centralCashCalc(){return {}},normalizeAccountCurrency(x){return x},JPW_NORMATIVE_CONSENT_VERSION:'synthetic',JPW_NORMATIVE_CONSENT_DOCUMENT:'synthetic',onboardingEP(){return {ep:0,obj:0}},emptyOrders(){return []},isOnboardingFullyComplete(){return true},showOnboardingCompleteNotice(){c.notice=true},isEditMode:mode==='edit',confirm(){return true},archiveCurrentLedgerForNewPeriod(){vm.runInContext('S.ledgerArchive.push(S.ledger);S.ledger=[]',c)}});
  vm.runInContext('S.onboarding={done:false};S.params={saldoIni:10000,saldoAtu:10000,inicio:"2026-09-01"};S.transitionLog=[];S.ledger=[{resultado:10}];S.ledgerArchive=[];S.period={};S.phases=[{orders:[{status:true}]}];S.phaseUnlocked=[true,false];S.cycleRealizado=12;S.activeOperation={id:"synthetic-op"};S.quarantine={id:"preserve"};dgLogChange=()=>{};',c);
- const before=vm.runInContext('JSON.stringify(S)',c);vm.runInContext(onboarding.slice(onboarding.indexOf('  function commitOnboardingStart('),onboarding.indexOf('  function renderOnboardingFinalSummary(')),c);
- assert.strictEqual(vm.runInContext('commitOnboardingStart({saldo:10000})',c),false);assert.strictEqual(vm.runInContext('JSON.stringify(S)',c),before);assert(!c.closed&&!c.booted&&!c.notice);assert(!c.alerts.some(x=>x.includes('foi gravada,')));
+ const before=vm.runInContext('JSON.stringify(S)',c);installOnboardingCommit(c);
+ assert.strictEqual(vm.runInContext('commitOnboardingStart({saldo:10000},{fields:formSignature()})',c),false);assert.strictEqual(vm.runInContext('validatedSteps.join(",")===onbSteps.join(",")',c),true);assert.strictEqual(vm.runInContext('JSON.stringify(S)',c),before);assert(!c.closed&&!c.booted&&!c.notice);assert(!c.alerts.some(x=>x.includes('foi gravada,')));
 });
 await test('onboarding unknown preserves candidate and keeps form open',()=>{
  const c=context();let reads=0;c.__read=()=>{if(++reads>1)throw new Error('readback');return null};c.alerts=[];c.alert=x=>c.alerts.push(x);c.closeModal=()=>{c.closed=true};c.boot=()=>{c.booted=true};c.$=id=>({checked:true,value:id==='obMoedaBase'?'USD':id==='obData'?'2026-10-01':'synthetic',classList:{add(){}}});
  Object.assign(c,{showOnboardingStep(){},getActiveRiskProfile(){return {key:'base',mensal:.1,anual:1,mdd:.22,name:'base'}},BROKER_PARTNERS:[{key:'synthetic',name:'synthetic'}],brokerSel:'synthetic',profSel:'base',ob:{},consentMatchesCurrentVersion:false,localDateTimeISO(){return '2026-10-06T12:00:00'},todayISO(){return '2026-10-06'},fmtPct(){return '22%'},reserveCalc(){return {}},centralCashCalc(){return {}},normalizeAccountCurrency(x){return x},JPW_NORMATIVE_CONSENT_VERSION:'synthetic',JPW_NORMATIVE_CONSENT_DOCUMENT:'synthetic',isEditMode:true});
- vm.runInContext('S.onboarding={done:false};S.params={saldoIni:10000,saldoAtu:10000,inicio:"2026-09-01"};S.transitionLog=[];S.period={};dgLogChange=()=>{};',c);vm.runInContext(onboarding.slice(onboarding.indexOf('  function commitOnboardingStart('),onboarding.indexOf('  function renderOnboardingFinalSummary(')),c);
- assert.strictEqual(vm.runInContext('commitOnboardingStart({saldo:10000})',c),false);assert.strictEqual(vm.runInContext('S.onboarding.done',c),true);assert(JSON.parse(c.__values.get('jpwealth_v9_state')).onboarding.done);assert(!c.closed&&!c.booted);assert(c.alerts.some(x=>x.includes('resultado desconhecido')));
+ vm.runInContext('S.onboarding={done:false};S.params={saldoIni:10000,saldoAtu:10000,inicio:"2026-09-01"};S.transitionLog=[];S.period={};dgLogChange=()=>{};',c);installOnboardingCommit(c);
+ assert.strictEqual(vm.runInContext('commitOnboardingStart({saldo:10000},{fields:formSignature()})',c),false);assert.strictEqual(vm.runInContext('validatedSteps.join(",")===onbSteps.join(",")',c),true);assert.strictEqual(vm.runInContext('S.onboarding.done',c),true);assert(JSON.parse(c.__values.get('jpwealth_v9_state')).onboarding.done);assert(!c.closed&&!c.booted);assert(c.alerts.some(x=>x.includes('resultado desconhecido')));
 });
 const result={kind:'synthetic persistence source probes',sourceHashes:Object.fromEntries(['src/js/00-core/04-persistence.js','src/js/00-core/06-storage-fs.js','src/js/40-app/07-finalize-session.js','src/js/10-domain/13-alladin.js','src/js/10-domain/04-stop-statistics.js','src/js/40-app/04-onboarding.js'].map(f=>[f,crypto.createHash('sha256').update(fs.readFileSync(root+'/'+f)).digest('hex')])),cases,summary:{PASS:cases.filter(x=>x.status==='PASS').length,FAIL:cases.filter(x=>x.status==='FAIL').length}};fs.writeFileSync(out,JSON.stringify(result,null,2));console.log(JSON.stringify(result.summary));for(const c of cases.filter(x=>x.status==='FAIL'))console.log(c.name+' '+c.error);process.exitCode=result.summary.FAIL?1:0;
 })();

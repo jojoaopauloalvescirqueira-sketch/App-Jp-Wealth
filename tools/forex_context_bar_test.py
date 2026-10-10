@@ -33,6 +33,12 @@ def run(root, baseline=False):
                 page.on('pageerror',lambda e: errors.append(str(e)))
                 page.goto(url); wait_bootstrap(page)
                 page.evaluate("([mode,theme])=>{mountNavigationLayout(mode);S.theme=theme;applyTheme();S.params.saldoAtu=10240;S.params.inicio='2026-09-01';render()}",[mode,theme])
+                # Alladin defaults to frozen; assert refusal before explicitly enabling the
+                # synthetic full-navigation fixture. Exploration must not grant access.
+                assert not page.evaluate("JPWModuleAvailability.canAccess('alladin')")
+                assert not page.evaluate("JPWNavigation.navigate('alladin')")
+                page.evaluate('closeModal()')
+                assert page.evaluate("JPWModuleAvailability.setState('alladin','active').ok")
                 before = page.evaluate("() => ({state:JSON.stringify(S),storage:JSON.stringify({...localStorage}),timers:__a11Timers})")
                 page.evaluate("""() => {window.__a11Computes=0;window.__a11Saves=0;
                     const c=compute,s=save;compute=function(...a){__a11Computes++;return c.apply(this,a)};

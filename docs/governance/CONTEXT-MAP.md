@@ -216,6 +216,14 @@ X1 acrescenta critérios de design sem redefinir essas responsabilidades.
 Instalação e validação: [contrato X1](../work/X1-DESIGN-INSTALL-20260910.md).
 Este acréscimo não atualiza a revisão material histórica do mapa nem os índices.
 
+Para o recorte **trajetórias patrimoniais e comparação de cenários**, consultar
+[SCENARIO-FAN](../design/SCENARIO-FAN.md), sua relação focal com
+`JPW-FEAT-0011` no [Atlas](../architecture/FEATURE-ATLAS.md#jpw-feat-0011-scenario-fan)
+e os motores/adapters originais do Planejamento. O catálogo separa apresentação,
+origem e disponibilidade; não acrescenta regra financeira ou prova de execução.
+Esta rota focal de 08/10/2026 não atualiza os contextos históricos nem autoriza
+Graphify, reindexação ou adoção do componente nos demais módulos.
+
 ## Consulta corrente de estabilização
 
 - Contrato estrutural explícito: `docs/work/CHG-TECHNICAL-DEBT-CONTEXT-20260911.md`;

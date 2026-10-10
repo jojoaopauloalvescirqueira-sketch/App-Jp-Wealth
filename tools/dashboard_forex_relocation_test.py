@@ -132,8 +132,26 @@ def run(browser, url, artifacts, baseline=None):
     (artifacts / "synthetic-layout-v6.json").write_text(raw)
     ctx, page, errors = open_page(browser, url, raw)
     output = values(page)
-    assert [v["clearance"]["status"] for v in output] == ["pending", "clear", "blocked", "blocked"]
-    assert output[0]["text"]["mcFactDD"] != output[2]["text"]["mcFactDD"]
+    assert [v["clearance"]["status"] for v in output] == ["blocked"]*4
+    # Legacy book/realizado do not supply observed equity or authorize execution.
+    assert output[0]["text"]["mcFactDD"] == output[2]["text"]["mcFactDD"]
+    assert all('Não calculável' in v['text']['mcFactDD'] for v in output)
+    assert all(any('P-14/P-17/P-18' in reason for reason in v['clearance']['reasons']) for v in output)
+    evidence_ctx,evidence_page,_=open_page(browser,url)
+    try:
+        from forex_execution_table_test import SEED
+        scope=evidence_page.evaluate(SEED)
+        canonical=evidence_page.evaluate("""scope=>{
+          const api=JPWForex.state,read=()=>({clearance:getOperationalClearance(),text:document.getElementById('mcFactDD').textContent,accountId:api.operationalSelection().accountId});
+          render();const positive=read();
+          const result=api.recordAccountFacts({accountIndex:0,periodId:scope.periodId,si:10000,equity:8500,netCashflow:0,cashflowAdjustmentRecorded:true,currency:'USD',source:'Synthetic observed drawdown',observedAt:'2026-09-23T12:00:00Z'},{reason:'Synthetic drawdown counterexample'});
+          if(!result.ok)throw Error(JSON.stringify(result));render();return {positive,drawdown:read()};
+        }""",scope)
+        assert canonical['positive']['accountId']==canonical['drawdown']['accountId']==scope['accountId']
+        assert canonical['positive']['text'] != canonical['drawdown']['text'] and '15,00%' in canonical['drawdown']['text'],canonical
+        assert canonical['positive']['clearance']['status']==canonical['drawdown']['clearance']['status']=='blocked'
+        (artifacts/'canonical-counterexample.json').write_text(json.dumps(canonical,ensure_ascii=False,indent=2))
+    finally:evidence_ctx.close()
     if baseline:
         bc, bp, be = open_page(browser, baseline, raw)
         assert bp.evaluate("!!dashLayoutValidateScreenWidgets('dash', JSON.parse(localStorage.getItem(JP_WIDGET_STORAGE_KEY_V6)).screens.dash.widgets)")
@@ -276,10 +294,14 @@ def run(browser, url, artifacts, baseline=None):
         p.reload()
         go(p,"forex-operation")
         controls(p)
-        p.locator('[data-layout-card="exec-consolidado"] > .dash-layout-menu-btn').press("Enter")
-        p.locator('#jpPopoverActive [data-size="full"]').click()
+        # Execution Board retains this legacy group as opaque metadata. Save
+        # an available Dashboard card through its real user control instead.
+        go(p,'dashboard')
+        swap(p,'institutional-panel')
+        swap(p,'institutional-panel','down')
         p.locator("#dashLayoutDoneBtn").click()
         assert not p.locator("#dashLayoutBar").is_visible()
+        assert json.loads(stored(p))["screens"]["exec"] == legacy_pref["screens"]["exec"]
         assert json.loads(stored(p))["screens"]["dash"] == PREF["screens"]["dash"]
         assert not e, e
         c.close()

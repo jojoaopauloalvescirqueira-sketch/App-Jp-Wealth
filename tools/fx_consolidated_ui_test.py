@@ -2,7 +2,8 @@
 """Consolidado: real DOM navigation/import fixtures; assertions determine exit code."""
 import argparse, hashlib, json, threading
 from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -61,11 +62,12 @@ def main():
             page.locator('#fxcConfirmImport').click()
             test('identity checkbox required',lambda:require(page.evaluate("S.fxConsolidated.receipts.length===0&&document.querySelector('#fxcStatus').textContent.includes('Confirme')")))
             page.locator('#fxcConfirmIdentity').check();page.locator('#fxcConfirmImport').click()
-            page.wait_for_function("S.fxConsolidated.receipts.length===1")
+            page.wait_for_function("S.fxConsolidated.receipts.length===1&&document.querySelector('#fxcImport').hidden")
             test('confirmed HTML writes once without changing operational Forex',lambda:require(page.evaluate("S.fxConsolidated.accounts[0].deals.length===8&&JSON.stringify(S.forex)===__fxOp&&document.querySelector('#fxcImport').hidden")))
-            # Approved professional layout: import timestamp is shown once in account identity; methodology stays in coverage.
-            # Assert the exact stored receipt timestamp, preserving producer/value checks.
-            test('ledger projection displayed with provenance',lambda:require(page.evaluate("document.querySelector('#fxcIdentity .fxc-selection-meta').textContent.includes('Importado: '+S.fxConsolidated.receipts[0].importedAt)&&document.querySelector('#fxcCoverage').textContent.includes('Metodologia')&&document.querySelector('#fxcPanel-account').textContent.includes('85')&&document.querySelector('#fxcIdentity .fxc-chart')===null&&document.querySelectorAll('#fxcPanel-account [data-fxc-series=main] svg').length===1")))
+            # Approved source/date presentation keeps declared fields and UTC provenance.
+            # Compare the exact stored receipt, formatted independently; no locale
+            # conversion or replacement of the producing financial assertions.
+            test('ledger projection displayed with provenance',lambda:require(page.evaluate("document.querySelector('#fxcCoverage').textContent.includes('Importado: '+S.fxConsolidated.receipts[0].importedAt.replace(/^(\d{4})-(\d{2})-(\d{2})T(.*)Z$/,(_,y,m,d,time)=>d+'/'+m+'/'+y+', '+time+' UTC'))&&document.querySelector('#fxcCoverage').textContent.includes('Metodologia')&&document.querySelector('#fxcPanel-account').textContent.includes('85')&&document.querySelector('#fxcIdentity .fxc-chart')===null&&document.querySelectorAll('#fxcPanel-account [data-fxc-series=main] svg').length===1")))
             if args.output:
                 shots=Path(args.output).parent
                 page.screenshot(path=str(shots/'consolidated-account-light.png'),full_page=True)

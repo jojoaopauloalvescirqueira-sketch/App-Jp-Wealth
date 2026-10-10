@@ -9,6 +9,7 @@ import argparse
 from datetime import datetime, timezone
 from functools import partial
 from http.server import ThreadingHTTPServer
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import hashlib
 import importlib.util
 import json
@@ -127,7 +128,11 @@ def usable(page):
 
 
 def open_notes(page):
-    page.locator('#headerNotesBtn').click()
+    if page.locator('#headerNotesBtn').is_visible():
+        page.locator('#headerNotesBtn').click()
+    else:
+        page.evaluate("openSettingsModal('interface')")
+        page.locator('#mvpNotesOpenFromSettingsBtn').click()
     expect(page.locator('#mvpNotesOverlay')).to_be_visible()
 
 

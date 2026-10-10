@@ -100,7 +100,7 @@ process.stdout.write(JSON.stringify(results));
 
 def browser_roundtrip():
     from functools import partial
-    from http.server import ThreadingHTTPServer
+    from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
     import threading
     from playwright.sync_api import sync_playwright
     import notes_launcher_test as fixture
@@ -151,7 +151,9 @@ def browser_roundtrip():
               const old=structuredClone(payload);delete old.state.forex.executionDiagnostics;
               const order=Object.values(old.state.forex.accountContexts.accounts['IDENTITY-A'].periods)[0].phases[0].orders[0];
               delete order.brokerHash;delete order.identityContractVersion;delete order.calculationInputs.executionDiagnostics;order.revisions=[];
-              const restored=normalizeImportedState(old);results.push(!('executionDiagnostics' in restored.forex)&&JSON.stringify(S)===before);
+              // A deliberately legacy envelope has no v2 checksum. Tampered v2 copies
+              // above must still be rejected; legacy absence is a separate boundary.
+              const restored=normalizeImportedState({state:old.state});results.push(!('executionDiagnostics' in restored.forex)&&JSON.stringify(S)===before);
               return results;
             }''',payload)
             assert all(checks),checks

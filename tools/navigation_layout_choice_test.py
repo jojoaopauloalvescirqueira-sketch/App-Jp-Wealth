@@ -607,7 +607,8 @@ def run_navigation(browser, url, evidence):
             settle(page)
             page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
             settle(page)
-            assert page.evaluate("JPWExec.ui.getView()") == "motor"
+            assert page.evaluate("JPWExec.ui.getView()") == "panel"
+            assert page.locator("#ebToolMotor").is_visible()
             page.locator('#researchNavTrigger').click()
             settle(page)
             if layout == 'sidebar':
@@ -685,8 +686,14 @@ def run_navigation(browser, url, evidence):
                     page.locator('[data-nav-child="forex-consolidated"]').click()
                 drawer_closed(page)
                 assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
-                if layout == "sidebar":
+                if layout=='topbar':
+                    page.locator('#forexAreasToggle').click();settle(page)
+                    assert page.locator('#nav #execNavSubmenu').count()==1, 'Forex areas were not loaned to the mobile dialog'
+                else:
                     drawer_open(page, layout)
+                if not page.locator('[data-nav-child="forex-operation"]').is_visible():
+                    page.locator('#execNavTrigger').focus();page.keyboard.press('ArrowDown')
+                    settle(page)
                 page.locator('[data-nav-child="forex-operation"]').click()
                 drawer_closed(page)
             assert page.evaluate("JPWExec.ui.getView()") == "panel"
@@ -767,7 +774,8 @@ def run_submenu(browser, url, evidence):
         assert page.get_attribute('html', 'data-submenu-level') == '3'
         page.evaluate("() => {JPWForex.executionBoardUI.guardNavigation=window.__submenuGuard;}")
         page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
-        assert page.evaluate('JPWExec.ui.getView()') == 'motor'
+        assert page.evaluate('JPWExec.ui.getView()') == 'panel'
+        assert page.locator('#ebToolMotor').is_visible()
         assert page.get_attribute('html', 'data-submenu-level') == '3'
         page.evaluate("window.__nlOps=[];window.__nlSubmenuRailWriteFailure=true")
         page.locator('#railToggle').click()
@@ -845,7 +853,8 @@ def run_notes(browser, url, evidence):
                 page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
             settle(page)
             before = raw(page)
-            page.locator('#headerNotesBtn').click()
+            page.evaluate("openSettingsModal('interface')")
+            page.locator('#mvpNotesOpenFromSettingsBtn').click()
             page.locator('#mvpNotesDrawer').wait_for(state='visible')
             settle(page)
             for width in [1440, 390, 1024, 320, 1440]:
@@ -861,6 +870,8 @@ def run_notes(browser, url, evidence):
             page.locator('#mvpNotesCloseBtn').click()
             page.locator('#mvpNotesOverlay').wait_for(state='hidden')
             settle(page)
+            assert page.locator('#mvpNotesOpenFromSettingsBtn').evaluate('e=>e===document.activeElement')
+            page.locator('#settingsCloseBtn').click();settle(page)
             assert not page.locator('#nav').evaluate('e=>e.inert')
             assert not page.locator('#appMain').evaluate('e=>e.inert')
             if layout == 'submenu':

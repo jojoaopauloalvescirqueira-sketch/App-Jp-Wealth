@@ -3,8 +3,8 @@ function ledgerOperationalScope(){
   const selection=window.JPWForex?.state?.operationalSelection?.()||{};
   return {accountId:selection.accountId||null,periodId:selection.periodId||null};
 }
-function ledgerScopedRead(){
-  const scope=ledgerOperationalScope();
+function ledgerScopedRead(context){
+  const scope=context===undefined?ledgerOperationalScope():ledgerContext(context);
   return scope.accountId&&scope.periodId?window.JPWForex.state.accountLedger(scope):null;
 }
 function ledgerSorted(){
@@ -100,7 +100,7 @@ function ledgerContext(input){
     policyVersion:source.policyVersion||null};
 }
 function ledgerId(row,index){return row.id||'legacy:'+row.data+':'+index;}
-function ledgerRows(){const scoped=ledgerScopedRead();return (scoped?.status==='OK'?scoped.value:[]).map((r,i)=>({...structuredClone(r),id:ledgerId(r,i),version:r.version||0,
+function ledgerRows(context){const scoped=ledgerScopedRead(context);return (scoped?.status==='OK'?scoped.value:[]).map((r,i)=>({...structuredClone(r),id:ledgerId(r,i),version:r.version||0,
   provenance:r.accountId&&r.periodId?'IDENTIFIED':'LEGACY_UNRESOLVED'}));}
 function ledgerFind(id){return ledgerRows().find(r=>r.id===id);}
 function ledgerValidDate(value){
@@ -178,7 +178,7 @@ function ledgerVoid(id,{reason,expectedVersion=null}={}){
 }
 // Completeness is declared for a specific preview, never inferred from weekdays.
 function ledgerMonthlyActual(month,context={}){
-  const ctx=ledgerContext(context), all=ledgerRows(), rows=all.filter(r=>r.data.slice(0,7)===month&&r.accountId===ctx.accountId&&r.periodId===ctx.periodId);
+  const ctx=ledgerContext(context), all=ledgerRows(ctx), rows=all.filter(r=>r.data.slice(0,7)===month&&r.accountId===ctx.accountId&&r.periodId===ctx.periodId);
   const issues=[];
   if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))issues.push('Mês inválido.');
   if(!ctx.accountId||!ctx.periodId)issues.push('Selecione conta e período identificados. Legado sem origem não é vinculado automaticamente.');
@@ -594,9 +594,17 @@ function dgBackupPreserveCompatibleFields(original,normalized){
   if(!original||!normalized||typeof original!=='object'||typeof normalized!=='object')return;
   if(Array.isArray(original)){
     if(!Array.isArray(normalized))return;
+    // Empty or repeated IDs do not identify a row. In particular, blank order
+    // drafts must not contribute their stable orderId/revisions to the first
+    // blank row. Keep the guarded positional path for anonymous entries.
+    const rowId=item=>item&&typeof item==='object'&&!Array.isArray(item)&&
+      (typeof item.id==='string'&&item.id.trim()||typeof item.id==='number'&&Number.isFinite(item.id))?item.id:null;
+    const originalIds=new Map(),normalizedIds=new Map(),normalizedRows=new Map();
+    for(const item of original){const id=rowId(item);if(id!==null)originalIds.set(id,(originalIds.get(id)||0)+1);}
+    for(const item of normalized){const id=rowId(item);if(id!==null){normalizedIds.set(id,(normalizedIds.get(id)||0)+1);normalizedRows.set(id,item);}}
     original.forEach((item,index)=>{
-      const identified=item&&typeof item==='object'&&item.id!==undefined;
-      const target=identified?normalized.find(other=>other&&other.id===item.id):normalized[index];
+      const id=rowId(item),identified=id!==null&&originalIds.get(id)===1&&normalizedIds.get(id)===1;
+      const target=identified?normalizedRows.get(id):normalized[index];
       if(!identified&&item&&typeof item==='object'&&!Array.isArray(item)){
         if(original.length!==normalized.length||!target||typeof target!=='object')return;
         const identity=Object.keys(item).filter(key=>Object.prototype.hasOwnProperty.call(target,key)&&!(item[key]&&typeof item[key]==='object'));

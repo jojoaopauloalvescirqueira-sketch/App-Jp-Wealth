@@ -3,7 +3,8 @@
 Synthetic fresh browser contexts; no financial fixture or external network.
 """
 from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import threading
@@ -14,13 +15,13 @@ from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_
 ROOT = Path(__file__).resolve().parents[1]
 CHILDREN = ['forex-consolidated', 'forex-management-accounts', 'forex-operation', 'forex-history',
             'forex-accounting', 'forex-planning', 'forex-reserves']
-LABELS = ['Dashboard', 'Contas e Período', 'Execution Board', 'History',
-          'Contabilidade', 'Planejamento', 'Reservas']
+LABELS = ['Desempenho', 'Histórico de operações', 'Operação', 'Contas e Períodos',
+          'Contabilidade', 'Planejamento patrimonial', 'Reservas']
 VIEWS = [('forex-operation', 'panel', 'executionBoard'),
          ('forex-history', 'history', 'execHistory'),
          ('forex-accounting', 'accounting', 'contab'),
          ('forex-management-accounts', 'accounts', 'contas'),
-         ('motor', 'motor', 'motorWidgetGrid')]
+         ('motor', 'panel', 'executionBoard')]
 
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *_): pass
@@ -56,9 +57,11 @@ def main():
                         assert page.evaluate("""host=>['executionBoard','execHistory','contab','contas','motorWidgetGrid']
                           .filter(id=>id!==host).every(id=>document.getElementById(id).hidden&&document.getElementById(id).inert)""", host)
                         assert page.evaluate("(view)=>execWidgetGrid.hidden===(view!=='panel')", view)
+                        if route=='motor':
+                            assert page.locator('#ebToolsBody:not([hidden])').is_visible()
                 for alias, child, view in [('history', 'forex-history', 'history'), ('contab', 'forex-accounting', 'accounting'),
                     ('forex-reconciliation', 'forex-accounting', 'accounting'), ('contas','forex-management-accounts','accounts'),
-                    ('forex-account','forex-management-accounts','accounts'), ('motor','forex-management-accounts','motor')]:
+                    ('forex-account','forex-management-accounts','accounts'), ('motor','forex-operation','panel')]:
                     assert page.evaluate('(r)=>JPWNavigation.navigate(r)', alias)
                     assert page.evaluate('JPWNavigation.current().child') == child
                     assert page.evaluate('JPWExec.ui.getView()') == view
@@ -78,7 +81,8 @@ def main():
                     assert page.get_attribute('html', 'data-submenu-level') == '3'
                     assert page.evaluate('JPWNavigation.current()') == before
                     page.locator('[data-nav-local-view="motor"]').click()
-                    assert page.evaluate('JPWExec.ui.getView()') == 'motor'
+                    assert page.evaluate('JPWExec.ui.getView()') == 'panel'
+                    assert page.locator('#ebToolsBody:not([hidden])').is_visible()
                     page.locator('#submenuNavBack').click()
                     page.locator('[data-nav-child="forex-history"]').click()
                     assert page.get_attribute('html', 'data-submenu-level') == '2'

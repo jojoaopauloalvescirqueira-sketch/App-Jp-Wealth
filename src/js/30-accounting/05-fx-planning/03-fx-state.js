@@ -298,9 +298,7 @@ function fxOverviewLive(){
 function fxReservePanelData(){
   const api=window.JPWForex&&window.JPWForex.state;
   const view=api&&api.read?api.read():{},account=view.account||null;
-  const active=S.forex&&S.forex.activeAccountId;
-  const stored=S.forex&&S.forex.reserves;
-  const reserves=stored&&active&&stored.accountId===active?stored:{};
+  const reserves=view.reserves&&view.reserves.observations||{};
   const number=v=>typeof v==='number'&&Number.isFinite(v)?v:null;
   const accountCapital=account?number(account.capitalNominal):null,declared=number(reserves.capitalNominal);
   const conflict=accountCapital!==null&&declared!==null&&accountCapital!==declared;

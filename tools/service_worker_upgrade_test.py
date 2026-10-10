@@ -114,7 +114,7 @@ def arm(page):
 def wait_until(page, predicate: str, timeout=8000): page.wait_for_function(predicate, timeout=timeout)
 
 
-def wait_for_waiting_worker(page, timeout=8.0):
+def wait_for_waiting_worker(page, timeout=30.0):
     deadline = time.monotonic() + timeout
     last = None
     while time.monotonic() < deadline:

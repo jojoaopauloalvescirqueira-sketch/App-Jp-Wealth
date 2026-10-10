@@ -169,7 +169,12 @@ class ProductAssetsTests(unittest.TestCase):
         manifest = json.loads((ROOT / 'src/js/manifest.json').read_text())
         paths.update('/' + entry['path'] for entry in manifest['files'])
         sw = (ROOT / 'sw.js').read_text().split('].flatMap', 1)[0]
-        paths.update(urljoin('/', path) for path in re.findall(r"['\"](\./[^'\"]*)['\"]", sw))
+        precache = {urljoin('/', path) for path in re.findall(r"['\"](\./[^'\"]*)['\"]", sw)}
+        # Prefix constants construct resource URLs; they are not file requests.
+        # Assert directory denial separately and still cover every actual file.
+        prefixes = {path for path in precache if path.endswith('/') and path != '/'}
+        self.assertEqual(prefixes, {'/downloads/jpw-alavancagem-atual/'})
+        paths.update(precache - prefixes)
         for manifest_path in (ROOT / 'manifests').glob('*.webmanifest'):
             manifest_url = '/' + manifest_path.relative_to(ROOT).as_posix()
             paths.add(manifest_url)
@@ -182,6 +187,8 @@ class ProductAssetsTests(unittest.TestCase):
                 paths.add(urljoin('/src/styles/app.css', resource.strip()))
         self.assertGreater(len(paths), 100, 'Resource coverage unexpectedly empty')
         with serving(ROOT) as server:
+            for prefix in prefixes:
+                self.assertEqual(request(server, prefix)[0], 404)
             for path in sorted(paths):
                 with self.subTest(path=path):
                     encoded = quote(path, safe='/%?=&')

@@ -2,18 +2,27 @@
 // Public legacy entry points remain callable and do not move or duplicate facts.
 const TRANSITION_QUESTIONNAIRES=Object.freeze({});
 const DOWNGRADE_QUESTIONNAIRE=Object.freeze({});
-function closeModal(){
+function closeModal(options={}){
+  const box=$('modalBox');
+  if(box.dataset.onboardingSession==='legacy'&&!options.onboardingConfirmed){
+    if(window.JPWOnboardingDraft?.requestClose({discard:options.discard===true})===false)return false;
+  }
+  if(box.dataset.onboardingSession==='legacy')window.__captureOnboardingDraft=null;
   if(typeof operationDiscardReview==='function')operationDiscardReview();
   if(typeof window.__cleanupOnboardingModalUI === 'function'){
     try{ window.__cleanupOnboardingModalUI(); }catch(e){}
     window.__cleanupOnboardingModalUI=null;
   }
   $('modalOverlay').classList.remove('show');
-  $('modalBox').classList.remove('onboarding-modal');
-  $('modalBox').innerHTML='';
+  if(typeof jpwFirstAccessReleaseFocus==='function')jpwFirstAccessReleaseFocus();
+  box.classList.remove('onboarding-modal','jpw-welcome-modal');
+  delete box.dataset.onboardingSession;
+  delete box._jpwOnboardingSession;
+  box.innerHTML='';
   renderOnboardingIncompleteBanner();
   renderExecutionOnboardingWarning();
   renderConfigOnboarding();
+  return true;
 }
 
 function operationOrderIsLive(o){

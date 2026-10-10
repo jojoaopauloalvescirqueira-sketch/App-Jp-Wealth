@@ -1,0 +1,449 @@
+# Fotografias anteriores à integração de 2026-10-09
+
+## Site validado
+
+# Candidate local — JPW Scenario Fan (2026-10-08)
+
+Source revision representada: `7f0828488b2fc0ea62dc7c421174799cda47a34a`.
+
+Raiz `/private/tmp/jpw-scenario-fan-20261008/candidate`; branch herdada `codex/onboarding-first-access-20261007`. Base isolada `1591f527ada923d4`, 104 alterações preexistentes preservadas. Produto e control plane em CHGs separados vinculados no ACTIVE-TASK. Snapshot anterior de 899 caminhos em `reference-revision/before`.
+
+Revisão visual corrente concluída no candidate local `363e2e7b56a86ced`. 57/57 PASS no full bruto; 46/46 PASS no subconjunto STANDARD da mesma execução FULL (não execução CLI separada). Renderer/CSS exatos passaram focal 16/16, regressão gráfica mensal 8/8 e contraprova independente 8/8 mais preservação de cursor. HTTP, file, portátil e PWA offline passaram 4/4 na distribuição corrigida; zoom nativo Chrome 200% e demonstração em 1440/390/320 px também conferidos. Integridade independente verificou manifesto, 102 scripts, quatro assets e réplica fiel de 899 caminhos. Evidências externas em `/private/tmp/jpw-scenario-fan-20261008/reference-revision`.
+
+Histórico preservado: a entrega inicial `ffa80ce18f1e7e5d` passou seu escopo técnico, mas o proprietário rejeitou a semelhança visual. A build intermediária `4cded3c51310acf0` teve 54 PASS e 3 PRODUCT_FAIL brutos: preflight/structure por hash declarado antigo e pivot-studies por erro de inicialização. O manifesto foi corrigido mecanicamente, seguido dos geradores e validadores oficiais. Três replays iguais de Pivôs passaram, sem esclarecer a causa inicial; o recibo anterior permanece inalterado. Gates parciais interrompidos e erros dos probes externos também foram preservados, sem inferir PASS.
+
+O refinamento aproxima a anatomia do PriceTargetFan mantendo dados mensais exatos, lacunas, consulta acessível e fallback estreito. No produto nenhum cenário é escolhido automaticamente; somente a demonstração fictícia começa com duas hipóteses. Fórmulas, writers, schemas, MT5, julgadores e autoridade permanecem iguais à base desta campanha. Aceite estético humano, integração e publicação são separados e pendentes. Safari, tecnologia assistiva nativa, toque físico, hospedagem operacional e MT5 nativo NOT_RUN. Notas de encerramento são o único delta documental posterior ao gate; runtime preservado.
+
+[Estado anterior preservado](../work/HISTORY-STATE-SCENARIO-FAN-BASELINE-20261008.md).
+
+## Genetrix integrado anteriormente
+
+# Estado focal — GENETRIX 1.21.2 no site — 2026-10-08
+
+Source revision representada: `7f0828488b2fc0ea62dc7c421174799cda47a34a`
+
+A âncora acima identifica a base Git da transferência. Os fontes representados nesta árvore são 1.21.2, identificados pelo ZIP e fingerprint abaixo. O estágio de commit, push e merge deve ser conferido pelo recibo Git/PR vinculado em INTEGRATION; a versão dos fontes, isoladamente, não comprova essas ações. O escopo desta fotografia é GENETRIX; os estados históricos dos demais módulos permanecem separados.
+
+Raiz `/private/tmp/jpw-genetrix-site-1-21-2-20261008`; branch `codex/genetrix-1-21-2-site-20261008`. Contrato: [CHG 1.21.2](../work/CHG-GENETRIX-1-21-2-SITE-20261008.md). [Estado e proveniência da integração](../validation/genetrix-1.21.2/INTEGRATION.md). Pedido de integração e Git registrados; publicação externa permanece separada.
+
+| Camada | Estado observado neste checkpoint |
+|---|---|
+| Produto/distribuição local | Fontes CANDIDATE 1.21.2, MQL 1.212, cálculo 1.9.0; 132 membros canônicos |
+| Fonte e runtime | Fingerprint 111 fontes/recursos `9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6`; não é prova de runtime MT5 |
+| ZIP fonte | SHA256 `a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261`; 760092 bytes |
+| Compilação 1.21.2 | NOT_RUN; sem EX5 atual distribuído |
+| Runtime/clipboard/instalação MT5 | BLOCKED / NOT_RUN conforme evidência própria; nenhum armamento |
+| Web/MT5 host da integração final | MT5 host R3: 40/40 PASS; full web R3: 57/57 PASS. Simulação de host não é runtime MT5 |
+| Git/hosting | Commit/push/merge autorizados; estágio observado e recibo Git/PR em INTEGRATION. Nenhum deploy externo presumido |
+| Harness | 1.0 CANDIDATE; piloto R2 FAIL e R5 restrito preservados; 1.0.1 NOT_ADOPTED |
+| Histórico 1.20 | Compilação MetaEditor 6230 e seus recibos permanecem históricos; não validam 1.21.2 |
+
+Arquitetura vigente do pacote: indicador **Genetrix · Conta** para as sete leituras e Cockpit; **Monitor** em gráfico de apoio para monitoramento/histórico e contabilidade; **NoCuda · Gráficos** para estudos; **Supervisor 7x** opcional separado e não armado. O Monitor não contém rotinas de negociação. Observer/Accountant legados são referência/rollback, não instalação recomendada conjunta no mesmo gráfico.
+
+Campos indisponíveis, custos parciais, Current/Estimated e estados PENDING / NOT_HOMOLOGATED / BLOCKED mantêm seus significados. Cabeçalhos antigos entre os 132 membros são fotografias congeladas; a seleção atual está no manifesto e nesta integração. Não resolver divergência normativa nem preencher pendência por número de versão.
+
+Esta seção expira se identidade/branch/manifesto/pacote/tarefa/ambiente mudar. O guard de revisão Git não demonstra frescor do delta não commitado, carregamento dos documentos ou execução nativa; exigir recibos do mesmo candidate.
+
+## Fotografias anteriores preservadas — não estado focal atual
+
+# Candidate local — verificadores pendentes (2026-10-06)
+
+Pedido do proprietário: “Solucione todos os product fail pendentes”. Base1db5b703ca56d26c preservada; cópia jpw-product-fail-repair-20261006/candidate, branch codex/saving-reliability-20261006/HEADac3a2faffeb3. Contratos CHG-JPW-PENDING-FAIL-PRODUCT/TEST, brief correspondente. Fórmulas financeiras/MT5/dados intactos; guarda de leitura para contexto incompatível corrigida sem normalização/gravação. Expectativas obsoletas corrigidas somente mediante contrato já aprovado. Corrida de inicialização reproduzida com latência foi corrigida pela ordem declarada de reservas antes de onboarding/boot, sem mudar a matemática. Novos gates e auditoria dos bytes finais serão registrados no relatório externo; resultados anteriores permanecem históricos. EX5/execução nativa NOT_RUN, promoção/aceite humano separados. SOURCE REVISION UNKNOWN global herdada não é resolvida por este resumo delimitado.
+
+## Histórico preservado
+
+# Estado local — JPW Posições 1.15.0 (2026-10-01)
+
+Raiz `/private/tmp/jpw-cockpit-ui-20260930`, branch `codex/jpw-cockpit-ui-20260930`, HEAD `deffc5061fe2eff3d83b6f6e742fa105ac9c5b06`. [CHG-JPW-POSITIONS-TABLE-20261001](../work/CHG-JPW-POSITIONS-TABLE-20261001.md), A4/N3, autoriza tabela, contribuição nocional/equity e fechamento. Base local 1.14.0 preservada com 593/593 hashes e snapshot externo; 98 alterações herdadas conservadas. Candidate de fontes implementado; os recibos da validação final e da auditoria ficam fora do pacote público, na pasta de evidências indicada. Não declarar integração à main, aceite ou publicação. Nativo NOT_RUN; nenhum EX5 ou conta real. Resultados finais em `outputs/jpw-positions-table-v1150-20261001`. Fórmulas e schemas anteriores ficam protegidos; o mapa AGENTS legado continua dívida documental separada.
+
+## Fotografia anterior preservada — 1.14.0
+
+# Estado local — JPW Signal Copy 1.14.0 (2026-10-01)
+
+Raiz e branch continuam `/private/tmp/jpw-cockpit-ui-20260930` e
+`codex/jpw-cockpit-ui-20260930`; HEAD `deffc5061fe2eff3d83b6f6e742fa105ac9c5b06`.
+O plano Signal Copy aprovado autoriza somente o candidate local descrito em
+[CHG-JPW-SIGNAL-COPY-20261001](../work/CHG-JPW-SIGNAL-COPY-20261001.md) e seu
+[brief](../work/BRIEF-JPW-SIGNAL-COPY-20261001.md). Base 1.13.0 preservada com
+59/59 hashes e snapshot externo; o delta 1.14.0 não está integrado à main.
+
+Preparar mensagem foi implementado com catálogo direto independente do EA,
+papéis transitórios, prévia congelada, projeção de somente uma pendente e
+exportação TXT explícita. Cálculos e registros financeiros anteriores permanecem
+protegidos. A atualização remove integralmente itens encerrados, inclusive
+quando o catálogo fica vazio; os recibos antes/depois da correção são separados.
+A validação e a identidade final ficam em
+`outputs/jpw-signal-copy-v1140-20261001` do projeto local 3 - TRABALHO.
+Compilação, interação e Ctrl+C integral nativos seguem `NOT_RUN`; fontes e
+testes no host não comprovam clipboard, leitura da corretora ou prontidão.
+Não há autorização para conta real, negociação, envio, instalação operacional,
+commit, push, merge ou publicação nesta tarefa.
+
+Esta atualização é evidência de trabalho, não altera autoridade ou parâmetros.
+O mapa local `mt5/jpw-alavancagem-atual/AGENTS.md` continua descrevendo a
+fotografia 1.10.1: sua cobertura dos novos módulos requer revisão separada,
+sem impedir a consulta dos fontes atuais, README, manifesto e CHG. As fontes
+externas do Estatuto/Harness e as skills continuam intactas.
+
+## Fotografia anterior preservada — correção dos PRODUCT_FAIL registrados
+
+last_verified: 2026-09-30
+Source revision: `deffc5061fe2eff3d83b6f6e742fa105ac9c5b06`
+Raiz: `/private/tmp/jpw-cockpit-ui-20260930`; branch: `codex/jpw-cockpit-ui-20260930`.
+Essa revisão é somente o **HEAD/base Git conferido**. O candidate 1.11.0 inclui delta local preexistente não commitado e os reparos coordenados desta rodada; sua identidade completa exige a comparação com `outputs/jpw-product-fail-repair-20260930/BASELINE.json` e o fingerprint final. Não se afirma que os novos bytes estejam integrados à main.
+
+Pedido vigente: corrigir os PRODUCT_FAIL apresentados ou registrados. Contratos separados de [produto](../work/CHG-JPW-PRODUCT-FAIL-REPAIR-20260930.md), [HTTP dos testes](../work/CHG-JPW-TEST-HTTP-RELIABILITY-20260930.md) e [reconciliação estrutural local](../work/CHG-JPW-CONTEXT-FAIL-REPAIR-20260930.md). O último corrige somente rótulos de contexto e seleção explícita do contrato; não cria autoridade ou política.
+
+Últimos recibos preservados **anteriores ao reparo**: full 55 PASS / 2 PRODUCT_FAIL e MT5 host 17 PASS / 0 PRODUCT_FAIL. Compilação e interação nativa MT5 permanecem NOT_RUN. Os novos gates e a auditoria final desta rodada ainda não estão concluídos nesta fotografia; resultados antigos permanecem históricos, sem reclassificação. Produto, fórmulas, registros e normas não são alterados por este delta documental.
+
+O teste estrutural atual usa a mesma dupla vigente em modo default ou com `--contract docs/work/CHG-JPW-CONTEXT-FAIL-REPAIR-20260930.md`. Os payloads JSON da dupla inline **histórica de outra raiz** permanecem conservados sob fences json em ACTIVE-TASK; não constituem contratos yaml vigentes nem representam esta revisão. Referência: [tarefa atual](../work/ACTIVE-TASK.md).
+
+Esta seção é fonte apenas do escopo local, base/branch e limites acima, não de homologação financeira, aceite, publicação ou carregamento de instruções. Expira se raiz, branch, baseline, candidate, tarefa ou ambiente divergirem materialmente. Fatos das demais áreas abaixo conservam datas e limites próprios.
+
+## Histórico anterior preservado — fotografias, não estado global atual
+
+# Execution Board tabular — implementação local para revisão visual
+
+Em 2026-09-22, o plano integral do proprietário autorizou reorganizar Forex e
+entregar preenchimento tabular por fase, HASH textual por ordem e cenários Raiz-N
+declarados. Base `a62258f1a1ca5b0e32ea9f36bb4106fba37e4414`, branch isolada
+`codex/forex-execution-board-table-20260922`. O contrato está em
+[CHG-FOREX-EXECUTION-TABLE-20260922](../work/CHG-FOREX-EXECUTION-TABLE-20260922.md).
+
+As leituras operacionais usam saldo contábil atual; RC, limites, fases e
+alavancagem normativa permanecem separados. Hard Stop mantém 22%. Nenhuma norma
+ou parâmetro P21 é ativado pelos cenários Raiz-N. Os schemas atuais permanecem,
+com extensões opcionais validadas no Backup Completo. Os quatro layouts usam a
+mesma hierarquia atualizada, com History independente. Contratos reconciliados:
+[Board](../architecture/FOREX-EXECUTION-BOARD.md),
+[estado](../architecture/STATE-SCHEMA.md) e
+[navegação](../architecture/NAVIGATION-HIERARCHY.md).
+
+Focais, revisão independente e fingerprint do build `247bf13458098290` estão
+registrados na pasta externa `~/.codex/forex-execution-board-table/20260922/evidence/`.
+O CHG registra os 54 checks da rodada full e a aprovação dos três restantes
+em reexecução após reparar o ponteiro Git afetado pela mudança externa de pasta;
+não declara uma rodada full 57/57. Limitações de três oráculos legados também
+estão identificadas. Candidate `346e701` concluído e publicado na branch
+após autorização posterior de commit, merge e push; a integração final é
+conferida pelas referências Git. Publicação do aplicativo continua separada.
+A pasta principal e suas alterações documentais preexistentes foram preservadas.
+
+## Histórico anterior preservado
+
+# Lateral em níveis integrada à `main`
+
+Base Git `22bc889c7f0ece4b8b9a7d1b1ddda57d638a34da`, branch isolada
+`codex/submenu-sidebar-navigation-20260922`. O delta autorizado acrescenta uma
+quarta composição visual e a preferência auxiliar `jpw_nav_submenu_rail` ao
+workspace do Backup Completo; não altera domínio financeiro, rotas ou schema de
+`S`. A exploração da lateral permanece em RAM e só um destino final aceito chama
+`JPWNavigation`. O build `e606146a740126cb` passou nos focais de navegação,
+preferências, ordem, Settings, Notas, Backup Completo, estrutura, portátil e
+PWA. O gate completo não ficou verde neste host: suas duas melhores rodadas
+tiveram 55/57 PASS, com boots HTTP parciais variáveis; todos os casos falhos
+passaram isoladamente sem mudança de código. O candidate está no commit
+`805c4be`, publicado na branch `codex/submenu-sidebar-navigation-20260922` e
+integrado à `main` pelo merge commit `3ccea2a`; branch e `main` foram publicadas
+no remoto. Publicação do produto e aceite visual continuam gates separados.
+Contrato: [CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922](../work/CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922.md).
+
+## Histórico preservado
+
+# Liquid Glass integrado ao `main`
+
+Integração autorizada pelo proprietário e executada em 2026-09-22. Base Git
+`4ba8d61af363f3130518b0dcbf3e6d2ae876bf77`; candidate publicado no commit
+`41db961` da branch `codex/liquid-glass-navigation-20260921` e integrado ao
+`main` pelo merge commit `9290192`.
+O delta autorizado adiciona uma terceira composição visual e a preferência
+auxiliar `jpw_nav_glass_tint` ao workspace do Backup Completo; não altera domínio
+financeiro, rotas ou schema de `S`. O build `6739a2a96e21d863` passou no gate
+completo com 57/57 verificações e na matriz focal de 140 casos visuais. Commit,
+push da branch e merge foram concluídos; aceite visual e publicação de produto
+continuam gates separados.
+Contrato: [CHG-LIQUID-GLASS-NAVIGATION-20260921](../work/CHG-LIQUID-GLASS-NAVIGATION-20260921.md).
+
+## Histórico preservado
+
+# Atualização focal — motor Forex integrado
+
+Fonte desta informação Forex: commit `01c08241ccb7bc229a05779a52f577ee55a69ae7`, build `9f236bf4a421a1bf`. O catálogo de Parâmetros alimenta o motor central; ver [FOREX-V11-ENGINE](../architecture/FOREX-V11-ENGINE.md) e [PROJECT-CONTEXT](PROJECT-CONTEXT.md). Não é homologação financeira: compatibilidade legada, dimensão operacional indisponível, A12 parcial, OPEN-05/V11/FCR/FEO e AUD-05/P2 permanecem. Esta atualização documental local não declara integração deste lote nem reconciliação global do contexto.
+
+## Fotografias históricas abaixo — não representam o estado atual global
+
+# Completion pass local — APPLE01, 2026-09-12
+
+last_verified: 2026-09-12
+Revisão histórica representada: `fafb228316cbcad8091ebc4632443a51687ace43`
+Raiz `/Users/joaopauloalves/.codex/apple-redesign/20260912/product`, branch
+`codex/apple-experience-redesign-20260912`. Base Git mais delta não commitado.
+V2 (`79dc7dba…`, build `ecb3a3c493cc95e7`) permanece checkpoint histórico recuperável.
+A revisão local seguinte compõe Dashboard em capítulos de orientação, PF em resumo
+planejado/realizado e registros, Research em bancadas de estudo, Lab com o canvas
+antes das métricas, Alladin em coleções rotuladas, Tickets em escrita/coleções e
+Settings em duas intenções de configuração. NoCoda projeta linhas 0/−1 canônicas;
+Pivots projeta medianas H1/H4 e n já calculados. Ausência não vira zero.
+São visualizações de dados existentes; fórmulas, persistência, A10–A13 e lifecycle
+não recebem mudança. 3D foi comparado como conceito externo e rejeitado.
+Identidade, diff, gates, revisão, comparadores e recuperação desta fase estão em
+`/Users/joaopauloalves/.codex/apple-redesign/20260912/evidence/completion/`.
+O manifesto externo identifica o pacote; seu SHA-256 não é commit. Este texto
+registra implementação local em validação, não antecipa resultado de gate/auditoria,
+aceite humano ou integração. Main, outras worktrees e stash permanecem separados.
+A12 parcial, OPEN-05/V11, AUD-05/P2 e demais dívidas continuam abertas; nenhuma
+homologação financeira ou indexação é declarada. Sem staging, commit, push, PR,
+merge ou deploy nesta campanha.
+
+## Histórico anterior preservado
+
+# Candidate local — Apple-guided experience redesign
+
+Fotografia: 2026-09-12.
+last_verified: 2026-09-12
+Revisão histórica representada: `fafb228316cbcad8091ebc4632443a51687ace43`
+Branch `codex/apple-experience-redesign-20260912`, raiz `/Users/joaopauloalves/.codex/apple-redesign/20260912/product`.
+A base é commit Git; o pacote local inclui delta não commitado. A identidade final,
+resultados, auditoria e recuperação ficam em `/Users/joaopauloalves/.codex/apple-redesign/20260912/evidence/`.
+A campanha está em validação; este documento não concede aceite nem integração.
+
+Apresentação compartilhada: neutros e superfícies legíveis, ícones originais dos
+cinco módulos, rótulos Configurações/Tickets/Finalizar sessão, organização dos atalhos,
+grupos do Alladin e acabamento de formulários, calendário, estudos e Laboratório.
+Rotas, ordem personalizável e alternativa superior são preservadas. Não foram
+acrescentados gráficos, 3D, cálculos ou persistência. A12 parcial, OPEN-05/V11,
+AUD-05/P2 e demais dívidas continuam separadas.
+
+DESIGN01 foi integrado por PR17 em `fafb228316cbcad8091ebc4632443a51687ace43`; sua fotografia
+anterior abaixo é histórica. A main da pasta principal não foi sincronizada nesta
+campanha. Nenhum staging, commit, push, PR, merge ou deploy desta entrega.
+
+## Histórico preservado
+
+# Estado corrente — candidate local DESIGN & EXPERIENCE 01
+
+Classe M1. Data da fotografia: 2026-09-12
+last_verified: 2026-09-12
+Revisão histórica representada: `689e8a8f6cc09db9109b52d505c4dcb66fc16be3`
+
+Essa revisão Git acrescida do delta local compõe o candidate, ainda não
+commitado. Raiz `/Users/joaopauloalves/.codex/design-campaigns/20260912/product`, branch `codex/design-experience-01`.
+Baseline 297 inputs/build `02eba740dcabc48b` preservada em `/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/baseline.json`
+e `baseline.tar`. [Contrato](../work/CHG-DESIGN-EXPERIENCE-01-20260912.md).
+
+Quatro lotes implementados: evolução PF com tabela canônica; ações Dashboard e
+prontidão Forex; busca e leitura acessível Alladin/curvas/Configurações; comandos
+do Lab antes do Canvas. Piloto D1 revisado antes da propagação. Fontes financeiras,
+persistência e A10–A13 preservados; A12 parcial e A13 pausado em memória.
+
+Identidade do pacote e resultados: [candidate-final.json](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/candidate-final.json),
+[REPORT.md](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/REPORT.md), [auditoria](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/audit-final.md) e
+[recuperação](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/RECOVERY.md). Esses registros externos vinculam os hashes
+congelados às execuções, inclusive falhas anteriores e limitações; não inferir
+PASS apenas pela existência de uma referência. Build oficial `52a1c11fcb3939d7`.
+A etapa seguinte é conferência e aceite humanos, ainda não concedidos.
+Sem staging, commit, push, PR, merge ou deploy nesta campanha.
+
+O recorte representa somente a apresentação e os contratos afetados. Não é
+curadoria geral, reindexação, garantia universal de compreensão ou homologação
+financeira. OPEN-05/V11/FCR/FEO, contexto histórico ausente de A12, AUD-05/P2,
+limitações de clientes/descoberta e demais dívidas anteriores permanecem abertas.
+Main, stash e checkpoints anteriores conservam suas revisões próprias.
+
+---
+
+## Histórico preservado — fotografias anteriores
+
+# Estado corrente — candidate local de estabilização
+
+Classe M1. Data da fotografia: 2026-09-11
+last_verified: 2026-09-11
+Revisão histórica representada: `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe`
+
+Essa revisão é o **HEAD/base Git**, acrescido dos deltas locais V2 e desta campanha;
+não é o commit dos arquivos ainda não integrados. Raiz conferida:
+`/Users/joaopauloalves/.codex/reliability-campaigns/20260911/product`, branch
+`codex/debt-resolution-20260911`. Identidade final, build, inputs e resultados:
+[manifesto final](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json) e
+[relatório da campanha](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-REPORT.md). Até o freeze esses recibos
+podem ainda não existir; não inferir aprovação pela referência.
+
+O HEAD contém o checkpoint funcional Forex/NoCoda/Pivots/Notas/datas Alladin,
+com aceite humano anterior próprio. A V2 técnica de partida é
+`e706077826091e353dee686f0cdc79554402080870941bafbf55aea23b2a1f56`, build
+`a48cf004f5ea5dc0`: FULL local55/55, interface129/129, Estudos/Notas71/71 e
+AUDIT_PASS_WITH_DEBT pertencem a essa V2, **não são novas execuções** deste delta.
+As correções adicionais e suas contraprovas constam do inventário/relatório final.
+
+A main local foi conferida em `09c1427f4880ef7684b1a6fc4d2bc310e706380f`;
+HEAD e main são commits distintos. Esta campanha não consulta nem altera sua
+integração remota. O PR14/FULL remoto antigo54/55 é evidência histórica, não
+resultado remoto do novo candidate. `codex/nav-ref-context` e as demais worktrees
+permanecem separados. Sem staging, commit do produto, push, PR, merge ou deploy.
+
+## Contrato corrente e limites
+
+[Campanha de produto N2](../work/CHG-TECHNICAL-DEBT-CLOSURE-20260911.md) e
+[contexto N3/A4 dedicado](../work/CHG-TECHNICAL-DEBT-CONTEXT-20260911.md)
+registram o pedido humano delimitado. Para a validação estrutural corrente:
+`python -B tools/agent_instruction_structure_test.py --root . --contract docs/work/CHG-TECHNICAL-DEBT-CONTEXT-20260911.md`.
+O modo sem `--contract` continua examinando V4 histórico: seu PRODUCT_FAIL por
+root mismatch não foi apagado nem convertido em PASS. Documento preenchido
+não comprova autoridade; a autorização vem da conversa, e o candidate não a amplia.
+
+Atlas, X1 e X2 tiveram uso **explícito consultivo** no caso Calendário com comandos
+capturados; formato válido é outra prova. Descoberta automática, sessão nativa
+nova, Claude e comparação A/B continuam NOT_RUN. AUD-05/P2 conserva seus
+contraexemplos históricos. O grafo não está disponível nesta worktree; a fotografia
+antiga STALE não é índice atual e não houve reindexação.
+
+OPEN-05 continua NEEDS_HUMAN_RULE: reservas correntes e snapshot/clearance divergem.
+V11 é adoção documental; motor legado, conflitos FCR/FEO e demais decisões
+normativas permanecem separados das correções técnicas. Não preencher PENDING,
+escolher regra ou homologar pelo FULL. Limites e recuperação estão no relatório
+externo; aceite e integração deste novo pacote ainda não ocorreram.
+
+AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED. Reconciliação limitada às fontes
+atingidas; AGENTS/CLAUDE/skills/Harness/CI/validador permanecem inalterados.
+Não declarar compreensão universal, segurança integral ou zero bugs.
+
+---
+
+## Histórico preservado — recortes anteriores, não estado vigente
+
+## Recorte conferido — campanha integrada pelo PR #12
+
+Em 2026-09-11, a campanha de quatro lotes (PF, Alladin, Configurações e Forex)
+está integrada em `56a8e46f2ff07f88af6726cadd4c8d611eb242f3`, build `e5caefeada66ab35`.
+Main local e remota foram conferidas nesse merge. [Fechamento e evidências](../work/REFACTOR-CAMPAIGN-CONTEXT-CLOSE.md)
+reúnem commit, FULL remoto, CI pré/pós-merge, aceite, checkpoint e recuperação.
+
+A branch `codex/refactor-campaign-context`, baseada nesse merge, contém somente
+esta preparação documental local, ainda sem aceite ou integração próprios.
+A campanha de código terminou; nenhum novo lote está autorizado. O candidate
+`codex/nav-ref-context` permanece independente e preservado. Dívidas anteriores
+continuam abertas. Este recorte não avança Source revision/last_verified globais,
+não atualiza índices nem declara revisão integral ou homologação financeira.
+
+---
+
+Fotografia anterior preservada integralmente; suas branches, permissões e resultados
+pertencem ao período indicado, não à autorização desta campanha.
+
+> Atualização delimitada de 2026-09-10: proprietário autorizou transferência e integração conjunta Atlas + V4, com pendências abertas no [registro](../work/ATLAS-V4-INTEGRATION-20260910.md). Não é aprovação técnica do piloto. Commit/merge devem ser conferidos no Git; a fotografia histórica abaixo não é prova de integração.
+
+# Estado atual — produto integrado e candidate de instruções
+
+Classe M1. Data da fotografia: 2026-09-09
+last_verified: 2026-09-09
+Revisão histórica: `484228189cc3f5f4c297f29f88f2b2ed541a3afd`
+
+A revisão acima identifica o **produto integrado examinado**, não um commit novo.
+O delta de instruções/contexto está sem commit em `codex/agent-context-coherence`,
+sob CHG/CTX identificados em [ACTIVE-TASK](../work/ACTIVE-TASK.md).
+Esta fotografia não antecipa validação, aceite ou integração desse delta.
+A autorização vigente limita-se ao incremento confirmado pela Opção A.
+
+## Produto comprovado por leitura na baseline
+
+- Build `88c0cb1ce5520311`; 78 scripts clássicos na mesma ordem do manifest.
+- Navegação lateral padrão e composição superior opcional no Editor integradas
+  pelo PR #6, merge `9094ab342f7506c64d6052bdcc4f65f7c10b6b73`, ancestral da revisão.
+- Dashboard mantém resumos superiores e “Sistema e atalhos”; operação, onboarding,
+  Estado Operacional, VRM e calendário ficam em Forex > Visão Geral.
+- Preferências de layout v6 e escolha lateral/superior permanecem contratos de
+  apresentação; esta tarefa não altera código, schema ou armazenamento.
+- Research entrega Calendário, NoCoda e Pivots; quatro áreas permanecem placeholders.
+- Finanças Pessoais mantém orçamento, dívidas, comparação e cenários.
+- Alladin entrega cadastro, ledger/estorno, caixa e quantidade de posições;
+  não entrega valuation, cost basis, performance ou patrimônio consolidado completo.
+- Finalidades/contratos atuais: [PROJECT-CONTEXT](PROJECT-CONTEXT.md),
+  [CONTEXT-MAP](CONTEXT-MAP.md) e [CODE-MAP](../architecture/CODE-MAP.md).
+
+## Invariantes e dívidas preservadas
+
+V11 é adoção documental. PDF, Anexo, leitor e consentimento não são alterados.
+Motor financeiro quadrifásico permanece legado; FCR/FEO e PENDING não foram
+arbitrados. Fórmulas, schema, migração, persistência e dados operacionais estão
+fora desta mudança. A intermitência histórica Galton permanece registrada;
+PASS isolado não encerra essa dívida.
+
+README, QUALITY-GATES e SECURITY-MODEL contêm trechos/contagens anteriores;
+não integram a allowlist desta rodada. Para localização/capacidade atual usar os
+contratos e mapas examinados; para comandos/contagens efetivamente executados,
+usar o gate e sua evidência. Não promover esses trechos antigos a estado vigente.
+O texto auxiliar do calendário que ainda cita Dashboard também permanece dívida
+de produto fora do escopo.
+
+## Contexto e recuperação
+
+AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED — delta crítico de control plane.
+AGENTS/CLAUDE, roteamento, brief e mapas são consumidores afetados; o CHG permite
+reconciliação delimitada. As skills importadas congeladas e o Harness mestre
+permanecem intactos; referências às fontes não autorizam editar os consumidores.
+
+O grafo existente representa `a3052d2314ab3f8c01b1cff0a1d08790cd416c6d`, anterior
+à navegação atual: **STALE**. Nenhuma reindexação ou consulta que grave metadados
+está autorizada. Recuperação direta em arquivos atuais continua disponível.
+Não declarar SYSTEM RECONCILED nem carregamento universal sem prova dos consumidores.
+
+## Evidências e limites deste checkpoint
+
+A entrada foi revalidada: main/HEAD esperados, uma worktree, árvore limpa e
+stash `bfdb323f05f0df27c79fd11cb18d64352a5c5194` preservado. Só a criação/uso da
+branch indicada foi autorizada como mutação Git; commit/push/PR/merge/deploy não.
+
+Validação da implementação é registrada em evidências sintéticas isoladas
+referidas na tarefa ativa, identificadas por SHA/fingerprint. Este arquivo não
+transporta PASS de testes locais/CI de entregas anteriores. Testes das instruções,
+full do produto, auditoria e aceite humano têm alcances distintos. Nenhuma
+publicação é autorizada por este checkpoint.
+
+
+## Candidate isolado — disponibilidade de módulos, 2026-09-24
+Base ad5c23e; CHG-MODULE-AVAILABILITY-20260924 A3/N2 em codex/module-availability-20260924. [Decisão de produto](../decisions/2026-09-24-alladin-congelado.md) e [contrato](../architecture/MODULE-AVAILABILITY.md). Implementação em validação, sem integração/aceite; resultados finais somente no recibo externo desta entrega. Nenhum recibo histórico foi reclassificado.
+
+## Candidate isolado — lateral padrão, 2026-10-01
+
+[CHG-JPW-SIDEBAR-20261001](../work/CHG-JPW-SIDEBAR-20261001.md), N1/A2 aprovado pelo proprietário. Base efetiva HEAD `deffc5061fe2eff3d83b6f6e742fa105ac9c5b06`, com 639 arquivos e 138 entradas dirty preservadas antes da escrita; fingerprint de base `5cb6611087b53f5fe1df57d14150bb3634e48ab5f3d5cb6e2237c8f9d1828a06`. Não confundir a branch local com main, integração ou publicação.
+
+Somente sidebar recebe hover temporizado, pais de disclosure, overlay sem reflow e seleção fixa. [Contrato atual](../architecture/NAVIGATION-HIERARCHY.md) complementado sem apagar história. Outros layouts, preferências, fachada/guards, regras/dados financeiros e pacote MT5 permanecem fora do delta. AGENTIC IMPACT DETECTED: contrato de navegação, tarefa ativa e este checkpoint reconciliados no escopo; instruções, Harness, gates e fontes normativas intactos. `SOURCE REVISION UNKNOWN` herdado não é reclassificado como frescor comprovado.
+
+Candidate implementado. O estado de validação é definido exclusivamente pelos recibos em `outputs/jpw-sidebar-20261001` do projeto local, com snapshot, relatórios brutos, auditoria, comparação de escopo e fingerprint. Tentativas anteriores, três PRODUCT_FAIL da navegação local e as falhas dos focais contextual lifecycle/drawer, reproduzidas na base preservada, permanecem registradas sem reclassificação; os ramos interrompidos permanecem NOT_RUN. Não representam aprovação integral. MT5 nativo continua limitação herdada, sem ser apresentado como prova deste delta web. Nenhuma autorização de commit, instalação operacional ou publicação pertence à entrega.
+
+
+## Candidate local — navegação, Estatuto e clareza Forex (2026-10-01)
+
+Recorte N1/A2 delimitado pelos três CHGs `CHG-JPW-NAVIGATION-AVAILABILITY-20261001`, `CHG-JPW-NORMATIVE-READER-20261001` e `CHG-JPW-FOREX-CLARITY-20261001`. Não é integração ou publicação. Snapshot e evidências: `/Users/joaopauloalves/.codex/.chatgpt-projects/g-p-6a4fc0aa51dc8191af013579f37179a3/outputs/jpw-navigation-normative-forex-20261001`.
+
+- Dashboard filtra módulos congelados antes dos consumidores; laboratório único em Configurações → Conhecimento; Others não é destino visível.
+- Ferramentas → Estrutura Normativa lê somente os bytes locais íntegros do Estatuto V11 e não registra aceite.
+- Forex organiza a próxima ação, consulta/aplicação explícita de contexto e ordens compactas com detalhes/auditoria completa. Não há alteração de domínio financeiro.
+- Runtime build `83369b5cffa50c58`; 160 referências protegidas verificadas contra a base e equivalência financeira sintética exata.
+- Revisão independente identificou e fechou três P2 de Forex e um P2 de clique no leitor a zoom200%. Permanece observação P3 estética dos botões do Histórico vazio.
+
+A classificação final dos gates e os hashes vinculantes devem ser lidos em `REPORT.md` e `CANDIDATE.json` no diretório externo. Os recibos iniciais continuam preservados: standard45PASS/1PRODUCT_FAIL (rótulos visíveis aprovados atualizados) e full56PASS/1PRODUCT_FAIL (diagnóstico de input PDF ausente corrigido no gerador, sem editar o gate). Não há promoção automática desses resultados anteriores.
+
+MT5 1.16.1 e seus bloqueios de validação nativa não foram alterados. SOURCE REVISION UNKNOWN herdado permanece explícito. HEAD, commits e publicação não mudaram.
+
+Fechamento deste recorte: full final57PASS/0falhas (inclui os46checks standard); suíte MT5 host17PASS; auditoria de design PASS_WITH_NOTES, zero P1/P2 no escopo. Candidate permanece local; recibos anteriores não foram reclassificados.
+
+# Operação como Execution Board — candidate local 2026-10-01
+
+Candidate local implementado, com aceite bloqueado; sem commit, integração ou publicação. CHGs separados: `CHG-JPW-EXECUTION-WORKBOOK-20261001` (N1/A2, interface) e `CHG-JPW-LOT-REFERENCES-20261001` (N3/A4, referências matemáticas). Base `deffc5061fe2eff3d83b6f6e742fa105ac9c5b06`, snapshot externo de 644 arquivos e 182 alterações preexistentes; fingerprint `e6d2d9cdfc61e2e908474b090b60222b73e3470f746c530eb27b94aba2326c32`. A identificação completa da revisão de fontes anterior continua `SOURCE REVISION UNKNOWN`.
+
+O delta apresenta grade contínua e ferramentas Matriz/Raiz N/Motor, conservando writers, schemas, risco confirmado, contexto e pacote MT5. O Motor separa SI de min(SI,equity), com aliases correntes preservados e nenhum lote autorizado. Focal matemático final:34/34PASS; classificação completa e bloqueios no fechamento abaixo. Contratos atuais em `docs/architecture/FOREX-EXECUTION-BOARD.md` e `FOREX-EXPERIENCE.md`; recibos em `outputs/jpw-execution-board-20261001` no projeto local 3 - TRABALHO. Nenhum status histórico anterior é herdado como aprovação deste candidate.
+
+## Fechamento do candidate Execution Board
+
+Runtime final `7125b6ef17f60623`, fontes funcionais congeladas; site local e portátil regenerados oficialmente. Standard final: **46 PASS / 0 falhas**. Full bruto dos bytes congelados: **56 PASS / 1 PRODUCT_FAIL** — timeout de ativação do Laboratório Galton em research-navigation. O mesmo focal passou no standard e na repetição isolada; o full não foi reclassificado. A rodada full anterior conserva 57 PASS, mas atravessou a última correção CSS e não constitui aceite dos bytes finais.
+
+Focais financeiros: referências do Motor 34/34 PASS; projeção 116/116 PASS; Market 30/31, com 1 PRODUCT_FAIL também reproduzido no snapshot. Workbook source7/8 e portátil6/7, ambos com a mesma falha herdada DD14 (14.000000000000002 provoca fase5 em vez de4). Board 15/15 PASS; tabela e Clarity PASS. Auditoria independente do delta: AUDIT_PASS_WITH_DEBT, sem aprovação financeira global. Regressão MT5 host 17 PASS nos bytes finais; compilação/execução nativa herdadas NOT_RUN e pacote 1.16.1 íntegro.
+
+**Aceite bloqueado** por DD14, divergência de captura inicial no focal Market e intermitência Galton no gate obrigatório. Policy, engine, state, Estatuto/Anexo, gates e fixtures canônicas permanecem iguais ao snapshot. As falhas não foram escondidas no renderer nem removidas dos testes. As 182 alterações preexistentes permanecem preservadas; SOURCE REVISION UNKNOWN herdado continua explícito.
+
+Relatório, recibos, capturas comparativas, fingerprint e rollback: `/Users/joaopauloalves/.codex/.chatgpt-projects/g-p-6a4fc0aa51dc8191af013579f37179a3/outputs/jpw-execution-board-20261001/REPORT.md` e `CANDIDATE.json`. Não houve commit, integração, publicação, alteração do MT5 ou acesso a perfil financeiro real.
+
+## GENETRIX — candidato de integração 2026-10-07
+
+Base de trabalho4ef5f00019acd32fe1dde633e924dcc1569596dd. Integração focal do produto1.20.0/MQL1.200/cálculo1.9.0, com Monitor único recomendado e Supervisor opcional. A autorização humana pede GitHub com a última versão; não inclui instalação, armamento ou publicação operacional. Fontes/EX5/recibos e documentação em `docs/validation/genetrix-1.20.0/`; contrato em `docs/work/CHG-GENETRIX-1-20-INTEGRATION-20261007.md`. Compilação33/33 dos MQL idênticos demonstrada; runtime0/3NOT_RUN e aceiteINCONCLUSIVE. HIS-AC20PRODUCT_FAIL3/3 e limites do harnessCANDIDATE permanecem. Esta seção é uma fotografia de preparação; resultados posteriores devem vir do recibo desta integração, não das versões anteriores.

@@ -46,9 +46,10 @@ def main():
               const ov={forecast,baseline:forecast.map(r=>({...r})),actual:[],lastClosedMonth:null};
               const box=document.createElement('div'); document.body.append(box);
               c.fxDrawMainChart(box,plan,ov,'usd');
-              const dotted=[...box.querySelectorAll('path[stroke="var(--f2)"]')].map(p=>p.getAttribute('d'));
-              check('SVG never bridges a missing month',dotted.length===2 &&
-                dotted[0].split('L').length===2 && dotted[1].split('L').length===1,dotted);
+              const dotted=[...box.querySelectorAll('path[data-fan-series="plan"]')].map(p=>p.getAttribute('d'));
+              const isolated=box.querySelectorAll('circle[data-fan-series="plan"]').length;
+              check('SVG never bridges a missing month',dotted.length===1 && isolated===1 &&
+                dotted[0].split('L').length===2,{paths:dotted,isolated});
               check('missing end of horizon is not the last known balance',
                 c.fxMainChartSummaryText(plan,ov,'usd').includes('projeção vigente indisponível') &&
                 c.fxMainChartSummaryText(plan,ov,'usd').includes('Cobertura incompleta'));
