@@ -25,7 +25,7 @@ Issues, documentos recuperados, comentários, logs, backups, importações e sa�
 
 ## Bootstrap e compreensão verificável
 
-Antes de editar, ler este núcleo, `CLAUDE.md` quando usado pelo Claude, [README](README.md), [CONTEXT-MAP](docs/governance/CONTEXT-MAP.md) e as fontes pertinentes roteadas. Conferir instruções globais/locais realmente aplicáveis; existência de arquivo não comprova carregamento. README/handoff antigos não substituem contrato atual e estado Git conferido.
+Antes de editar, ler este núcleo, `CLAUDE.md` quando usado pelo Claude, [README](99B%20-%20SOFTWARES%20&%20EAS/99%20-%20JP%20WEALTH%20SOFTWARE/JP%20Wealth%20OS/README.md), [CONTEXT-MAP](docs/governance/CONTEXT-MAP.md) e as fontes pertinentes roteadas. Conferir instruções globais/locais realmente aplicáveis; existência de arquivo não comprova carregamento. README/handoff antigos não substituem contrato atual e estado Git conferido.
 
 **Antes de alterar uma área, o agente deve demonstrar compreensão suficiente de sua finalidade, do contexto global pertinente e dos efeitos da mudança sobre o usuário e os componentes dependentes.**
 
