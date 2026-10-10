@@ -53,7 +53,10 @@ struct JPWNoCudaUIView
    string daily_reason;
   };
 
-string g_nocuda_ui_kept[];
+string g_nocuda_ui_kept[],g_nocuda_ui_previous[];
+// A failed keep-list preparation must never become permission to prune widgets.
+bool g_nocuda_ui_inventory_complete=true,g_nocuda_ui_deferred_prune=false;
+string g_nocuda_ui_render_prefix="",g_nocuda_ui_preparation_reason="";
 string g_nocuda_ui_editing="",g_nocuda_ui_focus="";
 int g_nocuda_ui_page=0,g_nocuda_ui_pages=1;
 
@@ -90,15 +93,38 @@ int JPWNoCudaUIDailyCapacity()
    return(MathMax(1,MathMin(5,(JPWNoCudaUIBodyHeight()-row-JPWUIDesignPx(8))/(3*row+JPWUIDesignPx(16)))));
   }
 int JPWNoCudaUIMeasurePages()
-  { return((5+JPWNoCudaUIDailyCapacity()-1)/JPWNoCudaUIDailyCapacity()+
-      (JPWNoCudaUIBodyHeight()>=2*JPWNoCudaUIButtonHeight()+2*JPWNoCudaUILineHeight()+JPWUIDesignPx(20) ? 1 : 2)+1); }
+  {
+   const int inner=JPWNoCudaUIWidth()-JPWUIDesignPx(32);
+   const int queries=(JPWNoCudaUIBodyHeight()>=JPWNoCudaUIQueryHeight(inner,false)+
+      JPWNoCudaUIQueryHeight(inner,true) ? 1 : 2);
+   return((5+JPWNoCudaUIDailyCapacity()-1)/JPWNoCudaUIDailyCapacity()+queries+1);
+  }
+
+void JPWNoCudaUIFail()
+  {
+   g_nocuda_ui_inventory_complete=false;
+   const string reason="Interface indisponível · preparação incompleta. Rascunho preservado; use Fechar ou amplie o gráfico.";
+   if(g_nocuda_ui_preparation_reason!=reason) Print(reason);
+   g_nocuda_ui_preparation_reason=reason;
+   const string status=g_nocuda_ui_render_prefix+"UI_STATUS";
+   if(ObjectFind(0,status)>=0) JPWUIDesignSetString(status,OBJPROP_TEXT,reason);
+   for(int i=0;i<ArraySize(g_nocuda_ui_kept);i++)
+     {
+      const string name=g_nocuda_ui_kept[i];
+      if(ObjectFind(0,name)<0 || ObjectGetInteger(0,name,OBJPROP_TYPE)!=OBJ_BUTTON ||
+         name==g_nocuda_ui_render_prefix+"UI_CLOSE" || name==g_nocuda_ui_render_prefix+"UI_OPEN") continue;
+      JPWUIDesignSetString(name,OBJPROP_TEXT,"Indisponível");
+      JPWUIDesignSetString(name,OBJPROP_TOOLTIP,reason);
+     }
+  }
+bool JPWNoCudaUISetInteger(const string name,const ENUM_OBJECT_PROPERTY_INTEGER property,const long value)
+  { if(!g_nocuda_ui_inventory_complete) return(false); const bool ok=JPWUIDesignSetInteger(name,property,value); if(!ok) JPWNoCudaUIFail(); return(ok); }
+bool JPWNoCudaUISetString(const string name,const ENUM_OBJECT_PROPERTY_STRING property,const string value)
+  { if(!g_nocuda_ui_inventory_complete) return(false); const bool ok=JPWUIDesignSetString(name,property,value); if(!ok) JPWNoCudaUIFail(); return(ok); }
 
 int JPWNoCudaUITextWidth(const string text,const int size)
   {
-   uint width=0,height=0;
-   if(TextSetFont("Arial",-size*10) && TextGetSize(text,width,height))
-      return((int)width);
-   return(StringLen(text)*MathMax(JPWUIDesignPx(6),JPWUIDesignPx(size*6/10)));
+   return(JPWUIDesignTextWidth(text,size));
   }
 string JPWNoCudaUIFit(const string value,const int available_pixels,
                      const int font_size)
@@ -117,38 +143,72 @@ bool JPWNoCudaUIDark()
   }
 void JPWNoCudaUIClear(const string prefix)
   {
-   const string owned=prefix+"UI_";
-   for(int i=ObjectsTotal(0,0,-1)-1;i>=0;i--)
-     {
-      const string name=ObjectName(0,i,0,-1);
-      if(StringFind(name,owned)==0)
-        { if(StringFind(name,"_DESIGN_ICON")>=0) JPWUIDesignDeleteIcon(name);
-          else ObjectDelete(0,name); }
-     }
-   ArrayResize(g_nocuda_ui_kept,0);
-   g_nocuda_ui_editing=""; g_nocuda_ui_focus="";
-  }
-void JPWNoCudaUIKeep(const string name)
-  {
-   const int count=ArraySize(g_nocuda_ui_kept);
-   ArrayResize(g_nocuda_ui_kept,count+1);
-   g_nocuda_ui_kept[count]=name;
-  }
-void JPWNoCudaUIFinish(const string prefix)
-  {
-   // Remove only obsolete widgets. Existing edits/buttons survive a redraw.
+   g_nocuda_ui_render_prefix=prefix;
    const string owned=prefix+"UI_";
    for(int i=ObjectsTotal(0,0,-1)-1;i>=0;i--)
      {
       const string name=ObjectName(0,i,0,-1);
       if(StringFind(name,owned)!=0) continue;
-      bool keep=false;
+      bool removed=false;
+      if(StringFind(name,"_DESIGN_ICON")>=0)
+        { JPWUIDesignDeleteIcon(name); removed=(ObjectFind(0,name)<0); }
+      else removed=JPWUIDesignDelete(name) && ObjectFind(0,name)<0;
+      if(!removed)
+        { g_nocuda_ui_deferred_prune=true; JPWNoCudaUIFail(); return; }
+     }
+   ArrayResize(g_nocuda_ui_kept,0); ArrayResize(g_nocuda_ui_previous,0);
+   g_nocuda_ui_inventory_complete=true; g_nocuda_ui_deferred_prune=false;
+   g_nocuda_ui_preparation_reason=""; g_nocuda_ui_editing=""; g_nocuda_ui_focus="";
+  }
+void JPWNoCudaUIKeep(const string name)
+  {
+   if(!g_nocuda_ui_inventory_complete) return;
+   const int count=ArraySize(g_nocuda_ui_kept);
+   if(ArrayResize(g_nocuda_ui_kept,count+1)!=count+1)
+     {
+      JPWNoCudaUIFail();
+      return;
+     }
+   g_nocuda_ui_kept[count]=name;
+  }
+void JPWNoCudaUIFinish(const string prefix)
+  {
+   // An incomplete inventory cannot establish which existing widgets are obsolete.
+   if(!g_nocuda_ui_inventory_complete) return;
+   g_nocuda_ui_preparation_reason="";
+   // Stable structure needs no chart-wide inventory scan on a content refresh.
+   const int count=ArraySize(g_nocuda_ui_kept);
+   bool same=!g_nocuda_ui_deferred_prune && count==ArraySize(g_nocuda_ui_previous);
+   for(int k=0;same && k<count;k++) same=g_nocuda_ui_kept[k]==g_nocuda_ui_previous[k];
+   if(same) return;
+   if(ArrayResize(g_nocuda_ui_previous,count)!=count)
+     { JPWNoCudaUIFail(); return; }
+   for(int k=0;k<count;k++) g_nocuda_ui_previous[k]=g_nocuda_ui_kept[k];
+   // Remove only obsolete widgets. Existing edits/buttons survive a redraw.
+   const string owned=prefix+"UI_";
+   g_nocuda_ui_deferred_prune=false;
+   for(int i=ObjectsTotal(0,0,-1)-1;i>=0;i--)
+     {
+      const string name=ObjectName(0,i,0,-1);
+      if(StringFind(name,owned)!=0) continue;
+      // An active field may temporarily fall outside a compact viewport.
+      bool listed=false;
       for(int k=0;k<ArraySize(g_nocuda_ui_kept);k++)
-         if(g_nocuda_ui_kept[k]==name) { keep=true; break; }
+         if(g_nocuda_ui_kept[k]==name) { listed=true; break; }
+      const bool active=name==g_nocuda_ui_editing;
+      bool keep=listed || active;
+      if(active && !listed) g_nocuda_ui_deferred_prune=true;
       if(!keep)
         {
-         if(StringFind(name,"_DESIGN_ICON")>=0) JPWUIDesignDeleteIcon(name);
-         else ObjectDelete(0,name);
+bool removed=false;
+          if(StringFind(name,"_DESIGN_ICON")>=0)
+            { JPWUIDesignDeleteIcon(name); removed=(ObjectFind(0,name)<0); }
+          else removed=JPWUIDesignDelete(name) && ObjectFind(0,name)<0;
+          if(!removed)
+            {
+             // A cached desired inventory must not hide a refused deletion.
+             g_nocuda_ui_deferred_prune=true; JPWNoCudaUIFail(); return;
+            }
          if(g_nocuda_ui_editing==name) g_nocuda_ui_editing="";
          if(g_nocuda_ui_focus==name) g_nocuda_ui_focus="";
         }
@@ -157,28 +217,33 @@ void JPWNoCudaUIFinish(const string prefix)
 bool JPWNoCudaUIEnsure(const string name,const ENUM_OBJECT type)
   {
    JPWNoCudaUIKeep(name);
-   if(ObjectFind(0,name)>=0) return(true);
-   return(ObjectCreate(0,name,type,0,0,0));
+   if(!g_nocuda_ui_inventory_complete) return(false);
+   if(ObjectFind(0,name)>=0 && ObjectGetInteger(0,name,OBJPROP_TYPE)!=type)
+      JPWUIDesignDelete(name);
+   const bool ready=JPWUIDesignEnsure(name,type);
+   if(!ready) JPWNoCudaUIFail();
+   return(ready);
   }
 void JPWNoCudaUIString(const string name,const ENUM_OBJECT_PROPERTY_STRING property,
                       const string value)
   {
-   if(ObjectGetString(0,name,property)!=value)
-      ObjectSetString(0,name,property,value);
+   if(property==OBJPROP_TEXT && ObjectGetInteger(0,name,OBJPROP_TYPE)==OBJ_EDIT &&
+      ObjectGetString(0,name,property)==value) return;
+   JPWNoCudaUISetString(name,property,value);
   }
 bool JPWNoCudaUIBox(const string name,const int x,const int y,
                     const int w,const int h,const color fill,const color border)
   {
    if(!JPWNoCudaUIEnsure(name,OBJ_RECTANGLE_LABEL)) return(false);
-   return(ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
-          ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x) &&
-          ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y) &&
-          ObjectSetInteger(0,name,OBJPROP_XSIZE,w) &&
-          ObjectSetInteger(0,name,OBJPROP_YSIZE,h) &&
-          ObjectSetInteger(0,name,OBJPROP_BGCOLOR,fill) &&
-          ObjectSetInteger(0,name,OBJPROP_COLOR,border) &&
-          ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false) &&
-          ObjectSetInteger(0,name,OBJPROP_HIDDEN,true));
+   return(JPWNoCudaUISetInteger(name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XDISTANCE,x) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YDISTANCE,y) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XSIZE,w) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YSIZE,h) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_BGCOLOR,fill) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_COLOR,border) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_SELECTABLE,false) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_HIDDEN,true));
   }
 bool JPWNoCudaUIText(const string name,const int x,const int y,
                      const string value,const int size,const color ink,
@@ -188,35 +253,41 @@ bool JPWNoCudaUIText(const string name,const int x,const int y,
    JPWNoCudaUIString(name,OBJPROP_FONT,"Arial");
    JPWNoCudaUIString(name,OBJPROP_TEXT,value);
    JPWNoCudaUIString(name,OBJPROP_TOOLTIP,tooltip=="" ? value : tooltip);
-   return(ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
-          ObjectSetInteger(0,name,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER) &&
-          ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x) &&
-          ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y) &&
-          ObjectSetInteger(0,name,OBJPROP_FONTSIZE,size) &&
-          ObjectSetInteger(0,name,OBJPROP_COLOR,ink) &&
-          ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false) &&
-          ObjectSetInteger(0,name,OBJPROP_HIDDEN,true));
+   return(JPWNoCudaUISetInteger(name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XDISTANCE,x) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YDISTANCE,y) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_FONTSIZE,size) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_COLOR,ink) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_SELECTABLE,false) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_HIDDEN,true));
   }
 bool JPWNoCudaUIButton(const string name,const int x,const int y,
                        const int w,const int h,const string label,
                        const color ink,const color fill)
   {
    if(!JPWNoCudaUIEnsure(name,OBJ_BUTTON)) return(false);
+   const color background=(color)ChartGetInteger(0,CHART_COLOR_BACKGROUND);
+   if(name==g_nocuda_ui_focus)
+      JPWNoCudaUIBox(name+"_FOCUS_FRAME",x-JPWUIDesignPx(2),y-JPWUIDesignPx(2),
+         w+JPWUIDesignPx(4),h+JPWUIDesignPx(4),JPWUIDesignFocusInk(background),JPWUIDesignFocusInk(background));
    JPWNoCudaUIString(name,OBJPROP_FONT,"Arial");
    JPWNoCudaUIString(name,OBJPROP_TEXT,JPWNoCudaUIFit(label,w-JPWUIDesignPx(16),10));
    JPWNoCudaUIString(name,OBJPROP_TOOLTIP,label);
-   return(ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
-          ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x) &&
-          ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y) &&
-          ObjectSetInteger(0,name,OBJPROP_XSIZE,w) &&
-          ObjectSetInteger(0,name,OBJPROP_YSIZE,h) &&
-          ObjectSetInteger(0,name,OBJPROP_FONTSIZE,10) &&
-          ObjectSetInteger(0,name,OBJPROP_COLOR,ink) &&
-          ObjectSetInteger(0,name,OBJPROP_BGCOLOR,fill) &&
-          ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,name==g_nocuda_ui_focus ? ink : fill) &&
-          ObjectSetInteger(0,name,OBJPROP_STATE,false) &&
-          ObjectSetInteger(0,name,OBJPROP_ZORDER,1005) &&
-          ObjectSetInteger(0,name,OBJPROP_HIDDEN,true));
+   return(JPWNoCudaUISetInteger(name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XDISTANCE,x) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YDISTANCE,y) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XSIZE,w) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YSIZE,h) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_FONTSIZE,10) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_COLOR,ink) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_BGCOLOR,fill) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_BORDER_COLOR,name==g_nocuda_ui_focus ?
+             (fill==JPWUIDesignPrimaryFill(background) ? JPWUIDesignPrimaryInk(background) : JPWUIDesignFocusInk(background)) :
+             (JPWNoCudaUIDark() ? C'120,133,149' : C'112,123,138')) &&
+          (ObjectGetInteger(0,name,OBJPROP_STATE)==0 || JPWNoCudaUISetInteger(name,OBJPROP_STATE,false)) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_ZORDER,1005) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_HIDDEN,true));
   }
 bool JPWNoCudaUIEdit(const string name,const int x,const int y,
                      const int w,const int h,const string value,
@@ -228,20 +299,24 @@ bool JPWNoCudaUIEdit(const string name,const int x,const int y,
    // Never replace the text/caret of a focused field during timer/resize.
    if(!existed || name!=g_nocuda_ui_editing)
       JPWNoCudaUIString(name,OBJPROP_TEXT,value);
-   return(ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
-          ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x) &&
-          ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y) &&
-          ObjectSetInteger(0,name,OBJPROP_XSIZE,w) &&
-          ObjectSetInteger(0,name,OBJPROP_YSIZE,h) &&
-          ObjectSetInteger(0,name,OBJPROP_FONTSIZE,10) &&
-          ObjectSetInteger(0,name,OBJPROP_COLOR,ink) &&
-          ObjectSetInteger(0,name,OBJPROP_BGCOLOR,fill) &&
-          ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,name==g_nocuda_ui_focus ? ink : fill) &&
-          ObjectSetInteger(0,name,OBJPROP_HIDDEN,true));
+   return(JPWNoCudaUISetInteger(name,OBJPROP_CORNER,CORNER_LEFT_UPPER) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XDISTANCE,x) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YDISTANCE,y) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_XSIZE,w) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_YSIZE,h) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_FONTSIZE,10) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_COLOR,ink) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_BGCOLOR,fill) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_BORDER_COLOR,name==g_nocuda_ui_focus ?
+             JPWUIDesignFocusInk((color)ChartGetInteger(0,CHART_COLOR_BACKGROUND)) :
+             (JPWNoCudaUIDark() ? C'120,133,149' : C'112,123,138')) &&
+          JPWNoCudaUISetInteger(name,OBJPROP_HIDDEN,true));
   }
 string JPWNoCudaUIFocusCycle(const string prefix,const string current,
                             const bool reverse)
   {
+   if(!g_nocuda_ui_inventory_complete)
+      return(ObjectFind(0,prefix+"UI_CLOSE")>=0 ? prefix+"UI_CLOSE" : prefix+"UI_OPEN");
    const int count=ArraySize(g_nocuda_ui_kept);
    int at=(reverse ? 0 : -1);
    for(int i=0;i<count;i++) if(g_nocuda_ui_kept[i]==current) { at=i; break; }
@@ -252,7 +327,7 @@ string JPWNoCudaUIFocusCycle(const string prefix,const string current,
       if(StringFind(name,prefix+"UI_")==0 &&
          ObjectFind(0,name)>=0 &&
          (ObjectGetInteger(0,name,OBJPROP_TYPE)==OBJ_BUTTON ||
-          (ObjectGetInteger(0,name,OBJPROP_TYPE)==OBJ_EDIT && !ObjectGetInteger(0,name,OBJPROP_READONLY))))
+          ObjectGetInteger(0,name,OBJPROP_TYPE)==OBJ_EDIT))
          return(name);
      }
    return("");
@@ -275,12 +350,13 @@ void JPWNoCudaUIWrap(const string value,const int width,const int size,
          if(space>0) end=space;
         }
       const int count=ArraySize(lines);
-      ArrayResize(lines,count+1);
+      if(ArrayResize(lines,count+1)!=count+1) { JPWNoCudaUIFail(); return; }
       lines[count]=StringSubstr(pending,0,end);
       pending=StringSubstr(pending,end);
       while(StringLen(pending)>0 && StringSubstr(pending,0,1)==" ") pending=StringSubstr(pending,1);
      }
-   if(ArraySize(lines)==0) { ArrayResize(lines,1); lines[0]="—"; }
+   if(ArraySize(lines)==0)
+     { if(ArrayResize(lines,1)!=1) { JPWNoCudaUIFail(); return; } lines[0]="—"; }
   }
 void JPWNoCudaUIParagraph(const string name,const int x,const int y,
                          const int width,const int row,const string value,
@@ -316,9 +392,11 @@ void JPWNoCudaUIDataRow(const string name,const int x,const int y,
   }
 void JPWNoCudaUIAppend(const string value,const int width,string &lines[])
   {
+   if(!g_nocuda_ui_inventory_complete) return;
    string wrapped[]; JPWNoCudaUIWrap(value,width,10,wrapped);
+   if(!g_nocuda_ui_inventory_complete) return;
    const int count=ArraySize(lines),extra=ArraySize(wrapped);
-   ArrayResize(lines,count+extra+1);
+   if(ArrayResize(lines,count+extra+1)!=count+extra+1) { JPWNoCudaUIFail(); return; }
    for(int i=0;i<extra;i++) lines[count+i]=wrapped[i];
    lines[count+extra]="";
   }
@@ -364,36 +442,73 @@ void JPWNoCudaUIRememberHUD(const int cw,const int ch)
 bool JPWNoCudaUILauncherAt(const int cw,const int ch,const int width,const int height,
                            const int desired_x,const int desired_y,JPWNoCudaUIRect &place)
   {
-   const int gap=JPWUIDesignPx(8);
-   if(width<=0 || height<=0 || cw<width+2*gap || ch<height+2*gap) return(false);
-   const int px=MathMax(gap,MathMin(desired_x,cw-width-gap));
-   const int py=MathMax(gap,MathMin(desired_y,ch-height-gap));
+   if(width<=0 || height<=0 || cw<width || ch<height) return(false);
    JPWNoCudaUIRect hud; const bool reserved=JPWNoCudaUICockpitHUD(cw,ch,hud);
-   place.x=px; place.y=py; place.width=width; place.height=height;
-   if(!reserved || !JPWNoCudaUIRectIntersects(place,hud)) return(true);
-   int xs[4]={px,px,hud.x-width-gap,hud.x+hud.width+gap};
-   int ys[4]={hud.y-height-gap,hud.y+hud.height+gap,py,py};
-   bool found=false; long best=0;
-   for(int i=0;i<4;i++)
+   // Keep the normal breathing room when it fits. Padding must not hide a
+   // physically usable action; a compact pass may touch, never cover, the HUD.
+   for(int compact=0;compact<2;compact++)
      {
-      JPWNoCudaUIRect candidate;
-      candidate.x=MathMax(gap,MathMin(xs[i],cw-width-gap));
-      candidate.y=MathMax(gap,MathMin(ys[i],ch-height-gap));
-      candidate.width=width; candidate.height=height;
-      if(JPWNoCudaUIRectIntersects(candidate,hud)) continue;
-      const long dx=(long)candidate.x-px,dy=(long)candidate.y-py;
-      const long distance=dx*dx+dy*dy;
-      if(!found || distance<best) { found=true; best=distance; place=candidate; }
+      const int gap=(compact==0 ? JPWUIDesignPx(8) : 0);
+      const int margin_x=MathMin(gap,(cw-width)/2),margin_y=MathMin(gap,(ch-height)/2);
+      const int px=MathMax(margin_x,MathMin(desired_x,cw-width-margin_x));
+      const int py=MathMax(margin_y,MathMin(desired_y,ch-height-margin_y));
+      place.x=px; place.y=py; place.width=width; place.height=height;
+      if(!reserved || !JPWNoCudaUIRectIntersects(place,hud)) return(true);
+      int xs[4]={px,px,hud.x-width-gap,hud.x+hud.width+gap};
+      int ys[4]={hud.y-height-gap,hud.y+hud.height+gap,py,py};
+      bool found=false; long best=0;
+      for(int i=0;i<4;i++)
+        {
+         JPWNoCudaUIRect candidate;
+         candidate.x=MathMax(margin_x,MathMin(xs[i],cw-width-margin_x));
+         candidate.y=MathMax(margin_y,MathMin(ys[i],ch-height-margin_y));
+         candidate.width=width; candidate.height=height;
+         if(JPWNoCudaUIRectIntersects(candidate,hud)) continue;
+         const long dx=(long)candidate.x-px,dy=(long)candidate.y-py;
+         const long distance=dx*dx+dy*dy;
+         if(!found || distance<best) { found=true; best=distance; place=candidate; }
+        }
+      if(found) return(true);
      }
-   return(found);
+   return(false);
   }
 bool JPWNoCudaUILauncherPlacement(const int cw,const int ch,const int minimum_width,
                                  const int height,JPWNoCudaUIRect &place)
   { return(JPWNoCudaUILauncherAt(cw,ch,minimum_width,height,JPWUIDesignPx(12),ch-height-JPWUIDesignPx(12),place)); }
 
+int JPWNoCudaUILevelColumns(const int inner)
+  {
+   string labels[4]={"−4,000","Selecionar","− nível","+ nível"};
+   return(JPWUIDesignNavColumns(labels,4,inner,10,JPWUIDesignPx(8)));
+  }
+int JPWNoCudaUIDateColumns(const int inner)
+  {
+   string labels[2]={"2026.10.07","Consultar dia"};
+   return(JPWUIDesignNavColumns(labels,2,inner,10,JPWUIDesignPx(8)));
+  }
+int JPWNoCudaUIQueryHeight(const int inner,const bool date)
+  {
+   const int count=(date ? 2 : 4);
+   const int columns=(date ? JPWNoCudaUIDateColumns(inner) : JPWNoCudaUILevelColumns(inner));
+   const int rows=(count+columns-1)/columns;
+   return(JPWNoCudaUILineHeight()+rows*(JPWNoCudaUIButtonHeight()+JPWUIDesignPx(8))+JPWUIDesignPx(4));
+  }
+bool JPWNoCudaUIFooterToolsFit(const int inner,const string tf,const bool visible,const bool mesh)
+  {
+   const int gap=JPWUIDesignPx(8),nav=JPWUIDesignPx(44);
+   const int reserved=2*nav+4*gap+JPWUIDesignTextWidth("999 / 999",10)+JPWUIDesignButtonWidth("Fechar",10);
+   const int tools=JPWUIDesignButtonWidth("Fonte "+tf,10)+
+      JPWUIDesignButtonWidth(visible ? "Canal visível" : "Canal oculto",10)+
+      JPWUIDesignButtonWidth(mesh ? "Malha completa" : "Essencial",10)+2*gap;
+   return(reserved+tools<=inner);
+  }
+
 void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
   {
+   JPWUIDesignBeginPass();
+   g_nocuda_ui_render_prefix=prefix;
    ArrayResize(g_nocuda_ui_kept,0);
+   g_nocuda_ui_inventory_complete=true;
    const int cw=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS);
    const int ch=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
    JPWNoCudaUIRememberHUD(cw,ch);
@@ -404,37 +519,66 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
    const color surface=(dark ? C'28,31,37' : C'247,249,252');
    const color chrome=(dark ? C'39,45,54' : C'233,238,244');
    const color card=(dark ? C'34,39,47' : C'255,255,255');
-   const color border=(dark ? C'102,110,122' : C'128,135,147');
-   const color accent=(dark ? C'151,185,217' : C'48,79,112');
+   const color border=(dark ? C'120,133,149' : C'112,123,138');
+   const color accent=JPWUIDesignPrimaryFill((color)ChartGetInteger(0,CHART_COLOR_BACKGROUND));
+   const color accent_ink=JPWUIDesignPrimaryInk((color)ChartGetInteger(0,CHART_COLOR_BACKGROUND));
+   const color state_ink=(dark ? C'151,185,217' : C'48,79,112');
    const int line=JPWNoCudaUILineHeight(),bh=JPWNoCudaUIButtonHeight();
    const int candidate_inner=JPWNoCudaUIWidth()-JPWUIDesignPx(32);
    const int candidate_available=JPWNoCudaUIHeight()-JPWNoCudaUIHeaderHeight()-bh-JPWUIDesignPx(24);
    int minimum_body=2*line+bh;
    if(v.tab==0) minimum_body=MathMax(minimum_body,6*line+2*bh+JPWUIDesignPx(52));
-   if(v.tab==1) minimum_body=MathMax(minimum_body,4*line+JPWUIDesignPx(16));
+   if(v.tab==1) minimum_body=MathMax(minimum_body,
+      MathMax(JPWNoCudaUIQueryHeight(candidate_inner,false),JPWNoCudaUIQueryHeight(candidate_inner,true)));
    if(v.tab==2) minimum_body=MathMax(minimum_body,(candidate_inner>=JPWUIDesignPx(500) ? bh+JPWUIDesignPx(8) : 2*(bh+JPWUIDesignPx(8)))+line+JPWUIDesignPx(24));
    if(!v.open || cw<JPWUIDesignPx(300) || ch<JPWUIDesignPx(260) || candidate_available<minimum_body)
      {
-      const string launcher_text="NoCuda · Gráficos";
-      const int button_width=JPWUIDesignButtonWidth(launcher_text,10,true);
+      const string full_launcher_text=(v.open ? "NoCuda · Gráficos · recolher" : "NoCuda · Gráficos");
+      string launcher_text=full_launcher_text;
+      bool use_icon=true;
+      int button_width=JPWUIDesignButtonWidth(launcher_text,10,use_icon);
       const int hint_count=(v.pick>0 ? 1 : 0)+(v.open ? 1 : 0);
       const int full_height=bh+hint_count*(line+JPWUIDesignPx(8));
       JPWNoCudaUIRect place;
       bool show_hints=JPWNoCudaUILauncherPlacement(cw,ch,button_width,full_height,place);
-      if(!show_hints && !JPWNoCudaUILauncherPlacement(cw,ch,button_width,bh,place))
+      bool placed=show_hints || JPWNoCudaUILauncherPlacement(cw,ch,button_width,bh,place);
+      // Decoration and a long label cannot remove an otherwise usable action.
+      // Preserve the full identity in the tooltip when compact presentation is needed.
+      for(int compact=1;!placed && compact<=2;compact++)
+        {
+         use_icon=false;
+         launcher_text=(compact==1 ? full_launcher_text : (v.open ? "Fechar NoCuda" : "NoCuda"));
+         button_width=JPWUIDesignButtonWidth(launcher_text,10,false);
+         show_hints=JPWNoCudaUILauncherPlacement(cw,ch,button_width,full_height,place);
+         placed=show_hints || JPWNoCudaUILauncherPlacement(cw,ch,button_width,bh,place);
+        }
+      if(!placed)
         {
          g_nocuda_ui_launcher_reason="NoCuda: espaço livre insuficiente; amplie o gráfico ou reposicione o HUD do Cockpit. Rascunho preservado.";
-         JPWNoCudaUIFinish(prefix); return;
+         Print(g_nocuda_ui_launcher_reason);
+         JPWNoCudaUIFinish(prefix); JPWUIDesignEndPass(); return;
         }
       JPWNoCudaUIButton(prefix+"UI_OPEN",place.x,place.y,button_width,bh,"",ink,chrome);
-      const int icon=JPWUIDesignPx(16),inset=JPWUIDesignPx(12);
+      const int icon=JPWUIDesignPx(20),inset=JPWUIDesignPx(12);
       const string icon_name=prefix+"UI_OPEN_DESIGN_ICON";
-      JPWNoCudaUIKeep(icon_name);
-      JPWUIDesignIcon(icon_name,place.x+inset,place.y+(bh-icon)/2,icon,ink,true);
-      JPWNoCudaUIText(prefix+"UI_OPEN_LABEL",place.x+inset+icon+JPWUIDesignPx(8),
+      if(use_icon) JPWNoCudaUIKeep(icon_name);
+      const bool decoration_attempted=use_icon && g_nocuda_ui_inventory_complete;
+      const bool decorated=decoration_attempted &&
+         JPWUIDesignIcon(icon_name,place.x+inset,place.y+(bh-icon)/2,icon,ink,true);
+      if(decoration_attempted && !decorated)
+        {
+         JPWUIDesignDeleteIcon(icon_name);
+         if(ObjectFind(0,icon_name)>=0)
+           {
+            g_nocuda_ui_deferred_prune=true;
+            JPWNoCudaUIFail();
+            JPWNoCudaUIFinish(prefix); JPWUIDesignEndPass(); return;
+           }
+        }
+      JPWNoCudaUIText(prefix+"UI_OPEN_LABEL",place.x+inset+(decorated ? icon+JPWUIDesignPx(8) : 0),
          place.y+(bh-line)/2,launcher_text,10,ink);
-      ObjectSetString(0,prefix+"UI_OPEN",OBJPROP_TOOLTIP,launcher_text);
-      ObjectSetString(0,prefix+"UI_OPEN",OBJPROP_TOOLTIP,v.status+
+      JPWNoCudaUISetString(prefix+"UI_OPEN",OBJPROP_TOOLTIP,launcher_text);
+      JPWNoCudaUISetString(prefix+"UI_OPEN",OBJPROP_TOOLTIP,full_launcher_text+" · "+v.status+
          (v.open ? " · Amplie a altura do gráfico; rascunho preservado" : ""));
       int hint_y=place.y+bh+JPWUIDesignPx(8);
       if(show_hints && v.pick>0)
@@ -445,7 +589,7 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
         }
       if(show_hints && v.open) JPWNoCudaUIText(prefix+"UI_SMALL_HINT",place.x,hint_y,
          JPWNoCudaUIFit("Amplie a altura do gráfico · rascunho preservado",place.width,10),10,muted);
-      JPWNoCudaUIFinish(prefix); return;
+      JPWNoCudaUIFinish(prefix); JPWUIDesignEndPass(); return;
      }
 
    const int w=JPWNoCudaUIWidth(),h=JPWNoCudaUIHeight();
@@ -458,16 +602,17 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
    JPWNoCudaUIBox(prefix+"UI_BG",x,y,w,h,surface,border);
    JPWNoCudaUIBox(prefix+"UI_HEADER",x+1,y+1,w-2,body_y-y-1,chrome,chrome);
    JPWNoCudaUIKeep(prefix+"UI_BRAND_LOGO"); JPWNoCudaUIKeep(prefix+"UI_TITLE");
-   JPWGenetrixHeader(prefix+"UI_BRAND_LOGO",prefix+"UI_TITLE",x+pad,title_y,
-      inner,line,13,ink,dark,"NoCuda · Gráficos · manual · "+v.symbol,4);
+   if(g_nocuda_ui_inventory_complete)
+      JPWGenetrixHeader(prefix+"UI_BRAND_LOGO",prefix+"UI_TITLE",x+pad,title_y,
+         inner,line,13,ink,dark,"NoCuda · Gráficos · manual · "+v.symbol,4);
    JPWNoCudaUIText(prefix+"UI_STAGE",x+pad,title_y+line,
-      JPWNoCudaUIFit(state+" · "+v.source_tf,inner,10),10,accent,state+" · "+v.source_tf);
+      JPWNoCudaUIFit(state+" · "+v.source_tf,inner,10),10,state_ink,state+" · "+v.source_tf);
    string tabs[3]={"Desenho","Medidas","Registro"};
    const int gap=JPWUIDesignPx(8),columns=JPWNoCudaUINavColumns(),rows=(3+columns-1)/columns;
    const int tw=(inner-(columns-1)*gap)/columns;
    for(int t=0;t<3;t++)
       JPWNoCudaUIButton(prefix+"UI_TAB_"+IntegerToString(t),x+pad+(t%columns)*(tw+gap),
-         tab_y+(t/columns)*(bh+gap),tw,bh,tabs[t],t==v.tab ? (dark ? surface : card) : ink,t==v.tab ? accent : card);
+         tab_y+(t/columns)*(bh+gap),tw,bh,tabs[t],ink,t==v.tab ? JPWUIDesignSelectedFill((color)ChartGetInteger(0,CHART_COLOR_BACKGROUND)) : card);
    JPWNoCudaUIText(prefix+"UI_STATUS",x+pad,tab_y+rows*(bh+gap),
       JPWNoCudaUIFit(v.status,inner,10),10,muted,v.status);
 
@@ -491,7 +636,8 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
       const int anchors_per_page=MathMax(1,MathMin(3,columns*MathMax(1,cards_space/card_h)));
       const int anchor_pages=(3+anchors_per_page-1)/anchors_per_page;
       const int tools_per_page=MathMax(1,MathMin(3,(cards_space-line)/(bh+JPWUIDesignPx(8))));
-      const int tool_pages=(wide ? 0 : (3+tools_per_page-1)/tools_per_page);
+      const bool footer_tools=JPWNoCudaUIFooterToolsFit(inner,v.source_tf,v.channel_visible,v.full_mesh);
+      const int tool_pages=(footer_tools ? 0 : (3+tools_per_page-1)/tools_per_page);
       g_nocuda_ui_pages=anchor_pages+1+tool_pages;
       g_nocuda_ui_page=(g_nocuda_ui_editing==prefix+"UI_JUST" ? anchor_pages : MathMax(0,MathMin(v.page,g_nocuda_ui_pages-1)));
       JPWNoCudaUIText(prefix+"UI_SOURCE",x+pad,body_y,
@@ -513,7 +659,7 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
             const int actual_h=MathMin(card_h-JPWUIDesignPx(8),actions_y-ay-JPWUIDesignPx(8));
             JPWNoCudaUIBox(prefix+"UI_ANCHOR_CARD_"+ids[a],ax,ay,card_w,actual_h,card,border);
             JPWNoCudaUIText(prefix+"UI_ANCHOR_TITLE_"+ids[a],ax+JPWUIDesignPx(12),ay+JPWUIDesignPx(8),
-               JPWNoCudaUIFit(ids[a]+(a==2 ? " · largura" : " · principal")+(complete[a] ? " · ✓" : " · a marcar"),card_w-JPWUIDesignPx(20),10),10,accent);
+               JPWNoCudaUIFit(ids[a]+(a==2 ? " · largura" : " · principal")+(complete[a] ? " · ✓" : " · a marcar"),card_w-JPWUIDesignPx(20),10),10,state_ink);
             const string close_separator=" · Close ";
             const int close_at=StringFind(values[a],close_separator),date_at=StringFind(values[a],": ");
             if(complete[a] && close_at>=0 && date_at>=0)
@@ -534,7 +680,7 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
         {
          const int content_h=actions_y-content_y-JPWUIDesignPx(8);
          JPWNoCudaUIBox(prefix+"UI_CONFIRM_CARD",x+pad,content_y,inner,content_h,card,border);
-         JPWNoCudaUIText(prefix+"UI_PREVIEW",x+pad+JPWUIDesignPx(12),content_y+JPWUIDesignPx(12),JPWNoCudaUIFit("Conferir e confirmar",inner-JPWUIDesignPx(24),11),11,accent);
+         JPWNoCudaUIText(prefix+"UI_PREVIEW",x+pad+JPWUIDesignPx(12),content_y+JPWUIDesignPx(12),JPWNoCudaUIFit("Conferir e confirmar",inner-JPWUIDesignPx(24),11),11,state_ink);
          JPWNoCudaUIDataRow(prefix+"UI_WIDTH",x+pad+JPWUIDesignPx(12),content_y+line+JPWUIDesignPx(12),inner-JPWUIDesignPx(24),line,
             "Largura / 1/8: "+(v.geometry_valid ? v.width_price+" / "+v.subdivision_price : "N/A"),ink,v.width_text);
          JPWNoCudaUIText(prefix+"UI_JUST_LABEL",x+pad+JPWUIDesignPx(12),content_y+content_h-bh-line-JPWUIDesignPx(20),
@@ -544,7 +690,7 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
         }
       else
         {
-         JPWNoCudaUIText(prefix+"UI_APPEARANCE",x+pad,content_y,JPWNoCudaUIFit("Aparência e período-fonte",inner,11),11,accent);
+         JPWNoCudaUIText(prefix+"UI_APPEARANCE",x+pad,content_y,JPWNoCudaUIFit("Aparência e período-fonte",inner,11),11,state_ink);
          const int tool_start=(g_nocuda_ui_page-anchor_pages-1)*tools_per_page;
          for(int tool=0;tool<tools_per_page && tool_start+tool<3;tool++)
            {
@@ -557,19 +703,19 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
       const int aw=(inner-JPWUIDesignPx(8))/2;
       if(v.draft)
         {
-         JPWNoCudaUIButton(prefix+"UI_CONFIRM",x+pad,actions_y,aw,bh,"Confirmar versão",v.geometry_valid ? (dark ? surface : card) : muted,v.geometry_valid ? accent : chrome);
+         JPWNoCudaUIButton(prefix+"UI_CONFIRM",x+pad,actions_y,aw,bh,"Confirmar versão",v.geometry_valid ? accent_ink : muted,v.geometry_valid ? accent : chrome);
          JPWNoCudaUIButton(prefix+"UI_CANCEL",x+pad+aw+JPWUIDesignPx(8),actions_y,aw,bh,"Cancelar rascunho",ink,chrome);
         }
       else
         {
-         JPWNoCudaUIButton(prefix+"UI_NEW",x+pad,actions_y,aw,bh,"Novo canal",dark ? surface : card,accent);
+         JPWNoCudaUIButton(prefix+"UI_NEW",x+pad,actions_y,aw,bh,"Novo canal",accent_ink,accent);
          JPWNoCudaUIButton(prefix+"UI_EDIT",x+pad+aw+JPWUIDesignPx(8),actions_y,aw,bh,"Editar versão",ink,chrome);
         }
      }
    else if(v.tab==1)
      {
       const int capacity=JPWNoCudaUIDailyCapacity();
-      const int query_pages=(available>=2*bh+2*line+JPWUIDesignPx(20) ? 1 : 2);
+      const int query_pages=(available>=JPWNoCudaUIQueryHeight(inner,false)+JPWNoCudaUIQueryHeight(inner,true) ? 1 : 2);
       const int result_pages=(5+capacity-1)/capacity;
       string provenance[];
       JPWNoCudaUIAppend("Origem e limites · "+v.daily_state,inner-JPWUIDesignPx(24),provenance);
@@ -583,7 +729,7 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
       const int provenance_pages=(ArraySize(provenance)+rows-1)/rows;
       g_nocuda_ui_pages=query_pages+result_pages+provenance_pages;
       g_nocuda_ui_page=MathMax(0,MathMin(v.measure_page,g_nocuda_ui_pages-1));
-      if(g_nocuda_ui_editing==prefix+"UI_DATE" && query_pages==2) g_nocuda_ui_page=1;
+      if(g_nocuda_ui_editing==prefix+"UI_DATE") g_nocuda_ui_page=(query_pages==2 ? 1 : 0);
       if(g_nocuda_ui_editing==prefix+"UI_LEVEL_INPUT") g_nocuda_ui_page=0;
       if(g_nocuda_ui_page<query_pages)
         {
@@ -593,24 +739,29 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
          if(level_page)
            {
             JPWNoCudaUIText(prefix+"UI_LEVEL",x+pad,cy,JPWNoCudaUIFit("Linha selecionada · nível",inner,10),10,muted,v.level_text);
-            const int qw=(inner-JPWUIDesignPx(24))/4;
+            const int columns=JPWNoCudaUILevelColumns(inner),gap=JPWUIDesignPx(8);
+            const int qw=(inner-(columns-1)*gap)/columns;
             JPWNoCudaUIEdit(prefix+"UI_LEVEL_INPUT",x+pad,cy+line,qw,bh,
                v.level_input=="" ? DoubleToString(-4.0+(double)v.level_index/8.0,3) : v.level_input,ink,card);
-            JPWNoCudaUIButton(prefix+"UI_LEVEL_APPLY",x+pad+qw+JPWUIDesignPx(8),cy+line,qw,bh,"Selecionar",ink,chrome);
-            JPWNoCudaUIButton(prefix+"UI_LEVEL_PREV",x+pad+2*(qw+JPWUIDesignPx(8)),cy+line,qw,bh,"− nível",ink,chrome);
-            JPWNoCudaUIButton(prefix+"UI_LEVEL_NEXT",x+pad+3*(qw+JPWUIDesignPx(8)),cy+line,qw,bh,"+ nível",ink,chrome);
-            cy+=line+bh+JPWUIDesignPx(12);
+            string ids[3]={"LEVEL_APPLY","LEVEL_PREV","LEVEL_NEXT"};
+            string labels[3]={"Selecionar","− nível","+ nível"};
+            for(int action=1;action<4;action++)
+               JPWNoCudaUIButton(prefix+"UI_"+ids[action-1],x+pad+(action%columns)*(qw+gap),
+                  cy+line+(action/columns)*(bh+gap),qw,bh,labels[action-1],ink,chrome);
+            cy+=JPWNoCudaUIQueryHeight(inner,false);
            }
          if(date_page)
            {
             JPWNoCudaUIText(prefix+"UI_DATE_LABEL",x+pad,cy,JPWNoCudaUIFit("Data do servidor",inner,10),10,muted,"AAAA.MM.DD · 00h, 12h e 24h");
-            const int fw=(inner-JPWUIDesignPx(8))/2;
+            const int columns=JPWNoCudaUIDateColumns(inner),gap=JPWUIDesignPx(8);
+            const int fw=(inner-(columns-1)*gap)/columns;
             JPWNoCudaUIEdit(prefix+"UI_DATE",x+pad,cy+line,fw,bh,v.date,ink,card);
-            JPWNoCudaUIButton(prefix+"UI_DAILY_QUERY",x+pad+fw+JPWUIDesignPx(8),cy+line,fw,bh,"Consultar dia",dark ? surface : card,accent);
-            cy+=line+bh+JPWUIDesignPx(12);
+            JPWNoCudaUIButton(prefix+"UI_DAILY_QUERY",x+pad+(columns>1 ? fw+gap : 0),
+               cy+line+(columns>1 ? 0 : bh+gap),fw,bh,"Consultar dia",accent_ink,accent);
+            cy+=JPWNoCudaUIQueryHeight(inner,true);
            }
          if(cy+line<=body_bottom)
-           { JPWNoCudaUIText(prefix+"UI_DAILY_STATE",x+pad,cy,JPWNoCudaUIFit("Projeção diária · "+v.daily_state,inner,10),10,accent,v.daily_reason); cy+=line+JPWUIDesignPx(8); }
+           { JPWNoCudaUIText(prefix+"UI_DAILY_STATE",x+pad,cy,JPWNoCudaUIFit("Projeção diária · "+v.daily_state,inner,10),10,state_ink,v.daily_reason); cy+=line+JPWUIDesignPx(8); }
          if(cy+bh<=body_bottom)
             JPWNoCudaUIButton(prefix+"UI_DAILY_REFS",x+pad,cy,inner,bh,
                v.references ? "Ocultar referências 00h / 12h / 24h" : "Mostrar referências 00h / 12h / 24h",ink,chrome);
@@ -619,7 +770,7 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
         {
          const int page=g_nocuda_ui_page-query_pages;
          JPWNoCudaUIText(prefix+"UI_DAILY_STATE",x+pad,body_y,
-            JPWNoCudaUIFit("Nível "+DoubleToString(-4.0+(double)v.level_index/8.0,3)+" · "+v.daily_state,inner,10),10,accent,v.daily_reason);
+            JPWNoCudaUIFit("Nível "+DoubleToString(-4.0+(double)v.level_index/8.0,3)+" · "+v.daily_state,inner,10),10,state_ink,v.daily_reason);
          string results[5]; results[0]=v.daily_start; results[1]=v.daily_mid; results[2]=v.daily_end;
          results[3]=v.daily_mean; results[4]=v.daily_range;
          for(int i=0;i<capacity && page*capacity+i<5;i++)
@@ -672,15 +823,17 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
    JPWNoCudaUIButton(prefix+"UI_CLOSE",x+w-pad-close_w,footer_y,close_w,bh,"Fechar",ink,chrome);
    // Appearance/source tools remain available on the drawing footer, grouped
    // separately from immutable revision actions.
-   if(v.tab==0 && inner>=JPWUIDesignPx(650))
+   if(v.tab==0 && JPWNoCudaUIFooterToolsFit(inner,v.source_tf,v.channel_visible,v.full_mesh))
      {
-      const int tx=x+pad+2*nav_w+JPWUIDesignPx(80);
-      const int tool_w=(x+w-pad-close_w-JPWUIDesignPx(8)-tx-JPWUIDesignPx(12))/3;
-      JPWNoCudaUIButton(prefix+"UI_TF",tx,footer_y,tool_w,bh,"Fonte "+v.source_tf,ink,card);
-      JPWNoCudaUIButton(prefix+"UI_VIS",tx+tool_w+JPWUIDesignPx(8),footer_y,tool_w,bh,v.channel_visible ? "Canal visível" : "Canal oculto",ink,card);
-      JPWNoCudaUIButton(prefix+"UI_MESH",tx+2*(tool_w+JPWUIDesignPx(8)),footer_y,tool_w,bh,v.full_mesh ? "Malha completa" : "Essencial",ink,card);
+      int tx=x+pad+2*nav_w+JPWUIDesignPx(24)+JPWUIDesignTextWidth("999 / 999",10);
+      string ids[3]={"TF","VIS","MESH"};
+      string labels[3]={"Fonte "+v.source_tf,v.channel_visible ? "Canal visível" : "Canal oculto",v.full_mesh ? "Malha completa" : "Essencial"};
+      for(int i=0;i<3;i++)
+        { const int tool_w=JPWUIDesignButtonWidth(labels[i],10);
+          JPWNoCudaUIButton(prefix+"UI_"+ids[i],tx,footer_y,tool_w,bh,labels[i],ink,card);
+          tx+=tool_w+JPWUIDesignPx(8); }
      }
-   JPWNoCudaUIFinish(prefix);
+   JPWNoCudaUIFinish(prefix); JPWUIDesignEndPass();
   }
 
 #endif

@@ -1,3 +1,60 @@
+# GENETRIX 1.21.2 — revisão candidata
+
+> Revisão candidata atual: **1.21.2**. Correções de título e acesso compacto NoCuda e candidato separado de controles de regressão estão descritos em [GENETRIX_CORRECTIONS_1_21_2.md](GENETRIX_CORRECTIONS_1_21_2.md). O estado de cada evidência acompanha a entrega externa; a compilação 1.21.1 não é evidência desta revisão. Sem instalação operacional nesta etapa.
+
+**Da origem da operação à leitura do risco.**
+
+O GENETRIX organiza a leitura da conta e os estudos no MetaTrader 5. Esta revisão conserva os reparos de memória e rascunhos da base, corrige identificação do NoCuda em cabeçalhos estreitos e recupera seu acesso compacto quando há espaço físico. Produto **1.21.2**, MQL **1.212**, cálculo **1.9.0**; reparos 1.21.1 preservados.
+
+**CANDIDATE.** Consulte o manifesto e o recibo desta revisão para compilação e testes. Aceite operacional e instalação permanecem **NOT_RUN**. Resultados de versões anteriores não aprovam esta revisão. O harness interno conserva sua classificação; parâmetros `PENDING`, `NOT_HOMOLOGATED` ou `BLOCKED` continuam com esses estados.
+
+**Compilação 1.21.2: NOT_RUN/BLOCKED.** O kit isolado foi preparado para os 33 programas, mas não há recibo novo de MetaEditor nem EX5 desta revisão. O canal Parallels não confirmou execução. A compilação comprovada da base 1.21.1 é histórica e não aprova estes fontes. Interação no terminal, instalação e aceite operacional permanecem separados e pendentes.
+
+## Comece por aqui
+
+| O que você quer | Componente | Onde fica |
+| --- | --- | --- |
+| Acompanhar stops, histórico e ciclos da conta | **JPW_Genetrix_Monitor** — núcleo da conta | Um gráfico de apoio dedicado. É o único EA necessário para as leituras. |
+| Ver o resumo financeiro e os detalhes | **JPW_Alavancagem_Atual** — Genetrix · Conta | Indicador no gráfico de trabalho; abre o Cockpit. |
+| Estudar canais e registrar observações | **JPW_NoCuda_Channels** — NoCuda · Gráficos | Outro indicador no mesmo gráfico de trabalho, se desejado. |
+| Examinar a proteção adicional em 7x | **JPW_Genetrix_Supervisor** — opcional | Outro gráfico, com contrato próprio. Não é necessário para as leituras. |
+
+Observer e Accountant separados ficam preservados para compatibilidade e rollback. **Não os execute junto com o Monitor.** No MT5, anexar um segundo EA ao mesmo gráfico substitui o primeiro. Os dois indicadores podem coexistir.
+
+Para revisar um pacote, use o conjunto completo de `MQL5/Include/JPWealth`, recursos e programas da mesma versão. Não copie apenas o arquivo `.mq5` nem misture bibliotecas de pacotes diferentes. Documentação e harness ficam fora da pasta MQL5. Consulte o [guia rápido, validação e rollback](GENETRIX_REVIEW_1_21_1.md).
+
+## Se uma leitura não aparecer
+
+1. **Só aparece NoCuda:** confira se `JPW_Alavancagem_Atual` está disponível, compilado e listado em Ctrl+I no gráfico. NoCuda não substitui o resumo financeiro.
+2. **Risco dos stops ou compensado indisponível:** no Cockpit, abra Sistema e confira os módulos do Monitor, a captura concluída e o motivo exibido. Presença do EA não comprova dados completos ou atuais.
+3. **Só algumas linhas estão ocultas:** confira a visibilidade nas preferências do Cockpit. Fechar o Cockpit mantém o resumo; fechar o gráfico do Monitor interrompe a coleta.
+4. **N/A, Partial ou Estimated:** leia o motivo e a origem. Ausência de dado não significa zero nem permissão para operar.
+
+## Reparos da base 1.21.1 preservados
+
+- Catálogos, detalhes de stops e cálculos controlados recusam falhas de alocação antes de acessar ou publicar listas incompletas.
+- Reconciliação do Histórico Pessoal não confirma um episódio quando não conseguiu preparar seus eventos.
+- Ao sair do NoCuda, os campos deixam de capturar edição sobre outra janela; o texto ainda não salvo é preservado na sessão.
+- Comandos que precisam de estudo, versão ou vínculo explicam qual seleção falta.
+- Preparar mensagem conserva o número correto de páginas na apresentação alternativa.
+- A seleção de ciclo respeita a validade dos controles e o foco; abrir Conta sem contexto disponível explica o próximo passo.
+
+Abrir, fechar ou trocar de aba não confirma estudos. Salvar/aplicar continua sendo uma ação explícita. O Monitor não negocia; esta revisão não arma o Supervisor, instala componentes ou altera parâmetros financeiros.
+
+## Correções e evidência 1.21.2
+
+O título NoCuda adapta temporariamente sua fonte ao cabeçalho estreito; o acesso compacto admite margem adaptativa sem cobrir o resumo Conta. As preferências e o rascunho permanecem intactos. A nova referência é [GENETRIX_CORRECTIONS_1_21_2.md](GENETRIX_CORRECTIONS_1_21_2.md); o guia1.21.1 acima descreve a base histórica.
+
+A pasta externa `Evidências` da entrega1.21.2 contém critérios congelados, baseline1.21.1, novas tentativas e pareceres independentes. O candidato de julgadores é separado da correção do produto. Manifesto e hashes relacionam o conjunto exato; testes locais não comprovam compilação ou interação no terminal. Falhas históricas continuam registradas. A evidência1.21.1 preservada possui sua base1.21.0 e não é transferida como aceite atual.
+
+---
+
+## Documentação histórica da base 1.20.0, preservada
+
+Todo o texto abaixo descreve sua revisão original, inclusive números de compilador, EX5, aceites e caminhos antigos. Conferir o relatório e o manifesto atuais antes de uso.
+
+---
+
 # JPW GENETRIX — fontes MT5 v1.20.0
 
 **Da origem da operação à leitura do risco.**

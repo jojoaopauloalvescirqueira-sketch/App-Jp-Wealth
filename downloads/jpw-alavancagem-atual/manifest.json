@@ -1,14 +1,18 @@
 {
   "schemaVersion": 1,
-  "version": "1.20.0",
-  "coverage": "CANDIDATE 1.20.0 — Monitor Observer+Accountant; cálculo1.9.0. Compilação nativa33/33,0erros0avisos. Testes locais e limites nos recibos;0/3 sessões críticas MT5, instalação/aceiteNOT_RUN.",
+  "version": "1.21.2",
+  "coverage": "CANDIDATE 1.21.2; cálculo 1.9.0 preservado; reparos NoCuda e candidato separado de julgadores. Critérios locais, compilação e runtime possuem evidências próprias; sem aceite herdado.",
   "sourceFiles": [
     "mt5/jpw-alavancagem-atual/AGENTS.md",
     "mt5/jpw-alavancagem-atual/GENETRIX_7X_LEDGER.md",
+    "mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_20_1.md",
+    "mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_21_0.md",
     "mt5/jpw-alavancagem-atual/GENETRIX_COMPILE_FIX_1_18_2.md",
     "mt5/jpw-alavancagem-atual/GENETRIX_CORE_1_20_0.md",
+    "mt5/jpw-alavancagem-atual/GENETRIX_CORRECTIONS_1_21_2.md",
     "mt5/jpw-alavancagem-atual/GENETRIX_PERSONAL_HISTORY.md",
     "mt5/jpw-alavancagem-atual/GENETRIX_REPAIR_1_18_1.md",
+    "mt5/jpw-alavancagem-atual/GENETRIX_REVIEW_1_21_1.md",
     "mt5/jpw-alavancagem-atual/GENETRIX_UI_1_19_0.md",
     "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5",
     "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Accountant.mq5",
@@ -24,6 +28,7 @@
     "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_150.bmp",
     "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_200.bmp",
     "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
+    "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.provenance.md",
     "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
     "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh",
     "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
@@ -134,181 +139,45 @@
   "validation": {
     "mathematics": {
       "status": "pending",
-      "detail": "Paridade e referência determinística local avaliadas nos recibos; não demonstra eficácia financeira."
+      "detail": "Regressões financeiras e contraprovas locais passaram; fórmulas e unidades preservadas. Aceite completo pendente devido a lacunas de julgadores e execução nativa; ver relatório."
     },
     "compilation": {
-      "status": "passed",
-      "detail": "33/33 programas recompilados em MetaEditor nativo isolado;0erros0avisos;X64 Regular. Executáveis ligados aos fontes/logs por hashes. Interação MT5 e instalação NOT_RUN."
+      "status": "pending",
+      "detail": "Fontes 1.21.2 em preparação; EX5 anteriores não comprovam esta revisão. Compilação nativa NOT_RUN até recibo do mesmo fingerprint."
     },
     "terminal": {
       "status": "pending",
-      "detail": "BLOCKED: controle visual do Windows não confirma comandos recebidos. 0/3 sessões críticas; migração NOT_RUN. Compilação não é aceite operacional."
+      "detail": "Interação, instalação operacional e aceite 1.21.2 NOT_RUN/BLOCKED; nenhum aceite transferido."
     },
     "clipboard": {
       "status": "pending",
-      "detail": "NOT_RUN: paste/clipboard no MT5 ainda não validado nesta integração; compilação não comprova funcionamento."
+      "detail": "Seleção/cópia interativa no MT5 desta revisão NOT_RUN; teste local não substitui evidência nativa."
     }
-  },
-  "nativeArtifact": {
-    "sourceFingerprint": "1290186a730aaaf8f1d5645318ff8c814a7dc821e419d9eb3c16015cadf1d783",
-    "cpu": "X64 Regular",
-    "compiler": "MetaEditor64 PE5.0.0.6230 (build6230); SHA25668d8f87dcdb443cb851a75839ae68ed606b0b661995cde8218156778db5244c2",
-    "evidence": "docs/validation/genetrix-1.20.0/evidence/NATIVE-ROOT-RECEIPT-R1.json; docs/validation/genetrix-1.20.0/evidence/NATIVE-INDEPENDENT-REVIEW-R1-PARSER-R2.json; raw logs .log.txt preserved by SHA256",
-    "artifacts": [
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.ex5",
-        "sha256": "968f4e0a3042db19f3fdab1b4ad3d50f565d1b38b10420bfac6c8eba49b69c2c"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Accountant.ex5",
-        "sha256": "535d6920007e1129a7f93a89dc435037afbcb1dc0bc94cbb02b7d147c8784ee5"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Monitor.ex5",
-        "sha256": "023e30f14cef4e322646fd89f46b7e7552916f5cff8ebe7785234b27afd28702"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Supervisor.ex5",
-        "sha256": "1e49bd631b210c115127363bf90d9f5824ed7703f346f6917ee62a14f0c06660"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.ex5",
-        "sha256": "01c1f3cdbd647970029fa1f493bbcd9ad63230e1359a9b46cd9d8d601e51127c"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.ex5",
-        "sha256": "036588649c176ea72d2e81de078afab8e05cadd185c4c13abc040aef31f57ea5"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.ex5",
-        "sha256": "26fa831d110fc1b419ee8dbccc65bad56631fb6bf0f044feefd40d2086baf91d"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.ex5",
-        "sha256": "994677b914fc3a816f1b495c7a0922f521976e884ee972dec10d94445165b2d3"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.ex5",
-        "sha256": "b37ec10d47fee5e53ffd56085e0e829c2eb8714bc0ce311d3d47f64177394e14"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.ex5",
-        "sha256": "ff44761659bb81b450413b803a77210b405aedbb4c06be166d3175c011e3aed3"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.ex5",
-        "sha256": "5ed955439c64f5f0a5effaa7f6009688dc846de03df4c7f930d9f816584da3de"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.ex5",
-        "sha256": "7a85dac28b06caf14b3c40ec7498177121a6d2c2d57bafba88c19d98a7a6f123"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.ex5",
-        "sha256": "b6bf3158951e5064332dcc42a3a65a4ddb35198876aad56e3a63f83a90c1fbf4"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.ex5",
-        "sha256": "df529411f65d3f51e0235e3abbef5e6680a2710538d1f40f1e9929aa73e00226"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.ex5",
-        "sha256": "2f2b2b5c4705fa298cb97441e1dcbdc9d03a11c409fed2049d493a3a649fc213"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.ex5",
-        "sha256": "5bd8bffa155b578c5bfdff67993274394b816154cbe7f51f7c58db85c4379e23"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.ex5",
-        "sha256": "6219262ff3708c2b46e33cd125aa138a46ca4803c798900ff1df41c430f7ce03"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.ex5",
-        "sha256": "868d1a3d02b0789bd0121499cd2da72c674877d41ebf7e89afe804de38853e28"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.ex5",
-        "sha256": "21861e4ffdfc08c322248055f7a8f793ab26cf96e65abe1d7b8b341d57cefbe4"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.ex5",
-        "sha256": "dd815ea88e2282fd97cdceca6a5ffae3b22ad1765c2e3feb8db6cb8b41ea0c1e"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.ex5",
-        "sha256": "276cae52cbf94288d599f0e69703dfa7f877c7eac59d5ff8ae1a3181415b11a8"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.ex5",
-        "sha256": "c44879d9d51c70303ad493b68f7fc96e220df5baa4c865da6887975572d7ddd2"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.ex5",
-        "sha256": "4ac8c39baddde23a6e081b7df6dba393adb17fbb6c673b8619998ce70a63067e"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.ex5",
-        "sha256": "5b86ccb55aef03936bf6b7a35019b94c00695ff8b71f33227b42af49048ab0af"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.ex5",
-        "sha256": "fed3b1882dfa5c5286fd5e06cca8b68221565eb9623ef5704a53e271289b79d2"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Genetrix_Risk_Tests.ex5",
-        "sha256": "88cecc8fe30d2c228377857b41d02b09e96be388b266e70e02964c076a0ae95b"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.ex5",
-        "sha256": "51e286deab532c502c00654d16257ffa36ebbcc88bd440d74fcfdc98c0546ebf"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.ex5",
-        "sha256": "64ffedc88b1d25bce5bb153a394bded89c6996f1a3b7706fa27a4ed60674ac82"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.ex5",
-        "sha256": "3f63c2e62a3589f5557ad15fd82700f70168c0873ea405a608c0e16380a4dfe0"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.ex5",
-        "sha256": "f65f15557af28bc867e5fbbf96e2114726f26b47b39f1e9e16f5f9e05511576f"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.ex5",
-        "sha256": "6e4741f3e2fb94936f9d0e4d707f4dc259d0beb5000fdd1db8b3e8630c1ffecf"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.ex5",
-        "sha256": "de0b502a234402628404f2b203f75de2248259c6ba8a1cb88fa39bc13e1211d6"
-      },
-      {
-        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.ex5",
-        "sha256": "5b477cacc061a85329af9f71ae075a4bc887204bad8bfe57cea9881fc3f12814"
-      }
-    ]
   },
   "productName": "JPW GENETRIX",
   "tagline": "Da origem da operação à leitura do risco.",
   "genetrixCandidate": {
-    "version": "1.20.0",
-    "base": "1.19.0 R3 preservada; docs/validation/genetrix-1.20.0/evidence/BASELINE-MANIFEST.json",
+    "version": "1.21.2",
     "classification": "CANDIDATE",
-    "native": "COMPILATION_PASS_33_OF_33_RUNTIME_NOT_RUN",
+    "baselineCommit": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
+    "native": "COMPILE_NOT_RUN_RUNTIME_BLOCKED",
     "execution": "OBSERVE_ONLY_MONITOR_NO_TRADING_ROUTINES",
-    "siteIntegration": "TRACKED_REPOSITORY_CANDIDATE_RUNTIME_NOT_VALIDATED",
-    "executionScope": "Núcleo observacional; instalação pendente",
-    "supervisor": "OPTIONAL_SEPARATE_NOT_ARMED"
+    "supervisor": "OPTIONAL_SEPARATE_NOT_ARMED",
+    "siteIntegration": "NOT_RUN",
+    "baselineProduct": "1.21.1"
   },
-  "runtimeBuildId": "8a01094f354dc52ed37e14d585b6625d11dc62614a5019aa74d5dc8da7497f1e",
+  "runtimeBuildId": "b62034333bedb9635bb78d06d6b3f22b36510de1f4b7e3214009c12bf0f31862",
   "sourceHashes": {
     "AGENTS.md": "fa1e7e3160f858709393d5f7ce071dcad23f3a420dfa11c4e1fd82baba27ce21",
     "GENETRIX_7X_LEDGER.md": "de84e7148a984f7b437e589fc33ab0ffada6bd3652f8b7192136c6cc9a4c6439",
+    "GENETRIX_CANDIDATE_1_20_1.md": "888d37de2b898ebce2da353275cb61601b13d5293c9891977c9b33cc5c5f7e2a",
+    "GENETRIX_CANDIDATE_1_21_0.md": "f547423389b4bbd093da718385206ee5fd90fd4be641de3a49c810617c9bb1fb",
     "GENETRIX_COMPILE_FIX_1_18_2.md": "51d35eff6437080d29466e181effec595a87de5210c1b5f990c09d8ccb2d1bc3",
     "GENETRIX_CORE_1_20_0.md": "0d494acfc9f0d54a81d50fe83e7094d8fcaca5b080d8647223ebb87b5c84746b",
+    "GENETRIX_CORRECTIONS_1_21_2.md": "e3c913376524b3240909c5c9049a034afb5b1d569ead95783a0b12f5d7dfa1e4",
     "GENETRIX_PERSONAL_HISTORY.md": "f52fb0bfe81110ca010dc5182335da697699483d239541521605d2752e399b97",
     "GENETRIX_REPAIR_1_18_1.md": "0ccff0d81177b8bfec3f5efe2342a8389b2a3b72a004f0f0b8d8c119244fa78d",
+    "GENETRIX_REVIEW_1_21_1.md": "62c11ce851918f6b173755d2ccbf8bf847aec5c61a5cc3ce8ed7ed6c3b74a4c8",
     "GENETRIX_UI_1_19_0.md": "3ab6f1faea138ec18f03cddc6075c0684e78bdb61bb64f4d0e1ba438b05d742d",
     "MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5": "63ad1caa3228e915ba50eb2e6404e58993911412e11a68eae50a3f2100d9366c",
     "MQL5/Experts/JPWealth/JPW_Genetrix_Accountant.mq5": "eff085079eca0cc7108ec18c01f120f06f4567d3daed650927681234e3e97e24",
@@ -324,9 +193,10 @@
     "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_150.bmp": "b8f0cea6d304cec380c965301f210969490e91e2978a2fb77d62a937edf5e269",
     "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_200.bmp": "5ca59f6dd99b56d3cd9611641f4e17d85f63b28dfc565e099a8d22c49ee59f0c",
     "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp": "d812113962c031d866d776619be47565c99541fcf7dc5b372116c9f13594e781",
-    "MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh": "621110ceea32e7292b7e8a2855fca10f8b7245400f8c0b37d70e9119e8dd7d40",
+    "MQL5/Images/JPWealth/JPW_NoCuda_Logo.provenance.md": "02d6dc261ad667917f97f3985ddbe2ca7c5f9a4de7697a61867b8d76b4f5fae0",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh": "cb7b9a64be67cc07e79ed8c2602c79cd481491307d01d6d59fc3c2d7205d8400",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh": "512b38af73fa3a27ff6f4dc29d0b2d3126ecf740e3aa951c4e80e56b549f6401",
-    "MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh": "eaa08b9a84d54dc2e5226bd3ee0645e99315545eb0f4da49b0294f251cf7d03d",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh": "72f55c55ebd64a5804499f818aa2d4f4a7e022f32dab23aca1e6cedeb8df750d",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh": "a2155822afe2bd921b6ce088edd2b64e04e5c7aedb53dbd5c3e1ce8f1368bf7b",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh": "98c47b0526c772846d1e70b048f01deab7881c8be879ba0e0ca9693902534418",
@@ -336,7 +206,7 @@
     "MQL5/Include/JPWealth/JPW_Alavancagem_Observer_Presence.mqh": "efb047a162c0fd0df409483dbdc81983e82d4181e1ce4a6e7fba17bca1394bcd",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Panel.mqh": "9328e24af17d874d94dfefb7053700bfc6740cf5901bb6daa1a4911269cac4e5",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh": "baa9f19cf6358c5a570bedeed870754483128b62ba5205437a9dcc5f07d33a29",
-    "MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "9d9daec898a3f18f9b6a0c5f0a6822c31721c984ef0fa4ff67c5288c5410d260",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "571be320500ad60682e2efbe1b47ca088b3d02534db0535144e0925569ca10c6",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
     "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh": "50dcb401e51cf176a404846add48d59d14ce2e75c78c30b5fd2dd67abbfa444e",
     "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
@@ -351,50 +221,50 @@
     "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Terminal.mqh": "b5232907de3b8ab5c928a0b7a176fd3c10c673ddcfb822d424766be76b47148b",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
     "MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh": "1fe7397a337be945a77c0c3b68d3f4b317180d7929732f88525a94c127c000b2",
-    "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "cf4073213f060543b85b0ba71e73d93c7bdbcfe2aa0ecf500d5afd69751d9cc1",
+    "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "c1f72fd8e58c696c531edeed8796a3a399a10b55a9a2ebfc419a6ff83711f95f",
     "MQL5/Include/JPWealth/JPW_Genetrix_Accountant_Runtime.mqh": "5529b47df6dea893d6fd4e288a74c218d332e0298eb9801d7654c062409e34d3",
-    "MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh": "e409bf0ddd2357733cdf1009578b0c07fb2b9fe55abe66d3f9e53a525a6cbbb9",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh": "253c992b8fc82e2b84410fd9ab56aab2c8c21f9ec32bcab542b000dc28d300f7",
     "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Bridge.mqh": "391680d77672dd2b8b9e0b81a04a35258fd116c10c2abac695c8b081045ae104",
-    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh": "d329042d6bc612c209490f81a2d569fd54ec13b78874104a6297cce189b12d0b",
-    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Preparation.mqh": "a82d710e1f98be659871bc3cf9dc7eeb5399fd4450f91a761ba5f746766b6b34",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh": "7dc452123b987d227bffe7aaf210cc7a5c3b965369def66bf5120a62da0c76ee",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Preparation.mqh": "0b0c789b9b36afe28f60fba6a5948c8cbedfd6e0548e845defa066b1f005b3eb",
     "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Store.mqh": "b8d326f04c0723360925b217b1f52a468513d92f6f5933bf38dfe1fe9e876a96",
-    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Terminal.mqh": "4efe9a62ab476f7add28ed7e3cf24eab85f4c2fa999ab64c3f03aaf61d75cbde",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Terminal.mqh": "1053cd2c9905a2a1f81ea7da0111ce9204a1c9b8cfb605b5844151536758f38e",
     "MQL5/Include/JPWealth/JPW_Genetrix_Monitor_Core.mqh": "f925790a27cd244df230b0959e6c0fd27ff0be2ea5cc23742390d7780e8f0880",
     "MQL5/Include/JPWealth/JPW_Genetrix_Monitor_Status.mqh": "4658c7c9cdc65322e2022c434b8a6d7b0ed08f82c9ee4b79691797ac540c8d9d",
     "MQL5/Include/JPWealth/JPW_Genetrix_Monitor_UI.mqh": "2d794c558ac4a21c22f4db2f3b691410c72ea2228a127b9e8c3f78127d241ee2",
     "MQL5/Include/JPWealth/JPW_Genetrix_Observer_Runtime.mqh": "a357c1850931d6515f2f9d7c341df741f57e3ace328694ae2ac16963504edf2c",
-    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh": "8325dde4504ca17e72ce94604ef18ceac06a525edf325afaa12f4f127c00a380",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh": "73ef12c0048ad3268a1324c25356cc613b6d03cf37f9337f683ab2270b125f9f",
     "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Store.mqh": "fc5a858e2a28a67613734d12e266acb082b5b94100104e8246fb65375e20b442",
-    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh": "7a2de90a6b429a514653c1bba309272aab0944f42d6f18a057f2c400ce0cb68f",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh": "b3094cc750a9dd0c7604bcb9ae62854497f83d8084ad4791f16f289362d528df",
     "MQL5/Include/JPWealth/JPW_Genetrix_UI.mqh": "1051702bc2b1dbd195f42d6efadaeb1ad6ab2ba3a5b3e3383a0fe65c352d6ca6",
     "MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh": "9fed10b552abdd9ff3b8181b81332635270cb85a02393730b9b5b7bfb8988e71",
-    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh": "b83cd9b4f50da017f4f98354181712461f8d5a15501e97c140ac2427a40407b0",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh": "cf4a38dd2648d931163ea6ff1c65f4ca6fa55fbae3099c81d6083ab4eb4c0135",
     "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
     "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd",
     "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh": "2fca05f5fe15d67089d462c503536d9a8000df9088dad1222f3bb502df05f42d",
     "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1",
-    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh": "3fdff8e04c29c298554ba22709991a331ed89fa09b69cd035d344ec2a6d291a7",
+    "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh": "b1ed077b4e6233397dfc473e64c1e13b12202eeffe3d1c6d510b8543eaea64f0",
     "MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh": "2d101ff677276ec23650be5c3e825a87ee716769e0273884b98ef8031f78a1f5",
     "MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh": "6f830d204a9ff05ccb66ce07ff2675eb12ae9f243446e21a26afd743a4d683a0",
     "MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh": "41b8abe75f00be9680ab528cd1621951abab8dfacddaef654ddf3c3a485357ee",
     "MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh": "e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e",
     "MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh": "ff89bc319bb956c46d4eba30eda24c2cfa7c3c400ece14ab408ac34f00e3b14a",
-    "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh": "a3176927ffc7959f23748c7b1242628a5d548f5e1d5b1d786873dd18d625374b",
-    "MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh": "fff1414a55b9e1661d360075f0ec3b2b494c9e57e0d4f87a0db9fcdd3c06b29d",
-    "MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh": "6590d13570c94409b77e12ed15f5e08cc0020898319e07ccc95e12b130743526",
+    "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh": "09d85bb783ee346bafd2d7c1a3fe82c50244f646a0d00fad5e04e85d0583fec2",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh": "858da864d2f37d60334d3739db82c9eba66d7c21627225711a9811e94fa3fc1d",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
     "MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh": "fe65d13bfec4b147e743ab6ec8d3ea482e5329a9e71ec8ef9f31587d74613eec",
     "MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh": "742e384fee457ff6429218e395993a1485e77f3a44ae9d0a3ed5c8ef0ed585e8",
     "MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh": "bac55b8f5cb30597b98efa7300dcd9551a760e5043ad343d3c358725608af3b1",
-    "MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh": "d23b5b934fc9a8cc75882de0ff72407ab9a9fd8fc89b0e1a9698a5c193890fa0",
+    "MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh": "b4c2041a60eb304bce59c7689c4e52850146cc5fd36209af06f91733ccfd2168",
     "MQL5/Include/JPWealth/JPW_SignalCopy_Controller.mqh": "31cf2504f46ccab679bfbc51e5ef66f18cf378d1cae6eb2a5a63001dad1eb1c8",
     "MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh": "2c8f4284da8eee97e794cd9cbf7efb9d78808a97f859ef1752c48bb730f71601",
     "MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh": "b1667783a6f262c0731b2e867c46cab073975ec0fa6df284a6cdbcb9e66950c9",
     "MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh": "329fede70dec11c0f8b046c20ef70b4406b27e700313d8e48c76616435a41db5",
-    "MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh": "0f22816b9d10ba5a394763ba711a3ba5545beb4c8c539ba1c744c906f230d4c3",
-    "MQL5/Include/JPWealth/JPW_UI_Design.mqh": "c0505daffbe786af37afbe35966b79f22a9ca7ffd0e7c652bf243617f8ffbb9c",
+    "MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh": "1546a5a75ff53ad26bc52da45a8d892af59a66641a0bc0644199ca4a5cb98495",
+    "MQL5/Include/JPWealth/JPW_UI_Design.mqh": "4697a2fe433c774d1eb800385c18375dc90a17c86847ffd94f6258edde5608e8",
     "MQL5/Include/JPWealth/JPW_UI_Focus.mqh": "79ee34a078ac1a2bf81dc0027bfc413e162fcdfde04e9e1f489290b5e0652219",
-    "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "039eaa4d7ff98eea464c303a7bf5a4290e1223a4eefdf8a23fe4704c06a8fd0b",
-    "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "1ac4b9cd039fc223998ad67e896d32e5535c9bc78cd6a4fe7c2adf2cb2e2b4ba",
+    "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "03d89c9f8e40794dec2f871a2059d366a701676189f2a1e5dcccc2549cf8bed5",
+    "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "f8f52df2722af890e60c826250e9bfd9bc2de68fc1025b2d83f59a527699096a",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5": "56a9b7af025b1429b074238990415a12334814ac0cd4e438656c6320aba10327",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5": "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5": "8b50f01a9e9deea1dc29b12cad6ee70012b49abda84bb9dae4e81a18e19184bb",
@@ -407,7 +277,7 @@
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5": "53779e5d00dc6f9e903dca760406173182025bd903196cc6029eb38b3e11fb7a",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5": "55c9fd37a7d8829ddda11955b888eb9722179d01e8607edb769a78a9a0a1071e",
-    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5": "3de62cd34a13673f6c23474127e16839dba378c1439fb05b53650f4488fee0b7",
+    "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5": "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5": "e61a63c5c203c10991301fb3ca4867578d695f1db0db52fc2538ee99d939a6dc",
     "MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5": "2b1a92faf049a187b65d94e060ec2270cdd140477251935d3a7639b89429e1a4",
@@ -422,7 +292,7 @@
     "MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5": "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
     "MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
     "MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
-    "README.md": "d4da746f853fb71ac0870099495ba9bcbbae62403fec2a15f5b4e9cd3b1dbcbc",
+    "README.md": "c66401dfc747fdd605d1fc33122591c78991a1d358eea0e9877e4fdc78f9d379",
     "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
     "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf": "0b7797c8ce561073c541ca3c75ad2904b15e36a7d377066f395ea1daded5f05e",
     "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
@@ -431,21 +301,22 @@
     "harness/contracts/ENG-AC01-12.json": "c0f93f1ffd9eaf83dac33fd6f9ae2a12c321049ae01491018b9ac6ce40954635",
     "harness/contracts/TEMPLATES.md": "7868e8711d1194dfaead7dad42caf6c019099d93735e95bf8705f415b3375df0"
   },
-  "mqlSourceFingerprint": "1290186a730aaaf8f1d5645318ff8c814a7dc821e419d9eb3c16015cadf1d783",
+  "mqlSourceFingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6",
   "downloads": {
     "source": {
       "available": true,
-      "path": "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.20.0.zip",
-      "filename": "JPW_Genetrix_Fontes_v1.20.0.zip",
-      "sha256": "9a0bb0a4cb61b1e63eee99b10bde64a446f1d383ad5179bf5b05d9c85b65af7d",
-      "bytes": 737523
+      "path": "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip",
+      "filename": "JPW_Genetrix_Fontes_v1.21.2.zip",
+      "sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+      "bytes": 760092
     },
     "compiled": {
-      "available": true,
-      "path": "downloads/jpw-alavancagem-atual/JPW_Alavancagem_Atual_Compilado_v1.20.0.zip",
-      "filename": "JPW_Alavancagem_Atual_Compilado_v1.20.0.zip",
-      "sha256": "0f23b0f0163d824a78ff0e2ee0b8bb90f08c5075b293968f2cc940666b5447ba",
-      "bytes": 3600177
+      "available": false,
+      "path": null,
+      "filename": null,
+      "sha256": null,
+      "bytes": null,
+      "reason": "Fontes 1.21.2 em preparação; EX5 anteriores não comprovam esta revisão. Compilação nativa NOT_RUN até recibo do mesmo fingerprint."
     }
   },
   "integration": {
@@ -461,6 +332,7 @@
       "pilot_R2": "FAIL_25_PASS_7_FAIL_4_INCONCLUSIVE_OF_36",
       "R5": "AC03_FAIL_AC04_PASS_FULL_NOT_RUN",
       "revision_1_0_1": "NOT_ADOPTED"
-    }
+    },
+    "baseRole": "HISTORICAL integration reference preserved from baseline manifest; current candidate baseline is genetrixCandidate.baselineCommit."
   }
 }

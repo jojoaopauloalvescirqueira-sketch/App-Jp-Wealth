@@ -8,6 +8,8 @@ import json
 import base64
 import re
 import os
+import sys
+import traceback
 from pathlib import Path
 import threading
 from urllib.request import urlopen
@@ -24,7 +26,8 @@ MANIFEST = json.loads((ROOT / 'downloads/jpw-alavancagem-atual/manifest.json').r
 SOURCE = MANIFEST['downloads']['source']
 ARCHIVE = ROOT / SOURCE['path']
 COMPILED = MANIFEST['downloads']['compiled']
-COMPILED_ARCHIVE = ROOT / COMPILED['path']
+# A missing native slice is a valid candidate state, never a path to old EX5.
+COMPILED_ARCHIVE = ROOT / COMPILED['path'] if COMPILED.get('available') is True and isinstance(COMPILED.get('path'), str) else None
 EVIDENCE_DIR = Path(os.environ['JPW_LEVERAGE_EVIDENCE_DIR']) if os.environ.get('JPW_LEVERAGE_EVIDENCE_DIR') else None
 EXPECTED = {
     'README.md',
@@ -136,14 +139,133 @@ HARNESS_MEMBERS = {
     "harness/contracts/TEMPLATES.md", "harness/REPOSITORY_INTEGRATION.md",
 }
 EXPECTED.update(HARNESS_MEMBERS)
-assert len(EXPECTED) == 127
+EXPECTED.update({
+    "GENETRIX_CANDIDATE_1_20_1.md", "GENETRIX_CANDIDATE_1_21_0.md",
+    "GENETRIX_REVIEW_1_21_1.md", "GENETRIX_CORRECTIONS_1_21_2.md",
+    "MQL5/Images/JPWealth/JPW_NoCuda_Logo.provenance.md",
+})
+assert len(EXPECTED) == 132
 EXPECTED_EX5 = {name[:-4] + ".ex5" for name in EXPECTED if name.endswith(".mq5")}
 assert len(EXPECTED_EX5) == 33
+EXPECTED_VERSION = "1.21.2"
 EXPECTED_COVERAGE = (
-    "CANDIDATE 1.20.0 — Monitor Observer+Accountant; cálculo1.9.0. "
-    "Compilação nativa33/33,0erros0avisos. Testes locais e limites nos recibos;"
-    "0/3 sessões críticas MT5, instalação/aceiteNOT_RUN."
+    "CANDIDATE 1.21.2; cálculo 1.9.0 preservado; reparos NoCuda e candidato separado de julgadores. "
+    "Critérios locais, compilação e runtime possuem evidências próprias; sem aceite herdado."
 )
+
+
+def verify_manifest_contract(manifest):
+    """Explicit release oracle. Source-only never proves native execution/publication."""
+    assert manifest['version'] == EXPECTED_VERSION, 'candidate version differs from explicit 1.21.2 target'
+    assert manifest['productName'] == 'JPW GENETRIX'
+    assert len(manifest['sourceFiles']) == len(set(manifest['sourceFiles'])) == 132
+    assert {Path(name).relative_to('mt5/jpw-alavancagem-atual').as_posix()
+            for name in manifest['sourceFiles']} == EXPECTED, 'explicit source inventory differs'
+    assert set(manifest['sourceHashes']) == EXPECTED, 'source hash inventory differs'
+    assert all(re.fullmatch('[a-f0-9]{64}', digest) for digest in manifest['sourceHashes'].values())
+    assert manifest['coverage'] == EXPECTED_COVERAGE, 'candidate coverage differs from frozen target'
+    assert manifest['genetrixCandidate']['version'] == EXPECTED_VERSION
+    source = manifest['downloads']['source']
+    assert source['available'] is True and isinstance(source['path'],str) and source['path']
+    assert source['filename'] == Path(source['path']).name
+    assert re.fullmatch('[a-f0-9]{64}',source['sha256']) and source['bytes'] > 0
+    compiled = manifest['downloads']['compiled']; native = manifest.get('nativeArtifact')
+    assert type(compiled['available']) is bool
+    if compiled['available']:
+        assert native is not None, 'compiled download has no native receipt'
+        assert isinstance(compiled['path'],str) and compiled['path']
+        assert compiled['filename'] == Path(compiled['path']).name
+        assert re.fullmatch('[a-f0-9]{64}',compiled['sha256']) and compiled['bytes'] > 0
+        assert native['sourceFingerprint'] == manifest['mqlSourceFingerprint']
+        assert native['cpu'] == 'X64 Regular' and '6230' in native['compiler']
+        assert native['evidence'] and len(native['artifacts']) == 33
+        names={Path(item['path']).relative_to('mt5/jpw-alavancagem-atual').as_posix()
+               for item in native['artifacts']}
+        assert names == EXPECTED_EX5 and len(names) == len(native['artifacts'])
+        assert manifest['validation']['compilation']['status'] == 'passed'
+        assert '33/33' in manifest['validation']['compilation']['detail']
+    else:
+        assert native is None, 'source-only entry must not carry a claimed native bundle'
+        assert all(compiled[key] is None for key in ('path','filename','sha256','bytes'))
+        assert isinstance(compiled.get('reason'),str) and compiled['reason']
+        assert manifest['validation']['compilation']['status'] == 'pending'
+        assert 'NOT_RUN' in manifest['validation']['compilation']['detail']
+        assert manifest['genetrixCandidate']['native'] == 'COMPILE_NOT_RUN_RUNTIME_BLOCKED', 'source-only candidate must not claim compilation PASS'
+    for kind in ('mathematics','terminal','clipboard'):
+        assert manifest['validation'][kind]['status'] == 'pending'
+    assert manifest['integration']['runtime'] == manifest['integration']['installation'] == 'NOT_RUN'
+    assert manifest['integration']['complete_acceptance'] == 'INCONCLUSIVE'
+    assert manifest['integration']['historical_HIS_AC20'] == 'PRODUCT_FAIL_3_OF_3'
+
+
+def verify_native_page_state(page, manifest=MANIFEST):
+    """Observe all current DOM claims; historical and conditional guidance stays allowed."""
+    compiled=manifest['downloads']['compiled'];available=compiled['available'];problems=[]
+    def require(ok, message):
+        if not ok: problems.append(message)
+    button=page.locator('[data-jpw-leverage-download="compiled"]')
+    require(button.count()==1,'botão compilado ausente ou duplicado')
+    if button.count()==1:
+        require(button.is_enabled()==available,'botão compilado diverge da disponibilidade')
+    statuses=page.locator('[data-jpw-leverage-meta="compiled-status"]').all_text_contents()
+    hashes=page.locator('[data-jpw-leverage-meta="compiled-sha"]').all_text_contents()
+    require(bool(statuses),'texto de disponibilidade compilada ausente')
+    require(bool(hashes),'estado de integridade compilada ausente')
+    summaries=page.locator('[data-jpw-leverage-meta="native-summary"]').all_text_contents()
+    require(len(summaries)==1,'resumo nativo ausente ou duplicado')
+    summary=summaries[0] if len(summaries)==1 else ''
+    limits=page.locator('[data-genetrix-panel="validation"]').text_content()
+    if available:
+        require(all(compiled['filename'] in value for value in statuses),'nome do compilado diverge')
+        require(set(hashes)=={compiled['sha256']},'hash compilado diverge')
+        require(summary=='Compilado · execução MT5 pendente','resumo nativo diverge do recibo')
+        require('33 executáveis' in limits,'inventário compilado não identificado')
+    else:
+        require(all('Indisponível' in value and compiled['reason'] in value for value in statuses),'indisponibilidade compilada não explicada')
+        require(set(hashes)=={'—'},'fonte-only exibe hash compilado sem prova')
+        require(summary=='Validação nativa pendente','fonte-only exibe resumo nativo incompatível')
+        # Only explicit current claims are refused. A historical clause must
+        # label its own scope; a generic instruction about EX5/33 is not proof.
+        blocks=page.locator('[data-genetrix-panel="validation"] p').all_text_contents() or [limits]
+        clauses=[clause for block in blocks for clause in re.split(r'(?<=[.;])\s+|\n',block)]
+        current_claims=[clause for clause in clauses if re.search(r'\bHá\s+compilação\s+comprovada\b',clause,re.I)
+                        and not re.match(r'^\s*(Referência histórica|Histórico(?: da versão)?|Versão histórica)\b',clause,re.I)]
+        require(not current_claims,'página afirma compilação atual comprovada para candidato fonte-only')
+    for phrase in ('0/3','NOT_RUN','INCONCLUSIVE','HIS-AC20','PRODUCT_FAIL 3/3'):
+        require(phrase in limits,'estado literal ausente: '+phrase)
+    if problems:
+        print(json.dumps({'PAGE_NATIVE_DIVERGENCES':problems},ensure_ascii=False),flush=True)
+        raise AssertionError(' ; '.join(problems))
+    return 'PASS' if available else 'NOT_RUN'
+
+
+def page_observation(page):
+    """Public DOM evidence only; no account/runtime state is included."""
+    observed={key:page.locator(selector).all_text_contents() for key,selector in {
+        'version':'[data-jpw-leverage-meta="version"]',
+        'native_summary':'[data-jpw-leverage-meta="native-summary"]',
+        'compiled_status':'[data-jpw-leverage-meta="compiled-status"]',
+        'source_hash':'[data-jpw-leverage-meta="source-sha"]',
+        'validation':'[data-genetrix-panel="validation"]'}.items()}
+    observed['expected_version']=EXPECTED_VERSION
+    observed['expected_source_hash']=SOURCE['sha256']
+    observed['expected_compiled_available']=COMPILED['available']
+    # Preserve the table's established identity contract: the harness uses
+    # full vault-relative package paths; installable MQL entries use filenames.
+    expected_identifiers={name if name in HARNESS_MEMBERS else Path(name).name:name
+                          for name in EXPECTED if not name.endswith('.provenance.md')}
+    assert len(expected_identifiers)==len(EXPECTED)-2, 'file-table identifiers collide'
+    actual_files=set(page.locator('.leverage-file-table tbody th').all_text_contents())
+    expected_files=set(expected_identifiers)
+    observed['file_table_expected_identifier_to_member']=dict(sorted(expected_identifiers.items()))
+    observed['file_table_observed_raw_identifiers']=sorted(actual_files)
+    observed['file_table_missing']=sorted(expected_files-actual_files)
+    observed['file_table_unexpected']=sorted(actual_files-expected_files)
+    observed['source_hash_mismatch']=set(observed['source_hash'])!={SOURCE['sha256']}
+    observed['version_mismatch']=set(observed['version'])!={EXPECTED_VERSION}
+    observed['external_publication']='NOT_RUN'
+    return observed
+
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -197,48 +319,22 @@ def route_and_inspect(page):
     assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
     assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeveragePage').text_content()
     assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeveragePage').text_content()
-    assert MANIFEST['version'] == '1.20.0'
-    assert MANIFEST['productName'] == 'JPW GENETRIX'
+    verify_manifest_contract(MANIFEST)
     assert 'Da origem da operação' in page.locator('#jpwLeverageOverview').text_content()
     assert 'medidas do Fibonacci importado permanecem indisponíveis' in page.locator('#jpwGenetrixDefinition').text_content()
-    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 127
-    assert MANIFEST['coverage'] == EXPECTED_COVERAGE
-    native = MANIFEST['nativeArtifact']
-    assert native['sourceFingerprint'] == MANIFEST['mqlSourceFingerprint']
-    assert native['cpu'] == 'X64 Regular' and '6230' in native['compiler']
-    assert native['evidence'] and len(native['artifacts']) == 33
-    native_records = {Path(item['path']).relative_to('mt5/jpw-alavancagem-atual').as_posix(): item['sha256']
-                      for item in native['artifacts']}
-    assert set(native_records) == EXPECTED_EX5
-    for name, expected_hash in native_records.items():
-        assert re.fullmatch('[a-f0-9]{64}', expected_hash)
-        assert sha256((ROOT/'mt5/jpw-alavancagem-atual'/name).read_bytes()).hexdigest() == expected_hash
-    assert MANIFEST['genetrixCandidate']['native'] == 'COMPILATION_PASS_33_OF_33_RUNTIME_NOT_RUN'
-    assert MANIFEST['downloads']['compiled']['available'] is True
-    assert MANIFEST['validation']['compilation']['status'] == 'passed'
-    assert '33/33' in MANIFEST['validation']['compilation']['detail']
-    for kind in ('mathematics', 'terminal', 'clipboard'):
-        assert MANIFEST['validation'][kind]['status'] == 'pending'
-    assert MANIFEST['integration']['runtime'] == MANIFEST['integration']['installation'] == 'NOT_RUN'
-    assert MANIFEST['integration']['complete_acceptance'] == 'INCONCLUSIVE'
-    assert MANIFEST['integration']['historical_HIS_AC20'] == 'PRODUCT_FAIL_3_OF_3'
-    limits = page.locator('[data-genetrix-panel="validation"]').text_content()
-    for phrase in ('33 executáveis', '0/3', 'NOT_RUN', 'INCONCLUSIVE', 'HIS-AC20', 'PRODUCT_FAIL 3/3'):
-        assert phrase in limits, phrase
+    print(json.dumps({'PAGE_OBSERVATION':page_observation(page)},ensure_ascii=False),flush=True)
+    verify_native_page_state(page)
     assert MANIFEST['validation']['clipboard']['detail'] in page.locator('[data-jpw-leverage-meta="clipboard"]').text_content()
     overview = page.locator('#jpwGenetrixArchitecture').text_content()
     for phrase in ('JPW_Genetrix_Monitor', 'Genetrix · Conta', 'NoCuda · Gráficos',
                    'Observer e Accountant', 'rollback', 'Supervisor 7x', 'outro gráfico'):
         assert phrase in overview, phrase
-    assert 'Compilado · execução MT5 pendente' in page.locator('[data-jpw-leverage-meta="native-summary"]').text_content()
     assert set(page.locator('[data-jpw-leverage-meta="version"]').all_text_contents()) == {MANIFEST['version']}
     assert all(MANIFEST['validation']['mathematics']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="mathematics"]').all_text_contents())
     assert all(MANIFEST['validation']['compilation']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="compilation"]').all_text_contents())
     assert all(MANIFEST['validation']['terminal']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="terminal"]').all_text_contents())
     assert page.locator('[data-jpw-leverage-download="source"]').is_enabled()
     assert set(page.locator('[data-jpw-leverage-meta="source-sha"]').all_text_contents()) == {SOURCE['sha256']}
-    assert page.locator('[data-jpw-leverage-download="compiled"]').is_enabled()
-    assert all(COMPILED['filename'] in value for value in page.locator('[data-jpw-leverage-meta="compiled-status"]').all_text_contents())
     assert page.evaluate("JPWNavigation.navigateLocal('tools','leverage')")
     assert page.evaluate("JPWNavigation.current().canonical") == 'tools-leverage'
 
@@ -266,12 +362,12 @@ def verify_guide(page):
         'Indicators', 'Include', 'Scripts', 'Experts', 'Images']
     open_area(page, 'install')
     assert page.locator('.leverage-package--source [data-jpw-leverage-download="source"]').is_enabled()
-    assert page.locator('.leverage-package--compiled [data-jpw-leverage-download="compiled"]').is_enabled()
+    assert page.locator('.leverage-package--compiled [data-jpw-leverage-download="compiled"]').is_enabled() == COMPILED['available']
     open_area(page, 'validation')
     validation = page.locator('[data-genetrix-panel="validation"]')
     assert validation.locator('[data-jpw-leverage-meta="version"]').text_content() == MANIFEST['version']
     assert SOURCE['filename'] in validation.locator('[data-jpw-leverage-meta="source-status"]').text_content()
-    assert COMPILED['filename'] in validation.locator('[data-jpw-leverage-meta="compiled-status"]').text_content()
+    assert (COMPILED['filename'] if COMPILED['available'] else COMPILED['reason']) in validation.locator('[data-jpw-leverage-meta="compiled-status"]').text_content()
     validation_hash = validation.locator('.genetrix-validation-integrity > summary')
     validation_hash.focus(); page.keyboard.press('Enter')
     assert validation_hash.evaluate('n=>n.parentElement.open')
@@ -381,7 +477,12 @@ def verify_guide(page):
     expected_destinations.update({name: 'Referência no ZIP · não copiar para MQL5' for name in
         {'GENETRIX_REPAIR_1_18_1.md', 'GENETRIX_COMPILE_FIX_1_18_2.md', 'GENETRIX_UI_1_19_0.md',
          'GENETRIX_CORE_1_20_0.md'} | HARNESS_MEMBERS})
-    assert len(expected_destinations) == rows.count() == 126
+    expected_destinations.update({name:'Referência no ZIP · não copiar para MQL5' for name in
+        ('GENETRIX_CANDIDATE_1_20_1.md','GENETRIX_CANDIDATE_1_21_0.md',
+         'GENETRIX_REVIEW_1_21_1.md','GENETRIX_CORRECTIONS_1_21_2.md')})
+    # The two resource provenance sidecars are in the archive inventory; like
+    # the pre-existing brand sidecar they are not installable file-table rows.
+    assert len(expected_destinations) == rows.count() == 130
     assert {row.locator('th').text_content(): row.locator('td').text_content()
             for row in rows.all()} == expected_destinations
     assert 'não são compilados separadamente' in page.locator('#jpwLeverageCompile').text_content()
@@ -707,7 +808,7 @@ def verify_archive(raw):
     with ZipFile(BytesIO(raw)) as bundle:
         listed_names = bundle.namelist()
         names = set(listed_names)
-        assert len(listed_names) == len(names) == 127
+        assert len(listed_names) == len(names) == 132
         assert EXPECTED == names, names
         assert names == {Path(path).relative_to('mt5/jpw-alavancagem-atual').as_posix()
                          for path in MANIFEST['sourceFiles']}, names
@@ -716,6 +817,7 @@ def verify_archive(raw):
 
 
 def verify_compiled_archive(raw):
+    assert COMPILED['available'] is True and MANIFEST.get('nativeArtifact') is not None, 'native slice is unavailable'
     assert len(raw) == COMPILED['bytes']
     assert sha256(raw).hexdigest() == COMPILED['sha256']
     native = {Path(item['path']).relative_to('mt5/jpw-alavancagem-atual').as_posix(): item['sha256']
@@ -752,8 +854,14 @@ def download_from_page(page, kind='source'):
 def main():
     assert SOURCE['available'] is True and ARCHIVE.is_file(), 'source package not built'
     verify_archive(ARCHIVE.read_bytes())
-    assert COMPILED['available'] is True and COMPILED_ARCHIVE.is_file(), 'compiled package not built'
-    verify_compiled_archive(COMPILED_ARCHIVE.read_bytes())
+    verify_manifest_contract(MANIFEST)
+    if COMPILED['available']:
+        assert COMPILED_ARCHIVE is not None and COMPILED_ARCHIVE.is_file(), 'compiled package not built'
+        from leverage_package_test import assert_native_evidence
+        assert_native_evidence(ROOT, MANIFEST)
+        verify_compiled_archive(COMPILED_ARCHIVE.read_bytes())
+    else:
+        print('PAGE_NATIVE_COMPILATION: NOT_RUN; source-only candidate; no prior EX5 accepted',flush=True)
     # Same static bytes/assertions; existing bounded transport avoids dropped
     # bootstrap scripts under concurrent local loads. No retry or fallback.
     server = BrowserFixtureServer(('127.0.0.1', 0), Quiet)
@@ -768,9 +876,10 @@ def main():
         with urlopen(origin + '/' + SOURCE['path']) as response:
             assert response.status == 200
             verify_archive(response.read())
-        with urlopen(origin + '/' + COMPILED['path']) as response:
-            assert response.status == 200
-            verify_compiled_archive(response.read())
+        if COMPILED['available']:
+            with urlopen(origin + '/' + COMPILED['path']) as response:
+                assert response.status == 200
+                verify_compiled_archive(response.read())
         with sync_playwright() as playwright:
             chrome = Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
             launch_options = {'executable_path': str(chrome)} if chrome.is_file() else {}
@@ -783,7 +892,7 @@ def main():
                     route_and_inspect(page)
                     verify_guide(page)
                     download_from_page(page)
-                    download_from_page(page, 'compiled')
+                    if COMPILED['available']: download_from_page(page, 'compiled')
                     assert page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})') == before
                     assert not errors, errors
                     print('PASS', name, 'route, metadata, bytes and extraction', flush=True)
@@ -806,25 +915,26 @@ def main():
                         assert not count
                         print('PASS HTTP equal-size tampered ZIP refused by SHA-256',flush=True)
                         page.unroute('**/' + SOURCE['path'])
-                        page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=404, body='missing'))
-                        # Navigation coverage intentionally closed disclosures. Re-establish
-                        # the negative case's visible UI precondition through its summary.
-                        compiled_disclosure = page.locator('.genetrix-compiled-details')
-                        if not compiled_disclosure.evaluate('n=>n.open'):
-                            compiled_disclosure.locator(':scope > summary').click()
-                        compiled_button = page.locator('[data-jpw-leverage-download="compiled"]')
-                        assert compiled_button.is_visible() and compiled_button.is_enabled()
-                        compiled_button.click()
-                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').dataset.state==='error'")
-                        assert 'não encontrado' in page.locator('#jpwLeverageDownloadStatus').text_content()
-                        assert not count
-                        page.unroute('**/' + COMPILED['path'])
-                        changed = bytearray(COMPILED_ARCHIVE.read_bytes()); changed[-1] ^= 1
-                        page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=200, body=bytes(changed), content_type='application/zip'))
-                        compiled_button.click()
-                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
-                        assert not count
-                        print('PASS HTTP native missing/tampered archive refused; no download', flush=True)
+                        if COMPILED['available']:
+                            page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=404, body='missing'))
+                            # Navigation coverage intentionally closed disclosures. Re-establish
+                            # the negative case's visible UI precondition through its summary.
+                            compiled_disclosure = page.locator('.genetrix-compiled-details')
+                            if not compiled_disclosure.evaluate('n=>n.open'):
+                                compiled_disclosure.locator(':scope > summary').click()
+                            compiled_button = page.locator('[data-jpw-leverage-download="compiled"]')
+                            assert compiled_button.is_visible() and compiled_button.is_enabled()
+                            compiled_button.click()
+                            page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').dataset.state==='error'")
+                            assert 'não encontrado' in page.locator('#jpwLeverageDownloadStatus').text_content()
+                            assert not count
+                            page.unroute('**/' + COMPILED['path'])
+                            changed = bytearray(COMPILED_ARCHIVE.read_bytes()); changed[-1] ^= 1
+                            page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=200, body=bytes(changed), content_type='application/zip'))
+                            compiled_button.click()
+                            page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
+                            assert not count
+                            print('PASS HTTP native missing/tampered archive refused; no download', flush=True)
                 finally:
                     context.close()
             for layout in ('sidebar', 'topbar', 'glass', 'submenu'):
@@ -872,7 +982,7 @@ def main():
                 wait_bootstrap(page)
                 route_and_inspect(page)
                 download_from_page(page)
-                download_from_page(page, 'compiled')
+                if COMPILED['available']: download_from_page(page, 'compiled')
                 assert not errors, errors
                 print('PASS PWA offline route and source/native archives', flush=True)
             finally:
@@ -883,4 +993,14 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+        print('PAGE_LOCAL_INTEGRATION: PASS')
+        print('PAGE_EXTERNAL_PUBLICATION: NOT_RUN; localhost/file/portable tests do not prove publication')
+        print('JPW_TEST_RESULT: PASS')
+    except AssertionError as error:
+        traceback.print_exc()
+        print('PAGE_LOCAL_INTEGRATION: PRODUCT_FAIL;', str(error),flush=True)
+        print('PAGE_EXTERNAL_PUBLICATION: NOT_RUN',flush=True)
+        print('JPW_TEST_RESULT: PRODUCT_FAIL',flush=True)
+        sys.exit(1)

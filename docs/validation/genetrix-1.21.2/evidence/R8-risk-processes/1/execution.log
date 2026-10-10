@@ -1,0 +1,53 @@
+PASS RIS-AC01 below7 none
+PASS RIS-AC02 exact7 none
+PASS RIS-AC03 raw above7 whole
+PASS RIS-AC04 no display epsilon
+PASS RIS-AC05 newest whole not largest
+PASS RIS-AC05 confirmed static after5x
+PASS RIS-AC06 aggregate cancel newest
+PASS RIS-AC06 minimal prefix stop preserve older
+PASS RIS-AC07 zero budget newest pending first
+PASS RIS-AC07 zero budget next pending
+PASS RIS-AC07 then positions
+PASS RIS-AC08 durable intent begin
+PASS RIS-AC08 cancel refused proceeds position
+PASS RIS-AC09 close intent begin
+PASS RIS-AC09 refusal pause no older skip
+PASS RIS-AC10 unknown forbids all new requests
+PASS RIS-AC11 finish residual even below7
+PASS RIS-AC12 netting unavailable
+PASS RIS-AC12 FIFO conflict no fallback
+PASS RIS-AC13 unarmed begin denied
+PASS RIS-AC17 Estimated no action
+PASS RIS-AC17 missing pending no partial aggregate
+PASS RIS-AC17 invalid equity no action
+PASS RIS-AC18 tie by identifier not ticket
+PASS RIS-FX01 planned quote120k not current110k immutable quote
+PASS RIS-FX02 account base notional invariant
+HOST/PURE_RESULTS 26 PASS / 0 FAIL; native compile/runtime NOT_RUN unless separately executed
+PASS RIS-STORE01 opaque installation-bound identity
+PASS RIS-STORE02 save readback generation1
+PASS RIS-STORE03 canonical roundtrip no implicit defaults
+PASS RIS-STORE04 durable unknown intent survives new object load
+PASS RIS-STORE05 checksum rejects corruption
+PASS RIS-STORE06 short write not confirmed
+PASS RIS-STORE07 interrupted latest write blocks old clean fallback
+PASS RIS-STORE08 fixture-only interrupted write cleanup
+PASS RIS-STORE09 structured receipt append readback
+PASS RIS-STORE10 receipt short write rejected
+PASS RIS-AC16 lock primitive synthetic exclusive owner
+PASS RIS-AC16 lock primitive synthetic release
+PASS RIS-AC15 FILLED alone keeps unknown no new request
+PASS RIS-AC15 wrong order link keeps unknown
+PASS RIS-AC15 wrong position identifier keeps unknown
+PASS RIS-AC15 entry not yet in inventory keeps unknown
+PASS RIS-AC15 linked order deal live identifier releases only after durable witness
+PASS RIS-AC15 positively closed subsequent chain reconciles flat
+PASS RIS-AC15 partial entry cancel needs linked residual
+PASS RIS-AC15 budget incomplete keeps unknown
+PASS RIS-AC15 truncated history limit keeps unknown
+PASS RIS-AC15 canceled deal correction keeps unknown
+PASS RIS-AC15 incoherent live volume keeps unknown
+PASS RIS-AC15 zero fill canceled pending confirmed without invented deal
+PASS RIS-AC15 unconfirmed durable witness cannot release unknown
+HOST_TOTAL 51 PASS / 0 FAIL

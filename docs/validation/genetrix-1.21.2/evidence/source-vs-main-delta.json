@@ -1,0 +1,202 @@
+[
+  {
+    "name": "GENETRIX_CANDIDATE_1_20_1.md",
+    "change": "new",
+    "bytes": 1204,
+    "sha256": "888d37de2b898ebce2da353275cb61601b13d5293c9891977c9b33cc5c5f7e2a"
+  },
+  {
+    "name": "GENETRIX_CANDIDATE_1_21_0.md",
+    "change": "new",
+    "bytes": 1238,
+    "sha256": "f547423389b4bbd093da718385206ee5fd90fd4be641de3a49c810617c9bb1fb"
+  },
+  {
+    "name": "GENETRIX_CORRECTIONS_1_21_2.md",
+    "change": "new",
+    "bytes": 2844,
+    "sha256": "e3c913376524b3240909c5c9049a034afb5b1d569ead95783a0b12f5d7dfa1e4"
+  },
+  {
+    "name": "GENETRIX_REVIEW_1_21_1.md",
+    "change": "new",
+    "bytes": 4598,
+    "sha256": "62c11ce851918f6b173755d2ccbf8bf847aec5c61a5cc3ce8ed7ed6c3b74a4c8"
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+    "change": "modified",
+    "oldSha256": "621110ceea32e7292b7e8a2855fca10f8b7245400f8c0b37d70e9119e8dd7d40",
+    "newSha256": "cb7b9a64be67cc07e79ed8c2602c79cd481491307d01d6d59fc3c2d7205d8400",
+    "oldBytes": 51105,
+    "newBytes": 52592
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
+    "change": "modified",
+    "oldSha256": "eaa08b9a84d54dc2e5226bd3ee0645e99315545eb0f4da49b0294f251cf7d03d",
+    "newSha256": "72f55c55ebd64a5804499f818aa2d4f4a7e022f32dab23aca1e6cedeb8df750d",
+    "oldBytes": 98653,
+    "newBytes": 99499
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh",
+    "change": "modified",
+    "oldSha256": "9d9daec898a3f18f9b6a0c5f0a6822c31721c984ef0fa4ff67c5288c5410d260",
+    "newSha256": "571be320500ad60682e2efbe1b47ca088b3d02534db0535144e0925569ca10c6",
+    "oldBytes": 128211,
+    "newBytes": 145563
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+    "change": "modified",
+    "oldSha256": "cf4073213f060543b85b0ba71e73d93c7bdbcfe2aa0ecf500d5afd69751d9cc1",
+    "newSha256": "c1f72fd8e58c696c531edeed8796a3a399a10b55a9a2ebfc419a6ff83711f95f",
+    "oldBytes": 694,
+    "newBytes": 694
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh",
+    "change": "modified",
+    "oldSha256": "e409bf0ddd2357733cdf1009578b0c07fb2b9fe55abe66d3f9e53a525a6cbbb9",
+    "newSha256": "253c992b8fc82e2b84410fd9ab56aab2c8c21f9ec32bcab542b000dc28d300f7",
+    "oldBytes": 5257,
+    "newBytes": 5515
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh",
+    "change": "modified",
+    "oldSha256": "d329042d6bc612c209490f81a2d569fd54ec13b78874104a6297cce189b12d0b",
+    "newSha256": "7dc452123b987d227bffe7aaf210cc7a5c3b965369def66bf5120a62da0c76ee",
+    "oldBytes": 26403,
+    "newBytes": 26566
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Preparation.mqh",
+    "change": "modified",
+    "oldSha256": "a82d710e1f98be659871bc3cf9dc7eeb5399fd4450f91a761ba5f746766b6b34",
+    "newSha256": "0b0c789b9b36afe28f60fba6a5948c8cbedfd6e0548e845defa066b1f005b3eb",
+    "oldBytes": 43840,
+    "newBytes": 44362
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Terminal.mqh",
+    "change": "modified",
+    "oldSha256": "4efe9a62ab476f7add28ed7e3cf24eab85f4c2fa999ab64c3f03aaf61d75cbde",
+    "newSha256": "1053cd2c9905a2a1f81ea7da0111ce9204a1c9b8cfb605b5844151536758f38e",
+    "oldBytes": 12045,
+    "newBytes": 12371
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh",
+    "change": "modified",
+    "oldSha256": "8325dde4504ca17e72ce94604ef18ceac06a525edf325afaa12f4f127c00a380",
+    "newSha256": "73ef12c0048ad3268a1324c25356cc613b6d03cf37f9337f683ab2270b125f9f",
+    "oldBytes": 14947,
+    "newBytes": 14984
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh",
+    "change": "modified",
+    "oldSha256": "7a2de90a6b429a514653c1bba309272aab0944f42d6f18a057f2c400ce0cb68f",
+    "newSha256": "b3094cc750a9dd0c7604bcb9ae62854497f83d8084ad4791f16f289362d528df",
+    "oldBytes": 13429,
+    "newBytes": 13463
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+    "change": "modified",
+    "oldSha256": "b83cd9b4f50da017f4f98354181712461f8d5a15501e97c140ac2427a40407b0",
+    "newSha256": "cf4a38dd2648d931163ea6ff1c65f4ca6fa55fbae3099c81d6083ab4eb4c0135",
+    "oldBytes": 39394,
+    "newBytes": 40850
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+    "change": "modified",
+    "oldSha256": "3fdff8e04c29c298554ba22709991a331ed89fa09b69cd035d344ec2a6d291a7",
+    "newSha256": "b1ed077b4e6233397dfc473e64c1e13b12202eeffe3d1c6d510b8543eaea64f0",
+    "oldBytes": 38066,
+    "newBytes": 55017
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+    "change": "modified",
+    "oldSha256": "a3176927ffc7959f23748c7b1242628a5d548f5e1d5b1d786873dd18d625374b",
+    "newSha256": "09d85bb783ee346bafd2d7c1a3fe82c50244f646a0d00fad5e04e85d0583fec2",
+    "oldBytes": 36762,
+    "newBytes": 45332
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+    "change": "modified",
+    "oldSha256": "fff1414a55b9e1661d360075f0ec3b2b494c9e57e0d4f87a0db9fcdd3c06b29d",
+    "newSha256": "858da864d2f37d60334d3739db82c9eba66d7c21627225711a9811e94fa3fc1d",
+    "oldBytes": 22027,
+    "newBytes": 23102
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh",
+    "change": "modified",
+    "oldSha256": "6590d13570c94409b77e12ed15f5e08cc0020898319e07ccc95e12b130743526",
+    "newSha256": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+    "oldBytes": 15138,
+    "newBytes": 16406
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh",
+    "change": "modified",
+    "oldSha256": "d23b5b934fc9a8cc75882de0ff72407ab9a9fd8fc89b0e1a9698a5c193890fa0",
+    "newSha256": "b4c2041a60eb304bce59c7689c4e52850146cc5fd36209af06f91733ccfd2168",
+    "oldBytes": 9674,
+    "newBytes": 10295
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh",
+    "change": "modified",
+    "oldSha256": "0f22816b9d10ba5a394763ba711a3ba5545beb4c8c539ba1c744c906f230d4c3",
+    "newSha256": "1546a5a75ff53ad26bc52da45a8d892af59a66641a0bc0644199ca4a5cb98495",
+    "oldBytes": 18577,
+    "newBytes": 20027
+  },
+  {
+    "name": "MQL5/Include/JPWealth/JPW_UI_Design.mqh",
+    "change": "modified",
+    "oldSha256": "c0505daffbe786af37afbe35966b79f22a9ca7ffd0e7c652bf243617f8ffbb9c",
+    "newSha256": "4697a2fe433c774d1eb800385c18375dc90a17c86847ffd94f6258edde5608e8",
+    "oldBytes": 5052,
+    "newBytes": 12472
+  },
+  {
+    "name": "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+    "change": "modified",
+    "oldSha256": "039eaa4d7ff98eea464c303a7bf5a4290e1223a4eefdf8a23fe4704c06a8fd0b",
+    "newSha256": "03d89c9f8e40794dec2f871a2059d366a701676189f2a1e5dcccc2549cf8bed5",
+    "oldBytes": 17451,
+    "newBytes": 18841
+  },
+  {
+    "name": "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+    "change": "modified",
+    "oldSha256": "1ac4b9cd039fc223998ad67e896d32e5535c9bc78cd6a4fe7c2adf2cb2e2b4ba",
+    "newSha256": "f8f52df2722af890e60c826250e9bfd9bc2de68fc1025b2d83f59a527699096a",
+    "oldBytes": 57985,
+    "newBytes": 60604
+  },
+  {
+    "name": "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+    "change": "modified",
+    "oldSha256": "3de62cd34a13673f6c23474127e16839dba378c1439fb05b53650f4488fee0b7",
+    "newSha256": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+    "oldBytes": 11151,
+    "newBytes": 13462
+  },
+  {
+    "name": "README.md",
+    "change": "modified",
+    "oldSha256": "d4da746f853fb71ac0870099495ba9bcbbae62403fec2a15f5b4e9cd3b1dbcbc",
+    "newSha256": "c66401dfc747fdd605d1fc33122591c78991a1d358eea0e9877e4fdc78f9d379",
+    "oldBytes": 90433,
+    "newBytes": 95979
+  }
+]

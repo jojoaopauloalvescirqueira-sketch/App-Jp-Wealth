@@ -1,3 +1,7 @@
+# 2026-10-09 — integração autorizada do site e GENETRIX
+
+Site validado e GENETRIX 1.21.2 reunidos; conflitos dos juízes MT5 reconciliados com a versão mais recente, mantendo os contratos e controles dessa integração anterior. Validação da combinação e envio Git registrados separadamente; sem publicação.
+
 # Candidate local 2026-10-08 — trajetórias patrimoniais
 
 - JPW Scenario Fan local em SVG: realizado, PLAN, até dois cenários salvos e baseline opcional, sem escrita durante consulta.
@@ -8,6 +12,14 @@
 # Candidate local 2026-10-08 — comportamento e recuperacao
 
 Delta delimitado da auditoria: consultas contabeis por contexto, confirmacao de depositos ACTUAL, leitura de reservas, recuperacao de edicoes PF, protecao de campos compativeis do backup e explicacoes da sessao. Contraprovas adicionais tratam captura monotona do pico por conta/periodo, preservacao do motivo de anulacao, recibo integral de encerramento e dois cortes de layout. Formulas, estados normativos e bytes MT5 preservados; controle ativo e hashes Atlas reconciliados; fixtures superadas tratadas em contrato separado. Novos resultados e limitacoes dependem dos recibos dos bytes finais, fora do produto; nao implica publicacao/aceite. Historico anterior abaixo preservado.
+
+## 2026-10-08 — candidate: GENETRIX 1.21.2 no site
+
+- Transposição dos 132 membros canônicos e distribuição de fontes 1.21.2; cálculo 1.9.0 preservado. Monitor recomendado, Conta/NoCuda distintos e Supervisor 7x opcional separado.
+- Fontes com identidade própria; 33 EX5 antigos retirados do conjunto atual para não representar 1.21.2 sem compilação comprovada. Recibos 1.20 e histórico Git conservados.
+- Juízes transferidos em trilha N3 dedicada:24 registros, incluindo ATR canônico e 23 ferramentas; before/after e controles preservados, sem trocar esperado para aprovar.
+- Contexto focal reconciliado por referências. MT5 host R3: 40/40 PASS com inputs íntegros; web full R3 57/57 PASS; revisão independente em registro próprio. Compilação 1.21.2 NOT_RUN e runtime/instalação NOT_RUN / BLOCKED. Harness 1.0 CANDIDATE, piloto FAIL histórico mantido.
+- Integração Git autorizada e pendente de gates neste registro; nenhum deploy externo, instalação MT5, negociação ou homologação. [Contrato](docs/work/CHG-GENETRIX-1-21-2-SITE-20261008.md) e [proveniência/limites](docs/validation/genetrix-1.21.2/INTEGRATION.md).
 
 ## 2026-10-06 — candidate: correção dos verificadores pendentes
 

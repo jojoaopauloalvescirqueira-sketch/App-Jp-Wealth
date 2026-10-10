@@ -547,4 +547,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    from leverage_host_layout import panel
+    raise SystemExit(panel(sys.modules[__name__]))

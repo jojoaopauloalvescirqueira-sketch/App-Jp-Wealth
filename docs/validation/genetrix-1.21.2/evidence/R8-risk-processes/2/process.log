@@ -1,0 +1,496 @@
+PASS RIS-AC01 below7 none
+PASS RIS-AC02 exact7 none
+PASS RIS-AC03 raw above7 whole
+PASS RIS-AC04 no display epsilon
+PASS RIS-AC05 newest whole not largest
+PASS RIS-AC05 confirmed static after5x
+PASS RIS-AC06 aggregate cancel newest
+PASS RIS-AC06 minimal prefix stop preserve older
+PASS RIS-AC07 zero budget newest pending first
+PASS RIS-AC07 zero budget next pending
+PASS RIS-AC07 then positions
+PASS RIS-AC08 durable intent begin
+PASS RIS-AC08 cancel refused proceeds position
+PASS RIS-AC09 close intent begin
+PASS RIS-AC09 refusal pause no older skip
+PASS RIS-AC10 unknown forbids all new requests
+PASS RIS-AC11 finish residual even below7
+PASS RIS-AC12 netting unavailable
+PASS RIS-AC12 FIFO conflict no fallback
+PASS RIS-AC13 unarmed begin denied
+PASS RIS-AC17 Estimated no action
+PASS RIS-AC17 missing pending no partial aggregate
+PASS RIS-AC17 invalid equity no action
+PASS RIS-AC18 tie by identifier not ticket
+PASS RIS-FX01 planned quote120k not current110k immutable quote
+PASS RIS-FX02 account base notional invariant
+HOST/PURE_RESULTS 26 PASS / 0 FAIL; native compile/runtime NOT_RUN unless separately executed
+PASS RIS-STORE01 opaque installation-bound identity
+PASS RIS-STORE02 save readback generation1
+PASS RIS-STORE03 canonical roundtrip no implicit defaults
+PASS RIS-STORE04 durable unknown intent survives new object load
+PASS RIS-STORE05 checksum rejects corruption
+PASS RIS-STORE06 short write not confirmed
+PASS RIS-STORE07 interrupted latest write blocks old clean fallback
+PASS RIS-STORE08 fixture-only interrupted write cleanup
+PASS RIS-STORE09 structured receipt append readback
+PASS RIS-STORE10 receipt short write rejected
+PASS RIS-AC16 lock primitive synthetic exclusive owner
+PASS RIS-AC16 lock primitive synthetic release
+PASS RIS-AC15 FILLED alone keeps unknown no new request
+PASS RIS-AC15 wrong order link keeps unknown
+PASS RIS-AC15 wrong position identifier keeps unknown
+PASS RIS-AC15 entry not yet in inventory keeps unknown
+PASS RIS-AC15 linked order deal live identifier releases only after durable witness
+PASS RIS-AC15 positively closed subsequent chain reconciles flat
+PASS RIS-AC15 partial entry cancel needs linked residual
+PASS RIS-AC15 budget incomplete keeps unknown
+PASS RIS-AC15 truncated history limit keeps unknown
+PASS RIS-AC15 canceled deal correction keeps unknown
+PASS RIS-AC15 incoherent live volume keeps unknown
+PASS RIS-AC15 zero fill canceled pending confirmed without invented deal
+PASS RIS-AC15 unconfirmed durable witness cannot release unknown
+HOST_TOTAL 51 PASS / 0 FAIL
+{
+  "test": "jpw_genetrix_risk_pure",
+  "scope": "CORE_STORE_AND_CANCEL_TERMINAL_REAL_BODY_SYNTHETIC_APIS",
+  "execution_state": "EXECUTED_HOST",
+  "hashes": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh": "73ef12c0048ad3268a1324c25356cc613b6d03cf37f9337f683ab2270b125f9f",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Risk_Store.mqh": "fc5a858e2a28a67613734d12e266acb082b5b94100104e8246fb65375e20b442",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Genetrix_Risk_Tests.mq5": "53056a0025cb359cc19ea202d4312921a2348bb1fb1e4c63e91e97482f60c41b",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
+    "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Genetrix_Supervisor.mq5": "fe803f551b7f7d5f35f3e5b1f89937bb12259ae97b1787e4cac3a99260f51d95",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh": "b3094cc750a9dd0c7604bcb9ae62854497f83d8084ad4791f16f289362d528df",
+    "tools/jpw_genetrix_risk_test.py": "bd4e00a853f72dca015b6d8978287b9132fa842cc675bcb93f72e46625e3f5a7",
+    "tools/leverage_config_test.py": "0304a3e85a54e4d2bbc84d6b4bb17cb4a4cfa33354680a62c809113ec4c52d57"
+  },
+  "compile_command": [
+    "/usr/bin/clang++",
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "/var/folders/rr/dtg8m_h101117dv90m1716y00000gn/T/jpw-risk-host-_gh3tzuh/risk.cpp",
+    "-o",
+    "/var/folders/rr/dtg8m_h101117dv90m1716y00000gn/T/jpw-risk-host-_gh3tzuh/risk-tests"
+  ],
+  "compile_exit": 0,
+  "execute_exit": 0,
+  "native_compile": "NOT_RUN",
+  "native_execution": "NOT_RUN",
+  "ea_orchestration": "NOT_RUN",
+  "store_codec": "EXECUTED_HOST",
+  "cancel_terminal_adapter": "EXECUTED_HOST_SYNTHETIC_HISTORY",
+  "local_lock_primitive": "EXECUTED_HOST_SYNTHETIC",
+  "store_crash_durability": "NOT_RUN",
+  "cross_terminal_coordination": "NOT_PROVIDED",
+  "frozen_oracle_reference": {
+    "path": "tests/fixtures/genetrix/risk-oracles-v1.json",
+    "sha256": "1c3e9488dd4fe1825d439efc8ea71e83cd34762639ef12770bf33e0cd83f4b7e",
+    "usage": "AUDIT_REFERENCE_ONLY; executable author fixtures are in the distributed MQL script. Independent JSON-driven numeric execution is a separate root-owned check."
+  },
+  "coverage": [
+    {
+      "case": "RIS-AC01",
+      "host_assertions": [
+        "RIS-AC01 below7 none"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC01",
+        "equity": "1000",
+        "gross": "6999",
+        "expected_action": "NONE"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC02",
+      "host_assertions": [
+        "RIS-AC02 exact7 none"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC02",
+        "equity": "1000",
+        "gross": "7000",
+        "expected_action": "NONE"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC03",
+      "host_assertions": [
+        "RIS-AC03 raw above7 whole"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC03",
+        "equity": "1000",
+        "gross": "7000.01",
+        "expected_action": "CLOSE_NEWEST_WHOLE"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC04",
+      "host_assertions": [
+        "RIS-AC04 no display epsilon"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC04",
+        "equity": "1000",
+        "gross": "7000.0000001",
+        "expected_action": "CLOSE_NEWEST_WHOLE",
+        "display": "7.00x"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC05",
+      "host_assertions": [
+        "RIS-AC05 newest whole not largest",
+        "RIS-AC05 confirmed static after5x"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC05",
+        "equity": "900",
+        "gross": "6500",
+        "positions_oldest_first": [
+          {
+            "ticket": 10,
+            "notional": "2000"
+          },
+          {
+            "ticket": 20,
+            "notional": "2500"
+          },
+          {
+            "ticket": 30,
+            "notional": "2000"
+          }
+        ],
+        "expected_ticket": 30,
+        "after_confirmed_no_cost_fixture": {
+          "gross": "4500",
+          "equity": "900",
+          "leverage": "5"
+        }
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC06",
+      "host_assertions": [
+        "RIS-AC06 aggregate cancel newest",
+        "RIS-AC06 minimal prefix stop preserve older"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC06",
+        "equity": "1000",
+        "gross": "6000",
+        "pending_oldest_first": [
+          {
+            "ticket": 100,
+            "notional": "500"
+          },
+          {
+            "ticket": 200,
+            "notional": "800"
+          }
+        ],
+        "budget": "1000",
+        "expected_cancel_tickets": [
+          200
+        ],
+        "remaining_projected": "6500"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC07",
+      "host_assertions": [
+        "RIS-AC07 zero budget newest pending first",
+        "RIS-AC07 zero budget next pending",
+        "RIS-AC07 then positions"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC07",
+        "equity": "900",
+        "gross": "6500",
+        "pending_oldest_first": [
+          {
+            "ticket": 100,
+            "notional": "100"
+          },
+          {
+            "ticket": 200,
+            "notional": "200"
+          }
+        ],
+        "budget": "0",
+        "expected_cancel_tickets": [
+          200,
+          100
+        ],
+        "then_close": 30
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC08",
+      "host_assertions": [
+        "RIS-AC08 durable intent begin",
+        "RIS-AC08 cancel refused proceeds position"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC08",
+        "event": "CANCEL_REFUSED",
+        "expected": "Do not resend refused pending; mark incomplete; allow LIFO position reduction if current>7"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC09",
+      "host_assertions": [
+        "RIS-AC09 close intent begin",
+        "RIS-AC09 refusal pause no older skip"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC09",
+        "event": "CLOSE_REFUSED",
+        "expected": "Pause; never skip to older position"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC10",
+      "host_assertions": [
+        "RIS-AC10 unknown forbids all new requests"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC10",
+        "event": "UNKNOWN_REQUEST",
+        "expected": "No further requests until objective reconciliation"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC11",
+      "host_assertions": [
+        "RIS-AC11 finish residual even below7"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC11",
+        "event": "DONE_PARTIAL",
+        "expected": "Keep original whole-close intention; finish reconciled residual before another position"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC12",
+      "host_assertions": [
+        "RIS-AC12 netting unavailable",
+        "RIS-AC12 FIFO conflict no fallback"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC12",
+        "event": "NETTING_OR_FIFO",
+        "expected": "Cannot arm; zero trade requests"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC13",
+      "host_assertions": [
+        "RIS-AC13 unarmed begin denied"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC13",
+        "event": "REAL_ACCOUNT_OR_OBSERVE_MODE",
+        "expected": "Zero trade requests"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC14",
+      "host_assertions": [],
+      "frozen_oracle": {
+        "id": "RIS-AC14",
+        "event": "ACCOUNT_CHANGE_OR_RESTART",
+        "expected": "Disarm; old request/view cannot become current for new account"
+      },
+      "host_component_state": "NOT_RUN",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC15",
+      "host_assertions": [
+        "RIS-AC15 FILLED alone keeps unknown no new request",
+        "RIS-AC15 wrong order link keeps unknown",
+        "RIS-AC15 wrong position identifier keeps unknown",
+        "RIS-AC15 entry not yet in inventory keeps unknown",
+        "RIS-AC15 linked order deal live identifier releases only after durable witness",
+        "RIS-AC15 positively closed subsequent chain reconciles flat",
+        "RIS-AC15 partial entry cancel needs linked residual",
+        "RIS-AC15 budget incomplete keeps unknown",
+        "RIS-AC15 truncated history limit keeps unknown",
+        "RIS-AC15 canceled deal correction keeps unknown",
+        "RIS-AC15 incoherent live volume keeps unknown",
+        "RIS-AC15 zero fill canceled pending confirmed without invented deal",
+        "RIS-AC15 unconfirmed durable witness cannot release unknown"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC15",
+        "event": "PENDING_FILL_DURING_CANCEL",
+        "expected": "Reconcile linked deal and resulting position; no success claim for cancellation"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC16",
+      "host_assertions": [
+        "RIS-AC16 lock primitive synthetic exclusive owner",
+        "RIS-AC16 lock primitive synthetic release"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC16",
+        "event": "TWO_LOCAL_INSTANCES",
+        "expected": "At most one publisher/executor; losing instance never sends"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC17",
+      "host_assertions": [
+        "RIS-AC17 Estimated no action",
+        "RIS-AC17 missing pending no partial aggregate",
+        "RIS-AC17 invalid equity no action"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC17",
+        "event": "MISSING_CONTRACT_PRICE_ROUTE_EQUITY",
+        "expected": "N/A separate from known excess; zero trade requests"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    },
+    {
+      "case": "RIS-AC18",
+      "host_assertions": [
+        "RIS-AC18 tie by identifier not ticket"
+      ],
+      "frozen_oracle": {
+        "id": "RIS-AC18",
+        "event": "TIME_TIE",
+        "expected": "Opening time desc then identifier desc; convention not finer time evidence"
+      },
+      "host_component_state": "EXECUTED_HOST",
+      "native_case_state": "NOT_RUN",
+      "whole_case_verdict": "NOT_RUN",
+      "limit": "Core/state, Store or cancel-terminal real body with synthetic history only; full EA orchestration, native permissions/lifecycle/broker evidence NOT_RUN"
+    }
+  ],
+  "passed_assertions": [
+    "RIS-AC01 below7 none",
+    "RIS-AC02 exact7 none",
+    "RIS-AC03 raw above7 whole",
+    "RIS-AC04 no display epsilon",
+    "RIS-AC05 newest whole not largest",
+    "RIS-AC05 confirmed static after5x",
+    "RIS-AC06 aggregate cancel newest",
+    "RIS-AC06 minimal prefix stop preserve older",
+    "RIS-AC07 zero budget newest pending first",
+    "RIS-AC07 zero budget next pending",
+    "RIS-AC07 then positions",
+    "RIS-AC08 durable intent begin",
+    "RIS-AC08 cancel refused proceeds position",
+    "RIS-AC09 close intent begin",
+    "RIS-AC09 refusal pause no older skip",
+    "RIS-AC10 unknown forbids all new requests",
+    "RIS-AC11 finish residual even below7",
+    "RIS-AC12 netting unavailable",
+    "RIS-AC12 FIFO conflict no fallback",
+    "RIS-AC13 unarmed begin denied",
+    "RIS-AC17 Estimated no action",
+    "RIS-AC17 missing pending no partial aggregate",
+    "RIS-AC17 invalid equity no action",
+    "RIS-AC18 tie by identifier not ticket",
+    "RIS-FX01 planned quote120k not current110k immutable quote",
+    "RIS-FX02 account base notional invariant",
+    "RIS-STORE01 opaque installation-bound identity",
+    "RIS-STORE02 save readback generation1",
+    "RIS-STORE03 canonical roundtrip no implicit defaults",
+    "RIS-STORE04 durable unknown intent survives new object load",
+    "RIS-STORE05 checksum rejects corruption",
+    "RIS-STORE06 short write not confirmed",
+    "RIS-STORE07 interrupted latest write blocks old clean fallback",
+    "RIS-STORE08 fixture-only interrupted write cleanup",
+    "RIS-STORE09 structured receipt append readback",
+    "RIS-STORE10 receipt short write rejected",
+    "RIS-AC16 lock primitive synthetic exclusive owner",
+    "RIS-AC16 lock primitive synthetic release",
+    "RIS-AC15 FILLED alone keeps unknown no new request",
+    "RIS-AC15 wrong order link keeps unknown",
+    "RIS-AC15 wrong position identifier keeps unknown",
+    "RIS-AC15 entry not yet in inventory keeps unknown",
+    "RIS-AC15 linked order deal live identifier releases only after durable witness",
+    "RIS-AC15 positively closed subsequent chain reconciles flat",
+    "RIS-AC15 partial entry cancel needs linked residual",
+    "RIS-AC15 budget incomplete keeps unknown",
+    "RIS-AC15 truncated history limit keeps unknown",
+    "RIS-AC15 canceled deal correction keeps unknown",
+    "RIS-AC15 incoherent live volume keeps unknown",
+    "RIS-AC15 zero fill canceled pending confirmed without invented deal",
+    "RIS-AC15 unconfirmed durable witness cannot release unknown"
+  ],
+  "outcome": "PASS"
+}

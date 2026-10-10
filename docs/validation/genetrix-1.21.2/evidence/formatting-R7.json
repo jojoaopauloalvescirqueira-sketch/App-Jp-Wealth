@@ -1,0 +1,26 @@
+{
+  "revision": "R7-FORMATTING",
+  "previousCommit": "dfc3f80841bf52a429896a054453dbdc49894cd6",
+  "changes": [
+    {
+      "path": "tools/leverage_host_layout.py",
+      "beforeSha256": "cb17b9329aefeba20933c49ab6e6a310490cbfc9c18e082f1f5ba4d2368a1ac7",
+      "afterSha256": "97a6adc76472c22f7872fd87186747913698819dfa7b27850db2ace202ace3c1",
+      "change": "remove only excess trailing blank lines",
+      "astEquivalent": true
+    },
+    {
+      "path": "tools/leverage_host_runtime.py",
+      "beforeSha256": "114186b7d68dbe01363e84e4890575ffb935d607df9cd7c7a3957918ed21d8ad",
+      "afterSha256": "6ac01ffa9258c63815bbff1caa389bfdfaacebfef0ba60c950f9939c0e19f26c",
+      "change": "remove only excess trailing blank lines",
+      "astEquivalent": true
+    }
+  ],
+  "criteriaChanged": false,
+  "sourceAndWebsiteChanged": false,
+  "priorResultsPreserved": true,
+  "hostRerun": "PASS \u2014 40/40",
+  "hostReceipt": "mt5-host-R7.json",
+  "independentSupplement": "EOF-ONLY-SUPPLEMENT.md"
+}

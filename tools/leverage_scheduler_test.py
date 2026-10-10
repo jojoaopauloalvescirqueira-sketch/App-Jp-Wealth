@@ -553,4 +553,7 @@ def presence_helper_replay(compiler: str) -> int:
 
 
 if __name__ == "__main__":
+    import sys
+    from leverage_host_runtime import scheduler_adapter
+    scheduler_adapter(sys.modules[__name__])
     raise SystemExit(main())

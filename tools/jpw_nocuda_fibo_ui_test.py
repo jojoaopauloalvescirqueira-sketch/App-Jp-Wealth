@@ -14,7 +14,8 @@ import subprocess
 import tempfile
 from leverage_source import expanded_source
 
-ROOT = Path(__file__).resolve().parents[1]
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+ROOT = source_root()
 SOURCE = ROOT / 'mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh'
 LOGO = ROOT / 'mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp'
 
@@ -43,20 +44,9 @@ std::map<string,Object> objects;
 int chart_width=1440,chart_height=1000,dpi=100,measured_font=11,pref_writes=0;
 int background=0xffffff;
 long TerminalInfoInteger(int){return dpi*96/100;}
-
-double MathRound(double value){return std::round(value);}
-double MathSqrt(double value){return std::sqrt(value);}
-uint StringGetCharacter(const string&value,int index){return (unsigned char)value.at(index);}
-uint ColorToARGB(color value,int alpha){return ((uint)alpha<<24)|(uint(value)&0xffffff);}
-constexpr int COLOR_FORMAT_ARGB_NORMALIZE=1;
-template<class T>void ArrayInitialize(std::vector<T>&values,int value){std::fill(values.begin(),values.end(),value);}
-std::map<string,std::vector<uint>> icon_resources;
-bool ResourceCreate(const string&name,const std::vector<uint>&pixels,int width,int height,int,int,int,int){
- if(width<=0||height<=0||pixels.size()!=size_t(width*height))return false;
- icon_resources[name]=pixels;return true;
-}
-bool ResourceFree(const string&name){return icon_resources.erase(name)>0;}
-
+long long ChartID(){return 123456;}
+string StringFormat(const string&,long long n){return "JPW_LEV_"+std::to_string(n)+"_HUD_BG";}
+string DoubleToString(double v,int n){std::ostringstream s;s<<std::fixed<<std::setprecision(n)<<v;return s.str();}
 double MathMax(double a,double b){return std::max(a,b);}
 double MathMin(double a,double b){return std::min(a,b);}
 template<class T>int ArraySize(const std::vector<T>&a){return (int)a.size();}
@@ -65,13 +55,9 @@ int StringLen(const string&s){return (int)s.size();}
 int StringFind(const string&s,const string&n,int start=0){auto p=s.find(n,start);return p==string::npos?-1:(int)p;}
 string StringSubstr(const string&s,int p,int count=-1){return p>(int)s.size()?"":s.substr(p,count<0?string::npos:(size_t)count);}
 string IntegerToString(long n){return std::to_string(n);}
-long ChartID(){return 123456;}
-string StringFormat(const string&,long id){return "JPW_LEV_"+std::to_string(id)+"_HUD_BG";}
-string DoubleToString(double value,int digits){std::ostringstream out;out<<std::fixed<<std::setprecision(digits)<<value;return out.str();}
 long StringToInteger(const string&s){try{return std::stol(s);}catch(...){return 0;}}
 int StringSplit(const string&s,char delimiter,std::vector<string>&a){a.clear();std::stringstream ss(s);string v;while(std::getline(ss,v,delimiter))a.push_back(v);return (int)a.size();}
-constexpr int FW_NORMAL=0;
-bool TextSetFont(const string&,int size,int=0){measured_font=std::abs(size)/10;return true;}
+bool TextSetFont(const string&,int size){measured_font=std::abs(size)/10;return true;}
 bool TextGetSize(const string&s,uint&w,uint&h){int chars=0;for(unsigned char c:s)if((c&0xc0)!=0x80)chars++;h=(uint)((measured_font*4*dpi+299)/300);w=(uint)(chars*h*.48);return true;}
 long ChartGetInteger(int,int p){return p==CHART_WIDTH_IN_PIXELS?chart_width:p==CHART_HEIGHT_IN_PIXELS?chart_height:background;}
 int ObjectFind(int,const string&n){return objects.count(n)?1:-1;}
@@ -79,9 +65,8 @@ bool ObjectCreate(int,const string&n,int type,int,int,int){objects[n]=Object{};o
 bool ObjectDelete(int,const string&n){return objects.erase(n)>0;}
 long ObjectGetInteger(int,const string&n,int p){auto i=objects.find(n);if(i==objects.end())return 0;return p==OBJPROP_TYPE?i->second.type:i->second.number[p];}
 string ObjectGetString(int,const string&n,int p){auto i=objects.find(n);return i==objects.end()?"":i->second.text[p];}
-void native_text_geometry(Object& obj){if(obj.type!=OBJ_LABEL)return;int old=measured_font;measured_font=obj.number[OBJPROP_FONTSIZE];uint w=0,h=0;TextGetSize(obj.text[OBJPROP_TEXT],w,h);obj.number[OBJPROP_XSIZE]=w;obj.number[OBJPROP_YSIZE]=h;measured_font=old;}
-bool ObjectSetInteger(int,const string&n,int p,long v){objects[n].number[p]=v;if(p==OBJPROP_FONTSIZE)native_text_geometry(objects[n]);return true;}
-bool ObjectSetString(int,const string&n,int p,const string&v){objects[n].text[p]=v;if(p==OBJPROP_TEXT)native_text_geometry(objects[n]);if(p==OBJPROP_BMPFILE&&icon_resources.count(v)){long size=long(std::sqrt(icon_resources[v].size()));objects[n].number[OBJPROP_XSIZE]=size;objects[n].number[OBJPROP_YSIZE]=size;}if(n=="JPW_NOCUDA_FIBO_VISUAL_V1"&&p==OBJPROP_TOOLTIP)pref_writes++;return true;}
+bool ObjectSetInteger(int,const string&n,int p,long v){objects[n].number[p]=v;return true;}
+bool ObjectSetString(int,const string&n,int p,const string&v){objects[n].text[p]=v;if(n=="JPW_NOCUDA_FIBO_VISUAL_V1"&&p==OBJPROP_TOOLTIP)pref_writes++;return true;}
 int ObjectsTotal(int,int,int){return (int)objects.size();}
 string ObjectName(int,int i,int,int){auto p=objects.begin();std::advance(p,i);return p->first;}
 '''
@@ -92,9 +77,16 @@ void check(bool ok,const string&message){checks++;if(!ok){failures++;std::cerr<<
 string P="SYNTHETIC_";
 string name(const string&s){return JPWNoCudaFiboUIName(P,s);}
 string txt(const string&s){return ObjectGetString(0,name(s),OBJPROP_TEXT);}
-bool inside(const Object&o){return o.number.at(OBJPROP_XDISTANCE)>=g_fc_layout.x&&o.number.at(OBJPROP_YDISTANCE)>=g_fc_layout.y&&
+bool inside(const Object&o){
+ for(int p:{OBJPROP_XDISTANCE,OBJPROP_YDISTANCE,OBJPROP_XSIZE,OBJPROP_YSIZE})if(!o.number.count(p))return false;
+return o.number.at(OBJPROP_XDISTANCE)>=g_fc_layout.x&&o.number.at(OBJPROP_YDISTANCE)>=g_fc_layout.y&&
  o.number.at(OBJPROP_XDISTANCE)+o.number.at(OBJPROP_XSIZE)<=g_fc_layout.x+g_fc_layout.width&&
  o.number.at(OBJPROP_YDISTANCE)+o.number.at(OBJPROP_YSIZE)<=g_fc_layout.y+g_fc_layout.height;}
+bool inside_name(const string& n){const auto at=objects.find(n);return at!=objects.end()&&inside(at->second);}
+bool physical_name(const string&n){const auto it=objects.find(n);if(it==objects.end())return false;const auto&p=it->second.number;
+ for(int key:{OBJPROP_XDISTANCE,OBJPROP_YDISTANCE,OBJPROP_XSIZE,OBJPROP_YSIZE})if(!p.count(key))return false;
+ return p.at(OBJPROP_XSIZE)>0&&p.at(OBJPROP_YSIZE)>0&&p.at(OBJPROP_XDISTANCE)>=0&&p.at(OBJPROP_YDISTANCE)>=0&&
+ p.at(OBJPROP_XDISTANCE)+p.at(OBJPROP_XSIZE)<=chart_width&&p.at(OBJPROP_YDISTANCE)+p.at(OBJPROP_YSIZE)<=chart_height;}
 void reset(int width=1440,int height=1000,int font=11,int scale=100){
  chart_width=width;chart_height=height;dpi=scale;objects.clear();pref_writes=0;g_fc_initialized=false;
  g_fc_focus="";g_fc_editing="";g_fc_notice="";g_fc_tab=-1;g_fc_gesture=false;g_fc_mouse_down=false;g_fc_settings_dirty=false;g_fc_scroll=0;
@@ -144,7 +136,9 @@ int main(){
  JPWNoCudaFiboUIDraw(P,v);check(ObjectGetString(0,edit,OBJPROP_TEXT)=="2026.10.14","redraw preserves in-progress date text/caret boundary");
  JPWNoCudaFiboUIFieldCapture(P,v);check(v.projection_date=="2026.10.14","date capture retrieves user draft only");
  g_fc_draft.height=200;JPWNoCudaFiboUIDraw(P,v);
- check(ObjectFind(0,edit)<0&&g_fc_editing=="","resize can hide edit without retaining a dangling native edit guard");
+ check(ObjectFind(0,edit)>=0&&g_fc_editing==edit&&ObjectGetString(0,edit,OBJPROP_TEXT)=="2026.10.14"&&g_fc_deferred_prune,"resize preserves active editor text and defers destructive pruning");
+ JPWNoCudaFiboUIEndInteraction();JPWNoCudaFiboUIDraw(P,v);
+ check(ObjectFind(0,edit)<0&&g_fc_editing.empty(),"ending edit permits safe removal of unavailable field");
  g_fc_draft.height=900;JPWNoCudaFiboUIDraw(P,v);
  check(ObjectGetString(0,edit,OBJPROP_TEXT)=="2026.10.14","captured draft survives a field disappearing and returning on resize");g_fc_editing="";
  const int before=pref_writes;long px=ObjectGetInteger(0,name("FC_DRAG"),OBJPROP_XDISTANCE)+8;double py=ObjectGetInteger(0,name("FC_DRAG"),OBJPROP_YDISTANCE)+8;string state="1";
@@ -179,7 +173,7 @@ int main(){
   for(const auto&o:objects)if(StringFind(o.first,P+"FC_")==0)check(inside(o.second),"full tab geometry remains inside ample window");
  }
  reset(180,180,24,200);v=fixture();JPWNoCudaFiboUIDraw(P,v);
- check(!g_fc_layout.usable&&inside(objects[name("FC_HEADER_CLOSE")]),"impossible tiny frame preserves a close hatch without false usable status");
+ check(!g_fc_layout.usable&&physical_name(name("FC_CLOSE")),"impossible tiny frame preserves a close hatch without false usable status");
  reset();v=fixture();v.tab=1;v.below.valid=false;v.above.valid=false;v.selected.valid=false;
  JPWNoCudaFiboUIDraw(P,v);check(!seen_value(v.below.price)&&txt("BELOW_PRICE")=="N/A","unverified unavailable metrics do not reveal numerical candidates as accepted values");
  reset();v=fixture();v.preview=true;v.record_detail="2026.10.01 00:00:00 = 1.1234567890123456|2026.10.01 04:00:00 = 1.2345678901234567|2026.10.01 08:00:00 = 1.3456789012345678";
@@ -189,13 +183,22 @@ int main(){
  bool cancel_available=false;
  for(int at=0;at<=g_fc_scroll_max;at++){g_fc_scroll=at;JPWNoCudaFiboUIDraw(P,v);cancel_available|=ObjectFind(0,name("FC_IMPORT_CANCEL"))>=0;}
  check(cancel_available,"import preview exposes explicit cancel within same tab");
+ for(int font:{18,19})for(int theme:{0,1}){
+  reset(320,1080,font,150);background=theme?0x171b21:0xffffff;v=fixture();v.tab=0;JPWNoCudaFiboUIDraw(P,v);
+  check(physical_name(name("TITLE"))&&txt("TITLE").find("NoCuda")!=string::npos,"narrow title regression: NoCuda caption remains visible at font18/19 and150percent");
+ }
  int cases=0;
  for(int font=9;font<=24;font++)for(int scale:{100,125,150,200})for(int width:{320,390,800,1440})for(int height:{420,720,1080})for(int theme:{0,1}){
   reset(width,height,font,scale);background=theme?0x171b21:0xffffff;v=fixture();v.tab=2;JPWNoCudaFiboUIDraw(P,v);cases++;
-  check(inside(objects[name("FC_HEADER_CLOSE")])&&(!g_fc_layout.usable||inside(objects[name("FC_CLOSE")])),"pinned close controls stay within responsive window; infeasible shell keeps header hatch");
+  const string exit=physical_name(name("FC_HEADER_CLOSE"))?name("FC_HEADER_CLOSE"):name("FC_CLOSE");
+  check(physical_name(exit),"responsive window retains a real physically bounded exit");
+  check(JPWNoCudaFiboUIHitAction(P,exit)=="FC_CLOSE","responsive exit maps to actual close action");
+  bool title=false;for(const auto&o:objects)if(o.second.type==OBJ_LABEL&&o.second.text.count(OBJPROP_TEXT)&&o.second.text.at(OBJPROP_TEXT).find("NoCuda")!=string::npos&&physical_name(o.first))title=true;
+  check(title,"NoCuda title is visibly identifiable in every viewport");
+  if(g_fc_layout.usable)check(inside_name(name("FC_CLOSE")),"usable window retains bounded footer exit");
   check(contrast(g_fc_ink,g_fc_surface)>=4.5&&contrast(g_fc_muted,g_fc_surface)>=4.5,"text theme contrast meets 4.5 to 1 threshold");
   check(contrast(0xffffff,g_fc_accent)>=4.5,"active button uses readable white ink in both themes");
-  if(g_fc_layout.usable)check(ObjectFind(0,name("FC_RESIZE"))>=0&&ObjectFind(0,name("FC_CLOSE"))>=0&&ObjectGetInteger(0,name("FC_RESIZE"),OBJPROP_YDISTANCE)>=ObjectGetInteger(0,name("FC_CLOSE"),OBJPROP_YDISTANCE)+g_fc_layout.button,"resize handle does not overlap footer actions in a usable shell");
+  if(g_fc_layout.usable)check(inside_name(name("FC_RESIZE"))&&ObjectGetInteger(0,name("FC_RESIZE"),OBJPROP_YDISTANCE)>=ObjectGetInteger(0,name("FC_CLOSE"),OBJPROP_YDISTANCE)+g_fc_layout.button,"usable window resize handle does not overlap footer actions");
   if(!g_fc_layout.usable){constrained++;check(ObjectFind(0,name("UNUSABLE"))>=0,"infeasible viewport is explicitly unavailable, never counted as functional success");continue;}
   usable++;bool reached[5]={false,false,false,false,false};bool date_seen=false,query_seen=false;
   for(int at=0;at<=g_fc_scroll_max;at++){
@@ -233,12 +236,9 @@ def main():
     source = source.replace('JPWNoCudaFiboUIItem sources[];', 'std::vector<JPWNoCudaFiboUIItem> sources;').replace('JPWNoCudaFiboUIItem records[];', 'std::vector<JPWNoCudaFiboUIItem> records;')
     source = source.replace('string g_fc_keep[],g_fc_actions[],g_fc_action_ids[];', 'std::vector<string> g_fc_keep,g_fc_actions,g_fc_action_ids;')
     source = source.replace('string f[];', 'std::vector<string> f;')
-    source = re.sub(r'\b(uint|string) &(\w+)\[\]',r'std::vector<\1> &\2',source)
-    source = re.sub(r'\b(uint|string) (\w+)\[\];',r'std::vector<\1> \2;',source)
-    source = source.replace('int JPWUIDesignNavColumns(std::vector<string> &labels,','template<class Labels> int JPWUIDesignNavColumns(Labels &labels,')
     with tempfile.TemporaryDirectory(prefix='jpw-nocuda-fibo-ui-') as folder:
         path = Path(folder)
-        (path / 'ui.cpp').write_text(SHIM + source + MAIN)
+        (path / 'ui.cpp').write_text(complete_design_shim(SHIM) + translate_arrays(source) + MAIN)
         compiled = subprocess.run([compiler, '-std=c++17', '-O1', str(path / 'ui.cpp'), '-o', str(path / 'ui')], text=True, capture_output=True)
         if compiled.returncode:
             print(compiled.stderr)

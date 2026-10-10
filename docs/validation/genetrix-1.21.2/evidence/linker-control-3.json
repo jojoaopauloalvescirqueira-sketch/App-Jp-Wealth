@@ -1,0 +1,60 @@
+{
+  "trial": "3",
+  "pid": 76735,
+  "before_sha256": "e9a445c66df1ceb0323cf7707d66119cb76179bc7e6ffa61d1698927883886dd",
+  "after_sha256": "bd4e00a853f72dca015b6d8978287b9132fa842cc675bcb93f72e46625e3f5a7",
+  "only_import_sys_and_non_darwin_lcrypto_delta": true,
+  "all_other_AST_identical": true,
+  "commands": [
+    {
+      "platform": "darwin",
+      "command": [
+        "/compiler",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/fixture.cpp",
+        "-o",
+        "/fixture-bin"
+      ],
+      "exact_expected": true
+    },
+    {
+      "platform": "linux",
+      "command": [
+        "/compiler",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/fixture.cpp",
+        "-o",
+        "/fixture-bin",
+        "-lcrypto"
+      ],
+      "exact_expected": true
+    },
+    {
+      "platform": "win32",
+      "command": [
+        "/compiler",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/fixture.cpp",
+        "-o",
+        "/fixture-bin",
+        "-lcrypto"
+      ],
+      "exact_expected": true
+    }
+  ],
+  "synthetic_missing_crypto_control_rejected": true,
+  "synthetic_Werror_removal_control_rejected": true,
+  "canonical_132_source_members_unchanged": true,
+  "source_zip_unchanged": true,
+  "linux_native_execution": "NOT_RUN",
+  "native_MT5": "NOT_RUN/BLOCKED"
+}

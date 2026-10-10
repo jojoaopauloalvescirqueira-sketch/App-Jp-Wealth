@@ -1,0 +1,26 @@
+{
+  "trial": "3",
+  "process": 72015,
+  "http_manifest_exact": true,
+  "http_zip_sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+  "http_zip_bytes": 760092,
+  "compiled_available": false,
+  "native": "COMPILE_NOT_RUN_RUNTIME_BLOCKED",
+  "external_publication": "NOT_RUN",
+  "embedded": [
+    {
+      "file": "build-id.js",
+      "manifest_exact": true,
+      "payload_exact": true,
+      "only_source": true,
+      "source_members": 132
+    },
+    {
+      "file": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "manifest_exact": true,
+      "payload_exact": true,
+      "only_source": true,
+      "source_members": 132
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "zip_sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+  "zip_bytes": 760092,
+  "members": 132,
+  "runtime_inputs": 111,
+  "runtime_fingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6",
+  "manifest_hashes_match": true,
+  "runtime_fingerprint_match": true,
+  "versions": {
+    "version": "1.21.2",
+    "mqlVersion": null,
+    "calculationVersion": null,
+    "runtimeBuildId": "b62034333bedb9635bb78d06d6b3f22b36510de1f4b7e3214009c12bf0f31862"
+  },
+  "compiled": {
+    "available": false,
+    "path": null,
+    "filename": null,
+    "sha256": null,
+    "bytes": null,
+    "reason": "Fontes 1.21.2 em preparação; EX5 anteriores não comprovam esta revisão. Compilação nativa NOT_RUN até recibo do mesmo fingerprint."
+  },
+  "nativeArtifact": null,
+  "validation": {
+    "mathematics": {
+      "status": "pending",
+      "detail": "Regressões financeiras e contraprovas locais passaram; fórmulas e unidades preservadas. Aceite completo pendente devido a lacunas de julgadores e execução nativa; ver relatório."
+    },
+    "compilation": {
+      "status": "pending",
+      "detail": "Fontes 1.21.2 em preparação; EX5 anteriores não comprovam esta revisão. Compilação nativa NOT_RUN até recibo do mesmo fingerprint."
+    },
+    "terminal": {
+      "status": "pending",
+      "detail": "Interação, instalação operacional e aceite 1.21.2 NOT_RUN/BLOCKED; nenhum aceite transferido."
+    },
+    "clipboard": {
+      "status": "pending",
+      "detail": "Seleção/cópia interativa no MT5 desta revisão NOT_RUN; teste local não substitui evidência nativa."
+    }
+  },
+  "genetrixCandidate": {
+    "version": "1.21.2",
+    "classification": "CANDIDATE",
+    "baselineCommit": "7f0828488b2fc0ea62dc7c421174799cda47a34a",
+    "native": "COMPILE_NOT_RUN_RUNTIME_BLOCKED",
+    "execution": "OBSERVE_ONLY_MONITOR_NO_TRADING_ROUTINES",
+    "supervisor": "OPTIONAL_SEPARATE_NOT_ARMED",
+    "siteIntegration": "NOT_RUN",
+    "baselineProduct": "1.21.1"
+  },
+  "ex5_members": []
+}

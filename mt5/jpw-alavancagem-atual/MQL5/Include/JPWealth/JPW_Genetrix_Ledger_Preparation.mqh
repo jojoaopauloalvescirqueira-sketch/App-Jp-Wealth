@@ -519,8 +519,9 @@ private:
       if(!Identity() || !JPWLedgerAccountDouble(ACCOUNT_BALANCE,view.balance)) return(false);
       view.margin_mode=AccountInfoInteger(ACCOUNT_MARGIN_MODE);
       if(view.margin_mode!=ACCOUNT_MARGIN_MODE_RETAIL_HEDGING) { reason="Ledger v1 requer hedging; demais módulos independentes"; return(false); }
-      if(!JPWLedgerReadLive(live,active,first_fresh,reason) ||
-         !JPWLedgerComposition(live,active,key,view.balance,view.margin_mode,first_composition)) return(false);
+      if(!JPWLedgerReadLive(live,active,first_fresh,reason)) return(false);
+      if(!JPWLedgerComposition(live,active,key,view.balance,view.margin_mode,first_composition))
+        { reason="Composição contábil indisponível; preparação não confirmada"; return(false); }
       history_end=TimeTradeServer(); if(history_end<=0) history_end=TimeCurrent();
       if(history_end<=0 || !HistorySelect(0,history_end)) { reason="Histórico indisponível"; return(false); }
       source_deal_count=HistoryDealsTotal(); source_order_count=HistoryOrdersTotal();
@@ -612,8 +613,11 @@ private:
      {
       JPWLedgerOrder pending[]; JPWLedgerPosition positions[]; bool fresh=false; double balance=0;
       if(!Identity() || !JPWLedgerAccountDouble(ACCOUNT_BALANCE,balance) || balance!=view.balance ||
-         AccountInfoInteger(ACCOUNT_MARGIN_MODE)!=view.margin_mode || !JPWLedgerReadLive(positions,pending,fresh,reason) ||
-         !JPWLedgerComposition(positions,pending,key,balance,view.margin_mode,composition) || composition!=first_composition)
+         AccountInfoInteger(ACCOUNT_MARGIN_MODE)!=view.margin_mode || !JPWLedgerReadLive(positions,pending,fresh,reason))
+         { if(reason=="") reason="Conta/composição mudou durante preparação"; return(false); }
+      if(!JPWLedgerComposition(positions,pending,key,balance,view.margin_mode,composition))
+        { reason="Composição contábil indisponível; preparação não confirmada"; return(false); }
+      if(composition!=first_composition)
         { if(reason=="") reason="Conta/composição mudou durante preparação"; return(false); }
       if(ArrayResize(live,ArraySize(positions))!=ArraySize(positions)) return(false);
       for(int i=0;i<ArraySize(positions);i++) live[i]=positions[i];
@@ -712,8 +716,11 @@ public:
       JPWLedgerPosition positions[]; JPWLedgerOrder pending[]; bool fresh=false; string current=""; double balance=0;
       if(!Identity() || !JPWLedgerAccountDouble(ACCOUNT_BALANCE,balance) || balance!=view.balance ||
          AccountInfoInteger(ACCOUNT_MARGIN_MODE)!=view.margin_mode ||
-         !JPWLedgerReadLive(positions,pending,fresh,reason) ||
-         !JPWLedgerComposition(positions,pending,key,balance,view.margin_mode,current) || current!=composition)
+         !JPWLedgerReadLive(positions,pending,fresh,reason))
+         { if(reason=="") reason="Composição/contexto mudou antes da publicação"; return(false); }
+      if(!JPWLedgerComposition(positions,pending,key,balance,view.margin_mode,current))
+        { reason="Composição contábil indisponível; preparação não confirmada"; return(false); }
+      if(current!=composition)
         { if(reason=="") reason="Composição/contexto mudou antes da publicação"; return(false); }
       if(!fresh || TerminalInfoInteger(TERMINAL_CONNECTED)==0 || GetTickCount64()<(ulong)view.observed_mono_ms ||
          GetTickCount64()-(ulong)view.observed_mono_ms>JPW_LEDGER_MAX_AGE_MS) view.quality=2;

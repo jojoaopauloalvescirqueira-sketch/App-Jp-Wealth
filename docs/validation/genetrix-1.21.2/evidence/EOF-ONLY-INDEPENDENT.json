@@ -1,0 +1,24 @@
+[
+  {
+    "path": "tools/leverage_host_layout.py",
+    "before_sha256": "cb17b9329aefeba20933c49ab6e6a310490cbfc9c18e082f1f5ba4d2368a1ac7",
+    "after_sha256": "97a6adc76472c22f7872fd87186747913698819dfa7b27850db2ace202ace3c1",
+    "before_bytes": 22255,
+    "after_bytes": 22253,
+    "before_trailing_newlines": 3,
+    "after_trailing_newlines": 1,
+    "exact_EOF_normalization": true,
+    "AST_identical": true
+  },
+  {
+    "path": "tools/leverage_host_runtime.py",
+    "before_sha256": "114186b7d68dbe01363e84e4890575ffb935d607df9cd7c7a3957918ed21d8ad",
+    "after_sha256": "6ac01ffa9258c63815bbff1caa389bfdfaacebfef0ba60c950f9939c0e19f26c",
+    "before_bytes": 5183,
+    "after_bytes": 5181,
+    "before_trailing_newlines": 3,
+    "after_trailing_newlines": 1,
+    "exact_EOF_normalization": true,
+    "AST_identical": true
+  }
+]

@@ -4,11 +4,13 @@ Only MT5 APIs and presentation are seams; no replacement of controller logic.
 """
 from pathlib import Path
 import argparse, importlib.util, hashlib, json, re, shutil, subprocess, tempfile, sys
-ROOT=Path(__file__).resolve().parents[1];INC=ROOT/'mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth'
+from leverage_host_shim import source_root, translate_arrays, complete_design_shim
+ROOT=source_root();INC=ROOT/'mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth'
 def module(name,file):
     spec=importlib.util.spec_from_file_location(name,ROOT/'tools'/file);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 ct=module('core','jpw_nocuda_fibo_test.py');db=module('db','jpw_nocuda_fibo_store_runtime_test.py');term=module('term','jpw_nocuda_fibo_terminal_test.py')
 UISEAMS=r'''
+void JPWNoCudaReadJustification(); // defined by presentation seam below
 #define JPW_PRODUCT_VERSION string("1.16.0")
 #define JPW_BUILD_ID string("HOST_SYNTHETIC_BUILD")
 #define _Period period
@@ -24,6 +26,7 @@ UISEAMS=r'''
 #define OBJ_NO_PERIODS 0
 #define OBJ_LABEL 90
 #define OBJ_EDIT 91
+#define OBJ_BUTTON 92
 #define SYMBOL_CHART_MODE 1
 #define SYMBOL_CHART_MODE_LAST 1
 #define SYMBOL_DIGITS 2
@@ -54,6 +57,7 @@ string g_nocuda_symbol="SYNTHETIC",g_nocuda_feed="TEST_ONLY",g_nocuda_prefix="TE
 bool g_nocuda_panel_open=false,g_nocuda_panel_focus=false,g_nocuda_canvas_ready=false;
 struct FakeCanvas{void Destroy(){}}g_nocuda_canvas;
 string g_fc_editing,g_fc_focus,ui_owner;
+bool g_fc_gesture=false,g_fc_mouse_down=false;
 JPWNoCudaFiboUIPrefs g_fc_pref;
 JPWNoCudaFiboUILayout g_fc_layout;
 void JPWNoCudaFiboUILoadPrefs(){}
@@ -85,7 +89,6 @@ string TerminalInfoString(int){return "SYNTHETIC_INSTALLATION";}
 unsigned long GetMicrosecondCount(){static unsigned long n=10000;return ++n;}
 bool ChartSetInteger(long,int,long){return true;}
 int CopyRates(const string&,int,int shift,int count,std::vector<MqlRates>&out){if(flip_feed_during_rates){synthetic_feed="SYNTHETIC_RACE_FEED";flip_feed_during_rates=false;}if(shift<0||count!=1||shift>=(int)times.size())return 0;out.resize(1);out[0]={times[times.size()-1-shift],1.1,1.3,1.0,1.2};return 1;}
-void JPWNoCudaReadJustification(){}
 void JPWNoCudaUIClear(const string&){}
 bool JPWUIAcquire(const string&p){ui_owner=p;return true;}
 bool JPWUIOwns(const string&p){return ui_owner==p;}
@@ -115,6 +118,7 @@ bool g_nocuda_pending_pick=false,g_nocuda_recent_object=false,g_nocuda_skip_fiel
 long g_nocuda_a_open=0,g_nocuda_b_open=0,g_nocuda_c_open=0,g_nocuda_a_known=0,g_nocuda_b_known=0,g_nocuda_c_known=0;
 double g_nocuda_a_close=0,g_nocuda_b_close=0,g_nocuda_c_close=0;
 void JPWNoCudaRemoveDrawingObjects(const string&){}
+void JPWNoCudaReadJustification(){} // UI boundary outside this controller/store scope
 void JPWNoCudaLoadChartState(){}
 void JPWNoCudaReloadStudies(){}
 void JPWNoCudaClearDaily(){}
@@ -146,8 +150,13 @@ JPWNCFAction("FC_SOURCE_0");JPWNCFAction("FC_SYNC_RESUME");NCFCheck(g_ncf_link,"
 times[3]++;elapsed=40000;JPWNCFTimer();NCFCheck(!g_ncf_sync.armed&&g_ncf_head.revision==3,"history correction suspends without new revision");times=seed.opens;
 JPWNCFAction("FC_SYNC_RESUME");NCFCheck(!g_ncf_sync.armed,"resume alone cannot accept corrected history");
 objects["native"].ints[{OBJPROP_TIMEFRAMES,0}]=2048;
-JPWNCFAction("FC_REFRESH_SOURCE");NCFCheck(!g_ncf_sync.armed&&g_ncf_head.paused==1&&g_ncf_head.revision==4,"explicit history revision accepted while preserving paused follow mode");
-JPWNCFAction("FC_SYNC_RESUME");NCFCheck(g_ncf_sync.armed&&g_ncf_head.revision==4,"explicit resume follows the accepted history without another revision");
+JPWNCFAction("FC_REFRESH_SOURCE");
+NCFCheck(!g_ncf_sync.armed&&g_ncf_head.revision==4&&g_ncf_head.paused==1&&!g_ncf_history_conflict,"explicit history refresh accepts revision and preserves pause");
+JPWNCFSnapshot paused_snapshot;
+NCFCheck(JPWNCFLoadHead(g_ncf_key,g_ncf_id,h,paused_snapshot,reason)==JPW_NCF_VALID&&h.revision==4&&h.paused==1,"accepted revision and pause persisted in SQLite");
+JPWNCFAction("FC_SYNC_RESUME");
+NCFCheck(g_ncf_sync.armed&&g_ncf_head.paused==0&&g_ncf_head.revision==4,"only explicit resume arms without creating another revision");
+NCFCheck(JPWNCFLoadHead(g_ncf_key,g_ncf_id,h,paused_snapshot,reason)==JPW_NCF_VALID&&h.revision==4&&h.paused==0,"explicit resume persisted following state");
 NCFCheck(g_ncf_original_mask==2048&&g_ncf_saved.timeframes==2048,"explicit history acceptance updates restore mask");
 JPWNCFAction("FC_SOURCE_HIDE");NCFCheck(g_ncf_hidden&&objects["native"].ints[{OBJPROP_TIMEFRAMES,0}]==0,"history revision source can be hidden");
 JPWNCFAction("FC_SOURCE_SHOW");NCFCheck(!g_ncf_hidden&&objects["native"].ints[{OBJPROP_TIMEFRAMES,0}]==2048,"show after history revision restores its updated visibility");
@@ -249,13 +258,15 @@ def main():
     legacy_defs=db.transform(legacy[legacy.index('struct JPWNoCudaRecord'):legacy.index('bool JPWNoCudaStoreNewStudyId')])
     legacy_defs=re.sub(r'uchar (\w+)\[\];',r'std::vector<uchar> \1;',legacy_defs)
     dbshim=db.DBSHIM.replace('int payload_selects=0,catalog_reads=0;', 'int payload_selects=0,catalog_reads=0,catalog_page_queries=0;').replace('int DatabasePrepare(int h,const string&q){', 'int DatabasePrepare(int h,const string&q){if(q.rfind("SELECT c.kind",0)==0)catalog_page_queries++;')
-    code=shim+dbshim+termshim+'\nconstexpr int OBJ_BUTTON=100;\n'+core+store+db.DBREAD+terminal+types+UISEAMS+sync+controller+legacy_defs+CONTEXTSEAMS+clear_anchors+context_reset+fixture+TEST
+    from leverage_panel_test import body_of
+    end_interaction='void JPWNoCudaFiboUIEndInteraction(){'+body_of(ui,'void JPWNoCudaFiboUIEndInteraction()')+'}\n'
+    code=shim+dbshim+termshim+core+store+db.DBREAD+terminal+types+UISEAMS+end_interaction+sync+controller+legacy_defs+CONTEXTSEAMS+clear_anchors+context_reset+fixture+TEST
     with tempfile.TemporaryDirectory(prefix='jpw-ncf-controller-')as temp:
         src=Path(temp)/'controller.cpp';src.write_text(code);exe=Path(temp)/'controller';flags=['-lsqlite3']+([]if sys.platform=='darwin'else['-lcrypto'])
         compiled=subprocess.run([compiler,'-std=c++17','-Wall','-Wextra','-Werror','-Wno-deprecated-declarations',str(src),'-o',str(exe),*flags],text=True,capture_output=True)
         run=subprocess.run([str(exe),temp],text=True,capture_output=True)if compiled.returncode==0 else None
         files=[ct.CORE,db.STORE,INC/'JPW_NoCuda_Fibo_Terminal.mqh',INC/'JPW_NoCuda_Fibo_Sync.mqh',INC/'JPW_NoCuda_Fibo_Controller.mqh',mainpath,legacy_path,INC/'JPW_NoCuda_Fibo_UI.mqh',Path(__file__)]
-        report={'status':'PASS'if run and run.returncode==0 else'PRODUCT_FAIL','scope':'production controller + capture + core + sync + store + main context reset; host SQLite/SHA256; UI and MT5 API seams; legacy key/clear real; legacy loading/drawing outside scope','native':'NOT_RUN','sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()for p in files},'compiler_log':compiled.stdout+compiled.stderr,'output':run.stdout+run.stderr if run else''}
+        report={'status':'TEST_HARNESS_FAIL' if compiled.returncode else ('PASS' if run and run.returncode==0 else 'PRODUCT_FAIL'),'scope':'production controller + capture + core + sync + store + main context reset; host SQLite/SHA256; UI and MT5 API seams; legacy key/clear real; legacy loading/drawing outside scope','native':'NOT_RUN','sha256':{str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else 'judge/'+p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in files},'compiler_log':compiled.stdout+compiled.stderr,'output':run.stdout+run.stderr if run else''}
         if args.evidence_dir:
             out=Path(args.evidence_dir);out.mkdir(parents=True,exist_ok=True);(out/'fibo-controller-runtime.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
         print(json.dumps(report,ensure_ascii=False,indent=2));return 0 if report['status']=='PASS'else 1

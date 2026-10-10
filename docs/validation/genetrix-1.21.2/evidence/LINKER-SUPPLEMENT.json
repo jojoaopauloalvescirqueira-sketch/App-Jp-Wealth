@@ -1,0 +1,90 @@
+{
+  "review_id": "CI-PR36-LINKER-RISK-INDEPENDENT",
+  "local_delta_result": "PASS",
+  "failed_ci_attempt": {
+    "run_id": 37872820141,
+    "workflow": "MT5 Host Verification",
+    "head_sha": "90b39df7a9d6097970a82013cd4e0c9b6e5fee02",
+    "actual_checkout_merge_sha": "b871ca267c705bfdf30ed9a5642a6084c66e37d1",
+    "conclusion": "failure",
+    "summary": {
+      "PASS": 39,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 1
+    },
+    "failing_test": "jpw_genetrix_risk_test",
+    "failure": "Linker undefined reference to SHA256; missing -lcrypto on non-darwin",
+    "classification": "TEST_HARNESS_FAIL",
+    "assertion_execution": "NOT_RUN",
+    "artifact_id": 11590939021,
+    "artifact_sha256": "3f0a99fc651193a53557a9f60a7a3e4ebc9ab0096da97f499dfb2b92f23c7261",
+    "failing_log_sha256": "e5a0ad5f1b86a2aaa800358475ac6626787946f2401980c8e350f48ee2bce919"
+  },
+  "baseline_preexistence": {
+    "tools/jpw_genetrix_risk_test.py": {
+      "baseline_sha256": "e9a445c66df1ceb0323cf7707d66119cb76179bc7e6ffa61d1698927883886dd",
+      "failed_PR_head_sha256": "e9a445c66df1ceb0323cf7707d66119cb76179bc7e6ffa61d1698927883886dd",
+      "same": true
+    },
+    "tools/leverage_config_test.py": {
+      "baseline_sha256": "0304a3e85a54e4d2bbc84d6b4bb17cb4a4cfa33354680a62c809113ec4c52d57",
+      "failed_PR_head_sha256": "0304a3e85a54e4d2bbc84d6b4bb17cb4a4cfa33354680a62c809113ec4c52d57",
+      "same": true
+    }
+  },
+  "patch": {
+    "before": "e9a445c66df1ceb0323cf7707d66119cb76179bc7e6ffa61d1698927883886dd",
+    "after": "bd4e00a853f72dca015b6d8978287b9132fa842cc675bcb93f72e46625e3f5a7",
+    "scope": "Import sys and conditional compile_command.append(-lcrypto) only",
+    "remaining_AST_identical": true,
+    "warning_flags_preserved": true,
+    "embedded_Cpp_and_assertions_preserved": true,
+    "three_fresh_platform_controls": "PASS",
+    "canonical_source_and_package_unchanged": true
+  },
+  "limits": {
+    "actual_Linux_reexecution_after_patch": "NOT_RUN at this review checkpoint; future CI needed",
+    "local_platform_controls": "AST command construction only, not Linux compilation",
+    "native_MT5": "NOT_RUN/BLOCKED",
+    "quality_gate_attempt1": "IN_PROGRESS at snapshot03",
+    "workflows": "unchanged; ubuntu-latest host tests, not native MT5"
+  },
+  "subsequent_local_receipt_observed": {
+    "path": "/private/tmp/jpw-genetrix-site-evidence-20261008/mt5-host-R8.json",
+    "sha256": "803523cb446bcc2223079bc3cc4c36a94ae9f87a8fea6d571f34b960cfbc6982",
+    "summary": {
+      "PASS": 40,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "inputs_unchanged": true,
+    "patched_judge_sha256": "bd4e00a853f72dca015b6d8978287b9132fa842cc675bcb93f72e46625e3f5a7",
+    "risk_log_sha256": "d60217a047500c868562a6dc71e48282cbee3df11a2d4de246b4180185515098",
+    "risk_log_host_assertions": 51,
+    "native_compile": "NOT_RUN",
+    "native_execution": "NOT_RUN",
+    "source": "Root-executed receipt read independently; reviewer did not rerun whole host suite"
+  },
+  "freeze_R8_observed": {
+    "path": "/private/tmp/jpw-genetrix-site-evidence-20261008/freeze-R8.json",
+    "sha256": "4bf95596069abb4c0bb1f57d8987778f4475850aabef45bf64c905e66ac2041d",
+    "changesVsR3": {
+      "tools/jpw_genetrix_risk_test.py": {
+        "old": "e9a445c66df1ceb0323cf7707d66119cb76179bc7e6ffa61d1698927883886dd",
+        "new": "bd4e00a853f72dca015b6d8978287b9132fa842cc675bcb93f72e46625e3f5a7"
+      },
+      "tools/leverage_host_layout.py": {
+        "old": "cb17b9329aefeba20933c49ab6e6a310490cbfc9c18e082f1f5ba4d2368a1ac7",
+        "new": "97a6adc76472c22f7872fd87186747913698819dfa7b27850db2ace202ace3c1"
+      },
+      "tools/leverage_host_runtime.py": {
+        "old": "114186b7d68dbe01363e84e4890575ffb935d607df9cd7c7a3957918ed21d8ad",
+        "new": "6ac01ffa9258c63815bbff1caa389bfdfaacebfef0ba60c950f9939c0e19f26c"
+      }
+    },
+    "interpretation": "Only risk linker command addition plus prior reviewed EOF formatting delta; runtime source and package preserved"
+  }
+}

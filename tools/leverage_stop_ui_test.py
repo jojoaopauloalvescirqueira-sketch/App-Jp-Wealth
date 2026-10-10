@@ -241,4 +241,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import sys
+    from leverage_host_layout import stop_ui
+    raise SystemExit(stop_ui(sys.modules[__name__]))

@@ -9,7 +9,7 @@ JPWPersonalRow g_personal_rows[],g_personal_detail;
 bool g_personal_available=false,g_personal_read_requested=true;
 ulong g_personal_read_mono=0,g_personal_request_id=0;
 long g_personal_read_wall=0;
-string g_personal_live_notice="EA observador sem evidência recente";
+string g_personal_live_notice="Núcleo Monitor sem evidência recente";
 int g_personal_live_count=-1,g_personal_live_state=-1;
 int g_personal_export_requested=0,g_personal_account_index=-1;
 long g_personal_before=0,g_personal_detail_seq=0;
@@ -50,7 +50,7 @@ void JPWPersonalResetPage()
     ArrayResize(g_personal_cursor,0); JPWPersonalRequestRead(); }
 void JPWPersonalReadPresence()
   {
-   g_personal_live_notice="EA observador sem evidência recente"; g_personal_live_count=-1; g_personal_live_state=-1;
+   g_personal_live_notice="Núcleo Monitor sem evidência recente"; g_personal_live_count=-1; g_personal_live_state=-1;
    if(g_personal_operating_key=="") return;
    const string prefix="JPWPH_"+StringSubstr(g_personal_operating_key,0,24)+"_";
    const long now=(long)TimeGMT(); int worst=-1; bool standby=false;
@@ -70,8 +70,8 @@ void JPWPersonalReadPresence()
    if(worst==3) g_personal_live_notice="histórico incompleto — gravação não confirmada";
    else if(worst==5) g_personal_live_notice="Aviso local com resultado incompleto; consulte Histórico";
    else if(worst==2) g_personal_live_notice="Leitura desconhecida/interrupção · consulte cobertura";
-   else if(worst==1) g_personal_live_notice=(g_personal_live_count>=0 ? "EA observador recente · "+IntegerToString(g_personal_live_count)+" sujeitos sem SL registrado na corretora" : "EA observador recente · contagem sem SL desconhecida; consulte Histórico");
-   else if(worst==0) g_personal_live_notice="EA observador inicializando";
+   else if(worst==1) g_personal_live_notice=(g_personal_live_count>=0 ? "Núcleo Monitor recente · "+IntegerToString(g_personal_live_count)+" sujeitos sem SL registrado na corretora" : "Núcleo Monitor recente · contagem sem SL desconhecida; consulte Histórico");
+   else if(worst==0) g_personal_live_notice="Núcleo Monitor inicializando";
    else if(standby) g_personal_live_notice="Instância em espera; titularidade de outro escritor";
   }
 void JPWPersonalCollectUI()
@@ -84,7 +84,9 @@ void JPWPersonalCollectUI()
      }
    JPWPersonalReadPresence();
    const ulong now=GetTickCount64();
-   if(g_raiz_details_open && (now<g_personal_read_mono || now-g_personal_read_mono>=5000) &&
+   if(g_raiz_details_open && (g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY ||
+       g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT) &&
+       (now<g_personal_read_mono || now-g_personal_read_mono>=5000) &&
       !g_personal_read_requested) JPWPersonalRequestRead();
    if(g_personal_export_requested!=0)
      {
@@ -93,7 +95,9 @@ void JPWPersonalCollectUI()
       string path="",reason="";
       if(JPWPersonalExport(requested_scope,backup,path,reason)) g_personal_export_result="Arquivo da conta "+StringSubstr(requested_scope,0,12)+"… gravado: "+path;
       else g_personal_export_result="Exportação da conta "+StringSubstr(requested_scope,0,12)+"… não confirmada: "+reason;
-      JPWRaizPanelDestroy();
+      JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);
+       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
+       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT);
      }
    if(!g_personal_read_requested || !JPWCoordinatorBudgetRemaining()) return;
    const ulong request=g_personal_request_id;
@@ -122,7 +126,9 @@ void JPWPersonalCollectUI()
    if(request!=g_personal_request_id || scope!=g_personal_scope || category!=g_personal_category ||
       before!=g_personal_before || detail_seq!=g_personal_detail_seq || operating!=g_personal_operating_key ||
       !g_account_known || g_diagnostic_context!=operating)
-     { JPWPersonalRequestRead(); JPWRaizPanelDestroy(); return; }
+     { JPWPersonalRequestRead(); JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);
+       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
+       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT); return; }
    // A missing/corrupt selected history must not prevent browsing other local accounts.
    if(catalog_ok)
      {
@@ -146,7 +152,9 @@ void JPWPersonalCollectUI()
      }
    else
      { ArrayResize(g_personal_rows,0); g_personal_reason=(reason=="" ? "Consulta não confirmada; atualize para tentar novamente." : reason); }
-   JPWRaizPanelDestroy();
+   JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);
+       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
+       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT);
   }
 
 string JPWPersonalScopeLabel()

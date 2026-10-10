@@ -1,0 +1,37 @@
+{
+  "freeze_file": "freeze-R5-final.json",
+  "freeze_file_sha256": "b113c5d930e23af1a0c15784564f3e8f86116d846741ff962e0474e8cff02c98",
+  "fingerprint": "ad70b6bd11d614265c82eed4f53d85ecc97fd478ae7d27354c6624749358840c",
+  "inputs": 847,
+  "missing": [],
+  "changed": [],
+  "R3_runtime_changed": [],
+  "full_summary": {
+    "PASS": 57,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "host_summary": {
+    "PASS": 40,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "host_inputs_unchanged": true,
+  "native_compilation": "NOT_RUN",
+  "native_execution": "NOT_RUN",
+  "operational_readiness": "BLOCKED_NATIVE_VALIDATION",
+  "doc_hashes": {
+    "docs/work/CHG-GENETRIX-1-21-2-SITE-20261008.md": "f3b1b9c6229c1906229e5461bab34da9815efc3b7dd595a49861a3ca63650e1b",
+    "docs/work/ACTIVE-TASK.md": "51b6f9cabd7ce95aadd4efad513b61e198d6df0e88262c684a8f418fde8d14a7",
+    "docs/governance/CURRENT-STATE.md": "d0d53bdc474d08e83a693aa2dc64a944d785a67b54fd32129d3d0153a5ff23c7",
+    "docs/governance/CONTEXT-MAP.md": "e9d6f7d5e9c0741a8620e21fd8d7677e17b361bda80e78d6bbe6333faed0b0dc",
+    "CHANGELOG.md": "129a38d73c609cd5cd87d87a9355fc3bc4a38a5a57d8bf9cf90111a09f4936cb",
+    "docs/validation/genetrix-1.21.2/INTEGRATION.md": "8e67db76fce0cced0e87c70a95f907879a91d528baef2146c71cf1f9b32b3fec"
+  }
+}

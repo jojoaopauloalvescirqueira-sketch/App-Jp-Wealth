@@ -1,0 +1,38 @@
+[
+  {
+    "trial": 1,
+    "source_sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "source_bytes": 760092,
+    "zip_exact": true,
+    "deterministic": true,
+    "runtime_fingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6",
+    "compiled": false,
+    "nativeArtifact": null,
+    "ex5_negative": "REJECTED",
+    "ex5_reason": ".ex5 encontrado sem evidencia nativa; nao distribuir"
+  },
+  {
+    "trial": 2,
+    "source_sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "source_bytes": 760092,
+    "zip_exact": true,
+    "deterministic": true,
+    "runtime_fingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6",
+    "compiled": false,
+    "nativeArtifact": null,
+    "ex5_negative": "REJECTED",
+    "ex5_reason": ".ex5 encontrado sem evidencia nativa; nao distribuir"
+  },
+  {
+    "trial": 3,
+    "source_sha256": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "source_bytes": 760092,
+    "zip_exact": true,
+    "deterministic": true,
+    "runtime_fingerprint": "9650de7a8573566f3532e3a3ecb2806d0a0e62e2afe7b8130f1331045c06a4b6",
+    "compiled": false,
+    "nativeArtifact": null,
+    "ex5_negative": "REJECTED",
+    "ex5_reason": ".ex5 encontrado sem evidencia nativa; nao distribuir"
+  }
+]
