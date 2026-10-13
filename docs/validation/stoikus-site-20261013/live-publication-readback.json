@@ -1,0 +1,31 @@
+{
+  "result": "PASS",
+  "url": "https://jp-wealth-software.jojoaopauloalvescirq.chatgpt.site/",
+  "verification": "Owner-authorized Site dispatch; fresh HTTP; no browser data",
+  "checks": [
+    {
+      "path": "build-id.js",
+      "status": 200,
+      "sha256": "4284ab67fe337395b7f0905f779951739ef8ad460bc3b02e068da50c83d0e8cf",
+      "bytes": 1948914
+    },
+    {
+      "path": "downloads/jpw-alavancagem-atual/manifest.json",
+      "status": 200,
+      "sha256": "dc45de5e1e41aecde4061d40fa8efbac56eb9414ac60cb6877bf79eea827fc0e",
+      "bytes": 30938
+    },
+    {
+      "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip",
+      "status": 200,
+      "sha256": "03ccb37824175511108b36e9abb5c9fa0dc28d89a338caea1dc7bf02508b9cae",
+      "bytes": 773801
+    },
+    {
+      "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip",
+      "status": 200,
+      "sha256": "5b2c7ca40736dda976fe97a91a2677d190eb1ccfdf9527703fd471ee702a11e5",
+      "bytes": 441516
+    }
+  ]
+}

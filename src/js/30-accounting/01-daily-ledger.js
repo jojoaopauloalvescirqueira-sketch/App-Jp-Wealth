@@ -398,16 +398,38 @@ function dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte){
   payload.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(payload))};
   const text=JSON.stringify(payload,null,2),blob=new Blob([text],{type:'application/json'});
   if(blob.size>JPW_BACKUP_MAX_BYTES)throw new Error('Backup excede o limite de 32 MiB; preserve a recuperação bruta e examine os dados.');
+  dgBackupInspect(payload); // the same structural/checksum boundary must pass before delivery or GENERATED
   // Finalization compares the user workspace, not the additional RAM recovery copy.
   blob.workspaceFingerprint=workspace.sourceFingerprint;blob.checksum=payload.integrity.checksum;
   blob.fileChecksum=dgBackupSha256(text);blob.confirmedSourceFingerprint=dgBackupSha256(confirmed);
   dgBackupSetStatus('GENERATED',{filename,checksum:blob.checksum,reason:null,localRecordConfirmed:false});
   return blob;
 }
+// Financial histories may legitimately exceed the workspace depth limit.
+// Inspect every key iteratively without truncating chains or weakening the
+// forbidden-key guard. Track ancestors, so shared references remain compatible
+// while a direct cyclic API input is refused (JSON files cannot contain cycles).
+function dgBackupCheckTree(value){
+  const ancestors=new WeakSet(),frames=[];
+  const enter=item=>{
+    if(!item||typeof item!=='object')return;
+    if(ancestors.has(item))throw new Error('Estrutura circular no backup.');
+    ancestors.add(item);frames.push({value:item,keys:Object.keys(item),index:0});
+  };
+  enter(value);
+  while(frames.length){
+    const frame=frames[frames.length-1];
+    if(frame.index===frame.keys.length){ancestors.delete(frame.value);frames.pop();continue;}
+    const key=frame.keys[frame.index++];
+    if(['__proto__','prototype','constructor'].includes(key))throw new Error('Campo não permitido no backup.');
+    enter(frame.value[key]);
+  }
+}
 function dgBackupInspect(raw){
   if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error('JSON inválido: raiz precisa ser um objeto.');
   if(raw.tipo==='jpwealth_partial_audit'||raw.tipo==='jpwealth_recovery_backup'||raw.coverage==='PARTIAL_AUDIT'||raw.contas||raw.legacyUnreconciled)throw new Error('Relatório parcial ou recuperação de emergência não é Backup Completo. Nenhum dado será substituído.');
-  jpwWorkspaceCheckTree(raw);
+  dgBackupCheckTree(raw);
+  if(Object.prototype.hasOwnProperty.call(raw,'workspace'))jpwWorkspaceValidate(raw.workspace);
   const envelope=Object.prototype.hasOwnProperty.call(raw,'state')||Object.prototype.hasOwnProperty.call(raw,'tipo'),state=envelope?raw.state:raw;
   if(!state||typeof state!=='object'||Array.isArray(state))throw new Error('Backup sem objeto de estado.');
   dgBackupValidateTypedContainers(state);
@@ -429,6 +451,7 @@ function dgBackupInspect(raw){
   return {kind:envelope?'LEGACY_FULL_ENVELOPE':'LEGACY_FULL_STATE',legacy:true,sections:Object.keys(state).sort(),missing};
 }
 function dgBackupValidateTypedContainers(state){
+  jpwValidateChecklist(state);
   for(const [key,definition] of Object.entries(DEFAULTS)){
     if(!Object.prototype.hasOwnProperty.call(state,key))continue;
     if(Array.isArray(definition)){

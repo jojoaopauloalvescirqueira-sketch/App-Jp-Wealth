@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "width": 390,
+      "target_box": {
+        "x": 20,
+        "y": 427.859375,
+        "width": 256.015625,
+        "height": 44
+      },
+      "click_opens_install_and_target": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 320,
+      "target_box": {
+        "x": 20,
+        "y": 428.4375,
+        "width": 256.015625,
+        "height": 44
+      },
+      "click_opens_install_and_target": true,
+      "no_page_overflow": true
+    }
+  ],
+  "native_MT5": "NOT_RUN"
+}

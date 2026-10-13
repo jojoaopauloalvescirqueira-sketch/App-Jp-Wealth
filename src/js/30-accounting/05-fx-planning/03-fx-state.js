@@ -297,16 +297,29 @@ function fxOverviewLive(){
 // SI, onboarding e despesas mensais não suprem capital nominal ou seis meses.
 function fxReservePanelData(){
   const api=window.JPWForex&&window.JPWForex.state;
-  const view=api&&api.read?api.read():{},account=view.account||null;
-  const reserves=view.reserves&&view.reserves.observations||{};
+  const view=api&&api.read?api.read():{},reserves=view.reserves&&view.reserves.observations||{};
+  const context=api&&api.accountContext?api.accountContext(view.budgetScope):null;
+  const unavailable=()=>({status:'NOT_COMPUTABLE',value:null,unit:'ACCOUNT_CURRENCY',findings:[]});
+  // Consume the exact results: a selected satellite, conflict or missing basis
+  // cannot regain a Mestre requirement through this presentation adapter.
+  const fcr=view.metrics?.fcrRequirement||unavailable(),feo=view.metrics?.feoRequirement||unavailable();
   const number=v=>typeof v==='number'&&Number.isFinite(v)?v:null;
-  const accountCapital=account?number(account.capitalNominal):null,declared=number(reserves.capitalNominal);
-  const conflict=accountCapital!==null&&declared!==null&&accountCapital!==declared;
-  const result=reserveRequirementsCalc({capitalNominal:conflict?null:declared??accountCapital,
-    sixMonthExpenseAmount:number(reserves.sixMonthExpenseAmount),determinationRecorded:reserves.determinationRecorded===true,
-    expensesApproved:reserves.expensesApproved===true,fcrCurrent:number(reserves.fcrConstituted),feoCurrent:number(reserves.feoConstituted)});
-  if(conflict)result.findings.push({code:'NOMINAL_CAPITAL_DIVERGENCE',message:'Capital nominal da conta e da apuração divergem. Reconcilie os registros; nenhuma base foi escolhida automaticamente.'});
-  return result;
+  const fcrReq=fcr.status==='OK'?number(fcr.value):null,feoReq=feo.status==='OK'?number(feo.value):null;
+  const fcrCur=number(reserves.fcrConstituted),feoCur=number(reserves.feoConstituted);
+  const coverage=(cur,req)=>cur!==null&&req>0?cur/req*100:null;
+  const difference=(cur,req)=>cur!==null&&req!==null?cur-req:null;
+  const status=(cur,req)=>cur===null||req===null?'Pendente':cur<req?'Insuficiente':'Constituído — verificar governança';
+  const hasDeficit=(fcrReq!==null&&fcrCur!==null&&fcrCur<fcrReq)||(feoReq!==null&&feoCur!==null&&feoCur<feoReq);
+  const findings=[...fcr.findings,...feo.findings];
+  if(fcr.findings.some(f=>f.code==='FCR_NOMINAL_CONFLICT'))findings.push({code:'NOMINAL_CAPITAL_DIVERGENCE',message:'Capital nominal da conta e da apuração divergem. Reconcilie os registros; nenhuma base foi escolhida automaticamente.'});
+  return {accountId:view.budgetScope?.accountId||null,periodId:view.budgetScope?.periodId||null,
+    currency:context?.status==='OK'?context.value.currency:null,
+    capital:fcr.status==='OK'?number(fcr.base):null,masterCapital:fcr.status==='OK'?number(fcr.base):null,
+    fcrReq,feoReq,fcrCur,feoCur,fcrStatus:status(fcrCur,fcrReq),feoStatus:status(feoCur,feoReq),
+    fcrCoverage:coverage(fcrCur,fcrReq),feoCoverage:coverage(feoCur,feoReq),
+    fcrDiff:difference(fcrCur,fcrReq),feoDiff:difference(feoCur,feoReq),hasDeficit,
+    generalStatus:hasDeficit?'Déficit registrado':fcrReq===null||feoReq===null?'Requisitos não calculáveis':'Constituição informada; elegibilidade depende de governança',
+    generalTone:hasDeficit?'var(--f4)':'var(--ink-dim)',status:'PENDING_GOVERNANCE',requirements:{fcr,feo},findings};
 }
 
 window.JPWFx.state={fxState,fxActivePlanRaw,fxActivePlan,fxPlanCreate,fxPlanDelete,

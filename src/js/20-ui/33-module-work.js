@@ -168,8 +168,11 @@
       const entries=JSON.parse(item.text),supported=item.context?.moduleId==='research'&&Array.isArray(entries)&&entries.length>0&&entries.every(entry=>['nocoda','pivots'].includes(entry.kind)&&entry.draft);
       return {compatible:supported&&available('research')&&!hasPending('research')&&item.baseReference===JSON.stringify({nocoda:S.nocoda,pivotStudies:S.pivotStudies}),reason:supported?'O estudo original deve corresponder, sem outra edição aberta.':'Este formulário permanece disponível para leitura e cópia; sua reconstrução automática não é segura.'};
     }catch(_){return {compatible:false,reason:'Contexto do estudo incompatível.'};}},
-    reopen(item){if(typeof closeSettingsModal==='function')closeSettingsModal();if(root.JPWNavigation?.navigate('research-forex')===false)throw new Error('Navegação recusada.');
-      for(const entry of JSON.parse(item.text)){if(entry.kind==='nocoda')root.JPWNocodaUI.restoreDraft(entry.draft);else root.JPWPivotsUI.restoreDraft(entry.draft);}
+    reopen(item){
+      const entries=JSON.parse(item.text),view=entries.some(entry=>entry.kind==='pivots')?'pivots':'nocoda';
+      if(typeof closeSettingsModal==='function')closeSettingsModal();
+      if(root.JPWNavigation?.navigateLocal('research',view)===false)throw new Error('Navegação recusada.');
+      for(const entry of entries){if(entry.kind==='nocoda')root.JPWNocodaUI.restoreDraft(entry.draft);else root.JPWPivotsUI.restoreDraft(entry.draft);}
     }
   });
   for(const [id,ids]of Object.entries(screens))for(const key of ids){const node=byId(key);if(node)bind(node,id);}

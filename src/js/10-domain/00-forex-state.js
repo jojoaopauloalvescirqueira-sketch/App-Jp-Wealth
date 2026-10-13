@@ -827,6 +827,9 @@
       const selected=input.periodId?a.periods[input.periodId]:!requestedNewPeriod&&a.currentPeriodId?a.periods[a.currentPeriodId]:null;
       const newPeriod=requestedNewPeriod||!!(selected&&previous&&selected.periodId!==previous.periodId);
       if(input.periodId&&!selected)throw new Error('Período selecionado não pertence à conta cadastrada.');
+      // Keep the UTC day convention used by automatic periods and historical reconciliation.
+      if(selected&&new Date(input.observedAt).toISOString().slice(0,10)<selected.startedAt)
+        throw new Error('Observação anterior ao início do período selecionado (data UTC). Preserve a entrada e revise o período.');
       if(newPeriod&&a.currentPeriodId&&a.periods[a.currentPeriodId]?.activeOperation)
         throw new Error('Resolva a operação desta conta antes de iniciar novo período.');
       if(newPeriod&&selected&&selected.periodId===previous?.periodId)throw new Error('Novo período exige identidade distinta da observação anterior.');

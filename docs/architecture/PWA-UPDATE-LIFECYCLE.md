@@ -58,3 +58,11 @@ shell, preservando seus bytes e a consulta offline. A regra não altera o ciclo 
 instalação/ativação/atualização nem as demais rotas. No HTML portátil, o gerador
 incorpora os originais em links de download com data URLs; não depende de /dist/docs
 ou de uma pasta externa. O texto derivado também continua no leitor do onboarding.
+
+## Documentação do projeto — correção AUD-10 (2026-10-12)
+
+README.md e CHANGELOG.md recebem correspondência exata antes do fallback de navegação, da mesma forma que a consulta normativa. Esses dois documentos entram no precache atômico e no fingerprint explícito de rebuild_monolith.py. Uma aba controlada consulta os bytes documentais de seu próprio build, inclusive offline; a navegação para eles não recebe index.html.
+
+No portátil, os links são incorporados como data URLs de download com os bytes originais. O gerador usa a lista explícita desses dois documentos, sem varrer diretórios. Sua fixture de PDF inclui os mesmos inputs obrigatórios. Isso não muda scope/URL do worker, waiting, activate, controllerchange ou recarga. A transição de build continua dependendo do fechamento dos clientes antigos.
+
+A regressão tools/pwa_document_navigation_test.py usa um perfil sintético, verifica os links de Configurações sob controller online/offline, os bytes cacheados, a incorporação portátil e a preservação do estado. O servidor dessa fixture oferece Markdown como texto para observar a navegação; em hosting que baixa Markdown, o destino continua sendo o arquivo original. O teste service_worker_upgrade_test.py permanece necessário para o ciclo de atualização.

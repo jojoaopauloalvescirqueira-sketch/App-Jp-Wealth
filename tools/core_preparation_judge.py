@@ -3,7 +3,7 @@
 import argparse,hashlib,importlib.util,json,re,subprocess,tempfile,shutil,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];BASE=ROOT/'mt5/jpw-alavancagem-atual/MQL5'
-spec=importlib.util.spec_from_file_location('legacy',ROOT/'tools/jpw_genetrix_ledger_test.py');legacy=importlib.util.module_from_spec(spec);spec.loader.exec_module(legacy)
+spec=importlib.util.spec_from_file_location('legacy',ROOT/'tools/jpw_stoikus_ledger_test.py');legacy=importlib.util.module_from_spec(spec);spec.loader.exec_module(legacy)
 EXTRA=r'''
 using uint=unsigned int;using ulong=unsigned long;using datetime=long;
 ulong clock_ms=1000;ulong GetTickCount64(){return clock_ms++;}
@@ -62,7 +62,7 @@ def main():
  if not compiler:
   print("JPW_TEST_RESULT: ENVIRONMENT_ERROR");return 2
  inc=BASE/'Include/JPWealth'
- paths=[inc/'JPW_Genetrix_Ledger_Core.mqh',inc/'JPW_Genetrix_Ledger_Store.mqh',inc/'JPW_Genetrix_Ledger_Preparation.mqh',inc/'JPW_Genetrix_Ledger_Terminal.mqh',BASE/'Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.mq5',Path(__file__).resolve()]
+ paths=[inc/'JPW_Stoikus_Ledger_Core.mqh',inc/'JPW_Stoikus_Ledger_Store.mqh',inc/'JPW_Stoikus_Ledger_Preparation.mqh',inc/'JPW_Stoikus_Ledger_Terminal.mqh',BASE/'Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5',Path(__file__).resolve()]
  receipt={'scope':'complete production preparation and SQLite commit; source/API/clock controlled; no MT5 runtime or broker','sources':{str(x.relative_to(ROOT)):hashlib.sha256(x.read_bytes()).hexdigest() for x in paths},'native':'NOT_RUN'}
  source='\n'.join([legacy.SHIM,translated(paths[0].read_text()),translated(paths[1].read_text()),EXTRA,translated(extract(paths[3].read_text(),'JPWLedgerComposition')),translated(paths[2].read_text()),translated(paths[4].read_text()),TEST])
  with tempfile.TemporaryDirectory(prefix='core-preparation-judge-') as d:

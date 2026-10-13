@@ -458,7 +458,7 @@ bool JPWCockpitVisible(JPWCockpitPrefs&prefs,int index){return (prefs.visible_ma
 string JPWCockpitQualityText(JPW_VIEW_QUALITY quality){
  return quality==JPW_VIEW_CURRENT?"Current":quality==JPW_VIEW_ESTIMATED?"Estimated":"N/A";
 }
-// New seventh-metric boundary is verified in jpw_genetrix_ui_test; legacy HUD fixtures keep their original six rows.
+// New seventh-metric boundary is verified in jpw_stoikus_ui_test; legacy HUD fixtures keep their original six rows.
 string JPWGenetrixMetricQuality(int,JPW_VIEW_QUALITY quality){return JPWCockpitQualityText(quality);}
 string g_panel_prefix="JPW_TEST_";
 int InpFontSize=8,InpOffsetX=16,InpOffsetY=40,InpFontColor=0x767676;
@@ -709,11 +709,11 @@ int main(){
  std::cout<<"]}\n";
 }
 '''
-    brand_source = (MQL / "Include/JPWealth/JPW_Genetrix_Brand.mqh").read_text()
+    brand_source = (MQL / "Include/JPWealth/JPW_Stoikus_Brand.mqh").read_text()
     brand_signatures = ["int JPWGenetrixTextWidth(const string text,const int font)",
                         "string JPWGenetrixHeaderText(const string section,const int width,const int font)",
                         "bool JPWGenetrixHeader(const string logo_name,const string text_name,const int x,const int y,const int width,const int height,const int font,const color ink,const bool dark,const string section,const int zorder=4)"]
-    brand = "const string JPW_PRODUCT_NAME=\"GENETRIX\";\n" + "\n".join(
+    brand = "const string JPW_PRODUCT_NAME=\"Stoikus\";\n" + "\n".join(
         signature + "{" + body_of(brand_source, signature.split("(")[0]) + "}"
         for signature in brand_signatures)
     cpp = "long capture_background=0xffffff;\n" + shim + panel + enums + globals_and_apis + design_helpers(full=True) + brand + creators + capture_main

@@ -102,6 +102,24 @@ function enterLoadRecoveryMode(kind, raw, error){
   console.error('JP Wealth: o banco salvo não pôde ser carregado com segurança (motivo: '+kind+'). Gravações bloqueadas até decisão do operador.'+(jpWealthLoadRecovery.recoveryKey?' Cópia de recuperação: '+jpWealthLoadRecovery.recoveryKey:''), error);
   renderLoadRecoveryWarning();
 }
+// Checklist is a known structure, not a repairable financial fact. Missing in
+// an older document is supported; present incompatible content is preserved raw
+// by load recovery or refused before import. Unknown compatible fields remain.
+function jpwValidateChecklist(documento){
+  if(!Object.prototype.hasOwnProperty.call(documento,'checklist'))return;
+  const record=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  if(!Array.isArray(documento.checklist))throw new Error('Checklist inválido (checklist): esperava lista de grupos.');
+  for(const group of documento.checklist){
+    if(!record(group)||typeof group.group!=='string'||!Array.isArray(group.items))
+      throw new Error('Checklist inválido: grupo e lista de itens incompatíveis.');
+    for(const item of group.items){
+      // The current checklist input offers exactly 0, 1 and 2; labels are free
+      // inert text, never matched against a closed catalogue of DEFAULTS.
+      if(!record(item)||typeof item.label!=='string'||!Number.isInteger(item.v)||item.v<0||item.v>2)
+        throw new Error('Checklist inválido: item, descrição ou valor incompatível.');
+    }
+  }
+}
 function load(){
   let raw=null, readError=null;
   try{ raw=localStorage.getItem(LSKEY); }catch(e){ readError=e; }
@@ -1227,6 +1245,7 @@ function paramsNormalizeState(){
 }
 function migrate(){ // garante chaves novas se schema evoluir
   if(!S || typeof S!=='object' || Array.isArray(S)) throw new Error('A base deve ser um documento JSON, não uma lista.');
+  jpwValidateChecklist(S); // refuse before any default/normalization can hide the original structure
   // Optional documentary metadata is validated before normalization, never inferred from global profiles.
   if(!jpwValidateAccountProfileExtensions(S))
     throw new Error('Metadados de conta ou perfil incompatíveis; preserve a base para revisão.');

@@ -1,80 +1,76 @@
-# Tarefa ativa — integração autorizada — 2026-10-09
+# Tarefa ativa — entrega GitHub Stoikus — 2026-10-13
 
-Data da fotografia: 2026-10-09
+Data da fotografia: 2026-10-13
 
-Source revision representada: `7b73a9731faad4d3a5e06920ff5a80cd92b715e8`
+Source revision representada: `0f247215cc20829fdba40c3b33458ee976c17ea1`
 
-Base integrada: main 89113f8 + delta validado do site aaac928. Pedido humano: “faça merge, push, commit, limpe worktree e integre tudo”. Integração e validação em andamento; esta fotografia não comprova push ou merge remoto. Preservar GENETRIX 1.21.2 e suas limitações nativas. O estudo de futuras aplicações dos gráficos continua proposta, sem implementação. Nenhum deploy, dado pessoal ou fórmula nova.
+Base Git acima mais delta na branch `codex/stoikus-renaming-20261012`, raiz `/private/tmp/jpw-stoikus-renaming-20261012`. O proprietário autorizou registrar commits, enviar a branch, abrir PR, conferir testes GitHub e integrar na main: “realize esse passo 1, 2 3”; “execute”. Operações em preparação nesta fotografia; provas finais externas em `/private/tmp/jpw-stoikus-github-20261013`.
 
-[Contrato](../work/CHG-JPW-INTEGRATION-20261009.md)
+Entrega: auditoria AUD-01..10, Stoikus 1.22.1 / MQL 1.221 / cálculo 1.9.0. Candidato GitHub web `6455102de8b5f1fa`. A correção de espaço excedente no guia e o destino portátil de evidências Linux alteram sete entradas do freeze de 402 arquivos; MQL build/fingerprint e cálculos conservados. O Site versão 3 conserva o build anterior `e570a26ad6fd096a`; seus recibos são históricos dessa publicação. Site GPT/Sites versão 3 publicado em https://jp-wealth-software.jojoaopauloalvescirq.chatgpt.site, commit interno Sites 4cdff1d563b36229561b008b4fb99fd655001f48; publicação e GitHub são destinos separados. Verificações anteriores próprias: full 57/57, host 44/44; serão conferidas novamente antes do commit.
 
-[Histórico preservado](HISTORY-INTEGRATION-ACTIVE-TASK-20261009.md)
+Compilação/execução MT5, instalação e aceite operacional **NOT_RUN**; sem EX5 atual ou armamento. Trabalho simultâneo de Guia de Aprendizagem permanece no checkout principal CloudDocs e não integra esta entrega. As instruções AGENTS antigas foram revogadas; documentos e contratos históricos conservam seus bytes, sem nova autoridade.
 
-## Contratos da reconciliação contextual
+[Registro contextual](CHG-STOIKUS-GITHUB-CONTEXT-20261013.md) · [Fotografia anterior](HISTORY-BEFORE-STOIKUS-GITHUB-docs__work__ACTIVE-TASK.md)
 
 ```yaml
 {
-  "schema": "jp-harness/chg/v1",
-  "change_id": "CHG-JPW-INTEGRATION-CONTEXT-20261009",
   "status": "approved",
-  "approved_by": "Proprietario — autorizacao explicita nesta sessao",
-  "approved_at": "2026-10-10T01:34:42.461764+00:00",
-  "authorization_evidence": "faça merge, push, commit, limpe worktree e integre tudo",
-  "objective": "Registrar componente e descoberta focal sem alterar autoridade/juiz",
+  "approved_by": "Proprietário nesta conversa; pedido explícito de commit, push, PR e merge",
+  "approved_at": "2026-10-13T19:11:10.641872+00:00",
+  "authorization_evidence": "realize esse passo 1, 2 3; execute",
+  "schema": "jp-harness/chg/v1",
+  "change_id": "CHG-STOIKUS-GITHUB-CONTEXT-20261013",
+  "objective": "Registrar a entrega GitHub autorizada da auditoria e Stoikus 1.22.1 já publicada, mantendo limites nativos",
   "risk_level": "N3",
   "authority_required": "A4",
   "target": {
-    "root": "/private/tmp/jpw-onboarding-20261007",
-    "branch": "codex/onboarding-first-access-20261007",
-    "baseline_sha": "aaac928bc9449f0f482b80008db553919f363fdc"
+    "root": "/private/tmp/jpw-stoikus-renaming-20261012",
+    "branch": "codex/stoikus-renaming-20261012",
+    "baseline_sha": "0f247215cc20829fdba40c3b33458ee976c17ea1"
   },
   "scope": {
     "allowed_files": [
+      "docs/work/CHG-STOIKUS-GITHUB-CONTEXT-20261013.md",
       "docs/work/ACTIVE-TASK.md",
       "docs/governance/CURRENT-STATE.md",
       "docs/governance/CONTEXT-MAP.md",
       "SESSION_HANDOFF.md",
-      "docs/work/CHG-JPW-INTEGRATION-20261009.md",
-      "docs/work/HISTORY-INTEGRATION-ACTIVE-TASK-20261009.md",
-      "docs/work/HISTORY-INTEGRATION-CURRENT-STATE-20261009.md",
-      "AGENTS.md"
+      "docs/validation/stoikus-site-20261013/INTEGRATION.md"
     ],
     "forbidden_files": [
+      "AGENTS.md",
+      "CLAUDE.md",
       "docs/normative/",
       "docs/decisions/",
       "tools/quality_gate.py",
-      "tools/agent_instruction_structure_test.py",
-      "tools/feature_atlas_test.py",
       ".github/"
     ],
     "allowed_actions": [
-      "Reconciliar apenas contexto da integracao autorizada",
-      "Preservar historicos e evidencias",
-      "Git commit/push/merge e limpeza de worktrees integradas",
-      "Corrigir apenas o caminho relocacionado do Harness em AGENTS.md; conteudo/autoridade intactos"
+      "Documentar commits, push, PR, checks e merge realmente executados",
+      "Preservar fotografias históricas e limites MT5",
+      "Vincular provas do candidato exato"
     ],
     "forbidden_actions": [
-      "Deploy ou publicacao do Site",
-      "Dados reais ou formulas novas",
-      "Alterar gates ou classificadores",
-      "Implementar o estudo futuro dos graficos"
+      "Alterar normas, dados, esquemas ou relaxar gates",
+      "Atribuir homologação MT5 inexistente",
+      "Incluir Guia de Aprendizagem concorrente no delta"
     ],
     "regressions_forbidden": [
-      "Ampliar autoridade ou enfraquecer gates",
-      "Falsificar validacao ou homologacao",
-      "Reescrever historico"
+      "Apagar histórico",
+      "Transferir aprovação de outro candidate",
+      "Fingir execução nativa ou cegamento completo"
     ]
   },
   "derived_artifacts": {
     "allowed": [],
     "generation_commands": [],
-    "manual_edit": "forbidden"
+    "manual_edit": "allowed"
   },
   "external_side_effects": {
     "network": "allowed",
     "allowed_targets": [
-      "Loopback sintetico",
-      "Repositorio GitHub configurado"
+      "Repositório GitHub jojoaopauloalvescirqueira-sketch/App-Jp-Wealth",
+      "Loopback de testes sintéticos"
     ],
     "temporary_artifacts": "allowed",
     "cleanup_required": true
@@ -87,113 +83,107 @@ Base integrada: main 89113f8 + delta validado do site aaac928. Pedido humano: �
   "toolchain": {
     "dependency_changes": [],
     "allowed_processes": [
-      "python3",
-      "Chromium descartavel",
-      "git",
-      "gh"
+      "Python",
+      "Chromium descartável",
+      "C++ host",
+      "Node bundled",
+      "Git commit/fetch/push",
+      "GitHub PR/checks/merge"
     ]
   },
   "acceptance_criteria": [
-    "Historico e GENETRIX 1.21.2 preservados",
-    "Full e focais do delta combinados",
-    "main local/remota identicas e worktrees integradas limpas"
+    "Estado focal correto e mesmo SHA base",
+    "Históricos byte-idênticos preservados",
+    "Sem conclusão nativa ou publicação simulada"
   ],
   "approved_tests": [
-    "quality_gate full/standard",
-    "leverage_suite all",
-    "Focais onboarding/scenario_fan/behavior",
-    "agent_instruction_structure_test",
-    "feature_atlas_test"
+    "agent_instruction_structure_test.py com controles negativos",
+    "preflight_context_test.py",
+    "quality_gate.py --tier full"
   ],
   "rollback": {
     "source": [
-      "Reverter commits da integracao sem reset destrutivo"
+      "Reverter somente delta de integração com snapshots originais e versão Sites2"
     ],
     "application_state": [],
     "data": [],
     "environment": [
-      "Encerrar processos descartaveis desta tarefa"
+      "Encerrar apenas processos próprios de testes"
     ],
     "verification": [
-      "Hashes originais e ausencia de schema alterado"
+      "Conferir hashes da baseline e Source revision"
     ]
   },
   "expires_on": [
-    "Fim da tarefa",
-    "Mudanca material de escopo"
+    "Mudança dos bytes publicados ou projeto/audiência alvo"
   ]
 }
 ```
 
 ```yaml
 {
-  "schema": "jp-harness/ctx/v1",
-  "context_change_id": "CTX-JPW-INTEGRATION-20261009",
   "status": "approved",
-  "approved_by": "Proprietario — autorizacao explicita nesta sessao",
-  "approved_at": "2026-10-10T01:34:42.461764+00:00",
-  "authorization_evidence": "faça merge, push, commit, limpe worktree e integre tudo",
-  "root": "/private/tmp/jpw-onboarding-20261007",
+  "approved_by": "Proprietário nesta conversa; pedido explícito de commit, push, PR e merge",
+  "approved_at": "2026-10-13T19:11:10.641872+00:00",
+  "authorization_evidence": "realize esse passo 1, 2 3; execute",
+  "schema": "jp-harness/ctx/v1",
+  "context_change_id": "CTX-STOIKUS-GITHUB-20261013",
+  "root": "/private/tmp/jpw-stoikus-renaming-20261012",
   "mode": "CONCORRENTE",
-  "approved_branch": "codex/onboarding-first-access-20261007",
+  "approved_branch": "codex/stoikus-renaming-20261012",
   "create": [
-    "docs/work/CHG-JPW-INTEGRATION-20261009.md",
-    "docs/work/HISTORY-INTEGRATION-ACTIVE-TASK-20261009.md",
-    "docs/work/HISTORY-INTEGRATION-CURRENT-STATE-20261009.md"
+    "docs/work/CHG-STOIKUS-GITHUB-CONTEXT-20261013.md"
   ],
   "modify": [
     "docs/work/ACTIVE-TASK.md",
     "docs/governance/CURRENT-STATE.md",
     "docs/governance/CONTEXT-MAP.md",
     "SESSION_HANDOFF.md",
-    "AGENTS.md"
+    "docs/validation/stoikus-site-20261013/INTEGRATION.md"
   ],
   "merge": [],
   "preserve": [
-    "Snapshot das 20 alteracoes herdadas",
-    "Delta validado de 119 caminhos",
-    "GENETRIX 1.21.2 e suas limitacoes",
-    "Classificacoes e historicos anteriores"
+    "Fotografias históricas e patches AUD byte-idênticos",
+    "Gates/normas e limites nativos"
   ],
   "do_not_touch": [
+    "AGENTS.md",
+    "CLAUDE.md",
     "docs/normative/",
     "docs/decisions/",
     "tools/quality_gate.py",
-    "tools/agent_instruction_structure_test.py",
-    "tools/feature_atlas_test.py",
     ".github/"
   ],
-  "source_revision": "aaac928bc9449f0f482b80008db553919f363fdc",
   "archive_requires_confirmation": [],
   "source_of_truth": {
-    "human": "Autorizacao Git explicita nesta sessao",
-    "engineering": "AGENTS.md e Harness existente, SHA-256 b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95",
-    "integration": "docs/work/CHG-JPW-INTEGRATION-20261009.md"
+    "human": "realize esse passo 1, 2 3; execute",
+    "product": "downloads/jpw-alavancagem-atual/manifest.json",
+    "site": "https://jp-wealth-software.jojoaopauloalvescirq.chatgpt.site",
+    "evidence": "/private/tmp/jpw-stoikus-github-20261013"
   },
   "information_promotion": [
     {
-      "from": "Estado Git observado e bytes validados",
-      "to": "Contexto desta integracao",
-      "reason": "Conciliar duas linhas de trabalho ja autorizadas sem antecipar conclusao ou homologacao"
+      "from": "Recibos concretos e resultado nativo Sites succeeded",
+      "to": "Estado factual da integração",
+      "reason": "Não herdar PASS ou instalar/armar MT5"
     }
   ],
   "expiration_rules": [
     {
-      "artifact": "docs/governance/CURRENT-STATE.md",
-      "event": "Novo delta material ou mudanca de candidate"
+      "artifact": "Estado/publicação1.22.1",
+      "event": "Alteração posterior dos bytes"
     }
   ],
   "privacy_actions": [
-    "Somente dados sinteticos; nenhuma base real consultada"
+    "Somente fixtures sintéticas; não ler dados de conta para testes"
   ],
   "acceptance_criteria": [
-    "Historico e GENETRIX 1.21.2 preservados",
-    "Full e focais do delta combinados",
-    "main local/remota identicas e worktrees integradas limpas"
+    "Um estado focal corrente sem herança de PASS",
+    "Histórico preservado em arquivos próprios",
+    "Contrato estrutural não apresentado como prova de autorização humana"
   ],
   "expires_on": [
-    "Fim desta tarefa",
-    "Mudanca material de escopo"
+    "Escopo/raiz/branch divergirem"
   ]
 }
 ```

@@ -4,7 +4,7 @@ import argparse,hashlib,importlib.util,json,re,subprocess,tempfile,shutil,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/'mt5/jpw-alavancagem-atual/MQL5'
-spec=importlib.util.spec_from_file_location('legacyjudge',ROOT/'tools/jpw_genetrix_ledger_test.py')
+spec=importlib.util.spec_from_file_location('legacyjudge',ROOT/'tools/jpw_stoikus_ledger_test.py')
 legacy=importlib.util.module_from_spec(spec);spec.loader.exec_module(legacy)
 EXTRA=r'''
 using ulong=unsigned long;ulong host_clock=1;
@@ -48,11 +48,11 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--receipt',type=Path,default=ROOT/"tools/.artifacts"/"core_replay_judge.json");a=p.parse_args();compiler=shutil.which("clang++") or shutil.which("g++")
     if not compiler:
         print("JPW_TEST_RESULT: ENVIRONMENT_ERROR");return 2
-    files=[BASE/'Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh',BASE/'Include/JPWealth/JPW_Genetrix_Ledger_Store.mqh',BASE/'Include/JPWealth/JPW_Genetrix_Ledger_Preparation.mqh',BASE/'Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.mq5',Path(__file__).resolve(),ROOT/'tools/jpw_genetrix_ledger_test.py']
+    files=[BASE/'Include/JPWealth/JPW_Stoikus_Ledger_Core.mqh',BASE/'Include/JPWealth/JPW_Stoikus_Ledger_Store.mqh',BASE/'Include/JPWealth/JPW_Stoikus_Ledger_Preparation.mqh',BASE/'Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5',Path(__file__).resolve(),ROOT/'tools/jpw_stoikus_ledger_test.py']
     receipt={'scope':'actual private replay vs unchanged legacy builder; synthetic data/clock, real host SQLite wrappers but this test does not exercise commit; native MT5 NOT_RUN','sources':{str(x.relative_to(ROOT)):hashlib.sha256(x.read_bytes()).hexdigest() for x in files}}
     def translated(x):
         raw=x.read_text()
-        if x.name=='JPW_Genetrix_Ledger_Preparation.mqh' and 'class CJPWLedgerPreparation' in raw:
+        if x.name=='JPW_Stoikus_Ledger_Preparation.mqh' and 'class CJPWLedgerPreparation' in raw:
             # Scope is the complete unchanged replay class and its indexes,
             # not the later terminal collector which needs different seams.
             raw=raw.split('class CJPWLedgerPreparation',1)[0]+'\n#endif\n'

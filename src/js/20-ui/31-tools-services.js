@@ -116,8 +116,14 @@
       typeof manifest.version==='string'&&/^[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.version)&&
       manifest.downloads&&manifest.validation;
     if(!validManifest){
+      for(const kind of ['dailySource','source','compiled']){
+        document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]')
+          .forEach(button=>{button.disabled=true;});
+      }
       set('source-availability','Fontes não confirmadas');
+      set('dailySource-availability','Pacote de uso não confirmado');
       set('native-summary','Validação nativa não informada');
+      set('dailySource-status','Metadados de distribuição indisponíveis nesta cópia.');
       set('source-status','Metadados de distribuição indisponíveis nesta cópia.');
       set('compiled-status','Metadados de distribuição indisponíveis nesta cópia.');
       notice('Não foi possível confirmar os arquivos desta versão.',true);
@@ -125,6 +131,7 @@
     }
     set('version',manifest.version);
     set('source-availability',validEntry(manifest.downloads.source)?'Fontes disponíveis':'Fontes indisponíveis');
+    set('dailySource-availability',validEntry(manifest.downloads.dailySource)?'Pacote de uso disponível':'Pacote de uso indisponível nesta cópia');
     const nativeStages=['compilation','terminal'].map(stage=>manifest.validation[stage]?.status);
     set('native-summary',nativeStages.every(state=>state==='passed')?'Evidências nativas registradas':
       manifest.validation.compilation?.status==='passed'&&manifest.validation.terminal?.status==='pending'?'Compilado · execução MT5 pendente':
@@ -136,19 +143,20 @@
       const detail=item&&typeof item.detail==='string'&&item.detail?item.detail:'';
       set(stage,state+(detail?' · '+detail:''));
     }
-    for(const kind of ['source','compiled']){
-      const entry=manifest.downloads[kind],button=document.querySelector('[data-jpw-leverage-download="'+kind+'"]');
+    for(const kind of ['dailySource','source','compiled']){
+      const entry=manifest.downloads[kind],buttons=document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]');
+      const disable=value=>buttons.forEach(button=>{button.disabled=value;});
       const ready=validEntry(entry)&&
-        (location.protocol!=='file:'||!!(files[kind]&&typeof files[kind].base64==='string'));
-      button.disabled=!ready;
+        (location.protocol!=='file:'||!!(files[kind]&&files[kind].mime==='application/zip'&&typeof files[kind].base64==='string'));
+      disable(!ready);
       set(kind+'-sha',ready?entry.sha256:'—');
       if(ready) set(kind+'-status','Disponível · '+entry.filename+' · '+entry.bytes.toLocaleString('pt-BR')+' bytes');
       else if(entry&&entry.available===false&&typeof entry.reason==='string'&&entry.reason)
         set(kind+'-status','Indisponível · '+entry.reason);
       else set(kind+'-status','Arquivo indisponível ou sem integridade confirmada nesta cópia.');
-      button.addEventListener('click',async()=>{
+      buttons.forEach(button=>button.addEventListener('click',async()=>{
         if(!ready||button.disabled)return;
-        button.disabled=true;notice('Verificando o arquivo antes do download…');
+        disable(true);notice('Verificando o arquivo antes do download…');
         try{
           let bytes;
           if(location.protocol==='file:'){
@@ -169,8 +177,8 @@
           setTimeout(()=>URL.revokeObjectURL(url),30000);
           notice('Arquivo '+entry.filename+' verificado e preparado para download.');
         }catch(error){notice('Download não iniciado: '+error.message,true);}
-        finally{button.disabled=false;}
-      });
+        finally{disable(false);}
+      }));
     }
   }
   function initGenetrixUI(){

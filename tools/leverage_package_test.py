@@ -153,14 +153,96 @@ EXPECTED_MEMBERS.update({"GENETRIX_CANDIDATE_1_20_1.md", "GENETRIX_CANDIDATE_1_2
 
 
 
+HISTORICAL_MEMBERS = frozenset(EXPECTED_MEMBERS)
+assert len(HISTORICAL_MEMBERS) == 132
+MEMBER_RENAMES = {
+    'MQL5/Experts/JPWealth/JPW_Genetrix_Accountant.mq5': 'MQL5/Experts/JPWealth/JPW_Stoikus_Accountant.mq5',
+    'MQL5/Experts/JPWealth/JPW_Genetrix_Monitor.mq5': 'MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5',
+    'MQL5/Experts/JPWealth/JPW_Genetrix_Supervisor.mq5': 'MQL5/Experts/JPWealth/JPW_Stoikus_Supervisor.mq5',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo.provenance.md': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo.provenance.md',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_100.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_100.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_125.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_125.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_150.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_150.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_200.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_200.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_100.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_125.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_125.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_150.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_150.bmp',
+    'MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_200.bmp': 'MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_200.bmp',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Accountant_Runtime.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Accountant_Runtime.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Bridge.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Bridge.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Core.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Core.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Preparation.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Preparation.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Store.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Store.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Ledger_Terminal.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Terminal.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Monitor_Core.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Core.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Monitor_Status.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Status.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Monitor_UI.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Monitor_UI.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Observer_Runtime.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Observer_Runtime.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Risk_Core.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Risk_Store.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Risk_Store.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_Risk_Terminal.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_Risk_Terminal.mqh',
+    'MQL5/Include/JPWealth/JPW_Genetrix_UI.mqh': 'MQL5/Include/JPWealth/JPW_Stoikus_UI.mqh',
+    'MQL5/Scripts/JPWealth/JPW_Genetrix_Ledger_Tests.mq5': 'MQL5/Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5',
+    'MQL5/Scripts/JPWealth/JPW_Genetrix_Risk_Tests.mq5': 'MQL5/Scripts/JPWealth/JPW_Stoikus_Risk_Tests.mq5',
+}
+assert len(MEMBER_RENAMES) == 29 and set(MEMBER_RENAMES) <= HISTORICAL_MEMBERS
+EXPECTED_MEMBERS = {MEMBER_RENAMES.get(name, name) for name in HISTORICAL_MEMBERS} | {"STOIKUS_RENAME_1_22_0.md"}
+assert len(EXPECTED_MEMBERS) == 133
+STOIKUS_1_22_0_MEMBERS = frozenset(EXPECTED_MEMBERS)
+# The usage revision adds exactly these two members. Keep every older source,
+# financial oracle, harness and engineering document in the SDK.
+EXPECTED_MEMBERS |= {
+    "STOIKUS_USO_DIARIO.md",
+    "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
+}
+assert len(EXPECTED_MEMBERS) == 135
+
+
+HISTORICAL_ARCHIVE = "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip"
+HISTORICAL_ARCHIVE_BYTES = 760092
+HISTORICAL_ARCHIVE_SHA256 = "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+
+
+def assert_historical_archive(raw: bytes) -> None:
+    """The immutable 1.21.2 release is independent of the renamed current tree."""
+    assert len(raw) == HISTORICAL_ARCHIVE_BYTES
+    assert hashlib.sha256(raw).hexdigest() == HISTORICAL_ARCHIVE_SHA256
+    with zipfile.ZipFile(BytesIO(raw)) as archive:
+        names = archive.namelist()
+        assert archive.testzip() is None
+        assert len(names) == len(set(names)) == 132
+        assert set(names) == HISTORICAL_MEMBERS
+        assert not any(name.lower().endswith(".ex5") for name in names)
+        version = archive.read("MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh")
+        assert b'#define JPW_PRODUCT_VERSION "1.21.2"' in version
+        assert b'#define JPW_PRODUCT_MQL_VERSION "1.212"' in version
+        assert b'#define JPW_CALCULATION_VERSION "1.9.0"' in version
+
+
+def assert_historical_stoikus_archive(raw: bytes) -> None:
+    """The 1.22.0 archive remains byte-identical when 1.22.1 is generated."""
+    assert len(raw) == 763854
+    assert hashlib.sha256(raw).hexdigest() == "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95"
+    with zipfile.ZipFile(BytesIO(raw)) as archive:
+        assert archive.testzip() is None
+        assert len(archive.namelist()) == len(set(archive.namelist())) == 133
+        assert set(archive.namelist()) == STOIKUS_1_22_0_MEMBERS
+        assert not any(name.lower().endswith(".ex5") for name in archive.namelist())
+        header = archive.read("MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh")
+        assert b'#define JPW_PRODUCT_VERSION "1.22.0"' in header
+        assert b'#define JPW_PRODUCT_MQL_VERSION "1.220"' in header
+        assert b'#define JPW_CALCULATION_VERSION "1.9.0"' in header
+
+
 def assert_release_inventory(manifest: dict) -> None:
     expected = {"mt5/jpw-alavancagem-atual/" + member for member in EXPECTED_MEMBERS}
-    assert len(EXPECTED_MEMBERS) == 132
-    assert len(manifest["sourceFiles"]) == len(set(manifest["sourceFiles"])) == 132
+    assert len(EXPECTED_MEMBERS) == 135
+    assert len(manifest["sourceFiles"]) == len(set(manifest["sourceFiles"])) == 135
     assert set(manifest["sourceFiles"]) == expected, "source inventory differs from the explicit release contract"
 
 
-NATIVE_EVIDENCE = Path("review-evidence/correction-1.21.2-20261008/native-kit")
+NATIVE_EVIDENCE = Path("review-evidence/stoikus-1.22.1/native-kit")
 
 
 def native_kit(root: Path) -> Path:
@@ -181,7 +263,7 @@ def assert_native_evidence(root: Path, manifest: dict, kit: Path | None = None) 
     helper=json.loads((kit/"helper-freeze.json").read_text())
     before=kit/"resultado/inputs-before";after=kit/"resultado/outputs-after"
     sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
-    assert receipt["version"]==freeze["version"]==manifest["version"]=="1.21.2"
+    assert receipt["version"]==freeze["version"]==manifest["version"]=="1.22.1"
     assert receipt["compilation_result"]=="PASS"
     assert receipt["runtime_validation"]=="NOT_RUN"
     assert receipt["installation_of_binaries"]=="NOT_PERFORMED"
@@ -200,11 +282,11 @@ def assert_native_evidence(root: Path, manifest: dict, kit: Path | None = None) 
     for name,value in inputs.items():
         assert sha(before/name)==sha(after/name)==value
     runtime={member for member in EXPECTED_MEMBERS if Path(member).suffix in (".mq5",".mqh",".bmp")}
-    assert len(runtime)==111
+    assert len(runtime)==112
     for member in runtime:
         assert sha(root/"mt5/jpw-alavancagem-atual"/member)==freeze["files"][member]
     targets={member.removeprefix("MQL5/") for member in EXPECTED_MEMBERS if member.endswith(".mq5")}
-    assert len(targets)==len(receipt["targets"])==33
+    assert len(targets)==len(receipt["targets"])==34
     assert {row["target"] for row in receipt["targets"]}==targets
     artifacts={item["path"]:item["sha256"] for item in native["artifacts"]}
     for row in receipt["targets"]:
@@ -225,10 +307,30 @@ def assert_native_evidence(root: Path, manifest: dict, kit: Path | None = None) 
 
 
 def main() -> None:
+    historical = (ROOT / HISTORICAL_ARCHIVE).read_bytes()
+    assert_historical_archive(historical)
+    for changed in (historical[:-1], historical[:100] + bytes([historical[100] ^ 1]) + historical[101:]):
+        try:
+            assert_historical_archive(changed)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError("immutable historical archive accepted altered bytes")
+    print("PASS immutable GENETRIX 1.21.2 archive and size/hash counterexamples; no current-tree substitution")
+    stoikus_historical = (ROOT / "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip").read_bytes()
+    assert_historical_stoikus_archive(stoikus_historical)
+    for changed in (stoikus_historical + b"x", b"x" + stoikus_historical[1:]):
+        try:
+            assert_historical_stoikus_archive(changed)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError("immutable Stoikus 1.22.0 archive accepted altered bytes")
+    print("PASS immutable Stoikus 1.22.0 archive and size/hash counterexamples")
     template = json.loads((ROOT / MANIFEST_PATH).read_text(encoding="utf-8"))
     expected_sources = {"mt5/jpw-alavancagem-atual/" + member for member in EXPECTED_MEMBERS}
-    assert len(EXPECTED_MEMBERS) == 132
-    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 132
+    assert len(EXPECTED_MEMBERS) == 135
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 135
     assert set(template["sourceFiles"]) == expected_sources, "source inventory differs from the explicit release contract"
     assert_release_inventory(template)
     for mutation in ("duplicate", "substitute"):
@@ -243,16 +345,16 @@ def main() -> None:
             pass
         else:
             raise AssertionError("explicit inventory accepted " + mutation)
-    assert template["version"] == "1.21.2"
+    assert template["version"] == "1.22.1"
     version_source = (ROOT / VERSION_HEADER).read_text(encoding="utf-8")
-    assert '#define JPW_PRODUCT_VERSION "1.21.2"' in version_source
-    assert '#define JPW_PRODUCT_MQL_VERSION "1.212"' in version_source
+    assert '#define JPW_PRODUCT_VERSION "1.22.1"' in version_source
+    assert '#define JPW_PRODUCT_MQL_VERSION "1.221"' in version_source
     assert '#define JPW_CALCULATION_VERSION "1.9.0"' in version_source
     nocuda_source = (ROOT / "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5").read_text(encoding="utf-8")
     assert '#property version   "1.30"' in nocuda_source
     readme = (ROOT / "mt5/jpw-alavancagem-atual/README.md").read_text(encoding="utf-8")
     readme_plain = re.sub(r"[*`]", "", readme)
-    assert re.search(r"\bMQL\s*1\.212(?![\d.])", readme_plain), "README MQL version must be 1.212"
+    assert re.search(r"\bMQL\s*1\.221(?![\d.])", readme_plain), "README MQL version must be 1.221"
     nocuda_version_pattern = r"\bNoCuda\s+(?:declara\s+)?1\.30(?!\d|\.\d)"
     for declaration, expected in (("NoCuda 1.30.", True),
                                   ("NoCuda declara 1.30.", True),
@@ -260,7 +362,7 @@ def main() -> None:
                                   ("NoCuda 1.30.7.", False)):
         assert bool(re.search(nocuda_version_pattern, declaration)) == expected
     assert re.search(nocuda_version_pattern, readme_plain), "README NoCuda version must be 1.30"
-    for phrase in ('GENETRIX 1.21.2', 'cálculo **1.9.0**', 'NOT_RUN'):
+    for phrase in ('Stoikus 1.22.1', 'cálculo **1.9.0**', 'NOT_RUN'):
         assert phrase in readme, phrase
     assert "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh" in template["sourceFiles"]
     assert "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5" in template["sourceFiles"]
@@ -335,18 +437,18 @@ def main() -> None:
           for name in ("Controller", "Core", "Export", "Store", "Terminal", "UI")),
         "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
     }
-    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 132
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 135
     assert personal_history <= set(template["sourceFiles"])
     assert nocuda <= set(template["sourceFiles"])
-    brands = {"mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Genetrix_Logo_" +
+    brands = {"mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_" +
               theme + "_" + str(scale) + ".bmp" for theme in ("Light", "Dark")
               for scale in (100,125,150,200)}
     assert brands <= set(template["sourceFiles"])
-    assert "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh" in template["sourceFiles"]
-    assert template["productName"] == "JPW GENETRIX"
-    assert '#define JPW_PRODUCT_NAME "JPW GENETRIX"' in version_source
+    assert "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh" in template["sourceFiles"]
+    assert template["productName"] == "Stoikus"
+    assert '#define JPW_PRODUCT_NAME "Stoikus"' in version_source
     assert '#define JPW_PRODUCT_TAGLINE "Da origem da operação à leitura do risco."' in version_source
-    for phrase in ("CANDIDATE 1.21.2", "1.9.0"):
+    for phrase in ("CANDIDATE 1.22.1", "1.9.0"):
         assert phrase in template["coverage"], phrase
     for phrase in ("Fibonacci acompanhado", "UNVERIFIED_NATIVE", "| 5 | −0,50 |", "H1 e H4", "não prevê"):
         assert phrase in readme, phrase
@@ -358,7 +460,7 @@ def main() -> None:
     assert "NOT_RUN" in template["validation"]["terminal"]["detail"]
     expected_native = {"mt5/jpw-alavancagem-atual/" + name[:-4] + ".ex5"
                        for name in EXPECTED_MEMBERS if name.endswith(".mq5")}
-    assert len(expected_native) == 33
+    assert len(expected_native) == 34
     expected_compiled = {name.removeprefix("mt5/jpw-alavancagem-atual/")
                          for name in expected_native} | {"README.md"}
     native = template.get("nativeArtifact")
@@ -366,7 +468,7 @@ def main() -> None:
     if native is not None:
         assert native["sourceFingerprint"] == template["mqlSourceFingerprint"]
         assert native["cpu"] == "X64 Regular" and native["compiler"] and native["evidence"]
-        assert len(native["artifacts"]) == 33
+        assert len(native["artifacts"]) == 34
         assert {item["path"] for item in native["artifacts"]} == expected_native
         for item in native["artifacts"]:
             native_bytes = (ROOT / item["path"]).read_bytes()
@@ -377,7 +479,7 @@ def main() -> None:
         assert hashlib.sha256(compiled_bytes).hexdigest() == compiled["sha256"]
         assert len(compiled_bytes) == compiled["bytes"]
         with zipfile.ZipFile(BytesIO(compiled_bytes)) as archive:
-            assert len(archive.namelist()) == len(set(archive.namelist())) == 34
+            assert len(archive.namelist()) == len(set(archive.namelist())) == 35
             assert set(archive.namelist()) == expected_compiled
             assert archive.read("README.md") == readme.encode("utf-8")
             for item in native["artifacts"]:
@@ -391,7 +493,7 @@ def main() -> None:
     assert len(actual_source_bytes) == actual_source["bytes"]
     assert set(template["sourceHashes"]) == EXPECTED_MEMBERS
     with zipfile.ZipFile(BytesIO(actual_source_bytes)) as archive:
-        assert len(archive.namelist()) == len(set(archive.namelist())) == 132
+        assert len(archive.namelist()) == len(set(archive.namelist())) == 135
         assert set(archive.namelist()) == EXPECTED_MEMBERS
         for member, expected_hash in template["sourceHashes"].items():
             source_bytes = (ROOT / "mt5/jpw-alavancagem-atual" / member).read_bytes()
@@ -454,7 +556,7 @@ def main() -> None:
         assert first["runtimeBuildId"].encode() in payloads[version_member]
         source = first["downloads"]["source"]
         assert source["available"] and not first["downloads"]["compiled"]["available"]
-        assert source["filename"] == "JPW_Genetrix_Fontes_v1.21.2.zip"
+        assert source["filename"] == "JPW_Stoikus_Fontes_v1.22.1.zip"
         content = (root / source["path"]).read_bytes()
         assert len(content) == source["bytes"]
         assert hashlib.sha256(content).hexdigest() == source["sha256"]
@@ -530,7 +632,7 @@ def main() -> None:
         bad_version = (root / VERSION_HEADER).read_bytes()
         valid_version = ('#define JPW_PRODUCT_VERSION "' + template["version"] + '"').encode()
         assert bad_version.count(valid_version) == 1, "runtime-version mutation must change exactly one declaration"
-        mismatched_version = bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.21.2"',
+        mismatched_version = bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.22.1"',
                                                 b'#define JPW_PRODUCT_VERSION "1.9.0"')
         assert mismatched_version != bad_version, "negative version fixture did not mutate the input"
         (root / VERSION_HEADER).write_bytes(mismatched_version)
@@ -574,13 +676,13 @@ def main() -> None:
         assert build(root) == first
 
         # Local #resource paths must be declared just like local includes.
-        ui = root / "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh"
+        ui = root / "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh"
         saved_ui = ui.read_bytes()
         resource_declaration = next(line for line in (ROOT / ui.relative_to(root)).read_bytes().splitlines()
                                     if line.startswith(b"#resource"))
         ui.write_bytes(saved_ui + resource_declaration + b"\n")
         undeclared_resource = json.loads(manifest_path.read_text())
-        resource_path = "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_100.bmp"
+        resource_path = "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp"
         undeclared_resource["sourceFiles"].remove(resource_path)
         manifest_path.write_text(json.dumps(undeclared_resource))
         try:
@@ -632,7 +734,7 @@ def main() -> None:
             assert "sem evidencia nativa" in str(error)
         else:
             raise AssertionError("unverified .ex5 accepted")
-        assert not (root / f"downloads/jpw-alavancagem-atual/JPW_Alavancagem_Atual_Compilado_v{template['version']}.zip").exists()
+        assert not (root / f"downloads/jpw-alavancagem-atual/JPW_Stoikus_Compilado_v{template['version']}.zip").exists()
         rogue.unlink()
 
         # A compiler receipt must bind every executable to the exact MQL inputs,
@@ -681,7 +783,7 @@ def main() -> None:
         assert valid_compiled["downloads"]["compiled"]["available"]
         synthetic_path = root / valid_compiled["downloads"]["compiled"]["path"]
         with zipfile.ZipFile(synthetic_path) as archive:
-            assert len(archive.namelist()) == len(set(archive.namelist())) == 34
+            assert len(archive.namelist()) == len(set(archive.namelist())) == 35
             assert set(archive.namelist()) == expected_compiled
             for relative, native_bytes in native_payloads.items():
                 assert archive.read(relative.removeprefix("mt5/jpw-alavancagem-atual/")) == native_bytes

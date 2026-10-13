@@ -79,8 +79,11 @@ utilização, rótulo ATIVA/QUITADA, relevância de dívida, patrimônio.
   deliberada é permitida em qualquer época — inclusive resolver pendência de
   mês passado. Não existe "Fechar mês" na V1.
 - **Status operacional ≠ completude financeira.** Completude do realizado é
-  ancorada em VALOR explícito: receita conhecida ⇔ `receivedAmount !== null`;
-  despesa conhecida ⇔ `executedCash !== null` **e** `executedCard !== null`.
+  ancorada em VALOR explícito válido segundo `pfAmountInDomain`: receita conhecida
+  exige `receivedAmount` válido; despesa conhecida exige `executedCash` **e**
+  `executedCard` válidos. O domínio vigente é inteiro seguro não negativo em
+  centavos; zero é válido, enquanto null, string, decimal fracionário ou valor
+  fora do domínio mantém a cobertura parcial sem reescrever o fato original.
   Guardas: RECEBIDA exige recebido explícito; PAGO exige os dois canais
   explícitos (0 válido). Soma parcial jamais se apresenta como total:
   `realizedSurplus` e `incomeExpenseRatio` só existem com cobertura completa.

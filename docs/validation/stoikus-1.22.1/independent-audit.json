@@ -1,0 +1,222 @@
+{
+  "timestampUTC": "2026-10-13T16:06:57.355544+00:00",
+  "root": "/private/tmp/jpw-stoikus-renaming-20261012",
+  "nativeCompilation": "NOT_RUN",
+  "nativeRuntime": "NOT_RUN",
+  "checks": {
+    "historicalDigests": {
+      "stoikus1220": "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95",
+      "genetrix1212": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261"
+    },
+    "publicInputs": {
+      "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5": [
+        [
+          "bool",
+          "InpHistoryCoverageConfirmed",
+          "false"
+        ],
+        [
+          "bool",
+          "InpCostCoverageConfirmed",
+          "false"
+        ],
+        [
+          "string",
+          "InpCoverageEvidence",
+          "\"\""
+        ]
+      ],
+      "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": [
+        [
+          "int",
+          "InpUpdateSeconds",
+          "1"
+        ],
+        [
+          "int",
+          "InpMaxQuoteAgeSeconds",
+          "30"
+        ],
+        [
+          "ENUM_BASE_CORNER",
+          "InpCorner",
+          "CORNER_LEFT_UPPER"
+        ],
+        [
+          "int",
+          "InpOffsetX",
+          "16"
+        ],
+        [
+          "int",
+          "InpOffsetY",
+          "40"
+        ],
+        [
+          "int",
+          "InpFontSize",
+          "8"
+        ],
+        [
+          "int",
+          "InpCockpitFontSize",
+          "11"
+        ],
+        [
+          "color",
+          "InpFontColor",
+          "C'118,118,118'"
+        ],
+        [
+          "long",
+          "InpGenesisTicket",
+          "0"
+        ],
+        [
+          "string",
+          "InpPipSymbol",
+          "\"\""
+        ],
+        [
+          "double",
+          "InpPipSize",
+          "0.0"
+        ],
+        [
+          "bool",
+          "InpTechnicalLog",
+          "false"
+        ]
+      ],
+      "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": [
+        [
+          "ENUM_TIMEFRAMES",
+          "InpSourceTimeframe",
+          "PERIOD_H1"
+        ],
+        [
+          "bool",
+          "InpFullMesh",
+          "true"
+        ],
+        [
+          "string",
+          "InpPipSymbol",
+          "\"\""
+        ],
+        [
+          "double",
+          "InpPipSize",
+          "0.0"
+        ],
+        [
+          "int",
+          "InpMaxQuoteAgeSeconds",
+          "30"
+        ]
+      ]
+    },
+    "displayLabels": {
+      "labels": {
+        "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5": [
+          "Histórico completo confirmado (não: pendente)",
+          "Custos completos confirmados (não: pendente)",
+          "Evidência da cobertura (vazio: não informado)"
+        ],
+        "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": [
+          "Cadência solicitada (s; 1–3600; ciclo até 30 s; Stops até 5 s)",
+          "Idade máxima da cotação (s; 1 a 30)",
+          "Canto do painel",
+          "Distância horizontal do canto (px; zero ou mais)",
+          "Distância vertical do canto (px; zero ou mais)",
+          "Fonte compacta no gráfico (pt; 8 a 40)",
+          "Fonte do painel Conta (pt; 9 a 24)",
+          "Cor do texto",
+          "Ticket Genesis (0: referência única; >0: ticket aberto)",
+          "Símbolo exato para pip (vazio: sem convenção manual)",
+          "Tamanho de 1 pip em preço (0: sem convenção manual)",
+          "Registro técnico (desativado por padrão)"
+        ],
+        "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": [
+          "Período fonte das âncoras (Atual não aceito)",
+          "Malha completa ao iniciar (sim: todos os níveis)",
+          "Símbolo exato para pip (vazio: sem conversão)",
+          "Tamanho de 1 pip em preço (0: só com símbolo vazio)",
+          "Idade máxima da cotação (s; 1 a 3600)"
+        ]
+      },
+      "maximumCharacters": 62
+    },
+    "unchangedNoCudaLibraries": [
+      "MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh",
+      "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh"
+    ],
+    "unchangedMathCores": [
+      "MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh",
+      "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh"
+    ],
+    "changedMqlVs1220": [
+      "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+      "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+      "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+      "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5"
+    ],
+    "source": {
+      "sha256": "03ccb37824175511108b36e9abb5c9fa0dc28d89a338caea1dc7bf02508b9cae",
+      "bytes": 773801,
+      "members": 135,
+      "programs": 34,
+      "sourceParity": true
+    },
+    "dailySource": {
+      "sha256": "5b2c7ca40736dda976fe97a91a2677d190eb1ccfdf9527703fd471ee702a11e5",
+      "bytes": 441516,
+      "members": 82,
+      "programs": 4,
+      "sourceParity": true
+    },
+    "dailyClosureMembers": 81
+  },
+  "mutants": [
+    {
+      "mutation": "relative_icustom",
+      "rejected": true,
+      "exitCode": 1,
+      "output": "FAIL: caller_shadow: FAIL caller_shadow: unrooted iCustom loaded the caller-folder shadow instead of Indicators\n\n"
+    },
+    {
+      "mutation": "skip_presence_gate",
+      "rejected": true,
+      "exitCode": 1,
+      "output": "FAIL: inactive_listed: FAIL inactive_listed: manual object, preference or study changed\n\n"
+    },
+    {
+      "mutation": "omit_health_boundary",
+      "rejected": true,
+      "exitCode": 1,
+      "output": "FAIL: inactive_listed: FAIL inactive_listed: listed inactive/unknown panel lacks health boundary\n\n"
+    },
+    {
+      "mutation": "omit_release_warning",
+      "rejected": true,
+      "exitCode": 1,
+      "output": "FAIL: release_fail: FAIL release_fail: visible result omitted the specific handle release warning and native error\n\n"
+    }
+  ],
+  "outcome": "PASS",
+  "limits": "Independent byte/contracts/closure checks and host negative probes only. The shipped C++ harness replaces MT5 APIs; it cannot prove MQL5 compilation, chart lifetime, native indicator handlers, rendering, DPI, real handle reference ownership, scheduling, or account IO."
+}

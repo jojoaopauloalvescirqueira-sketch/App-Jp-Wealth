@@ -18,7 +18,7 @@ instável, datas hardcoded). A planilha original contém anotações pessoais e
 |---|---|---|
 | PLANEJADO | premissas do operador (taxa, aportes, câmbio projetado) | `plan.baseline` / `plan.current` |
 | REALIZADO | fechamentos mensais efetivos e ledger cambial | `plan.actuals` / `plan.contributions` |
-| NORMATIVO | FCR/FEO exigidos pelo Estatuto (Arts. 13.1, 13.2, 26.2) | `reserveRequirementsCalc()` — nunca duplicado |
+| NORMATIVO | FCR/FEO exigidos pelo Estatuto (Arts. 13.1, 13.2, 26.2) | `JPWForex.state.read().metrics.fcrRequirement/feoRequirement` — nunca recalculado no painel |
 
 A interface marca cada valor com badge `REAL` ou `PREMISSA`; rentabilidade
 planejada **nunca** deriva de perfis de risco (a V10 removeu projeções por
@@ -108,7 +108,7 @@ início (`fxNextOpenMonth`); editar mês fechado é auditado e preserva `closedA
 
 ## Reservas — fonte única na revisão V11
 
-`reserveRequirementsCalc()` é um adapter de `JPWForex.engine`, compartilhado pelo onboarding e Planejamento. Recebe capitalNominal explícito e sixMonthExpenseAmount com determinationRecorded/expensesApproved. SI não fornece capital nominal, nem a despesa de um mês determina automaticamente o método de apuração. Requisitos ausentes permanecem null/PENDING, e montantes suficientes não comprovam governança ou homologação. O painel não movimenta capital. Ver [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md).
+O painel de Planejamento consome `JPWForex.state.read().metrics.fcrRequirement` e `feoRequirement`, preservando status, findings e contexto de conta/período; apresenta os montantes na moeda declarada desse contexto. Não recalcula requisitos nem escolhe uma Conta Mestre a partir de uma conta Satélite. `reserveRequirementsCalc()` permanece como adapter de `JPWForex.engine` para seus demais consumidores, incluindo onboarding. SI não fornece capital nominal, nem a despesa de um mês determina automaticamente a apuração de seis meses. Requisitos ausentes permanecem null/PENDING ou NOT_COMPUTABLE conforme o motor; montantes suficientes não comprovam governança ou homologação. O painel não movimenta capital. Ver [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md).
 
 ## Distinção deliberada de sistemas vizinhos
 

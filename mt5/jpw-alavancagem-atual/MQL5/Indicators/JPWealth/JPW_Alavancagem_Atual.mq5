@@ -1,7 +1,7 @@
 #property copyright "JP Wealth"
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
 #property version JPW_PRODUCT_MQL_VERSION
-#property description "JPW GENETRIX · Cockpit: alavancagem, flutuante global/compensado, Genesis SL, Raiz N e risco dos stops."
+#property description "Stoikus · Cockpit: alavancagem, flutuante global/compensado, Genesis SL, Raiz N e risco dos stops."
 #property indicator_chart_window
 #property indicator_buffers 0
 #property indicator_plots 0
@@ -23,18 +23,24 @@
 #include <JPWealth/JPW_Alavancagem_Cockpit.mqh> // See package AGENTS.md for invariants and review.
 #include <JPWealth/JPW_Alavancagem_Positions.mqh> // Accepted same-reading account contribution, no persistence.
 
-input int InpUpdateSeconds=1; // Cadência solicitada; frescor limita o ciclo completo a no máximo 30 s.
-input int InpMaxQuoteAgeSeconds=30;
-input ENUM_BASE_CORNER InpCorner=CORNER_LEFT_UPPER;
-input int InpOffsetX=16;
-input int InpOffsetY=40;
-input int InpFontSize=8;
-input int InpCockpitFontSize=11; // Independente da fonte compacta do gráfico.
-input color InpFontColor=C'118,118,118'; // #767676; templates retain their saved inputs.
-input long InpGenesisTicket=0; // 0: inferir somente uma referencia inequivoca; >0: ticket aberto.
-input string InpPipSymbol=""; // Opcional: convencao de pip para este simbolo EXATO.
-input double InpPipSize=0.0;
-input bool InpTechnicalLog=false;
+input group "Atualização e validade da leitura"
+// A validade dos dados continua limitando o ciclo completo a no máximo 30 s.
+input int InpUpdateSeconds=1; // Cadência solicitada (s; 1–3600; ciclo até 30 s; Stops até 5 s)
+input int InpMaxQuoteAgeSeconds=30; // Idade máxima da cotação (s; 1 a 30)
+input group "Posição no gráfico"
+input ENUM_BASE_CORNER InpCorner=CORNER_LEFT_UPPER; // Canto do painel
+input int InpOffsetX=16; // Distância horizontal do canto (px; zero ou mais)
+input int InpOffsetY=40; // Distância vertical do canto (px; zero ou mais)
+input group "Fontes e cor"
+input int InpFontSize=8; // Fonte compacta no gráfico (pt; 8 a 40)
+input int InpCockpitFontSize=11; // Fonte do painel Conta (pt; 9 a 24)
+input color InpFontColor=C'118,118,118'; // Cor do texto
+input group "Referência Genesis e unidade pip"
+input long InpGenesisTicket=0; // Ticket Genesis (0: referência única; >0: ticket aberto)
+input string InpPipSymbol=""; // Símbolo exato para pip (vazio: sem convenção manual)
+input double InpPipSize=0.0; // Tamanho de 1 pip em preço (0: sem convenção manual)
+input group "Diagnóstico"
+input bool InpTechnicalLog=false; // Registro técnico (desativado por padrão)
 
 string g_panel_prefix="";
 bool g_panel_instance_admitted=false; // Rejected copies never clean another instance.
@@ -209,7 +215,7 @@ void JPWRenderStopsTable(const int x,const int body_y,const int inner,
 
 // Account metrics are independent of the notional conversion and its routes.
 // B/E/P/C are read in account units, then account identity, B and C are
-#include <JPWealth/JPW_Genetrix_UI.mqh>
+#include <JPWealth/JPW_Stoikus_UI.mqh>
 #include <JPWealth/JPW_PersonalHistory_UI.mqh>
 #include <JPWealth/JPW_Alavancagem_Coordinator.mqh>
 #include <JPWealth/JPW_SignalCopy_Controller.mqh>
@@ -276,9 +282,15 @@ int OnInit()
   {
    if(InpUpdateSeconds<1 || InpUpdateSeconds>3600 || InpMaxQuoteAgeSeconds<1 ||
       InpMaxQuoteAgeSeconds>30 || InpOffsetX<0 || InpOffsetY<0 || InpFontSize<8 || InpFontSize>40 || InpCockpitFontSize<9 || InpCockpitFontSize>24)
-      return(INIT_PARAMETERS_INCORRECT);
+     { Print("Stoikus · Conta: revise as Entradas. Atualização: 1 a 3600 s; idade da cotação: 1 a 30 s; ",
+             "distâncias: zero ou mais px; fonte compacta: 8 a 40 pt; fonte do painel: 9 a 24 pt. ",
+             "Use Ctrl+I > indicador > Editar.");
+       return(INIT_PARAMETERS_INCORRECT); }
    if(InpGenesisTicket<0 || !MathIsValidNumber(InpPipSize) || InpPipSize<0.0)
-      return(INIT_PARAMETERS_INCORRECT);
+     { Print("Stoikus · Conta: o ticket Genesis precisa ser zero ou um ticket aberto positivo; ",
+             "o tamanho do pip precisa ser um número finito, zero ou positivo. Zero mantém a opção manual desativada. ",
+             "Revise Referência Genesis e unidade pip em Ctrl+I > indicador > Editar.");
+       return(INIT_PARAMETERS_INCORRECT); }
    // One retained object namespace per chart. Check before prefix assignment,
    // template cleanup, preference reads or acquisition of any shared resource.
    IndicatorSetString(INDICATOR_SHORTNAME,JPW_PRODUCT_NAME+" · Cockpit "+JPW_PRODUCT_VERSION);
@@ -287,10 +299,12 @@ int OnInit()
      {
       const string installed=ChartIndicatorName(0,0,i);
       if(StringFind(installed,JPW_PRODUCT_NAME+" · Cockpit")==0 ||
+         StringFind(installed,"JPW GENETRIX · Cockpit")==0 ||
          installed=="JPW_Alavancagem_Atual") copies++;
      }
    if(copies>1)
-     { Print("GENETRIX · Conta: mantenha uma instância por gráfico. A instância existente foi preservada.");
+     { Print("Stoikus · Conta: mantenha uma instância por gráfico. A instância existente foi preservada. ",
+             "Para ajustar suas Entradas, use Ctrl+I > indicador > Editar.");
        return(INIT_FAILED); }
    g_panel_instance_admitted=true;
    g_panel_prefix=StringFormat("JPW_LEV_%I64d_",ChartID());
@@ -317,6 +331,8 @@ int OnInit()
    const int timer_seconds=(InpUpdateSeconds<5 ? InpUpdateSeconds : 5);
    if(!EventSetTimer(timer_seconds))
      {
+      Print("Stoikus · Conta: não foi possível iniciar a atualização do painel. Erro ",GetLastError(),
+            ". Confira o Diário e carregue o indicador novamente; mantenha o Monitor no gráfico de apoio.");
       if(g_raiz_atr_handle!=INVALID_HANDLE) IndicatorRelease(g_raiz_atr_handle);
       JPWClearPanel(); return(INIT_FAILED);
      }

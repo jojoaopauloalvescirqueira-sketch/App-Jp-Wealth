@@ -1,0 +1,93 @@
+{
+  "root": "/private/tmp/jpw-stoikus-renaming-20261012",
+  "freeze": "freeze-R3.json",
+  "nativeCompilation": "NOT_RUN",
+  "nativeRuntime": "NOT_RUN",
+  "contentUnchanged": true,
+  "beforeHashes": {
+    "tools/stoikus_startup_test.py": "0d5aac69ce11e3287dc25a81b309a18d50b42d2acc7acf88b628b9224bce090f",
+    "tools/stoikus_daily_package_test.py": "931802d5974006b2b5dc3170e8542dbaad883c4623567eb96d55fee3c391a787",
+    "tools/leverage_package_test.py": "9ae80b448ba21502b8ec17774cd55dc643895005b5fe39c00232c37f498f9a9e",
+    "tools/build_leverage_package.py": "8d6110ab5547cd45eb6f29e68a13b8d50256e7728be482c436c671031c7b36fd",
+    "tools/stoikus_download_test.py": "fbba5d288b4f175cef8d1485c5a6f9000bf30e2c0e16246b8ab89ca4fb2916ab",
+    "tools/stoikus_download_test.js": "095be49f741ddb65e9db51bf24393aa0a6124d68cf9973f6fea24f4e263a0824",
+    "src/js/20-ui/31-tools-services.js": "3ac6d94cf7def5562044b3453c71571a6a732f60a3e57824a6e1a403cdfa45db",
+    "downloads/jpw-alavancagem-atual/manifest.json": "dc45de5e1e41aecde4061d40fa8efbac56eb9414ac60cb6877bf79eea827fc0e",
+    "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip": "5b2c7ca40736dda976fe97a91a2677d190eb1ccfdf9527703fd471ee702a11e5",
+    "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip": "03ccb37824175511108b36e9abb5c9fa0dc28d89a338caea1dc7bf02508b9cae",
+    "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip": "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95",
+    "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5": "64ec6c6635755c496bb1f02d335c44f2a3ab7d8916e3f7db3a4fd1f556a8f0b8",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "007a4791df76a3d48881f8a40b10ebc681100ab8e8871285eb8e9968a2b75934",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "c394d792504ad73de59dfa4caf9c82ea44e74ebf98fafe91e1ac5658e1d98ec4",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5": "a1453e13805f7534d97f7339a54c4c35dcfc9871de0bd6e896a03e612affff25",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "015ac36986f893de0392789adaf6309c301f9fc39807b8ec3851ee2f048838af"
+  },
+  "afterHashes": {
+    "tools/stoikus_startup_test.py": "0d5aac69ce11e3287dc25a81b309a18d50b42d2acc7acf88b628b9224bce090f",
+    "tools/stoikus_daily_package_test.py": "931802d5974006b2b5dc3170e8542dbaad883c4623567eb96d55fee3c391a787",
+    "tools/leverage_package_test.py": "9ae80b448ba21502b8ec17774cd55dc643895005b5fe39c00232c37f498f9a9e",
+    "tools/build_leverage_package.py": "8d6110ab5547cd45eb6f29e68a13b8d50256e7728be482c436c671031c7b36fd",
+    "tools/stoikus_download_test.py": "fbba5d288b4f175cef8d1485c5a6f9000bf30e2c0e16246b8ab89ca4fb2916ab",
+    "tools/stoikus_download_test.js": "095be49f741ddb65e9db51bf24393aa0a6124d68cf9973f6fea24f4e263a0824",
+    "src/js/20-ui/31-tools-services.js": "3ac6d94cf7def5562044b3453c71571a6a732f60a3e57824a6e1a403cdfa45db",
+    "downloads/jpw-alavancagem-atual/manifest.json": "dc45de5e1e41aecde4061d40fa8efbac56eb9414ac60cb6877bf79eea827fc0e",
+    "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip": "5b2c7ca40736dda976fe97a91a2677d190eb1ccfdf9527703fd471ee702a11e5",
+    "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip": "03ccb37824175511108b36e9abb5c9fa0dc28d89a338caea1dc7bf02508b9cae",
+    "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip": "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95",
+    "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+    "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5": "64ec6c6635755c496bb1f02d335c44f2a3ab7d8916e3f7db3a4fd1f556a8f0b8",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "007a4791df76a3d48881f8a40b10ebc681100ab8e8871285eb8e9968a2b75934",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "c394d792504ad73de59dfa4caf9c82ea44e74ebf98fafe91e1ac5658e1d98ec4",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5": "a1453e13805f7534d97f7339a54c4c35dcfc9871de0bd6e896a03e612affff25",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "015ac36986f893de0392789adaf6309c301f9fc39807b8ec3851ee2f048838af"
+  },
+  "commands": [
+    {
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/stoikus_startup_test.py",
+        "--out",
+        "/private/tmp/jpw-stoikus-usability-evidence-20261013/final-code-critic/startup-official-final.json"
+      ],
+      "startedUTC": "2026-10-13T16:08:54.671742+00:00",
+      "completedUTC": "2026-10-13T16:08:55.787243+00:00",
+      "exitCode": 0,
+      "stdout": "PASS: actual opening script executed in 29 host scenarios; 20 original public inputs preserved. Native compile/runtime NOT_RUN.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/stoikus_daily_package_test.py"
+      ],
+      "startedUTC": "2026-10-13T16:08:54.672063+00:00",
+      "completedUTC": "2026-10-13T16:08:56.738236+00:00",
+      "exitCode": 0,
+      "stdout": "PASS separate frozen inventories; bytes/hash; reproduction and idempotence\nPASS absent guide/script/dependencies, traversal, unsafe resources, symlink and unproved EX5 rejected\nPASS actual candidate inventories, bytes, source parity, immutable historical archives\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/leverage_package_test.py"
+      ],
+      "startedUTC": "2026-10-13T16:08:54.672196+00:00",
+      "completedUTC": "2026-10-13T16:08:58.081917+00:00",
+      "exitCode": 0,
+      "stdout": "PASS immutable GENETRIX 1.21.2 archive and size/hash counterexamples; no current-tree substitution\nPASS immutable Stoikus 1.22.0 archive and size/hash counterexamples\nNATIVE_COMPILATION_SLICE: NOT_RUN; source-only candidate; no old EX5 accepted\nLEVERAGE PACKAGE OK — deterministic bytes, exact extraction, missing include and unverified .ex5 refused\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/stoikus_download_test.py"
+      ],
+      "startedUTC": "2026-10-13T16:08:54.672403+00:00",
+      "completedUTC": "2026-10-13T16:08:54.779792+00:00",
+      "exitCode": 0,
+      "stdout": "PASS daily/source/compiled online; daily offline; corrupt size/hash; legacy and invalid manifests; unsafe records; absent button\n",
+      "stderr": ""
+    }
+  ]
+}

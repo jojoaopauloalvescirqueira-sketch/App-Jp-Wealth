@@ -1,6 +1,6 @@
 #ifndef JPW_NOCUDA_UI_MQH
 #define JPW_NOCUDA_UI_MQH
-#include <JPWealth/JPW_Genetrix_Brand.mqh>
+#include <JPWealth/JPW_Stoikus_Brand.mqh>
 #include <JPWealth/JPW_UI_Design.mqh>
 
 // Presentation only. No candle reads, study DB access or revision writes.

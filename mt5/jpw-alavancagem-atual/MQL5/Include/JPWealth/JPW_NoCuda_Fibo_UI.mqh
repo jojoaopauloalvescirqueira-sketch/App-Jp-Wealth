@@ -3,7 +3,7 @@
 
 // Presentation only: receives accepted strings/identities from the controller.
 // No account, candle, native-channel or study-store reads occur in this file.
-#include <JPWealth/JPW_Genetrix_Brand.mqh>
+#include <JPWealth/JPW_Stoikus_Brand.mqh>
 #include <JPWealth/JPW_UI_Design.mqh>
 #include <JPWealth/JPW_NoCuda_UI.mqh>
 

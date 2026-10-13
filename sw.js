@@ -8,6 +8,9 @@ const NORMATIVE_DOCUMENT_URLS = [
   './docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
   './docs/normative/ANEXO_PARAMETRICO_CANONICO.md'
 ].map(path => new URL(path, self.location.href).href);
+// Project documents share the active build; navigation must preserve their bytes.
+const PROJECT_DOCUMENT_URLS = ['./README.md', './CHANGELOG.md']
+  .map(path => new URL(path, self.location.href).href);
 const NOCUDA_DOCUMENT_URLS = [
   './downloads/nocuda/Nocuda_Tool.ex5',
   './downloads/nocuda/Nocuda_Tool.pine', './downloads/nocuda/Nocuda_Tool.mq5',
@@ -38,7 +41,7 @@ const PRECACHE_URLS = [
   './src/js/40-app/25-fx-consolidated-pdf.js',
   './src/js/40-app/24-fx-consolidated-import.js',
   './src/js/10-domain/17-fx-consolidated-model.js',
-  ...NORMATIVE_DOCUMENT_URLS,
+  ...NORMATIVE_DOCUMENT_URLS, ...PROJECT_DOCUMENT_URLS,
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './assets/jp-wealth-logo.png',
   './assets/jp-wealth-brand-red.png', './assets/jp-wealth-brand-black.png',
@@ -142,7 +145,7 @@ self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
   const url=new URL(event.request.url);
   const documentURL = url.origin + url.pathname;
-  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)||documentURL===LEVERAGE_MANIFEST_URL||documentURL.startsWith(LEVERAGE_ROOT_URL)){
+  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||PROJECT_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)||documentURL===LEVERAGE_MANIFEST_URL||documentURL.startsWith(LEVERAGE_ROOT_URL)){
     event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(documentURL).then(cached=>cached||fetch(event.request))));
     return;
   }

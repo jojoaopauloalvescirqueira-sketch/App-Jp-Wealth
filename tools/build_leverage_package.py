@@ -24,6 +24,13 @@ COMPILED_ARTIFACT = PRODUCT + "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.ex
 ZIP_DATE = (1980, 1, 1, 0, 0, 0)
 VERSION_HEADER = PRODUCT + "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh"
 BUILD_MACRO = re.compile(rb'(?m)^#define JPW_BUILD_ID[ \t]+"[^"\r\n]*"[ \t]*$')
+DAILY_GUIDE = PRODUCT + "STOIKUS_USO_DIARIO.md"
+DAILY_PROGRAMS = frozenset(PRODUCT + relative for relative in (
+    "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+    "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+    "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+    "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
+))
 
 
 def checked_file(root: Path, relative: str, prefix: str) -> Path:
@@ -77,7 +84,7 @@ def download_record(relative: str, content: bytes) -> dict:
 
 NOCUDA_LOGO = PRODUCT + "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp"
 # Every embedded resource is explicitly approved; arbitrary images cannot ship.
-GENETRIX_LOGOS = frozenset(PRODUCT + "MQL5/Images/JPWealth/JPW_Genetrix_Logo_" +
+GENETRIX_LOGOS = frozenset(PRODUCT + "MQL5/Images/JPWealth/JPW_Stoikus_Logo_" +
     theme + "_" + str(scale) + ".bmp" for theme in ("Light", "Dark")
     for scale in (100, 125, 150, 200))
 EMBEDDED_RESOURCES = GENETRIX_LOGOS | {NOCUDA_LOGO}
@@ -127,13 +134,58 @@ HARNESS_DOCUMENTS = frozenset({
 })
 
 
+def local_dependencies(relative: str, source_text: str) -> set[str]:
+    """Resolve project-local includes/resources without consulting the filesystem.
+
+    Standard MT5 includes remain supplied by MetaEditor. Every project-local
+    dependency is validated against the SDK's declared inventory by build().
+    """
+    dependencies = set()
+    for resource in re.findall(r'^\s*#resource\s*"([^"\r\n]+)"', source_text, re.MULTILINE):
+        normalized = re.sub(r"/+", "/", resource.replace("\\", "/"))
+        if not normalized.startswith("/Images/") or ".." in PurePosixPath(normalized).parts:
+            raise ValueError(f"Recurso local inesperado: {resource}")
+        dependency = PRODUCT + "MQL5" + normalized
+        if dependency not in EMBEDDED_RESOURCES:
+            raise ValueError(f"Recurso local inesperado: {resource}")
+        dependencies.add(dependency)
+    for include in re.findall(r'^\s*#include\s*"([^"\r\n]+)"', source_text, re.MULTILINE):
+        dependencies.add(PurePosixPath(relative).parent.as_posix() + "/" + include.replace("\\", "/"))
+    for include in re.findall(r'^\s*#include\s*<([^>\r\n]+)>', source_text, re.MULTILINE):
+        normalized = include.replace("\\", "/")
+        if normalized.startswith("JPWealth/"):
+            dependencies.add(PRODUCT + "MQL5/Include/" + normalized)
+    return dependencies
+
+
+def daily_inventory(sources: list[str], dependencies: dict[str, set[str]]) -> set[str]:
+    """Close only the four authorized usage entrypoints over local dependencies."""
+    if not (DAILY_PROGRAMS | {DAILY_GUIDE}).issubset(sources):
+        raise ValueError("Programas de uso diario ou guia ausentes do manifesto")
+    selected = set()
+    pending = list(DAILY_PROGRAMS)
+    while pending:
+        relative = pending.pop()
+        if relative in selected:
+            continue
+        if (relative not in DAILY_PROGRAMS
+                and PurePosixPath(relative).suffix != ".mqh"
+                and relative not in EMBEDDED_RESOURCES):
+            raise ValueError(f"Dependencia fora do pacote de uso diario: {relative}")
+        selected.add(relative)
+        pending.extend(dependencies.get(relative, set()))
+    return selected | {DAILY_GUIDE}
+
+
 def build(root: Path = ROOT) -> dict:
     manifest_file = checked_file(root, MANIFEST_PATH, OUTPUT)
     manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(manifest.get("version", ""))):
         raise ValueError("Manifesto de alavancagem sem schema ou versao valida")
     sources = manifest.get("sourceFiles")
-    if not isinstance(sources, list) or len(sources) < 4 or len(sources) != len(set(sources)):
+    if (not isinstance(sources, list) or len(sources) < 4
+            or not all(isinstance(relative, str) for relative in sources)
+            or len(sources) != len(set(sources))):
         raise ValueError("Lista de fontes incompleta ou duplicada")
     required = (
         PRODUCT + "README.md",
@@ -185,6 +237,7 @@ def build(root: Path = ROOT) -> dict:
     ):
         raise ValueError("Estados de validacao incompletos")
     # Validate all declared paths/types before updating even the generated ID.
+    dependencies = {}
     for relative in sources:
         if (PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh")
                 and relative not in EMBEDDED_RESOURCES
@@ -193,26 +246,13 @@ def build(root: Path = ROOT) -> dict:
         source = checked_file(root, relative, PRODUCT)
         if source.suffix in (".mq5", ".mqh"):
             source_text = source.read_text(encoding="utf-8")
-            # MQL resolves quoted includes relative to the including source.
-            # The dependency must itself be explicitly mapped in the manifest;
-            # neither a missing file nor an undeclared local file can ship.
-            for resource in re.findall(r'^\s*#resource\s*"([^"\r\n]+)"', source_text, re.MULTILINE):
-                normalized = re.sub(r"/+", "/", resource.replace("\\", "/"))
-                if not normalized.startswith("/Images/") or ".." in PurePosixPath(normalized).parts:
-                    raise ValueError(f"Recurso local inesperado: {resource}")
-                dependency = PRODUCT + "MQL5" + normalized
-                if dependency not in EMBEDDED_RESOURCES or dependency not in sources:
-                    raise ValueError(f"Recurso local ausente do manifesto: {resource}")
-                checked_file(root, dependency, PRODUCT)
-            for include in re.findall(r'^\s*#include\s*"([^"\r\n]+)"', source_text, re.MULTILINE):
-                dependency = PurePosixPath(relative).parent.as_posix() + "/" + include.replace("\\", "/")
+            dependencies[relative] = local_dependencies(relative, source_text)
+            for dependency in dependencies[relative]:
                 if dependency not in sources:
-                    raise ValueError(f"Include local ausente do manifesto: {include}")
+                    kind = "Recurso" if dependency in EMBEDDED_RESOURCES else "Include"
+                    raise ValueError(f"{kind} local ausente do manifesto: {dependency}")
                 checked_file(root, dependency, PRODUCT)
-            for include in re.findall(r'^\s*#include\s*<JPWealth/([^>]+)>', source_text, re.MULTILINE):
-                dependency = PRODUCT + "MQL5/Include/JPWealth/" + include
-                if dependency not in sources:
-                    raise ValueError(f"Include JPWealth ausente do manifesto: {include}")
+    daily_sources = daily_inventory(sources, dependencies)
     manifest["runtimeBuildId"] = stamp_source_build(root, sources, manifest["version"])
     members = []
     for relative in sources:
@@ -227,9 +267,17 @@ def build(root: Path = ROOT) -> dict:
     source_fingerprint = hashlib.sha256(json.dumps(mql_hashes, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     manifest["mqlSourceFingerprint"] = source_fingerprint
     version = manifest["version"]
-    source_path = OUTPUT + f"JPW_Genetrix_Fontes_v{version}.zip"
+    source_path = OUTPUT + f"JPW_Stoikus_Fontes_v{version}.zip"
     source_zip = make_archive(members)
     downloads = {"source": download_record(source_path, source_zip)}
+    daily_path = OUTPUT + f"JPW_Stoikus_Uso_Fontes_v{version}.zip"
+    daily_members = [
+        ("LEIA_PRIMEIRO.md" if relative == DAILY_GUIDE else relative.removeprefix(PRODUCT),
+         checked_file(root, relative, PRODUCT).read_bytes())
+        for relative in daily_sources
+    ]
+    daily_zip = make_archive(daily_members)
+    downloads["dailySource"] = download_record(daily_path, daily_zip)
 
     native = manifest.get("nativeArtifact")
     expected_ex5 = [relative[:-4] + ".ex5" for relative in sources if relative.endswith(".mq5")]
@@ -238,7 +286,7 @@ def build(root: Path = ROOT) -> dict:
             raise ValueError("Compilacao marcada como concluida sem artefato nativo")
         if any((root / relative).exists() for relative in expected_ex5):
             raise ValueError(".ex5 encontrado sem evidencia nativa; nao distribuir")
-        if (root / (OUTPUT + f"JPW_Alavancagem_Atual_Compilado_v{version}.zip")).exists():
+        if (root / (OUTPUT + f"JPW_Stoikus_Compilado_v{version}.zip")).exists():
             raise ValueError("Pacote compilado sem evidencia nativa; revisar antes do build")
         downloads["compiled"] = {
             "available": False, "path": None, "filename": None, "sha256": None,
@@ -261,12 +309,13 @@ def build(root: Path = ROOT) -> dict:
             if len(ex5) < 1024 or not re.fullmatch(r"[0-9a-f]{64}", str(record.get("sha256", ""))) or hashlib.sha256(ex5).hexdigest() != record["sha256"]:
                 raise ValueError("Artefato nativo vazio ou diferente da evidencia")
             native_members.append((record["path"].removeprefix(PRODUCT), ex5))
-        compiled_path = OUTPUT + f"JPW_Alavancagem_Atual_Compilado_v{version}.zip"
+        compiled_path = OUTPUT + f"JPW_Stoikus_Compilado_v{version}.zip"
         compiled_zip = make_archive(native_members)
         downloads["compiled"] = download_record(compiled_path, compiled_zip)
 
     manifest["downloads"] = downloads
     write_changed(root / source_path, source_zip)
+    write_changed(root / daily_path, daily_zip)
     if native is not None:
         write_changed(root / compiled_path, compiled_zip)
     write_changed(manifest_file, (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
@@ -275,6 +324,7 @@ def build(root: Path = ROOT) -> dict:
 
 if __name__ == "__main__":
     generated = build()
+    print(generated["downloads"]["dailySource"]["path"])
     print(generated["downloads"]["source"]["path"])
     if generated["downloads"]["compiled"]["available"]:
         print(generated["downloads"]["compiled"]["path"])

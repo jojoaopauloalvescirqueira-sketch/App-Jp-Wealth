@@ -1,0 +1,8 @@
+{
+  "writes": 128,
+  "removed_old_renamed_paths": 34,
+  "verified_after": true,
+  "git_head": "0f247215cc20829fdba40c3b33458ee976c17ea1",
+  "branch": "codex/audit-bugfixes-20261012",
+  "no_git_mutations": true
+}

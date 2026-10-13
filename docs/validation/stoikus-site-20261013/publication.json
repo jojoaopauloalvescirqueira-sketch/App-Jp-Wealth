@@ -1,0 +1,40 @@
+{
+  "deployment": {
+    "id": "appgdep_6ace63b7d7748191b291aa6dc7009cc5",
+    "project_id": "appgprj_6abff945d9a48191aac3b1519893c2fc",
+    "title": "JP Wealth Software",
+    "version_id": "appgprj_6abff945d9a48191aac3b1519893c2fc~appgver_9e3e7cb62980819182b3c8596fa4a984",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://jp-wealth-software.jojoaopauloalvescirq.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6abff945d9a48191aac3b1519893c2fc",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-13T17:01:01.666089+00:00"
+  },
+  "saved_version": {
+    "id": "appgprj_6abff945d9a48191aac3b1519893c2fc~appgver_9e3e7cb62980819182b3c8596fa4a984",
+    "project_id": "appgprj_6abff945d9a48191aac3b1519893c2fc",
+    "version_number": 3,
+    "source": {
+      "commit_sha": "4cdff1d563b36229561b008b4fb99fd655001f48"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_000000004350820ea917e61000f856a0",
+      "content_hash": "sha256:ad5a0286dc6f6a527352fa516f2e8e4886e8313701cf575857a2bd106134cf50",
+      "size_bytes": 20725760,
+      "file_count": 163
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "source": {
+    "project_id": "appgprj_6abff945d9a48191aac3b1519893c2fc",
+    "checkout_path": "/private/tmp/jpw-hosted-site-20261013",
+    "commit_sha": "4cdff1d563b36229561b008b4fb99fd655001f48",
+    "archive": "/private/tmp/jpw-stoikus-site-integration-evidence-20261013/jp-wealth-stoikus-1.22.1.tar.gz"
+  }
+}

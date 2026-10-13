@@ -1,3 +1,30 @@
+# 2026-10-13 — integração local Stoikus 1.22.1 com as correções de auditoria
+
+Integração e publicação solicitadas pelo proprietário. Guia, pacote de uso e SDK Stoikus 1.22.1 incorporados com preservação dos patches AUD-01..AUD-10, seus regressores e documentos PWA. A combinação possui recibos próprios; resultados anteriores não aprovam seus bytes. Compilação e execução MT5 continuam NOT_RUN; commit, push e merge não foram realizados.
+
+# 2026-10-13 — candidate Stoikus 1.22.1, correções de uso diário
+
+- Instalação de uso separada do SDK de engenharia: Monitor, Conta, NoCuda e uma ferramenta pontual de abertura; testes e laboratório não entram no pacote de uso.
+- Os 20 inputs originais ganham grupos e descrições em português, mantendo nomes, tipos, ordem e valores padrão. As mensagens de inicialização explicam os limites que já existiam.
+- Abertura conjunta reconhece indicadores atuais e legados antes de criar handles, preserva EA/configurações/estudos existentes e informa falhas parciais; repetição sem duplicatas nos ensaios host.
+- Novo guia de dois gráficos e download de uso verificado por tamanho/SHA-256; inventário e ensaios de engenharia sob seção explícita.
+- Produto 1.22.1 / MQL 1.221 / cálculo 1.9.0; pacotes anteriores preservados. Host/distribuição PASS 44/44 e full web PASS 57/57 no R4 congelado; Gauntlet documental/web e revisão de código aprovados por críticos separados. Compilação/execução MT5, instalação e aceite operacional NOT_RUN até prova exata; sem commit, push, merge, publicação ou negociação.
+
+# 2026-10-12 — candidate Stoikus 1.22.0, somente de fontes
+
+- Nome público Stoikus para a suíte MT5; produto 1.22.0 / MQL 1.220 / cálculo 1.9.0. Logo JP Wealth, slogan e nome NoCuda preservados.
+- Escopo autorizado de 34 renomes: 29 fontes/recursos MQL e cinco ferramentas host, com referências e distribuição próprias. O [mapa atual](mt5/jpw-alavancagem-atual/STOIKUS_RENAME_1_22_0.md) registra compatibilidade, nomes estáveis e transição futura.
+- Contratos financeiros, unidades, parâmetros, schemas e namespaces persistidos preservados pelo escopo; não há migração de dados ou instalação operacional. Pacotes, manuais, harness e recibos GENETRIX históricos conservados.
+- Novo pacote `JPW_Stoikus_Fontes_v1.22.0.zip`, sem EX5. Host/all PASS 40/40 e full PASS 57/57 no R2 congelado; resultados e limites nos recibos próprios em [INTEGRATION 1.22.0](docs/validation/stoikus-1.22.0/INTEGRATION.md). Compilação e interação nativas, instalação e aceite operacional: NOT_RUN. Nenhum commit, integração, publicação, armamento ou negociação nesta etapa.
+
+# Candidate local — correções da auditoria de 12/10/2026
+
+- Backup completo preserva históricos válidos profundos e valida sua própria importabilidade antes de anunciar geração. Checklist incompatível é recusado antes de confirmação/escrita; bases antigas inválidas preservam o original no fluxo de recuperação.
+- PF usa seu validador existente na cobertura dos valores conhecidos. Reservas do Planejamento reutilizam os resultados canônicos e a moeda da conta; MEI mantém referência ausente pendente. Observações respeitam a data UTC de abertura do período selecionado.
+- Recuperação de Pivots reabre a view e o formulário; filtros e ordenação mantêm foco/editor. Aceitar o descarte de Notas fecha o rascunho ao trocar de pasta.
+- README/CHANGELOG permanecem documentos no PWA online/offline e no portátil; ambos pertencem ao fingerprint do build. Ciclo conservador de atualização preservado.
+- [Contrato](docs/work/CHG-AUDIT-BUGFIXES-20261012.md) e [auditoria da correção](docs/audit/AUDIT-BUGFIXES-20261012.md). Candidate local na branch autorizada; validação final pelos recibos externos. Teste manual e aceite do proprietário pendentes; nenhuma integração ou publicação.
+
 # 2026-10-09 — integração autorizada do site e GENETRIX
 
 Site validado e GENETRIX 1.21.2 reunidos; conflitos dos juízes MT5 reconciliados com a versão mais recente, mantendo os contratos e controles dessa integração anterior. Validação da combinação e envio Git registrados separadamente; sem publicação.

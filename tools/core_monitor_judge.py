@@ -103,7 +103,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--receipt',type=Path,default=ROOT/"tools/.artifacts"/"core_monitor_judge.json");a=p.parse_args();compiler=shutil.which("clang++") or shutil.which("g++")
     if not compiler:
         print("JPW_TEST_RESULT: ENVIRONMENT_ERROR");return 2
-    files=[INC/'JPW_Genetrix_Monitor_Core.mqh',INC/'JPW_Genetrix_Monitor_Status.mqh',Path(__file__).resolve()]
+    files=[INC/'JPW_Stoikus_Monitor_Core.mqh',INC/'JPW_Stoikus_Monitor_Status.mqh',Path(__file__).resolve()]
     receipt={'scope':'production MQL function bodies, synthetic native seams, host filesystem; not MT5 GUI or native ABI','sources':{str(x.relative_to(ROOT)):hashlib.sha256(x.read_bytes()).hexdigest() for x in files},'native':'NOT_RUN'}
     with tempfile.TemporaryDirectory(prefix='core-monitor-judge-') as d:
         d=Path(d);cpp=d/'judge.cpp';binary=d/'judge';cpp.write_text(PRE+'\n'+translate(files[0].read_text())+'\n'+translate(files[1].read_text())+'\n'+TEST)

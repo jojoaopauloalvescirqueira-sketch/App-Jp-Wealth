@@ -1,6 +1,6 @@
 #ifndef JPW_ALAVANCAGEM_COORDINATOR_MQH
 #define JPW_ALAVANCAGEM_COORDINATOR_MQH
-#include <JPWealth/JPW_Genetrix_Monitor_UI.mqh>
+#include <JPWealth/JPW_Stoikus_Monitor_UI.mqh>
 // Indicator runtime component; included after its instance state.
 long g_indicator_diagnostic_instance=0;
 

@@ -453,9 +453,9 @@ function fxpOverviewHTML(live){
     <section class="fxp-block">
       <div class="fxp-block-head"><h3>Reservas estatutárias</h3><span class="art">Art. 13</span></div>
       ${fxpCovHTML('FCR · Contingência e Reconstituição',res.fcrCoverage,res.fcrStatus,
-        `constituído ${fxpMoneyOrPending(res.fcrCur)} · exigido ${fxpMoneyOrPending(res.fcrReq)}`+(res.fcrDiff<0?` · déficit ${fxpBoardMoney(-res.fcrDiff)}`:''))}
+        `constituído ${fxpMoneyOrPending(res.fcrCur,res)} · exigido ${fxpMoneyOrPending(res.fcrReq,res)}`+(res.fcrDiff<0?` · déficit ${fxpMoneyOrPending(-res.fcrDiff,res)}`:''))}
       ${fxpCovHTML('FEO · Estabilidade Operacional',res.feoCoverage,res.feoStatus,
-        `constituído ${fxpMoneyOrPending(res.feoCur)} · apurado ${fxpMoneyOrPending(res.feoReq)}`+(res.feoDiff<0?` · déficit ${fxpBoardMoney(-res.feoDiff)}`:''))}
+        `constituído ${fxpMoneyOrPending(res.feoCur,res)} · apurado ${fxpMoneyOrPending(res.feoReq,res)}`+(res.feoDiff<0?` · déficit ${fxpMoneyOrPending(-res.feoDiff,res)}`:''))}
       <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Constituição quantitativa não confirma elegibilidade. Apuração, liquidez e governança permanecem verificações distintas.</p>
       <button type="button" class="fxp-linkish" id="fxpGoOnboarding" style="margin-top:8px">Revisar Reservas</button>
       <div id="fxpReservesPanel">${fxpReservesHTML(res)}</div>
@@ -478,7 +478,7 @@ function fxpOverviewHTML(live){
 }
 // Barra de cobertura normativa. O rótulo textual acompanha sempre — estado
 // normativo nunca é comunicado só pela cor da barra.
-function fxpMoneyOrPending(value){return Number.isFinite(value)?fxpBoardMoney(value):'não informado';}
+function fxpMoneyOrPending(value,context){return Number.isFinite(value)?fmtForexMoney(value,context):'não informado';}
 function fxpCovHTML(rotulo,cobertura,status,meta){
   const known=Number.isFinite(cobertura),cor=status==='Insuficiente'?'var(--f4)':'var(--ink-dim)';
   const larg=known?Math.max(0,Math.min(100,cobertura)):0;
@@ -499,11 +499,11 @@ function fxpHorizonHTML(plan){
 function fxpReservesHTML(res){
   const row=(k,v)=>`<tr class="fxp-reserve-row"><td>${k}</td><td>${v}</td></tr>`;
   return `<details class="mc-disclosure fxp-disc fxp-reserves"><summary>Detalhes e governança das reservas</summary><div class="mc-disclosure-body"><div class="fxp-tablewrap"><table class="dtable"><tbody>
-    ${row('Capital nominal explícito da Conta Mestre',fxpMoneyOrPending(res.capital))}
-    ${row('FCR exigido pelo motor V11',fxpMoneyOrPending(res.fcrReq))}
-    ${row('FCR constituído',fxpMoneyOrPending(res.fcrCur))}
-    ${row('FEO apurado para seis meses de despesas reais',fxpMoneyOrPending(res.feoReq))}
-    ${row('FEO constituído',fxpMoneyOrPending(res.feoCur))}
+    ${row('Capital nominal explícito da Conta Mestre',fxpMoneyOrPending(res.capital,res))}
+    ${row('FCR exigido pelo motor V11',fxpMoneyOrPending(res.fcrReq,res))}
+    ${row('FCR constituído',fxpMoneyOrPending(res.fcrCur,res))}
+    ${row('FEO apurado para seis meses de despesas reais',fxpMoneyOrPending(res.feoReq,res))}
+    ${row('FEO constituído',fxpMoneyOrPending(res.feoCur,res))}
     ${row('Situação quantitativa',esc(res.generalStatus))}
     ${row('Governança',esc(res.status||'PENDING_GOVERNANCE'))}
     </tbody></table></div><ul>${(res.findings||[]).map(f=>`<li>${esc(f.message||f.code)}</li>`).join('')}</ul><p class="fxp-note">Valor calculado não resolve conflitos documentais nem concede autorização operacional. SI não substitui capital nominal; uma média mensal não substitui a apuração explícita de seis meses.</p></div></details>`;

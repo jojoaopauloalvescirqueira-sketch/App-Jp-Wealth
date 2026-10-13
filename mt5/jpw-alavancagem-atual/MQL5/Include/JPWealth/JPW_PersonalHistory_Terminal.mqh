@@ -1,7 +1,7 @@
 #ifndef JPW_PERSONAL_HISTORY_TERMINAL_MQH
 #define JPW_PERSONAL_HISTORY_TERMINAL_MQH
 #include <JPWealth/JPW_PersonalHistory_Core.mqh>
-#include <JPWealth/JPW_Genetrix_Risk_Terminal.mqh>
+#include <JPWealth/JPW_Stoikus_Risk_Terminal.mqh>
 #include <JPWealth/JPW_Alavancagem_RaizN_Observer.mqh>
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
 // Read-only terminal adapter. Capture is incremental; SL evidence does not

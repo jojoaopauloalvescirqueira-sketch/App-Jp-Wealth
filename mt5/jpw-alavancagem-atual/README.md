@@ -1,3 +1,23 @@
+# Stoikus 1.22.1 — uso diário e engenharia
+
+**Da origem da operação à leitura do risco.**
+
+Comece pelo [guia de uso diário](STOIKUS_USO_DIARIO.md): Monitor em um gráfico de apoio mantido aberto; Conta e NoCuda no gráfico de trabalho, com abertura conjunta por `JPW_Stoikus_Abrir_Paineis`. Produto **1.22.1**, MQL **1.221**, cálculo **1.9.0**.
+
+O **JPW_Stoikus_Uso_Fontes_v1.22.1.zip** contém esses quatro programas, dependências e o guia como `LEIA_PRIMEIRO.md`. O **JPW_Stoikus_Fontes_v1.22.1.zip** conserva o SDK completo, testes, laboratório, utilitários e referências históricas. A presença de Tests ou Lab não indica um painel de uso; scripts terminam e deixam o resultado em Experts.
+
+Os dois indicadores coexistem no mesmo gráfico. O abridor adiciona somente os ausentes, preserva configurações e estudos presentes e não inicia o Monitor. Padrões de cobertura `false` / `false` / vazio permitem iniciar com cobertura desconhecida; não declare confirmação sem evidência. NoCuda exige período-fonte definido, H1 por padrão; PERIOD_CURRENT é inválido. Fibonacci importado conserva UNVERIFIED_NATIVE e suas medidas dependentes bloqueadas.
+
+Compilação e interação nativas, instalação e aceite operacional: **NOT_RUN**. Não há EX5 desta revisão distribuído sem prova dos mesmos bytes. A primeira validação é isolada. Fórmulas, unidades, defaults, APIs, schemas, dados, chaves, bancos, locks, preferências e estudos permanecem nos contratos existentes; N/A e Partial não significam zero nem autorização financeira.
+
+Observer e Accountant separados são legados para rollback: nenhum produtor legado deve executar junto do Monitor, em qualquer gráfico. Antes de organizar uma instalação antiga, inventarie caminhos/versões e preserve backup; a eventual remoção explícita afeta apenas fontes/executáveis obsoletos identificados, nunca MQL5/Files ou registros. Supervisor permanece separado e opcional; esta revisão não o arma.
+
+O [mapa de renomeação 1.22.0](STOIKUS_RENAME_1_22_0.md) descreve a base histórica da identidade Stoikus. Para instalação, Entradas e abertura desta revisão, siga o guia de uso acima. Resultados de revisões anteriores não aprovam estes novos bytes.
+
+## Documentação histórica GENETRIX preservada
+
+O conteúdo abaixo mantém os bytes da base 1.21.2 e descreve as revisões que identifica. Para nomes, distribuição e evidências atuais, use a camada Stoikus acima e seu mapa; referências históricas não comprovam compilação ou execução 1.22.0.
+
 # GENETRIX 1.21.2 — revisão candidata
 
 > Revisão candidata atual: **1.21.2**. Correções de título e acesso compacto NoCuda e candidato separado de controles de regressão estão descritos em [GENETRIX_CORRECTIONS_1_21_2.md](GENETRIX_CORRECTIONS_1_21_2.md). O estado de cada evidência acompanha a entrega externa; a compilação 1.21.1 não é evidência desta revisão. Sem instalação operacional nesta etapa.

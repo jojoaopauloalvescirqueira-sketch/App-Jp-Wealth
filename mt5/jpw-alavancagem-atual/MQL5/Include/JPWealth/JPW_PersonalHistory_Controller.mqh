@@ -234,7 +234,7 @@ void JPWPersonalControllerNotifyDue(JPWPersonalCapture &capture,int &due[],const
    if(ArraySize(due)==0 || g_ph_owner_conflict) return;
    // Reconcile indices refer to the un-compacted projection. Called before a
    // successful persistence compacts memory. No index is used after compaction.
-   int verified[]; string payload="[",message="GENETRIX — sem SL registrado na corretora";
+   int verified[]; string payload="[",message="Stoikus — sem SL registrado na corretora";
    for(int i=0;i<ArraySize(due);i++)
      {
       if(GetTickCount64()-started>=500) { g_ph_gap=true; break; }
