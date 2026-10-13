@@ -1,6 +1,6 @@
 #property copyright "JP Wealth"
 #property version   "1.30"
-#property description "JPW GENETRIX · NoCuda: Fibonacci nativo como editor; estudos manuais preservados."
+#property description "Stoikus · NoCuda: Fibonacci nativo como editor; estudos manuais preservados."
 #property indicator_chart_window
 #property indicator_buffers 0
 #property indicator_plots 0
@@ -13,11 +13,14 @@
 #include <JPWealth/JPW_NoCuda_Render.mqh>
 #include <JPWealth/JPW_NoCuda_UI.mqh>
 
-input ENUM_TIMEFRAMES InpSourceTimeframe=PERIOD_H1;
-input bool InpFullMesh=true;
-input string InpPipSymbol=""; // Opcional: apenas para o simbolo exato.
-input double InpPipSize=0.0;
-input int InpMaxQuoteAgeSeconds=30;
+input group "Estudo e desenho"
+input ENUM_TIMEFRAMES InpSourceTimeframe=PERIOD_H1; // Período fonte das âncoras (Atual não aceito)
+input bool InpFullMesh=true; // Malha completa ao iniciar (sim: todos os níveis)
+input group "Unidade pip (opcional)"
+input string InpPipSymbol=""; // Símbolo exato para pip (vazio: sem conversão)
+input double InpPipSize=0.0; // Tamanho de 1 pip em preço (0: só com símbolo vazio)
+input group "Validade da cotação"
+input int InpMaxQuoteAgeSeconds=30; // Idade máxima da cotação (s; 1 a 3600)
 
 CCanvas g_nocuda_canvas;
 bool g_nocuda_canvas_ready=false;
@@ -1150,14 +1153,20 @@ int OnInit()
       PeriodSeconds(InpSourceTimeframe)<=0 ||
       (InpPipSymbol!="" && (!MathIsValidNumber(InpPipSize) ||
                              InpPipSize<=0.0)))
-      return(INIT_PARAMETERS_INCORRECT);
+     { Print("Stoikus · NoCuda: revise as Entradas. Idade da cotação: 1 a 3600 s; ",
+             "escolha um período fonte explícito, como H1 (Atual não é aceito). ",
+             "Se preencher Símbolo exato para pip, informe tamanho finito e positivo; ",
+             "para desativar a conversão, deixe o símbolo vazio. Use Ctrl+I > indicador > Editar.");
+       return(INIT_PARAMETERS_INCORRECT); }
    IndicatorSetString(INDICATOR_SHORTNAME,JPW_NOCUDA_SHORTNAME);
    int copies=0;
    for(int i=0;i<ChartIndicatorsTotal(0,0);i++)
       if(ChartIndicatorName(0,0,i)==JPW_NOCUDA_SHORTNAME ||
+         ChartIndicatorName(0,0,i)=="JPW GENETRIX · NoCuda Channels" ||
          ChartIndicatorName(0,0,i)=="JPW_NoCuda_Channels") copies++;
    if(copies>1)
-     { Print("JPW NoCuda Channels: mantenha uma instância por gráfico.");
+     { Print("Stoikus · NoCuda: mantenha uma instância por gráfico. Para ajustar a existente, ",
+             "use Ctrl+I > indicador > Editar.");
        return(INIT_FAILED); }
    g_nocuda_prefix="JPWNC_"+IntegerToString(ChartID())+"_"+
                    IntegerToString((long)GetMicrosecondCount())+"_";
@@ -1174,10 +1183,14 @@ int OnInit()
    if(JPWNoCudaStoreKey(TerminalInfoString(TERMINAL_DATA_PATH),
                        g_nocuda_feed,g_nocuda_store_key))
      { JPWNoCudaLoadChartState(); JPWNoCudaReloadStudies(); }
-   else g_nocuda_status="Feed ou instalação indisponível; gravação bloqueada.";
+   else
+     { g_nocuda_status="Feed ou instalação indisponível; gravação bloqueada.";
+       Print("Stoikus · NoCuda: ",g_nocuda_status,
+             " Confira a conexão e o servidor da conta; carregue o indicador novamente após regularizar."); }
    JPWNCFInit();
    if(!EventSetTimer(1))
-     { Print("JPW NoCuda Channels: timer indisponível; seleção de âncoras bloqueada.");
+     { Print("Stoikus · NoCuda: atualização indisponível; seleção de âncoras bloqueada. Erro ",GetLastError(),
+             ". Confira o Diário e carregue o indicador novamente após regularizar o terminal.");
        return(INIT_FAILED); }
    JPWNoCudaPaint(); JPWNoCudaDrawUI();
    return(INIT_SUCCEEDED);

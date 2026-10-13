@@ -44,7 +44,7 @@
       "order": 7,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "8bf9ea95c507e67a87f2c7374c3b9a56620d8db686adbc79ef1279e132e11b38"
+      "sha256": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392"
     },
     {
       "path": "src/js/00-core/08-module-availability.js",
@@ -92,7 +92,7 @@
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
       "order": 15,
-      "sha256": "2104f33e99d8d4ce03bed8a59e139f9689348291ced5e9f4462956d86edfeb9b"
+      "sha256": "e788c831fe83a3ddb2617082d17e367c6b80477eab1896d063893da8704a4125"
     },
     {
       "order": 16,
@@ -170,7 +170,7 @@
       "order": 28,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "e6be68aef58fabb7679bc5d2b24bfd9e98d563ae325a1fdf6adc7c0e59592353"
+      "sha256": "a5169e6040f9293ba31f3ad0e689a591f264cdf07bae900ee4bef7374371b4e2"
     },
     {
       "order": 29,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/30-accounting/03-mei-jp.js",
       "section": "MEI-JP · MODELO ESTATÍSTICO INSTITUCIONAL",
-      "sha256": "ce8b231b6c25f719a5afe319d0504d0f094128ffa00a370d35ca49197589af27"
+      "sha256": "0213ae6164606d68102de6190ae7c158bbb7a5879a977afed59841752bc60f46"
     },
     {
       "order": 32,
@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "243dac27a94f61512fca85b0fbb3859c1d20cbcdd3f0769218e049565e7c0748"
+      "sha256": "f0ecfd74b8a100d006901ba8105de1fcef0e33661e4471c86536177f29c88dfb"
     },
     {
       "order": 34,
@@ -248,7 +248,7 @@
       "order": 41,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "d4a9814fcbfd0602812395a992030789f9099a22d58445284c470fcf8ae15913"
+      "sha256": "14b4b6c053a0dc79641d0a8b0897b635e815a9718b61a990513b208f1271311f"
     },
     {
       "order": 42,
@@ -320,7 +320,7 @@
       "order": 53,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "ae06568aa1874f5e4a3a7d6ec60a081a9c60c4d9e04401f5cb1c5ee23faa7772"
+      "sha256": "851e8d09698dba917d03dc6bcfd921367393c7a901bcf16498d4aaee0feb7fbe"
     },
     {
       "order": 54,
@@ -404,7 +404,7 @@
       "order": 67,
       "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
       "section": "PLANEJAMENTO FX · ESTADO E MUTAÇÕES",
-      "sha256": "d5991d5841fb50a1d7ead618473fabc9de59500fad33eb75ac4fb25625d14725"
+      "sha256": "17d9b46d20e0e9d5300bf0a2b0b64a6acc8363bd02b5934b6314578187b773fd"
     },
     {
       "order": 68,
@@ -416,7 +416,7 @@
       "order": 69,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "766c9afa976560760909c80453a23c1e8de12272c9b4c69c6f99dc166e6bbdc2"
+      "sha256": "653f6419584ecf757a075fa3ee0ccfa3a1ba628b9a7e5cca5da064d89184dca5"
     },
     {
       "order": 70,
@@ -446,7 +446,7 @@
       "order": 74,
       "path": "src/js/20-ui/15-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · interface do workspace",
-      "sha256": "dea4aaf8625cabfbb19b3bcc3b35f8e875987f24024da322c9d2a99768c2411c"
+      "sha256": "a4ebe6d7c23b81fbdd6f44348f2a878b510d3f62001e50ba6e02e9e87c5464c1"
     },
     {
       "order": 75,
@@ -464,7 +464,7 @@
       "order": 77,
       "path": "src/js/10-domain/12-personal-finance.js",
       "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
-      "sha256": "4d56f313fc7ebbf8c45cb87b8b0416f18bbc8a94b82ea036887de1d58a9e9032"
+      "sha256": "6ae2f7d0fe84227c0853c7f774b105542a5e4637078fe34d2d1baef47d120ca1"
     },
     {
       "order": 78,
@@ -589,7 +589,7 @@
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
       "order": 98,
-      "sha256": "f0152c0fc32b2679b20f2b3ea9b719bc22bb014f67b1021976ace17c0927f27d"
+      "sha256": "3ac6d94cf7def5562044b3453c71571a6a732f60a3e57824a6e1a403cdfa45db"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",
@@ -607,7 +607,7 @@
       "path": "src/js/20-ui/33-module-work.js",
       "section": "Module availability · presentation and preserved work",
       "order": 101,
-      "sha256": "f8a9f15893b3df6a691d3be14c329fe148f0e66e04027e3ae89346673f275a88"
+      "sha256": "43325410aedc6d2e972d34b9618510f6f1cf2d224e7e08bb8b39d28ce9d1919f"
     },
     {
       "path": "src/js/20-ui/32-module-availability.js",

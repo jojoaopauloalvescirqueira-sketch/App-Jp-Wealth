@@ -292,14 +292,35 @@ function pvStudyHTML(study, math) {
   return `
     <div class="pv-study cp-pv-study">
       <p class="pv-period cp-study-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
-      ${pvStatsHTML(stats)}
+      <div id="pvStudyStats">${pvStatsHTML(stats)}</div>
       ${pvFiltersHTML()}
-      ${pvTableHTML(records, stats, quebrados, math)}
+      <div id="pvStudyResults">${pvTableHTML(records, stats, quebrados, math)}</div>
       <div class="pv-actions">
         <button type="button" class="reset-btn" id="pvAddPivotBtn"${pvFormOpen ? ' disabled' : ''}>+ Adicionar Pivot</button>
       </div>
       ${pvFormOpen ? pvFormHTML() : ''}
     </div>`;
+}
+
+// Filtros e ordenação repintam resultados; controles e editor mantêm seus nós.
+function pvRefreshResults() {
+  const root = document.getElementById('execPivots');
+  const study = pvStudyById(pvStudyId), math = pvMath();
+  const statsHost = root && root.querySelector('#pvStudyStats');
+  const resultsHost = root && root.querySelector('#pvStudyResults');
+  if (!study || !math || !statsHost || !resultsHost) return false;
+  const stats = math.stats(study.pivots, { scope: pvFilters.criterion });
+  statsHost.innerHTML = pvStatsHTML(stats);
+  resultsHost.innerHTML = pvTableHTML(pvVisibleRecords(study, math), stats,
+    study.pivots.filter(p => !math.derive(p)), math);
+  root.querySelectorAll('[data-pv-filter]').forEach(button => {
+    const active = pvFilters[button.dataset.pvFilter] === button.dataset.pvValue;
+    button.classList.toggle('on', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  pvBindResultActions(statsHost);
+  pvBindResultActions(resultsHost);
+  return true;
 }
 
 // ---- estatística ---------------------------------------------------------
@@ -728,6 +749,15 @@ function pvApplyHighlight() {
 
 // ---- bind ----------------------------------------------------------------
 
+function pvBindResultActions(root) {
+  root.querySelectorAll('[data-pv-edit]').forEach(button =>
+    button.addEventListener('click', () => { if (pvConfirmDiscard()) pvOpenForm(button.dataset.pvEdit); }));
+  root.querySelectorAll('[data-pv-delete]').forEach(button =>
+    button.addEventListener('click', () => pvDeletePivot(button.dataset.pvDelete)));
+  root.querySelectorAll('[data-pv-goto]').forEach(button =>
+    button.addEventListener('click', () => pvGoToPivot(button.dataset.pvGoto)));
+}
+
 function pvBind(root) {
   const instrument = root.querySelector('#pvInstrument');
   if (instrument) instrument.addEventListener('change', () => {
@@ -768,24 +798,19 @@ function pvBind(root) {
   root.querySelectorAll('[data-pv-filter]').forEach(button => {
     button.addEventListener('click', () => {
       pvFilters[button.dataset.pvFilter] = button.dataset.pvValue;
-      renderPivotStudies();
+      pvRefreshResults();
     });
   });
   const sort = root.querySelector('#pvSort');
   if (sort) sort.addEventListener('change', () => {
     const [key, direction] = sort.value.split(':');
     pvSort = { key, ascending: direction === 'asc' };
-    renderPivotStudies();
+    pvRefreshResults();
   });
 
   const add = root.querySelector('#pvAddPivotBtn');
   if (add) add.addEventListener('click', () => pvOpenForm(null));
-  root.querySelectorAll('[data-pv-edit]').forEach(button =>
-    button.addEventListener('click', () => { if (pvConfirmDiscard()) pvOpenForm(button.dataset.pvEdit); }));
-  root.querySelectorAll('[data-pv-delete]').forEach(button =>
-    button.addEventListener('click', () => pvDeletePivot(button.dataset.pvDelete)));
-  root.querySelectorAll('[data-pv-goto]').forEach(button =>
-    button.addEventListener('click', () => pvGoToPivot(button.dataset.pvGoto)));
+  pvBindResultActions(root);
 
   root.querySelectorAll('[data-pv-field]').forEach(input => {
     input.addEventListener('input', () => {
@@ -808,5 +833,12 @@ function pvBind(root) {
 // Superfície pública consumida pelo controlador de views do Execution Board.
 window.JPWPivotsUI = { render: renderPivotStudies, hasDrafts:()=>pvDirty||pvNewStudyOpen,
   backupDraft:()=>pvDirty||pvNewStudyOpen?{instrumentId:pvInstrumentId,studyId:pvStudyId,editingId:pvEditingId,draft:structuredClone(pvDraft),newStudy:pvNewStudyOpen?structuredClone(pvNewStudyDraft):null}:null,
-  restoreDraft(value){pvInstrumentId=value.instrumentId;pvStudyId=value.studyId;pvEditingId=value.editingId;pvDraft=structuredClone(value.draft);pvDirty=!!value.draft;pvNewStudyOpen=!!value.newStudy;pvNewStudyDraft=structuredClone(value.newStudy||{periodStart:'',periodEnd:''});renderPivotStudies();},
+  restoreDraft(value){
+    pvInstrumentId=value.instrumentId;pvStudyId=value.studyId;pvEditingId=value.editingId;
+    pvDraft=structuredClone(value.draft);pvFormOpen=!!value.draft;pvDirty=!!value.draft;
+    pvNewStudyOpen=!!value.newStudy;pvNewStudyDraft=structuredClone(value.newStudy||{periodStart:'',periodEnd:''});
+    renderPivotStudies();
+    const first=document.getElementById(pvFormOpen?'pv_timeframe':pvNewStudyOpen?'pvPeriodStart':'');
+    if(first&&!first.closest('[hidden],[inert]'))first.focus({preventScroll:true});
+  },
   resetDraft:()=>{pvCloseForm();pvNewStudyOpen=false;pvNewStudyDraft={periodStart:'',periodEnd:''};} };

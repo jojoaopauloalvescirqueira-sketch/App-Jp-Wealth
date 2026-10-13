@@ -193,7 +193,7 @@ def main():
  compiler=shutil.which('clang++') or shutil.which('g++')
  if not compiler: print('ENVIRONMENT_ERROR: C++ compiler unavailable'); return 2
  source=PRESENT.read_text()
- brand=expanded_source(INC/'JPW_Genetrix_Brand.mqh')
+ brand=expanded_source(INC/'JPW_Stoikus_Brand.mqh')
  brand=re.sub(r'^#(?:if.*|endif.*|resource.*)\n','',brand,flags=re.MULTILINE)
  brand=re.sub(r'^#define\s+(JPW_GENETRIX_BRAND_MQH|JPW_ALAVANCAGEM_VERSION_MQH)\s*\n','',brand,flags=re.MULTILINE)
  # MQL concatenates string literals/macros directly. Preserve the production

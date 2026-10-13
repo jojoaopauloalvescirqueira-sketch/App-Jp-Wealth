@@ -116,7 +116,7 @@ function meiQuality(n){
 function meiStageLabel(stage){
   return ({institutional:'Institucional', preliminary:'Institucional + evidência preliminar',
     'hybrid-initial':'Híbrido inicial', 'hybrid-advanced':'Híbrido avançado',
-    empirical:'Empírico predominante', unconfigured:'CID não configurado', off:'Desativado'})[stage]||'—';
+    empirical:'Empírico predominante', unconfigured:'CID não configurado', 'reference-pending':'Referência de retorno indisponível', off:'Desativado'})[stage]||'—';
 }
 function meiCalibration(profileKey){
   const mei=S.mei||DEFAULTS.mei, pr=getActiveRiskProfile(profileKey);
@@ -124,6 +124,7 @@ function meiCalibration(profileKey){
   const stats=calculateMEIHistoricalStats(), n=stats.observations;
   if(!mei.enabled) return {enabled:false, reason:'O MEI-JP está desativado.', pr, cid, stats, modelStage:'off', sigmaUsed:0, historicalWeight:0};
   if(!(cid>0)) return {enabled:false, reason:'Configure o CID no MEI-JP para habilitar a simulação probabilística.', pr, cid:0, stats, modelStage:'unconfigured', sigmaUsed:0, historicalWeight:0};
+  if(!Number.isFinite(riskProfileMonthlyTarget(pr))) return {enabled:false, reason:'Referência mensal do perfil indisponível. A simulação permanece pendente; ausência não é retorno zero.', pr, cid, stats, modelStage:'reference-pending', sigmaUsed:0, historicalWeight:0};
   // Transição conservadora (Correção 3): w_h = clip((n − 6)/(36 − 6), 0, 1).
   // 0–5: institucional (w=0) · 6–11: evidência preliminar (w baixo) · 12–23: híbrido inicial ·
   // 24–35: híbrido avançado (histórico relevante, mas NÃO substitui o CID) · ≥36: empírico (w=1).
@@ -167,6 +168,7 @@ function runMEIMonteCarlo(options={}){
   const confidence=Math.max(.5,Math.min(.99,+options.confidenceLevel||mei.confidenceLevel||.90));
   const startingEquity=Math.max(0,+options.startingEquity||0), expectedMonthlyReturn=riskProfileMonthlyTarget(cal.pr), sigma=cal.sigmaUsed;
   if(!(startingEquity>0)) return {...cal, enabled:false, reason:'Informe o saldo inicial para simular.'};
+  if(!Number.isFinite(expectedMonthlyReturn)) return {...cal, enabled:false, reason:'Referência mensal do perfil indisponível. Ausência não é retorno zero.'};
   // GBM sobre a variável patrimonial V_t (não preço de ativo):
   //   V_{t+1} = V_t · exp[(ln(1+r_p) − ½σ_p²) + σ_p·Z_t],  Z_t ~ N(0,1)
   // O drift logarítmico ln(1+r_p) preserva E[V_{t+1}/V_t]−1 = r_p (retorno aritmético do perfil);

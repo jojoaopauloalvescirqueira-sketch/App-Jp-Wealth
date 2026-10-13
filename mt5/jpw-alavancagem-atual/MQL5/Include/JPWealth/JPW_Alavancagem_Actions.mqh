@@ -629,7 +629,7 @@ void JPWOpenCockpit(const int metric=-1)
       g_refresh_requested=true;
       // An explicit click deserves a next step even when identity is missing.
       // Never open a financial view by relaxing its account-context guard.
-      Alert("Genetrix · Conta: leitura da conta ainda indisponível. Confira a conexão do MT5 e as abas Experts/Diário; depois clique em Conta novamente.");
+      Alert("Stoikus · Conta: leitura da conta ainda indisponível. Confira a conexão do MT5 e as abas Experts/Diário; depois clique em Conta novamente.");
       return;
      }
    const bool resume=g_jpw_focus_suspended && g_raiz_draft_account_known &&

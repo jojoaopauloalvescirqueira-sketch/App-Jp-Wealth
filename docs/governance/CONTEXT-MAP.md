@@ -1,3 +1,33 @@
+# Rota corrente — entrega GitHub Stoikus — 2026-10-13
+
+Começar por [estado focal](CURRENT-STATE.md), [tarefa](../work/ACTIVE-TASK.md), [registro GitHub](../work/CHG-STOIKUS-GITHUB-CONTEXT-20261013.md), [publicação comprovada](../validation/stoikus-site-20261013/INTEGRATION.md) e [guia de uso](../../mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md). O usuário autorizou commit/push/PR/checks/merge. Runtime, dados e cálculo preservados; MT5 nativo NOT_RUN. Trabalho paralelo no checkout principal deve ser preservado.
+
+## Fotografias anteriores
+
+# Rota focal — Stoikus 1.22.1 — uso diário — 2026-10-13
+
+Começar pelo [guia de uso](../../mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md), [design](../superpowers/specs/2026-10-13-stoikus-usage-design.md), [plano](../superpowers/plans/2026-10-13-stoikus-usage.md), [estado focal](CURRENT-STATE.md) e [tarefa ativa](../work/ACTIVE-TASK.md). Distribuição corrente pelo manifesto `downloads/jpw-alavancagem-atual/manifest.json`: `dailySource` é o pacote de uso; `source` conserva a engenharia.
+
+A referência escolhida é https://www.earnforex.com/metatrader-expert-advisors/Position-Sizer/. A comparação cobre clareza de instalação e Entradas; não importa cálculos, ações de negociação nem autoridade financeira. Provas MT5 permanecem independentes das verificações host/browser. As instruções AGENTS anteriormente fornecidas foram revogadas pelo usuário; os documentos históricos abaixo são fontes de contexto, não uma nova autorização.
+
+Fecho 1.22.1: [recibos e limites](../validation/stoikus-1.22.1/INTEGRATION.md). Host/distribuição PASS 44/44 e full web PASS 57/57 no R4; código/distribuição e clareza documental/web aprovados por críticos independentes. MT5 nativo permanece NOT_RUN; aprovação histórica não é transferida.
+
+---
+
+## Rota anterior preservada
+
+# Rota focal Stoikus 1.22.0 — 2026-10-12
+
+Para trabalhar na renomeação atual da suíte MT5, partir do [guia Stoikus](../../mt5/jpw-alavancagem-atual/README.md), [mapa de 34 renomes](../../mt5/jpw-alavancagem-atual/STOIKUS_RENAME_1_22_0.md), [contrato autorizado](../work/CHG-STOIKUS-RENAMING-20261012.md), [brief](../work/BRIEF-STOIKUS-RENAMING-20261012.md) e [proveniência/recibos próprios](../validation/stoikus-1.22.0/INTEGRATION.md). Contexto de tarefa: [CURRENT-STATE](CURRENT-STATE.md) e [ACTIVE-TASK](../work/ACTIVE-TASK.md). Base **0f247215cc20829fdba40c3b33458ee976c17ea1**, branch `codex/stoikus-renaming-20261012`; candidato e fingerprint final devem ser conferidos no recibo da revisão.
+
+- Marca pública **Stoikus**; produto **1.22.0**, MQL **1.220**, cálculo **1.9.0**. Fontes produtivas continuam em `mt5/jpw-alavancagem-atual/`, com distribuição pelo manifesto em `downloads/jpw-alavancagem-atual/manifest.json`; o novo ZIP é `JPW_Stoikus_Fontes_v1.22.0.zip`, sem EX5.
+- Núcleo recomendado `JPW_Stoikus_Monitor`; Conta usa `JPW_Alavancagem_Atual`, e NoCuda conserva `JPW_NoCuda_Channels`. Supervisor `JPW_Stoikus_Supervisor` permanece separado/opcional, sem instalação ou armamento nesta tarefa.
+- O mapa separa 29 nomes MQL/recursos de cinco ferramentas host. Nomes técnicos persistidos, schemas, chaves, bancos, locks, inputs, preferências e regras financeiras não são objeto da renomeação. Diretórios estáveis não recebem troca global de nome.
+- Compilação e interação nativas, instalação e aceite operacional **NOT_RUN**; host/web aprovados localmente no R2 (40/40 e 57/57), com recibos do candidato próprio. Pacotes e resultados GENETRIX anteriores conservam sua identidade e não aprovam Stoikus 1.22.0.
+- O `AGENTS.md` distribuído no pacote, o harness e os manuais GENETRIX do componente conservam suas fotografias e bytes. O núcleo comum do repositório permanece aplicável. Ler os contratos pertinentes com o mapa atual, sem reescrevê-los nem promover o harness a nova autoridade. A autorização vem do pedido humano; os CHGs/CTX vinculados registram esse escopo e não concedem ações adicionais.
+
+A rota e os mapas anteriores abaixo são preservados como suas fotografias documentais. Esta atualização focal não declara reconciliação integral do projeto.
+
 # Mapa de contexto para agentes
 
 ## Rota focal GENETRIX 1.21.2 — 2026-10-08

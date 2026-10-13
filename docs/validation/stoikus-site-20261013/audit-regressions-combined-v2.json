@@ -1,0 +1,57 @@
+{
+  "checks": [
+    {
+      "name": "backup",
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/backup_import_audit_test.py",
+        "--root",
+        "/private/tmp/jpw-stoikus-renaming-20261012",
+        "--artifact",
+        "/private/tmp/jpw-stoikus-site-integration-evidence-20261013/backup-combined-v2.json"
+      ],
+      "exit_code": 0,
+      "seconds": 30.678722249998827,
+      "log": "backup-combined-v2.log"
+    },
+    {
+      "name": "ui",
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/audit_ui_recovery_test.py",
+        "--root",
+        "/private/tmp/jpw-stoikus-renaming-20261012",
+        "--output",
+        "/private/tmp/jpw-stoikus-site-integration-evidence-20261013/ui-combined-v2"
+      ],
+      "exit_code": 0,
+      "seconds": 22.461192374990787,
+      "log": "ui-combined-v2.log"
+    },
+    {
+      "name": "pwa",
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/pwa_document_navigation_test.py",
+        "--root",
+        "/private/tmp/jpw-stoikus-renaming-20261012",
+        "--out",
+        "/private/tmp/jpw-stoikus-site-integration-evidence-20261013/pwa-combined-v2.json"
+      ],
+      "exit_code": 0,
+      "seconds": 2.4433195830060868,
+      "log": "pwa-combined-v2.log"
+    },
+    {
+      "name": "fx-pdf",
+      "command": [
+        "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python",
+        "tools/fx_consolidated_pdf_test.py"
+      ],
+      "exit_code": 0,
+      "seconds": 5.119706625002436,
+      "log": "fx-pdf-combined-v2.log"
+    }
+  ],
+  "passed": true
+}

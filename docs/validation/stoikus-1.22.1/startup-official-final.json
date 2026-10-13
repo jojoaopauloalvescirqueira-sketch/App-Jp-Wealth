@@ -1,0 +1,269 @@
+{
+  "root": "/private/tmp/jpw-stoikus-renaming-20261012",
+  "timestampUTC": "2026-10-13T16:08:54.709578+00:00",
+  "nativeCompilation": "NOT_RUN",
+  "nativeRuntime": "NOT_RUN",
+  "cases": [
+    {
+      "case": "caller_shadow",
+      "exitCode": 0,
+      "output": "PASS caller_shadow created=2 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "inactive_listed",
+      "exitCode": 0,
+      "output": "PASS inactive_listed created=0 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: Stoikus · Cockpit 1.22.0 (janela 0); confira versão e dados.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "empty",
+      "exitCode": 0,
+      "output": "PASS empty created=2 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "repeat",
+      "exitCode": 0,
+      "output": "PASS repeat created=2 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "account_present",
+      "exitCode": 0,
+      "output": "PASS account_present created=1 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: Stoikus · Cockpit 1.22.0 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "nocuda_present",
+      "exitCode": 0,
+      "output": "PASS nocuda_present created=1 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "both_present",
+      "exitCode": 0,
+      "output": "PASS both_present created=0 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: Stoikus · Cockpit 1.22.0 (janela 0); confira versão e dados.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "legacy",
+      "exitCode": 0,
+      "output": "PASS legacy created=0 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: JPW GENETRIX · Cockpit 1.21.2 (janela 0); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário.\nNoCuda: listado e preservado: JPW GENETRIX · NoCuda Channels (janela 0); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "file_aliases",
+      "exitCode": 0,
+      "output": "PASS file_aliases created=0 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: JPW_Alavancagem_Atual (janela 0); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário.\nNoCuda: listado e preservado: JPW_NoCuda_Channels (janela 0); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "mixed_legacy",
+      "exitCode": 0,
+      "output": "PASS mixed_legacy created=0 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: JPW GENETRIX · Cockpit 1.21.2 (janela 0); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "existing_subwindow",
+      "exitCode": 0,
+      "output": "PASS existing_subwindow created=0 main=0\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: JPW GENETRIX · Cockpit 1.21.2 (janela 1); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 2); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "duplicates",
+      "exitCode": 0,
+      "output": "PASS duplicates created=0 main=3\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: Stoikus · Cockpit 1.22.0 (janela 0); JPW GENETRIX · Cockpit 1.21.2 (janela 0); confira versão e dados. Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário. Há 2 cópias; confira Ctrl+I.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "create_account_fail",
+      "exitCode": 0,
+      "output": "PASS create_account_fail created=2 main=1\nALERT Stoikus · Abertura incompleta.\nConta: falhou ao carregar (erro 4802). Compile JPW_Alavancagem_Atual.mq5 no MetaEditor e confira MQL5\\Indicators\\JPWealth.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "create_nocuda_fail",
+      "exitCode": 0,
+      "output": "PASS create_nocuda_fail created=2 main=1\nALERT Stoikus · Abertura incompleta.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: falhou ao carregar (erro 4802). Compile JPW_NoCuda_Channels.mq5 no MetaEditor e confira MQL5\\Indicators\\JPWealth.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "attach_account_fail",
+      "exitCode": 0,
+      "output": "PASS attach_account_fail created=2 main=1\nALERT Stoikus · Abertura incompleta.\nConta: carregado, mas falhou ao anexar (erro 4114). Confira o Diário e execute a ferramenta novamente.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "attach_nocuda_fail",
+      "exitCode": 0,
+      "output": "PASS attach_nocuda_fail created=2 main=1\nALERT Stoikus · Abertura incompleta.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, mas falhou ao anexar (erro 4114). Confira o Diário e execute a ferramenta novamente.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "partial_retry",
+      "exitCode": 0,
+      "output": "PASS partial_retry created=3 main=2\nALERT Stoikus · Abertura incompleta.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, mas falhou ao anexar (erro 4114). Confira o Diário e execute a ferramenta novamente.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\nALERT Stoikus · Painéis listados no gráfico.\nConta: listado e preservado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "scan_fail",
+      "exitCode": 0,
+      "output": "PASS scan_fail created=0 main=0\nALERT Stoikus · Abertura incompleta. Conta e NoCuda: presença não confirmada.\nConfira a lista de indicadores em Ctrl+I e o Diário; depois tente novamente.\nMantenha o Monitor em outro gráfico de apoio, aberto.\n"
+    },
+    {
+      "case": "name_fail",
+      "exitCode": 0,
+      "output": "PASS name_fail created=0 main=1\nALERT Stoikus · Abertura incompleta. Conta e NoCuda: presença não confirmada.\nConfira a lista de indicadores em Ctrl+I e o Diário; depois tente novamente.\nMantenha o Monitor em outro gráfico de apoio, aberto.\n"
+    },
+    {
+      "case": "attach_unconfirmed",
+      "exitCode": 0,
+      "output": "PASS attach_unconfirmed created=2 main=0\nALERT Stoikus · Abertura incompleta.\nConta: anexação não confirmada; confira Ctrl+I e o Diário antes de tentar novamente.\nNoCuda: anexação não confirmada; confira Ctrl+I e o Diário antes de tentar novamente.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "release_fail",
+      "exitCode": 0,
+      "output": "PASS release_fail created=2 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados. Aviso: falha na liberação do handle da ferramenta (erro 4807). Confira o Diário; as instâncias listadas foram preservadas.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "similar_unrelated",
+      "exitCode": 0,
+      "output": "PASS similar_unrelated created=2 main=4\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "indicator_list_fail",
+      "exitCode": 0,
+      "output": "PASS indicator_list_fail created=0 main=0\nALERT Stoikus · Abertura incompleta. Conta e NoCuda: presença não confirmada.\nConfira a lista de indicadores em Ctrl+I e o Diário; depois tente novamente.\nMantenha o Monitor em outro gráfico de apoio, aberto.\n"
+    },
+    {
+      "case": "account_present_companion_fail",
+      "exitCode": 0,
+      "output": "PASS account_present_companion_fail created=1 main=1\nALERT Stoikus · Abertura incompleta.\nConta: listado e preservado: Stoikus · Cockpit 1.22.0 (janela 0); confira versão e dados.\nNoCuda: falhou ao carregar (erro 4802). Compile JPW_NoCuda_Channels.mq5 no MetaEditor e confira MQL5\\Indicators\\JPWealth.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "nocuda_present_companion_fail",
+      "exitCode": 0,
+      "output": "PASS nocuda_present_companion_fail created=1 main=1\nALERT Stoikus · Abertura incompleta.\nConta: falhou ao carregar (erro 4802). Compile JPW_Alavancagem_Atual.mq5 no MetaEditor e confira MQL5\\Indicators\\JPWealth.\nNoCuda: listado e preservado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "indicator_list_zero_fail",
+      "exitCode": 0,
+      "output": "PASS indicator_list_zero_fail created=0 main=0\nALERT Stoikus · Abertura incompleta. Conta e NoCuda: presença não confirmada.\nConfira a lista de indicadores em Ctrl+I e o Diário; depois tente novamente.\nMantenha o Monitor em outro gráfico de apoio, aberto.\n"
+    },
+    {
+      "case": "root_missing_with_shadow_fail",
+      "exitCode": 0,
+      "output": "PASS root_missing_with_shadow_fail created=2 main=1\nALERT Stoikus · Abertura incompleta.\nConta: falhou ao carregar (erro 4802). Compile JPW_Alavancagem_Atual.mq5 no MetaEditor e confira MQL5\\Indicators\\JPWealth.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "release_nocuda_warning",
+      "exitCode": 0,
+      "output": "PASS release_nocuda_warning created=2 main=2\nALERT Stoikus · Painéis listados no gráfico.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, anexado e listado: Stoikus · NoCuda Channels (janela 0); confira versão e dados. Aviso: falha na liberação do handle da ferramenta (erro 4807). Confira o Diário; as instâncias listadas foram preservadas.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    },
+    {
+      "case": "attach_release_fail",
+      "exitCode": 0,
+      "output": "PASS attach_release_fail created=2 main=1\nALERT Stoikus · Abertura incompleta.\nConta: carregado, anexado e listado: Stoikus · Cockpit 1.22.1 (janela 0); confira versão e dados.\nNoCuda: carregado, mas falhou ao anexar (erro 4114). Confira o Diário e execute a ferramenta novamente. Aviso: falha na liberação do handle da ferramenta (erro 4807). Confira o Diário; as instâncias listadas foram preservadas.\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\nMantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.\n"
+    }
+  ],
+  "publicInputs": {
+    "Experts/JPWealth/JPW_Stoikus_Monitor.mq5": [
+      [
+        "bool",
+        "InpHistoryCoverageConfirmed",
+        "false"
+      ],
+      [
+        "bool",
+        "InpCostCoverageConfirmed",
+        "false"
+      ],
+      [
+        "string",
+        "InpCoverageEvidence",
+        "\"\""
+      ]
+    ],
+    "Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": [
+      [
+        "int",
+        "InpUpdateSeconds",
+        "1"
+      ],
+      [
+        "int",
+        "InpMaxQuoteAgeSeconds",
+        "30"
+      ],
+      [
+        "ENUM_BASE_CORNER",
+        "InpCorner",
+        "CORNER_LEFT_UPPER"
+      ],
+      [
+        "int",
+        "InpOffsetX",
+        "16"
+      ],
+      [
+        "int",
+        "InpOffsetY",
+        "40"
+      ],
+      [
+        "int",
+        "InpFontSize",
+        "8"
+      ],
+      [
+        "int",
+        "InpCockpitFontSize",
+        "11"
+      ],
+      [
+        "color",
+        "InpFontColor",
+        "C'118,118,118'"
+      ],
+      [
+        "long",
+        "InpGenesisTicket",
+        "0"
+      ],
+      [
+        "string",
+        "InpPipSymbol",
+        "\"\""
+      ],
+      [
+        "double",
+        "InpPipSize",
+        "0.0"
+      ],
+      [
+        "bool",
+        "InpTechnicalLog",
+        "false"
+      ]
+    ],
+    "Indicators/JPWealth/JPW_NoCuda_Channels.mq5": [
+      [
+        "ENUM_TIMEFRAMES",
+        "InpSourceTimeframe",
+        "PERIOD_H1"
+      ],
+      [
+        "bool",
+        "InpFullMesh",
+        "true"
+      ],
+      [
+        "string",
+        "InpPipSymbol",
+        "\"\""
+      ],
+      [
+        "double",
+        "InpPipSize",
+        "0.0"
+      ],
+      [
+        "int",
+        "InpMaxQuoteAgeSeconds",
+        "30"
+      ]
+    ]
+  },
+  "scriptSha256": "a1453e13805f7534d97f7339a54c4c35dcfc9871de0bd6e896a03e612affff25",
+  "versionSha256": "015ac36986f893de0392789adaf6309c301f9fc39807b8ec3851ee2f048838af",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+  "hostCompile": {
+    "exitCode": 0,
+    "output": ""
+  },
+  "outcome": "PASS"
+}

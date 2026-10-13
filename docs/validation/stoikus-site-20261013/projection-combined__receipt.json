@@ -1,0 +1,52 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "-e",
+    "<embedded NODE>"
+  ],
+  "root": "/private/tmp/jpw-stoikus-renaming-20261012",
+  "head": "0f247215cc20829fdba40c3b33458ee976c17ea1",
+  "branch": "codex/stoikus-renaming-20261012",
+  "sourceHashesBefore": {
+    "src/js/00-core/00-forex-policy.js": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed",
+    "src/js/10-domain/00-forex-engine.js": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e",
+    "src/js/00-core/01-risk-profiles.js": "dbac835cead6b9f9d3807c7d02a7f45773e9c35466771480701efee5725de70e",
+    "src/js/00-core/03-default-state.js": "4f7381a9f9fbf29c077120aab14564bb28867f1bb490ff1b50ba79ec0d0d9593",
+    "src/js/00-core/05-helpers.js": "e3198d6e5ecec9676e24e054424cd6a98ac129178754d263270ae53cc97216db",
+    "src/js/10-domain/00-forex-state.js": "e788c831fe83a3ddb2617082d17e367c6b80477eab1896d063893da8704a4125",
+    "src/js/10-domain/02-risk-calculations.js": "78b106e981fc83950758a3323b222c2e390d23549c15ddb02223c05126ff9703",
+    "src/js/10-domain/12-personal-finance.js": "6ae2f7d0fe84227c0853c7f774b105542a5e4637078fe34d2d1baef47d120ca1",
+    "src/js/10-domain/07-reserve-requirements.js": "2c1a9d00cce4bda29e87be28398ae7fcd864e3c172f6df69b05246221a5d6a95",
+    "src/js/30-accounting/03-mei-jp.js": "0213ae6164606d68102de6190ae7c158bbb7a5879a977afed59841752bc60f46",
+    "src/js/30-accounting/05-fx-planning/01-fx-model.js": "2e00cfca44f07e6552b0782a7226a8a490bf1165bbc5bbaf07c4991088540a4d",
+    "src/js/30-accounting/05-fx-planning/02-fx-engine.js": "b95ad597ab5eb3e3ef9b4727da797d25dc259552f235f3ea14ebdbe703f525ca",
+    "src/js/30-accounting/05-fx-planning/03-fx-state.js": "17d9b46d20e0e9d5300bf0a2b0b64a6acc8363bd02b5934b6314578187b773fd",
+    "src/js/30-accounting/05-fx-planning/05-fx-ui.js": "653f6419584ecf757a075fa3ee0ccfa3a1ba628b9a7e5cca5da064d89184dca5",
+    "src/js/00-core/04-persistence.js": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+    "src/js/manifest.json": "635f8c44109b56d5e892dfdc0dd814384df218b7b53c520fbf4f79e9be8dab60"
+  },
+  "sourceHashesAfter": {
+    "src/js/00-core/00-forex-policy.js": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed",
+    "src/js/10-domain/00-forex-engine.js": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e",
+    "src/js/00-core/01-risk-profiles.js": "dbac835cead6b9f9d3807c7d02a7f45773e9c35466771480701efee5725de70e",
+    "src/js/00-core/03-default-state.js": "4f7381a9f9fbf29c077120aab14564bb28867f1bb490ff1b50ba79ec0d0d9593",
+    "src/js/00-core/05-helpers.js": "e3198d6e5ecec9676e24e054424cd6a98ac129178754d263270ae53cc97216db",
+    "src/js/10-domain/00-forex-state.js": "e788c831fe83a3ddb2617082d17e367c6b80477eab1896d063893da8704a4125",
+    "src/js/10-domain/02-risk-calculations.js": "78b106e981fc83950758a3323b222c2e390d23549c15ddb02223c05126ff9703",
+    "src/js/10-domain/12-personal-finance.js": "6ae2f7d0fe84227c0853c7f774b105542a5e4637078fe34d2d1baef47d120ca1",
+    "src/js/10-domain/07-reserve-requirements.js": "2c1a9d00cce4bda29e87be28398ae7fcd864e3c172f6df69b05246221a5d6a95",
+    "src/js/30-accounting/03-mei-jp.js": "0213ae6164606d68102de6190ae7c158bbb7a5879a977afed59841752bc60f46",
+    "src/js/30-accounting/05-fx-planning/01-fx-model.js": "2e00cfca44f07e6552b0782a7226a8a490bf1165bbc5bbaf07c4991088540a4d",
+    "src/js/30-accounting/05-fx-planning/02-fx-engine.js": "b95ad597ab5eb3e3ef9b4727da797d25dc259552f235f3ea14ebdbe703f525ca",
+    "src/js/30-accounting/05-fx-planning/03-fx-state.js": "17d9b46d20e0e9d5300bf0a2b0b64a6acc8363bd02b5934b6314578187b773fd",
+    "src/js/30-accounting/05-fx-planning/05-fx-ui.js": "653f6419584ecf757a075fa3ee0ccfa3a1ba628b9a7e5cca5da064d89184dca5",
+    "src/js/00-core/04-persistence.js": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+    "src/js/manifest.json": "635f8c44109b56d5e892dfdc0dd814384df218b7b53c520fbf4f79e9be8dab60"
+  },
+  "testSha256": "c265190e788024db84aa9a3fcbe880ec0f8fd07e70b05bd07e9fffcf856437dd",
+  "nodeVersion": "v24.19.0",
+  "exitCode": 0,
+  "classification": "PASS",
+  "pass": 29,
+  "fail": 0
+}

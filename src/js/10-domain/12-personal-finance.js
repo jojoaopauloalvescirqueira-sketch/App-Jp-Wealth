@@ -382,11 +382,11 @@ function pfProjectedIncome(m){
 function pfKnownReceivedIncome(m){
   if(!m || !Array.isArray(m.incomes)) return 0;
   // TODO valor informado soma, INDEPENDENTE do status — dinheiro que entrou, entrou.
-  return m.incomes.reduce((acc,i)=> acc + ((i && typeof i.receivedAmount==='number') ? i.receivedAmount : 0), 0);
+  return m.incomes.reduce((acc,i)=> acc + ((i && pfAmountInDomain(i.receivedAmount)) ? i.receivedAmount : 0), 0);
 }
 function pfIncomeCoverage(m){
   const linhas = (m && Array.isArray(m.incomes)) ? m.incomes.filter(Boolean) : [];
-  const conhecidas = linhas.filter(i=>i.receivedAmount!==null && i.receivedAmount!==undefined).length;
+  const conhecidas = linhas.filter(i=>pfAmountInDomain(i.receivedAmount)).length;
   return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
 }
 
@@ -478,8 +478,8 @@ function pfActDeleteExpense(monthKey, expenseId){
 function pfExpenseExecutedKnown(e){
   // total conhecido da LINHA: soma dos canais informados (para exibição e
   // agregados "conhecidos"); a COMPLETUDE exige os dois explícitos.
-  const a = (typeof e.executedCash==='number') ? e.executedCash : 0;
-  const b = (typeof e.executedCard==='number') ? e.executedCard : 0;
+  const a = pfAmountInDomain(e.executedCash) ? e.executedCash : 0;
+  const b = pfAmountInDomain(e.executedCard) ? e.executedCard : 0;
   return a + b;
 }
 function pfPlannedExpenses(m){
@@ -493,8 +493,7 @@ function pfKnownExecutedExpenses(m){
 }
 function pfExpenseCoverage(m){
   const linhas = (m && Array.isArray(m.expenses)) ? m.expenses.filter(Boolean) : [];
-  const conhecidas = linhas.filter(e=>e.executedCash!==null && e.executedCash!==undefined
-                                   && e.executedCard!==null && e.executedCard!==undefined).length;
+  const conhecidas = linhas.filter(e=>pfAmountInDomain(e.executedCash) && pfAmountInDomain(e.executedCard)).length;
   return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
 }
 

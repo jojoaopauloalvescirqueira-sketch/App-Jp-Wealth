@@ -1,0 +1,599 @@
+{
+  "scope": "read-only product; receipt files only",
+  "native_MT5": "NOT_RUN",
+  "packet_hashes": [
+    {
+      "packet": "A",
+      "path": "page.html",
+      "sha256": "578b5690dd22edfd0d17d363fc3e8eecf1cc61403793004de7e9a3d1dd4c5abc"
+    },
+    {
+      "packet": "A",
+      "path": "observed-text.txt",
+      "sha256": "f96a266352d9abe8d48e21f4a58828010c8a7f3400c1907694e2cf0137ec658f"
+    },
+    {
+      "packet": "B",
+      "path": "page.html",
+      "sha256": "2ca2f277177cb8673420e19b8195300ac77cae30dab81db5b5b3e5df5430e61b"
+    },
+    {
+      "packet": "B",
+      "path": "guide.md",
+      "sha256": "628cf4b3bd81eb413fdb7dd96b2562275544eb6776b5d45565ee76272c902b7a"
+    },
+    {
+      "packet": "B",
+      "path": "observed/start-1440.png",
+      "sha256": "2dacdfd3c4ca9ba366d1793a9049a682e1c55dce0022bd3b4e4937ecc8c83ec4"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-nocuda-320.png",
+      "sha256": "e0144a516359b02a3f6f38dea8f9ebe5bccecf40c72c4c515c4e8b43286e0f62"
+    },
+    {
+      "packet": "B",
+      "path": "observed/result.json",
+      "sha256": "69e7f036b1650d2507e33dac0699bed2271fd2f1dc04ba6b75e9987f2586c2d6"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-first-screen-desktop.png",
+      "sha256": "07b38948df2842b3a3052734d9f80e62135d591712577dfd5a935813ce29efaf"
+    },
+    {
+      "packet": "B",
+      "path": "observed/help-observed.txt",
+      "sha256": "54593f476f3e5c9371ec1422c1b65c5023e5550fc7affb9f69b0effeb8aee65d"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-nocuda-390.png",
+      "sha256": "4b30167247f2a2c0d86f7659d4e2a20fdd6ae1d1e02f4f2947e8308088ca38fe"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-390.png",
+      "sha256": "884d526c141a233f7a6831bd828e46ce9301e692338f9b7dbe893b999cfa7632"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-account-1440.png",
+      "sha256": "31af37e6b86bb978c51a718180b1c4b8741fa2d5ace8ccae683d00d3f4e7f6e7"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-account-390.png",
+      "sha256": "6cd773a9d13901b9674c0a0f402776ea1196389b47f7ea4b34a6a090b521d000"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-nocuda-1440.png",
+      "sha256": "7d224ec50bf5ee2f5bd59b88c669cf3834a052f4231eb3c96d4812453159cec0"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-monitor-320.png",
+      "sha256": "a285dc79d2089fb9512add2d7b29f549b8cc7c2d109c8f734bdb3fafe9b39cf2"
+    },
+    {
+      "packet": "B",
+      "path": "observed/start-320.png",
+      "sha256": "249036c013fed398b760f08be6c22900d3b9415717e66d21c58fab40e3e71311"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-first-screen-320.png",
+      "sha256": "d50933953284436252b1b4ed911bc21e2b19b2afc8a845716e9fd2f1b7674d68"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-first-screen-390.png",
+      "sha256": "1c3c529dce1af52bb469fa0fce1e74e87ff82eb947837e106e4d658ebb0178ca"
+    },
+    {
+      "packet": "B",
+      "path": "observed/start-390.png",
+      "sha256": "e6a853ab439cffd09caf3af2343003205c7c68372b1ecf4021016503374e1acb"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-monitor-1440.png",
+      "sha256": "237ebb5a9037d032f994638d8b4e0d23a864fd7c33a869348cee26d8de6a8e87"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-observed.txt",
+      "sha256": "d158fac826499eec8276ecebb87bf38c728fc7fc2603d9d98071bdc9f84a1602"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-monitor-390.png",
+      "sha256": "a314ed5429cd6e8d5730724cc46a2f99a8af2cd3abb57dbc81c75696325aaf79"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-desktop.png",
+      "sha256": "d56a22a17c8e43b165de30a2ec06e012ac72065e6118340a4e5c28a2739647a1"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-first-screen-1440.png",
+      "sha256": "07b38948df2842b3a3052734d9f80e62135d591712577dfd5a935813ce29efaf"
+    },
+    {
+      "packet": "B",
+      "path": "observed/inputs-account-320.png",
+      "sha256": "6d7302e76624f50e12aa1ffae6577b3eb8db982140dc361892691d66cd6b2146"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-320.png",
+      "sha256": "cd5df624a22238670630f0373022e0e603fbe38e9848d47786b90d8093786ee2"
+    },
+    {
+      "packet": "B",
+      "path": "observed/install-1440.png",
+      "sha256": "0b1675614f9057d83050368f08e9b02b721f7ca60e7dbe135ba1a08590cb0f74"
+    }
+  ],
+  "live_matches_packet_B": true,
+  "inputs_exact": [
+    {
+      "component": "account",
+      "identifier": "InpUpdateSeconds",
+      "default": "1",
+      "label": "Cadência solicitada (s; 1–3600; ciclo até 30 s; Stops até 5 s)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpMaxQuoteAgeSeconds",
+      "default": "30",
+      "label": "Idade máxima da cotação (s; 1 a 30)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpCorner",
+      "default": "CORNER_LEFT_UPPER",
+      "label": "Canto do painel"
+    },
+    {
+      "component": "account",
+      "identifier": "InpOffsetX",
+      "default": "16",
+      "label": "Distância horizontal do canto (px; zero ou mais)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpOffsetY",
+      "default": "40",
+      "label": "Distância vertical do canto (px; zero ou mais)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpFontSize",
+      "default": "8",
+      "label": "Fonte compacta no gráfico (pt; 8 a 40)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpCockpitFontSize",
+      "default": "11",
+      "label": "Fonte do painel Conta (pt; 9 a 24)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpFontColor",
+      "default": "C'118,118,118'",
+      "label": "Cor do texto"
+    },
+    {
+      "component": "account",
+      "identifier": "InpGenesisTicket",
+      "default": "0",
+      "label": "Ticket Genesis (0: referência única; >0: ticket aberto)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpPipSymbol",
+      "default": "\"\"",
+      "label": "Símbolo exato para pip (vazio: sem convenção manual)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpPipSize",
+      "default": "0.0",
+      "label": "Tamanho de 1 pip em preço (0: sem convenção manual)"
+    },
+    {
+      "component": "account",
+      "identifier": "InpTechnicalLog",
+      "default": "false",
+      "label": "Registro técnico (desativado por padrão)"
+    },
+    {
+      "component": "nocuda",
+      "identifier": "InpSourceTimeframe",
+      "default": "PERIOD_H1",
+      "label": "Período fonte das âncoras (Atual não aceito)"
+    },
+    {
+      "component": "nocuda",
+      "identifier": "InpFullMesh",
+      "default": "true",
+      "label": "Malha completa ao iniciar (sim: todos os níveis)"
+    },
+    {
+      "component": "nocuda",
+      "identifier": "InpPipSymbol",
+      "default": "\"\"",
+      "label": "Símbolo exato para pip (vazio: sem conversão)"
+    },
+    {
+      "component": "nocuda",
+      "identifier": "InpPipSize",
+      "default": "0.0",
+      "label": "Tamanho de 1 pip em preço (0: só com símbolo vazio)"
+    },
+    {
+      "component": "nocuda",
+      "identifier": "InpMaxQuoteAgeSeconds",
+      "default": "30",
+      "label": "Idade máxima da cotação (s; 1 a 3600)"
+    },
+    {
+      "component": "monitor",
+      "identifier": "InpHistoryCoverageConfirmed",
+      "default": "false",
+      "label": "Histórico completo confirmado (não: pendente)"
+    },
+    {
+      "component": "monitor",
+      "identifier": "InpCostCoverageConfirmed",
+      "default": "false",
+      "label": "Custos completos confirmados (não: pendente)"
+    },
+    {
+      "component": "monitor",
+      "identifier": "InpCoverageEvidence",
+      "default": "\"\"",
+      "label": "Evidência da cobertura (vazio: não informado)"
+    }
+  ],
+  "tabs": [
+    {
+      "width": 1440,
+      "tab": "overview",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 1440,
+      "tab": "install",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 1440,
+      "tab": "resources",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 1440,
+      "tab": "validation",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 1440,
+      "tab": "help",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 390,
+      "tab": "overview",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 390,
+      "tab": "install",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 390,
+      "tab": "resources",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 390,
+      "tab": "validation",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 390,
+      "tab": "help",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 320,
+      "tab": "overview",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 320,
+      "tab": "install",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 320,
+      "tab": "resources",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 320,
+      "tab": "validation",
+      "visible": true,
+      "no_page_overflow": true
+    },
+    {
+      "width": 320,
+      "tab": "help",
+      "visible": true,
+      "no_page_overflow": true
+    }
+  ],
+  "keyboard_five_tabs": "PASS",
+  "downloads": [
+    {
+      "kind": "dailySource",
+      "filename": "JPW_Stoikus_Uso_Fontes_v1.22.1.zip",
+      "bytes": 441516,
+      "sha256": "5b2c7ca40736dda976fe97a91a2677d190eb1ccfdf9527703fd471ee702a11e5",
+      "zip_entries": [
+        "LEIA_PRIMEIRO.md",
+        "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_100.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_125.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_150.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_200.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_125.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_150.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_200.bmp",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Observer_Presence.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Panel.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Observer.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Samples.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Controller.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Accountant_Runtime.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Bridge.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Preparation.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Status.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Monitor_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Observer_Runtime.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Risk_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Risk_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_UI_Design.mqh",
+        "MQL5/Include/JPWealth/JPW_UI_Focus.mqh",
+        "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+        "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5"
+      ],
+      "no_EX5": true
+    },
+    {
+      "kind": "source",
+      "filename": "JPW_Stoikus_Fontes_v1.22.1.zip",
+      "bytes": 773801,
+      "sha256": "03ccb37824175511108b36e9abb5c9fa0dc28d89a338caea1dc7bf02508b9cae",
+      "zip_entries": [
+        "AGENTS.md",
+        "GENETRIX_7X_LEDGER.md",
+        "GENETRIX_CANDIDATE_1_20_1.md",
+        "GENETRIX_CANDIDATE_1_21_0.md",
+        "GENETRIX_COMPILE_FIX_1_18_2.md",
+        "GENETRIX_CORE_1_20_0.md",
+        "GENETRIX_CORRECTIONS_1_21_2.md",
+        "GENETRIX_PERSONAL_HISTORY.md",
+        "GENETRIX_REPAIR_1_18_1.md",
+        "GENETRIX_REVIEW_1_21_1.md",
+        "GENETRIX_UI_1_19_0.md",
+        "MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5",
+        "MQL5/Experts/JPWealth/JPW_Stoikus_Accountant.mq5",
+        "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+        "MQL5/Experts/JPWealth/JPW_Stoikus_Supervisor.mq5",
+        "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
+        "MQL5/Images/JPWealth/JPW_NoCuda_Logo.provenance.md",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo.provenance.md",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_100.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_125.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_150.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_200.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_125.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_150.bmp",
+        "MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_200.bmp",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Observer_Presence.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Panel.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Observer.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Samples.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Controller.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh",
+        "MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Accountant_Runtime.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Bridge.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Preparation.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Status.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Monitor_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Observer_Runtime.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Risk_Store.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_Risk_Terminal.mqh",
+        "MQL5/Include/JPWealth/JPW_Stoikus_UI.mqh",
+        "MQL5/Include/JPWealth/JPW_UI_Design.mqh",
+        "MQL5/Include/JPWealth/JPW_UI_Focus.mqh",
+        "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+        "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.mq5",
+        "MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5",
+        "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5",
+        "MQL5/Scripts/JPWealth/JPW_Stoikus_Risk_Tests.mq5",
+        "README.md",
+        "STOIKUS_RENAME_1_22_0.md",
+        "STOIKUS_USO_DIARIO.md",
+        "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md",
+        "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf",
+        "harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt",
+        "harness/MANUAL_DE_ATIVACAO.md",
+        "harness/REPOSITORY_INTEGRATION.md",
+        "harness/contracts/ENG-AC01-12.json",
+        "harness/contracts/TEMPLATES.md"
+      ],
+      "no_EX5": true
+    }
+  ],
+  "compiled_unavailable": "PASS; native NOT_RUN",
+  "no_app_data_writes": true,
+  "browser_errors": [],
+  "live_unchanged_after_test": true,
+  "result": "PASS"
+}

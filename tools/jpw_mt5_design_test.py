@@ -41,7 +41,7 @@ int StringFind(const string& s,const string& part){const size_t p=s.find(part);r
 int calls=0,key_calls=0,edit_commits=0,applies=0;
 bool editing=false;string edit_draft="original";
 // New cycle handling is a separate component boundary for this legacy focus
-// replay; jpw_genetrix_ui_test executes its production selector/event logic.
+// replay; jpw_stoikus_ui_test executes its production selector/event logic.
 bool JPWGenetrixHandleCycleEvent(const int,const long,const string&){return false;}
 void JPWHandleChartEvent(const int id,const long& key,const double&,const string& name){
  calls++;

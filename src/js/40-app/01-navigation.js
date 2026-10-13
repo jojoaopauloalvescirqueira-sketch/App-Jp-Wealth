@@ -24,7 +24,7 @@ const NAV_RESEARCH_CHILDREN=Object.freeze([
 const NAV_TOOLS_CHILDREN=Object.freeze([
   Object.freeze({id:'tools-calendar',label:'Calendário Econômico',primary:'tools',child:'tools-calendar',screen:'tools',localView:Object.freeze({surface:'tools',view:'calendar'}),aliases:Object.freeze(['tools'])}),
   Object.freeze({id:'tools-nocuda',label:'Nocuda Tool',primary:'tools',child:'tools-nocuda',screen:'tools',localView:Object.freeze({surface:'tools',view:'nocuda'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'tools-leverage',label:'JPW GENETRIX — MT5',primary:'tools',child:'tools-leverage',screen:'tools',localView:Object.freeze({surface:'tools',view:'leverage'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'tools-leverage',label:'Stoikus — MT5',primary:'tools',child:'tools-leverage',screen:'tools',localView:Object.freeze({surface:'tools',view:'leverage'}),aliases:Object.freeze([])}),
   Object.freeze({id:'tools-normative',label:'Estrutura Normativa JP Wealth',primary:'tools',child:'tools-normative',screen:'tools',localView:Object.freeze({surface:'tools',view:'normative'}),aliases:Object.freeze([])})
 ]);
 

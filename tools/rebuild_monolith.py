@@ -39,13 +39,17 @@ NOCUDA_DOCUMENTS = (
     ('downloads/nocuda/TRADINGVIEW-LEIA-ME.md', 'text/markdown;charset=utf-8', 'TRADINGVIEW-LEIA-ME.md'),
     ('downloads/nocuda/MT5-LEIA-ME.md', 'text/markdown;charset=utf-8', 'MT5-LEIA-ME.md'),
 )
+PROJECT_DOCUMENTS = (
+    ('README.md', 'text/markdown;charset=utf-8', 'README.md'),
+    ('CHANGELOG.md', 'text/markdown;charset=utf-8', 'CHANGELOG.md'),
+)
 FINGERPRINT_FIXED_INPUTS = (
     'index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js',
     'tools/rebuild_monolith.py', 'tools/build_leverage_package.py',
     'downloads/jpw-alavancagem-atual/manifest.json',
     *leverage_manifest['sourceFiles'],
     *(item['path'] for item in leverage_downloads.values()),
-    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS),
+    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS + PROJECT_DOCUMENTS),
 )
 FINGERPRINT_TAIL_INPUTS = (
     'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
@@ -171,7 +175,7 @@ html = html.replace('\n</body>', '<script>\n' + js + '\n</script>\n</body>', 1)
 
 # O portátil precisa entregar os originais sem depender de pastas externas.
 # Base64 mantém os bytes e não introduz conteúdo normativo como HTML executável.
-for relative, mime, filename in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS:
+for relative, mime, filename in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS + PROJECT_DOCUMENTS:
     encoded = base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')
     html = html.replace(
         f'href="{relative}"',

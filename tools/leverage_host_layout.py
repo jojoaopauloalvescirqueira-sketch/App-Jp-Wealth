@@ -86,7 +86,8 @@ def geometry(geo=None):
                 "bool JPWPresentationSetString(const string name,const ENUM_OBJECT_PROPERTY_STRING property,const string value)"):
         geo.HUD_SHIM += fn(PRESENT, sig)
     geo.HUD_SHIM += "void JPWClearPanel();void JPWUIDesignDeleteIcon(const string name);int JPWUIDesignPx(const int logical);color JPWPanelTextColor(const color chart_background,const color requested);\n" + fn(PRESENT, "void JPWHUDUnavailable(const string reason)")
-    geo.HUD_MAIN = geo.HUD_MAIN.replace("16*8+24+24+2*8", "16*8+24+20+8+2*8")
+    # Approved caption "Stoikus · Conta" has 15 glyphs; retain the exact icon/padding oracle.
+    geo.HUD_MAIN = geo.HUD_MAIN.replace("16*8+24+24+2*8", "15*8+24+20+8+2*8")
     geo.HUD_MAIN = geo.HUD_MAIN.replace(
         'if(insufficient.width!=-1||objects.count(cockpit_button)||g_panel_count!=0)',
         'if(!InBounds(insufficient,200,160)||!objects.count(cockpit_button)||objects[g_panel_prefix+"RAIZ_UI_HUD_LABEL"].text[OBJPROP_TEXT]!="Conta")')

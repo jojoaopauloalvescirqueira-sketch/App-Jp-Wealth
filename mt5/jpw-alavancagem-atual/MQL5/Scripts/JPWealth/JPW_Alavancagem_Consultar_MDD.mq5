@@ -1,7 +1,7 @@
 #property copyright "JP Wealth"
 #property version   "1.21"
 
-#property description "JPW GENETRIX · Consulta sob demanda do máximo DD/saldo observado."
+#property description "Stoikus · Consulta sob demanda do máximo DD/saldo observado."
 
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
 #include <JPWealth/JPW_Alavancagem_MDD.mqh>

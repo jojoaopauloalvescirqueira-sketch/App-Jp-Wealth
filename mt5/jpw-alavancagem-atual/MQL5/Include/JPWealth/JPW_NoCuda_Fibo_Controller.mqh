@@ -289,7 +289,7 @@ void JPWNCFInit()
 void JPWNCFShutdown()
   {
    JPWNCFRestoreOriginalVisibility();
-   if(g_ncf_restore_source!="") Print("GENETRIX: ",g_ncf_restore_reason," Confira a origem; ao remover o indicador não há timer para retentar.");
+   if(g_ncf_restore_source!="") Print("Stoikus: ",g_ncf_restore_reason," Confira a origem; ao remover o indicador não há timer para retentar.");
    if(g_ncf_clone!="") ObjectDelete(0,g_ncf_clone);
    JPWUIRelease(g_nocuda_prefix); JPWNoCudaFiboUIClear(g_nocuda_prefix);
   }

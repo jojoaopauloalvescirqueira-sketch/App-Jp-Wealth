@@ -79,7 +79,7 @@ template<class T> int ArraySize(const std::vector<T>& rows){return (int)rows.siz
 int signal_opened=0,signal_cleared=0;long signal_ticket=0;
 void JPWSignalClear(){signal_cleared++;}
 void JPWSignalSaveDraft(){}
-// New cycle event is exercised by the actual helper in jpw_genetrix_ui_test.
+// New cycle event is exercised by the actual helper in jpw_stoikus_ui_test.
 bool JPWGenetrixHandleCycleEvent(int,long,const string&){return false;}
 void JPWSignalInvalidate(const string&){}
 bool JPWSignalHandleClick(const string&){return false;}

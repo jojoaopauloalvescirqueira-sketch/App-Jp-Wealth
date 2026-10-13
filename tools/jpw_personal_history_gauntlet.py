@@ -9,7 +9,7 @@ AREA=ROOT/'outputs/genetrix-personal-history'
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def inputs():
     paths=set(p for p in (ROOT/'mt5/jpw-alavancagem-atual').rglob('*') if p.is_file())
-    for pattern in ('tools/jpw_personal_history*.py','tools/personal_history_host/*','tools/jpw_genetrix*.py','tools/leverage_*.py','tools/build_leverage_package.py','tests/fixtures/genetrix-personal-history/*','docs/work/genetrix-personal-history/*.md','downloads/jpw-alavancagem-atual/manifest.json'):
+    for pattern in ('tools/jpw_personal_history*.py','tools/personal_history_host/*','tools/jpw_genetrix*.py','tools/jpw_stoikus*.py','tools/leverage_*.py','tools/build_leverage_package.py','tests/fixtures/genetrix-personal-history/*','docs/work/genetrix-personal-history/*.md','downloads/jpw-alavancagem-atual/manifest.json'):
         paths.update(p for p in ROOT.glob(pattern) if p.is_file())
     return {str(p.relative_to(ROOT)):digest(p) for p in sorted(paths)}
 def write_new(path,data):

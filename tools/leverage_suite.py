@@ -34,15 +34,18 @@ HOST = (
     "leverage_reliability_test", "leverage_diagnostics_test",
     "leverage_scheduler_test",
     "core_monitor_judge", "core_replay_judge", "core_preparation_judge",
-    "jpw_genetrix_ledger_test", "jpw_genetrix_risk_test", "jpw_personal_history_test",
-    "jpw_genetrix_ui_test", "jpw_genetrix_brand_test", "jpw_positions_ui_test",
+    "jpw_stoikus_ledger_test", "jpw_stoikus_risk_test", "jpw_personal_history_test",
+    "jpw_stoikus_ui_test", "jpw_stoikus_brand_test", "jpw_positions_ui_test",
     "jpw_mt5_design_test", "jpw_signal_copy_test", "jpw_signal_copy_ui_test", "jpw_signal_copy_adapter_test",
     "jpw_nocuda_core_test", "jpw_nocuda_projection_test", "jpw_nocuda_store_test",
     "jpw_nocuda_fibo_test", "jpw_nocuda_fibo_terminal_test", "jpw_nocuda_fibo_store_test",
     "jpw_nocuda_fibo_store_runtime_test", "jpw_nocuda_fibo_controller_test",
     "jpw_nocuda_fibo_ui_test", "jpw_nocuda_integration_test",
+    "stoikus_startup_test",
 )
-DISTRIBUTION = ("leverage_package_test", "leverage_page_test")
+DISTRIBUTION = ("leverage_package_test", "leverage_page_test",
+                "stoikus_daily_package_test", "stoikus_download_test",
+                "stoikus_usage_page_test")
 
 
 def classify(returncode: int, output: str) -> str:
@@ -72,7 +75,8 @@ def input_hashes(root: Path = ROOT) -> dict[str, str]:
     paths: set[Path] = set()
     for pattern in (
         "mt5/jpw-alavancagem-atual/**/*", "tools/leverage_*.py",
-        "tools/core_*_judge.py", "tools/jpw_genetrix*.py", "tools/jpw_nocuda*.py",
+        "tools/core_*_judge.py", "tools/jpw_genetrix*.py", "tools/jpw_stoikus*.py", "tools/jpw_nocuda*.py",
+        "tools/stoikus_*.py", "tools/stoikus_*.js",
         "tools/jpw_personal_history*.py", "tools/jpw_positions*.py", "tools/jpw_signal_copy*.py", "tools/jpw_mt5_design*.py", "tools/personal_history_host/**/*",
         "tests/fixtures/genetrix/*.json",
         "tools/build_leverage_package.py", "tools/browser_bootstrap_fixture.py",
@@ -194,6 +198,8 @@ def main() -> int:
         command = [sys.executable, str(ROOT / "tools" / f"{name}.py")]
         if name == "jpw_personal_history_test":
             command += ["--output", str(artifact.with_suffix(".logs") / "personal-history-evidence")]
+        if name == "stoikus_usage_page_test":
+            command += ["--evidence", str(artifact.with_suffix(".logs") / "stoikus-usage-page-evidence")]
         print(f"[RUN] {name}", flush=True)
         check = run_check(name, command, ROOT, artifact.with_suffix(".logs"),
                           timeout=420 if name == "leverage_page_test" else 180)

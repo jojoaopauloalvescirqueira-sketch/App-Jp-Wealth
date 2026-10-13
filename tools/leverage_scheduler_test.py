@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MQL = ROOT / "mt5/jpw-alavancagem-atual/MQL5"
 INCLUDE = MQL / "Include/JPWealth"
 EA = MQL / "Experts/JPWealth/JPW_Alavancagem_Observer.mq5"
-RUNTIME = INCLUDE / "JPW_Genetrix_Observer_Runtime.mqh"
+RUNTIME = INCLUDE / "JPW_Stoikus_Observer_Runtime.mqh"
 
 
 def function(source: str, name: str) -> str:
@@ -236,7 +236,7 @@ void JPWAcceptMetric(int metric){accepted_metrics.push_back(metric);}
 void JPWCollectStopRisk(){stop_calls++;}
 // New read-model collection is a separate component boundary in this legacy
 // scheduler replay. Its real implementation and metric-6 acceptance run in
-// jpw_genetrix_ui_test; original collector/order/budget assertions stay intact.
+// jpw_stoikus_ui_test; original collector/order/budget assertions stay intact.
 void JPWGenetrixCollectLedger(){}
 void JPWStopRiskUnavailable(const string&){}
 void JPWDetailsReadStopRisk(){}

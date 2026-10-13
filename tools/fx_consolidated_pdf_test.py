@@ -54,6 +54,9 @@ class Quiet(SimpleHTTPRequestHandler):
 def copy_build_dependencies(target):
     # The official generator now builds the traced Genetrix package as well.
     # Copy its complete declared inputs into the disposable build, never stub it.
+    # Project documentation is now an explicit input of the official build.
+    for name in ('README.md','CHANGELOG.md'):
+        shutil.copy2(ROOT/name,target/name)
     for folder in ('assets','downloads','mt5','manifests'):
         shutil.copytree(ROOT/folder,target/folder,dirs_exist_ok=True)
     destination=target/'tools/build_leverage_package.py'

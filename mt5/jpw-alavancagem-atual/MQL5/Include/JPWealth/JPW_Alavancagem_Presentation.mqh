@@ -1,6 +1,6 @@
 #ifndef JPW_ALAVANCAGEM_PRESENTATION_MQH
 #define JPW_ALAVANCAGEM_PRESENTATION_MQH
-#include <JPWealth/JPW_Genetrix_Brand.mqh>
+#include <JPWealth/JPW_Stoikus_Brand.mqh>
 #include <JPWealth/JPW_UI_Design.mqh>
 // Indicator runtime component; included after its instance state.
 void JPWRenderHUD();
@@ -248,7 +248,7 @@ void JPWHUDUnavailable(const string reason)
    JPWPresentationSetInteger(name,OBJPROP_HIDDEN,true);
    JPWPresentationSetString(name,OBJPROP_FONT,"Arial");
    JPWPresentationSetString(name,OBJPROP_TEXT,label);
-   JPWPresentationSetString(name,OBJPROP_TOOLTIP,"Genetrix · Conta · "+reason+" · amplie o gráfico.");
+   JPWPresentationSetString(name,OBJPROP_TOOLTIP,"Stoikus · Conta · "+reason+" · amplie o gráfico.");
   }
 
 void JPWRenderHUDBody()
@@ -276,7 +276,7 @@ void JPWRenderHUDBody()
    if(!TextSetFont("Arial",-10*button_font,FW_NORMAL))
      { JPWClearPanel(); return; }
    uint button_text_width=0,button_text_height=0;
-   const string launcher_label="Genetrix · Conta";
+   const string launcher_label="Stoikus · Conta";
    if(!TextGetSize(launcher_label,button_text_width,button_text_height))
      { JPWClearPanel(); return; }
    const int button_height=JPWUIDesignControlHeight((int)button_text_height);
@@ -1109,7 +1109,7 @@ void JPWRenderStopsTable(const int x,const int body_y,const int inner,
       JPWRaizCreateLabel("STOP_EMPTY","Stop risk: N/A · "+cause,x,body_y);
       if(body_height>=2*g_details_line)
          JPWRaizCreateLabel("STOP_HINT",
-            "No mesmo MT5: Expert Advisors > JPWealth > JPW_Genetrix_Monitor, em gráfico de apoio.",
+            "No mesmo MT5: Expert Advisors > JPWealth > JPW_Stoikus_Monitor, em gráfico de apoio.",
             x,body_y+g_details_line);
       if(body_height>=3*g_details_line)
          JPWRaizCreateLabel("STOP_HINT_2",
@@ -1507,11 +1507,11 @@ void JPWMonitorAppendComponents(const int inner,string &lines[])
    // All producer diagnostics were accepted by Coordinator, never read on paint.
    // Presence is independent of every financial metric and of historical coverage.
    JPWDetailsWrap("Componentes da conta",inner,lines);
-   JPWDetailsWrap("GENETRIX · Núcleo da conta reúne monitoramento e contabilidade; observa a conta inteira desta instalação, a partir de um gráfico de apoio dedicado.",inner,lines);
+   JPWDetailsWrap("Stoikus · Núcleo da conta reúne monitoramento e contabilidade; observa a conta inteira desta instalação, a partir de um gráfico de apoio dedicado.",inner,lines);
    if(!g_monitor_ui_available || g_monitor_ui_context=="" || g_monitor_ui_context!=g_diagnostic_context)
      {
       JPWDetailsWrap("Núcleo ausente ou indisponível · "+g_monitor_ui_reason,inner,lines);
-      JPWDetailsWrap("Confira JPW_Genetrix_Monitor no gráfico de apoio e a aba Experts. Um diagnóstico ausente não prova que todos os produtores estejam desligados; confira também as métricas e instâncias legadas.",inner,lines);
+      JPWDetailsWrap("Confira JPW_Stoikus_Monitor no gráfico de apoio e a aba Experts. Um diagnóstico ausente não prova que todos os produtores estejam desligados; confira também as métricas e instâncias legadas.",inner,lines);
      }
    else
      {
@@ -1538,7 +1538,7 @@ void JPWMonitorAppendComponents(const int inner,string &lines[])
       JPWDetailsWrap("Ciclo técnico: "+IntegerToString(status.last_cycle_ms)+" ms; ultrapassagens registradas "+
          IntegerToString(status.overruns)+". Timer solicitado não garante despacho pontual.",inner,lines);
      }
-   JPWDetailsWrap("Instalação padrão: um JPW_Genetrix_Monitor no gráfico de apoio; retire Observer e Accountant legados normalmente. Não precisa habilitar negociação. Fechar o Cockpit mantém o EA; fechar ou substituir o gráfico do EA interrompe o acompanhamento.",inner,lines);
+   JPWDetailsWrap("Instalação padrão: um JPW_Stoikus_Monitor no gráfico de apoio; retire Observer e Accountant legados normalmente. Não precisa habilitar negociação. Fechar o Cockpit mantém o EA; fechar ou substituir o gráfico do EA interrompe o acompanhamento.",inner,lines);
    JPWDetailsWrap("Supervisor 7x é separado e opcional; não é requisito das sete métricas. Estado salvo não comprova executor ativo ou armamento atual. A interface não o instala, arma ou negocia.",inner,lines);
   }
 
@@ -2081,7 +2081,7 @@ void JPWRenderCockpit()
             ". Amostra financeira Stop risk: "+
             (g_stop_quality==JPW_VIEW_CURRENT ? "Current" : "N/A · "+g_stop_reason)+
             ". Um sinal não valida o total nem prova cobertura contínua.",inner,lines);
-         JPWDetailsWrap("Ativação do núcleo nesta instalação: Expert Advisors > JPWealth > JPW_Genetrix_Monitor, em gráfico de apoio dedicado. Não inicie Observer ou Accountant legados junto dele; confira o motivo de cada módulo e a aba Experts.",inner,lines);
+         JPWDetailsWrap("Ativação do núcleo nesta instalação: Expert Advisors > JPWealth > JPW_Stoikus_Monitor, em gráfico de apoio dedicado. Não inicie Observer ou Accountant legados junto dele; confira o motivo de cada módulo e a aba Experts.",inner,lines);
          JPWDetailsWrap("Trilha técnica: "+(g_diagnostic_state==JPW_STORE_VALID ? "acessível" :
             (g_diagnostic_state==JPW_STORE_ABSENT ? "ainda ausente" : "indisponível/atenção"))+
             ". "+g_diagnostic_summary+" "+g_diagnostic_reason,inner,lines);

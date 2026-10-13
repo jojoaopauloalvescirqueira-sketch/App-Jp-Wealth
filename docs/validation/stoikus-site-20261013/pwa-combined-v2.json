@@ -1,0 +1,88 @@
+{
+  "root": "/private/tmp/jpw-stoikus-renaming-20261012",
+  "environment": "isolated Chromium; real SW/native Settings popup; synthetic economic bootstrap",
+  "sources": {
+    "sw.js": "2c25f43c3cb6009f4c1c8e4fce078aff0b6d73ae1e70a919cdc48c469aaa1d37",
+    "tools/rebuild_monolith.py": "ab8d4b9ee8005aacfb35a9e86d11aad14aeeb7d59db1de213b7ac9f002b3382b",
+    "README.md": "55d6f595e47774c34e1e91a6c41f90c52a53634d71c66cbe74372371e6ed785c",
+    "CHANGELOG.md": "5d14628b091678f8109f1cb5a0e8f40eb8a3c369ec68cfe1b21d90332707bfe1",
+    "build-id.js": "4284ab67fe337395b7f0905f779951739ef8ad460bc3b02e068da50c83d0e8cf"
+  },
+  "cases": [
+    {
+      "name": "online native link delivers README.md",
+      "result": "PASS",
+      "observed": {
+        "url": "http://127.0.0.1:52137/README.md",
+        "actual_sha256": "b0bcf214fd47bea7eb7f37e4a145c4dc3c8caea31128e3da749ca5af3aeafab8",
+        "expected_sha256": "b0bcf214fd47bea7eb7f37e4a145c4dc3c8caea31128e3da749ca5af3aeafab8",
+        "contains_app_shell": false
+      }
+    },
+    {
+      "name": "online native link delivers CHANGELOG.md",
+      "result": "PASS",
+      "observed": {
+        "url": "http://127.0.0.1:52137/CHANGELOG.md",
+        "actual_sha256": "44362d5dd7e71e576ac619a50ce7b451aeb7eb4cd77d3477926da1eb8139f660",
+        "expected_sha256": "44362d5dd7e71e576ac619a50ce7b451aeb7eb4cd77d3477926da1eb8139f660",
+        "contains_app_shell": false
+      }
+    },
+    {
+      "name": "online document links preserve financial document",
+      "result": "PASS",
+      "observed": null
+    },
+    {
+      "name": "offline native link delivers README.md",
+      "result": "PASS",
+      "observed": {
+        "url": "http://127.0.0.1:52137/README.md",
+        "actual_sha256": "b0bcf214fd47bea7eb7f37e4a145c4dc3c8caea31128e3da749ca5af3aeafab8",
+        "expected_sha256": "b0bcf214fd47bea7eb7f37e4a145c4dc3c8caea31128e3da749ca5af3aeafab8",
+        "contains_app_shell": false
+      }
+    },
+    {
+      "name": "offline native link delivers CHANGELOG.md",
+      "result": "PASS",
+      "observed": {
+        "url": "http://127.0.0.1:52137/CHANGELOG.md",
+        "actual_sha256": "44362d5dd7e71e576ac619a50ce7b451aeb7eb4cd77d3477926da1eb8139f660",
+        "expected_sha256": "44362d5dd7e71e576ac619a50ce7b451aeb7eb4cd77d3477926da1eb8139f660",
+        "contains_app_shell": false
+      }
+    },
+    {
+      "name": "offline document links preserve financial document",
+      "result": "PASS",
+      "observed": null
+    },
+    {
+      "name": "active build cache contains exact README.md",
+      "result": "PASS",
+      "observed": null
+    },
+    {
+      "name": "active build cache contains exact CHANGELOG.md",
+      "result": "PASS",
+      "observed": null
+    },
+    {
+      "name": "portable delivers exact README.md",
+      "result": "PASS",
+      "observed": null
+    },
+    {
+      "name": "portable delivers exact CHANGELOG.md",
+      "result": "PASS",
+      "observed": null
+    },
+    {
+      "name": "test preserves product sources",
+      "result": "PASS",
+      "observed": null
+    }
+  ]
+}

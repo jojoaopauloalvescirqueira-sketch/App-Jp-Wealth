@@ -1606,9 +1606,11 @@ function mvpNotesFocusFolderKebab(id){
 // escolher uma pasta avança a navegação em camadas para a Lista (estágio B).
 function mvpNotesSwitchFolder(target){
   mvpNotesConfirmDiscardIfDirty(()=>{
+    const discarded=mvpNotesUI.draftDirty;
     mvpNotesUI.activeFolder=target;
     mvpNotesUI.stage='list';
-    renderMvpNotesList();
+    if(discarded)mvpNotesCloseEditor();
+    else renderMvpNotesList();
   });
 }
 function mvpNotesPromptFolderName(defaultValue,draftKey){

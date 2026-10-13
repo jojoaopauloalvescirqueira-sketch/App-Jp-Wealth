@@ -237,7 +237,7 @@ string _Symbol="SYNTHETIC";int draws=0;
 ulong host_now=1000;ulong GetTickCount64(){return host_now;}
 void JPWRenderHUD(){draws++;}void JPWRenderRaizDetails(){}void ChartRedraw(int){}
 // This legacy replay keeps the new ledger projection at a component boundary.
-// jpw_genetrix_ui_test executes its actual helper/collector/selector separately;
+// jpw_stoikus_ui_test executes its actual helper/collector/selector separately;
 // none of the six original metric evidence or expiry assertions is changed.
 void JPWGenetrixPresentMetric(){g_cockpit_snapshot.metric[6].title="Flutuante compensado";
  g_cockpit_snapshot.metric[6].value="N/A";g_cockpit_snapshot.metric[6].quality=JPW_VIEW_NA;}

@@ -70,7 +70,7 @@ int g_leverage_quality=1,g_floating_quality=0,g_genesis_quality=0,g_raiz_quality
 double g_numeric_values[7]={};bool g_numeric_valid[7]={};long g_source_times[7]={};
 JPWMetricSample g_metric_samples[7];int g_metric_last_quality[7]={};
 // Ledger is an explicit separate component boundary for this inventory replay;
-// its production projection/collection is tested in jpw_genetrix_ui_test.
+// its production projection/collection is tested in jpw_stoikus_ui_test.
 bool g_genetrix_ledger_available=false;
 struct HostLedgerSample{long observed_mono_ms=0;}g_genetrix_view;
 string g_panel_value,g_panel_status,g_leverage_reason;

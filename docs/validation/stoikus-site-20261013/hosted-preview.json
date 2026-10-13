@@ -1,0 +1,25 @@
+{
+  "downloads": [
+    {
+      "kind": "dailySource",
+      "filename": "JPW_Stoikus_Uso_Fontes_v1.22.1.zip",
+      "bytes": 441516,
+      "sha256": "5b2c7ca40736dda976fe97a91a2677d190eb1ccfdf9527703fd471ee702a11e5"
+    },
+    {
+      "kind": "source",
+      "filename": "JPW_Stoikus_Fontes_v1.22.1.zip",
+      "bytes": 773801,
+      "sha256": "03ccb37824175511108b36e9abb5c9fa0dc28d89a338caea1dc7bf02508b9cae"
+    }
+  ],
+  "tabs": [
+    "overview",
+    "install",
+    "resources",
+    "validation",
+    "help"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

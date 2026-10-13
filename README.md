@@ -1,3 +1,25 @@
+# JP Wealth — Stoikus 1.22.1 e correções de auditoria — 2026-10-13
+
+Este conjunto incorpora o Stoikus 1.22.1 e os patches AUD-01..AUD-10 já presentes no site. Guia e downloads de uso/engenharia seguem separados. A publicação solicitada usa o projeto existente JP Wealth Software no Sites/GPT, mantendo seu acesso; Netlify é uma configuração anterior e não é o destino atual. Os recibos da combinação estão em docs/validation/stoikus-site-20261013/; resultados anteriores abaixo pertencem às respectivas revisões. Compilação e execução MT5 permanecem NOT_RUN, sem EX5 novo distribuído.
+
+## Fotografias anteriores preservadas
+
+# Stoikus 1.22.1 — correções de uso diário (2026-10-13)
+
+A suíte mantém Monitor, Conta e NoCuda e acrescenta uma ferramenta pontual de abertura dos dois indicadores. O [guia de uso](mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md) orienta dois gráficos e as configurações públicas em português. O pacote de uso contém quatro programas com dependências; testes e laboratório ficam no SDK de engenharia. Produto 1.22.1 / MQL 1.221 / cálculo 1.9.0; defaults, dados, fórmulas e identidades permanecem intactos.
+
+Correções locais revisadas: host/distribuição PASS 44/44 e full web PASS 57/57 no freeze R4, com Gauntlet de clareza documental/web e revisão de código por críticos independentes. [Recibos desta revisão](docs/validation/stoikus-1.22.1/INTEGRATION.md). Distribuição somente de fontes; execução/compilação/instalação/aceite MT5 NOT_RUN até recibos próprios. Os pacotes 1.22.0 e GENETRIX são históricos preservados.
+
+## Revisão anterior preservada
+
+# Stoikus 1.22.0 — camada atual da suíte MT5 (2026-10-12)
+
+A suíte MT5 passa a usar a marca pública **Stoikus**. Esta revisão candidata aplica a renomeação delimitada autorizada pelo proprietário, com produto **1.22.0**, MQL **1.220** e cálculo **1.9.0**. A logo JP Wealth, o slogan “Da origem da operação à leitura do risco.” e o nome independente NoCuda permanecem. O site apresenta e distribui o pacote; não executa os componentes MT5.
+
+O [guia atual](mt5/jpw-alavancagem-atual/README.md) e o [mapa de renomes e compatibilidade](mt5/jpw-alavancagem-atual/STOIKUS_RENAME_1_22_0.md) identificam os 29 nomes MQL/recursos e cinco ferramentas host, as leituras da Conta, o Monitor e o Supervisor opcional. Distribuição **somente de fontes**, sem EX5; host/web aprovados localmente no R2 (40/40 e 57/57). Compilação e interação nativas, instalação e aceite operacional: **NOT_RUN**. A evidência desta revisão tem seus próprios recibos em [INTEGRATION 1.22.0](docs/validation/stoikus-1.22.0/INTEGRATION.md); um resultado histórico não aprova os bytes atuais.
+
+A renomeação conserva os contratos financeiros e de persistência e não autoriza negociação, migração de dados, instalação ou publicação. Os registros datados abaixo ficam preservados e descrevem suas respectivas revisões; esta camada não reconcilia automaticamente todas as pendências documentais do site.
+
 # Candidate local de correcoes de comportamento — 2026-10-08
 
 Cinco achados da auditoria f70839305b2d7fb8 sao corrigidos e reavaliados nesta copia isolada: consulta contabil por contexto explicito, conferencia ACTUAL de depositos, reservas por periodo, preservacao de edicao recusada em PF e ajuda de Notas fiel ao Backup Completo. Contratos/limites em [brief](docs/work/BRIEF-JPW-BEHAVIOR-FIXES-20261008.md). Testes, fixtures e manutencao de contexto possuem contratos separados. Consulte os recibos novos no relatorio externo antes de tratar uma verificacao como aprovada. Sem alteracao de formulas, schemas, norma, MT5 ou dados reais; sem commit, integracao ou publicacao.

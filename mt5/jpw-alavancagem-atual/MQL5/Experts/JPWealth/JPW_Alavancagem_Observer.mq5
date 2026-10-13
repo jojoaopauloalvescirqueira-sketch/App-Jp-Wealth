@@ -1,8 +1,8 @@
 #property copyright "JP Wealth"
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
 #property version JPW_PRODUCT_MQL_VERSION
-#property description "JPW GENETRIX · Observador legado compativel; nao negocia."
-#include <JPWealth/JPW_Genetrix_Observer_Runtime.mqh>
+#property description "Stoikus · Observador legado compativel; nao negocia."
+#include <JPWealth/JPW_Stoikus_Observer_Runtime.mqh>
 int OnInit()
   {
    if(!JPWObserverRuntimeAttach() || !EventSetTimer(1))
