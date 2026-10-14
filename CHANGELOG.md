@@ -1,3 +1,10 @@
+# Candidate local — guia interativo de 13/10/2026
+
+- Conhecer o app abre a central; Configurações → Conhecimento → Guia do site oferece acesso permanente e pesquisável. A acolhida permite nova tentativa se o guia ainda não carregou.
+- Sete trilhas e 57 lições orientam nos controles reais, com pausa, retomada, revisão e resultados distintos para leitura, ação, pulo e prática opcional confirmada.
+- Progresso auxiliar local separado do estado financeiro e do Backup Completo; limpeza de sessão e mudanças da base invalidam observações pendentes. Scripts locais incluídos no manifesto, precache e portátil oficial.
+- [Uso e limites](docs/architecture/LEARNING-GUIDE.md). Candidate local; recibos de validação e revisão externa registram os resultados. Sem publicação ou mudança de regras financeiras.
+
 # 2026-10-13 — integração local Stoikus 1.22.1 com as correções de auditoria
 
 Integração e publicação solicitadas pelo proprietário. Guia, pacote de uso e SDK Stoikus 1.22.1 incorporados com preservação dos patches AUD-01..AUD-10, seus regressores e documentos PWA. A combinação possui recibos próprios; resultados anteriores não aprovam seus bytes. Compilação e execução MT5 continuam NOT_RUN; commit, push e merge não foram realizados.

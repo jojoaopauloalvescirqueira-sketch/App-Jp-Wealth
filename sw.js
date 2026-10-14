@@ -19,6 +19,10 @@ const NOCUDA_DOCUMENT_URLS = [
 const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.location.href).href;
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
 const PRECACHE_URLS = [
+  './src/js/40-app/26-learning-catalog.js',
+  './src/js/00-core/09-learning-progress.js',
+  './src/js/40-app/27-learning-view.js',
+  './src/js/40-app/28-learning-guide.js',
   './src/vendor/fflate/fflate-0.8.2.min.js',
   './src/js/00-core/09-evidence-archive.js',
 

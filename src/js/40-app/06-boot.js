@@ -63,7 +63,7 @@ function openFirstAccessWelcome(){
           <div class="jpw-welcome-actions">
             <button type="button" id="jpwWelcomeStart" class="jpw-welcome-choice"><strong>Começar do zero</strong><span>Escolher a primeira tarefa e preparar seu contexto.</span></button>
             <button type="button" id="jpwWelcomeRestore" class="jpw-welcome-choice"><strong>Restaurar Backup Completo</strong><span>Conferir um arquivo antes de importar seus dados.</span></button>
-            <button type="button" id="jpwWelcomeExplore" class="jpw-welcome-choice"><strong>Conhecer o app</strong><span>Consultar as áreas disponíveis, sem preparar uma operação.</span></button>
+            <button type="button" id="jpwWelcomeExplore" class="jpw-welcome-choice"><strong>Conhecer o app</strong><span>Explorar o guia interativo e os controles de cada área.</span></button>
           </div>
         </section>
         <section id="jpwWelcomeTasks" hidden inert><h2 id="jpwWelcomeTasksTitle" tabindex="-1">Escolha sua primeira tarefa.</h2><p>Cada área terá seus próprios dados e confirmações.</p>
@@ -97,7 +97,13 @@ function openFirstAccessWelcome(){
     $('jpwWelcomeChoices').hidden=false;$('jpwWelcomeChoices').inert=false;
     status('');$('jpwWelcomeStart').focus({preventScroll:true});
   };
-  $('jpwWelcomeExplore').onclick=()=>{if(leave()!==false)window.JPWNavigation?.navigate('dashboard');};
+  $('jpwWelcomeExplore').onclick=()=>{
+    if(typeof window.JPWLearningGuide?.open!=='function'){
+      status('O guia ainda está carregando. Tente Conhecer o app novamente quando o carregamento terminar.');return;
+    }
+    if(leave()===false)return;
+    if(window.JPWNavigation?.navigate('dashboard')===true)window.JPWLearningGuide.open();
+  };
   $('jpwWelcomeRestore').onclick=()=>$('jpwWelcomeFile').click();
   $('jpwWelcomeFile').onchange=event=>{
     const file=event.target.files?.[0];if(!file)return;
@@ -163,6 +169,8 @@ function boot(){
   if(typeof renderDgStorageCard==='function') renderDgStorageCard();
   if(typeof renderDgBackupBanner==='function') renderDgBackupBanner();
   enhanceFieldNotes();
+  // A primeira execução antecede o guia; importações e trocas de base o pausam.
+  try{window.JPWLearningGuide?.revalidate?.('boot');}catch(error){}
   // cotações ao vivo sempre que o programa abre (SET 4 do lote) — alimenta grade, ATR% e stop vivo
   if(!fxAutoFetchedThisSession){ fxAutoFetchedThisSession=true; updateFxRates(); }
   // An empty browser starts with the app welcome, never a financial period writer.

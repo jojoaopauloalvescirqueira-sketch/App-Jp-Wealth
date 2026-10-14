@@ -11,7 +11,7 @@ const SETTINGS_GROUPS=[
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
   {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
   {id:'forex-preferences', label:'Forex', desc:'Preferências de consulta do Consolidado FX.', icon:'operations', children:['forex-consolidated']},
-  {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational','probability-lab']},
+  {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational','probability-lab','learning-guide']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
 ];
@@ -22,6 +22,7 @@ const SETTINGS_LEAVES={
   interface:{label:'Interface', group:'appearance-interface', desc:'Tamanho do texto e instruções do sistema.', terms:['interface','fonte','tamanho','tipografia','sidebar','barra lateral','ajuda','instruções']},
   editor:{label:'Editor', group:'appearance-interface', desc:'Preferências de edição.', terms:['editor']},
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
+  'learning-guide':{label:'Guia do site', group:'knowledge', desc:'Trilhas interativas para conhecer os controles e retomar seu aprendizado.', terms:['guia','tutorial','primeiros passos','aprender','ajuda']},
   'probability-lab':{label:'Laboratório de Probabilidade', group:'knowledge', desc:'Galton Board: experimento visual de probabilidade e distribuição.', terms:['probabilidade','laboratório','Galton','Galton Board','distribuição','binomial']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Estatuto V11.0 e Anexo Paramétrico Canônico vigentes.', terms:['estatuto','V11','anexo','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
@@ -550,6 +551,9 @@ function buildSettingsContent(){
   createSettingsPanel('interface','<p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
   createSettingsPanel('editor','<p class="settings-lead">Preferências de edição e de apresentação da interface neste navegador.</p><div data-settings-slot="editor"></div>');
   createSettingsPanel('educational',educationPanel());
+  // O painel pertence às Configurações; a apresentação cria sua própria central.
+  const learningPanel=createSettingsPanel('learning-guide','');
+  window.JPWLearningGuide?.renderCenter?.(learningPanel);
   createSettingsPanel('probability-lab','<h3 id="settingsProbabilityTitle" data-route-focus tabindex="-1">Galton Board</h3><p class="settings-lead">Explore probabilidade e distribuição em um experimento visual. Ao sair ou cobrir esta página, a simulação pausa; use Continuar para retomá-la.</p><div id="settingsGaltonSlot"></div>');
   createSettingsPanel('statute','<p class="settings-lead">Consulte o Estatuto V11.0 e o Anexo JPW-ANNEX-T03. O motor financeiro legado ainda não foi adaptado; esta referência documental não homologa seus cálculos.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
@@ -642,6 +646,7 @@ function activateSettingsCategory(id,options={}){
   settingsUpdateSidebarActive(targetId);
   settingsUpdatePageHeader(targetId);
   if(targetId==='backup' && typeof renderDgStorageCard==='function') renderDgStorageCard();
+  if(targetId==='learning-guide')window.JPWLearningGuide?.renderCenter?.(exists);
   settingsSyncProbabilityLab();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
@@ -833,7 +838,7 @@ function openSettingsModal(category='general', opener){
   buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;
   settingsState.navStack=['general']; settingsState.navIndex=0; settingsState.mobileListVisible=true;
   moveLegacySettingsNodes(); settingsEl('settingsOverlay').classList.add('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','false'); settingsSetAppInert(true);
-  if(category==='probability-lab') settingsNavigateToLeaf(category,{focus:false});
+  if(category==='probability-lab'||category==='learning-guide') settingsNavigateToLeaf(category,{focus:false});
   else if(category&&category!=='general') settingsNavigate(category,{push:true,focus:false});
   else settingsRenderCurrent({focus:false});
   window.__settingsModalDebug.opens++;
