@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "f0ecfd74b8a100d006901ba8105de1fcef0e33661e4471c86536177f29c88dfb"
+      "sha256": "db729539753e5045e61fd1071ade8b8b7c68dc0533592bef7256602cb3361e65"
     },
     {
       "order": 34,
@@ -266,13 +266,13 @@
       "order": 44,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "c33175b2a8954031ced6ebe1ac13e9feec59db7743a01b68ffa13caa0fcf2b07"
+      "sha256": "ae3e0dc136fe1f7882a675a6c57bdec815945d3f92bb5c399922f88ddec2cba0"
     },
     {
       "order": 45,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "cf42e9104b8d88afd2e36dce4390a99785a006579beab67f7e728b04ef167cfd"
+      "sha256": "fe840f7a62c9785ac822b61280b9e1c97bb8839450f41d05c7f70e46773a3b35"
     },
     {
       "order": 46,
@@ -290,7 +290,7 @@
       "order": 48,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "a21e5993a30b9cbe77371553140ddc8229d5bfdcf3a150e5ac80dc602a127647"
+      "sha256": "ef5a182015e91416ac86ea8217b8da68917f5d21b8fc24a0f6dae92c684ff9fc"
     },
     {
       "order": 49,
@@ -614,6 +614,30 @@
       "section": "Module availability · presentation and preserved work",
       "order": 102,
       "sha256": "c8bf4d2169885378efdc1f0ba9a03571f8cd8bd8c4b5c4da948d3b10c71ed261"
+    },
+    {
+      "path": "src/js/40-app/26-learning-catalog.js",
+      "section": "GUIA DO SITE · catálogo editorial local",
+      "order": 103,
+      "sha256": "90663d88980077bcad202b808755577fb510e7327dd057760dac585e1f69b08c"
+    },
+    {
+      "path": "src/js/00-core/09-learning-progress.js",
+      "section": "GUIA DO SITE · progresso auxiliar validado",
+      "order": 104,
+      "sha256": "86396ca40e0fc1941c476e2b4645dac96618e11133941fd85f6a25927c0a2db2"
+    },
+    {
+      "path": "src/js/40-app/27-learning-view.js",
+      "section": "GUIA DO SITE · central e orientação contextual",
+      "order": 105,
+      "sha256": "6fbddab78dc3cbb402d6c41d699a4491e665a4d5a60293511a7f11060b75e729"
+    },
+    {
+      "path": "src/js/40-app/28-learning-guide.js",
+      "section": "GUIA DO SITE · controlador de observação",
+      "order": 106,
+      "sha256": "7ab6d853405f9bb8b6e54984f8f1d817d2856e6c2c88afa7fba68b32b2cd93e7"
     }
   ],
   "runtimeAssets": [

@@ -10212,3 +10212,26 @@ html[data-navigation="topbar"] #nav>#navSubShell .nav-sub-menu[hidden]{display:n
 }
 @media(any-pointer:coarse){.jpw-scenario-fan .sf-inspector select,.jpw-scenario-fan summary{min-height:48px}}
 @media(prefers-reduced-motion:reduce){.jpw-scenario-fan *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Guia do site: superfícies próprias, sem alterar estilos dos controles originais. */
+#jpwLearningCenter { padding: 12px; }
+.jpw-learning-tracks { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:14px; margin-top:16px; }
+.jpw-learning-track { border:1px solid var(--line, #64748b); border-radius:12px; padding:16px; background:var(--panel); color:var(--ink); }
+.jpw-learning-controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.jpw-learning-controls button { min-height:38px; max-width:100%; white-space:normal; }
+.jpw-learning-coach { position:fixed; z-index:12000; box-sizing:border-box; width:360px; max-width:calc(100vw - 24px); overflow:auto; overscroll-behavior:contain; border:2px solid var(--violet); border-radius:14px; padding:14px; background:var(--panel); color:var(--ink); box-shadow:0 6px 28px #0004; line-height:1.5; font-size:max(13px,.9rem); }
+.jpw-learning-coach h3 { margin:6px 0; font-size:1.05rem; }
+.jpw-learning-coach p { margin:7px 0; }
+#jpwLearningCount { font-size:.85em; opacity:.8; }
+#jpwLearningExpected { border-left:3px solid var(--violet); padding-left:8px; }
+#jpwLearningStatus,#jpwLearningCenterStatus { font-size:.9em; font-weight:600; }
+.jpw-learning-target { outline:3px solid var(--violet) !important; outline-offset:4px !important; }
+.jpw-learning-coach button:focus-visible,#jpwLearningCenter button:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+@media(max-width:600px) { .jpw-learning-coach { font-size:max(12px,.86rem); padding:12px; } .jpw-learning-controls button { min-height:42px; flex:1 1 110px; } }
+@media(prefers-reduced-motion:reduce) { .jpw-learning-coach,.jpw-learning-target { animation:none !important; transition:none !important; } }
+
+/* Adaptive guide content stays within the original focus owner and natural scroll flow. */
+.jpw-learning-coach[data-learning-layout="flow"] { position:static; width:auto; max-width:100%; max-height:none; margin:12px 0; overflow:visible; flex:none; box-shadow:none; }
+#jpwLearningDetailsSummary { cursor:pointer; padding:8px 0; font-weight:600; line-height:1.4; }
+#jpwLearningDetailsSummary:focus-visible { outline:3px solid currentColor; outline-offset:2px; }
+#jpwLearningDetails > #jpwLearningDetailsBody { max-height:min(220px,40vh); max-height:min(220px,40dvh); overflow:auto; overscroll-behavior:contain; padding:0 2px 4px; }

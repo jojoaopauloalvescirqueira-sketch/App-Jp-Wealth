@@ -79,6 +79,39 @@ const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
 let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
+let navSequence=0;
+const navSubscribers=new Set();
+const navPublicationQueue=[];
+let navPublishing=false;
+
+function navSnapshot(current=navCurrent){
+  return {canonical:current.canonical,requested:current.requested,source:current.source,
+    primary:current.primary,child:current.child,screen:current.screen,
+    localView:current.localView?{...current.localView}:null};
+}
+
+function navSubscribe(listener){
+  if(typeof listener!=='function')return ()=>{};
+  // Cada assinatura possui sua própria identidade, mesmo para a mesma função.
+  const subscription={listener};
+  navSubscribers.add(subscription);
+  return ()=>navSubscribers.delete(subscription);
+}
+
+function navPublishAccepted(){
+  // Captura no aceite; navegações reentrantes aguardam a entrega corrente.
+  navPublicationQueue.push({sequence:++navSequence,current:navSnapshot(),subscribers:[...navSubscribers]});
+  if(navPublishing)return;
+  navPublishing=true;
+  try{
+    while(navPublicationQueue.length){
+      const publication=navPublicationQueue.shift();
+      for(const subscription of publication.subscribers){
+        try{subscription.listener({sequence:publication.sequence,current:navSnapshot(publication.current)});}catch(_){}
+      }
+    }
+  }finally{navPublishing=false;}
+}
 
 function navPublicRoute(route){
   return {id:route.id,label:route.label||null,primary:route.primary,child:route.child||null,screen:route.screen,
@@ -188,6 +221,9 @@ function navApply(plan,target){
   if(plan.action==='motor') JPWForex.executionBoardUI.openTool('motor');
   // A conclusão visual também acompanha o aceite retomado por um guard.
   if(typeof shellNavigationApplied==='function')shellNavigationApplied(plan,target);
+  navPublishAccepted();
+  // Um callback pode tentar outra rota; o resultado deste aceite é próprio.
+  navLastResult={accepted:true,reason:null};
   return true;
 }
 
@@ -270,9 +306,8 @@ window.JPWNavigation=Object.freeze({
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,
-  current:()=>({canonical:navCurrent.canonical,requested:navCurrent.requested,source:navCurrent.source,
-    primary:navCurrent.primary,child:navCurrent.child,screen:navCurrent.screen,
-    localView:navCurrent.localView?{...navCurrent.localView}:null}),
+  current:()=>navSnapshot(),
+  subscribe:navSubscribe,
   focusCurrentScreen:navFocusCurrentScreen
 });
 
