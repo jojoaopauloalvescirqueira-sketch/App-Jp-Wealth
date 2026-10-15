@@ -35,10 +35,18 @@ function harness({ metadata = manifest(), bytes = payload, protocol = 'https:', 
   };
   const context = vm.createContext({ window: { JPW_LEVERAGE_MANIFEST: metadata, JPW_LEVERAGE_FILES: embedded },
     document, el: () => notices, location: { protocol }, Uint8Array, Blob, crypto: webcrypto,
+    downloadAction:()=>({signal:undefined,current:()=>true,done(){}}),
     fetch: async () => { if(onFetch)onFetch({buttons,extraButtons});
       return { ok: true, arrayBuffer: async () => Uint8Array.from(bytes).buffer }; },
     URL: { createObjectURL: () => 'blob:fixture', revokeObjectURL() {} }, setTimeout() {},
     atob: value => Buffer.from(value, 'base64').toString('binary') });
+  const resources={}; for(const [kind,item] of Object.entries(metadata?.downloads||{}))if(item?.available)resources['leverage/'+kind]={...item,mime:'application/zip',payload:'leverage-'+({dailySource:'daily-source',source:'source',compiled:'compiled'}[kind])};
+  context.window.JPW_DOWNLOAD_MANIFEST={resources};
+  context.window.JPWDownloadAssets={async getBytes(id){const kind=id.split('/')[1],item=resources[id];let raw;
+    if(protocol==='file:'){const data=embedded[kind];if(!data||data.mime!=='application/zip')throw new Error('Arquivo incorporado ausente.');raw=Buffer.from(data.base64,'base64');}
+    else{const response=await context.fetch(item.path);raw=Buffer.from(await response.arrayBuffer());}
+    if(raw.length!==item.bytes)throw new Error('Tamanho incorreto');if(sha(raw)!==item.sha256)throw new Error('Hash incorreto');return Uint8Array.from(raw);
+  }};
   vm.runInContext(text.slice(start, end) + '\ninitLeverageDownloads();', context);
   return { buttons, extraButtons, metas, notices, downloads,
     async click(kind, second = false) { const button = (second ? extraButtons : buttons)[kind];
@@ -88,7 +96,7 @@ function harness({ metadata = manifest(), bytes = payload, protocol = 'https:', 
     mime: 'application/zip', base64: Buffer.alloc(payload.length, 120).toString('base64') } } });
   await corrupt.click('dailySource'); assert.deepEqual(corrupt.downloads, []); assert.match(corrupt.notices.textContent, /Hash/);
   for (const embedded of [{}, { dailySource: { mime: 'text/html', base64: payload.toString('base64') } }]) {
-    const h = harness({ protocol: 'file:', embedded }); assert.equal(h.buttons.dailySource.disabled, true);
+    const h = harness({ protocol: 'file:', embedded }); await h.click('dailySource');assert.deepEqual(h.downloads,[]);
   }
   harness({ missingButton: 'dailySource' });
   console.log('PASS daily/source/compiled online; daily offline; corrupt size/hash; legacy and invalid manifests; unsafe records; absent button');

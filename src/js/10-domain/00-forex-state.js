@@ -224,11 +224,17 @@
     catch(error){markJPWealthPersistenceOutcomeUnknown('registro Forex');clearConfirmation();return {ok:false,persistido:null,error:'Gravação indeterminada. Não repita antes de conferir a base.'};}
     if(written===false){restore();clearConfirmation();return {ok:false,persistido:false,error:'Gravação recusada. O registro não foi confirmado; mantenha a entrada para tentar novamente.'};}
     if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno do registro Forex');clearConfirmation();return {ok:false,persistido:null,error:'Resultado de gravação desconhecido. Não repetir.'};}
+  try{window.JPWNotifications?.invalidate('forex','system');}catch(_){}
     return {ok:true,persistido:true};
   }
   // Contexto operacional versionado. Seleção é estado efêmero; nenhum dado de
   // uma conta é copiado para S.phases, S.ledger ou S.activeOperation ao navegar.
   let operationalAccountId=null,operationalPeriodId=null,operationalHold=null;
+  // Presentation invalidation identity only: no schema validation, account
+  // enumeration or context cloning. Never returns the mutable private hold.
+  const operationalSelectionToken=()=>JSON.stringify([operationalAccountId,operationalPeriodId,
+    operationalHold?.epoch,operationalHold?.selection?.accountId,operationalHold?.selection?.periodId,
+    operationalHold?.selection?.reason,operationalHold?.selection?.requiresSelection]);
   const contextEnvelope=f=>f?.accountContexts||{schemaVersion:1,revision:0,accounts:{},archivedAccounts:{},legacy:null};
   function registeredAccount(accountId){
     const matches=(S.accounts||[]).filter(a=>a&&a.forexAccountId===accountId);
@@ -1086,7 +1092,7 @@
   }
   function activateProposal(){return {ok:false,persistido:false,status:'BLOCKED',error:'Ativação exige ato normativo e autoridade verificáveis. A sessão local não os comprova.'};}
   fx.state={empty,read:(target)=>target===undefined?fx.readModel():fx.readModel(target),recordContext,context:recordContext,mutate,migrateLegacy,
-    operationalSelection,selectOperationalAccount,selectOperationalPeriod,selectOperationalContext,withPreservedOperationalContext,archiveRegisteredAccount,
+    operationalSelection,operationalSelectionToken,selectOperationalAccount,selectOperationalPeriod,selectOperationalContext,withPreservedOperationalContext,archiveRegisteredAccount,
     accountProfileContext,createRiskProfileAssignment,validProfileAssignment,validProfileSnapshot,validateAccountProfileExtensions,
     accountContext,recordAccountPeriod,legacyAccountPreview,confirmLegacyAccountSnapshot,
     accountLedger,recordAccountLedger,recordAccountOrders,finalizeAccountOperation,addAccountOrderDraft,deleteAccountOrderDraft,

@@ -1,5 +1,32 @@
 # Central de notificações — NOTIFICATIONS-CENTER-01
 
+## MiniGames — atualização local 2026-10-14
+
+Os avisos visíveis de `[data-galton-storage].is-error` e
+`[data-galton-integrity]:not([hidden])` continuam na fonte `local` e no collector
+existente. A área passa a `system`, o título a **MiniGames** e o destino a
+`galton-board`, que abre o jogo em Ferramentas e Serviços → MiniGames.
+O filtro `visible(node)` continua obrigatório: a coleta não monta o jogo nem
+consulta avisos de uma superfície oculta. As identidades de feedback continuam
+somente em memória. O inventário de 2026-09-14 abaixo conserva seu escopo
+histórico; sua linha Research — Laboratório não define o owner corrente.
+
+## Atualização de eficiência — 2026-10-14
+
+`JPWNotifications.invalidate(...sourceIds)` invalida somente as fontes indicadas:
+`system`, `forex`, `pf`, `alladin`, `calendar` e `local`. Cada fonte conserva um
+cache efêmero próprio; invalidações do mesmo turno são reunidas numa microtask.
+`refresh()` preserva a leitura completa e síncrona. Abrir a central, retornar à
+aplicação e concluir a inicialização atualizam todas as fontes.
+
+Digitação e cliques comuns atualizam sinais locais. Escritores Forex, PF e
+Alladin invalidam a fonte correspondente depois da confirmação de persistência,
+com exceções do observador isoladas do resultado do comando. Calendário,
+cotações, backup e persistência reutilizam seus sinais existentes. Troca de
+estado descarta caches, histórico e marcações da geração anterior. Esses caches
+de apresentação não entram em `S` ou no backup. Contrato e medição em
+[Eficiência da apresentação](APP-EFFICIENCY.md).
+
 ## Finalidade e alcance
 
 Inventário inspecionado em 2026-09-14 sobre a branch

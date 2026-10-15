@@ -18,6 +18,8 @@ O registro usa `updateViaCache: 'none'`, para que as buscas do script e de seus 
 
 `tools/rebuild_monolith.py` gera `build-id.js` a partir de hash reproduzível do HTML (sem a linha gerada), CSS, manifest JavaScript, worker, scripts, os dois manifestos PWA, os wordmarks e as matrizes dos ícones e seus exports opacos de 192 e 512 px, com fundo até as bordas, documentos normativos e próprio gerador declarados. Os ícones e manifestos usam a versão explícita `ICON_CACHE_VERSION` de `sw.js`, incrementada quando os bytes ou o mapeamento da marca mudam. A página carrega o Build ID antes dos scripts do terminal e o worker usa `importScripts`. O identificador não pertence a `S` nem a qualquer backup.
 
+Na atualização de eficiência de 2026-10-14, `build-id.js` conserva somente ID e metadados leves, seguros também no contexto do worker. NoCuda e ZIPs Stoikus são obtidos pelo loader na ação do usuário; seus originais continuam no precache web. Os sidecars gerados para `file://` ficam fora desse precache e da ordem de scripts inicial. No portátil, essas famílias usam JSON inerte incorporado, interpretado sob demanda. O tratamento dos demais documentos abaixo permanece específico de cada documento. Os novos derivados integram a verificação de reprodutibilidade. Ver [contratos de eficiência](APP-EFFICIENCY.md).
+
 ## Cache e offline
 
 O precache é atômico: falha de qualquer recurso crítico remove o cache parcial e impede a instalação. `sw.js` não é precacheado. Caches antigos só são removidos na ativação válida e somente se o nome começar por `jp-wealth-`; caches externos são preservados.

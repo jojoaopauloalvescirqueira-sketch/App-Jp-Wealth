@@ -13,9 +13,102 @@
   const key=(pi,oi)=>pi+':'+oi;
   const period=()=>fx.state.accountContext(fx.state.operationalSelection());
   const current=(pi,oi)=>period().value?.phases?.[pi]?.orders?.[oi];
-  const draftKey=(pi,oi)=>{const s=fx.state.operationalSelection();
+  const draftKey=(pi,oi,selection)=>{const s=selection||fx.state.operationalSelection();
     return [s.accountId||'',s.periodId||'',pi+':'+oi].join('|');};
   const signature=o=>JSON.stringify(o);
+  let tableSnapshot=null,quoteRevision=0,completeView=null,viewObserver=null,viewRoots=null;
+  const geometryFields=['par','entry','sl','tp'];
+  function snapshotToken(selection){
+    const forex=S.forex,envelope=forex?.accountContexts;
+    const value=envelope?.accounts?.[selection.accountId]?.periods?.[selection.periodId];
+    return [S,forex,envelope,value,S.instruments,S.accounts,forex?.dailyReferences,selection.accountId,selection.periodId,
+      fx.state.operationalSelectionToken(),envelope?.accounts?.[selection.accountId]?.currentPeriodId,
+      value?.revision,envelope?.revision,forex?.dailyReferences?.revision,forex?.schemaVersion,forex?.policyVersion,
+      forex?.instrumentContexts,forex?.instrumentContexts?.revision,forex?.executionDiagnostics,forex?.executionDiagnostics?.revision,jpWealthPersistenceEpoch(),
+      jpWealthLastPersistedRawGet(),quoteRevision,jpWealthPersistenceOutcomeIsUnknown()];
+  }
+  // This certificate belongs only to a completed mounted presentation. The
+  // table editor snapshot can be refreshed independently and is never proof
+  // that capital, risk, instruments, records and status were all painted.
+  function completeToken(selection){
+    const f=S.forex,p=f?.accountContexts?.accounts?.[selection.accountId]?.periods?.[selection.periodId];
+    const history=S.operationHistory,legacy=S.activeOperation;
+    const token=[...snapshotToken(selection),sessionEpochRead(),root.JP_WEALTH_SESSION_WIPE_EPOCH,
+      fx.state.supported(),S.phases,S.ledger,legacy,legacy?.recordContext,legacy?.operationId,legacy?.revision,
+      history,history?.schemaVersion,history?.revision,history?.records,history?.records?.length,
+      S.quarantine,S.quarantine?.releasedAt,S.profiles,S.params,S.onboarding,
+      f?.accounts,f?.accounts?.[selection.accountId],f?.h4Closes,f?.auditLog,f?.proposals,f?.operationBudgets,f?.market,f?.grid,f?.reserves,f?.migration,
+      f?.accountContexts?.accounts,f?.accountContexts?.archivedAccounts,f?.accountContexts?.legacy,
+      p?.phases,p?.activeOperation,p?.grid,p?.reserves,p?.ledger,p?.ledger?.length,p?.riskProfileSnapshot];
+    // Confirmed writes invalidate through raw/epoch/revisions. These cheap
+    // identities and primitive inputs also detect RAM replacements and quote
+    // updates without reading or cloning the financial projection on entry.
+    for(const account of S.accounts||[])token.push(account,account?.forexAccountId,account?.nome,account?.tipo,
+      account?.platformCurrency,account?.platform,account?.platformLogin,account?.broker,account?.perfil,
+      account?.riskProfileAssignment,account?.riskProfileAssignment?.revision);
+    for(const instrument of S.instruments||[])token.push(instrument,instrument?.name,instrument?.preco,
+      instrument?.cpl,instrument?.updated,instrument?.banned,instrument?.unlocked,instrument?.banReason);
+    return token;
+  }
+  const sameToken=(a,b)=>a.length===b.length&&a.every((value,index)=>value===b[index]);
+  function presentationRoots(){return [el('executionBoard'),el('execWidgetGrid')];}
+  function exposedPresentation(){
+    return root.execGetView?.()==='panel'&&el('exec')?.classList.contains('active')&&
+      presentationRoots().every(node=>node&&!node.closest('[hidden],[inert],[aria-hidden="true"]')&&node.getClientRects().length>0);
+  }
+  function presentationChanged(records){
+    return records.some(record=>{
+      // Resize/disclosure controls sometimes assign an identical textContent.
+      // Replacing that text node changes neither the mounted controls nor UI.
+      const before=record.removedNodes,after=record.addedNodes;
+      return !(record.type==='childList'&&before.length===1&&after.length===1&&
+        before[0].nodeType===Node.TEXT_NODE&&after[0].nodeType===Node.TEXT_NODE&&before[0].data===after[0].data);
+    });
+  }
+  function observePresentation(){
+    const roots=presentationRoots();
+    if(viewRoots&&roots.every((node,index)=>node===viewRoots[index]))return;
+    viewObserver?.disconnect();completeView=null;viewRoots=roots;
+    viewObserver=new MutationObserver(records=>{if(presentationChanged(records))completeView=null;});
+    // Navigation toggles hidden/inert. Content changes, including replacement
+    // of a connected descendant, invalidate the mounted presentation instead.
+    for(const node of roots)if(node)viewObserver.observe(node,{childList:true,characterData:true,subtree:true});
+  }
+  function reusePresentation(){
+    syncEpoch();
+    if(!completeView||jpWealthPersistenceOutcomeIsUnknown()||!exposedPresentation())return false;
+    if(!presentationRoots().every((node,index)=>node===completeView.roots[index])||presentationChanged(viewObserver.takeRecords())){
+      completeView=null;return false;
+    }
+    return sameToken(completeView.token,completeToken(completeView.selection));
+  }
+  function captureTableSnapshot(m,context){
+    const selection=fx.state.operationalSelection(),token=snapshotToken(selection),previous=tableSnapshot;
+    const equivalent=previous&&!token.some((value,index)=>value!==previous.token[index]);
+    const instruments=new Map((m.instruments||[]).map(i=>[i.id,i]));
+    // Fresh projections may change diagnostic freshness without a saved write.
+    // Compare only prepared inputs consumed by geometry, once per instrument;
+    // the input handler never serializes an instrument or validates the domain.
+    const instrumentSignatures=new Map([...instruments].map(([id,i])=>[id,
+      signature({id:i.id,atr:i.atr,rootN:i.rootN,status:i.status,findings:i.findings})]));
+    const orders=new Map(),rows=new Map((m.displayRows||m.rows||[]).map(row=>[key(row.pi,row.oi),row]));
+    for(const [pi,phase] of (context.value?.phases||[]).entries())for(const [oi,order] of (phase.orders||[]).entries()){
+      const id=key(pi,oi),before=signature(order),old=equivalent?previous.orders.get(id):null;
+      const reuse=old&&old.before===before&&
+        previous.instrumentSignatures.get(old.previewInstrumentId)===instrumentSignatures.get(old.previewInstrumentId);
+      orders.set(id,{order,before,row:rows.get(id),node:old?.node,
+        geometryKey:reuse?old.geometryKey:null,preview:reuse?old.preview:null,
+        previewInstrumentId:reuse?old.previewInstrumentId:null});
+    }
+    tableSnapshot={token,selection,model:m,context,orders,instruments,instrumentSignatures,supported:fx.state.supported()};
+    return tableSnapshot;
+  }
+  function editingSnapshot(){
+    syncEpoch();const token=tableSnapshot?snapshotToken(tableSnapshot.selection):null;
+    if(!tableSnapshot||token.some((value,index)=>value!==tableSnapshot.token[index]))
+      return captureTableSnapshot(model(),period());
+    return tableSnapshot;
+  }
   function declaredDate(value){
     const text=String(value||''),match=text.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}:\d{2})(:\d{2})?(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?$/);
     if(!match)return text;
@@ -40,17 +133,22 @@
   const scaledWidth=width=>`calc(${width}px * var(--fs-scale, 1))`;
   const workbookStyle=()=>`--eb-workbook-width:${scaledWidth(workbookWidths.reduce((a,b)=>a+b,0))};--eb-id-width:${scaledWidth(workbookWidths[0])};--eb-instrument-width:${scaledWidth(workbookWidths[1])};--eb-sticky-width:${scaledWidth(workbookWidths[0]+workbookWidths[1])}`;
   const measuredWidths=new WeakMap();
-  let measureFrame=0,measureCanvas=null;
+  let measureFrame=0,measureCanvas=null,measureAll=true;
+  const dirtyMeasureRows=new Set();
   function sizeWorkbookColumns(){
     measureFrame=0;
     const table=el('ebOrderScroll')?.querySelector('.eb-workbook-table');if(!table)return;
     const scroll=table.parentElement,scale=parseFloat(getComputedStyle(scroll).getPropertyValue('--fs-scale'))||1;
-    const widths=measuredWidths.get(table)||workbookWidths.slice();
+    const previous=measuredWidths.get(table),fontToken=[scale,devicePixelRatio,getComputedStyle(scroll).font,document.documentElement.dataset.fs].join('|');
+    const full=measureAll||!previous||previous.fontToken!==fontToken;
+    const widths=full?workbookWidths.slice():previous.widths;
+    const rows=full?table.querySelectorAll('.eb-order-row'):[...dirtyMeasureRows].filter(row=>row.isConnected&&table.contains(row));
+    measureAll=false;dirtyMeasureRows.clear();
     if(!measureCanvas)measureCanvas=document.createElement('canvas');
     const context=measureCanvas.getContext('2d');if(!context)return;
     // This reads displayed strings only. Grow columns to show complete values;
     // do not shrink/recreate editors while typing or repainting a quote.
-    for(const row of table.querySelectorAll('.eb-order-row'))for(const cell of row.cells){
+    for(const row of rows)for(const cell of row.cells){
       const index=cell.cellIndex,control=cell.querySelector('input,select'),value=cell.querySelector('[data-eb-calc]');
       if(!control&&!value)continue;
       const node=control||value,style=getComputedStyle(node),cellStyle=getComputedStyle(cell);
@@ -60,7 +158,7 @@
       const inputSpace=control?(parseFloat(style.paddingLeft)||0)+(parseFloat(style.paddingRight)||0)+4+(control.tagName==='SELECT'?22:0):0;
       widths[index]=Math.max(widths[index],Math.ceil((context.measureText(text||'').width+padding+inputSpace)/scale));
     }
-    measuredWidths.set(table,widths);
+    measuredWidths.set(table,{widths,fontToken});
     [...table.querySelectorAll('col')].forEach((col,index)=>{col.style.width=scaledWidth(widths[index]);});
     scroll.style.setProperty('--eb-workbook-width',scaledWidth(widths.reduce((a,b)=>a+b,0)));
     scroll.style.setProperty('--eb-id-width',scaledWidth(widths[0]));
@@ -70,10 +168,11 @@
     // Decide after measurement in one place; grow-only widths prevent a loop
     // when the list switches to its larger font. The controls stay mounted.
     const available=scroll.clientWidth;
-    if(available>0)el('execPhaseGridsCard')?.classList.toggle('eb-narrow',
-      available<768||available-(widths[0]+widths[1])*scale<320);
+    const card=el('execPhaseGridsCard'),narrow=available<768||available-(widths[0]+widths[1])*scale<320;
+    if(available>0&&card&&card.classList.contains('eb-narrow')!==narrow){card.classList.toggle('eb-narrow',narrow);queueWorkbookSizing();}
   }
-  function queueWorkbookSizing(){if(!measureFrame)measureFrame=root.requestAnimationFrame(sizeWorkbookColumns);}
+  function queueWorkbookSizing(row){if(row)dirtyMeasureRows.add(row);else measureAll=true;
+    if(!measureFrame)measureFrame=root.requestAnimationFrame(sizeWorkbookColumns);}
   function visibleOrders(phase,pi){
     return (phase.orders||[]).map((order,oi)=>({order,oi})).filter(({order:o,oi})=>
       drafts.has(draftKey(pi,oi))||!!o.recordStatus||!!o.orderId||
@@ -83,8 +182,9 @@
   }
   function syncEpoch(){
     const next=jpWealthPersistenceEpoch();
+    if(next!==epoch)completeView=null;
     if(next!==epoch&&!jpWealthPersistenceOutcomeIsUnknown()){
-      drafts.clear();expanded.clear();expandedPhases.clear();instrumentChoice=null;tableSignature=null;
+      drafts.clear();expanded.clear();expandedPhases.clear();instrumentChoice=null;tableSignature=null;tableSnapshot=null;
       observationDirty=false;if(dialog?.open)dialog.close();
     }
     epoch=next;
@@ -157,15 +257,19 @@
     for(const id of ['execClearanceCard','execConsolidadoCard','execLifoMonitor','execPhaseGridsCard']){
       const card=el(id);if(card)grid.append(card);
     }
+    let workbookAvailableWidth=0;
     const sizeWorkbook=width=>{
       if(!phaseCard||!num(width)||width<=0)return;
       phaseCard.style.setProperty('--eb-detail-width',width+'px');
-      queueWorkbookSizing();
+      if(width!==workbookAvailableWidth){workbookAvailableWidth=width;queueWorkbookSizing();}
     };
     if(phaseCard){
       sizeWorkbook(phaseCard.clientWidth-parseFloat(getComputedStyle(phaseCard).paddingLeft)-parseFloat(getComputedStyle(phaseCard).paddingRight));
       if(typeof ResizeObserver==='function')new ResizeObserver(entries=>sizeWorkbook(entries[0]?.contentRect?.width)).observe(phaseCard);
     }
+    root.addEventListener('resize',()=>queueWorkbookSizing());
+    document.fonts?.addEventListener('loadingdone',()=>queueWorkbookSizing());
+    new MutationObserver(()=>queueWorkbookSizing()).observe(document.documentElement,{attributes:true,attributeFilter:['data-fs','style']});
     grid.addEventListener('click',onClick);
     el('ebOperationRecords')?.addEventListener('change',event=>{
       if(event.target.id==='ebRecordsOperation'){recordsChoice=event.target.value;renderOperationRecords(recordsProjection);}
@@ -177,9 +281,14 @@
       if(node.matches?.('details[data-eb-detail]'))syncDetail(node);
     },true);
   }
-  function render(){
+  function render(options={}){
     if(!fx.executionBoard||typeof S==='undefined'||!S)return;
-    prepareShell();const m=model();
+    if(options.reuseOnNavigation===true&&reusePresentation())return;
+    // Invalidate before any fallible painter; partial or failed refreshes must
+    // never leave an older complete presentation eligible for reuse.
+    completeView=null;syncEpoch();
+    const selection=fx.state.operationalSelection(),token=completeToken(selection);
+    prepareShell();observePresentation();const m=model();
     el('ebOperationIdentity').textContent=m.scope?.operationId?`Operação em andamento · ${m.scope.currency||'moeda não identificada'}`:
       (m.scope?.periodId?'Nova operação neste período.':'Escolha o contexto em Contas e Período.');
     el('ebOperationIdentity').title=[m.scope?.operationId&&'Operação: '+m.scope.operationId,m.scope?.periodId&&'Período: '+m.scope.periodId].filter(Boolean).join(' · ');
@@ -201,6 +310,10 @@
     for(const button of el('execWidgetGrid').querySelectorAll('[data-addorder],[data-eb-save-row],[data-eb-observation],[data-eb-diagnostics],[data-eb-update-quotes],[data-eb-retry-quotes],[data-eb-manage]'))if(!supported)button.disabled=true;
     if(el('exec')?.classList.contains('active')&&typeof renderHeaderReadout==='function')
       renderHeaderReadout(compute());
+    const currentToken=completeToken(selection);
+    viewObserver.takeRecords();
+    if(!jpWealthPersistenceOutcomeIsUnknown()&&exposedPresentation()&&sameToken(token,currentToken))
+      completeView={selection,token:currentToken,roots:presentationRoots()};
   }
   const recordLabels={OPERATION_CREATED:'Operação registrada',ORDER_RECORDED:'Ordem registrada',ORDER_REVISED:'Revisão salva',
     ORDER_CLOSED:'Encerramento da ordem registrado',ORDER_VOIDED:'Ordem anulada',OPERATION_CLOSED:'Operação finalizada'};
@@ -429,32 +542,47 @@
       return '<tr>'+values.map(v=>'<td>'+esc(v??'—')+'</td>').join('')+'</tr>';
     })).join('')+'</tbody></table></div></details>';
   }
-  function updateRowCalculations(m,pi,oi){
-    const row=(m.displayRows||m.rows||[]).find(r=>r.pi===pi&&r.oi===oi),node=el('phaseContainer')?.querySelector(`[data-eb-row="${key(pi,oi)}"]`);
-    if(!node)return;
-    const draft=drafts.get(draftKey(pi,oi)),o={...current(pi,oi)};
+  function updateRowCalculations(m,pi,oi,snapshot=tableSnapshot,forceMeasure=false){
+    const cached=snapshot?.orders.get(key(pi,oi)),row=cached?.row,
+      node=cached?.node?.isConnected?cached.node:el('phaseContainer')?.querySelector(`[data-eb-row="${key(pi,oi)}"]`);
+    if(!node||!cached)return;
+    cached.node=node;let sizingDirty=forceMeasure;
+    const draft=drafts.get(draftKey(pi,oi,snapshot.selection)),o={...cached.order};
     if(draft)for(const [f,v] of Object.entries(draft.values))o[f]=numericFields.has(f)?String(v).trim()===''?null:orderParseResult(v):v;
-    const instrument=m.instruments?.find(i=>i.id===root.instrumentId(o.par));
-    const preview=draft&&fx.executionBoard.previewOrder?fx.executionBoard.previewOrder(o,instrument):row;
+    const geometryKey=signature(geometryFields.map(f=>o[f]));
+    const geometryChanged=geometryFields.some(f=>o[f]!==cached.order[f]);
+    let preview=row;
+    if(draft&&geometryChanged&&fx.executionBoard.previewOrder){
+      if(cached.geometryKey!==geometryKey){cached.geometryKey=geometryKey;cached.previewInstrumentId=root.instrumentId(o.par);
+        cached.preview=fx.executionBoard.previewOrder(o,snapshot.instruments.get(cached.previewInstrumentId));}
+      preview=cached.preview;
+    }
     const geometry=preview?.geometry||{},risk=row?.operationalRisk;
     const percentage=x=>({value:x?.percent,unit:'PERCENT',reason:reason(x)});
     const cells={...geometry,atrMultiple:preview?.atrMultiple,rootOne:percentage(preview?.rootN?.oneWeek),rootTwo:percentage(preview?.rootN?.twoWeeks),riskValue:risk,riskPercent:percentage(risk)};
     for(const cell of node.querySelectorAll('[data-eb-calc]')){
-      const value=cells[cell.dataset.ebCalc];cell.textContent=num(value?.value)?format(value):'—';
-      cell.title=num(value?.value)?(draft&&!cell.dataset.ebCalc.startsWith('risk')?'Prévia não salva':'Registro confirmado'):reason(value);
+      const value=cells[cell.dataset.ebCalc],text=num(value?.value)?format(value):'—';
+      if(cell.textContent!==text){cell.textContent=text;sizingDirty=true;}
+      const title=num(value?.value)?(draft&&!cell.dataset.ebCalc.startsWith('risk')?'Prévia não salva':'Registro confirmado'):reason(value);
+      if(cell.title!==title)cell.title=title;
     }
-    const saved=current(pi,oi),readonly=saved?.recordStatus==='voided'||!fx.state.supported();
+    const saved=cached.order,readonly=saved?.recordStatus==='voided'||!snapshot.supported;
     const status=draft?'Não salvo':saved?.recordStatus==='voided'?'Anulada':readonly?'Somente leitura':'';
-    const badge=node.querySelector('[data-eb-preview]');if(badge){badge.textContent=status;badge.hidden=!status;}
+    const badge=node.querySelector('[data-eb-preview]');if(badge){
+      if(badge.textContent!==status){badge.textContent=status;sizingDirty=true;}
+      if(badge.hidden!==!status){badge.hidden=!status;sizingDirty=true;}
+    }
     node.classList.toggle('eb-dirty',!!draft);
     for(const button of node.querySelectorAll('[data-eb-save-row],[data-eb-cancel-row]'))button.disabled=readonly||!draft;
     const feedback=el(`ebError-${pi}-${oi}`);if(feedback){feedback.textContent=draft?.error||'';feedback.hidden=!draft?.error;}
-    queueWorkbookSizing();
+    if(sizingDirty)queueWorkbookSizing(node);
   }
   function renderPhases(m){
+    completeView=null;
     if(!fx.executionBoard)return;
     m=m||model();const container=el('phaseContainer');if(!container)return;
-    const recordedPhases=period().value?.phases||[],hasContext=recordedPhases.length>0;
+    const context=period(),snapshot=captureTableSnapshot(m,context);
+    const recordedPhases=context.value?.phases||[],hasContext=recordedPhases.length>0;
     const phaseList=hasContext?recordedPhases:fx.policy.phases.map(p=>({faseNome:p.name,orders:[]}));
     const phaseNames=phaseList.map((p,pi)=>recordedPhases.length===4||p.policyVersion==='LEGACY_UNRESOLVED'?
       m.phases?.find(x=>x.index===pi)?.name||'LEGACY '+(pi+1):fx.policy.phases[pi]?.name||p.faseNome);
@@ -466,7 +594,7 @@
       const focus=document.activeElement,focusKey=focus?.dataset?.f?{p:focus.dataset.p,o:focus.dataset.o,f:focus.dataset.f,start:focus.selectionStart,end:focus.selectionEnd}:null;
       const scroll=el('ebOrderScroll'),scrollPosition=scroll?{left:scroll.scrollLeft,top:scroll.scrollTop}:null;
       container.innerHTML=`${!hasContext?'<div class="eb-setup-prompt"><h3>Prepare a conta para registrar suas ordens</h3><p>Confirme conta, período, moeda e capital inicial (SI). O saldo do relatório não substitui o SI.</p><button type="button" data-eb-manage>Gerenciar em Contas e Período</button></div>':''}<p class="eb-context-line">${recordedPhases.length===4?'Grades LEGACY preservadas; os quatro índices não correspondem às seis fases V11.':'Fase de registro da ordem e fase da conta são informações distintas.'} Totais e risco usam a versão salva.</p><details class="eb-table-help"><summary>Como preencher a grade</summary><p>Tab e Shift+Tab percorrem os campos. Diagnósticos recalculam a prévia em memória; risco e totais conservam a versão salva. Informe ID e HASH para novas ordens executadas; pendentes podem aguardar o HASH. Salvar linha confirma explicitamente os fatos. Enter nos campos não salva.</p><p>Distâncias SL/TP são unidades de preço. SL %, TP % e Raiz N % usam a entrada da linha. Custos separados são assinados: despesas negativas e créditos positivos. Correções exigem motivo; o encerramento usa Fechar ordem nos detalhes.</p></details><div id="ebOrderScroll" class="eb-table-scroll eb-workbook-scroll" style="${workbookStyle()}" tabindex="0" role="region" aria-label="Execution Board · ordens de todas as fases"><table class="otable eb-order-table eb-workbook-table"><colgroup>${workbookWidths.map((width,index)=>`<col class="eb-column-${index}" style="width:${scaledWidth(width)}">`).join('')}</colgroup><thead><tr class="eb-column-groups"><th colspan="4" scope="colgroup">Identificação</th><th colspan="4" scope="colgroup">Execução</th><th colspan="8" scope="colgroup">Diagnósticos · prévia ao editar</th><th colspan="2" scope="colgroup">Risco · versão salva</th><th colspan="2" scope="colgroup">Acompanhamento</th></tr><tr class="eb-column-labels">${workbookColumns.map(t=>'<th scope="col">'+esc(t)+'</th>').join('')}</tr></thead>${phaseList.map((p,pi)=>`<tbody class="eb-phase-group"><tr class="eb-phase-row" data-phase="${pi}" id="ebPhase-${pi}" tabindex="-1"><th colspan="20" scope="rowgroup"><div class="eb-phase-anchor"><div class="eb-phase-label"><strong>${esc(phaseNames[pi])}</strong><span>${visibleOrders(p,pi).length} ${visibleOrders(p,pi).length===1?'ordem':'ordens'}${!hasContext?' · aguardando contexto':''}</span>${hasContext?`<button type="button" class="reset-btn" data-eb-phase-diagnostics="${pi}" aria-expanded="${expandedPhases.has(pi)}" aria-controls="ebPhaseDiagnostics-${pi}" aria-label="Diagnósticos da fase ${esc(phaseNames[pi])}">Diagnósticos</button><button type="button" class="reset-btn" data-addorder="${pi}" aria-label="Adicionar ordem na fase ${esc(phaseNames[pi])}">+ Ordem</button>`:''}</div><div id="ebPhaseDiagnostics-${pi}" class="eb-phase-diagnostics" ${expandedPhases.has(pi)?'':'hidden'}></div></div></th></tr>${visibleOrders(p,pi).map(({order:o,oi})=>rowHTML(pi,oi,o)).join('')}</tbody>`).join('')}</table></div><div id="ebAuditHost"></div><details class="eb-phase-consolidation"><summary>Consolidação por fase · registros confirmados</summary><div id="ebPhaseSummary" class="eb-table-scroll"></div></details>`;
-      tableSignature=next;
+      tableSignature=next;queueWorkbookSizing();
       if(scrollPosition){el('ebOrderScroll').scrollLeft=scrollPosition.left;el('ebOrderScroll').scrollTop=scrollPosition.top;}
       if(focusKey){const target=container.querySelector(`[data-p="${focusKey.p}"][data-o="${focusKey.o}"][data-f="${focusKey.f}"]`);target?.focus();if(target?.setSelectionRange&&focusKey.start!=null)target.setSelectionRange(focusKey.start,focusKey.end);}
     }
@@ -476,26 +604,28 @@
       const instruments=(phase.instruments||[]).map(i=>m.instruments.find(x=>x.id===i.id)).filter(Boolean);
       updateHTML('ebPhaseDiagnostics-'+phase.index,`<div class="eb-metrics">${metric('Lucro Técnico',phase.technicalProfit)}${metric('Margem normativa',phase.freeNormativeMargin)}${instruments.map(i=>metric('VRM · '+i.name,i.vrm)+metric('Stop mínimo · '+i.name,i.minimumStop)).join('')}</div><p>Dados por instrumento; sem VRM médio artificial. Compensação econômica não é reposição normativa de margem.</p>`);
     }
-    for(const [pi,p] of phaseList.entries())for(const [oi] of (p.orders||[]).entries())updateRowCalculations(m,pi,oi);
+    for(const [pi,p] of phaseList.entries())for(const [oi] of (p.orders||[]).entries())updateRowCalculations(m,pi,oi,snapshot);
   }
-  function getDraft(pi,oi){
-    syncEpoch();const k=draftKey(pi,oi);if(!drafts.has(k)){const o=current(pi,oi),ctx=period();
-      drafts.set(k,{before:signature(o),orderId:o?.orderId,version:o?.recordVersion,
+  function getDraft(pi,oi,snapshot=editingSnapshot()){
+    const k=draftKey(pi,oi,snapshot.selection);if(!drafts.has(k)){const cached=snapshot.orders.get(key(pi,oi)),o=cached?.order,ctx=snapshot.context;
+      drafts.set(k,{before:cached?.before,orderId:o?.orderId,version:o?.recordVersion,
         operationId:ctx.value?.activeOperation?.operationId||null,contextRevision:ctx.revision,
         values:{},reason:'',error:''});}return drafts.get(k);
   }
   function onInput(event){
     const target=event.target;
+    if(!target.matches('[data-eb-reason],[data-f]'))return;
+    const snapshot=editingSnapshot();
     if(target.matches('[data-eb-reason]')){
-      const [pi,oi]=target.dataset.ebReason.split(':').map(Number),draft=getDraft(pi,oi);
+      const [pi,oi]=target.dataset.ebReason.split(':').map(Number),draft=getDraft(pi,oi,snapshot);
       draft.reason=target.value;draft.error='';target.removeAttribute('aria-invalid');
-      updateRowCalculations(model(),pi,oi);return;
+      updateRowCalculations(snapshot.model,pi,oi,snapshot,true);return;
     }
     if(!target.matches('[data-f]'))return;
-    const pi=+target.dataset.p,oi=+target.dataset.o,f=target.dataset.f,d=getDraft(pi,oi);
+    const pi=+target.dataset.p,oi=+target.dataset.o,f=target.dataset.f,d=getDraft(pi,oi,snapshot);
     d.values[f]=target.type==='checkbox'?target.checked:target.value;d.error='';target.removeAttribute('aria-invalid');
     if(target.tagName==='SELECT')target.title=target.selectedOptions[0]?.textContent||'';
-    updateRowCalculations(model(),pi,oi);
+    updateRowCalculations(snapshot.model,pi,oi,snapshot,true);
   }
   function rowError(pi,oi,text,fieldName){
     const d=getDraft(pi,oi);d.error=text;expanded.add(key(pi,oi));
@@ -679,6 +809,7 @@
     }
   }
   root.addEventListener('jpwealth:forex-quotes',()=>{
+    quoteRevision++;tableSnapshot=null;completeView=null;
     const state=fx.marketQuotes.get();
     for(const id of ['fxFetchStatus','ebQuoteStatus']){const node=el(id);if(node)node.textContent=state.message;}
     for(const button of document.querySelectorAll('[data-eb-update-quotes],#fxUpdateBtn'))button.disabled=state.busy;
@@ -687,7 +818,7 @@
   root.addEventListener('beforeunload',event=>{if(hasDrafts()){event.preventDefault();event.returnValue='';}});
   fx.executionBoardUI={render,renderPhases,hasDrafts,openTool,
     backupDrafts:()=>hasDrafts()?{rows:[...drafts.entries()],observation:observationDirty&&el('ebObservationForm')?Object.fromEntries(new FormData(el('ebObservationForm'))):null,diagnostics:observationDirty&&el('ebDiagnosticForm')?Object.fromEntries(new FormData(el('ebDiagnosticForm'))):null,instrumentId:instrumentChoice,selection:fx.state.operationalSelection(),baseReference:signature(period().value)}:null,saveRow,cancelRow,requestLeave,guardNavigation,
-    discard(){drafts.clear();expanded.clear();expandedPhases.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
+    discard(){completeView=null;tableSnapshot=null;drafts.clear();expanded.clear();expandedPhases.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
     getSelection:()=>({accountId:fx.state.operationalSelection().accountId,instrumentId:instrumentChoice})};
   window.JPWWorkspaceDrafts.registerRestorer('execution-board',{
     inspect(item){

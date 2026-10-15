@@ -8,6 +8,8 @@
   const names={system:'Sistema',forex:'Forex',pf:'Finanças Pessoais',alladin:'Alladin',research:'Research',notes:'Notas'};
   const rank={critical:0,warning:1,info:2};
   const live=new Map(), history=[], seen=new Map();
+  const caches=new Map(), dirty=new Set();
+  const sources={system:collectSystem,forex:collectForex,pf:collectPersonalFinance,alladin:collectAlladin,calendar:collectCalendar,local:collectLocal};
   let stateRef=S, serial=0, scheduled=false, rendering=false, paused=false, lastView='', returnFocus=true;
   let focusOpener=null;
   const text=value=>typeof value==='string'?value:'';
@@ -29,7 +31,8 @@
   }
   function currentGeneration(){
     if(stateRef===S) return;
-    stateRef=S; live.clear(); history.length=0; seen.clear(); lastView='';
+    stateRef=S; live.clear(); caches.clear(); history.length=0; seen.clear(); lastView='';
+    Object.keys(sources).forEach(id=>dirty.add(id));
   }
   function record(message,contextArea='system'){
     currentGeneration();
@@ -44,7 +47,7 @@
     history.unshift({id:'activity:'+ ++serial,area:'system',contextArea,kind:'event',severity:'info',
       title:'Mensagem do aplicativo',body,at:now,revision:String(serial),go:null});
     if(history.length>80){ const old=history.pop(); seen.delete(old.id); }
-    schedule();
+    invalidate('local');
   }
   function add(next,id,area,severity,title,body,go,revision){
     next.set(id,{id,area,kind:'live',severity,title,body,go,revision:revision||severity+'|'+title+'|'+body});
@@ -177,7 +180,7 @@
     ['#alladinModalBox .session-error,#alladinModalBox .session-warning','alladin','Formulário Alladin',null],
     ['#fbAllocExceeds','pf','Destinações do mês','pf-monthly'],
     ['#dgStorageCard .dg-status-warn,#dgActNote','system','Pasta de exportação','backup'],
-    ['[data-galton-storage].is-error,[data-galton-integrity]:not([hidden])','research','Laboratório','probability-lab']
+    ['[data-galton-storage].is-error,[data-galton-integrity]:not([hidden])','system','MiniGames','galton-board']
   ];
   function collectLocal(next){
     const localErrors=new Set();
@@ -209,21 +212,30 @@
     if(typeof mvpNotesUI==='object' && mvpNotesUI.draftDirty)
       add(next,'notes:draft','notes','info','Nota com alterações não salvas','O conteúdo permanece no editor desta sessão.','notes');
   }
-  function refresh(){
-    if(rendering) return;
+  function refreshSources(){
+    if(rendering || paused)return;
     currentGeneration();
-    const next=new Map();
-    // Separate adapters: failure never causes an empty healthy area nor stops
-    // the other producers. No exception text containing domain data is copied.
-    for(const [area,collect] of [['system',collectSystem],['forex',collectForex],['pf',collectPersonalFinance],
-      ['alladin',collectAlladin],['research',collectCalendar],['system',collectLocal]]){
-      try{ collect(next); }
-      catch(_){ add(next,'unavailable:'+collect.name,area,'warning','Avisos desta área indisponíveis',
-        'Não foi possível consultar esta fonte. Abra a área para conferir o estado.','area:'+area); }
+    if(!dirty.size)return;
+    const pending=[...dirty];dirty.clear();
+    for(const id of pending){
+      const next=new Map(),collect=sources[id];
+      try{collect(next);}
+      catch(_){const area=id==='calendar'?'research':id==='local'?'system':id;
+        add(next,'unavailable:'+collect.name,area,'warning','Avisos desta área indisponíveis',
+        'Não foi possível consultar esta fonte. Abra a área para conferir o estado.',id==='calendar'?'research-forex':'area:'+area);}
+      caches.set(id,next);
     }
-    for(const key of live.keys()) if(!next.has(key)) seen.delete(key);
-    live.clear(); next.forEach((item,key)=>live.set(key,item));
-    paint();
+    const next=new Map();for(const cache of caches.values())cache.forEach((item,key)=>next.set(key,item));
+    for(const key of live.keys())if(!next.has(key))seen.delete(key);
+    live.clear();next.forEach((item,key)=>live.set(key,item));paint();
+  }
+  function refresh(){
+    Object.keys(sources).forEach(id=>dirty.add(id));refreshSources();
+  }
+  function invalidate(...ids){
+    currentGeneration();
+    for(const id of ids)if(sources[id])dirty.add(id);
+    schedule();
   }
   function entries(){ return [...live.values(),...history].sort((a,b)=>
     rank[a.severity]-rank[b.severity] || (a.kind===b.kind?0:a.kind==='live'?-1:1) ||
@@ -287,7 +299,7 @@
   function schedule(){
     if(paused || scheduled) return;
     scheduled=true;
-    queueMicrotask(()=>{scheduled=false;refresh();});
+    queueMicrotask(()=>{scheduled=false;refreshSources();});
   }
   function open(){
     const dialog=el('notificationCenter');
@@ -339,7 +351,7 @@
     }
     if(JPWNavigation.navigate(target))JPWNavigation.focusCurrentScreen();
   }
-  window.JPWNotifications=Object.freeze({open,close,refresh});
+  window.JPWNotifications=Object.freeze({open,close,refresh,invalidate});
   // Bridges are installed once and keep original behavior even if the optional
   // centre cannot render. They do not replace blocking decisions.
   const nativeAlert=window.alert;
@@ -351,7 +363,9 @@
     const original=window[name];if(typeof original!=='function')continue;
     window[name]=function(...args){
       const result=original.apply(this,args);
-      try{if(name==='showSessionNotice')record(args[0],currentArea());schedule();}catch(_){}
+      try{if(name==='showSessionNotice')record(args[0],currentArea());
+        else if(name==='ffNewsRender')invalidate('calendar');
+        else invalidate('forex','system');}catch(_){}
       return result;
     };
   }
@@ -388,24 +402,28 @@
   const selector=localSources.map(row=>row[0]).join(',')+',#persistenceAlert,#persistenceRecovery,#settingsProfileStatus,#mvpNotesEditorBar';
   const observer=new MutationObserver(records=>{
     if(rendering)return;
-    if(records.some(record=>{
+    for(const record of records){
       const node=record.target.nodeType===1?record.target:record.target.parentElement;
-      if(!node||node.closest('#notificationCenter,#headerNotificationsBtn'))return false;
-      if(record.attributeName==='aria-invalid')return true;
-      return !!node.closest(selector) || [...record.addedNodes].some(n=>n.nodeType===1 && (n.matches(selector)||n.querySelector(selector)));
-    }))schedule();
+      if(!node||node.closest('#notificationCenter,#headerNotificationsBtn'))continue;
+      const added=[...record.addedNodes].filter(n=>n.nodeType===1);
+      const systemSelector='#persistenceAlert,#persistenceRecovery,#settingsProfileStatus';
+      if(node.closest(systemSelector)||added.some(n=>n.matches(systemSelector)||n.querySelector(systemSelector)))invalidate('system','local');
+      else if(record.attributeName==='aria-invalid'||node.closest(selector)||added.some(n=>n.matches(selector)||n.querySelector(selector)))invalidate('local');
+    }
   });
   observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,
     attributeFilter:['aria-invalid','data-state','data-dirty','hidden','class']});
-  document.addEventListener('input',schedule);
-  document.addEventListener('change',schedule);
-  document.addEventListener('click',schedule);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
-  window.addEventListener('storage',schedule);
-  window.addEventListener('pagehide',()=>{paused=true;history.length=0;live.clear();seen.clear();});
-  window.addEventListener('pageshow',()=>{paused=false;schedule();});
+  document.addEventListener('input',()=>invalidate('local'));
+  document.addEventListener('change',()=>invalidate('local'));
+  document.addEventListener('click',()=>invalidate('local'));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
+  window.addEventListener('storage',refresh);
+  window.addEventListener('jpw-backup-status',()=>invalidate('system'));
+  window.JPWNavigation?.subscribe(()=>invalidate('local'));
+  window.addEventListener('pagehide',()=>{paused=true;history.length=0;live.clear();caches.clear();seen.clear();dirty.clear();});
+  window.addEventListener('pageshow',()=>{paused=false;refresh();});
   // Existing quote provider, read only subscription. The existing calendar tick
   // reaches us through ffNewsRender called by ffNewsRenderAll; no second economic poll/timer is created.
-  if(window.JPWMarket?.usdBrl?.onChange) JPWMarket.usdBrl.onChange(schedule);
-  schedule();
+  if(window.JPWMarket?.usdBrl?.onChange) JPWMarket.usdBrl.onChange(()=>invalidate('forex','system'));
+  invalidate(...Object.keys(sources));
 })();

@@ -32,7 +32,7 @@ const PRECACHE_URLS = [
   './assets/nocuda-tradingview.png', './assets/nocuda-metatrader.png',
   ...NOCUDA_DOCUMENT_URLS,
   LEVERAGE_MANIFEST_URL,
-  './src/js/10-domain/16-nocuda-transfer.js', './src/js/20-ui/31-tools-services.js',
+  './src/js/10-domain/16-nocuda-transfer.js', './src/js/00-core/10-download-assets.js', './src/js/20-ui/31-tools-services.js',
   './src/js/10-domain/19-execution-market.js',
   './src/js/10-domain/18-execution-board-model.js',
   './src/js/20-ui/30-execution-board.js',

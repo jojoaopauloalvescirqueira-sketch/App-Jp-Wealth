@@ -1,6 +1,6 @@
 // ============ RENDER ============
 const FCOLORS=['var(--f1)','var(--f2)','var(--f2)','var(--f3)','var(--f3)','var(--f4)'];
-function render(){
+function renderPresentation(options={}){
   const c=compute(), model=c.forex, metrics=model.metrics, policy=JPWForex.policy, p=S.params;
   const known=value=>typeof value==='number'&&Number.isFinite(value);
   const money=value=>known(value)?fmtForexMoney(value,c.forex.account,0):'Não calculável';
@@ -9,12 +9,19 @@ function render(){
   const multiple=value=>known(value)?fmtX(value):'Não calculável';
   const decimal=(value,digits=2)=>known(value)?value.toLocaleString('pt-BR',{minimumFractionDigits:digits,maximumFractionDigits:digits}):'Não calculável';
   const phaseColor=model.accountPhase.compulsoryClose?'var(--danger)':FCOLORS[c.fi]||'var(--ink-dim)';
+  const visible=id=>{const e=$(id);return !!e&&!e.closest('[hidden],[inert],[aria-hidden="true"]')&&e.getClientRects().length>0;};
+  // Mount the exposed host before painting projections moved there on first entry.
+  const consolidated=visible('fxconsolidated')&&window.JPWFXConsolidated?.render;
+  if(consolidated)JPWFXConsolidated.render();
+  if(options.expandContext&&consolidated)fxSetContextExpanded(true,{paint:false});
   // header pill
   renderHeaderReadout(c);
   $('hPhaseLbl').textContent=c.fase.nome;
   const hp=$('hPhase'); hp.className='pill'+(Number.isInteger(c.fi)?' f'+(c.fi+1):'');
   hp.querySelector('.dot').style.background=phaseColor;
   hp.querySelector('.dot').style.color=phaseColor;
+  const execVisible=visible('execOverview'),dashVisible=visible('dash');
+  if(execVisible){
   // Existing gauge geometry; scales and phase boundaries come from the V11
   // read-model/registry. Missing observations hide needles, never display zero.
   const ddCeil=c.mddScaled;
@@ -215,6 +222,9 @@ function render(){
   const regimeLabel={NORMAL:'NORMAL',TRANSITION:'TRANSIÇÃO',HIGH:'ALTA VOL'}[c.regime]||'NÃO CALCULÁVEL';
   $('mVRM').textContent=decimal(c.vrm);
   $('mRegime').textContent=regimeLabel;
+  }
+  const regimeLabel={NORMAL:'NORMAL',TRANSITION:'TRANSIÇÃO',HIGH:'ALTA VOL'}[c.regime]||'NÃO CALCULÁVEL';
+  if(visible('gdVrmValue')){
   const gdVv=$('gdVrmValue'); if(gdVv) gdVv.textContent=decimal(c.vrm);
   const gdVr=$('gdVrmRegime');
   const regimeColor=!known(c.vrm)?'var(--ink-dim)':c.regime==='NORMAL'?'var(--jp-success)':(c.regime==='TRANSITION'?'var(--jp-warning)':'var(--jp-danger)');
@@ -247,6 +257,8 @@ function render(){
   if(gdVLim){
     gdVLim.textContent='NORMAL abaixo de '+decimal(vrmLimits.normalBelow)+' · TRANSIÇÃO até '+decimal(vrmLimits.highAbove)+' inclusive · acima, ALTA VOL';
   }
+  }
+  if(execVisible){
   // LIFO
   $('lLote').textContent=decimal(c.loteTotal);
   $('lRisco').textContent=money(c.riscoTotal);
@@ -285,23 +297,26 @@ function render(){
   $('lifoSug').innerHTML=c.sug;
   // dashboard mirror — a faixa de métricas saiu na Fase 2B (os quatro fatos
   // vivem no cockpit). #dStatus permanece: é de outro card, não da faixa.
-  $('dStatus').textContent=c.status.split('—')[0].trim();
+  }
+  if(dashVisible)$('dStatus').textContent=c.status.split('—')[0].trim();
   // (grade única: a fase ativa é rotulada explicitamente em renderPhases; sem badge dinâmico por índice)
   // Camadas de veredito (UX de decisão): Operational Clearance (dash) + Execution Clearance (exec).
   // Reusam o MESMO c de compute() — nenhum estado paralelo, só leitura.
-  renderOperationalClearance(c);
-  renderExecClearance(c);
+  if(visible('mcClearanceCard'))renderOperationalClearance(c);
+  if(visible('exec')&&window.execGetView?.()==='panel')renderExecClearance(c);
   renderOnboardingIncompleteBanner();
-  renderExecutionOnboardingWarning();
+  if(visible('exec')&&window.execGetView?.()==='panel')renderExecutionOnboardingWarning();
   // Status do Sistema — espelho de leitura de persistência/backup/frescor/
   // governança. O guard de typeof segue o idioma já usado no boot para
   // renderDgStorageCard: este arquivo é ordem 11 do manifest e o renderizador
   // vive em 40-app/12-global-dashboard.js (41), então no primeiro render
   // disparado por boot() a função ainda não existe. Aquele arquivo faz a
   // primeira pintura por conta própria assim que todos os scripts carregam.
-  if(typeof renderSystemStatus==='function') renderSystemStatus();
-  if(window.JPWDashMacro) window.JPWDashMacro.schedule();
-  if(window.JPWForex?.executionBoardUI)JPWForex.executionBoardUI.render();
+  if(dashVisible&&typeof renderSystemStatus==='function') renderSystemStatus();
+  if(dashVisible&&window.JPWDashMacro) window.JPWDashMacro.schedule();
+  if(visible('exec')&&window.execGetView?.()==='panel'&&window.JPWForex?.executionBoardUI)JPWForex.executionBoardUI.render({reuseOnNavigation:options.navigation===true});
   if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
-  if(document.getElementById('fxconsolidated')?.classList.contains('active')&&window.JPWFXConsolidated?.render)window.JPWFXConsolidated.render();
 }
+
+// Navigation paints the accepted surface without invalidating financial sources.
+function render(){return renderPresentation();}

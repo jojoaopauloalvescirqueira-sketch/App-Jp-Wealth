@@ -198,7 +198,7 @@ def run(a):
       contrast=page.evaluate(CONTRAST,selector)
       check(prefix+' text contrast '+selector,contrast is not None and contrast['ratio']>=4.5,contrast)
      before=page.evaluate('JSON.stringify(S)')
-     for route in ['dashboard','forex-overview','personal-finance','ecal','nocoda','pivots','probability-lab','alladin','dashboard']:
+     for route in ['dashboard','forex-overview','personal-finance','ecal','nocoda','pivots','tools-minigames','probability-lab','alladin','dashboard']:
       page.evaluate('closeSettingsModal()')
       check(prefix+' destination '+route,page.evaluate('(r)=>JPWNavigation.navigate(r)',route))
       check(prefix+' no page overflow '+route,page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))

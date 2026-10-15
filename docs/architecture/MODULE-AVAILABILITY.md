@@ -1,5 +1,17 @@
 # Disponibilidade reversível de módulos
 
+## MiniGames — complemento local corrente 2026-10-14
+
+Galton Board passa a Ferramentas e Serviços → MiniGames. `tools-minigames`, a
+visão `tools/galton` e os aliases antigos pertencem a Tools, não a Research;
+congelar Research não bloqueia a central nem o jogo. A entrada continua passando
+pelos guards e pela política de disponibilidade aplicáveis, sem ampliar a lista
+de módulos congeláveis. Um diálogo aberto recusa a entrada de compatibilidade
+sem fechá-lo nem perder rascunho; não há replay posterior.
+Nenhum default, chave, backup, schema ou regra de congelamento muda. O texto
+datado de 2026-10-01 abaixo conserva a localização anterior como histórico.
+[Contrato corrente](GALTON-BOARD.md).
+
 CHG-MODULE-AVAILABILITY-20260924, N2/A3. Base inspecionada ad5c23e7884be108ceaf35acd26fb1c3b28b57db. Candidate isolado, sem integração nem aceite. Decisão de produto: [fonte única](../decisions/2026-09-24-alladin-congelado.md).
 
 ## Fonte e alcance

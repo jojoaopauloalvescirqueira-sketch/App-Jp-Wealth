@@ -1,5 +1,7 @@
 # JP Wealth — Stoikus 1.22.1 e correções de auditoria — 2026-10-13
 
+Candidate local de **MiniGames (14/10/2026)**: Ferramentas e Serviços → MiniGames reúne o cartão Galton Board. **Abrir** entra no jogo e **Voltar para MiniGames** retorna à central. A montagem ocorre somente ao abrir o jogo; a simulação não começa automaticamente. Sair ou cobrir o jogo pausa a mesma instância em memória; voltar exige **Continuar**. Preferências, física, estatística e dados financeiros preservados. O guia mantém seus 57 passos em sete trilhas, inclusive o ID anterior do Laboratório. [Contrato vigente](docs/architecture/GALTON-BOARD.md). Validação e aceite são separados; sem merge, push ou publicação nesta tarefa.
+
 Este conjunto incorpora o Stoikus 1.22.1 e os patches AUD-01..AUD-10 já presentes no site. Guia e downloads de uso/engenharia seguem separados. A publicação solicitada usa o projeto existente JP Wealth Software no Sites/GPT, mantendo seu acesso; Netlify é uma configuração anterior e não é o destino atual. Os recibos da combinação estão em docs/validation/stoikus-site-20261013/; resultados anteriores abaixo pertencem às respectivas revisões. Compilação e execução MT5 permanecem NOT_RUN, sem EX5 novo distribuído.
 
 ## Fotografias anteriores preservadas
@@ -123,9 +125,10 @@ glossário, FAQ — sem sinais nem recomendações), Estatuto Operacional, Parâ
 e Backup. A pesquisa é declarativa e **não indexa dados
 operacionais** do usuário.
 
-### Laboratório de Probabilidade — Galton Board
+### MiniGames — Galton Board
 
-Em `Configurações → Conhecimento → Laboratório de Probabilidade`, uma placa física
+Em `Ferramentas e Serviços → MiniGames`, escolha **Abrir** no cartão Galton Board.
+**Voltar para MiniGames** retorna ao catálogo e pausa o jogo. Uma placa física
 2D permite observar como um histograma empírico emerge de colisões reais. O motor
 Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,
 seed determinística, pinos triangulares, `linhas + 1` compartimentos, controles de
@@ -292,7 +295,7 @@ e contexto final não capturado ficam fora da projeção, sem preenchimento fict
 Lucro Técnico, alavancagem, DD/fase e risco/clearance permanecem pendentes nos
 conflitos registrados; saldo book não é equity flutuante, base de retorno não é
 saldo final, e cadastro atual não preenche histórico ausente.
-Naquela revisão histórica, Research possuía destino para o Laboratório de Probabilidade. A localização atual é Configurações → Conhecimento. Ao sair da folha ou cobrir o Lab com um subdiálogo,
+Naquela revisão histórica, Research possuía destino para o Laboratório de Probabilidade; a revisão de 2026-10-01 o levou a Configurações → Conhecimento. O candidate MiniGames de 2026-10-14 o hospeda em Ferramentas e Serviços → MiniGames. Ao sair do jogo ou cobri-lo com um diálogo,
 a mesma simulação fica pausada em memória; voltar exige **Continuar**. Recarregar
 não recupera a simulação, somente as preferências persistidas. Contrato e limites em
 [CHG-PRODUCT-IMPROVEMENTS-20260911](docs/work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).

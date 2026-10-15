@@ -61,18 +61,26 @@ ownership visual em Research/Forex e uma única instância DOM cada.
 - `tools/validate_project.py` compara todo script do manifest com o precache; a
   divergência é falha estrutural, não uma condição aceita para operação offline.
 
-### 7. Laboratório de Probabilidade
+### 7. MiniGames — Galton Board
 
 - `src/js/40-app/18-galton-board/` contém configuração/geometry, PRNG, estatística,
   física, renderer e controller sob o namespace único `window.JPWGalton`.
 - `src/vendor/planck/planck-1.5.0.min.js` é o build UMD oficial vendorizado do motor
   Planck.js, versão 1.5.0, licença MIT e SHA-256
   `69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974`.
-- `src/js/40-app/09-settings-modal.js` oferece o caminho
-  `Configurações > Conhecimento > Laboratório de Probabilidade` e coordena a
-  montagem/pausa do controller único. `23-research-views.js` preserva somente aliases legados. Na decisão A13-A, navegar ou cobrir o laboratório
-  conserva a mesma simulação em memória, pausada até `Continuar`; não persiste
-  bolas/resultados. Reset e finalização conservam seus contratos de limpeza.
+- Na revisão local de 2026-10-14, `src/js/20-ui/31-tools-services.js` oferece
+  `Ferramentas e Serviços > MiniGames`, com hub e jogo como duas visões do mesmo
+  child `tools-minigames`. Abrir monta o controller único em `#toolsGaltonSlot`;
+  o hub não monta o jogo e a simulação não começa automaticamente. Voltar, sair
+  ou cobrir com qualquer diálogo pausa e conserva o mundo em memória, sem RAF
+  ou ResizeObserver ativo; retornar exige `Continuar`. `09-settings-modal.js` e
+  `23-research-views.js` preservam entradas legadas para o mesmo jogo, recusadas
+  quando há diálogo aberto. Não há folha concorrente. Reset, finalização e
+  preferências conservam os contratos; bolas/resultados não são persistidos.
+- `26-learning-catalog.js` conserva versão, 57 IDs e sete trilhas; o passo antigo
+  do Laboratório aponta ao hub. `18-notification-center.js` reaproveita a fonte
+  local visível como MiniGames/system com destino `galton-board`, sem montar jogo.
+  [Contrato corrente e histórico de owners](GALTON-BOARD.md).
 - O mundo usa unidades normalizadas e passo fixo de `1/120 s`, separado do render.
   O default tem 10 linhas, espaçamento horizontal `1`, vertical `0.82`, raio de pino
   `0.09`, raio de bola `0.14`, densidade `1`, restituição `0.28`, atrito `0.22`,

@@ -1,5 +1,29 @@
 # Navegação hierárquica — contrato de implementação
 
+## MiniGames — revisão local corrente 2026-10-14
+
+Este complemento sucede apenas a localização do Laboratório nas fotografias
+datadas abaixo. Os seis primários permanecem. Ferramentas e Serviços conserva
+`tools-calendar`, `tools-nocuda`, `tools-leverage` e `tools-normative`, acrescentando
+`tools-minigames` no fim. O child seleciona `tools/minigames`; **Abrir** no único
+cartão Galton Board seleciona `tools/galton`, mantendo o mesmo child.
+**Voltar para MiniGames** retorna ao hub. A seleção é efêmera, sem URL profunda
+ou nova preferência de navegação. Os quatro layouts reutilizam o mesmo submenu.
+
+`#minigamesHub` e `#minigamesGame` pertencem a Tools; `#toolsGaltonSlot` recebe a
+única montagem sob demanda. Não existe folha/card do Laboratório em Configurações.
+Aliases `probability-lab`, `galton-board`, `research-probability-lab`, a visão
+local antiga de Research e as APIs antigas de Configurações abrem diretamente
+o jogo, seguindo guards e disponibilidade; Research congelado não impede Tools.
+Com qualquer diálogo aberto, a entrada de compatibilidade é recusada com orientação,
+sem fechar o diálogo, trocar foco, descartar rascunho ou agendar abertura.
+
+Entrada no jogo foca `#minigamesGaltonTitle`; Voltar foca Abrir. Sair, voltar ao
+hub ou cobrir o jogo com qualquer diálogo pausa a instância em memória e cancela
+RAF/ResizeObserver. Retorno exige **Continuar**; visitar o hub não monta ou inicia
+a simulação. Preferências, epoch e finalização preservam seus contratos.
+[Lifecycle e isolamento](GALTON-BOARD.md). Os registros abaixo conservam suas datas.
+
 ## Complemento local — Alavancagem Atual, 2026-09-26
 
 `Ferramentas e Serviços` passa a ter três filhos, na ordem `tools-calendar`,

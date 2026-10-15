@@ -8797,12 +8797,9 @@ html[data-navigation="sidebar"][data-sidebar-closing="true"] #appSidebar #navSub
   }
 }
 
-/* Laboratório no host único de Configurações; as dimensões da física permanecem. */
-[data-settings-panel="probability-lab"] { min-width: 0; }
-#settingsGaltonSlot, #settingsGaltonSlot .galton-board, #settingsGaltonSlot .galton-stage { min-width: 0; max-width: 100%; }
-#settingsGaltonSlot .galton-table-wrap { max-width: 100%; overflow-x: auto; }
-/* O canvas adapta-se à largura da folha, que é menor que a viewport desktop. */
-#settingsGaltonSlot .cp-lab-workspace { grid-template-columns: minmax(0,1fr); grid-template-areas: "stage" "status" "integrity" "analysis"; }
+/* Galton no workspace de Tools; dimensões físicas e renderer preservados. */
+#minigamesGame, #toolsGaltonSlot, #toolsGaltonSlot .galton-board, #toolsGaltonSlot .galton-stage { min-width: 0; max-width: 100%; }
+#toolsGaltonSlot .galton-table-wrap { max-width: 100%; overflow-x: auto; }
 /* Os estilos de display do shell não podem sobrepor a indisponibilidade. */
 .cp-panorama-index[hidden], #jpwSsGov[hidden], #gdFooter [data-dash-go][hidden] { display: none !important; }
 
@@ -10235,3 +10232,16 @@ html[data-navigation="topbar"] #nav>#navSubShell .nav-sub-menu[hidden]{display:n
 #jpwLearningDetailsSummary { cursor:pointer; padding:8px 0; font-weight:600; line-height:1.4; }
 #jpwLearningDetailsSummary:focus-visible { outline:3px solid currentColor; outline-offset:2px; }
 #jpwLearningDetails > #jpwLearningDetailsBody { max-height:min(220px,40vh); max-height:min(220px,40dvh); overflow:auto; overscroll-behavior:contain; padding:0 2px 4px; }
+
+/* MiniGames uses the existing Tools workspace and keeps the board mounted. */
+#tools > .tools-view[hidden]{display:none !important;}
+.minigames-header{margin-bottom:24px;}
+.minigames-header h2{margin:12px 0 8px;}
+.minigames-header p,.minigames-card p{color:var(--ink-dim);line-height:1.65;}
+.minigames-catalog{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),360px));gap:20px;}
+.minigames-card{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:24px;min-width:0;}
+.minigames-card-art{width:100%;height:140px;color:var(--violet);border-radius:12px;background:var(--bg);}
+.minigames-card h3,.minigames-card p{margin:0;}
+.minigames-card button{min-height:44px;min-width:96px;margin-top:auto;}
+.minigames-navigation-status{font-size:.9rem;line-height:1.5;padding:12px;color:var(--ink);}
+@media(max-width:600px){.minigames-header{margin-bottom:16px;}.minigames-card{padding:18px;}.minigames-card-art{height:120px;}.minigames-header button{min-height:44px;}}

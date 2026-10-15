@@ -379,3 +379,23 @@ Contrato: [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md). Manifest/portabl
 ## Atualização focal — 2026-10-01
 
 A listagem histórica acima não define a navegação atual. `09-settings-modal.js` agora hospeda a instância única do Laboratório em Conhecimento; `23-research-views.js` conserva os aliases, sem folha concorrente. Research tem quatro destinos visíveis; Others resolve apenas links antigos. Dashboard filtra módulos congelados antes da leitura. `34-normative-reader.js`, carregado após `31-tools-services.js`, cuida do documento original V11 com recursos locais e nenhum escritor financeiro. `30-execution-board.js` oferece os mesmos comandos em tabela compacta/detalhes e a auditoria completa readonly. Contratos: [navegação](NAVIGATION-HIERARCHY.md), [leitor](NORMATIVE-READER.md), [Forex](FOREX-EXPERIENCE.md).
+
+
+## Atualização focal corrente — MiniGames, 2026-10-14
+
+Este complemento sucede apenas o owner do Laboratório descrito nas fotografias
+anteriores, inclusive a atualização de 2026-10-01. `31-tools-services.js` passa a
+hospedar a central `#minigamesHub` e o jogo `#minigamesGame`: duas visões
+`tools/minigames` e `tools/galton` do último child `tools-minigames`.
+`#toolsGaltonSlot` recebe uma única montagem diferida, preservada ao navegar.
+`09-settings-modal.js` deixa de hospedar o jogo; suas APIs antigas e os aliases
+em navegação/Research encaminham ao jogo, respeitando guards e recusando
+diálogos abertos. Não há folha oculta ou segundo controller.
+
+`26-learning-catalog.js` conserva o ID `general-settings-probability-lab` na
+trilha `general`, versão 1 e os mesmos 57 passos/sete trilhas, com rota do hub
+e âncora `#minigamesHub`. `18-notification-center.js` conserva o collector local
+visível e identifica seus avisos como MiniGames, área system, destino
+`galton-board`. Física, estatística, preferência e epoch continuam nos módulos
+Galton existentes; a coleta de notificações e o hub não montam o jogo.
+Contrato e critérios de verificação: [GALTON-BOARD](GALTON-BOARD.md).
