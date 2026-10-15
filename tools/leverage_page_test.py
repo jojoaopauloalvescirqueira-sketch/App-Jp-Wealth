@@ -1013,7 +1013,7 @@ def main():
                         tampered = bytearray(ARCHIVE.read_bytes()); tampered[-1] ^= 1
                         page.route('**/' + SOURCE['path'], lambda route: route.fulfill(status=200,body=bytes(tampered),content_type='application/zip'))
                         page.locator('[data-jpw-leverage-download="source"]').click()
-                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
+                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do arquivo diferente')")
                         assert not count
                         print('PASS HTTP equal-size tampered ZIP refused by SHA-256',flush=True)
                         page.unroute('**/' + SOURCE['path'])
@@ -1030,7 +1030,7 @@ def main():
                             changed = bytearray(daily_raw); changed[-1] ^= 1
                             page.route('**/' + record['path'], lambda route: route.fulfill(status=200, body=bytes(changed), content_type='application/zip'))
                             daily_button.click()
-                            page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
+                            page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do arquivo diferente')")
                             assert not count
                             page.unroute('**/' + record['path'])
                             page.route('**/' + record['path'], lambda route: route.fulfill(status=200, body=daily_raw[:-1], content_type='application/zip'))
@@ -1056,7 +1056,7 @@ def main():
                             changed = bytearray(COMPILED_ARCHIVE.read_bytes()); changed[-1] ^= 1
                             page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=200, body=bytes(changed), content_type='application/zip'))
                             compiled_button.click()
-                            page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
+                            page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do arquivo diferente')")
                             assert not count
                             print('PASS HTTP native missing/tampered archive refused; no download', flush=True)
                 finally:

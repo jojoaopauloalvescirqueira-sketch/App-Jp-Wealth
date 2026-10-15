@@ -332,6 +332,7 @@ SOFTWARE.
       <button type="button" data-nav-item data-nav-child="tools-nocuda"><span class="nav-sub-item-title">Nocuda Tool</span><span class="nav-sub-item-desc">Downloads e parâmetros</span></button>
       <button type="button" data-nav-item data-nav-child="tools-leverage"><span class="nav-sub-item-title">Stoikus — MT5</span><span class="nav-sub-item-desc">Ferramentas e instalação</span></button>
       <button type="button" data-nav-item data-nav-child="tools-normative"><span class="nav-sub-item-title">Estrutura Normativa JP Wealth</span><span class="nav-sub-item-desc">Leitura do Estatuto V11</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-minigames"><span class="nav-sub-item-title">MiniGames</span><span class="nav-sub-item-desc">Experimentos e jogos</span></button>
     </nav>
   </div>
 </div>
@@ -1816,6 +1817,21 @@ SOFTWARE.
       </div>
       <div class="nr-status-row"><span id="nrStatus" role="status" aria-live="polite">Abra o Estatuto para consultar o original.</span><button id="nrRetry" type="button">Tentar novamente</button></div>
     </div>
+
+    <div class="tools-view minigames-hub" id="minigamesHub" data-tools-view="minigames" role="region" aria-labelledby="minigamesTitle" hidden inert>
+      <header class="minigames-header"><h2 id="minigamesTitle" data-route-focus tabindex="-1">MiniGames</h2><p>Explore ideias e padrões com jogos e experimentos interativos.</p></header>
+      <div class="minigames-catalog">
+        <article class="card minigames-card" aria-labelledby="minigamesGaltonCardTitle">
+          <svg class="minigames-card-art" viewBox="0 0 240 120" aria-hidden="true" focusable="false"><g fill="currentColor" opacity=".3"><circle cx="120" cy="32" r="4"/><circle cx="100" cy="52" r="4"/><circle cx="140" cy="52" r="4"/><circle cx="80" cy="72" r="4"/><circle cx="120" cy="72" r="4"/><circle cx="160" cy="72" r="4"/></g><circle cx="120" cy="12" r="5" fill="currentColor"/><path d="M65 98h110M85 90v8m20-8v8m20-8v8m20-8v8m20-8v8" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <h3 id="minigamesGaltonCardTitle">Galton Board</h3><p>Solte bolas, acompanhe suas trajetórias e observe a distribuição que se forma no tabuleiro.</p>
+          <button type="button" id="minigamesOpenGalton">Abrir</button>
+        </article>
+      </div>
+    </div>
+    <div class="tools-view minigames-game" id="minigamesGame" data-tools-view="galton" role="region" aria-labelledby="minigamesGaltonTitle" hidden inert>
+      <header class="minigames-header"><button type="button" id="minigamesBack" class="reset-btn">Voltar para MiniGames</button><h2 id="minigamesGaltonTitle" data-route-focus tabindex="-1">Galton Board</h2><p>Explore probabilidade e distribuição. Ao sair ou abrir uma janela, a simulação pausa; use Continuar para retomá-la.</p></header>
+      <div id="toolsGaltonSlot"></div>
+    </div>
   </section>
 
   <!-- ================= 05 ALLADIN ================= -->
@@ -2527,6 +2543,7 @@ SOFTWARE.
 <script src="src/js/10-domain/18-execution-board-model.js"></script>
 <script src="src/js/20-ui/30-execution-board.js"></script>
 <script src="src/js/10-domain/16-nocuda-transfer.js"></script>
+<script src="src/js/00-core/10-download-assets.js"></script>
 <script src="src/js/20-ui/31-tools-services.js"></script>
 <script src="src/js/20-ui/34-normative-reader.js"></script>
 <script src="src/js/20-ui/31-forex-accounts.js"></script>

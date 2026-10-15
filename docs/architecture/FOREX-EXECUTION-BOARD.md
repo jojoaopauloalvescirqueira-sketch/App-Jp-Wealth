@@ -1,5 +1,24 @@
 # Forex — Execution Board
 
+## Eficiência da edição — 2026-10-14
+
+A apresentação mantém um snapshot privado da última leitura fresca da tabela,
+com mapas de ordens e instrumentos. Na digitação, somente mudanças efetivas de
+instrumento, entrada, SL e TP acionam `previewOrder`; o par de eventos input/change
+não repete a mesma prévia. Os outros campos alteram rascunho, feedback e ações.
+Risco e totais continuam representando registros confirmados.
+
+O snapshot compara contexto, referências, revisões, raw persistido, cotações e
+epoch. `JPWForex.state.operationalSelectionToken()` expõe uma identidade leve da
+seleção privada para apresentação, sem validar ou clonar períodos. A identidade
+de `S` ou o epoch, isoladamente, não comprovam validade. Salvar reconfere contexto,
+versões e bloqueios pelos leitores e escritores anteriores.
+
+Dimensionamento incremental mede as linhas alteradas num quadro. Montagem,
+fonte, zoom, largura e modo de apresentação exigem medição completa. Inputs,
+foco, caret e rolagem permanecem nos mesmos nós. Contrato e metodologia em
+[Eficiência da apresentação](APP-EFFICIENCY.md).
+
 **Contrato atual do candidate local de 2026-10-05:** [Proporções de planilha](#proporções-de-planilha--candidate-2026-10-05), sobre [Operação como planilha](#operação-como-planilha--candidate-2026-10-01). As seções datadas abaixo preservam contratos e evidências históricos; não descrevem uma aprovação da revisão atual.
 
 Campanha FOREX-EXECUTION-BOARD-01, base integrada `594c86ebf13661d0e5846a3b64a0288631fd938d`, branch `codex/forex-execution-board-20260915`. Contrato e limites em [CHG/CTX](../work/CHG-FOREX-EXECUTION-BOARD-20260915.md). Estado: revisão local, validação e aceite separados. Recibos de execução/fingerprint/recovery em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`.

@@ -129,6 +129,7 @@ function openFirstAccessWelcome(){
 window.JPWFirstAccess=Object.freeze({open:openFirstAccessWelcome,focusModal:jpwFirstAccessFocusModal});
 
 function boot(){
+  try{window.JPWNotifications?.invalidate('system','forex','pf','alladin','calendar','local');}catch(_){}
   applyTheme(); applyRailState(); bindRailToggle(); applyFontScale(); applyNavStyle(); startHeaderClock();
   renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderNavStyleSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
   renderParams(); renderMotor(); renderContas(); renderDash(); renderCheck();

@@ -113,6 +113,7 @@ def rebuild(destino: Path):
 def fatos(destino: Path):
     leverage = json.loads((destino / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))
     return {
+        'download_sidecars': {p.name:p.read_bytes() for p in sorted((destino/'src/vendor/downloads').glob('*-payload.js'))},
         'build_id': (destino / 'build-id.js').read_text(encoding='utf-8').strip(),
         'monolito': (destino / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html').read_bytes(),
         'manifest': (destino / 'src/js/manifest.json').read_bytes(),
@@ -142,6 +143,7 @@ def main():
 
         assert a['build_id'] == b['build_id'], (
             f"LIXO ALTEROU O BUILD ID\n  limpo: {a['build_id']}\n  sujo : {b['build_id']}")
+        assert a['download_sidecars'] == b['download_sidecars'], 'lixo alterou payloads de download'
         assert a['monolito'] == b['monolito'], 'lixo alterou o monólito portátil'
         assert a['manifest'] == b['manifest'], 'lixo alterou os hashes do manifest'
         assert a['leverage_manifest'] == b['leverage_manifest'], 'lixo alterou o manifesto de alavancagem'
@@ -163,8 +165,15 @@ def main():
         embedded = re.findall(r'href="data:([^" ]+);base64,([A-Za-z0-9+/=]+)" download="([^"]+)"', html)
         for relative in DOCUMENTOS + NOCUDA_BUILD_INPUTS:
             original = (limpo / relative).read_bytes()
-            assert any(base64.b64decode(data) == original for _mime, data, _name in embedded), relative
-            assert f'href="{relative}"' not in html, f'link externo ainda presente: {relative}'
+            if relative in NOCUDA_BUILD_INPUTS:
+                inert = re.findall(r'<script type="application/json" id="jpw-download-payload-[^"]+">(.*?)</script>', html)
+                envelopes = [json.loads(payload) for payload in inert]
+                key = 'nocuda/' + Path(relative).name
+                assert any(base64.b64decode(payload['files'].get(key, '')) == original for payload in envelopes), relative
+                assert f'href="{relative}"' in html, f'URL original ausente: {relative}'
+            else:
+                assert any(base64.b64decode(data) == original for _mime, data, _name in embedded), relative
+                assert f'href="{relative}"' not in html, f'link externo ainda presente: {relative}'
             destino = raiz / ('documento-' + Path(relative).suffix.lstrip('.'))
             montar(destino, arquivos)
             alvo_doc = destino / relative

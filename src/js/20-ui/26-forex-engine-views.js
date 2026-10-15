@@ -59,12 +59,14 @@
       ${button('Registrar reservas')}${response()}</form></details><details><summary>Trilha de reservas</summary><div id="fxReserveHistory"></div></details>`;
     const accountFacts=el('fxAccountFacts')?.closest('details');
     if(accountFacts&&el('accountPeriodCard'))el('accountPeriodCard').append(accountFacts);
+    for(const disclosure of [accountFacts,el('fxOperationBudget')?.closest('details')])disclosure?.addEventListener('toggle',()=>{if(disclosure.open)render();});
     document.addEventListener('submit',submit);
     document.addEventListener('click',click);
     document.addEventListener('input',event=>{const form=event.target.closest?.('form');
       if(form&&(scopedForms.has(form.id)||form.id==='fxAccountFacts'))form.dataset.fxTouched='true';});
     document.addEventListener('change',event=>{const form=event.target.closest?.('form');
       if(form&&(scopedForms.has(form.id)||form.id==='fxAccountFacts'))form.dataset.fxTouched='true';});
+    if(!el('fxRegistryRows').firstElementChild)el('fxRegistryRows').innerHTML=fx.policy.list().map(p=>`<tr><th>${safe(p.id)}<br>${safe(p.name||p.label)}</th><td>${safe(p.value===null?'PENDING':JSON.stringify(p.value))}<br>${safe(p.unit)}</td><td>${safe(p.technicalStatus||p.status)}<br>${safe(p.homologationStatus)}<br>${safe(p.operabilityStatus)}</td><td><details><summary>${safe(p.authorityMode)}</summary><pre>${safe(JSON.stringify(p,null,2))}</pre></details></td></tr>`).join('');
     render();
   }
   function after(form,result){
@@ -144,15 +146,20 @@
   }
   const readableStatus=status=>({OK:'Calculável',RECORDED:'Registrado',PENDING:'Pendente',PENDING_INPUT:'Dados incompletos',BLOCKED:'Bloqueado',NOT_COMPUTABLE:'Não calculável',NOT_EVALUATED:'Não avaliado'}[status]||status);
   const metric=(name,result,suffix='')=>`<article class="fx-engine-metric"><h3>${safe(name)}</h3><strong>${typeof result.value==='number'?number(result.value)+suffix:safe(typeof result.value==='string'?result.value:result.value===null?'Não calculável':result.status)}</strong><small title="${safe(result.status)}">${safe(readableStatus(result.status))}</small>${result.findings.length?`<p>${safe(result.findings[0].message)}</p>`:''}</article>`;
+  const visible=id=>{const e=el(id);if(!e||e.closest('[hidden],[inert]')||!e.getClientRects().length)return false;
+    for(let parent=e.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS'&&!parent.open&&!parent.querySelector(':scope > summary')?.contains(e))return false;
+    return true;};
   function render(){
     if(!initialized)return;
     if(stateIdentity!==S){stateIdentity=S;document.querySelectorAll('#forexEnginePanel form,#forexReservesPanel form').forEach(f=>f.reset());fx.state.clearEditor();}
+    if(!['forexEnginePanel','forexReservesPanel','fxAccountFacts','fxOperationalSummary','forexV11Overview'].some(visible))return;
     const model=fx.state.read(),m=model.metrics;
     const formScope=fx.state.operationalSelection();
     for(const id of scopedForms){const form=el(id);if(form&&form.dataset.fxTouched!=='true'){
       form.dataset.fxScopeAccount=String(formScope.accountId||'');
       form.dataset.fxScopePeriod=String(formScope.periodId||'');
     }}
+    if(visible('fxAccountFacts')){
     const factForm=el('fxAccountFacts'),factScope=fx.accountsUI?.examination()||fx.state.operationalSelection();
     const selectedIndex=(S.accounts||[]).findIndex(row=>row.forexAccountId===factScope.accountId);
     const factPeriod=factScope.accountId&&factScope.periodId?fx.state.accountContext(factScope).value:null;
@@ -165,13 +172,16 @@
     }
     select.disabled=true;factForm.elements.si.readOnly=true;factForm.elements.currency.disabled=true;
     factForm.querySelector('button[type="submit"]').disabled=!factPeriod||typeof factPeriod.si!=='number'||factPeriod.si<=0;
+    }
+    if(visible('forexEnginePanel')){
     el('fxEngineState').innerHTML=`<strong title="${safe(model.executionEligibility.status)}">${safe(readableStatus(model.executionEligibility.status))}</strong> · ${safe(fx.policy.version)}<p>Elegibilidade e registro são independentes. Pendências não são convertidas em zero.</p>${model.canRecord&&(!S.forex||!S.forex.migration)?'<button type="button" data-fx-migrate>Adotar agregado V11 explicitamente, preservando legado</button>':''}`;
     el('fxPolicyIdentity').textContent=`${fx.policy.version} · ${fx.policy.statuteVersion} · ${fx.policy.parametricAnnexVersion} · vigência ${fx.policy.effectiveDate}`;
-    el('fxRegistryRows').innerHTML=fx.policy.list().map(p=>`<tr><th>${safe(p.id)}<br>${safe(p.name||p.label)}</th><td>${safe(p.value===null?'PENDING':JSON.stringify(p.value))}<br>${safe(p.unit)}</td><td>${safe(p.technicalStatus||p.status)}<br>${safe(p.homologationStatus)}<br>${safe(p.operabilityStatus)}</td><td><details><summary>${safe(p.authorityMode)}</summary><pre>${safe(JSON.stringify(p,null,2))}</pre></details></td></tr>`).join('');
     const status=fx.state.editorStatus();el('fxEditorState').textContent=status.unlocked?'Sessão local desbloqueada até '+new Date(status.expiresAt).toLocaleTimeString('pt-BR'):'Editor bloqueado. Ativação normativa indisponível sem ato e autoridade verificáveis.';
     el('fxProposals').innerHTML=(S.forex&&Array.isArray(S.forex.proposals)?S.forex.proposals:[]).map(p=>`<p>${safe(p.timestamp)} · ${safe(p.field)}: ${safe(p.oldValue)} → ${safe(p.newValue)} · ${safe(p.status)} · ${safe(p.reason)} · não ativada</p>`).join('')||'<p>Nenhuma proposta registrada.</p>';
+    }
     const currency=model.account&&model.account.currency,unit=currency?' '+safe(currency):'';
     const reserveMetric=(label,r)=>{const v=r.value&&typeof r.value==='object'?r.value:null;const card=metric(label,{...r,value:v?v.constituted:null},unit);return v?card.replace('</article>','<p class="fx-reserve-detail">Requerido '+number(v.required)+unit+' · Déficit '+number(v.deficit)+unit+'</p></article>'):card;};
+    if(visible('forexReservesPanel')){
     el('fxReserveSummary').innerHTML=metric('FCR requerido',m.fcrRequirement,unit)+metric('FEO requerido',m.feoRequirement,unit)+reserveMetric('Constituição FCR',m.fcrStatus)+reserveMetric('Constituição FEO',m.feoStatus);
     const selectedScope=fx.state.operationalSelection(),selectedPeriod=fx.state.accountContext(selectedScope);
     const reserveAccount=(S.accounts||[]).find(a=>a.forexAccountId===selectedScope.accountId);
@@ -184,19 +194,22 @@
       (S.forex?.reserves?.accountId===selectedScope.accountId&&S.forex.reserves.periodId===selectedScope.periodId?S.forex.reserves:null);
     const history=[],seen=new Set();while(r&&!seen.has(r)){seen.add(r);history.push(`<li>${safe(r.recordedAt)} · FCR ${number(r.fcrConstituted)} · FEO ${number(r.feoConstituted)} · ${safe(r.source)}</li>`);r=r.previous;}
     el('fxReserveHistory').innerHTML=history.length?'<ol>'+history.join('')+'</ol>':'<p>Nenhuma constituição registrada.</p>';
+    }
+    if(visible('fxBudgetContext')){
     const budget=m.operationBudget;
     el('fxBudgetContext').textContent=`Conta ${model.budgetScope.accountId||'não identificada'} · período ${model.budgetScope.periodId||'não identificado'} · ${model.account?.currency||'moeda não informada'} · ${model.budgetScope.operationId?'operação '+model.budgetScope.operationId:'próximo primeiro registro'}. Orçamento: ${number(budget.value)}. ${budget.status}`;
     el('fxBudgetHistory').innerHTML=budget.declaration?`<details><summary>Declaração e versões capturadas</summary><pre>${safe(JSON.stringify(budget.declaration,null,2))}</pre></details>`:'<p>Nenhuma declaração conciliada com este contexto.</p>';
+    }
     const a=model.account;
     const summary=el('fxOperationalSummary');
-    if(summary){
+    if(summary&&visible('fxOperationalSummary')){
       const accountId=model.budgetScope.accountId,registered=(S.accounts||[]).find(row=>row.forexAccountId===accountId);
       const label=registered?(registered.apelido||registered.nome||registered.broker||accountId):(accountId||'Não selecionada');
       const context=fx.state.accountContext(model.budgetScope),periodLabel=context.status==='OK'?context.value.startedAt:'Não identificado';
       const reasons=summary.querySelector('details')?.open===true;
       summary.innerHTML=`<dl class="fx-context-identity"><div><dt>Conta operacional</dt><dd>${safe(label)}</dd></div><div><dt>Período operacional</dt><dd>${safe(periodLabel)}</dd></div></dl><div class="fx-context-eligibility"><span>Elegibilidade normativa</span><strong title="${safe(model.executionEligibility.status)}">${safe(readableStatus(model.executionEligibility.status))}</strong></div><div class="fx-context-metrics">${metric('Fase da conta',model.accountPhase)}${metric('Drawdown da conta',m.drawdown,'%')}${metric('Risco financeiro aberto e pendente',m.aggregateRisk,unit)}</div><details ${reasons?'open':''}><summary>Motivos e indisponibilidades</summary><ul>${model.findings.map(f=>`<li><b>${safe(f.code)}</b> — ${safe(f.message)}</li>`).join('')||'<li>Nenhum motivo informado pelo motor.</li>'}</ul><div class="fx-engine-actions"><button type="button" data-fx-route="forex-account">Consultar conta e observações</button><button type="button" data-fx-route="params">Ver parâmetros</button></div></details>`;
     }
-    el('forexV11Overview').innerHTML=`<div class="fx-engine-status"><strong>${safe(model.executionEligibility.status)} — elegibilidade normativa</strong><p>${model.canRecord?'O registro factual permanece acessível, sujeito à integridade da gravação.':'Registro indisponível nesta versão do agregado; preserve a base.'} ${safe(fx.policy.version)}</p><div class="fx-engine-actions"><button type="button" data-fx-route="forex-account">Registrar observação da conta</button><button type="button" data-fx-route="params">Ver parâmetros</button></div></div><div class="fx-engine-cards">
+    if(visible('forexV11Overview'))el('forexV11Overview').innerHTML=`<div class="fx-engine-status"><strong>${safe(model.executionEligibility.status)} — elegibilidade normativa</strong><p>${model.canRecord?'O registro factual permanece acessível, sujeito à integridade da gravação.':'Registro indisponível nesta versão do agregado; preserve a base.'} ${safe(fx.policy.version)}</p><div class="fx-engine-actions"><button type="button" data-fx-route="forex-account">Registrar observação da conta</button><button type="button" data-fx-route="params">Ver parâmetros</button></div></div><div class="fx-engine-cards">
       ${metric('Equity flutuante',{value:a?a.equity:null,status:a?'RECORDED':'NOT_COMPUTABLE',findings:[]},unit)}${metric('Drawdown da conta',m.drawdown,'%')}${metric('Fase da conta',model.accountPhase)}${metric('Fase da grade',model.activeGridPhase)}${metric('Alavancagem bruta',m.leverage,'x')}${metric('Risco financeiro aberto e pendente',m.aggregateRisk,unit)}${metric('Risco de admissão',m.admissionRisk,unit)}${metric('Orçamento declarado da operação',m.operationBudget,unit)}${metric('Risco comprometido',m.committedRisk,unit)}${metric('VRM',m.vrm)}${metric('Orçamento prudencial',m.prudentialCapacity,unit)}${metric('Reservas totais constituídas',{value:model.reserves.totalConstituted,status:model.reserves.totalConstituted===null?'NOT_COMPUTABLE':'RECORDED',findings:[]},unit)}
       </div><nav class="fx-engine-actions" aria-label="Destinos do resumo Forex"><button type="button" data-fx-route="forex-operation">Ordens e fatos</button><button type="button" data-fx-route="forex-account">Contas</button><button type="button" data-fx-route="forex-reserves">Reservas</button><button type="button" data-fx-route="forex-reconciliation">Contabilidade</button><button type="button" data-fx-route="forex-planning">Planejamento</button></nav>
       <details><summary>Sequência de dimensionamento — volume final indisponível</summary><p>O parâmetro de risco inicial está pendente. Não há volume sugerido, arredondado ou autorizado.</p><ol>${(m.sizingTrace.steps||[]).map(step=>`<li><b>${safe(step.id)}</b> — ${safe(step.status)} · ${number(step.value)}</li>`).join('')}</ol></details>

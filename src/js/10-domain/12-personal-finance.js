@@ -164,6 +164,7 @@ function pfMutate(acao, fn, meta){
     markJPWealthPersistenceOutcomeUnknown('retorno indeterminado ao gravar Finanças Pessoais');
     return { ...r, ...indeterminado };
   }
+  try{window.JPWNotifications?.invalidate('pf','system');}catch(_){}
   // O callback nunca pode sobrescrever o resultado da gravação.
   return { ...r, ok:true, persistido:true, erro:undefined };
 }

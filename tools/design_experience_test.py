@@ -87,7 +87,7 @@ class Checks:
 
 
 def navigate(page, route):
-    if route not in {'probability-lab','research-probability-lab','galton-board'} and page.locator('#settingsOverlay.show').count():
+    if page.locator('#settingsOverlay.show').count():
         page.locator('#settingsCloseBtn').click()
     if not page.evaluate('(r)=>JPWNavigation.navigate(r)', route):
         raise AssertionError('Public navigation refused ' + route)
@@ -122,7 +122,7 @@ def forex(page,c):
     c.check('Forex context shown',page.locator('#gdContextRow').is_visible())
     before=page.evaluate('JPWNavigation.current()')
     navigate(page,'research-probability-lab')
-    c.check('Lab modal has no Forex context and preserves the prior route',page.locator('#settingsModal #gdContextRow').count()==0 and page.evaluate('JPWNavigation.current()')==before and page.locator('#settingsGaltonSlot').is_visible())
+    c.check('Lab Tools host has no Forex context',page.locator('#tools #gdContextRow').count()==0 and page.evaluate("JPWNavigation.current().primary==='tools' && JPWNavigation.current().localView.view==='galton'") and page.locator('#toolsGaltonSlot').is_visible())
     navigate(page,'dashboard')
     c.check('Forex context absent dashboard',not page.locator('#gdContextRow').is_visible())
 
@@ -404,7 +404,7 @@ def charts(page,c):
 
 def lab(page,c):
     navigate(page,'research-probability-lab')
-    root=page.locator('#settingsGaltonSlot [data-galton-root]')
+    root=page.locator('#toolsGaltonSlot [data-galton-root]')
     c.check('Lab has one instance',root.count()==1 and page.locator('[data-galton-root]').count()==1)
     order=root.evaluate("e=>{const a=e.querySelector('.galton-controls'),b=e.querySelector('.galton-stage');return {before:!!(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING),bottom:a.getBoundingClientRect().bottom,top:b.getBoundingClientRect().top}}")
     c.check('Lab controls precede canvas in DOM and view',order['before'] and order['bottom']<=order['top']+1,order)

@@ -610,10 +610,9 @@ def test_persistence_contract(page):
 
 
 def enter_galton(page):
-    assert page.evaluate("JPWNavigation.navigate('research-forex')") is True
-    page.evaluate("openSettingsModal('knowledge')")
-    page.locator('[data-settings-panel="knowledge"] [data-nav-to="probability-lab"]').click()
-    page.locator('#settingsGaltonSlot [data-galton-root]').wait_for(state="visible")
+    assert page.evaluate("JPWNavigation.navigate('tools-minigames')") is True
+    page.locator('#minigamesOpenGalton').click()
+    page.locator('#toolsGaltonSlot [data-galton-root]').wait_for(state="visible")
     page.wait_for_function("document.querySelector('[data-galton-root]')?.__galtonController?.active === true")
 
 
@@ -737,7 +736,7 @@ def test_navigation_continuity(page):
         assert out['preserved'] and out['stayedPreserved'] and out['prefsPreserved'] and out['stagedPreserved'],row
         assert back['same'] and back['active'] and back['paused'] and not back['running'],row
         assert back['preserved'] and back['label']=='Continuar' and back['lastAt']==back['raf']==0,row
-        assert back['observers']==back['roots']==1 and back['headerInert'],row
+        assert back['observers']==back['roots']==1 and not back['headerInert'],row
         assert row['stateUnchanged'] and row['storageUnchanged'],row
         page.wait_for_timeout(100)
         assert page.evaluate("JSON.stringify(window.__continuityController.engine.snapshot())===window.__continuityPaused"),route
@@ -770,10 +769,12 @@ def test_navigation_continuity(page):
 
     # Changing Settings leaves covers the same experiment; return requires Continuar.
     for running in [False,True,False,True]:
-        before=page.evaluate("""running => {
+        before=page.evaluate("""async running => {
           const c=window.__continuityController;
           if(c.snapshot().running!==running)c.root.querySelector('[data-galton-action="pause"]').click();
-          settingsNavigate('general');
+          openSettingsModal('general');
+          // New Tools owner observes visibility mutations at the microtask boundary.
+          await Promise.resolve();
           return {snapshot:JSON.stringify(c.engine.snapshot()),active:c.active,raf:c.raf,
             observers:window.__galtonDebug.resizeObservers};
         }""",running)
@@ -781,7 +782,7 @@ def test_navigation_continuity(page):
         page.wait_for_timeout(100)
         assert page.evaluate('JSON.stringify(window.__continuityController.engine.snapshot())')==before['snapshot']
         after=page.evaluate("""() => {
-          const c=window.__continuityController;settingsNavigate('probability-lab');
+          const c=window.__continuityController;closeSettingsModal();settingsNavigate('probability-lab');
           const result={same:document.querySelector('[data-galton-root]').__galtonController===c,
             active:c.active,running:c.snapshot().running,paused:c.snapshot().paused,
             mounts:window.__galtonDebug.mounts,observers:window.__galtonDebug.resizeObservers};
@@ -858,9 +859,9 @@ def test_navigation_continuity(page):
 
 def test_real_ui(page):
     enter_galton(page)
-    assert page.locator("#settingsOverlay").is_visible()
-    assert page.locator("#settingsPageTitle").inner_text() == "Laboratório de Probabilidade"
-    assert page.locator("#settingsProbabilityTitle").inner_text() == "Galton Board"
+    assert not page.locator("#settingsOverlay").is_visible()
+    assert page.locator("#minigamesGaltonTitle").inner_text() == "Galton Board"
+    assert page.evaluate("JPWNavigation.current().primary") == "tools"
     assert page.locator("[data-galton-add]").count() == 4
     assert page.locator("[data-galton-speed]").count() == 4
     assert page.locator("[data-galton-canvas]").get_attribute("role") == "img"
@@ -1107,7 +1108,7 @@ def test_real_ui(page):
 
     # Trocar de folha pausa o mesmo jogo; o retorno conserva owner e estado.
     page.evaluate("window.__a13CoveredController=document.querySelector('[data-galton-root]').__galtonController")
-    page.evaluate("settingsNavigate('knowledge')")
+    page.evaluate("openSettingsModal('knowledge')")
     covered = page.evaluate("""() => ({
       same:document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController,
       active:window.__a13CoveredController.active,
@@ -1116,8 +1117,8 @@ def test_real_ui(page):
       owner:JPWNavigation.current().primary,
       rootInSettings:!!document.querySelector('#settingsModal [data-galton-root]')
     })""")
-    assert covered == {"same":True,"active":False,"raf":0,"observers":0,"owner":"research","rootInSettings":True}, covered
-    page.evaluate("settingsNavigate('probability-lab')")
+    assert covered == {"same":True,"active":False,"raf":0,"observers":0,"owner":"tools","rootInSettings":False}, covered
+    page.evaluate("closeSettingsModal();settingsNavigate('probability-lab')")
     assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController && window.__a13CoveredController.active")
 
     # Notas e Finalização também cobrem o jogo; cancelar não altera seus dados.
@@ -1175,12 +1176,12 @@ def test_real_ui(page):
     assert reopened["speed"] == expected_preferences["speed"]
     leave_galton(page)
 
-    # Geometria mobile: folha de Configurações rolável, canvas contido horizontalmente.
+    # Geometria mobile: jogo em Ferramentas, canvas contido horizontalmente.
     page.set_viewport_size({"width": 390, "height": 844})
     enter_galton(page)
     mobile = page.evaluate(
         """() => {
-          const modal = document.querySelector('[data-settings-panel="probability-lab"]').getBoundingClientRect();
+          const modal = document.querySelector('#minigamesGame').getBoundingClientRect();
           const canvas = document.querySelector('[data-galton-canvas]').getBoundingClientRect();
           return {
             modal: {left: modal.left, top: modal.top, right: modal.right, bottom: modal.bottom},

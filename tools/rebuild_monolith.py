@@ -133,17 +133,33 @@ def build_id():
 
 current_build_id = build_id()
 build_id_source = f"// Gerado por tools/rebuild_monolith.py. Não editar manualmente.\nconst JP_WEALTH_BUILD_ID = '{current_build_id}';\n"
-# Browser-only Pine source for offline/file:// editable downloads. The same
-# official source is fingerprinted and embedded in the portable links below.
-pine_payload = base64.b64encode((ROOT / 'downloads/nocuda/Nocuda_Tool.pine').read_bytes()).decode('ascii')
-nocuda_payload = {name: {'mime': mime, 'base64': base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')} for relative, mime, name in NOCUDA_DOCUMENTS}
-build_id_source += 'if (typeof window !== "undefined") {window.JPW_NOCUDA_PINE = ' + json.dumps(pine_payload) + ';window.JPW_NOCUDA_FILES = ' + json.dumps(nocuda_payload, separators=(',', ':')) + ';}\n'
-leverage_payload = {
-    kind: {'mime': 'application/zip', 'base64': base64.b64encode((ROOT / item['path']).read_bytes()).decode('ascii')}
-    for kind, item in leverage_downloads.items()
-}
+# Lazy download metadata carries no archive/source bytes into bootstrap or SW.
+resources, payloads, envelopes = {}, {}, {}
+for relative, mime, filename in NOCUDA_DOCUMENTS:
+    data = (ROOT / relative).read_bytes()
+    key = 'nocuda/' + filename
+    resources[key] = dict(path=relative, filename=filename, mime=mime, bytes=len(data), sha256=hashlib.sha256(data).hexdigest(), payload='nocuda')
+    envelopes.setdefault('nocuda', {})[key] = base64.b64encode(data).decode('ascii')
+for kind, item in leverage_downloads.items():
+    group = {'dailySource':'leverage-daily-source','source':'leverage-source','compiled':'leverage-compiled'}[kind]
+    key = 'leverage/' + kind
+    resources[key] = {name: item[name] for name in ('path','filename','bytes','sha256')}
+    resources[key].update(mime='application/zip', payload=group)
+    envelopes[group] = {key: base64.b64encode((ROOT / item['path']).read_bytes()).decode('ascii')}
+portable_downloads = ''
+for group, files in envelopes.items():
+    relative = 'src/vendor/downloads/' + group + '-payload.js'
+    element_id = 'jpw-download-payload-' + group
+    payloads[group] = dict(path=relative, elementId=element_id)
+    envelope = dict(schemaVersion=1, buildId=current_build_id, id=group, files=files)
+    encoded = json.dumps(envelope, separators=(',', ':')).replace('<', '\\u003c')
+    target = ROOT / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text('window.JPWDownloadAssets.register(' + json.dumps(group) + ',' + encoded + ');\n', encoding='utf-8')
+    portable_downloads += '<script type="application/json" id="' + element_id + '">' + encoded + '</script>\n'
+download_manifest = dict(schemaVersion=1, buildId=current_build_id, resources=resources, payloads=payloads)
 leverage_json = json.dumps(leverage_manifest, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
-build_id_source += 'if (typeof window !== "undefined") {window.JPW_LEVERAGE_MANIFEST = ' + leverage_json + ';window.JPW_LEVERAGE_FILES = ' + json.dumps(leverage_payload, separators=(',', ':')) + ';}\n'
+build_id_source += 'if (typeof window !== "undefined") {window.JPW_LEVERAGE_MANIFEST = ' + leverage_json + ';window.JPW_DOWNLOAD_MANIFEST = ' + json.dumps(download_manifest, separators=(',', ':')) + ';}\n'
 build_id_path.write_text(build_id_source, encoding='utf-8')
 
 index = (ROOT / 'index.html').read_text(encoding='utf-8')
@@ -171,11 +187,11 @@ html = html.replace('<script src="build-id.js"></script>', '<script>\n' + portab
 for item in manifest['files']:
     tag = f'<script src="{item["path"]}"></script>'
     html = html.replace(tag, '', 1)
-html = html.replace('\n</body>', '<script>\n' + js + '\n</script>\n</body>', 1)
+html = html.replace('\n</body>', portable_downloads + '<script>\n' + js + '\n</script>\n</body>', 1)
 
 # O portátil precisa entregar os originais sem depender de pastas externas.
 # Base64 mantém os bytes e não introduz conteúdo normativo como HTML executável.
-for relative, mime, filename in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS + PROJECT_DOCUMENTS:
+for relative, mime, filename in NORMATIVE_DOCUMENTS + PROJECT_DOCUMENTS:
     encoded = base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')
     html = html.replace(
         f'href="{relative}"',

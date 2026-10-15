@@ -77,11 +77,11 @@
     return `<figure class="fxc-chart" data-fxc-series="${safe(key)}" data-axis-mode="${series.axisMode}" data-time-kind="${series.timeKind}" data-point-count="${series.points.length}" data-gap-count="${series.gapCount}" data-fxc-points="${safe(JSON.stringify(series.points))}" data-axis-domain="${safe(JSON.stringify(shared.domain||null))}" data-fxc-markers="${safe(JSON.stringify(shared.markers||[]))}" data-sync-group="${safe(shared.group||'')}" data-unit="${safe(unit)}" data-color="${safe(color)}"><figcaption id="${id}-title">${safe(title)}</figcaption>${provenance?`<p class="fxc-chart-provenance">${safe(provenance)}</p>`:''}${shared.group?'':`<p class="fxc-chart-axis-note">${safe(axisDescription(series))}${series.gapCount?' · '+series.gapCount+' observação(ões) sem valor; curva interrompida.':''}${series.validCount===1?' · Uma observação; não há trajetória entre pontos.':''}</p>`}<div class="fxc-chart-frame"><div class="fxc-chart-axis" aria-hidden="true"></div><div class="fxc-chart-plot" role="img" aria-labelledby="${id}-title" aria-describedby="${id}-value"></div></div><div class="fxc-chart-dates"><span>${safe(declaredDate(series.points[0].date))}</span><span>${safe(declaredDate(series.points.at(-1).date))}</span></div><div class="fxc-chart-reader"><button type="button" class="fxc-chart-prev" aria-label="Observação anterior: ${safe(title)}">Anterior</button><label for="${id}-cursor">Observação<input id="${id}-cursor" class="fxc-chart-cursor" type="range" min="0" max="${series.points.length-1}" step="1" value="${selected}" aria-label="Observação do gráfico: ${safe(title)}" ${series.points.length===1?'disabled':''}></label><button type="button" class="fxc-chart-next" aria-label="Próxima observação: ${safe(title)}">Próxima</button></div><output id="${id}-value" class="fxc-chart-value" aria-live="polite"></output><details class="fxc-chart-values" data-fxc-disclosure="chart-${safe(key)}-values"><summary>Ver valores do gráfico</summary><div class="fxc-scroll"><table><caption>${safe(title)} · valores das observações, sem arredondamento</caption><thead><tr><th scope="col">Observação</th><th scope="col">Data / referência original</th><th scope="col">Valor</th></tr></thead><tbody>${series.points.map(p=>`<tr data-fxc-value-row="${p.index}"><th scope="row">${p.index+1}</th><td>${safe(p.date)}</td><td data-value="${p.value===null?'':safe(String(p.value))}">${safe(exactValue(p.value,unit))}${p.value===null?' · '+safe(p.reason):''}</td></tr>`).join('')}</tbody></table></div></details></figure>`;
   }
   let chartObserver=null;
-  function bindCharts(){
+  function bindCharts(panel){
     chartObserver?.disconnect();
     chartObserver=typeof ResizeObserver==='function'?new ResizeObserver(entries=>entries.forEach(entry=>entry.target._fxcDraw?.())):null;
     const readers=[];
-    document.querySelectorAll('#fxconsolidated figure[data-fxc-series]').forEach(figure=>{
+    panel.querySelectorAll('figure[data-fxc-series]').forEach(figure=>{
       const series=chartSeries(JSON.parse(figure.dataset.fxcPoints)),plot=figure.querySelector('.fxc-chart-plot'),axis=figure.querySelector('.fxc-chart-axis'),cursor=figure.querySelector('.fxc-chart-cursor'),output=figure.querySelector('output'),prev=figure.querySelector('.fxc-chart-prev'),next=figure.querySelector('.fxc-chart-next');
       const domain=JSON.parse(figure.dataset.axisDomain||'null'),markers=JSON.parse(figure.dataset.fxcMarkers||'[]');
       let geometry=null;
@@ -99,7 +99,7 @@
         });
       };reader.select=select;figure._fxcSelect=select;
       plot._fxcDraw=()=>{
-        if(!plot.clientWidth||!plot.clientHeight)return;
+        if(plot.closest('[hidden],[inert]')||!plot.clientWidth||!plot.clientHeight)return;
         geometry=chartGeometry(series,plot.clientWidth,plot.clientHeight,domain,figure.dataset.fxcSeries==='drawdown');
         axis.innerHTML=geometry.ticks.map(t=>`<span style="top:${t.y/geometry.height*100}%">${safe(number(t.value,figure.dataset.unit))}</span>`).join('');
         const markerHtml=markers.map(m=>{
@@ -182,7 +182,19 @@
     return `Fonte: ${ui.source==='manual'?'Manual':'MT5'} · Moeda dos dados: ${projectedCurrency(model)||'não conciliada'} · Período: ${declaredDate(model.period?.from||ui.from)||'início não informado'} → ${declaredDate(model.period?.to||ui.to)||'fim não informado'} · Cobertura: ${coverage}`;
   }
   function panels(model){
-    const stat=[['trades',ui.source==='manual'?'Operações finalizadas':'Deals de saída (inclui parciais)'],['wins','Resultados positivos'],['losses','Resultados negativos'],['neutral','Resultados zero'],['winRate','Taxa de resultados positivos','%'],['profitFactor','Fator de lucro · base declarada'],['expectedPayoff',ui.source==='manual'?'Resultado líquido / operações':'Resultado líquido / saídas'],['averageWin','Média dos resultados positivos'],['averageLoss','Média dos resultados negativos'],['bestTrade','Melhor resultado'],['worstTrade','Pior resultado'],['maxWinStreak','Maior sequência positiva'],['maxLossStreak','Maior sequência negativa']];
+    // Expose the selected panel before creating its markup. Retained siblings
+    // stay untouched until their own entry, which always receives a fresh model.
+    for(const [id] of tabs){
+      const active=ui.tab===id,panel=el('fxcPanel-'+id);
+      if(panel.hidden===active)panel.hidden=!active;
+      if(panel.inert===active)panel.inert=!active;
+      el('fxcTab-'+id).setAttribute('aria-selected',String(active));el('fxcTab-'+id).tabIndex=active?0:-1;
+    }
+    el('fxcSearch').closest('label').hidden=ui.tab!=='history';
+    const panel=el('fxcPanel-'+ui.tab);
+    chartObserver?.disconnect();
+    if(panel.closest('[hidden],[inert]')||!panel.getClientRects().length)return;
+    if(ui.tab==='account'){
     const seriesInput=ui.source==='manual'?model.series?.realized:model.series?.[ui.chart],mainSeries=chartSeries(seriesInput),ddSeries=chartSeries(model.series?.drawdown);
     const sync=ui.source==='mt5'&&mainSeries.axisMode==='time'&&ddSeries.axisMode==='time'&&mainSeries.timeKind===ddSeries.timeKind&&mainSeries.validCount&&ddSeries.validCount;
     const domain=sync?[Math.min(mainSeries.points[0].time,ddSeries.points[0].time),Math.max(mainSeries.points.at(-1).time,ddSeries.points.at(-1).time)]:null;
@@ -192,17 +204,21 @@
     const dd=ui.source==='manual'?'<p class="fxc-empty-series">Drawdown do saldo indisponível: fechamentos manuais não constituem uma série de saldo.</p>':chart(model.series?.drawdown,'Drawdown histórico do saldo','negative','%','drawdown','Inclui depósitos e retiradas. Não é drawdown de equity nem o drawdown operacional JP Wealth.',{domain,group:sync?'account':''});
     const accountFacts=`<dl class="fxc-account-facts">${label(model,'balance','Saldo disponível')}${label(model,'equity','Equity disponível')}</dl><p class="fxc-note">Valores calculados a partir dos registros ou informados no relatório, conforme a origem indicada. Referência do saldo calculado: ${safe(declaredDate(model.series?.balance?.at(-1)?.time)||'sem série calculável')}. Importação não equivale a observação atual da conta.</p>`;
     el('fxcPanel-account').innerHTML=`<dl class="fxc-primary-kpis">${label(model,'growth','Crescimento no período','%')}${label(model,'netProfit','Resultado realizado')}${label(model,'maxDrawdownPct','Drawdown histórico do saldo','%')}</dl><details class="fxc-account-facts-detail" data-fxc-disclosure="account-facts"><summary>Saldo, equity e origem dos valores</summary>${accountFacts}</details><section class="fxc-integrated-panel" aria-label="Evolução e risco histórico"><div class="fxc-chart-head"><div><h3>Evolução da conta</h3><p>${ui.source==='manual'?'Acumulado dos fechamentos locais selecionados.':'Crescimento do período no resumo; curva acumulada desde a origem, mesmo quando recortada.'}</p></div>${ui.source==='mt5'?`<div class="fxc-segment" aria-label="Gráfico principal"><button type="button" data-fxc-chart="growth" aria-pressed="${ui.chart==='growth'}">Crescimento</button><button type="button" data-fxc-chart="balance" aria-pressed="${ui.chart==='balance'}">Saldo</button></div>`:''}</div>${ui.source==='mt5'?`<label class="fxc-check fxc-cashflow-toggle"><input type="checkbox" id="fxcCashflows" ${ui.cashflows?'checked':''} ${flows.length?'':'disabled'}> Marcar depósitos e retiradas registrados (${flows.length})</label>`:''}${main}${dd}${sync?`<details class="fxc-shared-axis" data-fxc-disclosure="shared-axis"><summary>Como ler as duas curvas</summary><p>${safe(axisDescription(mainSeries))} Os cursores consultam o mesmo evento quando ele existe nas duas séries. Valores ausentes interrompem a curva; nenhum ponto é completado.</p></details>`:''}${ui.cashflows&&flows.length?`<details class="fxc-cashflow-values" data-fxc-disclosure="cashflows"><summary>Consultar movimentações de caixa marcadas</summary><ul>${flows.map(r=>`<li>${safe(declaredDate(r.time))} · ${r.profit>=0?'Depósito':'Retirada'} · ${safe(exactValue(r.profit,r.currency))} · ${safe(r.ticket)}</li>`).join('')}</ul></details>`:''}${!mainSeries.validCount?'<button type="button" data-fxc-import-action>Importar histórico da conta</button>':''}</section>${monthly(model)}<details class="fxc-methodology" data-fxc-disclosure="methodology"><summary>Metodologia, cobertura e séries indisponíveis</summary><p>${safe(chartProvenance(model))}</p><p>Três origens distintas: calculado dos registros, informado em resumo para um período e observado em um instante. O gráfico não interpola eventos ausentes, não corrige fluxos por conta própria e não produz uma curva de equity a partir de uma fotografia.</p><p>Equity, flutuante, margem e exposição históricos: sem série observada disponível nesta fonte. Para analisá-los será necessária uma fonte histórica própria. O indicador atual isolado não preenche essas curvas.</p><p>${ui.source==='manual'?'Registros manuais mostram somente fatos capturados no encerramento.':'A unidade de contagem é deal de saída, inclusive parcial, reversão e Close By; não pressupõe uma posição completa.'}</p><p>Resumo importado conserva seu período original. Uma seleção menor sem eventos compatíveis permanece indisponível.</p></details>`;
+    }else if(ui.tab==='history'){
     el('fxcPanel-history').innerHTML=history(model)+(ui.source==='mt5'?['orders','positions'].map(collection=>{const rows=(S.fxConsolidated?.accounts?.find(a=>a.id===ui.accountId)?.[collection]||[]);return `<details class="fxc-entity-details" data-fxc-disclosure="entity-${collection}"><summary>${collection==='orders'?'Ordens registradas (históricas e pendentes)':'Snapshots de posições abertas'} · ${rows.length}</summary><p>Entidade distinta de execução; não integra a contagem de negociações. Fotografias importadas não comprovam o estado atual da corretora. Este inventário não é filtrado pelo período das execuções.</p><div class="fxc-scroll"><table><thead><tr><th>Ticket</th><th>Instrumento</th><th>Tipo / estado</th><th>Data observada</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${safe(r.ticket)}</td><td>${safe(r.symbol)}</td><td>${safe([r.type,r.state,r.orderScope].filter(Boolean).join(' · '))}</td><td>${safe(declaredDate(r.time||r.openedAt)||'Não informada')}</td></tr>`).join('')}</tbody></table></div></details>`;}).join(''):'');
+    }else if(ui.tab==='statistics'){
+    const stat=[['trades',ui.source==='manual'?'Operações finalizadas':'Deals de saída (inclui parciais)'],['wins','Resultados positivos'],['losses','Resultados negativos'],['neutral','Resultados zero'],['winRate','Taxa de resultados positivos','%'],['profitFactor','Fator de lucro · base declarada'],['expectedPayoff',ui.source==='manual'?'Resultado líquido / operações':'Resultado líquido / saídas'],['averageWin','Média dos resultados positivos'],['averageLoss','Média dos resultados negativos'],['bestTrade','Melhor resultado'],['worstTrade','Pior resultado'],['maxWinStreak','Maior sequência positiva'],['maxLossStreak','Maior sequência negativa']];
     const statGroups=[['Contagens e frequência',stat.slice(0,5)],['Resultados',stat.slice(5,11)],['Sequências',stat.slice(11)]];
     const statsMarkup=statGroups.map(([title,items])=>{
       const ready=items.filter(([key])=>hasValue(metric(model,key).value)),missing=items.filter(([key])=>!hasValue(metric(model,key).value));
       return `<section class="fxc-stat-group"><h3>${safe(title)}</h3>${ready.length?`<dl class="fxc-statistics">${ready.map(([k,t,u])=>label(model,k,t,u)).join('')}</dl>`:''}${missing.length?`<details data-fxc-disclosure="missing-${safe(title)}"><summary>Indicadores indisponíveis (${missing.length})</summary><dl class="fxc-statistics">${missing.map(([k,t,u])=>label(model,k,t,u)).join('')}</dl></details>`:''}</section>`;
     }).join('');
     el('fxcPanel-statistics').innerHTML=`<p class="fxc-note">${ui.source==='manual'?'Estatísticas dos resultados líquidos das operações finalizadas no JP Wealth.':'Estatísticas por deal de saída. Fechamentos parciais e reversões podem gerar vários registros para uma posição.'}</p><div class="fxc-stat-groups">${statsMarkup}</div><div class="fxc-distribution-heading"><h3>O que explica o resultado</h3><label>Ordenar distribuições<select id="fxcDistributionSort"><option value="result" ${ui.sort==='result'?'selected':''}>Resultado: maior para menor</option><option value="name" ${ui.sort==='name'?'selected':''}>Nome</option></select></label></div><div class="fxc-distributions">${distribution(model.breakdowns?.symbols,'Resultado por instrumento','symbol',projectedCurrency(model)||'')}${distribution(model.breakdowns?.directions,'Resultado por direção','direction',projectedCurrency(model)||'')}</div><details class="fxc-costs" data-fxc-disclosure="costs"><summary>Custos e movimentações de caixa</summary><h3>Custos já considerados no líquido</h3><dl class="fxc-statistics">${[['commission','Comissões'],['swap','Swaps'],['fee','Taxas']].map(([k,t])=>label(model,k,t)).join('')}</dl><h3>Movimentações de capital</h3><dl class="fxc-statistics">${[['deposits','Depósitos (inclui o inicial quando registrado)'],['withdrawals','Retiradas'],['initialBalance','Primeiro depósito registrado']].map(([k,t])=>label(model,k,t)).join('')}</dl><p>Depósitos e retiradas não são lucro. O primeiro depósito já participa dos depósitos; não somar as duas informações. Custos não são descontados novamente.</p></details>`;
+    }else if(ui.tab==='risks'){
     el('fxcPanel-risks').innerHTML=`<section id="fxcRiskBasis"><h3>Três leituras diferentes de drawdown</h3><dl class="fxc-risk-definitions"><div><dt>Histórico do saldo</dt><dd>Queda em relação ao pico histórico do balance calculado dos registros. Inclui movimentos de caixa. A série aparece junto da evolução no Painel.</dd></div><div><dt>Operacional JP Wealth</dt><dd>Calculado pelo motor no contexto operacional e com sua própria base. Consulte Operação; não é substituído por esta estatística histórica.</dd></div><div><dt>Informado no relatório</dt><dd>Valor declarado na importação para seu período e base. Não comprova uma curva observada e não altera limites ou autorização.</dd></div></dl><dl class="fxc-statistics">${label(model,'maxDrawdown','Drawdown máximo do saldo')}${label(model,'maxDrawdownPct','Drawdown relativo do saldo','%')}</dl><button type="button" data-fxc-tab="account">Ver evolução e drawdown</button><button type="button" data-fxc-go="forex-operation">Consultar risco operacional</button></section><details data-fxc-disclosure="other-risk"><summary>Outras informações de risco disponíveis no relatório</summary><dl class="fxc-statistics">${label(model,'maxLoad','Margem utilizada máxima informada','%')}${label(model,'mfe','MFE — excursão favorável')}${label(model,'mae','MAE — excursão adversa')}</dl><p>Margem utilizada não equivale a perda potencial. Valores isolados não constituem uma trajetória histórica.</p></details>`;
-    for(const [id] of tabs){const active=ui.tab===id;el('fxcPanel-'+id).hidden=!active;el('fxcPanel-'+id).inert=!active;el('fxcTab-'+id).setAttribute('aria-selected',String(active));el('fxcTab-'+id).tabIndex=active?0:-1;}
-    el('fxcSearch').closest('label').hidden=ui.tab!=='history';
-    bindCharts();
+    }
+    bindCharts(panel);
+    return panel;
   }
   function notify(message,kind='info'){ui.message=message;ui.kind=kind;if(el('fxcStatus')){el('fxcStatus').textContent=message;el('fxcStatus').dataset.kind=kind;}}
   function options(accounts,selected,automatic=false){return (automatic?'<option value="">Automático — conta Mestre</option>':'<option value="">Selecione uma conta</option>')+accounts.map(a=>`<option value="${safe(a.id)}" ${selected===a.id?'selected':''}>${safe(a.name||a.nome||a.id)}${a.login?' · '+safe(a.login):''}${a.archived?' · histórico':''}</option>`).join('');}
@@ -558,23 +574,31 @@
       else for(const attr of ['data-fxc-chart','data-fxc-month','data-fxc-month-mode','data-fxc-go','data-fxc-tab'])
         if(active.hasAttribute(attr)){focus='['+attr+'="'+CSS.escape(active.getAttribute(attr))+'"]';break;}
     }
-    return {details,points,focus};
+    const scrolls=[...root.querySelectorAll('[id^="fxcPanel-"]')].flatMap(panel=>
+      [...panel.querySelectorAll('.fxc-scroll')].map((node,index)=>({panel:panel.id,index,left:node.scrollLeft,top:node.scrollTop})));
+    return {details,points,focus,scrolls};
   }
-  function restorePresentation(saved){
-    if(!saved)return;
+  function restorePresentation(saved,panel){
+    if(!saved||!panel)return;
     const root=el('fxconsolidated');
-    root.querySelectorAll('[data-fxc-disclosure]').forEach(node=>{node.open=saved.details.includes(node.dataset.fxcDisclosure);});
+    for(const scope of [panel,el('fxcNextAction')])scope.querySelectorAll('[data-fxc-disclosure]').forEach(node=>{
+      const open=saved.details.includes(node.dataset.fxcDisclosure);if(node.open!==open)node.open=open;
+    });
     for(const selected of saved.points){
       if(!selected.point)continue;
-      const figure=root.querySelector('[data-fxc-series="'+CSS.escape(selected.series)+'"]');if(!figure)continue;
+      const figure=panel.querySelector('[data-fxc-series="'+CSS.escape(selected.series)+'"]');if(!figure)continue;
       const points=JSON.parse(figure.dataset.fxcPoints),p=selected.point;
       const index=points.findIndex(q=>q.date===p.date&&q.ticket===p.ticket&&(p.ticket!==null||q.index===p.index));
       if(index>=0)figure._fxcSelect?.(index,false);
     }
+    const scrolls=panel.querySelectorAll('.fxc-scroll');
+    for(const scroll of saved.scrolls||[])if(scroll.panel===panel.id&&scrolls[scroll.index]){scrolls[scroll.index].scrollLeft=scroll.left;scrolls[scroll.index].scrollTop=scroll.top;}
     const target=saved.focus&&root.querySelector(saved.focus);
     if(target&&!target.disabled&&!target.closest('[hidden],[inert]')&&target.getClientRects().length)target.focus({preventScroll:true});
   }
   function render(){
+    const host=el('fxconsolidated');
+    if(!host||host.closest('[hidden],[inert],[aria-hidden="true"]')||!host.getClientRects().length)return;
     mount();if(!ui.mounted)return;const accounts=FX.accounts?FX.accounts():[];if(ui.source==='manual'&&S.operationHistory?.schemaVersion===DEFAULTS.operationHistory.schemaVersion&&S.operationHistory?.records?.some(r=>!r.accountId))accounts.push({id:'unassigned',name:'Não conciliados — conta histórica ausente',archived:true});
     if(ui.accountId===null){const preferred=S.fxConsolidated?.defaultAccountId;const masters=accounts.filter(a=>a.type==='MESTRE');ui.accountId=preferred?(accounts.some(a=>a.id===preferred)?preferred:''):(masters.length===1?masters[0].id:'');}
     if(ui.accountId&&!accounts.some(a=>a.id===ui.accountId))ui.accountId='';
@@ -603,7 +627,7 @@
     renderOriginalEvidence(receipt,ui.token);
     el('fxcCoverage').textContent=(issues.length?issues.join(' · ')+'. ':'')+`Período declarado: ${declaredDate(model.period?.from||ui.from)||'início não informado'} → ${declaredDate(model.period?.to||ui.to)||'fim não informado'}. ${ui.source==='mt5'?'Importado: '+(declaredDate(receipt?.importedAt)||'não disponível')+'. ':''}Metodologia ${model.methodologyVersion||'não disponível'}. Fuso: ${model.period?.timezone&&model.period.timezone!=='unknown'?model.period.timezone:'não informado'}. MT5: custos assinados uma vez; contagem por deal de saída. Manual: resultado líquido capturado no encerramento. Saldo não equivale a equity. Consultar esta conta não altera a conta operacional.`;
     updatePeriodControls();
-    panels(model);restorePresentation(presentation);notify(ui.message,ui.kind);
+    const paintedPanel=panels(model);restorePresentation(presentation,paintedPanel);notify(ui.message,ui.kind);
   }
   function settingsMarkup(){return `<div class="fxc-settings"><p>Escolha a conta aberta inicialmente no Consolidado FX. Esta preferência não altera a conta operacional.</p><label>Conta padrão<select id="fxcDefaultAccount"></select></label><button type="button" id="fxcSaveDefault">Salvar preferência</button><p id="fxcDefaultStatus" role="status" aria-live="polite"></p></div>`;}
   function bindSettings(){const select=el('fxcDefaultAccount');if(!select)return;select.innerHTML=options(FX.accounts?.()||[],S.fxConsolidated?.defaultAccountId||'',true);const button=el('fxcSaveDefault');button.onclick=async()=>{button.disabled=true;try{const result=await FX.saveDefaultAccount(select.value||null);el('fxcDefaultStatus').textContent=result?.ok?'Preferência salva.':(result?.error?.message||result?.error||'Não foi possível confirmar a preferência.');if(result?.ok){cancel();ui.accountId=null;render();}}catch(error){el('fxcDefaultStatus').textContent='Preferência não confirmada: '+(error.message||String(error));}finally{button.disabled=false;}};}

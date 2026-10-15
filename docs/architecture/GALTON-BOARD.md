@@ -1,9 +1,9 @@
-# Arquitetura do Laboratorio de Probabilidade - Galton Board
+# Arquitetura de MiniGames — Galton Board
 
 ## Objetivo e fronteira
 
 O Galton Board e um simulador educacional de fisica e probabilidade, acessado em
-`Configurações > Conhecimento > Laboratório de Probabilidade > Galton Board`. Ele pertence a camada
+`Ferramentas e Serviços > MiniGames > Galton Board` no candidate local de 2026-10-14. Ele pertence a camada
 de aplicacao e nao ao dominio financeiro. O laboratorio nao le nem escreve `S`,
 `DEFAULTS`, contas, ordens, ledger, perfis, credenciais, APIs ou qualquer regra
 normativa do JP Wealth.
@@ -12,11 +12,20 @@ O resultado mostra como uma distribuicao empirica pode emergir de colisoes reais
 uma placa de pinos. Ele **nao e um modelo de retorno de Forex, uma previsao de mercado
 ou uma promessa de desempenho**.
 
-Na revisão local 2026-10-01, a folha educacional de Configurações é o owner
-canônico, conforme [CHG-JPW-NAVIGATION-AVAILABILITY-20261001](../work/CHG-JPW-NAVIGATION-AVAILABILITY-20261001.md).
-A localização A13 em Research é histórica. Os aliases `research-probability-lab`,
-`probability-lab` e `galton-board` abrem a mesma folha, inclusive com Research
-congelado. Não há segunda cópia do jogo.
+Na revisão local 2026-10-14, `tools-minigames` é o último filho de Ferramentas e
+Serviços. A visão `tools/minigames` apresenta `#minigamesHub`, seu título
+`#minigamesTitle` e um único cartão Galton Board com **Abrir**. A visão
+`tools/galton` usa o mesmo child e apresenta `#minigamesGame`, título
+`#minigamesGaltonTitle` e **Voltar para MiniGames**. O foco vai ao título do jogo
+na entrada e retorna a Abrir na volta. A central não monta nem inicia o jogo.
+
+A localização A13 em Research e a folha de Configurações da revisão de
+2026-10-01 são históricas. Os aliases `research-probability-lab`, `probability-lab`,
+`galton-board`, a visão local antiga de Research e as APIs antigas de Configurações
+abrem o jogo em Tools diretamente. Respeitam os guards e a disponibilidade
+pertinentes; Research congelado não impede o acesso. Com um diálogo aberto, o
+pedido é recusado com orientação, preservando DOM, foco e rascunho, sem abertura
+adiada. Não há folha oculta nem segunda cópia do jogo.
 
 ## Dependencia e carregamento
 
@@ -46,14 +55,15 @@ para ES Modules, framework ou bundler.
 | `06-controller.js` | DOM, comandos, persistencia, lifecycle, acessibilidade e coordenacao entre os demais modulos |
 
 As fronteiras sao unidirecionais: configuracao/PRNG/estatistica nao dependem de DOM;
-fisica nao conhece o modal de Configuracoes; renderer apenas projeta snapshots; e o
+fisica nao conhece a navegação; renderer apenas projeta snapshots; e o
 controller e o unico orquestrador da interface. A integracao em
-`09-settings-modal.js` monta ou ativa o mesmo controller, sem física nem
-estatística própria. O overlay da Central e o inert do fundo são o host normal;
-subdiálogos, Notas e outros diálogos cobrem o laboratório e pausam seu ciclo.
+`31-tools-services.js` monta sob demanda uma única instância em `#toolsGaltonSlot`,
+com root permanente, sem reconstruir o tabuleiro ao renderizar ou navegar.
+Configurações conserva somente a compatibilidade de entrada; não hospeda o jogo.
+Qualquer diálogo que cubra o jogo pausa seu ciclo, inclusive Notas e Configurações.
 
 ```text
-DOM de Configurações -> controller -> fisica (Planck)
+DOM de Tools/MiniGames -> controller -> fisica (Planck)
                            |             |
                            |             +-> snapshot agregado
                            +-> renderer <-+
@@ -245,10 +255,11 @@ instancia da geracao anterior fica impedida de recriar preferencias apagadas.
 
 O controller possui estados explicitos de montagem, execucao, pausa e descarte.
 
-- entrar no painel monta ou reativa uma unica instancia, sem retomar automaticamente
-  uma simulação pausada pela navegação;
-- sair do Laboratório, fechar a Central, trocar folha ou cobri-lo com outro diálogo pausa
-  o loop e desconecta o `ResizeObserver`, preservando controller e mundo em memória;
+- Abrir no cartão, ou um alias de compatibilidade aceito, monta ou reativa uma única
+  instância; visitar a central não monta o jogo e nenhuma entrada inicia a simulação;
+- Voltar para MiniGames, sair de Tools ou cobrir o jogo com qualquer diálogo chama
+  `deactivateGaltonBoard({resume:false})`, cancela `requestAnimationFrame` e desconecta o
+  `ResizeObserver`, preservando controller e mundo em memória;
 - retornar dessas transições mantém a pausa até o comando explícito `Continuar`;
 - `document.hidden` pausa a acumulacao de tempo e evita catch-up ao retornar;
 - desmontar cancela `requestAnimationFrame`, remove listeners, desconecta observers e
@@ -288,6 +299,14 @@ ficam visiveis junto ao experimento.
 
 ## PWA, seguranca e privacidade
 
+O passo `general-settings-probability-lab` continua na trilha `general`, no mesmo
+lugar, com `catalog.version=1` e os mesmos 57 IDs em sete trilhas. Seu destino é
+`tools-minigames` e sua âncora `#minigamesHub`; o texto ensina Abrir e Voltar sem
+migrar nem reiniciar progresso. A central de notificações reutiliza somente os
+avisos locais já visíveis de preferência/integridade, na área `system`, com título
+MiniGames e destino `galton-board`. A coleta não monta jogo nem consulta um
+experimento oculto.
+
 Todos os scripts declarados no manifest, inclusive Planck e os modulos do laboratorio,
 devem estar no precache. O validador compara manifest e service worker para impedir que
 um novo modulo funcione online e falhe silenciosamente offline. A politica de ativacao
@@ -312,7 +331,7 @@ para:
   reproducibilidade no mesmo runtime;
 - persistencia: round-trip, reload vazio, extensoes desconhecidas, JSON corrompido,
   falha de leitura/escrita, isolamento de `S` e Finalizar Sessao;
-- integracao: navegacao Configurações/Conhecimento/Laboratório e aliases, comandos, pausa/retomada/reset, lifecycle sem loop
+- integracao: navegação Tools/MiniGames/cartão/jogo/Voltar e aliases, recusa com diálogo aberto, comandos, pausa/retomada/reset, lifecycle sem loop
   duplicado, teclado e alternativa ao Canvas;
 - PWA: manifest, precache, build portatil e upgrade offline;
 - navegador real: desktop, `390 x 844`, claro/escuro e reduced motion;
@@ -342,6 +361,9 @@ Ficam deliberadamente fora da Fase 1:
 
 
 ## Lifecycle da realocação — revisão local 2026-10-01
+
+Fotografia histórica: o owner desta seção foi sucedido por Tools/MiniGames em
+2026-10-14, conforme o contrato corrente acima. Não descreve o host atual.
 
 `#settingsGaltonSlot` recebe uma única `galtonBoardPanelHTML()` sob demanda.
 Sair, fechar a Central, trocar de folha ou cobrir o Lab pausa e reutiliza o controller:
