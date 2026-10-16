@@ -1,7 +1,7 @@
 #property copyright "JP Wealth"
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
 #property version JPW_PRODUCT_MQL_VERSION
-#property description "Stoikus · abre Conta e NoCuda no gráfico atual; preserva os componentes já presentes."
+#property description "Stoikus by JP Wealth · abre Conta e NoCuda no gráfico atual; preserva os componentes já presentes."
 
 // Native indicator handles initialize their programs before ChartIndicatorAdd.
 // Always inspect the whole chart first; a second instance could touch retained
@@ -27,7 +27,7 @@ int JPWStoikusPanelCount(const long chart,const bool account,string &listed,bool
    long windows=0;
    ResetLastError();
    if(!ChartGetInteger(chart,CHART_WINDOWS_TOTAL,0,windows) || windows<1)
-     { Print("Stoikus · Abrir painéis: não foi possível consultar as janelas do gráfico. Erro ",GetLastError());
+     { Print("Stoikus by JP Wealth · Abrir painéis: não foi possível consultar as janelas do gráfico. Erro ",GetLastError());
        return(-1); }
    int copies=0;
    for(int window=0;window<(int)windows;window++)
@@ -35,14 +35,14 @@ int JPWStoikusPanelCount(const long chart,const bool account,string &listed,bool
       ResetLastError();
       const int total=ChartIndicatorsTotal(chart,window);
       if(total<0 || GetLastError()!=0)
-        { Print("Stoikus · Abrir painéis: lista de indicadores indisponível. Erro ",GetLastError());
+        { Print("Stoikus by JP Wealth · Abrir painéis: lista de indicadores indisponível. Erro ",GetLastError());
           return(-1); }
       for(int i=0;i<total;i++)
         {
          ResetLastError();
          const string name=ChartIndicatorName(chart,window,i);
          if(name=="")
-           { Print("Stoikus · Abrir painéis: nome de indicador indisponível. Erro ",GetLastError());
+           { Print("Stoikus by JP Wealth · Abrir painéis: nome de indicador indisponível. Erro ",GetLastError());
              return(-1); }
          if(JPWStoikusPanelName(name,account))
            {
@@ -70,7 +70,7 @@ bool JPWStoikusOpenPanel(const long chart,const bool account,string &result)
       result="listado e preservado: "+listed+"; confira versão e dados";
       if(legacy) result+=". Nome legado ou sem versão detectado; confira as versões em Ctrl+I e no Diário";
       if(copies>1) result+=". Há "+IntegerToString(copies)+" cópias; confira Ctrl+I";
-      Print("Stoikus · ",role,": ",result);
+      Print("Stoikus by JP Wealth · ",role,": ",result);
       return(true);
      }
 
@@ -86,7 +86,7 @@ bool JPWStoikusOpenPanel(const long chart,const bool account,string &result)
       const string filename=(account ? "JPW_Alavancagem_Atual" : "JPW_NoCuda_Channels");
       result="falhou ao carregar (erro "+IntegerToString(create_error)+
          "). Compile "+filename+".mq5 no MetaEditor e confira MQL5\\Indicators\\JPWealth";
-      Print("Stoikus · ",role,": ",result);
+      Print("Stoikus by JP Wealth · ",role,": ",result);
       return(false);
      }
 
@@ -103,19 +103,19 @@ bool JPWStoikusOpenPanel(const long chart,const bool account,string &result)
      {
       release_notice=". Aviso: falha na liberação do handle da ferramenta (erro "+IntegerToString(GetLastError())+
          "). Confira o Diário; as instâncias listadas foram preservadas";
-      Print("Stoikus · ",role,release_notice);
+      Print("Stoikus by JP Wealth · ",role,release_notice);
      }
    if(!attached)
      { result="carregado, mas falhou ao anexar (erro "+IntegerToString(attach_error)+
           "). Confira o Diário e execute a ferramenta novamente"+release_notice;
-       Print("Stoikus · ",role,": ",result);
+       Print("Stoikus by JP Wealth · ",role,": ",result);
        return(false); }
    if(confirmed<1)
      { result="anexação não confirmada; confira Ctrl+I e o Diário antes de tentar novamente"+release_notice;
-       Print("Stoikus · ",role,": ",result);
+       Print("Stoikus by JP Wealth · ",role,": ",result);
        return(false); }
    result="carregado, anexado e listado: "+listed+"; confira versão e dados"+release_notice;
-   Print("Stoikus · ",role,": ",result);
+   Print("Stoikus by JP Wealth · ",role,": ",result);
    return(true);
   }
 
@@ -129,7 +129,7 @@ void OnStart()
    const int nocuda_copies=JPWStoikusPanelCount(chart,false,nocuda_listed,nocuda_legacy);
    if(account_copies<0 || nocuda_copies<0)
      {
-      const string message="Stoikus · Abertura incompleta. Conta e NoCuda: presença não confirmada.\n"
+      const string message="Stoikus by JP Wealth · Abertura incompleta. Conta e NoCuda: presença não confirmada.\n"
          "Confira a lista de indicadores em Ctrl+I e o Diário; depois tente novamente.\n"
          "Mantenha o Monitor em outro gráfico de apoio, aberto.";
       Print(message); Alert(message);
@@ -139,7 +139,7 @@ void OnStart()
    const bool account_ok=JPWStoikusOpenPanel(chart,true,account_result);
    const bool nocuda_ok=JPWStoikusOpenPanel(chart,false,nocuda_result);
    const string title=(account_ok && nocuda_ok ? "Painéis listados no gráfico" : "Abertura incompleta");
-   const string message="Stoikus · "+title+".\nConta: "+account_result+".\nNoCuda: "+nocuda_result+
+   const string message="Stoikus by JP Wealth · "+title+".\nConta: "+account_result+".\nNoCuda: "+nocuda_result+
       ".\nA listagem não confirma funcionamento ou compatibilidade. Confira versões e dados; nenhuma instância existente foi substituída.\n"
       "Mantenha o Monitor em outro gráfico de apoio, aberto. Para ajustar Entradas: Ctrl+I > indicador > Editar.";
    // One visible result per execution. A successful addition stays in place

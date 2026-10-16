@@ -13,6 +13,53 @@ leverage_manifest = build_leverage_package(ROOT)
 leverage_downloads = {
     kind: item for kind, item in leverage_manifest['downloads'].items() if item['available']
 }
+# Optional R4 delivery inputs are bounded records, never a directory scan or
+# native proof. Keep historical ZIP payloads unchanged when the field is absent.
+INTERFACE_DELIVERY_CATALOG = {
+ 'R5': {
+    'nativeKit': ('Kit_Windows_Stoikus_Janelas_R5.zip', 'application/zip'),
+    'nativePin': ('root-pin-R5.json', 'application/json'),
+    'preview': ('Previa_Stoikus_Janelas_R5.html', 'text/html'),
+ },
+ 'R4': {
+    'nativeKit': ('Kit_Windows_Stoikus_Assinatura_R4.zip', 'application/zip'),
+    'nativePin': ('root-pin-R4.json', 'application/json'),
+    'preview': ('Previa_Stoikus_Interface_R4.html', 'text/html'),
+}}
+
+def interface_delivery_files():
+    if 'interfaceRelease' not in leverage_manifest:
+        return {}
+    release = leverage_manifest['interfaceRelease']
+    expected = INTERFACE_DELIVERY_CATALOG.get(release.get('revision')) if isinstance(release, dict) else None
+    if not expected:
+        raise SystemExit('ERRO: revisao de entrega da interface invalida')
+    artifacts = release.get('artifacts') if isinstance(release, dict) else None
+    if not isinstance(artifacts, dict) or set(artifacts) != set(expected):
+        raise SystemExit('ERRO: inventario de entrega da interface invalido')
+    files = {}
+    for kind, (filename, mime) in expected.items():
+        item = artifacts[kind]
+        relative = 'downloads/jpw-alavancagem-atual/' + filename
+        if (not isinstance(item, dict) or item.get('available') is not True
+                or item.get('path') != relative or item.get('filename') != filename
+                or type(item.get('bytes')) is not int or item['bytes'] <= 0
+                or not isinstance(item.get('sha256'), str)
+                or not re.fullmatch(r'[a-f0-9]{64}', item['sha256'])):
+            raise SystemExit(f'ERRO: metadata de entrega da interface invalida: {kind}')
+        path = ROOT / relative
+        if path.is_symlink() or not path.is_file() or path.resolve() != ROOT.resolve() / relative:
+            raise SystemExit(f'ERRO: input de entrega da interface invalido: {relative}')
+        raw = path.read_bytes()
+        if len(raw) != item['bytes'] or hashlib.sha256(raw).hexdigest() != item['sha256']:
+            raise SystemExit(f'ERRO: bytes/hash de entrega da interface divergentes: {relative}')
+        files[kind] = (mime, item)
+    return files
+
+leverage_delivery_files = {
+    kind: ('application/zip', item) for kind, item in leverage_downloads.items()
+}
+leverage_delivery_files.update(interface_delivery_files())
 manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
 build_id_path = ROOT / 'build-id.js'
 
@@ -48,7 +95,7 @@ FINGERPRINT_FIXED_INPUTS = (
     'tools/rebuild_monolith.py', 'tools/build_leverage_package.py',
     'downloads/jpw-alavancagem-atual/manifest.json',
     *leverage_manifest['sourceFiles'],
-    *(item['path'] for item in leverage_downloads.values()),
+    *(item['path'] for _mime, item in leverage_delivery_files.values()),
     *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS + PROJECT_DOCUMENTS),
 )
 FINGERPRINT_TAIL_INPUTS = (
@@ -140,11 +187,11 @@ for relative, mime, filename in NOCUDA_DOCUMENTS:
     key = 'nocuda/' + filename
     resources[key] = dict(path=relative, filename=filename, mime=mime, bytes=len(data), sha256=hashlib.sha256(data).hexdigest(), payload='nocuda')
     envelopes.setdefault('nocuda', {})[key] = base64.b64encode(data).decode('ascii')
-for kind, item in leverage_downloads.items():
-    group = {'dailySource':'leverage-daily-source','source':'leverage-source','compiled':'leverage-compiled'}[kind]
+for kind, (mime, item) in leverage_delivery_files.items():
+    group = 'leverage-' + {'dailySource':'daily-source','source':'source','compiled':'compiled','nativeKit':'native-kit','nativePin':'native-pin','preview':'preview'}[kind]
     key = 'leverage/' + kind
     resources[key] = {name: item[name] for name in ('path','filename','bytes','sha256')}
-    resources[key].update(mime='application/zip', payload=group)
+    resources[key].update(mime=mime, payload=group)
     envelopes[group] = {key: base64.b64encode((ROOT / item['path']).read_bytes()).decode('ascii')}
 portable_downloads = ''
 for group, files in envelopes.items():
@@ -155,11 +202,17 @@ for group, files in envelopes.items():
     encoded = json.dumps(envelope, separators=(',', ':')).replace('<', '\\u003c')
     target = ROOT / relative
     target.parent.mkdir(parents=True, exist_ok=True)
+    if group == 'leverage-preview':
+        envelope_path = relative.removesuffix('.js') + '.json'
+        envelope_bytes = encoded.encode('utf-8')
+        (ROOT / envelope_path).write_bytes(envelope_bytes)
+        payloads[group].update(envelopePath=envelope_path, envelopeBytes=len(envelope_bytes), envelopeSha256=hashlib.sha256(envelope_bytes).hexdigest())
     target.write_text('window.JPWDownloadAssets.register(' + json.dumps(group) + ',' + encoded + ');\n', encoding='utf-8')
     portable_downloads += '<script type="application/json" id="' + element_id + '">' + encoded + '</script>\n'
 download_manifest = dict(schemaVersion=1, buildId=current_build_id, resources=resources, payloads=payloads)
 leverage_json = json.dumps(leverage_manifest, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
 build_id_source += 'if (typeof window !== "undefined") {window.JPW_LEVERAGE_MANIFEST = ' + leverage_json + ';window.JPW_DOWNLOAD_MANIFEST = ' + json.dumps(download_manifest, separators=(',', ':')) + ';}\n'
+build_id_source += 'if (typeof self !== "undefined" && typeof window === "undefined") {self.JPW_DOWNLOAD_MANIFEST = ' + json.dumps(download_manifest, separators=(',', ':')) + ';}\n'
 build_id_path.write_text(build_id_source, encoding='utf-8')
 
 index = (ROOT / 'index.html').read_text(encoding='utf-8')

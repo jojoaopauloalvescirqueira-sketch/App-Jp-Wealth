@@ -96,6 +96,19 @@ bool JPWPanelCockpit(const int chart_width,const int chart_height,
    return(rect.width>0 && rect.height>0);
   }
 
+// Conta has its own bounded viewport; callers pass DPI once, before layout.
+bool JPWPanelAccount(const int chart_width,const int chart_height,const double scale,JPWPanelRect &rect)
+  {
+   if(chart_width<1 || chart_height<1 || scale<=0) return(false);
+   const int nominal_width=(int)(720*scale+0.5),nominal_height=(int)(520*scale+0.5);
+   const int cap_width=(int)((long)chart_width*85/100),cap_height=(int)((long)chart_height*85/100);
+   rect.width=(nominal_width<cap_width ? nominal_width : cap_width);
+   rect.height=(nominal_height<cap_height ? nominal_height : cap_height);
+   rect.x=(chart_width-rect.width)/2; rect.y=(chart_height-rect.height)/2;
+   rect.compact=((double)rect.width/scale<640);
+   return(rect.width>0 && rect.height>0);
+  }
+
 bool JPWPanelDialog(const int chart_width,const int chart_height,
                     const int text_height,const int char_width,JPWPanelRect &rect,
                     int &padding,int &line_height,int &control_height,

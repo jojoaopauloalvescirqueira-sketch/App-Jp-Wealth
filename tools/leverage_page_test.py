@@ -18,6 +18,7 @@ from zipfile import ZipFile
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap
 from browser_fixture_server import BrowserFixtureServer
+from stoikus_usage_page_test import verify_hosted_preview_delivery, reset_download_page
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +26,8 @@ os.chdir(ROOT)
 MANIFEST = json.loads((ROOT / 'downloads/jpw-alavancagem-atual/manifest.json').read_text())
 SOURCE = MANIFEST['downloads']['source']
 DAILY = MANIFEST['downloads'].get('dailySource')
+INTERFACE = MANIFEST.get('interfaceRelease')
+ARTIFACT_NAMES = {'nativeKit': 'Kit_Windows_Stoikus_Janelas_R5.zip', 'nativePin': 'root-pin-R5.json', 'preview': 'Previa_Stoikus_Janelas_R5.html'}
 ARCHIVE = ROOT / SOURCE['path']
 COMPILED = MANIFEST['downloads']['compiled']
 # A missing native slice is a valid candidate state, never a path to old EX5.
@@ -180,26 +183,43 @@ MEMBER_RENAMES = {
 }
 assert len(MEMBER_RENAMES) == 29 and set(MEMBER_RENAMES) <= HISTORICAL_EXPECTED
 EXPECTED = {MEMBER_RENAMES.get(name, name) for name in HISTORICAL_EXPECTED} | {"STOIKUS_RENAME_1_22_0.md", "STOIKUS_USO_DIARIO.md", "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5"}
-assert len(EXPECTED) == 135
+EXPECTED.add("MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh")
+EXPECTED.update('MQL5/Include/JPWealth/'+name for name in ('JPW_Stoikus_HUD.mqh','JPW_Stoikus_Visual.mqh','JPW_Stoikus_Window.mqh'))
+assert len(EXPECTED) == 139
 EXPECTED_EX5 = {name[:-4] + ".ex5" for name in EXPECTED if name.endswith(".mq5")}
 assert len(EXPECTED_EX5) == 34
-EXPECTED_VERSION = "1.22.1"
+EXPECTED_VERSION = "1.23.0"
 EXPECTED_COVERAGE = (
-    "CANDIDATE 1.22.1; cálculo 1.9.0 preservado; instalação de uso, Entradas e abertura conjunta dos painéis. "
+    "CANDIDATE 1.23.0; cálculo 1.9.0 preservado; lifecycle NoCuda, continuidade auditada do Histórico Pessoal e estados acionáveis do Monitor. "
     "Critérios locais, compilação e runtime possuem evidências próprias; sem aceite herdado."
 )
 
 
 def verify_manifest_contract(manifest):
     """Explicit release oracle. Source-only never proves native execution/publication."""
-    assert manifest['version'] == EXPECTED_VERSION, 'candidate version differs from explicit 1.22.1 target'
+    assert manifest['version'] == EXPECTED_VERSION, 'candidate version differs from explicit 1.23.0 target'
     assert manifest['productName'] == 'Stoikus'
-    assert len(manifest['sourceFiles']) == len(set(manifest['sourceFiles'])) == 135
+    assert len(manifest['sourceFiles']) == len(set(manifest['sourceFiles'])) == 139
     assert {Path(name).relative_to('mt5/jpw-alavancagem-atual').as_posix()
             for name in manifest['sourceFiles']} == EXPECTED, 'explicit source inventory differs'
     assert set(manifest['sourceHashes']) == EXPECTED, 'source hash inventory differs'
     assert all(re.fullmatch('[a-f0-9]{64}', digest) for digest in manifest['sourceHashes'].values())
-    assert manifest['coverage'] == EXPECTED_COVERAGE, 'candidate coverage differs from frozen target'
+    if manifest.get('interfaceRelease'):
+        release = manifest['interfaceRelease']
+        assert release['revision'] == 'R5' and release['candidate'] == '1.23.0-interface'
+        assert release['archiveVariant'] == '' and release['state'] == 'SOURCE_ONLY_NATIVE_PENDING'
+        assert all(release[key] == 'NOT_RUN' for key in ('nativeCompilation', 'nativeRuntime', 'humanAcceptance', 'windowsX64'))
+        assert set(release['artifacts']) == set(ARTIFACT_NAMES)
+        assert 'CANDIDATE 1.23.0' in manifest['coverage'] and 'janelas R5' in manifest['coverage'] and 'cálculo 1.9.0 preservado' in manifest['coverage']
+        for kind, filename in ARTIFACT_NAMES.items():
+            entry = release['artifacts'][kind]
+            assert entry['available'] is True and entry['filename'] == filename
+            assert entry['path'] == 'downloads/jpw-alavancagem-atual/' + filename
+            raw = (ROOT / entry['path']).read_bytes()
+            assert len(raw) == entry['bytes'] and sha256(raw).hexdigest() == entry['sha256']
+        assert manifest['downloads']['compiled']['available'] is False
+    else:
+        assert manifest['coverage'] == EXPECTED_COVERAGE, 'candidate coverage differs from frozen target'
     assert manifest['genetrixCandidate']['version'] == EXPECTED_VERSION
     source = manifest['downloads']['source']
     assert source['available'] is True and isinstance(source['path'],str) and source['path']
@@ -207,7 +227,9 @@ def verify_manifest_contract(manifest):
     assert re.fullmatch('[a-f0-9]{64}',source['sha256']) and source['bytes'] > 0
     daily = manifest['downloads']['dailySource']
     assert daily['available'] is True and isinstance(daily['path'], str) and daily['path']
-    assert daily['filename'] == 'JPW_Stoikus_Uso_Fontes_v1.22.1.zip'
+    assert daily['filename'] == 'JPW_Stoikus_Uso_Fontes_v1.23.0.zip'
+    if manifest.get('interfaceRelease'):
+        assert daily['sha256'] == '0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3'
     assert daily['filename'] == Path(daily['path']).name
     assert re.fullmatch('[a-f0-9]{64}', daily['sha256']) and daily['bytes'] > 0
     compiled = manifest['downloads']['compiled']; native = manifest.get('nativeArtifact')
@@ -355,24 +377,30 @@ def route_and_inspect(page):
     assert page.locator('#nocudaTool').is_hidden()
     assert page.locator('#execEcal').is_hidden()
     assert page.locator('#toolsNavSubmenu [data-nav-child="tools-leverage"]').get_attribute('aria-current') == 'page'
-    assert page.locator('#jpwLeveragePage h1').text_content() == 'Stoikus'
+    signature = page.locator('#jpwLeverageTitle')
+    assert signature.get_attribute('aria-label') == 'Stoikus by JP Wealth'
+    assert signature.locator('.stoikus-name').text_content() == 'Stoikus'
+    assert signature.locator('.stoikus-attribution > span').text_content() == 'by'
+    assert signature.evaluate("n=>getComputedStyle(n).fontWeight==='400'&&getComputedStyle(n).fontSize==='24px'")
     assert page.evaluate("JPWNavigation.children('tools').find(r=>r.id==='tools-leverage').label") == 'Stoikus — MT5'
     assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
-    assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeveragePage').text_content()
-    assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeveragePage').text_content()
+    assert 'Este site não recebe posições, patrimônio da conta (equity), credenciais, resultados ou estudos' in page.locator('#jpwLeveragePage').text_content()
+    assert 'O site não lê nem distribui o arquivo' in page.locator('#jpwLeverageHow').text_content()
     current_distribution_text = page.locator('#jpwLeveragePage').text_content()
     assert 'JPW_Genetrix_Monitor' not in current_distribution_text, 'stale Monitor filename in current distribution guidance'
     assert not re.search(r'\bJPW_Genetrix_Logo_[A-Za-z0-9_]+\.bmp\b', current_distribution_text, re.I), 'stale brand bitmap filename in current distribution guidance'
     verify_manifest_contract(MANIFEST)
-    assert 'Da origem da operação' in page.locator('#jpwLeverageOverview').text_content()
-    assert 'medidas do Fibonacci importado permanecem indisponíveis' in page.locator('#jpwGenetrixDefinition').text_content()
+    assert 'Sua conta e seus estudos' in page.locator('#jpwLeverageOverview').text_content()
+    assert 'a geometria Fibonacci importada ainda aguarda comprovação nativa' in page.locator('#jpwGenetrixDefinition').text_content()
     print(json.dumps({'PAGE_OBSERVATION':page_observation(page)},ensure_ascii=False),flush=True)
     verify_native_page_state(page)
     assert MANIFEST['validation']['clipboard']['detail'] in page.locator('[data-jpw-leverage-meta="clipboard"]').text_content()
     overview = page.locator('#jpwGenetrixArchitecture').text_content()
-    for phrase in ('JPW_Stoikus_Monitor', 'Stoikus · Conta', 'NoCuda · Gráficos',
-                   'Observer e Accountant', 'rollback', 'Supervisor 7x', 'outro gráfico'):
+    for phrase in ('Monitor da conta','Stoikus · Conta','NoCuda · Gráficos','um EA por gráfico','gráfico vazio','interrompe o Monitor'):
         assert phrase in overview, phrase
+    assert 'JPW_Stoikus_Monitor' in page.locator('#jpwLeverageDailyStart').text_content()
+    assert 'não enviam ordens nem mensagens aos grupos' in page.locator('#jpwGenetrixDefinition').text_content()
+    assert 'Supervisor e produtores legados' in page.locator('#jpwGenetrixDefinition').text_content()
     assert page.locator('.genetrix-tabs').get_attribute('aria-label') == 'Áreas do Stoikus'
     assert set(page.locator('[data-jpw-leverage-meta="version"]').all_text_contents()) == {MANIFEST['version']}
     assert all(MANIFEST['validation']['mathematics']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="mathematics"]').all_text_contents())
@@ -389,36 +417,32 @@ def route_and_inspect(page):
 def verify_guide(page):
     steps = page.locator('#jpwLeveragePage [data-leverage-step]')
     open_area(page, 'install')
+    role_details = page.locator('#genetrixInstallPanel details').filter(has=page.locator('[data-stoikus-daily-roles]')).first
+    role_details.locator(':scope > summary').click()
     assert page.locator('[data-stoikus-daily-roles]').is_visible()
     assert page.locator('[data-stoikus-isolated-install]').is_visible()
     assert all(note.is_hidden() for note in page.locator('[data-stoikus-legacy-install] p').all())
     daily_start = page.locator('#jpwLeverageDailyStart').text_content()
     assert 'Stoikus · Cockpit' in daily_start and 'Stoikus · NoCuda Channels' in daily_start
     assert page.locator('[data-stoikus-daily-roles] tbody tr').count() == 4
-    assert page.locator('[data-jpw-leverage-download="dailySource"]').is_visible()
+    assert page.locator('[data-jpw-leverage-download="dailySource"]').count() == 1
+    assert not page.locator('[data-jpw-leverage-download="dailySource"]').is_visible(), 'Sources already supplied inside the kit stay optional'
     assert page.locator('#jpwLeverageTests').is_hidden()
     assert page.locator('.genetrix-file-disclosure .leverage-file-table').is_hidden()
     for component, count in [('account',12),('nocuda',5),('monitor',3)]:
         assert page.locator('[data-stoikus-inputs="'+component+'"] tbody tr').count() == count
-    assert steps.count() == 7
-    assert steps.evaluate_all("nodes=>nodes.map(n=>n.dataset.leverageStep)") == list('1234567')
-    for step in steps.all():
-        area = step.evaluate("n=>n.closest('[data-genetrix-panel]').dataset.genetrixPanel")
-        open_area(page, area)
-        assert step.is_visible()
-        assert step.locator('h2').is_visible()
-        assert any(node.is_visible() for node in step.locator(':scope > p, :scope > ol, :scope > .leverage-editor-flow').all()), step.get_attribute('data-leverage-step')
-        assert step.evaluate("n=>!n.closest('details')"), 'Essential steps must stay exposed'
-    assert page.locator('.leverage-glossary dt').all_text_contents() == [
-        'MetaTrader 5 (MT5)', 'MetaEditor', 'Indicador', 'Script',
-        'Expert Advisor (EA)', 'Arquivos .mq5, .mqh e .ex5']
-    assert 'documentação oficial MQL5 da MetaQuotes' in \
-        page.locator('.leverage-official-ref').text_content()
-    assert page.locator('.leverage-official-ref a').count() == 0
-    assert page.locator('.leverage-editor-flow>div').count() == 3
-    assert 'Compilar com F7' in page.locator('.leverage-editor-flow').text_content()
-    assert page.locator('.leverage-folder-map strong').all_text_contents() == [
-        'Indicators', 'Include', 'Scripts', 'Experts', 'Images']
+    # Legacy anchors remain stable; six ordinary-flow stages are now the only primary path.
+    phases = page.locator('#genetrixInstallPanel .stoikus-phase')
+    assert phases.evaluate_all('ns=>ns.map(n=>n.id)') == ['jpwStoikusNativeKit','genetrixPreparation','jpwLeverageCompile','jpwLeverageInstall','jpwLeverageDailyStart','jpwLeverageUse']
+    for phase in phases.all():
+        assert phase.is_visible() and phase.locator('h2').is_visible()
+        assert phase.evaluate("n=>!n.closest('details')"), 'Essential stages must stay exposed'
+        assert 'Resultado esperado:' in phase.inner_text()
+    assert page.locator('.leverage-glossary dt').all_text_contents() == ['Fonte .mq5 e apoio .mqh','Programa .ex5','Indicador, script e EA']
+    assert 'Compilar com F7' not in page.locator('#genetrixInstallPanel').inner_text(), 'A second unreceipted compilation path returned'
+    assert 'não recompile nela' in page.locator('#jpwLeverageInstall').inner_text()
+    assert 'quatro logs completos' in page.locator('#jpwLeverageCompile').inner_text()
+    assert 'zero erros e zero avisos' in page.locator('#jpwLeverageCompile').inner_text()
     open_area(page, 'install')
     assert page.locator('.leverage-package--daily [data-jpw-leverage-download="dailySource"]').is_enabled()
     assert page.locator('.leverage-package--source [data-jpw-leverage-download="source"]').is_enabled()
@@ -442,6 +466,7 @@ def verify_guide(page):
     page.keyboard.press('Enter')
     assert not release.evaluate('n=>n.parentElement.open')
     open_area(page, 'install')
+    reveal_target(page, 'jpwLeverageDownloads')  # Opens the optional package group through the real controller.
     source_disclosure = page.locator('[data-stoikus-engineering-download] > summary')
     source_disclosure.click()
     assert page.locator('[data-jpw-leverage-download="source"]').is_visible()
@@ -449,7 +474,19 @@ def verify_guide(page):
     integrity.click()
     assert SOURCE['sha256'] in page.locator('.leverage-package--source .leverage-package-integrity').text_content()
     integrity.click()
-    assert 'Não substitua a pasta MQL5 inteira.' in page.locator('#jpwLeverageInstall').text_content()
+    copy_guide = page.locator('#jpwLeverageInstall').text_content()
+    assert 'somente os quatro .ex5' in copy_guide
+    assert 'Preserve arquivos existentes' in copy_guide and 'backup antes da substituição' in copy_guide
+    assert 'Não copie fontes, Includes ou imagens para a demo e não recompile nela' in copy_guide
+    copied_rows = page.locator('#jpwLeverageInstall .stoikus-ex5-table tbody tr')
+    assert copied_rows.count() == 4
+    assert {row.locator('th').text_content(): row.locator('td').text_content()
+            for row in copied_rows.all()} == {
+        'JPW_Stoikus_Monitor.ex5': 'MQL5/Experts/JPWealth/',
+        'JPW_Alavancagem_Atual.ex5': 'MQL5/Indicators/JPWealth/',
+        'JPW_NoCuda_Channels.ex5': 'MQL5/Indicators/JPWealth/',
+        'JPW_Stoikus_Abrir_Paineis.ex5': 'MQL5/Scripts/JPWealth/',
+    }
     reveal_target(page, 'jpwLeverageInstall')
     page.locator('.genetrix-file-disclosure .leverage-file-table').evaluate("n=>{let a=n.parentElement;while(a){if(a.tagName==='DETAILS')a.open=true;a=a.parentElement;}}")
     rows = page.locator('.genetrix-file-disclosure .leverage-file-table tbody tr')
@@ -553,65 +590,85 @@ def verify_guide(page):
     assert len(historical_documents) == 13
     expected_destinations.update({name: "Documento histórico no ZIP · não copiar para MQL5"
                                   for name in historical_documents})
-    assert len(expected_destinations) == rows.count() == 133
+    expected_destinations['JPW_Stoikus_Monitor_Log.mqh'] = 'MQL5/Include/JPWealth/'
+    expected_destinations.update({name:'MQL5/Include/JPWealth/' for name in ('JPW_Stoikus_HUD.mqh','JPW_Stoikus_Visual.mqh','JPW_Stoikus_Window.mqh')})
+    assert len(expected_destinations) == rows.count() == 137
     assert {row.locator('th').text_content(): row.locator('td').text_content()
             for row in rows.all()} == expected_destinations
-    assert 'não são compilados separadamente' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_Consultar_MDD.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_RaizN_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_RaizN_Store_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_RaizN_Config_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_RaizN_Live_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_RaizN_Horizon_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_RaizN_Factor_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_Observer_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_Observer.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_Panel_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_Alavancagem_StopRisk_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_NoCuda_Channels.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_NoCuda_Core_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    # Engineering members remain verified by the exact inventory above; they
+    # are references, not extra compilation/install steps in the R5 daily path.
+    sdk_inventory = page.locator('.genetrix-file-disclosure .leverage-file-table').text_content()
+    for name in ('JPW_Alavancagem_Consultar_MDD.mq5', 'JPW_Alavancagem_RaizN_Tests.mq5',
+                 'JPW_Alavancagem_RaizN_Store_Tests.mq5', 'JPW_Alavancagem_RaizN_Config_Tests.mq5',
+                 'JPW_Alavancagem_RaizN_Live_Tests.mq5', 'JPW_Alavancagem_RaizN_Horizon_Tests.mq5',
+                 'JPW_Alavancagem_RaizN_Factor_Tests.mq5', 'JPW_Alavancagem_Observer_Tests.mq5',
+                 'JPW_Alavancagem_Observer.mq5', 'JPW_Alavancagem_Panel_Tests.mq5',
+                 'JPW_Alavancagem_StopRisk_Tests.mq5', 'JPW_NoCuda_Channels.mq5',
+                 'JPW_NoCuda_Core_Tests.mq5', 'JPW_NoCuda_Store_Tests.mq5',
+                 'JPW_NoCuda_Projection_Tests.mq5', 'JPW_SignalCopy_Tests.mq5'):
+        assert name in sdk_inventory, name
+    frozen_guide = (ROOT/'mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md').read_text()
+    frozen_reference = (ROOT/'mt5/jpw-alavancagem-atual/README.md').read_text()
+    assert 'não são compilados separadamente' in frozen_guide
     reveal_target(page, 'jpwLeverageTests')
-    assert 'JPW_NoCuda_Store_Tests' in page.locator('#jpwLeverageTests').text_content()
-    assert 'JPW_NoCuda_Projection_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
-    assert 'JPW_NoCuda_Projection_Tests' in page.locator('#jpwLeverageTests').text_content()
-    assert 'Allow Algo Trading / Permitir negociação algorítmica desmarcado' in page.locator('#jpwLeverageTests').text_content()
-    assert 'Experts' in page.locator('#jpwLeverageTests').text_content()
-    assert 'Não comprova a leitura dos contratos' in page.locator('#jpwLeverageTests').text_content()
-    assert '10.000 USC = US$ 100' in page.locator('#jpwLeverageUSC').text_content()
-    assert 'último equity informado pelo terminal' in page.locator('#jpwLeverageUse').text_content()
-    assert 'horário do servidor' in page.locator('#jpwLeverageUse').text_content()
-    assert page.locator('#jpwLeverageUse .leverage-quality dt').all_text_contents() == [
-        'Current', 'Estimated', 'N/A']
+    tests_scope = page.locator('#jpwLeverageTests').locator('xpath=ancestor::details[1]').text_content()
+    for phrase in ('protocolo separado', 'não fazem parte dos quatro EX5',
+                   'laboratório isolado', 'compilação e recibos próprios',
+                   'não comprova interação no MT5 ou as especificações da corretora'):
+        assert phrase in tests_scope, phrase
+    usc = page.locator('#jpwLeverageUSC').text_content()
+    for phrase in ('USC representa centavos de dólar', 'escala da moeda e a escala de cada instrumento',
+                   'Sem perfil compatível, a leitura USC fica bloqueada',
+                   'JPW_Alavancagem_Verificar_USC', 'fora do kit de quatro programas',
+                   'não acrescente o utilitário à demo como atalho'):
+        assert phrase in usc, phrase
+    assert '10.000 USC = US$ 100' in frozen_reference
+    # Timing and numeric examples remain in the frozen technical reference.
+    # They must not force a second installation/compilation recipe into phase 6.
+    for phrase in ('último equity informado pelo terminal', 'horário do servidor',
+                   'JPW: Leverage 2,75x · Current', 'JPW: Leverage ≈2,75x · Estimated',
+                   'Floating P/L: +1,25%', 'Genesis SL: 3,52%',
+                   'InpUpdateSeconds', '30 segundos', '5 segundos'):
+        assert phrase in frozen_reference, phrase
+    account_inputs = page.locator('[data-stoikus-inputs="account"]').text_content()
+    for phrase in ('InpUpdateSeconds', '30 s', '5 s', 'não garante intervalos exatos'):
+        assert phrase in account_inputs, phrase
     guide = page.locator('#jpwLeverageUse').text_content()
-    assert 'JPW: Leverage 2,75x · Current' in guide
-    assert 'JPW: Leverage ≈2,75x · Estimated' in guide
-    assert 'Floating P/L: +1,25%' in guide
-    assert 'Genesis SL: 3,52%' in guide
-    assert 'Raiz N diag. 1W: ≈3,29% · F1,5 · Estimated' in guide
-    assert 'Raiz N diag. 2W: ≈4,65% · F1,5 · Estimated' in guide
-    assert 'Cockpit → Raiz N' in guide and 'Cockpit → Stops' in guide
-    assert 'Stop risk: 250 USC · 2,50% balance · Current' in guide
-    assert 'InpUpdateSeconds' in guide and '30 segundos' in guide and '5 segundos' in guide
-    assert 'não garante intervalos exatos' in guide
-    assert 'DD / saldo: 3,00%' in guide and 'não é uma linha adicional' in guide
-    assert 'sete linhas pequenas e cinzas' in guide
-    assert 'O Cockpit separa resumo, Stops, Raiz N' in guide
+    assert page.locator('#jpwLeverageUse .leverage-quality dt').all_text_contents() == [
+        'Current · atual', 'Estimated · estimado', 'N/A · indisponível']
+    for phrase in ('uma das sete métricas', 'resumo compacto', 'valor, unidade, estado, motivo e origem',
+                   'Histórico', 'Preparando', 'gravação for confirmada',
+                   'Selecionar canal → Conferir prévia → Confirmar vínculo',
+                   'Isso não é aprovação para operar', 'Não significa zero',
+                   'Partial indica cobertura parcial', 'UNVERIFIED_NATIVE',
+                   'Compilação, instalação, execução e aceite'):
+        assert phrase in guide, phrase
+    # Financial scopes remain explicit in Resources/overview; old gray-row
+    # examples do not define the layout of the compact R5 presentation.
+    overview = page.locator('#jpwStoikusInterface').text_content()
+    assert 'conta inteira' in overview and 'grupo de símbolo/direção atribuído' in overview
+    assert 'Compensado exige o ciclo selecionado' in overview
+    risk = page.locator('#jpwLeverageStopRisk').text_content()
+    assert 'moeda da conta' in risk and '% do saldo atual' in risk
+    how = page.locator('#jpwLeverageHow').text_content()
+    assert 'DD / saldo = 100 × max(0, B − E) / B' in how
+    assert 'máximo observado' in how and 'Não é um MDD pico-a-vale' in how
     cockpit = page.locator('#jpwLeverageCockpit').text_content()
     assert page.locator('#jpwLeverageCockpit').count() == 1
-    for phrase in ('sete cartões', 'Estado dos dados', 'última captura registrada',
+    for phrase in ('sete métricas', 'Estado dos dados', 'última captura registrada',
                    'LAST · NOT ACTIVE',
                    'não comprova que o EA está ativo agora', 'Cockpit → Ajustes',
                    'Restaurar padrão', 'gráfico atual', 'modelo/template do MT5',
                    'teste nativo isolado', 'Ocultar não desliga'):
         assert phrase in cockpit, phrase
     assert 'O indicador não salva nem sobrescreve modelos por conta própria' in cockpit
-    for phrase in ('1.13.0', '1040 × 760 px', 'aba ativa', 'controle em foco',
-                   'preserva as fórmulas e os registros locais'):
+    for phrase in ('interface R5', '10 pt', 'aba ativa', 'controle em foco',
+                   'interação e restauração por template ainda exigem ensaio no MT5 isolado'):
         assert phrase in cockpit, phrase
     assert page.locator('#jpwLeverageCockpit .leverage-cockpit-map dt').all_text_contents() == [
         'Visão geral', 'Stops', 'Raiz N', 'Sistema', 'Histórico Pessoal', 'Ajustes']
     cockpit_guide = page.locator('#jpwLeverageCockpit').text_content()
-    for phrase in ('tabela única', 'ticket completo', 'volume', 'Leverage individual', 'nocional bruto', 'equity', 'Operação', 'Conta', 'rolagem', 'Fechar', 'Esc', 'NOT_RUN'):
+    for phrase in ('tabela única', 'ticket completo', 'volume', 'Leverage individual', 'nocional bruto', 'equity', 'Operação', 'Conta', 'rolagem', 'Fechar', 'Esc', 'Validação nativa R5 pendente', 'Gerar os EX5 não comprova essa interação'):
         assert phrase in cockpit_guide, phrase
     reveal_target(page, 'jpwLeverageSignalCopy')
     signal = page.locator('#jpwLeverageSignalCopy')
@@ -621,17 +678,17 @@ def verify_guide(page):
                    'NOT_RUN', 'MQL5/Files/JPWealth/SignalCopy/', 'não envia',
                    'pendente', 'conta', 'símbolo'):
         assert phrase in signal.text_content(), phrase
-    assert 'JPW_SignalCopy_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_SignalCopy_Tests.mq5' in sdk_inventory
     reveal_target(page, 'jpwLeverageNoCuda')
     channels = page.locator('#jpwLeverageNoCuda')
     assert channels.is_visible()
     assert page.locator('#jpwLeverageNoCuda').count() == 1
-    for phrase in ('1.16.1', 'JPW_NoCuda_Channels', 'não precisa do EA observador',
+    for phrase in ('R5', 'JPW_NoCuda_Channels', 'não precisa do EA observador',
                    'Canal de Fibonacci do próprio MT5', '65 níveis', '−4 a +4', '0,125',
                    'não desloca as âncoras', 'ajustes no período de referência',
                    'suspende a sincronização', 'última captura íntegra salva',
                    'Tick, zoom, rolagem e consulta não criam revisões',
-                   '90% do gráfico', 'Compacta · Ampla · Maximizada',
+                   '680 × 500', '85% do gráfico', 'Compacta · Ampla · Maximizada',
                    'padrão 11', '9 a 24', 'UNVERIFIED_NATIVE', 'N/A', 'NOT_RUN',
                    'geometria importada, interação e prontidão operacional continuam pendentes',
                    'referência geométrica inclinada', 'se o canal for mantido',
@@ -659,8 +716,8 @@ def verify_guide(page):
           '00/04/08/12/16/20', 'Não se divide uma contagem H1 por quatro',
           'Falta, barra extra', 'Cotação recente não valida calendário',
           'nada altera o calendário da Raiz N', 'feriados', 'horário de verão')),
-        ('Arquivos adicionais', ('JPW_NoCuda_Fibo_Tests.mq5', 'JPW_NoCuda_Fibo_Lab.mq5',
-          'JPW_NoCuda_Logo.bmp', 'MQL5/Images/JPWealth/', 'sem autoaprovação da geometria')),
+        ('Arquivos do NoCuda no SDK', ('JPW_NoCuda_Fibo_Tests.mq5', 'JPW_NoCuda_Fibo_Lab.mq5',
+          'JPW_NoCuda_Logo.bmp', 'compilação temporária', 'protocolo separado', 'correspondência geométrica nativa')),
     ]
     for title, phrases in disclosures:
         summary = channels.locator('details summary').filter(has_text=title)
@@ -694,7 +751,7 @@ def verify_guide(page):
     assert 'amostra vencedora em UTC do relógio do computador' in viewer
     assert 'não uma série temporal' in viewer
     assert 'DD / saldo atual ou estimado' in viewer
-    assert 'não altera as sete linhas do gráfico' in viewer
+    assert 'não altera as leituras do painel Conta' in viewer
     assert 'Ausência de registro não significa máximo zero' in viewer
     assert 'MDD pico-a-vale' in viewer
     assert 'Experts' in viewer and 'arquivos locais de log' in viewer
@@ -747,17 +804,25 @@ def verify_guide(page):
     assert 'Não é um MDD pico-a-vale' in how
     assert 'relógio do computador' in how
     assert 'O site não lê nem distribui o arquivo' in how
-    assert 'fonte 8' in page.locator('#jpwLeverageUse').text_content()
+    # The guide must describe this candidate's actual HUD default, not a legacy release.
+    account_source = (ROOT/'mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5').read_text()
+    default_font = re.search(r'input\s+int\s+InpFontSize\s*=\s*(\d+)\s*;', account_source).group(1)
+    assert re.search(r'fonte[^.\n]{0,60}\b' + default_font + r'\b', page.locator('#jpwLeverageUse').text_content(), re.I)
+    assert 'fonte 8' not in page.locator('#jpwLeverageUse').text_content()
     # The essential path stays in ordinary document flow; only extra explanations collapse.
     reveal_target(page, 'jpwLeverageUSC')
-    summary = page.locator('#jpwLeverageUSC summary')
-    summary.focus()
+    summary = page.locator('#jpwLeverageUSC').locator('xpath=ancestor::details[1]').locator(':scope > summary')
+    assert summary.evaluate("n=>n.parentElement.open"), 'Legacy anchor must reveal the USC disclosure'
+    summary.focus(); page.keyboard.press('Enter')
+    assert not summary.evaluate("n=>n.parentElement.open")
     page.keyboard.press('Enter')
     assert summary.evaluate("n=>n.parentElement.open")
     page.evaluate("window.dispatchEvent(new PopStateEvent('popstate'));window.dispatchEvent(new HashChangeEvent('hashchange'))")
     page.evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
     assert summary.evaluate('n=>n===document.activeElement'), 'Duplicate history events must not steal disclosure focus'
-    assert 'MQL5/Files/JPWealth/Alavancagem/' in page.locator('#jpwLeverageUSC details').text_content()
+    usc = page.locator('#jpwLeverageUSC').text_content()
+    assert 'Sem perfil compatível, a leitura USC fica bloqueada' in usc
+    assert 'fora do kit de quatro programas' in usc and 'não acrescente o utilitário à demo como atalho' in usc
     page.keyboard.press('Enter')
     assert not summary.evaluate("n=>n.parentElement.open")
     open_area(page, 'overview')
@@ -856,6 +921,8 @@ def verify_guide_geometry(page, layout):
                     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
                     page.locator('#jpwLeveragePage').screenshot(path=str(EVIDENCE_DIR / f'{area}-{width}-{theme}.png'))
             open_area(page, 'install')
+            settings = page.locator('#genetrixInstallPanel details').filter(has=page.locator('[data-stoikus-inputs="account"]')).first
+            settings.locator(':scope > summary').click()
             for component in ('account','nocuda','monitor'):
                 inputs = page.locator('[data-stoikus-inputs="'+component+'"]')
                 inputs.locator(':scope > summary').click()
@@ -886,7 +953,7 @@ def verify_archive(raw):
     with ZipFile(BytesIO(raw)) as bundle:
         listed_names = bundle.namelist()
         names = set(listed_names)
-        assert len(listed_names) == len(names) == 135
+        assert len(listed_names) == len(names) == 139
         assert EXPECTED == names, names
         assert names == {Path(path).relative_to('mt5/jpw-alavancagem-atual').as_posix()
                          for path in MANIFEST['sourceFiles']}, names
@@ -905,10 +972,17 @@ def verify_daily_archive(raw):
     }
     with ZipFile(BytesIO(raw)) as bundle:
         names = bundle.namelist()
-        assert len(names) == len(set(names)), 'daily archive has duplicate members'
+        assert len(names) == len(set(names)) == 86, 'daily archive inventory/duplicates'
         assert {name for name in names if name.endswith('.mq5')} == programs
         assert not any(name.endswith('.ex5') for name in names), 'daily sources claim executable bytes'
-        assert bundle.read('LEIA_PRIMEIRO.md') == (ROOT/'mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md').read_bytes()
+        guide = (ROOT/'mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md').read_bytes()
+        if INTERFACE:
+            with ZipFile(ROOT / INTERFACE['artifacts']['nativeKit']['path']) as kit:
+                sealed = kit.read('JPW_Stoikus_Uso_Fontes_v1.23.0_interface.zip')
+            assert raw == sealed, 'daily sources differ from exact kit payload'
+            assert bundle.read('LEIA_PRIMEIRO.md').endswith(guide), 'sealed introduction must preserve original daily guide'
+        else:
+            assert bundle.read('LEIA_PRIMEIRO.md') == guide
         for name in names:
             if name != 'LEIA_PRIMEIRO.md':
                 assert bundle.read(name) == (ROOT/'mt5/jpw-alavancagem-atual'/name).read_bytes(), name
@@ -933,19 +1007,30 @@ def verify_compiled_archive(raw):
             assert content == (ROOT/'mt5/jpw-alavancagem-atual'/name).read_bytes()
 
 
-def download_from_page(page, kind='source'):
-    open_area(page, 'install')
-    if kind in ('source', 'compiled'):
-        disclosure = page.locator('[data-stoikus-engineering-download]' if kind == 'source' else '.genetrix-compiled-details').filter(has=page.locator('[data-jpw-leverage-download="'+kind+'"]'))
+def reveal_download_control(page, kind):
+    """Use real disclosure controls, independently for every optional download."""
+    button = page.locator('[data-jpw-leverage-download="'+kind+'"]')
+    for disclosure in button.locator('xpath=ancestor::details').all():
         if not disclosure.evaluate('n=>n.open'):
             disclosure.locator(':scope > summary').click()
-    record = {'source': SOURCE, 'compiled': COMPILED, 'dailySource': DAILY}[kind]
+    assert button.is_visible()
+    return button
+
+
+def download_from_page(page, kind='source'):
+    open_area(page, 'install')
+    reveal_download_control(page, kind)
+    record = INTERFACE['artifacts'][kind] if kind in ARTIFACT_NAMES else {'source': SOURCE, 'compiled': COMPILED, 'dailySource': DAILY}[kind]
     with page.expect_download() as pending:
         page.locator('[data-jpw-leverage-download="'+kind+'"]').click()
     artifact = pending.value
     assert artifact.suggested_filename == record['filename']
     raw = Path(artifact.path()).read_bytes()
-    {'source': verify_archive, 'compiled': verify_compiled_archive, 'dailySource': verify_daily_archive}[kind](raw)
+    if kind in ARTIFACT_NAMES:
+        assert len(raw) == record['bytes'] and sha256(raw).hexdigest() == record['sha256']
+        assert raw == (ROOT / record['path']).read_bytes(), 'artifact download differs from release file'
+    else:
+        {'source': verify_archive, 'compiled': verify_compiled_archive, 'dailySource': verify_daily_archive}[kind](raw)
     assert 'verificado' in page.locator('#jpwLeverageDownloadStatus').text_content()
 
 
@@ -989,6 +1074,8 @@ def main():
                     before = page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})')
                     route_and_inspect(page)
                     verify_guide(page)
+                    if INTERFACE:
+                        for kind in ARTIFACT_NAMES: download_from_page(page, kind)
                     download_from_page(page, 'dailySource')
                     download_from_page(page)
                     if COMPILED['available']: download_from_page(page, 'compiled')
@@ -997,10 +1084,32 @@ def main():
                     print('PASS', name, 'route, metadata, bytes and extraction', flush=True)
                     if name == 'HTTP':
                         verify_navigation_contract(page)
+                        if INTERFACE:
+                            open_area(page, 'install')
+                            reveal_download_control(page, 'preview')
+                            verify_hosted_preview_delivery(page, ROOT, INTERFACE)
                         count = []
                         page.on('download', lambda artifact: count.append(artifact.suggested_filename))
+                        if INTERFACE:
+                            for kind, record in INTERFACE['artifacts'].items():
+                                if kind == 'preview': continue  # embedded-only; separate refusal checks above
+                                open_area(page, 'install')
+                                button = page.locator('[data-jpw-leverage-download="'+kind+'"]')
+                                raw = (ROOT / record['path']).read_bytes()
+                                changed = bytearray(raw); changed[-1] ^= 1
+                                for status, body, expected in ((404,b'missing','não encontrado'),(200,bytes(changed),'Hash'),(200,raw[:-1],'Tamanho')):
+                                    reset_download_page(page)
+                                    page.route('**/' + record['path'], lambda route, request=None, code=status, data=body: route.fulfill(status=code, body=data))
+                                    button.click()
+                                    page.wait_for_function("expected=>document.getElementById('jpwLeverageDownloadStatus').textContent.includes(expected)", arg=expected)
+                                    assert not count, ('R5 bad artifact downloaded',kind,status)
+                                    page.unroute('**/' + record['path'])
+                            print('PASS R5 HTTP missing, tampered and truncated kit/pin refused; embedded preview checked separately',flush=True)
+
+                        reset_download_page(page)
                         page.route('**/' + SOURCE['path'], lambda route: route.fulfill(status=404, body='missing'))
                         open_area(page, 'install')
+                        reveal_download_control(page, 'source')
                         source_disclosure = page.locator('[data-stoikus-engineering-download]')
                         if not source_disclosure.evaluate('n=>n.open'):
                             source_disclosure.locator(':scope > summary').click()
@@ -1011,6 +1120,7 @@ def main():
                         print('PASS HTTP missing package fails closed', flush=True)
                         page.unroute('**/' + SOURCE['path'])
                         tampered = bytearray(ARCHIVE.read_bytes()); tampered[-1] ^= 1
+                        reset_download_page(page)
                         page.route('**/' + SOURCE['path'], lambda route: route.fulfill(status=200,body=bytes(tampered),content_type='application/zip'))
                         page.locator('[data-jpw-leverage-download="source"]').click()
                         page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do arquivo diferente')")
@@ -1018,7 +1128,7 @@ def main():
                         print('PASS HTTP equal-size tampered ZIP refused by SHA-256',flush=True)
                         page.unroute('**/' + SOURCE['path'])
                         for kind, record in [('dailySource', DAILY)]:
-                            daily_button = page.locator('[data-jpw-leverage-download="'+kind+'"]')
+                            daily_button = reveal_download_control(page, kind)
                             assert daily_button.is_visible() and daily_button.is_enabled()
                             page.route('**/' + record['path'], lambda route: route.fulfill(status=404, body='missing'))
                             daily_button.click()
@@ -1043,6 +1153,7 @@ def main():
                             page.route('**/' + COMPILED['path'], lambda route: route.fulfill(status=404, body='missing'))
                             # Navigation coverage intentionally closed disclosures. Re-establish
                             # the negative case's visible UI precondition through its summary.
+                            reveal_download_control(page, 'compiled')
                             compiled_disclosure = page.locator('.genetrix-compiled-details').filter(has=page.locator('[data-jpw-leverage-download="compiled"]'))
                             if not compiled_disclosure.evaluate('n=>n.open'):
                                 compiled_disclosure.locator(':scope > summary').click()
@@ -1105,6 +1216,8 @@ def main():
                 page.reload()
                 wait_bootstrap(page)
                 route_and_inspect(page)
+                if INTERFACE:
+                    for kind in ARTIFACT_NAMES: download_from_page(page, kind)
                 download_from_page(page, 'dailySource')
                 download_from_page(page)
                 if COMPILED['available']: download_from_page(page, 'compiled')

@@ -1,0 +1,135 @@
+{
+  "schema": "jpw-personal-history-continuity-host/v1",
+  "baseline": false,
+  "baseline_product_commit": null,
+  "status": "PASS",
+  "native": "NOT_RUN",
+  "sources": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh": "be42ab65bd9885937acf3df22f1ab71f5372e36c74252febe58b1b9fdd7dc3c4",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh": "8173c91a2fe3e4c1d3a6b5b5d6ce55fafb6f6571b1fd58eec7e0fe7bcf81206a",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh": "b2aeb2b404ff9be5c6d30c888e4ef9eb1a615178a977792d158a3008816ea270",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh": "6fcdc1075adbc89427ed23c98457818b3ce080b8f53cf087570a3eac0ab7fb6a",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "4051c93e5945a590e98cf0f7c379bf53787dc66fbbf4aef1e59f8158aa28a5c5",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh": "d0a80f5585501b054b4e136a6aa872b5f595d902a74c62336e7332ad3b4760e0",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh": "d164c5af97d8a982891b330d02bd79870123b196e7917e50a5f99d8a46e5dd00",
+    "tools/personal_history_host/compat.hpp": "d147a0b672ea7bd737a77db88591cb314fce8d9da45d37ac36ae042bbabbc45a",
+    "tools/personal_history_host/drain.hpp": "939cdb22e6a738b8fd552b1e8fe11de8741a99a75aff8dbceb1ce4273ca8dc55",
+    "tools/personal_history_host/export_drain.hpp": "4ecd40071873a537ea446aaefcbc3dd2f6015561e558e734b79c723c59213ff4",
+    "tools/personal_history_host/store_cases.cpp": "d2bacbced4c96aa71e8f05e2015d740639bcbbdcd1064f1dae0285da8a171548",
+    "tools/personal_history_host/ui_cases.cpp": "3eaa2d3788fb6172dd511efbac193dfc1896119fa891c8839ba703916f98c2cb",
+    "tools/personal_history_host/controller_cases.cpp": "613c64a19e896592f907c7d737f0232b0d1f47de0904d6c249e30f9ff47441a3",
+    "tools/personal_history_host/ui_seams.cpp": "13cce15b892d7880b07c6c4f3af906daf605a56cba053c58f2481bfda679c2c3",
+    "tools/personal_history_host/controller_seams.cpp": "1e8643388c53215c7b568c05c981e4ddeeb1ead56503cbe67e11179de654d97d",
+    "tools/personal_history_host/continuity_cases.cpp": "b81a69660ce72eb2951ae7d7d9970b0801d2b92d736f5003e021bef2e1aa4d00",
+    "tools/personal_history_host/continuity_process.hpp": "3e7be38fe8fd25fd50b2f1dfb05bbcfad03ef82f7b8a6fa7cf003b8aa541d314",
+    "tools/personal_history_host/continuity_baseline_cases.cpp": "bc0854a5ef63b4d54478d383a6b0ec0bac91ef4f8afb02b78f8a2ecde7d19f37",
+    "tools/jpw_personal_history_continuity_test.py": "67ff446e7d1fe1c95b8b7e3a91cd62b8134e7cd690b7ba7e657eaf4ba616f929",
+    "tools/jpw_personal_history_test.py": "3bfb155b1d30db69f165bd3500b7da89733469c3767cac942e808c4b3ecc2197"
+  },
+  "compiled_source_sha256": "27aca692cba74eef324734b20fa658f867d03cb42dfa89d168eb329bc22d3385",
+  "sources_unchanged_during_execution": true,
+  "compile_exit": 0,
+  "attempt": ".superpowers/sdd/stoikus-continuity-20261014/task-2-continuity-final-02/host-pmxbtrp4",
+  "cases": [
+    {
+      "id": "CONT-01",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 2.9924117499999996,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-02",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.039365916999999584,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-03",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 7.969611749999999,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-04",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.24723741699999913,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-05",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.12418841700000094,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-06",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.09003491699999877,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-07",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.10639304200000055,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-08",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.07068570799999918,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-09",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.1278488339999999,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-10",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.16762966599999984,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-11",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 6.871111459,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-12",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 48.31920795800001,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-13",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.038865040999993994,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-14",
+      "status": "PASS",
+      "regression_receipt": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/receipt.json",
+      "regression_sha256": "139ed94b5b2fe82fa6e454bb2e91c317127e367c75b30dabe8bb39df1652f6da"
+    }
+  ]
+}

@@ -1,0 +1,708 @@
+{
+  "schemaVersion": 1,
+  "state": "LOCAL_GATES_PASS_GITHUB_PENDING",
+  "mainBase": "2b22175a4f3f47b1f289deca65366c4dc0445dca",
+  "testedTree": "a82726bbe41274a5b92eaf05007f09afd8485152",
+  "frozenRegularFiles": 1149,
+  "sourceFingerprint": "8920cbb23a4d3b9d286cb64346647e45efcd33186c16b8a63d7f7cbc10c4e336",
+  "webBuild": "a4672bde6f6e8965",
+  "stoikus": "1.23.0",
+  "calculation": "1.9.0",
+  "receipts": [
+    {
+      "name": "leverage-all-serial-r2.json",
+      "sha256": "6dec19ae06077b71a2d7c1064a9a8eef6ce6fdcba8f104ecb07510434e1e85ec",
+      "summary": {
+        "PASS": 54,
+        "PRODUCT_FAIL": 0,
+        "TEST_HARNESS_FAIL": 0,
+        "ENVIRONMENT_ERROR": 0,
+        "BASELINE_FAIL": 0,
+        "NOT_RUN": 0
+      },
+      "checks": [
+        {
+          "name": "leverage_suite_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_panel_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_cockpit_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_details_event_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_geometry_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_config_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_factor_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_horizon_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_live_adapter_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_observer_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_stop_risk_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_stop_ui_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_reliability_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_diagnostics_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_scheduler_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "core_monitor_judge",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "core_replay_judge",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "core_preparation_judge",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_stoikus_ledger_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_stoikus_risk_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_personal_history_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_stoikus_ui_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_stoikus_brand_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_positions_ui_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_mt5_design_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_signal_copy_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_signal_copy_ui_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_signal_copy_adapter_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_core_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_projection_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_store_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_terminal_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_store_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_store_runtime_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_controller_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_ui_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_integration_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_startup_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_lifecycle_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_stoikus_monitor_state_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_personal_history_continuity_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_account_interface_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_account_review_regression_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_risk_presentation_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_hud_targets_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_ui_prerequisites",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "jpw_nocuda_fibo_controller_prerequisites",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_package_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "leverage_page_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_daily_package_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_download_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_usage_page_test",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus_interface_delivery_test",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "name": "quality-full-corrected-r2.json",
+      "sha256": "7072930d502f5d6512bc173c12a3911532b614dbd2b5c05b365dab37f101bce4",
+      "summary": {
+        "PASS": 75,
+        "PRODUCT_FAIL": 0,
+        "TEST_HARNESS_FAIL": 0,
+        "ENVIRONMENT_ERROR": 0,
+        "BASELINE_FAIL": 0,
+        "NOT_RUN": 0
+      },
+      "checks": [
+        {
+          "name": "preflight",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "structure",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "diff-check",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "preflight-context",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "navigation-ia",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "dashboard-macro",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "research-navigation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "smoke",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "settings",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "brand-identity-contract",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "brand-identity-browser",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "statute-documentary",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "galton-board",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "fx-planning",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "exec-submenu",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "nocoda",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "pivot-studies",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "order-guards",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "operation-identity",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "operation-finalize",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "operation-history",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "operation-wiring",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "phases-visibility",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "exec-three-column",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-foundation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-finalize-preservation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-backup-roundtrip",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-navigation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-budget",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-debt-credit",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-comparison",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-scenarios",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "finpes-overview",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "usd-brl-quote",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-unit",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-ledger",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-position",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-foundation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-finalize-preservation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "session-epoch-protocol",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "session-write-serialization",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-ui-readonly",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-ui-crud",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-ui-ledger",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-ui-tx-write",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "alladin-ui-tx-reverse",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "session-finalization",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "storage-governance",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "persistence-failure",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "persistence-recovery",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "investor-password",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "import-xss",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "state-integrity",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "async-generation",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "build-reproducibility",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "service-worker-upgrade",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "mvp-notes",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "notification-center",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "notification-efficiency",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "consolidated-efficiency",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "consolidated-model",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "consolidated-storage",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "consolidated-ui",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "forex-professional-panel",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "execution-efficiency",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "execution-table",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "execution-workbook",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "execution-proportions",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "forex-context",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "forex-navigation-journey",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "learning-guide",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "nocuda-tools",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "stoikus-downloads",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "download-assets-unit",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "name": "download-assets-browser",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ]
+    }
+  ],
+  "nativeCompilation": "NOT_RUN",
+  "nativeExecution": "NOT_RUN",
+  "humanAcceptance": "NOT_RUN",
+  "windowsX64": "NOT_RUN",
+  "attemptHistory": [
+    {
+      "name": "leverage-all-final.json",
+      "summary": "53 PASS; HUD timeout60s; raw failure preserved"
+    },
+    {
+      "name": "quality-full-final.json",
+      "summary": "73 PASS; two tests KeyError JP_WEALTH_CHROMIUM; raw failure preserved"
+    },
+    {
+      "name": "minigames-preservation.log",
+      "summary": "Missing ignored screenshot output directory; rerun after mkdir passes without test/source changes"
+    },
+    {
+      "name": "candidate-freeze-r2.json",
+      "summary": "Stale aggregate fingerprint corrected in r3; original receipt and provenance preserved"
+    }
+  ]
+}

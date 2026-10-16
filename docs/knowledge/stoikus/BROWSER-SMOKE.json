@@ -1,0 +1,386 @@
+{
+  "utc": "2026-10-14T19:52:06.489072+00:00",
+  "scope": "Fresh Chromium context per local HTML; read-only browser UI smoke",
+  "freeze_sha256": "4585e410c73fd978950a0c22204c49f64b972f3a2beb2a3ebe80b0ecbf7b1beb",
+  "freeze_files": 50,
+  "freeze_mismatch_before": [],
+  "maps": [
+    {
+      "name": "master",
+      "path": "graphify-out/graph.html",
+      "console_errors": [],
+      "page_errors": [],
+      "request_failures": [],
+      "cdn_responses": [
+        {
+          "url": "https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js",
+          "status": 200
+        }
+      ],
+      "checks": {
+        "exact_counts": true,
+        "canvas_visible": true,
+        "stats_counts": true,
+        "search_result_found": true,
+        "detail_label_source": true,
+        "selection": true,
+        "neighbor_detail": true,
+        "search_no_match": true,
+        "single_filter": true,
+        "indeterminate": true,
+        "single_filter_restored": true,
+        "hide_all": true,
+        "show_all": true,
+        "sidebar_sections_visible": true,
+        "cdn_loaded": true,
+        "no_runtime_errors": true
+      },
+      "counts": {
+        "raw_nodes": 301,
+        "raw_edges": 1144,
+        "dataset_nodes": 301,
+        "dataset_edges": 1144,
+        "communities": 28,
+        "canvas": true,
+        "canvas_width": 1160,
+        "canvas_height": 1000
+      },
+      "stats": "301 nodes · 1144 edges · 28 communities",
+      "search_target": "JPW_Alavancagem_Atual",
+      "search_results": 2,
+      "detail": "JPW_Alavancagem_Atual\nType: concept\nCommunity: Contexto e contratos / Uso e distribuição\nSource: mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md\nDegree: 5\nNeighbors (5)\nGráfico de trabalho\nJPW_Alavancagem_Atual.mq5\nSTOIKUS_USO_DIARIO.md\nPacote diário de fontes\nJPW_Stoikus_Abrir_Paineis",
+      "neighbor_count": 5,
+      "layout": {
+        "sidebar": {
+          "x": 1160,
+          "y": 0,
+          "width": 280,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "graph": {
+          "x": 0,
+          "y": 0,
+          "width": 1160,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "info-panel": {
+          "x": 1161,
+          "y": 56,
+          "width": 279,
+          "height": 351.921875,
+          "bottom": 407.921875
+        },
+        "legend-wrap": {
+          "x": 1161,
+          "y": 407.921875,
+          "width": 279,
+          "height": 558.078125,
+          "bottom": 966
+        },
+        "stats": {
+          "x": 1161,
+          "y": 966,
+          "width": 279,
+          "height": 34,
+          "bottom": 1000
+        }
+      }
+    },
+    {
+      "name": "arquitetura",
+      "path": "arquitetura/graphify-out/graph.html",
+      "console_errors": [],
+      "page_errors": [],
+      "request_failures": [],
+      "cdn_responses": [
+        {
+          "url": "https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js",
+          "status": 200
+        }
+      ],
+      "checks": {
+        "exact_counts": true,
+        "canvas_visible": true,
+        "stats_counts": true,
+        "search_result_found": true,
+        "detail_label_source": true,
+        "selection": true,
+        "neighbor_detail": true,
+        "search_no_match": true,
+        "single_filter": true,
+        "indeterminate": true,
+        "single_filter_restored": true,
+        "hide_all": true,
+        "show_all": true,
+        "sidebar_sections_visible": true,
+        "cdn_loaded": true,
+        "no_runtime_errors": true
+      },
+      "counts": {
+        "raw_nodes": 125,
+        "raw_edges": 228,
+        "dataset_nodes": 125,
+        "dataset_edges": 228,
+        "communities": 15,
+        "canvas": true,
+        "canvas_width": 1160,
+        "canvas_height": 1000
+      },
+      "stats": "125 nodes · 228 edges · 15 communities",
+      "search_target": "2026-10-14-stoikus-personal-continuity-design.md",
+      "search_results": 1,
+      "detail": "2026-10-14-stoikus-personal-continuity-design.md\nType: document\nCommunity: Conta e núcleo / Histórico Pessoal\nSource: docs/superpowers/specs/2026-10-14-stoikus-personal-continuity-design.md\nDegree: 6\nNeighbors (6)\nJPW_PersonalHistory_Controller.mqh\nJPW_PersonalHistory_Core.mqh\nJPW_PersonalHistory_Export.mqh\nJPW_PersonalHistory_Store.mqh\nJPW_PersonalHistory_UI.mqh\nJPW_Alavancagem_Atual.mq5",
+      "neighbor_count": 6,
+      "layout": {
+        "sidebar": {
+          "x": 1160,
+          "y": 0,
+          "width": 280,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "graph": {
+          "x": 0,
+          "y": 0,
+          "width": 1160,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "info-panel": {
+          "x": 1161,
+          "y": 56,
+          "width": 279,
+          "height": 351.921875,
+          "bottom": 407.921875
+        },
+        "legend-wrap": {
+          "x": 1161,
+          "y": 407.921875,
+          "width": 279,
+          "height": 558.078125,
+          "bottom": 966
+        },
+        "stats": {
+          "x": 1161,
+          "y": 966,
+          "width": 279,
+          "height": 34,
+          "bottom": 1000
+        }
+      }
+    },
+    {
+      "name": "fluxos",
+      "path": "fluxos/graphify-out/graph.html",
+      "console_errors": [],
+      "page_errors": [],
+      "request_failures": [],
+      "cdn_responses": [
+        {
+          "url": "https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js",
+          "status": 200
+        }
+      ],
+      "checks": {
+        "exact_counts": true,
+        "canvas_visible": true,
+        "stats_counts": true,
+        "search_result_found": true,
+        "detail_label_source": true,
+        "selection": true,
+        "neighbor_detail": true,
+        "search_no_match": true,
+        "single_filter": true,
+        "indeterminate": true,
+        "single_filter_restored": true,
+        "hide_all": true,
+        "show_all": true,
+        "sidebar_sections_visible": true,
+        "cdn_loaded": true,
+        "no_runtime_errors": true
+      },
+      "counts": {
+        "raw_nodes": 104,
+        "raw_edges": 172,
+        "dataset_nodes": 104,
+        "dataset_edges": 172,
+        "communities": 9,
+        "canvas": true,
+        "canvas_width": 1160,
+        "canvas_height": 1000
+      },
+      "stats": "104 nodes · 172 edges · 9 communities",
+      "search_target": "JPW_Alavancagem_Atual",
+      "search_results": 2,
+      "detail": "JPW_Alavancagem_Atual\nType: concept\nCommunity: Uso e distribuição / Contexto e contratos\nSource: mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md\nDegree: 5\nNeighbors (5)\nGráfico de trabalho\nJPW_Alavancagem_Atual.mq5\nSTOIKUS_USO_DIARIO.md\nPacote diário de fontes\nJPW_Stoikus_Abrir_Paineis",
+      "neighbor_count": 5,
+      "layout": {
+        "sidebar": {
+          "x": 1160,
+          "y": 0,
+          "width": 280,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "graph": {
+          "x": 0,
+          "y": 0,
+          "width": 1160,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "info-panel": {
+          "x": 1161,
+          "y": 56,
+          "width": 279,
+          "height": 351.921875,
+          "bottom": 407.921875
+        },
+        "legend-wrap": {
+          "x": 1161,
+          "y": 407.921875,
+          "width": 279,
+          "height": 558.078125,
+          "bottom": 966
+        },
+        "stats": {
+          "x": 1161,
+          "y": 966,
+          "width": 279,
+          "height": 34,
+          "bottom": 1000
+        }
+      }
+    },
+    {
+      "name": "testes-evidencias",
+      "path": "testes-evidencias/graphify-out/graph.html",
+      "console_errors": [],
+      "page_errors": [],
+      "request_failures": [],
+      "cdn_responses": [
+        {
+          "url": "https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js",
+          "status": 200
+        }
+      ],
+      "checks": {
+        "exact_counts": true,
+        "canvas_visible": true,
+        "stats_counts": true,
+        "search_result_found": true,
+        "detail_label_source": true,
+        "selection": true,
+        "neighbor_detail": true,
+        "search_no_match": true,
+        "single_filter": true,
+        "indeterminate": true,
+        "single_filter_restored": true,
+        "hide_all": true,
+        "show_all": true,
+        "sidebar_sections_visible": true,
+        "cdn_loaded": true,
+        "no_runtime_errors": true
+      },
+      "counts": {
+        "raw_nodes": 225,
+        "raw_edges": 983,
+        "dataset_nodes": 225,
+        "dataset_edges": 983,
+        "communities": 10,
+        "canvas": true,
+        "canvas_width": 1160,
+        "canvas_height": 1000
+      },
+      "stats": "225 nodes · 983 edges · 10 communities",
+      "search_target": "integrated-freeze-R2.json",
+      "search_results": 1,
+      "detail": "integrated-freeze-R2.json\nType: document\nCommunity: NoCuda e estudos / Evidências locais\nSource: docs/knowledge/stoikus/evidence/integrated-freeze-R2.json\nDegree: 149\nNeighbors (149)\nJPW_Alavancagem_Observer.mq5\nJPW_Stoikus_Accountant.mq5\nJPW_Stoikus_Monitor.mq5\nJPW_Stoikus_Supervisor.mq5\nJPW_Alavancagem_Actions.mqh\nJPW_Alavancagem_Cockpit.mqh\nJPW_Alavancagem_Coordinator.mqh\nJPW_Alavancagem_Core.mqh\nJPW_Alavancagem_Diagnostics_Core.mqh\nJPW_Alavancagem_Diagnostics.mqh\nJPW_Alavancagem_Genesis_Core.mqh\nJPW_Alavancagem_Genesis_Store.mqh\nJPW_Alavancagem_MDD.mqh\nJPW_Alavancagem_Observer_Presence.mqh\nJPW_Alavancagem_Panel.mqh\nJPW_Alavancagem_Positions.mqh\nJPW_Alavancagem_Presentation.mqh\nJPW_Alavancagem_Profile.mqh\nJPW_Alavancagem_RaizN_Config.mqh\nJPW_Alavancagem_RaizN_Core.mqh\nJPW_Alavancagem_RaizN_Factor.mqh\nJPW_Alavancagem_RaizN_Horizon.mqh\nJPW_Alavancagem_RaizN_Live.mqh\nJPW_Alavancagem_RaizN_Observer.mqh\nJPW_Alavancagem_RaizN_Store.mqh\nJPW_Alavancagem_Samples.mqh\nJPW_Alavancagem_StopRisk_Core.mqh\nJPW_Alavancagem_StopRisk_Store.mqh\nJPW_Alavancagem_StopRisk_Terminal.mqh\nJPW_Alavancagem_Store_Result.mqh\nJPW_Alavancagem_Terminal.mqh\nJPW_Alavancagem_Version.mqh\nJPW_NoCuda_Core.mqh\nJPW_NoCuda_Fibo_Controller.mqh\nJPW_NoCuda_Fibo_Core.mqh\nJPW_NoCuda_Fibo_Store.mqh\nJPW_NoCuda_Fibo_Sync.mqh\nJPW_NoCuda_Fibo_Terminal.mqh\nJPW_NoCuda_Fibo_UI.mqh\nJPW_NoCuda_Projection_Core.mqh\nJPW_NoCuda_Projection.mqh\nJPW_NoCuda_Render.mqh\nJPW_NoCuda_Store.mqh\nJPW_NoCuda_Terminal.mqh\nJPW_NoCuda_UI.mqh\nJPW_PersonalHistory_Controller.mqh\nJPW_PersonalHistory_Core.mqh\nJPW_PersonalHistory_Export.mqh\nJPW_PersonalHistory_Store.mqh\nJPW_PersonalHistory_Terminal.mqh\nJPW_PersonalHistory_UI.mqh\nJPW_SignalCopy_Controller.mqh\nJPW_SignalCopy_Core.mqh\nJPW_SignalCopy_Terminal.mqh\nJPW_SignalCopy_Types.mqh\nJPW_SignalCopy_UI.mqh\nJPW_Stoikus_Accountant_Runtime.mqh\nJPW_Stoikus_Brand.mqh\nJPW_Stoikus_Ledger_Bridge.mqh\nJPW_Stoikus_Ledger_Core.mqh\nJPW_Stoikus_Ledger_Preparation.mqh\nJPW_Stoikus_Ledger_Store.mqh\nJPW_Stoikus_Ledger_Terminal.mqh\nJPW_Stoikus_Monitor_Core.mqh\nJPW_Stoikus_Monitor_Log.mqh\nJPW_Stoikus_Monitor_Status.mqh\nJPW_Stoikus_Monitor_UI.mqh\nJPW_Stoikus_Observer_Runtime.mqh\nJPW_Stoikus_Risk_Core.mqh\nJPW_Stoikus_Risk_Store.mqh\nJPW_Stoikus_Risk_Terminal.mqh\nJPW_Stoikus_UI.mqh\nJPW_UI_Design.mqh\nJPW_UI_Focus.mqh\nJPW_Alavancagem_Atual.mq5\nJPW_NoCuda_Channels.mq5\nJPW_Alavancagem_Consultar_MDD.mq5\nJPW_Alavancagem_Diagnostics_Tests.mq5\nJPW_Alavancagem_Genesis_Store_Tests.mq5\nJPW_Alavancagem_Genesis_Tests.mq5\nJPW_Alavancagem_Metrics_Tests.mq5\nJPW_Alavancagem_Observer_Tests.mq5\nJPW_Alavancagem_Panel_Tests.mq5\nJPW_Alavancagem_Positions_Tests.mq5\nJPW_Alavancagem_Profile_Tests.mq5\nJPW_Alavancagem_RaizN_Config_Tests.mq5\nJPW_Alavancagem_RaizN_Factor_Tests.mq5\nJPW_Alavancagem_RaizN_Horizon_Tests.mq5\nJPW_Alavancagem_RaizN_Live_Tests.mq5\nJPW_Alavancagem_RaizN_Store_Tests.mq5\nJPW_Alavancagem_RaizN_Tests.mq5\nJPW_Alavancagem_StopRisk_Tests.mq5\nJPW_Alavancagem_Tests.mq5\nJPW_Alavancagem_Verificar_USC.mq5\nJPW_NoCuda_Core_Tests.mq5\nJPW_NoCuda_Fibo_Lab.mq5\nJPW_NoCuda_Fibo_Tests.mq5\nJPW_NoCuda_Projection_Tests.mq5\nJPW_NoCuda_Store_Tests.mq5\nJPW_PersonalHistory_Tests.mq5\nJPW_SignalCopy_Tests.mq5\nJPW_Stoikus_Abrir_Paineis.mq5\nJPW_Stoikus_Ledger_Tests.mq5\nJPW_Stoikus_Risk_Tests.mq5\ncore_monitor_judge.py\ncore_preparation_judge.py\ncore_replay_judge.py\njpw_nocuda_core_test.py\njpw_nocuda_fibo_controller_test.py\njpw_nocuda_fibo_store_test.py\njpw_nocuda_fibo_terminal_test.py\njpw_nocuda_fibo_ui_test.py\njpw_nocuda_integration_test.py\njpw_nocuda_lifecycle_test.py\njpw_nocuda_projection_test.py\njpw_nocuda_store_test.py\njpw_personal_history_continuity_test.py\njpw_personal_history_gauntlet.py\njpw_personal_history_test.py\njpw_stoikus_ledger_test.py\njpw_stoikus_monitor_state_test.py\njpw_stoikus_risk_test.py\nleverage_cockpit_test.py\nleverage_config_test.py\nleverage_details_event_test.py\nleverage_diagnostics_test.py\nleverage_factor_test.py\nleverage_geometry_test.py\nleverage_horizon_test.py\nleverage_live_adapter_test.py\nleverage_observer_test.py\nleverage_package_test.py\nleverage_panel_test.py\nleverage_reliability_test.py\nleverage_scheduler_test.py\nleverage_stop_risk_test.py\nleverage_stop_ui_test.py\nleverage_suite.py\nleverage_suite_test.py\ncases.cpp\ncontinuity_cases.cpp\ncontroller_cases.cpp\nexport_cases.cpp\nstore_cases.cpp\nterminal_cases.cpp\nui_cases.cpp\nstoikus_daily_package_test.py\nstoikus_download_test.py\nstoikus_startup_test.py",
+      "neighbor_count": 149,
+      "layout": {
+        "sidebar": {
+          "x": 1160,
+          "y": 0,
+          "width": 280,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "graph": {
+          "x": 0,
+          "y": 0,
+          "width": 1160,
+          "height": 1000,
+          "bottom": 1000
+        },
+        "info-panel": {
+          "x": 1161,
+          "y": 56,
+          "width": 279,
+          "height": 402.296875,
+          "bottom": 458.296875
+        },
+        "legend-wrap": {
+          "x": 1161,
+          "y": 458.296875,
+          "width": 279,
+          "height": 507.703125,
+          "bottom": 966
+        },
+        "stats": {
+          "x": 1161,
+          "y": 966,
+          "width": 279,
+          "height": 34,
+          "bottom": 1000
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "No MT5/Windows/native execution",
+    "No AI efficiency measurement",
+    "No revalidation of all source-anchor semantics",
+    "Public copy verification belongs to parent"
+  ],
+  "browser_version": "148.0.7778.96",
+  "freeze_mismatch_after": [],
+  "verdict": "PASS_FUNCTIONAL_WITH_P3_VISUAL_FINDING",
+  "functional_verdict": "PASS_BROWSER_SMOKE",
+  "visual_inspection": [
+    "master-initial",
+    "arquitetura-detail",
+    "fluxos-initial",
+    "testes-evidencias-detail"
+  ],
+  "findings": [
+    {
+      "id": "B1",
+      "priority": 3,
+      "title": "Caminhos Source longos ficam cortados no painel de detalhes",
+      "locations": [
+        "graphify-out/graph.html:13",
+        "graphify-out/graph.html:22",
+        "graphify-out/graph.html:140"
+      ],
+      "also_applies_to": "same renderer in three specialized HTML maps",
+      "reproduction": "Arquitetura: search JPW_PersonalHistory_Controller.mqh and click result at 1440x1000",
+      "evidence": "BROWSER-SMOKE-overflow.json and BROWSER-SMOKE-overflow.png",
+      "observed": {
+        "field_client_width": 251,
+        "field_scroll_width": 407,
+        "text_right": 1581.984375,
+        "viewport_width": 1440,
+        "sidebar_overflow": "hidden",
+        "tooltip": false
+      },
+      "impact": "Source suffix cannot be read visually in details; data remains intact in DOM and graph.json",
+      "suggestion": "Allow wrapping long paths in detail fields, e.g. overflow-wrap:anywhere, or expose complete source through tooltip/copy control",
+      "blocking": false
+    }
+  ],
+  "sandbox_attempt": "BROWSER-SMOKE-attempt1-sandbox.json: Chromium launch denied by macOS sandbox; authorized temporary-browser rerun succeeded",
+  "functional_checks_passed": 64,
+  "freeze_mismatch_final": []
+}

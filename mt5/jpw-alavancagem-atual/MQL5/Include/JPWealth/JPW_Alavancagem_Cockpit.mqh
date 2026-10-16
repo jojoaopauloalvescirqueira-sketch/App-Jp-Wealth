@@ -75,7 +75,8 @@ enum JPW_COCKPIT_ACTION
    JPW_ACTION_STOP_ROW_FIRST=80, JPW_ACTION_EXPORT=96,
    JPW_ACTION_LEDGER_CYCLE_FIRST=100, JPW_ACTION_TAB_HISTORY=120,
    JPW_ACTION_HISTORY_ACCOUNT=121, JPW_ACTION_HISTORY_REFRESH=122,
-   JPW_ACTION_HISTORY_ROW_FIRST=130
+   JPW_ACTION_HISTORY_ROW_FIRST=130, JPW_ACTION_HISTORY_CHOICE_FIRST=140,
+   JPW_ACTION_SECTIONS=160
   };
 string JPWCockpitCornerName(const int corner)
   {
@@ -91,6 +92,28 @@ int JPWCockpitNextCorner(const int corner)
    if(corner==CORNER_RIGHT_UPPER) return(CORNER_RIGHT_LOWER);
    if(corner==CORNER_RIGHT_LOWER) return(CORNER_LEFT_LOWER);
    return(CORNER_LEFT_UPPER);
+  }
+// Reorder presentation only; numeric indices, mask bits and keyboard actions stay canonical.
+string JPWCockpitQualityLabel(const string canonical)
+  {
+   if(canonical=="Current") return("Atual");
+   if(canonical=="Estimated") return("Estimado");
+   if(canonical=="Partial") return("Parcial");
+   if(canonical=="Historical") return("Histórico");
+   return(canonical);
+  }
+string JPWCockpitMetricTitle(const int index,const string canonical)
+  {
+   if(index==0) return("Alavancagem da conta");
+   if(index==1) return("Resultado flutuante");
+   if(index==2) return("SL da referência");
+   if(index==5) return("Risco dos stops");
+   return(canonical);
+  }
+int JPWCockpitPresentationIndex(const int slot)
+  {
+   const int order[7]={0,5,1,2,3,4,6};
+   return(slot>=0 && slot<7 ? order[slot] : -1);
   }
 int JPWCockpitHUDTarget(const bool summary,const int summary_source,const int object_index)
   { return(summary ? summary_source : object_index); }

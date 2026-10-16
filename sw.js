@@ -18,6 +18,7 @@ const NOCUDA_DOCUMENT_URLS = [
 ].map(path => new URL(path, self.location.href).href);
 const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.location.href).href;
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
+const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
 const PRECACHE_URLS = [
   './src/js/40-app/26-learning-catalog.js',
   './src/js/00-core/09-learning-progress.js',
@@ -127,7 +128,65 @@ self.addEventListener('install', event => {
           throw new Error('Integridade de download JPW Alavancagem Atual invalida');
         return {url:url.href,bytes:item.bytes,sha256:item.sha256};
       });
-      await cache.addAll(downloads.map(item=>item.url));
+      let previewDownload=null;
+      // R4 adds exactly three declared local inputs. Their JSON/HTML extensions
+      // do not broaden the historical ZIP allowlist or establish native proof.
+      if(Object.prototype.hasOwnProperty.call(manifest,'interfaceRelease')){
+        const artifacts=manifest.interfaceRelease?.artifacts;
+        const catalog={R5:{nativeKit:'Kit_Windows_Stoikus_Janelas_R5.zip',nativePin:'root-pin-R5.json',preview:'Previa_Stoikus_Janelas_R5.html'},R4:{nativeKit:'Kit_Windows_Stoikus_Assinatura_R4.zip',nativePin:'root-pin-R4.json',preview:'Previa_Stoikus_Interface_R4.html'}};
+        const expected=catalog[manifest.interfaceRelease.revision];
+        if(!expected)throw new Error('Revisao de entrega da interface invalida');
+        if(!artifacts||typeof artifacts!=='object'||Array.isArray(artifacts)||
+          Object.keys(artifacts).length!==Object.keys(expected).length||
+          Object.keys(artifacts).some(kind=>!Object.prototype.hasOwnProperty.call(expected,kind)))
+          throw new Error('Inventario de entrega da interface invalido');
+        for(const [kind,filename] of Object.entries(expected)){
+          const item=artifacts[kind];
+          if(!item||item.available!==true||item.path!==`downloads/jpw-alavancagem-atual/${filename}`||item.filename!==filename||
+            !Number.isSafeInteger(item.bytes)||item.bytes<=0||typeof item.sha256!=='string'||!/^[a-f0-9]{64}$/.test(item.sha256))
+            throw new Error('Metadata de entrega da interface invalida');
+          const url=new URL(item.path,self.location.href);
+          if(url.href!==new URL(filename,LEVERAGE_ROOT_URL).href||url.search||url.hash)
+            throw new Error('URL de entrega da interface invalida');
+          const download={url:url.href,bytes:item.bytes,sha256:item.sha256};
+          downloads.push(download);
+          if(kind==='preview')previewDownload=download;
+        }
+      }
+      if(previewDownload){
+        // The host may canonicalize/inject HTML. Only official embedded bytes
+        // may seed this URL; absence/corruption never falls back to the network.
+        const downloadManifest=self.JPW_DOWNLOAD_MANIFEST;
+        const resource=downloadManifest?.resources?.['leverage/preview'];
+        const descriptor=downloadManifest?.payloads?.['leverage-preview'];
+        if(downloadManifest?.schemaVersion!==1||downloadManifest.buildId!==JP_WEALTH_BUILD_ID||
+          !resource||resource.mime!=='text/html'||resource.payload!=='leverage-preview'||
+          new URL(resource.path,self.location.href).href!==previewDownload.url||
+          !descriptor||descriptor.path!=='src/vendor/downloads/leverage-preview-payload.js'||descriptor.envelopePath!=='src/vendor/downloads/leverage-preview-payload.json'||
+          !Number.isSafeInteger(descriptor.envelopeBytes)||descriptor.envelopeBytes<=0||
+          !/^[a-f0-9]{64}$/.test(descriptor.envelopeSha256))
+          throw new Error('Payload incorporado da previa invalido');
+        const response=await fetch(new URL(descriptor.envelopePath,self.location.href).href,{redirect:'error'});
+        if(!response.ok)throw new Error('Envelope da previa ausente');
+        const raw=await response.arrayBuffer();
+        const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),n=>n.toString(16).padStart(2,'0')).join('');
+        if(raw.byteLength!==descriptor.envelopeBytes||hash!==descriptor.envelopeSha256)
+          throw new Error('Envelope da previa diferente do manifesto');
+        const payload=JSON.parse(new TextDecoder().decode(raw));
+        const encoded=payload?.files?.['leverage/preview'];
+        if(payload?.schemaVersion!==1||payload.buildId!==JP_WEALTH_BUILD_ID||payload.id!=='leverage-preview'||
+          Object.keys(payload.files||{}).length!==1||typeof encoded!=='string'||!encoded||
+          !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded))
+          throw new Error('Payload incorporado da previa invalido');
+        const bytes=Uint8Array.from(atob(encoded),value=>value.charCodeAt(0));
+        await cache.put(previewDownload.url,new Response(bytes,{headers:{'Content-Type':'text/html'}}));
+        // Offline pages still load the same lazy classic sidecar. Reconstruct it
+        // only from the verified envelope; never fetch the host's HTML route.
+        await cache.put(new URL(descriptor.path,self.location.href).href,
+          new Response('window.JPWDownloadAssets.register("leverage-preview",'+new TextDecoder().decode(raw)+');\n',
+            {headers:{'Content-Type':'application/javascript'}}));
+      }
+      await cache.addAll(downloads.filter(item=>item!==previewDownload).map(item=>item.url));
       for(const item of downloads){
         const cached=await cache.match(item.url);
         if(!cached)throw new Error('Download JPW Alavancagem Atual ausente do cache');
@@ -149,6 +208,14 @@ self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
   const url=new URL(event.request.url);
   const documentURL = url.origin + url.pathname;
+  if(LEVERAGE_PREVIEW_URLS.includes(documentURL)&&self.JPW_DOWNLOAD_MANIFEST?.resources?.['leverage/preview']){
+    event.respondWith(caches.open(CACHE_NAME).then(async cache=>{
+      const cached=await cache.match(documentURL);
+      if(!cached)throw new Error('Previa incorporada ausente do cache');
+      return cached;
+    }));
+    return;
+  }
   if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||PROJECT_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)||documentURL===LEVERAGE_MANIFEST_URL||documentURL.startsWith(LEVERAGE_ROOT_URL)){
     event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(documentURL).then(cached=>cached||fetch(event.request))));
     return;

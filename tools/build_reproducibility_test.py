@@ -4,7 +4,8 @@
 Contrato duplo:
   1. lixo local não rastreado (.DS_Store, temporário de editor, subdiretório ignorado)
      NÃO pode alterar o Build ID, o monólito nem os hashes do manifest;
-  2. mudança real num input oficial do candidato DEVE alterar o Build ID.
+  2. mudança real num input oficial DEVE alterar o Build ID, ou ser recusada
+     quando violar a identidade selada de uma interface aprovada.
 
 Como funciona: monta duas cópias do projeto num diretório temporário a partir dos
 arquivos rastreados pelo Git e de qualquer input oficial já declarado no manifest
@@ -38,6 +39,28 @@ BRAND_BUILD_INPUTS = (
 )
 LEVERAGE_MANIFEST = 'downloads/jpw-alavancagem-atual/manifest.json'
 LEVERAGE_BUILDER = 'tools/build_leverage_package.py'
+INTERFACE_ARTIFACTS = {
+    'nativeKit': ('downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip', 'application/zip'),
+    'nativePin': ('downloads/jpw-alavancagem-atual/root-pin-R5.json', 'application/json'),
+    'preview': ('downloads/jpw-alavancagem-atual/Previa_Stoikus_Janelas_R5.html', 'text/html'),
+}
+INTERFACE_DAILY_SHA256 = '0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3'
+
+
+def artefatos_interface_declarados(leverage, root=ROOT):
+    if 'interfaceRelease' not in leverage:
+        return {}
+    # Use the real package boundary: keys, exact R5 values, native pending,
+    # safe files, approved hashes/lengths and sealed MQL identity are mandatory.
+    spec = importlib.util.spec_from_file_location('jpw_repro_checked_interface', root / LEVERAGE_BUILDER)
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    assert builder.validate_interface_release(root, leverage) == ''
+    records = leverage['interfaceRelease']['artifacts']
+    assert set(records) == set(INTERFACE_ARTIFACTS), 'inventario de interface nao limitado aos tres inputs'
+    for kind, (relative, _mime) in INTERFACE_ARTIFACTS.items():
+        assert records[kind]['path'] == relative, ('input de interface inesperado', kind)
+    return records
 
 
 def artefatos_nativos_declarados(leverage):
@@ -87,6 +110,7 @@ def arquivos_do_candidato():
     # exactly the manifest declarations; the real builder still checks every
     # source fingerprint, path, architecture and artifact SHA-256.
     arquivos.update(item['path'] for item in artefatos_nativos_declarados(leverage))
+    arquivos.update(item['path'] for item in artefatos_interface_declarados(leverage).values())
     return sorted(arquivos)
 
 def montar(destino: Path, arquivos):
@@ -113,12 +137,15 @@ def rebuild(destino: Path):
 def fatos(destino: Path):
     leverage = json.loads((destino / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))
     return {
-        'download_sidecars': {p.name:p.read_bytes() for p in sorted((destino/'src/vendor/downloads').glob('*-payload.js'))},
+        'download_sidecars': {p.name:p.read_bytes() for p in sorted((destino/'src/vendor/downloads').glob('*-payload.*'))},
         'build_id': (destino / 'build-id.js').read_text(encoding='utf-8').strip(),
         'monolito': (destino / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html').read_bytes(),
         'manifest': (destino / 'src/js/manifest.json').read_bytes(),
         'leverage_manifest': (destino / LEVERAGE_MANIFEST).read_bytes(),
         'leverage_source': (destino / leverage['downloads']['source']['path']).read_bytes(),
+        'leverage_daily': (destino / leverage['downloads']['dailySource']['path']).read_bytes(),
+        'interface_artifacts': {kind: (destino / item['path']).read_bytes()
+                                for kind, item in artefatos_interface_declarados(leverage, destino).items()},
         'leverage_compiled': ((destino / leverage['downloads']['compiled']['path']).read_bytes()
                               if leverage['downloads']['compiled']['available'] else None),
     }
@@ -149,6 +176,8 @@ def main():
         assert a['leverage_manifest'] == b['leverage_manifest'], 'lixo alterou o manifesto de alavancagem'
         assert a['leverage_source'] == b['leverage_source'], 'lixo alterou o ZIP de fontes de alavancagem'
         assert a['leverage_compiled'] == b['leverage_compiled'], 'lixo alterou o ZIP compilado de alavancagem'
+        assert a['leverage_daily'] == b['leverage_daily'], 'lixo alterou o ZIP de uso diario'
+        assert a['interface_artifacts'] == b['interface_artifacts'], 'lixo alterou os tres artifacts de interface'
 
         # ---- 3. contraprova: mudar um INPUT OFICIAL deve mudar o Build ID ----
         montar(alterado, arquivos)
@@ -193,11 +222,68 @@ def main():
             assert len(original) == item['bytes'], item['path']
             assert base64.b64encode(original).decode('ascii') in html, item['path']
             assert hashlib.sha256(original).hexdigest() == item['sha256'], item['path']
+        interface_records = artefatos_interface_declarados(leverage, limpo)
+        if interface_records:
+            assert hashlib.sha256(a['leverage_daily']).hexdigest() == INTERFACE_DAILY_SHA256
+        download_metadata = json.JSONDecoder().raw_decode(html.split('window.JPW_DOWNLOAD_MANIFEST = ',1)[1])[0]
+        inert_payloads = [json.loads(raw) for raw in re.findall(r'<script type="application/json" id="jpw-download-payload-[^"]+">(.*?)</script>',html)]
+        portable_files = {key.removeprefix('leverage/'): {'mime':download_metadata['resources'][key]['mime'],'base64':encoded} for payload in inert_payloads for key,encoded in payload['files'].items() if key.startswith('leverage/')}
+        bootstrap = (limpo/'build-id.js').read_text()
+        assert 'base64' not in bootstrap and 'JPW_LEVERAGE_FILES' not in bootstrap, 'download bytes leaked into bootstrap'
+        for kind, item in interface_records.items():
+            original = (limpo / item['path']).read_bytes()
+            assert item['path'] in arquivos, ('input oficial da interface ausente do fixture', kind)
+            assert len(original) == item['bytes'], kind
+            assert hashlib.sha256(original).hexdigest() == item['sha256'], kind
+            assert portable_files[kind]['mime'] == INTERFACE_ARTIFACTS[kind][1], kind
+            assert base64.b64decode(portable_files[kind]['base64'], validate=True) == original, kind
+        for kind, item in leverage['downloads'].items():
+            if item['available']:
+                assert portable_files[kind]['mime'] == 'application/zip', kind
+                assert base64.b64decode(portable_files[kind]['base64'], validate=True) == (limpo / item['path']).read_bytes(), kind
         first_source = leverage['sourceFiles'][0]
         montar(alterado, arquivos)
         (alterado / first_source).write_bytes((alterado / first_source).read_bytes() + b'\n')
-        rebuild(alterado)
-        assert fatos(alterado)['build_id'] != a['build_id'], 'fingerprint cego ao pacote de fontes'
+        if interface_records:
+            erro = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'], cwd=alterado, capture_output=True, text=True)
+            reason = 'fingerprint aprovado' if Path(first_source).suffix in ('.mq5','.mqh','.bmp') else 'Pacote ou build da interface diverge da release aprovada'
+            assert erro.returncode != 0 and reason in (erro.stdout + erro.stderr), 'fonte selada alterada foi aceita'
+        else:
+            rebuild(alterado)
+            assert fatos(alterado)['build_id'] != a['build_id'], 'fingerprint cego ao pacote de fontes'
+        interface_controls = []
+        if interface_records:
+            # The old/default test above still requires a different build for a
+            # changed official source. R5 sealed bytes must instead fail closed.
+            sealed_source = next(rel for rel in leverage['sourceFiles'] if rel.endswith('.mq5'))
+            destino = raiz / 'interface-source-tampered'
+            montar(destino, arquivos)
+            target = destino / sealed_source
+            target.write_bytes(target.read_bytes() + b'\n// changed sealed source\n')
+            erro = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'], cwd=destino, capture_output=True, text=True)
+            assert erro.returncode != 0 and 'fingerprint aprovado' in (erro.stdout + erro.stderr), 'fonte MQL selada alterada foi aceita'
+            interface_controls.append({'control': 'sealed-source-tampered', 'path': sealed_source, 'result': 'EXPECTED_REFUSAL'})
+            for kind, item in interface_records.items():
+                for control in ('missing', 'tampered'):
+                    destino = raiz / ('interface-' + kind + '-' + control)
+                    montar(destino, arquivos)
+                    target = destino / item['path']
+                    if control == 'missing':
+                        target.unlink()
+                        reason = 'Arquivo declarado ausente ou inseguro: ' + item['path']
+                    else:
+                        content = target.read_bytes()
+                        assert content, ('controle da interface exige arquivo nao vazio', kind)
+                        target.write_bytes(bytes([content[0] ^ 1]) + content[1:])
+                        reason = 'Bytes/hash da interface divergem da release aprovada: ' + kind
+                    before = {rel: (destino / rel).read_bytes() for rel in (
+                        'build-id.js', 'src/js/manifest.json', LEVERAGE_MANIFEST,
+                        'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')}
+                    erro = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'], cwd=destino, capture_output=True, text=True)
+                    assert erro.returncode != 0 and reason in (erro.stdout + erro.stderr), (kind, control, erro.stdout, erro.stderr)
+                    assert all((destino / rel).read_bytes() == raw for rel, raw in before.items()), 'recusa de interface alterou outputs'
+                    interface_controls.append({'control': control, 'kind': kind, 'path': item['path'],
+                                               'returncode': erro.returncode, 'result': 'EXPECTED_REFUSAL'})
 
         # ---- 5. cada input da marca declarado e ausente precisa falhar alto ----
         for relative in BRAND_BUILD_INPUTS:
@@ -243,13 +329,17 @@ def main():
         print(json.dumps({'native_declared_inputs': len(native['artifacts']) if native else 0,
                           'compiled_zip_deterministic': a['leverage_compiled'] == b['leverage_compiled'],
                           'compiled_fallback_preserved': native is not None or a['leverage_compiled'] is None,
-                          'native_integrity_controls': native_controls}, indent=2))
+                          'native_integrity_controls': native_controls,
+                          'daily_zip_deterministic': a['leverage_daily'] == b['leverage_daily'],
+                          'interface_declared_inputs': len(interface_records),
+                          'interface_artifacts_deterministic': a['interface_artifacts'] == b['interface_artifacts'],
+                          'interface_integrity_controls': interface_controls}, indent=2))
 
         canonico = a['build_id'].split("'")[1]
         print(f'BUILD REPRODUCIBILITY OK — Build ID canonico {canonico}; '
               f'{len(LIXO)} artefatos locais ignorados (.DS_Store na raiz/icons/src, swap e undo '
               f'de editor, diretorio ignorado) nao alteram Build ID, monolito nem manifest; '
-              f'mudanca real de fonte/documento altera; originais incorporados identicos; input oficial ausente interrompe o build.')
+              f'mudanca oficial altera o build ou e recusada se violar fonte selada; originais incorporados identicos; input oficial ausente interrompe o build.')
 
 if __name__ == '__main__':
     main()

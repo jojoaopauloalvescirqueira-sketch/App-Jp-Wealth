@@ -588,14 +588,14 @@
     {
       "path": "src/js/00-core/10-download-assets.js",
       "order": 98,
-      "sha256": "714989b6abc9ffb3d60003f6685f5af92963c5d4244ca39caabf2cc42bcdf1ca",
+      "sha256": "e42f18df8612ac5599aeabc3b0fe364c314878d7bd13c0f6ad2fcc810470b378",
       "section": "PUBLIC DOWNLOADS · lazy verified assets"
     },
     {
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
       "order": 99,
-      "sha256": "c4cc046708f01d0049142c6b5f96725ae235097caf222b01f8de69c6e02b654a"
+      "sha256": "62839f6e324f81f9d39b9a07d9c9076bd5711fba7d685a29a3a94592068fdcae"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",

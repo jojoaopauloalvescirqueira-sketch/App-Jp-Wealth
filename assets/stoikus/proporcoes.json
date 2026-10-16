@@ -1,0 +1,37 @@
+{
+  "source": "/private/tmp/jpw-stoikus-continuity-20261014/assets/jp-wealth-brand-red.png",
+  "source_sha256": "a77960904ec84b92ad2b1701b5beec6979613b8192dc449e9be8ecbdde10cd85",
+  "source_size": [
+    1179,
+    128
+  ],
+  "source_corner_rgba": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "main_font": "Arial regular400",
+  "main_px": 24,
+  "by_px": 12,
+  "wordmark_box_px": [
+    110.53125,
+    12
+  ],
+  "target_logical_px": [
+    240,
+    28
+  ],
+  "core_width": 219.908203125,
+  "left_margin": 10.0458984375,
+  "metrics": {
+    "main": 78.703125,
+    "by": 12.673828125,
+    "ascent": 17.47265625,
+    "descent": 0.29296875
+  },
+  "layout": "horizontal",
+  "native_mt5": "NOT_RUN",
+  "program_and_site_edits": false,
+  "preserved_source_copy": "JP-Wealth-vermelha-original.png"
+}

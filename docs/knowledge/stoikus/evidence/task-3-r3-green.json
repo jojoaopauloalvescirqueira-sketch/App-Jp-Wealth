@@ -1,0 +1,183 @@
+{
+  "scope": "Actual complete Monitor callbacks, admission/lease/heartbeat, scheduler and status codec; terminal APIs and Observer/Accountant boundaries synthetic; real isolated status filesystem",
+  "native": "NOT_RUN",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "compiler": "/usr/bin/clang++",
+  "sources": {
+    "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5": "05fd1c569d1fd84b8aa942270da512206712c7557b000879b5d9ec649bbe9b4d",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Core.mqh": "f925790a27cd244df230b0959e6c0fd27ff0be2ea5cc23742390d7780e8f0880",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Status.mqh": "4658c7c9cdc65322e2022c434b8a6d7b0ed08f82c9ee4b79691797ac540c8d9d",
+    "tools/core_monitor_judge.py": "829026ef2e94c863624c4549f6e423a2e2a5b7e66d9c4b73bca282cf27bec423",
+    "tools/jpw_stoikus_monitor_state_test.py": "a602ff6b8d59fbdaf2efd88c8d8ba889588b72eba3966bc0eb6a1acbe553fa18",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh": "6fd858b37bf61f9ff131fc2af80a2da1f5440ae875e36af69e6a5932c55c5bb9"
+  },
+  "cases": [
+    {
+      "id": "failed-attach-init",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|failed-attach-init|PASS|4\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "conflict-ten-retries",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|conflict-ten-retries|PASS|4\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "changed-reason",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|changed-reason|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Lease temporária do núcleo indisponível. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "file-open-cause-uncertain",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|file-open-cause-uncertain|PASS|5\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "file-open-error-change",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|file-open-error-change|PASS|3\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5001. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "file-open-no-error-stale",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|file-open-no-error-stale|PASS|1\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 0. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "recovery-once",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|recovery-once|PASS|10\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "identity-empty",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|identity-empty|PASS|5\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando identidade da conta/instalação; nova tentativa a cada 1 s. Motivo: Identidade indisponível; publicação atual invalidada. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Novo contexto da conta/instalação. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "same-reason-new-context",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|same-reason-new-context|PASS|3\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Novo contexto da conta/instalação. Motivo: Abertura do lock exclusivo indisponível. Erro 5004. Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e se há outro Monitor para esta conta/instalação; consulte o Diário do terminal. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "account-change-lease-failure",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|account-change-lease-failure|PASS|6\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: revalidando contexto da conta/instalação; publicação anterior suspensa. Novo contexto da conta/instalação. Motivo: Conta/instalação em revalidação; confira as declarações de cobertura da conta original. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Titularidade da lease não confirmada. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "foreign-lease",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|foreign-lease|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: lease perdida; produtor suspenso, aguardando nova titularidade. Motivo: Lease alterada; trabalho suspenso sem roubar titularidade. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "timer-failure",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|timer-failure|PASS|4\nLOG|Stoikus · Monitor: não foi possível iniciar a atualização de 1 s. Erro 501. Confira o Diário do terminal e Conta → Sistema; carregue o Monitor novamente no gráfico de apoio.\n",
+      "stderr": ""
+    },
+    {
+      "id": "degraded-reason-recovery",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|degraded-reason-recovery|PASS|4\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Stops: Observador legado ativo; publicações suspensas; Histórico Pessoal: Observador legado ativo; publicações suspensas; Raiz N: Observador legado ativo; publicações suspensas; . Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Stops: Lock histórico indisponível; Histórico Pessoal: Lock histórico indisponível; Raiz N: Lock histórico indisponível; . Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "diagnostic-failure-recovery",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|diagnostic-failure-recovery|PASS|9\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Diagnóstico: Escrita do diagnóstico indisponível; . Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "observer-attach-rejected",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|observer-attach-rejected|PASS|3\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Observador não anexado; contabilidade permanece independente; Stops: Captura/lease atuais não confirmadas; aguardando revalidação; Histórico Pessoal: ; Raiz N: Varredura concluída; aguardando novas entradas. Snapshots são históricos; . Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "ledger-failure-recovery",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|ledger-failure-recovery|PASS|4\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Contabilidade: Publicação contábil recusada; base preservada; cobertura histórica/custos incompleta na geração aceita; . Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Contabilidade: Geração contábil alterada; cobertura histórica/custos incompleta na geração aceita; . Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "heartbeat-failure",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|heartbeat-failure|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: lease perdida; produtor suspenso, aguardando nova titularidade. Motivo: Titularidade da lease não confirmada; trabalho suspenso. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "promoted-heartbeat-failure",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|promoted-heartbeat-failure|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: lease perdida; produtor suspenso, aguardando nova titularidade. Motivo: Titularidade da lease não confirmada; trabalho suspenso. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "trade-context-change",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|trade-context-change|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: revalidando contexto da conta/instalação; publicação anterior suspensa. Novo contexto da conta/instalação. Motivo: Conta/instalação em revalidação; confira as declarações de cobertura da conta original. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: produtor ativo; recuperado. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "midcycle-identity-loss",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|midcycle-identity-loss|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: aguardando identidade da conta/instalação; nova tentativa a cada 1 s. Novo contexto da conta/instalação. Motivo: Identidade indisponível; publicação atual invalidada. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "initial-heartbeat-ten-retries",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|initial-heartbeat-ten-retries|PASS|3\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: aguardando titularidade; nova tentativa a cada 1 s. Motivo: Titularidade da lease não confirmada. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "shutdown-diagnostic-failure",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|shutdown-diagnostic-failure|PASS|2\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\nLOG|Stoikus · Monitor: estado degradado; confira os módulos afetados. Motivo: Diagnóstico de encerramento não confirmado: Escrita do diagnóstico indisponível. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    },
+    {
+      "id": "status-data-invariant",
+      "status": "PASS",
+      "returncode": 0,
+      "stdout": "CASE|status-data-invariant|PASS|14\nLOG|Stoikus · Monitor carregado; timer de 1 s disponível. Cobertura declarada não ativa negociação nem arma Supervisor.\nLOG|Stoikus · Monitor: produtor ativo. Capturas e cobertura continuam com validação própria. Confira Conta → Sistema e mantenha o gráfico de apoio aberto.\n",
+      "stderr": ""
+    }
+  ],
+  "build": {
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "status": "PASS"
+}

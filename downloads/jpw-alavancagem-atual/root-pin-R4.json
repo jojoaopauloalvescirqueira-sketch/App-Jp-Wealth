@@ -1,0 +1,37 @@
+{
+  "kind": "JPW_STOIKUS_UI_NATIVE_KIT_ROOT_PIN",
+  "candidate": "1.22.3-interface",
+  "status": "SEALED_SOURCE_ONLY",
+  "freeze_id": "stoikus-interface-R4",
+  "root_freeze_sha256": "8e43e6dc0e574083d9f3043f80b8aff3e4b87a99e38dd1c8d8217fb612ebdb6f",
+  "mql_source_fingerprint": "b2b0afc9535816685decb8d5860a90fee35642b1ea3e6720523ecd8145c00d81",
+  "interface_fingerprint": "ee9105007b390c05c51ca7165b86e4418662c062642063b65958bd454106349e",
+  "runtime_build_id": "45beb82e9366197542bfa5c7084a28bc05dd6b155f5a3777fdaa95f15b67239d",
+  "calculation_version": "1.9.0",
+  "source_zip_sha256": "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21bf31e5855ef",
+  "kit_package_filename": "Kit_Windows_Stoikus_Assinatura_R4.zip",
+  "kit_package_sha256": "86b9fb52e811c953f2e142f7670327685748bf75848c0ce2bea644eaa664d474",
+  "files_sha256": {
+    "Compile-Stoikus-UI.ps1": "41afe0acaa6d413c86f5cacbe2c09af3829789a89bf3b6b09c4bdaa60998b44b",
+    "JPW_Stoikus_Uso_Fontes_v1.22.3_interface.zip": "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21bf31e5855ef",
+    "LEIA-PRIMEIRO.md": "96609be996456c1da7c7a196af53e8b40748b9f35586ba934efa872947c41841",
+    "NativeKit.Core.ps1": "2dba568c184e31f1e28814c706d3e6a9459fe4e45524e33b52db14c0776ed542",
+    "Test-NativeUI-Kit.ps1": "700b0509f07710f2e79df6cbb08d838e8b54222d8412fe0c32e625ed0c0257af",
+    "identity.schema.json": "eac014755a7839aa5adcec5e9e9da361e32ca63aabe030b7df6e4db50d708685",
+    "source-freeze-R4.json": "8e43e6dc0e574083d9f3043f80b8aff3e4b87a99e38dd1c8d8217fb612ebdb6f",
+    "stoikus-1.22.3-interface.identity.json": "9f8252a4cdc715d80ae02f9c54712104bc93f8ae3a230c87186cd17edc8477d2",
+    "verify_native_ui_kit.py": "9bb0e84187e80fef48ea8018e3778557f17164286b964ab8abeaa2f659332da2"
+  },
+  "reviews": {
+    "source_and_manifest": "NOT_RUN_AT_SEAL",
+    "host_full": "NOT_RUN_AT_SEAL",
+    "python_independent_byte_check": "NOT_RUN_AT_SEAL",
+    "negative_tamper_fixtures": "NOT_RUN_AT_SEAL",
+    "powershell_static_review": "NOT_RUN_AT_SEAL",
+    "windows_power_shell_fixtures": "NOT_RUN_AT_SEAL",
+    "mt5_compilation": "NOT_RUN_AT_SEAL",
+    "mt5_demo_runtime": "NOT_RUN_AT_SEAL",
+    "independent_windows_x64": "NOT_RUN_AT_SEAL",
+    "owner_acceptance": "NOT_RUN_AT_SEAL"
+  }
+}

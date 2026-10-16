@@ -83,6 +83,7 @@ void JPWSignalSaveDraft(){}
 bool JPWGenetrixHandleCycleEvent(int,long,const string&){return false;}
 void JPWSignalInvalidate(const string&){}
 bool JPWSignalHandleClick(const string&){return false;}
+bool g_cockpit_sections_open=false;int g_cockpit_section_page=0,g_personal_picker=0,g_personal_picker_page=0;
 void JPWPersonalRequestRead(){}
 void JPWPersonalHistoryMove(int){}
 bool JPWPersonalHandleClick(const string&){return false;}
@@ -343,7 +344,7 @@ int main(){
  OnChartEvent(CHARTEVENT_CLICK,80,90.,"");
  OnChartEvent(CHARTEVENT_KEYDOWN,54,0.,"");
  check(g_cockpit_selected==4,"foreign click pair cannot change the selected cockpit metric");
- accept_current();JPWOpenCockpit();
+ g_cockpit_sections_open=true; accept_current();JPWOpenCockpit();check(!g_cockpit_sections_open,"opening cockpit clears compact menu from prior session");
  click(JPWActionObject(JPW_ACTION_SECONDARY));
  check(signal_opened==1&&g_raiz_tab==JPW_SIGNAL_ROUTE,"overview launches message catalogue without financial refresh");
  const int cleared=signal_cleared;click(JPWActionObject(JPW_ACTION_CLOSE));
@@ -433,6 +434,8 @@ int main(){
  JPWFocusStep(false);check(g_focus_action==focus_action&&!g_editing_field,"next Tab focuses button without applying");
  JPWFocusStep(true);check(g_focus_action==-1017&&g_editing_field,"Shift Tab returns to editor without applying");
  check(apply+legacy_apply+factor_apply==before_rejected_writes&&preference_write_calls==before_rejected_preference_writes,"focus traversal never writes settings");
+ accept_current();JPWOpenCockpit();click(g_panel_prefix+"HUD_RISK_SCOPE");
+ check(g_raiz_tab==JPW_ROUTE_METRIC&&g_cockpit_selected==5,"risk scope fallback opens canonical risk detail");
  std::cout<<"HOST_DETAILS_EVENT: "<<checks-failures<<" PASS / "<<failures<<" FAIL\n";
  return failures?1:0;
 }

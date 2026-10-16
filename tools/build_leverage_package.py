@@ -82,6 +82,89 @@ def download_record(relative: str, content: bytes) -> dict:
     }
 
 
+# Sealed, approved R4 files are distribution inputs, never native proof. Only
+# these three local files may enter the optional interface release contract.
+INTERFACE_ARTIFACTS = {
+    "nativeKit": ("Kit_Windows_Stoikus_Assinatura_R4.zip", "86b9fb52e811c953f2e142f7670327685748bf75848c0ce2bea644eaa664d474"),
+    "nativePin": ("root-pin-R4.json", "009cd46d458a4a85c14a0cae0c76ea9d730b47656304d36dfb7552fb952e8932"),
+    "preview": ("Previa_Stoikus_Interface_R4.html", "b1e44151cc4acf5fa96fb0bb0a349b2ecab0ca631e59649629c253adb83f70f2"),
+}
+INTERFACE_RELEASE_VALUES = {
+    "revision": "R4", "candidate": "1.22.3-interface", "archiveVariant": "interface",
+    "state": "SOURCE_ONLY_NATIVE_PENDING", "nativeCompilation": "NOT_RUN",
+    "nativeRuntime": "NOT_RUN", "humanAcceptance": "NOT_RUN", "windowsX64": "NOT_RUN",
+}
+INTERFACE_BUILD_ID = "45beb82e9366197542bfa5c7084a28bc05dd6b155f5a3777fdaa95f15b67239d"
+INTERFACE_MQL_FINGERPRINT = "b2b0afc9535816685decb8d5860a90fee35642b1ea3e6720523ecd8145c00d81"
+INTERFACE_DAILY_SHA256 = "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21bf31e5855ef"
+
+
+# Bounded approved release catalog: selecting a version never relaxes its pins.
+SEALED_RELEASES = {
+    "1.22.3": dict(values=INTERFACE_RELEASE_VALUES, artifacts=INTERFACE_ARTIFACTS,
+                   build=INTERFACE_BUILD_ID, fingerprint=INTERFACE_MQL_FINGERPRINT,
+                   daily=INTERFACE_DAILY_SHA256),
+    "1.23.0": dict(
+        values=dict(INTERFACE_RELEASE_VALUES, revision="R5", candidate="1.23.0-interface", archiveVariant=""),
+        artifacts={
+            "nativeKit": ("Kit_Windows_Stoikus_Janelas_R5.zip", "5c32d1a5bf3ff2e2023c2c0e7b29c6425d1cc1bd5169f5fdf03f277d8fc9f8f4"),
+            "nativePin": ("root-pin-R5.json", "bb6ad986db99b3f9dca2437e83f9fd928f4df7830a9866da5d2b0b7bc731447a"),
+            "preview": ("Previa_Stoikus_Janelas_R5.html", "90fd6a0d542ce9abb538d61f0b5b8e5470d364eae1dd47ceed4504f6b67cbfd7"),
+        },
+        build="c1298741ec9673c2644cfaad83e6444b06a4ae7e0a5ec78f85f2c65d2781ea31",
+        fingerprint="62c9bb7d36aed866983449c4327fb529b994464cb1422bf9516c639ea4fb94ac",
+        daily="0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3",
+        sdk="65ed7e2cb6f9fe680695ef67e47eb9aa873a66e2bfd214c1ebd71a41367fcf63"),
+}
+
+
+def validate_interface_release(root: Path, manifest: dict) -> str:
+    """Validate the bounded sealed-input contract before any generated writes."""
+    if "interfaceRelease" not in manifest:
+        return ""
+    release = manifest["interfaceRelease"]
+    contract = SEALED_RELEASES.get(manifest["version"])
+    if contract is None:
+        raise ValueError("Versao sem contrato selado")
+    values, artifacts_contract = contract["values"], contract["artifacts"]
+    if (not isinstance(release, dict)
+            or set(release) != set(values) | {"artifacts"}
+            or any(release.get(key) != value for key, value in values.items())):
+        raise ValueError("Contrato interfaceRelease invalido ou estado nativo promovido")
+    if (manifest.get("nativeArtifact") is not None
+            or any(manifest["validation"][kind]["status"] != "pending" for kind in ("compilation", "terminal"))):
+        raise ValueError("Release selada exige validacao nativa pendente")
+    artifacts = release["artifacts"]
+    if not isinstance(artifacts, dict) or set(artifacts) != set(artifacts_contract):
+        raise ValueError("Inventario de artifacts da interface invalido")
+    verified = {}
+    for kind, (filename, approved_digest) in artifacts_contract.items():
+        record = artifacts[kind]
+        if (not isinstance(record, dict)
+                or set(record) != {"available", "path", "filename", "sha256", "bytes"}
+                or record.get("available") is not True
+                or record.get("path") != OUTPUT + filename
+                or record.get("filename") != filename
+                or record.get("sha256") != approved_digest
+                or type(record.get("bytes")) is not int or record["bytes"] <= 0):
+            raise ValueError(f"Metadata da interface invalida: {kind}")
+        raw = checked_file(root, record["path"], OUTPUT).read_bytes()
+        regenerated = download_record(OUTPUT + filename, raw)
+        if regenerated != record:
+            raise ValueError(f"Bytes/hash da interface divergem da release aprovada: {kind}")
+        verified[kind] = regenerated
+    # Bind executable bytes independently of stale generated manifest metadata.
+    mql_hashes = {relative.removeprefix(PRODUCT): hashlib.sha256(
+        checked_file(root, relative, PRODUCT).read_bytes()).hexdigest()
+        for relative in manifest["sourceFiles"] if runtime_source(relative)}
+    fingerprint = hashlib.sha256(json.dumps(mql_hashes, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    if fingerprint != contract["fingerprint"]:
+        raise ValueError("Fontes da interface divergem do fingerprint aprovado")
+    release["artifacts"] = verified
+    variant = values["archiveVariant"]
+    return "_" + variant if variant else ""
+
+
 NOCUDA_LOGO = PRODUCT + "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp"
 # Every embedded resource is explicitly approved; arbitrary images cannot ship.
 GENETRIX_LOGOS = frozenset(PRODUCT + "MQL5/Images/JPWealth/JPW_Stoikus_Logo_" +
@@ -252,6 +335,7 @@ def build(root: Path = ROOT) -> dict:
                     kind = "Recurso" if dependency in EMBEDDED_RESOURCES else "Include"
                     raise ValueError(f"{kind} local ausente do manifesto: {dependency}")
                 checked_file(root, dependency, PRODUCT)
+    archive_suffix = validate_interface_release(root, manifest)
     daily_sources = daily_inventory(sources, dependencies)
     manifest["runtimeBuildId"] = stamp_source_build(root, sources, manifest["version"])
     members = []
@@ -267,10 +351,10 @@ def build(root: Path = ROOT) -> dict:
     source_fingerprint = hashlib.sha256(json.dumps(mql_hashes, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     manifest["mqlSourceFingerprint"] = source_fingerprint
     version = manifest["version"]
-    source_path = OUTPUT + f"JPW_Stoikus_Fontes_v{version}.zip"
+    source_path = OUTPUT + f"JPW_Stoikus_Fontes_v{version}{archive_suffix}.zip"
     source_zip = make_archive(members)
     downloads = {"source": download_record(source_path, source_zip)}
-    daily_path = OUTPUT + f"JPW_Stoikus_Uso_Fontes_v{version}.zip"
+    daily_path = OUTPUT + f"JPW_Stoikus_Uso_Fontes_v{version}{archive_suffix}.zip"
     daily_members = [
         ("LEIA_PRIMEIRO.md" if relative == DAILY_GUIDE else relative.removeprefix(PRODUCT),
          checked_file(root, relative, PRODUCT).read_bytes())
@@ -278,6 +362,11 @@ def build(root: Path = ROOT) -> dict:
     ]
     daily_zip = make_archive(daily_members)
     downloads["dailySource"] = download_record(daily_path, daily_zip)
+    contract = SEALED_RELEASES.get(version) if "interfaceRelease" in manifest else None
+    if contract and (downloads["dailySource"]["sha256"] != contract["daily"]
+            or manifest["runtimeBuildId"] != contract["build"]
+            or ("sdk" in contract and downloads["source"]["sha256"] != contract["sdk"])):
+        raise ValueError("Pacote ou build da interface diverge da release aprovada")
 
     native = manifest.get("nativeArtifact")
     expected_ex5 = [relative[:-4] + ".ex5" for relative in sources if relative.endswith(".mq5")]
@@ -288,6 +377,8 @@ def build(root: Path = ROOT) -> dict:
             raise ValueError(".ex5 encontrado sem evidencia nativa; nao distribuir")
         if (root / (OUTPUT + f"JPW_Stoikus_Compilado_v{version}.zip")).exists():
             raise ValueError("Pacote compilado sem evidencia nativa; revisar antes do build")
+        if archive_suffix and (root / (OUTPUT + f"JPW_Stoikus_Compilado_v{version}{archive_suffix}.zip")).exists():
+            raise ValueError("Pacote compilado da interface sem evidencia nativa")
         downloads["compiled"] = {
             "available": False, "path": None, "filename": None, "sha256": None,
             "bytes": None, "reason": validation["compilation"]["detail"],

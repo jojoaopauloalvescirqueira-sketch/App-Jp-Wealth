@@ -25,6 +25,10 @@ input int InpMaxQuoteAgeSeconds=30; // Idade máxima da cotação (s; 1 a 3600)
 CCanvas g_nocuda_canvas;
 bool g_nocuda_canvas_ready=false;
 string g_nocuda_prefix="";
+// Admission owns the namespace even when a later initialization step fails.
+// Callbacks become active only after initialization succeeds.
+bool g_nocuda_resources_admitted=false;
+bool g_nocuda_initialized=false;
 string g_nocuda_symbol="",g_nocuda_feed="",g_nocuda_store_key="";
 ENUM_TIMEFRAMES g_nocuda_source_tf=PERIOD_H1;
 string g_nocuda_studies[];
@@ -670,7 +674,8 @@ void JPWNoCudaDrawUI()
    // One NoCuda launcher at a time. The manual anchor-pick return remains
    // available while that workflow owns the chart; otherwise FC_OPEN also
    // offers the existing explicit Manual route inside the Fibonacci panel.
-   if(view.open || view.pick>0)
+   JPWNoCudaUIVisualLoad();
+   if(view.open || view.pick>0 || g_manual_collapsed)
      {
       JPWNoCudaUIRender(g_nocuda_prefix,view);
       if(ArraySize(g_fc_previous)>0 || ArraySize(g_fc_keep)>0 || g_fc_deferred_prune)
@@ -1021,8 +1026,15 @@ void JPWNoCudaAction(const string object)
    // A partial frame cannot present a study action as ready. Keep the explicit
    // exit/return control usable while preserving the user's current draft.
    if(!g_nocuda_ui_inventory_complete && name!="UI_CLOSE" && name!="UI_OPEN") return;
+   if(name=="UI_MINIMIZE" && g_nocuda_panel_open)
+     {
+      JPWNoCudaReadJustification();g_nocuda_skip_field_capture=true;
+      JPWStoikusWindowCancel(g_manual_gesture,g_manual_rect);
+      g_manual_collapsed=true;JPWNoCudaUIVisualSave();g_nocuda_panel_open=false;JPWUIRelease(g_nocuda_prefix);
+      JPWNoCudaDrawUI();return;
+     }
    if(name=="UI_OPEN")
-     { JPWNoCudaReadJustification(); g_nocuda_skip_field_capture=true;
+     { g_manual_collapsed=false;JPWNoCudaUIVisualSave(); JPWNoCudaReadJustification(); g_nocuda_skip_field_capture=true;
        g_nocuda_panel_focus=true; g_nocuda_ui_editing="";
        if(!g_nocuda_panel_open && !JPWUIAcquire(g_nocuda_prefix)) return;
        g_nocuda_panel_open=!g_nocuda_panel_open;
@@ -1170,6 +1182,7 @@ int OnInit()
        return(INIT_FAILED); }
    g_nocuda_prefix="JPWNC_"+IntegerToString(ChartID())+"_"+
                    IntegerToString((long)GetMicrosecondCount())+"_";
+   g_nocuda_resources_admitted=true;
    g_nocuda_symbol=_Symbol;
    g_nocuda_feed=AccountInfoString(ACCOUNT_SERVER);
    g_nocuda_source_tf=InpSourceTimeframe;
@@ -1193,11 +1206,15 @@ int OnInit()
              ". Confira o Diário e carregue o indicador novamente após regularizar o terminal.");
        return(INIT_FAILED); }
    JPWNoCudaPaint(); JPWNoCudaDrawUI();
+   g_nocuda_initialized=true;
    return(INIT_SUCCEEDED);
   }
 
 void OnDeinit(const int reason)
   {
+   JPWStoikusWindowCancel(g_manual_gesture,g_manual_rect);
+   g_nocuda_initialized=false;
+   if(!g_nocuda_resources_admitted || g_nocuda_prefix=="") return;
    EventKillTimer();
    JPWNCFShutdown();
    if(g_nocuda_canvas_ready) g_nocuda_canvas.Destroy();
@@ -1205,6 +1222,8 @@ void OnDeinit(const int reason)
    JPWNoCudaUIClear(g_nocuda_prefix);
    JPWNoCudaRemoveDrawingObjects(g_nocuda_prefix);
    if(reason==REASON_REMOVE) ObjectDelete(0,JPW_NOCUDA_CHART_STATE);
+   g_nocuda_resources_admitted=false;
+   g_nocuda_prefix="";
    ChartRedraw(0);
   }
 
@@ -1254,6 +1273,8 @@ void JPWNoCudaResetContext(const string symbol,const string feed)
 
 void OnTimer()
   {
+   if(!g_nocuda_initialized || !g_nocuda_resources_admitted ||
+      g_nocuda_prefix=="") return;
    const string current_feed=AccountInfoString(ACCOUNT_SERVER);
    if(_Symbol!=g_nocuda_symbol || current_feed!=g_nocuda_feed)
      {
@@ -1295,8 +1316,29 @@ void OnTimer()
 void OnChartEvent(const int id,const long &lparam,const double &dparam,
                   const string &sparam)
   {
+   if(!g_nocuda_initialized || !g_nocuda_resources_admitted ||
+      g_nocuda_prefix=="") return;
+   // An active pointer gesture owns Escape before editor/panel shortcuts.
+   // Preserve the visible draft and editor; never turn this cancellation into Close.
+   if(id==CHARTEVENT_KEYDOWN && lparam==27 && g_fc_gesture)
+     { JPWNoCudaFiboUIFieldCapture(g_nocuda_prefix,g_ncf_ui);
+       JPWNoCudaFiboUICancelGeometry();JPWNCFDraw();return; }
+   if(id==CHARTEVENT_KEYDOWN && lparam==27 && g_manual_gesture.active)
+     {JPWStoikusWindowCancel(g_manual_gesture,g_manual_rect);JPWNoCudaDrawUI();return;}
+   if(id==CHARTEVENT_CHART_CHANGE || id>=CHARTEVENT_CUSTOM ||
+      (id==CHARTEVENT_KEYDOWN && lparam==27) || !JPWUIOwns(g_nocuda_prefix))
+      JPWStoikusWindowCancel(g_manual_gesture,g_manual_rect);
+   if(!g_ncf_mode && g_nocuda_panel_open)
+     {
+      bool completed=false;
+      if(JPWStoikusWindowEvent(g_manual_gesture,g_manual_rect,id,lparam,dparam,sparam,JPWUIOwns(g_nocuda_prefix),
+         (int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS),
+         JPWUIDesignPx(48),JPWUIDesignPx(36),completed,JPWUIDesignPx(480),JPWUIDesignPx(500)))
+        { JPWNoCudaReadJustification();if(completed)JPWNoCudaUIRememberGeometry();JPWNoCudaDrawUI();return; }
+     }
    if(_Symbol!=g_nocuda_symbol || AccountInfoString(ACCOUNT_SERVER)!=g_nocuda_feed)
-     { g_nocuda_pending_pick=false; JPWNoCudaClearDaily(); return; }
+     { JPWStoikusWindowCancel(g_manual_gesture,g_manual_rect);JPWNoCudaFiboUICancelGeometry();
+       g_nocuda_pending_pick=false; JPWNoCudaClearDaily(); return; }
    // Capture and route native edits before the button-oriented Fibonacci router.
    // Enter/Esc finish a draft field; they never confirm or save a study.
    if(id==CHARTEVENT_OBJECT_ENDEDIT &&

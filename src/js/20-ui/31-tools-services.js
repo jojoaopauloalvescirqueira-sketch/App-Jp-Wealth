@@ -165,15 +165,34 @@
     const set=(name,value)=>document.querySelectorAll('[data-jpw-leverage-meta="'+name+'"]')
       .forEach(node=>{node.textContent=value;});
     const notice=(message,error)=>{const node=el('jpwLeverageDownloadStatus');node.textContent=message;node.dataset.state=error?'error':'ok';};
-    const validEntry=entry=>entry&&entry.available===true&&
-      typeof entry.path==='string'&&/^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path)&&
+    const artifactCatalog={R5:{
+      nativeKit:{filename:'Kit_Windows_Stoikus_Janelas_R5.zip',mime:'application/zip'},
+      nativePin:{filename:'root-pin-R5.json',mime:'application/json'},
+      preview:{filename:'Previa_Stoikus_Janelas_R5.html',mime:'text/html'}
+    },R4:{
+      nativeKit:{filename:'Kit_Windows_Stoikus_Assinatura_R4.zip',mime:'application/zip'},
+      nativePin:{filename:'root-pin-R4.json',mime:'application/json'},
+      preview:{filename:'Previa_Stoikus_Interface_R4.html',mime:'text/html'}
+    }};
+    const artifactTypes=artifactCatalog[manifest?.interfaceRelease?.revision]||artifactCatalog.R5;
+    const kinds=['dailySource','source','compiled',...Object.keys(artifactTypes)];
+    const release=manifest&&manifest.interfaceRelease;
+    const validRelease=release&&((release.revision==='R4'&&release.candidate==='1.22.3-interface'&&release.archiveVariant==='interface'&&manifest.version==='1.22.3')||
+      (release.revision==='R5'&&release.candidate==='1.23.0-interface'&&release.archiveVariant===''&&manifest.version==='1.23.0'))&&release.state==='SOURCE_ONLY_NATIVE_PENDING'&&
+      manifest.downloads?.compiled?.available===false&&
+      ['nativeCompilation','nativeRuntime','humanAcceptance','windowsX64'].every(key=>release[key]==='NOT_RUN')&&release.artifacts&&
+      Object.keys(release.artifacts).length===3&&Object.keys(artifactTypes).every(key=>Object.hasOwn(release.artifacts,key));
+    const validEntry=(entry,kind)=>entry&&entry.available===true&&
+      typeof entry.path==='string'&&
+      (Object.hasOwn(artifactTypes,kind)?!!validRelease&&entry.path==='downloads/jpw-alavancagem-atual/'+artifactTypes[kind].filename:
+        /^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path))&&
       entry.filename===entry.path.split('/').pop()&&/^[a-f0-9]{64}$/.test(entry.sha256)&&
       Number.isSafeInteger(entry.bytes)&&entry.bytes>0;
     const validManifest=manifest&&manifest.schemaVersion===1&&
       typeof manifest.version==='string'&&/^[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.version)&&
       manifest.downloads&&manifest.validation;
     if(!validManifest){
-      for(const kind of ['dailySource','source','compiled']){
+      for(const kind of kinds){
         document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]')
           .forEach(button=>{button.disabled=true;});
       }
@@ -187,6 +206,7 @@
       return;
     }
     set('version',manifest.version);
+    set('interface-release',validRelease?'Interface '+release.revision+' · '+release.candidate+' · SOURCE_ONLY · validação nativa pendente':'Interface não confirmada nesta cópia');
     set('source-availability',validEntry(manifest.downloads.source)?'Fontes disponíveis':'Fontes indisponíveis');
     set('dailySource-availability',validEntry(manifest.downloads.dailySource)?'Pacote de uso disponível':'Pacote de uso indisponível nesta cópia');
     const nativeStages=['compilation','terminal'].map(stage=>manifest.validation[stage]?.status);
@@ -200,10 +220,13 @@
       const detail=item&&typeof item.detail==='string'&&item.detail?item.detail:'';
       set(stage,state+(detail?' · '+detail:''));
     }
-    for(const kind of ['dailySource','source','compiled']){
-      const entry=manifest.downloads[kind],buttons=document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]');
+    for(const kind of kinds){
+      const type=artifactTypes[kind]||{mime:'application/zip'};
+      const entry=Object.hasOwn(artifactTypes,kind)?(validRelease?release.artifacts[kind]:null):manifest.downloads[kind],buttons=document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]');
       const disable=value=>buttons.forEach(button=>{button.disabled=value;});
-      const ready=validEntry(entry)&&!!window.JPW_DOWNLOAD_MANIFEST?.resources?.['leverage/'+kind];
+      const resource=window.JPW_DOWNLOAD_MANIFEST?.resources?.['leverage/'+kind];
+      const ready=validEntry(entry,kind)&&!!resource&&resource.mime===type.mime&&
+        ['path','filename','sha256','bytes'].every(key=>resource[key]===entry[key]);
       disable(!ready);
       set(kind+'-sha',ready?entry.sha256:'—');
       if(ready) set(kind+'-status','Disponível · '+entry.filename+' · '+entry.bytes.toLocaleString('pt-BR')+' bytes');
@@ -216,7 +239,7 @@
         try{
           const bytes=await window.JPWDownloadAssets.getBytes('leverage/'+kind,{signal:action.signal});
           if(!action.current())return;
-          const url=URL.createObjectURL(new Blob([bytes],{type:'application/zip'}));
+          const url=URL.createObjectURL(new Blob([bytes],{type:type.mime}));
           const link=document.createElement('a');link.href=url;link.download=entry.filename;document.body.append(link);link.click();link.remove();
           setTimeout(()=>URL.revokeObjectURL(url),30000);
           notice('Arquivo '+entry.filename+' verificado e preparado para download.');

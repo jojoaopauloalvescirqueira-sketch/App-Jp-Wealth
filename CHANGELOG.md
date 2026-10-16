@@ -1,3 +1,24 @@
+# 2026-10-16 — integração Stoikus 1.23.0/R5
+
+- Integra fontes, interface e guias R5 ao JP Wealth atual, preservando o carregamento de downloads sob demanda, os MiniGames e os demais módulos da main.
+- Publica no catálogo local SDK, pacote diário e kit de compilação/pin/prévia selados R5; versões anteriores preservadas e sem EX5 do Stoikus. Cálculo1.9.0 permanece.
+- Acrescenta contrato limitado de distribuição R5 e regressões mantendo R4 e controles negativos. Compilação/runtime/instalação MT5 e aceite humano continuam NOT_RUN; implantação GPT Sites e instalador separados.
+
+# 2026-10-15 — candidato privado Stoikus 1.23.0 / janelas R5
+
+- Grade e margens compartilhadas, títulos à esquerda, etiquetas proporcionais, motivos em duas linhas e acesso aos detalhes completos; cabeçalhos e paginação separados das ações.
+- Resumo Compacto por padrão, modo Completo e máscara de métricas preservados. Fundo ARGB com transparência de 0% a 100%, controles/textos opacos e alternativa opaca quando o recurso falha.
+- Movimento, redimensionamento e minimização independentes; rascunhos e desenhos preservados. Preferências visuais versionadas separadas e gravação explícita após concluir a ação.
+- Conta 720 × 520 e NoCuda 680 × 500 pixels lógicos; navegação adaptativa e área do resumo compartilhada com o lançador NoCuda para evitar sobreposição.
+- Produto 1.23.0 / MQL 1.230 / cálculo 1.9.0. Pacotes locais, prévia, regressões e evidências próprias em [integração R5](docs/validation/stoikus-windows-20261015/INTEGRATION.md). Compilação/runtime MT5, instalação e aceite humano NOT_RUN. Site, instalador, Git e publicação separados; históricos preservados.
+
+# 2026-10-14 — candidato Stoikus 1.22.2
+
+- NoCuda somente destrói recursos adquiridos pela própria instância; falhas precoces de inicialização conservam os objetos de outros indicadores e não liberam preferências alheias.
+- Histórico Pessoal conserva auditoria integral e tipada em etapas no mesmo snapshot. Verifica mudanças externas de geração e ownership antes de mutações, confirma recuperação antes de publicá-la, cancela consultas antigas e só confirma exportações completas. Schema, registros e cálculo1.9.0 preservados.
+- Monitor diferencia espera, atividade, degradação e recuperação; a mesma condição não repete logs a cada segundo. Falha de abertura de lock informa erro e causas possíveis sem atribuir ownership a outro produtor sem prova.
+- Produto1.22.2 / MQL1.222. Pacotes anteriores e recibos históricos preservados. Compilação, instalação e aceite nativos dependem dos mesmos bytes; Windows ARM/Parallels e Windows x64 têm provas distintas. Sem negociação, commit, push, merge ou publicação nesta tarefa.
+
 # Candidate local — guia interativo de 13/10/2026
 
 - Conhecer o app abre a central; Configurações → Conhecimento → Guia do site oferece acesso permanente e pesquisável. A acolhida permite nova tentativa se o guia ainda não carregou.

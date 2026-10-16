@@ -54,35 +54,6 @@ string JPWPersonalBackupHead(const string key,const long sequence,const long sta
       "\",\n\"sequence\":\""+JPWPersonalInt(sequence)+"\",\n\"started_wall\":\""+JPWPersonalInt(started)+
       "\",\n\"last_wall\":\""+JPWPersonalInt(last)+"\",\n\"rows\":[\n");
   }
-bool JPWPersonalBackupBuild(const string key,string &json,string &reason)
-  {
-   json=""; reason=""; JPWPersonalStoreContext ctx;
-   if(!JPWPersonalOpen(key,false,"",0,0,ctx)) { reason=ctx.reason; return(false); }
-   bool valid=JPWPersonalIntegrity(ctx.db,reason);
-   int q=DatabasePrepare(ctx.db,"SELECT sequence,started_wall,last_wall FROM ph_meta WHERE id=1");
-   long sequence=0,started=0,last=0;
-   bool ok=valid && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,sequence) && DatabaseColumnLong(q,1,started) && DatabaseColumnLong(q,2,last) && started>0 && last>=started;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   string body=JPWPersonalBackupHead(key,sequence,started,last); long count=0;
-   q=DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows ORDER BY sequence");
-   ok=ok && q!=INVALID_HANDLE; ResetLastError();
-   if(q!=INVALID_HANDLE) while(ok && DatabaseRead(q))
-     {
-      JPWPersonalRow row; ok=JPWPersonalReadRow(q,row,key) && row.sequence==count+1;
-      if(!ok) break;
-      if(count>0) body+=",\n"; body+=JPWPersonalBackupRow(row); count++;
-      if(StringLen(body)>JPW_PERSONAL_BACKUP_MAX_CHARS) { reason="Backup excede capacidade desta exportação; dados preservados"; ok=false; break; }
-      ResetLastError();
-     }
-   if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA && count==sequence;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   body+="\n]"; string digest=""; if(ok) ok=JPWPersonalHash(body,digest);
-   ok=JPWPersonalReadFinish(ctx,ok);
-   JPWPersonalClose(ctx,0,0);
-   if(ok) json=body+",\n\"sha256\":\""+digest+"\"\n}";
-   else if(reason=="") reason="Backup não confirmado; integridade/seq recusada";
-   return(ok);
-  }
 bool JPWPersonalBackupValue(const string line,const string name,string &value)
   {
    value=""; string marker="\""+name+"\":\"";
@@ -166,52 +137,142 @@ bool JPWPersonalRestoreSandbox(const string json,const string sandbox_id,string 
      }
    int q=DatabasePrepare(db,"UPDATE ph_meta SET last_wall=?1 WHERE id=1");
    ok=ok && q!=INVALID_HANDLE && DatabaseBind(q,0,last) && JPWPersonalDone(q); if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(ok) ok=JPWPersonalIntegrity(db,reason);
-   if(ok) ok=JPWPersonalAuditRows(db,reason)==JPW_STORE_VALID; if(ok) ok=DatabaseTransactionCommit(db);
-   if(!ok) { DatabaseTransactionRollback(db); if(reason=="") reason="Reconstrução não confirmada; sandbox preservado para diagnóstico"; }
-   DatabaseClose(db); return(ok);
+   JPWPersonalStoreContext audited; audited.db=db; audited.account_key=key; audited.transaction_active=ok;
+   if(ok) ok=JPWPersonalAuditBegin(audited);
+   while(ok && !audited.audit_complete)
+     { JPWStoreResult result=JPWPersonalAuditStep(audited,GetTickCount64(),JPW_PERSONAL_SLICE_MS,JPW_PERSONAL_SLICE_ROWS);
+       if(result!=JPW_STORE_BUSY && result!=JPW_STORE_VALID) { reason=audited.reason; ok=false; } }
+   // This standalone synchronous helper drives the same complete phases. It is
+   // deliberately outside the runtime timer; SQL/global parse is indivisible.
+   if(audited.db==INVALID_HANDLE) { db=INVALID_HANDLE; ok=false; }
+   if(ok) ok=DatabaseTransactionCommit(db);
+   if(!ok) { if(db!=INVALID_HANDLE) DatabaseTransactionRollback(db); if(reason=="") reason="Reconstrução não confirmada; sandbox preservado para diagnóstico"; }
+   if(db!=INVALID_HANDLE) DatabaseClose(db); audited.db=INVALID_HANDLE; return(ok);
   }
-bool JPWPersonalExport(const string key,const bool backup,string &path,string &reason)
+enum JPWPersonalExportPhase { JPW_PH_EXPORT_IDLE=0,JPW_PH_EXPORT_AUDIT,JPW_PH_EXPORT_ROWS,JPW_PH_EXPORT_FINISH,JPW_PH_EXPORT_VERIFY,JPW_PH_EXPORT_READY,JPW_PH_EXPORT_FAILED };
+struct JPWPersonalExportJob
   {
-   path=""; reason=""; if(!JPWPersonalHashValid(key)) { reason="Identidade inválida"; return(false); }
-   string suffix=JPWPersonalInt((long)TimeGMT())+"_"+JPWPersonalInt((long)GetTickCount64());
-   FolderCreate("JPWealth\\Genetrix\\PersonalHistory\\Exports");
-   path=JPW_PERSONAL_FOLDER+"Exports\\"+(backup ? "backup_" : "history_")+key+"_"+suffix+(backup ? ".json" : ".csv");
-   if(FileIsExist(path)) { path=""; reason="Destino existente preservado; tente outra captura"; return(false); }
-   string json=""; if(backup && !JPWPersonalBackupBuild(key,json,reason)) { path=""; return(false); }
-   int file=FileOpen(path,FILE_WRITE|FILE_TXT|FILE_ANSI,0,CP_UTF8);
-   if(file==INVALID_HANDLE) { reason="Arquivo de exportação indisponível"; return(false); }
-   bool ok=true;
-   if(backup) ok=JPWPersonalWriteText(file,json);
-   else
-     {
-      JPWPersonalStoreContext ctx;
-      ok=JPWPersonalOpen(key,false,"",0,0,ctx);
-      string header="account_key;sequence;category;item_id;observed_utc_seconds;subject_kind;subject_id_text;ticket_text;symbol;state;leverage;quality;payload;sha256\r\n";
-      if(ok) ok=JPWPersonalWriteText(file,header);
-      int q=ok ? DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows ORDER BY sequence") : INVALID_HANDLE;
-      ok=ok && q!=INVALID_HANDLE; ResetLastError();
-      if(q!=INVALID_HANDLE) while(ok && DatabaseRead(q))
-        {
-         JPWPersonalRow row; ok=JPWPersonalReadRow(q,row,key); if(!ok) break;
-         string line=JPWPersonalCSVRow(key,row);
-         ok=JPWPersonalWriteText(file,line); ResetLastError();
-        }
-      if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA;
-      if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-      if(ctx.db!=INVALID_HANDLE) { ok=JPWPersonalReadFinish(ctx,ok); JPWPersonalClose(ctx,0,0); }
-     }
-   ResetLastError(); FileFlush(file); if(GetLastError()!=0) ok=false; FileClose(file);
-   if(!ok) { reason="Exportação incompleta; arquivo parcial preservado, sem confirmação de backup"; return(false); }
-   if(backup)
-     {
-      int checked=FileOpen(path,FILE_READ|FILE_TXT|FILE_ANSI,0,CP_UTF8); string saved="";
-      if(checked==INVALID_HANDLE) { reason="Exportação escrita sem releitura confirmada"; return(false); }
-      while(!FileIsEnding(checked)) { string line=FileReadString(checked); if(saved!="") saved+="\n"; saved+=line; }
-      FileClose(checked); string parsed_key=""; long started=0,last=0; JPWPersonalRow rows[];
-      if(saved!=json || !JPWPersonalBackupParse(saved,parsed_key,started,last,rows,reason) || parsed_key!=key)
-         { reason="Releitura/verificação do backup recusada"; return(false); }
-     }
-   return(true);
+   JPWPersonalStoreContext ctx; JPWPersonalExportPhase phase; JPWStoreResult result;
+   bool active,backup; string account_key,path,reason,body,json,saved; int query,file; long count;
+   JPWPersonalExportJob() { active=false; backup=false; phase=JPW_PH_EXPORT_IDLE; result=JPW_STORE_ABSENT; query=INVALID_HANDLE; file=INVALID_HANDLE; count=0; }
+  };
+void JPWPersonalExportCancel(JPWPersonalExportJob &job)
+  {
+   if(job.query!=INVALID_HANDLE) DatabaseFinalize(job.query); job.query=INVALID_HANDLE;
+   if(job.file!=INVALID_HANDLE) FileClose(job.file); job.file=INVALID_HANDLE;
+   JPWPersonalOpenCancel(job.ctx); job.active=false; job.phase=JPW_PH_EXPORT_IDLE;
+   job.body=""; job.json=""; job.saved="";
+   job.result=JPW_STORE_BUSY; job.reason="Exportação cancelada; eventual arquivo parcial preservado sem confirmação";
   }
+JPWStoreResult JPWPersonalExportFail(JPWPersonalExportJob &job,const JPWStoreResult result,const string reason)
+  { JPWPersonalExportCancel(job); job.phase=JPW_PH_EXPORT_FAILED; job.result=result; job.reason=reason; return(result); }
+JPWStoreResult JPWPersonalExportBegin(const string key,const bool backup,JPWPersonalExportJob &job)
+  {
+   if(job.active || job.ctx.db!=INVALID_HANDLE || job.query!=INVALID_HANDLE || job.file!=INVALID_HANDLE) return(JPW_STORE_INCOMPATIBLE);
+   job.account_key=key; job.backup=backup; job.count=0; job.body=""; job.json=""; job.saved=""; job.reason="";
+   string suffix=JPWPersonalInt((long)TimeGMT())+"_"+JPWPersonalInt((long)GetTickCount64());
+   job.path=JPW_PERSONAL_FOLDER+"Exports\\"+(backup ? "backup_" : "history_")+key+"_"+suffix+(backup ? ".json" : ".csv");
+   JPWStoreResult opened=JPWPersonalOpenBegin(key,false,"",0,0,job.ctx);
+   if(opened!=JPW_STORE_BUSY) return(JPWPersonalExportFail(job,opened,job.ctx.reason));
+   job.active=true; job.phase=JPW_PH_EXPORT_AUDIT; job.result=JPW_STORE_BUSY; job.reason="Auditoria integral antes da exportação"; return(job.result);
+  }
+bool JPWPersonalExportCreateFile(JPWPersonalExportJob &job)
+  {
+   FolderCreate("JPWealth\\Genetrix\\PersonalHistory\\Exports");
+   if(FileIsExist(job.path)) { job.reason="Destino existente preservado; tente outra captura"; return(false); }
+   job.file=FileOpen(job.path,FILE_WRITE|FILE_TXT|FILE_ANSI,0,CP_UTF8);
+   if(job.file==INVALID_HANDLE) { job.reason="Arquivo de exportação indisponível"; return(false); } return(true);
+  }
+JPWStoreResult JPWPersonalExportStep(JPWPersonalExportJob &job,const ulong started,const int budget_ms,const int max_rows)
+  {
+   if(!job.active || max_rows<1 || budget_ms<1) return(job.result);
+   ulong now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+   if(job.phase==JPW_PH_EXPORT_AUDIT)
+     {
+      JPWStoreResult audit=JPWPersonalOpenStep(job.ctx,started,budget_ms,max_rows,0,0);
+      if(audit==JPW_STORE_BUSY && JPWPersonalPreparing(job.ctx)) return(audit);
+      if(audit!=JPW_STORE_VALID) return(JPWPersonalExportFail(job,audit,job.ctx.reason));
+      job.phase=JPW_PH_EXPORT_ROWS;
+      // Consume rows on a later slice: the same snapshot remains retained.
+      return(JPW_STORE_BUSY);
+     }
+   if(job.phase==JPW_PH_EXPORT_ROWS && job.query==INVALID_HANDLE)
+     {
+      if(job.backup) job.body=JPWPersonalBackupHead(job.account_key,job.ctx.snapshot_sequence,job.ctx.started_wall,job.ctx.last_wall);
+      else
+        {
+         if(!JPWPersonalExportCreateFile(job)) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,job.reason));
+         if(!JPWPersonalWriteText(job.file,"account_key;sequence;category;item_id;observed_utc_seconds;subject_kind;subject_id_text;ticket_text;symbol;state;leverage;quality;payload;sha256\r\n"))
+            return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Exportação incompleta; header não confirmado, parcial preservado"));
+        }
+      job.query=DatabasePrepare(job.ctx.db,"SELECT sequence,category,item_id,wall,payload,digest,(typeof(sequence)='integer' AND typeof(category)='text' AND typeof(item_id)='text' AND typeof(wall)='integer' AND typeof(payload)='text' AND typeof(digest)='text') FROM ph_rows ORDER BY sequence");
+      if(job.query==INVALID_HANDLE) return(JPWPersonalExportFail(job,JPWPersonalErrorResult(GetLastError()),"Cursor de exportação indisponível; parcial preservado"));
+     }
+   int units=0;
+   while(job.phase==JPW_PH_EXPORT_ROWS && units<max_rows)
+     {
+      now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+      ResetLastError(); bool row_present=DatabaseRead(job.query); int error=GetLastError(); units++;
+      if(!row_present)
+        {
+         if(error!=ERR_DATABASE_NO_MORE_DATA || job.count!=job.ctx.snapshot_sequence)
+            return(JPWPersonalExportFail(job,error==ERR_DATABASE_NO_MORE_DATA ? JPW_STORE_CORRUPT : JPWPersonalErrorResult(error),"Exportação incompleta; EOF/contagem não confirmados, parcial preservado"));
+         DatabaseFinalize(job.query); job.query=INVALID_HANDLE; job.phase=JPW_PH_EXPORT_FINISH; break;
+        }
+      JPWPersonalRow row; int typed=0;
+      if(!JPWPersonalReadRow(job.query,row,job.account_key) || !DatabaseColumnInteger(job.query,6,typed) || typed!=1 || row.sequence!=job.count+1)
+         return(JPWPersonalExportFail(job,JPW_STORE_CORRUPT,"Exportação recusada por linha/tipo/sequência; parcial preservado"));
+      if(job.backup)
+        {
+         if(job.count>0) job.body+=",\n"; job.body+=JPWPersonalBackupRow(row);
+         if(StringLen(job.body)>JPW_PERSONAL_BACKUP_MAX_CHARS)
+            return(JPWPersonalExportFail(job,JPW_STORE_INCOMPATIBLE,"Capacidade JSON excedida (MAX_CHARS do corpo canônico); dados preservados e CSV integral disponível"));
+        }
+      else if(!JPWPersonalWriteText(job.file,JPWPersonalCSVRow(job.account_key,row)))
+         return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Exportação incompleta; linha não confirmada, parcial preservado"));
+      job.count++;
+     }
+   now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+   if(job.phase==JPW_PH_EXPORT_FINISH)
+     {
+      if(job.backup)
+        {
+         job.body+="\n]";
+         if(StringLen(job.body)>JPW_PERSONAL_BACKUP_MAX_CHARS) return(JPWPersonalExportFail(job,JPW_STORE_INCOMPATIBLE,"Capacidade JSON excedida (MAX_CHARS do corpo canônico); CSV integral disponível"));
+         string digest=""; if(!JPWPersonalHash(job.body,digest)) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Checksum global não confirmado"));
+         job.json=job.body+",\n\"sha256\":\""+digest+"\"\n}";
+         if(!JPWPersonalExportCreateFile(job)) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,job.reason));
+         if(!JPWPersonalWriteText(job.file,job.json)) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Backup escrito parcialmente, sem confirmação"));
+        }
+      ResetLastError(); FileFlush(job.file); int error=GetLastError(); FileClose(job.file); job.file=INVALID_HANDLE;
+      if(error!=0) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Flush da exportação não confirmado; parcial preservado"));
+      if(!JPWPersonalReadFinish(job.ctx,true)) return(JPWPersonalExportFail(job,job.ctx.result,job.ctx.reason));
+      JPWPersonalOpenCancel(job.ctx);
+      if(job.backup)
+        {
+         job.file=FileOpen(job.path,FILE_READ|FILE_TXT|FILE_ANSI,0,CP_UTF8);
+         if(job.file==INVALID_HANDLE) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Backup escrito sem releitura confirmada"));
+         job.phase=JPW_PH_EXPORT_VERIFY; return(JPW_STORE_BUSY);
+        }
+      job.phase=JPW_PH_EXPORT_READY; job.result=JPW_STORE_VALID; job.active=false; job.reason=""; return(job.result);
+     }
+   units=0;
+   while(job.phase==JPW_PH_EXPORT_VERIFY && units<max_rows)
+     {
+      now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+      ResetLastError(); bool end=FileIsEnding(job.file);
+      if(GetLastError()!=0) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Releitura do backup interrompida"));
+      if(end)
+        {
+         FileClose(job.file); job.file=INVALID_HANDLE; string key="",reason=""; long first=0,last=0; JPWPersonalRow rows[];
+         if(job.saved!=job.json || !JPWPersonalBackupParse(job.saved,key,first,last,rows,reason) || key!=job.account_key || ArraySize(rows)!=job.count)
+            return(JPWPersonalExportFail(job,JPW_STORE_CORRUPT,"Releitura/verificação global do backup recusada"));
+         job.phase=JPW_PH_EXPORT_READY; job.result=JPW_STORE_VALID; job.active=false; job.reason=""; job.saved=""; job.body=""; return(job.result);
+        }
+      string line=FileReadString(job.file); if(GetLastError()!=0) return(JPWPersonalExportFail(job,JPW_STORE_IO_ERROR,"Releitura do backup interrompida"));
+      if(job.saved!="") job.saved+="\n"; job.saved+=line; units++;
+     }
+   return(JPW_STORE_BUSY);
+  }
+
 #endif

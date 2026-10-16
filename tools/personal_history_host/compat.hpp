@@ -25,9 +25,13 @@
 using string=std::string; using uchar=unsigned char; using ushort=unsigned short;
 constexpr int INVALID_HANDLE=-1, WHOLE_ARRAY=-1, CP_UTF8=65001;
 constexpr int DATABASE_OPEN_READONLY=1, DATABASE_OPEN_READWRITE=2, DATABASE_OPEN_CREATE=4;
-constexpr int ERR_DATABASE_NO_MORE_DATA=5126;
+constexpr int DATABASE_FIELD_TYPE_INTEGER=SQLITE_INTEGER,DATABASE_FIELD_TYPE_TEXT=SQLITE_TEXT;
+constexpr int ERR_DATABASE_NO_MORE_DATA=5126,ERR_DATABASE_BUSY=5605,ERR_DATABASE_LOCKED=5606,ERR_DATABASE_CORRUPT=5611,ERR_DATABASE_NOTADB=5626;
 string host_root; int host_error=0,host_handle=1,host_asserts=0;bool host_forbid_io=false;
+unsigned long host_read_clock_ms=0,host_read_calls=0;bool host_prepare_fail=false,host_column_fail=false,host_flush_fail=false,host_getters_permissive=false,host_commit_fail=false,host_open_fail=false,host_rw_open_fail=false;int host_rw_open_attempts=0;
+extern unsigned long host_mono;
 std::map<int,sqlite3*> host_dbs; std::map<int,sqlite3_stmt*> host_statements;
+int DatabaseColumnType(int q,int i){return sqlite3_column_type(host_statements.at(q),i);}
 void ResetLastError(){host_error=0;} int GetLastError(){return host_error;}
 template<class T> int ArraySize(const std::vector<T>& a){return (int)a.size();}
 template<class T> int ArrayResize(std::vector<T>& a,int n){if(n<0)return -1;a.resize(n);return n;}
@@ -59,19 +63,19 @@ out="";for(int i=0;i<32;i++)out+=StringFormat("%02x",b[i]);return true;}
 string host_path(string s){std::replace(s.begin(),s.end(),'\\','/');return host_root+"/"+s;}
 bool FileIsExist(const string& s){if(host_forbid_io)throw std::runtime_error("forbidden filesystem IO in presentation/action");return std::filesystem::exists(host_path(s));}
 bool FolderCreate(const string& s){if(host_forbid_io)throw std::runtime_error("forbidden filesystem IO in presentation/action");std::error_code e;std::filesystem::create_directories(host_path(s),e);return !e;}
-int DatabaseOpen(const string& path,int flags){if(host_forbid_io)throw std::runtime_error("forbidden SQL IO in presentation/action");sqlite3* db=nullptr;int f=(flags&DATABASE_OPEN_READONLY)?SQLITE_OPEN_READONLY:SQLITE_OPEN_READWRITE;if(flags&DATABASE_OPEN_CREATE)f|=SQLITE_OPEN_CREATE;int rc=sqlite3_open_v2(host_path(path).c_str(),&db,f,nullptr);if(rc!=SQLITE_OK){if(db)sqlite3_close(db);host_error=rc;return -1;}int h=host_handle++;host_dbs[h]=db;return h;}
+int DatabaseOpen(const string& path,int flags){if(host_rw_open_fail&&(flags&DATABASE_OPEN_READWRITE)){host_rw_open_attempts++;host_error=5610;return -1;}if(host_open_fail){host_error=5610;return -1;}if(host_forbid_io)throw std::runtime_error("forbidden SQL IO in presentation/action");sqlite3* db=nullptr;int f=(flags&DATABASE_OPEN_READONLY)?SQLITE_OPEN_READONLY:SQLITE_OPEN_READWRITE;if(flags&DATABASE_OPEN_CREATE)f|=SQLITE_OPEN_CREATE;int rc=sqlite3_open_v2(host_path(path).c_str(),&db,f,nullptr);if(rc!=SQLITE_OK){if(db)sqlite3_close(db);host_error=(rc&255)+5600;return -1;}int h=host_handle++;host_dbs[h]=db;return h;}
 void DatabaseClose(int h){if(host_dbs.count(h)){sqlite3_close(host_dbs[h]);host_dbs.erase(h);}}
-int DatabasePrepare(int h,const string& sql){if(host_forbid_io)throw std::runtime_error("forbidden SQL IO in presentation/action");sqlite3_stmt* q=nullptr;int rc=sqlite3_prepare_v2(host_dbs.at(h),sql.c_str(),-1,&q,nullptr);if(rc!=SQLITE_OK){host_error=rc;return -1;}int n=host_handle++;host_statements[n]=q;return n;}
+int DatabasePrepare(int h,const string& sql){if(host_forbid_io)throw std::runtime_error("forbidden SQL IO in presentation/action");if(host_prepare_fail){host_error=5610;return -1;}sqlite3_stmt* q=nullptr;int rc=sqlite3_prepare_v2(host_dbs.at(h),sql.c_str(),-1,&q,nullptr);if(rc!=SQLITE_OK){host_error=(rc&255)+5600;return -1;}int n=host_handle++;host_statements[n]=q;return n;}
 bool DatabaseBind(int q,int i,long x){return sqlite3_bind_int64(host_statements.at(q),i+1,x)==SQLITE_OK;}
 bool DatabaseBind(int q,int i,int x){return DatabaseBind(q,i,(long)x);}
 bool DatabaseBind(int q,int i,double x){return sqlite3_bind_double(host_statements.at(q),i+1,x)==SQLITE_OK;}
 bool DatabaseBind(int q,int i,const string& x){return sqlite3_bind_text(host_statements.at(q),i+1,x.c_str(),(int)x.size(),SQLITE_TRANSIENT)==SQLITE_OK;}
-bool DatabaseRead(int q){int rc=sqlite3_step(host_statements.at(q));host_error=rc==SQLITE_DONE?ERR_DATABASE_NO_MORE_DATA:(rc==SQLITE_ROW?0:rc);return rc==SQLITE_ROW;}
+bool DatabaseRead(int q){host_read_calls++;host_mono+=host_read_clock_ms;int rc=sqlite3_step(host_statements.at(q));host_error=rc==SQLITE_DONE?ERR_DATABASE_NO_MORE_DATA:(rc==SQLITE_ROW?0:(rc&255)+5600);return rc==SQLITE_ROW;}
 void DatabaseFinalize(int q){if(host_statements.count(q)){sqlite3_finalize(host_statements[q]);host_statements.erase(q);}}
-bool DatabaseColumnLong(int q,int i,long& n){if(sqlite3_column_type(host_statements.at(q),i)!=SQLITE_INTEGER)return false;n=(long)sqlite3_column_int64(host_statements.at(q),i);return true;}
+bool DatabaseColumnLong(int q,int i,long& n){if(host_column_fail||(!host_getters_permissive&&sqlite3_column_type(host_statements.at(q),i)!=SQLITE_INTEGER))return false;n=(long)sqlite3_column_int64(host_statements.at(q),i);return true;}
 bool DatabaseColumnInteger(int q,int i,int& n){long v=0;if(!DatabaseColumnLong(q,i,v))return false;n=(int)v;return true;}
-bool DatabaseColumnText(int q,int i,string& s){if(sqlite3_column_type(host_statements.at(q),i)!=SQLITE_TEXT)return false;s=(const char*)sqlite3_column_text(host_statements.at(q),i);return true;}
-bool DatabaseExecute(int h,const string& sql){int rc=sqlite3_exec(host_dbs.at(h),sql.c_str(),nullptr,nullptr,nullptr);host_error=rc==SQLITE_OK?0:rc;return rc==SQLITE_OK;}
+bool DatabaseColumnText(int q,int i,string& s){if(host_column_fail||(!host_getters_permissive&&sqlite3_column_type(host_statements.at(q),i)!=SQLITE_TEXT))return false;s=(const char*)sqlite3_column_text(host_statements.at(q),i);return true;}
+bool DatabaseExecute(int h,const string& sql){if(host_commit_fail&&sql=="COMMIT"){host_error=5610;return false;}int rc=sqlite3_exec(host_dbs.at(h),sql.c_str(),nullptr,nullptr,nullptr);host_error=rc==SQLITE_OK?0:(rc&255)+5600;return rc==SQLITE_OK;}
 bool DatabaseTransactionBegin(int h){return DatabaseExecute(h,"BEGIN");}
 bool DatabaseTransactionCommit(int h){return DatabaseExecute(h,"COMMIT");}
 bool DatabaseTransactionRollback(int h){return DatabaseExecute(h,"ROLLBACK");}
@@ -106,7 +110,7 @@ int StringReplace(string& value,const string& needle,const string& replacement){
 std::map<int,std::fstream*>host_files;int host_file_handle=200000;
 int FileOpen(const string& name,int flags,int,int){if(host_forbid_io)throw std::runtime_error("forbidden filesystem IO in presentation/action");auto mode=std::ios::binary;if(flags&FILE_WRITE)mode|=std::ios::out|std::ios::trunc;if(flags&FILE_READ)mode|=std::ios::in;auto f=new std::fstream(host_path(name),mode);if(!*f){delete f;host_error=1;return INVALID_HANDLE;}int h=host_file_handle++;host_files[h]=f;return h;}
 uint FileWriteString(int h,const string& value){auto f=host_files.at(h);f->write(value.data(),value.size());return *f?(uint)value.size():0;}
-void FileFlush(int h){host_files.at(h)->flush();}
+void FileFlush(int h){host_files.at(h)->flush();if(host_flush_fail)host_error=10;}
 void FileClose(int h){if(host_files.count(h)){host_files[h]->close();delete host_files[h];host_files.erase(h);}}
 bool FileIsEnding(int h){return host_files.at(h)->peek()==EOF;}
 string FileReadString(int h){string line;std::getline(*host_files.at(h),line);if(!line.empty()&&line.back()=='\r')line.pop_back();return line;}

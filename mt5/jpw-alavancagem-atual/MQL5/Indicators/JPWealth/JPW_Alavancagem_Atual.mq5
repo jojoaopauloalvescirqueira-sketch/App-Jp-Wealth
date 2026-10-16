@@ -32,7 +32,7 @@ input ENUM_BASE_CORNER InpCorner=CORNER_LEFT_UPPER; // Canto do painel
 input int InpOffsetX=16; // Distância horizontal do canto (px; zero ou mais)
 input int InpOffsetY=40; // Distância vertical do canto (px; zero ou mais)
 input group "Fontes e cor"
-input int InpFontSize=8; // Fonte compacta no gráfico (pt; 8 a 40)
+input int InpFontSize=10; // Fonte compacta no gráfico (pt; 8 a 40)
 input int InpCockpitFontSize=11; // Fonte do painel Conta (pt; 9 a 24)
 input color InpFontColor=C'118,118,118'; // Cor do texto
 input group "Referência Genesis e unidade pip"
@@ -313,6 +313,8 @@ int OnInit()
    // Keep the chart preference and remove only our RAIZ_UI_* controls.
    JPWRaizPanelDestroy();
    JPWCockpitLoadPrefs();
+   JPWStoikusVisualLoad();
+   ChartSetInteger(0,CHART_EVENT_MOUSE_MOVE,true);
    JPWSignalClear();
    g_cockpit_template_recheck=(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)<0 &&
                                ObjectFind(0,JPW_COCKPIT_PREF_V2_OBJECT)<0 &&
@@ -380,18 +382,31 @@ int OnCalculate(const int rates_total,const int prev_calculated,const int begin,
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
+   if(id==CHARTEVENT_KEYDOWN && lparam==27 && g_account_window_gesture.active)
+     { JPWAccountWindowEvent(id,lparam,dparam,sparam); return; }
+   // Escape releases only our active pointer gesture, even when keyboard focus
+   // still belongs to a foreign editor. All other keys retain the normal gate.
+   if(id==CHARTEVENT_KEYDOWN && lparam==27 && (g_stoikus_drag || g_stoikus_resize))
+     { JPWStoikusHUDCancel(); JPWRenderHUD(); return; }
    // Another indicator's focused editor must not activate Cockpit shortcuts.
    // All non-key events retain the existing identity/field/event handling.
    if(!JPWCockpitAcceptChartEvent(id,lparam,dparam,sparam)) return;
    JPWUIDesignBeginPass();
-   if(!JPWGenetrixHandleCycleEvent(id,lparam,sparam))
+   string hud_route="";
+   if(JPWAccountWindowEvent(id,lparam,dparam,sparam)) {}
+   else if(JPWStoikusHUDEvent(id,lparam,dparam,sparam,hud_route))
+     { if(hud_route!="") JPWHandleChartEvent(CHARTEVENT_OBJECT_CLICK,lparam,dparam,hud_route); }
+   else if(!JPWGenetrixHandleCycleEvent(id,lparam,sparam))
       JPWHandleChartEvent(id,lparam,dparam,sparam);
    JPWUIDesignEndPass();
   }
 
 void OnDeinit(const int reason)
   {
+   JPWPersonalUICancelPending();
    if(!g_panel_instance_admitted || g_panel_prefix=="") return;
+   JPWStoikusWindowCancel(g_account_window_gesture,g_account_window_rect);
+   JPWStoikusHUDCleanup();
    EventKillTimer();
    JPWUIRelease(g_panel_prefix);
    JPWSignalClear();

@@ -30,7 +30,7 @@ INPUTS = {
         ['int', 'InpUpdateSeconds', '1'], ['int', 'InpMaxQuoteAgeSeconds', '30'],
         ['ENUM_BASE_CORNER', 'InpCorner', 'CORNER_LEFT_UPPER'],
         ['int', 'InpOffsetX', '16'], ['int', 'InpOffsetY', '40'],
-        ['int', 'InpFontSize', '8'], ['int', 'InpCockpitFontSize', '11'],
+        ['int', 'InpFontSize', '10'], ['int', 'InpCockpitFontSize', '11'],
         ['color', 'InpFontColor', "C'118,118,118'"],
         ['long', 'InpGenesisTicket', '0'], ['string', 'InpPipSymbol', '""'],
         ['double', 'InpPipSize', '0.0'], ['bool', 'InpTechnicalLog', 'false']],

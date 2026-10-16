@@ -6,6 +6,8 @@ MetaEditor compilation, native bitmap loading, visual DPI or MT5 interaction.
 """
 from pathlib import Path
 import hashlib
+import base64
+import xml.etree.ElementTree as ET
 import re
 import shutil
 import struct
@@ -32,6 +34,30 @@ MAIN = r'''
 int checks=0,failures=0;
 void check(bool ok,const string&m){checks++;if(!ok){failures++;std::cerr<<"FAIL "<<m<<"\n";}}
 int main(){
+ // The approved signature stays at its native DPI size; it is never cropped or
+ // silently downscaled to fit a shorter slot. Functional labels own the budget.
+ const int mark_width[4]={240,300,360,480},mark_height[4]={28,35,42,56};
+ const int display_scale[4]={100,125,150,200};
+ for(int i=0;i<4;i++){
+  objects.clear();dpi=display_scale[i];
+  JPWGenetrixHeader("MARK","TITLE",10,20,1600,mark_height[i],11,0,false,"Conta");
+  check(ObjectFind(0,"MARK")>=0,"approved signature appears when exact DPI rectangle fits");
+  if(ObjectFind(0,"MARK")>=0){
+   check(objects["MARK"].number[OBJPROP_XSIZE]==mark_width[i]&&objects["MARK"].number[OBJPROP_YSIZE]==mark_height[i],"approved signature uses exact dimensions per DPI");
+   check(objects["MARK"].text[OBJPROP_BMPFILE].find("_"+std::to_string(display_scale[i])+".bmp")!=string::npos,"resource scale agrees with painted dimensions");
+   check(objects["MARK"].text[OBJPROP_TOOLTIP]=="Stoikus by JP Wealth","decorative tooltip exposes full attribution");
+  }
+  JPWGenetrixHeader("MARK","TITLE",10,20,1600,mark_height[i]-1,11,0,false,"NoCuda · Gráficos");
+  check(ObjectFind(0,"MARK")<0,"short header removes bitmap instead of shrinking approved lettering");
+  check(ObjectFind(0,"TITLE")>=0&&objects["TITLE"].text[OBJPROP_TEXT].find("NoCuda")!=string::npos,"short header retains functional NoCuda title");
+  objects.clear();
+  JPWGenetrixHeader("MARK","TITLE",10,20,mark_width[i],mark_height[i],11,0,false,"");
+  check(ObjectFind(0,"MARK")>=0&&ObjectFind(0,"TITLE")<0,"signature without section is painted once with no duplicate Stoikus caption");
+ }
+ objects.clear();dpi=100;refuse_logo_geometry=true;
+ JPWGenetrixHeader("MARK","TITLE",10,20,1000,40,11,0,false,"Stops");
+ check(ObjectFind(0,"MARK")<0&&objects["TITLE"].number[OBJPROP_XDISTANCE]==10,"rejected logo geometry removes partial bitmap and restores full-width text");
+ refuse_logo_geometry=false;
  for(int font=9;font<=24;font++)for(int d:{100,125,150,200})for(bool dark:{false,true})
  for(int width:{70,120,280,600,1000})for(int height:{20,32,60,96}){
   objects.clear();dpi=d;
@@ -69,7 +95,7 @@ int main(){
  JPWGenetrixHeader("MARK","TITLE",10,20,1000,40,11,0,false,"Stops");
  check(ObjectFind(0,"MARK")<0&&objects["TITLE"].number[OBJPROP_XDISTANCE]==10,
    "bitmap assignment refusal uses full-width textual fallback");
- check(objects["TITLE"].text[OBJPROP_TEXT]=="Stoikus · Stops","fallback retains public name and module");
+ check(objects["TITLE"].text[OBJPROP_TEXT]=="Stoikus by JP Wealth · Stops","wide textual fallback retains attribution and module");
  std::cout<<"GENETRIX_BRAND_RENDER: "<<checks-failures<<" PASS / "<<failures<<" FAIL; native MT5 NOT_RUN\n";
  return failures?1:0;
 }
@@ -179,6 +205,66 @@ template<typename... Args> void Print(const Args&...){}
     print("PASS actual OnInit count/refusal, old/new aliases, unrelated indicators and two sensitive counterexamples; native MT5 NOT_RUN")
 
 
+def verify_header_render(compiler: str, source: str) -> int:
+    source = re.sub(r'^#(?:if.*|endif.*|resource.*)\n', '', source, flags=re.M)
+    source = re.sub(r'^#define\s+(JPW_GENETRIX_BRAND_MQH|JPW_ALAVANCAGEM_VERSION_MQH)\s*\n', '', source, flags=re.M)
+    shim = SHIM.replace('int StringFind(const string&s,const string&n){auto p=s.find(n);','int StringFind(const string&s,const string&n,int start=0){auto p=s.find(n,start);').replace('bool ObjectSetString(int,const string&n,int p,const string&v){',
+                        'bool refuse_bitmap=false;\nbool ObjectSetString(int,const string&n,int p,const string&v){if(refuse_bitmap&&p==OBJPROP_BMPFILE)return false;')
+    shim = shim.replace('bool ObjectSetInteger(int,const string&n,int p,long v){',
+                        'bool refuse_logo_geometry=false;\nbool ObjectSetInteger(int,const string&n,int p,long v){if(refuse_logo_geometry&&n=="MARK"&&p==OBJPROP_YSIZE)return false;')
+    with tempfile.TemporaryDirectory(prefix='jpw-genetrix-brand-') as folder:
+        path = Path(folder)
+        (path / 'brand.cpp').write_text(complete_design_shim(shim) + translate_arrays(source) + MAIN)
+        compiled = subprocess.run([compiler, '-std=c++17', '-O1', str(path / 'brand.cpp'), '-o', str(path / 'brand')], text=True, capture_output=True)
+        assert compiled.returncode == 0, compiled.stderr or compiled.stdout
+        result = subprocess.run([str(path / 'brand')], text=True, capture_output=True)
+        print(result.stdout, end='')
+        print(result.stderr, end='')
+        assert result.returncode == 0, "Production brand renderer failed the declared signature/fallback cases"
+        return 0
+def functional_launcher_replay(compiler):
+    """Approved Conta caption: real renderer, measured target and product action."""
+    import leverage_host_layout as host
+    geo=host.geometry()
+    actions=(BASE/'Include/JPWealth/JPW_Alavancagem_Actions.mqh').read_text()
+    start=actions.index('   if(sparam==g_panel_prefix+"RAIZ_DETAILS_BUTTON")')
+    stop=actions.index('   if(!g_raiz_details_open) return;',start)
+    routing='''int account_open_calls=0,account_front_calls=0;
+void JPWOpenCockpit(){account_open_calls++;g_raiz_details_open=true;}
+void JPWRenderRaizDetails(){account_front_calls++;}
+'''
+    routing+='void LauncherAction(const string sparam){'+actions[start:stop]+'}\n'
+    geo.HUD_MAIN=geo.HUD_MAIN[:geo.HUD_MAIN.index('int main(){')]+routing+r'''
+int main(){
+ int checks=0,failures=0,cases=0;
+ auto check=[&](bool ok,const string &why){checks++;if(!ok){failures++;std::cerr<<"FAIL "<<why<<"\n";}};
+ for(int dpi:{96,120,144,192})for(int width:{160,200,800})for(int failure:{0,1,2})for(bool collapsed:{false,true}){
+  mock_screen_dpi=dpi;InpFontSize=10;g_stoikus_options=false;
+  host_window_resource_fail=failure==1;host_window_text_fail=failure==2;
+  DrawHUD(width,1200,0,0,false);g_stoikus_visual.collapsed=collapsed;JPWRenderHUD();
+  const string target=g_panel_prefix+(collapsed?"HUD_RESTORE":"RAIZ_DETAILS_BUTTON");
+  check(objects.count(target)&&WindowTextValid(target,JPWUIDesignPx(4)),"functional Conta has measured opaque text and bounded resource/native target");
+  const string caption=failure?objects[target].text[OBJPROP_TEXT]:WindowText(target);
+  check(caption=="Conta","approved functional launcher caption remains Conta");
+  const auto &n=objects[target].number;long x=n.at(OBJPROP_XDISTANCE)+n.at(OBJPROP_XSIZE)/2;double y=n.at(OBJPROP_YDISTANCE)+n.at(OBJPROP_YSIZE)/2;
+  check(n.at(OBJPROP_XDISTANCE)>=0&&n.at(OBJPROP_YDISTANCE)>=0&&n.at(OBJPROP_XDISTANCE)+n.at(OBJPROP_XSIZE)<=width&&n.at(OBJPROP_YDISTANCE)+n.at(OBJPROP_YSIZE)<=1200,"launcher geometry stays inside chart");
+  scope_clock_ms+=300;string route;
+  check(JPWStoikusHUDEvent(CHARTEVENT_CLICK,x,y,"",route),"actual HUD rectangle dispatch accepts launcher click");
+  if(collapsed)check(!g_stoikus_visual.collapsed&&route=="","collapsed Conta restores summary through actual action");
+  else {
+   check(route==target,"launcher routes exact canonical account target");
+   g_raiz_details_open=false;int opened=account_open_calls;LauncherAction(route);check(account_open_calls==opened+1&&g_raiz_details_open,"actual launcher action opens Conta");
+   int fronted=account_front_calls;LauncherAction(route);check(account_front_calls==fronted+1&&JPWUIOwner()==g_panel_prefix,"actual repeated launcher action fronts owned Conta");
+  }
+  host_window_resource_fail=false;host_window_text_fail=false;cases++;
+ }
+ std::cout<<"STOIKUS_FUNCTIONAL_CONTA: "<<cases<<" DPI/width/collapse/resource cases, "<<checks<<" checks, "<<failures<<" failures; native MT5 NOT_RUN\n";
+ return failures?1:0;
+}
+'''
+    return geo.hud_layout_replay(compiler)
+
+
 def main():
     compiler = shutil.which('clang++') or shutil.which('g++')
     if not compiler:
@@ -188,14 +274,25 @@ def main():
     source = expanded_source(HEADER)
     if re.search(r'\b(AccountInfo\w*|CopyRates|CopyBuffer|Database\w*|File\w*|Order\w*|Position\w*|GlobalVariable\w*)\s*\(', source):
         raise AssertionError('Brand header reaches a financial/persistence boundary')
+    verify_header_render(compiler, source)
     provenance = (IMAGES / 'JPW_Stoikus_Logo.provenance.md').read_text()
     assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() in provenance
+    for theme in ('clara', 'escura'):
+        vector = ROOT / 'assets/stoikus' / ('stoikus-assinatura-' + theme + '.svg')
+        assert hashlib.sha256(vector.read_bytes()).hexdigest() in provenance
+        svg = ET.fromstring(vector.read_text())
+        assert (svg.attrib['width'], svg.attrib['height']) == ('240', '28')
+        lettering = svg.findall('.//{http://www.w3.org/2000/svg}text')
+        assert [(n.text, n.attrib['font-size'], n.attrib['font-weight']) for n in lettering] == [('Stoikus', '24', '400'), ('by', '12', '400')]
+        image = svg.find('.//{http://www.w3.org/2000/svg}image')
+        assert image.attrib['height'] == '12' and image.attrib['preserveAspectRatio'] == 'xMidYMid meet'
+        assert base64.b64decode(image.attrib['href'].split(',', 1)[1]) == SOURCE.read_bytes(), 'Institutional mark must be the original PNG bytes'
     declared = re.findall(r'^#resource "[^"\n]*?(JPW_Stoikus_[^"\n]+\.bmp)"', source, flags=re.M)
     assert len(declared) == len(set(declared)) == 8
     for name in declared:
         data = (IMAGES / name).read_bytes()
         scale = int(name.rsplit('_', 1)[1].split('.')[0])
-        expected = {100: (147, 16), 125: (184, 20), 150: (221, 24), 200: (295, 32)}[scale]
+        expected = {100: (240, 28), 125: (300, 35), 150: (360, 42), 200: (480, 56)}[scale]
         assert data[:2] == b'BM' and struct.unpack_from('<ii', data, 18) == expected
         assert struct.unpack_from('<H', data, 28)[0] == 24
         assert hashlib.sha256(data).hexdigest() in provenance
@@ -208,40 +305,15 @@ def main():
         assert '#include <JPWealth/JPW_Stoikus_Brand.mqh>' in path.read_text()
         assert 'JPWGenetrixHeader(' in path.read_text()
     presentation = consumers[0].read_text()
-    assert re.search(r'const\s+string\s+launcher_label\s*=\s*"Stoikus · Conta"\s*;', presentation), "actual labelled launcher required"
-    assert 'TextGetSize(launcher_label,button_text_width,button_text_height)' in presentation, "launcher label must be measured"
-    direct = ('ObjectSetString(0,launcher_text,OBJPROP_TEXT,launcher_label)' in presentation or
-              'JPWPresentationSetString(launcher_text,OBJPROP_TEXT,launcher_label)' in presentation)
-    painted = 'JPWPresentationSetString(launcher_text,OBJPROP_TEXT,painted_label)' in presentation
-    assert direct or painted, "measured label must be assigned"
-    if painted:
-        assert 'string painted_label=launcher_label;' in presentation, "painted caption originates from full functional label"
-        assert 'TextGetSize(painted_label,button_text_width,button_text_height)' in presentation, "painted caption must itself be measured"
-        assert re.search(r'if\(button_width>button_budget\)\s*\{\s*painted_label="Conta";', presentation), "compact caption requires demonstrated width shortage"
-        assert 'JPWPresentationSetString(launcher_text,OBJPROP_TOOLTIP,launcher_label)' in presentation, "compact caption retains full identity"
-        writes = re.findall(r'(?<![A-Za-z_])painted_label\s*=\s*([^;]+);', presentation)
-        assert writes == ['launcher_label','"Conta"'], "caption substitutions remain explicit and bounded"
-    if direct and 'JPWPresentationSetString(launcher_text,OBJPROP_TEXT,launcher_label)' in presentation or painted:
-        wrapper = re.search(r'bool\s+JPWPresentationSetString\s*\([^)]*\)\s*\{[^}]*\}', presentation, re.S)
-        assert wrapper and 'JPWUIDesignSetString(name,property,value)' in wrapper.group(0), "assignment wrapper must forward exact property/value"
+    # The approved retained HUD uses functional Conta; the full Stoikus
+    # signature remains verified above on all8BMPs and actual brand headers.
+    assert 'JPWStoikusHUDRender();' in body_of(presentation,'void JPWRenderHUDBody()'), "launcher must delegate to actual retained HUD"
+    if functional_launcher_replay(shutil.which('clang++') or shutil.which('g++')):
+        return 1
     assert 'JPWDetailsWrap(JPW_PRODUCT_TAGLINE,inner,lines)' in presentation
-    source = re.sub(r'^#(?:if.*|endif.*|resource.*)\n', '', source, flags=re.M)
-    source = re.sub(r'^#define\s+(JPW_GENETRIX_BRAND_MQH|JPW_ALAVANCAGEM_VERSION_MQH)\s*\n', '', source, flags=re.M)
-    shim = SHIM.replace('int StringFind(const string&s,const string&n){auto p=s.find(n);','int StringFind(const string&s,const string&n,int start=0){auto p=s.find(n,start);').replace('bool ObjectSetString(int,const string&n,int p,const string&v){',
-                        'bool refuse_bitmap=false;\nbool ObjectSetString(int,const string&n,int p,const string&v){if(refuse_bitmap&&p==OBJPROP_BMPFILE)return false;')
-    with tempfile.TemporaryDirectory(prefix='jpw-genetrix-brand-') as folder:
-        path = Path(folder)
-        (path / 'brand.cpp').write_text(complete_design_shim(shim) + translate_arrays(source) + MAIN)
-        compiled = subprocess.run([compiler, '-std=c++17', '-O1', str(path / 'brand.cpp'), '-o', str(path / 'brand')], text=True, capture_output=True)
-        if compiled.returncode:
-            print(compiled.stderr)
-            return compiled.returncode
-        result = subprocess.run([str(path / 'brand')], text=True, capture_output=True)
-        print(result.stdout, end='')
-        print(result.stderr, end='')
-        print('BRAND_SOURCE_SHA256:', hashlib.sha256(HEADER.read_bytes()).hexdigest())
-        print('RESOURCES: 8 traced RGB BMPs; site source hash confirmed; native MT5 NOT_RUN')
-        return result.returncode
+    print('BRAND_SOURCE_SHA256:', hashlib.sha256(HEADER.read_bytes()).hexdigest())
+    print('RESOURCES: 8 traced RGB BMPs; approved signature geometry and source hash confirmed; native MT5 NOT_RUN')
+    return 0
 
 
 if __name__ == '__main__':

@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "verdict": "SOURCE_APPROVED",
+  "reviewer": "/root/stoikus_independent_review",
+  "utc": "2026-10-14T19:57:53.587685+00:00",
+  "scope": "AI context maps structure, source provenance, historical evidence boundaries, query navigation, final document/HTML continuity and local byte copies. No new product/native verification.",
+  "freeze": {
+    "path": "REVIEW-FREEZE-R2.json",
+    "sha256": "aeb487a3e29f25621873e9d85fe8d23fd7fe802df8ce26bfa18e2929940ce667",
+    "files": 51,
+    "mismatches": []
+  },
+  "read_only_checks": {
+    "path": "INDEPENDENT_CHECKS_R2.json",
+    "sha256": "9482aa73bac91a82f7bcbf7f0f3443f4fdbcdfb9959accd4ac2d41b5518c970f"
+  },
+  "views": {
+    "master": {
+      "nodes": 301,
+      "pairs": 1144,
+      "relation_records": 1230,
+      "confidence_counts": {
+        "EXTRACTED": 1222,
+        "INFERRED": 8
+      },
+      "dangling": 0,
+      "duplicate_pairs": 0,
+      "source_literal_errors": [],
+      "native": "NOT_RUN",
+      "graph_json_sha256": "a397c506e135f12d3dc1bda9fcc374370eef540612f9d0df4e3ca188d352df12"
+    },
+    "arquitetura": {
+      "nodes": 125,
+      "pairs": 228,
+      "relation_records": 242,
+      "confidence_counts": {
+        "EXTRACTED": 242
+      },
+      "dangling": 0,
+      "duplicate_pairs": 0,
+      "source_literal_errors": [],
+      "native": "NOT_RUN",
+      "graph_json_sha256": "af7e7145e0bdf1fb3347e654ff3ada6ad3a4df8eee7fd717bf36bf780b99b271"
+    },
+    "fluxos": {
+      "nodes": 104,
+      "pairs": 172,
+      "relation_records": 185,
+      "confidence_counts": {
+        "EXTRACTED": 183,
+        "INFERRED": 2
+      },
+      "dangling": 0,
+      "duplicate_pairs": 0,
+      "source_literal_errors": [],
+      "native": "NOT_RUN",
+      "graph_json_sha256": "73c479a6607e887c8117d28d9f21a3b3d26c7bf0cd9a6b4b67ef248b95cb99f2"
+    },
+    "testes-evidencias": {
+      "nodes": 225,
+      "pairs": 983,
+      "relation_records": 1055,
+      "confidence_counts": {
+        "EXTRACTED": 1049,
+        "INFERRED": 6
+      },
+      "dangling": 0,
+      "duplicate_pairs": 0,
+      "source_literal_errors": [],
+      "native": "NOT_RUN",
+      "graph_json_sha256": "a168079af074bc879302d210439060b1474cd092fe9ed679623a70013edfd165"
+    }
+  },
+  "raw_provenance_multiset_exact": true,
+  "product_baseline": {
+    "product_files": {
+      "checked": 136,
+      "mismatches": []
+    },
+    "candidate_input_hashes": {
+      "checked": 1023,
+      "mismatches": []
+    }
+  },
+  "source_manifest": {
+    "checked": 246,
+    "mismatches": [],
+    "kinds": {
+      "support_or_document": 31,
+      "runtime_mql": 104,
+      "binary_inventory": 9,
+      "test_runner": 47,
+      "frozen_receipt": 8,
+      "frozen_suite_log": 47
+    },
+    "relative_paths_safe": true
+  },
+  "receipt_copies": {
+    "checked": 8,
+    "mismatches": []
+  },
+  "previous_graph": {
+    "checked": 18,
+    "mismatches": []
+  },
+  "local_integration": {
+    "path": "LOCAL-INTEGRATION.json",
+    "sha256": "38f2d82f3a3a2909d2452ec38ea500b27426de206cc89b8667478865124bce14",
+    "copies_checked": 102,
+    "copy_mismatches": []
+  },
+  "independent_flow_reviewer": {
+    "path": "FLOW_REVIEW.json",
+    "sha256": "8d122eedecb891e2294a6358b3242c26b8c7ac7cd116b0f735b333ba40dc60c2",
+    "status": "SOURCE_APPROVED",
+    "navigation_recipes": 8,
+    "native": "NOT_RUN"
+  },
+  "browser": {
+    "path": "BROWSER-SMOKE-R2.json",
+    "sha256": "90a138d4c4fe57fa5d099e67269f937b6ecedb607bc74ad7609cfdc2fad5feed",
+    "verdict": "B1_RESOLVED_FOCAL_PASS",
+    "focal_R2_checks": 24,
+    "focal_R2_PASS": 24,
+    "runtime_errors": 0,
+    "views": 4,
+    "R1_64_functional": "R1 evidence preserved; NOT_RERUN in R2",
+    "executed_by_this_reviewer": false
+  },
+  "R1_to_R2": {
+    "changed": [
+      "arquitetura/graphify-out/graph.html",
+      "build_ai_graphs.py",
+      "fluxos/graphify-out/graph.html",
+      "graphify-out/graph.html",
+      "testes-evidencias/graphify-out/graph.html"
+    ],
+    "added": [
+      "FILE_CONTEXT_REPORT.md"
+    ],
+    "removed": [],
+    "four_HTML_changes_css_only": true,
+    "graph_JSON_data_unchanged": true,
+    "FILE_CONTEXT_REPORT_consumers_and_test_refs_match_graph": true
+  },
+  "runtime_identity": {
+    "distribution": "graphifyy",
+    "version": "0.9.41",
+    "bundled_wheel_sha256": "5f5bfa1de21e9b76ade0168d3c1f9213115c30a985e44ed5b1f3000176f98777",
+    "package_files_compared": 215,
+    "package_file_mismatches": 0,
+    "customization": "Local literal-reference extraction, pair-consolidation wrapper and HTML CSS post-processing only; installed runtime unchanged"
+  },
+  "resolved_findings": [
+    {
+      "id": "FLOW-01",
+      "status": "RESOLVED",
+      "description": "Prefix matching mislabeled Monitor support filenames as explicit Monitor.mq5 references. Whole-token/exact filename guard fixes the source association; before snapshots retained."
+    },
+    {
+      "id": "FLOW-02",
+      "status": "RESOLVED",
+      "description": "README now distinguishes relative graph top-level paths from absolute original provenance paths, with source-manifest mapping/reanchoring instructions and no command execution from stored paths."
+    },
+    {
+      "id": "B1",
+      "status": "RESOLVED_BY_INDEPENDENT_BROWSER_CRITIC",
+      "description": "Long detail Source text cropped. Four HTML CSS-only changes wrap paths; focal fresh R2 browser proves visible tail/selection/community and no overflow/errors."
+    }
+  ],
+  "findings_pending": [],
+  "limits": {
+    "native_compile_runtime_installation_acceptance": "NOT_RUN",
+    "new_host_or_full_product_gates": "NOT_RUN",
+    "host47_web57": "Frozen historical R2 results only, byte-preserved snapshots. Not rerun by graph task.",
+    "calls_coverage_claims": 0,
+    "AI_answer_quality_or_actual_efficiency": "NOT_MEASURED",
+    "host_token_usage": "UNAVAILABLE",
+    "context_size_estimate": "Estimate only; no actual token/time savings",
+    "prior_MQL_symbol_graph": "Partial C++ adapter with 17/104 parse-error files, preserved; new maps use literal file references",
+    "HTML": "Internet/CDN required; JSON/report local",
+    "Git_commit_push_merge_publication": "NOT_RUN"
+  },
+  "writes_by_reviewer": [
+    "INDEPENDENT_CHECKS_R2.json",
+    "INDEPENDENT_REVIEW.json",
+    "INDEPENDENT_REVIEW.md"
+  ],
+  "product_modified_by_reviewer": false,
+  "graph_or_generator_modified_by_reviewer": false
+}

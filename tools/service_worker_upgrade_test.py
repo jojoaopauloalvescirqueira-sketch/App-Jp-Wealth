@@ -13,6 +13,7 @@ from urllib.request import Request, urlopen
 import json
 import mimetypes
 import os
+import re
 import shutil
 import socket
 import tempfile
@@ -29,7 +30,34 @@ def digest(data: bytes) -> str: return sha256(data).hexdigest()
 
 
 def markerize(root: Path, build: str) -> None:
-    (root / "build-id.js").write_text(f"const JP_WEALTH_BUILD_ID = 'test-{build}';\n", encoding="utf-8")
+    bootstrap = root / "build-id.js"
+    source, count = re.subn(r"(?m)^const JP_WEALTH_BUILD_ID = '[^'\r\n]+';$",
+                            f"const JP_WEALTH_BUILD_ID = 'test-{build}';",
+                            bootstrap.read_text(encoding="utf-8"))
+    if count != 1:
+        raise AssertionError("declaracao unica de Build ID ausente do bootstrap real")
+    # A marker is a synthetic build: update every lazy envelope and its binding,
+    # keeping the real metadata/bootstrap shape used by the worker and page.
+    import hashlib
+    import json
+    old = re.search(r"(?m)^const JP_WEALTH_BUILD_ID = '([^']+)';$", bootstrap.read_text()).group(1)
+    source = source.replace('"buildId":"' + old + '"', '"buildId":"test-' + build + '"')
+    marker = 'window.JPW_DOWNLOAD_MANIFEST = '
+    if marker in source:
+        metadata = json.JSONDecoder().raw_decode(source.split(marker, 1)[1])[0]
+        original_metadata = json.dumps(metadata, separators=(',', ':'))
+        for payload in metadata['payloads'].values():
+            target = root / payload['path']
+            if target.exists():
+                target.write_text(target.read_text().replace('"buildId":"' + old + '"', '"buildId":"test-' + build + '"'))
+            if payload.get('envelopePath'):
+                envelope = root / payload['envelopePath']
+                raw = envelope.read_text().replace('"buildId":"' + old + '"', '"buildId":"test-' + build + '"').encode()
+                envelope.write_bytes(raw)
+                payload['envelopeBytes'] = len(raw)
+                payload['envelopeSha256'] = hashlib.sha256(raw).hexdigest()
+        source = source.replace(original_metadata, json.dumps(metadata, separators=(',', ':')))
+    bootstrap.write_text(source, encoding="utf-8")
     index = root / "index.html"; html = index.read_text(encoding="utf-8")
     html = html.replace("</head>", f'<meta name="jpwealth-test-html-build" content="{build}"></head>', 1)
     html = html.replace("</body>", f'<script>window.__JPW_TEST_JS_BUILD="{build}";</script></body>', 1)

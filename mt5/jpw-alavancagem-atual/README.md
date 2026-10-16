@@ -1,10 +1,38 @@
-# Stoikus 1.22.1 — uso diário e engenharia
+# Stoikus 1.23.0 — janelas e resumo — candidato privado R5
+
+Produto **1.23.0**, MQL **1.230**, cálculo **1.9.0**. Esta entrega local aprimora alinhamento, proporções e manipulação da interface MT5 a partir da base 1.22.3. A assinatura **Stoikus by JP Wealth**, os recursos da marca e as regras financeiras estão preservados.
+
+O resumo começa em modo Compacto, com alavancagem da conta, risco dos stops e disponibilidade, largura de 280 pixels lógicos e transparência de fundo de 30%. O modo Completo mantém as sete métricas respeitando a máscara existente. Use **−** para recolher o resumo, **Conta** para restaurar/abrir e **⋯** para ajustar o modo ou a transparência. Textos e cliques permanecem opacos/ativos mesmo com fundo 100% transparente. Os detalhes mantêm o valor completo, a unidade, o escopo e o motivo.
+
+Conta começa em **720 × 520** e NoCuda em **680 × 500** pixels lógicos, limitados ao gráfico; configurações válidas existentes são respeitadas. As janelas oferecem movimento pelo cabeçalho, redimensionamento e minimização independentes do resumo. Minimizar preserva rascunhos em memória e desenhos; não confirma ações. As preferências visuais são separadas, versionadas e gravadas somente após uma ação concluída. O [guia de uso diário](STOIKUS_USO_DIARIO.md) explica controles e o roteiro dos dois gráficos.
+
+Os pacotes desta entrega são `JPW_Stoikus_Fontes_v1.23.0.zip` (SDK) e `JPW_Stoikus_Uso_Fontes_v1.23.0.zip` (quatro programas e dependências). Para preparar a compilação isolada, use `Kit_Windows_Stoikus_Janelas_R5.zip` com `root-pin-R5.json` externo. O kit não instala componentes, não abre gráficos e não inclui EX5; consulte seus próprios hashes e recibos antes de qualquer cópia. A [prévia navegável](../../docs/preview/stoikus-window-controls/index.html) usa dados fictícios.
+
+Compilação e interação MT5, instalação demo, aceite humano e Windows x64 independente: **NOT_RUN**. Ensaios host não substituem essas provas. [Estudo](../../docs/validation/stoikus-windows-20261015/DESIGN.md) e [evidências desta revisão](../../docs/validation/stoikus-windows-20261015/INTEGRATION.md). Site e instalador mantêm versões próprias; integração/publicação são etapas separadas.
+
+---
+
+## Histórico R4 preservado — não certifica R5
+
+# Stoikus 1.22.3 — Interface R4 no site JP Wealth
+
+Produto **1.22.3**, MQL **1.223**, cálculo **1.9.0**. A entrega Interface R4 usa o candidato **1.22.3-interface**, cálculo **1.9.0** e estado **SOURCE_ONLY_NATIVE_PENDING**. O site mantém as cinco abas e distribui os mesmos fontes selados do kit; os ZIPs históricos continuam separados. Compilação nativa, execução MT5, aceite humano e Windows x64 independente: **NOT_RUN**. Publicação do site tem autorização própria; não aprova instalação ou negociação no MT5.
+
+Na aba Instalar, comece por `Kit_Windows_Stoikus_Assinatura_R4.zip` e baixe separadamente `root-pin-R4.json`. Extraia numa pasta local nova `sealed-R4`, confira todos os arquivos e hashes pelo guia do kit, execute as fixtures Windows e só depois compile em staging temporário. Preserve `results.zip`; confira origem, freeze, ZIP, quatro fontes e hashes dos EX5 no recibo R4 antes de qualquer cópia para uma instalação demo com pasta de dados separada. Windows ARM no Parallels não substitui Windows x64 independente. O kit não é instalador, não traz EXE e não abre o terminal.
+
+`JPW_Stoikus_Uso_Fontes_v1.22.3_interface.zip` contém os quatro programas de uso: Monitor no gráfico de apoio; Conta e NoCuda no gráfico de trabalho; Abrir Painéis como script pontual. Confira seu SHA-256 no manifesto e no pin R4 separado; o ZIP deve ser idêntico ao selado no kit. `JPW_Stoikus_Fontes_v1.22.3_interface.zip` oferece o SDK separado. A prévia `Previa_Stoikus_Interface_R4.html` tem dados fictícios e não executa MT5. Os downloads conferem bytes e SHA-256 antes de salvar e recusam arquivos divergentes.
+
+A interface explica cada métrica da Conta por valor, unidade, estado, motivo, origem e escopo; o resumo compacto usa 10 pt por padrão, enquanto o painel tem fonte própria. Histórico distingue conta consultada, categoria e leitura ainda em preparação. NoCuda segue Selecionar canal → Conferir prévia → Confirmar vínculo, mantendo UNVERIFIED_NATIVE e medidas dependentes indisponíveis quando a correspondência nativa não estiver comprovada. N/A, Partial e Estimated preservam seus significados.
+
+Os contratos, arquivos e resultados descritos abaixo são fotografias anteriores; não transferem aprovação para os bytes R4.
+
+# Stoikus 1.22.3 — uso diário e engenharia
 
 **Da origem da operação à leitura do risco.**
 
-Comece pelo [guia de uso diário](STOIKUS_USO_DIARIO.md): Monitor em um gráfico de apoio mantido aberto; Conta e NoCuda no gráfico de trabalho, com abertura conjunta por `JPW_Stoikus_Abrir_Paineis`. Produto **1.22.1**, MQL **1.221**, cálculo **1.9.0**.
+Comece pelo [guia de uso diário](STOIKUS_USO_DIARIO.md): Monitor em um gráfico de apoio mantido aberto; Conta e NoCuda no gráfico de trabalho, com abertura conjunta por `JPW_Stoikus_Abrir_Paineis`. Produto **1.22.3**, MQL **1.223**, cálculo **1.9.0**.
 
-O **JPW_Stoikus_Uso_Fontes_v1.22.1.zip** contém esses quatro programas, dependências e o guia como `LEIA_PRIMEIRO.md`. O **JPW_Stoikus_Fontes_v1.22.1.zip** conserva o SDK completo, testes, laboratório, utilitários e referências históricas. A presença de Tests ou Lab não indica um painel de uso; scripts terminam e deixam o resultado em Experts.
+O **JPW_Stoikus_Uso_Fontes_v1.22.3.zip** contém esses quatro programas, dependências e o guia como `LEIA_PRIMEIRO.md`. O **JPW_Stoikus_Fontes_v1.22.3.zip** conserva o SDK completo, testes, laboratório, utilitários e referências históricas. A presença de Tests ou Lab não indica um painel de uso; scripts terminam e deixam o resultado em Experts.
 
 Os dois indicadores coexistem no mesmo gráfico. O abridor adiciona somente os ausentes, preserva configurações e estudos presentes e não inicia o Monitor. Padrões de cobertura `false` / `false` / vazio permitem iniciar com cobertura desconhecida; não declare confirmação sem evidência. NoCuda exige período-fonte definido, H1 por padrão; PERIOD_CURRENT é inválido. Fibonacci importado conserva UNVERIFIED_NATIVE e suas medidas dependentes bloqueadas.
 
@@ -13,6 +41,14 @@ Compilação e interação nativas, instalação e aceite operacional: **NOT_RUN
 Observer e Accountant separados são legados para rollback: nenhum produtor legado deve executar junto do Monitor, em qualquer gráfico. Antes de organizar uma instalação antiga, inventarie caminhos/versões e preserve backup; a eventual remoção explícita afeta apenas fontes/executáveis obsoletos identificados, nunca MQL5/Files ou registros. Supervisor permanece separado e opcional; esta revisão não o arma.
 
 O [mapa de renomeação 1.22.0](STOIKUS_RENAME_1_22_0.md) descreve a base histórica da identidade Stoikus. Para instalação, Entradas e abertura desta revisão, siga o guia de uso acima. Resultados de revisões anteriores não aprovam estes novos bytes.
+
+## Continuidade do candidato 1.22.3
+
+O NoCuda somente limpa recursos que esta instância adquiriu; uma inicialização recusada não deve retirar objetos de outro indicador. O Histórico Pessoal audita o mesmo banco em etapas e mantém a leitura como **preparando** até verificar todo o histórico. O antigo limite total de 100.000 registros ou 2 segundos deixa de decidir a validade do banco. Nenhum histórico é apagado, resumido ou migrado.
+
+A auditoria conserva a conexão e a transação entre etapas. Alteração do banco por outra conexão exige nova auditoria; perda efetiva de ownership continua bloqueando o produtor. Consultas, detalhes e exportações usam a mesma fotografia auditada, e resultados parciais não recebem confirmação de sucesso. O backup JSON mantém o limite de 32 × 1024 × 1024 caracteres do corpo canônico; esse limite não é uma medida exata do tamanho do arquivo final. CSV permanece a via de exportação para históricos maiores. SQL e operações indivisíveis podem exceder a fatia de execução; os ensaios host não provam latência do MT5.
+
+O Monitor diferencia inicialização, espera, atividade, degradação e recuperação. Repetir a mesma condição não repete a mensagem a cada segundo; mudanças de motivo e recuperação continuam visíveis. Confira Experts e a leitura de cobertura no painel antes de considerar os dados atuais.
 
 ## Documentação histórica GENETRIX preservada
 
@@ -66,6 +102,8 @@ Abrir, fechar ou trocar de aba não confirma estudos. Salvar/aplicar continua se
 O título NoCuda adapta temporariamente sua fonte ao cabeçalho estreito; o acesso compacto admite margem adaptativa sem cobrir o resumo Conta. As preferências e o rascunho permanecem intactos. A nova referência é [GENETRIX_CORRECTIONS_1_21_2.md](GENETRIX_CORRECTIONS_1_21_2.md); o guia1.21.1 acima descreve a base histórica.
 
 A pasta externa `Evidências` da entrega1.21.2 contém critérios congelados, baseline1.21.1, novas tentativas e pareceres independentes. O candidato de julgadores é separado da correção do produto. Manifesto e hashes relacionam o conjunto exato; testes locais não comprovam compilação ou interação no terminal. Falhas históricas continuam registradas. A evidência1.21.1 preservada possui sua base1.21.0 e não é transferida como aceite atual.
+
+A assinatura aprovada é **Stoikus by JP Wealth**: Arial regular24px, by12px e logo vermelha original12px em composição240×28px lógicos. NoCuda conserva sua identidade. A revisão muda apresentação/distribuição; cálculo1.9.0, IDs, dados e negociação permanecem sob os contratos existentes.
 
 ---
 

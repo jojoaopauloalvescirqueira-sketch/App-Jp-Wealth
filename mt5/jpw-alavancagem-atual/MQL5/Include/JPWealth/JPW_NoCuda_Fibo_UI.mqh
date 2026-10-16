@@ -20,6 +20,9 @@ struct JPWNoCudaFiboView
    bool open; bool linked; bool preview; bool draft_pending;
    bool source_hidden; bool sync_paused;
    int tab;
+   // Presentation guidance is derived by the controller; never persisted in V1.
+   string next_action; string import_hint; string visibility_hint; string sync_hint; string sync_pause_hint; string sync_refresh_hint; string reference_hint;
+   string observation_hint; string restore_hint; string measure_hint;
    string symbol; string source_name; string source_tf; string status; string reason;
    string quote_text; string selected_text; string selected_value; string selected_distance;
    string projection_date; string justification; string observation_time; string observation_note;
@@ -43,9 +46,16 @@ struct JPWNoCudaFiboUILayout
 
 JPWNoCudaFiboUIPrefs g_fc_pref,g_fc_draft;
 JPWNoCudaFiboUILayout g_fc_layout;
-bool g_fc_initialized=false,g_fc_pref_invalid=false,g_fc_settings_dirty=false;
+bool g_fc_initialized=false,g_fc_pref_invalid=false,g_fc_settings_dirty=false,g_fc_pref_restore=false,g_fc_pref_restore_requested=false;
+string g_fc_pref_seen="";
 bool g_fc_gesture=false,g_fc_resize=false,g_fc_mouse_down=false;
-int g_fc_pointer_x=0,g_fc_pointer_y=0,g_fc_start_x=0,g_fc_start_y=0;
+bool g_fc_scroll_captured=false,g_fc_scroll_before=true;
+void JPWNoCudaFiboUICancelGeometry()
+  {
+   if(g_fc_scroll_captured) ChartSetInteger(0,CHART_MOUSE_SCROLL,g_fc_scroll_before);
+   g_fc_scroll_captured=false; g_fc_gesture=false; g_fc_mouse_down=false;
+  }
+int g_fc_pointer_x=0,g_fc_pointer_y=0,g_fc_start_x=0,g_fc_start_y=0,g_fc_resize_edges=0;
 int g_fc_start_w=0,g_fc_start_h=0,g_fc_scroll=0,g_fc_scroll_max=0,g_fc_tab=-1;
 string g_fc_notice="",g_fc_editing="",g_fc_focus="";
 string g_fc_keep[],g_fc_previous[],g_fc_actions[],g_fc_action_ids[];
@@ -54,7 +64,7 @@ bool g_fc_force_clear=false,g_fc_deferred_prune=false;
 bool g_fc_inventory_complete=true;
 string g_fc_render_prefix="";
 int g_fc_line_cursor=0,g_fc_visible_lines=0;
-bool g_fc_measure_pass=false;
+bool g_fc_measure_pass=false,g_fc_details=false;
 color g_fc_ink,g_fc_muted,g_fc_surface,g_fc_chrome,g_fc_card,g_fc_border,g_fc_accent;
 
 void JPWNoCudaFiboUIFail()
@@ -84,6 +94,12 @@ int JPWNoCudaFiboUIClamp(const int v,const int a,const int b)
 int JPWNoCudaFiboUITextWidth(const string value,const int font)
   {
    return(JPWUIDesignTextWidth(value,font));
+  }
+int JPWNoCudaFiboUITextHeight(const int font)
+  {
+   uint w=0,h=0;
+   if(TextSetFont("Arial",-10*font) && TextGetSize("Ag",w,h) && h>0) return((int)h);
+   return(JPWUIDesignPx(font+4));
   }
 int JPWNoCudaFiboUILine(const int font)
   {
@@ -178,7 +194,7 @@ void JPWNoCudaFiboUIEdit(const string name,const int x,const int y,const int w,c
 int JPWNoCudaFiboUIValueRows()
   {
    const int line=MathMax(1,g_fc_layout.line);
-   return((JPWUIDesignControlHeight(line)+line-1)/line);
+   return((g_fc_layout.button+line-1)/line);
   }
 int JPWNoCudaFiboUICardRows()
   {
@@ -190,7 +206,7 @@ void JPWNoCudaFiboUIValue(const string name,const int x,const int y,const int w,
    // Preserve the whole numeric string. A narrow read-only field supports
    // native horizontal selection, whose interaction remains a native gate.
    if(name==g_fc_editing || JPWNoCudaFiboUITextWidth(value,g_fc_draft.font)>w)
-      JPWNoCudaFiboUIEdit(name,x,y,w,JPWUIDesignControlHeight(g_fc_layout.line),value,true);
+      JPWNoCudaFiboUIEdit(name,x,y,w,g_fc_layout.button,value,true);
    else JPWNoCudaFiboUILabel(name,x,y,w,value,g_fc_draft.font,g_fc_ink,false);
   }
 void JPWNoCudaFiboUIButton(const string prefix,const string action,const int x,const int y,
@@ -233,6 +249,7 @@ void JPWNoCudaFiboUIButton(const string prefix,const string action,const int x,c
   }
 void JPWNoCudaFiboUIFinish(const string prefix)
   {
+   if(prefix=="") return;
    // Preserve every existing widget/caret when preparation did not complete.
    if(!g_fc_inventory_complete) return;
    const int count=ArraySize(g_fc_keep);
@@ -267,6 +284,8 @@ void JPWNoCudaFiboUIFinish(const string prefix)
   }
 void JPWNoCudaFiboUIClear(const string prefix)
   {
+   JPWNoCudaFiboUICancelGeometry();
+   if(prefix=="") return;
    g_fc_render_prefix=prefix;
    ArrayResize(g_fc_keep,0); g_fc_inventory_complete=true; g_fc_force_clear=true;
    JPWNoCudaFiboUIFinish(prefix); g_fc_force_clear=false;
@@ -274,15 +293,15 @@ void JPWNoCudaFiboUIClear(const string prefix)
      { g_fc_deferred_prune=true; return; }
    ArrayResize(g_fc_previous,0); ArrayResize(g_fc_actions,0); ArrayResize(g_fc_action_ids,0);
    g_fc_deferred_prune=false; g_fc_focus=""; g_fc_editing="";
-   g_fc_gesture=false; g_fc_mouse_down=false;
+   JPWNoCudaFiboUICancelGeometry();
   }
 
-void JPWNoCudaFiboUIDefault(JPWNoCudaFiboUIPrefs &p,const int preset=1)
+void JPWNoCudaFiboUIDefault(JPWNoCudaFiboUIPrefs &p,const int preset=0)
   {
    const int cw=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),ch=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
-   p.width=(preset==0 ? MathMin(680,cw-24) : preset==2 ? cw-16 : cw*9/10);
-   p.height=(preset==0 ? MathMin(520,ch-24) : preset==2 ? ch-16 : ch*9/10);
-   p.width=MathMax(24,p.width); p.height=MathMax(24,p.height);
+   p.width=(preset==0 ? MathMin(JPWUIDesignPx(680),cw*85/100) : preset==2 ? cw-16 : cw*9/10);
+   p.height=(preset==0 ? MathMin(JPWUIDesignPx(500),ch*85/100) : preset==2 ? ch-16 : ch*9/10);
+   p.width=MathMax(1,MathMin(cw,p.width)); p.height=MathMax(1,MathMin(ch,p.height));
    p.x=(cw-p.width)/2; p.y=(ch-p.height)/2;
    // Keep the initial launcher away from MT5's instrument header and HUD.
    p.font=11; p.density=0; p.launcher=2; p.mesh=1; p.preset=preset;
@@ -290,21 +309,60 @@ void JPWNoCudaFiboUIDefault(JPWNoCudaFiboUIPrefs &p,const int preset=1)
 void JPWNoCudaFiboUIBounds(JPWNoCudaFiboUIPrefs &p)
   {
    const int cw=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),ch=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
-   p.width=JPWNoCudaFiboUIClamp(p.width,24,MathMax(24,cw-8));
-   p.height=JPWNoCudaFiboUIClamp(p.height,24,MathMax(24,ch-8));
-   p.x=JPWNoCudaFiboUIClamp(p.x,4,MathMax(4,cw-p.width-4));
-   p.y=JPWNoCudaFiboUIClamp(p.y,4,MathMax(4,ch-p.height-4));
+   const int margin=(cw>=32 && ch>=32 ? 4 : 0);
+   p.width=JPWNoCudaFiboUIClamp(p.width,1,MathMax(1,cw-2*margin));
+   p.height=JPWNoCudaFiboUIClamp(p.height,1,MathMax(1,ch-2*margin));
+   p.x=JPWNoCudaFiboUIClamp(p.x,margin,MathMax(margin,cw-p.width-margin));
+   p.y=JPWNoCudaFiboUIClamp(p.y,margin,MathMax(margin,ch-p.height-margin));
    p.font=JPWNoCudaFiboUIClamp(p.font,9,24);
   }
 string JPWNoCudaFiboUIPrefName() { return("JPW_NOCUDA_FIBO_VISUAL_V1"); }
+// Separate collapsed-window metadata; the physical legacy VISUAL_V1 payload
+// and financial/link drafts retain their own schemas and lifetimes.
+bool g_fc_window_loaded=false,g_fc_window_valid=true,g_fc_window_minimized=false;
+string g_fc_window_seen="",g_fc_window_notice="";
+void JPWNoCudaFiboUIWindowLoad()
+  {
+   if(g_fc_window_loaded)return;g_fc_window_loaded=true;
+   const string name="JPW_NOCUDA_FIBO_WINDOW_V1";if(ObjectFind(0,name)<0)return;
+   g_fc_window_seen=ObjectGetString(0,name,OBJPROP_TOOLTIP);
+   g_fc_window_valid=ObjectGetInteger(0,name,OBJPROP_TYPE)==OBJ_LABEL &&
+      (g_fc_window_seen=="V1|0" || g_fc_window_seen=="V1|1");
+   if(!g_fc_window_valid){g_fc_window_notice="Estado visual inválido; objeto preservado";return;}
+   g_fc_window_minimized=g_fc_window_seen=="V1|1";
+   // Remember collapse for the launcher, never auto-open or reconstruct a study.
+  }
+bool JPWNoCudaFiboUIWindowSave(const bool minimized)
+  {
+   JPWNoCudaFiboUIWindowLoad();const string name="JPW_NOCUDA_FIBO_WINDOW_V1";
+   const bool existed=ObjectFind(0,name)>=0;
+   const string previous=(existed ? ObjectGetString(0,name,OBJPROP_TOOLTIP) : "");
+   if(!g_fc_window_valid || (existed && ObjectGetInteger(0,name,OBJPROP_TYPE)!=OBJ_LABEL) || previous!=g_fc_window_seen)
+     {g_fc_window_notice="Estado visual alterado ou incompatível; objeto preservado";return(false);}
+   if(!existed && !ObjectCreate(0,name,OBJ_LABEL,0,0,0))
+     {g_fc_window_notice="Não foi possível salvar o estado da janela";return(false);}
+   const string text=(minimized ? "V1|1" : "V1|0");
+   const bool ok=ObjectSetInteger(0,name,OBJPROP_XDISTANCE,100000) && ObjectSetInteger(0,name,OBJPROP_YDISTANCE,100000) &&
+      ObjectSetInteger(0,name,OBJPROP_HIDDEN,true) && ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false) &&
+      ObjectSetString(0,name,OBJPROP_TOOLTIP,text) && ObjectGetString(0,name,OBJPROP_TOOLTIP)==text;
+   if(!ok)
+     {
+      const bool restored=(existed ? ObjectSetString(0,name,OBJPROP_TOOLTIP,previous) : ObjectDelete(0,name));
+      g_fc_window_notice=(restored ? "Estado visual não salvo; anterior preservado" : "Falha ao salvar/restaurar estado visual; confira o template");
+      return(false);
+     }
+   g_fc_window_seen=text;g_fc_window_minimized=minimized;g_fc_window_notice="";return(true);
+  }
+
 void JPWNoCudaFiboUILoadPrefs()
   {
-   JPWNoCudaFiboUIDefault(g_fc_pref); g_fc_pref_invalid=false;
+   JPWNoCudaFiboUIWindowLoad();
+   JPWNoCudaFiboUIDefault(g_fc_pref);g_fc_pref_invalid=false;g_fc_pref_restore=false;g_fc_pref_restore_requested=false;g_fc_pref_seen="";
    const string name=JPWNoCudaFiboUIPrefName();
    if(ObjectFind(0,name)>=0)
      {
-      string f[]; const string text=ObjectGetString(0,name,OBJPROP_TOOLTIP);
-      bool valid=StringSplit(text,'|',f)==10 && f[0]=="V1";
+      string f[]; const string text=ObjectGetString(0,name,OBJPROP_TOOLTIP);g_fc_pref_seen=text;
+      bool valid=ObjectGetInteger(0,name,OBJPROP_TYPE)==OBJ_LABEL && StringSplit(text,'|',f)==10 && f[0]=="V1";
       int v[9];
       if(valid) for(int i=0;i<9;i++)
         { v[i]=(int)StringToInteger(f[i+1]); if(f[i+1]!=IntegerToString(v[i])) valid=false; }
@@ -313,30 +371,44 @@ void JPWNoCudaFiboUILoadPrefs()
       if(valid)
         { g_fc_pref.x=v[0]; g_fc_pref.y=v[1]; g_fc_pref.width=v[2]; g_fc_pref.height=v[3];
           g_fc_pref.font=v[4]; g_fc_pref.density=v[5]; g_fc_pref.launcher=v[6]; g_fc_pref.mesh=v[7]; g_fc_pref.preset=v[8]; }
-      else { g_fc_pref_invalid=true; g_fc_notice="Preferência visual inválida; objeto original preservado."; }
+      else { // Keep the prior safe fallback for an existing invalid object.
+             // Compacta is the new-install default only; no migration or save.
+             JPWNoCudaFiboUIDefault(g_fc_pref,1);
+             g_fc_pref_invalid=true; g_fc_notice="Preferência visual inválida; objeto original preservado."; }
      }
    JPWNoCudaFiboUIBounds(g_fc_pref); g_fc_draft=g_fc_pref; g_fc_initialized=true;
   }
 bool JPWNoCudaFiboUISavePrefs()
   {
+   const string name=JPWNoCudaFiboUIPrefName();const bool existed=ObjectFind(0,name)>=0;
+   const string previous=(existed ? ObjectGetString(0,name,OBJPROP_TOOLTIP) : "");
+   if((existed && ObjectGetInteger(0,name,OBJPROP_TYPE)!=OBJ_LABEL) || previous!=g_fc_pref_seen ||
+      (g_fc_pref_invalid && !g_fc_pref_restore))
+     {g_fc_notice="Preferência visual alterada ou inválida; objeto original preservado.";return(false);}
    JPWNoCudaFiboUIBounds(g_fc_pref);
-   const string name=JPWNoCudaFiboUIPrefName();
-   if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_LABEL,0,0,0))
+   if(!existed && !ObjectCreate(0,name,OBJ_LABEL,0,0,0))
      { g_fc_notice="Não foi possível guardar a preferência visual."; return(false); }
    const string text="V1|"+IntegerToString(g_fc_pref.x)+"|"+IntegerToString(g_fc_pref.y)+"|"+
       IntegerToString(g_fc_pref.width)+"|"+IntegerToString(g_fc_pref.height)+"|"+
       IntegerToString(g_fc_pref.font)+"|"+IntegerToString(g_fc_pref.density)+"|"+
       IntegerToString(g_fc_pref.launcher)+"|"+IntegerToString(g_fc_pref.mesh)+"|"+IntegerToString(g_fc_pref.preset);
-   JPWNoCudaFiboUISetInteger(name,OBJPROP_XDISTANCE,-10000); JPWNoCudaFiboUISetInteger(name,OBJPROP_YDISTANCE,-10000);
-   JPWNoCudaFiboUISetInteger(name,OBJPROP_HIDDEN,true); JPWNoCudaFiboUISetInteger(name,OBJPROP_SELECTABLE,false);
-   if(!JPWNoCudaFiboUISetString(name,OBJPROP_TOOLTIP,text) || ObjectGetString(0,name,OBJPROP_TOOLTIP)!=text)
-     { g_fc_notice="Preferência visual não confirmada."; return(false); }
-   g_fc_pref_invalid=false; return(true);
+   // Preferences bypass widget property caches: readback/rollback reflects the
+   // actual chart object, including template edits outside this renderer.
+   const bool ok=ObjectSetInteger(0,name,OBJPROP_XDISTANCE,-10000) && ObjectSetInteger(0,name,OBJPROP_YDISTANCE,-10000) &&
+      ObjectSetInteger(0,name,OBJPROP_HIDDEN,true) && ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false) &&
+      ObjectSetString(0,name,OBJPROP_TOOLTIP,text) && ObjectGetString(0,name,OBJPROP_TOOLTIP)==text;
+   if(!ok)
+     {
+      const bool restored=(existed ? ObjectSetString(0,name,OBJPROP_TOOLTIP,previous) : ObjectDelete(0,name));
+      g_fc_notice=(restored ? "Preferência visual não confirmada; anterior preservada." : "Falha ao salvar/restaurar visual; confira o template.");
+      return(false);
+     }
+   g_fc_pref_seen=text;g_fc_pref_invalid=false;g_fc_pref_restore=false;return(true);
   }
 int JPWNoCudaFiboUIFooterRows(const int inner,const int font)
   {
    const int gap=JPWUIDesignPx(8);
-   const int arrow=MathMax(JPWUIDesignPx(32),JPWUIDesignButtonWidth("↓",font));
+   const int arrow=MathMax(JPWUIDesignPx(36),JPWUIDesignButtonWidth("↓",font));
    const int action=MathMax(JPWUIDesignButtonWidth("Recolher",font),JPWUIDesignButtonWidth("Cancelar",font));
    if(inner>=2*arrow+2*action+3*gap) return(1);
    if(inner>=2*action+gap) return(2);
@@ -350,24 +422,24 @@ void JPWNoCudaFiboUICalculateLayout()
    g_fc_layout.width=g_fc_draft.width; g_fc_layout.height=g_fc_draft.height;
    g_fc_layout.line=JPWNoCudaFiboUILine(g_fc_draft.font);
    g_fc_layout.pad=JPWUIDesignPx(g_fc_draft.density==1 ? 8 : 12);
-   g_fc_layout.button=JPWUIDesignControlHeight(g_fc_layout.line);
+   g_fc_layout.button=JPWUIDesignControlHeight(JPWNoCudaFiboUITextHeight(g_fc_draft.font));
    g_fc_layout.inner=g_fc_layout.width-2*g_fc_layout.pad;
-   g_fc_layout.narrow=g_fc_layout.inner<JPWUIDesignPx(650);
+   g_fc_layout.narrow=g_fc_layout.inner<JPWUIDesignPx(640);
    string tabs[5]={"Canal","Agora","Projeção","Registro","Aparência"};
    const int gap=JPWUIDesignPx(8);
    g_fc_layout.nav_columns=JPWUIDesignNavColumns(tabs,5,g_fc_layout.inner,g_fc_draft.font,gap);
-   g_fc_layout.nav_rows=(5+g_fc_layout.nav_columns-1)/g_fc_layout.nav_columns;
+   g_fc_layout.nav_rows=(g_fc_layout.narrow ? 1 : (5+g_fc_layout.nav_columns-1)/g_fc_layout.nav_columns);
    const int header=g_fc_layout.button+JPWUIDesignPx(16)+
-      (g_fc_layout.narrow ? 0 : g_fc_layout.line)+g_fc_layout.nav_rows*(g_fc_layout.button+gap)+gap;
+      3*g_fc_layout.line+g_fc_layout.nav_rows*(g_fc_layout.button+gap)+gap;
    g_fc_layout.body_y=g_fc_layout.y+header;
    // Reserve an independent minimum target strip for the resize handle.
    const int footer_rows=JPWNoCudaFiboUIFooterRows(g_fc_layout.inner,g_fc_draft.font);
    const int footer_height=footer_rows*(g_fc_layout.button+JPWUIDesignPx(8))-JPWUIDesignPx(8);
-   g_fc_layout.footer_y=g_fc_layout.y+g_fc_layout.height-footer_height-g_fc_layout.pad-JPWUIDesignPx(40);
+   g_fc_layout.footer_y=g_fc_layout.y+g_fc_layout.height-footer_height-g_fc_layout.pad-g_fc_layout.button-gap;
    g_fc_layout.body_height=MathMax(0,g_fc_layout.footer_y-g_fc_layout.body_y-gap);
    g_fc_layout.usable=g_fc_layout.inner>=JPWUIDesignPx(140) &&
       JPWUIDesignButtonWidth("Aparência",g_fc_draft.font)<=g_fc_layout.inner &&
-      g_fc_layout.body_height>=MathMax(2*g_fc_layout.line,JPWUIDesignControlHeight(g_fc_layout.line));
+      g_fc_layout.body_height>=MathMax(2*g_fc_layout.line,g_fc_layout.button);
    g_fc_visible_lines=MathMax(1,g_fc_layout.body_height/g_fc_layout.line);
   }
 string JPWNoCudaFiboUIHitAction(const string prefix,const string object)
@@ -425,6 +497,7 @@ void JPWNoCudaFiboUIFieldCapture(const string prefix,JPWNoCudaFiboView &v)
   }
 void JPWNoCudaFiboUIEndInteraction()
   {
+   JPWNoCudaFiboUICancelGeometry();
    // The controller captures fields first. A closed editor must not retain an
    // editable object or complete an unfinished geometry gesture over another
    // module; the in-memory draft and unapplied preferences stay unchanged.
@@ -437,6 +510,7 @@ void JPWNoCudaFiboUIScroll(const int delta)
   { g_fc_scroll=JPWNoCudaFiboUIClamp(g_fc_scroll+delta,0,g_fc_scroll_max); }
 bool JPWNoCudaFiboUIActions(const string action)
   {
+   if(action=="FC_DETAILS") { g_fc_details=!g_fc_details; g_fc_scroll=0; return(true); }
    if(action=="FC_SCROLL_UP") { JPWNoCudaFiboUIScroll(-1); return(true); }
    if(action=="FC_SCROLL_DOWN") { JPWNoCudaFiboUIScroll(1); return(true); }
    if(StringFind(action,"FC_PRESET_")==0)
@@ -453,20 +527,25 @@ bool JPWNoCudaFiboUIActions(const string action)
    if(action=="FC_DENSITY") { g_fc_draft.density=1-g_fc_draft.density; g_fc_settings_dirty=true; return(true); }
    if(action=="FC_LAUNCHER") { g_fc_draft.launcher=(g_fc_draft.launcher+1)%4; g_fc_settings_dirty=true; return(true); }
    if(action=="FC_MESH") { g_fc_draft.mesh=1-g_fc_draft.mesh; g_fc_settings_dirty=true; return(true); }
-   if(action=="FC_SETTINGS_DEFAULT") { JPWNoCudaFiboUIDefault(g_fc_draft); g_fc_settings_dirty=true; return(true); }
-   if(action=="FC_SETTINGS_CANCEL") { g_fc_draft=g_fc_pref; g_fc_settings_dirty=false; return(true); }
+   if(action=="FC_SETTINGS_DEFAULT") { JPWNoCudaFiboUIDefault(g_fc_draft);g_fc_pref_restore_requested=true;g_fc_settings_dirty=true;return(true); }
+   if(action=="FC_SETTINGS_CANCEL") { g_fc_draft=g_fc_pref;g_fc_pref_restore_requested=false;g_fc_settings_dirty=false;return(true); }
    if(action=="FC_SETTINGS_APPLY")
-     { g_fc_pref=g_fc_draft; const bool saved=JPWNoCudaFiboUISavePrefs();
+     { g_fc_pref=g_fc_draft;g_fc_pref_restore=g_fc_pref_restore_requested;
+       const bool saved=JPWNoCudaFiboUISavePrefs();g_fc_pref_restore=false;
+       if(saved)g_fc_pref_restore_requested=false;
        g_fc_settings_dirty=!saved; g_fc_notice=(saved ? "Preferência visual aplicada; template exige salvamento manual." : g_fc_notice); return(true); }
    return(false);
   }
 
 // Only a completed UI gesture may save geometry. Mouse movement and rendering
-// retain a draft; the coordinator routes focus and wheel events. Whether the
-// native chart also scrolls underneath these objects requires isolated MT5 QA.
+// retain a draft; the coordinator routes focus and wheel events. Chart scroll
+// is captured only for our gesture and restored on all termination paths.
 bool JPWNoCudaFiboUIHandleGeometry(const string prefix,const int id,const long &lparam,
                                  const double &dparam,const string &sparam)
   {
+   if(id==CHARTEVENT_CHART_CHANGE || id>=CHARTEVENT_CUSTOM ||
+      (id==CHARTEVENT_KEYDOWN && lparam==27) || !JPWUIOwns(prefix))
+     { JPWNoCudaFiboUICancelGeometry(); return(false); }
    // Object-click arrives after the click, not at mouse-down. It consumes an
    // owned handle but must not arm a new financial or geometry gesture.
    if(id==CHARTEVENT_OBJECT_CLICK && (sparam==JPWNoCudaFiboUIName(prefix,"FC_DRAG") ||
@@ -477,27 +556,45 @@ bool JPWNoCudaFiboUIHandleGeometry(const string prefix,const int id,const long &
    const bool down=((int)StringToInteger(sparam)&1)!=0;
    if(down && !g_fc_mouse_down && !g_fc_gesture)
      {
+      JPWPanelRect rect;rect.x=g_fc_draft.x;rect.y=g_fc_draft.y;rect.width=g_fc_draft.width;rect.height=g_fc_draft.height;
+      int edges=0;bool hit=false;
+      if(ObjectFind(0,JPWNoCudaFiboUIName(prefix,"BACKGROUND"))>=0)
+        {edges=JPWStoikusWindowEdges(rect,x,y,JPWUIDesignPx(36));hit=edges!=0;}
       const string handles[2]={"FC_DRAG","FC_RESIZE"};
-      for(int i=0;i<2;i++)
+      for(int i=0;i<2 && !hit;i++)
         {
          const string name=JPWNoCudaFiboUIName(prefix,handles[i]);
          if(ObjectFind(0,name)<0) continue;
          const int hx=(int)ObjectGetInteger(0,name,OBJPROP_XDISTANCE),hy=(int)ObjectGetInteger(0,name,OBJPROP_YDISTANCE);
          if(x<hx || y<hy || x>=hx+(int)ObjectGetInteger(0,name,OBJPROP_XSIZE) || y>=hy+(int)ObjectGetInteger(0,name,OBJPROP_YSIZE)) continue;
-         g_fc_gesture=true; g_fc_resize=i==1; g_fc_pointer_x=x; g_fc_pointer_y=y;
+         hit=true;edges=(i==1 ? 2|8 : 0);
+        }
+      if(hit)
+        {
+         g_fc_scroll_before=(bool)ChartGetInteger(0,CHART_MOUSE_SCROLL);
+         if(!ChartSetInteger(0,CHART_MOUSE_SCROLL,false)) return(false);
+         g_fc_scroll_captured=true;
+         g_fc_gesture=true; g_fc_resize=edges!=0;g_fc_resize_edges=edges;g_fc_pointer_x=x;g_fc_pointer_y=y;
          g_fc_start_x=g_fc_draft.x; g_fc_start_y=g_fc_draft.y;
-         g_fc_start_w=g_fc_draft.width; g_fc_start_h=g_fc_draft.height; break;
+         g_fc_start_w=g_fc_draft.width; g_fc_start_h=g_fc_draft.height;
         }
      }
    g_fc_mouse_down=down;
    if(!g_fc_gesture) return(false);
    if(g_fc_resize)
-     { g_fc_draft.width=g_fc_start_w+x-g_fc_pointer_x; g_fc_draft.height=g_fc_start_h+y-g_fc_pointer_y; }
+     {
+      const int cw=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),ch=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
+      const int margin=(cw>=32 && ch>=32 ? 4 : 0);
+      JPWPanelRect start,rect;start.x=g_fc_start_x-margin;start.y=g_fc_start_y-margin;start.width=g_fc_start_w;start.height=g_fc_start_h;
+      JPWStoikusWindowResize(start,rect,g_fc_resize_edges,x-g_fc_pointer_x,y-g_fc_pointer_y,
+         cw-2*margin,ch-2*margin,JPWUIDesignPx(360),JPWUIDesignPx(320));
+      g_fc_draft.x=rect.x+margin;g_fc_draft.y=rect.y+margin;g_fc_draft.width=rect.width;g_fc_draft.height=rect.height;
+     }
    else { g_fc_draft.x=g_fc_start_x+x-g_fc_pointer_x; g_fc_draft.y=g_fc_start_y+y-g_fc_pointer_y; }
    JPWNoCudaFiboUIBounds(g_fc_draft);
    if(!down)
      {
-      g_fc_gesture=false;
+      JPWNoCudaFiboUICancelGeometry();
       // A geometry gesture does not apply an unfinished Appearance form.
       g_fc_pref.x=g_fc_draft.x; g_fc_pref.y=g_fc_draft.y;
       g_fc_pref.width=g_fc_draft.width; g_fc_pref.height=g_fc_draft.height;
@@ -576,7 +673,9 @@ void JPWNoCudaFiboUIBodyEdit(const string prefix,const string action,const strin
 void JPWNoCudaFiboUIRenderMetric(const string prefix,const string id,const string title,
                           const JPWNoCudaFiboUIMetric &m)
   {
-   JPWNoCudaFiboUIBodyButton(prefix,"FC_USE_"+id,title+(m.highlight ? " · Mais próxima" : ""),m.highlight);
+   JPWNoCudaFiboUIBodyButton(prefix,"FC_USE_"+id,(m.valid ? "" : "Indisponível · ")+title+(m.highlight ? " · Mais próxima" : ""),m.valid && m.highlight);
+   if(!g_fc_measure_pass && !m.valid && ObjectFind(0,JPWNoCudaFiboUIName(prefix,"FC_USE_"+id))>=0)
+      JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_USE_"+id),OBJPROP_TOOLTIP,title+" · "+m.state+" · "+m.reason);
    JPWNoCudaFiboUIRow(prefix,id+"_LINE","Linha / nível bruto",m.label+" / "+m.raw_level);
    JPWNoCudaFiboUIRow(prefix,id+"_PRICE","Preço",m.valid ? m.price : "N/A",true);
    JPWNoCudaFiboUIRow(prefix,id+"_DELTA","Distância nominal",m.valid ? m.nominal : "N/A",true);
@@ -594,7 +693,9 @@ void JPWNoCudaFiboUICard(const string prefix,const string id,const string title,
    JPWNoCudaFiboUIBox(JPWNoCudaFiboUIName(prefix,id+"_CARD"),x,y,width,JPWNoCudaFiboUICardRows()*line,
       g_fc_card,m.highlight ? g_fc_accent : g_fc_border);
    JPWNoCudaFiboUIButton(prefix,"FC_USE_"+id,x+pad,y,width-2*pad,g_fc_layout.button,
-      title+(m.highlight ? " · Mais próxima" : ""),m.highlight);
+      (m.valid ? "" : "Indisponível · ")+title+(m.highlight ? " · Mais próxima" : ""),m.valid && m.highlight);
+   if(!g_fc_measure_pass && !m.valid && ObjectFind(0,JPWNoCudaFiboUIName(prefix,"FC_USE_"+id))>=0)
+      JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_USE_"+id),OBJPROP_TOOLTIP,title+" · "+m.state+" · "+m.reason);
    JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,id+"_LINE"),x+pad,content_y,width-2*pad,
       m.label+" · nível "+m.raw_level,font,g_fc_muted);
    JPWNoCudaFiboUIValue(JPWNoCudaFiboUIName(prefix,id+"_PRICE"),x+pad,content_y+line,width-2*pad,m.valid ? m.price : "N/A");
@@ -614,13 +715,42 @@ void JPWNoCudaFiboUICard(const string prefix,const string id,const string title,
 
 // Virtual body layout is measured before it is rendered. Changing the viewport
 // never leaves a blank first frame because the former offset exceeded its size.
+string JPWNoCudaFiboUIActionHint(const JPWNoCudaFiboView &v,const string action)
+  {
+   if(action=="FC_IMPORT") return(v.import_hint);
+   if(action=="FC_REFERENCE_TF") return(v.reference_hint);
+   if(action=="FC_SOURCE_HIDE" || action=="FC_SOURCE_SHOW") return(v.visibility_hint);
+   if(action=="FC_SYNC_RESUME") return(v.sync_hint);
+   if(action=="FC_SYNC_PAUSE") return(v.sync_pause_hint);
+   if(action=="FC_REFRESH_SOURCE") return(v.sync_refresh_hint);
+   if(action=="FC_TOUCH_SAVE") return(v.observation_hint);
+   if(action=="FC_RESTORE_RECORD") return(v.restore_hint);
+   if(action=="FC_QUERY_DAY" || action=="FC_SHOW_REFERENCES" || action=="FC_SAVE_PROJECTION" || StringFind(action,"FC_USE_")==0)
+      return(v.measure_hint);
+   return("");
+  }
+void JPWNoCudaFiboUIGuidedButton(const string prefix,const JPWNoCudaFiboView &v,
+                               const string action,const string text,const bool primary=false,const string item_id="")
+  {
+   const string hint=JPWNoCudaFiboUIActionHint(v,action);
+   JPWNoCudaFiboUIBodyButton(prefix,action,hint=="" ? text : "Indisponível · "+text,primary && hint=="",item_id);
+   if(!g_fc_measure_pass && hint!="" && ObjectFind(0,JPWNoCudaFiboUIName(prefix,action))>=0)
+      JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,action),OBJPROP_TOOLTIP,text+" · "+hint);
+  }
 void JPWNoCudaFiboUIBody(const string prefix,const JPWNoCudaFiboView &v)
   {
+   if(g_fc_details)
+     {
+      JPWNoCudaFiboUIRow(prefix,"DETAIL_STATE","Estado",v.status,true);
+      JPWNoCudaFiboUIRow(prefix,"DETAIL_REASON","Motivo completo",v.reason,true);
+      JPWNoCudaFiboUIRow(prefix,"DETAIL_NEXT","Próxima ação",v.next_action,true);
+      return;
+     }
    if(v.tab==0)
      {
-      JPWNoCudaFiboUIRow(prefix,"LINK","Vínculo",v.status);
+      JPWNoCudaFiboUIRow(prefix,"FLOW","Etapas",v.preview ? "2 · Conferir prévia → 3 · Confirmar vínculo" : "1 · Selecionar canal → 2 · Conferir prévia");
       JPWNoCudaFiboUIRow(prefix,"SOURCE","Objeto / fonte",v.source_name+" · "+v.source_tf);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_REFERENCE_TF","Período de referência · "+v.source_tf);
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_REFERENCE_TF","Período de referência · "+v.source_tf);
       JPWNoCudaFiboUIRow(prefix,"REASON","Conferência",v.reason);
       if(v.preview)
         {
@@ -632,15 +762,15 @@ void JPWNoCudaFiboUIBody(const string prefix,const JPWNoCudaFiboView &v)
          JPWNoCudaFiboUIRow(prefix,"PREVIEW_FRAME","Período / captura",v.source_tf+" · sem ajuste ao Close; confira o canal original");
         }
       for(int i=0;i<ArraySize(v.sources);i++)
-        { JPWNoCudaFiboUIBodyButton(prefix,"FC_SOURCE_"+IntegerToString(i),v.sources[i].title,v.sources[i].selected,v.sources[i].id);
+        { JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_SOURCE_"+IntegerToString(i),v.sources[i].title,v.sources[i].selected,v.sources[i].id);
           JPWNoCudaFiboUIRow(prefix,"SOURCE_INFO_"+IntegerToString(i),v.sources[i].state,v.sources[i].detail); }
-      JPWNoCudaFiboUIBodyButton(prefix,v.preview ? "FC_CONFIRM_IMPORT" : "FC_IMPORT",v.preview ? "Confirmar vínculo conferido" : "Importar canal selecionado",true);
-      if(v.preview) JPWNoCudaFiboUIBodyButton(prefix,"FC_IMPORT_CANCEL","Cancelar prévia · preservar vínculo anterior");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_REFRESH_SOURCE","Conferir fonte novamente");
-      JPWNoCudaFiboUIBodyButton(prefix,v.source_hidden ? "FC_SOURCE_SHOW" : "FC_SOURCE_HIDE",v.source_hidden ? "Mostrar canal original" : "Ocultar canal original");
-      JPWNoCudaFiboUIBodyButton(prefix,v.sync_paused ? "FC_SYNC_RESUME" : "FC_SYNC_PAUSE",v.sync_paused ? "Retomar sincronização" : "Pausar sincronização");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_UNLINK","Desvincular · preservar registros");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_MANUAL","Abrir desenho manual legado");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,v.preview ? "FC_CONFIRM_IMPORT" : "FC_IMPORT",v.preview ? "3 · Confirmar vínculo" : "2 · Conferir prévia",true);
+      if(v.preview) JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_IMPORT_CANCEL","Cancelar prévia · preservar vínculo anterior");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_REFRESH_SOURCE","Conferir fonte novamente");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,v.source_hidden ? "FC_SOURCE_SHOW" : "FC_SOURCE_HIDE",v.source_hidden ? "Mostrar canal original" : "Ocultar canal original");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,v.sync_paused ? "FC_SYNC_RESUME" : "FC_SYNC_PAUSE",v.sync_paused ? "Retomar sincronização" : "Pausar sincronização");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_UNLINK","Desvincular · preservar registros");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_MANUAL","Abrir desenho manual legado");
       JPWNoCudaFiboUIBodyEdit(prefix,"FC_JUST","Justificativa / contexto",v.justification);
      }
    else if(v.tab==1)
@@ -661,50 +791,52 @@ void JPWNoCudaFiboUIBody(const string prefix,const JPWNoCudaFiboView &v)
         }
       JPWNoCudaFiboUIRow(prefix,"NEAREST","Mais próxima",v.nearest.label+" · nível "+v.nearest.raw_level+" · "+(v.nearest.valid ? v.nearest.price : "N/A"));
       JPWNoCudaFiboUIBodyEdit(prefix,"FC_LEVEL_VALUE","Selecionar nível bruto · −4 a +4, passo 0,125",v.selected_value);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_LEVEL_APPLY","Selecionar linha pelo nível",true);
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_LEVEL_APPLY","Selecionar linha pelo nível",true);
       JPWNoCudaFiboUIRenderMetric(prefix,"SELECTED","Linha selecionada",v.selected);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_TOUCH_NEW","Registrar observação manual");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_TOUCH_NEW","Registrar observação manual");
       JPWNoCudaFiboUIRow(prefix,"GEOMETRY","Geometria / dados",v.reason);
      }
    else if(v.tab==2)
      {
       JPWNoCudaFiboUIRow(prefix,"PROJ_LINE","Linha selecionada",v.selected.label+" · nível "+v.selected.raw_level);
       JPWNoCudaFiboUIBodyEdit(prefix,"FC_DATE","Data · horário do servidor",v.projection_date);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_QUERY_DAY","Consultar dia",true);
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_QUERY_DAY","Consultar dia",true);
       for(int i=0;i<5;i++) JPWNoCudaFiboUIRow(prefix,"PROJECT_"+IntegerToString(i),v.projection_labels[i],v.projection_values[i],true);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_SHOW_REFERENCES","Mostrar / ocultar referências no gráfico");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_SAVE_PROJECTION","Registrar consulta conferida");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_SHOW_REFERENCES","Mostrar / ocultar referências no gráfico");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_SAVE_PROJECTION","Registrar consulta conferida");
       JPWNoCudaFiboUIRow(prefix,"PROVENANCE","Origem e limites",v.provenance);
      }
    else if(v.tab==3)
      {
       JPWNoCudaFiboUIRow(prefix,"RECORD_INFO","Consulta / registro",v.record_detail,true);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_RECORD_STUDIES","Estudos deste instrumento");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_RECORD_VERSIONS","Versões e observações do estudo");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_RECORD_REFRESH","Atualizar registros");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_RECORD_PREV","Página anterior · registros");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_RECORD_NEXT","Próxima página · registros");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RECORD_STUDIES","Estudos deste instrumento");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RECORD_VERSIONS","Versões e observações do estudo");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RECORD_REFRESH","Atualizar registros");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RECORD_PREV","Página anterior · registros");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RECORD_NEXT","Próxima página · registros");
       for(int i=0;i<ArraySize(v.records);i++)
-        { JPWNoCudaFiboUIBodyButton(prefix,"FC_RECORD_"+IntegerToString(i),v.records[i].title,v.records[i].selected,v.records[i].id);
+        { JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RECORD_"+IntegerToString(i),v.records[i].title,v.records[i].selected,v.records[i].id);
           JPWNoCudaFiboUIRow(prefix,"RECORD_ROW_"+IntegerToString(i),v.records[i].state,v.records[i].detail); }
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_RESTORE_RECORD","Restaurar versão selecionada");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_RESTORE_RECORD","Restaurar versão selecionada");
       JPWNoCudaFiboUIBodyEdit(prefix,"FC_OBS_TIME","Instante informado / observado",v.observation_time);
       JPWNoCudaFiboUIBodyEdit(prefix,"FC_OBS_NOTE","Observação manual",v.observation_note);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_TOUCH_SAVE","Salvar observação conferida",true);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_TOUCH_CANCEL","Cancelar observação");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_TOUCH_SAVE","Salvar observação conferida",true);
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_TOUCH_CANCEL","Cancelar observação");
      }
    else
      {
       JPWNoCudaFiboUIRow(prefix,"PREF_STATE","Prévia visual",g_fc_settings_dirty ? "Não aplicada" : "Aplicada / padrão");
       const string presets[3]={"Compacta","Ampla · 90%","Maximizada"};
-      for(int i=0;i<3;i++) JPWNoCudaFiboUIBodyButton(prefix,"FC_PRESET_"+IntegerToString(i),presets[i],g_fc_draft.preset==i);
+      for(int i=0;i<3;i++) JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_PRESET_"+IntegerToString(i),presets[i],g_fc_draft.preset==i);
       JPWNoCudaFiboUIRow(prefix,"FONT","Fonte do painel",IntegerToString(g_fc_draft.font),true);
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_FONT_MINUS","Diminuir fonte");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_FONT_PLUS","Aumentar fonte");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_DENSITY",g_fc_draft.density==1 ? "Densidade compacta" : "Densidade normal");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_LAUNCHER","Canto do botão · "+IntegerToString(g_fc_draft.launcher+1));
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_MESH",g_fc_draft.mesh==1 ? "Malha completa" : "Essencial");
-      JPWNoCudaFiboUIBodyButton(prefix,"FC_SETTINGS_DEFAULT","Restaurar padrão na prévia");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_FONT_MINUS","Diminuir fonte");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_FONT_PLUS","Aumentar fonte");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_DENSITY",g_fc_draft.density==1 ? "Densidade compacta" : "Densidade normal");
+      const string corners[4]={"Superior esquerdo","Superior direito","Inferior esquerdo","Inferior direito"};
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_LAUNCHER","Canto do botão · "+corners[g_fc_draft.launcher]);
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_MESH",g_fc_draft.mesh==1 ? "Malha completa" : "Malha essencial");
+      JPWNoCudaFiboUIRow(prefix,"MESH_HELP","Malha", "Completa: todos os níveis. Essencial: 0, 0,5 e 1 na cópia visual; o original e o estudo são preservados.");
+      JPWNoCudaFiboUIGuidedButton(prefix,v,"FC_SETTINGS_DEFAULT","Restaurar padrão na prévia");
       JPWNoCudaFiboUIRow(prefix,"PREF_NOTICE","Preferência",g_fc_notice);
      }
   }
@@ -772,13 +904,14 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
       JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"FC_OPEN_LABEL"),
          place.x+inset+(decorated ? icon+gap : 0),place.y+(bh-g_fc_layout.line)/2,
          bw-2*inset-(decorated ? icon+gap : 0),label,g_fc_draft.font,g_fc_ink,false);
-      JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_OPEN"),OBJPROP_TOOLTIP,full_label);
+      JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_OPEN"),OBJPROP_TOOLTIP,full_label+(g_fc_window_minimized ? " · Restaurar janela recolhida" : " · Abrir")+
+         (g_fc_window_notice=="" ? "" : " · "+g_fc_window_notice));
       JPWNoCudaFiboUIFinish(prefix); JPWUIDesignEndPass(); return;
      }
    const int x=g_fc_layout.x,y=g_fc_layout.y,w=g_fc_layout.width,h=g_fc_layout.height;
    const int pad=g_fc_layout.pad,bh=g_fc_layout.button,line=g_fc_layout.line,inner=g_fc_layout.inner;
    JPWNoCudaFiboUIBox(JPWNoCudaFiboUIName(prefix,"BACKGROUND"),x,y,w,h,g_fc_surface,g_fc_border);
-   if(inner<2*bh+JPWUIDesignPx(16) || h<2*bh+JPWUIDesignPx(24) ||
+   if(inner<2*bh+JPWUIDesignPx(24)+JPWNoCudaFiboUITextWidth("NoCuda",9) || h<2*bh+JPWUIDesignPx(24) ||
       g_fc_layout.body_y+2*line>g_fc_layout.footer_y ||
       JPWUIDesignButtonWidth("Aparência",g_fc_draft.font)>inner)
      {
@@ -798,7 +931,7 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
           for(int font=g_fc_draft.font;font>=9 && !safety_ready;font--)
          {
           const int base_gap=JPWUIDesignPx(font==g_fc_draft.font ? 8 : 4);
-          const int th=JPWNoCudaFiboUILine(font),eh=JPWUIDesignControlHeight(th);
+          const int th=JPWNoCudaFiboUILine(font),eh=JPWUIDesignControlHeight(JPWNoCudaFiboUITextHeight(font));
           for(int variant=0;variant<3 && !safety_ready;variant++)
             {
              const int gap=(variant==2 ? JPWUIDesignPx(4) : base_gap);
@@ -910,6 +1043,8 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
    const int gap=JPWUIDesignPx(8),close_w=bh,title_w=MathMax(0,inner-2*close_w-gap);
    JPWNoCudaFiboUIButton(prefix,"FC_HEADER_CLOSE",x+w-pad-close_w,y+gap,close_w,bh,"×");
    JPWNoCudaFiboUIButton(prefix,"FC_HEADER_MINIMIZE",x+w-pad-2*close_w-gap,y+gap,close_w,bh,"−");
+   JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_HEADER_MINIMIZE"),OBJPROP_TOOLTIP,"Recolher");
+   JPWNoCudaFiboUISetText(JPWNoCudaFiboUIName(prefix,"FC_HEADER_CLOSE"),OBJPROP_TOOLTIP,"Fechar");
    JPWNoCudaFiboUIButton(prefix,"FC_DRAG",x+pad,y+gap,title_w,bh,"");
    const string brand_logo=JPWNoCudaFiboUIName(prefix,"LOGO");
    const string brand_title=JPWNoCudaFiboUIName(prefix,"TITLE");
@@ -923,14 +1058,27 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
    if(g_fc_inventory_complete)
       JPWGenetrixHeader(brand_logo,brand_title,x+pad+gap,y+gap+JPWUIDesignPx(4),header_width,
          MathMax(0,bh-JPWUIDesignPx(8)),header_font,g_fc_ink,dark,"NoCuda · Gráficos · Fibonacci · "+v.symbol,1006);
-   if(!g_fc_layout.narrow)
-      JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"STATUS"),x+pad,y+bh+2*gap,inner,v.status+" · "+v.source_name,g_fc_draft.font,g_fc_muted);
+   const int sy=y+bh+2*gap;
+   const int details_w=MathMax(JPWUIDesignPx(36),JPWUIDesignButtonWidth("Detalhes",g_fc_draft.font));
+   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"STATUS"),x+pad,sy,inner,v.status,g_fc_draft.font,g_fc_ink);
+   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"REASON_PIN"),x+pad,sy+line,inner,v.reason,g_fc_draft.font,g_fc_muted);
+   JPWNoCudaFiboUILabel(JPWNoCudaFiboUIName(prefix,"NEXT_PIN"),x+pad,sy+2*line,inner,"Próxima ação: "+v.next_action,g_fc_draft.font,g_fc_ink);
    const int ty=g_fc_layout.body_y-g_fc_layout.nav_rows*(bh+gap)-gap;
    string tabs[5]={"Canal","Agora","Projeção","Registro","Aparência"};
-   const int columns=g_fc_layout.nav_columns,tw=(inner-(columns-1)*gap)/columns;
-   for(int i=0;i<5;i++) JPWNoCudaFiboUIButton(prefix,"FC_TAB_"+IntegerToString(i),
-      x+pad+(i%columns)*(tw+gap),ty+(i/columns)*(bh+gap),tw,bh,tabs[i],v.tab==i);
-   if(g_fc_tab!=v.tab) { g_fc_scroll=0; g_fc_tab=v.tab; }
+   if(g_fc_tab!=v.tab) { g_fc_scroll=0; g_fc_tab=v.tab; g_fc_details=false; }
+   if(g_fc_layout.narrow)
+     {
+      const int arrow=bh,section_w=inner-2*(arrow+gap);
+      JPWNoCudaFiboUIButton(prefix,"FC_SECTION_PREV",x+pad,ty,arrow,bh,"‹");
+      JPWNoCudaFiboUIButton(prefix,"FC_SECTION_NEXT",x+pad+arrow+gap,ty,section_w,bh,"Seção · "+tabs[v.tab],true);
+      JPWNoCudaFiboUIButton(prefix,"FC_SECTION_FORWARD",x+pad+inner-arrow,ty,arrow,bh,"›");
+     }
+   else
+     {
+      const int columns=g_fc_layout.nav_columns,tw=(inner-(columns-1)*gap)/columns;
+      for(int i=0;i<5;i++) JPWNoCudaFiboUIButton(prefix,"FC_TAB_"+IntegerToString(i),
+         x+pad+(i%columns)*(tw+gap),ty+(i/columns)*(bh+gap),tw,bh,tabs[i],v.tab==i);
+     }
    g_fc_line_cursor=0;
    if(!g_fc_layout.usable)
      {
@@ -945,7 +1093,7 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
       g_fc_measure_pass=false; g_fc_line_cursor=0; JPWNoCudaFiboUIBody(prefix,v);
      }
    const int footer_rows=JPWNoCudaFiboUIFooterRows(inner,g_fc_draft.font);
-   const int arrow_w=MathMax(JPWUIDesignPx(32),JPWUIDesignButtonWidth("↓",g_fc_draft.font));
+   const int arrow_w=MathMax(JPWUIDesignPx(36),JPWUIDesignButtonWidth("↓",g_fc_draft.font));
    JPWNoCudaFiboUIButton(prefix,"FC_SCROLL_UP",x+pad,g_fc_layout.footer_y,arrow_w,bh,"↑");
    JPWNoCudaFiboUIButton(prefix,"FC_SCROLL_DOWN",x+pad+arrow_w+gap,g_fc_layout.footer_y,arrow_w,bh,"↓");
    const int fx=(footer_rows==1 ? x+pad+2*arrow_w+2*gap : x+pad);
@@ -954,7 +1102,8 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
    JPWNoCudaFiboUIButton(prefix,v.tab==4 ? "FC_SETTINGS_APPLY" : "FC_CLOSE",fx,ay,action_w,bh,v.tab==4 ? "Aplicar" : "Fechar",v.tab==4);
    JPWNoCudaFiboUIButton(prefix,v.tab==4 ? "FC_SETTINGS_CANCEL" : "FC_MINIMIZE",
       footer_rows==3 ? fx : fx+action_w+gap,ay+(footer_rows==3 ? bh+gap : 0),action_w,bh,v.tab==4 ? "Cancelar" : "Recolher");
-   const int handle=JPWUIDesignPx(32);
+   const int handle=bh;
+   JPWNoCudaFiboUIButton(prefix,"FC_DETAILS",x+pad,y+h-handle-gap,MathMin(details_w,inner-handle-gap),bh,g_fc_details ? "Voltar" : "Detalhes");
    JPWNoCudaFiboUIButton(prefix,"FC_RESIZE",x+w-handle-gap,y+h-handle-gap,handle,handle,"↘");
    JPWNoCudaFiboUIFinish(prefix); JPWUIDesignEndPass();
   }

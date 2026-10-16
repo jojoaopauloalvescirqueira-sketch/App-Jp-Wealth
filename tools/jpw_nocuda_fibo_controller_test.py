@@ -87,7 +87,8 @@ string AccountInfoString(int){return synthetic_feed;}
 long TerminalInfoInteger(int prop){return prop==TERMINAL_CONNECTED?1:0;}
 string TerminalInfoString(int){return "SYNTHETIC_INSTALLATION";}
 unsigned long GetMicrosecondCount(){static unsigned long n=10000;return ++n;}
-bool ChartSetInteger(long,int,long){return true;}
+enum {CHART_MOUSE_SCROLL=991};bool host_nocuda_scroll=true;
+bool ChartSetInteger(long,int p,long value){if(p==CHART_MOUSE_SCROLL)host_nocuda_scroll=value;return true;}
 int CopyRates(const string&,int,int shift,int count,std::vector<MqlRates>&out){if(flip_feed_during_rates){synthetic_feed="SYNTHETIC_RACE_FEED";flip_feed_during_rates=false;}if(shift<0||count!=1||shift>=(int)times.size())return 0;out.resize(1);out[0]={times[times.size()-1-shift],1.1,1.3,1.0,1.2};return 1;}
 void JPWNoCudaUIClear(const string&){}
 bool JPWUIAcquire(const string&p){ui_owner=p;return true;}
@@ -130,8 +131,30 @@ int main(int argc,char**argv){if(argc!=2)return 2;root_path=argv[1];JPWNCFSnapsh
 NCFCheck(JPWNCFClone(0,"JPWNCF_seed",seed,reason)==JPW_NCF_VALID,"fixture native object");objects["native"]=objects["JPWNCF_seed"];objects["other"]=objects["JPWNCF_seed"];objects.erase("JPWNCF_seed");
 JPWNCFInit();action_ids["FC_SOURCE_0"]="native";action_ids["FC_SOURCE_1"]="other";
 JPWNCFAction("FC_OPEN");NCFCheck(g_ncf_ui.open&&JPWUIOwns(g_nocuda_prefix),"open acquires UI focus");
-JPWNCFAction("FC_SOURCE_0");JPWNCFAction("FC_IMPORT");NCFCheck(g_ncf_import,"explicit import preview");JPWNCFAction("FC_CONFIRM_IMPORT");
+JPWNCFDraw();NCFCheck(g_ncf_ui.next_action=="Selecione um canal na seção Canal.","empty state derives next action without parsing notices");
+NCFCheck(!g_ncf_ui.import_hint.empty()&&!g_ncf_ui.visibility_hint.empty()&&g_ncf_ui.measure_hint.find("UNVERIFIED_NATIVE")!=string::npos,"unavailable actions disclose prerequisites before click");
+g_ncf_notice="Mensagem traduzida arbitrária sem palavras de estado";JPWNCFDraw();NCFCheck(g_ncf_ui.next_action=="Selecione um canal na seção Canal.","translated reason does not drive stage");
+JPWNCFAction("FC_SECTION_PREV");NCFCheck(g_ncf_ui.tab==4,"compact previous section wraps to appearance");JPWNCFAction("FC_SECTION_FORWARD");NCFCheck(g_ncf_ui.tab==0,"compact next section wraps to canal");
+
+JPWNCFAction("FC_SOURCE_0");JPWNCFAction("FC_IMPORT");NCFCheck(g_ncf_import,"explicit import preview");JPWNCFDraw();NCFCheck(g_ncf_ui.next_action=="Confira as três âncoras e o período; depois confirme o vínculo.","preview phase has explicit confirmation guidance");JPWNCFAction("FC_CONFIRM_IMPORT");
 NCFCheck(g_ncf_has&&g_ncf_link&&g_ncf_head.revision==1,"confirm stores exact snapshot");
+JPWNCFDraw();NCFCheck(g_ncf_ui.next_action.find("validação nativa")!=string::npos&&g_ncf_ui.measure_hint.find("UNVERIFIED_NATIVE")!=string::npos,"confirmed link never certifies measurement");
+const auto presentation_phase=g_ncf_sync.phase;g_ncf_sync.phase=JPW_NCF_SOURCE_INVALID;g_ncf_notice="Qualidade inválida";JPWNCFDraw();NCFCheck(g_ncf_ui.next_action=="Confira a fonte e o período na seção Canal.","invalid source quality gets repair guidance rather than native approval explanation");g_ncf_sync.phase=presentation_phase;
+
+// The reorganized preview retains exact source reconfirmation before any write.
+const long import_revisions=CountSyntheticRows(g_ncf_key,"fibo_revisions");
+JPWNCFAction("FC_IMPORT");const double source_before_confirm=objects["native"].doubles[{OBJPROP_PRICE,2}];objects["native"].doubles[{OBJPROP_PRICE,2}]+=0.001;
+JPWNCFAction("FC_CONFIRM_IMPORT");NCFCheck(!g_ncf_import&&CountSyntheticRows(g_ncf_key,"fibo_revisions")==import_revisions&&g_ncf_head.revision==1,"changed source between preview and confirmation refuses new study/revision");objects["native"].doubles[{OBJPROP_PRICE,2}]=source_before_confirm;
+// Mouse and Enter share the existing refusal path; creating a display control
+// cannot grant numeric parity or authorize a projection record.
+for(const string action:{"FC_QUERY_DAY","FC_SHOW_REFERENCES","FC_SAVE_PROJECTION"}){
+ g_fc_focus=JPWNoCudaFiboUIName(g_nocuda_prefix,action);ObjectCreate(0,g_fc_focus,OBJ_BUTTON,0,0,0);g_fc_editing="";
+ const size_t objects_before_gate=objects.size();const long notes_before_gate=CountSyntheticRows(g_ncf_key,"fibo_notes");
+ JPWNCFHandleEvent(CHARTEVENT_KEYDOWN,13,0,"");
+ NCFCheck(g_ncf_notice.find("UNVERIFIED_NATIVE")!=string::npos&&!g_ncf_ui.selected.valid&&g_ncf_ui.projection_values[0]=="N/A"&&objects.size()==objects_before_gate&&CountSyntheticRows(g_ncf_key,"fibo_notes")==notes_before_gate,"Enter preserves native gate, N/A, marks and records");
+ JPWNCFHandleEvent(CHARTEVENT_OBJECT_CLICK,0,0,g_fc_focus);
+ NCFCheck(g_ncf_notice.find("UNVERIFIED_NATIVE")!=string::npos&&CountSyntheticRows(g_ncf_key,"fibo_notes")==notes_before_gate,"click preserves same projection gate");ObjectDelete(0,g_fc_focus);g_fc_focus="";
+}
 for(int i=0;i<3;i++){elapsed+=100;JPWNCFTimer();}NCFCheck(g_ncf_head.revision==1,"ticks without source edit do not persist");
 JPWNCFAction("FC_IMPORT");string frozen_preview=JPWNCFPack(g_ncf_preview);double original_c=objects["native"].doubles[{OBJPROP_PRICE,2}];objects["native"].doubles[{OBJPROP_PRICE,2}]+=0.0005;
 elapsed=700;JPWNCFTimer();NCFCheck(JPWNCFPack(g_ncf_preview)==frozen_preview&&g_ncf_head.revision==1,"import preview frozen while timer runs");JPWNCFAction("FC_IMPORT_CANCEL");NCFCheck(!g_ncf_import&&g_ncf_has&&g_ncf_sync.armed&&g_ncf_head.revision==1,"cancel preserves prior study and mode");objects["native"].doubles[{OBJPROP_PRICE,2}]=original_c;
@@ -231,6 +254,66 @@ NCFCheck(JPWNCFLoadHead(race_key,race_id,h,load,reason)==JPW_NCF_VALID&&h.revisi
 JPWNCFShutdown();NCFCheck(databases.empty()&&statements.empty(),"no database handles retained");
 Print("Controller production flow: ",jpw_ncf_asserts," asserts; failures=",jpw_ncf_failed,"; native NOT_RUN");return jpw_ncf_failed?1:0;}
 '''
+R1_TEST=r'''
+int main(int argc,char**argv){
+ if(argc!=2)return 2;root_path=argv[1];JPWNCFSnapshot seed;NCFFixture(seed);times=seed.opens;string reason;
+ NCFCheck(JPWNCFClone(0,"JPWNCF_seed",seed,reason)==JPW_NCF_VALID,"R1 fixture native object");objects["native"]=objects["JPWNCF_seed"];objects.erase("JPWNCF_seed");
+ JPWNCFInit();action_ids["FC_SOURCE_0"]="native";JPWNCFAction("FC_OPEN");JPWNCFAction("FC_SOURCE_0");JPWNCFAction("FC_IMPORT");JPWNCFAction("FC_CONFIRM_IMPORT");
+ NCFCheck(g_ncf_has&&g_ncf_link,"R1 explicit confirmed study");JPWNCFDraw();
+ const int reference=g_ncf_reference_tf,generation=g_ncf_head.generation;
+ NCFCheck(JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_REFERENCE_TF")=="Desvincule antes de mudar o período da referência.","R1-01 linked reference period discloses exact prerequisite before click");
+ g_fc_focus=JPWNoCudaFiboUIName(g_nocuda_prefix,"FC_REFERENCE_TF");ObjectCreate(0,g_fc_focus,OBJ_BUTTON,0,0,0);g_fc_editing="";
+ for(int event:{CHARTEVENT_OBJECT_CLICK,CHARTEVENT_KEYDOWN}){
+  JPWNCFHandleEvent(event,event==CHARTEVENT_KEYDOWN?13:0,0,event==CHARTEVENT_OBJECT_CLICK?g_fc_focus:"");
+  NCFCheck(g_ncf_reference_tf==reference&&g_ncf_head.generation==generation&&g_ncf_notice=="Desvincule antes de mudar o período da referência.","R1-01 click and Enter retain period refusal without writes");
+ }
+ ObjectDelete(0,g_fc_focus);g_fc_focus="";g_ncf_link=false;JPWNCFDraw();
+ NCFCheck(JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_REFERENCE_TF").empty(),"R1-01 reference hint clears when link is absent");g_ncf_link=true;
+ const auto normal_phase=g_ncf_sync.phase;
+ g_ncf_ui.observation_time="2026.10.14 10:00:00";g_ncf_ui.observation_note="Rascunho preservado R1";
+ g_fc_focus=JPWNoCudaFiboUIName(g_nocuda_prefix,"FC_TOUCH_SAVE");ObjectCreate(0,g_fc_focus,OBJ_BUTTON,0,0,0);
+ for(int blocked=0;blocked<4;blocked++){
+  g_ncf_import=blocked==0;g_ncf_history_conflict=blocked==1;
+  g_ncf_sync.phase=blocked==2?JPW_NCF_EDITING_PREVIEW:blocked==3?JPW_NCF_SAVE_PENDING:normal_phase;
+  JPWNCFDraw();
+  NCFCheck(JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_TOUCH_SAVE")=="Conclua ou cancele a revisão antes de registrar a observação.","R1-02 preview/conflict/editing/pending disclose exact prerequisite before click");
+  const long notes=CountSyntheticRows(g_ncf_key,"fibo_notes"),revisions=CountSyntheticRows(g_ncf_key,"fibo_revisions");
+  for(int event:{CHARTEVENT_OBJECT_CLICK,CHARTEVENT_KEYDOWN}){
+   JPWNCFHandleEvent(event,event==CHARTEVENT_KEYDOWN?13:0,0,event==CHARTEVENT_OBJECT_CLICK?g_fc_focus:"");
+   NCFCheck(CountSyntheticRows(g_ncf_key,"fibo_notes")==notes&&CountSyntheticRows(g_ncf_key,"fibo_revisions")==revisions&&g_ncf_head.generation==generation,"R1-02 blocked click/Enter writes no notes or revisions");
+   NCFCheck(g_ncf_ui.observation_time=="2026.10.14 10:00:00"&&g_ncf_ui.observation_note=="Rascunho preservado R1"&&g_ncf_notice=="Conclua ou cancele a revisão antes de registrar a observação.","R1-02 blocked actions preserve edited time/note and original refusal");
+  }
+  g_ncf_import=false;g_ncf_history_conflict=false;g_ncf_sync.phase=normal_phase;JPWNCFDraw();
+  NCFCheck(JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_TOUCH_SAVE").empty(),"R1-02 hint clears after each impediment ends");
+ }
+
+ ObjectDelete(0,g_fc_focus);g_fc_focus="";
+ // FINAL-R1-01: the timer's reachable history-conflict state must disclose the
+ // same refusal before interaction, independently of the translated notice.
+ g_ncf_history_conflict=true;JPWNCFSyncPause(g_ncf_sync);g_ncf_notice="unrelated localized notice";JPWNCFDraw();
+ const string conflict_hint="Histórico alterado: use Conferir fonte e justifique a revisão.";
+ NCFCheck(JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_SYNC_RESUME")==conflict_hint,"history conflict discloses Resume refusal before click");
+ NCFCheck(g_ncf_ui.next_action.find("Conferir fonte")!=string::npos&&g_ncf_ui.next_action.find("justifi")!=string::npos&&g_ncf_ui.next_action.find("Retomar")==string::npos,"history conflict next action requires explicit justified source review");
+ NCFCheck(JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_SYNC_PAUSE").empty()&&JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_REFRESH_SOURCE").empty(),"history conflict keeps Pause and corrective Refresh independently available");
+ const long revisions_before=CountSyntheticRows(g_ncf_key,"fibo_revisions"),notes_before=CountSyntheticRows(g_ncf_key,"fibo_notes"),generation_before=g_ncf_head.generation;
+ g_fc_focus=JPWNoCudaFiboUIName(g_nocuda_prefix,"FC_SYNC_RESUME");ObjectCreate(0,g_fc_focus,OBJ_BUTTON,0,0,0);
+ for(int event:{CHARTEVENT_OBJECT_CLICK,CHARTEVENT_KEYDOWN}){
+  JPWNCFHandleEvent(event,event==CHARTEVENT_KEYDOWN?13:0,0,event==CHARTEVENT_OBJECT_CLICK?g_fc_focus:"");
+  NCFCheck(!g_ncf_sync.armed&&g_ncf_history_conflict&&g_ncf_head.generation==generation_before&&CountSyntheticRows(g_ncf_key,"fibo_revisions")==revisions_before&&CountSyntheticRows(g_ncf_key,"fibo_notes")==notes_before,"blocked Resume mouse/Enter retains pause, gate, generation and SQLite rows");
+  NCFCheck(g_ncf_ui.observation_note=="Rascunho preservado R1"&&g_ncf_notice==conflict_hint&&!g_ncf_ui.selected.valid,"blocked Resume retains draft, refusal and invalid measures");
+ }
+ // Context and a live import preview keep precedence over historical guidance.
+ g_ncf_import=true;JPWNCFPresentationGuidance();NCFCheck(g_ncf_ui.next_action.find("três âncoras")!=string::npos,"import preview guidance takes precedence");g_ncf_import=false;
+ const string old_symbol=symbol;symbol="OTHER_SYNTHETIC";JPWNCFPresentationGuidance();NCFCheck(g_ncf_ui.next_action.find("contexto")!=string::npos,"context change guidance takes precedence");symbol=old_symbol;
+ // Real corrective action, real store, followed by redraw must clear the hint.
+ g_ncf_ui.justification="Synthetic explicit history review";JPWNCFAction("FC_REFRESH_SOURCE");JPWNCFDraw();
+ NCFCheck(!g_ncf_history_conflict&&JPWNoCudaFiboUIActionHint(g_ncf_ui,"FC_SYNC_RESUME").empty()&&g_ncf_ui.next_action.find("Retomar")!=string::npos,"successful explicit source review clears obsolete Resume refusal");
+ ObjectDelete(0,g_fc_focus);g_fc_focus="";JPWNCFShutdown();
+ NCFCheck(databases.empty()&&statements.empty(),"R1 no retained database handles");
+ Print("R1 targeted controller: ",jpw_ncf_asserts," asserts; failures=",jpw_ncf_failed,"; native NOT_RUN");return jpw_ncf_failed?1:0;
+}
+'''
+
 def transform(s):
     s=re.sub(r'^#include[^\n]*\n','',s,flags=re.M)
     s=s.replace('string names[]','std::vector<string> names').replace('string ids[],reason=""','std::vector<string> ids; string reason=""').replace('string f[]','std::vector<string> f').replace('MqlRates rates[]','std::vector<MqlRates> rates')
@@ -238,7 +321,7 @@ def transform(s):
     return s
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--evidence-dir');args=ap.parse_args();compiler=shutil.which('clang++')or shutil.which('g++')
+    ap=argparse.ArgumentParser();ap.add_argument('--evidence-dir');ap.add_argument('--interface-r1',action='store_true');args=ap.parse_args();compiler=shutil.which('clang++')or shutil.which('g++')
     shim=ct.SHIM.replace('string StringFormat(const char* fmt,double value)','template<class T> string StringFormat(const char* fmt,T value)')
     termshim=term.SHIM.replace('void ResetLastError(){error=0;}int GetLastError(){return error;}','').replace('int error=0,period=60,copy_count=0,mode=0;','int period=60,copy_count=0,mode=0;').replace('error=1','last_error=1')
     termshim=termshim.replace('int period=60,copy_count=0,mode=0;', 'int period=60,copy_count=0,mode=0;string synthetic_feed="TEST_ONLY";bool flip_feed_during_time=false,flip_feed_during_rates=false;').replace('std::vector<long>&out){copy_count++;', 'std::vector<long>&out){if(flip_feed_during_time){synthetic_feed="SYNTHETIC_RACE_FEED";flip_feed_during_time=false;}copy_count++;')
@@ -259,13 +342,16 @@ def main():
     legacy_defs=re.sub(r'uchar (\w+)\[\];',r'std::vector<uchar> \1;',legacy_defs)
     dbshim=db.DBSHIM.replace('int payload_selects=0,catalog_reads=0;', 'int payload_selects=0,catalog_reads=0,catalog_page_queries=0;').replace('int DatabasePrepare(int h,const string&q){', 'int DatabasePrepare(int h,const string&q){if(q.rfind("SELECT c.kind",0)==0)catalog_page_queries++;')
     from leverage_panel_test import body_of
+    from stoikus_window_nocuda_host import fibo_cancel,FIBO_WINDOW_BOUNDARY
+    window_seams=fibo_cancel()+FIBO_WINDOW_BOUNDARY
     end_interaction='void JPWNoCudaFiboUIEndInteraction(){'+body_of(ui,'void JPWNoCudaFiboUIEndInteraction()')+'}\n'
-    code=shim+dbshim+termshim+core+store+db.DBREAD+terminal+types+UISEAMS+end_interaction+sync+controller+legacy_defs+CONTEXTSEAMS+clear_anchors+context_reset+fixture+TEST
+    action_hint='string JPWNoCudaFiboUIActionHint(const JPWNoCudaFiboView &v,const string action){'+body_of(ui,'string JPWNoCudaFiboUIActionHint(')+'}\n'
+    code=shim+dbshim+termshim+core+store+db.DBREAD+terminal+types+UISEAMS+window_seams+end_interaction+sync+controller+legacy_defs+CONTEXTSEAMS+clear_anchors+context_reset+fixture+action_hint+(TEST[:TEST.index('int main(')]+R1_TEST if args.interface_r1 else TEST)
     with tempfile.TemporaryDirectory(prefix='jpw-ncf-controller-')as temp:
         src=Path(temp)/'controller.cpp';src.write_text(code);exe=Path(temp)/'controller';flags=['-lsqlite3']+([]if sys.platform=='darwin'else['-lcrypto'])
         compiled=subprocess.run([compiler,'-std=c++17','-Wall','-Wextra','-Werror','-Wno-deprecated-declarations',str(src),'-o',str(exe),*flags],text=True,capture_output=True)
         run=subprocess.run([str(exe),temp],text=True,capture_output=True)if compiled.returncode==0 else None
-        files=[ct.CORE,db.STORE,INC/'JPW_NoCuda_Fibo_Terminal.mqh',INC/'JPW_NoCuda_Fibo_Sync.mqh',INC/'JPW_NoCuda_Fibo_Controller.mqh',mainpath,legacy_path,INC/'JPW_NoCuda_Fibo_UI.mqh',Path(__file__)]
+        files=[ct.CORE,db.STORE,INC/'JPW_NoCuda_Fibo_Terminal.mqh',INC/'JPW_NoCuda_Fibo_Sync.mqh',INC/'JPW_NoCuda_Fibo_Controller.mqh',mainpath,legacy_path,INC/'JPW_NoCuda_Fibo_UI.mqh',ROOT/'tools/stoikus_window_nocuda_host.py',Path(__file__)]
         report={'status':'TEST_HARNESS_FAIL' if compiled.returncode else ('PASS' if run and run.returncode==0 else 'PRODUCT_FAIL'),'scope':'production controller + capture + core + sync + store + main context reset; host SQLite/SHA256; UI and MT5 API seams; legacy key/clear real; legacy loading/drawing outside scope','native':'NOT_RUN','sha256':{str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else 'judge/'+p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in files},'compiler_log':compiled.stdout+compiled.stderr,'output':run.stdout+run.stderr if run else''}
         if args.evidence_dir:
             out=Path(args.evidence_dir);out.mkdir(parents=True,exist_ok=True);(out/'fibo-controller-runtime.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))

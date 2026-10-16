@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from collections import Counter
 import hashlib
+from html import unescape
 from html.parser import HTMLParser
 import json
 from pathlib import Path
@@ -26,6 +27,96 @@ class IdParser(HTMLParser):
 
     def handle_starttag(self, _tag: str, attrs: list[tuple[str, str | None]]) -> None:
         self.ids.extend(value for key, value in attrs if key == "id" and value)
+
+
+class ExternalResourceParser(HTMLParser):
+    """Allow canonical navigation tokens; reject remote resource tokens.
+
+    Resource-shaped markup in raw-text examples is unsupported repository HTML.
+    This is a resource guard for canonical source, not an HTML5 DOM validator.
+    """
+
+    CDATA_CONTENT_ELEMENTS = ()
+    CANONICAL_ANCHOR = re.compile(
+        r'''<a(?=[ \t\r\n\f/>])(?:[^<>"']|"[^"<>]*"|'[^'<>]*')*>''', re.I
+    )
+    CANONICAL_ATTRIBUTE = re.compile(
+        r'''[ \t\r\n\f]+([A-Za-z_:][A-Za-z0-9_.:-]*)(?:[ \t\r\n\f]*=[ \t\r\n\f]*("[^"]*"|'[^']*'|[^\s"'=<>`]+))?'''
+    )
+    RESOURCE_ATTRIBUTE = re.compile(
+        r'''(?=(?<![A-Za-z0-9_.:-])(xlink:href|src|href)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))''',
+        re.I,
+    )
+
+    def __init__(self, source: str) -> None:
+        super().__init__()
+        self.has_external_resource = False
+        self.navigation_spans: list[tuple[int, int]] = []
+        self.navigation_token_spans: list[tuple[int, int]] = []
+        # These are canonical source tokens, including inert literals, not DOM.
+        for anchor in self.CANONICAL_ANCHOR.finditer(source):
+            self.collect_navigation_spans(anchor.group(), anchor.start())
+
+    @staticmethod
+    def is_remote(value: str) -> bool:
+        normalized = value.translate({9: None, 10: None, 13: None})
+        normalized = normalized.strip("".join(chr(code) for code in range(33)))
+        normalized = normalized.lower().replace("\\", "/")
+        return normalized.startswith(("http:", "https:", "//"))
+
+    def collect_navigation_spans(self, raw: str, offset: int) -> None:
+        position = 2
+        spans = []
+        token_spans = []
+        while raw[position:].strip(" \t\r\n\f") not in (">", "/>"):
+            attribute = self.CANONICAL_ATTRIBUTE.match(raw, position)
+            if not attribute:
+                break  # Ambiguous markup gets no textual-guard exception.
+            if any(char in (attribute.group(2) or "") for char in "<>"):
+                break  # Canonical navigation spans cannot contain markup.
+            if attribute.group(1).lower() == "href":
+                span = (offset + attribute.start(), offset + attribute.end())
+                token_spans.append(span)
+                if re.match(r'"https?://', attribute.group(2) or "", re.I):
+                    spans.append(span)
+            position = attribute.end()
+        else:
+            self.navigation_spans.extend(spans)
+            self.navigation_token_spans.extend(token_spans)
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        for key, value in attrs:
+            if key not in ("src", "href", "xlink:href") or not value:
+                continue
+            if tag == "a" and key == "href":
+                continue
+            if self.is_remote(value):
+                self.has_external_resource = True
+
+
+def has_external_resource_dependency(source: str) -> bool:
+    parser = ExternalResourceParser(source)
+    parser.feed(source)
+    parser.close()
+    if parser.has_external_resource:
+        return True
+    # Overlapping resource tokens stay guarded if comments confuse HTMLParser.
+    # Canonical navigation tokens alone receive the href exception.
+    for match in parser.RESOURCE_ATTRIBUTE.finditer(source):
+        value = next(value for value in match.groups()[1:] if value is not None)
+        if not parser.is_remote(unescape(value)):
+            continue
+        if match.group(1).lower() == "href" and any(
+            start <= match.start() < end for start, end in parser.navigation_token_spans
+        ):
+            continue
+        return True
+    # Keep the exact legacy guard for historical resource-shaped ambiguities.
+    # Inert canonical a[href] tokens are accepted by this repository's contract.
+    return any(
+        not any(start <= match.start() < end for start, end in parser.navigation_spans)
+        for match in re.finditer(r'(?:src|href)="https?://', source, re.I)
+    )
 
 
 def display_path(path: Path) -> str:
@@ -155,7 +246,7 @@ for item in assets:
 joined_javascript = "".join(path.read_text(encoding="utf-8") for path in javascript_paths)
 if "jpwealth_v9_state" not in joined_javascript:
     ERRORS.append("chave de persistencia principal nao localizada")
-if re.search(r'(?:src|href)="https?://', index, re.I):
+if has_external_resource_dependency(index):
     ERRORS.append("dependencia externa de CSS/JS encontrada no index")
 
 PWA_MANIFESTS = {
