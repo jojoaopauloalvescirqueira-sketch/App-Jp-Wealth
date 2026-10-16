@@ -31,7 +31,8 @@ void JPWCockpitLoadPrefs()
 
 bool JPWCockpitOwnedSuffix(const string suffix)
   {
-   if(suffix=="HUD_BG" || suffix=="RAIZ_DETAILS_BUTTON") return(true);
+   if(suffix=="HUD_NOTICE" || suffix=="HUD_MIN" || suffix=="HUD_OPTIONS" || suffix=="HUD_RESTORE" || suffix=="HUD_MODE" || suffix=="HUD_OPACITY" || suffix=="HUD_RESET" || suffix=="HUD_RESIZE") return(true);
+   if(suffix=="HUD_BG" || suffix=="HUD_RISK_SCOPE" || suffix=="RAIZ_DETAILS_BUTTON") return(true);
    if(StringLen(suffix)==1 && StringGetCharacter(suffix,0)>='0' &&
       StringGetCharacter(suffix,0)<='6') return(true);
    return(StringFind(suffix,"RAIZ_UI_")==0 && StringLen(suffix)>8);
@@ -368,7 +369,7 @@ void JPWRaizSwitchTab(const int tab)
       JPWRenderHUD();
      }
    JPWRaizSaveVisibleFields();
-   g_raiz_tab=tab;
+   g_raiz_tab=tab; g_cockpit_sections_open=false;
    JPWRaizPanelDestroy();
    if(tab==JPW_ROUTE_PERSONAL_HISTORY || tab==JPW_ROUTE_PERSONAL_DETAIL || tab==JPW_ROUTE_PERSONAL_EXPORT)
       JPWPersonalRequestRead();
@@ -619,6 +620,38 @@ void JPWRaizRecordComparison()
   }
 
 bool g_jpw_focus_suspended=false;
+void JPWAccountMinimize()
+  {
+   JPWRaizSaveVisibleFields();
+   JPWStoikusWindowCancel(g_account_window_gesture,g_account_window_rect);
+   g_jpw_focus_suspended=true; g_raiz_details_open=false;
+   JPWUIRelease(g_panel_prefix); JPWRaizPanelDestroy();
+   JPWStoikusVisual visual=g_stoikus_visual;visual.account_minimized=true;
+   JPWStoikusVisualSave(visual); JPWRenderHUD();
+  }
+bool JPWAccountWindowEvent(const int id,const long &lp,const double &dp,const string &sp)
+  {
+   if(id==CHARTEVENT_OBJECT_CLICK && g_raiz_details_open && sp==JPWActionObject(JPW_ACTION_MINIMIZE))
+     { JPWAccountMinimize();return(true); }
+   if(!g_account_window_gesture.active) g_account_window_rect=g_details_rect;
+   bool completed=false;
+   const bool consumed=JPWStoikusWindowEvent(g_account_window_gesture,g_account_window_rect,id,lp,dp,sp,
+      g_raiz_details_open && JPWUIOwns(g_panel_prefix),(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),
+      (int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS),g_details_control+2*g_details_pad,JPWUIDesignPx(36),completed,JPWUIDesignPx(240),JPWUIDesignPx(160));
+   if(!consumed)return(false);
+   JPWRaizSaveVisibleFields();
+   if(completed)
+     {
+      JPWStoikusVisual visual=g_stoikus_visual;const double scale=JPWUIDesignScale();
+      visual.account_positioned=true;visual.account_x=(int)MathRound(g_account_window_rect.x/scale);
+      visual.account_y=(int)MathRound(g_account_window_rect.y/scale);
+      visual.account_width=MathMax(240,(int)MathRound(g_account_window_rect.width/scale));
+      visual.account_height=MathMax(160,(int)MathRound(g_account_window_rect.height/scale));
+      JPWStoikusVisualSave(visual);
+     }
+   JPWInvalidateDialogContent();JPWRenderRaizDetails();return(true);
+  }
+
 
 void JPWOpenCockpit(const int metric=-1)
   {
@@ -635,6 +668,9 @@ void JPWOpenCockpit(const int metric=-1)
    const bool resume=g_jpw_focus_suspended && g_raiz_draft_account_known &&
                      g_raiz_draft_symbol==_Symbol && JPWAccountsEqual(g_raiz_draft_account,g_account);
    if(!JPWUIAcquire(g_panel_prefix)) return;
+   if(g_stoikus_visual.account_minimized)
+     { JPWStoikusVisual visual=g_stoikus_visual;visual.account_minimized=false;JPWStoikusVisualSave(visual); }
+   g_cockpit_sections_open=false; g_cockpit_section_page=0;
    if(resume)
      { g_jpw_focus_suspended=false; g_raiz_details_open=true;
        JPWRenderRaizDetails(); return; }
@@ -678,11 +714,30 @@ bool JPWPersonalHandleClick(const string target)
    JPWPresentationSetInteger(target,OBJPROP_STATE,false);
    if(target==JPWActionObject(JPW_ACTION_HISTORY_ACCOUNT))
      {
-      if(ArraySize(g_personal_accounts)>0)
-        { g_personal_account_index=(g_personal_account_index+1)%ArraySize(g_personal_accounts);
-          g_personal_scope=g_personal_accounts[g_personal_account_index]; g_personal_available=false;
-          JPWPersonalResetPage(); JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_HISTORY); }
+      g_personal_picker=(g_personal_picker==1 ? 0 : 1); g_personal_picker_page=0;
+      JPWInvalidateDialogContent(); JPWRenderRaizDetails();
       return(true);
+     }
+   if(g_personal_picker!=0)
+     {
+      if(target==JPWActionObject(JPW_ACTION_PRIMARY))
+        { g_personal_picker=0; g_personal_choice_count=0;
+          JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return(true); }
+      if(target==JPWActionObject(JPW_ACTION_SECONDARY)) return(true);
+      for(int j=0;j<g_personal_choice_count;j++)
+         if(target==JPWActionObject(JPW_ACTION_HISTORY_CHOICE_FIRST+j))
+           {
+            const int index=g_personal_choice_index[j];
+            if(g_personal_picker==1 && index>=0 && index<ArraySize(g_personal_accounts))
+              { g_personal_account_index=index; g_personal_scope=g_personal_accounts[index]; }
+            else if(g_personal_picker==2 && index>=0 && index<7) g_personal_category=JPWPersonalCategoryKey(index);
+            else return(false);
+            g_personal_picker=0; g_personal_choice_count=0;
+            JPWPersonalResetPage(); JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_HISTORY); return(true);
+           }
+      if(target==JPWActionObject(JPW_ACTION_PREVIOUS) || target==JPWActionObject(JPW_ACTION_NEXT))
+        { g_personal_picker_page+=(target==JPWActionObject(JPW_ACTION_PREVIOUS) ? -1 : 1);
+          JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return(true); }
      }
    if(target==JPWActionObject(JPW_ACTION_HISTORY_REFRESH))
      { JPWPersonalRequestRead(); JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return(true); }
@@ -693,17 +748,15 @@ bool JPWPersonalHandleClick(const string target)
              JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent(); JPWRenderRaizDetails(); }
       return(true);
      }
-   if(g_personal_available && !g_personal_read_requested && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
+   if(JPWPersonalUIReady() && g_personal_picker==0 && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
       for(int i=0;i<g_personal_button_count;i++) if(target==JPWActionObject(JPW_ACTION_HISTORY_ROW_FIRST+i))
         { g_personal_detail_seq=g_personal_button_seq[i]; JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_DETAIL); return(true); }
    if(target==JPWActionObject(JPW_ACTION_PRIMARY))
      {
       if(g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
         {
-         string sections[7]={"SUMMARY","EPISODE","ALERT","PEAK","SESSION","COVERAGE","EVENT"};
-         int index=0; for(int i=0;i<7;i++) if(sections[i]==g_personal_category) index=i;
-         g_personal_category=sections[(index+1)%7]; JPWPersonalResetPage();
-         JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_HISTORY);
+         g_personal_picker=(g_personal_picker!=0 ? 0 : 2); g_personal_picker_page=0;
+         JPWInvalidateDialogContent(); JPWRenderRaizDetails();
         }
       else if(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL)
         { g_personal_detail_seq=0; JPWRaizSwitchTab(JPW_ROUTE_PERSONAL_HISTORY); }
@@ -725,6 +778,8 @@ bool JPWPersonalHandleClick(const string target)
 
 void JPWHandleChartEventBody(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
+   if(id==CHARTEVENT_OBJECT_CLICK && g_raiz_details_open && sparam==JPWActionObject(JPW_ACTION_MINIMIZE))
+     { JPWAccountMinimize();return; }
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=JPWUIOwner()) return;
    if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=g_panel_prefix)
      {
@@ -804,6 +859,12 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
    if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=JPW_ROUTE_OVERVIEW)
      {
       if(!JPWDetailsContextCurrent()) return;
+      if(g_cockpit_sections_open && (lparam==37 || lparam==39))
+        { g_cockpit_section_page+=(lparam==37 ? -1 : 1);
+          JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
+      if(g_personal_picker!=0 && (g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY || g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT) && (lparam==37 || lparam==39))
+        { g_personal_picker_page+=(lparam==37 ? -1 : 1);
+          JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
       // Chart-level keys only; editing pages retain their own input behavior.
       if(g_raiz_tab==JPW_ROUTE_STOPS && !g_stops_show_pending &&
          (lparam==38 || lparam==40))
@@ -828,9 +889,15 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
       sparam!=JPWActionObject(JPW_ACTION_CLOSE) &&
       sparam!=JPWActionObject(JPW_ACTION_HEADER_CLOSE) &&
       sparam!=JPWActionObject(JPW_ACTION_LEGACY_CANCEL)) return;
+   if(sparam==g_panel_prefix+"HUD_RISK_SCOPE")
+     { if(ObjectGetInteger(0,sparam,OBJPROP_TYPE)==OBJ_BUTTON) JPWPresentationSetInteger(sparam,OBJPROP_STATE,false);
+       if(!g_raiz_details_open) JPWOpenCockpit(5);
+       else { g_cockpit_selected=5; JPWRaizSwitchTab(JPW_ROUTE_METRIC); }
+       return; }
    for(int metric=0;metric<JPW_COCKPIT_METRIC_COUNT;metric++)
       if(sparam==g_panel_prefix+IntegerToString(metric))
         {
+         if(ObjectGetInteger(0,sparam,OBJPROP_TYPE)==OBJ_BUTTON) JPWPresentationSetInteger(sparam,OBJPROP_STATE,false);
          const int target=JPWCockpitHUDTarget(g_hud_summary,g_hud_summary_source,metric);
          if(!g_raiz_details_open) JPWOpenCockpit(target);
          else if(target>=0) { g_cockpit_selected=target; JPWRaizSwitchTab(JPW_ROUTE_METRIC); }
@@ -839,23 +906,24 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
         }
    if(sparam==g_panel_prefix+"RAIZ_DETAILS_BUTTON")
      {
-      JPWPresentationSetInteger(sparam,OBJPROP_STATE,false);
-      if(g_raiz_details_open)
-        {
-         g_cockpit_draft=g_cockpit_prefs; g_cockpit_reset_requested=false;
-         JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
-         g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD();
-        }
-      else JPWOpenCockpit();
+      if(ObjectGetInteger(0,sparam,OBJPROP_TYPE)==OBJ_BUTTON) JPWPresentationSetInteger(sparam,OBJPROP_STATE,false);
+      if(!g_raiz_details_open) JPWOpenCockpit();
+      else { JPWUIAcquire(g_panel_prefix); JPWRenderRaizDetails(); }
       return;
      }
    if(!g_raiz_details_open) return;
    if(!JPWDetailsContextCurrent()) return;
+   if(sparam==JPWActionObject(JPW_ACTION_SECTIONS))
+     { g_cockpit_sections_open=!g_cockpit_sections_open; g_cockpit_section_page=0;
+       JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
+   if(g_cockpit_sections_open && (sparam==JPWActionObject(JPW_ACTION_PREVIOUS) || sparam==JPWActionObject(JPW_ACTION_NEXT)))
+     { g_cockpit_section_page+=(sparam==JPWActionObject(JPW_ACTION_PREVIOUS) ? -1 : 1);
+       JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
    if(JPWSignalHandleClick(sparam)) return;
    if(JPWPersonalHandleClick(sparam)) return;
    for(int i=0;i<100;i++)
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(i)))
-        { JPWPresentationSetInteger(sparam,OBJPROP_STATE,false); break; }
+        { if(ObjectGetInteger(0,sparam,OBJPROP_TYPE)==OBJ_BUTTON) JPWPresentationSetInteger(sparam,OBJPROP_STATE,false); break; }
    if(sparam==JPWActionObject(JPW_ACTION_TAB_FIRST)) { JPWRaizSwitchTab(JPW_ROUTE_OVERVIEW); return; }
    if(sparam==JPWActionObject(JPW_ACTION_TAB_STOPS))
      { g_record_read_requested=true; JPWRaizSwitchTab(JPW_ROUTE_STOPS); return; }
@@ -868,6 +936,8 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
    for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++)
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_CARD_FIRST+i)) ||
          sparam==JPWRaizUI("CARD_BG_"+IntegerToString(i)) ||
+         sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_TITLE") ||
+         sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_REASON2") ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_VALUE") ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_QUALITY") ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_REASON"))

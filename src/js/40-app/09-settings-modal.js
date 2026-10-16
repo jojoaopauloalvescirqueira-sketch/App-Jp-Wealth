@@ -11,7 +11,7 @@ const SETTINGS_GROUPS=[
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
   {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
   {id:'forex-preferences', label:'Forex', desc:'Preferências de consulta do Consolidado FX.', icon:'operations', children:['forex-consolidated']},
-  {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational','probability-lab','learning-guide']},
+  {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational','learning-guide']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
 ];
@@ -23,7 +23,6 @@ const SETTINGS_LEAVES={
   editor:{label:'Editor', group:'appearance-interface', desc:'Preferências de edição.', terms:['editor']},
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
   'learning-guide':{label:'Guia do site', group:'knowledge', desc:'Trilhas interativas para conhecer os controles e retomar seu aprendizado.', terms:['guia','tutorial','primeiros passos','aprender','ajuda']},
-  'probability-lab':{label:'Laboratório de Probabilidade', group:'knowledge', desc:'Galton Board: experimento visual de probabilidade e distribuição.', terms:['probabilidade','laboratório','Galton','Galton Board','distribuição','binomial']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Estatuto V11.0 e Anexo Paramétrico Canônico vigentes.', terms:['estatuto','V11','anexo','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Motor Forex, observações da conta, política V11 e propostas locais.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','V11','seis fases','reservas','editor']},
@@ -554,7 +553,6 @@ function buildSettingsContent(){
   // O painel pertence às Configurações; a apresentação cria sua própria central.
   const learningPanel=createSettingsPanel('learning-guide','');
   window.JPWLearningGuide?.renderCenter?.(learningPanel);
-  createSettingsPanel('probability-lab','<h3 id="settingsProbabilityTitle" data-route-focus tabindex="-1">Galton Board</h3><p class="settings-lead">Explore probabilidade e distribuição em um experimento visual. Ao sair ou cobrir esta página, a simulação pausa; use Continuar para retomá-la.</p><div id="settingsGaltonSlot"></div>');
   createSettingsPanel('statute','<p class="settings-lead">Consulte o Estatuto V11.0 e o Anexo JPW-ANNEX-T03. O motor financeiro legado ainda não foi adaptado; esta referência documental não homologa seus cálculos.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
   createSettingsPanel('tool-params','<p class="settings-lead">Motor Forex versionado. Registros explícitos, parâmetros normativos e estados de elegibilidade são apresentados separadamente.</p><div data-settings-slot="tool-params"></div>');
@@ -630,7 +628,7 @@ function restoreLegacySettingsNodes(){
 // Mantida com este nome e assinatura para compatibilidade com chamadas diretas existentes.
 function activateSettingsCategory(id,options={}){
   id=settingsNormalizeCategory(id);
-  if(id==='probability-lab'&&!settingsState.open){openSettingsModal(id,document.activeElement);return;}
+  if(id==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
   const exists=document.querySelector(`[data-settings-panel="${id}"]`);
   const targetId=exists?id:'general';
   if(targetId==='forex-consolidated'&&window.JPWFXConsolidated?.bindSettings)window.JPWFXConsolidated.bindSettings();
@@ -647,7 +645,6 @@ function activateSettingsCategory(id,options={}){
   settingsUpdatePageHeader(targetId);
   if(targetId==='backup' && typeof renderDgStorageCard==='function') renderDgStorageCard();
   if(targetId==='learning-guide')window.JPWLearningGuide?.renderCenter?.(exists);
-  settingsSyncProbabilityLab();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
 
@@ -677,7 +674,7 @@ function settingsRenderCurrent(options={}){
 }
 function settingsNavigate(id,options={}){
   id=settingsNormalizeCategory(id);
-  if(id==='probability-lab'&&!settingsState.open){openSettingsModal(id,document.activeElement);return;}
+  if(id==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
   const push=options.push!==false;
   if(push){
     if(settingsState.navStack[settingsState.navIndex]!==id){
@@ -694,6 +691,7 @@ function settingsNavigate(id,options={}){
   if(settingsState.active==='tool-check') fxOpenChecklist(settingsEl('settingsOpenChecklist'));
 }
 function settingsNavigateTopLevel(id){
+  if(settingsNormalizeCategory(id)==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
   settingsState.mobileListVisible=false;
   settingsNavigate(id,{push:true,focus:true});
 }
@@ -718,7 +716,7 @@ function settingsGoForward(){
 }
 function settingsNavigateToLeaf(leafId,options={}){
   leafId=settingsNormalizeCategory(leafId);
-  if(leafId==='probability-lab'&&!settingsState.open){openSettingsModal(leafId,document.activeElement);return;}
+  if(leafId==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
   const leaf=SETTINGS_LEAVES[leafId];
   settingsState.navStack=['general'];
   if(leaf&&leaf.group) settingsState.navStack.push(leaf.group);
@@ -817,36 +815,22 @@ function settingsSetAppInert(on){
     if(typeof syncShellViewport==='function'&&document.getElementById('appSidebar')?.dataset.ready)syncShellViewport();
   }
 }
-// A folha é independente de Research. Aliases antigos preservam a intenção.
-function settingsNormalizeCategory(id){return id==='galton-board'?'probability-lab':id;}
-function settingsSyncProbabilityLab(){
-  const slot=settingsEl('settingsGaltonSlot'); if(!slot) return;
-  const eligible=settingsState.open&&!settingsState.suspended&&settingsState.active==='probability-lab';
-  if(eligible&&!slot.querySelector('[data-galton-root]')){
-    slot.innerHTML=typeof galtonBoardPanelHTML==='function'?galtonBoardPanelHTML():'<p class="settings-empty" role="alert">O laboratório de probabilidade não pôde ser carregado.</p>';
-  }
-  const root=slot.querySelector('[data-galton-root]'); if(!root) return;
-  // O inert de appMain e o overlay desta central fazem parte do host normal.
-  // Apenas cobertura por OUTRO diálogo ou invisibilidade pausam o experimento.
-  const covered=document.querySelector('#modalOverlay.show,#mvpNotesOverlay.show,#ecalOverlay.show,#alladinModalOverlay.show,dialog[open]');
-  const visible=eligible&&!covered&&!root.closest('[hidden],[inert]')&&root.getClientRects().length;
-  if(visible&&!root.__galtonController?.active){if(typeof activateGaltonBoard==='function') activateGaltonBoard();}
-  else if(!visible&&root.__galtonController?.active&&typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({resume:false});
-}
+// Entradas antigas preservam a intenção sem criar uma folha concorrente.
+function settingsNormalizeCategory(id){return ['probability-lab','galton-board','research-probability-lab'].includes(id)?'probability-lab':id;}
 function openSettingsModal(category='general', opener){
   category=settingsNormalizeCategory(category);
+  if(category==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
   buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;
   settingsState.navStack=['general']; settingsState.navIndex=0; settingsState.mobileListVisible=true;
   moveLegacySettingsNodes(); settingsEl('settingsOverlay').classList.add('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','false'); settingsSetAppInert(true);
-  if(category==='probability-lab'||category==='learning-guide') settingsNavigateToLeaf(category,{focus:false});
+  if(category==='learning-guide') settingsNavigateToLeaf(category,{focus:false});
   else if(category&&category!=='general') settingsNavigate(category,{push:true,focus:false});
   else settingsRenderCurrent({focus:false});
   window.__settingsModalDebug.opens++;
   requestAnimationFrame(()=>{
     if(!settingsState.open||settingsState.suspended) return;
     const search=settingsEl('settingsSearch');
-    (category==='probability-lab'?settingsEl('settingsContent'):(search&&search.getClientRects().length?search:settingsEl('settingsContent'))).focus({preventScroll:true});
-    settingsSyncProbabilityLab();
+    (search&&search.getClientRects().length?search:settingsEl('settingsContent')).focus({preventScroll:true});
   });
 }
 function closeSettingsModal(options={}){
@@ -856,16 +840,16 @@ function closeSettingsModal(options={}){
   if(window.JPWForex&&JPWForex.state)JPWForex.state.lockEditor();
   if(typeof mvpNotesCancelAppearance==='function')mvpNotesCancelAppearance();
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
-  settingsSyncProbabilityLab();
+  if(typeof renderPresentation==='function')renderPresentation();
   const opener=settingsState.opener; settingsState.opener=null;
   if(options.restoreFocus!==false) shellRestoreHeaderFocus(opener);
 }
 function settingsMarkSubdialogLauncher(element){ settingsState.subdialogLauncher=element; }
 function suspendSettingsForSubdialog(){
-  if(!settingsState.open||settingsState.suspended) return; settingsState.suspended=true; settingsEl('settingsModal').inert=true; settingsEl('settingsModal').setAttribute('aria-hidden','true'); window.__settingsModalDebug.focusTrapActive=false; settingsSyncProbabilityLab();
+  if(!settingsState.open||settingsState.suspended) return; settingsState.suspended=true; settingsEl('settingsModal').inert=true; settingsEl('settingsModal').setAttribute('aria-hidden','true'); window.__settingsModalDebug.focusTrapActive=false;
 }
 function restoreSettingsAfterSubdialog(){
-  if(!settingsState.open||!settingsState.suspended) return; settingsState.suspended=false; settingsEl('settingsModal').inert=false; settingsEl('settingsModal').removeAttribute('aria-hidden'); const target=settingsState.subdialogLauncher; settingsState.subdialogLauncher=null; settingsSyncProbabilityLab(); if(target&&document.contains(target)) requestAnimationFrame(()=>target.focus());
+  if(!settingsState.open||!settingsState.suspended) return; settingsState.suspended=false; settingsEl('settingsModal').inert=false; settingsEl('settingsModal').removeAttribute('aria-hidden'); const target=settingsState.subdialogLauncher; settingsState.subdialogLauncher=null; if(target&&document.contains(target)) requestAnimationFrame(()=>target.focus());
 }
 function settingsFocusables(root){ return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&!el.closest('[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'); }
 function settingsTrapFocus(event){
@@ -877,7 +861,6 @@ function initSettingsSubdialogObserver(){
     if(settingsState.open&&records.some(record=>record.target===overlay)){
       if(overlay.classList.contains('show')) suspendSettingsForSubdialog(); else restoreSettingsAfterSubdialog();
     }
-    settingsSyncProbabilityLab();
   });
   ['modalOverlay','mvpNotesOverlay','ecalOverlay','alladinModalOverlay'].forEach(id=>{
     const target=settingsEl(id); if(target) settingsState.observer.observe(target,{attributes:true,attributeFilter:['class']});

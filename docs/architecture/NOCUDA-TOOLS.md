@@ -30,7 +30,9 @@ TradingView: `Nocuda_Tool.pine` v1.1, script pessoal Pinev6. Modos Manual/Import
 
 MT5: `Nocuda_Tool.mq5` e `.ex5` v1.0. Indicador com objetos de tendência, referências nativas arrastáveis e exportação local .txt. Não depende de DLL/clipboard, rede, EA ou ordens. Transparência é aproximada por mistura com o fundo. O guia explica offsets e persistência do desenho. Namespaces de instâncias têm delimitadores não permitidos no ID, e limpeza recusa prefixo vazio.
 
-O gerador oficial declara os cinco downloads como inputs de fingerprint e incorpora seus bytes no build e no portátil. Service worker precacheia os mesmos arquivos; suas URLs nunca caem no fallback HTML de navegação. Links file:// usam os bytes incorporados porque download de caminhos vizinhos não é portátil entre navegadores. Não existe fetch externo da ferramenta.
+O gerador oficial declara os cinco downloads como inputs de fingerprint. Desde a atualização de eficiência de 2026-10-14, `build-id.js` contém somente identidade e metadados. `JPWDownloadAssets` verifica build, tamanho e SHA-256 antes de entregar bytes: HTTP/PWA buscam os originais na ação; o modular `file://` carrega o sidecar NoCuda; o portátil interpreta seu envelope JSON inerte somente quando necessário. O service worker precacheia os originais, sem incluir os sidecars exclusivos do arquivo local. Não existe fetch externo da ferramenta.
+
+`JPWTools.generateEditable(value, canonical, {signal})` é assíncrono e deve ser aguardado. A validação dos parâmetros e a transformação do Pine permanecem existentes; navegar, alterar ou descartar o rascunho e finalizar a sessão invalidam ações pendentes. Os cliques primários de download usam o mesmo loader nos três transportes. Falha permite nova ação explícita; não produz repetição automática. Ver [contratos de eficiência](APP-EFFICIENCY.md).
 
 ## Verificação e limites
 

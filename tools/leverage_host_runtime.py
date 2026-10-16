@@ -73,6 +73,8 @@ def details_adapter(module):
                     function(PRESENT, "void JPWPresentationFailure(const string reason)") +
                     function(PRESENT, "bool JPWPresentationSetInteger(const string name,const ENUM_OBJECT_PROPERTY_INTEGER property,const long value)") +
                     "\nstd::vector<string> adapter_alerts; void Alert(const string& message){adapter_alerts.push_back(message);}\n")
+    from stoikus_window_host import event_adapter
+    module.SHIM += event_adapter(module.SHIM, focus_present=True)
     # A physical click requires an existing object. The historical renderer seam
     # creates no controls; instantiate only the specifically clicked button.
     # This supplies an input precondition, never event outcomes or expected state.

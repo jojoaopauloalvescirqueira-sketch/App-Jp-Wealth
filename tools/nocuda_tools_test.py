@@ -11,6 +11,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap
+from notes_launcher_test import launch_options
 
 ROOT=Path(__file__).resolve().parents[1]
 EVIDENCE=Path(os.environ.get('NOCUDA_EVIDENCE', ROOT/'tools/.artifacts/nocuda'))
@@ -39,13 +40,13 @@ def boot(browser,target,size=None,sw='block'):
     return context,page,errors
 try:
  with sync_playwright() as pw:
-    browser=pw.chromium.launch(executable_path='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless=True,args=['--no-sandbox'])
+    browser=pw.chromium.launch(**launch_options())
     targets=[('http',url),('file',(ROOT/'index.html').as_uri()),('portable',(ROOT/'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html').as_uri())]
     for mode,target in targets:
         context,page,errors=boot(browser,target)
         baseline=state(page)
         check(mode+' routes',page.evaluate("JPWNavigation.navigate('tools-nocuda')"))
-        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-nocuda','tools-leverage','tools-normative'])
+        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-nocuda','tools-leverage','tools-normative','tools-minigames'])
         page.click('#nocudaExample');wire=page.locator('#nocudaCanonical').input_value()
         check(mode+' preview49',page.locator('#nocudaPreview line').count()==49)
         check(mode+' anchors3',page.locator('#nocudaAnchors tr').count()==3)
@@ -125,7 +126,7 @@ try:
         result=page.evaluate("async name=>{const r=await fetch('downloads/nocuda/'+name);return {ok:r.ok,b:Array.from(new Uint8Array(await r.arrayBuffer()))};}",filename)
         check('PWA offline '+filename,result['ok'] and bytes(result['b'])==(ROOT/'downloads/nocuda'/filename).read_bytes())
     page.click('#nocudaExample')
-    check('PWA offline sourcegen',page.evaluate('!!JPWTools.generateEditable(null,JPWNocudaTransfer.example())'))
+    check('PWA offline sourcegen',page.evaluate("async()=>{const source=await JPWTools.generateEditable(null,JPWNocudaTransfer.example());return source.includes('const bool PRECONFIGURED = true // NOCUDA_PRECONFIGURED')&&source.includes('NOCUDA_DEFAULT:');}"))
     check('PWA no runtime errors',not errors)
     context.close();browser.close()
 finally:server.shutdown()

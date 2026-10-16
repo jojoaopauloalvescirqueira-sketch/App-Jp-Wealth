@@ -127,7 +127,7 @@ window.JPWExec = { ui: { selectView: execSelectView, getView: execGetView } };
 
 // Contexto expandido é somente apresentação. O nó completo e as preferências
 // dos widgets permanecem os mesmos; não há escrita nem cópia do estado.
-function fxSetContextExpanded(expanded){
+function fxSetContextExpanded(expanded,options={}){
   const overview=document.getElementById('execOverview'),root=document.getElementById('fxconsolidated');
   if(!overview||!root||!root.contains(overview)) return false;
   overview.hidden=!expanded;overview.inert=!expanded;
@@ -135,6 +135,7 @@ function fxSetContextExpanded(expanded){
   const button=document.getElementById('fxContextToggle');
   button.setAttribute('aria-expanded',String(!!expanded));
   button.textContent=expanded?'Recolher contexto':'Ver contexto completo';
+  if(expanded&&options.paint!==false&&typeof renderPresentation==='function')renderPresentation();
   return true;
 }
 

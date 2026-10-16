@@ -36,7 +36,7 @@ SURFACES = [
     ('pf-scenarios', 'personal-finance', ['finpes', 'cenarios']),
     ('research', 'research-stocks-br', None), ('calendar', 'ecal', None),
     ('nocoda', 'nocoda', None), ('pivots', 'pivots', None),
-    ('lab', 'probability-lab', None), ('alladin', 'alladin', None),
+    ('minigames', 'tools-minigames', None), ('lab', 'probability-lab', None), ('alladin', 'alladin', None),
     ('notes', 'dashboard', 'notes'), ('settings', 'dashboard', 'settings')]
 
 

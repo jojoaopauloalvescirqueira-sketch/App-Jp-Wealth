@@ -2,7 +2,7 @@
 """Independent usage archive contract and adversarial builder controls.
 
 The fixture is extracted from the immutable local 1.22.0 archive, verified
-against its frozen digest before extraction, with two authorized additions.
+against its frozen digest before extraction, with the authorized usage and diagnostic additions.
 No generated manifest defines the expected inventory.
 """
 from io import BytesIO
@@ -16,12 +16,13 @@ import stat
 import zipfile
 
 from build_leverage_package import build, MANIFEST_PATH, PRODUCT, VERSION_HEADER
-from leverage_package_test import EXPECTED_MEMBERS, assert_historical_archive, assert_historical_stoikus_archive
+from leverage_package_test import EXPECTED_MEMBERS, R5_WINDOW_HEADERS, R5_MEMBERS, assert_historical_archive, assert_historical_stoikus_archive, assert_historical_stoikus_1_22_1_archive
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE_ARCHIVE = 'downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip'
 GUIDE = 'STOIKUS_USO_DIARIO.md'
 SCRIPT = 'MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5'
+MONITOR_LOG = 'MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh'
 DAILY_PROGRAMS = {
     'MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5',
     'MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5',
@@ -59,8 +60,29 @@ DAILY_RESOURCES = {
 }
 DAILY_MEMBERS = DAILY_PROGRAMS | DAILY_INCLUDES | DAILY_RESOURCES | {'LEIA_PRIMEIRO.md'}
 assert len(DAILY_INCLUDES) == 69 and len(DAILY_MEMBERS) == 82
+DAILY_1_22_1_MEMBERS = frozenset(DAILY_MEMBERS)
+DAILY_INCLUDES.add(MONITOR_LOG)
+DAILY_MEMBERS.add(MONITOR_LOG)
+assert len(DAILY_INCLUDES) == 70 and len(DAILY_MEMBERS) == 83
 SDK_MEMBERS = EXPECTED_MEMBERS | {SCRIPT, GUIDE}
-assert len(SDK_MEMBERS) == 135
+assert len(SDK_MEMBERS) == 136
+R5_DAILY_MEMBERS = DAILY_MEMBERS | R5_WINDOW_HEADERS
+assert len(R5_DAILY_MEMBERS) == 86
+
+
+def assert_historical_daily_archive(raw):
+    """Frozen 1.22.1 daily package identity, before any extraction."""
+    assert len(raw) == 441515
+    assert hashlib.sha256(raw).hexdigest() == '2dd00aa8a4b4cb90f6b4eca36af4ef8d3e475ad5c856e163d9dc5c19fe6a99cf'
+    with zipfile.ZipFile(BytesIO(raw)) as archive:
+        assert archive.testzip() is None
+        assert len(archive.namelist()) == len(set(archive.namelist())) == 82
+        assert set(archive.namelist()) == DAILY_1_22_1_MEMBERS
+        assert not any(name.lower().endswith('.ex5') for name in archive.namelist())
+        header = archive.read('MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh')
+        assert b'#define JPW_PRODUCT_VERSION "1.22.1"' in header
+        assert b'#define JPW_PRODUCT_MQL_VERSION "1.221"' in header
+        assert b'#define JPW_CALCULATION_VERSION "1.9.0"' in header
 
 
 def check_archive(root, manifest, kind, expected):
@@ -69,7 +91,9 @@ def check_archive(root, manifest, kind, expected):
     raw = (root / entry['path']).read_bytes()
     assert entry['bytes'] == len(raw)
     assert entry['sha256'] == hashlib.sha256(raw).hexdigest()
-    assert entry['filename'] == f'JPW_Stoikus_{"Uso_Fontes" if kind == "dailySource" else "Fontes"}_v1.22.1.zip'
+    variant = manifest.get('interfaceRelease', {}).get('archiveVariant', '')
+    suffix = '_' + variant if variant else ''
+    assert entry['filename'] == f'JPW_Stoikus_{"Uso_Fontes" if kind == "dailySource" else "Fontes"}_v{manifest["version"]}{suffix}.zip'
     with zipfile.ZipFile(BytesIO(raw)) as archive:
         assert archive.testzip() is None
         assert len(archive.namelist()) == len(set(archive.namelist())) == len(expected)
@@ -82,7 +106,7 @@ def check_archive(root, manifest, kind, expected):
             assert {n for n in archive.namelist() if n.endswith('.mq5')} == DAILY_PROGRAMS
             assert not any(n.endswith(('_Tests.mq5', '_Lab.mq5')) for n in archive.namelist())
             # Needed risk libraries stay byte-identical and must remain read-only.
-            for name in DAILY_INCLUDES | DAILY_PROGRAMS:
+            for name in (expected - DAILY_RESOURCES - {"LEIA_PRIMEIRO.md"}):
                 text = re.sub(r'/\*.*?\*/|//[^\n]*', '', archive.read(name).decode(), flags=re.S)
                 assert not re.search(r'\b(OrderSend|OrderSendAsync)\s*\(', text), name
     return raw
@@ -94,8 +118,9 @@ def fixture(root):
     raw = (ROOT / BASELINE_ARCHIVE).read_bytes()
     assert_historical_stoikus_archive(raw)  # Literal size/hash before extraction.
     manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
-    manifest['version'] = '1.22.1'
-    manifest['coverage'] = manifest['coverage'].replace('1.22.0', '1.22.1')
+    manifest.pop('interfaceRelease', None)  # Original default-path controls remain independent.
+    manifest['version'] = '1.22.3'
+    manifest['coverage'] = manifest['coverage'].replace('1.22.0', '1.22.3')
     manifest['sourceFiles'] = sorted(PRODUCT + name for name in SDK_MEMBERS)
     manifest['nativeArtifact'] = None
     manifest['validation']['compilation'] = {'status': 'pending', 'detail': 'Synthetic fixtures; NOT_RUN'}
@@ -113,8 +138,11 @@ def fixture(root):
             target.write_bytes(archive.read(info))
     (root / PRODUCT / GUIDE).write_text('# Fixture usage guide\n')
     (root / PRODUCT / SCRIPT).write_text('#include <JPWealth/JPW_Alavancagem_Version.mqh>\nvoid OnStart() {}\n')
+    (root / PRODUCT / MONITOR_LOG).write_text('// Synthetic diagnostic-only include fixture.\n')
+    monitor = root / PRODUCT / 'MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5'
+    monitor.write_bytes(monitor.read_bytes() + b'\n#include <JPWealth/JPW_Stoikus_Monitor_Log.mqh>\n')
     version = root / VERSION_HEADER
-    version.write_text(version.read_text().replace('"1.22.0"', '"1.22.1"').replace('"1.220"', '"1.221"'))
+    version.write_text(version.read_text().replace('"1.22.0"', '"1.22.3"').replace('"1.220"', '"1.223"'))
     path = root / MANIFEST_PATH
     path.parent.mkdir(parents=True)
     path.write_text(json.dumps(manifest))
@@ -129,6 +157,20 @@ def assert_rejected(root, description):
 
 
 def controls():
+    for name, check in (
+        ('JPW_Stoikus_Fontes_v1.22.1.zip', assert_historical_stoikus_1_22_1_archive),
+        ('JPW_Stoikus_Uso_Fontes_v1.22.1.zip', assert_historical_daily_archive),
+    ):
+        historical = (ROOT / 'downloads/jpw-alavancagem-atual' / name).read_bytes()
+        check(historical)
+        for changed in (historical[:-1], historical[:100] + bytes([historical[100] ^ 1]) + historical[101:]):
+            try:
+                check(changed)
+            except AssertionError:
+                pass
+            else:
+                raise AssertionError('immutable historical archive accepted altered bytes: ' + name)
+    print('PASS immutable 1.22.1 SDK/daily archives and size/hash counterexamples')
     with TemporaryDirectory(prefix='jpw-stoikus-daily-') as directory:
         root = Path(directory)
         fixture(root)
@@ -144,7 +186,7 @@ def controls():
         assert check_archive(root, first, 'dailySource', DAILY_MEMBERS) == daily
         assert check_archive(root, first, 'source', SDK_MEMBERS) == sdk
         print('PASS separate frozen inventories; bytes/hash; reproduction and idempotence')
-        for member in (GUIDE, SCRIPT, 'MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh', next(iter(DAILY_RESOURCES))):
+        for member in (GUIDE, SCRIPT, MONITOR_LOG, 'MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh', next(iter(DAILY_RESOURCES))):
             target = root / PRODUCT / member
             content = target.read_bytes()
             target.unlink()
@@ -186,12 +228,19 @@ def controls():
 
 def candidate():
     manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
-    assert manifest['version'] == '1.22.1'
-    assert set(manifest['sourceFiles']) == {PRODUCT + name for name in SDK_MEMBERS}
-    check_archive(ROOT, manifest, 'dailySource', DAILY_MEMBERS)
-    check_archive(ROOT, manifest, 'source', SDK_MEMBERS)
+    assert manifest['version'] in ('1.22.3', '1.23.0')
+    sdk = R5_MEMBERS if manifest['version'] == '1.23.0' else SDK_MEMBERS
+    daily = R5_DAILY_MEMBERS if manifest['version'] == '1.23.0' else DAILY_MEMBERS
+    assert set(manifest['sourceFiles']) == {PRODUCT + name for name in sdk}
+    check_archive(ROOT, manifest, 'dailySource', daily)
+    check_archive(ROOT, manifest, 'source', sdk)
     assert_historical_archive((ROOT / 'downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip').read_bytes())
     assert_historical_stoikus_archive((ROOT / 'downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip').read_bytes())
+    assert_historical_stoikus_1_22_1_archive((ROOT / 'downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip').read_bytes())
+    assert_historical_daily_archive((ROOT / 'downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip').read_bytes())
+    if 'interfaceRelease' in manifest:
+        from stoikus_interface_package_test import candidate as interface_candidate
+        interface_candidate()
     print('PASS actual candidate inventories, bytes, source parity, immutable historical archives')
 
 

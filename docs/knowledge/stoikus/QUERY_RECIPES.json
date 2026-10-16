@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "version": "1.22.2",
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "Quais são os quatro programas diários e onde ficam os dois gráficos?",
+      "view": "fluxos",
+      "seed_labels": [
+        "JPW_Stoikus_Monitor",
+        "Gráfico de trabalho",
+        "JPW_Stoikus_Abrir_Paineis"
+      ],
+      "mode": "neighbors",
+      "depth": 2,
+      "expected_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+        "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
+        "mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md"
+      ],
+      "purpose": "Papéis distintos; script pontual e indicadores coexistentes."
+    },
+    {
+      "id": "Q02",
+      "question": "Quais consumidores e testes devo examinar ao alterar o Store do Histórico Pessoal?",
+      "view": "master",
+      "seed_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh"
+      ],
+      "mode": "impact",
+      "depth": 2,
+      "expected_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+        "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh",
+        "tools/jpw_personal_history_continuity_test.py"
+      ],
+      "purpose": "Includes de entrada e referências de testes; não cobertura completa."
+    },
+    {
+      "id": "Q03",
+      "question": "Como investigar limpeza do NoCuda após uma inicialização recusada?",
+      "view": "master",
+      "seed_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5"
+      ],
+      "seed_labels": [
+        "Limpeza NoCuda por ownership"
+      ],
+      "mode": "impact",
+      "depth": 1,
+      "expected_sources": [
+        "tools/jpw_nocuda_lifecycle_test.py",
+        "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+        "docs/superpowers/specs/2026-10-14-stoikus-continuity-design.md"
+      ],
+      "purpose": "Admissão/prefixo e regressão host; não prova de OnDeinit nativo."
+    },
+    {
+      "id": "Q04",
+      "question": "Onde conferir o cálculo 1.9.0 preservado e as versões do candidato?",
+      "view": "master",
+      "seed_labels": [
+        "Cálculo 1.9.0 preservado"
+      ],
+      "seed_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh"
+      ],
+      "mode": "neighbors",
+      "depth": 1,
+      "expected_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+        "docs/validation/stoikus-1.22.2/INTEGRATION.md"
+      ],
+      "purpose": "Identidade da versão; não homologação das fórmulas."
+    },
+    {
+      "id": "Q05",
+      "question": "Como localizar as regras de snapshot, data_version e auditoria até EOF?",
+      "view": "fluxos",
+      "seed_labels": [
+        "Guarda de geração da mesma conexão",
+        "Prontidão somente após EOF integral"
+      ],
+      "mode": "neighbors",
+      "depth": 1,
+      "expected_sources": [
+        "docs/superpowers/specs/2026-10-14-stoikus-personal-continuity-design.md"
+      ],
+      "purpose": "Contratos documentados e fonte; data_version numérico não foi gravado no recibo."
+    },
+    {
+      "id": "Q06",
+      "question": "Um PASS host comprova que os quatro programas foram compilados e instalados no MT5?",
+      "view": "fluxos",
+      "seed_labels": [
+        "Provas nativas NOT_RUN",
+        "Aceite operacional e financeiro separado",
+        "Prova de compilação de quatro programas"
+      ],
+      "mode": "neighbors",
+      "depth": 1,
+      "expected_sources": [
+        "docs/validation/stoikus-1.22.2/INTEGRATION.md"
+      ],
+      "purpose": "Provas nativas/instalação/aceite separados, sem resultado inventado."
+    },
+    {
+      "id": "Q07",
+      "question": "Quais referências de teste e mensagens investigar ao alterar o Monitor?",
+      "view": "master",
+      "seed_sources": [
+        "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5"
+      ],
+      "mode": "impact",
+      "depth": 1,
+      "expected_sources": [
+        "tools/jpw_stoikus_monitor_state_test.py",
+        "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5"
+      ],
+      "purpose": "Módulo e testes pertinentes; mensagens sem alterar autoridade financeira."
+    },
+    {
+      "id": "Q08",
+      "question": "Onde localizar o runner completo e seus resultados registrados, sem executar os testes?",
+      "view": "testes-evidencias",
+      "seed_sources": [
+        "tools/leverage_suite.py",
+        "docs/knowledge/stoikus/evidence/mt5-all-R2.json"
+      ],
+      "mode": "neighbors",
+      "depth": 1,
+      "expected_sources": [
+        "tools/leverage_suite.py",
+        "tools/jpw_personal_history_continuity_test.py",
+        "tools/jpw_nocuda_lifecycle_test.py",
+        "docs/knowledge/stoikus/evidence/mt5-all-R2.json"
+      ],
+      "purpose": "Registro literal dos 47 runners; snapshots R2 e logs congelados."
+    }
+  ],
+  "query_rules": {
+    "neighbors": "outgoing and incoming edges; retain direction and provenance",
+    "impact": "incoming includes_file and references from test_runner/host_facet_test_file; source nodes and their cited files remain anchors",
+    "budget": "Return selected sources and relation provenance, not every hash binding",
+    "result_status": "source navigation only; no independent AI-quality improvement measurement"
+  }
+}

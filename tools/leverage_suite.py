@@ -42,10 +42,21 @@ HOST = (
     "jpw_nocuda_fibo_store_runtime_test", "jpw_nocuda_fibo_controller_test",
     "jpw_nocuda_fibo_ui_test", "jpw_nocuda_integration_test",
     "stoikus_startup_test",
+    "jpw_nocuda_lifecycle_test", "jpw_stoikus_monitor_state_test",
+    "jpw_personal_history_continuity_test",
+    "stoikus_account_interface_test",
+    "stoikus_account_review_regression_test", "stoikus_risk_presentation_test",
+    "stoikus_hud_targets_test",
+    "jpw_nocuda_fibo_ui_prerequisites",
+    "jpw_nocuda_fibo_controller_prerequisites",
 )
+HOST_VARIANTS = {
+    "jpw_nocuda_fibo_ui_prerequisites": ("jpw_nocuda_fibo_ui_test.py", "--interface-r1"),
+    "jpw_nocuda_fibo_controller_prerequisites": ("jpw_nocuda_fibo_controller_test.py", "--interface-r1"),
+}
 DISTRIBUTION = ("leverage_package_test", "leverage_page_test",
                 "stoikus_daily_package_test", "stoikus_download_test",
-                "stoikus_usage_page_test")
+                "stoikus_usage_page_test", "stoikus_interface_delivery_test")
 
 
 def classify(returncode: int, output: str) -> str:
@@ -195,9 +206,18 @@ def main() -> int:
     before = input_hashes()
     checks = []
     for name in HOST + (DISTRIBUTION if args.scope == "all" else ()):
-        command = [sys.executable, str(ROOT / "tools" / f"{name}.py")]
+        variant = HOST_VARIANTS.get(name)
+        command = ([sys.executable, str(ROOT / "tools" / variant[0]), *variant[1:]]
+                   if variant else [sys.executable, str(ROOT / "tools" / f"{name}.py")])
         if name == "jpw_personal_history_test":
             command += ["--output", str(artifact.with_suffix(".logs") / "personal-history-evidence")]
+        if name == "jpw_personal_history_continuity_test":
+            command += ["--output", str(artifact.with_suffix(".logs") / "personal-history-continuity-evidence")]
+        if name == "jpw_nocuda_lifecycle_test":
+            command += ["--evidence-dir", str(artifact.with_suffix(".logs") / "nocuda-lifecycle-evidence"), "--label", "suite"]
+        if name == "jpw_stoikus_monitor_state_test":
+            command += ["--receipt", str(artifact.with_suffix(".logs") / "monitor-state-evidence.json"),
+                        "--keep", str(artifact.with_suffix(".logs") / "monitor-state-host")]
         if name == "stoikus_usage_page_test":
             command += ["--evidence", str(artifact.with_suffix(".logs") / "stoikus-usage-page-evidence")]
         print(f"[RUN] {name}", flush=True)

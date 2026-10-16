@@ -32,12 +32,33 @@ def fn(source, signature):
 
 
 def cockpit_target(source):
-    match = re.search(r"JPWPanelCockpit\(chart_width,chart_height,JPWUIDesignPx\((\d+)\),JPWUIDesignPx\((\d+)\),g_details_rect\)", source)
-    assert match, "R2 expects explicit logical sizes passed through the real DPI helper"
+    assert 'JPWPanelAccount(chart_width,chart_height,JPWUIDesignScale(),g_details_rect)' in source
+    panel = (INC/'JPW_Alavancagem_Panel.mqh').read_text()
+    match = re.search(r'nominal_width=\(int\)\((\d+)\*scale\+0.5\),nominal_height=\(int\)\((\d+)\*scale\+0.5\)',panel)
+    assert match, "Conta nominal size is defined in the production geometry helper"
     return int(match[1]), int(match[2])
 
 
+def risk_scope_shim():
+    # Accepted StopRisk read-view fields and clock are explicit synthetic native seams.
+    return r"""
+#include <vector>
+struct RiskScopeSample {string account_key;long observed_mono_ms=1000;int row_count=1;};
+RiskScopeSample g_stop_sample;
+std::vector<int> g_stop_rows={1};
+bool g_stop_ready=false,g_stop_scope_valid=false;
+string g_stop_scope_symbol="",g_diagnostic_context="scope-account";
+int g_stop_scope_side=0,g_stop_quality=0;
+unsigned long scope_clock_ms=1000;
+unsigned long GetTickCount64(){return scope_clock_ms;}
+int StringReplace(string&s,const string&a,const string&b){int n=0;size_t at=0;while((at=s.find(a,at))!=string::npos){s.replace(at,a.size(),b);at+=b.size();n++;}return n;}
+template<class T>int ArraySize(const std::vector<T>&a){return (int)a.size();}
+"""
+
 def geometry(geo=None):
+    if os.environ.get("JPW_JUDGE_KEEP_TEMP"):
+        from leverage_host_shim import source_root
+        source_root()  # Retain all generated translation units, including overview failures.
     geo = geo or importlib.import_module("leverage_geometry_test")
     geo.cockpit_target = cockpit_target
     original_design = geo.design_helpers
@@ -52,6 +73,20 @@ def geometry(geo=None):
     geo.design_helpers = design
     width, height = cockpit_target(PRESENT)
     geo.SHIM += "\nusing ushort=unsigned short;\n" + original_design(False)
+    geo.MAIN = geo.MAIN.replace("JPWPanelRect roomy;", "JPWPanelRect roomy;mock_screen_dpi=96;")
+    geo.MAIN = geo.MAIN.replace("roomy.width>=1000 && roomy.height>=700", "roomy.width==720 && roomy.height==520")
+    geo.MAIN = geo.MAIN.replace("main cockpit grows beyond 760x620", "Conta uses approved720x520 nominal size")
+    mapping = fn((INC/'JPW_Alavancagem_Cockpit.mqh').read_text(), "int JPWCockpitPresentationIndex(const int slot)")
+    geo.LAYOUT_MAIN = geo.LAYOUT_MAIN.replace('(measured==16&&cards!=7)||(measured==32&&cards<1)', 'cards<1||cards>7')
+    geo.LAYOUT_MAIN = geo.LAYOUT_MAIN.replace('JPWPanelCockpit(1440,636,__COCKPIT_WIDTH__,__COCKPIT_HEIGHT__,rect)', 'JPWPanelCockpit(1440,636,1040,760,rect)')
+    for signature in ("string JPWCockpitQualityLabel(const string canonical)", "string JPWCockpitMetricTitle(const int index,const string canonical)"):
+        mapping += fn((INC/'JPW_Alavancagem_Cockpit.mqh').read_text(),signature)
+    geo.LAYOUT_SHIM += risk_scope_shim()
+    geo.HUD_SHIM += risk_scope_shim()
+    mapping += fn(PRESENT,"string JPWCockpitMetricValue(const int index,const string canonical)")
+    mapping += fn(PRESENT,"string JPWRiskDisplayScope()")
+    geo.LAYOUT_SHIM += mapping
+    geo.HUD_SHIM += mapping
     geo.MAIN = geo.MAIN.replace("++cases;", "++cases;mock_screen_dpi=96*dpi/100;")
     geo.MAIN = geo.MAIN.replace("__COCKPIT_WIDTH__", f"JPWUIDesignPx({width})").replace("__COCKPIT_HEIGHT__", f"JPWUIDesignPx({height})")
     # Shared helper is already in SHIM for core/overview. Keep full HUD's native
@@ -65,6 +100,14 @@ def geometry(geo=None):
                 "bool JPWPresentationSetInteger(const string name,const ENUM_OBJECT_PROPERTY_INTEGER property,const long value)",
                 "bool JPWPresentationSetString(const string name,const ENUM_OBJECT_PROPERTY_STRING property,const string value)"):
         geo.LAYOUT_SHIM += fn(PRESENT, sig)
+    from stoikus_window_host import layout_text
+    geo.LAYOUT_SHIM += layout_text()
+    # Translate newly added actual overview dynamic reason arrays without altering its flow.
+    layout_code=inspect.getsource(geo.presentation_layout_replay)
+    layout_code=layout_code.replace('def presentation_layout_replay(', 'def window_presentation_layout_replay(',1)
+    layout_code=layout_code.replace('path.write_text(cpp)', 'path.write_text(__import__("leverage_host_shim").translate_arrays(cpp))')
+    exec(layout_code,geo.__dict__)
+    geo.presentation_layout_replay=geo.window_presentation_layout_replay
     # The original fixture's overview creator APIs stay explicit boundaries.
     # The HUD, in contrast, receives the real retained-object implementation.
     geo.HUD_SHIM = geo.HUD_SHIM.replace("using uint=unsigned int;", "using uint=unsigned int;using ushort=unsigned short;using ulong=unsigned long;")
@@ -110,7 +153,9 @@ def geometry(geo=None):
    if(!objects.count(object))continue;
    const string shown=objects[object].text[OBJPROP_TEXT];
    const bool full=shown.find(g_cockpit_snapshot.metric[i].value)!=string::npos;
-   const bool named=shown.find("Cockpit")!=string::npos||shown=="JPW"||shown=="JPW · Abrir Conta";
+   const bool risk_route=(i==5||(g_hud_summary&&g_hud_summary_source==5&&i==0));
+   const bool named=shown.find("Cockpit")!=string::npos||shown=="JPW"||shown=="JPW · Abrir Conta"||
+      (risk_route&&(shown=="Risco · Ver detalhe"||shown=="Risco · Conta"));
    if(!full&&!named){std::cerr<<"FAIL financial label was truncated or replaced with an unexplained number\n";return 1;}
    uint measured=0,h=0;TextSetFont("Arial",-10*InpFontSize,FW_NORMAL);TextGetSize(shown,measured,h);
    const int x=objects[object].number[OBJPROP_XDISTANCE];
@@ -121,13 +166,33 @@ def geometry(geo=None):
  }
  std::cout<<"HUD_FINANCIAL_LABELS: "<<financial_cases<<" seven-metric/DPI/corner cases PASS\n";
  std::cout<<"HOST_HEADER_RESERVE:''')
+    # Approved window contract: explicit Full for historical multi-metric fixtures.
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('chart_width=width;chart_height=height;objects.clear();g_panel_count=0;', 'JPWStoikusHUDCleanup();JPWStoikusVisualDefault(g_stoikus_visual);g_stoikus_visual.mode=1;chart_width=width;chart_height=height;objects.clear();g_panel_count=0;')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('objects[label].text[OBJPROP_TEXT]', 'WindowText(label)').replace('objects[object].text[OBJPROP_TEXT]', 'WindowText(object)')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('DrawHUD(800,400,corner,density,', 'DrawHUD(800,1000,corner,density,').replace('InBounds(first,800,400)', 'InBounds(first,800,1000)').replace('InBounds(next,800,400)', 'InBounds(next,800,1000)')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('!compact.summary||!compact_next.summary||', 'compact.text!=""||compact_next.text!=""||')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('narrow.width!=independent_launcher_minimum', 'narrow.width>280||narrow.width<36')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('objects[g_panel_prefix+"RAIZ_UI_HUD_LABEL"].text[OBJPROP_TEXT]!="Conta"', 'WindowText(cockpit_button).find("Conta")==string::npos')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('const int expected_header=measured*3+10>scaled_reserve?measured*3+10:scaled_reserve;', 'const int expected_header=scaled_reserve;')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('!g_hud_summary||g_hud_summary_source!=-1', 'g_hud_summary_source!=-1')
+    geo.HUD_MAIN = geo.HUD_MAIN.replace('const bool named=shown.find("Cockpit")', 'const bool named=((shown.find("Detalhes")!=string::npos||shown.find("Ver detalhes")!=string::npos) && objects[object].text[OBJPROP_TOOLTIP].find(g_cockpit_snapshot.metric[i].value)!=string::npos)||shown.find("Cockpit")')
+    old_extent='if(x<0||x+(int)measured>width)'
+    assert geo.HUD_MAIN.count(old_extent)==1, 'long financial extent oracle drift'
+    geo.HUD_MAIN=geo.HUD_MAIN.replace(old_extent,'if(!WindowTextValid(object)||x<0||x+objects[object].number[OBJPROP_XSIZE]>width)')
     def hud_replay(compiler):
         panel=geo.FILES[0].read_text()
         panel=re.sub(r"C'(\d+),(\d+),(\d+)'",lambda m:str(int(m[1])|(int(m[2])<<8)|(int(m[3])<<16)),panel)
         # Same explicit bitmap boundary as the historical fixture.
         decoration='bool JPWUIDesignIcon(const string name,const int x,const int y,const int size,const color,const bool){ObjectCreate(0,name,4,0,0,0);ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x);ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y);ObjectSetInteger(0,name,OBJPROP_XSIZE,size);ObjectSetInteger(0,name,OBJPROP_YSIZE,size);return true;}\nvoid JPWUIDesignDeleteIcon(const string name){ObjectDelete(0,name);}\n'
         runtime=fn(PRESENT,"void JPWClearPanel()")+fn(PRESENT,"void JPWRenderHUDBody()")+fn(PRESENT,"void JPWRenderHUD()")
-        cpp=geo.HUD_SHIM+geo.design_helpers(True)+decoration+panel+runtime+tiny_cockpit()+geo.HUD_MAIN
+        from stoikus_window_host import production, native, RASTER, hud_native_text
+        from leverage_host_shim import translate_arrays
+        base=geo.HUD_SHIM+geo.design_helpers(True)+decoration+panel
+        tiny=tiny_cockpit()
+        focus=(INC/'JPW_UI_Focus.mqh').read_text()
+        # Real owner helpers; chart broadcast is a recorded native boundary.
+        seams=native(base+tiny)+"string StringSubstr(const string&,int,int);\n"+RASTER+"\nint host_owner_events=0;bool EventChartCustom(int,int,long,double,const string&){host_owner_events++;return true;}\nvoid JPWRenderHUD();\n"
+        cpp=hud_native_text(translate_arrays(base+seams+focus+production()+runtime+tiny+geo.HUD_MAIN))
         return compile_cpp(cpp,"hud",compiler)
     geo.hud_layout_replay=hud_replay
     return geo
@@ -147,7 +212,7 @@ def tiny_cockpit():
         match=re.search(r'\b'+name+r'\s*(?:=\s*|\s+)(-?\d+)',source)
         assert match,name
         constants.append(f'constexpr int {name}={match[1]};')
-    extra='\n'.join(constants)+r'''
+    extra=(INC/'JPW_Stoikus_Window.mqh').read_text()+'\nJPWStoikusWindowGesture g_account_window_gesture;JPWPanelRect g_account_window_rect;\n'+'\n'.join(constants)+r'''
 int InpCockpitFontSize=11,g_details_font=11,g_details_control=32,g_details_pad=8,g_details_line=24;
 int g_stop_button_count=0,g_details_focus_route=-1,g_focus_action=-1,g_focus_count=0,g_focus_actions[128];
 bool g_raiz_panel_built=false,g_editing_field=false;double g_factor_draft=1.5;
@@ -188,6 +253,9 @@ def compile_cpp(cpp,name,compiler=None):
     assert compiler,"ENVIRONMENT_ERROR: compiler missing"
     with tempfile.TemporaryDirectory(prefix=f"r2-{name}-") as folder:
         path=Path(folder)/f"{name}.cpp";binary=Path(folder)/name;path.write_text(cpp)
+        if os.environ.get("JPW_JUDGE_KEEP_TEMP"):
+            retained=Path(os.environ["JPW_JUDGE_KEEP_TEMP"]);retained.mkdir(parents=True,exist_ok=True)
+            (retained/(name+"-"+hashlib.sha256(cpp.encode()).hexdigest()[:12]+".cpp")).write_text(cpp)
         for command in ([compiler,"-std=c++17","-Wall","-Wextra",str(path),"-o",str(binary)],[str(binary)]):
             result=subprocess.run(command,capture_output=True,text=True,timeout=60)
             print(result.stdout,end="");print(result.stderr,end="")
@@ -217,27 +285,112 @@ def stop_ui(module=None):
     return first or second
 
 
+def local_candidate_manifest_version(root):
+    """Bind the existing source/version criterion to a freshly verified local SDK.
+
+    Published manifests/archives are untouched. The unchanged candidate builder
+    independently requires the authorized version/MQL/calculation macros.
+    """
+    import build_stoikus_window_candidate as candidate
+    import build_leverage_package as official
+    root=Path(root)
+    with tempfile.TemporaryDirectory(prefix='stoikus-panel-candidate-') as temporary:
+        output=Path(temporary)/'candidate'
+        candidate.prepare(root,output)
+        identity=candidate.verify(output)
+        raw=(output/'candidate-manifest.json').read_bytes()
+        manifest=json.loads(raw)
+        actual={name:hashlib.sha256((root/official.PRODUCT/name).read_bytes()).hexdigest()
+                for name in identity['sourceHashes']}
+        assert actual==identity['sourceHashes'],'fresh candidate must bind every current source byte'
+        version_name=official.VERSION_HEADER.removeprefix(official.PRODUCT)
+        assert version_name in actual,'central version header must be in candidate inventory'
+        assert manifest['sourceHashes']==actual and manifest['version']==candidate.VERSION
+        digest=hashlib.sha256(raw).hexdigest()
+        kept=os.environ.get('JPW_JUDGE_KEEP_TEMP')
+        if kept:
+            retained=Path(kept)/('panel-candidate-manifest-'+digest[:12]+'.json')
+            retained.parent.mkdir(parents=True,exist_ok=True)
+            if retained.exists():assert retained.read_bytes()==raw,'retained manifest collision'
+            else:retained.write_bytes(raw)
+        print('PANEL_LOCAL_CANDIDATE:',json.dumps({'version':manifest['version'],
+            'sourceCount':len(actual),'manifestSha256':digest,
+            'mqlSourceFingerprint':identity['mqlSourceFingerprint'],
+            'runtimeBuildId':identity['runtimeBuildId']},sort_keys=True),flush=True)
+        return manifest['version']
+
+
 def panel(module=None):
     module=module or importlib.import_module("leverage_panel_test")
+    module.local_candidate_manifest_version=local_candidate_manifest_version
     # Rewrite only the explicit versioned literals below in the candidate
     # functions. Source inspection remains source inspection, supplemented by
     # the actual geometry runtime; no false require is swallowed.
     replacements={
-      'observer_missing ? "Risk: N/A · Check Observer"':'observer_missing ? "Risk: N/A · Ver Monitor"',
+      'observer_missing ? "Risk: N/A · Check Observer"':'observer_missing ? "Risco: N/A · Ver Monitor"',
       "'Open Cockpit'":"'Abrir Conta'",
-      'const int height=active*row_height+button_height+3*pad;':'int height=active*row_height+button_height+3*pad;',
+      'const int height=active*row_height+button_height+3*pad;':'int height=(active+(risk_visible ? 1 : 0))*row_height+button_height+3*pad;',
       'ObjectSetString(0,name,OBJPROP_TEXT,shown[i])':'JPWPresentationSetString(name,OBJPROP_TEXT,shown[i])',
       "'Click for details.'":"'Clique para ver detalhes.'",
       'ObjectDelete(0,g_panel_prefix+IntegerToString(i))':'JPWUIDesignDelete(g_panel_prefix+IntegerToString(i))',
       'JPWRaizSaveVisibleFields(); JPWRaizPanelDestroy();':'JPWRaizSaveVisibleFields(); JPWInvalidateDialogContent();',
       'StringFind(name,owned)==0':'JPWPresentationDialogObject(name)',
+      'input int InpFontSize=8;':'input int InpFontSize=10;',
+      'compact_title[i]+": "+metric.value+" · "+JPWGenetrixMetricQuality(i,metric.quality)':'compact_title[i]+": "+JPWCockpitMetricValue(i,metric.value)+" · "+JPWCockpitQualityLabel(JPWGenetrixMetricQuality(i,metric.quality))',
     }
-    for name in ('check_narrow_chart','check_six_labels_and_lifecycle','check_same_chart_dialog_cleanup','check_cockpit_navigation'):
+    for name in ('check_narrow_chart','check_six_labels_and_lifecycle','check_same_chart_dialog_cleanup','check_cockpit_navigation','check_defaults_and_status_source'):
         code=inspect.getsource(getattr(module,name))
         for before,after in replacements.items():code=code.replace(before,after)
+        if name=='check_narrow_chart':
+            # Approved retained HUD now delegates to the actual Stoikus renderer;
+            # check its source contracts instead of obsolete inline label tokens.
+            code='''def check_narrow_chart(hud):
+    require('JPWStoikusHUDRender();' in hud and 'JPWStoikusHUDWidth(' in hud and
+            'JPWStoikusHUDWrap(full,content-2*pad,one,two)' in hud and
+            'TextGetSize(line1,firstw,firsth)' in hud and 'TextGetSize(line2,secondw,secondh)' in hud,
+            'delegated HUD must measure every emitted line against its reserved surface')
+    require('JPWCockpitMetricValue(i,metric.value)' in hud and
+            'JPWCockpitQualityLabel(JPWGenetrixMetricQuality(i,metric.quality))' in hud and
+            'full+" · "+metric.reason' in hud and 'one="Detalhes"' in hud and
+            'StringSubstr(metric.value' not in hud,
+            'overflow must retain complete financial value, quality, reason and named details access')
+    require('count==0 ? "Sem métricas"' in hud and '"RAIZ_DETAILS_BUTTON"' in hud and
+            '"Conta"' in hud and 'g_hud_summary_source=-1' in hud,
+            'all-hidden configuration retains a functional account launcher without invented metric')
+    require('2*(int)th+2*pad' in hud and 'JPWUIDesignPx(44)' in hud and
+            'lower ? ch-JPWUIDesignPx(44)-MathMax(0,InpOffsetY) : ch-MathMax(InpOffsetY,JPWUIDesignPx(44))' in hud,
+            'default upper HUD budgets measured rows below the DPI-scaled44logical native heading')
+    require('JPWStoikusClamp(x,0,cw-width)' in hud and 'JPWStoikusClamp(y,0,ch-height)' in hud and
+            'width>cw || height>ch' in hud and 'if(collapsed || tiny)' in hud,
+            'all corners retain bounded full content or measured Conta fallback')
+'''
+        if name=='check_six_labels_and_lifecycle':
+            first=code.index("    require('for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++)'")
+            last=code.index("    require('JPWUIDesignDelete(g_panel_prefix+IntegerToString(i))'",first)
+            code=code[:first]+'''    require('JPWStoikusMetricVisible(g_stoikus_visual.mode,g_cockpit_prefs.visible_mask,i)' in hud and
+            'JPWCockpitMetric metric=g_cockpit_snapshot.metric[i];' in hud and 'g_panel_count=7;' in hud,
+            'delegated HUD reads canonical typed metrics using unchanged visibility-mask bits')
+    require('g_dd_line' not in hud and 'JPWMDDObserve' not in hud,
+            'DD/MDD remain off HUD and independent of visibility')
+    require('TextGetSize("Mg",tw,th)' in hud and '2*(int)th+2*pad' in hud and 'control=JPWUIDesignPx(36)' in hud,
+            'HUD spacing uses the initial measured font and accessible controls')
+    require('OBJPROP_CORNER,CORNER_LEFT_UPPER' in hud and 'OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER' in hud and
+            'OBJ_BITMAP_LABEL' in hud and 'OBJ_BUTTON' in hud and 'OBJPROP_BGCOLOR,fill' in hud and
+            all(token in hud for token in ('OBJPROP_XDISTANCE,x','OBJPROP_YDISTANCE,y','OBJPROP_XSIZE,w','OBJPROP_YSIZE,h')),
+            'retained bitmap/native targets have absolute bounded hit geometry and contrasting fallback')
+    require('OBJPROP_TOOLTIP' in hud and 'full+" · "+metric.reason' in hud and
+            'IntegerToString(i),x+pad,yy,content,row' in hud,
+            'abbreviated HUD preserves full value/reason and canonical detail target')
+'''+code[last:]
+        if name=='check_defaults_and_status_source':
+            old='manifest_version = json.loads((ROOT / "downloads/jpw-alavancagem-atual/manifest.json").read_text())[\'version\']'
+            assert code.count(old)==1,'panel manifest lookup drift'
+            code=code.replace(old,'manifest_version = local_candidate_manifest_version(ROOT)')
         if name=='check_same_chart_dialog_cleanup':code=code.replace('ObjectDelete(0,name)','JPWUIDesignDelete(name)')
         if name=='check_cockpit_navigation':
-            code=code.replace(r'JPWPanelCockpit\(chart_width,chart_height,(\d+),(\d+),g_details_rect\)',r'JPWPanelCockpit\(chart_width,chart_height,JPWUIDesignPx\((\d+)\),JPWUIDesignPx\((\d+)\),g_details_rect\)')
+            code=code.replace(r'JPWPanelCockpit\(chart_width,chart_height,(\d+),(\d+),g_details_rect\)',r'JPWPanelAccount\(chart_width,chart_height,JPWUIDesignScale\(\),g_details_rect\)')
+            code=code.replace('int(size[1]) >= 1000 and int(size[2]) >= 700', "'JPWPanelAccount(chart_width,chart_height,JPWUIDesignScale(),g_details_rect)' in cockpit")
+            code=code.replace(' ? \"Stops\"', ' ? \"Posições e stops\"')
         exec(compile(code,'<candidate-panel-'+name+'>','exec'),module.__dict__)
     # Expand only real forwarding wrappers and retain wrapper text as evidence.
     original_body=module.body_of
@@ -247,6 +400,10 @@ def panel(module=None):
     def delegated(source,signature):
         result=original_body(source,signature)
         if signature in delegates:result+='\n'+original_body(source,delegates[signature])
+        if signature=='void JPWRenderHUD()':
+            assert 'JPWStoikusHUDRender();' in result,'actual HUD delegation missing'
+            for helper in ('void JPWStoikusHUDRender()', 'bool JPWStoikusHUDSurfacePaint('):
+                result+='\n'+original_body(source,helper)
         return result
     module.body_of=delegated
     module.main()

@@ -1,0 +1,82 @@
+{
+  "source_logo_sha256": "a77960904ec84b92ad2b1701b5beec6979613b8192dc449e9be8ecbdde10cd85",
+  "logical_size": [
+    240,
+    28
+  ],
+  "native_mt5": "NOT_RUN",
+  "records": [
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-clara-100.png",
+      "dpi": 100,
+      "width": 240,
+      "height": 28,
+      "bmp_sha256": "dd815b191fa8e6e25669cad12134a0fba4f1e1bfd78a71f24953e551d4c3744a",
+      "png_sha256": "676a84279e26fc4c6b3527c879cfb119d8b0ec458cc5e94bf3af7cc1768db85e"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_125.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-clara-125.png",
+      "dpi": 125,
+      "width": 300,
+      "height": 35,
+      "bmp_sha256": "6208c8b01ebc0d5b6448324dea8d473cf7d800b4b8546705b8c885ce63b2ba65",
+      "png_sha256": "a6b4e6076705d090723632d51da2fb6b0157e92fcd4273f05654dd7a1c8d38a3"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_150.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-clara-150.png",
+      "dpi": 150,
+      "width": 360,
+      "height": 42,
+      "bmp_sha256": "c943a80f6e77c7518051df9412bbf47fc6d0006ff266f2c9074213fe289b4d88",
+      "png_sha256": "c90d371c699b65fa7fd3afc6ab6bb7ac51fb10ebdb371d44d238e7eb58fa3bcc"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_200.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-clara-200.png",
+      "dpi": 200,
+      "width": 480,
+      "height": 56,
+      "bmp_sha256": "ff4f6667c2f05ed4ccda8de73920ce87460b770bfd85666f8dee76215bb43727",
+      "png_sha256": "bd12a63529447856b2ae7335eb96a3f2bb5bde10e077458e0a4bba3930fc590e"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_100.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-escura-100.png",
+      "dpi": 100,
+      "width": 240,
+      "height": 28,
+      "bmp_sha256": "749c2b28ff55b09434995a2be028f5bf86f2274c2be0ed860e1dca6f08b4d82d",
+      "png_sha256": "0de6a2b3c993b60435a5b32936d990813d51d54b179d97948058ffee7f29d63d"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_125.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-escura-125.png",
+      "dpi": 125,
+      "width": 300,
+      "height": 35,
+      "bmp_sha256": "7d3679be4a8123e262d18a88424610f6f089528f5f897c7c5118adea5345d3e3",
+      "png_sha256": "6e9b6256a97b63aec5d6011745c78dce2fbc05b3458434688615deeb1b70e544"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_150.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-escura-150.png",
+      "dpi": 150,
+      "width": 360,
+      "height": 42,
+      "bmp_sha256": "ee123cab4b2b7df358f8759a50254fb768d18368e261868d8bdfbf93217844a7",
+      "png_sha256": "11cd05b1ece4f54381a12bde778336dbf94432265a5f6ffb603d8cec2bf9f76a"
+    },
+    {
+      "bmp": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_200.bmp",
+      "png": "assets/stoikus/stoikus-assinatura-escura-200.png",
+      "dpi": 200,
+      "width": 480,
+      "height": 56,
+      "bmp_sha256": "b756abb78bc3be7bb9abee6337338ccce1e5570847fa78016c1b664a3af483b1",
+      "png_sha256": "b14708bd125a3a5f4c5dba8d14e6ef9c22a53cc3ca33b66923eb6a931b00c596"
+    }
+  ]
+}

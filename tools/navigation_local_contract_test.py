@@ -37,6 +37,8 @@ CASES = [
     ("tools", "calendar", "tools-calendar", "tools", "tools-calendar"),
     ("tools", "nocuda", "tools-nocuda", "tools", "tools-nocuda"),
     ("tools", "leverage", "tools-leverage", "tools", "tools-leverage"),
+    ("tools", "minigames", "tools-minigames", "tools", "tools-minigames"),
+    ("tools", "galton", "tools-minigames", "tools", "tools-minigames"),
     ("research", "nocoda", "research-forex", "research", "research-forex"),
     ("research", "pivots", "research-forex", "research", "research-forex"),
     ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
@@ -182,7 +184,7 @@ def main():
             page.add_script_tag(content=source)
             page.add_script_tag(content=SPY)
             assert page.evaluate("Object.keys(JPWNavigation)") == [
-                "routes", "children", "resolve", "navigate", "navigateLocal", "current", "focusCurrentScreen"]
+                "routes", "children", "resolve", "navigate", "navigateLocal", "current", "subscribe", "focusCurrentScreen"]
             return page
 
         def run(name, function):
@@ -208,12 +210,18 @@ def main():
             p=new_page()
             try:
                 result=p.evaluate("__exercise('research','probability-lab')")
-                records.append(dict(name='research:probability-lab settings relocation',result=result))
-                assert result['accepted'] is True and result['before']==result['after']
-                assert result['events']==[dict(kind='apply',plan=dict(accepted=True,requested='probability-lab',source='compatibility',canonical=None,primary=None,child=None,screen=None,localView=None,action='settings',leaf='probability-lab'),target='probability-lab',last=dict(accepted=False,reason='not-applied')),dict(kind='settings',leaf='probability-lab')],result
-                assert result['reads']==0 and result['denied']==[] and result['lastAfter']==dict(accepted=True,reason=None)
+                records.append(dict(name='research:probability-lab Tools relocation',result=result))
+                expected=dict(canonical='tools-minigames',requested='probability-lab',source='compatibility',
+                              primary='tools',child='tools-minigames',screen='tools',
+                              localView=dict(surface='tools',view='galton'))
+                assert result['accepted'] is True
+                assert result['after']==dict(current=expected,screens=['tools'],primary=['tools'],aria=['tools']),result
+                assert [e['kind'] for e in result['events']]==['apply','resolve','resolve','select','pill','scroll','reminder','sub'],result
+                assert result['events'][0]==dict(kind='apply',plan=dict(accepted=True,**expected,action=None,leaf=None),target='probability-lab',last=dict(accepted=False,reason='not-applied')),result
+                assert result['events'][3]['surface']=='tools' and result['events'][3]['view']=='galton',result
+                assert result['reads']==2 and result['denied']==[] and result['lastAfter']==dict(accepted=True,reason=None)
             finally:p.close()
-        run('legacy Lab opens Settings without route or data mutation',relocated_lab_alias)
+        run('legacy Lab opens Tools game without data access',relocated_lab_alias)
 
         def relocated_calendar_alias():
             p = new_page()

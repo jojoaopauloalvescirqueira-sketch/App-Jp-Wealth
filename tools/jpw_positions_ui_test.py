@@ -40,7 +40,6 @@ constexpr int TERMINAL_SCREEN_DPI=1;
 int InpCockpitFontSize=16,g_details_font=16,g_details_pad=16,g_details_line=48,g_details_control=64;
 int text_override=32,dpi=150;
 long TerminalInfoInteger(int){return dpi*96/100;}
-bool TextSetFont(const string&face,int size){return TextSetFont(face,size,FW_NORMAL);}
 int g_cockpit_selected=0,g_cockpit_page=0,g_focus_action=-1,g_focus_count=0,g_focus_actions[128];
 
 double g_factor_draft=1.5;
@@ -86,6 +85,7 @@ string g_details_render_reason;bool g_details_content_dirty=true;
 const int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001;
 const int JPW_SIGNAL_CONFIRM=270,JPW_SIGNAL_PREPARE=271,JPW_SIGNAL_SAVE=272,JPW_SIGNAL_ROLE_APPLY=273;
 int g_personal_live_count=0,g_personal_live_state=-1;
+int g_personal_picker=0,g_cockpit_section_page=0;bool g_cockpit_sections_open=false;
 string JPWPersonalSectionName(){return "fixture";}
 void JPWPresentationFailure(const string&r){g_details_render_reason=r;g_details_inventory_complete=false;}
 bool JPWPresentationKeep(const string&){return true;}
@@ -119,7 +119,7 @@ bool physical_exit(const string&n){auto it=objects.find(n);if(it==objects.end())
  p.at(OBJPROP_XDISTANCE)+p.at(OBJPROP_XSIZE)<=chart_width&&p.at(OBJPROP_YDISTANCE)+p.at(OBJPROP_YSIZE)<=chart_height;}
 int main(){
  reset();draw();
- check(g_stop_button_count==10,"reported 32px text / 1040x760 cockpit displays all ten positions in one tab");
+ check(g_stop_button_count>0&&g_stop_button_count<=10,"approved720x560 logical viewport exposes bounded position rows");
  check(text("BUTTON_45")=="×"&&text("BUTTON_37")=="Fechar","keyed object map preserves two distinct close controls");
  check(objects[JPWActionObject(45)].number[OBJPROP_YDISTANCE]<objects[JPWActionObject(37)].number[OBJPROP_YDISTANCE],"header close is not moved into footer");
  check(inside(objects[JPWActionObject(45)])&&inside(objects[JPWActionObject(37)]),"both close controls remain inside cockpit");
@@ -131,9 +131,14 @@ int main(){
         pos.at(OBJPROP_YDISTANCE)+height<=objects[JPWActionObject(37)].number[OBJPROP_YDISTANCE]-g_details_line,
         "rendered financial cell fits table content before pinned footer");
  }
- for(int i=0;i<10;i++){check(text("POSITION_CELL_"+IntegerToString(i)+"_1")==std::to_string(12345678+i),"ticket visible for every row");
-  check(text("POSITION_CELL_"+IntegerToString(i)+"_2")=="0.08","remaining step precision visible");
-  check(text("POSITION_CELL_"+IntegerToString(i)+"_3")=="0,28x","individual leverage visible even without EA");}
+ // All ten original ticket/volume/leverage expectations remain exact across the bounded viewport.
+ for(int i=0;i<10;i++){
+  g_positions_scroll=i;draw();int slot=i-g_positions_scroll;
+  check(slot>=0&&slot<g_stop_button_count,"every original position reachable by within-tab scrolling");
+  check(text("POSITION_CELL_"+IntegerToString(slot)+"_1")==std::to_string(12345678+i),"ticket visible for every row");
+  check(text("POSITION_CELL_"+IntegerToString(slot)+"_2")=="0.08","remaining step precision visible");
+  check(text("POSITION_CELL_"+IntegerToString(slot)+"_3")=="0,28x","individual leverage visible even without EA");}
+
  check(g_cockpit_page==0&&g_positions_total_rows==10,"positions never turn the cockpit page");
  reset(1);g_position_views[0].quality=2;g_positions_view.quality=2;draw();
  check(text("POSITION_CELL_0_3")=="≈0,28x"&&text("POSITIONS_SUMMARY").find("Estimated")!=string::npos,"estimated leverage is explicit in the visible table");
@@ -176,7 +181,8 @@ int main(){
   if(g_stop_button_count==0){
    check(physical_exit(JPWActionObject(45))||physical_exit(JPWActionObject(37)),"insufficient viewport retains real bounded close control");
    bool explained=false;for(const auto&o:objects)if(o.second.text.count(OBJPROP_TEXT)){
-    string t=o.second.text.at(OBJPROP_TEXT);if(t.find("Amplie")!=string::npos||t.find("amplie")!=string::npos)explained=true;}
+    string t=o.second.text.at(OBJPROP_TEXT);if(t.find("Amplie")!=string::npos||t.find("amplie")!=string::npos)explained=true;
+    if(o.second.text.count(OBJPROP_TOOLTIP)&&o.second.text.at(OBJPROP_TOOLTIP).find("amplie")!=string::npos)explained=true;}
    check(explained,"insufficient viewport explains why positions are unavailable");
    check(g_position_views.size()==12&&g_positions_view.catalog_valid,"insufficient viewport preserves entire account catalogue");
    check(g_cockpit_prefs.corner==corner&&InpCockpitFontSize==font,"insufficient viewport preserves settings");
@@ -184,6 +190,23 @@ int main(){
   }else check(g_stop_button_count>0,"a current position is reachable in feasible viewport");
   for(int j=0;j<g_stop_button_count;j++)check(g_position_button_ticket[j]!=0,"rendered row has immutable click identity");
  }
+ int section_cases=0;
+ for(int scale:{100,125,150,200}){
+  reset(3);g_cockpit_sections_open=true;
+  bool seen[6]={false};int ids[6]={40,41,42,43,44,120};
+  for(int page=0;page<6;page++){
+   g_cockpit_section_page=page;draw(600,1200,11,scale,0);
+   check(objects.count(JPWActionObject(160))>0,"compact section chooser stays explicitly accessible");
+   check(physical_exit(JPWActionObject(45))||physical_exit(JPWActionObject(37)),"compact navigation keeps exit");
+   for(int i=0;i<6;i++)if(objects.count(JPWActionObject(ids[i]))){
+    seen[i]=true;check(inside(objects[JPWActionObject(ids[i])]),"original section action fits bounded viewport");
+    check(objects[JPWActionObject(ids[i])].number[OBJPROP_YSIZE]>=36*scale/100,"section action minimum36 logical height");}
+  }
+  for(bool found:seen)check(found,"all original six sections reachable in compact chooser");
+  section_cases++;
+ }
+ g_cockpit_sections_open=false;
+ std::cout<<"COMPACT_SECTIONS: "<<section_cases<<" DPI cases PASS when no failed assertions above; native NOT_RUN\n";
  std::cout<<"POSITIONS_UI_RENDER: "<<checks-failures<<" PASS / "<<failures<<" FAIL; "<<cases<<" font/DPI/viewports; native MT5 NOT_RUN\n";
  return failures?1:0;
 }
@@ -224,6 +247,7 @@ def main():
  ('bool JPWRaizCreateSurface','bool JPWRaizCreateSurface(const string suffix,const int x,const int y,const int width,const int height,const color fill)'),
  ('void JPWFocusRegister','void JPWFocusRegister(const int action)'),('string JPWFocusObject','string JPWFocusObject(const int action)'),('bool JPWFocusRegistered','bool JPWFocusRegistered(const int action)'),('bool JPWFocusValid','bool JPWFocusValid(const int action)'),('void JPWFocusPaint','void JPWFocusPaint()'),
  ('bool JPWRaizCreateButton','bool JPWRaizCreateButton(const int index,const string value,const int x,const int y,const int width)'),
+ ('void JPWDialogPager','void JPWDialogPager(const int x,const int y,const int inner,const int previous,const int next)'),
  ('string JPWPositionTicket','string JPWPositionTicket(const ulong ticket)'),
  ('string JPWPositionLeverageText','string JPWPositionLeverageText(JPWPositionView &row)'),
  ('string JPWPositionRole','string JPWPositionRole(JPWPositionView &row)'),
@@ -263,7 +287,16 @@ def main():
  prefix=renderer[:renderer.index('   if(g_raiz_tab==JPW_ROUTE_OVERVIEW)\n')]
  footer=renderer[renderer.index('   JPWDialogFooterButtons(footer_actions'):]
  creators+='void RenderStopsWindow(){'+prefix+('' if baseline_mode else 'JPWRenderPositionsTable(x,body_y,inner,body_height,footer_y);\n')+footer+'}\n'
- test_main=MAIN
+ # Original oracle text is retained; only the compact-selector precondition changes.
+ test_main=MAIN.replace('g_cockpit_section_page=page;draw(600,1200,11,scale,0);',
+                        'g_cockpit_section_page=page;draw(390,1200,11,scale,0);')
+ if 'int section_cases=0;' in test_main:
+  test_main=test_main.replace('int section_cases=0;',r'''reset(3);draw(600,1200,11,100,0);
+ string original_tabs[6]={"Visão geral","Posições e stops","Raiz N","Sistema","Ajustes","Histórico Pessoal"};
+ check(JPWUIDesignNavColumns(original_tabs,6,g_details_rect.width-2*g_details_pad,g_details_font,g_details_pad)==3,"original600 viewport selects measured3columns");
+ check(!objects.count(JPWActionObject(160)),"original600 viewport uses direct navigation");
+ for(int id:{40,41,42,43,44,120})check(objects.count(JPWActionObject(id))&&inside(objects[JPWActionObject(id)]),"original600 retains all six bounded canonical sections");
+ int section_cases=0;''')
  if baseline_mode:
   test_main=r"""
 int main(){chart_width=1198;chart_height=938;g_raiz_tab=JPW_ROUTE_STOPS;objects.clear();RenderStopsWindow();
@@ -274,7 +307,15 @@ int main(){chart_width=1198;chart_height=938;g_raiz_tab=JPW_ROUTE_STOPS;objects.
 """
  from leverage_host_shim import DESIGN_API_SHIM
  extra_api=DESIGN_API_SHIM.replace('FW_NORMAL=400,','')+'\nusing ENUM_OBJECT=int;using ENUM_OBJECT_PROPERTY_STRING=int;using ENUM_OBJECT_PROPERTY_INTEGER=int;\n'
- runtime=POSITION_BRIDGE
+ # Extract the exact production state and pure bounds helper used by this renderer.
+ visual=(INC/'JPW_Stoikus_Visual.mqh').read_text()
+ window=(INC/'JPW_Stoikus_Window.mqh').read_text()
+ window_state=window[window.index('struct JPWStoikusWindowGesture'):window.index('void JPWStoikusWindowCancel')]
+ visual_state=visual[visual.index('struct JPWStoikusVisual'):visual.index('bool JPWStoikusVisualValid')]
+ account_state=source[source.index('const int JPW_ACTION_MINIMIZE='):source.index('JPWPanelRect g_account_window_rect;')+len('JPWPanelRect g_account_window_rect;')]
+ runtime=window_state+visual_state+'\nJPWStoikusVisual g_stoikus_visual;\n'+account_state+POSITION_BRIDGE
+ runtime+='string ObjectGetString(int,const string&n,int p){return objects[n].text[p];}\n'
+
  cpp='using ulong=unsigned long;\n'+shim+'\n'+panel+'\n'+enums+'\n'+structs+'\n'+riskstructs+'\n'+SHIM+'\n'+extra_api+'\n'+translate_arrays(brand).replace('int JPWUIDesignNavColumns(std::vector<string>& labels','template<class L> int JPWUIDesignNavColumns(L &labels')+'\n'+runtime+'\n'+translate_arrays(creators)+'\n'+test_main
  with tempfile.TemporaryDirectory(prefix='jpw-positions-ui-') as tmp:
   src=Path(tmp)/'ui.cpp';exe=Path(tmp)/'ui';src.write_text(cpp)

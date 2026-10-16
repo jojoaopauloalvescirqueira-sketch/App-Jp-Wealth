@@ -1,0 +1,852 @@
+{
+  "schema": "jpw-personal-history-host/v1",
+  "classification": "PASS",
+  "acceptance_sha256": "58498de5802e4b989fcda76998e8ec4ccdff930d813430a54e01f339ae91c86c",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh": "be42ab65bd9885937acf3df22f1ab71f5372e36c74252febe58b1b9fdd7dc3c4",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh": "8173c91a2fe3e4c1d3a6b5b5d6ce55fafb6f6571b1fd58eec7e0fe7bcf81206a",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh": "b2aeb2b404ff9be5c6d30c888e4ef9eb1a615178a977792d158a3008816ea270",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "4051c93e5945a590e98cf0f7c379bf53787dc66fbbf4aef1e59f8158aa28a5c5",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh": "d0a80f5585501b054b4e136a6aa872b5f595d902a74c62336e7332ad3b4760e0",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh": "d164c5af97d8a982891b330d02bd79870123b196e7917e50a5f99d8a46e5dd00",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh": "6fcdc1075adbc89427ed23c98457818b3ce080b8f53cf087570a3eac0ab7fb6a",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
+    "tools/personal_history_host/compat.hpp": "d147a0b672ea7bd737a77db88591cb314fce8d9da45d37ac36ae042bbabbc45a",
+    "tools/personal_history_host/drain.hpp": "939cdb22e6a738b8fd552b1e8fe11de8741a99a75aff8dbceb1ce4273ca8dc55",
+    "tools/personal_history_host/export_drain.hpp": "4ecd40071873a537ea446aaefcbc3dd2f6015561e558e734b79c723c59213ff4",
+    "tools/personal_history_host/cases.cpp": "04017df79fd13eb813dbc278f37f58a9b1a9bb263b6d21b6d6b43c4f6ea9f463",
+    "tools/personal_history_host/store_cases.cpp": "d2bacbced4c96aa71e8f05e2015d740639bcbbdcd1064f1dae0285da8a171548",
+    "tools/personal_history_host/export_cases.cpp": "37d5c58a888a684e388b4f8b7ff46cbf81898f304e27eb06ea71be4ce5045b3a",
+    "tools/personal_history_host/ui_seams.cpp": "13cce15b892d7880b07c6c4f3af906daf605a56cba053c58f2481bfda679c2c3",
+    "tools/personal_history_host/ui_cases.cpp": "3eaa2d3788fb6172dd511efbac193dfc1896119fa891c8839ba703916f98c2cb",
+    "tools/personal_history_host/controller_seams.cpp": "1e8643388c53215c7b568c05c981e4ddeeb1ead56503cbe67e11179de654d97d",
+    "tools/personal_history_host/controller_cases.cpp": "613c64a19e896592f907c7d737f0232b0d1f47de0904d6c249e30f9ff47441a3",
+    "tools/personal_history_host/terminal_seams.cpp": "165df2bca9859822eaf126b48aa1ff9829c980b0de2bb0142d4874f26ef7de42",
+    "tools/personal_history_host/terminal_cases.cpp": "2c8776be06c436c97d77f250507cfccdd3a8cc784c446c10dfbce4f3611af7b5",
+    "tools/jpw_personal_history_test.py": "3bfb155b1d30db69f165bd3500b7da89733469c3767cac942e808c4b3ecc2197",
+    "tools/jpw_personal_history_oracle.py": "4ff9a15984ec1ae6732123f6240f413025a697ac897dfc0700ff09f5ebeef88f",
+    "tests/fixtures/genetrix-personal-history/acceptance-v1.json": "58498de5802e4b989fcda76998e8ec4ccdff930d813430a54e01f339ae91c86c"
+  },
+  "sources_unchanged_during_execution": true,
+  "compile_command": [
+    "clang++",
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Wno-unused-parameter",
+    "-Wno-deprecated-declarations",
+    ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/source.cpp",
+    "-lsqlite3",
+    "-o",
+    ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/test"
+  ],
+  "compile_exit_code": 0,
+  "compile_log": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/compile.log",
+  "cases": [
+    {
+      "id": "HIS-AC01",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 4,
+      "sqlite_assertion_count": 9,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC01/execution.log"
+    },
+    {
+      "id": "HIS-AC02",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 1,
+      "sqlite_assertion_count": 7,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC02/execution.log"
+    },
+    {
+      "id": "HIS-AC03",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 7,
+      "sqlite_assertion_count": 18,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC03/execution.log"
+    },
+    {
+      "id": "HIS-AC04",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "PASS",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 4,
+      "sqlite_assertion_count": 13,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": 5,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC04/execution.log"
+    },
+    {
+      "id": "HIS-AC05",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 4,
+      "sqlite_assertion_count": 15,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC05/execution.log"
+    },
+    {
+      "id": "HIS-AC06",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 3,
+      "sqlite_assertion_count": 13,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC06/execution.log"
+    },
+    {
+      "id": "HIS-AC07",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 3,
+      "sqlite_assertion_count": 12,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC07/execution.log"
+    },
+    {
+      "id": "HIS-AC08",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 3,
+      "sqlite_assertion_count": 19,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC08/execution.log"
+    },
+    {
+      "id": "HIS-AC09",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 5,
+      "sqlite_assertion_count": 19,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC09/execution.log"
+    },
+    {
+      "id": "HIS-AC10",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 2,
+      "sqlite_assertion_count": 12,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC10/execution.log"
+    },
+    {
+      "id": "HIS-AC11",
+      "host_core": "NOT_RUN",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "PASS",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "PASS",
+      "ownership_evidence": [
+        {
+          "phase": "contend",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC11/cross-process-ownership/contend.log"
+        },
+        {
+          "phase": "hold/crash",
+          "exit_code": 99,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC11/cross-process-ownership/hold.log"
+        },
+        {
+          "phase": "takeover",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC11/cross-process-ownership/takeover.log"
+        }
+      ],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": null,
+      "sqlite_assertion_count": 11,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": 6,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC11/execution.log"
+    },
+    {
+      "id": "HIS-AC12",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "PASS",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 5,
+      "sqlite_assertion_count": 17,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": 13,
+      "terminal_assertion_count": null,
+      "financial_oracle": [
+        {
+          "input": {
+            "label": "first",
+            "gross": "1400",
+            "equity": "200",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "7"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "7",
+            "changed": 1
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "lower",
+            "gross": "1399.9999999",
+            "equity": "200",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "6.9999999995"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "6.9999999995",
+            "changed": 0
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "tie",
+            "gross": "1400",
+            "equity": "200",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "7"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "7",
+            "changed": 0
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "higher_without_rounding",
+            "gross": "1400.0000001",
+            "equity": "200",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "7.0000000005"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "7.0000000005",
+            "changed": 1
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "estimated_separate",
+            "gross": "1800",
+            "equity": "200",
+            "quality": "Estimated",
+            "eligible": true,
+            "ratio_exact": "9"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "9",
+            "changed": 2
+          },
+          "status": "PASS"
+        }
+      ],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC12/execution.log"
+    },
+    {
+      "id": "HIS-AC13",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 2,
+      "sqlite_assertion_count": 9,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [
+        {
+          "input": {
+            "label": "equity_before",
+            "gross": "1400",
+            "equity": "200",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "7"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "7",
+            "changed": 1
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "equity_falls_no_entry",
+            "gross": "1400",
+            "equity": "175",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "8"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "8",
+            "changed": 1
+          },
+          "status": "PASS"
+        }
+      ],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC13/execution.log"
+    },
+    {
+      "id": "HIS-AC14",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "PASS",
+      "terminal_json": [
+        {
+          "scenario": "quote-nan",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        },
+        {
+          "scenario": "quote-inf",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        },
+        {
+          "scenario": "spec-nan",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        },
+        {
+          "scenario": "spec-inf",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        },
+        {
+          "scenario": "profile-divisor-nan",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        },
+        {
+          "scenario": "profile-divisor-inf",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        },
+        {
+          "scenario": "gross-overflow",
+          "strict_json": "PASS",
+          "unavailable_semantics": "PASS"
+        }
+      ],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 6,
+      "sqlite_assertion_count": 6,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": 7,
+      "financial_oracle": [
+        {
+          "input": {
+            "label": "zero_equity",
+            "gross": "1400",
+            "equity": "0",
+            "quality": "N/A",
+            "eligible": true,
+            "ratio_exact": null
+          },
+          "actual": {
+            "accepted": false,
+            "ratio": "NA",
+            "changed": 0
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "negative_equity",
+            "gross": "1400",
+            "equity": "-1",
+            "quality": "N/A",
+            "eligible": true,
+            "ratio_exact": null
+          },
+          "actual": {
+            "accepted": false,
+            "ratio": "NA",
+            "changed": 0
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "missing_conversion",
+            "gross": "1400",
+            "equity": "200",
+            "quality": "N/A",
+            "eligible": false,
+            "ratio_exact": null
+          },
+          "actual": {
+            "accepted": false,
+            "ratio": "NA",
+            "changed": 0
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "partial_inventory",
+            "gross": "1400",
+            "equity": "200",
+            "quality": "N/A",
+            "eligible": false,
+            "ratio_exact": null
+          },
+          "actual": {
+            "accepted": false,
+            "ratio": "NA",
+            "changed": 0
+          },
+          "status": "PASS"
+        },
+        {
+          "input": {
+            "label": "confirmed_empty",
+            "gross": "0",
+            "equity": "200",
+            "quality": "Current",
+            "eligible": true,
+            "ratio_exact": "0"
+          },
+          "actual": {
+            "accepted": true,
+            "ratio": "0",
+            "changed": 1
+          },
+          "status": "PASS"
+        }
+      ],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC14/execution.log"
+    },
+    {
+      "id": "HIS-AC15",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 3,
+      "sqlite_assertion_count": 14,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC15/execution.log"
+    },
+    {
+      "id": "HIS-AC16",
+      "host_core": "PASS",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "PASS",
+      "recovery_evidence": [
+        {
+          "phase": "seed",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC16/cross-process-recovery/seed.log"
+        },
+        {
+          "phase": "crash",
+          "exit_code": 99,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC16/cross-process-recovery/crash.log"
+        },
+        {
+          "phase": "recover",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC16/cross-process-recovery/recover.log"
+        }
+      ],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": 3,
+      "sqlite_assertion_count": 16,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC16/execution.log"
+    },
+    {
+      "id": "HIS-AC17",
+      "host_core": "NOT_RUN",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": null,
+      "sqlite_assertion_count": 143,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC17/execution.log"
+    },
+    {
+      "id": "HIS-AC18",
+      "host_core": "NOT_RUN",
+      "host_sqlite": "PASS",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "PASS",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "PASS",
+      "recovery_evidence": [
+        {
+          "phase": "seed",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/cross-process-recovery/seed.log"
+        },
+        {
+          "phase": "crash",
+          "exit_code": 99,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/cross-process-recovery/crash.log"
+        },
+        {
+          "phase": "recover",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/cross-process-recovery/recover.log"
+        },
+        {
+          "phase": "seed",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/cross-process-called-recovery/seed.log"
+        },
+        {
+          "phase": "crash-called",
+          "exit_code": 99,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/cross-process-called-recovery/crash-called.log"
+        },
+        {
+          "phase": "recover-called",
+          "exit_code": 0,
+          "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/cross-process-called-recovery/recover-called.log"
+        }
+      ],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": null,
+      "sqlite_assertion_count": 15,
+      "export_assertion_count": null,
+      "ui_assertion_count": null,
+      "controller_assertion_count": 12,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC18/execution.log"
+    },
+    {
+      "id": "HIS-AC19",
+      "host_core": "NOT_RUN",
+      "host_sqlite": "NOT_RUN",
+      "host_export_restore": "PASS",
+      "host_ui_helpers": "NOT_RUN",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": null,
+      "sqlite_assertion_count": null,
+      "export_assertion_count": 35,
+      "ui_assertion_count": null,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC19/execution.log"
+    },
+    {
+      "id": "HIS-AC20",
+      "host_core": "NOT_RUN",
+      "host_sqlite": "NOT_RUN",
+      "host_export_restore": "NOT_RUN",
+      "host_ui_helpers": "PASS",
+      "host_controller_helpers": "NOT_RUN",
+      "host_terminal_serializer": "NOT_RUN",
+      "terminal_json": [],
+      "cross_process_crash_recovery": "NOT_RUN",
+      "recovery_evidence": [],
+      "cross_process_ownership": "NOT_RUN",
+      "ownership_evidence": [],
+      "full_acceptance": "NOT_RUN",
+      "executed_scope": "Named production Core/Store/Export/UI/Controller/Terminal serializer functions and instrumented primitive seams; see facet statuses and logs",
+      "assertion_count": null,
+      "sqlite_assertion_count": null,
+      "export_assertion_count": null,
+      "ui_assertion_count": 841,
+      "controller_assertion_count": null,
+      "terminal_assertion_count": null,
+      "financial_oracle": [],
+      "execution_exit_code": 0,
+      "evidence": ".superpowers/sdd/stoikus-continuity-20261014/task-2-original-final-03/host-4ir6cvu7/HIS-AC20/execution.log"
+    }
+  ],
+  "native_mql_compile": "NOT_RUN",
+  "native_ex5": "NOT_RUN",
+  "native_mt5_alert_sound": "NOT_RUN",
+  "native_terminal_races": "NOT_RUN",
+  "native_ui_events": "NOT_RUN",
+  "real_accounts_or_trades": "NOT_RUN",
+  "limits": "Host status applies only to named executed subcriteria. No whole-case acceptance is inferred from host or static wiring."
+}

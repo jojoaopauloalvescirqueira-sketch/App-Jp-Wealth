@@ -3,7 +3,8 @@
 #include <JPWealth/JPW_PersonalHistory_Terminal.mqh>
 #include <JPWealth/JPW_PersonalHistory_Store.mqh>
 // One observational producer; chart windows are only consumers. No trade calls.
-JPWPersonalStoreContext g_ph_store;
+JPWPersonalStoreContext g_ph_store,g_ph_recovery;
+bool g_ph_storage_failed=false,g_ph_revalidating=false;
 JPWPersonalEpisode g_ph_episodes[];
 JPWPersonalEvent g_ph_unwritten[];
 JPWPersonalPeak g_ph_current,g_ph_estimated_peak;
@@ -78,6 +79,7 @@ void JPWPersonalControllerDetach(const string why)
       JPWPersonalCoverage(g_ph_store,"SESSION_END",wall,mono,why);
      }
    JPWPersonalClose(g_ph_store,(long)TimeGMT(),GetTickCount64());
+   JPWPersonalOpenCancel(g_ph_recovery);
    if(g_ph_exclusive_file!=INVALID_HANDLE) FileClose(g_ph_exclusive_file);
    g_ph_exclusive_file=INVALID_HANDLE;
    if(g_ph_context!="" && g_ph_token!="")
@@ -87,7 +89,7 @@ void JPWPersonalControllerDetach(const string why)
   }
 bool JPWPersonalControllerAttach(const string key,const string token_seed)
   {
-   g_ph_store.db=INVALID_HANDLE; g_ph_store.writer=false; g_ph_exclusive_file=INVALID_HANDLE; g_ph_memory_state=false; g_ph_restored_once=false; g_ph_gap_noted=false; g_ph_persist_error_cycle=false; g_ph_owner_conflict=false;
+   JPWPersonalContextReset(g_ph_store); JPWPersonalContextReset(g_ph_recovery); g_ph_storage_failed=false; g_ph_revalidating=false; g_ph_exclusive_file=INVALID_HANDLE; g_ph_memory_state=false; g_ph_restored_once=false; g_ph_gap_noted=false; g_ph_persist_error_cycle=false; g_ph_owner_conflict=false;
    g_ph_context=key; g_ph_token=""; g_ph_loaded=false; g_ph_incomplete=false; g_ph_gap=false; g_ph_dirty=true;
    g_ph_pending_current=false; g_ph_pending_estimated=false; g_ph_notification_error=false;
    g_ph_current.valid=false; g_ph_estimated_peak.valid=false; g_ph_next_open=0;
@@ -140,66 +142,104 @@ void JPWPersonalControllerMergeRestored(JPWPersonalEpisode &restored[])
           else JPWPersonalControllerProblem("Recuperação de episódios incompleta",true); }
      }
   }
+void JPWPersonalControllerStoreState()
+  {
+   if(JPWPersonalOwnerLost(g_ph_store))
+     { g_ph_loaded=false; g_ph_owner_conflict=true; g_ph_storage_failed=false;
+       JPWPersonalTerminalReset(); g_ph_live_count=-1; JPWPersonalControllerBridge(4); }
+   else if(JPWPersonalNeedsReaudit(g_ph_store))
+     { g_ph_loaded=false; g_ph_revalidating=true; g_ph_storage_failed=false;
+       JPWPersonalOpenCancel(g_ph_store); JPWPersonalOpenCancel(g_ph_recovery); g_ph_next_open=0; }
+   else if(!g_ph_store.writer && (g_ph_store.phase==JPW_PH_FAILED || g_ph_store.result==JPW_STORE_IO_ERROR))
+     {
+      g_ph_loaded=false; g_ph_storage_failed=(g_ph_store.result==JPW_STORE_IO_ERROR);
+      if(g_ph_store.db!=INVALID_HANDLE && !JPWPersonalPreparing(g_ph_store))
+        { JPWPersonalOpenCancel(g_ph_store); g_ph_next_open=GetTickCount64()+5000; }
+     }
+  }
+void JPWPersonalControllerApplyRecovered(JPWPersonalEpisode &restored[],JPWPersonalPeak &current,JPWPersonalPeak &estimated)
+  {
+   JPWPersonalControllerMergeRestored(restored);
+   if(current.valid && (!g_ph_current.valid || current.leverage>=g_ph_current.leverage)) { g_ph_current=current; g_ph_pending_current=false; }
+   if(estimated.valid && (!g_ph_estimated_peak.valid || estimated.leverage>=g_ph_estimated_peak.leverage)) { g_ph_estimated_peak=estimated; g_ph_pending_estimated=false; }
+   g_ph_restored_once=true;
+  }
+int JPWPersonalControllerSliceBudget(const ulong cycle_started,ulong &slice_started)
+  {
+   slice_started=GetTickCount64(); if(slice_started<cycle_started || slice_started-cycle_started>=500) return(0);
+   int remaining=(int)(500-(slice_started-cycle_started)); return(remaining<JPW_PERSONAL_SLICE_MS ? remaining : JPW_PERSONAL_SLICE_MS);
+  }
+void JPWPersonalControllerRecoveryStep(const ulong cycle_started,const bool allow_begin)
+  {
+   if(g_ph_restored_once || g_ph_revalidating) return;
+   if(g_ph_recovery.db==INVALID_HANDLE)
+     { if(!allow_begin) return; JPWPersonalOpenBegin(g_ph_context,false,"",0,0,g_ph_recovery); }
+   JPWStoreResult read=g_ph_recovery.result;
+   if(JPWPersonalPreparing(g_ph_recovery))
+     { ulong slice_started=0; int budget=JPWPersonalControllerSliceBudget(cycle_started,slice_started);
+       if(budget>0) read=JPWPersonalOpenStep(g_ph_recovery,slice_started,budget,JPW_PERSONAL_SLICE_ROWS,0,0); }
+   if(read==JPW_STORE_VALID)
+     {
+      JPWPersonalEpisode saved[]; JPWPersonalPeak current,estimated;
+      bool loaded=JPWPersonalLoadAuditedFrom(g_ph_recovery,saved,current,estimated);
+      if(loaded) loaded=JPWPersonalReadFinish(g_ph_recovery,true);
+      if(loaded) JPWPersonalControllerApplyRecovered(saved,current,estimated);
+      JPWPersonalOpenCancel(g_ph_recovery);
+     }
+  }
 bool JPWPersonalControllerEnsureStore(const ulong timer_started)
   {
    const ulong mono=GetTickCount64(); const long wall=(long)TimeGMT();
+   JPWPersonalControllerStoreState();
    if(g_ph_owner_conflict) { JPWPersonalControllerBridge(4); return(false); }
    if(g_ph_loaded && g_ph_store.writer)
      {
       if(JPWPersonalKeepAlive(g_ph_store,wall,mono)) return(true);
-      if(!g_ph_store.writer)
-        { g_ph_loaded=false; g_ph_owner_conflict=true; JPWPersonalTerminalReset(); g_ph_live_count=-1;
-          JPWPersonalControllerProblem("Titularidade SQL mudou apesar do lock local; avisos e escrita suspensos até nova ativação",true);
-          JPWPersonalControllerBridge(4); }
-      else JPWPersonalControllerProblem(g_ph_store.reason,true);
+      JPWPersonalControllerStoreState();
+      if(g_ph_owner_conflict) JPWPersonalControllerProblem("Titularidade SQL mudou; avisos e escrita suspensos até nova ativação",true);
+      else if(!g_ph_revalidating) JPWPersonalControllerProblem(g_ph_store.reason,true);
       return(false);
      }
-   if(mono<g_ph_next_open || mono-timer_started>=500) return(false);
-   if(g_ph_store.db!=INVALID_HANDLE) JPWPersonalClose(g_ph_store,wall,mono);
-   if(!JPWPersonalOpen(g_ph_context,true,g_ph_token,wall,mono,g_ph_store))
+   ulong now=GetTickCount64(); if(now<timer_started || now-timer_started>=500) return(false);
+   if(g_ph_store.db==INVALID_HANDLE)
      {
-      g_ph_next_open=mono+5000;
-      // A surviving database lease may delay takeover after a crash. The
-      // exclusive handle still permits read-only recovery of its cooldown.
-      if(!g_ph_restored_once)
-        {
-         JPWPersonalStoreContext reader; JPWPersonalEpisode saved[]; JPWPersonalPeak current,estimated;
-         if(JPWPersonalOpen(g_ph_context,false,"",0,0,reader))
-           {
-            if(JPWPersonalLoad(reader,saved,current,estimated))
-              {
-               JPWPersonalControllerMergeRestored(saved);
-               if(current.valid && (!g_ph_current.valid || current.leverage>=g_ph_current.leverage))
-                  { g_ph_current=current; g_ph_pending_current=false; }
-               if(estimated.valid && (!g_ph_estimated_peak.valid || estimated.leverage>=g_ph_estimated_peak.leverage))
-                  { g_ph_estimated_peak=estimated; g_ph_pending_estimated=false; }
-               g_ph_restored_once=true;
-              }
-            JPWPersonalClose(reader,0,0);
-           }
-        }
-      if(g_ph_store.result==JPW_STORE_BUSY) { g_ph_live_count=-1; JPWPersonalControllerBridge(4); }
+      if(!g_ph_revalidating && mono<g_ph_next_open)
+         { JPWPersonalControllerRecoveryStep(timer_started,false); return(false); }
+      JPWPersonalOpenBegin(g_ph_context,true,g_ph_token,wall,mono,g_ph_store);
+     }
+   JPWStoreResult opened=g_ph_store.result; bool attempted=false;
+   if(JPWPersonalPreparing(g_ph_store))
+     {
+      // A pending owner/lock uses backoff; an active audit always advances.
+      if((g_ph_store.phase==JPW_PH_WAIT_OWNER || g_ph_store.phase==JPW_PH_TRANSACTION) && mono<g_ph_next_open) opened=JPW_STORE_BUSY;
+      else { ulong slice_started=0; int budget=JPWPersonalControllerSliceBudget(timer_started,slice_started);
+             if(budget>0) { attempted=true; opened=JPWPersonalOpenStep(g_ph_store,slice_started,budget,JPW_PERSONAL_SLICE_ROWS,wall,mono); } }
+     }
+   if(opened!=JPW_STORE_VALID)
+     {
+      bool waiting=JPWPersonalPreparing(g_ph_store);
+      if(waiting && attempted && (g_ph_store.phase==JPW_PH_WAIT_OWNER || g_ph_store.phase==JPW_PH_TRANSACTION)) g_ph_next_open=mono+5000;
+      if(!waiting) { g_ph_next_open=mono+5000; g_ph_storage_failed=(opened==JPW_STORE_IO_ERROR); }
+      // Recovery of cooldown has its own retained audited reader. No temporary
+      // merge is visible before the read transaction confirms consumption.
+      if(!g_ph_restored_once && !g_ph_revalidating && (g_ph_recovery.db!=INVALID_HANDLE || !waiting ||
+         g_ph_store.phase==JPW_PH_WAIT_OWNER || g_ph_store.phase==JPW_PH_TRANSACTION))
+         JPWPersonalControllerRecoveryStep(timer_started,true);
+      g_ph_live_count=-1;
+      if(waiting) JPWPersonalControllerBridge(g_ph_store.phase==JPW_PH_WAIT_OWNER ? 4 : 0);
       else JPWPersonalControllerProblem(g_ph_store.reason,true);
       return(false);
      }
-   JPWPersonalEpisode restored[]; JPWPersonalPeak restored_current,restored_estimated;
-   if(!JPWPersonalLoad(g_ph_store,restored,restored_current,restored_estimated))
-     { JPWPersonalControllerProblem(g_ph_store.reason,true); JPWPersonalClose(g_ph_store,wall,mono);
-       g_ph_next_open=mono+30000; return(false); }
-   JPWPersonalControllerMergeRestored(restored);
-   if(restored_current.valid && (!g_ph_current.valid || restored_current.leverage>=g_ph_current.leverage))
-      { g_ph_current=restored_current; g_ph_pending_current=false; }
-   if(restored_estimated.valid && (!g_ph_estimated_peak.valid || restored_estimated.leverage>=g_ph_estimated_peak.leverage))
-      { g_ph_estimated_peak=restored_estimated; g_ph_pending_estimated=false; }
-   g_ph_loaded=true; g_ph_restored_once=true;
-   if(!JPWPersonalCoverage(g_ph_store,"SESSION_START",wall,mono,
-      "Monitoramento a partir desta ativação; períodos anteriores/entre sessões não são cobertura comprovada"))
-      JPWPersonalControllerProblem(g_ph_store.reason,true);
-   // Explicit unknown interval on restart when previous financial state exists.
+   JPWPersonalEpisode restored[]; JPWPersonalPeak current,estimated;
+   if(!JPWPersonalLoadAuditedFrom(g_ph_store,restored,current,estimated))
+     { JPWPersonalControllerProblem("Recuperação auditada sem capacidade",true); JPWPersonalClose(g_ph_store,wall,mono); g_ph_next_open=mono+30000; return(false); }
+   JPWPersonalControllerApplyRecovered(restored,current,estimated); JPWPersonalOpenCancel(g_ph_recovery);
+   g_ph_loaded=true; g_ph_revalidating=false; g_ph_storage_failed=false; g_ph_next_open=0;
+   if(!JPWPersonalCoverage(g_ph_store,"SESSION_START",wall,mono,"Monitoramento a partir desta ativação; períodos anteriores/entre sessões não são cobertura comprovada"))
+     { JPWPersonalControllerProblem(g_ph_store.reason,true); JPWPersonalControllerStoreState(); return(false); }
    if(ArraySize(g_ph_episodes)>0 || g_ph_current.valid || g_ph_estimated_peak.valid)
-     { g_ph_gap=true;
-       if(!JPWPersonalCoverage(g_ph_store,"GAP",wall,mono,"Reinício/tomada de titularidade; continuidade anterior não demonstrada"))
-         JPWPersonalControllerProblem(g_ph_store.reason,true); }
+     { g_ph_gap=true; if(!JPWPersonalCoverage(g_ph_store,"GAP",wall,mono,"Reinício/tomada de titularidade; continuidade anterior não demonstrada"))
+         { JPWPersonalControllerProblem(g_ph_store.reason,true); JPWPersonalControllerStoreState(); return(false); } }
    return(true);
   }
 void JPWPersonalControllerCompletionEvidence(JPWPersonalEvent &events[],const ulong started)
@@ -224,14 +264,16 @@ bool JPWPersonalControllerPersist(JPWPersonalCapture &capture)
   {
    const int changed=(g_ph_pending_current ? 1 : (g_ph_pending_estimated ? 2 : 0));
    if(!JPWPersonalCommit(g_ph_store,capture,g_ph_episodes,g_ph_unwritten,g_ph_current,g_ph_estimated_peak,changed))
-     { JPWPersonalControllerProblem(g_ph_store.reason,true); return(false); }
+     { JPWPersonalControllerProblem(g_ph_store.reason,true); JPWPersonalControllerStoreState(); return(false); }
    if(changed==1) g_ph_pending_current=false; if(changed==2) g_ph_pending_estimated=false;
    ArrayResize(g_ph_unwritten,0); JPWPersonalControllerCompact();
    return(true);
   }
 void JPWPersonalControllerNotifyDue(JPWPersonalCapture &capture,int &due[],const ulong started)
   {
-   if(ArraySize(due)==0 || g_ph_owner_conflict) return;
+   JPWPersonalControllerStoreState();
+   if(ArraySize(due)==0 || g_ph_owner_conflict || g_ph_revalidating || JPWPersonalPreparing(g_ph_store) || JPWPersonalPreparing(g_ph_recovery) ||
+      (!g_ph_restored_once && !g_ph_storage_failed)) return;
    // Reconcile indices refer to the un-compacted projection. Called before a
    // successful persistence compacts memory. No index is used after compaction.
    int verified[]; string payload="[",message="Stoikus — sem SL registrado na corretora";
@@ -253,22 +295,28 @@ void JPWPersonalControllerNotifyDue(JPWPersonalCapture &capture,int &due[],const
    // Capture monetary values remain frozen; the notification schedule uses the
    // actual request instant and fresh exact-ticket SL readings above.
    capture.wall_seconds=(long)TimeGMT(); capture.mono_ms=GetTickCount64();
-   for(int i=0;i<ArraySize(verified);i++) JPWPersonalMarkRequested(capture,g_ph_episodes[verified[i]]);
+   JPWPersonalEpisode requested[]; int count=ArraySize(g_ph_episodes);
+   if(ArrayResize(requested,count)!=count) { JPWPersonalControllerProblem("Pedido do aviso sem memória",true); return; }
+   for(int i=0;i<count;i++) requested[i]=g_ph_episodes[i];
+   for(int i=0;i<ArraySize(verified);i++) JPWPersonalMarkRequested(capture,requested[verified[i]]);
    payload+="]"; message+="\nOcorrências: "+JPWPersonalInt(ArraySize(verified))+". Reaviso em 60s após nova verificação.";
    string group=""; JPWPersonalHash(g_ph_context+"|"+g_ph_token+"|"+JPWPersonalInt((long)capture.mono_ms)+"|"+payload,group);
-   bool intent=g_ph_loaded && g_ph_store.writer && JPWPersonalNotify(g_ph_store,group,"INTENT",capture.wall_seconds,capture.mono_ms,payload,g_ph_episodes);
+   bool intent=g_ph_loaded && g_ph_store.writer && JPWPersonalNotify(g_ph_store,group,"INTENT",capture.wall_seconds,capture.mono_ms,payload,requested);
    if(!intent)
      {
       JPWPersonalControllerProblem("Histórico incompleto — intenção do aviso não persistida: "+g_ph_store.reason,true);
       // The retained exclusive handle still proves the local producer fence.
       // Explicit SQL-owner conflict overrides it and suspends all channels.
-      if(g_ph_loaded && !g_ph_store.writer) { g_ph_owner_conflict=true; return; }
+      JPWPersonalControllerStoreState();
+      if(g_ph_owner_conflict || g_ph_revalidating || !g_ph_storage_failed) return;
       if(g_ph_exclusive_file==INVALID_HANDLE) return;
       message+="\nHistórico incompleto — gravação não confirmada.";
      }
+   if(intent) for(int i=0;i<count;i++) g_ph_episodes[i]=requested[i];
    string key="",currency="";
    if(!JPWPersonalTerminalIdentity(key,currency) || key!=g_ph_context || !TerminalInfoInteger(TERMINAL_CONNECTED))
      { g_ph_gap=true; return; }
+   if(!intent) for(int i=0;i<count;i++) g_ph_episodes[i]=requested[i];
    bool channel_error=false;
    const string result=JPWPersonalTerminalNotify(message,channel_error);
    // Alert() has no acknowledgement. CALLED records the function request only.
@@ -288,6 +336,7 @@ void JPWPersonalControllerNotifyDue(JPWPersonalCapture &capture,int &due[],const
          JPWPersonalControllerQueue(errors);
       else JPWPersonalControllerProblem("Histórico incompleto — falha do canal não registrada por memória",true);
      }
+   JPWPersonalControllerStoreState();
    g_ph_notification_error=channel_error;
   }
 void JPWPersonalControllerTick(const ulong started)
@@ -359,7 +408,7 @@ void JPWPersonalControllerTick(const ulong started)
      { ArrayResize(g_ph_unwritten,0); if(pending==1) g_ph_pending_current=false; if(pending==2) g_ph_pending_estimated=false; }
    else
      { JPWPersonalControllerProblem(g_ph_store.reason,true);
-       if(g_ph_loaded && !g_ph_store.writer) g_ph_owner_conflict=true; }
+       JPWPersonalControllerStoreState(); }
    JPWPersonalControllerNotifyDue(capture,due,started);
    if(stored) JPWPersonalControllerCompact();
    if(g_ph_gap && GetTickCount64()-started<500 && g_ph_store.writer)

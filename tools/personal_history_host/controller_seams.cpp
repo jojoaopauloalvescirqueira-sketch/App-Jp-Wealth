@@ -10,3 +10,8 @@ bool JPWPersonalTerminalIdentity(string& key,string& currency){key=g_ph_context;
 bool JPWPersonalTerminalNoSLNow(const string&,JPWPersonalSubject&){return host_no_sl;}
 void JPWPersonalControllerBridge(int){}
 void JPWPersonalTerminalReset(){}
+
+JPWPersonalCapture host_controller_capture;std::vector<JPWPersonalSubject> host_controller_subjects;bool host_controller_capture_ready=true;
+bool JPWPersonalControllerExclusive(){return g_ph_exclusive_file!=INVALID_HANDLE;}
+bool JPWPersonalTerminalCaptureStep(const string&,ulong,JPWPersonalCapture &capture,std::vector<JPWPersonalSubject>&subjects,bool &ready,string &reason){capture=host_controller_capture;capture.wall_seconds=TimeGMT();capture.mono_ms=GetTickCount64();capture.started_msc=capture.wall_seconds*1000;capture.finished_msc=capture.started_msc+1;subjects=host_controller_subjects;ready=host_controller_capture_ready;reason="";return true;}
+bool JPWPersonalTerminalCompletionProof(JPWPersonalSubject&,string&,string&){return false;}

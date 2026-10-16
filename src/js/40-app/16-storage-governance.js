@@ -374,6 +374,7 @@ renderDgBackupBanner();
 // Apenas atualização de apresentação. Sem gravação, novo prazo ou consultas externas.
 // Um listener por script carregado; preserva o foco dos controles já exibidos.
 function dgRefreshStatusPresentation(){
+  try{window.JPWNotifications?.invalidate('system');}catch(_){}
   if(document.hidden) return;
   renderDgBackupBanner();
   if(typeof renderSystemStatus==='function') renderSystemStatus();

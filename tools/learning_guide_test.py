@@ -655,6 +655,23 @@ def research_drafts(page,row):
     row['acceptedPublications']=page.evaluate('__lgNav')
     page.evaluate('__lgUnsub()')
 
+# The original106 classic-script path identities and order in base0037bd3.
+# A single planned download loader may precede its tools-services consumer.
+ORIGINAL_SCRIPT_PATHS_SHA256 = '40a619eac3b449f7e0704d8aa2be46f38280902d0340f961e898057d22b36c82'
+DOWNLOAD_LOADER = 'src/js/00-core/10-download-assets.js'
+DOWNLOAD_CONSUMER = 'src/js/20-ui/31-tools-services.js'
+
+def assert_startup_scripts(root,scripts,expected):
+    original=[path for path in expected if path!=DOWNLOAD_LOADER]
+    assert len(original)==106 and hashlib.sha256('\n'.join(original).encode()).hexdigest()==ORIGINAL_SCRIPT_PATHS_SHA256,{'original':original}
+    assert scripts==expected and scripts[-4:]==MODULES,{'scripts':scripts,'manifest':expected}
+    if DOWNLOAD_LOADER in expected:
+        assert len(expected)==107 and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
+        assert (Path(root)/DOWNLOAD_LOADER).is_file(),'Declared download loader source is missing'
+        assert expected.index(DOWNLOAD_LOADER)+1==expected.index(DOWNLOAD_CONSUMER),'Download loader must immediately precede tools-services'
+    else:
+        assert len(expected)==106,expected
+
 def startup_surface(page,row):
     assert page.evaluate("!!(JPWLearningGuide&&JPWLearningProgress&&JPWLearningCatalog&&JPWLearningView)")
     start(page,'basics');click(page,'#jpwLearningUnderstand');seen(page,'basics-home')
@@ -662,7 +679,7 @@ def startup_surface(page,row):
     if not row['config'].get('surface'):
         scripts=page.evaluate('[...document.scripts].map(x=>x.getAttribute("src")).filter(x=>x&&x!=="build-id.js")')
         expected=[item['path'] for item in json.loads((Path(row['root'])/'src/js/manifest.json').read_text())['files']]
-        assert len(expected)==106 and scripts==expected and scripts[-4:]==MODULES,{'scripts':scripts,'manifest':expected}
+        assert_startup_scripts(row['root'],scripts,expected)
         row['classicScriptCount']=len(scripts);row['sourceJSCount']=sum(x.startswith('src/js/') for x in scripts)
     row['startupFacade']=True
 
@@ -828,7 +845,7 @@ def case_list():
     cases += [('native-contextual-help',contextual_help,{}),('native-pending-account-guard',account_guard,{}),
       ('native-research-draft-preservation-local-refusal',research_drafts,{}),('actual-backup-excludes-guide',backup,{}),
       ('actual-backup-import-pauses-invalidates-practice',import_revalidation,{}),
-      ('startup-source-106',startup_surface,{}),('startup-portable-http',startup_surface,{'surface':'portable-http'}),
+      ('startup-source-manifest',startup_surface,{}),('startup-portable-http',startup_surface,{'surface':'portable-http'}),
       ('startup-portable-file',startup_surface,{'surface':'portable-file'}),('offline-sw-four-guide-modules',offline,{'service_workers':'allow'})]
     cases += [(kind,lambda p,r,k=kind:viewport_events(p,r,k),{})
       for kind in ['nested-scroll','reflow-200-equivalent','visualViewport-shrink']]

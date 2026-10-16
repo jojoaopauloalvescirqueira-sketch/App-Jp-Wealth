@@ -2,7 +2,7 @@ void controller_case(const string& id){
 if(id!="HIS-AC18"&&id!="HIS-AC11"&&id!="HIS-AC04"&&id!="HIS-AC12"){Print("CONTROLLER_NOT_RUN|",id);return;}int start=host_asserts;
 // Use a distinct namespace so this facet does not reuse earlier case state.
 PersonalFixture f;JPWPersonalHash("synthetic-controller-account",f.key);f.capture.account_key=f.key;f.open();f.observe();f.commit();
-g_ph_store=f.context;g_ph_context=f.key;g_ph_token=f.token;g_ph_episodes=f.episodes;g_ph_loaded=true;g_ph_exclusive_file=123;
+g_ph_store=f.context;g_ph_context=f.key;g_ph_token=f.token;g_ph_episodes=f.episodes;g_ph_loaded=true;g_ph_restored_once=true;g_ph_storage_failed=false;g_ph_revalidating=false;g_ph_owner_conflict=false;g_ph_exclusive_file=123;
 g_ph_current=f.current;g_ph_estimated_peak=f.estimated;g_ph_unwritten.clear();g_ph_pending_current=false;g_ph_pending_estimated=false;
 host_alert_calls=0;host_sound_calls=0;host_no_sl=true;host_identity_ok=true;host_test_mode=false;host_sound_ok=true;
 if(id=="HIS-AC12"){

@@ -129,7 +129,9 @@ def integrated(page,out,case):
     assert page.locator('#fxcTab-risks').inner_text()=='Risco'
     text=page.locator('#fxcPanel-account').inner_text().lower()
     assert 'saldo' in text and ('desde a origem' in text or 'desde o início' in text)
+    page.locator('#fxcTab-risks').click()
     assert 'caixa' in page.locator('#fxcRiskBasis').text_content().lower(),'Balance DD must disclose cashflow effects'
+    page.locator('#fxcTab-account').click()
     main=curve(page);main.locator('svg [data-fxc-point]').nth(4).hover();settle(page)
     assert main.get_attribute('data-selected-point')==curve(page,'drawdown').get_attribute('data-selected-point')=='4'
     assert main.get_attribute('data-selected-ticket')==curve(page,'drawdown').get_attribute('data-selected-ticket')

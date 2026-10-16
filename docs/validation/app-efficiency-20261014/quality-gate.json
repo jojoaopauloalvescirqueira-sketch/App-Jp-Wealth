@@ -1,0 +1,593 @@
+{
+  "schema_version": 1,
+  "tier": "full",
+  "full_evidence_directory": "/private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961",
+  "started_at": "2026-10-14T19:52:57-03:00",
+  "finished_at": "2026-10-14T20:11:11-03:00",
+  "git": {
+    "branch": "codex/app-efficiency-20261014",
+    "head": "0037bd3c8a7ab2b4e21f7fdcb60f66ed93230874",
+    "dirty": true,
+    "status": [
+      "M build-id.js",
+      " M dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      " M docs/architecture/FOREX-EXECUTION-BOARD.md",
+      " M docs/architecture/NOCUDA-TOOLS.md",
+      " M docs/architecture/NOTIFICATION-CENTER.md",
+      " M docs/architecture/PWA-UPDATE-LIFECYCLE.md",
+      " M index.html",
+      " M src/js/10-domain/00-forex-state.js",
+      " M src/js/10-domain/12-personal-finance.js",
+      " M src/js/10-domain/13-alladin.js",
+      " M src/js/20-ui/03-main-render.js",
+      " M src/js/20-ui/13-exec-views.js",
+      " M src/js/20-ui/26-forex-engine-views.js",
+      " M src/js/20-ui/28-fx-consolidated.js",
+      " M src/js/20-ui/30-execution-board.js",
+      " M src/js/20-ui/31-tools-services.js",
+      " M src/js/40-app/01-navigation.js",
+      " M src/js/40-app/06-boot.js",
+      " M src/js/40-app/09-settings-modal.js",
+      " M src/js/40-app/16-storage-governance.js",
+      " M src/js/40-app/18-notification-center.js",
+      " M src/js/manifest.json",
+      " M sw.js",
+      " M tools/build_reproducibility_test.py",
+      " M tools/forex_professional_panel_test.py",
+      " M tools/learning_guide_test.py",
+      " M tools/nocuda_tools_test.py",
+      " M tools/quality_gate.py",
+      " M tools/rebuild_monolith.py",
+      " M tools/stoikus_download_test.js",
+      "?? docs/architecture/APP-EFFICIENCY.md",
+      "?? src/js/00-core/10-download-assets.js",
+      "?? src/vendor/downloads/",
+      "?? tools/app_efficiency_test.py",
+      "?? tools/consolidated_efficiency_test.py",
+      "?? tools/download_assets_browser_test.py",
+      "?? tools/download_assets_test.js",
+      "?? tools/forex_execution_efficiency_test.py",
+      "?? tools/notification_efficiency_test.py"
+    ]
+  },
+  "summary": {
+    "PASS": 75,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "raw_report": {
+    "path": "tools/.artifacts/app-efficiency-work/full3.json",
+    "sha256": "4226cd4da6dcde9843216da911d5b0393176dcc371979f1d81187879b57bdc93"
+  },
+  "candidate_build": "4b6cf8e71b699b13",
+  "checks": [
+    {
+      "name": "preflight",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/agent_preflight.py --mode audit --allow-dirty",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.172
+    },
+    {
+      "name": "structure",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/validate_project.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.323
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.24
+    },
+    {
+      "name": "preflight-context",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/preflight_context_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.347
+    },
+    {
+      "name": "navigation-ia",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/navigation_ia_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.641
+    },
+    {
+      "name": "dashboard-macro",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/dashboard_macro_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 28.171
+    },
+    {
+      "name": "research-navigation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/research_navigation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.805
+    },
+    {
+      "name": "smoke",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/smoke_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.625
+    },
+    {
+      "name": "settings",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/settings_modal_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 18.935
+    },
+    {
+      "name": "brand-identity-contract",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/brand_identity_contract_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.805
+    },
+    {
+      "name": "brand-identity-browser",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/brand_identity_browser_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.397
+    },
+    {
+      "name": "statute-documentary",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/statute_documentary_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.877
+    },
+    {
+      "name": "galton-board",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/galton_board_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.694
+    },
+    {
+      "name": "fx-planning",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/fx_planning_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.112
+    },
+    {
+      "name": "exec-submenu",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/exec_submenu_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 11.591
+    },
+    {
+      "name": "nocoda",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/nocoda_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.525
+    },
+    {
+      "name": "pivot-studies",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/pivot_studies_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.435
+    },
+    {
+      "name": "order-guards",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/order_guards_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.061
+    },
+    {
+      "name": "operation-identity",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/operation_identity_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.568
+    },
+    {
+      "name": "operation-finalize",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/operation_finalize_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.574
+    },
+    {
+      "name": "operation-history",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/operation_history_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.605
+    },
+    {
+      "name": "operation-wiring",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/operation_wiring_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.056
+    },
+    {
+      "name": "phases-visibility",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/phases_visibility_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.591
+    },
+    {
+      "name": "exec-three-column",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/exec_three_column_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.662
+    },
+    {
+      "name": "finpes-foundation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_foundation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.855
+    },
+    {
+      "name": "finpes-finalize-preservation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_finalize_preservation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.943
+    },
+    {
+      "name": "finpes-backup-roundtrip",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_backup_roundtrip_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.224
+    },
+    {
+      "name": "finpes-navigation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_navigation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.825
+    },
+    {
+      "name": "finpes-budget",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_budget_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 17.445
+    },
+    {
+      "name": "finpes-debt-credit",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_debt_credit_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 14.602
+    },
+    {
+      "name": "finpes-comparison",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_comparison_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.284
+    },
+    {
+      "name": "finpes-scenarios",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_scenarios_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 36.419
+    },
+    {
+      "name": "finpes-overview",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finpes_overview_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.781
+    },
+    {
+      "name": "usd-brl-quote",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/usd_brl_quote_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.72
+    },
+    {
+      "name": "alladin-unit",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_unit_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.509
+    },
+    {
+      "name": "alladin-ledger",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_ledger_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.548
+    },
+    {
+      "name": "alladin-position",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_position_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.441
+    },
+    {
+      "name": "alladin-foundation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_foundation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 23.024
+    },
+    {
+      "name": "alladin-finalize-preservation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_finalize_preservation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 33.657
+    },
+    {
+      "name": "session-epoch-protocol",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/session_epoch_protocol_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 18.232
+    },
+    {
+      "name": "session-write-serialization",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/session_write_serialization_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 19.199
+    },
+    {
+      "name": "alladin-ui-readonly",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_ui_readonly_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.859
+    },
+    {
+      "name": "alladin-ui-crud",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_ui_crud_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 43.547
+    },
+    {
+      "name": "alladin-ui-ledger",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_ui_ledger_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 26.258
+    },
+    {
+      "name": "alladin-ui-tx-write",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_ui_tx_write_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.95
+    },
+    {
+      "name": "alladin-ui-tx-reverse",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/alladin_ui_tx_reverse_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.921
+    },
+    {
+      "name": "session-finalization",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/finalize_session_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 57.663
+    },
+    {
+      "name": "storage-governance",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/storage_governance_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.812
+    },
+    {
+      "name": "persistence-failure",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/persistence_failure_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 31.641
+    },
+    {
+      "name": "persistence-recovery",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/persistence_recovery_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 47.287
+    },
+    {
+      "name": "investor-password",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/investor_password_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.951
+    },
+    {
+      "name": "import-xss",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/import_xss_security_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 19.39
+    },
+    {
+      "name": "state-integrity",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/state_integrity_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.691
+    },
+    {
+      "name": "async-generation",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/async_generation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.609
+    },
+    {
+      "name": "build-reproducibility",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/build_reproducibility_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 32.904
+    },
+    {
+      "name": "service-worker-upgrade",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/service_worker_upgrade_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 16.929
+    },
+    {
+      "name": "mvp-notes",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/mvp_notes_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 52.69
+    },
+    {
+      "name": "notification-center",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/notification_center_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 15.837
+    },
+    {
+      "name": "notification-efficiency",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/notification_efficiency_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 16.421
+    },
+    {
+      "name": "consolidated-efficiency",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/consolidated_efficiency_test.py --out /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/consolidated.json",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.961
+    },
+    {
+      "name": "consolidated-model",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/fx_consolidated_model_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.002
+    },
+    {
+      "name": "consolidated-storage",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/fx_consolidated_storage_test.py --out /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/consolidated-storage.json",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 17.284
+    },
+    {
+      "name": "consolidated-ui",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/fx_consolidated_ui_test.py --output /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/consolidated-ui.json",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.475
+    },
+    {
+      "name": "forex-professional-panel",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_professional_panel_test.py --out /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/professional-panel --native-zoom",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 40.59
+    },
+    {
+      "name": "execution-efficiency",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_execution_efficiency_test.py --artifacts /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/rows",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.647
+    },
+    {
+      "name": "execution-table",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_execution_table_test.py --artifacts /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/table --native-zoom",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 22.382
+    },
+    {
+      "name": "execution-workbook",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_execution_workbook_test.py --out /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/workbook",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 39.645
+    },
+    {
+      "name": "execution-proportions",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_execution_proportions_test.py --out /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/proportions",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 27.853
+    },
+    {
+      "name": "forex-context",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_context_bar_test.py --output /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/context.json",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.903
+    },
+    {
+      "name": "forex-navigation-journey",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/forex_navigation_journey_test.py --output /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/journey.json",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.114
+    },
+    {
+      "name": "learning-guide",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/learning_guide_test.py --out /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/guide.json --baseline-root '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/99B - SOFTWARES & EAS/JP Wealth OS'",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 101.183
+    },
+    {
+      "name": "nocuda-tools",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/nocuda_tools_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 10.008
+    },
+    {
+      "name": "stoikus-downloads",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/stoikus_download_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.184
+    },
+    {
+      "name": "download-assets-unit",
+      "command": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/download_assets_test.js",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.047
+    },
+    {
+      "name": "download-assets-browser",
+      "command": "/private/tmp/jpw-quality-audit-20261012-01a131dc/runtime/bin/python tools/download_assets_browser_test.py --out-dir /private/tmp/jpw-app-efficiency-20261014/tools/.artifacts/app-efficiency-full-20261014T195257124961/downloads",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.445
+    }
+  ]
+}

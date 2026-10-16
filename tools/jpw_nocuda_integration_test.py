@@ -262,6 +262,8 @@ ulong mock_ms=0;
 ulong GetTickCount64() { return mock_ms; }
 struct Record { int revision=0; string study_id="study-A"; };
 string g_nocuda_prefix="JPWNC_TEST_", g_nocuda_status="";
+// This callback replay starts with an admitted, successfully initialized instance.
+bool g_nocuda_resources_admitted=true,g_nocuda_initialized=true;
 string g_nocuda_preferred_study="";
 bool g_nocuda_panel_open=true, g_nocuda_is_draft=false;
 bool g_nocuda_visible=true, g_nocuda_full_mesh=true;
@@ -316,7 +318,7 @@ bool EventChartCustom(int,int,long,double,const string&owner){focus_events.push_
 bool g_ncf_mode=false;int ncf_dispatch_calls=0;
 bool JPWNCFHandleEvent(int,const long&,const double&,const string&){ncf_dispatch_calls++;return g_ncf_mode;}
 int shift_key=0;
-int TerminalInfoInteger(int) { return shift_key; }
+int TerminalInfoInteger(int p) { return p==TERMINAL_KEYSTATE_SHIFT?shift_key:96; }
 int ObjectGetInteger(int,const string&name,int property) { if(property==OBJPROP_TYPE)return focus_types.count(name)?focus_types[name]:OBJ_LABEL;return 0; }
 string JPWNoCudaUIFocusCycle(const string& prefix,const string&,bool reverse) { return prefix+(reverse ? "UI_CLOSE" : "UI_PAGE_NEXT"); }
 constexpr int OBJPROP_TEXT=1;
@@ -657,6 +659,16 @@ int main() {
  v.study_id="SYNTHETIC-001";v.study_count=2;v.study_index=0;v.revision=2;v.head_revision=3;
  v.history_text="Confirmado em 2026.09.30 14:16:20 UTC (computador).";
  int failures=0,checks=0;
+ // The shared signature is taller than the former wordmark. The manual title
+ // must reserve its native DPI height without overlapping the stage/status.
+ for(int scale:{100,125,150,200}) {
+  chart_width=2880;chart_height=1800;measured_line=12*scale/100;v.tab=0;
+  JPWNoCudaUIRender("JPWNC_TEST_",v);
+  const auto mark=controls.find("JPWNC_TEST_UI_BRAND_LOGO");++checks;
+  if(mark==controls.end()) {++failures;std::cerr<<"FAIL manual header lacks approved signature\n";continue;}
+  ++checks;if(mark->second.w!=240*scale/100||mark->second.h!=28*scale/100) {++failures;std::cerr<<"FAIL manual signature DPI dimensions\n";}
+  ++checks;if(controls.at("JPWNC_TEST_UI_STAGE").y<mark->second.y+mark->second.h) {++failures;std::cerr<<"FAIL manual title overlaps stage\n";}
+ }
  for(int width:{300,390,800,1440}) for(int height:{380,390,400,402,420,499,500,520,560,700})
   for(int measured:{12,16,20,26,32}) for(int dark:{0,1}) for(int tab=0;tab<3;tab++) {
    chart_width=width;chart_height=height+24;measured_line=measured;background=dark ? 0x101010 : 0xffffff;
@@ -1179,7 +1191,9 @@ class NoCudaIntegration(unittest.TestCase):
             source = Path(temp) / "actions.cpp"
             binary = Path(temp) / "actions"
             focus=(UI.parent/"JPW_UI_Focus.mqh").read_text()
-            source.write_text(ACTION_SHIM.replace("OBJ_BUTTON=3", "OBJ_BUTTON=3,OBJ_EDIT=4").replace("OBJPROP_SELECTABLE=13;", "OBJPROP_SELECTABLE=13,OBJPROP_SELECTED=14;") + focus + production + ACTION_CASES,
+            from stoikus_window_nocuda_host import manual_window,fibo_cancel
+            window=manual_window(ACTION_SHIM)+"bool g_fc_gesture=false,g_fc_mouse_down=false;\n"+fibo_cancel()
+            source.write_text(ACTION_SHIM.replace("OBJ_BUTTON=3", "OBJ_BUTTON=3,OBJ_EDIT=4").replace("OBJPROP_SELECTABLE=13;", "OBJPROP_SELECTABLE=13,OBJPROP_SELECTED=14;") + window + focus + production + ACTION_CASES,
                               encoding="utf-8")
             compile_result = subprocess.run(
                 [compiler, "-std=c++17", "-Wall", "-Wextra", "-Werror",
@@ -1389,13 +1403,15 @@ int main() {{
         # optional JSON preview of the production presenter objects.
         production = re.sub(r"C'(\d+),(\d+),(\d+)'", lambda m: str(int(m[1])+(int(m[2])<<8)+(int(m[3])<<16)), production)
         panel_source=(INCLUDE / "JPW_Alavancagem_Panel.mqh").read_text(encoding="utf-8")
-        production += "\n" + re.search(r"struct JPWPanelRect\s*\{.*?\};",panel_source,flags=re.DOTALL)[0]
-        production += "\n" + function(panel_source,"JPWPanelClamp") + "\n" + function(panel_source,"JPWPanelHUD") + "\n" + function(panel_source,"JPWPanelHUDReservedWidth")
+        # The actual UI graph now includes Panel and Window directly.
+        assert "struct JPWPanelRect" in production and "JPWPanelHUDReservedWidth(" in production
         production += "\n" + function(self.indicator,"JPWNoCudaReadJustification")
+        from stoikus_window_nocuda_host import full_ui_native,manual_signature_fixture
+        ui_native=full_ui_native()
         with tempfile.TemporaryDirectory(prefix="jpw-nocuda-ui-") as temp:
             source = Path(temp) / "ui.cpp"
             binary = Path(temp) / "ui"
-            source.write_text(complete_design_shim(UI_SHIM.replace("constexpr int OBJPROP_FONT=101", "constexpr int OBJPROP_READONLY=105;\nconstexpr int OBJPROP_FONT=101")) + translate_arrays(production) + UI_CASES,
+            source.write_text(complete_design_shim(UI_SHIM.replace("constexpr int OBJPROP_FONT=101", "constexpr int OBJPROP_READONLY=105;\nconstexpr int OBJPROP_FONT=101")) + ui_native + translate_arrays(production) + manual_signature_fixture(UI_CASES),
                               encoding="utf-8")
             compile_result = subprocess.run(
                 [compiler, "-std=c++17", "-Wall", "-Wextra", "-Werror",

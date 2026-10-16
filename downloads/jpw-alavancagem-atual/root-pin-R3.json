@@ -1,0 +1,39 @@
+{
+  "kind": "JPW_STOIKUS_UI_NATIVE_KIT_ROOT_PIN",
+  "candidate": "1.22.2-interface",
+  "status": "SEALED_SOURCE_ONLY",
+  "freeze_id": "stoikus-interface-R3",
+  "root_freeze_sha256": "735acfe5c7413b8e261506d35a4379bda0b12b9e6dcdfd19628ce0e0937650e6",
+  "mql_source_fingerprint": "33a981e42cd741a2c3db57e496ad63f36465180f08f166649e10b897cd21c15b",
+  "interface_fingerprint": "7855ecbb158fbfcdd017449943371570349caa929979c279c9bea4b07fd2a63e",
+  "runtime_build_id": "1bc02d97bdf034e824df726debb7087193a9fbb7cc1ebbad3c15dc7e83894100",
+  "calculation_version": "1.9.0",
+  "source_zip_sha256": "30399033a29403ab2d9c84cb799ae872a1acf312b7e2bcb0e10a6dacce70b183",
+  "kit_package_filename": "Kit_Windows_Stoikus_Interface.zip",
+  "kit_package_sha256": "c584076a3b1450bb5c0e0a17aaefce903291737a2c245833860942d10286ef97",
+  "host_receipt_sha256": "7ddcafc6fc42f494a8c9987410c00efad243e35a0973d21a64ca58401de1c9ef",
+  "files_sha256": {
+    "Compile-Stoikus-UI.ps1": "053728d2086fc6e1ccf4649bbd3677982ef42c623c2e1b79c53525736aee86f9",
+    "JPW_Stoikus_Uso_Fontes_v1.22.2_interface.zip": "30399033a29403ab2d9c84cb799ae872a1acf312b7e2bcb0e10a6dacce70b183",
+    "LEIA-PRIMEIRO.md": "497c599dce747bbe30f8d1791dd33ab5e18830f6d5fa4078bfe16bb68cd7ec4b",
+    "NativeKit.Core.ps1": "2dba568c184e31f1e28814c706d3e6a9459fe4e45524e33b52db14c0776ed542",
+    "Test-NativeUI-Kit.ps1": "d5665cf5b2e1f2948976257fe37f97f6fa346881efac667688dfe473eae9e0a5",
+    "identity.schema.json": "388271696ef1ad5312e9bfe43c4d19b5b2747da3b8653f3f694501560955f8d3",
+    "source-freeze-R3.json": "735acfe5c7413b8e261506d35a4379bda0b12b9e6dcdfd19628ce0e0937650e6",
+    "stoikus-1.22.2-interface.identity.json": "8b870f4a9321091d1ec69ef1758d9c59245f86b1da72af0d91409f11bd1c393d",
+    "verify_native_ui_kit.py": "0eb9de68f1a1cdede2b910d0d30e80c03f407b9ff63900a7e23b2900805ed3d3"
+  },
+  "reviews": {
+    "source_and_manifest": "PASS",
+    "host_full_48": "PASS",
+    "python_independent_byte_check": "PASS",
+    "negative_tamper_fixtures": "PASS_5_REJECTED",
+    "powershell_static_review": "PENDING_INDEPENDENT_REVIEW",
+    "windows_power_shell_fixtures": "NOT_RUN",
+    "mt5_compilation": "NOT_RUN",
+    "mt5_demo_runtime": "NOT_RUN",
+    "independent_windows_x64": "NOT_RUN",
+    "owner_acceptance": "NOT_RUN",
+    "receipt_binding_host_model": "PASS_11_SYNTHETIC_NEGATIVES_REJECTED"
+  }
+}

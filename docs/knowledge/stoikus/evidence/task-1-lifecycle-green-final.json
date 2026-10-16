@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "scope": "Execute NoCuda admission/cleanup callbacks and real ownership code on host.\n\nThe MQL lifecycle, controller, focus broker and object cleaners are production\nsource. MT5 chart APIs are deterministic seams; controller persistence uses real\nhost SQLite. Existing manual-study loading/rendering and unrelated presentation\nseams remain outside this ownership test. This is not a MetaEditor/native test.\n",
+  "native": "NOT_RUN",
+  "command": [
+    "/usr/bin/clang++",
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wno-deprecated-declarations",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-nocuda-lifecycle-lhrhdvq5/lifecycle.cpp",
+    "-o",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-nocuda-lifecycle-lhrhdvq5/lifecycle",
+    "-lsqlite3"
+  ],
+  "compile_exit": 0,
+  "run_exit": 0,
+  "compiler_log": "",
+  "output": "Stoikus · NoCuda: revise as Entradas. Idade da cotação: 1 a 3600 s; escolha um período fonte explícito, como H1 (Atual não é aceito). Se preencher Símbolo exato para pip, informe tamanho finito e positivo; para desativar a conversão, deixe o símbolo vazio. Use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: revise as Entradas. Idade da cotação: 1 a 3600 s; escolha um período fonte explícito, como H1 (Atual não é aceito). Se preencher Símbolo exato para pip, informe tamanho finito e positivo; para desativar a conversão, deixe o símbolo vazio. Use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: revise as Entradas. Idade da cotação: 1 a 3600 s; escolha um período fonte explícito, como H1 (Atual não é aceito). Se preencher Símbolo exato para pip, informe tamanho finito e positivo; para desativar a conversão, deixe o símbolo vazio. Use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: revise as Entradas. Idade da cotação: 1 a 3600 s; escolha um período fonte explícito, como H1 (Atual não é aceito). Se preencher Símbolo exato para pip, informe tamanho finito e positivo; para desativar a conversão, deixe o símbolo vazio. Use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: mantenha uma instância por gráfico. Para ajustar a existente, use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: mantenha uma instância por gráfico. Para ajustar a existente, use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: mantenha uma instância por gráfico. Para ajustar a existente, use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: mantenha uma instância por gráfico. Para ajustar a existente, use Ctrl+I > indicador > Editar.\nStoikus · NoCuda: atualização indisponível; seleção de âncoras bloqueada. Erro 1. Confira o Diário e carregue o indicador novamente após regularizar o terminal.\nNoCuda lifecycle: 155 checks; failures=0; native NOT_RUN\n",
+  "sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh": "2fca05f5fe15d67089d462c503536d9a8000df9088dad1222f3bb502df05f42d",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh": "4bfd0c354f33fefacd8369f4015cbff50c4819850b62433486649f47987f226c",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "71fa168b49caa512ffa14438cb807ce6753d8891f4b4bc304740de5f8c5ae65d",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh": "e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh": "82a6afcb2ab0c559824d1c99c0a5ac5d9fa71ce4b35cb4fcfcbd239a21285d33",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh": "c53e1b6e75f70b38cf5823615d30f4cde07193623fb6744a8601b20c7b9d168e",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh": "a5d116b900d6587990be38f2477d5c398a1b3d1feced060629d9fbd0322d966c",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_UI_Focus.mqh": "79ee34a078ac1a2bf81dc0027bfc413e162fcdfde04e9e1f489290b5e0652219",
+    "tools/jpw_nocuda_lifecycle_test.py": "54f2bca9e8197a09b41161d0385f6e6bd6327f8153d53df9390e3ae472eef00a",
+    "tools/jpw_nocuda_fibo_controller_test.py": "8577d09bcd7edaea4ad909f300d7ef199a960b6dd1f99e71be006eea42e680b3",
+    "tools/jpw_nocuda_fibo_store_runtime_test.py": "eb4da57ad2fa54a31a8567ef4108b1eec3cbbae7c3f141a0a2a56a96ce1f8cbd",
+    "tools/jpw_nocuda_fibo_terminal_test.py": "0fb0c0592962db1c8adbd2e7901d3b54327c493b2d43b4ef9daf08c8e4100176"
+  },
+  "extracted_functions": [
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+      "function": "JPWNoCudaRemoveDailyReferences",
+      "body_sha256": "b253f99b699e851b68cd3bfb53870330333b157837f6c3fd201fe2d14b017909"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+      "function": "JPWNoCudaRemoveDrawingObjects",
+      "body_sha256": "6a4804810b7b2ee562ac850aa3efb9db7a46796a7c27a6259d371ba121fc3e28"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+      "function": "JPWNoCudaUIClear",
+      "body_sha256": "1223e3618372f0d6c5a28dc369efee243c3238706ac74b51bf378a5206588001"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+      "function": "JPWNoCudaUIFinish",
+      "body_sha256": "664521c02ea3c70a51d8356ba7b26f17dd4d26a99c3a8aa421a1ae763f93a7f6"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+      "function": "JPWNoCudaFiboUIFinish",
+      "body_sha256": "41af1da1290d4113289536ab5c72a7dfe38c59f0d5e048c798fa2543b8541e6a"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+      "function": "JPWNoCudaFiboUIClear",
+      "body_sha256": "84f6d71fc5ef6392f4e50469ff6d975885321a426aae469728ebbbaea9fd2013"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+      "function": "JPWNoCudaFiboUIEndInteraction",
+      "body_sha256": "4a1b6336af8505ad8ba0d4f2d5da80d75115d5035e787289f2a3924af5136fe4"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "JPWNoCudaClearAnchors",
+      "body_sha256": "e5e1d70001cd9d9465d875c17d0dbbdcb8c16177c2cab9eb08111c7593fc7b07"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "JPWNoCudaResetContext",
+      "body_sha256": "3cc9e4ddc5abb770c05fb1347c094b9bccbbaf88cc43e62d35adb10d51d7c19c"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "JPWNoCudaAction",
+      "body_sha256": "9c13439f48e3d087364c5b338bbf5c4f71df05af9e9e612ca3c740b0a17b32ee"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "OnInit",
+      "body_sha256": "aba33c83e0e14b8e48e119934f5b9569236dbd2987b8b686525c9c68ce772157"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "OnDeinit",
+      "body_sha256": "48ddbfb6618a1e42439f3574a04c61c7e1ac64e7a0b5836f5babedff253d9ad6"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "OnTimer",
+      "body_sha256": "9a7ed401623e29655e917aeb9703e54ad4bfe6fa10d897af4d292e5593ff949d"
+    },
+    {
+      "file": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+      "function": "OnChartEvent",
+      "body_sha256": "8260947f0af4bb9033e7808f04af46fbaa84c3dcaff9c9357b1bfb700b3499ee"
+    }
+  ]
+}

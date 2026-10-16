@@ -164,6 +164,58 @@ void JPWNCFPaint()
    g_ncf_clone="JPWNCF_"+g_nocuda_prefix+"VIEW"; string reason="";
    if(JPWNCFClone(0,g_ncf_clone,visual,reason)!=JPW_NCF_VALID) { g_ncf_clone=""; g_ncf_notice=reason; }
   }
+string JPWNCFPeriodText(const int tf)
+  {
+   if(tf==PERIOD_M15) return("M15 · 15 minutos");
+   if(tf==PERIOD_M30) return("M30 · 30 minutos");
+   if(tf==PERIOD_H1) return("H1 · 1 hora");
+   if(tf==PERIOD_H4) return("H4 · 4 horas");
+   if(tf==PERIOD_D1) return("D1 · 1 dia");
+   if(tf==PERIOD_W1) return("W1 · 1 semana");
+   return(EnumToString((ENUM_TIMEFRAMES)tf));
+  }
+string JPWNCFActionPrerequisite(const string action);
+void JPWNCFPresentationGuidance()
+  {
+   // Derived RAM-only presentation. Canonical phases and gates remain the
+   // authority; localized notices are never parsed to infer an action.
+   g_ncf_ui.import_hint=JPWNCFActionPrerequisite("FC_IMPORT");
+   g_ncf_ui.visibility_hint=JPWNCFActionPrerequisite("FC_SOURCE_HIDE");
+   g_ncf_ui.sync_hint=JPWNCFActionPrerequisite("FC_SYNC_RESUME");
+   g_ncf_ui.sync_pause_hint=JPWNCFActionPrerequisite("FC_SYNC_PAUSE");
+   g_ncf_ui.sync_refresh_hint=JPWNCFActionPrerequisite("FC_REFRESH_SOURCE");
+   if(g_ncf_has && g_ncf_history_conflict)
+      g_ncf_ui.sync_hint="Histórico alterado: use Conferir fonte e justifique a revisão.";
+   g_ncf_ui.reference_hint=(g_ncf_link ? "Desvincule antes de mudar o período da referência." : "");
+   g_ncf_ui.observation_hint=JPWNCFActionPrerequisite("FC_TOUCH_SAVE");
+   if(g_ncf_has && (g_ncf_import || g_ncf_history_conflict ||
+      g_ncf_sync.phase==JPW_NCF_EDITING_PREVIEW || g_ncf_sync.phase==JPW_NCF_SAVE_PENDING))
+      g_ncf_ui.observation_hint="Conclua ou cancele a revisão antes de registrar a observação.";
+   g_ncf_ui.restore_hint=JPWNCFActionPrerequisite("FC_RESTORE_RECORD");
+   g_ncf_ui.measure_hint="UNVERIFIED_NATIVE · medidas dependem da validação nativa dos mesmos bytes.";
+   if(_Symbol!=g_nocuda_symbol || AccountInfoString(ACCOUNT_SERVER)!=g_nocuda_feed)
+      g_ncf_ui.next_action="Aguarde a atualização do contexto do gráfico.";
+   else if(g_ncf_import)
+      g_ncf_ui.next_action="Confira as três âncoras e o período; depois confirme o vínculo.";
+   else if(g_ncf_has && g_ncf_history_conflict)
+      g_ncf_ui.next_action="Use Conferir fonte na seção Canal e justifique a revisão do histórico.";
+   else if(g_ncf_has && (g_ncf_sync.phase==JPW_NCF_SOURCE_INVALID || g_ncf_sync.phase==JPW_NCF_SYNC_CONFLICT))
+      g_ncf_ui.next_action="Confira a fonte e o período na seção Canal.";
+   else if(g_ncf_selected_source=="")
+      g_ncf_ui.next_action="Selecione um canal na seção Canal.";
+   else if(!g_ncf_has)
+      g_ncf_ui.next_action="Confira a prévia do canal selecionado.";
+   else if(!g_ncf_link || g_ncf_sync.phase==JPW_NCF_DETACHED)
+      g_ncf_ui.next_action="Selecione a origem e confira um novo vínculo na seção Canal.";
+   else if(g_ncf_sync.phase==JPW_NCF_PAUSED || !g_ncf_sync.armed)
+      g_ncf_ui.next_action="Confira a fonte; use Retomar quando desejar acompanhar.";
+   else if(g_ncf_sync.phase==JPW_NCF_EDITING_PREVIEW)
+      g_ncf_ui.next_action="Conclua o gesto no canal original para conferir a revisão.";
+   else if(g_ncf_sync.phase==JPW_NCF_SAVE_PENDING)
+      g_ncf_ui.next_action="Aguarde a confirmação da gravação; a revisão anterior está preservada.";
+   else
+      g_ncf_ui.next_action="Vínculo conferido; medidas aguardam validação nativa.";
+  }
 void JPWNCFDraw()
   {
    JPWNCFContextCurrent();
@@ -171,10 +223,11 @@ void JPWNCFDraw()
    g_ncf_ui.preview=g_ncf_import; g_ncf_ui.source_hidden=g_ncf_hidden;
    g_ncf_ui.sync_paused=!g_ncf_sync.armed;
    g_ncf_ui.source_name=(g_ncf_selected_source=="" ? "Escolha um canal" : g_ncf_selected_source);
-   g_ncf_ui.source_tf=EnumToString((ENUM_TIMEFRAMES)g_ncf_reference_tf);
+   g_ncf_ui.source_tf=JPWNCFPeriodText(g_ncf_reference_tf);
    g_ncf_ui.status=JPWNCFPhaseText();
    g_ncf_ui.reason=(g_ncf_notice=="" ? "Medidas N/A até validação nativa; importar não certifica o método." : g_ncf_notice);
    if(g_ncf_restore_reason!="") g_ncf_ui.reason+=" · "+g_ncf_restore_reason;
+   JPWNCFPresentationGuidance();
    JPWNoCudaFiboUIDraw(g_nocuda_prefix,g_ncf_ui);
   }
 void JPWNCFNormalizeVisibility(JPWNCFSnapshot &source)
@@ -381,6 +434,10 @@ void JPWNCFConfirmImport()
   }
 string JPWNCFActionPrerequisite(const string action)
   {
+   if(action=="FC_IMPORT" && g_ncf_selected_source=="")
+      return("Selecione explicitamente o Fibonacci no catálogo.");
+   if(action=="FC_CONFIRM_IMPORT" && !g_ncf_import)
+      return("Confira uma prévia antes de confirmar o vínculo.");
    if(action=="FC_TOUCH_SAVE" && !g_ncf_has)
       return("Selecione um estudo em Registro ou importe e confirme um canal antes de gravar a observação. O texto informado foi preservado.");
    if(action=="FC_RESTORE_RECORD" && (!g_ncf_has || g_ncf_record_revision<=0))
@@ -400,11 +457,16 @@ void JPWNCFAction(const string action)
    if(JPWNoCudaFiboUIActions(action)) { if(action=="FC_SETTINGS_APPLY") JPWNCFPaint(); return; }
    if(action=="FC_OPEN")
      { if(!g_ncf_mode) JPWNoCudaReadJustification();
-       if(!JPWUIAcquire(g_nocuda_prefix)) return; g_ncf_mode=true; g_ncf_ui.open=true; g_nocuda_panel_open=false;
+       if(!JPWUIAcquire(g_nocuda_prefix)) return;
+       JPWNoCudaFiboUIWindowSave(false);g_ncf_mode=true;g_ncf_ui.open=true; g_nocuda_panel_open=false;
        JPWNoCudaUIClear(g_nocuda_prefix); if(g_nocuda_canvas_ready) {g_nocuda_canvas.Destroy();g_nocuda_canvas_ready=false;}
        JPWNCFReloadCatalog(); JPWNCFReloadRecords(); JPWNCFPaint(); }
    else if(action=="FC_CLOSE" || action=="FC_MINIMIZE")
-     { JPWNoCudaFiboUIEndInteraction(); g_ncf_ui.open=false; JPWUIRelease(g_nocuda_prefix); }
+     { JPWNoCudaFiboUIEndInteraction();JPWNoCudaFiboUIWindowSave(action=="FC_MINIMIZE");
+       g_ncf_ui.open=false;JPWUIRelease(g_nocuda_prefix); }
+   else if(action=="FC_SECTION_PREV" || action=="FC_SECTION_NEXT" || action=="FC_SECTION_FORWARD")
+     { g_ncf_ui.tab=(g_ncf_ui.tab+(action=="FC_SECTION_PREV" ? 4 : 1))%5;
+       if(g_ncf_ui.tab==3) JPWNCFReloadRecords(); }
    else if(StringFind(action,"FC_TAB_")==0)
      { g_ncf_ui.tab=(int)StringToInteger(StringSubstr(action,7));
        if(g_ncf_ui.tab==3) JPWNCFReloadRecords(); }

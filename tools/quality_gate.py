@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 import json
+import os
 from pathlib import Path
 import shlex
 import subprocess
@@ -15,6 +16,11 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT_DIR = ROOT / "tools/.artifacts"
+FULL_ARTIFACT_DIR = ARTIFACT_DIR / ("app-efficiency-full-" + datetime.now().strftime("%Y%m%dT%H%M%S%f"))
+
+
+def full_evidence(name: str) -> str:
+    return str(FULL_ARTIFACT_DIR / name)
 
 FAST = (
     ("preflight", [sys.executable, "tools/agent_preflight.py", "--mode", "audit", "--allow-dirty"]),
@@ -78,6 +84,24 @@ FULL = STANDARD + (
     ("build-reproducibility", [sys.executable, "tools/build_reproducibility_test.py"]),
     ("service-worker-upgrade", [sys.executable, "tools/service_worker_upgrade_test.py"]),
     ("mvp-notes", [sys.executable, "tools/mvp_notes_test.py"]),
+    ("notification-center", [sys.executable, "tools/notification_center_test.py"]),
+    ("notification-efficiency", [sys.executable, "tools/notification_efficiency_test.py"]),
+    ("consolidated-efficiency", [sys.executable, "tools/consolidated_efficiency_test.py", "--out", full_evidence('consolidated.json')]),
+    ("consolidated-model", [sys.executable, "tools/fx_consolidated_model_test.py"]),
+    ("consolidated-storage", [sys.executable, "tools/fx_consolidated_storage_test.py", "--out", full_evidence('consolidated-storage.json')]),
+    ("consolidated-ui", [sys.executable, "tools/fx_consolidated_ui_test.py", "--output", full_evidence('consolidated-ui.json')]),
+    ("forex-professional-panel", [sys.executable, "tools/forex_professional_panel_test.py", "--out", full_evidence('professional-panel'), "--native-zoom"]),
+    ("execution-efficiency", [sys.executable, "tools/forex_execution_efficiency_test.py", "--artifacts", full_evidence('rows')]),
+    ("execution-table", [sys.executable, "tools/forex_execution_table_test.py", "--artifacts", full_evidence('table'), "--native-zoom"]),
+    ("execution-workbook", [sys.executable, "tools/forex_execution_workbook_test.py", "--out", full_evidence('workbook')]),
+    ("execution-proportions", [sys.executable, "tools/forex_execution_proportions_test.py", "--out", full_evidence('proportions')]),
+    ("forex-context", [sys.executable, "tools/forex_context_bar_test.py", "--output", full_evidence('context.json')]),
+    ("forex-navigation-journey", [sys.executable, "tools/forex_navigation_journey_test.py", "--output", full_evidence('journey.json')]),
+    ("learning-guide", [sys.executable, "tools/learning_guide_test.py", "--out", full_evidence('guide.json'), "--baseline-root", os.environ.get("JPW_BASELINE_ROOT", str(ROOT))]),
+    ("nocuda-tools", [sys.executable, "tools/nocuda_tools_test.py"]),
+    ("stoikus-downloads", [sys.executable, "tools/stoikus_download_test.py"]),
+    ("download-assets-unit", [os.environ.get("JPW_NODE", "node"), "tools/download_assets_test.js"]),
+    ("download-assets-browser", [sys.executable, "tools/download_assets_browser_test.py", "--out-dir", full_evidence('downloads')]),
 )
 TIERS = {"fast": FAST, "standard": STANDARD, "full": FULL}
 ENVIRONMENT_MARKERS = (
@@ -99,6 +123,8 @@ def git_value(*args: str) -> str:
 def classify(returncode: int, output: str) -> str:
     if returncode == 0:
         return "PASS"
+    if "HARNESS_ERROR" in output:
+        return "TEST_HARNESS_FAIL"
     for result in EXPLICIT_FAILURE_RESULTS:
         if result in output:
             return result
@@ -147,6 +173,8 @@ def main() -> int:
     args = parser.parse_args()
 
     started_at = datetime.now().astimezone()
+    if args.tier == "full":
+        FULL_ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     checks: list[dict[str, object]] = []
     for name, command in TIERS[args.tier]:
         print(f"[RUN] {name}: {shlex.join(command)}", flush=True)
@@ -158,6 +186,7 @@ def main() -> int:
     payload = {
         "schema_version": 1,
         "tier": args.tier,
+        "full_evidence_directory": str(FULL_ARTIFACT_DIR) if args.tier == "full" else None,
         "started_at": started_at.isoformat(timespec="seconds"),
         "finished_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "git": {

@@ -1,0 +1,672 @@
+{
+  "review": "BROWSER_SMOKE_R2_B1_FOCAL",
+  "utc": "2026-10-14T19:55:10.410476+00:00",
+  "freeze_sha256": "aeb487a3e29f25621873e9d85fe8d23fd7fe802df8ce26bfa18e2929940ce667",
+  "freeze_files": 51,
+  "freeze_mismatches_before": [],
+  "static_checks": [
+    {
+      "view": "master",
+      "r1_snapshot_hash_valid": true,
+      "exact_css_comment_only_delta": true,
+      "graph_json_unchanged": true
+    },
+    {
+      "view": "arquitetura",
+      "r1_snapshot_hash_valid": true,
+      "exact_css_comment_only_delta": true,
+      "graph_json_unchanged": true
+    },
+    {
+      "view": "fluxos",
+      "r1_snapshot_hash_valid": true,
+      "exact_css_comment_only_delta": true,
+      "graph_json_unchanged": true
+    },
+    {
+      "view": "testes-evidencias",
+      "r1_snapshot_hash_valid": true,
+      "exact_css_comment_only_delta": true,
+      "graph_json_unchanged": true
+    }
+  ],
+  "views": [
+    {
+      "view": "master",
+      "errors": [],
+      "checks": {
+        "correct_selection": true,
+        "complete_source_in_detail": true,
+        "community_in_detail": true,
+        "all_detail_text_within_fields": true,
+        "source_tail_visible": true,
+        "no_runtime_errors": true
+      },
+      "source": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+      "selected": [
+        "mt5_jpw_alavancagem_atual_mql5_include_jpwealth_jpw_personalhistory_controller_file"
+      ],
+      "fields": [
+        {
+          "text": "JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 94,
+            "bottom": 114.796875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            },
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Type: code",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 119.796875,
+            "bottom": 140.59375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1241.96875,
+              "top": 121.796875,
+              "bottom": 137.796875
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Community: Histórico Pessoal / Evidências locais",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 145.59375,
+            "bottom": 187.1875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1363.4375,
+              "top": 147.59375,
+              "bottom": 163.59375
+            },
+            {
+              "left": 1175,
+              "right": 1278.265625,
+              "top": 168.390625,
+              "bottom": 184.390625
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Source: mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 192.1875,
+            "bottom": 254.578125
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1364.5625,
+              "top": 194.1875,
+              "bottom": 210.1875
+            },
+            {
+              "left": 1175,
+              "right": 1425.25,
+              "top": 214.984375,
+              "bottom": 230.984375
+            },
+            {
+              "left": 1175,
+              "right": 1331.734375,
+              "top": 235.78125,
+              "bottom": 251.78125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Degree: 13",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 259.578125,
+            "bottom": 280.375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1240.34375,
+              "top": 261.578125,
+              "bottom": 277.578125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "source_tail": [
+        {
+          "left": 1356.78125,
+          "right": 1425.25,
+          "top": 214.984375,
+          "bottom": 230.984375
+        },
+        {
+          "left": 1175,
+          "right": 1331.734375,
+          "top": 235.78125,
+          "bottom": 251.78125
+        }
+      ]
+    },
+    {
+      "view": "arquitetura",
+      "errors": [],
+      "checks": {
+        "correct_selection": true,
+        "complete_source_in_detail": true,
+        "community_in_detail": true,
+        "all_detail_text_within_fields": true,
+        "source_tail_visible": true,
+        "no_runtime_errors": true
+      },
+      "source": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+      "selected": [
+        "mt5_jpw_alavancagem_atual_mql5_include_jpwealth_jpw_personalhistory_controller_file"
+      ],
+      "fields": [
+        {
+          "text": "JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 94,
+            "bottom": 114.796875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            },
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Type: code",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 119.796875,
+            "bottom": 140.59375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1241.96875,
+              "top": 121.796875,
+              "bottom": 137.796875
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Community: Conta e núcleo / Histórico Pessoal",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 145.59375,
+            "bottom": 187.1875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1407.828125,
+              "top": 147.59375,
+              "bottom": 163.59375
+            },
+            {
+              "left": 1175,
+              "right": 1221.59375,
+              "top": 168.390625,
+              "bottom": 184.390625
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Source: mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 192.1875,
+            "bottom": 254.578125
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1364.5625,
+              "top": 194.1875,
+              "bottom": 210.1875
+            },
+            {
+              "left": 1175,
+              "right": 1425.25,
+              "top": 214.984375,
+              "bottom": 230.984375
+            },
+            {
+              "left": 1175,
+              "right": 1331.734375,
+              "top": 235.78125,
+              "bottom": 251.78125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Degree: 4",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 259.578125,
+            "bottom": 280.375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1234.609375,
+              "top": 261.578125,
+              "bottom": 277.578125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "source_tail": [
+        {
+          "left": 1356.78125,
+          "right": 1425.25,
+          "top": 214.984375,
+          "bottom": 230.984375
+        },
+        {
+          "left": 1175,
+          "right": 1331.734375,
+          "top": 235.78125,
+          "bottom": 251.78125
+        }
+      ]
+    },
+    {
+      "view": "fluxos",
+      "errors": [],
+      "checks": {
+        "correct_selection": true,
+        "complete_source_in_detail": true,
+        "community_in_detail": true,
+        "all_detail_text_within_fields": true,
+        "source_tail_visible": true,
+        "no_runtime_errors": true
+      },
+      "source": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+      "selected": [
+        "mt5_jpw_alavancagem_atual_mql5_include_jpwealth_jpw_personalhistory_controller_file"
+      ],
+      "fields": [
+        {
+          "text": "JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 94,
+            "bottom": 114.796875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            },
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Type: code",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 119.796875,
+            "bottom": 140.59375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1241.96875,
+              "top": 121.796875,
+              "bottom": 137.796875
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Community: Contexto e contratos / Histórico Pessoal",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 145.59375,
+            "bottom": 187.1875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1386.140625,
+              "top": 147.59375,
+              "bottom": 163.59375
+            },
+            {
+              "left": 1175,
+              "right": 1279.515625,
+              "top": 168.390625,
+              "bottom": 184.390625
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Source: mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 192.1875,
+            "bottom": 254.578125
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1364.5625,
+              "top": 194.1875,
+              "bottom": 210.1875
+            },
+            {
+              "left": 1175,
+              "right": 1425.25,
+              "top": 214.984375,
+              "bottom": 230.984375
+            },
+            {
+              "left": 1175,
+              "right": 1331.734375,
+              "top": 235.78125,
+              "bottom": 251.78125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Degree: 1",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 259.578125,
+            "bottom": 280.375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1232.28125,
+              "top": 261.578125,
+              "bottom": 277.578125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "source_tail": [
+        {
+          "left": 1356.78125,
+          "right": 1425.25,
+          "top": 214.984375,
+          "bottom": 230.984375
+        },
+        {
+          "left": 1175,
+          "right": 1331.734375,
+          "top": 235.78125,
+          "bottom": 251.78125
+        }
+      ]
+    },
+    {
+      "view": "testes-evidencias",
+      "errors": [],
+      "checks": {
+        "correct_selection": true,
+        "complete_source_in_detail": true,
+        "community_in_detail": true,
+        "all_detail_text_within_fields": true,
+        "source_tail_visible": true,
+        "no_runtime_errors": true
+      },
+      "source": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+      "selected": [
+        "mt5_jpw_alavancagem_atual_mql5_include_jpwealth_jpw_personalhistory_controller_file"
+      ],
+      "fields": [
+        {
+          "text": "JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 94,
+            "bottom": 114.796875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            },
+            {
+              "left": 1175,
+              "right": 1418.734375,
+              "top": 96,
+              "bottom": 112
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Type: code",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 119.796875,
+            "bottom": 140.59375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1241.96875,
+              "top": 121.796875,
+              "bottom": 137.796875
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Community: Histórico Pessoal / Evidências locais",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 145.59375,
+            "bottom": 187.1875
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1363.4375,
+              "top": 147.59375,
+              "bottom": 163.59375
+            },
+            {
+              "left": 1175,
+              "right": 1278.265625,
+              "top": 168.390625,
+              "bottom": 184.390625
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Source: mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 192.1875,
+            "bottom": 254.578125
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1364.5625,
+              "top": 194.1875,
+              "bottom": 210.1875
+            },
+            {
+              "left": 1175,
+              "right": 1425.25,
+              "top": 214.984375,
+              "bottom": 230.984375
+            },
+            {
+              "left": 1175,
+              "right": 1331.734375,
+              "top": 235.78125,
+              "bottom": 251.78125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Degree: 12",
+          "clientWidth": 251,
+          "scrollWidth": 251,
+          "bounds": {
+            "left": 1175,
+            "right": 1426,
+            "top": 259.578125,
+            "bottom": 280.375
+          },
+          "textRects": [
+            {
+              "left": 1175,
+              "right": 1240.046875,
+              "top": 261.578125,
+              "bottom": 277.578125
+            }
+          ],
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "source_tail": [
+        {
+          "left": 1356.78125,
+          "right": 1425.25,
+          "top": 214.984375,
+          "bottom": 230.984375
+        },
+        {
+          "left": 1175,
+          "right": 1331.734375,
+          "top": 235.78125,
+          "bottom": 251.78125
+        }
+      ]
+    }
+  ],
+  "prior_functional_64": "R1 evidence preserved; NOT_RERUN in R2",
+  "native": "NOT_RUN",
+  "ai_efficiency": "NOT_MEASURED",
+  "browser_version": "148.0.7778.96",
+  "freeze_mismatches_after": [],
+  "verdict": "B1_RESOLVED_FOCAL_PASS",
+  "screenshots_visually_inspected": [
+    "master",
+    "arquitetura",
+    "fluxos",
+    "testes-evidencias"
+  ],
+  "new_findings": []
+}

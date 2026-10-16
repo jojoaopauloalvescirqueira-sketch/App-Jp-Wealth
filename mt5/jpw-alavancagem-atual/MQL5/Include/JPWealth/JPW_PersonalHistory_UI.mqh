@@ -15,11 +15,44 @@ int g_personal_export_requested=0,g_personal_account_index=-1;
 long g_personal_before=0,g_personal_detail_seq=0;
 long g_personal_cursor[];
 int g_personal_cursor_page=0,g_personal_button_count=0;
+// Presentation selectors: bounded visible slots refer to the existing RAM catalog.
+int g_personal_picker=0,g_personal_picker_page=0,g_personal_choice_count=0;
+int g_personal_choice_index[8];
 long g_personal_button_seq[8];
+JPWPersonalStoreContext g_personal_read_ctx;
+JPWPersonalExportJob g_personal_export_job;
+bool g_personal_job_active=false;
+ulong g_personal_job_request=0;
+string g_personal_job_scope="",g_personal_job_category="",g_personal_job_operating="";
+long g_personal_job_before=0,g_personal_job_detail=0;
+string JPWPersonalCategoryKey(const int index)
+  {
+   const string keys[7]={"SUMMARY","EPISODE","ALERT","PEAK","SESSION","COVERAGE","EVENT"};
+   return(index>=0 && index<7 ? keys[index] : "");
+  }
+string JPWPersonalCategoryLabel(const string key)
+  {
+   if(key=="SUMMARY") return("Resumo e cobertura");
+   if(key=="EPISODE") return("Ocorrências sem SL");
+   if(key=="ALERT") return("Solicitações de aviso");
+   if(key=="PEAK") return("Recordes de alavancagem");
+   if(key=="SESSION") return("Sessões de monitoramento");
+   if(key=="EVENT") return("Detecção e desfechos");
+   return("Interrupções e recuperação");
+  }
+bool JPWPersonalUIReady()
+  { return(g_personal_available && !g_personal_read_requested && !g_personal_job_active); }
+string JPWPersonalUIReadState()
+  {
+   if(g_personal_job_active) return("Auditando");
+   if(g_personal_read_requested) return("Em leitura");
+   if(!g_personal_available) return("Consulta indisponível");
+   return("Consulta concluída");
+  }
 void JPWPersonalRequestRead()
   {
    g_personal_request_id++; if(g_personal_request_id==0) g_personal_request_id=1;
-   g_personal_read_requested=true; g_personal_available=false;
+   g_personal_read_requested=true; g_personal_available=false; g_personal_summary.current.valid=false; g_personal_summary.estimated.valid=false;
    g_personal_button_count=0; ArrayResize(g_personal_rows,0);
    g_personal_detail.sequence=0; g_personal_detail.category=""; g_personal_detail.item_id="";
    g_personal_detail.wall=0; g_personal_detail.payload=""; g_personal_detail.digest="";
@@ -74,87 +107,106 @@ void JPWPersonalReadPresence()
    else if(worst==0) g_personal_live_notice="Núcleo Monitor inicializando";
    else if(standby) g_personal_live_notice="Instância em espera; titularidade de outro escritor";
   }
+void JPWPersonalUICancelRead()
+  { JPWPersonalOpenCancel(g_personal_read_ctx); g_personal_job_active=false; }
+void JPWPersonalUICancelPending()
+  {
+   JPWPersonalUICancelRead(); JPWPersonalExportCancel(g_personal_export_job);
+   g_personal_export_requested=0; g_personal_export_scope="";
+  }
+bool JPWPersonalUIRequestMatches()
+  {
+   return(g_personal_job_request==g_personal_request_id && g_personal_job_scope==g_personal_scope &&
+      g_personal_job_category==g_personal_category && g_personal_job_before==g_personal_before &&
+      g_personal_job_detail==g_personal_detail_seq && g_personal_job_operating==g_personal_operating_key &&
+      g_account_known && g_diagnostic_context==g_personal_job_operating);
+  }
+void JPWPersonalUIInvalidateViews()
+  {
+   JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY); JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
+   JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT);
+  }
 void JPWPersonalCollectUI()
   {
-   if(!JPWCoordinatorBudgetRemaining() || !g_account_known || g_diagnostic_context=="") return;
+   if(!g_account_known || g_diagnostic_context=="")
+     {
+      if(g_personal_job_active) JPWPersonalUICancelRead();
+      if(g_personal_export_requested!=0 || g_personal_export_job.active)
+        { JPWPersonalExportCancel(g_personal_export_job); g_personal_export_requested=0; g_personal_export_scope="";
+          g_personal_export_result="Pedido cancelado: identidade operacional indisponível; eventual arquivo parcial sem confirmação."; }
+      g_personal_available=false; g_personal_read_requested=true; g_personal_button_count=0; ArrayResize(g_personal_rows,0);
+      g_personal_summary.current.valid=false; g_personal_summary.estimated.valid=false; g_personal_detail.sequence=0;
+      g_personal_reason="Conta operacional em confirmação; consulta anterior indisponível."; return;
+     }
+   if(!JPWCoordinatorBudgetRemaining()) return;
    if(g_personal_operating_key!=g_diagnostic_context)
      {
       if(g_personal_scope=="" || g_personal_scope==g_personal_operating_key) g_personal_scope=g_diagnostic_context;
       g_personal_operating_key=g_diagnostic_context; g_personal_available=false; JPWPersonalResetPage();
      }
-   JPWPersonalReadPresence();
-   const ulong now=GetTickCount64();
-   if(g_raiz_details_open && (g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY ||
-       g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT) &&
-       (now<g_personal_read_mono || now-g_personal_read_mono>=5000) &&
-      !g_personal_read_requested) JPWPersonalRequestRead();
+   JPWPersonalReadPresence(); const ulong now=GetTickCount64();
+   if(g_personal_job_active && !JPWPersonalUIRequestMatches()) JPWPersonalUICancelRead();
+   if(g_raiz_details_open && (g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY || g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT) &&
+      !g_personal_job_active && !g_personal_read_requested && (now<g_personal_read_mono || now-g_personal_read_mono>=5000)) JPWPersonalRequestRead();
    if(g_personal_export_requested!=0)
      {
-      const bool backup=(g_personal_export_requested==2); const string requested_scope=g_personal_export_scope;
-      g_personal_export_requested=0; g_personal_export_scope="";
-      string path="",reason="";
-      if(JPWPersonalExport(requested_scope,backup,path,reason)) g_personal_export_result="Arquivo da conta "+StringSubstr(requested_scope,0,12)+"… gravado: "+path;
-      else g_personal_export_result="Exportação da conta "+StringSubstr(requested_scope,0,12)+"… não confirmada: "+reason;
-      JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);
-       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
-       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT);
-     }
-   if(!g_personal_read_requested || !JPWCoordinatorBudgetRemaining()) return;
-   const ulong request=g_personal_request_id;
-   const string scope=g_personal_scope,category=g_personal_category,operating=g_personal_operating_key;
-   const long before=g_personal_before,detail_seq=g_personal_detail_seq;
-   g_personal_read_requested=false; g_personal_read_mono=now; g_personal_available=false;
-   ArrayResize(g_personal_rows,0); g_personal_button_count=0;
-   string accounts[],reason=""; JPWPersonalSummary summary; JPWPersonalRow rows[],detail;
-   bool ok=JPWPersonalListAccounts(accounts); const bool catalog_ok=ok;
-   if(!ok) reason="Catálogo de contas indisponível; nenhum histórico foi substituído.";
-   if(ok)
-     { ok=JPWPersonalReadSummary(scope,summary) && summary.account_key==scope;
-       if(!ok) reason=(summary.reason=="" ? "Resumo da conta selecionada não confirmado." : summary.reason); }
-   if(ok && detail_seq>0)
-     { ok=JPWPersonalReadDetail(scope,detail_seq,detail,reason) && detail.sequence==detail_seq;
-       if(!ok && reason=="") reason="Identidade do detalhe não confirmada."; }
-   else if(ok && category!="SUMMARY")
-     {
-      ok=JPWPersonalReadPage(scope,category,before,8,rows,reason);
-      for(int i=0;ok && i<ArraySize(rows);i++)
-         if(rows[i].category!=category || (before>0 && rows[i].sequence>=before) ||
-            (i>0 && rows[i].sequence>=rows[i-1].sequence))
-            { ok=false; reason="Página recusada: registros não correspondem ao pedido selecionado."; }
-     }
-   // A response belongs to the exact request, never to a newer selection.
-   if(request!=g_personal_request_id || scope!=g_personal_scope || category!=g_personal_category ||
-      before!=g_personal_before || detail_seq!=g_personal_detail_seq || operating!=g_personal_operating_key ||
-      !g_account_known || g_diagnostic_context!=operating)
-     { JPWPersonalRequestRead(); JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);
-       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
-       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT); return; }
-   // A missing/corrupt selected history must not prevent browsing other local accounts.
-   if(catalog_ok)
-     {
-      if(ArrayResize(g_personal_accounts,ArraySize(accounts))!=ArraySize(accounts))
-        { ok=false; reason="Catálogo sem capacidade de consulta; registros preservados."; }
-      else
+      if(!g_personal_export_job.active)
         {
-         for(int i=0;i<ArraySize(accounts);i++) g_personal_accounts[i]=accounts[i];
-         g_personal_account_index=-1;
-         for(int i=0;i<ArraySize(accounts);i++) if(accounts[i]==scope) g_personal_account_index=i;
+         JPWPersonalExportBegin(g_personal_export_scope,g_personal_export_requested==2,g_personal_export_job);
+        }
+      JPWStoreResult exported=g_personal_export_job.result;
+      if(g_personal_export_job.active) exported=JPWPersonalExportStep(g_personal_export_job,now,JPW_PERSONAL_SLICE_MS,JPW_PERSONAL_SLICE_ROWS);
+      if(exported!=JPW_STORE_BUSY || !g_personal_export_job.active)
+        {
+         const string scope=g_personal_export_scope;
+         g_personal_export_result=(exported==JPW_STORE_VALID ? "Arquivo da conta "+StringSubstr(scope,0,12)+"… gravado: "+g_personal_export_job.path :
+            "Exportação da conta "+StringSubstr(scope,0,12)+"… não confirmada: "+g_personal_export_job.reason);
+         g_personal_export_requested=0; g_personal_export_scope=""; JPWPersonalUIInvalidateViews();
         }
      }
-   if(ok && ArrayResize(g_personal_rows,ArraySize(rows))!=ArraySize(rows))
-     { ok=false; reason="Capacidade de consulta indisponível; registros preservados."; }
+   if(!JPWCoordinatorBudgetRemaining()) return;
+   if(g_personal_read_requested && !g_personal_job_active)
+     {
+      g_personal_job_request=g_personal_request_id; g_personal_job_scope=g_personal_scope; g_personal_job_category=g_personal_category;
+      g_personal_job_operating=g_personal_operating_key; g_personal_job_before=g_personal_before; g_personal_job_detail=g_personal_detail_seq;
+      g_personal_read_requested=false; g_personal_available=false; g_personal_button_count=0; ArrayResize(g_personal_rows,0);
+      // Account catalog does not depend on validity of the selected database.
+      string accounts[]; bool catalog=JPWPersonalListAccounts(accounts);
+      if(catalog && ArrayResize(g_personal_accounts,ArraySize(accounts))==ArraySize(accounts))
+        {
+         g_personal_account_index=-1;
+         for(int i=0;i<ArraySize(accounts);i++) { g_personal_accounts[i]=accounts[i]; if(accounts[i]==g_personal_scope) g_personal_account_index=i; }
+        }
+      JPWPersonalOpenBegin(g_personal_job_scope,false,"",0,0,g_personal_read_ctx); g_personal_job_active=true;
+     }
+   if(!g_personal_job_active) return;
+   JPWStoreResult opened=g_personal_read_ctx.result;
+   if(JPWPersonalPreparing(g_personal_read_ctx)) opened=JPWPersonalOpenStep(g_personal_read_ctx,GetTickCount64(),JPW_PERSONAL_SLICE_MS,JPW_PERSONAL_SLICE_ROWS,0,0);
+   if(opened==JPW_STORE_BUSY && JPWPersonalPreparing(g_personal_read_ctx))
+     { g_personal_reason="Auditoria integral em preparação; aguarde a confirmação da consulta."; JPWPersonalUIInvalidateViews(); return; }
+   JPWPersonalSummary summary; JPWPersonalRow rows[],detail; string reason=g_personal_read_ctx.reason;
+   bool ok=(opened==JPW_STORE_VALID) && JPWPersonalReadSummaryFrom(g_personal_read_ctx,summary);
+   if(ok && g_personal_job_detail>0) ok=JPWPersonalReadDetailFrom(g_personal_read_ctx,g_personal_job_detail,detail,reason) && detail.sequence==g_personal_job_detail;
+   else if(ok && g_personal_job_category!="SUMMARY")
+     {
+      ok=JPWPersonalReadPageFrom(g_personal_read_ctx,g_personal_job_category,g_personal_job_before,8,rows,reason);
+      for(int i=0;ok && i<ArraySize(rows);i++) if(rows[i].category!=g_personal_job_category ||
+         (g_personal_job_before>0 && rows[i].sequence>=g_personal_job_before) || (i>0 && rows[i].sequence>=rows[i-1].sequence))
+         { ok=false; reason="Página não corresponde ao pedido selecionado"; }
+     }
+   if(ok) { ok=JPWPersonalReadFinish(g_personal_read_ctx,true); if(!ok) reason=g_personal_read_ctx.reason; }
+   bool matches=JPWPersonalUIRequestMatches(); JPWPersonalUICancelRead();
+   if(!matches) { g_personal_available=false; JPWPersonalUIInvalidateViews(); return; }
+   g_personal_read_mono=GetTickCount64(); g_personal_summary.current.valid=false; g_personal_summary.estimated.valid=false;
+   if(ok && ArrayResize(g_personal_rows,ArraySize(rows))!=ArraySize(rows)) { ok=false; reason="Capacidade de consulta indisponível; registros preservados"; }
    if(ok)
      {
-      for(int i=0;i<ArraySize(rows);i++) g_personal_rows[i]=rows[i];
-      g_personal_summary=summary;
-      if(detail_seq>0) g_personal_detail=detail;
+      for(int i=0;i<ArraySize(rows);i++) g_personal_rows[i]=rows[i]; g_personal_summary=summary;
+      if(g_personal_job_detail>0) g_personal_detail=detail;
       g_personal_read_wall=(long)TimeGMT(); g_personal_available=true; g_personal_reason=summary.reason;
      }
-   else
-     { ArrayResize(g_personal_rows,0); g_personal_reason=(reason=="" ? "Consulta não confirmada; atualize para tentar novamente." : reason); }
-   JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_HISTORY);
-       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);
-       JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_EXPORT);
+   else { ArrayResize(g_personal_rows,0); g_personal_available=false; g_personal_reason=(reason=="" ? "Consulta não confirmada; atualize para tentar novamente" : reason); }
+   JPWPersonalUIInvalidateViews();
   }
 
 string JPWPersonalScopeLabel()

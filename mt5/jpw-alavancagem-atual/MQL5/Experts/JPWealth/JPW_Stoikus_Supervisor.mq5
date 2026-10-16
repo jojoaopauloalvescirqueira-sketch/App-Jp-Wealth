@@ -1,6 +1,6 @@
 #property copyright "JP Wealth"
 #property version "1.000"
-#property description "Stoikus · Supervisor: Additional 7x gross/equity breaker. Observe by default. Explicit demo-only execution; not a V11 controller."
+#property description "Stoikus by JP Wealth · Supervisor: Additional 7x gross/equity breaker. Observe by default. Explicit demo-only execution; not a V11 controller."
 #include <JPWealth/JPW_Stoikus_Risk_Terminal.mqh>
 #include <JPWealth/JPW_Stoikus_Risk_Store.mqh>
 
@@ -66,7 +66,7 @@ void JPWSupervisorPresent()
    else if(g_supervisor_plan_available && view.quality!="N/A")
       action="Next action (proposal unless armed): "+IntegerToString((int)g_supervisor_proposal.kind)+
          " / "+IntegerToString((long)g_supervisor_proposal.ticket);
-   Comment("Stoikus · Supervisor · ",view.state," · ",view.demo_armed ? "DEMO ARMED" : "OBSERVE / NO NEW EXECUTION",
+   Comment("Stoikus by JP Wealth · Supervisor · ",view.state," · ",view.demo_armed ? "DEMO ARMED" : "OBSERVE / NO NEW EXECUTION",
       "\n",view.reason,
       "\nGross/equity reading: ",reading,
       "\nPending static projection: ",projected,
@@ -85,7 +85,7 @@ bool JPWSupervisorPersist(const string reason,const string receipt="")
      {
       g_supervisor_store_failed=true; g_supervisor_record.machine.armed=false;
       g_supervisor_record.machine.protection_incomplete=true;
-      Comment("Stoikus · Supervisor: storage unconfirmed; OBSERVE / no requests. ",why);
+      Comment("Stoikus by JP Wealth · Supervisor: storage unconfirmed; OBSERVE / no requests. ",why);
       Print("JPW Supervisor: storage unconfirmed; no further requests.");
       return(false);
      }
@@ -407,7 +407,7 @@ int OnInit()
    FolderCreate("JPWealth",FILE_COMMON); FolderCreate(JPW_RISK_FOLDER,FILE_COMMON);
    g_supervisor_lock=FileOpen(JPW_RISK_FOLDER+key+".lock",FILE_READ|FILE_WRITE|FILE_BIN|FILE_COMMON);
    if(g_supervisor_lock==INVALID_HANDLE)
-     { Comment("Stoikus · Supervisor: another local owner or inaccessible lock. No requests."); return(INIT_FAILED); }
+     { Comment("Stoikus by JP Wealth · Supervisor: another local owner or inaccessible lock. No requests."); return(INIT_FAILED); }
    string why=""; const bool loaded=JPWRiskLoadRecord(key,g_supervisor_record,why);
    if(!loaded && why!="ABSENT") { FileClose(g_supervisor_lock); g_supervisor_lock=INVALID_HANDLE; return(INIT_FAILED); }
    if(!loaded)

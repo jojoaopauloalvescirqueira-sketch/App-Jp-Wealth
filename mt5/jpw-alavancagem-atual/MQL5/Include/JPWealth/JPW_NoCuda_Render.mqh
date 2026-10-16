@@ -8,6 +8,7 @@
 
 void JPWNoCudaRemoveDailyReferences(const string prefix)
   {
+   if(prefix=="") return;
    for(int i=ObjectsTotal(0,0,-1)-1;i>=0;i--)
      {
       const string name=ObjectName(0,i,0,-1);
@@ -69,6 +70,7 @@ bool JPWNoCudaDrawDailyReferences(const string prefix,
 
 void JPWNoCudaRemoveDrawingObjects(const string prefix)
   {
+   if(prefix=="") return;
    for(int i=ObjectsTotal(0,0,-1)-1;i>=0;i--)
      {
       const string name=ObjectName(0,i,0,-1);

@@ -6,6 +6,7 @@
 #include <JPWealth/JPW_Stoikus_Accountant_Runtime.mqh>
 #include <JPWealth/JPW_Stoikus_Monitor_Core.mqh>
 #include <JPWealth/JPW_Stoikus_Monitor_Status.mqh>
+#include <JPWealth/JPW_Stoikus_Monitor_Log.mqh>
 input group "Cobertura declarada da conta"
 input bool InpHistoryCoverageConfirmed=false; // Histórico completo confirmado (não: pendente)
 input bool InpCostCoverageConfirmed=false; // Custos completos confirmados (não: pendente)
@@ -19,6 +20,45 @@ double g_monitor_lease_value=0;
 bool g_monitor_owned=false,g_monitor_context_dirty=false;
 ulong g_monitor_next_claim_ms=0;
 int g_monitor_status_deferred_cycles=0;
+JPWMonitorLogState g_monitor_log;
+string g_monitor_log_publish_reason="";
+
+void JPWMonitorReport(const int stage,const string key,const string reason)
+  {
+   const string message=JPWMonitorLogTransition(g_monitor_log,stage,key,reason);
+   if(message!="") Print(message);
+  }
+void JPWMonitorReportWaiting(const string key)
+  {
+   JPWMonitorReport((JPWRaizNIsHash(key) ? JPW_MONITOR_LOG_OWNERSHIP : JPW_MONITOR_LOG_IDENTITY),
+                    key,g_monitor_reason);
+  }
+string JPWMonitorModuleProblem(JPWMonitorModuleStatus &module,const string label)
+  {
+   if(module.state!=JPW_MONITOR_DETACHED && module.state!=JPW_MONITOR_CONFLICT &&
+      module.state!=JPW_MONITOR_FAILED) return("");
+   return(label+": "+module.reason+"; ");
+  }
+void JPWMonitorReportCurrent()
+  {
+   if(!g_monitor_owned) return;
+   // Read the already projected diagnostics; never update a capture or quality.
+   const string reason=(g_monitor_log_publish_reason=="" ? "" :
+                         "Diagnóstico: "+g_monitor_log_publish_reason+"; ")+
+      (!g_observer_runtime_attached && g_monitor_reason!="" ? g_monitor_reason+"; " : "")+
+      JPWMonitorModuleProblem(g_monitor_snapshot.stop_risk,"Stops")+
+      JPWMonitorModuleProblem(g_monitor_snapshot.personal,"Histórico Pessoal")+
+      JPWMonitorModuleProblem(g_monitor_snapshot.ledger,"Contabilidade")+
+      JPWMonitorModuleProblem(g_monitor_snapshot.raiz,"Raiz N");
+   JPWMonitorReport((reason=="" ? JPW_MONITOR_LOG_ACTIVE : JPW_MONITOR_LOG_DEGRADED),
+                    g_monitor_key,reason);
+  }
+void JPWMonitorReportContext(const string key)
+  {
+   JPWMonitorReport((key=="" ? JPW_MONITOR_LOG_IDENTITY : JPW_MONITOR_LOG_CONTEXT),key,
+      (key=="" ? "Identidade indisponível; publicação atual invalidada" :
+                  "Conta/instalação em revalidação; confira as declarações de cobertura da conta original"));
+  }
 
 void JPWMonitorModuleSet(JPWMonitorModuleStatus &module,const int state,const string quality,
                          const string reason,const long observed_utc,const long observed_mono,
@@ -106,8 +146,12 @@ void JPWMonitorDetach(const int reason)
       g_monitor_snapshot.active=false; g_monitor_snapshot.live=false;
       JPWMonitorProjectStatus();
       string diagnostic_reason="";
-      if(!JPWMonitorWriteStatus(g_monitor_snapshot,diagnostic_reason))
-         Print("JPW núcleo: diagnóstico de encerramento não confirmado: ",diagnostic_reason);
+      // Before the first confirmed heartbeat there is no encodable diagnostic
+      // generation to close. The admission failure is reported by the caller.
+      if(!JPWMonitorWriteStatus(g_monitor_snapshot,diagnostic_reason) &&
+         g_monitor_snapshot.heartbeat_utc>0 && g_monitor_snapshot.heartbeat_mono_ms>0)
+         JPWMonitorReport(JPW_MONITOR_LOG_DEGRADED,g_monitor_key,
+                          "Diagnóstico de encerramento não confirmado: "+diagnostic_reason);
      }
    if(g_monitor_writer!=INVALID_HANDLE) FileClose(g_monitor_writer);
    g_monitor_writer=INVALID_HANDLE; g_monitor_owned=false; g_monitor_lease_value=0;
@@ -117,9 +161,16 @@ bool JPWMonitorAttach(const string key)
   {
    if(!JPWRaizNIsHash(key)) { g_monitor_reason="Identidade da conta/instalação indisponível"; return(false); }
    FolderCreate("JPWealth"); FolderCreate("JPWealth\\Genetrix"); FolderCreate("JPWealth\\Genetrix\\Monitor");
+   ResetLastError();
    const int owner=FileOpen(JPW_MONITOR_FOLDER+"writer_"+key+".lock",FILE_BIN|FILE_READ|FILE_WRITE);
    if(owner==INVALID_HANDLE)
-     { g_monitor_reason="Conflito: outro núcleo possui o lock exclusivo da conta/instalação"; return(false); }
+     {
+      const int open_error=GetLastError();
+      g_monitor_reason="Abertura do lock exclusivo indisponível. Erro "+IntegerToString(open_error)+
+         ". Causas possíveis: acesso/I/O ou outro produtor. Confira o acesso à pasta de dados e "
+         "se há outro Monitor para esta conta/instalação; consulte o Diário do terminal";
+      return(false);
+     }
    string token="";
    if(!JPWRaizNHash(key+"|monitor_session_v1|"+IntegerToString(ChartID())+"|"+
                     IntegerToString((long)TimeGMT())+"|"+IntegerToString((long)GetMicrosecondCount()),token))
@@ -143,22 +194,23 @@ bool JPWMonitorAttach(const string key)
    if(!JPWMonitorHeartbeat())
      { g_monitor_reason="Titularidade da lease não confirmada"; JPWMonitorDetach(REASON_INITFAILED); return(false); }
    JPWMonitorProjectStatus(); string reason="";
-   if(!JPWMonitorWriteStatus(g_monitor_snapshot,reason)) Print("JPW núcleo: ",reason);
+   JPWMonitorWriteStatus(g_monitor_snapshot,reason); g_monitor_log_publish_reason=reason;
    return(true);
   }
 int OnInit()
   {
    JPWMonitorSchedulerReset(g_monitor_scheduler); JPWMonitorSnapshotClear(g_monitor_snapshot);
+   JPWMonitorLogReset(g_monitor_log); g_monitor_log_publish_reason="";
    string key=""; if(JPWObserverReadIdentity(key)) g_monitor_declared_account=key;
-   if(key!="" && !JPWMonitorAttach(key))
-      Print("Stoikus · Monitor: ",g_monitor_reason,
-            ". Confira a conexão e se já há um Monitor nesta conta; acompanhe o estado no painel Conta.");
+   if(key!="") JPWMonitorAttach(key);
+   else g_monitor_reason="Identidade indisponível; publicação atual invalidada";
    if(!EventSetTimer(1))
-     { Print("Stoikus · Monitor: não foi possível iniciar a atualização de 1 s. Erro ",GetLastError(),
-             ". Confira o Diário do terminal e carregue o Monitor novamente no gráfico de apoio.");
+     { Print("Stoikus by JP Wealth · Monitor: não foi possível iniciar a atualização de 1 s. Erro ",GetLastError(),
+             ". Confira o Diário do terminal e Conta → Sistema; carregue o Monitor novamente no gráfico de apoio.");
        JPWMonitorDetach(REASON_INITFAILED); return(INIT_FAILED); }
-   Print("Stoikus · Monitor iniciado. Mantenha este gráfico de apoio aberto. ",
-         "Cobertura declarada não ativa negociação nem arma Supervisor; confira dados e cobertura no painel Conta.");
+   Print("Stoikus by JP Wealth · Monitor carregado; timer de 1 s disponível. ",
+         "Cobertura declarada não ativa negociação nem arma Supervisor.");
+   if(g_monitor_owned) JPWMonitorReportCurrent(); else JPWMonitorReportWaiting(key);
    return(INIT_SUCCEEDED);
   }
 void OnDeinit(const int reason) { EventKillTimer(); JPWMonitorDetach(reason); }
@@ -175,17 +227,19 @@ void OnTimer()
   {
    const ulong started=GetTickCount64(); string key="";
    if(!JPWObserverReadIdentity(key))
-     { JPWMonitorDetach(REASON_ACCOUNT); g_monitor_reason="Identidade indisponível; publicação atual invalidada"; return; }
+     { JPWMonitorDetach(REASON_ACCOUNT); g_monitor_reason="Identidade indisponível; publicação atual invalidada";
+       JPWMonitorReportWaiting(""); return; }
    if(g_monitor_context_dirty || (g_monitor_owned && key!=g_monitor_key))
-     { JPWMonitorDetach(REASON_ACCOUNT); g_monitor_context_dirty=false; }
+     { JPWMonitorDetach(REASON_ACCOUNT); g_monitor_context_dirty=false; JPWMonitorReportContext(key); }
    if(!g_monitor_owned)
      {
       if(started<g_monitor_next_claim_ms) return;
       g_monitor_next_claim_ms=started+1000;
-      if(!JPWMonitorAttach(key)) { Print("JPW núcleo: ",g_monitor_reason); return; }
+      if(!JPWMonitorAttach(key)) { JPWMonitorReportWaiting(key); return; }
      }
    if(!JPWMonitorOwnershipConfirmed())
-     { JPWMonitorDetach(REASON_ACCOUNT); g_monitor_reason="Lease alterada; trabalho suspenso sem roubar titularidade"; return; }
+     { JPWMonitorDetach(REASON_ACCOUNT); g_monitor_reason="Lease alterada; trabalho suspenso sem roubar titularidade";
+       JPWMonitorReport(JPW_MONITOR_LOG_LEASE_LOST,key,g_monitor_reason); return; }
    const int due_mask=15; int done_mask=0; bool status_attempted=false;
    JPWMonitorSchedulerBegin(g_monitor_scheduler,due_mask);
    // Technical publication is normally last. Under persistent indivisible
@@ -194,44 +248,50 @@ void OnTimer()
       GetTickCount64()>=started && GetTickCount64()-started<JPW_MONITOR_BUDGET_MS)
      {
       JPWMonitorProjectStatus();
-      if(!JPWMonitorHeartbeat()) { JPWMonitorDetach(REASON_ACCOUNT); return; }
+      if(!JPWMonitorHeartbeat())
+        { JPWMonitorDetach(REASON_ACCOUNT);
+          JPWMonitorReport(JPW_MONITOR_LOG_LEASE_LOST,key,"Titularidade da lease não confirmada; trabalho suspenso"); return; }
       string reason="";
-      if(!JPWMonitorWriteStatus(g_monitor_snapshot,reason)) Print("JPW núcleo: ",reason);
+      JPWMonitorWriteStatus(g_monitor_snapshot,reason); g_monitor_log_publish_reason=reason;
       status_attempted=true; g_monitor_status_deferred_cycles=0;
      }
    string context_before="";
    if(!JPWObserverReadIdentity(context_before) || context_before!=g_monitor_key)
-     { JPWMonitorDetach(REASON_ACCOUNT); return; }
+     { JPWMonitorDetach(REASON_ACCOUNT); JPWMonitorReportContext(context_before); return; }
    if(GetTickCount64()>=started && GetTickCount64()-started<JPW_MONITOR_BUDGET_MS)
       JPWObserverRuntimePrepare(started);
    string context_after="";
    if(!JPWObserverReadIdentity(context_after) || context_after!=g_monitor_key)
-     { JPWMonitorDetach(REASON_ACCOUNT); return; }
+     { JPWMonitorDetach(REASON_ACCOUNT); JPWMonitorReportContext(context_after); return; }
+   string changed_context=key;
    for(int jobs=0;jobs<4;jobs++)
      {
       const int module=JPWMonitorSchedulerNext(g_monitor_scheduler,started,GetTickCount64(),due_mask,done_mask);
       if(module<0) break;
       string before="";
       if(!JPWObserverReadIdentity(before) || before!=g_monitor_key)
-        { g_monitor_context_dirty=true; break; }
+        { g_monitor_context_dirty=true; changed_context=before; break; }
       if(module==2) JPWAccountantTick(started,JPW_MONITOR_LEDGER_SLICE_MS);
       else JPWObserverRuntimeTick(started,(module==3 ? 2 : module));
       done_mask|=1<<module;
       JPWMonitorSchedulerServiced(g_monitor_scheduler,module,GetTickCount64());
       string after="";
       if(!JPWObserverReadIdentity(after) || after!=g_monitor_key)
-        { g_monitor_context_dirty=true; break; }
+        { g_monitor_context_dirty=true; changed_context=after; break; }
      }
-   if(g_monitor_context_dirty) { JPWMonitorDetach(REASON_ACCOUNT); return; }
+   if(g_monitor_context_dirty)
+     { JPWMonitorDetach(REASON_ACCOUNT); JPWMonitorReportContext(changed_context); return; }
    if((done_mask&2)==0) JPWPersonalControllerDeferred();
    if(!g_observer_runtime_conflict) JPWStopRiskPresenceRefresh();
    if(!status_attempted && GetTickCount64()>=started &&
       GetTickCount64()-started<JPW_MONITOR_BUDGET_MS)
      {
       JPWMonitorProjectStatus();
-      if(!JPWMonitorHeartbeat()) { JPWMonitorDetach(REASON_ACCOUNT); return; }
+      if(!JPWMonitorHeartbeat())
+        { JPWMonitorDetach(REASON_ACCOUNT);
+          JPWMonitorReport(JPW_MONITOR_LOG_LEASE_LOST,key,"Titularidade da lease não confirmada; trabalho suspenso"); return; }
       string reason="";
-      if(!JPWMonitorWriteStatus(g_monitor_snapshot,reason)) Print("JPW núcleo: ",reason);
+      JPWMonitorWriteStatus(g_monitor_snapshot,reason); g_monitor_log_publish_reason=reason;
       status_attempted=true; g_monitor_status_deferred_cycles=0;
      }
    if(!status_attempted && g_monitor_status_deferred_cycles<1000000)
@@ -239,4 +299,5 @@ void OnTimer()
    if(GetTickCount64()<started || GetTickCount64()-started>=JPW_MONITOR_BUDGET_MS)
       JPWObserverDiagnostic(JPW_DIAG_BUDGET_DEFERRED);
    JPWMonitorSchedulerFinish(g_monitor_scheduler,started,GetTickCount64(),due_mask,done_mask);
+   JPWMonitorReportCurrent();
   }

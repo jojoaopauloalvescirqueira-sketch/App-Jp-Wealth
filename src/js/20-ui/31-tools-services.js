@@ -2,9 +2,16 @@
 (function(){
   'use strict';
   const el=id=>document.getElementById(id);
-  let view='calendar',valid=null,lastCanonical=null,revision=0;
+  let view='calendar',valid=null,lastCanonical=null,revision=0,downloadGeneration=0;
+  const downloadControllers=new Set();
+  const epoch=()=>typeof sessionEpochRead==='function'?sessionEpochRead():null;
+  function cancelDownloads(){downloadGeneration++;downloadControllers.forEach(c=>c.abort());downloadControllers.clear();}
+  window.JPWNavigation?.subscribe(cancelDownloads);window.addEventListener('pagehide',cancelDownloads);
+  function downloadAction(){const controller=new AbortController(),generation=downloadGeneration,base=epoch();downloadControllers.add(controller);
+    return {signal:controller.signal,current:()=>!controller.signal.aborted&&generation===downloadGeneration&&base===epoch(),done:()=>downloadControllers.delete(controller)};}
+
   jpwWorkspaceDraftProviders.set('nocuda-transfer',(reset=false)=>{
-    if(reset){lastCanonical=null;valid=null;el('nocudaPayload').value='';return [];}
+    if(reset){invalidate();lastCanonical=null;valid=null;el('nocudaPayload').value='';return [];}
     const text=el('nocudaPayload').value;
     return text?[{label:'NoCuda — parâmetros em conferência',provider:'nocuda-transfer',version:1,context:{route:'tools-nocuda'},baseReference:null,text}]:[];
   });
@@ -13,8 +20,56 @@
     reopen(item){if(typeof closeSettingsModal==='function')closeSettingsModal();if(window.JPWNavigation?.navigate('tools-nocuda')===false)throw new Error('Navegação recusada.');
       el('nocudaPayload').value=item.text;invalidate();status('Parâmetros recuperados, ainda não validados. Confira e valide antes de gerar.');el('nocudaPayload').focus();}
   });
+  // The Tools workspace owns visibility; the existing Galton controller owns
+  // physics, preferences and session epochs. Never rebuild a mounted board.
+  const dialogSelector='dialog[open],[role="dialog"],[aria-modal="true"]';
+  const overlaySelector='#settingsOverlay,#modalOverlay,#mvpNotesOverlay,#ecalOverlay,#alladinModalOverlay';
+  const isVisible=node=>!node.closest('[hidden],[inert],[aria-hidden="true"]')&&node.getClientRects().length>0&&getComputedStyle(node).visibility!=='hidden';
+  function openDialog(){
+    return [...document.querySelectorAll(dialogSelector)].find(isVisible)||
+      [...document.querySelectorAll(overlaySelector.split(',').map(selector=>selector+'.show').join(','))].find(isVisible)||null;
+  }
+  function canNavigateToGame(){
+    const dialog=openDialog();if(!dialog)return true;
+    let notice=dialog.querySelector('[data-minigames-navigation-status]');
+    if(!notice){notice=document.createElement('p');notice.dataset.minigamesNavigationStatus='';notice.className='minigames-navigation-status';notice.setAttribute('role','status');dialog.append(notice);}
+    notice.textContent='Feche a janela atual e abra Ferramentas e Serviços → MiniGames → Galton Board.';
+    return false;
+  }
+  function syncMiniGames(){
+    const slot=el('toolsGaltonSlot');if(!slot)return;
+    const visible=view==='galton'&&el('tools').classList.contains('active')&&!openDialog()&&!slot.closest('[hidden],[inert]')&&slot.getClientRects().length>0;
+    if(visible&&!slot.querySelector('[data-galton-root]')){
+      slot.innerHTML=typeof galtonBoardPanelHTML==='function'?galtonBoardPanelHTML():'<p role="alert">Galton Board não pôde ser carregado.</p>';
+    }
+    const controller=slot.querySelector('[data-galton-root]')?.__galtonController;
+    // Browser visibility remains with onVisibility; UI departure always requires
+    // explicit Continuar, including when a dialog closes over the same route.
+    if(visible&&!document.hidden&&!controller?.active)window.activateGaltonBoard?.();
+    else if(!visible&&controller?.active)window.deactivateGaltonBoard?.({resume:false});
+  }
+  window.JPWNavigation?.subscribe(({current})=>{
+    syncMiniGames();
+    if(current.primary!=='tools'||openDialog())return;
+    if(current.localView?.view==='galton')el('minigamesGaltonTitle').focus({preventScroll:true});
+  });
+  function initMiniGames(){
+    el('minigamesOpenGalton').addEventListener('click',()=>window.JPWNavigation?.navigateLocal('tools','galton'));
+    el('minigamesBack').addEventListener('click',()=>{
+      if(window.JPWNavigation?.navigate('tools-minigames'))el('minigamesOpenGalton').focus({preventScroll:true});
+    });
+    // Listen only for dialog/ancestor visibility changes. Galton histogram and
+    // canvas updates cannot trigger navigation or repeated activation.
+    const containsDialog=node=>node instanceof Element&&(node.matches('dialog,[role="dialog"],[aria-modal="true"],'+overlaySelector)||!!node.querySelector('dialog,[role="dialog"],[aria-modal="true"],'+overlaySelector));
+    const observer=new MutationObserver(records=>{
+      if(records.some(record=>record.type==='attributes'?containsDialog(record.target):[...record.addedNodes,...record.removedNodes].some(containsDialog)))syncMiniGames();
+    });
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncMiniGames();});
+    observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','inert','open','aria-hidden','role','aria-modal','style']});
+  }
   function selectView(next){
-    if(!['calendar','nocuda','leverage','normative'].includes(next))return;
+    if(!['calendar','nocuda','leverage','normative','minigames','galton'].includes(next))return;
+    if(view==='galton'&&next!=='galton')window.deactivateGaltonBoard?.({resume:false});
     if(view==='normative'&&next!=='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.leave();
     view=next;
     document.querySelectorAll('#tools [data-tools-view]').forEach(node=>{
@@ -24,7 +79,7 @@
     if(next==='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.enter();
   }
   function status(message,bad){el('nocudaStatus').textContent=message;el('nocudaStatus').dataset.state=bad?'error':'ok';}
-  function invalidate(){revision++;valid=null;['nocudaCopy','nocudaSave','nocudaEditable'].forEach(id=>el(id).disabled=true);el('nocudaRestore').hidden=!lastCanonical;}
+  function invalidate(){cancelDownloads();revision++;valid=null;['nocudaCopy','nocudaSave','nocudaEditable'].forEach(id=>el(id).disabled=true);el('nocudaRestore').hidden=!lastCanonical;}
   function summary(value){
     const items=[['Instrumento',value.symbol],['Período',value.tf%3600===0?(value.tf/3600)+' h':value.tf%60===0?(value.tf/60)+' min':value.tf+' s'],['Origem',value.src+' · '+value.feed],['Linhas',(17+value.before+value.after).toString()],['Passo','0,125'],['Largura assinada',value.d]];
     const nodes=[];items.forEach(([name,text])=>{const box=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=text;box.append(dt,dd);nodes.push(box);});el('nocudaSummary').replaceChildren(...nodes);
@@ -52,12 +107,7 @@
   function download(text,name,type){
     const blob=new Blob([text],{type:type||'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
   }
-  function pineSource(){
-    const encoded=window.JPW_NOCUDA_PINE;
-    if(!encoded)throw new Error('O modelo Pine não está disponível neste build. Reabra uma versão completa do aplicativo.');
-    return new TextDecoder().decode(Uint8Array.from(atob(encoded),c=>c.charCodeAt(0)));
-  }
-  function generateEditable(value,canonical){
+  async function generateEditable(value,canonical,options){
     // Always validate at the boundary, including callers of the public helper.
     const checked=window.JPWNocudaTransfer.parse(canonical);
     if(!checked.ok)throw new Error('Parâmetros inválidos.');value=checked.value;
@@ -71,7 +121,7 @@
     const l=value.labels;
     Object.assign(values,{labelMode:({M:'Marcos',A:'Todas as linhas',N:'Nenhum'})[l.mode],labelSize:l.size,labelTransparency:l.alpha,labelPosition:({L:'Início',C:'Centro',R:'Fim',T:'Último candle'})[l.pos],labelVertical:({U:'Acima',O:'Sobre a linha',D:'Abaixo'})[l.vert],labelGap:l.gapPercent,labelOffset:l.offsetBars,showLevel:!!l.showLevel,showPrice:!!l.showPrice,showMax:!!l.showMax,labelUseLineColor:!!l.useLineColor});raw.labelColor=hex(l.r,l.g,l.b);
     const expected=new Set([...Object.keys(values),...Object.keys(raw)]),found=new Set();
-    const source=pineSource().split('\n').map(line=>{
+    const source=(await window.JPWDownloadAssets.getText('nocuda/Nocuda_Tool.pine',options)).split('\n').map(line=>{
       const match=line.match(/\/\/ NOCUDA_DEFAULT:([A-Za-z0-9_]+)\s*$/);if(!match||!expected.has(match[1]))return line;
       const key=match[1];if(found.has(key))throw new Error('Modelo Pine com marcador duplicado.');
       const literal=Object.hasOwn(raw,key)?raw[key]:JSON.stringify(values[key]);
@@ -96,27 +146,53 @@
     catch(_error){if(token!==revision)return;el('nocudaCanonical').focus();el('nocudaCanonical').select();status('Selecione e copie o código validado abaixo com ⌘C ou Ctrl+C.');}
   });
   el('nocudaSave').addEventListener('click',()=>{if(valid)download(valid.canonical,'Nocuda_Parametros.txt');});
-  el('nocudaEditable').addEventListener('click',()=>{if(!valid)return;try{download(generateEditable(valid.value,valid.canonical),'Nocuda_Tool_Editavel.pine');status('Pine editável gerado. Abra no Pine Editor, salve e adicione ao gráfico compatível.');}catch(error){status(error.message,true);}});
-  // Local-file links are not downloadable in every browser. Use the exact
-  // build-pinned bytes already embedded by the official generator.
-  if(location.protocol==='file:')document.querySelectorAll('[data-nocuda-file]').forEach(link=>{const data=window.JPW_NOCUDA_FILES&&window.JPW_NOCUDA_FILES[link.dataset.nocudaFile];if(data)link.href='data:'+data.mime+';base64,'+data.base64;});
+  el('nocudaEditable').addEventListener('click',async()=>{if(!valid)return;const token=revision,action=downloadAction(),value=valid;
+    try{const source=await generateEditable(value.value,value.canonical,{signal:action.signal});if(!action.current()||token!==revision)return;
+      download(source,'Nocuda_Tool_Editavel.pine');status('Pine editável gerado. Abra no Pine Editor, salve e adicione ao gráfico compatível.');
+    }catch(error){if(action.current()&&token===revision)status(error.message,true);}finally{action.done();}});
+  document.querySelectorAll('[data-nocuda-file]').forEach(link=>link.addEventListener('click',async event=>{
+    if(event.button>0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+    event.preventDefault();const action=downloadAction(),name=link.dataset.nocudaFile;
+    try{const bytes=await window.JPWDownloadAssets.getBytes('nocuda/'+name,{signal:action.signal});if(!action.current())return;
+      const descriptor=window.JPW_DOWNLOAD_MANIFEST.resources['nocuda/'+name];download(bytes,descriptor.filename,descriptor.mime);
+    }catch(error){if(action.current())status('Download não iniciado: '+error.message,true);}finally{action.done();}
+  }));
   function initLeverageDownloads(){
     // Public release metadata and embedded bytes are generated from the same
     // manifest by the official build. The page never reads account data.
     const manifest=window.JPW_LEVERAGE_MANIFEST;
-    const files=window.JPW_LEVERAGE_FILES||{};
+
     const set=(name,value)=>document.querySelectorAll('[data-jpw-leverage-meta="'+name+'"]')
       .forEach(node=>{node.textContent=value;});
     const notice=(message,error)=>{const node=el('jpwLeverageDownloadStatus');node.textContent=message;node.dataset.state=error?'error':'ok';};
-    const validEntry=entry=>entry&&entry.available===true&&
-      typeof entry.path==='string'&&/^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path)&&
+    const artifactCatalog={R5:{
+      nativeKit:{filename:'Kit_Windows_Stoikus_Janelas_R5.zip',mime:'application/zip'},
+      nativePin:{filename:'root-pin-R5.json',mime:'application/json'},
+      preview:{filename:'Previa_Stoikus_Janelas_R5.html',mime:'text/html'}
+    },R4:{
+      nativeKit:{filename:'Kit_Windows_Stoikus_Assinatura_R4.zip',mime:'application/zip'},
+      nativePin:{filename:'root-pin-R4.json',mime:'application/json'},
+      preview:{filename:'Previa_Stoikus_Interface_R4.html',mime:'text/html'}
+    }};
+    const artifactTypes=artifactCatalog[manifest?.interfaceRelease?.revision]||artifactCatalog.R5;
+    const kinds=['dailySource','source','compiled',...Object.keys(artifactTypes)];
+    const release=manifest&&manifest.interfaceRelease;
+    const validRelease=release&&((release.revision==='R4'&&release.candidate==='1.22.3-interface'&&release.archiveVariant==='interface'&&manifest.version==='1.22.3')||
+      (release.revision==='R5'&&release.candidate==='1.23.0-interface'&&release.archiveVariant===''&&manifest.version==='1.23.0'))&&release.state==='SOURCE_ONLY_NATIVE_PENDING'&&
+      manifest.downloads?.compiled?.available===false&&
+      ['nativeCompilation','nativeRuntime','humanAcceptance','windowsX64'].every(key=>release[key]==='NOT_RUN')&&release.artifacts&&
+      Object.keys(release.artifacts).length===3&&Object.keys(artifactTypes).every(key=>Object.hasOwn(release.artifacts,key));
+    const validEntry=(entry,kind)=>entry&&entry.available===true&&
+      typeof entry.path==='string'&&
+      (Object.hasOwn(artifactTypes,kind)?!!validRelease&&entry.path==='downloads/jpw-alavancagem-atual/'+artifactTypes[kind].filename:
+        /^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path))&&
       entry.filename===entry.path.split('/').pop()&&/^[a-f0-9]{64}$/.test(entry.sha256)&&
       Number.isSafeInteger(entry.bytes)&&entry.bytes>0;
     const validManifest=manifest&&manifest.schemaVersion===1&&
       typeof manifest.version==='string'&&/^[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.version)&&
       manifest.downloads&&manifest.validation;
     if(!validManifest){
-      for(const kind of ['dailySource','source','compiled']){
+      for(const kind of kinds){
         document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]')
           .forEach(button=>{button.disabled=true;});
       }
@@ -130,6 +206,7 @@
       return;
     }
     set('version',manifest.version);
+    set('interface-release',validRelease?'Interface '+release.revision+' · '+release.candidate+' · SOURCE_ONLY · validação nativa pendente':'Interface não confirmada nesta cópia');
     set('source-availability',validEntry(manifest.downloads.source)?'Fontes disponíveis':'Fontes indisponíveis');
     set('dailySource-availability',validEntry(manifest.downloads.dailySource)?'Pacote de uso disponível':'Pacote de uso indisponível nesta cópia');
     const nativeStages=['compilation','terminal'].map(stage=>manifest.validation[stage]?.status);
@@ -143,11 +220,13 @@
       const detail=item&&typeof item.detail==='string'&&item.detail?item.detail:'';
       set(stage,state+(detail?' · '+detail:''));
     }
-    for(const kind of ['dailySource','source','compiled']){
-      const entry=manifest.downloads[kind],buttons=document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]');
+    for(const kind of kinds){
+      const type=artifactTypes[kind]||{mime:'application/zip'};
+      const entry=Object.hasOwn(artifactTypes,kind)?(validRelease?release.artifacts[kind]:null):manifest.downloads[kind],buttons=document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]');
       const disable=value=>buttons.forEach(button=>{button.disabled=value;});
-      const ready=validEntry(entry)&&
-        (location.protocol!=='file:'||!!(files[kind]&&files[kind].mime==='application/zip'&&typeof files[kind].base64==='string'));
+      const resource=window.JPW_DOWNLOAD_MANIFEST?.resources?.['leverage/'+kind];
+      const ready=validEntry(entry,kind)&&!!resource&&resource.mime===type.mime&&
+        ['path','filename','sha256','bytes'].every(key=>resource[key]===entry[key]);
       disable(!ready);
       set(kind+'-sha',ready?entry.sha256:'—');
       if(ready) set(kind+'-status','Disponível · '+entry.filename+' · '+entry.bytes.toLocaleString('pt-BR')+' bytes');
@@ -156,28 +235,16 @@
       else set(kind+'-status','Arquivo indisponível ou sem integridade confirmada nesta cópia.');
       buttons.forEach(button=>button.addEventListener('click',async()=>{
         if(!ready||button.disabled)return;
-        disable(true);notice('Verificando o arquivo antes do download…');
+        const action=downloadAction();disable(true);notice('Verificando o arquivo antes do download…');
         try{
-          let bytes;
-          if(location.protocol==='file:'){
-            const encoded=files[kind];
-            if(!encoded||encoded.mime!=='application/zip')throw new Error('Arquivo incorporado ausente.');
-            bytes=Uint8Array.from(atob(encoded.base64),c=>c.charCodeAt(0));
-          }else{
-            const response=await fetch(entry.path);
-            if(!response.ok)throw new Error('Arquivo não encontrado neste endereço.');
-            bytes=new Uint8Array(await response.arrayBuffer());
-          }
-          if(bytes.length!==entry.bytes)throw new Error('Tamanho do pacote diferente do manifesto.');
-          if(!crypto.subtle)throw new Error('Verificação criptográfica indisponível neste navegador.');
-          const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
-          if(digest!==entry.sha256)throw new Error('Hash do pacote diferente do manifesto.');
-          const url=URL.createObjectURL(new Blob([bytes],{type:'application/zip'}));
+          const bytes=await window.JPWDownloadAssets.getBytes('leverage/'+kind,{signal:action.signal});
+          if(!action.current())return;
+          const url=URL.createObjectURL(new Blob([bytes],{type:type.mime}));
           const link=document.createElement('a');link.href=url;link.download=entry.filename;document.body.append(link);link.click();link.remove();
           setTimeout(()=>URL.revokeObjectURL(url),30000);
           notice('Arquivo '+entry.filename+' verificado e preparado para download.');
-        }catch(error){notice('Download não iniciado: '+error.message,true);}
-        finally{disable(false);}
+        }catch(error){if(action.current())notice('Download não iniciado: '+error.message,true);}
+        finally{action.done();disable(false);}
       }));
     }
   }
@@ -296,9 +363,10 @@
     }
     return Object.freeze({getView:()=>active,open});
   }
+  initMiniGames();
   initLeverageDownloads();
   // Publish the existing Tools facade before resolving an initial deep link.
   // JPWNavigation needs that facade to reveal its outer Tools view.
   const genetrix=initGenetrixUI();
-  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view}),generateEditable,genetrix});selectView(view);
+  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view}),generateEditable,genetrix,minigames:Object.freeze({canNavigate:canNavigateToGame})});selectView(view);
 })();

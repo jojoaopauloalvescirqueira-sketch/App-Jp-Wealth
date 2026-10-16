@@ -1,4 +1,67 @@
+# Integração Stoikus 1.23.0/R5 ao JP Wealth — 2026-10-16
+
+Autorizada a integração, commit, push e merge à `main` atual (`2b22175a4f3f47b1f289deca65366c4dc0445dca`), preservando as melhorias recentes do aplicativo. Trabalho na branch existente `codex/stoikus-continuity-20261014`. O [registro desta integração](docs/work/CHG-STOIKUS-GIT-INTEGRATION-20261016.md) separa o catálogo de distribuição, a página e a validação final.
+
+Distribuição de **fontes candidatas 1.23.0 / MQL 1.230**, cálculo **1.9.0**. SDK, pacote diário, kit Windows, pin e prévia R5 conservam a identidade da entrega selada; não há EX5 do Stoikus. Compilação, uso MT5, instalação demo, aceite humano e Windows x64 permanecem **NOT_RUN**. A atualização do instalador e a implantação no GPT Sites têm entregas próprias.
+
+As validações abaixo são recibos históricos dos respectivos candidatos. Os resultados da combinação com a `main` atual serão registrados em [validação da integração](docs/validation/stoikus-git-integration-20261016/README.md), sem transferir aprovação dos bytes anteriores.
+
+---
+
+## Fotografias anteriores preservadas
+
+# JP Wealth — candidato local Stoikus 1.23.0 / janelas R5
+
+Host final **48/48 PASS** e **6/6 grupos adicionais PASS**, com inputs estáveis; reprodução e preservação aprovadas. Runtime build `c1298741ec9673c2644cfaad83e6444b06a4ae7e0a5ec78f85f2c65d2781ea31`, fingerprint MQL `62c9bb7d36aed866983449c4327fb529b994464cb1422bf9516c639ea4fb94ac`. Estes são resultados de fonte/bancada; MetaEditor, interação MT5 e aceite humano continuam NOT_RUN.
+
+Fontes **MQL 1.230**, cálculo **1.9.0** preservado. A revisão local organiza Conta/Histórico/NoCuda e acrescenta resumo compacto, fundo transparente, movimento, redimensionamento e minimização. [Guia dos controles](mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md), [prévia com dados fictícios](docs/preview/stoikus-window-controls/index.html) e [validação do candidato](docs/validation/stoikus-windows-20261015/INTEGRATION.md).
+
+Este candidato tem pacotes e hashes próprios, fora dos downloads publicados. Compilação e uso MT5, instalação demo e aceite humano continuam **NOT_RUN**. Site, instalador, Git e publicação são etapas separadas; a fotografia R4 abaixo descreve seus próprios bytes e não certifica R5.
+
+---
+
+## Fotografia anterior preservada
+
+# JP Wealth — atualização Stoikus 1.22.3 / interface R4
+
+Distribuição de fontes MQL 1.223, cálculo **1.9.0** preservado. A interface R4
+melhora Conta, Histórico Pessoal, NoCuda e orientação dos dois gráficos.
+Compilação e uso MT5, instalação demo e aceite humano continuam **NOT_RUN**.
+Use o kit de compilação Windows e o pin separado; são arquivos de preparação,
+sem EX5 e sem instalação automática. O site não executa os componentes MT5.
+
+A assinatura aprovada é **Stoikus by JP Wealth**: Arial regular24px, by12px e logo vermelha original12px em composição240×28px lógicos. NoCuda conserva sua identidade. A revisão muda apresentação/distribuição; cálculo1.9.0, IDs, dados e negociação permanecem sob os contratos existentes.
+
+
+---
+
+## Fotografia local anterior preservada
+
+# Stoikus 1.22.2 — Interface R3 no site JP Wealth
+
+A entrega Interface R3 usa o candidato **1.22.2-interface**, cálculo **1.9.0** e estado **SOURCE_ONLY_NATIVE_PENDING**. O site mantém as cinco abas e distribui os mesmos fontes selados do kit; os ZIPs históricos continuam separados. Compilação nativa, execução MT5, aceite humano e Windows x64 independente: **NOT_RUN**. Publicação do site tem autorização própria; não aprova instalação ou negociação no MT5.
+
+Na aba Instalar, comece por `Kit_Windows_Stoikus_Interface.zip` e baixe separadamente `root-pin-R3.json`. Extraia numa pasta local nova `sealed-R3`, confira todos os arquivos e hashes pelo guia do kit, execute as fixtures Windows e só depois compile em staging temporário. Preserve `results.zip`; confira origem, freeze, ZIP, quatro fontes e hashes dos EX5 no recibo R3 antes de qualquer cópia para uma instalação demo com pasta de dados separada. Windows ARM no Parallels não substitui Windows x64 independente. O kit não é instalador, não traz EXE e não abre o terminal.
+
+`JPW_Stoikus_Uso_Fontes_v1.22.2_interface.zip` contém os quatro programas de uso: Monitor no gráfico de apoio; Conta e NoCuda no gráfico de trabalho; Abrir Painéis como script pontual. Seu SHA-256 é `30399033a29403ab2d9c84cb799ae872a1acf312b7e2bcb0e10a6dacce70b183`, igual ao ZIP selado do kit. `JPW_Stoikus_Fontes_v1.22.2_interface.zip` oferece o SDK separado. A prévia `Previa_Stoikus_Interface.html` tem dados fictícios e não executa MT5. Os downloads conferem bytes e SHA-256 antes de salvar e recusam arquivos divergentes.
+
+A interface explica cada métrica da Conta por valor, unidade, estado, motivo, origem e escopo; o resumo compacto usa 10 pt por padrão, enquanto o painel tem fonte própria. Histórico distingue conta consultada, categoria e leitura ainda em preparação. NoCuda segue Selecionar canal → Conferir prévia → Confirmar vínculo, mantendo UNVERIFIED_NATIVE e medidas dependentes indisponíveis quando a correspondência nativa não estiver comprovada. N/A, Partial e Estimated preservam seus significados.
+
+Os contratos, arquivos e resultados descritos abaixo são fotografias anteriores; não transferem aprovação para os bytes R3.
+
+# Candidato Stoikus 1.22.2 — continuidade e validação — 2026-10-14
+
+Base conferida: `0037bd3c8a7ab2b4e21f7fdcb60f66ed93230874`. Trabalho isolado na branch `codex/stoikus-continuity-20261014`, em `/private/tmp/jpw-stoikus-continuity-20261014`. Produto **1.22.2**, MQL **1.222**, cálculo **1.9.0** preservado.
+
+O proprietário autorizou corrigir lifecycle/ownership do NoCuda, continuidade do Histórico Pessoal, estados acionáveis do Monitor, ensaios nativos isolados e validação com iniciante. Confirmou que fará o teste de uso e dispõe somente de Windows ARM no Parallels. Windows x64 independente permanece pendente; emulação x64 no ARM não substitui esse ensaio.
+
+As correções possuem regressões host e crítica independente. O congelamento final, os recibos all/full e o grafo focal serão registrados em [integração 1.22.2](docs/validation/stoikus-1.22.2/INTEGRATION.md). Aprovação de código ou compilação não é aceite financeiro ou operacional. Nenhum resultado histórico é transferido para este candidato.
+
+Esta tarefa não autoriza commit, push, merge nem publicação. O instalador beta preparado em outra worktree conserva o payload 1.22.1; não representa automaticamente estas correções. Instruções AGENTS antigas permanecem revogadas e preservadas como documentos históricos.
+
 # JP Wealth — Stoikus 1.22.1 e correções de auditoria — 2026-10-13
+
+Candidate local de **MiniGames (14/10/2026)**: Ferramentas e Serviços → MiniGames reúne o cartão Galton Board. **Abrir** entra no jogo e **Voltar para MiniGames** retorna à central. A montagem ocorre somente ao abrir o jogo; a simulação não começa automaticamente. Sair ou cobrir o jogo pausa a mesma instância em memória; voltar exige **Continuar**. Preferências, física, estatística e dados financeiros preservados. O guia mantém seus 57 passos em sete trilhas, inclusive o ID anterior do Laboratório. [Contrato vigente](docs/architecture/GALTON-BOARD.md). Validação e aceite são separados; sem merge, push ou publicação nesta tarefa.
 
 Este conjunto incorpora o Stoikus 1.22.1 e os patches AUD-01..AUD-10 já presentes no site. Guia e downloads de uso/engenharia seguem separados. A publicação solicitada usa o projeto existente JP Wealth Software no Sites/GPT, mantendo seu acesso; Netlify é uma configuração anterior e não é o destino atual. Os recibos da combinação estão em docs/validation/stoikus-site-20261013/; resultados anteriores abaixo pertencem às respectivas revisões. Compilação e execução MT5 permanecem NOT_RUN, sem EX5 novo distribuído.
 
@@ -123,9 +186,10 @@ glossário, FAQ — sem sinais nem recomendações), Estatuto Operacional, Parâ
 e Backup. A pesquisa é declarativa e **não indexa dados
 operacionais** do usuário.
 
-### Laboratório de Probabilidade — Galton Board
+### MiniGames — Galton Board
 
-Em `Configurações → Conhecimento → Laboratório de Probabilidade`, uma placa física
+Em `Ferramentas e Serviços → MiniGames`, escolha **Abrir** no cartão Galton Board.
+**Voltar para MiniGames** retorna ao catálogo e pausa o jogo. Uma placa física
 2D permite observar como um histograma empírico emerge de colisões reais. O motor
 Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,
 seed determinística, pinos triangulares, `linhas + 1` compartimentos, controles de
@@ -292,7 +356,7 @@ e contexto final não capturado ficam fora da projeção, sem preenchimento fict
 Lucro Técnico, alavancagem, DD/fase e risco/clearance permanecem pendentes nos
 conflitos registrados; saldo book não é equity flutuante, base de retorno não é
 saldo final, e cadastro atual não preenche histórico ausente.
-Naquela revisão histórica, Research possuía destino para o Laboratório de Probabilidade. A localização atual é Configurações → Conhecimento. Ao sair da folha ou cobrir o Lab com um subdiálogo,
+Naquela revisão histórica, Research possuía destino para o Laboratório de Probabilidade; a revisão de 2026-10-01 o levou a Configurações → Conhecimento. O candidate MiniGames de 2026-10-14 o hospeda em Ferramentas e Serviços → MiniGames. Ao sair do jogo ou cobri-lo com um diálogo,
 a mesma simulação fica pausada em memória; voltar exige **Continuar**. Recarregar
 não recupera a simulação, somente as preferências persistidas. Contrato e limites em
 [CHG-PRODUCT-IMPROVEMENTS-20260911](docs/work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).

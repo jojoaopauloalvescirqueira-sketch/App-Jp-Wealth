@@ -5,15 +5,29 @@
 #define JPW_PERSONAL_SCHEMA 1
 #define JPW_PERSONAL_FOLDER "JPWealth\\Genetrix\\PersonalHistory\\"
 #define JPW_PERSONAL_LEASE_MS 15000
+#define JPW_PERSONAL_SLICE_ROWS 1024
+#define JPW_PERSONAL_SLICE_MS 25
+enum JPWPersonalPhase
+  { JPW_PH_IDLE=0,JPW_PH_WAIT_OWNER,JPW_PH_TRANSACTION,JPW_PH_META,JPW_PH_SQLITE,
+    JPW_PH_EPISODES,JPW_PH_PEAKS,JPW_PH_ROWS,JPW_PH_OWNER,JPW_PH_OWNER_COMMIT,JPW_PH_READY,JPW_PH_FAILED };
 struct JPWPersonalStoreContext
-  { int db; string account_key; string owner_token; bool writer; bool read_snapshot; JPWStoreResult result; string reason; };
+  {
+   int db,query; string account_key,owner_token; bool writer,read_snapshot,requested_writer,transaction_active,audit_complete;
+   bool generation_changed,owner_lost; JPWPersonalPhase phase; JPWStoreResult result; string reason;
+   long expected_sequence,snapshot_sequence,started_wall,last_wall,data_version,active_episodes,total_episodes,gaps;
+   JPWPersonalEpisode recovered[]; JPWPersonalPeak current,estimated;
+   JPWPersonalStoreContext() { db=INVALID_HANDLE; query=INVALID_HANDLE; writer=false; read_snapshot=false; requested_writer=false;
+      transaction_active=false; audit_complete=false; generation_changed=false; owner_lost=false; phase=JPW_PH_IDLE; result=JPW_STORE_ABSENT;
+      expected_sequence=0; snapshot_sequence=0; started_wall=0; last_wall=0; data_version=0; active_episodes=0; total_episodes=0; gaps=0;
+      current.valid=false; estimated.valid=false; }
+  };
 struct JPWPersonalRow
   { long sequence; string category; string item_id; long wall; string payload; string digest; };
 bool JPWPersonalReadRow(const int query,JPWPersonalRow &row,const string key);
 struct JPWPersonalSummary
   {
    JPWStoreResult result; string reason; string account_key; long sequence;
-   long started_wall; long last_wall; int active_episodes; int total_episodes; int gaps;
+   long started_wall; long last_wall; long active_episodes; long total_episodes; long gaps;
    JPWPersonalPeak current; JPWPersonalPeak estimated;
   };
 bool JPWPersonalHash(const string value,string &hex)
@@ -73,8 +87,6 @@ bool JPWPersonalDone(const int query)
   { ResetLastError(); bool row=DatabaseRead(query); return(!row && GetLastError()==ERR_DATABASE_NO_MORE_DATA); }
 bool JPWPersonalFail(JPWPersonalStoreContext &ctx,const JPWStoreResult result,const string reason)
   { ctx.result=result; ctx.reason=reason; return(false); }
-bool JPWPersonalOpenFail(JPWPersonalStoreContext &ctx,const JPWStoreResult result,const string reason)
-  { if(ctx.db!=INVALID_HANDLE) DatabaseClose(ctx.db); ctx.db=INVALID_HANDLE; ctx.writer=false; ctx.read_snapshot=false; return(JPWPersonalFail(ctx,result,reason)); }
 bool JPWPersonalSchemaCreate(const int db,const string key,const long wall)
   {
    if(!DatabaseTransactionBegin(db)) return(false);
@@ -90,174 +102,276 @@ bool JPWPersonalSchemaCreate(const int db,const string key,const long wall)
    if(q!=INVALID_HANDLE) DatabaseFinalize(q);
    if(ok) ok=DatabaseTransactionCommit(db); if(!ok) DatabaseTransactionRollback(db); return(ok);
   }
-bool JPWPersonalEpisodeProjectionIntegrity(const int db,string &reason)
+bool JPWPersonalPreparing(JPWPersonalStoreContext &ctx)
+  { return(ctx.db!=INVALID_HANDLE && ctx.phase!=JPW_PH_IDLE && ctx.phase!=JPW_PH_READY && ctx.phase!=JPW_PH_FAILED && !ctx.owner_lost); }
+bool JPWPersonalReady(JPWPersonalStoreContext &ctx)
+  { return(ctx.db!=INVALID_HANDLE && ctx.phase==JPW_PH_READY && ctx.audit_complete && !ctx.generation_changed && !ctx.owner_lost); }
+bool JPWPersonalNeedsReaudit(JPWPersonalStoreContext &ctx) { return(ctx.generation_changed); }
+bool JPWPersonalOwnerLost(JPWPersonalStoreContext &ctx) { return(ctx.owner_lost); }
+JPWStoreResult JPWPersonalErrorResult(const int error)
   {
-   reason="";
-   // The SQL state is a selector, therefore it must be audited even for rows
-   // excluded from the active projection. A valid payload cannot authorize a
-   // different scalar state to hide an unresolved no-SL episode.
-   int q=DatabasePrepare(db,"SELECT p.episode_id,p.state,p.payload,p.digest,m.account_key,(typeof(p.state)='integer' AND p.state IN(1,2,3)) FROM ph_episodes p CROSS JOIN ph_meta m WHERE m.id=1 ORDER BY p.episode_id");
-   if(q==INVALID_HANDLE) { reason="Projeção de episódios indisponível"; return(false); }
-   bool ok=true; ResetLastError();
-   while(DatabaseRead(q))
-     {
-      int state=0,type_valid=0; string id="",raw="",digest="",key="",actual=""; JPWPersonalEpisode episode;
-      ok=DatabaseColumnText(q,0,id) && DatabaseColumnInteger(q,1,state) && DatabaseColumnText(q,2,raw) &&
-         DatabaseColumnText(q,3,digest) && DatabaseColumnText(q,4,key) && DatabaseColumnInteger(q,5,type_valid) && type_valid==1 &&
-         JPWPersonalHash(raw,actual) && actual==digest &&
-         JPWPersonalDecodeEpisode(raw,episode) && episode.episode_id==id && episode.state==state && episode.account_key==key;
-      if(!ok) break; ResetLastError();
-     }
-   if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA; DatabaseFinalize(q);
-   if(!ok) reason="Estado/identidade da projeção diverge do episódio íntegro; nenhum reset";
-   return(ok);
+   if(error==ERR_DATABASE_BUSY || error==ERR_DATABASE_LOCKED) return(JPW_STORE_BUSY);
+   if(error==ERR_DATABASE_CORRUPT || error==ERR_DATABASE_NOTADB) return(JPW_STORE_CORRUPT);
+   return(JPW_STORE_IO_ERROR);
   }
-bool JPWPersonalIntegrity(const int db,string &reason)
+void JPWPersonalOpenCancel(JPWPersonalStoreContext &ctx)
   {
-   reason=""; int q=DatabasePrepare(db,"PRAGMA quick_check"); string status="";
-   bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnText(q,0,status) && status=="ok";
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(!ok) { reason="Integridade SQLite recusada; nenhum reset"; return(false); }
-   if(!JPWPersonalEpisodeProjectionIntegrity(db,reason)) return(false);
-   // Every mutable projection must point to an immutable journal witness.
-   q=DatabasePrepare(db,"SELECT COUNT(*) FROM ph_episodes p LEFT JOIN ph_rows r ON r.sequence=p.sequence WHERE r.sequence IS NULL OR r.category<>'EPISODE' OR r.item_id<>p.episode_id OR r.payload<>p.payload OR r.digest<>p.digest"); int bad=0;
-   ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnInteger(q,0,bad) && bad==0;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   q=DatabasePrepare(db,"SELECT COUNT(*) FROM ph_peaks p LEFT JOIN ph_rows r ON r.sequence=p.sequence WHERE r.sequence IS NULL OR r.category<>'PEAK' OR r.payload<>p.payload OR r.digest<>p.digest");
-   ok=ok && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnInteger(q,0,bad) && bad==0;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   q=DatabasePrepare(db,"SELECT COUNT(*) FROM (SELECT item_id,MAX(sequence) latest FROM ph_rows WHERE category='EPISODE' GROUP BY item_id) r LEFT JOIN ph_episodes p ON p.episode_id=r.item_id WHERE p.episode_id IS NULL OR p.sequence<>r.latest");
-   ok=ok && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnInteger(q,0,bad) && bad==0;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   q=DatabasePrepare(db,"SELECT COUNT(*) FROM (SELECT item_id,MAX(sequence) latest FROM ph_rows WHERE category='PEAK' GROUP BY item_id) r LEFT JOIN ph_peaks p ON CAST(p.quality AS TEXT)=r.item_id WHERE p.quality IS NULL OR p.sequence<>r.latest");
-   ok=ok && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnInteger(q,0,bad) && bad==0;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   q=DatabasePrepare(db,"SELECT sequence,(SELECT COUNT(*) FROM ph_rows),(SELECT COALESCE(MAX(sequence),0) FROM ph_rows),started_wall,last_wall,(typeof(sequence)='integer' AND typeof(started_wall)='integer' AND typeof(last_wall)='integer') FROM ph_meta WHERE id=1");
-   long sequence=0,count=0,maximum=0,started=0,last=0; int meta_types=0;
-   ok=ok && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,sequence) && DatabaseColumnLong(q,1,count) &&
-      DatabaseColumnLong(q,2,maximum) && DatabaseColumnLong(q,3,started) && DatabaseColumnLong(q,4,last) &&
-      DatabaseColumnInteger(q,5,meta_types) && meta_types==1 && started>0 && last>=started &&
-      sequence>=0 && count==sequence && maximum==sequence;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(!ok) reason="Histórico/projeção/sequência divergente; escrita recusada";
-   return(ok);
+   if(ctx.query!=INVALID_HANDLE) DatabaseFinalize(ctx.query); ctx.query=INVALID_HANDLE;
+   if(ctx.db!=INVALID_HANDLE && ctx.transaction_active) DatabaseTransactionRollback(ctx.db);
+   if(ctx.db!=INVALID_HANDLE) DatabaseClose(ctx.db);
+   ctx.db=INVALID_HANDLE; ctx.writer=false; ctx.read_snapshot=false; ctx.transaction_active=false; ctx.audit_complete=false;
+   ctx.data_version=0; ctx.phase=JPW_PH_IDLE; ArrayResize(ctx.recovered,0); ctx.current.valid=false; ctx.estimated.valid=false;
   }
-// Typed journal audit precedes filters for writers and readers. Schema 1 has
-// no envelope seal or trusted generation cache, so a filtered query cannot
-// authorize unseen rows. Exceeding capacity is unavailable, never a reset.
-#define JPW_PERSONAL_STARTUP_AUDIT_MAX_ROWS 100000
-#define JPW_PERSONAL_STARTUP_AUDIT_MAX_MS 2000
-JPWStoreResult JPWPersonalAuditRows(const int db,string &reason)
+void JPWPersonalContextReset(JPWPersonalStoreContext &ctx)
   {
-   reason=""; ulong started=GetTickCount64();
-   int q=DatabasePrepare(db,"SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows ORDER BY sequence");
-   if(q==INVALID_HANDLE) { reason="Auditoria histórica indisponível"; return(JPW_STORE_IO_ERROR); }
-   int meta=DatabasePrepare(db,"SELECT account_key FROM ph_meta WHERE id=1"); string key="";
-   bool key_ok=meta!=INVALID_HANDLE && DatabaseRead(meta) && DatabaseColumnText(meta,0,key) && JPWPersonalHashValid(key);
-   if(meta!=INVALID_HANDLE) DatabaseFinalize(meta);
-   if(!key_ok) { DatabaseFinalize(q); reason="Identidade do histórico corrompida; nenhum reset"; return(JPW_STORE_CORRUPT); }
-   long expected=0; bool ok=true,capacity=false; ResetLastError();
-   while(DatabaseRead(q))
-     {
-      if(expected>=JPW_PERSONAL_STARTUP_AUDIT_MAX_ROWS || GetTickCount64()-started>JPW_PERSONAL_STARTUP_AUDIT_MAX_MS)
-        { capacity=true; ok=false; break; }
-      JPWPersonalRow row;
-      ok=JPWPersonalReadRow(q,row,key) && row.sequence==expected+1;
-      if(!ok) break; expected++; ResetLastError();
-     }
-   if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA; DatabaseFinalize(q);
-   if(capacity) { reason="Auditoria inicial excede capacidade; histórico preservado e escrita indisponível"; return(JPW_STORE_IO_ERROR); }
-   if(!ok) { reason="Envelope/payload histórico corrompido; consulta/escrita recusada, nenhum reset"; return(JPW_STORE_CORRUPT); }
-   return(JPW_STORE_VALID);
+   // Callers cancel owned handles before resetting a reusable context.
+   ctx.db=INVALID_HANDLE; ctx.query=INVALID_HANDLE; ctx.account_key=""; ctx.owner_token=""; ctx.writer=false;
+   ctx.read_snapshot=false; ctx.requested_writer=false; ctx.transaction_active=false; ctx.audit_complete=false;
+   ctx.generation_changed=false; ctx.owner_lost=false; ctx.phase=JPW_PH_IDLE; ctx.result=JPW_STORE_ABSENT; ctx.reason="";
+   ctx.expected_sequence=0; ctx.snapshot_sequence=0; ctx.started_wall=0; ctx.last_wall=0; ctx.data_version=0;
+   ctx.active_episodes=0; ctx.total_episodes=0; ctx.gaps=0; ArrayResize(ctx.recovered,0); ctx.current.valid=false; ctx.estimated.valid=false;
   }
-bool JPWPersonalOpen(const string key,const bool writer,const string token,const long wall,const ulong mono,JPWPersonalStoreContext &ctx)
+JPWStoreResult JPWPersonalAuditFail(JPWPersonalStoreContext &ctx,const JPWStoreResult result,const string reason)
+  { JPWPersonalOpenCancel(ctx); ctx.phase=JPW_PH_FAILED; ctx.result=result; ctx.reason=reason; return(result); }
+bool JPWPersonalDataVersion(const int db,long &version)
   {
-   ctx.db=INVALID_HANDLE; ctx.account_key=key; ctx.owner_token=token; ctx.writer=false; ctx.read_snapshot=false; ctx.result=JPW_STORE_ABSENT; ctx.reason="";
-   string path=JPWPersonalPath(key); if(path=="") return(JPWPersonalFail(ctx,JPW_STORE_INCOMPATIBLE,"Identidade opaca inválida"));
-   bool exists=FileIsExist(path);
-   if(!exists && !writer) return(JPWPersonalFail(ctx,JPW_STORE_ABSENT,"Histórico ainda não iniciado nesta instalação"));
-   if(writer && (!JPWPersonalHashValid(token) || wall<=0 || mono==0)) return(JPWPersonalFail(ctx,JPW_STORE_INCOMPATIBLE,"Titular/relógio inválido"));
+   int q=DatabasePrepare(db,"PRAGMA data_version");
+   bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnType(q,0)==DATABASE_FIELD_TYPE_INTEGER && DatabaseColumnLong(q,0,version) && version>0 && JPWPersonalDone(q);
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(ok);
+  }
+bool JPWPersonalOwnerRead(const int db,string &token,long &mono,long &wall)
+  {
+   int q=DatabasePrepare(db,"SELECT token,mono,wall,(typeof(id)='integer' AND typeof(token)='text' AND typeof(mono)='integer' AND typeof(wall)='integer') FROM ph_owner WHERE id=1"); int typed=0;
+   bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnText(q,0,token) && DatabaseColumnLong(q,1,mono) &&
+      DatabaseColumnLong(q,2,wall) && DatabaseColumnInteger(q,3,typed) && typed==1 && mono>=0 && wall>=0 &&
+      (token=="" || JPWPersonalHashValid(token)) && JPWPersonalDone(q);
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(ok);
+  }
+bool JPWPersonalLeaseAvailable(JPWPersonalStoreContext &ctx,const long wall,const ulong mono)
+  {
+   string token=""; long previous=0,previous_wall=0;
+   if(!JPWPersonalOwnerRead(ctx.db,token,previous,previous_wall)) return(JPWPersonalFail(ctx,JPW_STORE_CORRUPT,"Titular/relógio histórico corrompido; nenhum reset"));
+   bool expired=(mono>=(ulong)previous && mono-(ulong)previous>JPW_PERSONAL_LEASE_MS) ||
+      (mono<(ulong)previous && wall>previous_wall+15);
+   if(token!="" && token!=ctx.owner_token && !expired) return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Outro escritor ativo; aguardando titularidade"));
+   return(true);
+  }
+bool JPWPersonalAuditBegin(JPWPersonalStoreContext &ctx)
+  {
+   if(ctx.db==INVALID_HANDLE || !ctx.transaction_active || ctx.query!=INVALID_HANDLE) return(false);
+   ctx.writer=false; ctx.audit_complete=false; ctx.read_snapshot=false; ctx.phase=JPW_PH_META; ctx.result=JPW_STORE_BUSY;
+   ctx.reason="Auditoria integral em preparação"; ctx.expected_sequence=0; ctx.snapshot_sequence=0; ctx.active_episodes=0;
+   ctx.total_episodes=0; ctx.gaps=0; ctx.current.valid=false; ctx.estimated.valid=false; ArrayResize(ctx.recovered,0); return(true);
+  }
+JPWStoreResult JPWPersonalOpenBegin(const string key,const bool writer,const string token,const long wall,const ulong mono,JPWPersonalStoreContext &ctx)
+  {
+   if(ctx.db!=INVALID_HANDLE || ctx.query!=INVALID_HANDLE) { JPWPersonalFail(ctx,JPW_STORE_INCOMPATIBLE,"Contexto já possui trabalho; cancele antes de abrir"); return(ctx.result); }
+   JPWPersonalContextReset(ctx); ctx.account_key=key; ctx.owner_token=token; ctx.requested_writer=writer;
+   string path=JPWPersonalPath(key); if(path=="" || (writer && (!JPWPersonalHashValid(token) || wall<=0 || mono==0)))
+      { JPWPersonalFail(ctx,JPW_STORE_INCOMPATIBLE,"Identidade/titular/relógio inválido"); return(ctx.result); }
+   bool exists=FileIsExist(path); if(!exists && !writer) { JPWPersonalFail(ctx,JPW_STORE_ABSENT,"Histórico ainda não iniciado nesta instalação"); return(ctx.result); }
    if(writer) { FolderCreate("JPWealth"); FolderCreate("JPWealth\\Genetrix"); FolderCreate("JPWealth\\Genetrix\\PersonalHistory"); }
    ResetLastError(); ctx.db=DatabaseOpen(path,writer ? DATABASE_OPEN_READWRITE|DATABASE_OPEN_CREATE : DATABASE_OPEN_READONLY);
-   if(ctx.db==INVALID_HANDLE) return(JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Banco indisponível; nenhum reset"));
-   if(!exists && !JPWPersonalSchemaCreate(ctx.db,key,wall))
-     { DatabaseClose(ctx.db); ctx.db=INVALID_HANDLE; return(JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Inicialização não confirmada; preservar arquivo")); }
-   DatabaseExecute(ctx.db,"PRAGMA busy_timeout=0");
-   if(!DatabaseTransactionBegin(ctx.db)) return(JPWPersonalOpenFail(ctx,JPW_STORE_BUSY,"Validação histórica ocupada"));
-   int q=DatabasePrepare(ctx.db,"SELECT schema_version,account_key FROM ph_meta WHERE id=1"); int version=0; string stored="";
-   bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnInteger(q,0,version) && DatabaseColumnText(q,1,stored);
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(!ok || version!=JPW_PERSONAL_SCHEMA || stored!=key)
-     { DatabaseTransactionRollback(ctx.db); return(JPWPersonalOpenFail(ctx,ok ? JPW_STORE_INCOMPATIBLE : JPW_STORE_CORRUPT,"Schema/conta incompatível ou corrompido; nenhum reset")); }
-   string reason="";
-   if(!JPWPersonalIntegrity(ctx.db,reason))
-     { DatabaseTransactionRollback(ctx.db); return(JPWPersonalOpenFail(ctx,JPW_STORE_CORRUPT,reason)); }
-   JPWStoreResult audit=JPWPersonalAuditRows(ctx.db,reason);
-   if(audit!=JPW_STORE_VALID)
-     { DatabaseTransactionRollback(ctx.db); return(JPWPersonalOpenFail(ctx,audit,reason)); }
-   ctx.result=JPW_STORE_VALID;
-   // Keep the reader's audited snapshot until its consumer finishes. Committing
-   // here would validate one generation and later filter/read a different one.
-   if(!writer) { ctx.read_snapshot=true; return(true); }
-   if(!DatabaseTransactionCommit(ctx.db))
-     { DatabaseTransactionRollback(ctx.db); return(JPWPersonalOpenFail(ctx,JPW_STORE_IO_ERROR,"Validação histórica não confirmada")); }
-   if(!DatabaseTransactionBegin(ctx.db)) return(JPWPersonalOpenFail(ctx,JPW_STORE_BUSY,"Histórico ocupado; não emitir avisos como outro titular"));
-   q=DatabasePrepare(ctx.db,"SELECT token,mono,wall FROM ph_owner WHERE id=1"); string owner=""; long last_mono=0,last_wall=0;
-   ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnText(q,0,owner) && DatabaseColumnLong(q,1,last_mono) && DatabaseColumnLong(q,2,last_wall);
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   // Token is a fence. Each subsequent transaction verifies it again.
-   bool expired=(mono>=(ulong)last_mono && mono-(ulong)last_mono>JPW_PERSONAL_LEASE_MS) ||
-      (mono<(ulong)last_mono && wall>last_wall+15);
-   if(!ok || (owner!="" && owner!=token && !expired))
-     { DatabaseTransactionRollback(ctx.db); return(JPWPersonalOpenFail(ctx,ok ? JPW_STORE_BUSY : JPW_STORE_CORRUPT,"Outro escritor ativo ou relógio não verificável")); }
-   q=DatabasePrepare(ctx.db,"UPDATE ph_owner SET token=?1,mono=?2,wall=?3 WHERE id=1");
-   ok=q!=INVALID_HANDLE && DatabaseBind(q,0,token) && DatabaseBind(q,1,(long)mono) && DatabaseBind(q,2,wall) && JPWPersonalDone(q);
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
-   if(!ok) return(JPWPersonalOpenFail(ctx,JPW_STORE_IO_ERROR,"Aquisição de titularidade não confirmada"));
-   ctx.writer=true; return(true);
+   if(ctx.db==INVALID_HANDLE) { JPWPersonalFail(ctx,JPWPersonalErrorResult(GetLastError()),"Banco indisponível; nenhum reset"); return(ctx.result); }
+   if(!exists && !JPWPersonalSchemaCreate(ctx.db,key,wall)) return(JPWPersonalAuditFail(ctx,JPWPersonalErrorResult(GetLastError()),"Inicialização não confirmada; preservar arquivo"));
+   if(!DatabaseExecute(ctx.db,"PRAGMA busy_timeout=0")) return(JPWPersonalAuditFail(ctx,JPWPersonalErrorResult(GetLastError()),"Política de espera indisponível"));
+   ctx.phase=(writer ? JPW_PH_WAIT_OWNER : JPW_PH_TRANSACTION); ctx.result=JPW_STORE_BUSY; ctx.reason="Auditoria integral em preparação"; return(ctx.result);
+  }
+// All phase cursors retain the same transaction. No filter authorizes unseen rows.
+JPWStoreResult JPWPersonalAuditStep(JPWPersonalStoreContext &ctx,const ulong started,const int budget_ms,const int max_rows)
+  {
+   if(ctx.db==INVALID_HANDLE || !ctx.transaction_active || max_rows<1 || budget_ms<1) return(ctx.result);
+   int units=0;
+   while(units<max_rows)
+     {
+      ulong now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+      if(ctx.phase==JPW_PH_META)
+        {
+         int q=DatabasePrepare(ctx.db,"SELECT schema_version,account_key,sequence,started_wall,last_wall,(typeof(id)='integer' AND typeof(schema_version)='integer' AND typeof(account_key)='text' AND typeof(sequence)='integer' AND typeof(started_wall)='integer' AND typeof(last_wall)='integer') FROM ph_meta WHERE id=1");
+         long version=0; int typed=0; string key="";
+         bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,version) && DatabaseColumnText(q,1,key) &&
+            DatabaseColumnLong(q,2,ctx.snapshot_sequence) && DatabaseColumnLong(q,3,ctx.started_wall) && DatabaseColumnLong(q,4,ctx.last_wall) &&
+            DatabaseColumnInteger(q,5,typed) && typed==1 && ctx.snapshot_sequence>=0 && ctx.started_wall>0 && ctx.last_wall>=ctx.started_wall && JPWPersonalDone(q);
+         if(q!=INVALID_HANDLE) DatabaseFinalize(q);
+         if(!ok) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Metadados/tipos históricos corrompidos; nenhum reset"));
+         if(version!=JPW_PERSONAL_SCHEMA || key!=ctx.account_key) return(JPWPersonalAuditFail(ctx,JPW_STORE_INCOMPATIBLE,"Schema/conta incompatível; nenhum reset"));
+         string owner=""; long owner_mono=0,owner_wall=0;
+         if(!JPWPersonalOwnerRead(ctx.db,owner,owner_mono,owner_wall)) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Tipos/identidade do titular corrompidos; nenhum reset"));
+         if(ctx.requested_writer && !JPWPersonalDataVersion(ctx.db,ctx.data_version)) return(JPWPersonalAuditFail(ctx,JPW_STORE_IO_ERROR,"Geração da conexão não verificável"));
+         ctx.phase=JPW_PH_SQLITE; units++; continue;
+        }
+      if(ctx.phase<JPW_PH_SQLITE || ctx.phase>JPW_PH_ROWS) return(ctx.audit_complete ? JPW_STORE_VALID : ctx.result);
+      if(ctx.query==INVALID_HANDLE)
+        {
+         string sql="";
+         if(ctx.phase==JPW_PH_SQLITE) sql="PRAGMA quick_check";
+         if(ctx.phase==JPW_PH_EPISODES) sql="SELECT r.sequence,r.category,r.item_id,r.wall,r.payload,r.digest,p.episode_id,p.state,p.sequence,p.payload,p.digest,(typeof(p.episode_id)='text' AND typeof(p.state)='integer' AND p.state IN(1,2,3) AND typeof(p.sequence)='integer' AND typeof(p.payload)='text' AND typeof(p.digest)='text' AND typeof(r.sequence)='integer' AND typeof(r.category)='text' AND typeof(r.item_id)='text' AND typeof(r.wall)='integer' AND typeof(r.payload)='text' AND typeof(r.digest)='text') FROM ph_episodes p LEFT JOIN ph_rows r ON r.sequence=p.sequence ORDER BY p.episode_id";
+         if(ctx.phase==JPW_PH_PEAKS) sql="SELECT r.sequence,r.category,r.item_id,r.wall,r.payload,r.digest,p.quality,p.sequence,p.payload,p.digest,(typeof(p.quality)='integer' AND p.quality IN(1,2) AND typeof(p.sequence)='integer' AND typeof(p.payload)='text' AND typeof(p.digest)='text' AND typeof(r.sequence)='integer' AND typeof(r.category)='text' AND typeof(r.item_id)='text' AND typeof(r.wall)='integer' AND typeof(r.payload)='text' AND typeof(r.digest)='text') FROM ph_peaks p LEFT JOIN ph_rows r ON r.sequence=p.sequence ORDER BY p.quality";
+         if(ctx.phase==JPW_PH_ROWS) sql="SELECT r.sequence,r.category,r.item_id,r.wall,r.payload,r.digest,(typeof(r.sequence)='integer' AND typeof(r.category)='text' AND typeof(r.item_id)='text' AND typeof(r.wall)='integer' AND typeof(r.payload)='text' AND typeof(r.digest)='text'),e.sequence,p.sequence,(typeof(e.sequence)='integer'),(typeof(p.sequence)='integer') FROM ph_rows r LEFT JOIN ph_episodes e ON r.category='EPISODE' AND e.episode_id=r.item_id LEFT JOIN ph_peaks p ON r.category='PEAK' AND CAST(p.quality AS TEXT)=r.item_id ORDER BY r.sequence";
+         ctx.query=DatabasePrepare(ctx.db,sql);
+         if(ctx.query==INVALID_HANDLE) return(JPWPersonalAuditFail(ctx,JPWPersonalErrorResult(GetLastError()),"Cursor de auditoria indisponível; nenhum dado parcial"));
+        }
+      ResetLastError(); bool present=DatabaseRead(ctx.query); int error=GetLastError(); units++;
+      if(!present)
+        {
+         if(error!=ERR_DATABASE_NO_MORE_DATA) return(JPWPersonalAuditFail(ctx,JPWPersonalErrorResult(error),"Leitura interrompida; não é EOF histórico"));
+         DatabaseFinalize(ctx.query); ctx.query=INVALID_HANDLE;
+         if(ctx.phase==JPW_PH_ROWS)
+           {
+            if(ctx.expected_sequence!=ctx.snapshot_sequence) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Sequência/contagem histórica divergente"));
+            ctx.audit_complete=true; return(JPW_STORE_VALID);
+           }
+         ctx.phase=(JPWPersonalPhase)((int)ctx.phase+1); continue;
+        }
+      if(ctx.phase==JPW_PH_SQLITE)
+        { string value=""; if(!DatabaseColumnText(ctx.query,0,value) || value!="ok") return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Integridade SQLite recusada; nenhum reset")); continue; }
+      JPWPersonalRow row; int typed=0;
+      if(!JPWPersonalReadRow(ctx.query,row,ctx.account_key)) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Envelope/payload histórico corrompido; nenhum reset"));
+      if(ctx.phase==JPW_PH_EPISODES)
+        {
+         string id="",raw="",digest=""; int state=0; long seq=0; JPWPersonalEpisode episode;
+         bool ok=DatabaseColumnText(ctx.query,6,id) && DatabaseColumnInteger(ctx.query,7,state) && DatabaseColumnLong(ctx.query,8,seq) &&
+            DatabaseColumnText(ctx.query,9,raw) && DatabaseColumnText(ctx.query,10,digest) && DatabaseColumnInteger(ctx.query,11,typed) && typed==1 &&
+            state>=1 && state<=3 && seq>0 && seq<=ctx.snapshot_sequence && row.category=="EPISODE" && row.sequence==seq && row.item_id==id && row.payload==raw && row.digest==digest &&
+            JPWPersonalDecodeEpisode(raw,episode) && episode.state==state;
+         if(!ok) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Projeção/testemunha de episódio divergente"));
+         ctx.total_episodes++;
+         if(state==JPW_PERSONAL_ACTIVE)
+           { int n=ArraySize(ctx.recovered); if(n>=JPW_PERSONAL_MAX_SUBJECTS || ArrayResize(ctx.recovered,n+1)!=n+1) return(JPWPersonalAuditFail(ctx,JPW_STORE_IO_ERROR,"Recuperação ativa sem capacidade; histórico preservado"));
+             ctx.recovered[n]=episode; ctx.active_episodes++; }
+        }
+      else if(ctx.phase==JPW_PH_PEAKS)
+        {
+         int quality=0; long seq=0; string raw="",digest=""; JPWPersonalPeak peak;
+         bool ok=DatabaseColumnInteger(ctx.query,6,quality) && DatabaseColumnLong(ctx.query,7,seq) && DatabaseColumnText(ctx.query,8,raw) &&
+            DatabaseColumnText(ctx.query,9,digest) && DatabaseColumnInteger(ctx.query,10,typed) && typed==1 && (quality==1 || quality==2) &&
+            seq>0 && seq<=ctx.snapshot_sequence && row.category=="PEAK" && row.sequence==seq && row.item_id==JPWPersonalInt(quality) && row.payload==raw && row.digest==digest &&
+            JPWPersonalDecodePeak(raw,peak) && peak.quality==quality;
+         if(!ok) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Projeção/testemunha de máximo divergente"));
+         if(quality==1) ctx.current=peak; else ctx.estimated=peak;
+        }
+      else
+        {
+         bool ok=DatabaseColumnInteger(ctx.query,6,typed) && typed==1 && row.sequence==ctx.expected_sequence+1;
+         if(row.category=="EPISODE" || row.category=="PEAK")
+           { long projection=0; int projection_typed=0; int column=(row.category=="EPISODE" ? 7 : 8);
+             ok=ok && DatabaseColumnLong(ctx.query,column,projection) && DatabaseColumnInteger(ctx.query,column+2,projection_typed) && projection_typed==1 && projection>=row.sequence && projection<=ctx.snapshot_sequence; }
+         if(!ok) return(JPWPersonalAuditFail(ctx,JPW_STORE_CORRUPT,"Tipo/sequência/latest histórico divergente"));
+         if(row.category=="COVERAGE" && StringFind(row.payload,"GAP|")==0) ctx.gaps++;
+         ctx.expected_sequence++;
+        }
+     }
+   return(JPW_STORE_BUSY);
+  }
+JPWStoreResult JPWPersonalOpenStep(JPWPersonalStoreContext &ctx,const ulong started,const int budget_ms,const int max_rows,const long wall,const ulong mono)
+  {
+   if(JPWPersonalReady(ctx)) return(JPW_STORE_VALID);
+   if(!JPWPersonalPreparing(ctx) || ctx.generation_changed || budget_ms<1 || max_rows<1) return(ctx.result);
+   ulong now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+   if(ctx.phase==JPW_PH_WAIT_OWNER)
+     {
+      if(!JPWPersonalLeaseAvailable(ctx,wall,mono))
+        { if(ctx.result!=JPW_STORE_BUSY) return(JPWPersonalAuditFail(ctx,ctx.result,ctx.reason)); return(ctx.result); }
+      ctx.phase=JPW_PH_TRANSACTION;
+     }
+   if(ctx.phase==JPW_PH_TRANSACTION)
+     {
+      if(!DatabaseExecute(ctx.db,ctx.requested_writer ? "BEGIN IMMEDIATE" : "BEGIN"))
+        { ctx.result=JPWPersonalErrorResult(GetLastError()); ctx.reason="Reserva histórica ocupada/indisponível";
+          if(ctx.result!=JPW_STORE_BUSY) return(JPWPersonalAuditFail(ctx,ctx.result,ctx.reason)); return(ctx.result); }
+      ctx.transaction_active=true;
+      if(ctx.requested_writer && !JPWPersonalLeaseAvailable(ctx,wall,mono))
+        { DatabaseTransactionRollback(ctx.db); ctx.transaction_active=false; ctx.phase=JPW_PH_WAIT_OWNER;
+          if(ctx.result!=JPW_STORE_BUSY) return(JPWPersonalAuditFail(ctx,ctx.result,ctx.reason)); return(ctx.result); }
+      JPWPersonalAuditBegin(ctx);
+     }
+   if(ctx.phase>=JPW_PH_META && ctx.phase<=JPW_PH_ROWS)
+     {
+      JPWStoreResult audit=JPWPersonalAuditStep(ctx,started,budget_ms,max_rows); if(audit!=JPW_STORE_VALID) return(audit);
+      if(!ctx.requested_writer) { ctx.read_snapshot=true; ctx.phase=JPW_PH_READY; ctx.result=JPW_STORE_VALID; ctx.reason=""; return(ctx.result); }
+      ctx.phase=JPW_PH_OWNER;
+     }
+   now=GetTickCount64(); if(now<started || now-started>=(ulong)budget_ms) return(JPW_STORE_BUSY);
+   if(ctx.phase==JPW_PH_OWNER)
+     {
+      if(!JPWPersonalLeaseAvailable(ctx,wall,mono)) return(JPWPersonalAuditFail(ctx,ctx.result,ctx.reason));
+      int q=DatabasePrepare(ctx.db,"UPDATE ph_owner SET token=?1,mono=?2,wall=?3 WHERE id=1");
+      bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,ctx.owner_token) && DatabaseBind(q,1,(long)mono) && DatabaseBind(q,2,wall) && JPWPersonalDone(q);
+      int error=GetLastError(); if(q!=INVALID_HANDLE) DatabaseFinalize(q);
+      if(!ok) return(JPWPersonalAuditFail(ctx,JPWPersonalErrorResult(error),"Aquisição de titularidade não confirmada")); ctx.phase=JPW_PH_OWNER_COMMIT;
+     }
+   if(ctx.phase==JPW_PH_OWNER_COMMIT)
+     {
+      if(!DatabaseTransactionCommit(ctx.db))
+        { JPWStoreResult error=JPWPersonalErrorResult(GetLastError()); if(error==JPW_STORE_BUSY) { ctx.result=error; ctx.reason="Titularidade aguardando COMMIT; nenhum canal autorizado"; return(error); }
+          return(JPWPersonalAuditFail(ctx,error,"COMMIT de titularidade não confirmado")); }
+      ctx.transaction_active=false; ctx.writer=true; ctx.phase=JPW_PH_READY; ctx.result=JPW_STORE_VALID; ctx.reason="";
+     }
+   return(ctx.result);
+  }
+bool JPWPersonalLoadAuditedFrom(JPWPersonalStoreContext &ctx,JPWPersonalEpisode &episodes[],JPWPersonalPeak &current,JPWPersonalPeak &estimated)
+  {
+   ArrayResize(episodes,0); current.valid=false; estimated.valid=false; if(!JPWPersonalReady(ctx)) return(false);
+   int n=ArraySize(ctx.recovered); if(ArrayResize(episodes,n)!=n) return(false);
+   for(int i=0;i<n;i++) episodes[i]=ctx.recovered[i]; current=ctx.current; estimated=ctx.estimated; return(true);
+  }
+// Every mutation checks token and same-connection generation under its reserve.
+bool JPWPersonalWriteBegin(JPWPersonalStoreContext &ctx)
+  {
+   if(!JPWPersonalReady(ctx) || !ctx.writer) return(false);
+   if(!DatabaseExecute(ctx.db,"BEGIN IMMEDIATE")) return(JPWPersonalFail(ctx,JPWPersonalErrorResult(GetLastError()),"Histórico ocupado/indisponível"));
+   ctx.transaction_active=true; string token=""; long previous=0,wall=0,version=0;
+   bool owner=JPWPersonalOwnerRead(ctx.db,token,previous,wall);
+   if(owner && token!=ctx.owner_token)
+     { ctx.owner_lost=true; ctx.writer=false; ctx.audit_complete=false; ctx.phase=JPW_PH_FAILED;
+       DatabaseTransactionRollback(ctx.db); ctx.transaction_active=false; return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Titularidade perdida; avisos/gravações suspensos")); }
+   bool version_ok=owner && JPWPersonalDataVersion(ctx.db,version);
+   if(!version_ok || version!=ctx.data_version)
+     { DatabaseTransactionRollback(ctx.db); ctx.transaction_active=false; ctx.writer=false; ctx.audit_complete=false;
+       ctx.generation_changed=true; ctx.phase=JPW_PH_TRANSACTION; ctx.data_version=0; ArrayResize(ctx.recovered,0);
+       ctx.current.valid=false; ctx.estimated.valid=false;
+       return(JPWPersonalFail(ctx,version_ok ? JPW_STORE_BUSY : JPW_STORE_IO_ERROR,"Geração histórica mudou/não verificável; reauditoria integral necessária")); }
+   return(true);
   }
 bool JPWPersonalOwner(JPWPersonalStoreContext &ctx,const long wall,const ulong mono)
   {
-   if(!ctx.writer || ctx.db==INVALID_HANDLE) return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Sem titularidade de escrita"));
-   int q=DatabasePrepare(ctx.db,"SELECT token,mono FROM ph_owner WHERE id=1"); string token=""; long previous=0;
-   bool ok=q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnText(q,0,token) && DatabaseColumnLong(q,1,previous) &&
-      token==ctx.owner_token && mono>=(ulong)previous;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(!ok) { ctx.writer=false; return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Titularidade perdida; avisos/gravações suspensos")); }
-   q=DatabasePrepare(ctx.db,"UPDATE ph_owner SET mono=?1,wall=?2 WHERE id=1 AND token=?3");
-   ok=q!=INVALID_HANDLE && DatabaseBind(q,0,(long)mono) && DatabaseBind(q,1,wall) && DatabaseBind(q,2,ctx.owner_token) && JPWPersonalDone(q);
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   return(ok || JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Heartbeat não confirmado"));
+   if(!ctx.writer || !ctx.transaction_active || !ctx.audit_complete) return(false);
+   string token=""; long previous=0,old_wall=0;
+   if(!JPWPersonalOwnerRead(ctx.db,token,previous,old_wall) || token!=ctx.owner_token || mono<(ulong)previous)
+     { ctx.owner_lost=true; ctx.writer=false; ctx.audit_complete=false; return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Titularidade perdida; avisos/gravações suspensos")); }
+   int q=DatabasePrepare(ctx.db,"UPDATE ph_owner SET mono=?1,wall=?2 WHERE id=1 AND token=?3");
+   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,(long)mono) && DatabaseBind(q,1,wall) && DatabaseBind(q,2,ctx.owner_token) && JPWPersonalDone(q);
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q); return(ok);
+  }
+bool JPWPersonalWriteFinish(JPWPersonalStoreContext &ctx,const bool complete,const string reason)
+  {
+   bool ok=complete && DatabaseTransactionCommit(ctx.db); int error=GetLastError();
+   if(!ok) DatabaseTransactionRollback(ctx.db); ctx.transaction_active=false;
+   if(ok) { ctx.result=JPW_STORE_VALID; ctx.reason=""; return(true); }
+   if(ctx.owner_lost) return(false);
+   ctx.writer=false; ctx.audit_complete=false; ctx.generation_changed=false; ctx.phase=JPW_PH_FAILED; ctx.data_version=0;
+   return(JPWPersonalFail(ctx,JPWPersonalErrorResult(error),reason));
   }
 bool JPWPersonalKeepAlive(JPWPersonalStoreContext &ctx,const long wall,const ulong mono)
-  {
-   if(!DatabaseTransactionBegin(ctx.db)) return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Histórico ocupado"));
-   bool ok=JPWPersonalOwner(ctx,wall,mono); if(ok) ok=DatabaseTransactionCommit(ctx.db);
-   if(!ok) DatabaseTransactionRollback(ctx.db); return(ok);
-  }
+  { if(!JPWPersonalWriteBegin(ctx)) return(false); return(JPWPersonalWriteFinish(ctx,JPWPersonalOwner(ctx,wall,mono),"Heartbeat não confirmado")); }
 bool JPWPersonalReadFinish(JPWPersonalStoreContext &ctx,const bool complete)
   {
-   if(ctx.db==INVALID_HANDLE || ctx.writer || !ctx.read_snapshot)
+   if(!JPWPersonalReady(ctx) || ctx.writer || !ctx.read_snapshot || !ctx.transaction_active || ctx.query!=INVALID_HANDLE)
       return(JPWPersonalFail(ctx,JPW_STORE_INCOMPATIBLE,"Snapshot de consulta não confirmado"));
-   bool ok=complete && DatabaseTransactionCommit(ctx.db);
-   if(!ok) DatabaseTransactionRollback(ctx.db);
-   ctx.read_snapshot=false;
-   if(complete && !ok) return(JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Conclusão do snapshot de consulta não confirmada"));
-   return(ok);
+   bool ok=complete && DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
+   ctx.read_snapshot=false; ctx.transaction_active=false;
+   if(!ok) { ctx.audit_complete=false; return(JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Conclusão do snapshot não confirmada")); }
+   return(true);
   }
 void JPWPersonalClose(JPWPersonalStoreContext &ctx,const long wall,const ulong mono)
   {
-   if(ctx.db!=INVALID_HANDLE && ctx.read_snapshot)
-     { DatabaseTransactionRollback(ctx.db); ctx.read_snapshot=false; }
-   if(ctx.db!=INVALID_HANDLE && ctx.writer && DatabaseTransactionBegin(ctx.db))
+   if(ctx.db!=INVALID_HANDLE && ctx.writer && JPWPersonalWriteBegin(ctx))
      {
       int q=DatabasePrepare(ctx.db,"UPDATE ph_owner SET token='',mono=0,wall=?1 WHERE id=1 AND token=?2");
       bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,wall) && DatabaseBind(q,1,ctx.owner_token) && JPWPersonalDone(q);
-      if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-      if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
+      if(q!=INVALID_HANDLE) DatabaseFinalize(q); JPWPersonalWriteFinish(ctx,ok,"Liberação de titularidade não confirmada");
      }
-   if(ctx.db!=INVALID_HANDLE) DatabaseClose(ctx.db); ctx.db=INVALID_HANDLE; ctx.writer=false; ctx.read_snapshot=false;
+   JPWPersonalOpenCancel(ctx);
   }
 bool JPWPersonalAppend(const int db,const string category,const string item,const long wall,const string payload,long &sequence)
   {
@@ -300,9 +414,10 @@ bool JPWPersonalPutPeak(const int db,JPWPersonalPeak &peak)
 bool JPWPersonalLoad(JPWPersonalStoreContext &ctx,JPWPersonalEpisode &episodes[],JPWPersonalPeak &current,JPWPersonalPeak &estimated)
   {
    ArrayResize(episodes,0); current.valid=false; estimated.valid=false;
-   if(ctx.db==INVALID_HANDLE) return(false);
+   if(!JPWPersonalReady(ctx) || (!ctx.writer && (!ctx.read_snapshot || !ctx.transaction_active))) return(false);
+   bool reserved=ctx.writer; if(reserved && !JPWPersonalWriteBegin(ctx)) return(false);
    int q=DatabasePrepare(ctx.db,"SELECT payload,digest FROM ph_episodes WHERE state=1 ORDER BY episode_id"); bool ok=q!=INVALID_HANDLE;
-   if(!ok) return(JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Leitura recusada")); ResetLastError();
+   if(!ok) { if(reserved) JPWPersonalWriteFinish(ctx,false,"Leitura recusada"); return(JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Leitura recusada")); } ResetLastError();
    while(DatabaseRead(q))
      {
       string raw="",digest="",actual=""; JPWPersonalEpisode episode; int count=ArraySize(episodes);
@@ -320,13 +435,14 @@ bool JPWPersonalLoad(JPWPersonalStoreContext &ctx,JPWPersonalEpisode &episodes[]
       if(ok) { if(quality==1) current=peak; else if(quality==2) estimated=peak; else ok=false; } ResetLastError();
      }
    if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA; if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   if(!ok) return(JPWPersonalFail(ctx,JPW_STORE_CORRUPT,"Registro financeiro corrompido; nenhum reset")); return(true);
+   if(reserved) ok=JPWPersonalWriteFinish(ctx,ok,"Registro financeiro não confirmado");
+   if(!ok) { ArrayResize(episodes,0); current.valid=false; estimated.valid=false; return(JPWPersonalFail(ctx,JPW_STORE_CORRUPT,"Registro financeiro corrompido; nenhum reset")); } return(true);
   }
 bool JPWPersonalCommit(JPWPersonalStoreContext &ctx,JPWPersonalCapture &capture,JPWPersonalEpisode &episodes[],
                         JPWPersonalEvent &events[],JPWPersonalPeak &current,JPWPersonalPeak &estimated,const int changed)
   {
    if(capture.account_key!=ctx.account_key) return(JPWPersonalFail(ctx,JPW_STORE_INCOMPATIBLE,"Contexto alterado; escrita recusada"));
-   if(!DatabaseTransactionBegin(ctx.db)) return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Histórico ocupado"));
+   if(!JPWPersonalWriteBegin(ctx)) return(false);
    bool ok=JPWPersonalOwner(ctx,capture.wall_seconds,capture.mono_ms);
    for(int i=0;ok && i<ArraySize(episodes);i++) ok=episodes[i].account_key==ctx.account_key && JPWPersonalPutEpisode(ctx.db,episodes[i],capture.wall_seconds);
    long seq=0;
@@ -335,9 +451,9 @@ bool JPWPersonalCommit(JPWPersonalStoreContext &ctx,JPWPersonalCapture &capture,
          events[i].type+"|"+JPWPersonalHex(events[i].payload),seq);
    if(ok && changed==1) ok=current.valid && current.account_key==ctx.account_key && JPWPersonalPutPeak(ctx.db,current);
    if(ok && changed==2) ok=estimated.valid && estimated.account_key==ctx.account_key && JPWPersonalPutPeak(ctx.db,estimated);
-   if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
+   ok=JPWPersonalWriteFinish(ctx,ok,"Histórico incompleto — gravação não confirmada");
    if(ok) { ctx.result=JPW_STORE_VALID; ctx.reason=""; return(true); }
-   return(JPWPersonalFail(ctx,ctx.writer ? JPW_STORE_IO_ERROR : JPW_STORE_BUSY,"Histórico incompleto — gravação não confirmada"));
+   return(false);
   }
 // Distinct immutable stages. Stage INTENT precedes the external call; CALLED
 // and RESULT never claim the human saw/heard an alert. Missing stages remain
@@ -346,69 +462,62 @@ bool JPWPersonalNotify(JPWPersonalStoreContext &ctx,const string group_id,const 
                         const string payload,JPWPersonalEpisode &episodes[])
   {
    if(stage!="INTENT" && stage!="CALLED" && stage!="RESULT") return(false);
-   if(!DatabaseTransactionBegin(ctx.db)) return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Aviso sem confirmação de gravação"));
+   if(!JPWPersonalWriteBegin(ctx)) return(false);
    bool ok=JPWPersonalOwner(ctx,wall,mono); long seq=0;
    if(ok) ok=JPWPersonalAppend(ctx.db,"ALERT",group_id,wall,stage+"|"+JPWPersonalHex(payload),seq);
    if(stage=="INTENT") for(int i=0;ok && i<ArraySize(episodes);i++) ok=JPWPersonalPutEpisode(ctx.db,episodes[i],wall);
-   if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
-   return(ok || JPWPersonalFail(ctx,ctx.writer ? JPW_STORE_IO_ERROR : JPW_STORE_BUSY,"Histórico incompleto — aviso não confirmado"));
+   ok=JPWPersonalWriteFinish(ctx,ok,"Histórico incompleto — gravação não confirmada");
+   return(ok);
   }
 bool JPWPersonalCoverage(JPWPersonalStoreContext &ctx,const string type,const long wall,const ulong mono,const string detail)
   {
    if(type!="SESSION_START" && type!="SESSION_END" && type!="GAP" && type!="RESUMED" && type!="CLOCK_INCONSISTENT") return(false);
-   if(!DatabaseTransactionBegin(ctx.db)) return(JPWPersonalFail(ctx,JPW_STORE_BUSY,"Cobertura não confirmada"));
+   if(!JPWPersonalWriteBegin(ctx)) return(false);
    bool ok=JPWPersonalOwner(ctx,wall,mono); long seq=0;
    if(ok) ok=JPWPersonalAppend(ctx.db,type=="GAP" || type=="RESUMED" || type=="CLOCK_INCONSISTENT" ? "COVERAGE" : "SESSION",
       ctx.owner_token,wall,type+"|"+JPWPersonalHex(detail),seq);
-   if(ok) ok=DatabaseTransactionCommit(ctx.db); if(!ok) DatabaseTransactionRollback(ctx.db);
-   return(ok || JPWPersonalFail(ctx,JPW_STORE_IO_ERROR,"Cobertura incompleta — gravação não confirmada"));
+   ok=JPWPersonalWriteFinish(ctx,ok,"Histórico incompleto — gravação não confirmada");
+   return(ok);
   }
 bool JPWPersonalReadRow(const int query,JPWPersonalRow &row,const string key="")
   {
    string actual="";
-   return(DatabaseColumnLong(query,0,row.sequence) && DatabaseColumnText(query,1,row.category) && DatabaseColumnText(query,2,row.item_id) &&
+   return(DatabaseColumnType(query,0)==DATABASE_FIELD_TYPE_INTEGER && DatabaseColumnType(query,3)==DATABASE_FIELD_TYPE_INTEGER &&
+      DatabaseColumnType(query,1)==DATABASE_FIELD_TYPE_TEXT && DatabaseColumnType(query,2)==DATABASE_FIELD_TYPE_TEXT &&
+      DatabaseColumnType(query,4)==DATABASE_FIELD_TYPE_TEXT && DatabaseColumnType(query,5)==DATABASE_FIELD_TYPE_TEXT &&
+      DatabaseColumnLong(query,0,row.sequence) && DatabaseColumnText(query,1,row.category) && DatabaseColumnText(query,2,row.item_id) &&
       DatabaseColumnLong(query,3,row.wall) && DatabaseColumnText(query,4,row.payload) && DatabaseColumnText(query,5,row.digest) &&
       row.sequence>0 && JPWPersonalEnvelopeValid(row.category,row.item_id,row.wall,row.payload,key) &&
       JPWPersonalHash(row.payload,actual) && actual==row.digest);
   }
-bool JPWPersonalReadPage(const string key,const string category,const long before_seq,const int limit,JPWPersonalRow &rows[],string &reason)
+// Consumers stay on the audited reader snapshot; never open a second connection.
+bool JPWPersonalReadSummaryFrom(JPWPersonalStoreContext &ctx,JPWPersonalSummary &summary)
   {
-   ArrayResize(rows,0); reason=""; if(limit<1 || limit>100 || before_seq<0 ||
-      (category!="" && !JPWPersonalCategoryValid(category))) return(false);
-   JPWPersonalStoreContext ctx; if(!JPWPersonalOpen(key,false,"",0,0,ctx)) { reason=ctx.reason; return(false); }
-   string sql="SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows WHERE (?1='' OR category=?1) AND (?2=0 OR sequence<?2) ORDER BY sequence DESC LIMIT ?3";
-   int q=DatabasePrepare(ctx.db,sql); bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,category) && DatabaseBind(q,1,before_seq) && DatabaseBind(q,2,limit);
+   summary.account_key=ctx.account_key; summary.result=ctx.result; summary.reason=ctx.reason; summary.current.valid=false; summary.estimated.valid=false;
+   if(!JPWPersonalReady(ctx) || ctx.writer || !ctx.read_snapshot || !ctx.transaction_active) return(false);
+   summary.sequence=ctx.snapshot_sequence; summary.started_wall=ctx.started_wall; summary.last_wall=ctx.last_wall;
+   summary.active_episodes=ctx.active_episodes; summary.total_episodes=ctx.total_episodes; summary.gaps=ctx.gaps;
+   summary.current=ctx.current; summary.estimated=ctx.estimated; summary.result=JPW_STORE_VALID; summary.reason=""; return(true);
+  }
+bool JPWPersonalReadPageFrom(JPWPersonalStoreContext &ctx,const string category,const long before_seq,const int limit,JPWPersonalRow &rows[],string &reason)
+  {
+   ArrayResize(rows,0); reason="";
+   if(!JPWPersonalReady(ctx) || ctx.writer || !ctx.read_snapshot || !ctx.transaction_active || limit<1 || limit>100 || before_seq<0 ||
+      (category!="" && !JPWPersonalCategoryValid(category))) { reason="Snapshot/pedido de página não confirmado"; return(false); }
+   int q=DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest,(typeof(sequence)='integer' AND typeof(category)='text' AND typeof(item_id)='text' AND typeof(wall)='integer' AND typeof(payload)='text' AND typeof(digest)='text') FROM ph_rows WHERE (?1='' OR category=?1) AND (?2=0 OR sequence<?2) ORDER BY sequence DESC LIMIT ?3");
+   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,category) && DatabaseBind(q,1,before_seq) && DatabaseBind(q,2,limit);
    ResetLastError(); if(ok) while(DatabaseRead(q))
-     { int n=ArraySize(rows); JPWPersonalRow row; if(!JPWPersonalReadRow(q,row,key) || ArrayResize(rows,n+1)!=n+1) { ok=false; break; }
-       rows[n]=row; ResetLastError(); }
-   if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA;
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q); ok=JPWPersonalReadFinish(ctx,ok); JPWPersonalClose(ctx,0,0);
-   if(!ok) { reason="Página recusada/corrompida"; ArrayResize(rows,0); } return(ok);
+     { int n=ArraySize(rows),typed=0; JPWPersonalRow row; ok=JPWPersonalReadRow(q,row,ctx.account_key) && DatabaseColumnInteger(q,6,typed) && typed==1 && ArrayResize(rows,n+1)==n+1;
+       if(!ok) break; rows[n]=row; ResetLastError(); }
+   if(ok) ok=GetLastError()==ERR_DATABASE_NO_MORE_DATA; if(q!=INVALID_HANDLE) DatabaseFinalize(q);
+   if(!ok) { ArrayResize(rows,0); reason="Página recusada/corrompida"; } return(ok);
   }
-bool JPWPersonalReadDetail(const string key,const long seq,JPWPersonalRow &row,string &reason)
+bool JPWPersonalReadDetailFrom(JPWPersonalStoreContext &ctx,const long seq,JPWPersonalRow &row,string &reason)
   {
-   JPWPersonalStoreContext ctx; reason=""; if(!JPWPersonalOpen(key,false,"",0,0,ctx)) { reason=ctx.reason; return(false); }
-   int q=DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest FROM ph_rows WHERE sequence=?1");
-   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,seq) && DatabaseRead(q) && JPWPersonalReadRow(q,row,key);
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q); ok=JPWPersonalReadFinish(ctx,ok); JPWPersonalClose(ctx,0,0); if(!ok) reason="Detalhe ausente/corrompido"; return(ok);
-  }
-bool JPWPersonalReadSummary(const string key,JPWPersonalSummary &summary)
-  {
-   summary.account_key=key; summary.current.valid=false; summary.estimated.valid=false;
-   summary.sequence=0; summary.started_wall=0; summary.last_wall=0; summary.active_episodes=0; summary.total_episodes=0; summary.gaps=0;
-   JPWPersonalStoreContext ctx; if(!JPWPersonalOpen(key,false,"",0,0,ctx)) { summary.result=ctx.result; summary.reason=ctx.reason; return(false); }
-   string integrity_reason="";
-   bool valid=JPWPersonalIntegrity(ctx.db,integrity_reason);
-   if(!valid) JPWPersonalFail(ctx,JPW_STORE_CORRUPT,integrity_reason);
-   int q=DatabasePrepare(ctx.db,"SELECT sequence,started_wall,last_wall,(SELECT COUNT(*) FROM ph_episodes WHERE state=1),(SELECT COUNT(*) FROM ph_episodes),(SELECT COUNT(*) FROM ph_rows WHERE category='COVERAGE' AND payload LIKE 'GAP|%') FROM ph_meta WHERE id=1");
-   bool ok=valid && q!=INVALID_HANDLE && DatabaseRead(q) && DatabaseColumnLong(q,0,summary.sequence) && DatabaseColumnLong(q,1,summary.started_wall) &&
-      DatabaseColumnLong(q,2,summary.last_wall) && DatabaseColumnInteger(q,3,summary.active_episodes) && DatabaseColumnInteger(q,4,summary.total_episodes) && DatabaseColumnInteger(q,5,summary.gaps);
-   if(q!=INVALID_HANDLE) DatabaseFinalize(q);
-   JPWPersonalEpisode episodes[]; if(ok) ok=JPWPersonalLoad(ctx,episodes,summary.current,summary.estimated);
-   ok=JPWPersonalReadFinish(ctx,ok);
-   if(!ok) { summary.current.valid=false; summary.estimated.valid=false; }
-   summary.result=ok ? JPW_STORE_VALID : (ctx.result==JPW_STORE_VALID ? JPW_STORE_IO_ERROR : ctx.result);
-   summary.reason=ok ? "" : (ctx.reason=="" ? "Resumo histórico não confirmado" : ctx.reason); JPWPersonalClose(ctx,0,0); return(ok);
+   reason=""; if(!JPWPersonalReady(ctx) || ctx.writer || !ctx.read_snapshot || !ctx.transaction_active || seq<1) { reason="Snapshot de detalhe não confirmado"; return(false); }
+   int q=DatabasePrepare(ctx.db,"SELECT sequence,category,item_id,wall,payload,digest,(typeof(sequence)='integer' AND typeof(category)='text' AND typeof(item_id)='text' AND typeof(wall)='integer' AND typeof(payload)='text' AND typeof(digest)='text') FROM ph_rows WHERE sequence=?1"); int typed=0;
+   bool ok=q!=INVALID_HANDLE && DatabaseBind(q,0,seq) && DatabaseRead(q) && JPWPersonalReadRow(q,row,ctx.account_key) && DatabaseColumnInteger(q,6,typed) && typed==1 && JPWPersonalDone(q);
+   if(q!=INVALID_HANDLE) DatabaseFinalize(q); if(!ok) { row.sequence=0; row.payload=""; reason="Detalhe ausente/corrompido"; } return(ok);
   }
 bool JPWPersonalListAccounts(string &keys[])
   {

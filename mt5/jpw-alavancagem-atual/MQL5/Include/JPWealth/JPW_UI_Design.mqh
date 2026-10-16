@@ -131,7 +131,7 @@ double JPWUIDesignScale()
 int JPWUIDesignPx(const int logical)
   { return(MathMax(1,(int)MathRound((double)logical*JPWUIDesignScale()))); }
 int JPWUIDesignControlHeight(const int measured_text_height)
-  { return(MathMax(JPWUIDesignPx(32),measured_text_height+JPWUIDesignPx(16))); }
+  { return(MathMax(JPWUIDesignPx(36),measured_text_height+JPWUIDesignPx(16))); }
 int JPWUIDesignTextWidth(const string label,const int font)
   {
    const int dpi=(int)TerminalInfoInteger(TERMINAL_SCREEN_DPI);
@@ -161,6 +161,8 @@ int JPWUIDesignNavColumns(string &labels[],const int count,const int inner,
    if(count<1 || inner<1) return(1);
    for(int columns=count;columns>1;columns--)
      {
+      // Six native Account sections keep balanced rows (6 or 3+3).
+      if(count==6 && columns!=6 && columns!=3) continue;
       const int width=(inner-(columns-1)*gap)/columns;
       bool fits=(width>0);
       for(int i=0;i<count && fits;i++)

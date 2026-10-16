@@ -70,3 +70,17 @@ npm-debug.log*
 !downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip
 !downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip
 !downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip
+
+# Local builder/reviewer evidence; final receipts are delivered separately.
+.superpowers/
+!downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.2.zip
+!downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.2.zip
+
+# Exact sealed Stoikus source-only delivery inputs; historical bytes preserved.
+!downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.3_interface.zip
+!downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.3_interface.zip
+!downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Assinatura_R4.zip
+!downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.23.0.zip
+!downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.23.0.zip
+!downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip
+!downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Interface.zip

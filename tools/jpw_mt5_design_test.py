@@ -134,7 +134,8 @@ def main() -> int:
     }}, indent=2), flush=True)
     with tempfile.TemporaryDirectory(prefix="jpw-mt5-ui-focus-") as temporary:
         path, binary = Path(temporary) / "focus.cpp", Path(temporary) / "focus"
-        path.write_text(SHIM + "\nvoid JPWUIDesignBeginPass(){} void JPWUIDesignEndPass(){}\n" + helper + wrapper + MAIN, encoding="utf-8")
+        from stoikus_window_host import event_adapter
+        path.write_text(SHIM + event_adapter(SHIM) + "\nvoid JPWUIDesignBeginPass(){} void JPWUIDesignEndPass(){}\n" + helper + wrapper + MAIN, encoding="utf-8")
         for cmd in ([compiler, "-std=c++17", "-Wall", "-Wextra", str(path), "-o", str(binary)], [str(binary)]):
             result = subprocess.run(cmd, text=True, capture_output=True, check=False, timeout=60)
             print(result.stdout, end=""); print(result.stderr, end="")

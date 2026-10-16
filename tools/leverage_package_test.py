@@ -197,6 +197,9 @@ EXPECTED_MEMBERS |= {
     "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
 }
 assert len(EXPECTED_MEMBERS) == 135
+STOIKUS_1_22_1_MEMBERS = frozenset(EXPECTED_MEMBERS)
+EXPECTED_MEMBERS.add("MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh")
+assert len(EXPECTED_MEMBERS) == 136
 
 
 HISTORICAL_ARCHIVE = "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip"
@@ -221,7 +224,7 @@ def assert_historical_archive(raw: bytes) -> None:
 
 
 def assert_historical_stoikus_archive(raw: bytes) -> None:
-    """The 1.22.0 archive remains byte-identical when 1.22.1 is generated."""
+    """The 1.22.0 archive remains byte-identical when 1.22.3 is generated."""
     assert len(raw) == 763854
     assert hashlib.sha256(raw).hexdigest() == "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95"
     with zipfile.ZipFile(BytesIO(raw)) as archive:
@@ -236,13 +239,43 @@ def assert_historical_stoikus_archive(raw: bytes) -> None:
 
 
 def assert_release_inventory(manifest: dict) -> None:
-    expected = {"mt5/jpw-alavancagem-atual/" + member for member in EXPECTED_MEMBERS}
-    assert len(EXPECTED_MEMBERS) == 135
-    assert len(manifest["sourceFiles"]) == len(set(manifest["sourceFiles"])) == 135
+    members = release_members(manifest["version"])
+    expected = {"mt5/jpw-alavancagem-atual/" + member for member in members}
+    assert len(manifest["sourceFiles"]) == len(set(manifest["sourceFiles"])) == len(members)
     assert set(manifest["sourceFiles"]) == expected, "source inventory differs from the explicit release contract"
 
 
-NATIVE_EVIDENCE = Path("review-evidence/stoikus-1.22.1/native-kit")
+# R5 adds these approved presentation headers; each is named independently.
+R5_WINDOW_HEADERS = {
+    "MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+    "MQL5/Include/JPWealth/JPW_Stoikus_Visual.mqh",
+    "MQL5/Include/JPWealth/JPW_Stoikus_Window.mqh",
+}
+R5_MEMBERS = EXPECTED_MEMBERS | R5_WINDOW_HEADERS
+assert len(R5_MEMBERS) == 139
+
+
+def release_members(version):
+    assert version in ("1.22.3", "1.23.0"), "unrecognized release inventory"
+    return R5_MEMBERS if version == "1.23.0" else EXPECTED_MEMBERS
+
+
+def assert_historical_stoikus_1_22_1_archive(raw: bytes) -> None:
+    """Literal identity of the 1.22.1 SDK, independent of the current tree."""
+    assert len(raw) == 773800
+    assert hashlib.sha256(raw).hexdigest() == "e3d07f6573c2e357ee4917ae4805374cdd552f663baf84dc3da0948b9aef7119"
+    with zipfile.ZipFile(BytesIO(raw)) as archive:
+        assert archive.testzip() is None
+        assert len(archive.namelist()) == len(set(archive.namelist())) == 135
+        assert set(archive.namelist()) == STOIKUS_1_22_1_MEMBERS
+        assert not any(name.lower().endswith(".ex5") for name in archive.namelist())
+        header = archive.read("MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh")
+        assert b'#define JPW_PRODUCT_VERSION "1.22.1"' in header
+        assert b'#define JPW_PRODUCT_MQL_VERSION "1.221"' in header
+        assert b'#define JPW_CALCULATION_VERSION "1.9.0"' in header
+
+
+NATIVE_EVIDENCE = Path("review-evidence/stoikus-1.22.3/native-kit")
 
 
 def native_kit(root: Path) -> Path:
@@ -263,7 +296,7 @@ def assert_native_evidence(root: Path, manifest: dict, kit: Path | None = None) 
     helper=json.loads((kit/"helper-freeze.json").read_text())
     before=kit/"resultado/inputs-before";after=kit/"resultado/outputs-after"
     sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
-    assert receipt["version"]==freeze["version"]==manifest["version"]=="1.22.1"
+    assert receipt["version"]==freeze["version"]==manifest["version"]=="1.22.3"
     assert receipt["compilation_result"]=="PASS"
     assert receipt["runtime_validation"]=="NOT_RUN"
     assert receipt["installation_of_binaries"]=="NOT_PERFORMED"
@@ -282,7 +315,7 @@ def assert_native_evidence(root: Path, manifest: dict, kit: Path | None = None) 
     for name,value in inputs.items():
         assert sha(before/name)==sha(after/name)==value
     runtime={member for member in EXPECTED_MEMBERS if Path(member).suffix in (".mq5",".mqh",".bmp")}
-    assert len(runtime)==112
+    assert len(runtime)==113
     for member in runtime:
         assert sha(root/"mt5/jpw-alavancagem-atual"/member)==freeze["files"][member]
     targets={member.removeprefix("MQL5/") for member in EXPECTED_MEMBERS if member.endswith(".mq5")}
@@ -327,10 +360,22 @@ def main() -> None:
         else:
             raise AssertionError("immutable Stoikus 1.22.0 archive accepted altered bytes")
     print("PASS immutable Stoikus 1.22.0 archive and size/hash counterexamples")
+    usage_historical = (ROOT / "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip").read_bytes()
+    assert_historical_stoikus_1_22_1_archive(usage_historical)
+    for changed in (usage_historical[:-1], usage_historical[:100] + bytes([usage_historical[100] ^ 1]) + usage_historical[101:]):
+        try:
+            assert_historical_stoikus_1_22_1_archive(changed)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError("immutable Stoikus 1.22.1 SDK accepted altered bytes")
+    print("PASS immutable Stoikus 1.22.1 SDK and size/hash counterexamples")
     template = json.loads((ROOT / MANIFEST_PATH).read_text(encoding="utf-8"))
-    expected_sources = {"mt5/jpw-alavancagem-atual/" + member for member in EXPECTED_MEMBERS}
-    assert len(EXPECTED_MEMBERS) == 135
-    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 135
+    version = template["version"]
+    members = release_members(version)
+    expected_sources = {"mt5/jpw-alavancagem-atual/" + member for member in members}
+    assert len(members) == len(members)
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == len(members)
     assert set(template["sourceFiles"]) == expected_sources, "source inventory differs from the explicit release contract"
     assert_release_inventory(template)
     for mutation in ("duplicate", "substitute"):
@@ -345,16 +390,18 @@ def main() -> None:
             pass
         else:
             raise AssertionError("explicit inventory accepted " + mutation)
-    assert template["version"] == "1.22.1"
+    assert version in ("1.22.3", "1.23.0")
     version_source = (ROOT / VERSION_HEADER).read_text(encoding="utf-8")
-    assert '#define JPW_PRODUCT_VERSION "1.22.1"' in version_source
-    assert '#define JPW_PRODUCT_MQL_VERSION "1.221"' in version_source
+    assert f'#define JPW_PRODUCT_VERSION "{version}"' in version_source
+    mql_version = {"1.22.3": "1.223", "1.23.0": "1.230"}[version]
+    assert f'#define JPW_PRODUCT_MQL_VERSION "{mql_version}"' in version_source
     assert '#define JPW_CALCULATION_VERSION "1.9.0"' in version_source
     nocuda_source = (ROOT / "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5").read_text(encoding="utf-8")
     assert '#property version   "1.30"' in nocuda_source
     readme = (ROOT / "mt5/jpw-alavancagem-atual/README.md").read_text(encoding="utf-8")
+    # README is a sealed historical document in R5; its declared R4 version remains factual.
     readme_plain = re.sub(r"[*`]", "", readme)
-    assert re.search(r"\bMQL\s*1\.221(?![\d.])", readme_plain), "README MQL version must be 1.221"
+    assert re.search(r"\bMQL\s*1\.223(?![\d.])", readme_plain), "README MQL version must be 1.223"
     nocuda_version_pattern = r"\bNoCuda\s+(?:declara\s+)?1\.30(?!\d|\.\d)"
     for declaration, expected in (("NoCuda 1.30.", True),
                                   ("NoCuda declara 1.30.", True),
@@ -362,7 +409,7 @@ def main() -> None:
                                   ("NoCuda 1.30.7.", False)):
         assert bool(re.search(nocuda_version_pattern, declaration)) == expected
     assert re.search(nocuda_version_pattern, readme_plain), "README NoCuda version must be 1.30"
-    for phrase in ('Stoikus 1.22.1', 'cálculo **1.9.0**', 'NOT_RUN'):
+    for phrase in ('Stoikus 1.22.3', 'cálculo **1.9.0**', 'NOT_RUN'):
         assert phrase in readme, phrase
     assert "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh" in template["sourceFiles"]
     assert "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5" in template["sourceFiles"]
@@ -437,7 +484,7 @@ def main() -> None:
           for name in ("Controller", "Core", "Export", "Store", "Terminal", "UI")),
         "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
     }
-    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 135
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == len(members)
     assert personal_history <= set(template["sourceFiles"])
     assert nocuda <= set(template["sourceFiles"])
     brands = {"mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_" +
@@ -448,7 +495,7 @@ def main() -> None:
     assert template["productName"] == "Stoikus"
     assert '#define JPW_PRODUCT_NAME "Stoikus"' in version_source
     assert '#define JPW_PRODUCT_TAGLINE "Da origem da operação à leitura do risco."' in version_source
-    for phrase in ("CANDIDATE 1.22.1", "1.9.0"):
+    for phrase in (f"CANDIDATE {version}", "1.9.0"):
         assert phrase in template["coverage"], phrase
     for phrase in ("Fibonacci acompanhado", "UNVERIFIED_NATIVE", "| 5 | −0,50 |", "H1 e H4", "não prevê"):
         assert phrase in readme, phrase
@@ -459,7 +506,7 @@ def main() -> None:
         assert template["validation"][gate]["status"] == "pending"
     assert "NOT_RUN" in template["validation"]["terminal"]["detail"]
     expected_native = {"mt5/jpw-alavancagem-atual/" + name[:-4] + ".ex5"
-                       for name in EXPECTED_MEMBERS if name.endswith(".mq5")}
+                       for name in members if name.endswith(".mq5")}
     assert len(expected_native) == 34
     expected_compiled = {name.removeprefix("mt5/jpw-alavancagem-atual/")
                          for name in expected_native} | {"README.md"}
@@ -491,10 +538,10 @@ def main() -> None:
     actual_source_bytes = (ROOT / actual_source["path"]).read_bytes()
     assert hashlib.sha256(actual_source_bytes).hexdigest() == actual_source["sha256"]
     assert len(actual_source_bytes) == actual_source["bytes"]
-    assert set(template["sourceHashes"]) == EXPECTED_MEMBERS
+    assert set(template["sourceHashes"]) == members
     with zipfile.ZipFile(BytesIO(actual_source_bytes)) as archive:
-        assert len(archive.namelist()) == len(set(archive.namelist())) == 135
-        assert set(archive.namelist()) == EXPECTED_MEMBERS
+        assert len(archive.namelist()) == len(set(archive.namelist())) == len(members)
+        assert set(archive.namelist()) == members
         for member, expected_hash in template["sourceHashes"].items():
             source_bytes = (ROOT / "mt5/jpw-alavancagem-atual" / member).read_bytes()
             assert hashlib.sha256(source_bytes).hexdigest() == expected_hash
@@ -504,7 +551,7 @@ def main() -> None:
         with TemporaryDirectory(prefix="jpw-native-provenance-controls-") as directory:
             evidence_root=Path(directory);kit=evidence_root/NATIVE_EVIDENCE
             shutil.copytree(native_kit(ROOT),kit)
-            for member in EXPECTED_MEMBERS:
+            for member in members:
                 if Path(member).suffix in (".mq5",".mqh",".bmp"):
                     rel=Path("mt5/jpw-alavancagem-atual")/member
                     (evidence_root/rel).parent.mkdir(parents=True,exist_ok=True)
@@ -532,6 +579,7 @@ def main() -> None:
     # Synthetic builder controls are source-only until their own complete
     # temporary receipt is constructed; never borrow the actual native receipt.
     fixture_template = json.loads(json.dumps(template))
+    fixture_template.pop("interfaceRelease", None)  # Preserve default-path and synthetic-native controls.
     fixture_template["nativeArtifact"] = None
     fixture_template["validation"]["compilation"]["status"] = "pending"
     fixture_template["validation"]["compilation"]["detail"] = "Synthetic builder control; native NOT_RUN"
@@ -556,7 +604,7 @@ def main() -> None:
         assert first["runtimeBuildId"].encode() in payloads[version_member]
         source = first["downloads"]["source"]
         assert source["available"] and not first["downloads"]["compiled"]["available"]
-        assert source["filename"] == "JPW_Stoikus_Fontes_v1.22.1.zip"
+        assert source["filename"] == f"JPW_Stoikus_Fontes_v{version}.zip"
         content = (root / source["path"]).read_bytes()
         assert len(content) == source["bytes"]
         assert hashlib.sha256(content).hexdigest() == source["sha256"]
@@ -632,7 +680,7 @@ def main() -> None:
         bad_version = (root / VERSION_HEADER).read_bytes()
         valid_version = ('#define JPW_PRODUCT_VERSION "' + template["version"] + '"').encode()
         assert bad_version.count(valid_version) == 1, "runtime-version mutation must change exactly one declaration"
-        mismatched_version = bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.22.1"',
+        mismatched_version = bad_version.replace(f'#define JPW_PRODUCT_VERSION "{version}"'.encode(),
                                                 b'#define JPW_PRODUCT_VERSION "1.9.0"')
         assert mismatched_version != bad_version, "negative version fixture did not mutate the input"
         (root / VERSION_HEADER).write_bytes(mismatched_version)
@@ -914,6 +962,10 @@ def main() -> None:
         else:
             raise AssertionError("archive built without a declared include")
 
+    if "interfaceRelease" in template:
+        from stoikus_interface_package_test import candidate as interface_candidate, controls as interface_controls
+        interface_candidate()
+        interface_controls()
     print("LEVERAGE PACKAGE OK — deterministic bytes, exact extraction, missing include and unverified .ex5 refused")
 
 

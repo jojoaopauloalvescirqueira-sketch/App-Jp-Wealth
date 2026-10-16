@@ -192,6 +192,7 @@ function aldMutate(acao, fn, meta){
       if(aldPersistenceUnknown())return {...r,ok:false,persistido:null,status:'UNKNOWN',erro:'persistencia indeterminada'};
       restore();return {...r,ok:false,persistido:false,status:'REFUSED',erro:'persistencia recusada'};
     }
+  try{window.JPWNotifications?.invalidate('alladin','system');}catch(_){}
     return {...r,ok:true,persistido:true,status:'CONFIRMED',erro:undefined};
   }catch(error){
     // Não anunciar rollback se uma escrita já pode ter ocorrido. A memória fica

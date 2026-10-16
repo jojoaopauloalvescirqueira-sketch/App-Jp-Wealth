@@ -73,7 +73,7 @@ def extract_function(source: str, name: str) -> str:
 
 def ui_source() -> str:
     ui, presentation, actions = UI.read_text(), PRESENTATION.read_text(), ACTIONS.read_text()
-    globals_only = ui[ui.index('string g_personal_scope'):ui.index('void JPWPersonalRequestRead')]
+    globals_only = ui[ui.index('string g_personal_scope'):ui.index('string JPWPersonalCategoryKey')]
     parts = [(SUPPORT / "ui_seams.cpp").read_text(), r"""
 using ENUM_OBJECT_PROPERTY_INTEGER=int;
 // Same forward declaration/default as indicator line202.
@@ -86,26 +86,10 @@ bool JPWUIDesignSetInteger(const string& name,int prop,long value){return host_d
     for helper in ["JPWInvalidateDialogContent", "JPWPresentationFailure", "JPWPresentationSetInteger"]:
         parts.append(translate(extract_function(presentation, helper)))
     parts.append(translate(globals_only))
-    for name in ['JPWPersonalRequestRead', 'JPWPersonalRequestExport', 'JPWPersonalInvalidateContext', 'JPWPersonalResetPage', 'JPWPersonalScopeLabel', 'JPWPersonalPeakLabel']:
+    for name in ['JPWPersonalCategoryKey', 'JPWPersonalCategoryLabel', 'JPWPersonalUIReady', 'JPWPersonalUIReadState', 'JPWPersonalRequestRead', 'JPWPersonalRequestExport', 'JPWPersonalInvalidateContext', 'JPWPersonalResetPage', 'JPWPersonalScopeLabel', 'JPWPersonalPeakLabel']:
         parts.append(translate(extract_function(ui, name)))
-    # UI facet keeps the production coordinator and its request identity checks.
-    # Its IO readers are explicit synthetic primitives, just like host_ui_export;
-    # real Store/SQLite readers remain exercised by the independent Store facets.
-    parts.append(r"""
-std::vector<JPWPersonalRow> host_ui_read_rows;bool host_ui_read_valid=true;
-bool host_ui_accounts(std::vector<string>& keys){keys={"synthetic-account-A","synthetic-account-B"};return true;}
-bool host_ui_summary(const string& key,JPWPersonalSummary& summary){summary.account_key=key;if(!host_ui_read_valid){summary.reason="synthetic corruption preserved";return false;}return true;}
-bool host_ui_page(const string&,const string& category,long before,int limit,std::vector<JPWPersonalRow>& rows,string& reason){
- rows.clear();for(auto& row:host_ui_read_rows)if(row.category==category&&(before==0||row.sequence<before)&&int(rows.size())<limit)rows.push_back(row);reason="";return true;
-}
-bool host_ui_detail(const string&,long sequence,JPWPersonalRow& out,string& reason){for(auto& row:host_ui_read_rows)if(row.sequence==sequence){out=row;reason="";return true;}return false;}
-""")
-    macros = {'JPWPersonalExport':'host_ui_export','JPWPersonalListAccounts':'host_ui_accounts',
-              'JPWPersonalReadSummary':'host_ui_summary','JPWPersonalReadPage':'host_ui_page',
-              'JPWPersonalReadDetail':'host_ui_detail'}
-    parts.append('\n'.join('#define '+name+' '+seam for name,seam in macros.items())+'\n'+
-                 translate(extract_function(ui, "JPWPersonalCollectUI"))+'\n'+
-                 '\n'.join('#undef '+name for name in macros))
+    for name in ['JPWPersonalUICancelRead', 'JPWPersonalUICancelPending', 'JPWPersonalUIRequestMatches', 'JPWPersonalUIInvalidateViews', 'JPWPersonalCollectUI']:
+        parts.append(translate(extract_function(ui, name)))
     for name in ['JPWPersonalSectionName', 'JPWPersonalRowCaption', 'JPWPersonalDetailLines', 'JPWPersonalRenderBody']:
         parts.append(translate(extract_function(presentation, name)))
     for name in ['JPWRaizSwitchTab', 'JPWPersonalHistoryMove', 'JPWPersonalHandleClick']:
@@ -114,7 +98,7 @@ bool host_ui_detail(const string&,long sequence,JPWPersonalRow& out,string& reas
     # The merged fixture completes page/detail reads through the real production
     # coordinator and explicit synthetic IO primitives. Do not inject the older
     # manual completion, which would bypass those request identity checks.
-    assert 'JPWPersonalCollectUI();REQUIRE(g_personal_available' in ui_cases
+    assert 'host_collect_ui_drain();REQUIRE(g_personal_available' in ui_cases
     extra=r"""
 g_raiz_details_open=true;g_raiz_tab=JPW_ROUTE_PERSONAL_HISTORY;g_details_content_dirty=false;
 JPWInvalidateDialogContent(JPW_ROUTE_PERSONAL_DETAIL);REQUIRE(!g_details_content_dirty,"new route invalidation does not dirty unrelated visible view");
@@ -125,7 +109,7 @@ REQUIRE(!JPWPresentationSetInteger("fixture",OBJPROP_STATE,false)&&!g_details_in
 host_design_write_ok=true;REQUIRE(JPWPresentationSetInteger("fixture",OBJPROP_STATE,false),"successful property delegation retained");
 """
     assert 'host_forbid_io=false;' in ui_cases
-    parts.append(ui_cases.replace('host_forbid_io=false;',extra+'\nhost_forbid_io=false;'))
+    parts.append(ui_cases.replace('host_forbid_io=false;Print',extra+'\nhost_forbid_io=false;Print',1))
     return '\n'.join(parts)
 
 
@@ -133,7 +117,7 @@ def controller_source() -> str:
     controller, terminal = CONTROLLER.read_text(), TERMINAL.read_text()
     globals_only = controller[controller.index('JPWPersonalStoreContext g_ph_store'):controller.index('string JPWPersonalControllerMarker')]
     parts = [translate(globals_only), (SUPPORT / "controller_seams.cpp").read_text(), translate(extract_function(terminal, 'JPWPersonalTerminalNotify'))]
-    for name in ['JPWPersonalControllerProblem', 'JPWPersonalControllerQueue', 'JPWPersonalControllerCompact', 'JPWPersonalControllerMergeRestored', 'JPWPersonalControllerEnsureStore', 'JPWPersonalControllerPersist', 'JPWPersonalControllerNotifyDue']:
+    for name in ['JPWPersonalControllerProblem', 'JPWPersonalControllerQueue', 'JPWPersonalControllerCompact', 'JPWPersonalControllerDeferred', 'JPWPersonalControllerMergeRestored', 'JPWPersonalControllerStoreState', 'JPWPersonalControllerApplyRecovered', 'JPWPersonalControllerSliceBudget', 'JPWPersonalControllerRecoveryStep', 'JPWPersonalControllerEnsureStore', 'JPWPersonalControllerCompletionEvidence', 'JPWPersonalControllerPersist', 'JPWPersonalControllerNotifyDue', 'JPWPersonalControllerTick']:
         parts.append(translate(extract_function(controller, name)))
     parts.append((SUPPORT / "controller_cases.cpp").read_text())
     return '\n'.join(parts)
@@ -240,11 +224,11 @@ def main() -> int:
         parser.error("receipt already exists; use a new output to preserve earlier attempts")
     receipt_path.parent.mkdir(parents=True, exist_ok=True)
     attempt = Path(tempfile.mkdtemp(prefix="host-", dir=receipt_path.parent))
-    dependencies = [CORE, STORE, EXPORT, STORE_RESULT, SCRIPT, UI, PRESENTATION, ACTIONS, TERMINAL, CONTROLLER, MATH_CORE, PROFILE, SUPPORT / "compat.hpp", SUPPORT / "cases.cpp", SUPPORT / "store_cases.cpp", SUPPORT / "export_cases.cpp", SUPPORT / "ui_seams.cpp", SUPPORT / "ui_cases.cpp", SUPPORT / "controller_seams.cpp", SUPPORT / "controller_cases.cpp", SUPPORT / "terminal_seams.cpp", SUPPORT / "terminal_cases.cpp", Path(__file__), Path(oracle.__file__), oracle.ACCEPTANCE]
+    dependencies = [CORE, STORE, EXPORT, STORE_RESULT, SCRIPT, UI, PRESENTATION, ACTIONS, TERMINAL, CONTROLLER, MATH_CORE, PROFILE, SUPPORT / "compat.hpp", SUPPORT / "drain.hpp", SUPPORT / "export_drain.hpp", SUPPORT / "cases.cpp", SUPPORT / "store_cases.cpp", SUPPORT / "export_cases.cpp", SUPPORT / "ui_seams.cpp", SUPPORT / "ui_cases.cpp", SUPPORT / "controller_seams.cpp", SUPPORT / "controller_cases.cpp", SUPPORT / "terminal_seams.cpp", SUPPORT / "terminal_cases.cpp", Path(__file__), Path(oracle.__file__), oracle.ACCEPTANCE]
     sources = {str(path.relative_to(ROOT)): sha(path) for path in dependencies}
     cpp = attempt / "source.cpp"
     entry = '\nint main(int argc,char**argv){if(argc!=3&&argc!=4)return 2;host_root=argv[1];try{if(argc==4){if(string(argv[2])=="HIS-AC11")ownership_phase(argv[3]);else recovery_phase(argv[2],argv[3]);return 0;}core_case(argv[2]);store_case(argv[2]);export_case(argv[2]);ui_case(argv[2]);controller_case(argv[2]);terminal_case(argv[2]);return 0;}catch(const std::exception& e){std::cerr<<"PRODUCT_FAIL|"<<e.what()<<"\\n";return 1;}}\n'
-    cpp.write_text((SUPPORT / "compat.hpp").read_text() + '\n' + translate(STORE_RESULT.read_text()) + '\n' + translate(CORE.read_text()) + '\n' + translate(STORE.read_text()) + '\n' + translate(EXPORT.read_text()) + '\n' + translate(SCRIPT.read_text()) + '\n' + (SUPPORT / "cases.cpp").read_text() + '\n' + (SUPPORT / "store_cases.cpp").read_text() + '\n' + (SUPPORT / "export_cases.cpp").read_text() + '\n' + ui_source() + '\n' + controller_source() + '\n' + terminal_source() + entry)
+    cpp.write_text((SUPPORT / "compat.hpp").read_text() + '\n' + translate(STORE_RESULT.read_text()) + '\n' + translate(CORE.read_text()) + '\n' + translate(STORE.read_text()) + '\n' + (SUPPORT / 'drain.hpp').read_text() + '\n' + translate(EXPORT.read_text()) + '\n' + (SUPPORT / 'export_drain.hpp').read_text() + '\n' + translate(SCRIPT.read_text()) + '\n' + (SUPPORT / "cases.cpp").read_text() + '\n' + (SUPPORT / "store_cases.cpp").read_text() + '\n' + (SUPPORT / "export_cases.cpp").read_text() + '\n' + ui_source() + '\n' + controller_source() + '\n' + terminal_source() + entry)
     binary = attempt / "test"
     command = ["clang++", "-std=c++17", "-Wall", "-Wextra", "-Wno-unused-parameter", "-Wno-deprecated-declarations", str(cpp), "-lsqlite3", "-o", str(binary)]
     if platform.system() != "Darwin":
