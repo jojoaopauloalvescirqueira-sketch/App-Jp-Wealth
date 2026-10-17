@@ -1,0 +1,33 @@
+{
+  "id": "S10",
+  "topic": "neural_leakage",
+  "prompt": "Julgue disponibilidade temporal e ajuste do scaler; não treine uma rede.",
+  "input": {
+    "train_days": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "test_days": [
+      6,
+      7
+    ],
+    "scaler_fit_days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "feature_day": 5,
+    "feature_uses_days": [
+      4,
+      5,
+      6
+    ]
+  }
+}

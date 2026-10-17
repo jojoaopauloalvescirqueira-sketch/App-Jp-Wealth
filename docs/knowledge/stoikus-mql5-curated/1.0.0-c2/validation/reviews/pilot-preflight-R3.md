@@ -1,0 +1,13 @@
+# Preflight independente de captura R3
+
+Veredicto: APROVADO para iniciar os spawns novos. Inspeção concluída em 2026-10-15T16:17:10.279817+00:00, antes de outputs R3 existentes na pasta (zero arquivos response.md observados). O integrador informou que nenhum spawn ocorreu; a prova definitiva da ordem será o registro real das chamadas futuras. Não foram pontuadas respostas inexistentes.
+
+Inspecionei os 36 dispatches, 36 recibos predispatch e 12 inputs. Todos os hashes de dispatchs/inputs coincidem com input-freeze.json; SHA-256 desse índice observado agora: 19892897ea7770a6373fb581371c09c833ad248317a493034ef434f1e7b18ee3. A evidência desta revisão ancora a existência dos arquivos legíveis antes das chamadas autorizadas a seguir, além dos horários registrados pelo operador.
+
+Cada dispatch contém argumentos completos legíveis do spawn (task_name único, fork_turns none, target gpt-6.1-sol, wrapper/message) e resolved_inputs_before_dispatch com bytes UTF-8 integrais do arquivo referenciado. Conferi igualdade byte a byte com inputs atuais, hashes e os textos ENTRY, ARCHITECTURE e task-context do kit congelado. A projeção coincide exatamente com builder-inputs, contém apenas id/topic/prompt/input e não inclui expected. S01 inclui handle_required=true. Hashes de manifesto e freeze R3 também conferem.
+
+O campo resolved_inputs_before_dispatch é fechamento de evidência do input a ser lido; não é argumento oculto enviado à ferramenta. Essa distinção está explícita. O conjunto wrapper real + arquivo referenciado capturado integralmente atende ao requisito R3 de payload completo legível. O hash do arquivo dispatch vem de recibo externo, sem autorreferência circular. dispatch_sha256 deve continuar incidindo sobre os bytes do JSON dispatch inteiro, conforme o predispatch, não apenas message.
+
+Não há gap de captura a corrigir antes do primeiro spawn. Durante a execução, despachar exatamente arguments capturados; manter inputs e dispatches inalterados; preservar call_id, retorno canônico, timestamps e parâmetros observáveis da ferramenta real. Verificar que recorded_before_spawn_utc precede o timestamp real de cada spawn, não apenas preencher uma data planejada. Caso parâmetros/payload mudem antes de uma tentativa, preservar o registro anterior e produzir novo registro prévio identificado; não reescrever após saída.
+
+O preflight aprova preparação, não prova execução, fresh efetivo, integridade futura dos outputs ou ausência de acesso oculto. Logs SELF_RECORDED permanecem limitados conforme parecer R3. Nenhum resultado R2 é reclassificado e nenhuma tentativa real foi executada por este revisor.

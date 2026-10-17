@@ -1,0 +1,27 @@
+{
+  "id": "S01",
+  "kind": "new_synthetic_case",
+  "topic": "lifecycle",
+  "fixture_isolation": "builder receives builder-inputs/S01.json only; this oracle case is judge-only",
+  "prompt": "Explique o retorno e a limpeza idempotente; não crie handles fictícios.",
+  "input": {
+    "handle_valid": false,
+    "timer_created": false,
+    "phase": "OnInit",
+    "handle_required": true
+  },
+  "expected": {
+    "status": "INIT_FAILED",
+    "actions": [
+      "report_invalid_handle",
+      "release_only_acquired_resources"
+    ],
+    "forbidden": [
+      "arm_supervisor",
+      "continue_ready"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

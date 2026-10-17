@@ -1,0 +1,2288 @@
+{
+  "book": "TRD",
+  "source_sha256": "9ff6c55090527afa0efce722d67760805ee335fc64dad3c83638a89e6c79a145",
+  "assigned": [
+    675,
+    835
+  ],
+  "read_ranges": [
+    [
+      675,
+      900
+    ]
+  ],
+  "read_unique_pages": 226,
+  "method": "semantic_full_extracted_text_read_in_tool_batches",
+  "visual_review": false,
+  "native_execution": "NOT_RUN",
+  "product_source_review": false,
+  "tool_truncation_repaired": [
+    [
+      680,
+      686
+    ]
+  ],
+  "source_extraction_clipping_unrepaired_pages": [
+    758,
+    767,
+    768,
+    830,
+    832,
+    880
+  ],
+  "next_unread_page": 901,
+  "remaining_requested_extension": [
+    [
+      901,
+      1048
+    ]
+  ],
+  "sections": [
+    {
+      "section": "5.4.1",
+      "physical_pdf_pages": [
+        675,
+        676
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Indicadores transformam séries em buffers geridos pelo terminal; podem existir sem buffers para objetos/interação. Janela e quantidades são decisões estáticas.",
+      "application": "Proposta: distinguir Monitor EA existente de eventual indicador visual; não assumir necessidade de converter o programa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.2",
+      "physical_pdf_pages": [
+        676,
+        680
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "OnCalculate possui duas formas mutuamente exclusivas. A reduzida aceita série arbitrária e begin; a completa recebe OHLC, volumes e spreads do gráfico. prev_calculated é o retorno anterior e pode zerar após reconstrução histórica. Close exige atualizar barra corrente; retornar rates_total comunica prontidão.",
+      "application": "Proposta: explicitar estado de dados prontos e invalidação histórica em qualquer indicador futuro, sem transpor automaticamente OnCalculate ao EA.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.3",
+      "physical_pdf_pages": [
+        680,
+        681
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Janela principal e separada são alternativas compiladas. Objetos permitem complementar outra área, porém não substituem buffers públicos. Apply to possui restrições conforme janela.",
+      "application": "Proposta UI: escolher unidade visual e escala antes de arquitetura híbrida.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.4",
+      "physical_pdf_pages": [
+        681,
+        682
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Buffers armazenam dados; plots definem representação. Candle exige quatro buffers por plot. Quantidades são constantes de compilação; auxiliares também podem ser buffers.",
+      "application": "Proposta: contrato separado de dados e apresentação, sem equivaler índice do plot ao buffer.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.5",
+      "physical_pdf_pages": [
+        682,
+        685
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "SetIndexBuffer liga array double dinâmico persistente; terminal dimensiona depois de OnInit, não inicializa valores e controla resize. Ligação redefine indexação comum; ArraySetAsSeries deve vir depois. Tipos DATA, COLOR_INDEX e CALCULATIONS têm funções distintas.",
+      "application": "Proposta ownership: vida do array deve abranger uso pelo terminal; inicializar lacunas explicitamente. Divergência CopyBuffer p683 versus p772 deve permanecer sinalizada.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.6",
+      "physical_pdf_pages": [
+        685,
+        691
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "PlotIndexSetInteger configura tipo, estilo, largura, cores, deslocamentos, seta, início e visibilidade. Tipos exigem números diferentes de buffers. DRAW_NONE mantém dados e exclui plot da escala. Shift horizontal em barras e seta vertical em pixels são unidades distintas.",
+      "application": "Proposta UI: parâmetros tipados por unidade; falhas das chamadas verificáveis. Nenhum indicador do livro foi executado.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.7",
+      "physical_pdf_pages": [
+        691,
+        695
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Mapeamento consome buffers sequenciais conforme plot: candles0 usa0–3, linha1 usa4, zigzag2 usa5–6. Ordem dos plots também define sobreposição visual.",
+      "application": "Proposta: manifesto de buffers e plots evita pressupostos de índices iguais.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.8",
+      "physical_pdf_pages": [
+        695,
+        697
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Diretivas fornecem defaults antes de OnInit; funções permitem mudanças posteriores. Diretivas numeram plots a partir de1 e funções a partir de0. Defaults em diretivas aparecem já no primeiro diálogo.",
+      "application": "Proposta UI: defaults estáticos legíveis e tradução explícita das bases de índices.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.9",
+      "physical_pdf_pages": [
+        697,
+        698
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "PLOT_LABEL/indicator_labelN nomeiam plots e buffers na Data Window; múltiplos nomes usam ponto e vírgula.",
+      "application": "Proposta UI: labels semânticos e unidades, sem depender do nome do arquivo.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.10",
+      "physical_pdf_pages": [
+        698,
+        703
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "EMPTY_VALUE é DBL_MAX por default e deve preencher memória não calculada. Fractais dependem de vizinhos dos dois lados. DRAW_SECTION/ZIGZAG conectam pontos não vazios; vazio no buffer não garante ausência de segmento sobre a barra.",
+      "application": "Proposta: não confundir lacuna semântica com conexão gráfica; sinal de fractal tem latência e exemplo não é estratégia validada.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.11",
+      "physical_pdf_pages": [
+        704,
+        710
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Escala, níveis, cores, textos e altura de subjanela são ajustáveis por IndicatorSet*. Não há getters equivalentes. WPR exemplifica faixa[-100,0], níveis-20/-80 e cálculo incremental. Altura fixa bloqueia ajuste manual.",
+      "application": "Proposta UI: reservar altura fixa a painéis deliberados; limites ilustrativos WPR não são regra JP Wealth.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.12",
+      "physical_pdf_pages": [
+        710,
+        711
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "INDICATOR_DIGITS controla apresentação, não precisão do cálculo; SHORTNAME identifica instância e inclui parâmetros relevantes, até63 caracteres.",
+      "application": "Proposta UI: separar arredondamento de exibição de cálculo e nomes de ownership.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.13",
+      "physical_pdf_pages": [
+        711,
+        714
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Tipos DRAW_COLOR_* acrescentam buffer de índices para paleta de até64 cores, após buffers de dados. Em linha colorida, ponto mais recente define cor do segmento.",
+      "application": "Proposta UI: documentar se cor descreve ponto ou segmento. Exemplo p712 de troca da terceira cor sem modifier é ambíguo; não copiar sem verificar.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.14",
+      "physical_pdf_pages": [
+        714,
+        720
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "PLOT_DRAW_BEGIN propaga início inválido ao begin de indicador encadeado, mas não substitui inicialização explícita para consumidores programáticos. EMA/TEMA com DBL_MAX pode gerar overflow/NaN e contaminar recorrência. STRICT/CUSTOM/NONE demonstram políticas distintas.",
+      "application": "Proposta: validar dados e limites antes de recorrência, inicializar warm-up; não utilizar exemplos como evidência de execução.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.15",
+      "physical_pdf_pages": [
+        720,
+        732
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Delta de volume exige CopyTicksRange e prontidão assíncrona; timer solicita nova tentativa sem bloquear. DRAW_NONE permite escala útil da delta. OnCalculate não garante cada tick; timestamp em milissegundos mais contagem de ticks empatados evita duplicação/perda no cursor.",
+      "application": "Proposta: cursor com identidade temporal e multiplicidade, estado pending e flag de cancelamento lógico de refresh. Hipóteses estáticas p726/729 de limites/n=0 requerem teste isolado; não são bugs Stoikus.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.16",
+      "physical_pdf_pages": [
+        732,
+        753
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Multissímbolo exige sincronização por tempo, não igualdade de índices. iBarShift exact produz lacuna explícita; QuoteRefresh diferencia histórico disponível, terminal e servidor sem bloquear indicador. Arrays membros podem possuir buffers enquanto objeto vive. Unity calcula mudança relativa de cesta com moeda comum e sentidos direto/inverso.",
+      "application": "Proposta: semântica de disponibilidade por símbolo e instante; propriedade de arrays persistentes; nenhuma cesta ou fórmula do livro deve substituir cálculo normativo existente.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.17",
+      "physical_pdf_pages": [
+        754,
+        757
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Barra nova pode ser detectada por tempo, contagem ou volume, cada qual com limites. Em vários símbolos barras surgem em instantes diferentes. Monitor registra máscara e sincronismo; pressupõe sessões compatíveis e limite64 símbolos.",
+      "application": "Proposta: definir política por símbolo e relógio antes de consolidar sessão; indicador não recebe automaticamente tick de todo ativo.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.18",
+      "physical_pdf_pages": [
+        757,
+        759
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Tester visual calcula cada tick; no modo não visual indicadores dependentes podem calcular sob demanda de CopyBuffer. tester_everytick_calculate não altera geração de ticks. Livro relata ausência de OnDeinit/destrutores globais no teste isolado de indicadores.",
+      "application": "Proposta de validação: separar geração, cálculo, visualização e cleanup; todos experimentos desta revisão NOT_RUN.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.19",
+      "physical_pdf_pages": [
+        759,
+        760
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Indicadores proíbem várias operações de trading, rede, Sleep e bloqueio. Cálculo longo pode bloquear indicadores do mesmo símbolo; trabalho pesado deve residir em script/EA não negociador.",
+      "application": "Aplicação arquitetural proposta: manter UI responsiva e orçamento curto de handler; não é diagnóstico do Monitor atual.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.4.20",
+      "physical_pdf_pages": [
+        760,
+        762
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Wizard produz rascunho com janela, plots e handlers limitados; não cobre todos os eventos nem configurações.",
+      "application": "Sem aplicação direta: fluxo educativo MetaEditor, não autorização para gerar ou instalar indicador.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.1",
+      "physical_pdf_pages": [
+        763,
+        764
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Handles são locais ao programa; números iguais entre programas não identificam mesmo objeto. Cache e contadores dependem de parâmetros e, para custom, string do caminho/gráfico. Pedidos idênticos no mesmo programa não multiplicam ownership; ChartIndicatorGet acrescenta referência.",
+      "application": "Proposta ownership: não transportar handle como identidade global; uma liberação por handle adquirido e política explícita para handles consultados.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.2",
+      "physical_pdf_pages": [
+        765,
+        768
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "iCustom depende de EX5 e assinatura/ordem exatas; omissão só no fim. Caminho absoluto é relativo à raiz MQL5 e relativo busca primeiro junto ao chamador, depois Indicators. Nome dinâmico exige tester_indicator. Encadeamento usa handle final após todos inputs.",
+      "application": "Proposta: manifesto de dependências e caminhos canônicos; nenhum EX5 foi compilado. Trechos p765 omitindo pathname não devem ser copiados como chamada completa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.3",
+      "physical_pdf_pages": [
+        768,
+        770
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "BarsCalculated distingue erro-1, não pronto0 e quantidade calculada; handle válido não significa buffer pronto. Comparação precisa considerar símbolo/timeframe do fornecedor.",
+      "application": "Proposta: readiness explícito por dependência, não inferido de criação bem sucedida.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.4",
+      "physical_pdf_pages": [
+        770,
+        779
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "CopyBuffer recebe posição/tempo/intervalo e devolve quantidade real. Offset conta do presente; memória física do receptor é passado→presente. Pode retornar parcial ou ausência temporária. Em indicador retorna sem bloquear; EA/script podem esperar timeout. Encadeamento WPR/TEMA/fractal é demonstração de API e pode repintar barra0.",
+      "application": "Proposta: exigir quantidade solicitada antes de consumir, isolar EMPTY_VALUE/NaN e fechar barra conforme contrato. Contradição p683/p772 mantida; não criar sinais comerciais a partir do exemplo.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.5",
+      "physical_pdf_pages": [
+        780,
+        786
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Painel multitimeframe gera21 handles e projeta cada timeframe numa posição visual. A prontidão usa contagem do próprio timeframe. Livro adverte custo de calcular históricos completos para ler só último valor.",
+      "application": "Proposta UI: orçamento de recursos e cache com ownership; painel é possibilidade futura, sem adoção do exemplo.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.6",
+      "physical_pdf_pages": [
+        786,
+        792
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Catálogo fornece funções, parâmetros, enums preço/volume/média e buffers. Buffers multi-linha têm índices semânticos; Gator inclui buffers de cor.",
+      "application": "Sem aplicação direta: referência de APIs para futuras dependências, não recomendação de indicadores ou validação de fórmulas Stoikus.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.7",
+      "physical_pdf_pages": [
+        792,
+        801
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Stochastic demonstra criação, readiness e cópia de dois buffers; cache quente pode permitir leitura imediata, sem dispensar readiness geral. M1MA agrega dados menores e expõe limites de histórico, barra incompleta e sessões; PendingRefresh evita timer residual. UnityPro troca preços por iMA.",
+      "application": "Proposta: validação por timeframe real, carga limitada e cancelamento lógico de refresh; não equiparar média de M1 a regra financeira normativa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.8",
+      "physical_pdf_pages": [
+        801,
+        811
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "IndicatorCreate aceita MqlParam tipado; enums usam TYPE_INT; custom exige nome como primeiro TYPE_STRING. Tipos/ordem incorretos podem converter silenciosamente. Builder usa templates/overloads para escolher integer/double/string.",
+      "application": "Proposta: schema validado antes de criação dinâmica. Snippet p806 iEnvelopes sem símbolo/timeframe é ilustrativo incompleto, não código executado.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.9",
+      "physical_pdf_pages": [
+        812,
+        820
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Wrapper AutoIndicator empacota metadados de API e parseia lista de parâmetros, com fortes simplificações. Tipos/janela/quantidade de buffers custom não são inferíveis automaticamente. Escalas incompatíveis tornam linhas invisíveis.",
+      "application": "Proposta: preferir contrato explícito a adivinhação de entradas; parser didático não é parser robusto de produção e normaliza strings para minúsculas.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.10",
+      "physical_pdf_pages": [
+        820,
+        821
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Família ChartWindowFind, ChartIndicatorAdd/Delete/Get/Name/Total conecta cálculo a visualização.",
+      "application": "Proposta: operações de enumeração e aquisição devem distinguir consulta de referência adquirida.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.11",
+      "physical_pdf_pages": [
+        821,
+        824
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartIndicatorAdd no índice WINDOWS_TOTAL cria subjanela; cleanup usa SHORTNAME. Exemplo assume instância única e última janela, condição explicitamente limitada pelo autor.",
+      "application": "Proposta ownership: localizar de novo recurso próprio antes de remover; não presumir última janela como pertencente ao programa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.12",
+      "physical_pdf_pages": [
+        824,
+        827
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "PLOT_SHIFT afeta CopyBuffer: deslocamento futuroN pede offset-N. API não fornece getter externo dessa propriedade; Gator mostra buffers de cor e valor.",
+      "application": "Proposta: incluir shift no contrato e não confundir deslocamento visual com avanço informacional.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.13",
+      "physical_pdf_pages": [
+        827,
+        832
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "IndicatorRelease invalida referência; variável conserva número e deve ser zerada para INVALID_HANDLE. Número pode ser reutilizado por outro indicador. Contador impede descarregar instância ainda usada; tester ignora release segundo livro.",
+      "application": "Proposta ownership: validade e geração não podem ser inferidas do inteiro; testar cleanup fora do tester também.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.14",
+      "physical_pdf_pages": [
+        832,
+        835
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "IndicatorParameters devolve tipo e MqlParam efetivos pelo handle; custom pode incluir caminho e Apply to. Stringer usa cast float para exibir doubles, portanto é demonstrativo.",
+      "application": "Proposta: registrar parâmetros efetivos com precisão adequada em diagnóstico, não copiar serializador para persistência normativa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.5.15",
+      "physical_pdf_pages": [
+        835,
+        836
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "_AppliedTo descreve origem:0 forma completa,1–7 preços,8/9 indicador anterior/primeiro,10+ handle passado. Tabela weighted p836 diverge de p789.",
+      "application": "Proposta: origem explícita e resolução local do handle; registrar divergência editorial antes de citar fórmula.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.6.1",
+      "physical_pdf_pages": [
+        837,
+        838
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Um timer por programa, primeiro evento após período; eventos não se acumulam quando há outro pendente/em execução. Kill em indicador pode deixar evento residual; término destrói timer.",
+      "application": "Proposta: não medir tempo de calendário contando callbacks e manter flag pending.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.6.2",
+      "physical_pdf_pages": [
+        838,
+        847
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "OnTimer é sequencial com outros handlers, não thread. Indicador dependente criado por iCustom/IndicatorCreate não recebe timer segundo livro. MultiTimer reparte um timer físico em assinantes com multiplicadores; manager não possui objetos; construtor/destrutor faz bind/unbind.",
+      "application": "Proposta ownership: separar assinatura de posse e não presumir scheduler em dependência invisível. A restrição tem relevância ao avaliar exemplos anteriores, sem prova nativa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.6.3",
+      "physical_pdf_pages": [
+        847,
+        849
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Timer em milissegundos substitui o de segundos; callback prático limitado aproximadamente10–16ms e carga pode aumentar intervalo. Menor período aumenta tempo de teste.",
+      "application": "Proposta UI: escolher frequência por necessidade e medir atraso real; exemplos de logs pertencem ao livro, NOT_RUN local.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.1",
+      "physical_pdf_pages": [
+        850,
+        851
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Symbol/Period/Point/Digits equivalem às variáveis locais; propriedades de outro gráfico requerem APIs por ID.",
+      "application": "Proposta: separar contexto do gráfico da entidade financeira consultada.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.2",
+      "physical_pdf_pages": [
+        851,
+        851
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartID é long e não HWND;0 em muitas APIs significa gráfico atual, não ID efetivo0.",
+      "application": "Proposta ownership: persistir escopo do ID e não confundir handle Windows com ID MQL.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.3",
+      "physical_pdf_pages": [
+        852,
+        853
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartFirst/Next enumeram ordem interna que pode diferir das abas. Next(0) significa início, exceção ao padrão0=atual; fim é-1.",
+      "application": "Proposta UI: não associar recursos por posição na aba.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.4",
+      "physical_pdf_pages": [
+        853,
+        854
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartSymbol e ChartPeriod consultam qualquer ID; falhas devolvem string vazia ou0 e exigem checagem.",
+      "application": "Proposta: não tratar retorno de erro como contexto válido.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.5",
+      "physical_pdf_pages": [
+        854,
+        856
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Getters síncronos e setters assíncronos tipados; true no setter é enfileiramento. Forma bool+referência distingue falha de valor0. Múltiplas alterações podem preceder um único ChartRedraw.",
+      "application": "Proposta UI: batch de atualização com confirmação apropriada, sem prometer efeito imediato.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.6",
+      "physical_pdf_pages": [
+        856,
+        858
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "CHART_COMMENT é editável; nomes EA/script são r/o. Comentário é estado compartilhado do gráfico.",
+      "application": "Proposta ownership: não usar Comment como armazenamento exclusivo entre múltiplos componentes.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.7",
+      "physical_pdf_pages": [
+        858,
+        858
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Estado maximizado/minimizado/foco difere de HWND e flag IS_OBJECT, que são r/o.",
+      "application": "Proposta: estado visual não identifica proprietário do gráfico.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.8",
+      "physical_pdf_pages": [
+        858,
+        860
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "WINDOWS_TOTAL inclui principal; visibilidade pode ocultar subjanela sem remover índices. Chart objeto relata visível mesmo quando objeto oculto.",
+      "application": "Proposta: inspecionar janela e objeto separadamente, sem usar uma flag como prova de presença visual.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.9",
+      "physical_pdf_pages": [
+        860,
+        868
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Modo barras/candles/linha, foreground, shift e autoscroll são independentes. Monitor guarda snapshot/backup/restore; mudança linha↔OHLC exige rebinding/reconstrução, barras↔candles pode só redraw.",
+      "application": "Proposta UI: separar mudanças de dados de mudanças de apresentação; restaurar propriedades sob contrato de ownership.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.10",
+      "physical_pdf_pages": [
+        868,
+        871
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "CHART_SHOW desliga preço/escalas/subjanelas mas preserva objetos/recursos, útil para interface própria. Ticker/OHLC têm dependência. Volumes usam enum oculto/tick/real.",
+      "application": "Proposta UI: painel pode controlar visibilidade, com registro e restauração das propriedades alteradas; não implementar agora.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.11",
+      "physical_pdf_pages": [
+        872,
+        873
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Shift size mede recuo direito10–50%; fixed position fixa âncora esquerda0–100% quando autoscroll desligado.",
+      "application": "Proposta: não confundir pixels, barras e percentuais em layout.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.12",
+      "physical_pdf_pages": [
+        873,
+        875
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "CHART_SCALE0–5 é editável; barras visíveis, primeira barra, largura em barras/pixels são medidas r/o e dependem de recuo/redimensionamento.",
+      "application": "Proposta UI: recalcular layout por medidas atuais, sem inferir largura útil da capacidade total.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.13",
+      "physical_pdf_pages": [
+        875,
+        878
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Escala fixa,1:1 e pontos/barra são modos distintos. Altura programática bloqueia ajuste manual; -1 desfaz. YDISTANCE traduz coordenada global de mouse em local da subjanela.",
+      "application": "Proposta UI: coordenadas com origem explícita e restauração de altura; nenhuma medida visual foi conferida em terminal.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.14",
+      "physical_pdf_pages": [
+        878,
+        881
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Cores de fundo, eixos, grade, barras/candles, volumes, Bid/Ask/Last e stops são propriedades distintas. IndSubChart copia paleta do gráfico ao plot.",
+      "application": "Proposta UI: adaptar contraste/paleta sem sobrepor preferências do usuário. Três linhas de código p880 estão cortadas no texto-fonte extraído; não reconstruídas como código validado.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.15",
+      "physical_pdf_pages": [
+        881,
+        884
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Flags controlam menu, crosshair, scroll, teclado, navegação e drag de níveis. Desativar teclado não impede eventos de tecla. Desativar menu do gráfico preserva menu dos objetos.",
+      "application": "Proposta UI: capturar entrada sem bloquear recuperação; restaurar só configuração cuja posse foi definida.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.16",
+      "physical_pdf_pages": [
+        884,
+        885
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Dock/undock possui flag e limites de retângulo em tela virtual.",
+      "application": "Sem aplicação direta: suporte de múltiplos monitores depende de cenário do usuário e validação nativa.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.17",
+      "physical_pdf_pages": [
+        885,
+        887
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Drop possui janela, tempo/preço e pixels; tempo não é arredondado ao timeframe. Y é relativo à principal, mesmo drop em subjanela.",
+      "application": "Proposta UI: nunca converter gesto em regra financeira sem normalização explícita; origem espacial preservada.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.18",
+      "physical_pdf_pages": [
+        887,
+        890
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "TimePriceToXY e XYToTimePrice traduzem sistemas com quantização; resultado pode ser fora da tela ou negativo. Exemplos exibem discrepância no primeiro ciclo.",
+      "application": "Proposta: tolerâncias por unidade e verificação de retorno; igualdade demonstrada em exemplo não garante bijeção universal.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.19",
+      "physical_pdf_pages": [
+        890,
+        893
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartNavigate desloca barras a partir de BEGIN/CURRENT/END. Sincronizador usa timestamp da primeira barra visível e variável global, não igualdade de índices entre timeframes.",
+      "application": "Proposta: escopo de canal e ownership de autoscroll; não adotar global do exemplo como protocolo de produto.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.20",
+      "physical_pdf_pages": [
+        893,
+        893
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartRedraw solicita pintura; não recalcula séries ou indicadores.",
+      "application": "Proposta UI: reservar redraw a apresentação, sem usar como evidência de atualização dos dados.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.21",
+      "physical_pdf_pages": [
+        894,
+        894
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "ChartSetSymbolPeriod enfileira troca; mesmos símbolo/período podem reconstruir gráfico. Troca reinitializa EA e descarrega script que não volta sozinho.",
+      "application": "Proposta: refresh é operação de ciclo de vida, não pintura inocente; avaliar impacto antes de reutilizar técnica.",
+      "examples": "NOT_RUN"
+    },
+    {
+      "section": "5.7.22",
+      "physical_pdf_pages": [
+        894,
+        900
+      ],
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED",
+      "knowledge": "Enumeração usa janela/índice e SHORTNAME; Get adquire referência. Add exige mesmo símbolo/timeframe e pode criar janela em WINDOWS_TOTAL. Delete remove primeira instância homônima e dependentes, sem necessariamente liberar cálculo. Move faz get/add/delete/release; não move objetos.",
+      "application": "Proposta ownership: adquirir e liberar simetricamente, identificar instância e localizar janela novamente; não presumir exclusividade de nome ou posição.",
+      "examples": "NOT_RUN"
+    }
+  ],
+  "pages": [
+    {
+      "page": 675,
+      "sha256": "b1e2f9f1d6b6e3673b39f3086df307ba4ccd9d7e93e7e4c4bc751d7059e46cf1",
+      "characters": 3980,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 676,
+      "sha256": "0b3688e29ec9070bbf00297209ffdc9cb55de55007749327b512f44340742152",
+      "characters": 3807,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 677,
+      "sha256": "bf7f8225ea2a9e2a1a52382c0e05db333c1cbd8d54e2d1184006122e13849243",
+      "characters": 2702,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 678,
+      "sha256": "5f24a7ce902e0245e30cbad4c70082ecbf235bb2c32097a1978e3104a3105a09",
+      "characters": 2882,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 679,
+      "sha256": "f91594875bc1e8650c4eb520da0d1cca69c32476bfb876b58e0ff95150a4c3de",
+      "characters": 3087,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 680,
+      "sha256": "88dc99fc3dca4ef6d1a958d3f98097f175719687306e21ccc8df3a22c2b3e1b7",
+      "characters": 4143,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 681,
+      "sha256": "3fbb25755b633d80474f4ab25f7ba91a67e29198ff8954239207d1750b0c0964",
+      "characters": 3326,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 682,
+      "sha256": "e28bbf00d21c1c8d12d5ebf03960e30da0c2b76b31911cf252b50724f3d0ae5f",
+      "characters": 3214,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 683,
+      "sha256": "fa2d46daab7776d314beafdd1943674e7ae22fd41363c5c4ab0f25306f2a27b6",
+      "characters": 3587,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 684,
+      "sha256": "e97d8c15ca2fa2f3cd0d3439d244a3661f7cd54a6a005c8139e3257a7b1733ae",
+      "characters": 2408,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 685,
+      "sha256": "d6608dbac63ad43423192b87e6d8753a852d9fe5eaeb64ee3926fbd1ce45ef37",
+      "characters": 2923,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 686,
+      "sha256": "c9d50a787741c789a50e8b25942f9c1d86765465c33451a91687956ca4550b16",
+      "characters": 2788,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 687,
+      "sha256": "88fa9492f27808f281bd49685080833f19b1e9b681bfe2dbd2518fa08917a202",
+      "characters": 3233,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 688,
+      "sha256": "e33700dcaa668146de4a51f75adecc2481f3f346928baa11cdd3c6fa095bd8d4",
+      "characters": 2572,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 689,
+      "sha256": "e37ac7bc678669c25c3e2c1e95c763b10f2756a208f67040ef5d900ee99600ad",
+      "characters": 2115,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 690,
+      "sha256": "ee5b3dfc305a708a33f35eb799e2b9a9e93c5c0b12b46cda23c3ec3047c8edeb",
+      "characters": 1557,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 691,
+      "sha256": "7bf95c329d838efddf30b5673e06f0adffc9a73e92fd42b0edc3cd8ea71f7686",
+      "characters": 3292,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 692,
+      "sha256": "68b46c3ca5c768f7c0ec2efffeb7b70001e1e2563a306ddbb9c9b272cdf4a123",
+      "characters": 2056,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 693,
+      "sha256": "1ecee914d6711d937c4ebdcaf275124fe466a3bc0df1720def776848f4ef6c0f",
+      "characters": 1045,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 694,
+      "sha256": "2de69f6314a6251c9c1f0d585d7f5b1a902c4736ae8710deb2808ef40d5d19eb",
+      "characters": 1451,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 695,
+      "sha256": "0eb93c5b211695db95e60c8d11b279c13105a335f6fbdc58fd4888248704eb23",
+      "characters": 2172,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 696,
+      "sha256": "6e427a1fc3dec31325a4a24a7c7ea52583b04b3678d7a13a62ac6b891db0f707",
+      "characters": 2090,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 697,
+      "sha256": "61946d6e36ec1c18e93a9adc5b16daf768854498858714a265eb885a757aaa45",
+      "characters": 2204,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 698,
+      "sha256": "ac7a3aca176b971ca989e8659f41662972b42d0e55b241d0fbb6e54d2ce895fd",
+      "characters": 2267,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 699,
+      "sha256": "4b847b8a69bb9ae0dc5039bc938eef08dfb7a3fdd19d0011fa5fa01b7983d94e",
+      "characters": 2216,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 700,
+      "sha256": "66fa85e6826db2051c5df584a2c6e563a45a3182b89ec42d63d10c3f0907d15f",
+      "characters": 1295,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 701,
+      "sha256": "579220728ed6a83da214c7bdebc103e20e0f80a0226a46d13bd8faf72972bdb3",
+      "characters": 1194,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 702,
+      "sha256": "d4aed2b30ea21701fdcb1a5233d8f09dfda099cb008b2da8e0c0551b8567fe89",
+      "characters": 1008,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 703,
+      "sha256": "cc0c4040aeac32e89ed96a0a24aa01a68cd795f540dda4007ff475f5277667ec",
+      "characters": 1562,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 704,
+      "sha256": "08a81b67399dfee62365d4a08a187032b1e92e4cedf269e862f368170036ccdf",
+      "characters": 3067,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 705,
+      "sha256": "89bce32e643a773b2f8835a3f8865b1bdb0d01108b4af0a038b67b2b9b7ae4e5",
+      "characters": 1981,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 706,
+      "sha256": "6abed3730e24b9bd2ab2e1e7e87047a72198543c2b036794807c60b5e2e06946",
+      "characters": 3875,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 707,
+      "sha256": "ac5268c18546556b42c7186d1e2d19f38d763592c6b545ea7552e5d628e56a07",
+      "characters": 2520,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 708,
+      "sha256": "74d1a6926886fab5939fde695a6b217f7553d86943b791a4acb6a4e17b11cea0",
+      "characters": 1892,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 709,
+      "sha256": "b07cd52b781c076a06c7b7341ec4e855e9ca44f88618c9d0f55ac57784166ff4",
+      "characters": 1361,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 710,
+      "sha256": "54c49ffa981a9ec9717d4c16102ce2c3f9a6c860ee501c1438a24fde92c4fcbb",
+      "characters": 1878,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 711,
+      "sha256": "cd67559ad12dc2b9b906c0e73fc5523a8565212af4703957863036e26a62ac60",
+      "characters": 2678,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 712,
+      "sha256": "4cce8f9170fcbb6ce05d43186785a7cc035f37ff302920283e450d1e611238ed",
+      "characters": 2530,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 713,
+      "sha256": "ec9f80571348609b619cf35a75255b85307025649f6a5b01ec48af4f4ced721d",
+      "characters": 1570,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 714,
+      "sha256": "5970a25fd5b76ef46aec273d1cbd861a8f72383a773c82338439d5e2f1f9f0a6",
+      "characters": 2904,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 715,
+      "sha256": "a0b268976a55f151be9444df7a205b1dfb33bf6f58c6e4f2d0b9ca5542a7e104",
+      "characters": 3448,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 716,
+      "sha256": "ecac6b13cdc27d614feb044ac28326ee261a7d51eea2cbc90d890d67f30a5646",
+      "characters": 2281,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 717,
+      "sha256": "dc477069705e935e4d2b0420da5d727d0867c22c0a0df145819050bfa9e88253",
+      "characters": 780,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 718,
+      "sha256": "63862b2b40936c844815f8acd21c6295eb34f6db13edf1c4547eb11305e77065",
+      "characters": 2303,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 719,
+      "sha256": "930fc597fa4185cfe3e548844afee456d5502af65d3714bafdaf63caf40bacc3",
+      "characters": 1763,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 720,
+      "sha256": "c784fce8ef751f9b307ce00262525d58138fa440e6e900295cffbb4f10b8009c",
+      "characters": 2252,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 721,
+      "sha256": "94f8188569d98ac51e8fc22f945c31662286b3dd01f3d64f647d2e583a2648b7",
+      "characters": 3368,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 722,
+      "sha256": "eee210af42e864995c33a8074a98162a4db67ce3b6865c71521242bd109a8ff9",
+      "characters": 1290,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 723,
+      "sha256": "a0e8d4b381cbf377db7100d615b938dad2908f869dab0ca27bab2c9467bbfd13",
+      "characters": 2482,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 724,
+      "sha256": "7a7137df4896e7f8dda650057c9685a33278ebdb4e3732b358777f7cda5e86f8",
+      "characters": 2075,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 725,
+      "sha256": "adc7fdf3da2a051169362606a5942a371344c52e21fb83e9f9bf990f834d73bf",
+      "characters": 1327,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 726,
+      "sha256": "792e4bebbd21c311c22a5a3abe5c50bb1d820fec9edd94cfa3e2042b0ad29534",
+      "characters": 2195,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 727,
+      "sha256": "87da91398169791957026ccf82af844fc6336c7cf1ec8938bb57c255893c3b62",
+      "characters": 3065,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 728,
+      "sha256": "ac74ba557758d5f00e1d446ee4dec95093deb89be229b4cc77de68ba56705adc",
+      "characters": 2367,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 729,
+      "sha256": "5f988513cc265cef2448d8edb58c6cebd0576f3b22ee4d71b5c43fed38fef822",
+      "characters": 1762,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 730,
+      "sha256": "681c31dc74acab1f86e8dc9da8bf81a51688a1ba30f57761982b9f394da5b89f",
+      "characters": 1609,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 731,
+      "sha256": "064345dadcb03ff5b2a2367f3aced0ae51512ac924836d97fd266a98ab2b2ba1",
+      "characters": 432,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 732,
+      "sha256": "76c6b6286e686e9712530157017e602bb312e4476df481a9f8eec83c740687ce",
+      "characters": 3541,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 733,
+      "sha256": "ad27f6829307b12705cf8e25a16b12912b0eada036417eaa07cc8b261e0a91a1",
+      "characters": 1814,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 734,
+      "sha256": "64cbe92b8781b4e72cadd13a31f546bda41ca9dcc6efc1bb408b96cbe7752680",
+      "characters": 1331,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 735,
+      "sha256": "8507810b1262a6237967ef1746a50e2c45457bc9db502167c44400115d42093e",
+      "characters": 1878,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 736,
+      "sha256": "ab77f1588ba7fd55cecb235c1232db3d9095b8fee719ba23d004007b594fc40c",
+      "characters": 1607,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 737,
+      "sha256": "c6803bca704e38b8ca141f683c3089ada39f528a98448f234e4f705dc602cac1",
+      "characters": 2570,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 738,
+      "sha256": "c3ab0f2662a642616cc737ea5b79fd8aa014a83b58f940c2133a9aa225ad6c98",
+      "characters": 1915,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 739,
+      "sha256": "06bdd84c69ef333fb135e556f0e94917b19cf01769c5420a632fbb5ff6512259",
+      "characters": 2021,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 740,
+      "sha256": "c45e284a165dd063c88e5e1cc358eaed5d0ba54108554f2e247be376f7ab4428",
+      "characters": 2797,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 741,
+      "sha256": "4824819db4b0724a59a31546c4b1111930193c67c2d24c4fe8af6abfb1619e8d",
+      "characters": 1026,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 742,
+      "sha256": "6cc43f12b45f95eb1e12800e9391def1bbf624b6656773b357332d20fbf6ab7d",
+      "characters": 2447,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 743,
+      "sha256": "1148fd0fb4955c8b6c584304ab6875ed7142618405f0a9658ba10f92ba1fb7e8",
+      "characters": 1705,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 744,
+      "sha256": "1d0b83e9eb5ca6ec5211017bc8a94f8533c431de9b4125e33f5211c17a729181",
+      "characters": 2595,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 745,
+      "sha256": "5c2fe517172703ed3cc95f048049d23495aeaaf6d8ee5019c48e950e0d89cab1",
+      "characters": 2139,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 746,
+      "sha256": "425dd7fbfef2f685919e330562862cecb32a7ea99b6c5b83cd3eaa79b9c4e253",
+      "characters": 2254,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 747,
+      "sha256": "bf364df5f0122daa75677b6d042f36b9606e22ed579073cfb922ff3f9f71de4b",
+      "characters": 1532,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 748,
+      "sha256": "33f7640916b9641ebe9ff2a279583eeb73591a4edff6f41fc4feb14ca8770562",
+      "characters": 980,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 749,
+      "sha256": "8bf07f195152ed8e459a5f8435f25fe210bf1bd3989aa8d54c77d8df8c22d74b",
+      "characters": 1442,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 750,
+      "sha256": "d72cec649829d9fc998c74619cdec226c489eb4abef416b4cfed07a9af0a61ae",
+      "characters": 2581,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 751,
+      "sha256": "96a152b87ff0186dedc1d31a6a35668c7efa9496bb688081786dcd11dc14db28",
+      "characters": 2446,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 752,
+      "sha256": "ef58f0b96d8d10e363df0ecd47f4c0a5c605beeb470bf8c557558f975800fc2f",
+      "characters": 2278,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 753,
+      "sha256": "618999ae8024a87d77367f9ee9020da1e7b58bda7562550ca387411598a0ccff",
+      "characters": 1418,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 754,
+      "sha256": "7c5139b8ce52fe3fe4b617891d14bc1511d2c3c6df9ee4a3331ea05f48f03304",
+      "characters": 2774,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 755,
+      "sha256": "d75773ab72ed43d8a122729125541083dfe96af6c255337fea6b7e4e2ec02a58",
+      "characters": 2480,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 756,
+      "sha256": "d5032b13560890720740bcc9308acfd477314f8b6b93283174b83bf09953a848",
+      "characters": 1550,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 757,
+      "sha256": "f42ea3fb5d279535405d208459985cf6924498b6f65fafed2509a21a921e2129",
+      "characters": 2425,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 758,
+      "sha256": "5cbd58885a0ad14061d08f1300dfa3b3b6c93a20d5758a48e842df52a29ce900",
+      "characters": 3506,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 759,
+      "sha256": "ad28f92887a1dba135cb2b9b01320b4e11adbb81aaecd7a41656fe4752823a10",
+      "characters": 1860,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 760,
+      "sha256": "8de7d52505ca1102e754d5c814abf533b4c79154fcef44f4318fd55d0340d18d",
+      "characters": 2680,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 761,
+      "sha256": "d06ef1c56519dba34160b12a700a258a3fcc3c44a6ace1de0f54b47e2f6c8c12",
+      "characters": 595,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 762,
+      "sha256": "bff588eb27ab3e0bcb45b7796dd345a0c29f965b97234dd757358b067c949694",
+      "characters": 2020,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 763,
+      "sha256": "78a7d897f6a5d0c446be0215713bdeaae32ac7081ea0f587b6ed135da36ba238",
+      "characters": 3734,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 764,
+      "sha256": "0da7ec51fc4e72ffd946169b4dc56796b733b74c070713d72149af20bc5b7b20",
+      "characters": 3584,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 765,
+      "sha256": "49a6d17894f9ad8ef9ac4769be4577cc4d54b8b900e2fcdad394f3d48cb5926c",
+      "characters": 3725,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 766,
+      "sha256": "7de03b770d50155f09e0cf1ae648a5e4cec24a97ae50b276779c96f4d34a1080",
+      "characters": 4031,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 767,
+      "sha256": "b3e26053af1ecf1911ff6ab23d3726bb16af7c8617373b6225c14a07439213b9",
+      "characters": 3353,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 768,
+      "sha256": "28903d913638b2a437f2aa7baceee4700848e8f9e26bfce54cae255f19c5f791",
+      "characters": 3424,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 769,
+      "sha256": "4b1a33ca4329266ed40ea6b3be2f28c3febd218ae637222fbabadda0bc47a0e3",
+      "characters": 2246,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 770,
+      "sha256": "3046948567c7b9686143845b709d3d88d168fb62b1564566a6bbaf221dc3bdd2",
+      "characters": 2337,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 771,
+      "sha256": "bb3209bb3e2a57631e8c3668a64898991dd6145dfaa4dac9f260f22b2d558ebb",
+      "characters": 4266,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 772,
+      "sha256": "a93cfe2ad5427218ab5e123c9ae288e664740edbc195b876c4987319f6fcfce9",
+      "characters": 3320,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 773,
+      "sha256": "44477d8bfd1f960b0a23d41b01b470335db3587397e72faae68611b41b52e180",
+      "characters": 1866,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 774,
+      "sha256": "498638db2a03a0e1dcf8987abb2f9f04d816618dcc5cf0c845c8f109fd830ce7",
+      "characters": 1664,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 775,
+      "sha256": "bedb15bb682465fdeb9363fd41bb827726ccdfeb1670182216b2ecb27352c1ee",
+      "characters": 2479,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 776,
+      "sha256": "7fb1b75a896b058c1436e383dc2155fddecdcd523ee1e0cb2c8a9ff4e94eb7ba",
+      "characters": 2381,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 777,
+      "sha256": "1f162235c1f4aefc0b5dafde11a9337d5e7a3995d77d30581c8ba9e76d049998",
+      "characters": 1716,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 778,
+      "sha256": "b75e299a2409352633ed183e31ad47b90b2cbb13d291808a82ceb600f8f43b0a",
+      "characters": 2088,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 779,
+      "sha256": "776e52e7b82ec6daefee94a22c708448537174875a12389096c2b03ed0cbe679",
+      "characters": 1086,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 780,
+      "sha256": "f3867cfa9a08ebe015b5b5e50fabf727fa2fbfa47090b20179b1c77868bdc273",
+      "characters": 2887,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 781,
+      "sha256": "3a359ec50315e7c4fe95c52b280282a4d960d1027ade2e4daa25eda0502682bf",
+      "characters": 1598,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 782,
+      "sha256": "517455156a5d7d545b1cbaafff3bb88b9da489a06856765674cd3ee3f4df2593",
+      "characters": 1688,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 783,
+      "sha256": "e8ed9d42b00c0a4096b2761c2a5eb13f7c1c0a6b6b208dc9aa319b0c534d3b05",
+      "characters": 1101,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 784,
+      "sha256": "a0c9af1f461601af475410dfab3951deb37c8a9ebc4831d78ee5004fbb08d0c8",
+      "characters": 1353,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 785,
+      "sha256": "da5ab9ebbab1b8439ffe8276ce59eb36c3aa014fb52b04aa407aaa17ae2b5a27",
+      "characters": 2097,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 786,
+      "sha256": "1b563778b0b29a8b44aae3ed24f94b0d67ba2dfbe25bc98108996ba91e2da4ad",
+      "characters": 3264,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 787,
+      "sha256": "02d0ae002d98d8d17085a43e85fb6bab0234c9e1c820024919f40ae1edfe854c",
+      "characters": 3991,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 788,
+      "sha256": "a5509812d11bd376518f2ec23538eee5004aa98041ece2091d9e5075d99da9b7",
+      "characters": 3398,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 789,
+      "sha256": "96be6fd339e31b3c6e0dc6b8121cdb2ebab03fad72fe579e50ca8bf48bc0524d",
+      "characters": 3190,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 790,
+      "sha256": "ccce7f9f554e35ad08f03cf51c49c0d40c904a37d1289f67b600690174509bfe",
+      "characters": 571,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 791,
+      "sha256": "2c281702ec8cd7e2e3ee4efd5bfe5bfc30a1e21c413dbfb319674ad2f19331c9",
+      "characters": 2229,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 792,
+      "sha256": "caca2b012a40474e5816c8a31c90ffe65020f0a2b77043d2d6f4289a3f55680c",
+      "characters": 2230,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 793,
+      "sha256": "54b106a82f101a74f03b6b1da033bce698c8560ca4006f77428d6a89bbf87794",
+      "characters": 2244,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 794,
+      "sha256": "5d2856d1a0c6c0c421d4650649f36a512ca853234ec8ca91b86cec4c29fd3c78",
+      "characters": 2209,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 795,
+      "sha256": "c4d4ecf9a9c9ae87007268fd75d4882ec69db4261211ca13dc2be6d16fa9dee0",
+      "characters": 2461,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 796,
+      "sha256": "f41433e2803d3aa55eb95a33464202038f5c11ae2c775d676ee6f35dfcff836f",
+      "characters": 1819,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 797,
+      "sha256": "c218d150e43b2c6ff7abe5679457fb2da390901fb18a0217bf654d51ce9709c9",
+      "characters": 1549,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 798,
+      "sha256": "4bf93b79c033189fecc0970aeab238248f39d05cb1a7e20d6e227557405849f7",
+      "characters": 1276,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 799,
+      "sha256": "8d38915dab17cc072911dbf4df1d90c3c67e563b79fd2a81babb4febd5c850d9",
+      "characters": 1742,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 800,
+      "sha256": "91976a0e28fade22aca1a38e98a2d9838826cbc793c6af9288f235d5c4d92920",
+      "characters": 1321,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 801,
+      "sha256": "618f7fbb2ab74cd918e152ef840573af8b0f349423f11d71a7f800844b4300c2",
+      "characters": 1980,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 802,
+      "sha256": "ad96efe616d3545c93fe97557590b59ebfdae4d55a1436c40dd0d892b02109f3",
+      "characters": 2586,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 803,
+      "sha256": "31a4639d66c03834f599ab8613ff8f24bd5c17798841b5263426fcb843089dbb",
+      "characters": 2090,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 804,
+      "sha256": "b3c98fb977bb946e834c0a2c8894ff6006b7c86f47ddbba36b0af8df8386f46f",
+      "characters": 1945,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 805,
+      "sha256": "6df9fefd757b8eee4d0db14cc98c9176ba890f103a9907ea71a814f3b02bf31f",
+      "characters": 2595,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 806,
+      "sha256": "4f7c64c1cb85c97ffc168d741a15b63fd2b5c03c034664c33f818299529d47a3",
+      "characters": 1948,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 807,
+      "sha256": "f8f7040d027ca98650fd350cb4ee186f9e15ae2d465eebd5440559cfb3e3c49d",
+      "characters": 1163,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 808,
+      "sha256": "38a4c193901feee57d3ca6e5e94992afa4244fb12e5901db936130b0770fc394",
+      "characters": 2447,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 809,
+      "sha256": "354ba9c8b33e90dd95d987089b82cd7c8abe4fa98d77850caf307d5f53158416",
+      "characters": 2139,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 810,
+      "sha256": "4af1366fae56eb0ace3eb4f7e87a2cfdef5fcf4de950a6c2d41e8b8a38cf96eb",
+      "characters": 1540,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 811,
+      "sha256": "4edbcd203504e3fc103ded47e7d4de1106383f4d218694560f912e363e1f1f57",
+      "characters": 2854,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 812,
+      "sha256": "1cf6d26808673c2f4c1496f8ad9c45bbd6d58b213869e5591bfd47cd64aec293",
+      "characters": 3763,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 813,
+      "sha256": "7a3518116a9c105a96eb583e2a0654e3ce13210e305190fa593bb5a27956e206",
+      "characters": 3180,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 814,
+      "sha256": "dd2b594fd3d8c2df8d832c7cfb3a3b7b6831bf0eb5bdee4932e6e7b389bbae36",
+      "characters": 1764,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 815,
+      "sha256": "c8b18a69ab4d73ba6f6d77f2000f889aa42ed7fc861be31ae880d3c0a20da03c",
+      "characters": 1967,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 816,
+      "sha256": "f18a25a53d5ba254b33cff701781a2bd7f9cc2cb34d303af1095c01c4dcb0e94",
+      "characters": 2163,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 817,
+      "sha256": "6327226c20fcf1ad91841de489cccdb7b43586d2beed4b832a580c6103a5e1e4",
+      "characters": 2885,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 818,
+      "sha256": "c2b10e4c9dc9ccefa17cca62ad697c6a12148a9f0a6a7b5257651088b7069d5e",
+      "characters": 2830,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 819,
+      "sha256": "acd2777b8e47bec75885e18242612012f636c10c2c075a6be2084ae125d7eb78",
+      "characters": 2119,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 820,
+      "sha256": "06813092ba726d86c5d0a2a35870736769b3c2e1bcb1ddae582f669c4f607092",
+      "characters": 1673,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 821,
+      "sha256": "174fbb9aabc2a3f2f6f0c3e407aa2c4fb89fde30abad41b29753a6e1d93876b6",
+      "characters": 3552,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 822,
+      "sha256": "456925a7739123daea507bbdd8047c670e810f7ffe3c4a2b10d168bf3698b490",
+      "characters": 2556,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 823,
+      "sha256": "9a0482cb0edda6da755e08dfaa1ba94107621acd181aad911e5721d915df502e",
+      "characters": 1651,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 824,
+      "sha256": "41c3b5ffacf185a73daf8d2f6f857f83b112952d0a85aabd3d95b885ebe98dac",
+      "characters": 1851,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 825,
+      "sha256": "b6a77d49278d296a3669273ef7880cfa6ffe00a3f78ead6e1ab669cf48817719",
+      "characters": 630,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 826,
+      "sha256": "51ba36e087937108f9e81facb439e07d85cea6c9a716d9ec349f30dec745d3d7",
+      "characters": 1486,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 827,
+      "sha256": "2dadcace43fdbaa4b90cb761d638d465513c4735da437ee51f2aa6194987390d",
+      "characters": 2825,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 828,
+      "sha256": "2780991ea25224134a737bfa36aaa3b76f824d76be29f27d383e3ef2b11fc0a8",
+      "characters": 1806,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 829,
+      "sha256": "80c52a646aae2038b9cefef23ca365449918718876cfe138c3f336536e84d4a9",
+      "characters": 2193,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 830,
+      "sha256": "c0cfaffe0aca210c1b5d583e3137b6a2ce5f3f9224a6fac2010bbc037be4e981",
+      "characters": 2757,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 831,
+      "sha256": "65dd87444052f5bb16b87543410e2b98ec25375c77406eb7f0f2f4d296dc8211",
+      "characters": 586,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 832,
+      "sha256": "6833f935c3e0eae4c361f7245594504676ef3ac7de15aee53ace0aacd120daaa",
+      "characters": 3782,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 833,
+      "sha256": "4e82c30e63863c9aec4778eb734cc7882b2e60e5fca4974d2c6456da9e169941",
+      "characters": 1791,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 834,
+      "sha256": "2f91f19a0b37005c4a9006fa8fcb9de839630f4e82d3b767d0b2d9d25259b596",
+      "characters": 1960,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 835,
+      "sha256": "516f3186f7f32da2f8a5e40cceeeffdd2ce15081afdc3e083f9b0b1ad654c869",
+      "characters": 2405,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 836,
+      "sha256": "071e0c1aa630c6bfd69a71f0ce0f026bacbc68b37ef5f36a9e7293de29256ddf",
+      "characters": 2677,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 837,
+      "sha256": "dd44c92f82761e68445b2d790663cc4f4d7e68d16da66e6753baa5f81e22e7ce",
+      "characters": 3319,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 838,
+      "sha256": "07b656f5f7e2f78b29d7487a2fdeed4a36ff56f7f339b1123cea512566d771be",
+      "characters": 3238,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 839,
+      "sha256": "942cca34a1cbf219b79667cded1a77cbe20aea710e40150bfcd9a847262e86c5",
+      "characters": 1820,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 840,
+      "sha256": "94e743f0b33bf63b0856b7fecc47a4e42e136864556355086739329449469fda",
+      "characters": 1329,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 841,
+      "sha256": "b4c5c1110c84ad0e7783bf4db3bd850885e31879a90a3d206f741bc6d1a7b957",
+      "characters": 2222,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 842,
+      "sha256": "f25916018fad6161ff3ff83b9ba1d26498b6a5a70b50f26ea8b3e07ab96e060a",
+      "characters": 2129,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 843,
+      "sha256": "c469ac861a6e41eebc0c7c4eea570026ee6d89a520b61d0f6b747e3152d99ab5",
+      "characters": 1418,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 844,
+      "sha256": "2109f72749f97fa51af0022d71aa11e7c38d23d47b0e6ba4bf876a8414a90368",
+      "characters": 1799,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 845,
+      "sha256": "7514a554281204054b4d6ad0afc89fca255ab7bccd2eb224d7890f96fdd0f0f1",
+      "characters": 1645,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 846,
+      "sha256": "48dc50f951ec09462452d9cda5655906de611ef48726a44ba98206e74e95dc8d",
+      "characters": 2158,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 847,
+      "sha256": "45dc7af433b3fe7e1c1d90c416a642673407c0be30884833c4bfb08f3d058f75",
+      "characters": 3533,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 848,
+      "sha256": "2ca6e80ce210145b6bd930e2aa5dc612698f624e2e4f9909d5c429cbca27662b",
+      "characters": 1259,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 849,
+      "sha256": "e8f1d0e5da7510d713155e104bcb3b3107fe009b24553ed6582f7798e7135b25",
+      "characters": 3609,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 850,
+      "sha256": "271d2b326d093cf1d3cdce2d61e7f49309d5fde3aa01a70eb4b4c12f29a3b7c2",
+      "characters": 2393,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 851,
+      "sha256": "1c5eca2bf608fa5ca33e3faf86c9831a7e93e7f3cb5988ef7292a0c2e38b782d",
+      "characters": 2149,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 852,
+      "sha256": "b92d088b820731cf72ec785c55da60c304229af96a8c5c30f8e96e1582cdb6b4",
+      "characters": 2324,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 853,
+      "sha256": "b570397c0540a3d3c323a22864db8d33614e17fe85f619bfcb2a47ac11a1587e",
+      "characters": 1383,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 854,
+      "sha256": "b76c09ef7839673b10eafccdb3540e2ba4fa9e64dce853eff950dc5fcccdf8f4",
+      "characters": 1940,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 855,
+      "sha256": "cd1781b14e69245ee55b554ca8b4cfbfa55490a6ddb4d5eb3c25324f3b58b977",
+      "characters": 2930,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 856,
+      "sha256": "6041cce6ba107eb36001a7396bf51b9c5601ee0786e6a940d8ce6d9c15db966f",
+      "characters": 3318,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 857,
+      "sha256": "eacd7b165c7b3cc105e11434c89888d8b0b12b27daf9fa2cafba33261d4e7791",
+      "characters": 2548,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 858,
+      "sha256": "7db4d14b80ae1c28a663f9a92bfa80b3da64035896cf95a4af29b9c1e6839375",
+      "characters": 2026,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 859,
+      "sha256": "47e1e217b4f6e6487a29722f9bf8b6fb9c821c7d92b95a1822415c63789fcf45",
+      "characters": 1775,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 860,
+      "sha256": "93784f0c2aacad9e9f13cc1b1fc43bf9e4268b5cba865dd1e1771cc5d36b8722",
+      "characters": 2276,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 861,
+      "sha256": "e8f9b4913fa202e6e0bf688c8e8892a7788c35078c1b8ddaed51f0e1af0216b9",
+      "characters": 1695,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 862,
+      "sha256": "91775cf39bc7290dfe357089acf3f4290d76ff84d5df02ed90b0fcbe197e0cd5",
+      "characters": 2640,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 863,
+      "sha256": "dbb6409f10d75f2e0093ec698f257b3a5586d58daf2f121f0552016cf37e97b8",
+      "characters": 1684,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 864,
+      "sha256": "72679392a5df3e7d186fcf8913591348b551f76259c1a59607c54eb219c5c26b",
+      "characters": 1929,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 865,
+      "sha256": "0b8f4065e1885d4ee3129f8012ebf8710d58c7020d69a921f8021c2fc5e060e3",
+      "characters": 2205,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 866,
+      "sha256": "d5302902a0ca15b09791238270dd6968249d6e6d876329dd77bc75097824a683",
+      "characters": 1085,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 867,
+      "sha256": "6a32273f4bedd65205581d7da22b7db9e9280d75dcd2756547970912374d6e56",
+      "characters": 1929,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 868,
+      "sha256": "e6de2b11cb6ebadd897771555163128bd0768994ca9e0a29d6c5ff0256b63156",
+      "characters": 2562,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 869,
+      "sha256": "336bff3a47bb68f4121341624544b4915e6bd6cf1d270fa57c005214aca3144f",
+      "characters": 2761,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 870,
+      "sha256": "03bb13990273634ca84cee7a2fc1df7b76df629443661fd5e2889012d36a87b6",
+      "characters": 1329,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 871,
+      "sha256": "d925a2ad855baee6a51aa5ff320557f899e7a2c62f2c1fead64486571f208833",
+      "characters": 2184,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 872,
+      "sha256": "540f75f08105a64f9c604cd25e57cca55116f0fe32d8a43e2c20f1575665c4cf",
+      "characters": 1840,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 873,
+      "sha256": "e32789d5255564b67347df1214884dc59fb8b8f717dd63f0c57f48edc75eaea0",
+      "characters": 1732,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 874,
+      "sha256": "ec790925618bb5840c5b38c70d008b45279b16449178bee7c9b9cfaff8fc884c",
+      "characters": 693,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 875,
+      "sha256": "82d7d9452fd6dbf04194d52c33dd9625a8b3a370a30358e39c82d1e7f9f5d057",
+      "characters": 2082,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 876,
+      "sha256": "18a7da3aded99f93bc1729ad6d60f0f9b7f0c559a49bb56cc3a65dec6272fb66",
+      "characters": 3806,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 877,
+      "sha256": "5f89b8312237c1cb390edb0f7bac63f9af3816fcaa43b44c0a9968d67e0ebc3a",
+      "characters": 1907,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 878,
+      "sha256": "b38b2fc60a835178a8047ee10837b472f75cd27774aa9bd197207d4bd98c7bb8",
+      "characters": 1913,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 879,
+      "sha256": "4be0c2618253edfb05476617ea5fecf6517a04868e6e1f536ae667187424f24f",
+      "characters": 2234,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 880,
+      "sha256": "8ccb7093c0fb0df8b4fc49e5fa35a01b5db3db6e94cf615b15d167c52bd6fdb2",
+      "characters": 1622,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 881,
+      "sha256": "b610fdef0226905c446bf8d89a0bc429cf8bf218067661b9b5b163ecf3d0745e",
+      "characters": 3542,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 882,
+      "sha256": "85b16a8091747fd88121137e9f77ea2a225a8894dc1cb1f9014cd6cb4f113e74",
+      "characters": 959,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 883,
+      "sha256": "6746254a459bb71c23618db2986cde33e647003fd39bcf36fb7369a8631ef309",
+      "characters": 1558,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 884,
+      "sha256": "6fffeb15d59097599b8826bfe52e2b027ce9e934dbd8c84cbcccd589d3658bf7",
+      "characters": 2389,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 885,
+      "sha256": "2d7902e5ba727e2b6a8231e458b32e1e719177e7b1b6aaf947a401e4458dac3f",
+      "characters": 2456,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 886,
+      "sha256": "4c880a70c3235952a7a72fe11fd12fb00b95ea66cb97f2f0a5c51e054b38f484",
+      "characters": 2397,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 887,
+      "sha256": "395757fed493db2045c7837bb199dc394b26a09f28a242125d3f6b28fe9ecdfc",
+      "characters": 2290,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 888,
+      "sha256": "7265860508900d4e5767b57753c91464b2631c3cae7287c3034fa2b9e4d9c75c",
+      "characters": 1682,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 889,
+      "sha256": "902d4caaf01d5b18f4942ba1ce048026f0f9938ef7af125f0428641b6d924fc2",
+      "characters": 2012,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 890,
+      "sha256": "8431eaf0f01d28940624160fb03093f6dbda058dfc1d43aa64539094a75e051f",
+      "characters": 2402,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 891,
+      "sha256": "c1557efe256f18a22218a2898e80797c0b33c63e2e24b6db79d2a87979950454",
+      "characters": 1528,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 892,
+      "sha256": "069f041c09d57a152f13813642efcba66bccf833d978ae01912f2e5342237e75",
+      "characters": 2322,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 893,
+      "sha256": "beb057dc6a475696ccdcd057e99dd8dd5fb8f6e96acb209af6ccaaa862b0d8d4",
+      "characters": 1803,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 894,
+      "sha256": "c12dc24bb678fb585bc59932ff429bfa94847e239d20e7773621fdf91a2fa77d",
+      "characters": 3299,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 895,
+      "sha256": "cb13fc4a4f4f3e8346f8c9a08b47db703e983273f726f24eb70a3100498daf3d",
+      "characters": 3873,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 896,
+      "sha256": "022b9e99fbabe4cb2c342e0dd4ae20aa9b331cbeb1fbf700b779a15cae5b9225",
+      "characters": 2011,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 897,
+      "sha256": "2c19377dc41c1828ff556901d90a0a9adf131901b46551d0a9be7d2782f85b1d",
+      "characters": 1874,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 898,
+      "sha256": "7fe634cc18fe96b759a5e41d1d7c1772cbf4098024be0eb2f1cf559d85ffb6a7",
+      "characters": 2145,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 899,
+      "sha256": "f527dc87116cc1c1437e9ea76b9f956e40d37c93b33b8acd573601ee54fa37eb",
+      "characters": 1963,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    },
+    {
+      "page": 900,
+      "sha256": "b131845611f56acce34cf889a8ed7c629d7dc0448d4a6830322803a4b7301d8b",
+      "characters": 1879,
+      "status": "TEXT_READ_VISUAL_NOT_REVIEWED"
+    }
+  ],
+  "consolidation_full_text_pages": [
+    675,
+    676,
+    677,
+    678,
+    679,
+    680,
+    681,
+    682,
+    683,
+    684,
+    685,
+    686,
+    687,
+    688,
+    689,
+    690,
+    691,
+    692,
+    693,
+    694,
+    695,
+    696,
+    697,
+    698,
+    699,
+    700,
+    701,
+    702,
+    703,
+    704,
+    705,
+    706,
+    707,
+    708,
+    709,
+    710,
+    711,
+    712,
+    713,
+    714,
+    715,
+    716,
+    717,
+    718,
+    719,
+    720,
+    721,
+    722,
+    723,
+    724,
+    725,
+    726,
+    727,
+    728,
+    729,
+    730,
+    731,
+    732,
+    733,
+    734,
+    735,
+    736,
+    737,
+    738,
+    739,
+    740,
+    741,
+    742,
+    743,
+    744,
+    745,
+    746,
+    747,
+    748,
+    749,
+    750,
+    751,
+    752,
+    753,
+    754,
+    755,
+    756,
+    757,
+    758,
+    759,
+    760,
+    761,
+    762,
+    763,
+    764,
+    765,
+    766,
+    767,
+    768,
+    769,
+    770,
+    771,
+    772,
+    773,
+    774,
+    775,
+    776,
+    777,
+    778,
+    779,
+    780,
+    781,
+    782,
+    783,
+    784,
+    785,
+    786,
+    787,
+    788,
+    789,
+    790,
+    791,
+    792,
+    793,
+    794,
+    795,
+    796,
+    797,
+    798,
+    799,
+    800,
+    801,
+    802,
+    803,
+    804,
+    805,
+    806,
+    807,
+    808,
+    809,
+    810,
+    811,
+    812,
+    813,
+    814,
+    815,
+    816,
+    817,
+    818,
+    819,
+    820,
+    821,
+    822,
+    823,
+    824,
+    825,
+    826,
+    827,
+    828,
+    829,
+    830,
+    831,
+    832,
+    833,
+    834,
+    835,
+    836,
+    837,
+    838,
+    839,
+    840,
+    841,
+    842,
+    843,
+    844,
+    845,
+    846,
+    847,
+    848,
+    849,
+    850,
+    851,
+    852,
+    853,
+    854,
+    855,
+    856,
+    857,
+    858,
+    859,
+    860,
+    861,
+    862,
+    863,
+    864,
+    865,
+    866,
+    867,
+    868,
+    869,
+    870,
+    871,
+    872,
+    873,
+    874,
+    875,
+    876,
+    877,
+    878,
+    879,
+    880,
+    881,
+    882,
+    883,
+    884,
+    885,
+    886,
+    887,
+    888,
+    889,
+    890,
+    891,
+    892,
+    893,
+    894,
+    895,
+    896,
+    897,
+    898,
+    899,
+    900
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "positive_current": "PASS",
+  "negative_docx": {
+    "exit": 1,
+    "missing_segments": [
+      5
+    ]
+  },
+  "negative_pdf": {
+    "exit": 1,
+    "missing_segments": [
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127
+    ]
+  },
+  "original_artifacts_modified": false,
+  "scope": "Structural fidelity detector calibration only; visual/native proof separate"
+}

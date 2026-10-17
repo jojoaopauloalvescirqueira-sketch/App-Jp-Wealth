@@ -1,0 +1,3159 @@
+{
+  "book": "NN",
+  "pages_total": 690,
+  "coverage_claim": "all_leaf_sections_with_start_mid_end_excerpt_consultation; deeper_full_text_222_239; not_integral_690_page_reading",
+  "visual_audit": false,
+  "native_execution": false,
+  "sections": [
+    {
+      "depth": 0,
+      "title": "Neural Networks for Algorithmic Trading with MQL5",
+      "start": 5,
+      "end": 690,
+      "id": "NN-0001",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 1,
+      "title": "Introduction",
+      "start": 6,
+      "end": 6,
+      "id": "NN-0002",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        6
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Introdução apresenta escopo e definição de IA; não é prova de capacidade financeira.",
+      "additional_excerpt_windows": [
+        {
+          "page": 6,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 6,
+          "start_character": 2532,
+          "end_character": 3532
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "1. Basic principles of artificial intelligence construction",
+      "start": 7,
+      "end": 56,
+      "id": "NN-0003",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "1.1 Neuron and principles of building neural networks",
+      "start": 8,
+      "end": 11,
+      "id": "NN-0004",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        9,
+        11
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Ativações suaves e representação de neurônio; síntese diferencia limiar lógico e função treinável.",
+      "additional_excerpt_windows": [
+        {
+          "page": 9,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 11,
+          "start_character": 2048,
+          "end_character": 3048
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "1.2 Activation functions",
+      "start": 12,
+      "end": 22,
+      "id": "NN-0005",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        13,
+        17,
+        22
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Derivada do degrau nula ou indefinida limita treinamento usual; não extrapolar para toda técnica de aprendizagem.",
+      "additional_excerpt_windows": [
+        {
+          "page": 17,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 22,
+          "start_character": 1749,
+          "end_character": 2749
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "1.3 Weight initialization methods in neural networks",
+      "start": 23,
+      "end": 25,
+      "id": "NN-0006",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        24,
+        25
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Inicialização constante preserva simetrias; avaliar escala e ativação, sem afirmar garantia de ótimo.",
+      "additional_excerpt_windows": [
+        {
+          "page": 24,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 25,
+          "start_character": 2906,
+          "end_character": 3906
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "1.4 Neural network training",
+      "start": 26,
+      "end": 47,
+      "id": "NN-0007",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "1.4.1 Loss functions",
+      "start": 28,
+      "end": 32,
+      "id": "NN-0008",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        29,
+        30,
+        32
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "MAE e checagem de tamanhos no exemplo; código extraído contém grafias suspeitas e não foi copiado.",
+      "additional_excerpt_windows": [
+        {
+          "page": 30,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 32,
+          "start_character": 771,
+          "end_character": 1771
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "1.4.2 Error gradient backpropagation method",
+      "start": 33,
+      "end": 37,
+      "id": "NN-0009",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        34,
+        35,
+        37
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Passagem direta retém intermediários para regra da cadeia; separar distribuição e atualização.",
+      "additional_excerpt_windows": [
+        {
+          "page": 35,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 37,
+          "start_character": 567,
+          "end_character": 1567
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "1.4.3 Methods for optimizing neural networks",
+      "start": 38,
+      "end": 47,
+      "id": "NN-0010",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        39,
+        42,
+        47
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Taxa de aprendizagem e derivadas locais controlam atualização; otimizador não garante ótimo global.",
+      "additional_excerpt_windows": [
+        {
+          "page": 42,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 47,
+          "start_character": 928,
+          "end_character": 1928
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "1.5 Techniques for improving the convergence of neural networks",
+      "start": 48,
+      "end": 55,
+      "id": "NN-0011",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "1.5.1 Regularization",
+      "start": 48,
+      "end": 49,
+      "id": "NN-0012",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        48,
+        49
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Penalidade L1 e seleção de características; rejeitada generalização de eliminação completa do ruído.",
+      "additional_excerpt_windows": [
+        {
+          "page": 48,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 49,
+          "start_character": 1829,
+          "end_character": 2829
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "1.5.2 Dropout",
+      "start": 50,
+      "end": 51,
+      "id": "NN-0013",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        50,
+        51
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Probabilidade de retenção q=1-P; formulação normal versus máscara Bernoulli merece correção conceitual.",
+      "additional_excerpt_windows": [
+        {
+          "page": 50,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 51,
+          "start_character": 847,
+          "end_character": 1847
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "1.5.3 Normalization",
+      "start": 52,
+      "end": 55,
+      "id": "NN-0014",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        53,
+        55
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Motivação por mudanças de distribuição interna; síntese não trata essa explicação como garantia universal.",
+      "additional_excerpt_windows": [
+        {
+          "page": 53,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 55,
+          "start_character": 1510,
+          "end_character": 2510
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "1.6 Artificial intelligence in trading",
+      "start": 56,
+      "end": 56,
+      "id": "NN-0015",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        56
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Aplicações de terminal e automação; distinguir possibilidades da plataforma do produto atual.",
+      "additional_excerpt_windows": [
+        {
+          "page": 56,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 56,
+          "start_character": 2902,
+          "end_character": 3902
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "2. MetaTrader 5 features for algorithmic trading",
+      "start": 57,
+      "end": 83,
+      "id": "NN-0016",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "2.1 Program types and their construction features",
+      "start": 60,
+      "end": 66,
+      "id": "NN-0017",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        61,
+        63,
+        66
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Tipos de programa e eventos de EA; capacidade de negociar não implica que todo EA negocie.",
+      "additional_excerpt_windows": [
+        {
+          "page": 63,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 66,
+          "start_character": 2281,
+          "end_character": 3281
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "2.2 Statistical analysis and fuzzy logic tools",
+      "start": 67,
+      "end": 71,
+      "id": "NN-0018",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        68,
+        69,
+        71
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Conjuntos fuzzy e funções de pertinência; pertinência não equivale automaticamente a probabilidade.",
+      "additional_excerpt_windows": [
+        {
+          "page": 69,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 71,
+          "start_character": 2278,
+          "end_character": 3278
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "2.3 OpenCL: Parallel computations in MQL5",
+      "start": 72,
+      "end": 81,
+      "id": "NN-0019",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        73,
+        76,
+        81
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Host, dispositivo e kernels; transferências e precisão devem integrar custo.",
+      "additional_excerpt_windows": [
+        {
+          "page": 76,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 81,
+          "start_character": 1450,
+          "end_character": 2450
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "2.4 Integration with Python",
+      "start": 82,
+      "end": 83,
+      "id": "NN-0020",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        82,
+        83
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Bibliotecas e conexão terminal/Python; ambiente nativo precisa de validação própria.",
+      "additional_excerpt_windows": [
+        {
+          "page": 82,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 83,
+          "start_character": 2395,
+          "end_character": 3395
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "3. Building the first neural network model in MQL5",
+      "start": 84,
+      "end": 261,
+      "id": "NN-0021",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "3.1 Problem statement",
+      "start": 85,
+      "end": 86,
+      "id": "NN-0022",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        85,
+        86
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "ZigZag fornece extremos retrospectivos para alvos; impedir informação futura nos atributos.",
+      "additional_excerpt_windows": [
+        {
+          "page": 85,
+          "start_character": 0,
+          "end_character": 550
+        },
+        {
+          "page": 86,
+          "start_character": 1273,
+          "end_character": 2273
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.2 File arrangement structure",
+      "start": 87,
+      "end": 99,
+      "id": "NN-0023",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        88,
+        93,
+        99
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Índice colide com3.3 em87–99; amostra88 trata seleção, não valida integralmente arranjo de arquivos.",
+      "additional_excerpt_windows": [
+        {
+          "page": 93,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 99,
+          "start_character": 588,
+          "end_character": 1638
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.3 Choosing the input data",
+      "start": 87,
+      "end": 99,
+      "id": "NN-0024",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        88,
+        93,
+        99
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Seleção e correlação de indicadores; estimar transformações somente em treino.",
+      "additional_excerpt_windows": [
+        {
+          "page": 93,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 99,
+          "start_character": 588,
+          "end_character": 1638
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.4 Creating the framework for the future MQL5 program",
+      "start": 100,
+      "end": 129,
+      "id": "NN-0025",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "3.4.1 Defining constants",
+      "start": 101,
+      "end": 103,
+      "id": "NN-0026",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        102,
+        103
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Identificadores de classes e camadas, buffers e descritores; interfaces explícitas favorecem persistência.",
+      "additional_excerpt_windows": [
+        {
+          "page": 102,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 103,
+          "start_character": 2157,
+          "end_character": 3207
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "3.4.2 Mechanism for describing the structure of the future neural network",
+      "start": 104,
+      "end": 106,
+      "id": "NN-0027",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        105,
+        106
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Mesma ativação por camada é escolha do autor, não exigência universal da linguagem.",
+      "additional_excerpt_windows": [
+        {
+          "page": 105,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 106,
+          "start_character": 2376,
+          "end_character": 3426
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "3.4.3 Neural network base class and organization of forward and backward pass processes",
+      "start": 107,
+      "end": 125,
+      "id": "NN-0028",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        108,
+        116,
+        125
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "CNet mantém parâmetros, resultados e fluxo; estados devem ser separados por responsabilidade.",
+      "additional_excerpt_windows": [
+        {
+          "page": 116,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 125,
+          "start_character": 2327,
+          "end_character": 3377
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "3.4.4 Dynamic storage array of neural layers",
+      "start": 126,
+      "end": 129,
+      "id": "NN-0029",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        127,
+        129
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "CArrayObj e criação de camadas na carga; validação de índices, handles e propriedade.",
+      "additional_excerpt_windows": [
+        {
+          "page": 127,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 129,
+          "start_character": 993,
+          "end_character": 2043
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.5 Description of a Python script structure",
+      "start": 130,
+      "end": 137,
+      "id": "NN-0030",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        131,
+        133,
+        137
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Pandas organiza tabela e dados faltantes; schema e versões precisam acompanhar artefato.",
+      "additional_excerpt_windows": [
+        {
+          "page": 133,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 137,
+          "start_character": 1575,
+          "end_character": 2625
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.6 Fully connected neural layer",
+      "start": 138,
+      "end": 168,
+      "id": "NN-0031",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "3.6.1 Architecture and implementation principles",
+      "start": 139,
+      "end": 141,
+      "id": "NN-0032",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        140,
+        141
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Pesos incluem viés e buffers de gradiente; convenção de forma deve ser consistente.",
+      "additional_excerpt_windows": [
+        {
+          "page": 140,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 141,
+          "start_character": 1700,
+          "end_character": 2750
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "3.6.2 Creating a neural layer using MQL5 tools",
+      "start": 142,
+      "end": 160,
+      "id": "NN-0033",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        143,
+        151,
+        160
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Construtor e destrutor alocam/liberam buffers; falha parcial exige política de propriedade.",
+      "additional_excerpt_windows": [
+        {
+          "page": 151,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 160,
+          "start_character": 1013,
+          "end_character": 2063
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "3.6.3 Activation function class",
+      "start": 161,
+      "end": 168,
+      "id": "NN-0034",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        162,
+        164,
+        168
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Hierarquia de ativações permite polimorfismo; operação direta e derivada devem corresponder.",
+      "additional_excerpt_windows": [
+        {
+          "page": 164,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 168,
+          "start_character": 772,
+          "end_character": 1822
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.7 Organizing parallel computing using OpenCL",
+      "start": 169,
+      "end": 217,
+      "id": "NN-0035",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "3.7.1 Creating an OpenCL program",
+      "start": 170,
+      "end": 185,
+      "id": "NN-0036",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        171,
+        177,
+        185
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Buffer linear e deslocamento por neurônio; garantir bordas antes de paralelizar.",
+      "additional_excerpt_windows": [
+        {
+          "page": 177,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 185,
+          "start_character": 2051,
+          "end_character": 3101
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "3.7.2 Implementing functionality on the main program side",
+      "start": 186,
+      "end": 217,
+      "id": "NN-0037",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        187,
+        201,
+        217
+      ],
+      "character_window": [
+        500,
+        1350
+      ],
+      "analysis": "Índices nomeados de argumentos dos kernels; conferir ordem e tipo na interface host.",
+      "additional_excerpt_windows": [
+        {
+          "page": 201,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 217,
+          "start_character": 1913,
+          "end_character": 2963
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.8 Implementing the perceptron model in Python",
+      "start": 218,
+      "end": 221,
+      "id": "NN-0038",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        219,
+        221
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Dense e configurações antes do primeiro acesso; treinamento independente não prova equivalência.",
+      "additional_excerpt_windows": [
+        {
+          "page": 219,
+          "start_character": 0,
+          "end_character": 750
+        },
+        {
+          "page": 221,
+          "start_character": 2277,
+          "end_character": 2827
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.9 Creating training and testing samples",
+      "start": 222,
+      "end": 229,
+      "id": "NN-0039",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Normalização precisa persistir parâmetros; impedir estimativa em dados futuros.",
+      "additional_full_text_pages": [
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239
+      ],
+      "additional_excerpt_windows": [
+        {
+          "page": 225,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 229,
+          "start_character": 1060,
+          "end_character": 2110
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.10 Gradient distribution verification",
+      "start": 230,
+      "end": 239,
+      "id": "NN-0040",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Derivada empírica versus analítica; diferenças finitas exigem escala e determinismo.",
+      "additional_full_text_pages": [
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239
+      ],
+      "additional_excerpt_windows": [
+        {
+          "page": 234,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 239,
+          "start_character": 752,
+          "end_character": 1802
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "3.11 Comparative testing of implementations",
+      "start": 240,
+      "end": 261,
+      "id": "NN-0041",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        241,
+        250,
+        261
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Parâmetros de comparação incluem lote, taxa e épocas; alinhar antes de atribuir ganho ao runtime.",
+      "additional_excerpt_windows": [
+        {
+          "page": 250,
+          "start_character": 0,
+          "end_character": 750
+        },
+        {
+          "page": 261,
+          "start_character": 31,
+          "end_character": 581
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "4. Basic types of neural layers",
+      "start": 262,
+      "end": 400,
+      "id": "NN-0042",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "4.1 Convolutional neural networks",
+      "start": 263,
+      "end": 333,
+      "id": "NN-0043",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "4.1.1 Description of architecture and implementation principles",
+      "start": 264,
+      "end": 265,
+      "id": "NN-0044",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        264,
+        265
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Filtro local, passo e compartilhamento; distinguir convenção de convolução e correlação cruzada.",
+      "additional_excerpt_windows": [
+        {
+          "page": 264,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 265,
+          "start_character": 2606,
+          "end_character": 3656
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.1.2 Construction using MQL5",
+      "start": 266,
+      "end": 286,
+      "id": "NN-0045",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        267,
+        276,
+        286
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Pooling possui janela, passo e filtros; perda de posição deve ser avaliada na tarefa.",
+      "additional_excerpt_windows": [
+        {
+          "page": 276,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 286,
+          "start_character": 1487,
+          "end_character": 2537
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.1.3 Organizing parallel computing in convolutional networks using OpenCL",
+      "start": 287,
+      "end": 306,
+      "id": "NN-0046",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        288,
+        296,
+        306
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Execução bidimensional por saída e filtro; deslocamentos de buffer são parte do contrato.",
+      "additional_excerpt_windows": [
+        {
+          "page": 296,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 306,
+          "start_character": 1795,
+          "end_character": 2845
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.1.4 Implementing a convolutional model in Python",
+      "start": 307,
+      "end": 313,
+      "id": "NN-0047",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        308,
+        310,
+        313
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Conv1D e padding causal; dimensão de atributos não equivale à dimensão temporal.",
+      "additional_excerpt_windows": [
+        {
+          "page": 310,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 313,
+          "start_character": 935,
+          "end_character": 1985
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.1.5 Practical testing of convolutional models",
+      "start": 314,
+      "end": 333,
+      "id": "NN-0048",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        315,
+        323,
+        333
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Reaplicação de teste de gradiente; erro por aproximação numérica não desqualifica derivada analítica exata.",
+      "additional_excerpt_windows": [
+        {
+          "page": 323,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 333,
+          "start_character": 0,
+          "end_character": 620
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "4.2 Recurrent neural networks",
+      "start": 334,
+      "end": 400,
+      "id": "NN-0049",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "4.2.1 Description of architecture and implementation principles",
+      "start": 335,
+      "end": 338,
+      "id": "NN-0050",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        336,
+        338
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Desenrolamento temporal compartilha pesos; atenuação de gradientes motiva LSTM.",
+      "additional_excerpt_windows": [
+        {
+          "page": 336,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 338,
+          "start_character": 1576,
+          "end_character": 2626
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.2.2. Building an LSTM block in MQL5",
+      "start": 339,
+      "end": 371,
+      "id": "NN-0051",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        339,
+        344,
+        349
+      ],
+      "analysis": "Initadapta portas eprofundidade mínima2;decisão de fallback precisa decontrato.",
+      "additional_excerpt_windows": [
+        {
+          "page": 339,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 344,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 349,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "4.2.2.1 Feed-forward method",
+      "start": 350,
+      "end": 358,
+      "id": "NN-0052",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        351,
+        354,
+        358
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Pilhas de entradas e estado oculto suportam treino; memória transitória tem custo.",
+      "additional_excerpt_windows": [
+        {
+          "page": 354,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 358,
+          "start_character": 395,
+          "end_character": 1445
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "4.2.2.2 Backpropagation methods",
+      "start": 359,
+      "end": 367,
+      "id": "NN-0053",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        360,
+        363,
+        367
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Gradiente usa memória e saídas das portas; profundidade temporal limita histórico retropropagado.",
+      "additional_excerpt_windows": [
+        {
+          "page": 363,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 367,
+          "start_character": 1407,
+          "end_character": 2457
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "4.2.2.3 Saving and restoring the LSTM block",
+      "start": 368,
+      "end": 371,
+      "id": "NN-0054",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        369,
+        371
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Persistir conteúdo, não descritores; lacunas após carga afetam estado temporal.",
+      "additional_excerpt_windows": [
+        {
+          "page": 369,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 371,
+          "start_character": 1761,
+          "end_character": 2811
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.2.3 Organizing parallel computing in the LSTM block",
+      "start": 372,
+      "end": 380,
+      "id": "NN-0055",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        373,
+        376,
+        380
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Kernels LSTM recebem múltiplos buffers de portas e estado; fronteira host/device precisa de schema.",
+      "additional_excerpt_windows": [
+        {
+          "page": 376,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 380,
+          "start_character": 2084,
+          "end_character": 3134
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.2.4 Implementing recurrent models in Python",
+      "start": 381,
+      "end": 388,
+      "id": "NN-0056",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        381,
+        382,
+        383
+      ],
+      "analysis": "ParâmetrosKeras eautoseleção deimplementação sujeitosaambiente;semprova nativa.",
+      "additional_excerpt_windows": [
+        {
+          "page": 381,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 382,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 383,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "4.2.4.1 Building a test recurrent model in Python",
+      "start": 384,
+      "end": 388,
+      "id": "NN-0057",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        385,
+        386,
+        388
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "return_sequences=False altera forma da saída; comparar modelos com contratos equivalentes.",
+      "additional_excerpt_windows": [
+        {
+          "page": 386,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 388,
+          "start_character": 1487,
+          "end_character": 2537
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "4.2.5 Comparative testing of recurrent models",
+      "start": 389,
+      "end": 400,
+      "id": "NN-0058",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        390,
+        394,
+        400
+      ],
+      "character_window": [
+        0,
+        1350
+      ],
+      "analysis": "Acesso aos pesos internos e composição de camadas limitam comparação superficial.",
+      "additional_excerpt_windows": [
+        {
+          "page": 394,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 400,
+          "start_character": 0,
+          "end_character": 442
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "5. Attention mechanisms",
+      "start": 401,
+      "end": 569,
+      "id": "NN-0059",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "5.1 Self-Attention",
+      "start": 403,
+      "end": 458,
+      "id": "NN-0060",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "5.1.1 Description of architecture and implementation principles",
+      "start": 403,
+      "end": 405,
+      "id": "NN-0061",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        404,
+        405
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Encoder e decoder combinam atenção e feed-forward; arquitetura não implica causalidade automática.",
+      "additional_excerpt_windows": [
+        {
+          "page": 404,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 405,
+          "start_character": 493,
+          "end_character": 1443
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.1.2 Building Self-Attention with MQL5 tools",
+      "start": 406,
+      "end": 433,
+      "id": "NN-0062",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        406,
+        410,
+        415
+      ],
+      "analysis": "Valida count/window/window_out e usa normalização sequencial; eixos concretos diferem de interpretações genéricas.",
+      "additional_excerpt_windows": [
+        {
+          "page": 406,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 410,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 415,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.1.2.1 Self-Attention feed-forward method",
+      "start": 416,
+      "end": 422,
+      "id": "NN-0063",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        417,
+        419,
+        422
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Score é produto query/key e softmax por linha; máscara deve excluir informação proibida.",
+      "additional_excerpt_windows": [
+        {
+          "page": 419,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 422,
+          "start_character": 104,
+          "end_character": 1054
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.1.2.2 Self-Attention backpropagation methods",
+      "start": 423,
+      "end": 430,
+      "id": "NN-0064",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        424,
+        426,
+        430
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Derivada da normalização participa do gradiente; não omitir transformações auxiliares.",
+      "additional_excerpt_windows": [
+        {
+          "page": 426,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 430,
+          "start_character": 1222,
+          "end_character": 2172
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.1.2.3 File operations",
+      "start": 431,
+      "end": 433,
+      "id": "NN-0065",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        432,
+        433
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Interface Save/Load e identidade da camada; consulta do trecho não valida formato inteiro.",
+      "additional_excerpt_windows": [
+        {
+          "page": 432,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 433,
+          "start_character": 2085,
+          "end_character": 3035
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.1.3 Organizing parallel computing in the attention block",
+      "start": 434,
+      "end": 455,
+      "id": "NN-0066",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        435,
+        444,
+        455
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Kernels adicionais paralelizam passos; custo inclui buffers e transferências.",
+      "additional_excerpt_windows": [
+        {
+          "page": 444,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 455,
+          "start_character": 1831,
+          "end_character": 2781
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.1.4 Testing the attention mechanism",
+      "start": 456,
+      "end": 458,
+      "id": "NN-0067",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        457,
+        458
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Campos reutilizados descrevem sequência e atributos; nomes pouco específicos exigem contrato.",
+      "additional_excerpt_windows": [
+        {
+          "page": 457,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 458,
+          "start_character": 440,
+          "end_character": 1390
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "5.2 Multi-Head attention",
+      "start": 459,
+      "end": 515,
+      "id": "NN-0068",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        459,
+        460
+      ],
+      "analysis": "Cabeças concatenadas e projeçãoW0;não garante relaçãocausal.",
+      "additional_excerpt_windows": [
+        {
+          "page": 459,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 460,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.2.1 Description of the Multi-Head Self-Attention architecture",
+      "start": 461,
+      "end": 463,
+      "id": "NN-0069",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        462,
+        463
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Concatenação das matrizes de cabeças; conferir formas e projeções compartilhadas.",
+      "additional_excerpt_windows": [
+        {
+          "page": 462,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 463,
+          "start_character": 1409,
+          "end_character": 2359
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.2.2 Building Multi-Head Self-Attention in MQL5",
+      "start": 464,
+      "end": 487,
+      "id": "NN-0070",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        464,
+        469,
+        473
+      ],
+      "analysis": "TransposedOutput alinha posições emlinhas;Initcontexto deveabrangerW0.",
+      "additional_excerpt_windows": [
+        {
+          "page": 464,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 469,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 473,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.2.2.1 Multi-Head Self-Attention feed-forward method",
+      "start": 474,
+      "end": 478,
+      "id": "NN-0071",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        475,
+        476,
+        478
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Arrays de matrizes simulam dimensão de cabeças; cuidado com layout e índices.",
+      "additional_excerpt_windows": [
+        {
+          "page": 476,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 478,
+          "start_character": 0,
+          "end_character": 832
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.2.2.2 Multi-Head Self-Attention backpropagation methods",
+      "start": 479,
+      "end": 485,
+      "id": "NN-0072",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        480,
+        482,
+        485
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Normalização e blocos FF propagam gradientes em ordem reversa.",
+      "additional_excerpt_windows": [
+        {
+          "page": 482,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 485,
+          "start_character": 1438,
+          "end_character": 2388
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.2.2.3 File operations",
+      "start": 486,
+      "end": 487,
+      "id": "NN-0073",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        486,
+        487
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Save encadeia classe-base, número de cabeças e projeção; versão e ordem são essenciais.",
+      "additional_excerpt_windows": [
+        {
+          "page": 486,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 487,
+          "start_character": 1917,
+          "end_character": 2867
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.2.3 Organizing parallel computing for Multi-Head Self-Attention",
+      "start": 488,
+      "end": 498,
+      "id": "NN-0074",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        489,
+        493,
+        498
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Reuso de kernels reduz duplicação; trabalho paralelo depende de dimensões de execução.",
+      "additional_excerpt_windows": [
+        {
+          "page": 493,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 498,
+          "start_character": 2104,
+          "end_character": 3054
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.2.4 Building Multi-Head Self-Attention in Python",
+      "start": 499,
+      "end": 510,
+      "id": "NN-0075",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        499,
+        500,
+        501
+      ],
+      "analysis": "CustomLayersepara __init__,build,call;formadeentrada afeta pesos.",
+      "additional_excerpt_windows": [
+        {
+          "page": 499,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 500,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 501,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.2.4.1 Creating a new neural layer class",
+      "start": 502,
+      "end": 506,
+      "id": "NN-0076",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        503,
+        504,
+        506
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Classe Python inclui Dense e LayerNormalization; nome igual não prova igualdade com MQL5.",
+      "additional_excerpt_windows": [
+        {
+          "page": 504,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 506,
+          "start_character": 0,
+          "end_character": 411
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.2.4.2 Creating a script to test Multi-Head Self-Attention",
+      "start": 507,
+      "end": 510,
+      "id": "NN-0077",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        508,
+        510
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Reshape e Flatten conectam atenção e densas; conferir ordem temporal preservada.",
+      "additional_excerpt_windows": [
+        {
+          "page": 508,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 510,
+          "start_character": 1671,
+          "end_character": 2621
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.2.5 Comparative testing of Attention models",
+      "start": 511,
+      "end": 515,
+      "id": "NN-0078",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        512,
+        513,
+        515
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Campo step é reutilizado como número de cabeças; contrato semântico deve ser explícito.",
+      "additional_excerpt_windows": [
+        {
+          "page": 513,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 515,
+          "start_character": 0,
+          "end_character": 273
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "5.3 GPT architecture",
+      "start": 516,
+      "end": 569,
+      "id": "NN-0079",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "5.3.1 Description of the architecture ",
+      "start": 517,
+      "end": 517,
+      "id": "NN-0080",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        517
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "GPT descrito como decoder; exemplo numérico não é serviço assistente de linguagem.",
+      "additional_excerpt_windows": [
+        {
+          "page": 517,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 517,
+          "start_character": 1749,
+          "end_character": 2699
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.3.2 Building a GPT model in MQL5",
+      "start": 518,
+      "end": 546,
+      "id": "NN-0081",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        518,
+        523,
+        528
+      ],
+      "analysis": "CacheKeVporcamada,Initforms e contexto propagado por coleções.",
+      "additional_excerpt_windows": [
+        {
+          "page": 518,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 523,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 528,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.3.2.1 GPT feed-forward method",
+      "start": 529,
+      "end": 533,
+      "id": "NN-0082",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        530,
+        531,
+        533
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Percurso de camadas internas e escolha do dispositivo; verificar equivalência por operações.",
+      "additional_excerpt_windows": [
+        {
+          "page": 531,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 533,
+          "start_character": 1378,
+          "end_character": 2328
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.3.2.2 GPT backpropagation methods",
+      "start": 534,
+      "end": 542,
+      "id": "NN-0083",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        535,
+        538,
+        542
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Ramos residuais somam gradientes; omitir um ramo altera treinamento.",
+      "additional_excerpt_windows": [
+        {
+          "page": 538,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 542,
+          "start_character": 0,
+          "end_character": 832
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "5.3.2.3 File operations",
+      "start": 543,
+      "end": 546,
+      "id": "NN-0084",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        544,
+        546
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Métodos, getters e Save/Load; schema precisa acompanhar profundidade e unidades.",
+      "additional_excerpt_windows": [
+        {
+          "page": 544,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 546,
+          "start_character": 1712,
+          "end_character": 2662
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.3.3 Organizing parallel computing in the GPT model",
+      "start": 547,
+      "end": 558,
+      "id": "NN-0085",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        548,
+        552,
+        558
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Kernel GPT tem organização distinta; universalizar kernel nem sempre reduz complexidade.",
+      "additional_excerpt_windows": [
+        {
+          "page": 552,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 558,
+          "start_character": 2082,
+          "end_character": 3032
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "5.3.4 Comparative testing of implementations",
+      "start": 559,
+      "end": 569,
+      "id": "NN-0086",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        560,
+        564,
+        569
+      ],
+      "character_window": [
+        0,
+        1150
+      ],
+      "analysis": "Mesmos parâmetros herdados não asseguram mesma tarefa; comparar tamanhos e exemplos.",
+      "additional_excerpt_windows": [
+        {
+          "page": 564,
+          "start_character": 0,
+          "end_character": 600
+        },
+        {
+          "page": 569,
+          "start_character": 286,
+          "end_character": 1236
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "6. Architectural solutions for improving model convergence",
+      "start": 570,
+      "end": 650,
+      "id": "NN-0087",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "6.1 Batch normalization",
+      "start": 571,
+      "end": 622,
+      "id": "NN-0088",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 3,
+      "title": "6.1.1 Principles of batch normalization implementation",
+      "start": 572,
+      "end": 574,
+      "id": "NN-0089",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        573,
+        574
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Normalização usa média, variância,epsilon e escala treinável; custo adicional de estado.",
+      "additional_excerpt_windows": [
+        {
+          "page": 573,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 574,
+          "start_character": 246,
+          "end_character": 1296
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.1.2 Building a batch normalization class in MQL5",
+      "start": 575,
+      "end": 587,
+      "id": "NN-0090",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        575,
+        576,
+        577
+      ],
+      "analysis": "BNpreserva quantidade,treina escala/deslocamento,inicializa gamma1/beta0.",
+      "additional_excerpt_windows": [
+        {
+          "page": 575,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 576,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 577,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.1.2.1 Batch normalization feed-forward methods",
+      "start": 578,
+      "end": 580,
+      "id": "NN-0091",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        579,
+        580
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Lote<=1 possui caminho especial; comportamento deve ser testado separadamente.",
+      "additional_excerpt_windows": [
+        {
+          "page": 579,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 580,
+          "start_character": 832,
+          "end_character": 1882
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.1.2.2 Batch normalization backpropagation methods",
+      "start": 581,
+      "end": 585,
+      "id": "NN-0092",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        582,
+        583,
+        585
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Gradiente atravessa ativação e normalização; conferir fatores de escala.",
+      "additional_excerpt_windows": [
+        {
+          "page": 583,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 585,
+          "start_character": 1349,
+          "end_character": 2399
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.1.2.3 File operations",
+      "start": 586,
+      "end": 587,
+      "id": "NN-0093",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        586,
+        587
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Persistência encadeada salva tamanho de lote e estado herdado; checar leituras e escritas.",
+      "additional_excerpt_windows": [
+        {
+          "page": 586,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 587,
+          "start_character": 2522,
+          "end_character": 3572
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.1.3 Organizing multi-threaded computations in the batch normalization class",
+      "start": 588,
+      "end": 597,
+      "id": "NN-0094",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        589,
+        592,
+        597
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "TYPE4 e vetorização dependem de hardware; não adotar promessa genérica de um ciclo.",
+      "additional_excerpt_windows": [
+        {
+          "page": 592,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 597,
+          "start_character": 1345,
+          "end_character": 2395
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.1.4 Implementing batch normalization in Python",
+      "start": 598,
+      "end": 607,
+      "id": "NN-0095",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        598,
+        599,
+        600
+      ],
+      "analysis": "Inferênciausamédiasmóveis dotreino e trainablealterado exige recompilação domodelo.",
+      "additional_excerpt_windows": [
+        {
+          "page": 598,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 599,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 600,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.1.4.1 Creating a script to test batch normalization",
+      "start": 601,
+      "end": 607,
+      "id": "NN-0096",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        602,
+        604,
+        607
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Duas bases normalizada/não normalizada e separação dos dois alvos; preservar schema.",
+      "additional_excerpt_windows": [
+        {
+          "page": 604,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 607,
+          "start_character": 1423,
+          "end_character": 2473
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.1.5 Comparative testing of models using batch normalization",
+      "start": 608,
+      "end": 622,
+      "id": "NN-0097",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        609,
+        615,
+        622
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Comparação insere normalização antes da camada; ablação precisa controlar demais fatores.",
+      "additional_excerpt_windows": [
+        {
+          "page": 615,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 622,
+          "start_character": 0,
+          "end_character": 664
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "6.2 Dropout",
+      "start": 623,
+      "end": 650,
+      "id": "NN-0098",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        623,
+        624
+      ],
+      "analysis": "DescriçãoamostragemDropout e coadaptação; vantagensnãouniversais.",
+      "additional_excerpt_windows": [
+        {
+          "page": 623,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 624,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.2.1 Building Dropout in MQL5",
+      "start": 625,
+      "end": 634,
+      "id": "NN-0099",
+      "status": "partial_direct_intro_plus_children",
+      "pages_consulted": [
+        625,
+        626,
+        627,
+        628
+      ],
+      "analysis": "Dropoutsem pesoscria máscara epropaga flagTrainMode porcamadas.",
+      "additional_excerpt_windows": [
+        {
+          "page": 625,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 626,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 627,
+          "start_character": 0,
+          "end_character": 850
+        },
+        {
+          "page": 628,
+          "start_character": 0,
+          "end_character": 850
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.2.1.1 Feed-forward method",
+      "start": 629,
+      "end": 630,
+      "id": "NN-0100",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        629,
+        630
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Modo operação copia entrada, treino aplica máscara; não deixar aleatoriedade de treino em inferência.",
+      "additional_excerpt_windows": [
+        {
+          "page": 629,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 630,
+          "start_character": 1226,
+          "end_character": 2276
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.2.1.2 Backpropagation methods for Dropout",
+      "start": 631,
+      "end": 632,
+      "id": "NN-0101",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        631,
+        632
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Retropropagação reaplica máscara da passagem; não amostrar outra máscara.",
+      "additional_excerpt_windows": [
+        {
+          "page": 631,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 632,
+          "start_character": 998,
+          "end_character": 2048
+        }
+      ]
+    },
+    {
+      "depth": 4,
+      "title": "6.2.1.3 File operations",
+      "start": 633,
+      "end": 634,
+      "id": "NN-0102",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        633,
+        634
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Persistir probabilidade e carregar na mesma ordem; validar domínio após carga.",
+      "additional_excerpt_windows": [
+        {
+          "page": 633,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 634,
+          "start_character": 1617,
+          "end_character": 2667
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.2.2 Organizing multi-threaded operations in Dropout",
+      "start": 635,
+      "end": 640,
+      "id": "NN-0103",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        636,
+        637,
+        640
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "MaskMult realiza produto elemento a elemento; máscara e saída devem ter mesma forma.",
+      "additional_excerpt_windows": [
+        {
+          "page": 637,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 640,
+          "start_character": 1379,
+          "end_character": 2429
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.2.3 Implementing Dropout in Python",
+      "start": 641,
+      "end": 645,
+      "id": "NN-0104",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        642,
+        643,
+        645
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Experiência combina BN e dropout; observação negativa não é proibição universal.",
+      "additional_excerpt_windows": [
+        {
+          "page": 643,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 645,
+          "start_character": 2043,
+          "end_character": 3093
+        }
+      ]
+    },
+    {
+      "depth": 3,
+      "title": "6.2.4 Comparative testing of models with Dropout",
+      "start": 646,
+      "end": 650,
+      "id": "NN-0105",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        647,
+        648,
+        650
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Poucas características e coadaptação são explicações hipotéticas; não provar causalidade só pelo gráfico.",
+      "additional_excerpt_windows": [
+        {
+          "page": 648,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 650,
+          "start_character": 0,
+          "end_character": 307
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "7. Testing trading capabilities of the model",
+      "start": 651,
+      "end": 689,
+      "id": "NN-0106",
+      "status": "structural_via_children_not_read_in_full",
+      "pages_consulted": [],
+      "analysis": "Agregador do índice; consultar notas dos descendentes. Sem declaração de leitura integral."
+    },
+    {
+      "depth": 2,
+      "title": "7.1 Introduction to MetaTrader 5 Strategy Tester",
+      "start": 652,
+      "end": 653,
+      "id": "NN-0107",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        652,
+        653
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Tester possui cálculo e simulação de atrasos; configuração concreta limita conclusão.",
+      "additional_excerpt_windows": [
+        {
+          "page": 652,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 653,
+          "start_character": 2757,
+          "end_character": 3807
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "7.2 Developing an Expert Advisor template using MQL5",
+      "start": 654,
+      "end": 660,
+      "id": "NN-0108",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        655,
+        657,
+        660
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "EA carrega modelo já treinado; não confundir inferência com treinamento no EA.",
+      "additional_excerpt_windows": [
+        {
+          "page": 657,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 660,
+          "start_character": 1145,
+          "end_character": 2195
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "7.3 Creating a model for testing",
+      "start": 661,
+      "end": 674,
+      "id": "NN-0109",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        662,
+        667,
+        674
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Script especifica arquitetura e parâmetros e salva histórico; pesos e schema exigem rastreabilidade.",
+      "additional_excerpt_windows": [
+        {
+          "page": 667,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 674,
+          "start_character": 2055,
+          "end_character": 3105
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "7.4 Determining Expert Advisor parameters",
+      "start": 675,
+      "end": 685,
+      "id": "NN-0110",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        676,
+        680,
+        685
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Autor reutiliza2015–2020 de treino para otimizar EA; reconhecer dependência do ajuste.",
+      "additional_excerpt_windows": [
+        {
+          "page": 680,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 685,
+          "start_character": 323,
+          "end_character": 1373
+        }
+      ]
+    },
+    {
+      "depth": 2,
+      "title": "7.5 Testing the model on new data",
+      "start": 686,
+      "end": 689,
+      "id": "NN-0111",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        687,
+        689
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Resultado positivo anual apresentado; não infere rentabilidade em outros períodos ou com custos distintos.",
+      "additional_excerpt_windows": [
+        {
+          "page": 687,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 689,
+          "start_character": 583,
+          "end_character": 1633
+        }
+      ]
+    },
+    {
+      "depth": 1,
+      "title": "Conclusion",
+      "start": 690,
+      "end": 690,
+      "id": "NN-0112",
+      "status": "partial_textual_consultation",
+      "pages_consulted": [
+        690
+      ],
+      "character_window": [
+        0,
+        1450
+      ],
+      "analysis": "Conclusões amplas do autor excedem a generalização demonstrada; manual preserva como observações limitadas.",
+      "additional_excerpt_windows": [
+        {
+          "page": 690,
+          "start_character": 0,
+          "end_character": 650
+        },
+        {
+          "page": 690,
+          "start_character": 1144,
+          "end_character": 2194
+        }
+      ]
+    }
+  ],
+  "additional_findings": [
+    {
+      "pages": [
+        87
+      ],
+      "finding": "Seção3.2 efetivamente em87; marcação do índice a estende até99 porque3.3 começa na mesma página. Consultada87 integralmente. Não duplicar87–99 como duas leituras."
+    },
+    {
+      "pages": [
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239
+      ],
+      "finding": "Consulta textual integral222–239 após recuperar trechos truncados. 3.9 promove sorteio e normalização pré-split;3.10 mantém referência,perturba±delta e agrega diferenças. Norma relativa proposta no manual evita cancelamento de diferenças assinadas."
+    },
+    {
+      "pages": [
+        47,
+        185
+      ],
+      "finding": "ExemplosAdam exibem correçãoM/(1-beta1),V/(1-beta2),sem potência temporal visível. Necessita conferência do algoritmo completo antes de tratar comoAdam canônico; não reproduzido nem diagnosticado como bug produtivo."
+    },
+    {
+      "pages": [
+        265
+      ],
+      "finding": "Trecho final chama retropropagação de unsupervised. Manual corrige implicitamente: retropropagação é diferenciação de um objetivo, não categoria exclusiva de supervisão."
+    },
+    {
+      "pages": [
+        251,
+        256,
+        258,
+        260
+      ],
+      "finding": "CPU vence rede pequena; modelos e validação/teste divergem por composição de dados; autor reconhecehiperparâmetrosnãoajustados. Curvas semelhantes não provam equivalência de implementação."
+    },
+    {
+      "pages": [
+        325,
+        326,
+        327,
+        328,
+        330,
+        331,
+        332,
+        333
+      ],
+      "finding": "Reordenação de matriz altera operaçãoCNN; experimentoinicialpiora,combinação melhora;MSE eAccuracypreferemmodelosdistintos e diferençaspequenas."
+    },
+    {
+      "pages": [
+        394,
+        395,
+        396,
+        397,
+        398,
+        399,
+        400
+      ],
+      "finding": "ComparaçãoCNN/LSTM altera ordem de amostragem e capacidade;LSTMsembloco denso melhora inicial;autor398limita a conclusãoà tarefa,399resultadospróximos."
+    },
+    {
+      "pages": [
+        514,
+        568,
+        569
+      ],
+      "finding": "Número de cabeças implica tradeoff de recursos;GPTusa cache deKeV, ampliar pilha altera temporários, não necessariamente pesos. Isto não elimina custo da atenção densa."
+    },
+    {
+      "pages": [
+        614,
+        616,
+        618,
+        619,
+        620,
+        621,
+        622
+      ],
+      "finding": "BNexperimentada entrada/intermediárias;testes próximos,autor619reportadiferença<=5e-3;621taxaaumentada10vezes éresultadoespecífico,não recomendação universal."
+    },
+    {
+      "pages": [
+        646,
+        648,
+        649,
+        650
+      ],
+      "finding": "Dropoutpiora métricasdeteste;649autoradmite explicaçãohipotéticaeinsuficiência de informação. RejeitarproibiçãouniversalBN+dropout."
+    },
+    {
+      "pages": [
+        674,
+        675,
+        676,
+        680,
+        685,
+        686,
+        687,
+        688,
+        689,
+        690
+      ],
+      "finding": "Treino longo~2diasé relato doautor/hardware;otimização95passesvs>100k combinaçõesnão provaótimo;36trades/21vencedorasem2021;filtrardiasapósforwardretornaaoajuste."
+    },
+    {
+      "pages": [
+        87
+      ],
+      "finding": "3.2relida integralmente:PastasExperts/Scripts/IncludeNeuroNetworksBook,distintasdelibrariescompiladas."
+    }
+  ],
+  "all_sections_integrally_read": false
+}

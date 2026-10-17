@@ -1,0 +1,2935 @@
+{
+  "book": "REF",
+  "batch": "11",
+  "status": "PARTIAL_HONEST_CONTEXT_LIMIT",
+  "requested_pages": [
+    3239,
+    3607
+  ],
+  "consolidation_full_text_pages": [
+    3239,
+    3240,
+    3241,
+    3242,
+    3243,
+    3244,
+    3245,
+    3246,
+    3247,
+    3248,
+    3249,
+    3250,
+    3251,
+    3252,
+    3253,
+    3254,
+    3255,
+    3256,
+    3257,
+    3258,
+    3259,
+    3260,
+    3261,
+    3262,
+    3263,
+    3264,
+    3265,
+    3266,
+    3267,
+    3268,
+    3269,
+    3270,
+    3271,
+    3272,
+    3273,
+    3274,
+    3275,
+    3276,
+    3277,
+    3278,
+    3279,
+    3280,
+    3281,
+    3282,
+    3283,
+    3284,
+    3285,
+    3286,
+    3287,
+    3288,
+    3289,
+    3290,
+    3291,
+    3292,
+    3293,
+    3294,
+    3295,
+    3296,
+    3297,
+    3298,
+    3299,
+    3300,
+    3301,
+    3302,
+    3303,
+    3304,
+    3305,
+    3306,
+    3307,
+    3308,
+    3309,
+    3310,
+    3311,
+    3312,
+    3313,
+    3314,
+    3315,
+    3316,
+    3317,
+    3318,
+    3319,
+    3320,
+    3321,
+    3322,
+    3323,
+    3324,
+    3325,
+    3326,
+    3327,
+    3328,
+    3329,
+    3330,
+    3331,
+    3332,
+    3333,
+    3334,
+    3335,
+    3336,
+    3337,
+    3338,
+    3339,
+    3340,
+    3341,
+    3342,
+    3343,
+    3344,
+    3345,
+    3346,
+    3347,
+    3348,
+    3349,
+    3350,
+    3351,
+    3352,
+    3353,
+    3354,
+    3355,
+    3356,
+    3357,
+    3358,
+    3359,
+    3360,
+    3361,
+    3362,
+    3363,
+    3364,
+    3365,
+    3366,
+    3367,
+    3368,
+    3369,
+    3370,
+    3371,
+    3372,
+    3373,
+    3374,
+    3375,
+    3376,
+    3377,
+    3378,
+    3379,
+    3380,
+    3381,
+    3382,
+    3383,
+    3384,
+    3385,
+    3386,
+    3387,
+    3388,
+    3389,
+    3390,
+    3391,
+    3392,
+    3393,
+    3394,
+    3395,
+    3396,
+    3397,
+    3398,
+    3399,
+    3400,
+    3401,
+    3402,
+    3403,
+    3404,
+    3405,
+    3406,
+    3407,
+    3408,
+    3409,
+    3410,
+    3411,
+    3412,
+    3413,
+    3414,
+    3415,
+    3416,
+    3417,
+    3418,
+    3419,
+    3420,
+    3421,
+    3422,
+    3423,
+    3424,
+    3425,
+    3426,
+    3427,
+    3428,
+    3429,
+    3430
+  ],
+  "remaining_unread_ranges": [
+    [
+      3431,
+      3607
+    ]
+  ],
+  "source_pdf": {
+    "filename": "MQL5 Language REFERENCE.pdf",
+    "path": "SOURCES/MQL5 Language REFERENCE.pdf",
+    "sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+    "bytes": 33520715,
+    "pages": 7284
+  },
+  "method": "Leitura semântica integral efetiva de texto extraído em13retornos tool, cada lote<30000caracteres, max_output_tokens20000, nenhum truncado; catálogo somente para identificação, nunca promovido a leitura.",
+  "read_batches": [
+    {
+      "batch": 0,
+      "pages": [
+        3239,
+        3252
+      ],
+      "characters": 27833,
+      "path": "/private/tmp/ref11/0.txt",
+      "sha256": "0f6d64397db930ca8b236c8a4f9c5b7c119564576976c9384ed784eaf91c23de"
+    },
+    {
+      "batch": 1,
+      "pages": [
+        3253,
+        3263
+      ],
+      "characters": 26131,
+      "path": "/private/tmp/ref11/1.txt",
+      "sha256": "57d42d481a8a1025d359204baee49da194001a2f3fc6f5546dc68d54f305739f"
+    },
+    {
+      "batch": 2,
+      "pages": [
+        3264,
+        3274
+      ],
+      "characters": 27934,
+      "path": "/private/tmp/ref11/2.txt",
+      "sha256": "27d0a79542473fc38dcff6d326ed050641687b75c4ce929709412610545e42fd"
+    },
+    {
+      "batch": 3,
+      "pages": [
+        3275,
+        3285
+      ],
+      "characters": 27465,
+      "path": "/private/tmp/ref11/3.txt",
+      "sha256": "5fcbbe492a7d55be3644303f37ac22b0774229b5db0d65cc394d0941cc05c669"
+    },
+    {
+      "batch": 4,
+      "pages": [
+        3286,
+        3298
+      ],
+      "characters": 27335,
+      "path": "/private/tmp/ref11/4.txt",
+      "sha256": "1fd672ffe46842fdac95d03b6cbce3b28396ec8bbdbfa5e5f5c680a608b5f411"
+    },
+    {
+      "batch": 5,
+      "pages": [
+        3299,
+        3315
+      ],
+      "characters": 28150,
+      "path": "/private/tmp/ref11/5.txt",
+      "sha256": "6346d17555c71f4a49ed82642f3bd5249c4f70b4b52633cc8022cf6d38b2f616"
+    },
+    {
+      "batch": 6,
+      "pages": [
+        3316,
+        3331
+      ],
+      "characters": 27438,
+      "path": "/private/tmp/ref11/6.txt",
+      "sha256": "0a9c2e922871c29d1dead4596711afb33db530e06cb6ac90af0aa39487bbaeb0"
+    },
+    {
+      "batch": 7,
+      "pages": [
+        3332,
+        3350
+      ],
+      "characters": 28777,
+      "path": "/private/tmp/ref11/7.txt",
+      "sha256": "f5c4225783655ed719e5fb53a5b2ca409825bfe82ad0e58a5a67aac910c369bb"
+    },
+    {
+      "batch": 8,
+      "pages": [
+        3351,
+        3368
+      ],
+      "characters": 28681,
+      "path": "/private/tmp/ref11/8.txt",
+      "sha256": "2e7f39eaed674659892dd76ae7d86ac69233ff222a725fcea5424e0f2019b156"
+    },
+    {
+      "batch": 9,
+      "pages": [
+        3369,
+        3386
+      ],
+      "characters": 28685,
+      "path": "/private/tmp/ref11/9.txt",
+      "sha256": "8126be0889eb1768ce30294dbed92a5fa676dfe448b8f870c7264c69b0ada8f5"
+    },
+    {
+      "batch": 10,
+      "pages": [
+        3387,
+        3400
+      ],
+      "characters": 27723,
+      "path": "/private/tmp/ref11/10.txt",
+      "sha256": "6f39e20b8a1fa3a7b33103a72b3b5bbccc8f93a10c8ce378c232f22714e84820"
+    },
+    {
+      "batch": 11,
+      "pages": [
+        3401,
+        3415
+      ],
+      "characters": 27697,
+      "path": "/private/tmp/ref11/11.txt",
+      "sha256": "ffa9654f3997468a42218c68ac48b4d7c89280a4f92ff189edb6e419df316fc7"
+    },
+    {
+      "batch": 12,
+      "pages": [
+        3416,
+        3430
+      ],
+      "characters": 27799,
+      "path": "/private/tmp/ref11/12.txt",
+      "sha256": "165cab39bc2d175d269058e5d2f84fe0b66e096a65f08f7618a923a99b5ac180"
+    }
+  ],
+  "visual_verification": "NOT_PERFORMED",
+  "native_verification": "NOT_RUN",
+  "limits": [
+    "Somente texto extraído; figuras/layout não inspecionados.",
+    "Linhas longas de código cortadas lateralmente na própria extração, não reconstruídas nem compiladas.",
+    "Introdução de bancos de dados3238 não lida; history_orders_get continua3431; capítuloPython continua3437.",
+    "Sem auditoria de implementação Stoikus nem mudança produto/Git/harness/manual."
+  ],
+  "page_original_hashes": [
+    {
+      "page": 3239,
+      "sha256": "ddd3fb3a5e172790bfd8a42dd6eaa00d65b59e8969236e0cc60fd5d016fabc5c",
+      "jsonl_line_sha256": "91baf37301b69ea1deef0745a9295acfb834ad153a0f59597d5516384efbb2fc",
+      "characters": 2198,
+      "error": null
+    },
+    {
+      "page": 3240,
+      "sha256": "03ef5f4b09d6df95f2182f85036ba2d58e0284c135d78ba3e1719814702cfd94",
+      "jsonl_line_sha256": "e6c8fa29eb8631e0d20b7edf89396c0d746b7ca953d96594e051f473aefdad38",
+      "characters": 1638,
+      "error": null
+    },
+    {
+      "page": 3241,
+      "sha256": "e0122fa07ab480ff48cbb693201306a2eb76e4634cca59b5054e94a392f3f9c9",
+      "jsonl_line_sha256": "1543a0c74072d2c3a2cf4315f8f703d235760538b331627bc2c97f34875bbaee",
+      "characters": 2511,
+      "error": null
+    },
+    {
+      "page": 3242,
+      "sha256": "cef4e2f34df72d59bdb372a992f33105bfd10a50da482707a63790479b5077c3",
+      "jsonl_line_sha256": "402b725b182dc354dbd28c465e63107eb009cdc0a4231e5ff24858f9da6e877c",
+      "characters": 623,
+      "error": null
+    },
+    {
+      "page": 3243,
+      "sha256": "5f941fa9cf3d4d99e4e8388e4063348774a56053ff47f057e1001ab05d351487",
+      "jsonl_line_sha256": "44f1058911d2ec553a08bf596f56b4c2dcfaf8a1e1ae815cb3fea027ebf00cce",
+      "characters": 754,
+      "error": null
+    },
+    {
+      "page": 3244,
+      "sha256": "71a3d2a44e68b65992dfacd46b7273c2414fce9972bb01811722daeed57d6b0c",
+      "jsonl_line_sha256": "ee66d6fc652224769c54e3dbbb91e17a2e01199a675dc7f763d0d7f89fa2ad9b",
+      "characters": 2356,
+      "error": null
+    },
+    {
+      "page": 3245,
+      "sha256": "c25f94dbc0fd09d607604b1c2b56b19c038002906a256033fb7ec1d6e59100fb",
+      "jsonl_line_sha256": "4659d8461087df7c6ab85a1b0f513e4a220069eb2554fdf61776570432b1b5d5",
+      "characters": 2579,
+      "error": null
+    },
+    {
+      "page": 3246,
+      "sha256": "185106501258349a6bb1f172c813c86bbacc6bc8cb0530205d0fe7411df8dcfb",
+      "jsonl_line_sha256": "ad7061b5ff59f28774a326183ce504f7257ba0570a8a73d3aa29f6e7440a9b8a",
+      "characters": 1129,
+      "error": null
+    },
+    {
+      "page": 3247,
+      "sha256": "cdb562f0ced7994c54a6a8a5e9d58c146083f3c3d607da351f7238dbde7d6e34",
+      "jsonl_line_sha256": "cae2500d82d5ac96429329a73b47945f68e0c55d9cf00e415306d2d03d2b9e4d",
+      "characters": 2764,
+      "error": null
+    },
+    {
+      "page": 3248,
+      "sha256": "9247bb61b455f1e2c79ccbbbe9b9668032ceb93666a917942ff03c59e39c4485",
+      "jsonl_line_sha256": "9aba6078edd50eaaf6b2fac69ca9132d41446cf885cb50c5a948647757fb1e4e",
+      "characters": 2874,
+      "error": null
+    },
+    {
+      "page": 3249,
+      "sha256": "3b759d94289061c95d2360f952e2a2cefd585914284229c950af4c3be530f428",
+      "jsonl_line_sha256": "552a95a00ba91035a5c84b43828a65d6a57e2ce12f4f7a21f4ebebdc3e3da623",
+      "characters": 2287,
+      "error": null
+    },
+    {
+      "page": 3250,
+      "sha256": "af9309819f92e80052adebbf0042c4fc28931740a4351aa0713da444b8a2a99d",
+      "jsonl_line_sha256": "782012a9fd0ae8199b4f9e482fe52ccd8de6d9141353ab8e2cb058f599996cd2",
+      "characters": 2314,
+      "error": null
+    },
+    {
+      "page": 3251,
+      "sha256": "22240404316822e4776f7f687686b2b2ddc506e29965ed53190b1723ba27fe7b",
+      "jsonl_line_sha256": "93c7019b667af7df22e080c0922ad2bdca88e0ab23b8a8a1abfab19f8ac0b563",
+      "characters": 2211,
+      "error": null
+    },
+    {
+      "page": 3252,
+      "sha256": "fe80295f06d7b942ee639dcb500e43f4189a8569cd8e06ba1911d8ee8a94c8da",
+      "jsonl_line_sha256": "34cdaa05c315521fc2096285d94142988374a431f0d2b7d2f0e26ea1fd910750",
+      "characters": 1343,
+      "error": null
+    },
+    {
+      "page": 3253,
+      "sha256": "9a3252b452168cad4c4336a6828701ed0a117032e17d833627c2a4d9098ae1d2",
+      "jsonl_line_sha256": "b270d6978da88738b2361f746733cfccb0d8784102b321292e5109faba7167fb",
+      "characters": 2506,
+      "error": null
+    },
+    {
+      "page": 3254,
+      "sha256": "86e39dce892643dee70a53261d7131247700d82a9b231ebc45c5c9d61bdf4b79",
+      "jsonl_line_sha256": "642b05b2d442e5adb8d0e74ac49e9732d123293ad97ca5bfcb23b4e089608964",
+      "characters": 2186,
+      "error": null
+    },
+    {
+      "page": 3255,
+      "sha256": "d96db2fe4c20dd552d1284b53e8c25f4f78e67915f78d8f92161d840e2745dca",
+      "jsonl_line_sha256": "695bd0d07406c0c525a339d6814300fc79be8c59cf0b41552d37bd6ee075fdab",
+      "characters": 2181,
+      "error": null
+    },
+    {
+      "page": 3256,
+      "sha256": "05bab3c1de319692b589f8c46c8aa140e7d6a2ac5a163eff54a73a23af5d3af8",
+      "jsonl_line_sha256": "e07553594a24e423161542dd901ba6cdc5fd95e42b6f9050f69d1462e40e053b",
+      "characters": 2620,
+      "error": null
+    },
+    {
+      "page": 3257,
+      "sha256": "0509f925d8621490ec91b920dad65b7d65a3dc2183b56dd2202284aa49f6ae22",
+      "jsonl_line_sha256": "52cdc6bbe6b20aea61567cede90adcbc65b3deb160a7a9b6dcfbb5856c9a626c",
+      "characters": 1098,
+      "error": null
+    },
+    {
+      "page": 3258,
+      "sha256": "40ab4820e9737df5131bfcc8861f96163a54415967836ee7aa7122ccc17ab85f",
+      "jsonl_line_sha256": "001f450f006c09b8713daaaae60da74abdb5a353f241cd14eccd037fd0563c3c",
+      "characters": 1308,
+      "error": null
+    },
+    {
+      "page": 3259,
+      "sha256": "1a225d3a343dc3e2e07ec9be15498cdc674e3a987893f47f423f05bb479c4455",
+      "jsonl_line_sha256": "13c9636df39d87d3053ba6150f40d459e307180f5fa12f12ac1a2c98443699c1",
+      "characters": 2618,
+      "error": null
+    },
+    {
+      "page": 3260,
+      "sha256": "534dc52bfdedd053e14e7b2262f4b7917f2d6f240794db02c738ffe62cc07197",
+      "jsonl_line_sha256": "d2e4554aae222c1bbd7f2fb03594ecc3c8a6e48a99dc668fc78ac45115f93636",
+      "characters": 2978,
+      "error": null
+    },
+    {
+      "page": 3261,
+      "sha256": "60df92e112213ada4bd33663b024484c6c130bbc355fc3ff1274af8ee684fa1e",
+      "jsonl_line_sha256": "8200dfe55e65494144da6191433f115c5d52e9694508d154a067cd9efc50ea3f",
+      "characters": 2961,
+      "error": null
+    },
+    {
+      "page": 3262,
+      "sha256": "cd72e275b0a5feeba24a317d124be74266d5a73ccf0fca4ab2a6779df92c7e3c",
+      "jsonl_line_sha256": "4662b083869d6969dbe9a5ce15b446f9c50519e244e4eab185f1d2be590e2414",
+      "characters": 3140,
+      "error": null
+    },
+    {
+      "page": 3263,
+      "sha256": "fafda08b0f742815025b6514b35ffc023947d64a443a3dda4322ecdb321aebf7",
+      "jsonl_line_sha256": "fe623eabdbd5d3d4b2dc8d024e05f7aa1ad90ae7c3ad47ac0192e4e5ab1b9c62",
+      "characters": 2337,
+      "error": null
+    },
+    {
+      "page": 3264,
+      "sha256": "e891a550408bb37e9a3afc1c935ba5b38e30355937545ee82a380425c4f84676",
+      "jsonl_line_sha256": "435450bc39b11cc6a150b1046b6d3dd492d38810cf691c67febbd6b48ddfd9b1",
+      "characters": 3145,
+      "error": null
+    },
+    {
+      "page": 3265,
+      "sha256": "451ebb0c83071d64ad0161577b20fcf83c849b37194ba780a847329340a118ce",
+      "jsonl_line_sha256": "bcb5de553c78d60d7f175717550007f57e74509719462190ac1b81640169da37",
+      "characters": 2527,
+      "error": null
+    },
+    {
+      "page": 3266,
+      "sha256": "9ef9c36f6492c847998ca5fee6734aa99ecbf4486443e0ff5dd128169a3e525c",
+      "jsonl_line_sha256": "3a311ade2b5be0437c145224140c8038ca963443cefe13977ed2597d78790000",
+      "characters": 4296,
+      "error": null
+    },
+    {
+      "page": 3267,
+      "sha256": "0883e1bcb81a162341fce1003718bdc49152ea996d3c29a86f4d5e79ef7e3c1f",
+      "jsonl_line_sha256": "465242a77014326c3c35a051c5b28e0c33559464c930e2bea6f8ea5ef1ba5d50",
+      "characters": 2408,
+      "error": null
+    },
+    {
+      "page": 3268,
+      "sha256": "120a0cb6881b1acb96b791f54d6dc805d2171f7f76bab6f1f4356d8f5708a8dc",
+      "jsonl_line_sha256": "cb4af25f0f81f5fb05f25fa4186c8e2b7ba5b75c886a05ad6315367e086e09eb",
+      "characters": 3101,
+      "error": null
+    },
+    {
+      "page": 3269,
+      "sha256": "b0ff29ad6334e19acf13b65ca8745e67652a58f63261cae3d35f84607735430b",
+      "jsonl_line_sha256": "bba0440a200d738bab8c73c036f822a97c5f9c929e317e2cb16b66cbc737214e",
+      "characters": 2643,
+      "error": null
+    },
+    {
+      "page": 3270,
+      "sha256": "455d66ecbb4acf59e4563eb20e1fb9a748e6d11f3141d3c09f94d43ce6c93da9",
+      "jsonl_line_sha256": "caebc68b8850c687296471aff2bb8a19d09082c4b0648dce6fbfd4a8e1aa8555",
+      "characters": 357,
+      "error": null
+    },
+    {
+      "page": 3271,
+      "sha256": "33d43beaabe9197aa2dcffeca07e47f8bf1340730e8fccd1449b12230861ba82",
+      "jsonl_line_sha256": "4d302a1d1e5d39df5ed1d06e724ce8d4c94781b9c7a257fbfbafe2c9fb615a0d",
+      "characters": 2495,
+      "error": null
+    },
+    {
+      "page": 3272,
+      "sha256": "44cf8680f7320869a5aa222b092adc83759bf2063eceb33c3c4b7fc2f45efaf7",
+      "jsonl_line_sha256": "49482731e534656f2f5bd727d93b2aa30972348541b57f287fd4359fe0f26921",
+      "characters": 2524,
+      "error": null
+    },
+    {
+      "page": 3273,
+      "sha256": "b0e0e3edc3c52adc74a7f00292285850f0c7af7c3e915f10909fdbcfe2c70958",
+      "jsonl_line_sha256": "9838ed304d80eb95b3735f8694141064280e2026817e2c648c6d0ece2591674f",
+      "characters": 1983,
+      "error": null
+    },
+    {
+      "page": 3274,
+      "sha256": "1670f171ed401e8159edab752d5ac802e4ebefb2ebb220ce26cafe609f5e07cc",
+      "jsonl_line_sha256": "d784150d43cfc509254064b27f936b063f09c9391420319cbf0aff179acdc164",
+      "characters": 2257,
+      "error": null
+    },
+    {
+      "page": 3275,
+      "sha256": "2c41e75e4299bca918bf76568106e5cbf5b85152c4eb912a330d56f79e2fd463",
+      "jsonl_line_sha256": "537967612b610ddeecaed299e53d32214a737429a9a61440c56c9cf6c9d1c6d9",
+      "characters": 2926,
+      "error": null
+    },
+    {
+      "page": 3276,
+      "sha256": "ccb3eac022d2f74a432332dc626cbadb0c271176365cbcc9964d2ae95b81e985",
+      "jsonl_line_sha256": "b24bad4dc725502eec6e4d89423ac902531f16258dc60084a54d1d8dfadd3972",
+      "characters": 2878,
+      "error": null
+    },
+    {
+      "page": 3277,
+      "sha256": "f03d57c6e4dec94ab3257a566f41da34901934f3640ecc842b596de27ac62977",
+      "jsonl_line_sha256": "fee41d8c16f29ef0b15bbe7af38f8e8a227860ce902e1ea2dce4824b8336cb1e",
+      "characters": 2988,
+      "error": null
+    },
+    {
+      "page": 3278,
+      "sha256": "50c65641351c99f22c1ad2b6b3d3493f1e4d06669023092c17187ddf6a7e400f",
+      "jsonl_line_sha256": "b138b85b5d0f5175a2b5d7ac4144cc7cf82fb8057ae894cf53125101d3d1e6e5",
+      "characters": 2688,
+      "error": null
+    },
+    {
+      "page": 3279,
+      "sha256": "1d59dad76954ea3d2e172b966d07f1d1b484c42e4b51dc891d9d12e722323f59",
+      "jsonl_line_sha256": "9a99abcff5f7ac07af8b8945ae30b4d775aefe74b2caa635f5e0d32bfd3c6dbe",
+      "characters": 357,
+      "error": null
+    },
+    {
+      "page": 3280,
+      "sha256": "4dfb4fbbcca2cbe0c3de98961417b9cabbd4e52c0388060523391a82d71e7cde",
+      "jsonl_line_sha256": "43f949ee0b0846fc743adf905400a63f7366234b71548e0eef98b3d194b53e4f",
+      "characters": 2726,
+      "error": null
+    },
+    {
+      "page": 3281,
+      "sha256": "091ff9c90a0709840606ff3d97c188aaf3d32d40710cbcf8967514d723d69c49",
+      "jsonl_line_sha256": "72214fefdd0d856153d829dfce4d71face4ed664fc041cd4c800586521fab61b",
+      "characters": 2344,
+      "error": null
+    },
+    {
+      "page": 3282,
+      "sha256": "a0af0e80675db0710f5c6bbb942e3c89d54af86c047fd2d7370b2ba7d9b3e896",
+      "jsonl_line_sha256": "30085e3fdc2f88e5afca944f626db5f89415262992bc77f68e4593f3d3f8da4f",
+      "characters": 2321,
+      "error": null
+    },
+    {
+      "page": 3283,
+      "sha256": "8c12f4e1297fd5130877efc065831eb39c489887cc0dc3719d214b5eda916458",
+      "jsonl_line_sha256": "e96f096e037f37d50a781e633a0e1a6dbac3890fd43dc081e633100d0b3466f4",
+      "characters": 2038,
+      "error": null
+    },
+    {
+      "page": 3284,
+      "sha256": "10e5122ae17942e5fad30ad6fdff2934e43efb42ed6a53bb4498e1ee4417a37e",
+      "jsonl_line_sha256": "8eb7982c36037f8693906bf011025f3e909e6a7021acfa7f0124ce37e0594755",
+      "characters": 4044,
+      "error": null
+    },
+    {
+      "page": 3285,
+      "sha256": "bf1b7dae73aa5f2d018d3218c6475702114ab4ae29e2fea3c81fd26d7b36b8d4",
+      "jsonl_line_sha256": "d43556c733215b483f831c69136f1ece883531c4595e15f2497ac61d6332a7b2",
+      "characters": 1957,
+      "error": null
+    },
+    {
+      "page": 3286,
+      "sha256": "06ef4f212a05948585d90d44f487d1b5999b04551dbb4c26563f34e0e467cf3a",
+      "jsonl_line_sha256": "29d7f98fad55774e5b81d946d324017a5eddc0fb2c881de40e08da76bfad467c",
+      "characters": 2275,
+      "error": null
+    },
+    {
+      "page": 3287,
+      "sha256": "c4685c26b61df30634102de4e279ce14d84bc3c56ef8d92247c88e4e7d740a6e",
+      "jsonl_line_sha256": "7f05c7e9c3240d15ec44aaef9dd826f71179b455415a75924aa7538b2567ec58",
+      "characters": 2587,
+      "error": null
+    },
+    {
+      "page": 3288,
+      "sha256": "158d6484425c2d27971920d529065bfb1e267342a08de0020c7c0ea44dabdffd",
+      "jsonl_line_sha256": "430140fc9bbe0fee10b786a973c39cb0a656179cd19e1388c2a0f7fa4be25629",
+      "characters": 2395,
+      "error": null
+    },
+    {
+      "page": 3289,
+      "sha256": "22d78e152ddba12bd814555ffcf900543daa984b36746cd3f5fbd645f02b7c37",
+      "jsonl_line_sha256": "eb5f81c3d07df2c8ba4accbc6e996c4f840e5dbd635bb702d70b266329d95003",
+      "characters": 2334,
+      "error": null
+    },
+    {
+      "page": 3290,
+      "sha256": "038c58b1f6065f695c916362bc16226198bbf75641e3d2f4cddaeff7a089121e",
+      "jsonl_line_sha256": "d0cd96ecbed6b711f1691dd46c60925c9cf79d8f23f1f270b8596015d5bbc0b5",
+      "characters": 2031,
+      "error": null
+    },
+    {
+      "page": 3291,
+      "sha256": "a72d60d6da870460afab3815248ccd51c0c983e5ff03545493f1f5a3293ef776",
+      "jsonl_line_sha256": "5315cfe5a72d1e0885ca8468da126b6c6fb1931f806d45d56cfed3b9c97f3975",
+      "characters": 2304,
+      "error": null
+    },
+    {
+      "page": 3292,
+      "sha256": "be0b2e232a3130d8e0fda96c1ba1286bc4994b524123c91c8c4636d54b814f76",
+      "jsonl_line_sha256": "26261f199e97c7428fa858ba3b330a7d3c7d3ff1101ce2739a6495dbbd37c384",
+      "characters": 2035,
+      "error": null
+    },
+    {
+      "page": 3293,
+      "sha256": "53023eff6e8d6078710cc57eeddaeeab1aacae47d501bf8ea8be13b7b835c80d",
+      "jsonl_line_sha256": "200bde602a0d77e44cd9231d7990b15c59804a21479a84bb010863b237074236",
+      "characters": 2064,
+      "error": null
+    },
+    {
+      "page": 3294,
+      "sha256": "654cb8a98a0ce5382c4f35d255fc234d6b2307958e80cd58e9f35192ac4601aa",
+      "jsonl_line_sha256": "5fd487484fa6eff2b5555debf81a3f0f842250af1b2c4cf8367475880d63067c",
+      "characters": 2369,
+      "error": null
+    },
+    {
+      "page": 3295,
+      "sha256": "6ff90494d2bb4caa30e7fca91ce4cfb33d1e6fae58a77a6ff98949b8cb9a6c44",
+      "jsonl_line_sha256": "00e214ccd959e191547c91f32dc99a2130116bfcf2055108e4b5649787a5038a",
+      "characters": 846,
+      "error": null
+    },
+    {
+      "page": 3296,
+      "sha256": "9f7cc8f23e9fed472b64ffc520b80cffc27875a9a8cc3aaa48e545b39b091032",
+      "jsonl_line_sha256": "666349bf0a10a6e145d615d2d59b958a1fa0f96c2e3b8622e76ba4f215f8db24",
+      "characters": 1179,
+      "error": null
+    },
+    {
+      "page": 3297,
+      "sha256": "3396f1770cb56712d2df910d3821ac33ac682938548f39cc6aa9e93ec99535f6",
+      "jsonl_line_sha256": "08c6963214b02242ee1551a2b5ffd1b756de9c3dc94b33da03e008ecca01af1a",
+      "characters": 2459,
+      "error": null
+    },
+    {
+      "page": 3298,
+      "sha256": "a811a253263dbe88d042a7838a6ffd79471399acc7d44daa898296cc1b9405bf",
+      "jsonl_line_sha256": "cca31f8aace9a886d310b10bac414ee2957d2808077da7bb787fa126638543b3",
+      "characters": 2223,
+      "error": null
+    },
+    {
+      "page": 3299,
+      "sha256": "5a12fbe6951be9954daf179519ffe2951f58fe5bcf3eee6d89e288ee38bb33bf",
+      "jsonl_line_sha256": "4ec1214efead1341248938f50ae591af382753732d1a18a1458f5d01943b4e4a",
+      "characters": 1929,
+      "error": null
+    },
+    {
+      "page": 3300,
+      "sha256": "cd38a9de46e3c1f29c9135a63623ce7a026d1a465a8b8a38c7134db1c9c52570",
+      "jsonl_line_sha256": "cf76dbd3464df832c4ab7ea6c17f42042432f9138e5ba80fadfbb9c2078c48d0",
+      "characters": 561,
+      "error": null
+    },
+    {
+      "page": 3301,
+      "sha256": "16774f0bef635f635b82d35a0646fe87cd2d142ebbe5184625b9ba5044bf3382",
+      "jsonl_line_sha256": "4013ebcfa89470882d2795d93c29423e0705adcfac8f46fccc3a7cc8f45cbdf6",
+      "characters": 662,
+      "error": null
+    },
+    {
+      "page": 3302,
+      "sha256": "b4a5e168aa2e8771a055690a1fc9b14180b3b183b3907736d96c2d13a678f495",
+      "jsonl_line_sha256": "90511a5440fd63501884202e920c493bed39b270c283e7a29003a73dcb9f7a43",
+      "characters": 2357,
+      "error": null
+    },
+    {
+      "page": 3303,
+      "sha256": "2f955045da006eb92983cac4dc252baa4bbffb47e93f4a7bb9a63c7cbbbaf197",
+      "jsonl_line_sha256": "ef8350b987f92956291553d6548d98d85ee4943e4248f0738dce07543cb70481",
+      "characters": 2170,
+      "error": null
+    },
+    {
+      "page": 3304,
+      "sha256": "9a09618f31255a9f4e4be9e26c69c8d872e1818ccf0ae8fc22d8d38dba38ae3e",
+      "jsonl_line_sha256": "f8b9f0d1dffdc62d783c198797de1c384730a09ea47e6954ef5ea3b01c56e638",
+      "characters": 2690,
+      "error": null
+    },
+    {
+      "page": 3305,
+      "sha256": "9e39ad7d01b91f6e74ae08d1aa1a99bdb45aff30d608e827dcfe4d9628f109a7",
+      "jsonl_line_sha256": "407808521ab29504bc6c9c98bf1eff7e99e85b4dd89d44c887e3ff20fe8bce72",
+      "characters": 3150,
+      "error": null
+    },
+    {
+      "page": 3306,
+      "sha256": "548d8eff7e80ff85fae1aa43bb613000903eac3bca6e47622588509703e9642e",
+      "jsonl_line_sha256": "24e202b1be7fc4a4942126806339f673697b80cc0d4988b1fd62b579df79d1d7",
+      "characters": 1324,
+      "error": null
+    },
+    {
+      "page": 3307,
+      "sha256": "e01a8db631872c20f1a8146286e6c087184b8f4bb31094f948085909d38b376f",
+      "jsonl_line_sha256": "5edd27ad183120699e09b5d6d530a2428f656a6f1aca83b263465156089acb63",
+      "characters": 1592,
+      "error": null
+    },
+    {
+      "page": 3308,
+      "sha256": "2849c19f69ad9f6ce4a92a9cba4a41e9d20a2a578e47e05195a905bc8ef4b625",
+      "jsonl_line_sha256": "076aabe223c1eb80e37317a8661188666fef967560cbe530725f87912bb213eb",
+      "characters": 1575,
+      "error": null
+    },
+    {
+      "page": 3309,
+      "sha256": "08d27768fcbeabe0f0a747b1e46761778b16615180581426999031688692eebe",
+      "jsonl_line_sha256": "efcd7550ecfcc53cbc05fd05677e56f8bbf44b6b04679c5daf8aba7494185613",
+      "characters": 971,
+      "error": null
+    },
+    {
+      "page": 3310,
+      "sha256": "9c5faea2b276874dd1ac7b1245fe5f8fc97feb7718b3df75aa0c249c86143c0d",
+      "jsonl_line_sha256": "7aeb9b1254f55cd35cfa4f0e4034a21b36fc1254bacb86f2cad3f74a68792200",
+      "characters": 1328,
+      "error": null
+    },
+    {
+      "page": 3311,
+      "sha256": "fe37b7ff657c0e1c7b5b994cc14ce9470aae10ac0bdb7739525d7663b0d89fba",
+      "jsonl_line_sha256": "2d4ba15f8a0d1bf71a41a7a4dc1f544138ba46d3e554dd405f9618e368ce9595",
+      "characters": 1887,
+      "error": null
+    },
+    {
+      "page": 3312,
+      "sha256": "21757ec9ab1d9f0e1d74d33ddcb1b06d21825a06e0ac4bf41539f022748e1c09",
+      "jsonl_line_sha256": "191e19a211c6376ec144372b167b556c0133a65ad7c8f18c5093cf210e0a4bdd",
+      "characters": 1231,
+      "error": null
+    },
+    {
+      "page": 3313,
+      "sha256": "c8c3c918d9373548c6335d556b834bc5f46d9e59d024c984530acee6f29c3698",
+      "jsonl_line_sha256": "552e365dd227bc84b2d93fb71a16257eebde29ee18915da4477470b6d2ba4833",
+      "characters": 1482,
+      "error": null
+    },
+    {
+      "page": 3314,
+      "sha256": "5744748c92b12107a503e074acfdd682ca52a2be2734a7c0ca4224ce2afef93c",
+      "jsonl_line_sha256": "4b1e3a15b3f35f73862b52c85bd1f9e932135ff49f61d45afdcd4df2d925a58e",
+      "characters": 1468,
+      "error": null
+    },
+    {
+      "page": 3315,
+      "sha256": "58aed062b9730c2292ea2c69e855d6a58c9e3113b390b5b544da32870904f95b",
+      "jsonl_line_sha256": "d8d4b82ef6315b1424a1913aaf615bc5a1c4cb69758939ba4977f2dbd6d340d9",
+      "characters": 1467,
+      "error": null
+    },
+    {
+      "page": 3316,
+      "sha256": "1bb4b4d9963cc045009d083c8b57167e5a08de7813883027e7321dcf14376921",
+      "jsonl_line_sha256": "14d753a46fa55b4a88149cdf09e147cc283d691765746d5d81edada921e28969",
+      "characters": 1477,
+      "error": null
+    },
+    {
+      "page": 3317,
+      "sha256": "4d98225cee7cbaac2999d0322130a86b0bb75354f5b0c494c051f6861bbddd64",
+      "jsonl_line_sha256": "3f3a0395863b9121e8034e33c7e5ec3db332ce3d9d2f8194311dbbf9aaadd782",
+      "characters": 1499,
+      "error": null
+    },
+    {
+      "page": 3318,
+      "sha256": "da5a484762d257a1650a1c4b40c78ad89e08fc17006789196e73bba62ab65587",
+      "jsonl_line_sha256": "0f36af4f6e54ce986fc2a52407131a829bda4289063b2c69a11210bf3cf3b99c",
+      "characters": 2959,
+      "error": null
+    },
+    {
+      "page": 3319,
+      "sha256": "f1bc3fe65a1977004c0f25904a5a05aa9f465bfeb56c3acdf5e44bd48ec3b18b",
+      "jsonl_line_sha256": "64e71ba588b882824455c323ddb9ad4d14ebbca1f01924c26b176ce1b2778295",
+      "characters": 669,
+      "error": null
+    },
+    {
+      "page": 3320,
+      "sha256": "60566621450fcbb6909be2a0b37a9f975f0a2547a6c55bbddd383a4430beaf38",
+      "jsonl_line_sha256": "52449c043498aec9b830131667fd8df82cc9bd46f8d54c0900c756c5b6bd7a43",
+      "characters": 1064,
+      "error": null
+    },
+    {
+      "page": 3321,
+      "sha256": "85a61949bbb3e4d701104b3d04588129ecde976c2d0b6e45e9a27680997fbab5",
+      "jsonl_line_sha256": "a0a17984091eb0f6078d5c61b82e1ab7ba018f4e4dc9efc54b63ff1cca244323",
+      "characters": 915,
+      "error": null
+    },
+    {
+      "page": 3322,
+      "sha256": "333aaf874ea3bb92ae3e95838136684a0cb75a99f1f26b720e65a5b48894d40c",
+      "jsonl_line_sha256": "54c075246186ea286583a31f4cecf098ad306c2ef4fbb7fdb721224997b33990",
+      "characters": 809,
+      "error": null
+    },
+    {
+      "page": 3323,
+      "sha256": "adc2182b8eea6a2159b2e9cea63ffa5210771348d38d761d96bc38b3c62d3c8d",
+      "jsonl_line_sha256": "2bc52a65d40518d6125ced4b27e2413df6f43f12f60703b546eb1ea720440508",
+      "characters": 878,
+      "error": null
+    },
+    {
+      "page": 3324,
+      "sha256": "493dd846f885885045ab32c54bc6a17107e03699db2fd76fe252bcf2fc6bd91b",
+      "jsonl_line_sha256": "c48e6b44194c6c8e7ab4ef25d549604827d3dadba1bf7958ddf27f3368213158",
+      "characters": 698,
+      "error": null
+    },
+    {
+      "page": 3325,
+      "sha256": "ccd9dbfc41ca426267715f3e492de0a32035381921ad56be11f795ce464374d6",
+      "jsonl_line_sha256": "8da9cac9434d945329626e3a07fbfeac38babfe4c86c17f0571479fe932d5197",
+      "characters": 1349,
+      "error": null
+    },
+    {
+      "page": 3326,
+      "sha256": "1809ff1a01a8e1984c1cc696c53bb3086541cbca1ea9332b0b9ad6b6001e582e",
+      "jsonl_line_sha256": "8cf6f55363e036dcbaa49107ef915c93f65a79be9f47f6c0a3f778fc4fa38d64",
+      "characters": 895,
+      "error": null
+    },
+    {
+      "page": 3327,
+      "sha256": "fa493a522b80640a89cd222c9b7222eff4bebcf989790b946b191e22298128e1",
+      "jsonl_line_sha256": "f6e12449dc3d2ca0c4e013e49c7c2a9fd7c077e97148dae095f962b6cfae827f",
+      "characters": 2018,
+      "error": null
+    },
+    {
+      "page": 3328,
+      "sha256": "263fba82e8254cdb5bf1ad2196d1b76138737719c5bbcb3d93d3d435c24ef950",
+      "jsonl_line_sha256": "01adb5b24c256f44c63e6b5dd0e30eb6d386071b079f8f815654bfc84f47e634",
+      "characters": 2131,
+      "error": null
+    },
+    {
+      "page": 3329,
+      "sha256": "9032dd3197ff863411921bd8cbc30cf319645515acd8fe0ce03a5f07c5607f5f",
+      "jsonl_line_sha256": "bac1e305668f5ae41c34d90e7e604fe65bfc6c778fe31858c92e415ecaa5fa86",
+      "characters": 3366,
+      "error": null
+    },
+    {
+      "page": 3330,
+      "sha256": "09a0ddc1d5e38fdbfd0de90886cf881ba6d92a09eeca24a70beae83c67e22a0a",
+      "jsonl_line_sha256": "0f85445a21a49e418c2e312fb2faad1afb9766da687f263e0b3f3b7de2d47669",
+      "characters": 3270,
+      "error": null
+    },
+    {
+      "page": 3331,
+      "sha256": "d83aa0b6234150df0161dc491a70ac84895206d99c833f8750044f5d8d16d016",
+      "jsonl_line_sha256": "0cdbcc9dc9c5911e240a08ed3c87eadbdb5e9d2cc64ff777f6104e243cafacc1",
+      "characters": 3153,
+      "error": null
+    },
+    {
+      "page": 3332,
+      "sha256": "a973523102ff7bd1d7cb100d38777182f494da471e8cd41a089d7648d3c547fb",
+      "jsonl_line_sha256": "15ee8b503ed3ceb9c90d6dd8acb8e96e5f4c52f52ce14b2ee7cb8b420e910b9e",
+      "characters": 3166,
+      "error": null
+    },
+    {
+      "page": 3333,
+      "sha256": "7e4c7c2e92537b11b1134a19b2a7f21ffcd2c119ea32a45e633c5a2c9b499424",
+      "jsonl_line_sha256": "b40b26f51b8b2477d1832fbbe00783040b2cdf44c3d76891f9ad1ae479616290",
+      "characters": 715,
+      "error": null
+    },
+    {
+      "page": 3334,
+      "sha256": "bb0cf0079d782094cb5b7a60257ed664e470746a923477aae6bf2316c8c4f16a",
+      "jsonl_line_sha256": "cd96a28b8efabcb2b0187dbd6c637ae5664e18e79c177a4e82e351700b561b82",
+      "characters": 810,
+      "error": null
+    },
+    {
+      "page": 3335,
+      "sha256": "caa767e49c783375851e5954da26cf1ab589b942243807d8cd6eae3c6592bcc7",
+      "jsonl_line_sha256": "e297f56b8180b9ed8b5ebad95733831b48320f1f5a7116326f6d47359917394c",
+      "characters": 674,
+      "error": null
+    },
+    {
+      "page": 3336,
+      "sha256": "c1b5c8c9b68414eb6842b54788a79bcad333f1ac88c60c60a2f8ef8a70beeab7",
+      "jsonl_line_sha256": "3604e2e116ace8c1f415475fbac8ef0ab8df8b613fc5de38ff59adebecc6b03a",
+      "characters": 1770,
+      "error": null
+    },
+    {
+      "page": 3337,
+      "sha256": "81efabe9c36359f20545df9bee34e414e512815b9e5cd5c2bf15d07d12820975",
+      "jsonl_line_sha256": "924c374fdd820f841752b50838c90908d316fdcad4c042e8ac65b02a74ba1d89",
+      "characters": 1558,
+      "error": null
+    },
+    {
+      "page": 3338,
+      "sha256": "d70aef9b25a6a16de923259b5c56e69023ecc7462724e51710f2449dd5b336b8",
+      "jsonl_line_sha256": "e0efd478562ba199cef35b5503aed35eaf90e7e56125fb62a5399282d69b0795",
+      "characters": 845,
+      "error": null
+    },
+    {
+      "page": 3339,
+      "sha256": "63655a316b679d5e83f26180901c529a1e24240646853f329469c421a5c15df1",
+      "jsonl_line_sha256": "e58f6af35738ef64c6d40812d1e11bc6749f26f392b27a8c1e44d97400efcec2",
+      "characters": 867,
+      "error": null
+    },
+    {
+      "page": 3340,
+      "sha256": "dd98b40b97a6f4fe63355b33882ada9e952ddcf0e0fb84f5feeb2f348f5abd98",
+      "jsonl_line_sha256": "81b91acf57b5f6ac0921e8bda0329f22810dd075cff87f6b38135e5fa66d6c80",
+      "characters": 990,
+      "error": null
+    },
+    {
+      "page": 3341,
+      "sha256": "329ddc551258bb951a18ef3f080a06e99b93145f5358d0c94f664af1f583c846",
+      "jsonl_line_sha256": "93d427284eb7ae3e6eede9efe1f2f0762e775a47b0a789c915008b2df5947ce3",
+      "characters": 1200,
+      "error": null
+    },
+    {
+      "page": 3342,
+      "sha256": "db729d1cd69149becf469b0e9732d73c0418e04c58722f51174b9c872d058e45",
+      "jsonl_line_sha256": "272437197ede1e00d0cb1a9e51a0c62da42899b8d1949019d6c1bc97d2e2bd6b",
+      "characters": 2700,
+      "error": null
+    },
+    {
+      "page": 3343,
+      "sha256": "b92797d1519e003b35c616deb42c52a5488c347c9131b582669d670b28afd9a7",
+      "jsonl_line_sha256": "0c457e6e79846d21279b5926f06af65f5f947cea329b691acefc51c255000e38",
+      "characters": 1294,
+      "error": null
+    },
+    {
+      "page": 3344,
+      "sha256": "c3cf61de41adea77db273d3f66f2cea4786d15a5fe1b23ee132811e105ccbf3b",
+      "jsonl_line_sha256": "968a3b820e1903fc91ff7d484aaf7f0e024a325a9ce01a2e4b71468f300faf8e",
+      "characters": 823,
+      "error": null
+    },
+    {
+      "page": 3345,
+      "sha256": "5bd5c24c8ae7d6cfbcc4e307b7475b7185ab8de1ca93b7b9bc06dac42bdb95a1",
+      "jsonl_line_sha256": "e925f9cb310a5d523289c33a1786f751381c9c0766933f486b201e920d24c2b8",
+      "characters": 1028,
+      "error": null
+    },
+    {
+      "page": 3346,
+      "sha256": "4f9a6cbc5c82d3f3f621f366a904424cf707341f69f28ef50c2ddc3439d7c5eb",
+      "jsonl_line_sha256": "dc13cfbec2c468719db20b301721cc43ca3ce8b3c2453a1c36008d62b3c40cc1",
+      "characters": 617,
+      "error": null
+    },
+    {
+      "page": 3347,
+      "sha256": "d810e3b5ded0ef15d2d14f2f9925a941728f044bb0c8eea227001500c8169e53",
+      "jsonl_line_sha256": "8e9bff1dc9db45c8752f60e40c85ecfed96d5efbe98aa1d7c7daf06217308e3a",
+      "characters": 3031,
+      "error": null
+    },
+    {
+      "page": 3348,
+      "sha256": "d8988a1f3b92ba4399a21b3830711b4772e674effe40cba0875e42f55b3b8132",
+      "jsonl_line_sha256": "2ad90c85d10aa4158b62e3189ec82d538ad15e5755843d802bc89984ad6e6097",
+      "characters": 3031,
+      "error": null
+    },
+    {
+      "page": 3349,
+      "sha256": "957bc079987e25733eafcaf3e411992bf42107e8535dbc6232c6a9a031a920ca",
+      "jsonl_line_sha256": "d31ca773bf584122f4e22af4a7efe7bd7ce09c9256dd77aec937b99659bbee01",
+      "characters": 2028,
+      "error": null
+    },
+    {
+      "page": 3350,
+      "sha256": "90f987866c034e223a0e1420e1533598e1091705c63abc0244dda7750f330b72",
+      "jsonl_line_sha256": "d406fc7610f526e1e1f8493f1c91e48c87dcd67457d0234aeb22f00f81d70b1f",
+      "characters": 1288,
+      "error": null
+    },
+    {
+      "page": 3351,
+      "sha256": "2b8aa44ef30be285ed48a22adbf71dc58269959e1d15dd18bf104e83ac63e1ed",
+      "jsonl_line_sha256": "1d9f39d3e8e44e2b9810f7e9c4afb257704b01e6d608e1ca2e3e8bf62a07ea06",
+      "characters": 3209,
+      "error": null
+    },
+    {
+      "page": 3352,
+      "sha256": "ab8d2fa6fef4710426ce9e02971f8b5b9db57b769e8699e3716a88c8c257f793",
+      "jsonl_line_sha256": "fbc148f47e9e661750ebac6589cc4dc9eda8ebfdbc0e09989db3c87290099178",
+      "characters": 162,
+      "error": null
+    },
+    {
+      "page": 3353,
+      "sha256": "bc0693250a2b111b5a4b9f44aee3592696958a8f49266b4dba78fe199889ac5d",
+      "jsonl_line_sha256": "3e57ac933dc3047c81b24bba481f2732bfe5f8e61aa9da079efc5eb6a481baa8",
+      "characters": 2283,
+      "error": null
+    },
+    {
+      "page": 3354,
+      "sha256": "26bcc37e3c34a7a790af6ceee3f9b925a2c70d4784ee9f0c3b2924ac8046e728",
+      "jsonl_line_sha256": "6fdbf72fca4328bb2cba1e6208e833c2466f66e2627adffcabdccf27e1d23482",
+      "characters": 1173,
+      "error": null
+    },
+    {
+      "page": 3355,
+      "sha256": "52b29158525ec1b28f2e4431d7ca95ec098c488747e6a623fb2dbf3cf9822e4f",
+      "jsonl_line_sha256": "7d4cb6f6902166c2e87b685fe552f9f1222fba870ac3778b9f8d6c3f6326be50",
+      "characters": 2143,
+      "error": null
+    },
+    {
+      "page": 3356,
+      "sha256": "77ea04f87e294082a6425d6cab06709dc661f09201d2355f515c615d50a8654c",
+      "jsonl_line_sha256": "f9543585e54219b1e58b4faa3845a968e35e0f8bc698991c5bcf7535a5b06928",
+      "characters": 1826,
+      "error": null
+    },
+    {
+      "page": 3357,
+      "sha256": "c35ab37571471089e38eaec2dbcfc4b2ce15cbcc0313a9c78ceee65ba272c7f2",
+      "jsonl_line_sha256": "88a9b08b11e4bb811180aef9d158e9f82114c3363b5968531f268967699724e7",
+      "characters": 424,
+      "error": null
+    },
+    {
+      "page": 3358,
+      "sha256": "4715140003a37437d8ddcfb0f127919465f8d05c2638d37d2dc930203939b560",
+      "jsonl_line_sha256": "7d96aa35a2585f9366576a7305c05fd38e0b2f8aa5e6417f4d65cca33bd705b2",
+      "characters": 985,
+      "error": null
+    },
+    {
+      "page": 3359,
+      "sha256": "d7fbf71a83f63da2b1470e334bf0d1ed9d820082b1a033ef82cc31726f3f1982",
+      "jsonl_line_sha256": "7699eb064c5f6475d911586dfd030a2d32f3bd17e401ddd007fcf6d75c8e23ea",
+      "characters": 1909,
+      "error": null
+    },
+    {
+      "page": 3360,
+      "sha256": "901df60127e8b4408352e6c03c71e140223b111721f5f9312c3439a27e69e8f1",
+      "jsonl_line_sha256": "79c5513a3a4230a59f7c3f2ef85f1f2d97140754fee2428d44a303f66359fa09",
+      "characters": 1965,
+      "error": null
+    },
+    {
+      "page": 3361,
+      "sha256": "832cb768b2d492472b6851baf1c37fa2cfc6830afd44decd8c7ca1cec233b7d1",
+      "jsonl_line_sha256": "9916316f8b091ede6ae444b26f62e55b4e2b6f54d44ae92e808e2baca131e655",
+      "characters": 2318,
+      "error": null
+    },
+    {
+      "page": 3362,
+      "sha256": "dad7dd086fa714e231172c7992577c9ba3cce9f3c12efae658c88c8af115cfa0",
+      "jsonl_line_sha256": "baa4ae7cd6c95a5b62f4625b0be56465ee1625de8b50815979817cac3f322b85",
+      "characters": 232,
+      "error": null
+    },
+    {
+      "page": 3363,
+      "sha256": "be045943efb8ca5e69fda7a5ced47efa1674ba58854c1214467412fed4dc811e",
+      "jsonl_line_sha256": "c5f435d7b75f292ca6e65eef9ffc31c33ec50cdcecf2326c12881e03bdb3d685",
+      "characters": 2100,
+      "error": null
+    },
+    {
+      "page": 3364,
+      "sha256": "c7459066746ca655a161efa7d08f5e3152ce5d79af7f77904a0d7e016a17412d",
+      "jsonl_line_sha256": "846b3b26116a57aad7795bebe7228371f8eebc22622331c423c42933e52f9d46",
+      "characters": 1850,
+      "error": null
+    },
+    {
+      "page": 3365,
+      "sha256": "c577183b1ca09ddd9c399b99bcfba7bf9d61de8b4a5c81841aeee5dbfc82ef7d",
+      "jsonl_line_sha256": "e03c86259fd18ad6a9de90f38b8a45b3afca36590b9bc72120c64a873e748d86",
+      "characters": 1105,
+      "error": null
+    },
+    {
+      "page": 3366,
+      "sha256": "7b573eee1d0efb755c0007cedfb836c5d7b235de5a9c3b815db9a4448f17b942",
+      "jsonl_line_sha256": "93a59e87465be6f234335565596a9e69a962a9289c0bfc902964d43e9c0d9911",
+      "characters": 2078,
+      "error": null
+    },
+    {
+      "page": 3367,
+      "sha256": "9dbe3e266ae6dec3c16b2b495c994813d801032f7a8338c9a9218b2b98a07035",
+      "jsonl_line_sha256": "88ffe5fa50ea00654e2ca209f1564ad7ff41a00c827c815a5a90a6aed20730b5",
+      "characters": 2189,
+      "error": null
+    },
+    {
+      "page": 3368,
+      "sha256": "65523184daf5fa1c5d85ac1ddd5f2292bd32515a7919ef236e8fc4fd6c8b4b50",
+      "jsonl_line_sha256": "cfedf58d6715ee068ea99d6d1a47b885d6b412ea3dc069f51e7567349a7b6fc7",
+      "characters": 406,
+      "error": null
+    },
+    {
+      "page": 3369,
+      "sha256": "43acea0b2b66de41bd30a9db6468d3bc14e8cc718c8a26c29e6e1781b41ec861",
+      "jsonl_line_sha256": "16d0cf34207b719ed49cf6e0d7e1b0855720f6c0313dfa89b23401a90c6b60ee",
+      "characters": 1230,
+      "error": null
+    },
+    {
+      "page": 3370,
+      "sha256": "39c523248cfe7eab9a4f08c72adf4a595dd363911ac5cde45ae5702e64888945",
+      "jsonl_line_sha256": "3d913586da03c00f2bc35b2adf2aaa632f4ff4055e2dc574c62e51845047d568",
+      "characters": 2260,
+      "error": null
+    },
+    {
+      "page": 3371,
+      "sha256": "365aa8c9db111bf2ce6582b0f1bf855bbda8e7b9ad6321ee4efe3c4f9f57f912",
+      "jsonl_line_sha256": "1767440d62b959ae6deb42cfc1dc3298531a7669d743d336bb59792a3c4bf859",
+      "characters": 2028,
+      "error": null
+    },
+    {
+      "page": 3372,
+      "sha256": "eeccbd18bb01aa608b1d844cc2f35444dba388e0e2ae6cc8a70440076f445806",
+      "jsonl_line_sha256": "bb56226148b8e7d5d0ca8ecc4ffbce0e9a0fa06511cb6a190cc52cd558682466",
+      "characters": 711,
+      "error": null
+    },
+    {
+      "page": 3373,
+      "sha256": "b9dde134e60d3ed28187702a2d44d92708d2debcc5732108ed3ef5dfbefd6edc",
+      "jsonl_line_sha256": "46b9942a3c5efb0abf8019ca810f632060d1af26f5b937ccadd6c7d70879ea18",
+      "characters": 1943,
+      "error": null
+    },
+    {
+      "page": 3374,
+      "sha256": "0751921ebbddbc73edc68fe62a9e72133c003cb467dac7eea13a3376b34eb1fd",
+      "jsonl_line_sha256": "abe40b6332fb3b1045af73cf529988a8e37f12a8dade9b3df1b6a6ee72a2948f",
+      "characters": 1408,
+      "error": null
+    },
+    {
+      "page": 3375,
+      "sha256": "64fac137deccefaf0cb3b24300efe282eb7e4b315d08c6812abea5bd020635f0",
+      "jsonl_line_sha256": "1342433bc68392b25f3c14ef8855da2eb93a18132e886c7d974069a21da22507",
+      "characters": 1632,
+      "error": null
+    },
+    {
+      "page": 3376,
+      "sha256": "d8c6994f875148a57f3c895bd2c99c0a07dbcf989f298e06212f0c4e3b7ca663",
+      "jsonl_line_sha256": "23242a5f488f900df5d886cc606b479baadded8beb9fade16074b312bb33e8f2",
+      "characters": 401,
+      "error": null
+    },
+    {
+      "page": 3377,
+      "sha256": "4ad412da275353abbce1344b581a81e568e777959e61735c4dfaf71d3e9c5d5c",
+      "jsonl_line_sha256": "f3bd823b65221e0644aa2078686eff59cbc0bd9d3910f554b3154f0eb7a6d109",
+      "characters": 1757,
+      "error": null
+    },
+    {
+      "page": 3378,
+      "sha256": "9f609a406755159885ebaf2ea2b11e96d1a5198cc4ecd2b5a9c0650585046889",
+      "jsonl_line_sha256": "b13ed34e5ffd4f9ea22c6f94439fa201579ef6ca16d55e874861829330611973",
+      "characters": 608,
+      "error": null
+    },
+    {
+      "page": 3379,
+      "sha256": "7057783c979942e096eee6ce7532f3f0493f84997a64222d65b8386461cf63de",
+      "jsonl_line_sha256": "db95111e2603a3c2416f89e571c59e3402f900730b94beb5e216cb8b2b91b28a",
+      "characters": 2038,
+      "error": null
+    },
+    {
+      "page": 3380,
+      "sha256": "b967739e9c9b42afe487a32bf1f33671bf9af8e3c2812aaea7cff0a02d11c014",
+      "jsonl_line_sha256": "1a1b6507c632352422433d63cdbefe8ea19cd099d23cd9e2b5e6bc1bc38af3ad",
+      "characters": 1604,
+      "error": null
+    },
+    {
+      "page": 3381,
+      "sha256": "cbdcfbc071719e57be20ac208b45f4171dcb22a91baf318937cf18e19451c6f0",
+      "jsonl_line_sha256": "76dfcf68870e46d4a27d7209e751e76d7029cb808595741aacf4d29b5192d66f",
+      "characters": 1623,
+      "error": null
+    },
+    {
+      "page": 3382,
+      "sha256": "1347f1ebd842badc714f195ce18f5552359659203616c207033abceef7bfdc8d",
+      "jsonl_line_sha256": "5490440c1c03abc54e360dac294be6ee12e0aa140f8017ce102c97c591c4e6a2",
+      "characters": 1419,
+      "error": null
+    },
+    {
+      "page": 3383,
+      "sha256": "d544f3308bb27de02beb25391b2795a6ee9d9f44ef76f332ee6cc3236eb7a04d",
+      "jsonl_line_sha256": "6f2e8470a163eae001cc6d38cf0e1a0b413df6045106d7c784e34b8975d87887",
+      "characters": 630,
+      "error": null
+    },
+    {
+      "page": 3384,
+      "sha256": "aa44c755f4bcd647767082b6644234df690c22ca283110abfc281a795ed65f1a",
+      "jsonl_line_sha256": "8ef83c2260817fdb422fb3366ac5f05b6ca139107b0e4704132168911dc5a660",
+      "characters": 1979,
+      "error": null
+    },
+    {
+      "page": 3385,
+      "sha256": "762bfcd607069929d197c75e31da1bed2b384eb4eb5903095032108daae5d62e",
+      "jsonl_line_sha256": "a42f66dce894fc4fea9c6cab231da7a7f18a597e9f91b4a6a02ef2883df55735",
+      "characters": 3152,
+      "error": null
+    },
+    {
+      "page": 3386,
+      "sha256": "af42de268708d29e4c6ba31c618239454b1de9ebbb1fb831ce033e455e92f615",
+      "jsonl_line_sha256": "523235dffafd69724a7ed479451467dea2e2788c2597b4e391d642cf53406da9",
+      "characters": 1938,
+      "error": null
+    },
+    {
+      "page": 3387,
+      "sha256": "8ff612556721491655473083f3c8ce6d9ec8381d66eb4360cd8446e07e96bdbc",
+      "jsonl_line_sha256": "c0dce5d78bd1a27ee41579dc2e8876b0ca002d03eb4f2031d934da6af6199dcc",
+      "characters": 655,
+      "error": null
+    },
+    {
+      "page": 3388,
+      "sha256": "2d606b48d262bd96430c932bd566d851def8d78c02ed5787c08fdd90b2ec1b9e",
+      "jsonl_line_sha256": "5ea093e48f211beddcffea8392efa8bce0fccc33de59b49e71c80ad00b025f0e",
+      "characters": 2289,
+      "error": null
+    },
+    {
+      "page": 3389,
+      "sha256": "2975deaf434bfd1adf799069b2cf2c5b702d7264efadb038c1c89502d0027cb8",
+      "jsonl_line_sha256": "c8a0912d45a869dd069285186c3b7954cc941b78ad920946d651da41bd795e3d",
+      "characters": 2069,
+      "error": null
+    },
+    {
+      "page": 3390,
+      "sha256": "5ba31b741ab658ed3bf08bb937febf179f0aad5df21d6c5a03e9df030bc5af8f",
+      "jsonl_line_sha256": "ddad822e6d98997ef0c1687630c36807af77b18e7f2b9274ee17479c8eaf0336",
+      "characters": 2277,
+      "error": null
+    },
+    {
+      "page": 3391,
+      "sha256": "9f5bb8ca6968b6ef6c67fa52d36a1ad113c1d99f6b0fef3bf403a5febf02f8a3",
+      "jsonl_line_sha256": "b66799bfa82fff976453a4e3a8234f319a933f5ee311b6e86cccca835998c971",
+      "characters": 1163,
+      "error": null
+    },
+    {
+      "page": 3392,
+      "sha256": "95d2c727add98af1898431fca1aacee558b859fe1f5f0de76165b5e725b9d317",
+      "jsonl_line_sha256": "d19d901e6b5f98961d4a2970e9c7c32b527f52e61e02d7d7bfd9ad27eaebfd29",
+      "characters": 2093,
+      "error": null
+    },
+    {
+      "page": 3393,
+      "sha256": "88fb50ea2f1a56c6f246fe5dd803c6c54714cf724875ff6d8c7dd7599a564555",
+      "jsonl_line_sha256": "fdbaebdd4eafa358d4c6ed2083ff87bea86781aae20250a543b21749318c3af6",
+      "characters": 2566,
+      "error": null
+    },
+    {
+      "page": 3394,
+      "sha256": "d439f0828454bc47bb1449fbbbdd61b78f0b0d31352f4bc500f08d6083bfc35f",
+      "jsonl_line_sha256": "430a80604ee764a8a28bbc1202756b4b44fee96b93a82dc886c3d5b109cd7004",
+      "characters": 505,
+      "error": null
+    },
+    {
+      "page": 3395,
+      "sha256": "6b289ea672bd6020f9747f598ddaa334b4d874f929c9393007c95cbafe32c8e0",
+      "jsonl_line_sha256": "fcc5355b24e23780717c6ce0d860e7661cb35a4815c47a913aedcc8fd084ca1a",
+      "characters": 2321,
+      "error": null
+    },
+    {
+      "page": 3396,
+      "sha256": "388c5589ad9fd7a852aadd7dafa42638b067b0a2ddf383ff123148885d6bd82a",
+      "jsonl_line_sha256": "cea13777a59f8768daea05bfd3b543f90346513e69486a60d0ea73cdebc8b508",
+      "characters": 2504,
+      "error": null
+    },
+    {
+      "page": 3397,
+      "sha256": "bb646240e547ec9b86a1ac70c058e69ca8457743db108294ff6653dd2d0b9176",
+      "jsonl_line_sha256": "4eb054c5946af122aa594b582175b5ed219b303da7686756ce94f176db803e74",
+      "characters": 1547,
+      "error": null
+    },
+    {
+      "page": 3398,
+      "sha256": "884e28424bcb23febd545c4719d98f19e54ce6edb487148883305c4e47f06f55",
+      "jsonl_line_sha256": "837f619717a12200ea926ebea5a1be59510b24e8750dad8bfd4f5822b3e515a9",
+      "characters": 2533,
+      "error": null
+    },
+    {
+      "page": 3399,
+      "sha256": "7c044882716d6524539d0fe058c8f025c25db704aefb4cae7fe6172c109a5efa",
+      "jsonl_line_sha256": "f5391fc441b2d9cf617c776c1208b99db8bd7d8a1ed1531bffce059f08b72e50",
+      "characters": 2304,
+      "error": null
+    },
+    {
+      "page": 3400,
+      "sha256": "e503a4df382fa196374d322a17d7e4e514096ef89b250d39818c864214961244",
+      "jsonl_line_sha256": "db059511638cbdf973d29240ddba423fd17f7e744e7921e1956b4c016241a3f5",
+      "characters": 2645,
+      "error": null
+    },
+    {
+      "page": 3401,
+      "sha256": "0af132b4b8f8570810bf582e32d96e0ee2811d50bea1706e93e29f1c2a6b8ba4",
+      "jsonl_line_sha256": "6b34cb41f18a2b020a1b67b3613d5a1eb6023e32717902f459ab25390a888ecb",
+      "characters": 2492,
+      "error": null
+    },
+    {
+      "page": 3402,
+      "sha256": "233eecc41f4f79278f2f8d27db270c9724899a90cfb6f40b807993487a41033d",
+      "jsonl_line_sha256": "b983ce0955f49205b20fe9c729c1f92d2ea855524e120ab850caf4159cccfcb2",
+      "characters": 2481,
+      "error": null
+    },
+    {
+      "page": 3403,
+      "sha256": "eb3e36e034efb6d807f451d65fcb3818969a63bdc0b4348c29ba0c3639760189",
+      "jsonl_line_sha256": "3d20f678e5c74a733b6497811cfccbde7ba1a02a34ab963eb2617ccfcce7f513",
+      "characters": 1461,
+      "error": null
+    },
+    {
+      "page": 3404,
+      "sha256": "d3f7d880482bd20711af266283556ae7948861c43f0f93657c13e18822c0d8e5",
+      "jsonl_line_sha256": "62cce47135a6029813e1f1f6192fa50533d88c9408fb93b520b2b82a88350599",
+      "characters": 1041,
+      "error": null
+    },
+    {
+      "page": 3405,
+      "sha256": "54782f0fd57f0058b80f68375034cffb336d84186ed0aa1ec6cee2087ff8be5e",
+      "jsonl_line_sha256": "a278798d005aeb217598321271bf3fd54ad1bce5404af6d8e1be97cea97b27a9",
+      "characters": 2298,
+      "error": null
+    },
+    {
+      "page": 3406,
+      "sha256": "374631fdfe299a2249c97fd665d407caf5fe38be1597abd8062c61d43b2cb3b8",
+      "jsonl_line_sha256": "ab60cdd3f98d78e007e87174b35fa6d5665f5660f395e4bb2aad37ff2130067c",
+      "characters": 2263,
+      "error": null
+    },
+    {
+      "page": 3407,
+      "sha256": "f6793148d80592539fe4bad39376dda0826074a9b77fe9aa73cc819880d665c9",
+      "jsonl_line_sha256": "39a40f2511dd20f677f38f9230f84742eed4601827bc257f57957b23b482beac",
+      "characters": 695,
+      "error": null
+    },
+    {
+      "page": 3408,
+      "sha256": "5e302dffa6fb6e1c8f3b7ca858d887285b8baf58e7f43c655fd7ee8cfa77e2b2",
+      "jsonl_line_sha256": "864623c065d8c937f7645002351e2da41f101d4d58f08a1fd54d1e1093ae17fa",
+      "characters": 2115,
+      "error": null
+    },
+    {
+      "page": 3409,
+      "sha256": "41629100b3897798d6efc2d7e7f5b953236e183f9cae3089101afd8179216d85",
+      "jsonl_line_sha256": "a99940dd26cc62f786b99798085dc824749d72909056e7aff356cf0c8043c07b",
+      "characters": 2225,
+      "error": null
+    },
+    {
+      "page": 3410,
+      "sha256": "bce2b61afdcef28d1b4d49f1aa1a81ed602e74096fbb1ccd20d30bd1f08b701e",
+      "jsonl_line_sha256": "a0dcb304372865ec766d19ace57c1c768178e84d23f1ec80101c23e46932f659",
+      "characters": 353,
+      "error": null
+    },
+    {
+      "page": 3411,
+      "sha256": "8c0419402505f8e0b320aa85e0df7c70df2695bd7e69c1ec6a4ec5626030abe5",
+      "jsonl_line_sha256": "5d2071213c8b36f0a3649eb92b650b05466e765a1efb80007f063f5d83d2165d",
+      "characters": 1753,
+      "error": null
+    },
+    {
+      "page": 3412,
+      "sha256": "25b5e310132193e0c81bc41e99bd7d2a319d19e086ffcaf02e14393fa8c4682c",
+      "jsonl_line_sha256": "1ce7ada8bf14f86fec96e61f0a7f29023e6c86a22127db8795f892bd4d33aebc",
+      "characters": 2347,
+      "error": null
+    },
+    {
+      "page": 3413,
+      "sha256": "b65ae6e9538a678cd95bcfdf35c8d8a3edcace67689c9d89818863adf918ba90",
+      "jsonl_line_sha256": "be609b19f07db050ae5dbb8d0688c68a0892ad03a2be64f7494c5a0a6a5fbb4b",
+      "characters": 292,
+      "error": null
+    },
+    {
+      "page": 3414,
+      "sha256": "5db63f7a0f925f196712d439e50d3ac8257569008401e00941f1315424f50abf",
+      "jsonl_line_sha256": "279868740a52dca167e27d0c3ead4dd3bd1ff37c358957beac4eb4327fe81143",
+      "characters": 2707,
+      "error": null
+    },
+    {
+      "page": 3415,
+      "sha256": "9e66dc5d1ce93819c6ee8fd1fa9496105149807ce106414d13ba296e6980bd0f",
+      "jsonl_line_sha256": "b3f3a97e4ef345f84a5545016e2d218044f994cdcf7e810e7d895a2d1007eced",
+      "characters": 2904,
+      "error": null
+    },
+    {
+      "page": 3416,
+      "sha256": "0f0e6a24a7cedc67ade0466ae1ff47477a0ecc4616ed5f0e2969c298d6281241",
+      "jsonl_line_sha256": "a570ca7b59b048364ca7756f5a22ed11e924207ce10e1630f6edeccd64814bf4",
+      "characters": 2103,
+      "error": null
+    },
+    {
+      "page": 3417,
+      "sha256": "0f1dc60521e8f637991ac3ca2a21c69cb002fcad4fbb25d4cd75ea7ac0244ef7",
+      "jsonl_line_sha256": "a8b3697d94335eca8843c5a26a3256dc0558c958940da91d5857992bb76e0a5a",
+      "characters": 1187,
+      "error": null
+    },
+    {
+      "page": 3418,
+      "sha256": "abb5e933d93f8c1f76fec75bd2b4e8c506161afd8ec78987040e39dd8c63c05f",
+      "jsonl_line_sha256": "1bba5d1003eb3b624cfd4babf3b6bd45c64a4b5b713b4066579bbda832ecea37",
+      "characters": 2719,
+      "error": null
+    },
+    {
+      "page": 3419,
+      "sha256": "3c38ff413d9411555007df3676c030ea061ecd42cc07ec83c6febee5d3d52582",
+      "jsonl_line_sha256": "b7c73e98bd0c3e67b151dea3f3f1400e1bea977ab363d9590009bc0682f540f8",
+      "characters": 2368,
+      "error": null
+    },
+    {
+      "page": 3420,
+      "sha256": "28d2f4871d0356d44c916bac9518b5092e8a300141bc5f0bb9b71eeb58a54361",
+      "jsonl_line_sha256": "e968080341ef3b9e43f40af4b09c820f9ec0d36d95b16a01a5872ec77e2c71ee",
+      "characters": 2120,
+      "error": null
+    },
+    {
+      "page": 3421,
+      "sha256": "ce65612b9f49b4d43b71bd4dab607d72a106f65d410d3a3a08e8e5036d3de845",
+      "jsonl_line_sha256": "e5ee6619e86bfbb4c37c6022e9b71e11cd2313dad0bd6d995658ffa674454980",
+      "characters": 2427,
+      "error": null
+    },
+    {
+      "page": 3422,
+      "sha256": "3b443257cba1d5535b1b554ee928ed2d5a9782d6258ce0205acdffe195988401",
+      "jsonl_line_sha256": "0967bad3677607c6f991a6b99018d1f8757389b5a5932982b538f00454da4932",
+      "characters": 1238,
+      "error": null
+    },
+    {
+      "page": 3423,
+      "sha256": "f20ef815ea5fe59f7a9915cb17afb6f1789d4c3d8cec70587cf261c2eaff3f20",
+      "jsonl_line_sha256": "75aee367c74b66ab45f4f5ab7d617736159e5896d8de5da7c4380c41025c3c4d",
+      "characters": 1089,
+      "error": null
+    },
+    {
+      "page": 3424,
+      "sha256": "19bde6929077418e62dd95f775776307a0882cd85625cc174a6c645e1db886ec",
+      "jsonl_line_sha256": "74b70e4dbdb09405a1a9d7b3bfeb66dda30f213b8e191ee734cbf6021c67c1af",
+      "characters": 2220,
+      "error": null
+    },
+    {
+      "page": 3425,
+      "sha256": "6e52ec3840ddac3eec41c0d1ab2cf4304fc61245ba2dd4d0ee68ec5487512395",
+      "jsonl_line_sha256": "fae6c063675589f42c64fcce158d88a9e495aab929469a1b3efea0a168405666",
+      "characters": 2399,
+      "error": null
+    },
+    {
+      "page": 3426,
+      "sha256": "29ae999057e0598f044662f1b90318cd22be9c606d78bb05cf0c3eae8b751d82",
+      "jsonl_line_sha256": "dc016eeec466c6fa5b6bca6156cb108993996d812b77011f56edea378ac62309",
+      "characters": 472,
+      "error": null
+    },
+    {
+      "page": 3427,
+      "sha256": "10d73d14127c324e44b24141f4437a6df6f5218049355a3929302653ff236c91",
+      "jsonl_line_sha256": "0cec998c1384d40f49b6b18b42f8a4050f83afa43f66a7d9eafc534be03f6e8c",
+      "characters": 1781,
+      "error": null
+    },
+    {
+      "page": 3428,
+      "sha256": "29bb60b3a9c917f0394b39d12191b52624a97dee8bb38e8d660b37d4b0bd0668",
+      "jsonl_line_sha256": "906cd6ab2864a4c941848388836bb53bf1208a802ba5ee88cf4e584d065c0c7e",
+      "characters": 175,
+      "error": null
+    },
+    {
+      "page": 3429,
+      "sha256": "1b34a5f6b9ea43f8a3b285c2ff41c71bf92459b10ee5942b5a3cd088aa921fa9",
+      "jsonl_line_sha256": "8bbddf10aae341e70f19229370d0ba80abd8b4e8013e7303ff46a73bfd0a7588",
+      "characters": 2310,
+      "error": null
+    },
+    {
+      "page": 3430,
+      "sha256": "58c22b650c3aef62a66fe0dfa517c8c9251bb248a5bc15a9729d325d11933755",
+      "jsonl_line_sha256": "2e785f93b2a2f33752f43ab7e57e7fa49ac70bb70f0eda9326fa4aa10318cb94",
+      "characters": 2921,
+      "error": null
+    }
+  ],
+  "sections": [
+    {
+      "id": "REF-0001",
+      "title": "MQL5 Reference",
+      "depth": 0,
+      "start": 74,
+      "end": 7284,
+      "read_range": [
+        3239,
+        3430
+      ],
+      "status": "PARTIAL_EXTRACTED_TEXT_READ",
+      "knowledge": "Contêiner geral; este registro cobre exclusivamente3239–3430, não o livro inteiro.",
+      "stoikus_application": "Contêiner; não duplicar contagem de filhos.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1033",
+      "title": "Working with databases",
+      "depth": 1,
+      "start": 3238,
+      "end": 3317,
+      "read_range": [
+        3239,
+        3317
+      ],
+      "status": "PARTIAL_EXTRACTED_TEXT_READ",
+      "knowledge": "Trecho3239–3317: SQLite inclui agregações estatísticas (mediana, percentis, variância amostral/populacional) e matemática SQL; conexões, requests, bindings e transações têm ciclos próprios. Introdução3238 não lida.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1034",
+      "title": "DatabaseOpen",
+      "depth": 2,
+      "start": 3241,
+      "end": 3242,
+      "read_range": [
+        3241,
+        3242
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Abre caminho relativo MQL5\\Files; INVALID_HANDLE em falha. Nome vazio/NULL cria temporário em disco; :memory: cria RAM; ambos desaparecem ao fechar. Sem READONLY/READWRITE assume READWRITE; extensão padrão.sqlite; COMMON compartilha pasta de terminais.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1035",
+      "title": "DatabaseClose",
+      "depth": 2,
+      "start": 3243,
+      "end": 3243,
+      "read_range": [
+        3243,
+        3243
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Fechar conexão invalida automaticamente todos os handles de requests. Handle inválido sinaliza erro5121; retorno void não é prova de sucesso.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1036",
+      "title": "DatabaseImport",
+      "depth": 2,
+      "start": 3244,
+      "end": 3246,
+      "read_range": [
+        3244,
+        3246
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Importa CSV/ZIP; retorna linhas ou-1. Tabela ausente é inferida dos dados, incluindo nomes/tipos. skip_comments é conjunto de caracteres reconhecidos no início da linha, não prefixo literal. APPEND, cabeçalho, aspas, CRLF e pasta comum alteram interpretação.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1037",
+      "title": "DatabaseExport",
+      "depth": 2,
+      "start": 3247,
+      "end": 3252,
+      "read_range": [
+        3247,
+        3252
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Exporta tabela ou consulta somente leitura a UTF8; SELECT/select não pode alterar banco. Separador NULL usa tab; vazio transforma saída em strings não reimportáveis como tabela. Aspas duplicam aspas internas e protegem separadores/quebras; sobrescreve por padrão, BOM padrão.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1038",
+      "title": "DatabasePrint",
+      "depth": 2,
+      "start": 3253,
+      "end": 3257,
+      "read_range": [
+        3253,
+        3257
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Imprime tabela/consulta no Experts journal com flags para cabeçalho/índice/moldura/alinhamento. Retorna quantidade ou-1; exemplo executa PRAGMA TABLE_INFO e LEFT OUTER JOIN. Nomes CreataTable nas chamadas versus CreateTable nas definições aparecem divergentes no extraído; não copiar sem revisar.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1039",
+      "title": "DatabaseTableExists",
+      "depth": 2,
+      "start": 3258,
+      "end": 3258,
+      "read_range": [
+        3258,
+        3258
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "false pode significar tabela inexistente com5126, conclusão normal; também handle/parâmetro/execução inválidos. Separar ausência esperada de falha operacional.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1040",
+      "title": "DatabaseExecute",
+      "depth": 2,
+      "start": 3259,
+      "end": 3270,
+      "read_range": [
+        3259,
+        3270
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Executa SQL e retorna bool. Exemplo agrega DEALS por símbolo/magic e TRADES por hora; líquido inclui swap/comissão na primeira agregação. Conversão simples DEALS→TRADES é condicionada a hedging; join por position_id não demonstra reconciliação universal de saídas parciais/netting. Exemplo horário chama sum(profit) de net_profit apesar de armazenar custos separadamente: não promover nomenclatura a regra JPW.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1041",
+      "title": "DatabasePrepare",
+      "depth": 2,
+      "start": 3271,
+      "end": 3279,
+      "read_range": [
+        3271,
+        3279
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Prepare valida/compila SQL e produz handle, sem executar; primeira DatabaseRead executa. Parâmetros ?1,?2 suportados. Exemplo lê primeiras dez estruturas e finaliza cada request; mantém ressalva hedging na montagem de trades.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1042",
+      "title": "DatabaseReset",
+      "depth": 2,
+      "start": 3280,
+      "end": 3285,
+      "read_range": [
+        3280,
+        3285
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Reset permite reexecução sem recompilar e preserva valores já vinculados; trocar só um parâmetro é possível. Deve anteceder Bind após Read; não aceitar handle finalizado.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1043",
+      "title": "DatabaseBind",
+      "depth": 2,
+      "start": 3286,
+      "end": 3290,
+      "read_range": [
+        3286,
+        3290
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Bind usa índice0 enquanto ?N começa em1. Aceita tipos simples; request em execução/concluído exige Reset (5128). Exemplo persiste ticks em transação, mantendo símbolo vinculado uma vez e alterando campos por tick.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1044",
+      "title": "DatabaseBindArray",
+      "depth": 2,
+      "start": 3291,
+      "end": 3295,
+      "read_range": [
+        3291,
+        3295
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Vincula array como valor de parâmetro, útil BLOB; limite de bytes INT_MAX. Mesma diferença índice0/?1. Assinatura impressa no extraído diz DatabaseBind apesar do título BindArray; exemplo usa DatabaseBindArray e lê arquivos binários.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1045",
+      "title": "DatabaseRead",
+      "depth": 2,
+      "start": 3296,
+      "end": 3296,
+      "read_range": [
+        3296,
+        3296
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Read avança registro e executa request; false exige last error:5126 é fim normal, inclusive inserts sem linhas de resultado. Não classificar todo false como erro.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1046",
+      "title": "DatabaseReadBind",
+      "depth": 2,
+      "start": 3297,
+      "end": 3300,
+      "read_range": [
+        3297,
+        3300
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ReadBind avança e preenche struct só numérica/strings, sem arrays/herança. Campos não podem exceder colunas; struct menor permite leitura parcial e restante via ColumnXXX. Exemplo soma125000 e média31250 de quatro salários; resultado é exemplo documental.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1047",
+      "title": "DatabaseFinalize",
+      "depth": 2,
+      "start": 3301,
+      "end": 3301,
+      "read_range": [
+        3301,
+        3301
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Finalize remove request criado por Prepare; void, handle inválido produz5121. Não reutilizar handle finalizado.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1048",
+      "title": "DatabaseTransactionBegin",
+      "depth": 2,
+      "start": 3302,
+      "end": 3306,
+      "read_range": [
+        3302,
+        3306
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Begin inicia unidade de transação; fechar com Commit no sucesso ou Rollback em erro. Exemplo compara2737 inserts:48.5ms versus25818.9ms e532.8x; números pertencem ao exemplo, não benchmark Stoikus.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1049",
+      "title": "DatabaseTransactionCommit",
+      "depth": 2,
+      "start": 3307,
+      "end": 3307,
+      "read_range": [
+        3307,
+        3307
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Commit conclui alterações desde Begin e retorna bool; checar falha própria. Nota usa nome DatabaseBeginTransaction, divergente da API titulada TransactionBegin.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1050",
+      "title": "DatabaseTransactionRollback",
+      "depth": 2,
+      "start": 3308,
+      "end": 3308,
+      "read_range": [
+        3308,
+        3308
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Rollback cancela alterações desde Begin em falha; também retorna bool que pode falhar. Registrar falha da recuperação separadamente.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1051",
+      "title": "DatabaseColumnsCount",
+      "depth": 2,
+      "start": 3309,
+      "end": 3309,
+      "read_range": [
+        3309,
+        3309
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnsCount retorna número ou-1 e pode ser chamado antes de Read, exceção aos demais ColumnXXX.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1052",
+      "title": "DatabaseColumnName",
+      "depth": 2,
+      "start": 3310,
+      "end": 3310,
+      "read_range": [
+        3310,
+        3310
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnName usa índice0..count-1; documentação exige ao menos uma chamada Read. Saída string por referência e bool de sucesso.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1053",
+      "title": "DatabaseColumnType",
+      "depth": 2,
+      "start": 3311,
+      "end": 3311,
+      "read_range": [
+        3311,
+        3311
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnType retorna INTEGER/FLOAT/TEXT/BLOB/NULL ou INVALID; exige Read prévio. NULL é tipo explícito, não zero econômico.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1054",
+      "title": "DatabaseColumnSize",
+      "depth": 2,
+      "start": 3312,
+      "end": 3312,
+      "read_range": [
+        3312,
+        3312
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnSize retorna bytes ou-1; exige Read e índice válido. Dimensionar BLOB sem confundir bytes com elementos.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1055",
+      "title": "DatabaseColumnText",
+      "depth": 2,
+      "start": 3313,
+      "end": 3313,
+      "read_range": [
+        3313,
+        3313
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnText preenche string por referência no registro corrente; para próximo chamar Read. Verificar bool antes de usar saída.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1056",
+      "title": "DatabaseColumnInteger",
+      "depth": 2,
+      "start": 3314,
+      "end": 3314,
+      "read_range": [
+        3314,
+        3314
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnInteger preenche int por referência; contrato de índice e Read prévio. Não estreitar tickets longos por conveniência.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1057",
+      "title": "DatabaseColumnLong",
+      "depth": 2,
+      "start": 3315,
+      "end": 3315,
+      "read_range": [
+        3315,
+        3315
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnLong preserva campo long por referência; mesmo contrato do registro corrente e checagem bool.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1058",
+      "title": "DatabaseColumnDouble",
+      "depth": 2,
+      "start": 3316,
+      "end": 3316,
+      "read_range": [
+        3316,
+        3316
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnDouble preenche double por referência, após Read; bool distingue falha de valor zero válido.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1059",
+      "title": "DatabaseColumnBlob",
+      "depth": 2,
+      "start": 3317,
+      "end": 3317,
+      "read_range": [
+        3317,
+        3317
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ColumnBlob retorna campo como array por referência; consultar tamanho/tipo e Read primeiro. Não é serialização de objeto arbitrário.",
+      "stoikus_application": "Proposta de persistência/auditoria SQLite; nenhuma chamada presente do produto foi verificada. Testar contratos/erros e recuperação em candidato isolado antes de adoção.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1060",
+      "title": "Working with DirectX",
+      "depth": 1,
+      "start": 3318,
+      "end": 3346,
+      "read_range": [
+        3318,
+        3346
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "DirectX11/Shader Model5 exigem GPU compatível; contexto, buffers, shaders e inputs formam pipeline3D. Recursos só valem no contexto criador e requerem liberação explícita.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1061",
+      "title": "DXContextCreate",
+      "depth": 2,
+      "start": 3320,
+      "end": 3320,
+      "read_range": [
+        3320,
+        3320
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Create retorna contexto dimensionado em pixels ou INVALID_HANDLE. Objetos criados pertencem exclusivamente ao contexto; liberar com DXRelease.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1062",
+      "title": "DXContextSetSize",
+      "depth": 2,
+      "start": 3321,
+      "end": 3321,
+      "read_range": [
+        3321,
+        3321
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "SetSize altera largura/altura somente entre renderizações de frames; bool requer checagem.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1063",
+      "title": "DXContextGetSize",
+      "depth": 2,
+      "start": 3322,
+      "end": 3322,
+      "read_range": [
+        3322,
+        3322
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "GetSize devolve dimensões por referência; distinguir getter do SetSize duplicado no quadro introdutório.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1064",
+      "title": "DXContextClearColors",
+      "depth": 2,
+      "start": 3323,
+      "end": 3323,
+      "read_range": [
+        3323,
+        3323
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ClearColors preenche buffer de render com DXVector de cor; útil limpar antes do frame seguinte.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1065",
+      "title": "DXContextClearDepth",
+      "depth": 2,
+      "start": 3324,
+      "end": 3324,
+      "read_range": [
+        3324,
+        3324
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ClearDepth limpa buffer de profundidade antes do frame; checar bool.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1066",
+      "title": "DXContextGetColors",
+      "depth": 2,
+      "start": 3325,
+      "end": 3325,
+      "read_range": [
+        3325,
+        3325
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "GetColors recorta imagem com largura/altura/offset e devolve pixels uint ARGB; tamanho resultante é largura×altura.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1067",
+      "title": "DXContextGetDepth",
+      "depth": 2,
+      "start": 3326,
+      "end": 3326,
+      "read_range": [
+        3326,
+        3326
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "GetDepth fornece array float com profundidade relativa0..1 por pixel, não distância financeira/física.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1068",
+      "title": "DXBufferCreate",
+      "depth": 2,
+      "start": 3327,
+      "end": 3327,
+      "read_range": [
+        3327,
+        3327
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "BufferCreate distingue vertex e index; index exige uint[], vertex array de estruturas. start/count selecionam elementos; liberar handle.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1069",
+      "title": "DXTextureCreate",
+      "depth": 2,
+      "start": 3328,
+      "end": 3333,
+      "read_range": [
+        3328,
+        3333
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "TextureCreate recorta retângulo de imagem conforme formato DX; tabela mapeia formatos DXGI, de floats/inteiros a UNORM/SRGB, compressão BC e vídeo. Formato determina interpretação dos bytes; não intercambiar layouts.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1070",
+      "title": "DXInputCreate",
+      "depth": 2,
+      "start": 3334,
+      "end": 3334,
+      "read_range": [
+        3334,
+        3334
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "InputCreate aloca inputs de shader pelo tamanho em bytes da estrutura; retorna handle a liberar.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1071",
+      "title": "DXInputSet",
+      "depth": 2,
+      "start": 3335,
+      "end": 3335,
+      "read_range": [
+        3335,
+        3335
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "InputSet escreve dados em handle criado por InputCreate; não é handle do contexto, apesar do comentário resumido da assinatura.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1072",
+      "title": "DXShaderCreate",
+      "depth": 2,
+      "start": 3336,
+      "end": 3336,
+      "read_range": [
+        3336,
+        3336
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ShaderCreate compila HLSL5 por source/entry_point, retorna handle ouINVALID e texto compile_error. Há vertex, geometry e pixel; não prova compilação realizada aqui.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1073",
+      "title": "DXShaderSetLayout",
+      "depth": 2,
+      "start": 3337,
+      "end": 3337,
+      "read_range": [
+        3337,
+        3337
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Layout associa semantic_name/index e formato de cada campo; deve coincidir com estrutura do vertex buffer e entrada HLSL.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1074",
+      "title": "DXShaderInputsSet",
+      "depth": 2,
+      "start": 3338,
+      "end": 3338,
+      "read_range": [
+        3338,
+        3338
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ShaderInputsSet recebe handles; quantidade deve coincidir com cbuffer declarados no shader.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1075",
+      "title": "DXShaderTexturesSet",
+      "depth": 2,
+      "start": 3339,
+      "end": 3339,
+      "read_range": [
+        3339,
+        3339
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ShaderTexturesSet recebe handles de textura; quantidade deve coincidir com objetos Texture2D declarados.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1076",
+      "title": "DXDraw",
+      "depth": 2,
+      "start": 3340,
+      "end": 3340,
+      "read_range": [
+        3340,
+        3340
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Draw renderiza faixa de vertices do buffer previamente ligado; shaders devem estar definidos antes.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1077",
+      "title": "DXDrawIndexed",
+      "depth": 2,
+      "start": 3341,
+      "end": 3341,
+      "read_range": [
+        3341,
+        3341
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "DrawIndexed usa primitivas descritas por index buffer, vertex buffer/shaders previamente ligados e topologia definida.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1078",
+      "title": "DXPrimiveTopologySet",
+      "depth": 2,
+      "start": 3342,
+      "end": 3342,
+      "read_range": [
+        3342,
+        3342
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "PrimiveTopologySet (grafia da API) escolhe pontos, listas/tiras de linhas/triângulos e variantes adjacency; não mudar contagem sem considerar topologia.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1079",
+      "title": "DXBufferSet",
+      "depth": 2,
+      "start": 3343,
+      "end": 3343,
+      "read_range": [
+        3343,
+        3343
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "BufferSet liga buffer vertex/index ao contexto e faixa start/count usada na renderização.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1080",
+      "title": "DXShaderSet",
+      "depth": 2,
+      "start": 3344,
+      "end": 3344,
+      "read_range": [
+        3344,
+        3344
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "ShaderSet liga shader; vertex, geometry e pixel podem coexistir no pipeline.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1081",
+      "title": "DXHandleType",
+      "depth": 2,
+      "start": 3345,
+      "end": 3345,
+      "read_range": [
+        3345,
+        3345
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "HandleType distingue INVALID, CONTEXT, SHADER, BUFFER, INPUT e TEXTURE; ajuda diagnosticar ciclo de recursos.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1082",
+      "title": "DXRelease",
+      "depth": 2,
+      "start": 3346,
+      "end": 3346,
+      "read_range": [
+        3346,
+        3346
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "Release libera handle não usado explicitamente; bool e GetLastError devem ser observados.",
+      "stoikus_application": "Sem uso atual demonstrado no Monitor; visualização3D opcional futura, sem requisito financeiro ou de execução.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1083",
+      "title": "Python Integration",
+      "depth": 1,
+      "start": 3347,
+      "end": 3437,
+      "read_range": [
+        3347,
+        3430
+      ],
+      "status": "PARTIAL_EXTRACTED_TEXT_READ",
+      "knowledge": "Integração Python usa comunicação entre processos com terminal; pacote MetaTrader5 expõe dados e ações de negociação. Exemplo Windows/Python3.8 e versões2020 é histórico documental; não instalação atual validada. Capítulo continua3431–3437 ainda não lido.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1084",
+      "title": "initialize",
+      "depth": 2,
+      "start": 3353,
+      "end": 3354,
+      "read_range": [
+        3353,
+        3354
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "initialize pode localizar terminal, receber caminho EXE e login/password/server/timeout/portable. Sem login usa última conta; pode iniciar terminal. True só confirma conexão com terminal, não identidade pretendida nem execução de trade.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1085",
+      "title": "login",
+      "depth": 2,
+      "start": 3355,
+      "end": 3357,
+      "read_range": [
+        3355,
+        3357
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "login conecta conta especificada; credenciais/servidor omitidos podem vir do banco do terminal. Timeout padrão60000ms pode gerar exceção. Verificar conta/servidor após conexão, não usar credenciais de exemplos.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1086",
+      "title": "shutdown",
+      "depth": 2,
+      "start": 3358,
+      "end": 3358,
+      "read_range": [
+        3358,
+        3358
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "shutdown encerra conexão previamente estabelecida, sem retorno. Proposta: cleanup em finally para pesquisa futura.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1087",
+      "title": "version",
+      "depth": 2,
+      "start": 3359,
+      "end": 3360,
+      "read_range": [
+        3359,
+        3360
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "version retorna tupla versão/build/data do terminal ouNone; distinta da versão do pacote Python. Registrar ambas em evidência reproduzível.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1088",
+      "title": "last_error",
+      "depth": 2,
+      "start": 3361,
+      "end": 3362,
+      "read_range": [
+        3361,
+        3362
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "last_error usa códigos próprios da biblioteca, não enumeração GetLastError MQL: sucesso1; erros negativos, incluindo IPC/timeout/autotrading. INIT e CONNECT aparecem com mesmo-10003 no extraído.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1089",
+      "title": "account_info",
+      "depth": 2,
+      "start": 3363,
+      "end": 3365,
+      "read_range": [
+        3363,
+        3365
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "account_info retorna namedtuple consolidando propriedades conta ouNone. Campos balance/equity/profit/margin/currency/margin_mode ajudam contextualizar snapshot, sem inferir regra de risco JPW.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1090",
+      "title": "terminal_info",
+      "depth": 2,
+      "start": 3366,
+      "end": 3368,
+      "read_range": [
+        3366,
+        3368
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "terminal_info retorna namedtuple/None com connected, trade_allowed, tradeapi_disabled, build, maxbars, paths e outros. Nota repete TerminalInfoDouble; exemplo de saída não é estado deste ambiente.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1091",
+      "title": "symbols_total",
+      "depth": 2,
+      "start": 3369,
+      "end": 3369,
+      "read_range": [
+        3369,
+        3369
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "symbols_total inclui todos símbolos, customizados e desabilitados em MarketWatch; quantidade não é universo negociável selecionado.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1092",
+      "title": "symbols_get",
+      "depth": 2,
+      "start": 3370,
+      "end": 3372,
+      "read_range": [
+        3370,
+        3372
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "symbols_get retorna tupla ouNone; filtro group com* e! aplica inclusão antes de exclusão, em sequência. Diferenciar resultado vazio válido de erro.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1093",
+      "title": "symbol_info",
+      "depth": 2,
+      "start": 3373,
+      "end": 3376,
+      "read_range": [
+        3373,
+        3376
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "symbol_info consolida propriedades numéricas/textuais; exemplo mostra tick_value_profit/loss distintos, point/tick_size/volume_step e currencies. Não hardcode propriedades de EURJPY do exemplo.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1094",
+      "title": "symbol_info_tick",
+      "depth": 2,
+      "start": 3377,
+      "end": 3378,
+      "read_range": [
+        3377,
+        3378
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "symbol_info_tick devolve último tick ouNone, comtime/time_msc/flags/bid/ask/last/volume; presença não demonstra frescor nem Last negociado quando é0.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1095",
+      "title": "symbol_select",
+      "depth": 2,
+      "start": 3379,
+      "end": 3382,
+      "read_range": [
+        3379,
+        3382
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "symbol_select altera MarketWatch; remoção bloqueada se há gráficos abertos/posições. Não tratar chamada como consulta inofensiva em pesquisa só leitura.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1096",
+      "title": "market_book_add",
+      "depth": 2,
+      "start": 3383,
+      "end": 3383,
+      "read_range": [
+        3383,
+        3383
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "market_book_add assina mudanças DOM por símbolo e retorna bool; requer pareamento de release.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1097",
+      "title": "market_book_get",
+      "depth": 2,
+      "start": 3384,
+      "end": 3386,
+      "read_range": [
+        3384,
+        3386
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "market_book_get exige assinatura prévia e retorna tupla BookInfo ouNone; tipo/preço/volume em lotes. Exemplo consulta10 vezes com pausa5s, não captura garantida de todo evento.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1098",
+      "title": "market_book_release",
+      "depth": 2,
+      "start": 3387,
+      "end": 3387,
+      "read_range": [
+        3387,
+        3387
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "market_book_release cancela assinatura DOM do símbolo e retorna bool; assegurar limpeza mesmo após erro.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1099",
+      "title": "copy_rates_from",
+      "depth": 2,
+      "start": 3388,
+      "end": 3391,
+      "read_range": [
+        3388,
+        3391
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "copy_rates_from retorna numpy estruturado ouNone; barras com abertura<=data pedida, limitado ao histórico/Max bars in chart. Datas devem ser UTC conscientes. Tabela extraída duplica M12 na linha15min: não perpetuar sem conferir original/API.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1100",
+      "title": "copy_rates_from_pos",
+      "depth": 2,
+      "start": 3392,
+      "end": 3394,
+      "read_range": [
+        3392,
+        3394
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "copy_rates_from_pos índice0 é barra corrente e cresce ao passado; retorno contém OHLC/tick_volume/spread/real_volume. Limite de histórico é do terminal; barra0 não deve ser tratada como fechada.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1101",
+      "title": "copy_rates_range",
+      "depth": 2,
+      "start": 3395,
+      "end": 3397,
+      "read_range": [
+        3395,
+        3397
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "copy_rates_range inclui aberturas>=from e<=to; normalizar UTC e verificar cobertura real/limiteMax bars. Não assumir quantidade requerida equivale a dados disponíveis.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1102",
+      "title": "copy_ticks_from",
+      "depth": 2,
+      "start": 3398,
+      "end": 3400,
+      "read_range": [
+        3398,
+        3400
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "copy_ticks_from recebe símbolo/data/contagem/filtroINFO,TRADE,ALL e retorna numpy ouNone. Flags descrevem alterações; preservar time_msc e volume_real mostrados no resultado, não só resumo textual de colunas.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1103",
+      "title": "copy_ticks_range",
+      "depth": 2,
+      "start": 3401,
+      "end": 3403,
+      "read_range": [
+        3401,
+        3403
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "copy_ticks_range usa intervalo e filtros de ticks; contrato exige UTC e alerta para apresentação com offset local. Exemplo possui ticks distintos com mesmo time_msc, logo timestamp sozinho não prova duplicação.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1104",
+      "title": "orders_total",
+      "depth": 2,
+      "start": 3404,
+      "end": 3404,
+      "read_range": [
+        3404,
+        3404
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "orders_total conta ordens ativas; não confundir com posições. Exemplo<=0 imprime ausência, mas código de pesquisa precisa tratar falha conforme contrato observado.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1105",
+      "title": "orders_get",
+      "depth": 2,
+      "start": 3405,
+      "end": 3407,
+      "read_range": [
+        3405,
+        3407
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "orders_get filtra por symbol/group/ticket; symbol faz ignorar ticket. None é erro; tupla vazia deve ser tratada antes de acessar[0] como faz o exemplo de DataFrame.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1106",
+      "title": "order_calc_margin",
+      "depth": 2,
+      "start": 3408,
+      "end": 3410,
+      "read_range": [
+        3408,
+        3410
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "order_calc_margin estima margem na moeda da conta sem considerar ordens pendentes/posições correntes. Não é margem incremental da carteira nem verificação de regra de limite JPW.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1107",
+      "title": "order_calc_profit",
+      "depth": 2,
+      "start": 3411,
+      "end": 3413,
+      "read_range": [
+        3411,
+        3413
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "order_calc_profit estima BUY/SELL entre preços na moeda da conta no ambiente atual; resultado não é PnL líquido garantido. Exemplos mostram assimetria BUY/SELL USDJPY por conversão, não tabela universal de pontos.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1108",
+      "title": "order_check",
+      "depth": 2,
+      "start": 3414,
+      "end": 3417,
+      "read_range": [
+        3414,
+        3417
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "order_check retorna estrutura de checagem, não garantia de execução. Documenta ações/filling/expiração; tabela RETURN afirma Market/Exchange neste trecho: resolver compatibilidade com capítulo de trade antes de usar, não assumir política universal.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1109",
+      "title": "order_send",
+      "depth": 2,
+      "start": 3418,
+      "end": 3422,
+      "read_range": [
+        3418,
+        3422
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "order_send envia ação ao servidor e retorna MqlTradeResult, com request e retcode. Identificar position no fechamento; price omitido para Market Execution/DEAL conforme contrato. Aceitação/verificação em etapas não garante execução; exemplo abre e fecha e é exclusivamente NOT_RUN.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1110",
+      "title": "positions_total",
+      "depth": 2,
+      "start": 3423,
+      "end": 3423,
+      "read_range": [
+        3423,
+        3423
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "positions_total conta posições abertas, separado de ordens. Consulta seria proposta Python futura, não evidência de bridge presente.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1111",
+      "title": "positions_get",
+      "depth": 2,
+      "start": 3424,
+      "end": 3426,
+      "read_range": [
+        3424,
+        3426
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "positions_get retorna posições filtradas; symbol ignora ticket. None é erro e len0 é ausência válida; filtros group sequenciais. Preservar ticket e identifier sem tratá-los sempre iguais.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1112",
+      "title": "history_orders_total",
+      "depth": 2,
+      "start": 3427,
+      "end": 3428,
+      "read_range": [
+        3427,
+        3428
+      ],
+      "status": "FULL_EXTRACTED_TEXT_READ",
+      "knowledge": "history_orders_total conta histórico por intervalo com datetime/epoch; resultado não é deals. Exemplo usa datetime local ingênuo apesar de alertas UTC dos capítulos de dados; projetar pesquisa futura com fuso explícito.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    },
+    {
+      "id": "REF-1113",
+      "title": "history_orders_get",
+      "depth": 2,
+      "start": 3429,
+      "end": 3431,
+      "read_range": [
+        3429,
+        3430
+      ],
+      "status": "PARTIAL_EXTRACTED_TEXT_READ",
+      "knowledge": "Leitura parcial3429–3430: history_orders_get admite intervalo+group, ticket ou position (ORDER_POSITION_ID), retorna namedtuple/None e aplica filtros sequenciais. Exemplo continua3431, ainda não lido. Não declarar cobertura integral deste ID.",
+      "stoikus_application": "Proposta Python futura; BRIEF declara ausência atual de ML/bridge. Sem instalação/conexão/negociação autorizada ou executada neste estudo.",
+      "execution": "MQL_NOT_RUN; PYTHON_MT5_NOT_RUN"
+    }
+  ]
+}

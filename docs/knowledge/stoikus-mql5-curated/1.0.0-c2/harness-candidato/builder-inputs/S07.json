@@ -1,0 +1,13 @@
+{
+  "id": "S07",
+  "topic": "ownership",
+  "prompt": "Liste objetos removíveis e preservados no desligamento da instância A.",
+  "input": {
+    "objects": [
+      "JPW_A_panel",
+      "JPW_B_panel",
+      "manual_line"
+    ],
+    "owner_prefix": "JPW_A_"
+  }
+}

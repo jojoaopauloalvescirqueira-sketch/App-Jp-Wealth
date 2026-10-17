@@ -1,0 +1,1107 @@
+{
+  "reader": "trd_files_research",
+  "book": "TRD",
+  "source_sha256": "9ff6c55090527afa0efce722d67760805ee335fc64dad3c83638a89e6c79a145",
+  "method": "Direct semantic reading of full extracted page bodies; no native execution or image inspection",
+  "read_unique_pages": [
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288,
+    289,
+    290,
+    291,
+    292,
+    293,
+    294,
+    295,
+    296,
+    297,
+    298,
+    299,
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    307,
+    308,
+    309,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    319,
+    320,
+    321,
+    322,
+    323,
+    324,
+    325,
+    326,
+    327,
+    328,
+    329,
+    330,
+    331,
+    332,
+    333,
+    334,
+    335,
+    336,
+    337,
+    338,
+    339,
+    340,
+    341,
+    342,
+    343,
+    344,
+    345,
+    346,
+    347,
+    348,
+    349,
+    350,
+    351,
+    352,
+    353,
+    354,
+    355,
+    356,
+    357,
+    358,
+    359,
+    360,
+    361,
+    362,
+    363,
+    364,
+    365,
+    366,
+    367,
+    368,
+    369,
+    370,
+    371,
+    372,
+    373,
+    374,
+    375,
+    376,
+    377,
+    378,
+    379,
+    380,
+    381,
+    382,
+    383,
+    384,
+    385,
+    386,
+    387,
+    388,
+    389,
+    390,
+    391,
+    392,
+    393,
+    394,
+    395,
+    396,
+    397,
+    398,
+    399,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    431,
+    432,
+    433,
+    434,
+    435,
+    436,
+    437,
+    438,
+    439,
+    440,
+    441,
+    442,
+    443,
+    444,
+    445,
+    446,
+    447,
+    448,
+    449,
+    450,
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    457,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    475,
+    476,
+    477,
+    478,
+    479,
+    480,
+    481
+  ],
+  "read_unique_page_count": 201,
+  "native_examples": "NOT_RUN",
+  "batches": [
+    {
+      "start": 404,
+      "end": 411,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 412,
+      "end": 424,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 425,
+      "end": 437,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 438,
+      "end": 454,
+      "status": "READ_FULL",
+      "note": "438-454 initial wrapper truncated; repaired by 445-447 full reread"
+    },
+    {
+      "start": 445,
+      "end": 447,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 455,
+      "end": 460,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 461,
+      "end": 471,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 472,
+      "end": 481,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 281,
+      "end": 292,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 293,
+      "end": 303,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 304,
+      "end": 315,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 316,
+      "end": 325,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 326,
+      "end": 334,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 335,
+      "end": 345,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 346,
+      "end": 357,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 358,
+      "end": 369,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 370,
+      "end": 381,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 382,
+      "end": 393,
+      "status": "READ_FULL",
+      "note": ""
+    },
+    {
+      "start": 394,
+      "end": 403,
+      "status": "READ_FULL",
+      "note": ""
+    }
+  ],
+  "sections": [
+    {
+      "depth": 2,
+      "title": "4.1 Built-in type conversions",
+      "start": 281,
+      "end": 303,
+      "id": "TRD-0138",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.1 Numbers to strings and vice versa",
+      "start": 282,
+      "end": 285,
+      "id": "TRD-0139",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.2 Normalization of doubles",
+      "start": 286,
+      "end": 286,
+      "id": "TRD-0140",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.3 Date and time",
+      "start": 287,
+      "end": 295,
+      "id": "TRD-0141",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.4 Color",
+      "start": 296,
+      "end": 298,
+      "id": "TRD-0142",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.5 Structures",
+      "start": 299,
+      "end": 300,
+      "id": "TRD-0143",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.6 Enumerations",
+      "start": 301,
+      "end": 302,
+      "id": "TRD-0144",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.1.7 Type complex",
+      "start": 303,
+      "end": 303,
+      "id": "TRD-0145",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 2,
+      "title": "4.2 Working with strings and symbols",
+      "start": 304,
+      "end": 334,
+      "id": "TRD-0146",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.1 Initialization and measurement of strings",
+      "start": 305,
+      "end": 308,
+      "id": "TRD-0147",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.2 String concatenation",
+      "start": 309,
+      "end": 309,
+      "id": "TRD-0148",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.3 String comparison",
+      "start": 310,
+      "end": 315,
+      "id": "TRD-0149",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.4 Changing the character case and trimming spaces",
+      "start": 316,
+      "end": 317,
+      "id": "TRD-0150",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.5 Finding, replacing, and extracting string fragments",
+      "start": 318,
+      "end": 321,
+      "id": "TRD-0151",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.6 Working with symbols and code pages",
+      "start": 322,
+      "end": 328,
+      "id": "TRD-0152",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.2.7 Universal formatted data output to a string",
+      "start": 329,
+      "end": 334,
+      "id": "TRD-0153",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 2,
+      "title": "4.3 Working with arrays",
+      "start": 335,
+      "end": 386,
+      "id": "TRD-0154",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.1 Logging arrays",
+      "start": 336,
+      "end": 338,
+      "id": "TRD-0155",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.2 Dynamic arrays",
+      "start": 339,
+      "end": 345,
+      "id": "TRD-0156",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.3 Array measurement",
+      "start": 346,
+      "end": 346,
+      "id": "TRD-0157",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.4 Initializing and populating arrays",
+      "start": 347,
+      "end": 348,
+      "id": "TRD-0158",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.5 Copying and editing arrays",
+      "start": 349,
+      "end": 360,
+      "id": "TRD-0159",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.6 Moving (swapping) arrays",
+      "start": 361,
+      "end": 362,
+      "id": "TRD-0160",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.7 Comparing, sorting, and searching in arrays",
+      "start": 363,
+      "end": 377,
+      "id": "TRD-0161",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.8 Timeseries indexing direction in arrays",
+      "start": 378,
+      "end": 381,
+      "id": "TRD-0162",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.3.9 Zeroing objects and arrays",
+      "start": 382,
+      "end": 386,
+      "id": "TRD-0163",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 2,
+      "title": "4.4 Mathematical functions",
+      "start": 387,
+      "end": 403,
+      "id": "TRD-0164",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.1 The absolute value of a number",
+      "start": 388,
+      "end": 389,
+      "id": "TRD-0165",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.2 Maximum and minimum of two numbers",
+      "start": 390,
+      "end": 390,
+      "id": "TRD-0166",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.3 Rounding functions",
+      "start": 390,
+      "end": 390,
+      "id": "TRD-0167",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.4 Remainder after division (Modulo operation)",
+      "start": 391,
+      "end": 391,
+      "id": "TRD-0168",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.5 Powers and roots",
+      "start": 392,
+      "end": 393,
+      "id": "TRD-0169",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.6 Exponential and logarithmic functions",
+      "start": 392,
+      "end": 393,
+      "id": "TRD-0170",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.7 Trigonometric functions",
+      "start": 394,
+      "end": 396,
+      "id": "TRD-0171",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.8 Hyperbolic functions",
+      "start": 397,
+      "end": 397,
+      "id": "TRD-0172",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.9 Normality test for real numbers",
+      "start": 398,
+      "end": 400,
+      "id": "TRD-0173",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.10 Random number generation",
+      "start": 401,
+      "end": 401,
+      "id": "TRD-0174",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.4.11 Endianness control in integers",
+      "start": 402,
+      "end": 403,
+      "id": "TRD-0175",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 2,
+      "title": "4.5 Working with files",
+      "start": 404,
+      "end": 481,
+      "id": "TRD-0176",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.1 Information storage methods: text and binary",
+      "start": 406,
+      "end": 407,
+      "id": "TRD-0177",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.2 Writing and reading files in simplified mode",
+      "start": 408,
+      "end": 411,
+      "id": "TRD-0178",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.3 Opening and closing files",
+      "start": 412,
+      "end": 417,
+      "id": "TRD-0179",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.4 Managing file descriptors",
+      "start": 418,
+      "end": 424,
+      "id": "TRD-0180",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.5 Selecting an encoding for text mode",
+      "start": 425,
+      "end": 427,
+      "id": "TRD-0181",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.6 Writing and reading arrays",
+      "start": 428,
+      "end": 432,
+      "id": "TRD-0182",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.7 Writing and reading structures (binary files)",
+      "start": 433,
+      "end": 437,
+      "id": "TRD-0183",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.8 Writing and reading variables (binary files)",
+      "start": 438,
+      "end": 445,
+      "id": "TRD-0184",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.9 Writing and reading variables (text files)",
+      "start": 446,
+      "end": 454,
+      "id": "TRD-0185",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.10 Managing position in a file",
+      "start": 455,
+      "end": 460,
+      "id": "TRD-0186",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.11 Getting file properties",
+      "start": 461,
+      "end": 464,
+      "id": "TRD-0187",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.12 Force write cache to disk",
+      "start": 465,
+      "end": 469,
+      "id": "TRD-0188",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.13 Deleting a file and checking if it exists",
+      "start": 470,
+      "end": 471,
+      "id": "TRD-0189",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.14 Copying and moving files",
+      "start": 472,
+      "end": 473,
+      "id": "TRD-0190",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.15 Searching for files and folders",
+      "start": 474,
+      "end": 475,
+      "id": "TRD-0191",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.16 Working with folders",
+      "start": 476,
+      "end": 477,
+      "id": "TRD-0192",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    },
+    {
+      "depth": 3,
+      "title": "4.5.17 File or folder selection dialog",
+      "start": 478,
+      "end": 481,
+      "id": "TRD-0193",
+      "review_status": "READ_FULL_EXTRACTED_BODY"
+    }
+  ],
+  "additional_part5": {
+    "requested": [
+      611,
+      1048
+    ],
+    "read_pages": [
+      611,
+      612,
+      613,
+      614,
+      615,
+      616,
+      617,
+      618,
+      619,
+      620,
+      621,
+      622,
+      623,
+      624,
+      625,
+      626,
+      627,
+      628,
+      629,
+      630,
+      631,
+      632,
+      633,
+      634,
+      635,
+      636,
+      637,
+      638,
+      639,
+      640,
+      641,
+      642,
+      643,
+      644,
+      645,
+      646,
+      647,
+      648,
+      649,
+      650,
+      651,
+      652,
+      653,
+      654,
+      655,
+      656,
+      657,
+      658,
+      659,
+      660,
+      661,
+      662,
+      663,
+      664,
+      665,
+      666,
+      667,
+      668,
+      669,
+      670,
+      671,
+      672,
+      673,
+      674
+    ],
+    "read_unique_count": 64,
+    "pending_ranges": [
+      [
+        675,
+        1048
+      ]
+    ],
+    "status": "PARTIAL_SEMANTIC_REVIEW",
+    "batches": [
+      {
+        "start": 611,
+        "end": 622,
+        "status": "READ_FULL",
+        "note": "611-622 truncated at616; repaired by full reread616"
+      },
+      {
+        "start": 616,
+        "end": 616,
+        "status": "READ_FULL",
+        "note": ""
+      },
+      {
+        "start": 623,
+        "end": 630,
+        "status": "READ_FULL",
+        "note": ""
+      },
+      {
+        "start": 631,
+        "end": 638,
+        "status": "READ_FULL",
+        "note": ""
+      },
+      {
+        "start": 639,
+        "end": 647,
+        "status": "READ_FULL",
+        "note": ""
+      },
+      {
+        "start": 648,
+        "end": 656,
+        "status": "READ_FULL",
+        "note": ""
+      },
+      {
+        "start": 657,
+        "end": 665,
+        "status": "READ_FULL",
+        "note": ""
+      },
+      {
+        "start": 666,
+        "end": 674,
+        "status": "READ_FULL",
+        "note": ""
+      }
+    ],
+    "sections": [
+      {
+        "depth": 2,
+        "title": "5.1 General principles for executing MQL programs",
+        "start": 612,
+        "end": 630,
+        "id": "TRD-0249",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.1 Designing MQL programs of various types",
+        "start": 613,
+        "end": 615,
+        "id": "TRD-0250",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.2 Threads",
+        "start": 616,
+        "end": 616,
+        "id": "TRD-0251",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.3 Overview of event handling functions",
+        "start": 617,
+        "end": 622,
+        "id": "TRD-0252",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.4 Features of starting and stopping programs of various types",
+        "start": 623,
+        "end": 625,
+        "id": "TRD-0253",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.5 Reference events of indicators and Expert Advisors: OnInit and OnDeinit",
+        "start": 626,
+        "end": 627,
+        "id": "TRD-0254",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.6 The main function of scripts and services: OnStart",
+        "start": 628,
+        "end": 628,
+        "id": "TRD-0255",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.1.7 Programmatic removal of Expert Advisors and scripts: ExpertRemove",
+        "start": 629,
+        "end": 630,
+        "id": "TRD-0256",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 2,
+        "title": "5.2 Scripts and services",
+        "start": 631,
+        "end": 636,
+        "id": "TRD-0257",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.2.1 Scripts",
+        "start": 631,
+        "end": 631,
+        "id": "TRD-0258",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.2.2 Services",
+        "start": 632,
+        "end": 635,
+        "id": "TRD-0259",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.2.3 Restrictions for scripts and services",
+        "start": 636,
+        "end": 636,
+        "id": "TRD-0260",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 2,
+        "title": "5.3 Timeseries",
+        "start": 637,
+        "end": 674,
+        "id": "TRD-0261",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.1 Symbols and timeframes",
+        "start": 639,
+        "end": 641,
+        "id": "TRD-0262",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.2 Technical aspects of timeseries organization and storage",
+        "start": 642,
+        "end": 642,
+        "id": "TRD-0263",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.3 Getting characteristics of price arrays",
+        "start": 643,
+        "end": 644,
+        "id": "TRD-0264",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.4 Number of available bars (Bars/iBars)",
+        "start": 645,
+        "end": 647,
+        "id": "TRD-0265",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.5 Search bar index by time (iBarShift)",
+        "start": 645,
+        "end": 647,
+        "id": "TRD-0266",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.6 Overview of Copy functions for obtaining arrays of quotes",
+        "start": 648,
+        "end": 651,
+        "id": "TRD-0267",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.7 Getting quotes as an array of MqlRates structures",
+        "start": 652,
+        "end": 654,
+        "id": "TRD-0268",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.8 Separate request for arrays of prices, volumes, spreads, time",
+        "start": 655,
+        "end": 656,
+        "id": "TRD-0269",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.9 Reading price, volume, spread, and time by bar index",
+        "start": 657,
+        "end": 659,
+        "id": "TRD-0270",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.10 Finding the maximum and minimum values in a timeseries",
+        "start": 660,
+        "end": 663,
+        "id": "TRD-0271",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      },
+      {
+        "depth": 3,
+        "title": "5.3.11 Working with real tick arrays in MqlTick structures",
+        "start": 664,
+        "end": 674,
+        "id": "TRD-0272",
+        "review_status": "READ_FULL_EXTRACTED_BODY"
+      }
+    ]
+  },
+  "caveats": [
+    "No PDF image rendering",
+    "No referenced external mq5/mqh files read",
+    "Outline boundaries can omit subsection continuation on next page"
+  ],
+  "total_own_unique_pages": 265
+}

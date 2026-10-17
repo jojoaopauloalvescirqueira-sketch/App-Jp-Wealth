@@ -1,0 +1,15 @@
+{
+  "id": "S05",
+  "topic": "context",
+  "prompt": "Responda a solicitação e identifique a evidência que falta.",
+  "input": {
+    "request": "confirmar se cálculo 1.9.0 autoriza Supervisor",
+    "available": [
+      "version_label"
+    ],
+    "missing": [
+      "normative_authorization",
+      "owner_acceptance"
+    ]
+  }
+}

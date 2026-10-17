@@ -1,0 +1,15 @@
+{
+  "id": "S04",
+  "topic": "units",
+  "prompt": "Calcule com as unidades fornecidas, sem custos adicionais neste fixture; não generalize para o motor real.",
+  "input": {
+    "entry_price": 100.0,
+    "stop_price": 99.5,
+    "tick_size": 0.25,
+    "tick_value_loss_per_lot": 2.0,
+    "risk_cash": 10.0,
+    "volume_step": 0.5,
+    "volume_min": 0.5,
+    "volume_max": 10.0
+  }
+}

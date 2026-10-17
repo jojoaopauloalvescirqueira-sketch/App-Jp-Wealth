@@ -1,0 +1,769 @@
+{
+  "schema": "stoikus-coverage-union/1",
+  "method": "Union of explicitly declared full-text pages, no propagation from family openings",
+  "independent_full_source_audit": false,
+  "native_status": "NOT_RUN",
+  "evidence": [
+    {
+      "file": "engineering-coverage.json",
+      "sha256": "5d9036a792e58c4bf01e46d8c973303c2b91762a80cf5b541c3e0f1b96fe6fe5",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          66,
+          67
+        ],
+        [
+          74,
+          75
+        ],
+        [
+          141,
+          143
+        ],
+        [
+          154,
+          154
+        ],
+        [
+          180,
+          183
+        ],
+        [
+          404,
+          407
+        ],
+        [
+          412,
+          415
+        ],
+        [
+          465,
+          466
+        ],
+        [
+          482,
+          485
+        ],
+        [
+          488,
+          491
+        ],
+        [
+          499,
+          499
+        ],
+        [
+          612,
+          628
+        ],
+        [
+          631,
+          636
+        ],
+        [
+          837,
+          838
+        ],
+        [
+          847,
+          848
+        ],
+        [
+          1450,
+          1453
+        ],
+        [
+          1458,
+          1460
+        ],
+        [
+          1478,
+          1479
+        ],
+        [
+          1496,
+          1497
+        ],
+        [
+          1506,
+          1507
+        ],
+        [
+          1511,
+          1514
+        ],
+        [
+          1558,
+          1561
+        ],
+        [
+          1775,
+          1775
+        ],
+        [
+          1839,
+          1841
+        ],
+        [
+          1870,
+          1871
+        ],
+        [
+          1885,
+          1886
+        ],
+        [
+          1893,
+          1896
+        ],
+        [
+          1941,
+          1941
+        ],
+        [
+          2046,
+          2047
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "engineering-coverage.json",
+      "sha256": "5d9036a792e58c4bf01e46d8c973303c2b91762a80cf5b541c3e0f1b96fe6fe5",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          1042,
+          1048
+        ],
+        [
+          2082,
+          2086
+        ],
+        [
+          2098,
+          2098
+        ],
+        [
+          2106,
+          2108
+        ],
+        [
+          2122,
+          2123
+        ],
+        [
+          2630,
+          2633
+        ],
+        [
+          2639,
+          2644
+        ],
+        [
+          2665,
+          2667
+        ],
+        [
+          2676,
+          2677
+        ],
+        [
+          3189,
+          3189
+        ],
+        [
+          3241,
+          3242
+        ],
+        [
+          3302,
+          3302
+        ],
+        [
+          3307,
+          3308
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "nn-deep-coverage.json",
+      "sha256": "5d7d8a1af2657b1d701ff23b186cd7eca32fee471a77c967f3167e8c71e247c8",
+      "book": "NN",
+      "full_text_page_ranges": [
+        [
+          6,
+          83
+        ],
+        [
+          85,
+          168
+        ],
+        [
+          183,
+          183
+        ],
+        [
+          185,
+          185
+        ],
+        [
+          222,
+          226
+        ],
+        [
+          228,
+          239
+        ],
+        [
+          251,
+          251
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          258,
+          258
+        ],
+        [
+          260,
+          260
+        ],
+        [
+          265,
+          265
+        ],
+        [
+          537,
+          537
+        ],
+        [
+          579,
+          579
+        ],
+        [
+          651,
+          690
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "root-frontmatter-coverage.json",
+      "sha256": "0ea07dfb640e44283fd31910972837ef21fb3d0c5535c9e3471242116e571b89",
+      "book": "NN",
+      "full_text_page_ranges": [
+        [
+          1,
+          5
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "nn-layers-coverage.json",
+      "sha256": "e74ba91b5552ed7d23854ae9fe771e0a46ba1534d84b93554ee56f73bcb5d10b",
+      "book": "NN",
+      "full_text_page_ranges": [
+        [
+          169,
+          221
+        ],
+        [
+          240,
+          400
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "nn-final-coverage.json",
+      "sha256": "30e7e765f3f1ac8fa7c2dcb97666b9014eb4e18938d72532e2acfa7b1367db08",
+      "book": "NN",
+      "full_text_page_ranges": [
+        [
+          84,
+          84
+        ],
+        [
+          227,
+          227
+        ],
+        [
+          401,
+          650
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-semantic-coverage.json",
+      "sha256": "ba212a697a5624687d5a54cacf12808c1cd63ee60488a48d25ac0d25eb87d41d",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          42,
+          281
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-common-coverage.json",
+      "sha256": "c22bfc5e6096985207cc981179c50f0fbfc3d844c2ed98bace39894b702966a5",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          15,
+          41
+        ],
+        [
+          482,
+          610
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-files-coverage.json",
+      "sha256": "7e6b7a41103a43377465b9a693ef8cf1145cbbd1ec39ccf6292422a55ac187d5",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          281,
+          481
+        ],
+        [
+          611,
+          674
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-chart-coverage.json",
+      "sha256": "38775bbbddcb62484b06bf4823252fe2d69dbe0bf0f07254eed0c10ed1e4de9b",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          675,
+          900
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-trading-coverage.json",
+      "sha256": "b4e4576ecc00da0dbf29561d83ffa6548e97a7dcf96715ff6ff45847714928ac",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          1049,
+          1561
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-final-coverage.json",
+      "sha256": "1ddd6b84834ed88c13979d2dae0b863fbb397c80b8b0704f2ac4696f5e89b362",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          1,
+          14
+        ],
+        [
+          1775,
+          2047
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-ui-finish-coverage.json",
+      "sha256": "7fb52399d1b6dda2a26b41dd204069f819dd3448f4f8d5b1807a64f24ede21f7",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          901,
+          1048
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "trd-extensions-coverage.json",
+      "sha256": "f49225176b8783e894da1237f9d5b098d980c194cf2645875caaca4730629d69",
+      "book": "TRD",
+      "full_text_page_ranges": [
+        [
+          1562,
+          1774
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-01-coverage.json",
+      "sha256": "3b46115047795a17183fe2cabd0ef5308ce0853f424a350563e08003cfae4f53",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          1,
+          355
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-02-coverage.json",
+      "sha256": "e23783eb3fcb702ba1b8de7d565834f86d296973bc5b82b573ca6bc9114a1e22",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          356,
+          658
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-03-coverage.json",
+      "sha256": "c5efbcadfb87295682e16eaea1d8e2de596b72b76234fe5eed7668993dd4a9c2",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          659,
+          894
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-04-coverage.json",
+      "sha256": "b1f6a278b029a395ccdedc8f4981440027eecf02aa48ae192af97da5e7efb87e",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          895,
+          1194
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-05-coverage.json",
+      "sha256": "20187395042436040bd0a03ffe1cf7cd3797b2db144fa13e85f41781ec38c2fd",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          1195,
+          1390
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-05b-coverage.json",
+      "sha256": "6aba2e248efafc5da7e102b6e5154ee299d034019c2ec5ded6209d078330d2c1",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          1391,
+          1586
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-06-coverage.json",
+      "sha256": "d262637e0c52a21959ab1fdcd3cd1fb449d3456432cc0c09cf5c38513cd5914c",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          1587,
+          1947
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-07-coverage.json",
+      "sha256": "c97bc7b91203d23a7822fed6fad80560ade16f6a3ac22854044e813763cfd4d7",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          1948,
+          2289
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-08-coverage.json",
+      "sha256": "116f76b3035d8cd228f0a209b8cc00390843d8181ad1acd3bafb81ff6c477266",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          2290,
+          2611
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-09-coverage.json",
+      "sha256": "e845f315acd80360bd617b2e3b6450668564250b94c8795840357389ad46a443",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          2612,
+          2940
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-10-coverage.json",
+      "sha256": "7b0baa3e12abc68311fb9ce5542c913ed37c5b89f84a8f7570591ed985847f29",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          2941,
+          3042
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-10b-coverage.json",
+      "sha256": "dd02ebf5593830b2aa990c77139be362522c9183dd060aa41b8b764c07566dc0",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          3043,
+          3238
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-11-coverage.json",
+      "sha256": "6b14ce4acc5e374ecb1e014356e877c37e23e86dd61ee74fd95b29e812b598d0",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          3239,
+          3430
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-11b-coverage.json",
+      "sha256": "f3d74d76c77c2dd10552f806fd458d059da50286daf9ee1aedad05b42ee1a4ad",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          3431,
+          3607
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-12-coverage.json",
+      "sha256": "e622692fa3fc4e67deeb42dc9386b8da11a811ba363e41ae1e93f6c3d39027f8",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          3608,
+          3768
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-12b-coverage.json",
+      "sha256": "35070e9f97757e0ad3ccecfa8d82f6b8286774abbb3cb1d4e782806590a9df9c",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          3769,
+          4103
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-13-coverage.json",
+      "sha256": "a049be480f878fb68e6f96c69409827cea891c5bc794c9b6ae0127e5572143a8",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          4104,
+          4258
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-13b-coverage.json",
+      "sha256": "cd0007939b829698d4ac4560fb7a9e6bfc165c061e5d635d7c74b30f6c5f4e8a",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          4259,
+          4490
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-13c-coverage.json",
+      "sha256": "f252615b716609a515c095e3f3acf482d3f47350befb2bc14af8fa0c52321dce",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          4491,
+          4834
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-14-coverage.json",
+      "sha256": "8cbe84237859218dc5af39cdb5be73d24473f3933fe5bb86fd1ac781dac2cd2f",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          4835,
+          4976
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-14b-coverage.json",
+      "sha256": "181941cb6aeea754a20e1a324fb2b75228b600f22283a72f54620f698fa511be",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          4977,
+          5270
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-14c-coverage.json",
+      "sha256": "44eea742c4a8c7da545858ba9f678d2b0122ca2e0dcf1afadce49963a941f8e6",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          5271,
+          5703
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-15-coverage.json",
+      "sha256": "ced35e0a1d263b73a7281eba96070c3abd7b9c529eb6182b8374bd2e9c9ca132",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          5704,
+          6180
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-15b-coverage.json",
+      "sha256": "0dd443e8b2d78e3565ba13d343937cddbb2421fa2d3d1b6e912d62cb17ed26c7",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          6181,
+          6659
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-16-coverage.json",
+      "sha256": "e4917ee20a09fb5ad72ffd18b3938f4539987222fb9ac0bec2181d7d0e2dfe2b",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          6660,
+          7138
+        ]
+      ],
+      "note": ""
+    },
+    {
+      "file": "reference-batch-17-coverage.json",
+      "sha256": "ef17edb50b99e720b5c083fcc5b1b3dab6766080f08bc3760d36fc83c5328394",
+      "book": "REF",
+      "full_text_page_ranges": [
+        [
+          7139,
+          7284
+        ]
+      ],
+      "note": ""
+    }
+  ],
+  "books": {
+    "REF": {
+      "pages": 7284,
+      "extracted": 7284,
+      "full_text_read_unique": 7284,
+      "full_text_read_ranges": [
+        [
+          1,
+          7284
+        ]
+      ],
+      "pending_full_text_ranges": [],
+      "textual_body_coverage": "COMPLETE",
+      "visual_and_executable_verification": "SEPARATE_NOT_IMPLIED"
+    },
+    "TRD": {
+      "pages": 2047,
+      "extracted": 2047,
+      "full_text_read_unique": 2047,
+      "full_text_read_ranges": [
+        [
+          1,
+          2047
+        ]
+      ],
+      "pending_full_text_ranges": [],
+      "textual_body_coverage": "COMPLETE",
+      "visual_and_executable_verification": "SEPARATE_NOT_IMPLIED"
+    },
+    "NN": {
+      "pages": 690,
+      "extracted": 690,
+      "full_text_read_unique": 690,
+      "full_text_read_ranges": [
+        [
+          1,
+          690
+        ]
+      ],
+      "pending_full_text_ranges": [],
+      "textual_body_coverage": "COMPLETE",
+      "visual_and_executable_verification": "SEPARATE_NOT_IMPLIED"
+    }
+  },
+  "corpus_semantic_status": "COMPLETE_TEXTUAL_DECLARATIONS"
+}

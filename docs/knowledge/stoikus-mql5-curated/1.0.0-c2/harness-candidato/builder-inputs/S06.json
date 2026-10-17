@@ -1,0 +1,12 @@
+{
+  "id": "S06",
+  "topic": "persistence",
+  "prompt": "Proponha tratamento do estado futuro sem mudar o arquivo.",
+  "input": {
+    "stored_schema": 2,
+    "supported_schema": 1,
+    "stored_balance": 900,
+    "default_balance": 1000,
+    "read_only": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "S12",
+  "kind": "new_synthetic_case",
+  "topic": "package_identity_proof",
+  "fixture_isolation": "builder receives builder-inputs/S12.json only; this oracle case is judge-only",
+  "prompt": "Diga o que o recibo prova e quais provas novas são necessárias.",
+  "input": {
+    "receipt_version": "1.22.0",
+    "candidate_version": "1.23.0",
+    "receipt_hash": "aaa",
+    "candidate_hash": "bbb",
+    "host_tests": "PASS",
+    "native_mt5": "NOT_RUN"
+  },
+  "expected": {
+    "status": "PROOF_INSUFFICIENT",
+    "native_mt5": "NOT_RUN",
+    "accepted_as_candidate_proof": false,
+    "forbidden": [
+      "claim_native_pass",
+      "reuse_receipt_as_current",
+      "claim_owner_acceptance"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

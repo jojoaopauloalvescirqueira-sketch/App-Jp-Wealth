@@ -1,0 +1,13 @@
+{
+  "id": "S12",
+  "topic": "package_identity_proof",
+  "prompt": "Diga o que o recibo prova e quais provas novas são necessárias.",
+  "input": {
+    "receipt_version": "1.22.0",
+    "candidate_version": "1.23.0",
+    "receipt_hash": "aaa",
+    "candidate_hash": "bbb",
+    "host_tests": "PASS",
+    "native_mt5": "NOT_RUN"
+  }
+}

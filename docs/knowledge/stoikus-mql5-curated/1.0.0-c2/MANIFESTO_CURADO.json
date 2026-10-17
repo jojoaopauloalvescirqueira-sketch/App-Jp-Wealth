@@ -1,0 +1,2555 @@
+{
+  "schema": "stoikus-curated-edition/1",
+  "edition_id": "stoikus-documental-curada-1.0.0-c2",
+  "prepared_date": "2026-10-16",
+  "status": "CURATED_DOCUMENTARY_CANDIDATE",
+  "manual_revision": "1.0.0",
+  "harness_version": "0.1.0 CANDIDATE R3",
+  "adoption": "NOT_ADOPTED",
+  "native_mt5": "NOT_RUN",
+  "current_behavioral_pilot": "NOT_RUN",
+  "historical_results": "HISTORICAL_ONLY",
+  "source_snapshot": {
+    "id": "stoikus-mql5-historical-20261015",
+    "physical_files": 870,
+    "noncache_files": 866,
+    "inventory_fingerprint_sha256": "9e71b3a6c0b18cf22299e3d66420e1904a4b07cee3bbbca6e3fffff5af47af98",
+    "complete_archive_sha256": "2305ea13523b10904106c0bd1056c34cb4181640f00cebea67467ea3ddb64b0c",
+    "availability": "PRIVATE_EXTERNAL_RETAINED"
+  },
+  "content_identity_method": "SHA256(canonical UTF-8 JSON sorted list of {path,bytes,sha256}; ensure_ascii=False,sort_keys=True,separators=(comma,colon))",
+  "content_identity_sha256": "f43f50c9e800a3852f26841df89d52a30788d3b3ea212d26e7b6e7677bab4d17",
+  "self_exclusion": {
+    "path": "MANIFESTO_CURADO.json",
+    "reason": "Only this file is omitted to avoid circular hashing; its SHA256 is in an external receipt.",
+    "other_exclusions": []
+  },
+  "file_count_excluding_manifest": 212,
+  "files": [
+    {
+      "path": "COMECE_AQUI.md",
+      "bytes": 4030,
+      "sha256": "fee52053e86161d35fa178fba6171489892db1d6df04335b4c60e84bbd4190cd",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "DOCUMENTARY",
+        "source_path": "COMECE_AQUI.md",
+        "source_sha256": "4212be2e2ee9d916c71933f4745f181bc8ff26b12f38c9038255cbdd16365092",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "CURADORIA.md",
+      "bytes": 4458,
+      "sha256": "00929b37a67d91ad6308b5e3112702f90cc8482152274e4a5cc98f895efb9e1a",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "DEPENDENCIAS.md",
+      "bytes": 3936,
+      "sha256": "3a96be3eedf1cb3390ef87c16cfd305c5744fcb10ae3f0845fe0feb2f839b03c",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "HISTORICO.md",
+      "bytes": 3064,
+      "sha256": "e26ed4d0d4c857c6713730e7c71a19c819639ebece6623c058ee182e491c42f9",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN.md",
+      "bytes": 1953,
+      "sha256": "c792a44019ec5043b8452fda9811ffbc6920ab225f01422cdac01333309f823c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "IMPLEMENTATION_PLAN.md",
+        "source_sha256": "c792a44019ec5043b8452fda9811ffbc6920ab225f01422cdac01333309f823c",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "LEIA_ME_KIT.md",
+      "bytes": 2495,
+      "sha256": "27fc73c1bbcfc640f3d928d63ab94671e4194e5156a5b1af77cf1a0ca329c90f",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "DOCUMENTARY",
+        "source_path": "LEIA_ME_KIT.md",
+        "source_sha256": "292db998bc69de96c7ec342d2d0afe64db046dfb68ee921006983434c67bda4f",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "MANUAL.md",
+      "bytes": 172529,
+      "sha256": "49812f58f6d563a05c50ff4f35fe70548a26d70a0a5db7063b1d4f5f9c24571f",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "MANUAL.md",
+        "source_sha256": "49812f58f6d563a05c50ff4f35fe70548a26d70a0a5db7063b1d4f5f9c24571f",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "RELATORIO_FINAL.md",
+      "bytes": 13134,
+      "sha256": "8a75bb3131d80e74d24a77d342252d7d8d70907cf484a606b789b4d170f9e762",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "RELATORIO_FINAL.md",
+        "source_sha256": "8a75bb3131d80e74d24a77d342252d7d8d70907cf484a606b789b4d170f9e762",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/01-arquitetura.md",
+      "bytes": 15674,
+      "sha256": "d04fe0ca932b9da575015811502759566c47f925554c28475ecf52cac9c32712",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/01-arquitetura.md",
+        "source_sha256": "d04fe0ca932b9da575015811502759566c47f925554c28475ecf52cac9c32712",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/02-contratos.md",
+      "bytes": 14090,
+      "sha256": "436cc404cd659cf2ea96287a6167f42cdae3425ac6dcc5dfc3b21303ae5b5178",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/02-contratos.md",
+        "source_sha256": "436cc404cd659cf2ea96287a6167f42cdae3425ac6dcc5dfc3b21303ae5b5178",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/03-eventos.md",
+      "bytes": 15567,
+      "sha256": "cf2076401fd182c22767322e0f29803e94fe455a2365b47a27d8830aaaa85652",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/03-eventos.md",
+        "source_sha256": "cf2076401fd182c22767322e0f29803e94fe455a2365b47a27d8830aaaa85652",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/04-dados-racional.md",
+      "bytes": 17098,
+      "sha256": "5b3f1757ea44d3c5e6c2a9e4b203a524e33fd0756e303a6106478d5bf14a66a9",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/04-dados-racional.md",
+        "source_sha256": "5b3f1757ea44d3c5e6c2a9e4b203a524e33fd0756e303a6106478d5bf14a66a9",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/05-persistencia.md",
+      "bytes": 15179,
+      "sha256": "fb704e3aa207be164c5bee4e8f64952954cc0a9aaf75133b523c619def8738fe",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/05-persistencia.md",
+        "source_sha256": "fb704e3aa207be164c5bee4e8f64952954cc0a9aaf75133b523c619def8738fe",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/06-interface.md",
+      "bytes": 16387,
+      "sha256": "a447863ea638b9ad46d7a9dcaa4b191d89a85813433402fee028a3d81240e4c9",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/06-interface.md",
+        "source_sha256": "a447863ea638b9ad46d7a9dcaa4b191d89a85813433402fee028a3d81240e4c9",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/07-testes.md",
+      "bytes": 15070,
+      "sha256": "57740bcd449c349874597b76f85bb42ffda25b3c3214cba995699a529f68c8e2",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/07-testes.md",
+        "source_sha256": "57740bcd449c349874597b76f85bb42ffda25b3c3214cba995699a529f68c8e2",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/08-redes-neurais.md",
+      "bytes": 17196,
+      "sha256": "b6c6f3d1a01f617372f4880076f5f5b8afb65eaa69c638fcd21f1698bbaef2db",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/08-redes-neurais.md",
+        "source_sha256": "b6c6f3d1a01f617372f4880076f5f5b8afb65eaa69c638fcd21f1698bbaef2db",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/09-avaliacao.md",
+      "bytes": 15267,
+      "sha256": "05062ac47f2a9809afd9a4cd0801442ecad3401fb20dd1d913af3a7387325727",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/09-avaliacao.md",
+        "source_sha256": "05062ac47f2a9809afd9a4cd0801442ecad3401fb20dd1d913af3a7387325727",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "chapters/10-ia-propostas.md",
+      "bytes": 25354,
+      "sha256": "6a9fb8aa3d6e6172cff3515656837ea93740ee7bdaf9d26a8e5d194a138975d7",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "chapters/10-ia-propostas.md",
+        "source_sha256": "6a9fb8aa3d6e6172cff3515656837ea93740ee7bdaf9d26a8e5d194a138975d7",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "curadoria/INDICE_PESQUISA_ATUAL.json",
+      "bytes": 60721,
+      "sha256": "1a0175b28d4f68d2945349f97c7927d122daf694afda1f51b1e96d3ea70fac80",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "curadoria/MAPA_ORIGEM.json",
+      "bytes": 512302,
+      "sha256": "be86c763ff5d23307f888bf03399423fccb33b5a76fcd2dc1bf192dbe5444045",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "curadoria/REFERENCIAS_EXTERNAS.json",
+      "bytes": 375890,
+      "sha256": "0b3e2efc54da1fb05d308fe96b012c52c806beed2bc593741d8811a4dbf2cdf1",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "curadoria/TRANSFORMACOES.json",
+      "bytes": 39705,
+      "sha256": "e9f29d9935bb33c610171959aa9ee28a334a3554ca5bcf52ee3994a2a26c7ea6",
+      "provenance": {
+        "disposition": "GENERATED",
+        "scope": "DOCUMENTARY"
+      }
+    },
+    {
+      "path": "editorial/abertura.md",
+      "bytes": 3973,
+      "sha256": "add11d9f57e774d60c47ea793d2d36512de58b72e826950b514b286f9dca4fd1",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "editorial/abertura.md",
+        "source_sha256": "add11d9f57e774d60c47ea793d2d36512de58b72e826950b514b286f9dca4fd1",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "editorial/referencias.md",
+      "bytes": 1654,
+      "sha256": "04456c05c296dd6e983957c0b0d00414b6aab172368fc81380c89b1015921823",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "editorial/referencias.md",
+        "source_sha256": "04456c05c296dd6e983957c0b0d00414b6aab172368fc81380c89b1015921823",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "examples/README.md",
+      "bytes": 957,
+      "sha256": "2f212ff40bba4fd8702f8f27185eb88d7286ce38f4e71c50d2270c01ae3734e8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "examples/README.md",
+        "source_sha256": "2f212ff40bba4fd8702f8f27185eb88d7286ce38f4e71c50d2270c01ae3734e8",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "examples/contraprovas_matematicas.py",
+      "bytes": 2779,
+      "sha256": "0dd35838f5f711817a8dc637d7f6941cb09ee19a1375920af6e66518452fea35",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "examples/contraprovas_matematicas.py",
+        "source_sha256": "0dd35838f5f711817a8dc637d7f6941cb09ee19a1375920af6e66518452fea35",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "harness-candidato/ARCHITECTURE.md",
+      "bytes": 1616,
+      "sha256": "018b6c28676a58123d309a3a8ee062cbad91e34d4ab00a21019040adac415c85",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/ARCHITECTURE.md",
+        "source_sha256": "018b6c28676a58123d309a3a8ee062cbad91e34d4ab00a21019040adac415c85",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/ENTRY.md",
+      "bytes": 1282,
+      "sha256": "4da4c8a53b8abe3175a9ed971b4354b7b09aa504cd559490671aef6a88a5c2d0",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/ENTRY.md",
+        "source_sha256": "4da4c8a53b8abe3175a9ed971b4354b7b09aa504cd559490671aef6a88a5c2d0",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/PILOT.md",
+      "bytes": 5708,
+      "sha256": "27d7864ed72d45ca7b1524c333d8d8ce197bedca110423bbbf41be6be8b1dbeb",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/PILOT.md",
+        "source_sha256": "27d7864ed72d45ca7b1524c333d8d8ce197bedca110423bbbf41be6be8b1dbeb",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/README.md",
+      "bytes": 2663,
+      "sha256": "168679f75b8696e79d6d2b0215b820f098aaf820b03b3f1036e2d2bd6fdfc202",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/README.md",
+        "source_sha256": "168679f75b8696e79d6d2b0215b820f098aaf820b03b3f1036e2d2bd6fdfc202",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/attempt-template.json",
+      "bytes": 1106,
+      "sha256": "35c12e2a4053c5587de239e5c648b39dc384deae09cbe0d2e7d2b39073e9a5e8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/attempt-template.json",
+        "source_sha256": "35c12e2a4053c5587de239e5c648b39dc384deae09cbe0d2e7d2b39073e9a5e8",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S01.json",
+      "bytes": 255,
+      "sha256": "507f3acaad8afb1e35d3077f2c5c3a42a361bbf6b7406809afb51c6f2f5a6b7f",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S01.json",
+        "source_sha256": "507f3acaad8afb1e35d3077f2c5c3a42a361bbf6b7406809afb51c6f2f5a6b7f",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S02.json",
+      "bytes": 354,
+      "sha256": "f9313b212a383f12b5e2e934bd5ed47d292a92710e59b35f1c3ffb34e46503fa",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S02.json",
+        "source_sha256": "f9313b212a383f12b5e2e934bd5ed47d292a92710e59b35f1c3ffb34e46503fa",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S03.json",
+      "bytes": 296,
+      "sha256": "b018c3abd2afc31701f40fbde812531087abed98ec9ba5171e19aaec65731d87",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S03.json",
+        "source_sha256": "b018c3abd2afc31701f40fbde812531087abed98ec9ba5171e19aaec65731d87",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S04.json",
+      "bytes": 381,
+      "sha256": "0cd908a9816a4e6f09fc0f72d5074cdc4806fe6e6915703304ac1eafa05d8b03",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S04.json",
+        "source_sha256": "0cd908a9816a4e6f09fc0f72d5074cdc4806fe6e6915703304ac1eafa05d8b03",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S05.json",
+      "bytes": 331,
+      "sha256": "0531bed958635532f682f9968bba961742da2d25b268005d4ccef3f84865d9bb",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S05.json",
+        "source_sha256": "0531bed958635532f682f9968bba961742da2d25b268005d4ccef3f84865d9bb",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S06.json",
+      "bytes": 264,
+      "sha256": "419ac449e1ae0b0c65b6c60808beea6c7629e2faf67e7c8c8df10db09572aa48",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S06.json",
+        "source_sha256": "419ac449e1ae0b0c65b6c60808beea6c7629e2faf67e7c8c8df10db09572aa48",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S07.json",
+      "bytes": 263,
+      "sha256": "c1927e5b50c53c007860530bb8add598e58a32f547edf900a044b19b8caee5e2",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S07.json",
+        "source_sha256": "c1927e5b50c53c007860530bb8add598e58a32f547edf900a044b19b8caee5e2",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S08.json",
+      "bytes": 250,
+      "sha256": "ee58b1941405ca008620ecd7f6a0643767a42ffd39e82e763373ff3c736b62b9",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S08.json",
+        "source_sha256": "ee58b1941405ca008620ecd7f6a0643767a42ffd39e82e763373ff3c736b62b9",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S09.json",
+      "bytes": 379,
+      "sha256": "b5424543ad063b49bdb62b128cae0027859488e20ac7cb421e658d692b3ce321",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S09.json",
+        "source_sha256": "b5424543ad063b49bdb62b128cae0027859488e20ac7cb421e658d692b3ce321",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S10.json",
+      "bytes": 443,
+      "sha256": "161aff9f89ee62e549f5843127e427a762f5020a135e3240216b0f0554183f50",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S10.json",
+        "source_sha256": "161aff9f89ee62e549f5843127e427a762f5020a135e3240216b0f0554183f50",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S11.json",
+      "bytes": 299,
+      "sha256": "954dc44b33a2c5bdbea616808615de9dc7824147646396b361ad08f35d181947",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S11.json",
+        "source_sha256": "954dc44b33a2c5bdbea616808615de9dc7824147646396b361ad08f35d181947",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/builder-inputs/S12.json",
+      "bytes": 332,
+      "sha256": "677deb2d9506305d75bcc114f485cf70afac8da0413a5dc2243571692b1458b9",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/builder-inputs/S12.json",
+        "source_sha256": "677deb2d9506305d75bcc114f485cf70afac8da0413a5dc2243571692b1458b9",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S01.json",
+      "bytes": 689,
+      "sha256": "338060406c040c15069456027ed5ff617c4f5abe039eeab913d0221b51453a77",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S01.json",
+        "source_sha256": "338060406c040c15069456027ed5ff617c4f5abe039eeab913d0221b51453a77",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S02.json",
+      "bytes": 779,
+      "sha256": "1ed728887218f29cbb5da95c07b92a072bef80e16458550a060ad5a1615a7d27",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S02.json",
+        "source_sha256": "1ed728887218f29cbb5da95c07b92a072bef80e16458550a060ad5a1615a7d27",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S03.json",
+      "bytes": 700,
+      "sha256": "509bec721b31e3322ff93e67b0cdcb8325c255ee4aff29c84db9281334fa35e5",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S03.json",
+        "source_sha256": "509bec721b31e3322ff93e67b0cdcb8325c255ee4aff29c84db9281334fa35e5",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S04.json",
+      "bytes": 800,
+      "sha256": "d1a3786e3191b871e387b55c4a6d4493c86e9cd464c33f79440208e4ad13317b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S04.json",
+        "source_sha256": "d1a3786e3191b871e387b55c4a6d4493c86e9cd464c33f79440208e4ad13317b",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S05.json",
+      "bytes": 755,
+      "sha256": "52cc01beecfa4ef0671fa2092aeb261fc3b5d3301890e348e8cfc12033a06d94",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S05.json",
+        "source_sha256": "52cc01beecfa4ef0671fa2092aeb261fc3b5d3301890e348e8cfc12033a06d94",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S06.json",
+      "bytes": 676,
+      "sha256": "e1f75cf7cee1d269515f17c967dc8354657bfac4d0299d24486bb7530b2aa65b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S06.json",
+        "source_sha256": "e1f75cf7cee1d269515f17c967dc8354657bfac4d0299d24486bb7530b2aa65b",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S07.json",
+      "bytes": 662,
+      "sha256": "42b21307a0ea4db470cde72ab906b46be658c545071c5dd9d260206501ecbd60",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S07.json",
+        "source_sha256": "42b21307a0ea4db470cde72ab906b46be658c545071c5dd9d260206501ecbd60",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S08.json",
+      "bytes": 670,
+      "sha256": "fd7ae3402027b2d0c4482daf30489fb1e9bb80f541696b0cae7c722bda1e49fa",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S08.json",
+        "source_sha256": "fd7ae3402027b2d0c4482daf30489fb1e9bb80f541696b0cae7c722bda1e49fa",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S09.json",
+      "bytes": 803,
+      "sha256": "099daba434fc035fcc4fb0371d95b0ba681a2854d14a8eb5c17f0376a4b3152c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S09.json",
+        "source_sha256": "099daba434fc035fcc4fb0371d95b0ba681a2854d14a8eb5c17f0376a4b3152c",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S10.json",
+      "bytes": 959,
+      "sha256": "ebc573f2bcdb3fa5fa561f612d98a5d727edfdf6d71836da71806f3be7751145",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S10.json",
+        "source_sha256": "ebc573f2bcdb3fa5fa561f612d98a5d727edfdf6d71836da71806f3be7751145",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S11.json",
+      "bytes": 772,
+      "sha256": "41306467edb8fc93a22c8487663b95ea8b6216b2908ee1f4710bf9974b90bd95",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S11.json",
+        "source_sha256": "41306467edb8fc93a22c8487663b95ea8b6216b2908ee1f4710bf9974b90bd95",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/cases/S12.json",
+      "bytes": 794,
+      "sha256": "56d043574c16b9b385cf9dd2f4b9eecd6baedb04c974cdf7315b26c0abaabd9b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/cases/S12.json",
+        "source_sha256": "56d043574c16b9b385cf9dd2f4b9eecd6baedb04c974cdf7315b26c0abaabd9b",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/check_harness.py",
+      "bytes": 7870,
+      "sha256": "ccf2f823b63168db5de569e62e3897409f5c92e0ec37f377298425ebbf8b5a8a",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/check_harness.py",
+        "source_sha256": "ccf2f823b63168db5de569e62e3897409f5c92e0ec37f377298425ebbf8b5a8a",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/context/task-context.md",
+      "bytes": 1021,
+      "sha256": "c2a318d3261aa126518af953e84f621e1fcf62630b4ebb14f2852cbf8cd7f968",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/context/task-context.md",
+        "source_sha256": "c2a318d3261aa126518af953e84f621e1fcf62630b4ebb14f2852cbf8cd7f968",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/manifest.json",
+      "bytes": 14679,
+      "sha256": "004f96cc9a4a094d1dfdeebd803c83ebaf4482d8af07a3d0e1984124ec0328b6",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/manifest.json",
+        "source_sha256": "004f96cc9a4a094d1dfdeebd803c83ebaf4482d8af07a3d0e1984124ec0328b6",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/prompts/build.md",
+      "bytes": 401,
+      "sha256": "47f16aa3d2f89fed1d781cd4d44345755bf41ed26b4e9a368c8d91f2c76bd719",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/prompts/build.md",
+        "source_sha256": "47f16aa3d2f89fed1d781cd4d44345755bf41ed26b4e9a368c8d91f2c76bd719",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/prompts/diagnosis.md",
+      "bytes": 372,
+      "sha256": "14220f979bf581411f128240fb2c79e8816cd7e674f7a6fe1835c5b4c2ce32bb",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/prompts/diagnosis.md",
+        "source_sha256": "14220f979bf581411f128240fb2c79e8816cd7e674f7a6fe1835c5b4c2ce32bb",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/prompts/judge.md",
+      "bytes": 1204,
+      "sha256": "28141c198b70debf6439c23aedd4fb0c96427b585920ec39c99bb24e1a63af92",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/prompts/judge.md",
+        "source_sha256": "28141c198b70debf6439c23aedd4fb0c96427b585920ec39c99bb24e1a63af92",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/prompts/review.md",
+      "bytes": 398,
+      "sha256": "b0f7b7648afb499e790b06c47a4853ffc7053d4a46a13e5c3ff9f8751a83aa07",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/prompts/review.md",
+        "source_sha256": "b0f7b7648afb499e790b06c47a4853ffc7053d4a46a13e5c3ff9f8751a83aa07",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/provenance-policy.json",
+      "bytes": 2323,
+      "sha256": "c73a8ca9f2c65501419f89831b820d1bdc00f4caac58d42255456c5ad920e27d",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/provenance-policy.json",
+        "source_sha256": "c73a8ca9f2c65501419f89831b820d1bdc00f4caac58d42255456c5ad920e27d",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/recipes.md",
+      "bytes": 1420,
+      "sha256": "d1ee64dd067e78b5b3c9d73fddc743552939243a1d2037495c2c97ff64d6c415",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/recipes.md",
+        "source_sha256": "d1ee64dd067e78b5b3c9d73fddc743552939243a1d2037495c2c97ff64d6c415",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/rubric.json",
+      "bytes": 1658,
+      "sha256": "bf1da88d2d99b049a6e84ab645bc99d16f68b96630317f0e559630cbd3c596aa",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/rubric.json",
+        "source_sha256": "bf1da88d2d99b049a6e84ab645bc99d16f68b96630317f0e559630cbd3c596aa",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/source-identities.json",
+      "bytes": 686,
+      "sha256": "6d7b01a818ff723487c9e3e0c6cb42805ef2c05d06b8896767380aa28a03b6ff",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/source-identities.json",
+        "source_sha256": "6d7b01a818ff723487c9e3e0c6cb42805ef2c05d06b8896767380aa28a03b6ff",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/templates/contract.md",
+      "bytes": 467,
+      "sha256": "32e370909d1785ee8a5fc87e7f0cfdc2f61466c3e7f3e4ec0be0552be30a57cf",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/templates/contract.md",
+        "source_sha256": "32e370909d1785ee8a5fc87e7f0cfdc2f61466c3e7f3e4ec0be0552be30a57cf",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/templates/decision.md",
+      "bytes": 340,
+      "sha256": "529bcc5be3ee07abc36c56ef22ca4bf6591fc4b7a8611ca78824868c7100099f",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/templates/decision.md",
+        "source_sha256": "529bcc5be3ee07abc36c56ef22ca4bf6591fc4b7a8611ca78824868c7100099f",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/templates/delivery.md",
+      "bytes": 424,
+      "sha256": "ff0624f639bc4f7d64957f95a0bb70b1285068dee4b976726d18c476c9ad77ec",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/templates/delivery.md",
+        "source_sha256": "ff0624f639bc4f7d64957f95a0bb70b1285068dee4b976726d18c476c9ad77ec",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/templates/test.md",
+      "bytes": 374,
+      "sha256": "13fe487d3d75f25d941766f08912ab83c4c726e604483446227907bdab094c99",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/templates/test.md",
+        "source_sha256": "13fe487d3d75f25d941766f08912ab83c4c726e604483446227907bdab094c99",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "harness-candidato/tests/test_check_harness.py",
+      "bytes": 7488,
+      "sha256": "9547bfdf35532c049753c56ecf4660e2257f2c451dcf0b07b0b40a31a91f1716",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "harness-candidato/tests/test_check_harness.py",
+        "source_sha256": "9547bfdf35532c049753c56ecf4660e2257f2c451dcf0b07b0b40a31a91f1716",
+        "source_category": "KIT_CANDIDATO_CANONICO"
+      }
+    },
+    {
+      "path": "publication/Stoikus_Engenharia_MQL5_Manual.docx",
+      "bytes": 233513,
+      "sha256": "c8b90f9f6a0c4a1417878a2b1c4f30247fc55afdb328746f6a53436a5e006d7c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/Stoikus_Engenharia_MQL5_Manual.docx",
+        "source_sha256": "c8b90f9f6a0c4a1417878a2b1c4f30247fc55afdb328746f6a53436a5e006d7c",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/Stoikus_Engenharia_MQL5_Manual.pdf",
+      "bytes": 614447,
+      "sha256": "8c5e6c85861e6a17e71a0655921b2070ba4fb723e57a0120503b4e5e486e75a8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/Stoikus_Engenharia_MQL5_Manual.pdf",
+        "source_sha256": "8c5e6c85861e6a17e71a0655921b2070ba4fb723e57a0120503b4e5e486e75a8",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/diagram-1-semantics.json",
+      "bytes": 1292,
+      "sha256": "8e4c386e80006c3371170f5e55b3706e33e2305ecad9fb5887fb9351f7fc8317",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/diagram-1-semantics.json",
+        "source_sha256": "8e4c386e80006c3371170f5e55b3706e33e2305ecad9fb5887fb9351f7fc8317",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/diagram-1.png",
+      "bytes": 45339,
+      "sha256": "62c65327d1ca25a1bb9140ef3497310cfa7a371a55140db20b3e8590f044892c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/diagram-1.png",
+        "source_sha256": "62c65327d1ca25a1bb9140ef3497310cfa7a371a55140db20b3e8590f044892c",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/diagram-2-semantics.json",
+      "bytes": 1475,
+      "sha256": "4c39121d724e94c6770db3fb249c163a7ff26cd78734fc6488180af1ead86510",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/diagram-2-semantics.json",
+        "source_sha256": "4c39121d724e94c6770db3fb249c163a7ff26cd78734fc6488180af1ead86510",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/diagram-2.png",
+      "bytes": 66668,
+      "sha256": "4ff345c00f8b16ccf9984dd4a87401d834b2aebcfa5be95a0337e2da6e5d7a95",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/diagram-2.png",
+        "source_sha256": "4ff345c00f8b16ccf9984dd4a87401d834b2aebcfa5be95a0337e2da6e5d7a95",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/diagram-3-semantics.json",
+      "bytes": 981,
+      "sha256": "8f4ea5e4527f73fa54b7940714398f3605e966e4c6ff74fd25c73e379d079501",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/diagram-3-semantics.json",
+        "source_sha256": "8f4ea5e4527f73fa54b7940714398f3605e966e4c6ff74fd25c73e379d079501",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/diagram-3.png",
+      "bytes": 36695,
+      "sha256": "1324c75c350c38733fd02703b3644a8079b4e6ad65f39f21c280de27aa44ba50",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/diagram-3.png",
+        "source_sha256": "1324c75c350c38733fd02703b3644a8079b4e6ad65f39f21c280de27aa44ba50",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "publication/toc-pages.json",
+      "bytes": 692,
+      "sha256": "d0fc4d6fd3833927cf4cfb34ba8fba8d30fb15bfc47021848f2caeb20d22c42c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "publication/toc-pages.json",
+        "source_sha256": "d0fc4d6fd3833927cf4cfb34ba8fba8d30fb15bfc47021848f2caeb20d22c42c",
+        "source_category": "FORMATOS_E_DERIVADOS"
+      }
+    },
+    {
+      "path": "research/INDEX.md",
+      "bytes": 10226,
+      "sha256": "02f86a2116bdcb8ea71c0426e7328580721f85d78b82de02ccdd125798807087",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/INDEX.md",
+        "source_sha256": "02f86a2116bdcb8ea71c0426e7328580721f85d78b82de02ccdd125798807087",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/LEIA_ME.md",
+      "bytes": 5448,
+      "sha256": "c01543c75efa0a615a84501ad23177452f0c2641d14c93cac15dc257428cf43a",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/LEIA_ME.md",
+        "source_sha256": "c01543c75efa0a615a84501ad23177452f0c2641d14c93cac15dc257428cf43a",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/coverage-matrix.jsonl",
+      "bytes": 2287159,
+      "sha256": "d2081d1f2a4f2c7b0daa5e131ec3b650f9b98a71b43b0ad065d39e4a51a5b906",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/coverage-matrix.jsonl",
+        "source_sha256": "d2081d1f2a4f2c7b0daa5e131ec3b650f9b98a71b43b0ad065d39e4a51a5b906",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/coverage-summary.json",
+      "bytes": 15304,
+      "sha256": "d2fdc07b96002927db77ab7356f25d3e11e9a76aef89ac37a2abd4dede4bf142",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/coverage-summary.json",
+        "source_sha256": "d2fdc07b96002927db77ab7356f25d3e11e9a76aef89ac37a2abd4dede4bf142",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/critical-synthesis.md",
+      "bytes": 9855,
+      "sha256": "2873f7008009b432aa128f90f6b953664ffd8f45127614fc86b55ad11a140186",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/critical-synthesis.md",
+        "source_sha256": "2873f7008009b432aa128f90f6b953664ffd8f45127614fc86b55ad11a140186",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/engineering-coverage.json",
+      "bytes": 1659041,
+      "sha256": "5d9036a792e58c4bf01e46d8c973303c2b91762a80cf5b541c3e0f1b96fe6fe5",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/engineering-coverage.json",
+        "source_sha256": "5d9036a792e58c4bf01e46d8c973303c2b91762a80cf5b541c3e0f1b96fe6fe5",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/engineering-notes.md",
+      "bytes": 15229,
+      "sha256": "c6a8ea5fe7650e960b28363a271afac04047af253421a4344f17984f9356b6a2",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/engineering-notes.md",
+        "source_sha256": "c6a8ea5fe7650e960b28363a271afac04047af253421a4344f17984f9356b6a2",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/harness-notes.md",
+      "bytes": 6313,
+      "sha256": "05cc4415306e11da244431fe0911a4ae89176677315c4dff3963db6fd3d9958f",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/harness-notes.md",
+        "source_sha256": "05cc4415306e11da244431fe0911a4ae89176677315c4dff3963db6fd3d9958f",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/neural-coverage.json",
+      "bytes": 77717,
+      "sha256": "bcf6cdb1e5172685b9a690fd4711d3f22119ec92a63683482fb91c513a86286c",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/neural-coverage.json",
+        "source_sha256": "8feb34bcc9d1f655d1daec46a415b5d22f4e1439c66de9226744b40aaf8d11f5",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/neural-notes.md",
+      "bytes": 65655,
+      "sha256": "b6f907c9c241b79d13f24f50f9d0d51c6d672941b6fb4836ac7f870225967727",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/neural-notes.md",
+        "source_sha256": "a1a0ec7efc4480962f4bf18f36b69309aebb798ded4b232a398b87ab7c293140",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/nn-deep-coverage.json",
+      "bytes": 197936,
+      "sha256": "5d7d8a1af2657b1d701ff23b186cd7eca32fee471a77c967f3167e8c71e247c8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/nn-deep-coverage.json",
+        "source_sha256": "5d7d8a1af2657b1d701ff23b186cd7eca32fee471a77c967f3167e8c71e247c8",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/nn-deep-review.md",
+      "bytes": 34800,
+      "sha256": "6c4cbdc5c831819da3f69f98d86f736dc1b258c03dc7a7c576637e4ace5c6acb",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/nn-deep-review.md",
+        "source_sha256": "6c4cbdc5c831819da3f69f98d86f736dc1b258c03dc7a7c576637e4ace5c6acb",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/nn-final-coverage.json",
+      "bytes": 86859,
+      "sha256": "30e7e765f3f1ac8fa7c2dcb97666b9014eb4e18938d72532e2acfa7b1367db08",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/nn-final-coverage.json",
+        "source_sha256": "30e7e765f3f1ac8fa7c2dcb97666b9014eb4e18938d72532e2acfa7b1367db08",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/nn-final-review.md",
+      "bytes": 25714,
+      "sha256": "6c91233eafc680ab3e231f8c7459a7b083acccf98449a1dbb1a15aa338ecc0be",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/nn-final-review.md",
+        "source_sha256": "6c91233eafc680ab3e231f8c7459a7b083acccf98449a1dbb1a15aa338ecc0be",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/nn-layers-coverage.json",
+      "bytes": 20642,
+      "sha256": "e74ba91b5552ed7d23854ae9fe771e0a46ba1534d84b93554ee56f73bcb5d10b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/nn-layers-coverage.json",
+        "source_sha256": "e74ba91b5552ed7d23854ae9fe771e0a46ba1534d84b93554ee56f73bcb5d10b",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/nn-layers-review.md",
+      "bytes": 28302,
+      "sha256": "c9c9aa70778ba488dacafb25abc98eae00864cf8e30409d8a0782dce0c1ab2e6",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/nn-layers-review.md",
+        "source_sha256": "c9c9aa70778ba488dacafb25abc98eae00864cf8e30409d8a0782dce0c1ab2e6",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/official-sources.json",
+      "bytes": 1321,
+      "sha256": "1136e4283f4b77d2d879282e13835fc380ff66e72f05314097e0b3be45a5a382",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/official-sources.json",
+        "source_sha256": "1136e4283f4b77d2d879282e13835fc380ff66e72f05314097e0b3be45a5a382",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/page-inventory.jsonl.gz",
+      "bytes": 506554,
+      "sha256": "83c7c4c0fc12c8e4febcf0558ed656178cfe89668456ff7015e5add12e23c4ae",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/page-inventory.jsonl.gz",
+        "source_sha256": "83c7c4c0fc12c8e4febcf0558ed656178cfe89668456ff7015e5add12e23c4ae",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/pagination-map.json",
+      "bytes": 262,
+      "sha256": "a250fb2b2294948f78f54c2445cf73ab17d6ea44860b2e9e2816d49622c7eeb1",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/pagination-map.json",
+        "source_sha256": "a250fb2b2294948f78f54c2445cf73ab17d6ea44860b2e9e2816d49622c7eeb1",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-01-coverage.json",
+      "bytes": 205041,
+      "sha256": "3b46115047795a17183fe2cabd0ef5308ce0853f424a350563e08003cfae4f53",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-01-coverage.json",
+        "source_sha256": "3b46115047795a17183fe2cabd0ef5308ce0853f424a350563e08003cfae4f53",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-01-review.md",
+      "bytes": 36381,
+      "sha256": "372ef76757d9b2bc55fe01b65b8af15077be26829595eff162657842482cb4d8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-01-review.md",
+        "source_sha256": "372ef76757d9b2bc55fe01b65b8af15077be26829595eff162657842482cb4d8",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-02-coverage.json",
+      "bytes": 124124,
+      "sha256": "e23783eb3fcb702ba1b8de7d565834f86d296973bc5b82b573ca6bc9114a1e22",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-02-coverage.json",
+        "source_sha256": "e23783eb3fcb702ba1b8de7d565834f86d296973bc5b82b573ca6bc9114a1e22",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-02-review.md",
+      "bytes": 22206,
+      "sha256": "e579fb687c2e24d6a5fcf49d92a9a1a3698157e56d3b1859311478f8b6d64fc9",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-02-review.md",
+        "source_sha256": "e579fb687c2e24d6a5fcf49d92a9a1a3698157e56d3b1859311478f8b6d64fc9",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-03-coverage.json",
+      "bytes": 66575,
+      "sha256": "c5efbcadfb87295682e16eaea1d8e2de596b72b76234fe5eed7668993dd4a9c2",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-03-coverage.json",
+        "source_sha256": "c5efbcadfb87295682e16eaea1d8e2de596b72b76234fe5eed7668993dd4a9c2",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-03-review.md",
+      "bytes": 26187,
+      "sha256": "e6d3ba80a869be2f98fe1d3b9f001e03eddb8eca66c1ae361aac366bc261dc3c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-03-review.md",
+        "source_sha256": "e6d3ba80a869be2f98fe1d3b9f001e03eddb8eca66c1ae361aac366bc261dc3c",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-04-coverage.json",
+      "bytes": 69075,
+      "sha256": "b1f6a278b029a395ccdedc8f4981440027eecf02aa48ae192af97da5e7efb87e",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-04-coverage.json",
+        "source_sha256": "b1f6a278b029a395ccdedc8f4981440027eecf02aa48ae192af97da5e7efb87e",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-04-review.md",
+      "bytes": 30036,
+      "sha256": "411335eced6df8548752db2b34fd3145e3a44464552935ddea31c4295f95dd5a",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-04-review.md",
+        "source_sha256": "411335eced6df8548752db2b34fd3145e3a44464552935ddea31c4295f95dd5a",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-05-coverage.json",
+      "bytes": 151387,
+      "sha256": "20187395042436040bd0a03ffe1cf7cd3797b2db144fa13e85f41781ec38c2fd",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-05-coverage.json",
+        "source_sha256": "20187395042436040bd0a03ffe1cf7cd3797b2db144fa13e85f41781ec38c2fd",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-05-review.md",
+      "bytes": 41293,
+      "sha256": "7e377ff44d053718730874f695f8bb6730a775ae59f6d782684e8208345965f9",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-05-review.md",
+        "source_sha256": "7e377ff44d053718730874f695f8bb6730a775ae59f6d782684e8208345965f9",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-05b-coverage.json",
+      "bytes": 117694,
+      "sha256": "6aba2e248efafc5da7e102b6e5154ee299d034019c2ec5ded6209d078330d2c1",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-05b-coverage.json",
+        "source_sha256": "6aba2e248efafc5da7e102b6e5154ee299d034019c2ec5ded6209d078330d2c1",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-05b-review.md",
+      "bytes": 38890,
+      "sha256": "1b4c5edb41b63961812414bc55e7a85a7650f52590fd412a3ddd380bb9470a60",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-05b-review.md",
+        "source_sha256": "1b4c5edb41b63961812414bc55e7a85a7650f52590fd412a3ddd380bb9470a60",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-06-coverage.json",
+      "bytes": 237333,
+      "sha256": "d262637e0c52a21959ab1fdcd3cd1fb449d3456432cc0c09cf5c38513cd5914c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-06-coverage.json",
+        "source_sha256": "d262637e0c52a21959ab1fdcd3cd1fb449d3456432cc0c09cf5c38513cd5914c",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-06-review.md",
+      "bytes": 89752,
+      "sha256": "116549ac7b2455ccff5fa307145f19b535541ec08849fffbdfce50a47a789603",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-06-review.md",
+        "source_sha256": "116549ac7b2455ccff5fa307145f19b535541ec08849fffbdfce50a47a789603",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-07-coverage.json",
+      "bytes": 196614,
+      "sha256": "c97bc7b91203d23a7822fed6fad80560ade16f6a3ac22854044e813763cfd4d7",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-07-coverage.json",
+        "source_sha256": "c97bc7b91203d23a7822fed6fad80560ade16f6a3ac22854044e813763cfd4d7",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-07-review.md",
+      "bytes": 42827,
+      "sha256": "406fd5711e0476e29b05986a5cd02681dca039b37f3966a900482a1e4b2490d3",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-07-review.md",
+        "source_sha256": "406fd5711e0476e29b05986a5cd02681dca039b37f3966a900482a1e4b2490d3",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-08-coverage.json",
+      "bytes": 260328,
+      "sha256": "116f76b3035d8cd228f0a209b8cc00390843d8181ad1acd3bafb81ff6c477266",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-08-coverage.json",
+        "source_sha256": "116f76b3035d8cd228f0a209b8cc00390843d8181ad1acd3bafb81ff6c477266",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-08-review.md",
+      "bytes": 74678,
+      "sha256": "2a54fe2657718682659918734b5c96d12dce98e4748866316be28d0b206df766",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-08-review.md",
+        "source_sha256": "2a54fe2657718682659918734b5c96d12dce98e4748866316be28d0b206df766",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-09-coverage.json",
+      "bytes": 106086,
+      "sha256": "6d4cff0e26665d6338c30503af19b4140b2cba2e8db9396c8ca4097305ed4ac2",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-09-coverage.json",
+        "source_sha256": "e845f315acd80360bd617b2e3b6450668564250b94c8795840357389ad46a443",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-09-review.md",
+      "bytes": 46657,
+      "sha256": "6724d6f305eb30c344b849db8a37d166261da3d729514cdca9d6b49cac704a7b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-09-review.md",
+        "source_sha256": "6724d6f305eb30c344b849db8a37d166261da3d729514cdca9d6b49cac704a7b",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-10-coverage.json",
+      "bytes": 104236,
+      "sha256": "7b0baa3e12abc68311fb9ce5542c913ed37c5b89f84a8f7570591ed985847f29",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-10-coverage.json",
+        "source_sha256": "7b0baa3e12abc68311fb9ce5542c913ed37c5b89f84a8f7570591ed985847f29",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-10-review.md",
+      "bytes": 17526,
+      "sha256": "64f3cd01ab6bcd47b2341c87e0b84c4519e06283c8ae55765a38cd43a5d28d74",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-10-review.md",
+        "source_sha256": "64f3cd01ab6bcd47b2341c87e0b84c4519e06283c8ae55765a38cd43a5d28d74",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-10b-coverage.json",
+      "bytes": 147669,
+      "sha256": "dd02ebf5593830b2aa990c77139be362522c9183dd060aa41b8b764c07566dc0",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-10b-coverage.json",
+        "source_sha256": "dd02ebf5593830b2aa990c77139be362522c9183dd060aa41b8b764c07566dc0",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-10b-review.md",
+      "bytes": 39022,
+      "sha256": "e27b88a6c78a2a4a2855070bbad2fae5ab67cd859373ab81c0e0a84184cf79b2",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-10b-review.md",
+        "source_sha256": "e27b88a6c78a2a4a2855070bbad2fae5ab67cd859373ab81c0e0a84184cf79b2",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-11-coverage.json",
+      "bytes": 109210,
+      "sha256": "fa7da7ec92d67b2cb0af706659547624e0dbb115e0966a6dda8be45a901065d9",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-11-coverage.json",
+        "source_sha256": "6b14ce4acc5e374ecb1e014356e877c37e23e86dd61ee74fd95b29e812b598d0",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-11-review.md",
+      "bytes": 41793,
+      "sha256": "3ebb5651ee4d85b1ac89131e2f1fab9c60695e768ae6bb2fb94294d2256f9ac7",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-11-review.md",
+        "source_sha256": "6ef46551090c1141b7d8537dd1949a0df1f258b5696e606abafda2ad21e1af69",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-11b-coverage.json",
+      "bytes": 115966,
+      "sha256": "f3d74d76c77c2dd10552f806fd458d059da50286daf9ee1aedad05b42ee1a4ad",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-11b-coverage.json",
+        "source_sha256": "f3d74d76c77c2dd10552f806fd458d059da50286daf9ee1aedad05b42ee1a4ad",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-11b-review.md",
+      "bytes": 37135,
+      "sha256": "9d738ca1f50fa67499b7a32728f187630d36e32a08909d38fabb5b75b8a0d42b",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-11b-review.md",
+        "source_sha256": "3c395ca15afac49af48c08582ad2d47b0ea98d49eb554adbcd4d57462f4d5c4c",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-12-coverage.json",
+      "bytes": 223259,
+      "sha256": "e622692fa3fc4e67deeb42dc9386b8da11a811ba363e41ae1e93f6c3d39027f8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-12-coverage.json",
+        "source_sha256": "e622692fa3fc4e67deeb42dc9386b8da11a811ba363e41ae1e93f6c3d39027f8",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-12-review.md",
+      "bytes": 135435,
+      "sha256": "62efa2d1538ed38cef8c2c73ef93fa7fff3ef654d21b77cf6612929533f073d0",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-12-review.md",
+        "source_sha256": "62efa2d1538ed38cef8c2c73ef93fa7fff3ef654d21b77cf6612929533f073d0",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-12b-coverage.json",
+      "bytes": 255098,
+      "sha256": "35070e9f97757e0ad3ccecfa8d82f6b8286774abbb3cb1d4e782806590a9df9c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-12b-coverage.json",
+        "source_sha256": "35070e9f97757e0ad3ccecfa8d82f6b8286774abbb3cb1d4e782806590a9df9c",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-12b-review.md",
+      "bytes": 111912,
+      "sha256": "73499a8baab1bfe64eaf9e074fc963e0241d8d997f3d8bd886c202d216ea9b56",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-12b-review.md",
+        "source_sha256": "73499a8baab1bfe64eaf9e074fc963e0241d8d997f3d8bd886c202d216ea9b56",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-13-coverage.json",
+      "bytes": 371425,
+      "sha256": "a049be480f878fb68e6f96c69409827cea891c5bc794c9b6ae0127e5572143a8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-13-coverage.json",
+        "source_sha256": "a049be480f878fb68e6f96c69409827cea891c5bc794c9b6ae0127e5572143a8",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-13-review.md",
+      "bytes": 159039,
+      "sha256": "a6b043cb0e00c5971d6d13c488a9831b05c3782e998490df76934c21d1f20257",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-13-review.md",
+        "source_sha256": "f54c15b6a3093a505b55b497eb754df28f26fc9a2050cab6db5236f7b489af72",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-13b-coverage.json",
+      "bytes": 114421,
+      "sha256": "6bd21d073e70f95f3fe116b4c2a30f6a58753048b20957dfb9b827c6e096c992",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-13b-coverage.json",
+        "source_sha256": "cd0007939b829698d4ac4560fb7a9e6bfc165c061e5d635d7c74b30f6c5f4e8a",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-13b-review.md",
+      "bytes": 50475,
+      "sha256": "e807a6efeea8341f37a8a3cb838dc3728b2b4e3f5a5f618f13942a9251fdb743",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-13b-review.md",
+        "source_sha256": "e807a6efeea8341f37a8a3cb838dc3728b2b4e3f5a5f618f13942a9251fdb743",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-13c-coverage.json",
+      "bytes": 271980,
+      "sha256": "f252615b716609a515c095e3f3acf482d3f47350befb2bc14af8fa0c52321dce",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-13c-coverage.json",
+        "source_sha256": "f252615b716609a515c095e3f3acf482d3f47350befb2bc14af8fa0c52321dce",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-13c-review.md",
+      "bytes": 83448,
+      "sha256": "411d540637b4163efcd6ffec2a90d4c1aa8fb27dedb90c19c3821f352354799e",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-13c-review.md",
+        "source_sha256": "411d540637b4163efcd6ffec2a90d4c1aa8fb27dedb90c19c3821f352354799e",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-14-coverage.json",
+      "bytes": 344065,
+      "sha256": "8cbe84237859218dc5af39cdb5be73d24473f3933fe5bb86fd1ac781dac2cd2f",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-14-coverage.json",
+        "source_sha256": "8cbe84237859218dc5af39cdb5be73d24473f3933fe5bb86fd1ac781dac2cd2f",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-14-review.md",
+      "bytes": 192207,
+      "sha256": "d3906bc075cc17e68dc0d19c638af5a0fa0ff00100a48e898080b67e07cc2ef5",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-14-review.md",
+        "source_sha256": "d3906bc075cc17e68dc0d19c638af5a0fa0ff00100a48e898080b67e07cc2ef5",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-14b-coverage.json",
+      "bytes": 161281,
+      "sha256": "181941cb6aeea754a20e1a324fb2b75228b600f22283a72f54620f698fa511be",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-14b-coverage.json",
+        "source_sha256": "181941cb6aeea754a20e1a324fb2b75228b600f22283a72f54620f698fa511be",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-14b-review.md",
+      "bytes": 74923,
+      "sha256": "ec21f983e8457b880c796333643a9bdb40f884dacb25630940767d6336fd5dec",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-14b-review.md",
+        "source_sha256": "ec21f983e8457b880c796333643a9bdb40f884dacb25630940767d6336fd5dec",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-14c-coverage.json",
+      "bytes": 296329,
+      "sha256": "44eea742c4a8c7da545858ba9f678d2b0122ca2e0dcf1afadce49963a941f8e6",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-14c-coverage.json",
+        "source_sha256": "44eea742c4a8c7da545858ba9f678d2b0122ca2e0dcf1afadce49963a941f8e6",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-14c-review.md",
+      "bytes": 95252,
+      "sha256": "253ddc031e0e47a60d521ec93281a1aeac261bfbafb0e32c278a5bdf3fee5c3b",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-14c-review.md",
+        "source_sha256": "6229903c84c971b2c9592534597e3e70c59f91e3dfb8f5ee0ed7632ed0a23f28",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-15-coverage.json",
+      "bytes": 230547,
+      "sha256": "ced35e0a1d263b73a7281eba96070c3abd7b9c529eb6182b8374bd2e9c9ca132",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-15-coverage.json",
+        "source_sha256": "ced35e0a1d263b73a7281eba96070c3abd7b9c529eb6182b8374bd2e9c9ca132",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-15-review.md",
+      "bytes": 120696,
+      "sha256": "f8b557f28b8086783ca04ec637869c7ca52a488fd66510b7cd9e36b541b63274",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-15-review.md",
+        "source_sha256": "f8b557f28b8086783ca04ec637869c7ca52a488fd66510b7cd9e36b541b63274",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-15b-coverage.json",
+      "bytes": 213946,
+      "sha256": "0dd443e8b2d78e3565ba13d343937cddbb2421fa2d3d1b6e912d62cb17ed26c7",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-15b-coverage.json",
+        "source_sha256": "0dd443e8b2d78e3565ba13d343937cddbb2421fa2d3d1b6e912d62cb17ed26c7",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-15b-review.md",
+      "bytes": 101697,
+      "sha256": "9563594a463fd8bc4330094ccfd7dc165fd7e620ad415d594218317f37e9801a",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-15b-review.md",
+        "source_sha256": "f2c9a70e429449a051a3da14a8e0372a2d6332cd73b1d057ee05e9b9353f6069",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-16-coverage.json",
+      "bytes": 173132,
+      "sha256": "e4917ee20a09fb5ad72ffd18b3938f4539987222fb9ac0bec2181d7d0e2dfe2b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-16-coverage.json",
+        "source_sha256": "e4917ee20a09fb5ad72ffd18b3938f4539987222fb9ac0bec2181d7d0e2dfe2b",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-16-review.md",
+      "bytes": 76486,
+      "sha256": "229befe21c991ba5d7883965b81284f1df4e92afcd30c9c3b1b1322a00f4763c",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-16-review.md",
+        "source_sha256": "4d418c0ccd84dcbaaf00050767602468eacf87c0aa3833a7f45de5ef683ae3e6",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-17-coverage.json",
+      "bytes": 42030,
+      "sha256": "ef17edb50b99e720b5c083fcc5b1b3dab6766080f08bc3760d36fc83c5328394",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-17-coverage.json",
+        "source_sha256": "ef17edb50b99e720b5c083fcc5b1b3dab6766080f08bc3760d36fc83c5328394",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-batch-17-review.md",
+      "bytes": 12930,
+      "sha256": "844df3cf9986dc71aaa81847032d87ede086f42b5ff2d5bb0a5e82ea771a4a92",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-batch-17-review.md",
+        "source_sha256": "844df3cf9986dc71aaa81847032d87ede086f42b5ff2d5bb0a5e82ea771a4a92",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-family-review.json",
+      "bytes": 19482,
+      "sha256": "d0f9f2f0b8bf58bcf298bb725607f73c49cf1a89814cac5dc0d72f5a1164c16d",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-family-review.json",
+        "source_sha256": "d0f9f2f0b8bf58bcf298bb725607f73c49cf1a89814cac5dc0d72f5a1164c16d",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/reference-family-review.md",
+      "bytes": 8992,
+      "sha256": "5a15d1737de075ad91a6f2f78dcdbd669af7fe790e25c9692d56b0deb4a1ac04",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/reference-family-review.md",
+        "source_sha256": "5dd9ed164a613a653de172a6a87a2eda5da9f7b970b6fba5a7084077c4258df1",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/root-frontmatter-coverage.json",
+      "bytes": 387,
+      "sha256": "0ea07dfb640e44283fd31910972837ef21fb3d0c5535c9e3471242116e571b89",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/root-frontmatter-coverage.json",
+        "source_sha256": "0ea07dfb640e44283fd31910972837ef21fb3d0c5535c9e3471242116e571b89",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/section-catalog.jsonl",
+      "bytes": 854434,
+      "sha256": "37730f6cbc1f152c6074e2e813fb691dad24234e1a64efb8179e127e67c80099",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/section-catalog.jsonl",
+        "source_sha256": "37730f6cbc1f152c6074e2e813fb691dad24234e1a64efb8179e127e67c80099",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/source-manifest.json",
+      "bytes": 2624,
+      "sha256": "49d661e249a42ea3c4767fe357227e69840fb1e62c003f045bc191fe9eb599a3",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/source-manifest.json",
+        "source_sha256": "49d661e249a42ea3c4767fe357227e69840fb1e62c003f045bc191fe9eb599a3",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-chart-coverage.json",
+      "bytes": 77969,
+      "sha256": "38775bbbddcb62484b06bf4823252fe2d69dbe0bf0f07254eed0c10ed1e4de9b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-chart-coverage.json",
+        "source_sha256": "38775bbbddcb62484b06bf4823252fe2d69dbe0bf0f07254eed0c10ed1e4de9b",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-chart-review.md",
+      "bytes": 30585,
+      "sha256": "db1a10b1cc5ffba8ec244e8698291af88b77051a8687813f2865a16c5e4eceec",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-chart-review.md",
+        "source_sha256": "db1a10b1cc5ffba8ec244e8698291af88b77051a8687813f2865a16c5e4eceec",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-common-coverage.json",
+      "bytes": 130167,
+      "sha256": "c22bfc5e6096985207cc981179c50f0fbfc3d844c2ed98bace39894b702966a5",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-common-coverage.json",
+        "source_sha256": "c22bfc5e6096985207cc981179c50f0fbfc3d844c2ed98bace39894b702966a5",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-common-review.md",
+      "bytes": 51216,
+      "sha256": "6747399872e33c99d5740169d07e4d4b37b9089feb07d42d9044c4b71b939f15",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-common-review.md",
+        "source_sha256": "6747399872e33c99d5740169d07e4d4b37b9089feb07d42d9044c4b71b939f15",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-extensions-coverage.json",
+      "bytes": 105698,
+      "sha256": "f49225176b8783e894da1237f9d5b098d980c194cf2645875caaca4730629d69",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-extensions-coverage.json",
+        "source_sha256": "f49225176b8783e894da1237f9d5b098d980c194cf2645875caaca4730629d69",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-extensions-review.md",
+      "bytes": 30434,
+      "sha256": "8891120df80d2e27c35b1f920cc0a2b040cb1ab22d13b6f500b9ad1805578514",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-extensions-review.md",
+        "source_sha256": "8891120df80d2e27c35b1f920cc0a2b040cb1ab22d13b6f500b9ad1805578514",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-files-coverage.json",
+      "bytes": 22585,
+      "sha256": "7e6b7a41103a43377465b9a693ef8cf1145cbbd1ec39ccf6292422a55ac187d5",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-files-coverage.json",
+        "source_sha256": "7e6b7a41103a43377465b9a693ef8cf1145cbbd1ec39ccf6292422a55ac187d5",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-files-review.md",
+      "bytes": 62700,
+      "sha256": "9c6aafd83d7440e5802a6067559c5a7b84b9ac5aec790a5ea5b889ac65ff28ac",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-files-review.md",
+        "source_sha256": "9c6aafd83d7440e5802a6067559c5a7b84b9ac5aec790a5ea5b889ac65ff28ac",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-final-coverage.json",
+      "bytes": 44474,
+      "sha256": "1ddd6b84834ed88c13979d2dae0b863fbb397c80b8b0704f2ac4696f5e89b362",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-final-coverage.json",
+        "source_sha256": "1ddd6b84834ed88c13979d2dae0b863fbb397c80b8b0704f2ac4696f5e89b362",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-final-review.md",
+      "bytes": 24683,
+      "sha256": "f6de06d95b6749d864ddbd0ea2b10cac3eeb9fb9263d6303f64b340652804fba",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-final-review.md",
+        "source_sha256": "f6de06d95b6749d864ddbd0ea2b10cac3eeb9fb9263d6303f64b340652804fba",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-semantic-coverage.json",
+      "bytes": 225707,
+      "sha256": "ba212a697a5624687d5a54cacf12808c1cd63ee60488a48d25ac0d25eb87d41d",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-semantic-coverage.json",
+        "source_sha256": "ba212a697a5624687d5a54cacf12808c1cd63ee60488a48d25ac0d25eb87d41d",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-semantic-review.md",
+      "bytes": 66304,
+      "sha256": "d999f9b2caad4e7d38c7a58feb47cc7346bab57364631309e4e4026d6cc8bca9",
+      "provenance": {
+        "disposition": "TRANSFORMED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-semantic-review.md",
+        "source_sha256": "9c3585d9a04f84a3b6bf6cda42919b9a3eeb815e2585ab3d9eae9e72fcd84164",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-trading-coverage.json",
+      "bytes": 231138,
+      "sha256": "b4e4576ecc00da0dbf29561d83ffa6548e97a7dcf96715ff6ff45847714928ac",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-trading-coverage.json",
+        "source_sha256": "b4e4576ecc00da0dbf29561d83ffa6548e97a7dcf96715ff6ff45847714928ac",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-trading-review.md",
+      "bytes": 38504,
+      "sha256": "300cc3d9244761de04f3d1b83c35d55dc10e42e957a5f5d75ec5e91c71ba21a8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-trading-review.md",
+        "source_sha256": "300cc3d9244761de04f3d1b83c35d55dc10e42e957a5f5d75ec5e91c71ba21a8",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-ui-finish-coverage.json",
+      "bytes": 50344,
+      "sha256": "7fb52399d1b6dda2a26b41dd204069f819dd3448f4f8d5b1807a64f24ede21f7",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-ui-finish-coverage.json",
+        "source_sha256": "7fb52399d1b6dda2a26b41dd204069f819dd3448f4f8d5b1807a64f24ede21f7",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "research/trd-ui-finish-review.md",
+      "bytes": 23130,
+      "sha256": "ecd494129efc603b4b65d5ef2f47d3aba490312b5dc694d37ff2388fcb1607f2",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "research/trd-ui-finish-review.md",
+        "source_sha256": "ecd494129efc603b4b65d5ef2f47d3aba490312b5dc694d37ff2388fcb1607f2",
+        "source_category": "PESQUISA_E_RASTREABILIDADE"
+      }
+    },
+    {
+      "path": "tests/test_verificar_edicao.py",
+      "bytes": 16523,
+      "sha256": "885d2b502a33df02d5520d627216595ca0e1555b3468cbcaf9c12377ca740af8",
+      "provenance": {
+        "disposition": "TASK2_VERIFIER",
+        "scope": "EDITION_INTEGRITY_ONLY"
+      }
+    },
+    {
+      "path": "tools/build_manual.py",
+      "bytes": 9493,
+      "sha256": "d22e525742be346ce8873f2fd3379f60ac8456b6980d73808915c5173c2fdcb6",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "tools/build_manual.py",
+        "source_sha256": "d22e525742be346ce8873f2fd3379f60ac8456b6980d73808915c5173c2fdcb6",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "tools/check_publication.py",
+      "bytes": 4558,
+      "sha256": "f80b23461230a08b2a19800137544fd42abce0a3a14534a997e21bde0403df32",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "tools/check_publication.py",
+        "source_sha256": "f80b23461230a08b2a19800137544fd42abce0a3a14534a997e21bde0403df32",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "tools/consolidate_coverage.py",
+      "bytes": 7839,
+      "sha256": "f43b7d4e2d08907ff27caa74ad8d5aadd8c4e8610e828ef443e901bce5828374",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "tools/consolidate_coverage.py",
+        "source_sha256": "f43b7d4e2d08907ff27caa74ad8d5aadd8c4e8610e828ef443e901bce5828374",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "tools/query_sources.py",
+      "bytes": 1650,
+      "sha256": "9857d0caccc27620604f8fb0a9144e773b6bfd6ebf7292220acaa179ec03b4de",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "tools/query_sources.py",
+        "source_sha256": "9857d0caccc27620604f8fb0a9144e773b6bfd6ebf7292220acaa179ec03b4de",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "tools/render_diagrams.py",
+      "bytes": 7472,
+      "sha256": "42c1efc65158cf693e4be12b8129d39cf338f5d86caae7c20ca9d74feebc7fe8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "tools/render_diagrams.py",
+        "source_sha256": "42c1efc65158cf693e4be12b8129d39cf338f5d86caae7c20ca9d74feebc7fe8",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "tools/test_diagrams.py",
+      "bytes": 1550,
+      "sha256": "e77ae944ad4a9f926ff0a15cc8d59a0f3607100d7c35222790abd7a8523f09ae",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "DOCUMENTARY",
+        "source_path": "tools/test_diagrams.py",
+        "source_sha256": "e77ae944ad4a9f926ff0a15cc8d59a0f3607100d7c35222790abd7a8523f09ae",
+        "source_category": "NUCLEO_DOCUMENTAL_E_EDITORIAL"
+      }
+    },
+    {
+      "path": "validation/diagram-reproduction-R5.json",
+      "bytes": 1103,
+      "sha256": "1bc01929b042bfdf52a69037b025419a96ea40ae9b411a3be03e234bf2e8be8f",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/diagram-reproduction-R5.json",
+        "source_sha256": "1bc01929b042bfdf52a69037b025419a96ea40ae9b411a3be03e234bf2e8be8f",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/editorial-build.json",
+      "bytes": 2114,
+      "sha256": "12893582537664196cf2b26f7761e88f959f55868f7b38617731880b6939d131",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/editorial-build.json",
+        "source_sha256": "12893582537664196cf2b26f7761e88f959f55868f7b38617731880b6939d131",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/format-pages29-56-R7.json",
+      "bytes": 6867,
+      "sha256": "e0122a98a4707c0e49097243d7128236e6cfaad247c2416cf6d40d5517372659",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/format-pages29-56-R7.json",
+        "source_sha256": "e0122a98a4707c0e49097243d7128236e6cfaad247c2416cf6d40d5517372659",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-check-final.json",
+      "bytes": 59,
+      "sha256": "a00606d67100a4b8eaf6c5b21fd72a02db3552327c20d851b3a9f5de11491707",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-check-final.json",
+        "source_sha256": "a00606d67100a4b8eaf6c5b21fd72a02db3552327c20d851b3a9f5de11491707",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-freeze-R2.json",
+      "bytes": 2405,
+      "sha256": "7d43629320e8dc1f69ed13d1ebddd4a4f99b9d444e5fcf3cc9ca3eb024b81b5e",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-freeze-R2.json",
+        "source_sha256": "7d43629320e8dc1f69ed13d1ebddd4a4f99b9d444e5fcf3cc9ca3eb024b81b5e",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-freeze-R3.json",
+      "bytes": 2405,
+      "sha256": "73b70d83c22d17cb6fbad37ed9d1b8e8e0c1b16221339dd26bfe5152e8ad6da7",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-freeze-R3.json",
+        "source_sha256": "73b70d83c22d17cb6fbad37ed9d1b8e8e0c1b16221339dd26bfe5152e8ad6da7",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-freeze.json",
+      "bytes": 1204,
+      "sha256": "b0256f031068e42e984cb2dcd5a93017a3a66f97b1fa4e78a4bdd7f2bb58a770",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-freeze.json",
+        "source_sha256": "b0256f031068e42e984cb2dcd5a93017a3a66f97b1fa4e78a4bdd7f2bb58a770",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-qualification-R3.json",
+      "bytes": 1659,
+      "sha256": "813687da26b52178c2fc37b0729b73271d4374b84773ac6725da6eb25ee9a6ab",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-qualification-R3.json",
+        "source_sha256": "813687da26b52178c2fc37b0729b73271d4374b84773ac6725da6eb25ee9a6ab",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-report-R2.md",
+      "bytes": 3480,
+      "sha256": "43f5790c3092d665e587b001517e09f9650154fa887a68aec9ec38acff87418c",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-report-R2.md",
+        "source_sha256": "43f5790c3092d665e587b001517e09f9650154fa887a68aec9ec38acff87418c",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-report-R3.md",
+      "bytes": 3717,
+      "sha256": "ff2f7ef29d3d42d4257b083104bb2d40d08d633743fe54dc358260034f480679",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-report-R3.md",
+        "source_sha256": "ff2f7ef29d3d42d4257b083104bb2d40d08d633743fe54dc358260034f480679",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/harness-report.md",
+      "bytes": 2913,
+      "sha256": "16bd8304017d325dd8ae2f14bad988c05a60b85aaddb7dcfa9e610b0f8e7801e",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/harness-report.md",
+        "source_sha256": "16bd8304017d325dd8ae2f14bad988c05a60b85aaddb7dcfa9e610b0f8e7801e",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/math-lab.json",
+      "bytes": 601,
+      "sha256": "fd14157899949ef528256c198f6509bdde7f35e58c08c4d004bbce2b825b8c51",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/math-lab.json",
+        "source_sha256": "fd14157899949ef528256c198f6509bdde7f35e58c08c4d004bbce2b825b8c51",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/publication-controls.json",
+      "bytes": 414,
+      "sha256": "3fa3a73698ed355d52228da2067acce12849d8bc7942b8b2cb459f2e9fdabfeb",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/publication-controls.json",
+        "source_sha256": "3fa3a73698ed355d52228da2067acce12849d8bc7942b8b2cb459f2e9fdabfeb",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/publication-structure-R7.json",
+      "bytes": 997,
+      "sha256": "ca656c50a813eae609353903aba80724a82c2228bb5d881e93f87b4f1abef610",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/publication-structure-R7.json",
+        "source_sha256": "ca656c50a813eae609353903aba80724a82c2228bb5d881e93f87b4f1abef610",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/format-pages1-28-R5.json",
+      "bytes": 10930,
+      "sha256": "281ed19a1304aa74937e378eb06271c0ad8c78718a791617ff7860c960b64d8a",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/format-pages1-28-R5.json",
+        "source_sha256": "281ed19a1304aa74937e378eb06271c0ad8c78718a791617ff7860c960b64d8a",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/format-pages1-28-R7.json",
+      "bytes": 16624,
+      "sha256": "3a48c72dcafc75bda99db152f6f0f8ccb9e86bc45010334f087d8b08f874b6bc",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/format-pages1-28-R7.json",
+        "source_sha256": "3a48c72dcafc75bda99db152f6f0f8ccb9e86bc45010334f087d8b08f874b6bc",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/harness-review-R2.md",
+      "bytes": 3105,
+      "sha256": "47e00285b01e4dc139aca10c70744de8ccf148937ffc1269a45ecefceff9a3d1",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/harness-review-R2.md",
+        "source_sha256": "47e00285b01e4dc139aca10c70744de8ccf148937ffc1269a45ecefceff9a3d1",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/harness-review-R3.md",
+      "bytes": 4440,
+      "sha256": "6c706a07f911d44caf8c8d6b3bdc3c9c9a8fb08ac84f86b639ac8170ee781ff3",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/harness-review-R3.md",
+        "source_sha256": "6c706a07f911d44caf8c8d6b3bdc3c9c9a8fb08ac84f86b639ac8170ee781ff3",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/harness-review.md",
+      "bytes": 8387,
+      "sha256": "aef1eacfdc8619751d3e1ec48574edc016a04c3fb13c1927d91a92b2eab0a003",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/harness-review.md",
+        "source_sha256": "aef1eacfdc8619751d3e1ec48574edc016a04c3fb13c1927d91a92b2eab0a003",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/judge-calibration-R3.json",
+      "bytes": 2948,
+      "sha256": "270c9c2476f50031b7f549d588755e527328d8805f9e328ee9d0985c7f036416",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/judge-calibration-R3.json",
+        "source_sha256": "270c9c2476f50031b7f549d588755e527328d8805f9e328ee9d0985c7f036416",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/judge-calibration.json",
+      "bytes": 2366,
+      "sha256": "5c381c801cbd6bf03297225a8e288dd5aa567422679032207d5c74958f77d986",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/judge-calibration.json",
+        "source_sha256": "5c381c801cbd6bf03297225a8e288dd5aa567422679032207d5c74958f77d986",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/manual-review-R1.md",
+      "bytes": 8889,
+      "sha256": "d438df5716f72fd865e0a0ec4f2368da43c064647631bffc2e7155ea2544ecd4",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/manual-review-R1.md",
+        "source_sha256": "d438df5716f72fd865e0a0ec4f2368da43c064647631bffc2e7155ea2544ecd4",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/manual-review-R2.md",
+      "bytes": 5050,
+      "sha256": "927d34935bc98255873d62762b84498811835415f63bd1a8debbbff67717ae5a",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/manual-review-R2.md",
+        "source_sha256": "927d34935bc98255873d62762b84498811835415f63bd1a8debbbff67717ae5a",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/manual-review-R3.md",
+      "bytes": 4624,
+      "sha256": "bcfa1bb0dc59cbd70523f4a9bd44791e7207262d4d147401f815b23250b731b0",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/manual-review-R3.md",
+        "source_sha256": "bcfa1bb0dc59cbd70523f4a9bd44791e7207262d4d147401f815b23250b731b0",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/manual-review-R4.md",
+      "bytes": 2420,
+      "sha256": "5983ac1228b368c36906e4ecb4f53e535a79860908e9800bd3340629f8164c35",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/manual-review-R4.md",
+        "source_sha256": "5983ac1228b368c36906e4ecb4f53e535a79860908e9800bd3340629f8164c35",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/pilot-judgment-R2.md",
+      "bytes": 6290,
+      "sha256": "bd7b8938ceaefc4d982752f8fc5984aaba59c38b9c776b44d925bc783a370065",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/pilot-judgment-R2.md",
+        "source_sha256": "bd7b8938ceaefc4d982752f8fc5984aaba59c38b9c776b44d925bc783a370065",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/pilot-judgment-R3.md",
+      "bytes": 6958,
+      "sha256": "f0164913ec4f6f8a629cfe5b869e1396021363894b00f5f683d9a34fb57a6f58",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/pilot-judgment-R3.md",
+        "source_sha256": "f0164913ec4f6f8a629cfe5b869e1396021363894b00f5f683d9a34fb57a6f58",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/pilot-preflight-R3.md",
+      "bytes": 2675,
+      "sha256": "c5b1606e4b24cacfdce4ecdeb18dc2193e5c3f6a9268905ca08bab8a026f7ad5",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/pilot-preflight-R3.md",
+        "source_sha256": "c5b1606e4b24cacfdce4ecdeb18dc2193e5c3f6a9268905ca08bab8a026f7ad5",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/research-final-audit.json",
+      "bytes": 4423,
+      "sha256": "8f3a49519d57c49f6ce3093315b9fcdc80d26f07adc64dac54fd5c0894fcfb08",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/research-final-audit.json",
+        "source_sha256": "8f3a49519d57c49f6ce3093315b9fcdc80d26f07adc64dac54fd5c0894fcfb08",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/reviews/research-final-review.md",
+      "bytes": 7287,
+      "sha256": "e3dfdfacbc2ba1bee2cbd415309b2d7d41e5d93c07b780a133b7f1572cee77d0",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/reviews/research-final-review.md",
+        "source_sha256": "e3dfdfacbc2ba1bee2cbd415309b2d7d41e5d93c07b780a133b7f1572cee77d0",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/source-visual-review-R1.json",
+      "bytes": 12889,
+      "sha256": "e89104b82555fc983a18c2702a3b7d5607cff0a6c93d65f453e524d361a6af9b",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/source-visual-review-R1.json",
+        "source_sha256": "e89104b82555fc983a18c2702a3b7d5607cff0a6c93d65f453e524d361a6af9b",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "validation/source-visual-review.json",
+      "bytes": 18515,
+      "sha256": "9fab3d71924ce7849005f2b5efb4d3b48e80304048df32f8a2721820f313e5b8",
+      "provenance": {
+        "disposition": "PRESERVED",
+        "scope": "HISTORICAL_ONLY",
+        "source_path": "validation/source-visual-review.json",
+        "source_sha256": "9fab3d71924ce7849005f2b5efb4d3b48e80304048df32f8a2721820f313e5b8",
+        "source_category": "EVIDENCIA_RELATORIOS_E_REVISOES"
+      }
+    },
+    {
+      "path": "verificar_edicao.py",
+      "bytes": 14266,
+      "sha256": "59fa9d01f622a425dde8eb58ebe263dc7d8805448d4f3f6ee5cbe6333e4875f6",
+      "provenance": {
+        "disposition": "TASK2_VERIFIER",
+        "scope": "EDITION_INTEGRITY_ONLY"
+      }
+    }
+  ],
+  "revision_c2": {
+    "parent_edition_id": "stoikus-documental-curada-1.0.0-c1",
+    "parent_manifest_sha256": "50cd8c907139d968e903db0f624663711dbb9e54c70de3489ac845dec07b85f7",
+    "parent_zip_sha256": "9d685313d0de7160e06babf9372d978e6ee5d07d4561f6db3b37be90fdce4531",
+    "derivation_path": "curadoria/TRANSFORMACOES.json",
+    "derivation_sha256": "e9f29d9935bb33c610171959aa9ee28a334a3554ca5bcf52ee3994a2a26c7ea6",
+    "reason": "Mechanical Markdown formatting plus edition identity and traceability only"
+  }
+}

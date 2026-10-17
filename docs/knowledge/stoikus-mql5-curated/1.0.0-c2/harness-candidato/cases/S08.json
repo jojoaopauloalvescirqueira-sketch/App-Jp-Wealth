@@ -1,0 +1,25 @@
+{
+  "id": "S08",
+  "kind": "new_synthetic_case",
+  "topic": "ui",
+  "fixture_isolation": "builder receives builder-inputs/S08.json only; this oracle case is judge-only",
+  "prompt": "Defina estado e rótulos; a UI não pode transformar dado velho em autorização.",
+  "input": {
+    "account_connected": false,
+    "snapshot_age_s": 120,
+    "max_age_s": 10,
+    "last_risk": 50
+  },
+  "expected": {
+    "display": "STALE_DISCONNECTED",
+    "actions_enabled": false,
+    "last_risk_label": "historical",
+    "forbidden": [
+      "show_current_ready",
+      "enable_execution"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

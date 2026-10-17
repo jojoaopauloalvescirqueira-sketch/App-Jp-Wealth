@@ -1,0 +1,88 @@
+{
+  "schema": "STOIKUS_MQL5_CORPUS_V1",
+  "totalPages": 10021,
+  "sources": [
+    {
+      "id": "REF",
+      "filename": "MQL5 Language REFERENCE.pdf",
+      "sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+      "bytes": 33520715,
+      "pages": 7284,
+      "metadata": {
+        "/Creator": "Help+Manual 8",
+        "/Author": "MetaQuotes Ltd.",
+        "/Title": "MQL5 Reference",
+        "/Subject": "",
+        "/Keywords": "",
+        "/CreationDate": "D:20260502063257Z",
+        "/ModDate": "D:20260502063257Z",
+        "/Producer": "Help+Manual by EC Software GmbH"
+      },
+      "extraction": {
+        "engine": "Poppler pdftotext -layout",
+        "pages": 7284,
+        "errors": 0,
+        "empty": 0,
+        "characters": 11413855,
+        "complete": true,
+        "semanticReview": "SEPARATE_NOT_IMPLIED"
+      },
+      "outlineEntries": 4128
+    },
+    {
+      "id": "TRD",
+      "filename": "MQL5 Programming for Traders.pdf",
+      "sha256": "9ff6c55090527afa0efce722d67760805ee335fc64dad3c83638a89e6c79a145",
+      "bytes": 14304424,
+      "pages": 2047,
+      "metadata": {
+        "/Creator": "Help+Manual 8",
+        "/Author": "",
+        "/Title": "MQL5 Programming for Traders",
+        "/Subject": "",
+        "/Keywords": "",
+        "/CreationDate": "D:20260120095446Z",
+        "/ModDate": "D:20260120095446Z",
+        "/Producer": "Help+Manual by EC Software GmbH"
+      },
+      "extraction": {
+        "engine": "Poppler pdftotext -layout",
+        "pages": 2047,
+        "errors": 0,
+        "empty": 0,
+        "characters": 4887580,
+        "complete": true,
+        "semanticReview": "SEPARATE_NOT_IMPLIED"
+      },
+      "outlineEntries": 581
+    },
+    {
+      "id": "NN",
+      "filename": "Neural Networks for Algorithmic Trading with MQL5.pdf",
+      "sha256": "850e21e204f296b4c661895fcea4893ab263c81c7a0ead242a22234716611287",
+      "bytes": 9055721,
+      "pages": 690,
+      "metadata": {
+        "/Creator": "Help+Manual 8",
+        "/Author": "",
+        "/Title": "Neural Networks for Algorithmic Trading with MQL5",
+        "/Subject": "",
+        "/Keywords": "",
+        "/CreationDate": "D:20260120095049Z",
+        "/ModDate": "D:20260120095049Z",
+        "/Producer": "Help+Manual by EC Software GmbH"
+      },
+      "extraction": {
+        "engine": "Poppler pdftotext -layout",
+        "pages": 690,
+        "errors": 0,
+        "empty": 0,
+        "characters": 1823578,
+        "complete": true,
+        "semanticReview": "SEPARATE_NOT_IMPLIED"
+      },
+      "outlineEntries": 112
+    }
+  ],
+  "extractionIsSemanticReview": false
+}

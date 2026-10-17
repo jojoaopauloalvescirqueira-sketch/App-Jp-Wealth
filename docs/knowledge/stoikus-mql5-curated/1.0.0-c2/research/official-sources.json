@@ -1,0 +1,47 @@
+{
+  "retrieved": "2026-10-15",
+  "sources": [
+    {
+      "url": "https://www.mql5.com/en/docs/series/copyrates",
+      "publisher": "MetaQuotes",
+      "use": "complementary_current_API_check",
+      "status": "READ",
+      "nativeProof": false
+    },
+    {
+      "url": "https://www.mql5.com/en/docs/trading/ordercalcprofit",
+      "publisher": "MetaQuotes",
+      "use": "complementary_current_API_check",
+      "status": "READ",
+      "nativeProof": false
+    },
+    {
+      "url": "https://www.mql5.com/en/docs/common/resourcecreate",
+      "publisher": "MetaQuotes",
+      "use": "complementary_current_API_check",
+      "status": "READ",
+      "nativeProof": false
+    },
+    {
+      "url": "https://www.mql5.com/en/docs/objects/textsetfont",
+      "publisher": "MetaQuotes",
+      "use": "complementary_current_API_check",
+      "status": "READ",
+      "nativeProof": false
+    },
+    {
+      "url": "https://www.mql5.com/en/docs/event_handlers/ontradetransaction",
+      "publisher": "MetaQuotes",
+      "use": "complementary_current_API_check",
+      "status": "READ",
+      "nativeProof": false
+    },
+    {
+      "url": "https://www.mql5.com/en/docs/onnx/onnxrun",
+      "publisher": "MetaQuotes",
+      "use": "complementary_current_API_check",
+      "status": "READ",
+      "nativeProof": false
+    }
+  ]
+}
