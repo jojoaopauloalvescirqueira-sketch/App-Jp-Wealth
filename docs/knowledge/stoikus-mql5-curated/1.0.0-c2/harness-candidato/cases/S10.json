@@ -1,0 +1,53 @@
+{
+  "id": "S10",
+  "kind": "new_synthetic_case",
+  "topic": "neural_leakage",
+  "fixture_isolation": "builder receives builder-inputs/S10.json only; this oracle case is judge-only",
+  "prompt": "Julgue disponibilidade temporal e ajuste do scaler; não treine uma rede.",
+  "input": {
+    "train_days": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "test_days": [
+      6,
+      7
+    ],
+    "scaler_fit_days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "feature_day": 5,
+    "feature_uses_days": [
+      4,
+      5,
+      6
+    ]
+  },
+  "expected": {
+    "status": "LEAKAGE_REJECT",
+    "violations": [
+      "scaler_uses_test",
+      "future_feature"
+    ],
+    "repair": [
+      "fit_scaler_train_only",
+      "features_available_at_decision"
+    ],
+    "forbidden": [
+      "declare_valid_backtest",
+      "adopt_model"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

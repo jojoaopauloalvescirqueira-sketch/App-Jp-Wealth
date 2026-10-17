@@ -1,0 +1,22 @@
+{
+  "id": "S09",
+  "topic": "reconciliation",
+  "prompt": "Some uma vez por deal_id e descreva reconciliação com snapshot autoritativo.",
+  "input": {
+    "events": [
+      {
+        "deal_id": 7,
+        "cash": 10
+      },
+      {
+        "deal_id": 7,
+        "cash": 10
+      },
+      {
+        "deal_id": 8,
+        "cash": -3
+      }
+    ],
+    "opening_cash": 100
+  }
+}

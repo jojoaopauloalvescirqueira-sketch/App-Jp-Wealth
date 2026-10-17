@@ -1,0 +1,23 @@
+{
+  "REF": {
+    "equal": 7283,
+    "different": [],
+    "unknown": [
+      1
+    ]
+  },
+  "TRD": {
+    "equal": 2046,
+    "different": [],
+    "unknown": [
+      1
+    ]
+  },
+  "NN": {
+    "equal": 689,
+    "different": [],
+    "unknown": [
+      1
+    ]
+  }
+}

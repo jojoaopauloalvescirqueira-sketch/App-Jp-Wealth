@@ -1,0 +1,957 @@
+{
+  "schema": "stoikus-curated-transformations/1",
+  "source_originals_unchanged": true,
+  "new_reading_claim": false,
+  "removed_evidence_excerpt_fields": 83,
+  "removed_excerpt_characters": 20750,
+  "generalized_personal_path_fields": 3,
+  "files": [
+    {
+      "path": "COMECE_AQUI.md",
+      "kind": "REPLACE_SNAPSHOT_GUIDE_WITH_CURATED_EDITION_GUIDE",
+      "source_sha256": "4212be2e2ee9d916c71933f4745f181bc8ff26b12f38c9038255cbdd16365092",
+      "current_sha256": "fee52053e86161d35fa178fba6171489892db1d6df04335b4c60e84bbd4190cd",
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "LEIA_ME_KIT.md",
+      "kind": "REPLACE_SNAPSHOT_GUIDE_WITH_CURATED_EDITION_GUIDE",
+      "source_sha256": "292db998bc69de96c7ec342d2d0afe64db046dfb68ee921006983434c67bda4f",
+      "current_sha256": "27fc73c1bbcfc640f3d928d63ab94671e4194e5156a5b1af77cf1a0ca329c90f",
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/neural-coverage.json",
+      "kind": "REMOVE_THIRD_PARTY_EXCERPT_FIELDS",
+      "source_sha256": "8feb34bcc9d1f655d1daec46a415b5d22f4e1439c66de9226744b40aaf8d11f5",
+      "current_sha256": "bcf6cdb1e5172685b9a690fd4711d3f22119ec92a63683482fb91c513a86286c",
+      "fields": [
+        {
+          "json_pointer": "/sections/1/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "e8473c55f0bde0bc8f765ce32a15d7b14cf73d94999f8cf276ccf213f0e90221"
+        },
+        {
+          "json_pointer": "/sections/3/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "6096488296792caa72cb534085baad08f367ef83bdaf6e6963ba33d751d40008"
+        },
+        {
+          "json_pointer": "/sections/4/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "0ed695252c58ad4db29ccb5b2ee37ad7eff08aa02f22774068007795cc0d38d4"
+        },
+        {
+          "json_pointer": "/sections/5/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "418a610c8597eee6a724f3a73dc903cd600e4465b64ba2ea46198c3e85a7dcaa"
+        },
+        {
+          "json_pointer": "/sections/7/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "fd599b57f10475b62bbbddae9cb51e4286b0580c2c7743347d203555dd9c6476"
+        },
+        {
+          "json_pointer": "/sections/8/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "3a84cb25d579e4832f00f856a939609bc423a5d15d7bcefb39e86ea7bcbd989c"
+        },
+        {
+          "json_pointer": "/sections/9/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "9b3efbe8a59be6560c3e14e41f1acf95f77170d6808fffa2143e4eb9b785e7d0"
+        },
+        {
+          "json_pointer": "/sections/11/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "7aaf016ee58150df4c420aef7b9dce77640b5ae2f4b1cb65ca4682d97a9c47df"
+        },
+        {
+          "json_pointer": "/sections/12/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "00430116fbe3a8b702ef32d64820e9c51916e023481a8ea764a6e68c6b8fa14e"
+        },
+        {
+          "json_pointer": "/sections/13/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "22175e6eac80b9cad227dc2b0b5fa246f390232475d72a6268ad25fd9d8f77bf"
+        },
+        {
+          "json_pointer": "/sections/14/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "fa27355cc65eef9e3669474d8fe91fc3ab201c2babde947239d1efb911949309"
+        },
+        {
+          "json_pointer": "/sections/16/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "607de77dc4abbb9046ccdeb7421c8086718c55969b398003e7d545392647004b"
+        },
+        {
+          "json_pointer": "/sections/17/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "6d6c0c53f4db3b747bae882331f4f9968134e4b5425bd8fae4d3d701f6742b55"
+        },
+        {
+          "json_pointer": "/sections/18/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "885975233b46fe382b720d8266bb1d64d3c9aed6739bd7506127e8ccd18c94bb"
+        },
+        {
+          "json_pointer": "/sections/19/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "72f86b0086473a57a985b2e4deab71e101817cc19035b8aaf786e4ad3f18e3c8"
+        },
+        {
+          "json_pointer": "/sections/21/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "c126a11e39a0aff1bfef7d96b4005c87dedd3656d43511931406940c6ed4a55c"
+        },
+        {
+          "json_pointer": "/sections/22/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "a6a021470a2ac218c1e1849bc3f700ccdf5c1af4cb14c758a9040ca408edc625"
+        },
+        {
+          "json_pointer": "/sections/23/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "a6a021470a2ac218c1e1849bc3f700ccdf5c1af4cb14c758a9040ca408edc625"
+        },
+        {
+          "json_pointer": "/sections/25/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "30b2af10ba243a8b136d4caef7455fdc00a2d571049fb4962c95770962196197"
+        },
+        {
+          "json_pointer": "/sections/26/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "efa2f42f3336f173c187939379fe0472697b122c82c517b2b702266def59a517"
+        },
+        {
+          "json_pointer": "/sections/27/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "855670fa79d998c28f397796c9fd4df7ca6831815e7e3709381387c588545247"
+        },
+        {
+          "json_pointer": "/sections/28/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "019701c39cd6dd82d9f9b862d67516ec0c281183e89808ddee859458650dd316"
+        },
+        {
+          "json_pointer": "/sections/29/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "4906459335e2bcf62b446086ec2c223f4f5017b9556c3156d2af5f493146cbcd"
+        },
+        {
+          "json_pointer": "/sections/31/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "824a50f5eae326fa037c65f7f4726e670db33f6369cf1fd01179145ed040367d"
+        },
+        {
+          "json_pointer": "/sections/32/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "30f2e6fb3339a953edbf93aa1ee191272a0a6fea009916044774bc4341edce56"
+        },
+        {
+          "json_pointer": "/sections/33/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "3bb57795ef4a9f7e28d9628e8bd0a8996c56f9e510a3f3bc89926c9572be9ed7"
+        },
+        {
+          "json_pointer": "/sections/35/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "873023e265e7f32881d459c651866a791bc1ac53650dd14682262e4887f076ef"
+        },
+        {
+          "json_pointer": "/sections/36/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "7f69527893af5859df27e16502b05d280e5c911bec0c1e55c2fae99ef3824094"
+        },
+        {
+          "json_pointer": "/sections/37/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "b435e4905112f17600fb83f0d9cfa4ec03d663384b70d8906f965a74b0b47d61"
+        },
+        {
+          "json_pointer": "/sections/38/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "61653d8173003e70df1f28cd3028c41493f902818e3d2b836d9a0d7333f47061"
+        },
+        {
+          "json_pointer": "/sections/39/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "562f93346c59f046145f0ef5a0420de7f08649b7cbf13c799a35fe7949cc95fd"
+        },
+        {
+          "json_pointer": "/sections/40/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "adeb7e82d193ef54181ee1a0ee2b6a36ae3c82227f96e6b540b179c5f28a7af2"
+        },
+        {
+          "json_pointer": "/sections/43/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "073397b71f4947fcd4d8875ab5343103a63de2a3c43ca2fc8ddd9ee9022b8218"
+        },
+        {
+          "json_pointer": "/sections/44/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "2fba09ca3807aeffd5bfdf55d16eeaa207a42925d1db7d826655ead07fffbe14"
+        },
+        {
+          "json_pointer": "/sections/45/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "08ac91b3cd7e3f11a5c18ae312c7fe2804bcb4b500b672d23c553228be3d7c8b"
+        },
+        {
+          "json_pointer": "/sections/46/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "43ca30f90b86ceacb88340efbe5aedc4d22ffdbebb2727e8ef350cad8581d850"
+        },
+        {
+          "json_pointer": "/sections/47/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ac3f977a6520a9817253fc9220bbe2779191fd3cba3828728bc32c9144ccab93"
+        },
+        {
+          "json_pointer": "/sections/49/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "4424576e86e28f10ae058ccd74f9d4c25651391e612fce448883acbed4b1d460"
+        },
+        {
+          "json_pointer": "/sections/51/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "52489221c6c55e17d4812987c31224784f0adedddbb8adcdb52853b30cf82181"
+        },
+        {
+          "json_pointer": "/sections/52/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "8cf93241069f4708e0be5ab31939f906a0e9c769bdcb944d57ce267ffa8448eb"
+        },
+        {
+          "json_pointer": "/sections/53/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "99c70bd966d150434a02a7d70686db6f406e6f96eed0de1107ba736bd25b9cb4"
+        },
+        {
+          "json_pointer": "/sections/54/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "019c7b057d23902a75cc8cf7f156f252b6727077caaf65bcf839face43d20a2a"
+        },
+        {
+          "json_pointer": "/sections/56/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "71031c2372a01cfa584a98bcce3780c0eaae6753b3c6310db52286c4bd9a49f9"
+        },
+        {
+          "json_pointer": "/sections/57/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "d5be9f4e862a156eed6d0f79a30dc7f48b90797a2d282b52c6196ac7a2523ab6"
+        },
+        {
+          "json_pointer": "/sections/60/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "58ba34ce12427ed1527e2c655cab85c55b90e766b3c92887c15a93c735f493c5"
+        },
+        {
+          "json_pointer": "/sections/62/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "9e1e71f7488f5d1dc424367978547f59fa8c4a280590a2d2338bf27b969279ff"
+        },
+        {
+          "json_pointer": "/sections/63/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "c6e07ce2c0fc2c6e1815a247ec9bfd7369f51fe1822beb5dbb2851828682df0e"
+        },
+        {
+          "json_pointer": "/sections/64/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "a050ffc1dc642c125637e1176ed5bd21288b7d11a6b6331edf587a91b2943227"
+        },
+        {
+          "json_pointer": "/sections/65/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "7bd936658d8248e8e968a480034f36570d0103e98af25268bfe060aec29ada6a"
+        },
+        {
+          "json_pointer": "/sections/66/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "e536b30de67bd1c6f3f6ec33eefd1006ca7f2a1f9c44aa0a1efa560193b1ab16"
+        },
+        {
+          "json_pointer": "/sections/68/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "86273d9c12df082af11a2e225646c7ec6ccfb504dd768f3162b9cfc35ae4ddbc"
+        },
+        {
+          "json_pointer": "/sections/70/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ce8a7e3d5117d6894203f957eec624ace347cee3c6cb5cdb8889e27e57a0e5ed"
+        },
+        {
+          "json_pointer": "/sections/71/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ce7e36f18d912e4d000c73ff352c16572d57dbc3e9b5234514d14d57037305d0"
+        },
+        {
+          "json_pointer": "/sections/72/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ccfac325c26e19ab7201553144aafbf595477e83770e25ba3603562d7f5fee17"
+        },
+        {
+          "json_pointer": "/sections/73/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "2ee9ecedf12192671c2e5c44afbc691a8eb5117a8721f39cfaef4856f0aff83a"
+        },
+        {
+          "json_pointer": "/sections/75/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "6ee120b76eb95c260ff2bc0a19784d56cca3a9e183bcd7a71a67cdefe5245674"
+        },
+        {
+          "json_pointer": "/sections/76/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "861116a6ed7b5708233b7505723801f615e7e4e999442ff4232d5d2f5b0c2f18"
+        },
+        {
+          "json_pointer": "/sections/77/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "aa444b95d4f87f620e664ea3d9de1ed894f456f4fe12f37a040896d13a631d86"
+        },
+        {
+          "json_pointer": "/sections/79/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "300b5bea396d917f74965cbfc5245a9f6fd5502712a390c2644d08002ab08b44"
+        },
+        {
+          "json_pointer": "/sections/81/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "e308d8e9a546255081bd19b31035b9fe3724b10752942fda5d49d4f19e357798"
+        },
+        {
+          "json_pointer": "/sections/82/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "d4aba822d83fa3e63e91bb62213bea14e3c22eca1274f1dba1f29a0169392a67"
+        },
+        {
+          "json_pointer": "/sections/83/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "72c5919ff1ba889e9ac02ba968b250c19391f6de020f81784ab7bba45a15bc68"
+        },
+        {
+          "json_pointer": "/sections/84/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "c2f07487dc8babd3c64c252f5cec24b147d9f1955cd84d9085f4f2762746fb6f"
+        },
+        {
+          "json_pointer": "/sections/85/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "d78f77b4fbc2bef82b56da745d27b72fcdcd54b9f2013a7b74664a3611781dd8"
+        },
+        {
+          "json_pointer": "/sections/88/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "19ae5951c5e5fd68eb92f322315c555a800440a5e7e4898a04109f6e3a7d1999"
+        },
+        {
+          "json_pointer": "/sections/90/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "2a317b42379665648b09145fc18089954fda6b676e50677bdcf10649e3d52ca4"
+        },
+        {
+          "json_pointer": "/sections/91/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "913ba9bb9944b35f3196c882d800792543f19bd104dfa16417a017c6229f6cf9"
+        },
+        {
+          "json_pointer": "/sections/92/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "32772f9e59fd5c78a552f1559b82a923a48f20415106b09682cb04eb711b90fa"
+        },
+        {
+          "json_pointer": "/sections/93/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "90d4537e4bf943a60f5222cd781e34b045ece1f823fac90bf2ed94f8a808d410"
+        },
+        {
+          "json_pointer": "/sections/95/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "14b05a8c2c68ce1f4ea47875138b3e425e14fa2ec63c1ce83fa730cf30c48a38"
+        },
+        {
+          "json_pointer": "/sections/96/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "35d2f27d6b48457d5a97e912f51817a10f4fbe4f000cb51287f55787586c0ea4"
+        },
+        {
+          "json_pointer": "/sections/99/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ec34ab33f0831ecb70995baedbd4212b0f00e6243768ed400400cd59f6b50f4c"
+        },
+        {
+          "json_pointer": "/sections/100/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "f2d2b76806120974ec9db974018f252ea343fd947446979aa50a34a624dab040"
+        },
+        {
+          "json_pointer": "/sections/101/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "28fbc30a18a6752e8366a8443c7db712d6f58706d1ef1ab7914a0e4d5dafe897"
+        },
+        {
+          "json_pointer": "/sections/102/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "aa9fff1673680bdc62895c058550e4b75c065d7777e7cf2f445ef8b889b6a60f"
+        },
+        {
+          "json_pointer": "/sections/103/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ef12de58becad5f147a6bcd5e0804d99f1337c1feedec9aed9f0214206fac17f"
+        },
+        {
+          "json_pointer": "/sections/104/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "20358e161e3b7cc3d65bfdf580b49dce6e92477e715d7885fee3920ca0303143"
+        },
+        {
+          "json_pointer": "/sections/106/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "a7bf7f7b99caeb68e1ed1fdd267fe948eb1788120d77c6a92f1e9db12cab41f9"
+        },
+        {
+          "json_pointer": "/sections/107/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "c23ed5d7a9d1db34e4f2fc39c60014b5e3ace1c268b4b0ab8c384f191554e70a"
+        },
+        {
+          "json_pointer": "/sections/108/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "6e8d52d91ba2d431d0fe9ed48e322d069f1f04c65dc0f43dfa2ce8c735d953f0"
+        },
+        {
+          "json_pointer": "/sections/109/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "44ed79c5312d725380e6b589e6999e259996476c1ec7982169caa092159aecd6"
+        },
+        {
+          "json_pointer": "/sections/110/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "ad391abe584e98b8ce61e92968ce7fabee5dba98a5b1926f161dcd762336961e"
+        },
+        {
+          "json_pointer": "/sections/111/evidence_excerpt",
+          "operation": "REMOVE",
+          "removed_characters": 250,
+          "removed_utf8_sha256": "f4f546d74211748be3b181efced1842948ad58f216b0b742f8130bf85645e1dd"
+        }
+      ],
+      "other_data": "UNCHANGED_JSON_VALUES",
+      "semantic_reclassification": false
+    },
+    {
+      "path": "research/reference-batch-09-coverage.json",
+      "kind": "GENERALIZE_PERSONAL_SOURCE_PATH",
+      "source_sha256": "e845f315acd80360bd617b2e3b6450668564250b94c8795840357389ad46a443",
+      "current_sha256": "6d4cff0e26665d6338c30503af19b4140b2cba2e8db9396c8ca4097305ed4ac2",
+      "fields": [
+        {
+          "json_pointer": "/source_pdf/path",
+          "operation": "REPLACE_PERSONAL_SOURCE_LOCATOR",
+          "original_value_utf8_sha256": "e81c7071fe9715a65c947199cb0b205a63fab14a526fe89c0763fd7355b00f0d",
+          "replacement": "SOURCES/MQL5 Language REFERENCE.pdf",
+          "meaning": "External source locator; not an included relative file"
+        }
+      ],
+      "other_data": "UNCHANGED_JSON_VALUES",
+      "semantic_reclassification": false
+    },
+    {
+      "path": "research/reference-batch-11-coverage.json",
+      "kind": "GENERALIZE_PERSONAL_SOURCE_PATH",
+      "source_sha256": "6b14ce4acc5e374ecb1e014356e877c37e23e86dd61ee74fd95b29e812b598d0",
+      "current_sha256": "fa7da7ec92d67b2cb0af706659547624e0dbb115e0966a6dda8be45a901065d9",
+      "fields": [
+        {
+          "json_pointer": "/source_pdf/path",
+          "operation": "REPLACE_PERSONAL_SOURCE_LOCATOR",
+          "original_value_utf8_sha256": "e81c7071fe9715a65c947199cb0b205a63fab14a526fe89c0763fd7355b00f0d",
+          "replacement": "SOURCES/MQL5 Language REFERENCE.pdf",
+          "meaning": "External source locator; not an included relative file"
+        }
+      ],
+      "other_data": "UNCHANGED_JSON_VALUES",
+      "semantic_reclassification": false
+    },
+    {
+      "path": "research/reference-batch-13b-coverage.json",
+      "kind": "GENERALIZE_PERSONAL_SOURCE_PATH",
+      "source_sha256": "cd0007939b829698d4ac4560fb7a9e6bfc165c061e5d635d7c74b30f6c5f4e8a",
+      "current_sha256": "6bd21d073e70f95f3fe116b4c2a30f6a58753048b20957dfb9b827c6e096c992",
+      "fields": [
+        {
+          "json_pointer": "/original_pdf_path",
+          "operation": "REPLACE_PERSONAL_SOURCE_LOCATOR",
+          "original_value_utf8_sha256": "e81c7071fe9715a65c947199cb0b205a63fab14a526fe89c0763fd7355b00f0d",
+          "replacement": "SOURCES/MQL5 Language REFERENCE.pdf",
+          "meaning": "External source locator; not an included relative file"
+        }
+      ],
+      "other_data": "UNCHANGED_JSON_VALUES",
+      "semantic_reclassification": false
+    },
+    {
+      "path": "research/neural-notes.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "a1a0ec7efc4480962f4bf18f36b69309aebb798ded4b232a398b87ab7c293140",
+      "parent_c1_sha256": "a1a0ec7efc4480962f4bf18f36b69309aebb798ded4b232a398b87ab7c293140",
+      "current_sha256": "b6f907c9c241b79d13f24f50f9d0d51c6d672941b6fb4836ac7f870225967727",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [
+          599
+        ],
+        "remove_final_blank_lines": 0
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-batch-11-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "6ef46551090c1141b7d8537dd1949a0df1f258b5696e606abafda2ad21e1af69",
+      "parent_c1_sha256": "6ef46551090c1141b7d8537dd1949a0df1f258b5696e606abafda2ad21e1af69",
+      "current_sha256": "3ebb5651ee4d85b1ac89131e2f1fab9c60695e768ae6bb2fb94294d2256f9ac7",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [],
+        "remove_final_blank_lines": 1
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-batch-11b-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "3c395ca15afac49af48c08582ad2d47b0ea98d49eb554adbcd4d57462f4d5c4c",
+      "parent_c1_sha256": "3c395ca15afac49af48c08582ad2d47b0ea98d49eb554adbcd4d57462f4d5c4c",
+      "current_sha256": "9d738ca1f50fa67499b7a32728f187630d36e32a08909d38fabb5b75b8a0d42b",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [],
+        "remove_final_blank_lines": 1
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-batch-13-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "f54c15b6a3093a505b55b497eb754df28f26fc9a2050cab6db5236f7b489af72",
+      "parent_c1_sha256": "f54c15b6a3093a505b55b497eb754df28f26fc9a2050cab6db5236f7b489af72",
+      "current_sha256": "a6b043cb0e00c5971d6d13c488a9831b05c3782e998490df76934c21d1f20257",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [
+          15
+        ],
+        "remove_final_blank_lines": 0
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-batch-14c-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "6229903c84c971b2c9592534597e3e70c59f91e3dfb8f5ee0ed7632ed0a23f28",
+      "parent_c1_sha256": "6229903c84c971b2c9592534597e3e70c59f91e3dfb8f5ee0ed7632ed0a23f28",
+      "current_sha256": "253ddc031e0e47a60d521ec93281a1aeac261bfbafb0e32c278a5bdf3fee5c3b",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [],
+        "remove_final_blank_lines": 1
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-batch-15b-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "f2c9a70e429449a051a3da14a8e0372a2d6332cd73b1d057ee05e9b9353f6069",
+      "parent_c1_sha256": "f2c9a70e429449a051a3da14a8e0372a2d6332cd73b1d057ee05e9b9353f6069",
+      "current_sha256": "9563594a463fd8bc4330094ccfd7dc165fd7e620ad415d594218317f37e9801a",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [
+          245,
+          249,
+          253,
+          257
+        ],
+        "remove_final_blank_lines": 1
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-batch-16-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "4d418c0ccd84dcbaaf00050767602468eacf87c0aa3833a7f45de5ef683ae3e6",
+      "parent_c1_sha256": "4d418c0ccd84dcbaaf00050767602468eacf87c0aa3833a7f45de5ef683ae3e6",
+      "current_sha256": "229befe21c991ba5d7883965b81284f1df4e92afcd30c9c3b1b1322a00f4763c",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [],
+        "remove_final_blank_lines": 1
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/reference-family-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "5dd9ed164a613a653de172a6a87a2eda5da9f7b970b6fba5a7084077c4258df1",
+      "parent_c1_sha256": "5dd9ed164a613a653de172a6a87a2eda5da9f7b970b6fba5a7084077c4258df1",
+      "current_sha256": "5a15d1737de075ad91a6f2f78dcdbd669af7fe790e25c9692d56b0deb4a1ac04",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [],
+        "remove_final_blank_lines": 1
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    },
+    {
+      "path": "research/trd-semantic-review.md",
+      "kind": "C2_MECHANICAL_WHITESPACE_ONLY",
+      "source_sha256": "9c3585d9a04f84a3b6bf6cda42919b9a3eeb815e2585ab3d9eae9e72fcd84164",
+      "parent_c1_sha256": "9c3585d9a04f84a3b6bf6cda42919b9a3eeb815e2585ab3d9eae9e72fcd84164",
+      "current_sha256": "d999f9b2caad4e7d38c7a58feb47cc7346bab57364631309e4e4026d6cc8bca9",
+      "operations": {
+        "remove_single_ascii_trailing_space_at_lines": [
+          739
+        ],
+        "remove_final_blank_lines": 0
+      },
+      "other_bytes": "UNCHANGED",
+      "semantic_reclassification": false,
+      "original_availability": "PRIVATE_HISTORICAL_EXTERNAL"
+    }
+  ],
+  "revision_c2": {
+    "edition_id": "stoikus-documental-curada-1.0.0-c2",
+    "parent_edition_id": "stoikus-documental-curada-1.0.0-c1",
+    "parent_manifest_sha256": "50cd8c907139d968e903db0f624663711dbb9e54c70de3489ac845dec07b85f7",
+    "parent_zip_sha256": "9d685313d0de7160e06babf9372d978e6ee5d07d4561f6db3b37be90fdce4531",
+    "parent_content_identity_sha256": "3111a6261c0fc3ba3582996f4f615bf8e9bbed7d9483a6b52dddddad716d1ea7",
+    "reason": "Git staged diff --check rejected 13 inherited formatting markers; no gate waiver",
+    "parent_attempt": "R1_PRESERVED_EXTERNALLY",
+    "parent_gate_receipt_sha256": "2160af95e815d30d283b84f61c55736a75c443dcdbe04852c428132af295254a",
+    "removed_single_ascii_trailing_spaces": 7,
+    "removed_final_blank_lines": 6,
+    "mechanical_deltas": [
+      {
+        "path": "research/neural-notes.md",
+        "before_sha256": "a1a0ec7efc4480962f4bf18f36b69309aebb798ded4b232a398b87ab7c293140",
+        "after_sha256": "b6f907c9c241b79d13f24f50f9d0d51c6d672941b6fb4836ac7f870225967727",
+        "before_bytes": 65656,
+        "after_bytes": 65655,
+        "removed_single_ascii_trailing_spaces_at_lines": [
+          599
+        ],
+        "removed_final_blank_lines": 0,
+        "byte_deletions": [
+          {
+            "offset_before": 34008,
+            "hex_removed": "20"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-batch-11-review.md",
+        "before_sha256": "6ef46551090c1141b7d8537dd1949a0df1f258b5696e606abafda2ad21e1af69",
+        "after_sha256": "3ebb5651ee4d85b1ac89131e2f1fab9c60695e768ae6bb2fb94294d2256f9ac7",
+        "before_bytes": 41794,
+        "after_bytes": 41793,
+        "removed_single_ascii_trailing_spaces_at_lines": [],
+        "removed_final_blank_lines": 1,
+        "byte_deletions": [
+          {
+            "offset_before": 41793,
+            "hex_removed": "0a"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-batch-11b-review.md",
+        "before_sha256": "3c395ca15afac49af48c08582ad2d47b0ea98d49eb554adbcd4d57462f4d5c4c",
+        "after_sha256": "9d738ca1f50fa67499b7a32728f187630d36e32a08909d38fabb5b75b8a0d42b",
+        "before_bytes": 37136,
+        "after_bytes": 37135,
+        "removed_single_ascii_trailing_spaces_at_lines": [],
+        "removed_final_blank_lines": 1,
+        "byte_deletions": [
+          {
+            "offset_before": 37135,
+            "hex_removed": "0a"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-batch-13-review.md",
+        "before_sha256": "f54c15b6a3093a505b55b497eb754df28f26fc9a2050cab6db5236f7b489af72",
+        "after_sha256": "a6b043cb0e00c5971d6d13c488a9831b05c3782e998490df76934c21d1f20257",
+        "before_bytes": 159040,
+        "after_bytes": 159039,
+        "removed_single_ascii_trailing_spaces_at_lines": [
+          15
+        ],
+        "removed_final_blank_lines": 0,
+        "byte_deletions": [
+          {
+            "offset_before": 2906,
+            "hex_removed": "20"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-batch-14c-review.md",
+        "before_sha256": "6229903c84c971b2c9592534597e3e70c59f91e3dfb8f5ee0ed7632ed0a23f28",
+        "after_sha256": "253ddc031e0e47a60d521ec93281a1aeac261bfbafb0e32c278a5bdf3fee5c3b",
+        "before_bytes": 95253,
+        "after_bytes": 95252,
+        "removed_single_ascii_trailing_spaces_at_lines": [],
+        "removed_final_blank_lines": 1,
+        "byte_deletions": [
+          {
+            "offset_before": 95252,
+            "hex_removed": "0a"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-batch-15b-review.md",
+        "before_sha256": "f2c9a70e429449a051a3da14a8e0372a2d6332cd73b1d057ee05e9b9353f6069",
+        "after_sha256": "9563594a463fd8bc4330094ccfd7dc165fd7e620ad415d594218317f37e9801a",
+        "before_bytes": 101702,
+        "after_bytes": 101697,
+        "removed_single_ascii_trailing_spaces_at_lines": [
+          245,
+          249,
+          253,
+          257
+        ],
+        "removed_final_blank_lines": 1,
+        "byte_deletions": [
+          {
+            "offset_before": 15283,
+            "hex_removed": "20"
+          },
+          {
+            "offset_before": 15561,
+            "hex_removed": "20"
+          },
+          {
+            "offset_before": 15839,
+            "hex_removed": "20"
+          },
+          {
+            "offset_before": 16132,
+            "hex_removed": "20"
+          },
+          {
+            "offset_before": 101701,
+            "hex_removed": "0a"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-batch-16-review.md",
+        "before_sha256": "4d418c0ccd84dcbaaf00050767602468eacf87c0aa3833a7f45de5ef683ae3e6",
+        "after_sha256": "229befe21c991ba5d7883965b81284f1df4e92afcd30c9c3b1b1322a00f4763c",
+        "before_bytes": 76487,
+        "after_bytes": 76486,
+        "removed_single_ascii_trailing_spaces_at_lines": [],
+        "removed_final_blank_lines": 1,
+        "byte_deletions": [
+          {
+            "offset_before": 76486,
+            "hex_removed": "0a"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/reference-family-review.md",
+        "before_sha256": "5dd9ed164a613a653de172a6a87a2eda5da9f7b970b6fba5a7084077c4258df1",
+        "after_sha256": "5a15d1737de075ad91a6f2f78dcdbd669af7fe790e25c9692d56b0deb4a1ac04",
+        "before_bytes": 8993,
+        "after_bytes": 8992,
+        "removed_single_ascii_trailing_spaces_at_lines": [],
+        "removed_final_blank_lines": 1,
+        "byte_deletions": [
+          {
+            "offset_before": 8992,
+            "hex_removed": "0a"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      },
+      {
+        "path": "research/trd-semantic-review.md",
+        "before_sha256": "9c3585d9a04f84a3b6bf6cda42919b9a3eeb815e2585ab3d9eae9e72fcd84164",
+        "after_sha256": "d999f9b2caad4e7d38c7a58feb47cc7346bab57364631309e4e4026d6cc8bca9",
+        "before_bytes": 66305,
+        "after_bytes": 66304,
+        "removed_single_ascii_trailing_spaces_at_lines": [
+          739
+        ],
+        "removed_final_blank_lines": 0,
+        "byte_deletions": [
+          {
+            "offset_before": 55585,
+            "hex_removed": "20"
+          }
+        ],
+        "other_bytes_unchanged": true,
+        "semantic_reclassification": false
+      }
+    ],
+    "metadata_deltas": [
+      {
+        "path": "COMECE_AQUI.md",
+        "parent_c1_sha256": "ab22599519d09cae61e96b957117f7555a73a5ee8a13598b3684c761a3236130",
+        "current_c2_sha256": "fee52053e86161d35fa178fba6171489892db1d6df04335b4c60e84bbd4190cd"
+      },
+      {
+        "path": "CURADORIA.md",
+        "parent_c1_sha256": "c8d3a197ec05d8aa3b5bf196c8c92a450c7f02c34ef8773937173bf1e00a3fd6",
+        "current_c2_sha256": "00929b37a67d91ad6308b5e3112702f90cc8482152274e4a5cc98f895efb9e1a"
+      },
+      {
+        "path": "HISTORICO.md",
+        "parent_c1_sha256": "b24341f735e9883184c747b4dca7d86b21470b27a64c3979b73e19066fbe222b",
+        "current_c2_sha256": "e26ed4d0d4c857c6713730e7c71a19c819639ebece6623c058ee182e491c42f9"
+      },
+      {
+        "path": "verificar_edicao.py",
+        "parent_c1_sha256": "c4bcdebc6b4107559730c9725901f4d2765f2cfb137176362705e2fea6b6b3ca",
+        "current_c2_sha256": "59fa9d01f622a425dde8eb58ebe263dc7d8805448d4f3f6ee5cbe6333e4875f6"
+      },
+      {
+        "path": "curadoria/MAPA_ORIGEM.json",
+        "parent_c1_sha256": "324d8ae52e426664feaac254d3510b1b8bbccef4e4a0d18b0c01a2e12c0fa50d",
+        "current_c2_sha256": "be86c763ff5d23307f888bf03399423fccb33b5a76fcd2dc1bf192dbe5444045"
+      },
+      {
+        "path": "curadoria/INDICE_PESQUISA_ATUAL.json",
+        "parent_c1_sha256": "1e491bcd747c41daa5985465424e3abaff9b5b0a02e03605f11b48c634917792",
+        "current_c2_sha256": "1a0175b28d4f68d2945349f97c7927d122daf694afda1f51b1e96d3ea70fac80"
+      }
+    ],
+    "identity_policy": "This section identifies parent and nonrecursive deltas. Its own file and the current manifest are authenticated by the current manifest and its external pin, never by recursive self-hashes.",
+    "new_physical_revision_file": false,
+    "source_snapshot_classification_unchanged": true,
+    "historical_results": "HISTORICAL_ONLY",
+    "new_reading_claim": false,
+    "tests_byte_identical_to_parent": true,
+    "test_methods": 37,
+    "checker_delta": "Only STATES edition_id literal c1 to c2; criteria unchanged",
+    "adoption": "NOT_ADOPTED",
+    "native_mt5": "NOT_RUN",
+    "current_behavioral_pilot": "NOT_RUN"
+  }
+}

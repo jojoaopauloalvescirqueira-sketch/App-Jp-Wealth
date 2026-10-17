@@ -1,0 +1,26 @@
+{
+  "status": "PASS_LOCAL_MATH_ONLY",
+  "stdlib_only": true,
+  "dense_fixed_weights": [
+    17,
+    11
+  ],
+  "pearson_zero_but_deterministic_dependence": 0.0,
+  "normalization_train_only": [
+    0.3333333333333333,
+    0.6666666666666666,
+    1.0
+  ],
+  "normalization_with_future": [
+    0.01,
+    0.02,
+    0.03
+  ],
+  "gradient_numeric": -0.7999999999813712,
+  "gradient_analytic": -0.7999999999999998,
+  "defective_gradient_rejected": -0.3999999999999999,
+  "MQL5_compilation": "NOT_RUN",
+  "MT5_runtime": "NOT_RUN",
+  "neural_book_reproduction": "NOT_RUN",
+  "financial_validation": "NOT_RUN"
+}

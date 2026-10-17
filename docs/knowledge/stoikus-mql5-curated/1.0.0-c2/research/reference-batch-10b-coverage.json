@@ -1,0 +1,3911 @@
+{
+  "book": "REF",
+  "batch": "10b",
+  "status": "COMPLETE_ASSIGNED_RANGE",
+  "requested_pages": [
+    3043,
+    3238
+  ],
+  "consolidation_full_text_pages": [
+    3043,
+    3044,
+    3045,
+    3046,
+    3047,
+    3048,
+    3049,
+    3050,
+    3051,
+    3052,
+    3053,
+    3054,
+    3055,
+    3056,
+    3057,
+    3058,
+    3059,
+    3060,
+    3061,
+    3062,
+    3063,
+    3064,
+    3065,
+    3066,
+    3067,
+    3068,
+    3069,
+    3070,
+    3071,
+    3072,
+    3073,
+    3074,
+    3075,
+    3076,
+    3077,
+    3078,
+    3079,
+    3080,
+    3081,
+    3082,
+    3083,
+    3084,
+    3085,
+    3086,
+    3087,
+    3088,
+    3089,
+    3090,
+    3091,
+    3092,
+    3093,
+    3094,
+    3095,
+    3096,
+    3097,
+    3098,
+    3099,
+    3100,
+    3101,
+    3102,
+    3103,
+    3104,
+    3105,
+    3106,
+    3107,
+    3108,
+    3109,
+    3110,
+    3111,
+    3112,
+    3113,
+    3114,
+    3115,
+    3116,
+    3117,
+    3118,
+    3119,
+    3120,
+    3121,
+    3122,
+    3123,
+    3124,
+    3125,
+    3126,
+    3127,
+    3128,
+    3129,
+    3130,
+    3131,
+    3132,
+    3133,
+    3134,
+    3135,
+    3136,
+    3137,
+    3138,
+    3139,
+    3140,
+    3141,
+    3142,
+    3143,
+    3144,
+    3145,
+    3146,
+    3147,
+    3148,
+    3149,
+    3150,
+    3151,
+    3152,
+    3153,
+    3154,
+    3155,
+    3156,
+    3157,
+    3158,
+    3159,
+    3160,
+    3161,
+    3162,
+    3163,
+    3164,
+    3165,
+    3166,
+    3167,
+    3168,
+    3169,
+    3170,
+    3171,
+    3172,
+    3173,
+    3174,
+    3175,
+    3176,
+    3177,
+    3178,
+    3179,
+    3180,
+    3181,
+    3182,
+    3183,
+    3184,
+    3185,
+    3186,
+    3187,
+    3188,
+    3189,
+    3190,
+    3191,
+    3192,
+    3193,
+    3194,
+    3195,
+    3196,
+    3197,
+    3198,
+    3199,
+    3200,
+    3201,
+    3202,
+    3203,
+    3204,
+    3205,
+    3206,
+    3207,
+    3208,
+    3209,
+    3210,
+    3211,
+    3212,
+    3213,
+    3214,
+    3215,
+    3216,
+    3217,
+    3218,
+    3219,
+    3220,
+    3221,
+    3222,
+    3223,
+    3224,
+    3225,
+    3226,
+    3227,
+    3228,
+    3229,
+    3230,
+    3231,
+    3232,
+    3233,
+    3234,
+    3235,
+    3236,
+    3237,
+    3238
+  ],
+  "semantic_read_count": 196,
+  "unread_pages": [],
+  "read_method": "Fifteen sequential complete text outputs b10-read-08..22; each <=30000 chars; max_output_tokens=20000; no tool truncation. Each displayed file verified equal to original corpus page text. Extraction/indexing were not counted as reading.",
+  "source_pdf_sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+  "source_pdf_hash_provenance": "Preserved original metadata from preceding batch; PDF not rehashed in this worker.",
+  "source_jsonl_sha256": "166b9e8ab424e17918a646de8bad94dd829573a1db63260d4cd68ea3861bcde2",
+  "source_index_sha256": "b1f3f85c7a5557d3f9f58c4585b8a968513c9b564cab7156a16c1fcef0a9fc73",
+  "reading_batches": [
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-08.txt",
+      "start": 3043,
+      "end": 3054,
+      "pages": [
+        3043,
+        3044,
+        3045,
+        3046,
+        3047,
+        3048,
+        3049,
+        3050,
+        3051,
+        3052,
+        3053,
+        3054
+      ],
+      "characters": 27882,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "9015011dd47585998597b06b8685ce6486aa13ace57bd0a07d00d059c743f89a"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-09.txt",
+      "start": 3055,
+      "end": 3066,
+      "pages": [
+        3055,
+        3056,
+        3057,
+        3058,
+        3059,
+        3060,
+        3061,
+        3062,
+        3063,
+        3064,
+        3065,
+        3066
+      ],
+      "characters": 27897,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "39abde552b0ef7e00c02013caceea803187cdf53679cd81c4d5145b19ec76c2a"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-10.txt",
+      "start": 3067,
+      "end": 3078,
+      "pages": [
+        3067,
+        3068,
+        3069,
+        3070,
+        3071,
+        3072,
+        3073,
+        3074,
+        3075,
+        3076,
+        3077,
+        3078
+      ],
+      "characters": 29448,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "2f9987a2871cefb490a05e8851cd4a19a5419dbff0073d98c5f945708133d711"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-11.txt",
+      "start": 3079,
+      "end": 3090,
+      "pages": [
+        3079,
+        3080,
+        3081,
+        3082,
+        3083,
+        3084,
+        3085,
+        3086,
+        3087,
+        3088,
+        3089,
+        3090
+      ],
+      "characters": 29013,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "8a56e8f0343186ee149e32c6d14d5cfa96b081e54dc21f1546c9f35b09d9eec6"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-12.txt",
+      "start": 3091,
+      "end": 3103,
+      "pages": [
+        3091,
+        3092,
+        3093,
+        3094,
+        3095,
+        3096,
+        3097,
+        3098,
+        3099,
+        3100,
+        3101,
+        3102,
+        3103
+      ],
+      "characters": 29532,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "88b91385f4038937f4218ea2c0509e04035510339d980d01518360b866e09f51"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-13.txt",
+      "start": 3104,
+      "end": 3115,
+      "pages": [
+        3104,
+        3105,
+        3106,
+        3107,
+        3108,
+        3109,
+        3110,
+        3111,
+        3112,
+        3113,
+        3114,
+        3115
+      ],
+      "characters": 29877,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "1d0e9a74b6d882034332dd7733039e31614d31a6436cf6035a041d454bb9d669"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-14.txt",
+      "start": 3116,
+      "end": 3128,
+      "pages": [
+        3116,
+        3117,
+        3118,
+        3119,
+        3120,
+        3121,
+        3122,
+        3123,
+        3124,
+        3125,
+        3126,
+        3127,
+        3128
+      ],
+      "characters": 28565,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "8798bd5bb71bf231bc117bedf6233902a58a3283bd7f1123367a867de9e1d1b4"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-15.txt",
+      "start": 3129,
+      "end": 3140,
+      "pages": [
+        3129,
+        3130,
+        3131,
+        3132,
+        3133,
+        3134,
+        3135,
+        3136,
+        3137,
+        3138,
+        3139,
+        3140
+      ],
+      "characters": 28761,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "63c3f19861058e562512047a92d5f693e508ea4ea47c7cae8a82b0b760e5dfa7"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-16.txt",
+      "start": 3141,
+      "end": 3152,
+      "pages": [
+        3141,
+        3142,
+        3143,
+        3144,
+        3145,
+        3146,
+        3147,
+        3148,
+        3149,
+        3150,
+        3151,
+        3152
+      ],
+      "characters": 28896,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "6dfc21e50bb0532e0fdf3412ebc7497da9fa31e1a21c265be1578c9387078d79"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-17.txt",
+      "start": 3153,
+      "end": 3165,
+      "pages": [
+        3153,
+        3154,
+        3155,
+        3156,
+        3157,
+        3158,
+        3159,
+        3160,
+        3161,
+        3162,
+        3163,
+        3164,
+        3165
+      ],
+      "characters": 29478,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "9d3ddf478516806b84a2b4091265f3ce7e84a7b549bc75228322dc4331d2a974"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-18.txt",
+      "start": 3166,
+      "end": 3180,
+      "pages": [
+        3166,
+        3167,
+        3168,
+        3169,
+        3170,
+        3171,
+        3172,
+        3173,
+        3174,
+        3175,
+        3176,
+        3177,
+        3178,
+        3179,
+        3180
+      ],
+      "characters": 29663,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "3e1b60b765da793422d930327a2d0a5f7e976ccfe1d4db43b9b713f67de3bcea"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-19.txt",
+      "start": 3181,
+      "end": 3194,
+      "pages": [
+        3181,
+        3182,
+        3183,
+        3184,
+        3185,
+        3186,
+        3187,
+        3188,
+        3189,
+        3190,
+        3191,
+        3192,
+        3193,
+        3194
+      ],
+      "characters": 29073,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "4f95077415de2afbd099e69f611aa437df82d1bfe12a2ccffcf30bf12f74b69a"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-20.txt",
+      "start": 3195,
+      "end": 3208,
+      "pages": [
+        3195,
+        3196,
+        3197,
+        3198,
+        3199,
+        3200,
+        3201,
+        3202,
+        3203,
+        3204,
+        3205,
+        3206,
+        3207,
+        3208
+      ],
+      "characters": 28249,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "1cc061501e09e126455b84e0b13dd4635693cb5c8df0443f5cf47e9fb67a67bc"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-21.txt",
+      "start": 3209,
+      "end": 3227,
+      "pages": [
+        3209,
+        3210,
+        3211,
+        3212,
+        3213,
+        3214,
+        3215,
+        3216,
+        3217,
+        3218,
+        3219,
+        3220,
+        3221,
+        3222,
+        3223,
+        3224,
+        3225,
+        3226,
+        3227
+      ],
+      "characters": 28691,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "11c8c0e4025c03a2ce17b58e3ab7dafcb3e9243f276e24c8aabf7f8e5a61c98d"
+    },
+    {
+      "file": "/private/tmp/stoikus-mql5-research-20261015/b10-read-22.txt",
+      "start": 3228,
+      "end": 3238,
+      "pages": [
+        3228,
+        3229,
+        3230,
+        3231,
+        3232,
+        3233,
+        3234,
+        3235,
+        3236,
+        3237,
+        3238
+      ],
+      "characters": 22430,
+      "tool_output_truncated": false,
+      "reading": "full extracted text semantically read",
+      "display_sha256": "80eff5baf74aaed33faafcd78c8c88b6483667ff5861d089d861554a4cd76510"
+    }
+  ],
+  "pages": [
+    {
+      "page": 3043,
+      "original_page_sha256": "3f759d22cae60d2a0d6db6d1f6ce4215ecad90c9e95f2168ecedd1eddb895d53",
+      "computed_text_sha256": "3f759d22cae60d2a0d6db6d1f6ce4215ecad90c9e95f2168ecedd1eddb895d53",
+      "original_jsonl_row_sha256": "ec14566a93eae983aa6d5d9b4939b1bbd077bcebe22f255f95ee581c9a7f01e3",
+      "characters": 2454,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3044,
+      "original_page_sha256": "086e187a8f2646f28731b1f8e45f8c5b0607331b8979c18610433dc93387d1f6",
+      "computed_text_sha256": "086e187a8f2646f28731b1f8e45f8c5b0607331b8979c18610433dc93387d1f6",
+      "original_jsonl_row_sha256": "858351c49d9427257e4196d4c6ab23d1b801317c4a45d2afb936aa6761a9feb0",
+      "characters": 2520,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3045,
+      "original_page_sha256": "1a519738d97b5fb92ac70f9b07c451d1c33bf9a9b3d20d2541805a8ad9a368e9",
+      "computed_text_sha256": "1a519738d97b5fb92ac70f9b07c451d1c33bf9a9b3d20d2541805a8ad9a368e9",
+      "original_jsonl_row_sha256": "95fb2b6341ca810380adcf8e472aa2b32524755440403011b85dfb6851001e5b",
+      "characters": 2350,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3046,
+      "original_page_sha256": "036c1b86d2ed73bc42e1907de35ce2588465e7ad5018023f1833ad9e19bb9987",
+      "computed_text_sha256": "036c1b86d2ed73bc42e1907de35ce2588465e7ad5018023f1833ad9e19bb9987",
+      "original_jsonl_row_sha256": "c96c03214d63177b222ed296e8a73452247fee16bf1e4ee4b17df0c8ec6bafe0",
+      "characters": 2813,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3047,
+      "original_page_sha256": "0947c51ed48334d9f1d2f0af14948350e445c506db3636256adc0203a0dfdf45",
+      "computed_text_sha256": "0947c51ed48334d9f1d2f0af14948350e445c506db3636256adc0203a0dfdf45",
+      "original_jsonl_row_sha256": "358044ff146b22ab629167a5373ae4557491f6709955245d55190e1704d10a67",
+      "characters": 1696,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3048,
+      "original_page_sha256": "335583dc06f50fbb6f6f3dc970c8ab94c568fc0d64191f5a2fb9e0f503e5e3d0",
+      "computed_text_sha256": "335583dc06f50fbb6f6f3dc970c8ab94c568fc0d64191f5a2fb9e0f503e5e3d0",
+      "original_jsonl_row_sha256": "359ec50da20dfa4e1d6385ea747e186a388bd70d7e88b4179279c1fc83e6e3b9",
+      "characters": 2473,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3049,
+      "original_page_sha256": "ec125aafc5fb474b2801b0a80df454e69fbbf0fbab8b3f28b941de2bb829644c",
+      "computed_text_sha256": "ec125aafc5fb474b2801b0a80df454e69fbbf0fbab8b3f28b941de2bb829644c",
+      "original_jsonl_row_sha256": "32006f02a667c0363202c5a8540de9226fff9c36eeb087faf5e74651ff8f1d0b",
+      "characters": 2393,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3050,
+      "original_page_sha256": "9d46f038e78d552d311972d5c26b19457e503d2c5c807c7eb598ea2cbeb4400e",
+      "computed_text_sha256": "9d46f038e78d552d311972d5c26b19457e503d2c5c807c7eb598ea2cbeb4400e",
+      "original_jsonl_row_sha256": "fba91bc7495b2b260bd8267aa2fbf102cc74845b0308bfc99a258b55f3ee99c8",
+      "characters": 2368,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3051,
+      "original_page_sha256": "e8ceb6d7a39ffed5918af33c4fcf48919f7220ef2af2d514f58e8b54d772767c",
+      "computed_text_sha256": "e8ceb6d7a39ffed5918af33c4fcf48919f7220ef2af2d514f58e8b54d772767c",
+      "original_jsonl_row_sha256": "12a9ae11c144944989202cf8a843c5c431d600f7bf129ab40a1c056f3cc96e6f",
+      "characters": 3013,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3052,
+      "original_page_sha256": "045306e6e8e6e9d38ae3d1d88a4ce799b87a5511815c7d82c3199e8b86fe6903",
+      "computed_text_sha256": "045306e6e8e6e9d38ae3d1d88a4ce799b87a5511815c7d82c3199e8b86fe6903",
+      "original_jsonl_row_sha256": "7d1bbebbd3c8fccb4e0c1245c4cfa79e3ccee96e76481cca64d3edaaa07407a9",
+      "characters": 587,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3053,
+      "original_page_sha256": "9b42c0e3aa02a6abe99d0f9dadc8e647b602d972b9ff7f680fe2faf82726f7e5",
+      "computed_text_sha256": "9b42c0e3aa02a6abe99d0f9dadc8e647b602d972b9ff7f680fe2faf82726f7e5",
+      "original_jsonl_row_sha256": "30012d774990ba48def024ed36e69a3bfe6d4283d90a16e512aaed934d2a5c50",
+      "characters": 2163,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3054,
+      "original_page_sha256": "6c81e1796b06a17258c0cd1d164888085e0f38e571577e299336a227937920aa",
+      "computed_text_sha256": "6c81e1796b06a17258c0cd1d164888085e0f38e571577e299336a227937920aa",
+      "original_jsonl_row_sha256": "65eec25cf8dd6f51e08cc2614493041a7c22f3fa62339acfcf5ed2ef74fe9c15",
+      "characters": 2836,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3055,
+      "original_page_sha256": "7f9043e0bd29bb1e0fa6269ba756a05c43f75a67b3038d226cfb4053743eb552",
+      "computed_text_sha256": "7f9043e0bd29bb1e0fa6269ba756a05c43f75a67b3038d226cfb4053743eb552",
+      "original_jsonl_row_sha256": "db6ca3bd9078df533f887246d192b245e07e649ce19952fee5309a32c32daeda",
+      "characters": 2180,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3056,
+      "original_page_sha256": "952611e1ee3fb2c55f2a96343a29fc8da28e85a7dc680e0812798f65e75807a6",
+      "computed_text_sha256": "952611e1ee3fb2c55f2a96343a29fc8da28e85a7dc680e0812798f65e75807a6",
+      "original_jsonl_row_sha256": "bf38512fd98e42a6bbc29b6157315bee69e209ec4136d5d02645292189615c0a",
+      "characters": 2613,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3057,
+      "original_page_sha256": "bd6f6ef1d547a40a82670b0f6276a4bb39e239d71632647136d054abed0354b2",
+      "computed_text_sha256": "bd6f6ef1d547a40a82670b0f6276a4bb39e239d71632647136d054abed0354b2",
+      "original_jsonl_row_sha256": "71af0dfdaf7563d794e8e63b9ece22640ec3caf2d35572a0cc07afe7cc0f0a97",
+      "characters": 3086,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3058,
+      "original_page_sha256": "2179049bafed04bbf0d488f0af22ab3e327a998cc041507ff1b2b9a804d0763d",
+      "computed_text_sha256": "2179049bafed04bbf0d488f0af22ab3e327a998cc041507ff1b2b9a804d0763d",
+      "original_jsonl_row_sha256": "5254ce6c1e6233daf1b53ac938681659f32c3481ef6210833e83a16e0b89e2c7",
+      "characters": 932,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3059,
+      "original_page_sha256": "7ec59cf3ce883a5dd1c046bb7a83067a7bff24e63c7ea1fd7baaec69c2765051",
+      "computed_text_sha256": "7ec59cf3ce883a5dd1c046bb7a83067a7bff24e63c7ea1fd7baaec69c2765051",
+      "original_jsonl_row_sha256": "bed8c28fa4ff2249eda6b3b1080396bd71acaffeb8d6e0d1e395fa201e85629c",
+      "characters": 2575,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3060,
+      "original_page_sha256": "458ce1dc65830207d93ea21445f65ccab90f36899ee4ce248dfc46f9803345ae",
+      "computed_text_sha256": "458ce1dc65830207d93ea21445f65ccab90f36899ee4ce248dfc46f9803345ae",
+      "original_jsonl_row_sha256": "f20c3e210fdcfc8ceab62703ed4fd8367424a6e7fefc2287da06743dfd1d1670",
+      "characters": 2435,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3061,
+      "original_page_sha256": "eae8f7e18af055285cf06dbf7c3b7e1372bc2bb60f79466b5a8442a42b94ba9e",
+      "computed_text_sha256": "eae8f7e18af055285cf06dbf7c3b7e1372bc2bb60f79466b5a8442a42b94ba9e",
+      "original_jsonl_row_sha256": "9bb31540d9ad0439baa9b4eae9e49825502ddf506e7a03c58b2c4364bd26f502",
+      "characters": 2369,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3062,
+      "original_page_sha256": "62d44cf528f692e27c063dc8f1e845e76151ff518e3f8ac5d50f281f2f7ef0b3",
+      "computed_text_sha256": "62d44cf528f692e27c063dc8f1e845e76151ff518e3f8ac5d50f281f2f7ef0b3",
+      "original_jsonl_row_sha256": "f03ac495f6c31436cf78eab7ed53564c314044661cce2cf14c6ff76bc4d0fdcb",
+      "characters": 2855,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3063,
+      "original_page_sha256": "3da15f7cada0399d3b2700631f17915625d2e0075546b7e3d9a60c0226cdf370",
+      "computed_text_sha256": "3da15f7cada0399d3b2700631f17915625d2e0075546b7e3d9a60c0226cdf370",
+      "original_jsonl_row_sha256": "730a08635b77910c280bffc26447363142b100d3d049212b52d7a645c396be36",
+      "characters": 1378,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3064,
+      "original_page_sha256": "2cebf7e3068596bd88d85a918e5f8ef30be818867b69444fcd8dc2fbdd76a70a",
+      "computed_text_sha256": "2cebf7e3068596bd88d85a918e5f8ef30be818867b69444fcd8dc2fbdd76a70a",
+      "original_jsonl_row_sha256": "ab508c93e413f502639df190096557ea97a57378bf687e4473ac74b71316eaaf",
+      "characters": 2353,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3065,
+      "original_page_sha256": "3422420720c42a524b305c930080bd6638e4a9367b2d0f4ec399f5af260f65b4",
+      "computed_text_sha256": "3422420720c42a524b305c930080bd6638e4a9367b2d0f4ec399f5af260f65b4",
+      "original_jsonl_row_sha256": "3b63998cd823b6e0a74e44172aa15a5e2723d6c47cb490001010a832e9c8a552",
+      "characters": 2473,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3066,
+      "original_page_sha256": "28254aef290cf76ceb5f83da64f9f9ac09795add5e9935078da29c853b3cd5ac",
+      "computed_text_sha256": "28254aef290cf76ceb5f83da64f9f9ac09795add5e9935078da29c853b3cd5ac",
+      "original_jsonl_row_sha256": "37ae7271fe0226f557a186f2f354c9a7771810099eba8f1400e50edb5544a7a4",
+      "characters": 2432,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3067,
+      "original_page_sha256": "1f6136b8494c8710a08acf0fc07c40c3dbe778b2188eb70b979611b292292343",
+      "computed_text_sha256": "1f6136b8494c8710a08acf0fc07c40c3dbe778b2188eb70b979611b292292343",
+      "original_jsonl_row_sha256": "46ff4787a3beb6f1c8ef09b48fcd638c47ea943390abd7bfeba9ac9216388aa3",
+      "characters": 3092,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3068,
+      "original_page_sha256": "ff81f5c066a93356df0ffc91763dccb2d582543e7637212a12e672e6979245a1",
+      "computed_text_sha256": "ff81f5c066a93356df0ffc91763dccb2d582543e7637212a12e672e6979245a1",
+      "original_jsonl_row_sha256": "847a8d6ce3fd7099ad73abb9589da36341ec8611b63f60af44337018c4340505",
+      "characters": 1157,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3069,
+      "original_page_sha256": "f48bb9938cd917823ea87c7d8eccdd30103f76a3098f8742017157ad8e86568a",
+      "computed_text_sha256": "f48bb9938cd917823ea87c7d8eccdd30103f76a3098f8742017157ad8e86568a",
+      "original_jsonl_row_sha256": "58a878c7114efe0cab50a67744ea3807470db1ab1edf41f1270eb51458dbb882",
+      "characters": 2463,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3070,
+      "original_page_sha256": "c356c71a9dd7fd2d1de0a625c6fe625870ab981004759a37cb3032744e414b6b",
+      "computed_text_sha256": "c356c71a9dd7fd2d1de0a625c6fe625870ab981004759a37cb3032744e414b6b",
+      "original_jsonl_row_sha256": "a0637e9b8ed9d89f71993d7f6c777c517d0529bf4df79e7551296dc16863f2a6",
+      "characters": 2537,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3071,
+      "original_page_sha256": "dc2a9bd6795dd0cd20af50edad44cc9b62eddcd8d5cd09528c8b5d76e9da1d87",
+      "computed_text_sha256": "dc2a9bd6795dd0cd20af50edad44cc9b62eddcd8d5cd09528c8b5d76e9da1d87",
+      "original_jsonl_row_sha256": "08a4635d892f201b1761c7b097cee716f6774b429528bbc69cab13b811481097",
+      "characters": 2311,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3072,
+      "original_page_sha256": "450476566e716b16beb04705d8b21f72af3fe70383eb9ada65a45ccdb799c52f",
+      "computed_text_sha256": "450476566e716b16beb04705d8b21f72af3fe70383eb9ada65a45ccdb799c52f",
+      "original_jsonl_row_sha256": "3caf56b0d85d3720473c066c506eaa133f0293f9497f7fbb8b7b0c5f82e681f0",
+      "characters": 2785,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3073,
+      "original_page_sha256": "858acb8e558e3dfd0583e67366625b64b1c5928ce91d35dca47b75bef904c1ea",
+      "computed_text_sha256": "858acb8e558e3dfd0583e67366625b64b1c5928ce91d35dca47b75bef904c1ea",
+      "original_jsonl_row_sha256": "993c5566d4ff77f470ead957adc0b08865ac07f75f3d2e1c3964548b6913a40f",
+      "characters": 1777,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3074,
+      "original_page_sha256": "401cde657ad1ead08dd2984c8bb1006cb62e43b006bd8ac7815229cb228e5461",
+      "computed_text_sha256": "401cde657ad1ead08dd2984c8bb1006cb62e43b006bd8ac7815229cb228e5461",
+      "original_jsonl_row_sha256": "1b9d4bce30ba29ced6c1ed112f6116a48f7555f4e9c06febf0e454eb4cff8dee",
+      "characters": 2509,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3075,
+      "original_page_sha256": "f06e62e951060fc996560b19acc94c9e59249b20642db01b19ac2d39585d9ca7",
+      "computed_text_sha256": "f06e62e951060fc996560b19acc94c9e59249b20642db01b19ac2d39585d9ca7",
+      "original_jsonl_row_sha256": "c1c3713ebebd456b7e940272f4da71c7bdcadd7627af4b2356952add32420218",
+      "characters": 2757,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3076,
+      "original_page_sha256": "a098541ab4197c3f3f7776a2864f59b9f283b1af16105e84e385d9e71e563f62",
+      "computed_text_sha256": "a098541ab4197c3f3f7776a2864f59b9f283b1af16105e84e385d9e71e563f62",
+      "original_jsonl_row_sha256": "783998a839b33ec5b6424e047ded41c8845ed038faeb78dce5bbb55ae09fd7bc",
+      "characters": 2876,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3077,
+      "original_page_sha256": "e591e28389bd7d9adb519173eb70077f6ddb4f0b59ac59a2dc63a7ff31399060",
+      "computed_text_sha256": "e591e28389bd7d9adb519173eb70077f6ddb4f0b59ac59a2dc63a7ff31399060",
+      "original_jsonl_row_sha256": "3f48d405151b2ef1c8504c21041094cbef25868a3d84cb28bcf4d164208a745b",
+      "characters": 2240,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3078,
+      "original_page_sha256": "b604fa31f872022b309b82912d000938ee331a338805219c03f7ca3575c5f4cf",
+      "computed_text_sha256": "b604fa31f872022b309b82912d000938ee331a338805219c03f7ca3575c5f4cf",
+      "original_jsonl_row_sha256": "6baf7a59f66fb4b87ed9295368d731cf16fda5662d0600f4da6e9ed398f0d94b",
+      "characters": 2728,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3079,
+      "original_page_sha256": "2b1cdc49439a651c2f8f471e317f69eafd2f2d4d00cec65237e6c301f2b3e772",
+      "computed_text_sha256": "2b1cdc49439a651c2f8f471e317f69eafd2f2d4d00cec65237e6c301f2b3e772",
+      "original_jsonl_row_sha256": "0365374fd39f9bc63c44601749330c4fc07d845502ae310669b533f724ab44fa",
+      "characters": 3173,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3080,
+      "original_page_sha256": "bb13d5924cfcb196418f66f6758e3297c0bd53d6abb80571df4fbeeb0b06dc5d",
+      "computed_text_sha256": "bb13d5924cfcb196418f66f6758e3297c0bd53d6abb80571df4fbeeb0b06dc5d",
+      "original_jsonl_row_sha256": "291aa2478db1fe422f802c489234fb4673d58387ef3a268912cfc9d84a328cb5",
+      "characters": 1632,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3081,
+      "original_page_sha256": "613bc0b0f194bcd10230ff8c61f8dab595ca30d0f183baf5158ca2d0b26dbaf6",
+      "computed_text_sha256": "613bc0b0f194bcd10230ff8c61f8dab595ca30d0f183baf5158ca2d0b26dbaf6",
+      "original_jsonl_row_sha256": "27a20ea2d701e41ad7d51563a83303fe706eed616555f199c07e3f7d839dba41",
+      "characters": 2270,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3082,
+      "original_page_sha256": "56e28dc0510629ca87dd50c4359577e46d718f6db1b5f31e8db9327f04967a6e",
+      "computed_text_sha256": "56e28dc0510629ca87dd50c4359577e46d718f6db1b5f31e8db9327f04967a6e",
+      "original_jsonl_row_sha256": "8ffc82bde755736b1b0ce2dbda46f62c33ccd0bd27dc8a5f3c916b33b185e087",
+      "characters": 2677,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3083,
+      "original_page_sha256": "f5807aef83edef092272f9bb3d862cbedfdd7275a03cf419af6fe719f18c5442",
+      "computed_text_sha256": "f5807aef83edef092272f9bb3d862cbedfdd7275a03cf419af6fe719f18c5442",
+      "original_jsonl_row_sha256": "2ae35a77d46b9d63fd35ae470d175b7409c1c9585fb0b7cbcf4597fbfe2d3a28",
+      "characters": 2473,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3084,
+      "original_page_sha256": "1e6c5d50df11648fa1ec684d723c71c9ee908f68b5cf86390c531e38be99a57d",
+      "computed_text_sha256": "1e6c5d50df11648fa1ec684d723c71c9ee908f68b5cf86390c531e38be99a57d",
+      "original_jsonl_row_sha256": "0b52085f69b9e3618cf666e60f2df376738c552ae28a5744d4b8e37107063afd",
+      "characters": 2490,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3085,
+      "original_page_sha256": "f67c57e198612c51d86ce9b6ed1b02767df20c7500974a850a5fc741d3c46684",
+      "computed_text_sha256": "f67c57e198612c51d86ce9b6ed1b02767df20c7500974a850a5fc741d3c46684",
+      "original_jsonl_row_sha256": "d41eb80a039b8bc17feb814fd041ad042e0a2bb7c5b9cf935f3171238824be57",
+      "characters": 3298,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3086,
+      "original_page_sha256": "d7924609e91ddd3436a41ef6db1bf7b733dd0c0e979f9859e3adccd0577548a0",
+      "computed_text_sha256": "d7924609e91ddd3436a41ef6db1bf7b733dd0c0e979f9859e3adccd0577548a0",
+      "original_jsonl_row_sha256": "cbfeb37c4205120833bb52513d7021a3cb8ed25a4ee32c466ea0d280ddf5e9df",
+      "characters": 3004,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3087,
+      "original_page_sha256": "a20f6d5d2258fc3e278bc52525670c735efb511675de23473b023b7698d22d14",
+      "computed_text_sha256": "a20f6d5d2258fc3e278bc52525670c735efb511675de23473b023b7698d22d14",
+      "original_jsonl_row_sha256": "a894c33cd155fc9dd74da73b2c0f6fd96437b9f292a3e9e9458709b07ce0351a",
+      "characters": 396,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3088,
+      "original_page_sha256": "9e71e3c4902a7e16dc7d47286496bde889623c1af863f9d28068b76807abbc53",
+      "computed_text_sha256": "9e71e3c4902a7e16dc7d47286496bde889623c1af863f9d28068b76807abbc53",
+      "original_jsonl_row_sha256": "8001436249bed91031d492be7037f5908525cfb3d411e0daa228c4303ce5f30d",
+      "characters": 2584,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3089,
+      "original_page_sha256": "7249e01ac4c41a44534d6a370718c7486572a937add98b74eabd331c67a2677f",
+      "computed_text_sha256": "7249e01ac4c41a44534d6a370718c7486572a937add98b74eabd331c67a2677f",
+      "original_jsonl_row_sha256": "e9daa7becba58b55706715db9422428abc0b90f87eb7b112fc42e59355a22b14",
+      "characters": 2387,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3090,
+      "original_page_sha256": "afcd03432aefd66fe9b2bf1034645c868b9195ed7ea54858a9c94c2311a884eb",
+      "computed_text_sha256": "afcd03432aefd66fe9b2bf1034645c868b9195ed7ea54858a9c94c2311a884eb",
+      "original_jsonl_row_sha256": "d4b074f04a298c7288c237240d9d405cb475b59faef5aa4283d6bed7d0eec215",
+      "characters": 2413,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3091,
+      "original_page_sha256": "d28a8e795f3958bf6a1beeac27eff466618c61b7f667eede718db9d373fecd9d",
+      "computed_text_sha256": "d28a8e795f3958bf6a1beeac27eff466618c61b7f667eede718db9d373fecd9d",
+      "original_jsonl_row_sha256": "7170d9f599eaf5ad6322e6b0e0e09b48e146db80e1f25cef92be977e0777b49b",
+      "characters": 3158,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3092,
+      "original_page_sha256": "7739ef62f670e637f2c0f812e0fb299fe317ad9ab7830c9cd37e8ab17278dcec",
+      "computed_text_sha256": "7739ef62f670e637f2c0f812e0fb299fe317ad9ab7830c9cd37e8ab17278dcec",
+      "original_jsonl_row_sha256": "b4153a989342635709d506ee9b5f9afd5a12eeb9b08c40836126bed4b563932e",
+      "characters": 1107,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3093,
+      "original_page_sha256": "a833870b249a0dc704bd88aadef27f2d179c46bdf6af34c2809e0ab01918da18",
+      "computed_text_sha256": "a833870b249a0dc704bd88aadef27f2d179c46bdf6af34c2809e0ab01918da18",
+      "original_jsonl_row_sha256": "f4686844a6abe63cba054d0804854b7f840ecfa41baea5ed76c4f5609a893929",
+      "characters": 2611,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3094,
+      "original_page_sha256": "829e78b0270e6e0ed1a66ce1a19e46129305341c77ddab1873ff6a66b0f8f994",
+      "computed_text_sha256": "829e78b0270e6e0ed1a66ce1a19e46129305341c77ddab1873ff6a66b0f8f994",
+      "original_jsonl_row_sha256": "bb31361722408b2f4dd2f6522111fe7f925b7d3899c274a0b0f8fea2607495a7",
+      "characters": 2422,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3095,
+      "original_page_sha256": "ed099302f34abf140b80fe0735f8efa30ef601b9afbecb382866b41bd726a7bd",
+      "computed_text_sha256": "ed099302f34abf140b80fe0735f8efa30ef601b9afbecb382866b41bd726a7bd",
+      "original_jsonl_row_sha256": "c26dc157c4cdf2820e9be0f86e1e756fc20d5a60330e8fd3da3edc7454129e25",
+      "characters": 2364,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3096,
+      "original_page_sha256": "6a6dda46e0c8b8c1a5a8ed18ef48fd0a22f430b4c68ca74c0c5f97b8053e7aab",
+      "computed_text_sha256": "6a6dda46e0c8b8c1a5a8ed18ef48fd0a22f430b4c68ca74c0c5f97b8053e7aab",
+      "original_jsonl_row_sha256": "ea4a4755aead1bdfd66d88cba3a70b8f695d59671423abdb52ada5f88e0b9fcf",
+      "characters": 2926,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3097,
+      "original_page_sha256": "d6f5b0522298311931ca7b43d933a20c1ae5869b2bebeda5ebf0a8703e076589",
+      "computed_text_sha256": "d6f5b0522298311931ca7b43d933a20c1ae5869b2bebeda5ebf0a8703e076589",
+      "original_jsonl_row_sha256": "3b55a4c14bfe77ee3e02cffb00b48c2ec1aaa42f3f83497c52e4acc723967483",
+      "characters": 1003,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3098,
+      "original_page_sha256": "75e7010bb6922466ef8319e270cc7a5c204f7ef691439f9625b9a74160f73ca7",
+      "computed_text_sha256": "75e7010bb6922466ef8319e270cc7a5c204f7ef691439f9625b9a74160f73ca7",
+      "original_jsonl_row_sha256": "4a7ae7ee8d1ffbec28ad26a6c34838e901f5d9592cdf05e7f74cbe2d0aa854d1",
+      "characters": 2570,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3099,
+      "original_page_sha256": "ad4d77b76ea27683f9d9e8141da0da3c5b736252b7fd2150db3c52afcb862a05",
+      "computed_text_sha256": "ad4d77b76ea27683f9d9e8141da0da3c5b736252b7fd2150db3c52afcb862a05",
+      "original_jsonl_row_sha256": "976b0e8f988adef5891073118b590d314517681c7c03f3fef243b39a90cfe9a8",
+      "characters": 2395,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3100,
+      "original_page_sha256": "91ee02c688f47fafbed1615ed894cb3470f7f9a312b97c0f5bb28e9646f814a8",
+      "computed_text_sha256": "91ee02c688f47fafbed1615ed894cb3470f7f9a312b97c0f5bb28e9646f814a8",
+      "original_jsonl_row_sha256": "0b2aeef7058bcb5a5854663fedad399bd7a9c07cc26540c7d142a8c77ac9cf3c",
+      "characters": 2380,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3101,
+      "original_page_sha256": "f95d2c01a052cb7b08449c201b60ea6d01fad5a5c4562e81c5be828b1197fcac",
+      "computed_text_sha256": "f95d2c01a052cb7b08449c201b60ea6d01fad5a5c4562e81c5be828b1197fcac",
+      "original_jsonl_row_sha256": "d8f67bdd9f9f39fd8943430f7f13b9e0b770c41ecffed0c2d594f8be5896bb88",
+      "characters": 2871,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3102,
+      "original_page_sha256": "7ee1030d56aa0a28e031ed45547411b2978d38a52784b6f1c192f37970552170",
+      "computed_text_sha256": "7ee1030d56aa0a28e031ed45547411b2978d38a52784b6f1c192f37970552170",
+      "original_jsonl_row_sha256": "a8cad5617b450800542bd9a9e14fb45f9110f22fa2e96020e8f55c5b82148d9c",
+      "characters": 1131,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3103,
+      "original_page_sha256": "8cf48c893f2c0e276e921fda605a514246c413afe539c83f93e87919c929491d",
+      "computed_text_sha256": "8cf48c893f2c0e276e921fda605a514246c413afe539c83f93e87919c929491d",
+      "original_jsonl_row_sha256": "3755464a60a96a79f55ec414698616690c781ba92f003a084f5731ecc29a9abc",
+      "characters": 2360,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3104,
+      "original_page_sha256": "9d989e0ef0a0685ab8f41cd6b2183a22be03d725803f9276e38b46efce2f332c",
+      "computed_text_sha256": "9d989e0ef0a0685ab8f41cd6b2183a22be03d725803f9276e38b46efce2f332c",
+      "original_jsonl_row_sha256": "20934a92a262280bc50feb007f94588553605b76ce777f120c18205a784f437f",
+      "characters": 2707,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3105,
+      "original_page_sha256": "aba7e3be65a86b70e56dbf0c7da311128eda3c13661cf98f97141f058cde7d35",
+      "computed_text_sha256": "aba7e3be65a86b70e56dbf0c7da311128eda3c13661cf98f97141f058cde7d35",
+      "original_jsonl_row_sha256": "36e603873cc37cb1217bdf416a49ba68c95507d0d31a90b942970c9bbbbdf989",
+      "characters": 2253,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3106,
+      "original_page_sha256": "a525745788f1d55909bd67f211288cdce4b14cb03194c115ed0aa4670f4adf68",
+      "computed_text_sha256": "a525745788f1d55909bd67f211288cdce4b14cb03194c115ed0aa4670f4adf68",
+      "original_jsonl_row_sha256": "7b14198503f1d1ced54e521b81a9a720f7924252fd5aa7ece9f72ba22b98f434",
+      "characters": 2802,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3107,
+      "original_page_sha256": "5cc5620c16062dbff835b77593bcda27be0d709c77ab1e2d11f521f766baf2b0",
+      "computed_text_sha256": "5cc5620c16062dbff835b77593bcda27be0d709c77ab1e2d11f521f766baf2b0",
+      "original_jsonl_row_sha256": "a645b5a1b6ff1f63c77ae0e66d6856586941574050858f389a5cd1a845a07cbd",
+      "characters": 2059,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3108,
+      "original_page_sha256": "2c2f8f22ea8366c88e4635819ba80adb6cdfe3eb3e40142013d7d4d11acb7a90",
+      "computed_text_sha256": "2c2f8f22ea8366c88e4635819ba80adb6cdfe3eb3e40142013d7d4d11acb7a90",
+      "original_jsonl_row_sha256": "097e9acf58675b94b7d40f258a4319913b373d0e3526b8f122363b0aa9d11446",
+      "characters": 2360,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3109,
+      "original_page_sha256": "4f5843a65b895debc6ef28361ee93e48bd80e951b39ef10b75054fba5ede0ad8",
+      "computed_text_sha256": "4f5843a65b895debc6ef28361ee93e48bd80e951b39ef10b75054fba5ede0ad8",
+      "original_jsonl_row_sha256": "aca1d03f56f4abe8e23cb17a348fdffde3f0a8988e5f46142828058323b95351",
+      "characters": 2845,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3110,
+      "original_page_sha256": "b461db497e2a5c596cbf27c809798d584ddd014bd0c22254ce3f8d8862dbb07c",
+      "computed_text_sha256": "b461db497e2a5c596cbf27c809798d584ddd014bd0c22254ce3f8d8862dbb07c",
+      "original_jsonl_row_sha256": "d53b0f7239727589430d4f8e0a55903fbdb3b7bb587e2ccad6574ff8665a93b2",
+      "characters": 2276,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3111,
+      "original_page_sha256": "c901f38fa73f01299ebec0c2a6e15222c00f7c1eab92659f9a896a7b44a27953",
+      "computed_text_sha256": "c901f38fa73f01299ebec0c2a6e15222c00f7c1eab92659f9a896a7b44a27953",
+      "original_jsonl_row_sha256": "6abf7c24100d9bda665babedab9030c9716fed3f382829ecf3f467f7ca701343",
+      "characters": 2849,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3112,
+      "original_page_sha256": "e9f7cf9d061bf985b4ee7311900bf50c9c903f7ee438fb89b0a161ccd5d6928e",
+      "computed_text_sha256": "e9f7cf9d061bf985b4ee7311900bf50c9c903f7ee438fb89b0a161ccd5d6928e",
+      "original_jsonl_row_sha256": "c89c93ba46a35909356888ba64870398571fb09f9dfaa2639f7c252703b6a8a1",
+      "characters": 2116,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3113,
+      "original_page_sha256": "0dce9e620e4e549e3b703feba02936d2260bdc1b22ba8cc9bc335e21e58ae44f",
+      "computed_text_sha256": "0dce9e620e4e549e3b703feba02936d2260bdc1b22ba8cc9bc335e21e58ae44f",
+      "original_jsonl_row_sha256": "df56e5a4d0d6b679959384c36c91063ba48827d80222ba2685fdfdb55cd29f6f",
+      "characters": 2374,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3114,
+      "original_page_sha256": "66fea0507703873fd6e08d4dbfb660b13be959a8193d0ffdaf157c298ad70add",
+      "computed_text_sha256": "66fea0507703873fd6e08d4dbfb660b13be959a8193d0ffdaf157c298ad70add",
+      "original_jsonl_row_sha256": "ef4adb004d4234890462fbf3f6be47d2bc81e49a387f599d66e831e1b7a18e8b",
+      "characters": 2723,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3115,
+      "original_page_sha256": "f5179593c21808fb8208ec26ca5ca90e14b9578a948bf39d8a7cada859112d8b",
+      "computed_text_sha256": "f5179593c21808fb8208ec26ca5ca90e14b9578a948bf39d8a7cada859112d8b",
+      "original_jsonl_row_sha256": "114a010c5cadcf9b3c53303d752f1f071f4737fc0021bea9f48ef2e9d7d47472",
+      "characters": 2297,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3116,
+      "original_page_sha256": "3e8eb1be27fc6bc5607d183d8a49ffa7bb6e9b764ba27fc216c1180a2bb73882",
+      "computed_text_sha256": "3e8eb1be27fc6bc5607d183d8a49ffa7bb6e9b764ba27fc216c1180a2bb73882",
+      "original_jsonl_row_sha256": "d699bf982a8643ed586e4c3ec1f3273336b7dc96d5aaf840e2f3a08c24789dc6",
+      "characters": 2775,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3117,
+      "original_page_sha256": "8f53ed6dac6e72d85d06cc95d2ad6e53e63a4042840a00d547d1ef71994255c7",
+      "computed_text_sha256": "8f53ed6dac6e72d85d06cc95d2ad6e53e63a4042840a00d547d1ef71994255c7",
+      "original_jsonl_row_sha256": "7a235875a223d2b5eb3eacc91fabde564b4ce48b8cd98b1d9ef0bd5305456b40",
+      "characters": 2898,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3118,
+      "original_page_sha256": "734e4b0c0bf3e36844686a7b25e13cfbb19ec1ab2820246c27514b099891f924",
+      "computed_text_sha256": "734e4b0c0bf3e36844686a7b25e13cfbb19ec1ab2820246c27514b099891f924",
+      "original_jsonl_row_sha256": "90820c528a63e7394a2b94cf60999cf45260689f03c4d394c1937bb3e2d4a3fb",
+      "characters": 552,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3119,
+      "original_page_sha256": "ea58381a3ae8008d0800aad2fda030b342af64fb0809b313ac5a70031246f237",
+      "computed_text_sha256": "ea58381a3ae8008d0800aad2fda030b342af64fb0809b313ac5a70031246f237",
+      "original_jsonl_row_sha256": "286a9921c5ed907b14382b71548c9a5176c75fba7bcc18a251475ca8809fcdd3",
+      "characters": 2521,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3120,
+      "original_page_sha256": "08564f43c073df12668b9204af21e2338f463d4f6648131071cf6c471d9d861a",
+      "computed_text_sha256": "08564f43c073df12668b9204af21e2338f463d4f6648131071cf6c471d9d861a",
+      "original_jsonl_row_sha256": "7aac64111e794a31b2981b7a6949f11337714920e6a9f376d91d13666063e6a4",
+      "characters": 2346,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3121,
+      "original_page_sha256": "bc0bf1dd30503619b9af32fe9f042aa9afe6bcbb2afea79b61d2f2ddba06604a",
+      "computed_text_sha256": "bc0bf1dd30503619b9af32fe9f042aa9afe6bcbb2afea79b61d2f2ddba06604a",
+      "original_jsonl_row_sha256": "096c0ce9650e2b075bc2f3b830cadf11ae6b53f88c73e1847b586e786edc7854",
+      "characters": 2518,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3122,
+      "original_page_sha256": "468d4602b256bb036c45f4586ad028bef3fe90805086f1a3275b371b16bce684",
+      "computed_text_sha256": "468d4602b256bb036c45f4586ad028bef3fe90805086f1a3275b371b16bce684",
+      "original_jsonl_row_sha256": "ad9e9a6ce2bf3b9c576538b202df5580a229f13182a18d3fbc0da6337cd9b68d",
+      "characters": 2816,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3123,
+      "original_page_sha256": "dc2162d59e1bec9bd7e77820eebae77328df5535a291a61f60cff2e3772fe846",
+      "computed_text_sha256": "dc2162d59e1bec9bd7e77820eebae77328df5535a291a61f60cff2e3772fe846",
+      "original_jsonl_row_sha256": "11ae633d3e9b01309fe071473eace08439b4243238fed453d0102aa490ebbef5",
+      "characters": 552,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3124,
+      "original_page_sha256": "20479bbbcd4be591816bc61c321dda6e4a747d55b8f5dd8f95427b8f64cd4827",
+      "computed_text_sha256": "20479bbbcd4be591816bc61c321dda6e4a747d55b8f5dd8f95427b8f64cd4827",
+      "original_jsonl_row_sha256": "f466d621df67ae439f5626aa06af4ed0c62a1c1272af675e3b8a3a38033597e2",
+      "characters": 2493,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3125,
+      "original_page_sha256": "6434893aa84b971f4bfb32ba9dec0b88bd71351bbdf170c8530d59b51da08346",
+      "computed_text_sha256": "6434893aa84b971f4bfb32ba9dec0b88bd71351bbdf170c8530d59b51da08346",
+      "original_jsonl_row_sha256": "c782cb5890ccd7959e856f6f4aca26ce94cac62a90dcc1131fd028bcef21d472",
+      "characters": 2493,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3126,
+      "original_page_sha256": "a2c18fa0dabb48d97425f2806d33ba42814e27356ecade5db5085ebc96ab1372",
+      "computed_text_sha256": "a2c18fa0dabb48d97425f2806d33ba42814e27356ecade5db5085ebc96ab1372",
+      "original_jsonl_row_sha256": "59b191186f59b8b1309e56e5616bdde3df67cbd506141adbca691c13389174b7",
+      "characters": 2377,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3127,
+      "original_page_sha256": "c13a673cbcd2e7343c9060958b85ddaf75a382e73bde9db7dad480d371e20d9a",
+      "computed_text_sha256": "c13a673cbcd2e7343c9060958b85ddaf75a382e73bde9db7dad480d371e20d9a",
+      "original_jsonl_row_sha256": "d0c395b634368e734758b0a1fc7c31496f67efb7ac2cf4be5197ee36ae4037bb",
+      "characters": 2855,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3128,
+      "original_page_sha256": "a4a5972054c6df779e8328bdf90ed075b18fd576b8ef07c435420402f3bdc8dc",
+      "computed_text_sha256": "a4a5972054c6df779e8328bdf90ed075b18fd576b8ef07c435420402f3bdc8dc",
+      "original_jsonl_row_sha256": "e13535abdead6e254585122cad6b572c2a783697c8151ef7242541403d2de4e7",
+      "characters": 1135,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3129,
+      "original_page_sha256": "5fdfb1ce66e1ea39b9e60d38d1da3a2889436025c8826a8e8143796799a9eaca",
+      "computed_text_sha256": "5fdfb1ce66e1ea39b9e60d38d1da3a2889436025c8826a8e8143796799a9eaca",
+      "original_jsonl_row_sha256": "30b394ebd8d435053da58d51bfbf55dcae45e288359feee54a9a47eafcffefc1",
+      "characters": 2607,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3130,
+      "original_page_sha256": "b517e0d85b641696300a286cd9dc10ae51203e07c8d6474c4ae19d7442b5e82f",
+      "computed_text_sha256": "b517e0d85b641696300a286cd9dc10ae51203e07c8d6474c4ae19d7442b5e82f",
+      "original_jsonl_row_sha256": "1e701ea5acd6e836aa0961f31d2d735e1e5204c0ff4d044e0f0d1625a465f0d2",
+      "characters": 2460,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3131,
+      "original_page_sha256": "47e2f6a4f23a84c2a799757f56e03ad36543e733918dfc4bb30dd0dd03e3204a",
+      "computed_text_sha256": "47e2f6a4f23a84c2a799757f56e03ad36543e733918dfc4bb30dd0dd03e3204a",
+      "original_jsonl_row_sha256": "603c31e6c0eeaf453d57899d060dda1fb91426dd70c6f545eb103996c9a1ad7c",
+      "characters": 2387,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3132,
+      "original_page_sha256": "27d1e975a6f65c397a5a2d3575e9da7cbdcc42f96a325b096e0b65c83ba014d1",
+      "computed_text_sha256": "27d1e975a6f65c397a5a2d3575e9da7cbdcc42f96a325b096e0b65c83ba014d1",
+      "original_jsonl_row_sha256": "1bcc307569e24516e51a6886156b2b0e5d07ce4937c019cc0612d4cdb46c7fdb",
+      "characters": 2910,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3133,
+      "original_page_sha256": "4e93d07176ecbfb14e1c69db646583a0abf950db1bee137ccd64afb05f332663",
+      "computed_text_sha256": "4e93d07176ecbfb14e1c69db646583a0abf950db1bee137ccd64afb05f332663",
+      "original_jsonl_row_sha256": "dd4aea26b639f17d1c5015ea7538aa7083bf843dc237419ffb8eb70c04306c8d",
+      "characters": 1295,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3134,
+      "original_page_sha256": "db5968a79ab855e3acfb2c3cfe90cd8b5ff770b605e80f096b57b13e1cef5251",
+      "computed_text_sha256": "db5968a79ab855e3acfb2c3cfe90cd8b5ff770b605e80f096b57b13e1cef5251",
+      "original_jsonl_row_sha256": "37242ee19654fc1918e2f8eea1623d64be857f0b50edaeb189ba2beb9895f302",
+      "characters": 2430,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3135,
+      "original_page_sha256": "e11888a9debaf7307fadbc6aa08aa7517525c5c87fecf0739381ec12647b6516",
+      "computed_text_sha256": "e11888a9debaf7307fadbc6aa08aa7517525c5c87fecf0739381ec12647b6516",
+      "original_jsonl_row_sha256": "08f58aaa565c07a91ff90dc138f87127c1320727a598788319df4de790448578",
+      "characters": 2393,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3136,
+      "original_page_sha256": "9ef2bb856143414056cad7f9881b9939963a070a220be26232a679224fafa297",
+      "computed_text_sha256": "9ef2bb856143414056cad7f9881b9939963a070a220be26232a679224fafa297",
+      "original_jsonl_row_sha256": "3f306a0f621fa58fed58ecc4e09601542939daa5ebca04555cb11804ca94c058",
+      "characters": 2342,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3137,
+      "original_page_sha256": "41d8bef483972981df8611801b01ff847173a5ba354c66e9e0f29cd6535ac0ac",
+      "computed_text_sha256": "41d8bef483972981df8611801b01ff847173a5ba354c66e9e0f29cd6535ac0ac",
+      "original_jsonl_row_sha256": "8f813364f93e9428742bbd93a021553766a5c96dcf417839e38e1b6d034bba84",
+      "characters": 2956,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3138,
+      "original_page_sha256": "0875bdad44aef75462e9c3de193f704d298576a0fc5a43083e6c9cc79bc27ece",
+      "computed_text_sha256": "0875bdad44aef75462e9c3de193f704d298576a0fc5a43083e6c9cc79bc27ece",
+      "original_jsonl_row_sha256": "fdeb0803f18df6771d3576e3acdf54330e5f3e07bfd9e5b6acc463c776422fc0",
+      "characters": 1658,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3139,
+      "original_page_sha256": "1e6fe8e53946e750d95545be2cb8fed228ce7a8b3e2f61952443e96fecc46268",
+      "computed_text_sha256": "1e6fe8e53946e750d95545be2cb8fed228ce7a8b3e2f61952443e96fecc46268",
+      "original_jsonl_row_sha256": "b9e9a77e63e806a091056d1f48b564ebeb11b78fd57c4dbfe4abe9bb84986722",
+      "characters": 2357,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3140,
+      "original_page_sha256": "804fdbde5aeeeef85d59739baa0b4d73e31622067b22e9787c8f333f27edf9a1",
+      "computed_text_sha256": "804fdbde5aeeeef85d59739baa0b4d73e31622067b22e9787c8f333f27edf9a1",
+      "original_jsonl_row_sha256": "48fbb9b8ed10016bf86e83117d95fd7530f7fa1e923ba362a3628fdbca4384cd",
+      "characters": 2750,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3141,
+      "original_page_sha256": "e06418796da6323f602d6b6dcd88b89c32a81465ae340c73c413284babec9777",
+      "computed_text_sha256": "e06418796da6323f602d6b6dcd88b89c32a81465ae340c73c413284babec9777",
+      "original_jsonl_row_sha256": "bf3834c7946f2e385d5c29a663054da8642478670b46ee4b9764981ecdfc12ee",
+      "characters": 2273,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3142,
+      "original_page_sha256": "cb1f0961980c401baf584a9ddb62b9154fe70b5774c43dcf8e6fc2b7669358eb",
+      "computed_text_sha256": "cb1f0961980c401baf584a9ddb62b9154fe70b5774c43dcf8e6fc2b7669358eb",
+      "original_jsonl_row_sha256": "aa59dc453aa31644116f12aa7217c5765f1d192f8e43a8b861e6645da9505585",
+      "characters": 2804,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3143,
+      "original_page_sha256": "126e96b84dab139d72be703babfd7f4c5e4ab72747e9b104290e3e1ee8630836",
+      "computed_text_sha256": "126e96b84dab139d72be703babfd7f4c5e4ab72747e9b104290e3e1ee8630836",
+      "original_jsonl_row_sha256": "f466f0f66c6f2a4c180b9b8d54c3e9ddb271f95bfb40a4d2acb012ba204ef355",
+      "characters": 2133,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3144,
+      "original_page_sha256": "ea88c1222fda2f586fe4e145d86ae7be3a27c1f5f71370614250d2ced28056b6",
+      "computed_text_sha256": "ea88c1222fda2f586fe4e145d86ae7be3a27c1f5f71370614250d2ced28056b6",
+      "original_jsonl_row_sha256": "7a445c224ef6e65e176251630d8c5fdb8ce8b6af57647cc19b31280bff997df4",
+      "characters": 2172,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3145,
+      "original_page_sha256": "f659a033cb29e574ed98e53134a86e4d4c3c054b701d658b88091e1ad6abc158",
+      "computed_text_sha256": "f659a033cb29e574ed98e53134a86e4d4c3c054b701d658b88091e1ad6abc158",
+      "original_jsonl_row_sha256": "b398ea385b9195856cc6a8fbdcdd92243f02c2c66f5a8a1a811bd23393b58137",
+      "characters": 2892,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3146,
+      "original_page_sha256": "da10ba359ed9bc30ea8606b119c07b4f8f95289a41af5577a41249846e626e09",
+      "computed_text_sha256": "da10ba359ed9bc30ea8606b119c07b4f8f95289a41af5577a41249846e626e09",
+      "original_jsonl_row_sha256": "0fc934def3b99f116cefc93b55e0322b6be2d987839b0292225418a6848d47b0",
+      "characters": 2308,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3147,
+      "original_page_sha256": "52a2822dff948826b11ab46a444fa6d754bef4f6338a928a708314c131bb3a3e",
+      "computed_text_sha256": "52a2822dff948826b11ab46a444fa6d754bef4f6338a928a708314c131bb3a3e",
+      "original_jsonl_row_sha256": "b331ac78d76dfae63e3d78543bdf78f4eb4b6238e98b96f9cfe8274df7dd5986",
+      "characters": 2567,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3148,
+      "original_page_sha256": "5642d412a33da6e530c986e18a50c476212729a8ed1b399d52199a9b365013bc",
+      "computed_text_sha256": "5642d412a33da6e530c986e18a50c476212729a8ed1b399d52199a9b365013bc",
+      "original_jsonl_row_sha256": "ca1640fd879a083fe28fb4df82014026a1a574ccb20eb101369b59b21a896c8c",
+      "characters": 3147,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3149,
+      "original_page_sha256": "fc16e6ea7f2549e2cc7e44129ab9383baae84e2234014203d03d7c5fb6a3b877",
+      "computed_text_sha256": "fc16e6ea7f2549e2cc7e44129ab9383baae84e2234014203d03d7c5fb6a3b877",
+      "original_jsonl_row_sha256": "dd5e6182776e482d5592d4c5f002589ed7feca3656e0b1ed44a3fe373e4ba17e",
+      "characters": 1020,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3150,
+      "original_page_sha256": "cf0ba9d8a3bf2e46646ab1a8b6c2e6440b42ab6287428f83ef6c6786b6a18caa",
+      "computed_text_sha256": "cf0ba9d8a3bf2e46646ab1a8b6c2e6440b42ab6287428f83ef6c6786b6a18caa",
+      "original_jsonl_row_sha256": "030ebacda6cf915073fd69dac8abccfe0e7a71480178694ef72bd578146dc055",
+      "characters": 2462,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3151,
+      "original_page_sha256": "532240874824600f94fa16e79cfde958504c377db2fd8bcd1e5cfb8453951927",
+      "computed_text_sha256": "532240874824600f94fa16e79cfde958504c377db2fd8bcd1e5cfb8453951927",
+      "original_jsonl_row_sha256": "e27f9c1f243eeb418750e5aa1ef8329fe958be049d0aeb91ff2dc54824df9efa",
+      "characters": 2564,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3152,
+      "original_page_sha256": "e15a6b52aa685e84853c1bb86ccce8a41cc13bf1532a048a1ed6a08d84b5483f",
+      "computed_text_sha256": "e15a6b52aa685e84853c1bb86ccce8a41cc13bf1532a048a1ed6a08d84b5483f",
+      "original_jsonl_row_sha256": "00154ec28d58747383a51d0ff711b064d01cc596004a7e1660a00c596ba0c9a6",
+      "characters": 2338,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3153,
+      "original_page_sha256": "6fcd56c39739b9edcbb6f70a68fa964a896b427231e589345a8c01a0f0e9ee08",
+      "computed_text_sha256": "6fcd56c39739b9edcbb6f70a68fa964a896b427231e589345a8c01a0f0e9ee08",
+      "original_jsonl_row_sha256": "9fed867acb4993743ef907d9de0e16c43f40add9fcf24423827380143bf3ee58",
+      "characters": 2777,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3154,
+      "original_page_sha256": "6cf0df1f9de1292bbda911831443a4740b239a06dec6fda5cb94b60968262c4f",
+      "computed_text_sha256": "6cf0df1f9de1292bbda911831443a4740b239a06dec6fda5cb94b60968262c4f",
+      "original_jsonl_row_sha256": "f617ed9bd6599bf0baa49248a66424a916a3516a69aa9834fb331ad0f85efe06",
+      "characters": 1807,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3155,
+      "original_page_sha256": "8ec51b45225bb89a242edd50edddca5b4df01e15cdcf140381190e8b07297b91",
+      "computed_text_sha256": "8ec51b45225bb89a242edd50edddca5b4df01e15cdcf140381190e8b07297b91",
+      "original_jsonl_row_sha256": "f9d8177856e20855a9c13cb31c6370893f4f4fc62705323b1915eb5c9caae600",
+      "characters": 2520,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3156,
+      "original_page_sha256": "c89d4d60579754304f8672117185f45e08868762fcbbc0637c63783e49c0e526",
+      "computed_text_sha256": "c89d4d60579754304f8672117185f45e08868762fcbbc0637c63783e49c0e526",
+      "original_jsonl_row_sha256": "4fb85aa2084bddde8041c3600a860655b371d51aefa1f775bf4748b3f4690e98",
+      "characters": 2410,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3157,
+      "original_page_sha256": "ab8fde27fde6381a5c4d3a40c31a95076ed896b65f8da8ba153f7e5383887cc4",
+      "computed_text_sha256": "ab8fde27fde6381a5c4d3a40c31a95076ed896b65f8da8ba153f7e5383887cc4",
+      "original_jsonl_row_sha256": "1fdc664cc2051fdb5aba3319e9f748b3633ae801b0b91452972dc2885d447010",
+      "characters": 2365,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3158,
+      "original_page_sha256": "6512915e48da8b3caebb2bc0c65609b02b27556d470513faef823136b85d0225",
+      "computed_text_sha256": "6512915e48da8b3caebb2bc0c65609b02b27556d470513faef823136b85d0225",
+      "original_jsonl_row_sha256": "381146067b20f52f26f85058eba39c4a82bc3eb30c474575ebd8fef8b65530f1",
+      "characters": 2982,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3159,
+      "original_page_sha256": "99ecab0a970de8e5c6fa635b78c477a26058d0773003a443412c1915fb788e36",
+      "computed_text_sha256": "99ecab0a970de8e5c6fa635b78c477a26058d0773003a443412c1915fb788e36",
+      "original_jsonl_row_sha256": "7d2e621ed7d3abc58ca429a5dec35f0e30530dd836b56b2e31c9b60a02d5a27f",
+      "characters": 1005,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3160,
+      "original_page_sha256": "f2bb083803bf770f26d1257c38ecd4080e861b559f678e18801f4732a5b2edc7",
+      "computed_text_sha256": "f2bb083803bf770f26d1257c38ecd4080e861b559f678e18801f4732a5b2edc7",
+      "original_jsonl_row_sha256": "961ea4032a9d3f3d17117fad72cd33ea3594c3a2d7355449099386a29998a4ca",
+      "characters": 2484,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3161,
+      "original_page_sha256": "8b042dc0ddccccaa893b238ba6c97428c41ba78eb173dbded2925a7c4b86a773",
+      "computed_text_sha256": "8b042dc0ddccccaa893b238ba6c97428c41ba78eb173dbded2925a7c4b86a773",
+      "original_jsonl_row_sha256": "ac7b6890058efa57a0ef4476ceb94a2beda0504cbbeed3f600bfffb404da9d21",
+      "characters": 2371,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3162,
+      "original_page_sha256": "a86987a702dfa0a086b1d06c00cfeb8180c567f381314be13db42fb31c2d5120",
+      "computed_text_sha256": "a86987a702dfa0a086b1d06c00cfeb8180c567f381314be13db42fb31c2d5120",
+      "original_jsonl_row_sha256": "84020b4924154757954bcb89a0e9c253ede2d9c8733ce21638b0660080c95631",
+      "characters": 2335,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3163,
+      "original_page_sha256": "9f001299acca9249d39491efaaa2e0ec9f6757fb671f4931b8a3cf044385bef7",
+      "computed_text_sha256": "9f001299acca9249d39491efaaa2e0ec9f6757fb671f4931b8a3cf044385bef7",
+      "original_jsonl_row_sha256": "493155f9c07ce543a949397aaf5e8a65f6ed9da636a9bc6ea9e04bb7af6eb72f",
+      "characters": 3106,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3164,
+      "original_page_sha256": "8d417819702a111200c00d00cb15f412370e42b232923441ad98aef260f8cb4d",
+      "computed_text_sha256": "8d417819702a111200c00d00cb15f412370e42b232923441ad98aef260f8cb4d",
+      "original_jsonl_row_sha256": "4d6651bc1e8961eed5229d7179a6d88d4f05531ce7f72bce16b5cbdb417f58cd",
+      "characters": 661,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3165,
+      "original_page_sha256": "faa691a52ea72f3fe245d7bd9e67fecfe28292fd969a6bbf82e8ef91a7d45f5e",
+      "computed_text_sha256": "faa691a52ea72f3fe245d7bd9e67fecfe28292fd969a6bbf82e8ef91a7d45f5e",
+      "original_jsonl_row_sha256": "5d89875b70a4b424a9a0449b11ef932266669aba05c6b4487ce2de1ca9ff39f9",
+      "characters": 2421,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3166,
+      "original_page_sha256": "84b99e5eee45cd76ff9fa53752bc6abe93adae49d32abfaca2ff9841ac4816bc",
+      "computed_text_sha256": "84b99e5eee45cd76ff9fa53752bc6abe93adae49d32abfaca2ff9841ac4816bc",
+      "original_jsonl_row_sha256": "7b80c08cbe12fcf4ab02efd74f3d95ea34ed9175d2ef0a20dd4d60238ea7525a",
+      "characters": 2768,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3167,
+      "original_page_sha256": "cfff4f5f2e7ee44ce7c9f80087f4b98137e539d307ea27f4c4d0e5f56067b824",
+      "computed_text_sha256": "cfff4f5f2e7ee44ce7c9f80087f4b98137e539d307ea27f4c4d0e5f56067b824",
+      "original_jsonl_row_sha256": "3786212966603238c1aec9eac9ea7d02a407380168c8c848bf97cd9352ed3dec",
+      "characters": 2309,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3168,
+      "original_page_sha256": "7e5d84170362c00b1ab51d7181552bed1430f98fb0e82160283c2903d7eb0845",
+      "computed_text_sha256": "7e5d84170362c00b1ab51d7181552bed1430f98fb0e82160283c2903d7eb0845",
+      "original_jsonl_row_sha256": "ab88f0be4b0d499f454ee36c931cc25631b89810edfe1b85f871b75a47b22987",
+      "characters": 2815,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3169,
+      "original_page_sha256": "07b58d9ac24abce3eb32f119d5d12c8356fd2db34534bdeb61185d52a237dfeb",
+      "computed_text_sha256": "07b58d9ac24abce3eb32f119d5d12c8356fd2db34534bdeb61185d52a237dfeb",
+      "original_jsonl_row_sha256": "3a1dd5f38adcde7fe08cc40ed21b681d635b77de74816ca86a164acff2e24e27",
+      "characters": 2125,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3170,
+      "original_page_sha256": "5cc55078ac79ed924b2118dce488443404a99ad84148f85d46ca1ca940b66d07",
+      "computed_text_sha256": "5cc55078ac79ed924b2118dce488443404a99ad84148f85d46ca1ca940b66d07",
+      "original_jsonl_row_sha256": "f06ed85edd969729d31861f91cc815335a4c24a43661948f8c01b9dd0cd71b84",
+      "characters": 2552,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3171,
+      "original_page_sha256": "f29ab545de3a5a851147286dc68a86ec22bd59a6320ae08d298b9171653719bf",
+      "computed_text_sha256": "f29ab545de3a5a851147286dc68a86ec22bd59a6320ae08d298b9171653719bf",
+      "original_jsonl_row_sha256": "ffabf7af6d4da280569774c1b052291fe668f07d3942499875e33aa04a5dfb9e",
+      "characters": 2381,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3172,
+      "original_page_sha256": "df75984107e32d6692956a52ca4b2d562401a23127af91646583d9b858508f46",
+      "computed_text_sha256": "df75984107e32d6692956a52ca4b2d562401a23127af91646583d9b858508f46",
+      "original_jsonl_row_sha256": "a96e371b94bf9d9cc6f8a73f5331fe663eae17baf27788473c81e6f09c30fc46",
+      "characters": 2456,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3173,
+      "original_page_sha256": "c63013815b4a561e2067ce0dbc7c2eb96d253a9c69f51b5dff6f89866220ba11",
+      "computed_text_sha256": "c63013815b4a561e2067ce0dbc7c2eb96d253a9c69f51b5dff6f89866220ba11",
+      "original_jsonl_row_sha256": "5b69b795e2257741e4a78f1f67697ebea6604b5b01aea5b199b92448d990a26a",
+      "characters": 3106,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3174,
+      "original_page_sha256": "aa9401fead1c71f68d357690e55c0cf771027283d2943a3befe8ab6b02f08b4c",
+      "computed_text_sha256": "aa9401fead1c71f68d357690e55c0cf771027283d2943a3befe8ab6b02f08b4c",
+      "original_jsonl_row_sha256": "f115010ea2c5f86f1090d07f539415d176f8a140c251c0c3f17ed07e2b6193af",
+      "characters": 1009,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3175,
+      "original_page_sha256": "75a61e6a46f6f3ebc41b42a9c3456d16e6fb19ff667887968ac2a24d99185fe1",
+      "computed_text_sha256": "75a61e6a46f6f3ebc41b42a9c3456d16e6fb19ff667887968ac2a24d99185fe1",
+      "original_jsonl_row_sha256": "3bb058a071f2927fde711f035db3afab7fc80607b3e95f4f9e9fab00d04a1da2",
+      "characters": 2929,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3176,
+      "original_page_sha256": "dfdf65772e99a3361f1828ac1b95667a6da562a948d79d098fed2e4f5e2cf6b2",
+      "computed_text_sha256": "dfdf65772e99a3361f1828ac1b95667a6da562a948d79d098fed2e4f5e2cf6b2",
+      "original_jsonl_row_sha256": "67e5880138d1ff37245366d6c10ae6b5ad3d85f4a45b3259a16bb8615c4de828",
+      "characters": 669,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3177,
+      "original_page_sha256": "c002b425c0bc7022d94bd2db50481580fa9c9e0766ba5d08c64f64c4470914c1",
+      "computed_text_sha256": "c002b425c0bc7022d94bd2db50481580fa9c9e0766ba5d08c64f64c4470914c1",
+      "original_jsonl_row_sha256": "8b6ffbcbc434ff851c43a6d5bf8875fb97397a2b98bde5741f287c565025a456",
+      "characters": 406,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3178,
+      "original_page_sha256": "5f6003b66585cd8902b2a36404cde09e56b7a1d6f94b217859c92ad622817c14",
+      "computed_text_sha256": "5f6003b66585cd8902b2a36404cde09e56b7a1d6f94b217859c92ad622817c14",
+      "original_jsonl_row_sha256": "33e374671081387fe643ef101beaa0b79400deab5572b080c9973b1eb463817e",
+      "characters": 951,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3179,
+      "original_page_sha256": "94756777d046ad8e04ea21a7fa104f3caabb9b6edbf98c23532728334d42e6ac",
+      "computed_text_sha256": "94756777d046ad8e04ea21a7fa104f3caabb9b6edbf98c23532728334d42e6ac",
+      "original_jsonl_row_sha256": "a417956d6f65e1b6606187214340a43adf02b08dd17cfb531652da73504a06ec",
+      "characters": 1620,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3180,
+      "original_page_sha256": "cb977b87a06f576933dd9ba4d787616167b7eadd35e11dd473ec07d3d42b280c",
+      "computed_text_sha256": "cb977b87a06f576933dd9ba4d787616167b7eadd35e11dd473ec07d3d42b280c",
+      "original_jsonl_row_sha256": "1ef7408bac74417fc30777c2da448b2a59b56b335eb167bcee78b0c051774131",
+      "characters": 1297,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3181,
+      "original_page_sha256": "65a8642c33881b5afb8890381d87a17453e575915b5d5925dc06a8556a7312e1",
+      "computed_text_sha256": "65a8642c33881b5afb8890381d87a17453e575915b5d5925dc06a8556a7312e1",
+      "original_jsonl_row_sha256": "33d9b0c4b7254ee599cfdc7ae9344088e3e22857b67f6ef61f3facab2bb59411",
+      "characters": 1660,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3182,
+      "original_page_sha256": "d8243fdae656c10be92290b6456c1e959e73e82f85dd0572a5d74e589bad116a",
+      "computed_text_sha256": "d8243fdae656c10be92290b6456c1e959e73e82f85dd0572a5d74e589bad116a",
+      "original_jsonl_row_sha256": "32ee0cf7184614a2ebea68af901e734872da52d4b9377b6da93d45cce34bf779",
+      "characters": 2062,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3183,
+      "original_page_sha256": "39156004f67883006b8fd2c5d87f9cb886e564d14d31804023e024641aef61c1",
+      "computed_text_sha256": "39156004f67883006b8fd2c5d87f9cb886e564d14d31804023e024641aef61c1",
+      "original_jsonl_row_sha256": "cb5119b4d3dfa3fd04ecdb82f08b5619de6c5145288299e500b405efa5bf7e65",
+      "characters": 2810,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3184,
+      "original_page_sha256": "42488034d2afb70cfb249dfe59d51aa9c0a21eb77a1bb859d5de4b87576d24da",
+      "computed_text_sha256": "42488034d2afb70cfb249dfe59d51aa9c0a21eb77a1bb859d5de4b87576d24da",
+      "original_jsonl_row_sha256": "d593f8cfb2a34921eed2e960f101c64eda835319f229aee49a00611edcd84b8b",
+      "characters": 2053,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3185,
+      "original_page_sha256": "5fb2664287c24b3589041fc904e1a582238eea6fa1faad65384716835ab092bd",
+      "computed_text_sha256": "5fb2664287c24b3589041fc904e1a582238eea6fa1faad65384716835ab092bd",
+      "original_jsonl_row_sha256": "b79b1f241010465847f955f24f48973b002928ada99bbe4de253dedbe67bcf99",
+      "characters": 2055,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3186,
+      "original_page_sha256": "410830e55a546fcefd1078e615178629f6bf5ed5dee68fa78f08973edb63b4e1",
+      "computed_text_sha256": "410830e55a546fcefd1078e615178629f6bf5ed5dee68fa78f08973edb63b4e1",
+      "original_jsonl_row_sha256": "5cd3aa9697f9da7ec34b742b4594604b9f7ff4ab712c998b1081bbacbbe08729",
+      "characters": 971,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3187,
+      "original_page_sha256": "bc64ddd663558c1b7b3bd378868b087408d37211898fea8e505018f44da86264",
+      "computed_text_sha256": "bc64ddd663558c1b7b3bd378868b087408d37211898fea8e505018f44da86264",
+      "original_jsonl_row_sha256": "a9a42b47a77c615b7d14ad2078bc5cd14e80a093f7ed893e17f30ff5485807ad",
+      "characters": 938,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3188,
+      "original_page_sha256": "a7be259f9675b70b3dec00a104ee5ce2b77e111ab7057f7a96f93805ee4e7c10",
+      "computed_text_sha256": "a7be259f9675b70b3dec00a104ee5ce2b77e111ab7057f7a96f93805ee4e7c10",
+      "original_jsonl_row_sha256": "68c12b30c3b831af960846e4e3d29ddfc3f4310d5590d0d9b369ba6454be09ab",
+      "characters": 2145,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3189,
+      "original_page_sha256": "c6e2f0ada88f9f85dd74fa4ce32d75dbf8e9c83a3cfb8a34189d636e67208702",
+      "computed_text_sha256": "c6e2f0ada88f9f85dd74fa4ce32d75dbf8e9c83a3cfb8a34189d636e67208702",
+      "original_jsonl_row_sha256": "cd59825ef45cbd34a97f56deac27f13a128ac921731caab48f2b7551761152f0",
+      "characters": 1556,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3190,
+      "original_page_sha256": "690f295e65415ae0ed06408f8c92ef7c0e3a61d32bdf9852bf790c2522261762",
+      "computed_text_sha256": "690f295e65415ae0ed06408f8c92ef7c0e3a61d32bdf9852bf790c2522261762",
+      "original_jsonl_row_sha256": "e4d460cedcfe56687ff2e07c3f0e876841c21d53c3fa22d623f538040feff67d",
+      "characters": 915,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3191,
+      "original_page_sha256": "396b599d54496ab0c3dbb704552e62e8ed0987f44887d73f7d5c2cf859e74cf9",
+      "computed_text_sha256": "396b599d54496ab0c3dbb704552e62e8ed0987f44887d73f7d5c2cf859e74cf9",
+      "original_jsonl_row_sha256": "edf1cdcdf4145270f38d611bface45adb308bf0222cb8371acdeec69490103ea",
+      "characters": 2735,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3192,
+      "original_page_sha256": "45aeac94e14582807768e774bc48586f4a0d82fe300f2c77873e4a46afcd9e88",
+      "computed_text_sha256": "45aeac94e14582807768e774bc48586f4a0d82fe300f2c77873e4a46afcd9e88",
+      "original_jsonl_row_sha256": "dce89820d46f9c584f92c8a4755027c16a30c050f226f093933574cf5eedb1d8",
+      "characters": 3606,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3193,
+      "original_page_sha256": "07f5059260db21d71569c5177b5a4a2c3c766a371b82985b0ae76a728493c54d",
+      "computed_text_sha256": "07f5059260db21d71569c5177b5a4a2c3c766a371b82985b0ae76a728493c54d",
+      "original_jsonl_row_sha256": "9094a31c2b27858bcb658a94226a7ddecaf0047cb0ca3c8864eda66963b3df6e",
+      "characters": 3051,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3194,
+      "original_page_sha256": "0fc3614b78715c753781b7dc22c1b97afaae68e241a29d6852f9fb28d45fb2c5",
+      "computed_text_sha256": "0fc3614b78715c753781b7dc22c1b97afaae68e241a29d6852f9fb28d45fb2c5",
+      "original_jsonl_row_sha256": "ec8fdaff9aec0037ac107cd225927b74f79369daa097760f98277ecc5e5464b1",
+      "characters": 2264,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3195,
+      "original_page_sha256": "ae2dae0fbcc983cf6474ece2330fa5dac8da3f29000df8bf3715b25a5bf8a75c",
+      "computed_text_sha256": "ae2dae0fbcc983cf6474ece2330fa5dac8da3f29000df8bf3715b25a5bf8a75c",
+      "original_jsonl_row_sha256": "ec9a56062bd679a08750255d525e898cada3fc91f277523a942826aa23a40dab",
+      "characters": 2266,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3196,
+      "original_page_sha256": "c6ea9eca4a08ce1b08f3cbc0a17afd2bb7eceff403b4fcecc9959c1cc7166577",
+      "computed_text_sha256": "c6ea9eca4a08ce1b08f3cbc0a17afd2bb7eceff403b4fcecc9959c1cc7166577",
+      "original_jsonl_row_sha256": "d34b50b81be1a5814f6110beda3a6be0f9b1132e462ad888298bed2944effaf6",
+      "characters": 441,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3197,
+      "original_page_sha256": "eb9d6a838b634dc54f48608d66915eb66dbe44fd8f2485096db882fb4a7425a4",
+      "computed_text_sha256": "eb9d6a838b634dc54f48608d66915eb66dbe44fd8f2485096db882fb4a7425a4",
+      "original_jsonl_row_sha256": "adf30b953d224a192e0766d1f038f3672a143fc4f4c9f15b1efe763e9c5f6c80",
+      "characters": 3009,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3198,
+      "original_page_sha256": "9cd7707257ee7ab275096ef41fc4b9f2299d1ba41220d23a09b8924f71dd2d30",
+      "computed_text_sha256": "9cd7707257ee7ab275096ef41fc4b9f2299d1ba41220d23a09b8924f71dd2d30",
+      "original_jsonl_row_sha256": "54b410fffb1689bab4b2f66b535d9195a204dbc4daa83c57380456b7cd0dffb9",
+      "characters": 2218,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3199,
+      "original_page_sha256": "bd3e9fb4d40f9559de528819d303497cbe3b6ecd183bae5fc0777922152c544d",
+      "computed_text_sha256": "bd3e9fb4d40f9559de528819d303497cbe3b6ecd183bae5fc0777922152c544d",
+      "original_jsonl_row_sha256": "dd54707fded3f583ec48e530288a2ddfc8776f91a486b2897f72b842a4be894b",
+      "characters": 1130,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3200,
+      "original_page_sha256": "d31172cab80346243e6aefdf3d984db0a3e05456f9e39e38ec237d11eb27f164",
+      "computed_text_sha256": "d31172cab80346243e6aefdf3d984db0a3e05456f9e39e38ec237d11eb27f164",
+      "original_jsonl_row_sha256": "7d7b2cee2ed9fd86c6366721586d1b14741720fcded40aaeb29c506609d9a2c4",
+      "characters": 2517,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3201,
+      "original_page_sha256": "e41bb0d409e28d28de260b8519751563ac7ffea9a9098a2fd9bb46af27e9bfbf",
+      "computed_text_sha256": "e41bb0d409e28d28de260b8519751563ac7ffea9a9098a2fd9bb46af27e9bfbf",
+      "original_jsonl_row_sha256": "6a1e39eaae5ebe08f554e0836104b9b5ca58f8c1b4a18e43fe56a44334f2db31",
+      "characters": 3077,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3202,
+      "original_page_sha256": "76198a350256328bcbb7817e0f59dce62c796315a300e1aca56654cb923edec9",
+      "computed_text_sha256": "76198a350256328bcbb7817e0f59dce62c796315a300e1aca56654cb923edec9",
+      "original_jsonl_row_sha256": "e366035c3b9cad8d28516fc416b89ab95aa2e54c9d595dbebe4d91b90d790700",
+      "characters": 1351,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3203,
+      "original_page_sha256": "742cebfb0bead645cb054c04fe16beceda835d3671a7b2d78e573e4451966096",
+      "computed_text_sha256": "742cebfb0bead645cb054c04fe16beceda835d3671a7b2d78e573e4451966096",
+      "original_jsonl_row_sha256": "1b914a42a64b6ad2845a33575bd336d042d63b5832e9e5f9680879d646b31f16",
+      "characters": 2784,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3204,
+      "original_page_sha256": "4d724019f819da4183a898e90ffa21ae6fdd8611336f8cfb049dcb75624a05a2",
+      "computed_text_sha256": "4d724019f819da4183a898e90ffa21ae6fdd8611336f8cfb049dcb75624a05a2",
+      "original_jsonl_row_sha256": "b94a690adc02dff89d5b8cf876b793b59e2a2e97e4732124acb07f0e862632f3",
+      "characters": 3311,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3205,
+      "original_page_sha256": "2d12aabd37b6334a2a1d2793f054e688af082d09e0c85350f6244941cb2a9114",
+      "computed_text_sha256": "2d12aabd37b6334a2a1d2793f054e688af082d09e0c85350f6244941cb2a9114",
+      "original_jsonl_row_sha256": "8837996db7602d33f06a13f8fe10fd300b1f2df2568f6673c036e92dfe11deee",
+      "characters": 2231,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3206,
+      "original_page_sha256": "4e150788028d79123e490d10a2c6c7dd26de2a8289933fcbf1c292c96789c15a",
+      "computed_text_sha256": "4e150788028d79123e490d10a2c6c7dd26de2a8289933fcbf1c292c96789c15a",
+      "original_jsonl_row_sha256": "05722868a1293130fcdf38fc3b983cd7e72d785dd4f352ba77439c9993df683a",
+      "characters": 1073,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3207,
+      "original_page_sha256": "805435c2521c16e80490c4e68b95ef192ec951e7cd59895dc481b6309ec5b89c",
+      "computed_text_sha256": "805435c2521c16e80490c4e68b95ef192ec951e7cd59895dc481b6309ec5b89c",
+      "original_jsonl_row_sha256": "7d5ec0ddd27ceae1dbd705dec2988894d02e6767ad40d63d2f2ad5696993e539",
+      "characters": 522,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3208,
+      "original_page_sha256": "b43c171af58307da486715381036d998fb3bf00d0123774bccf41010e7f35125",
+      "computed_text_sha256": "b43c171af58307da486715381036d998fb3bf00d0123774bccf41010e7f35125",
+      "original_jsonl_row_sha256": "98e0988051ecaaea89f2000e58d626eff81931d23e1038d4c767d3a1c7033156",
+      "characters": 2067,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3209,
+      "original_page_sha256": "6cebad8d50855804899c888d46f513b373bc8f0fcaa3f98eda6e2f0e9cb40874",
+      "computed_text_sha256": "6cebad8d50855804899c888d46f513b373bc8f0fcaa3f98eda6e2f0e9cb40874",
+      "original_jsonl_row_sha256": "f3e35ea62ea3697cd37fbab04b3f149a970b1842369b55325a25ef130142ce86",
+      "characters": 2126,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3210,
+      "original_page_sha256": "7463c03263a4b4097b68175cd03dcd372a5c8089558f0b1bc5980568d18073b4",
+      "computed_text_sha256": "7463c03263a4b4097b68175cd03dcd372a5c8089558f0b1bc5980568d18073b4",
+      "original_jsonl_row_sha256": "d0e19c8a99e854517b66af3de458dc1483b2383acac5b180b722bd1bc00e5be4",
+      "characters": 2157,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3211,
+      "original_page_sha256": "e0d76b3a4516a58e7c8aced6198d1afe1f2a742c627fd01b4f4b2437f9bf64a2",
+      "computed_text_sha256": "e0d76b3a4516a58e7c8aced6198d1afe1f2a742c627fd01b4f4b2437f9bf64a2",
+      "original_jsonl_row_sha256": "ce0239207a6cc4a1512c628c82257028c1ce75c7bd6b95970e2ecfcfe703658a",
+      "characters": 2163,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3212,
+      "original_page_sha256": "5ee14f03161f214dd7d5303a4d2c8a2f1d11c7a0bcf6f11929aa141ea19cda10",
+      "computed_text_sha256": "5ee14f03161f214dd7d5303a4d2c8a2f1d11c7a0bcf6f11929aa141ea19cda10",
+      "original_jsonl_row_sha256": "b372ab0e7225b9658c130d288d5df5005abeb04fbe90ff7cbc1574f9ea7a9004",
+      "characters": 247,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3213,
+      "original_page_sha256": "49df34d7a0540b1247095dc639d0b783123e7e64312733263f08a3c3c74d5408",
+      "computed_text_sha256": "49df34d7a0540b1247095dc639d0b783123e7e64312733263f08a3c3c74d5408",
+      "original_jsonl_row_sha256": "9d7768bbb7c2aaf7f3de7063eab0cdd4518bb696e6c9a153951f0bf505a00e85",
+      "characters": 2250,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3214,
+      "original_page_sha256": "f252a14a2d2019fdce8f3a56fb0bfb9286a7990c1128d30658ed29610fb3fd45",
+      "computed_text_sha256": "f252a14a2d2019fdce8f3a56fb0bfb9286a7990c1128d30658ed29610fb3fd45",
+      "original_jsonl_row_sha256": "21bf7968fb455142e1acd1f7e9c765099236e62323a6768c889cb5af01ed428c",
+      "characters": 2678,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3215,
+      "original_page_sha256": "73520e44d8014bec45a77dee5737117ed30f7adcb1724b0ea6018bf6d886fed7",
+      "computed_text_sha256": "73520e44d8014bec45a77dee5737117ed30f7adcb1724b0ea6018bf6d886fed7",
+      "original_jsonl_row_sha256": "ae0fcc71dd6ea51096aa9b2fe23307bb20f086bffb3279021d6ba18b83583be3",
+      "characters": 2035,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3216,
+      "original_page_sha256": "3a60cab52e08c8124b0d50719713b70913e3928620930c26ce2f8d482b8ffa6b",
+      "computed_text_sha256": "3a60cab52e08c8124b0d50719713b70913e3928620930c26ce2f8d482b8ffa6b",
+      "original_jsonl_row_sha256": "1381078484e2c7feea2038c1ae424be80eb0c71b10ebed57eef1396b091dc34d",
+      "characters": 1989,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3217,
+      "original_page_sha256": "1c37ed4b34b9d00d74ed75990e7cace5d252b13fc2e8ebc16bb78b85a1e6ecaf",
+      "computed_text_sha256": "1c37ed4b34b9d00d74ed75990e7cace5d252b13fc2e8ebc16bb78b85a1e6ecaf",
+      "original_jsonl_row_sha256": "bd1e04366b0088c9dfee740b60095b6231afe95e00aa5031914a4d4647716a49",
+      "characters": 135,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3218,
+      "original_page_sha256": "1beae321e1f75b490b28edd365061fbc3593fa907c70656b31310f68ff547f47",
+      "computed_text_sha256": "1beae321e1f75b490b28edd365061fbc3593fa907c70656b31310f68ff547f47",
+      "original_jsonl_row_sha256": "f600c4dc29a8d29fcbca5d54bee8162855e7a6bb982453fd1b6a1675d9ab6b48",
+      "characters": 521,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3219,
+      "original_page_sha256": "641aab11543671564f5624b7eda9fc2d57f65f5946b4516714d1c27e56f10f11",
+      "computed_text_sha256": "641aab11543671564f5624b7eda9fc2d57f65f5946b4516714d1c27e56f10f11",
+      "original_jsonl_row_sha256": "743299bd8353f3976450f7343b9da637613a20e593a414d3f6aed4a751b0bedc",
+      "characters": 1201,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3220,
+      "original_page_sha256": "b7f05394fd42865988ca7bf1fd33b8893bc94a2772f5b9ad9135df040ace346a",
+      "computed_text_sha256": "b7f05394fd42865988ca7bf1fd33b8893bc94a2772f5b9ad9135df040ace346a",
+      "original_jsonl_row_sha256": "42219cf795a4f12af69e50d8ca69cd2b7fbc0fb4df5f32dfd3fd5260ae7e1c74",
+      "characters": 548,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3221,
+      "original_page_sha256": "bb6c67398e9c6336a2ae1bdc52abbfa50e8657b3e07c7a9f1c5edd517d37c0c1",
+      "computed_text_sha256": "bb6c67398e9c6336a2ae1bdc52abbfa50e8657b3e07c7a9f1c5edd517d37c0c1",
+      "original_jsonl_row_sha256": "914a70e47976db465e9d61b9152238ac83147658159d0f8b6969a37df69cd9f1",
+      "characters": 1138,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3222,
+      "original_page_sha256": "55992f91f234213778315e60aea242527500646fd0e7cecde5e793cc8758cbba",
+      "computed_text_sha256": "55992f91f234213778315e60aea242527500646fd0e7cecde5e793cc8758cbba",
+      "original_jsonl_row_sha256": "e7d43be38090d6580a4c2ff324c0f410173751637c4954f75fc32bd26423f436",
+      "characters": 911,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3223,
+      "original_page_sha256": "b7e0108a61f5ba8bf9bc9f24c6a787cd01a3fec6f96b7895312689a7ee8ae995",
+      "computed_text_sha256": "b7e0108a61f5ba8bf9bc9f24c6a787cd01a3fec6f96b7895312689a7ee8ae995",
+      "original_jsonl_row_sha256": "b46965aa8359fa42e2baaf76273e955cdcae4ef6a0e6917dcf79c226afae4f65",
+      "characters": 884,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3224,
+      "original_page_sha256": "75c284dbd8c9d952ce07d5fc06691f301ff6626dfc71f9f8d152c74ee72d1ebb",
+      "computed_text_sha256": "75c284dbd8c9d952ce07d5fc06691f301ff6626dfc71f9f8d152c74ee72d1ebb",
+      "original_jsonl_row_sha256": "63136e190c0d8375e1b9369a10c87e5417a36526fe7f1ffb535b1adbb831ba22",
+      "characters": 1206,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3225,
+      "original_page_sha256": "e9ec9893300f83658ec85f0fbbf3687166ed8916f394a0f8c6e3a08fe0fa7de6",
+      "computed_text_sha256": "e9ec9893300f83658ec85f0fbbf3687166ed8916f394a0f8c6e3a08fe0fa7de6",
+      "original_jsonl_row_sha256": "fccb01ecd4a209a34626fc9624710fb06227a712e00df6b6601466ca895ab20f",
+      "characters": 515,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3226,
+      "original_page_sha256": "0b5b04acd1df68b927ba17603b6f652e911309732c42faf81980bdad6d380512",
+      "computed_text_sha256": "0b5b04acd1df68b927ba17603b6f652e911309732c42faf81980bdad6d380512",
+      "original_jsonl_row_sha256": "c1a7848bbf7496949fc929bb4eed2e1e7a0fb8249683e9694c1c33cbee5763bc",
+      "characters": 2600,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3227,
+      "original_page_sha256": "7c6a27e09eaebfdf67d45cb32f31438cd08b48dc30cf076dc9b4a08810cf8f77",
+      "computed_text_sha256": "7c6a27e09eaebfdf67d45cb32f31438cd08b48dc30cf076dc9b4a08810cf8f77",
+      "original_jsonl_row_sha256": "84c5083d30b6df95c433a31a9bfbe6b9b2d20e26bafd2450ad00999677b3e8a1",
+      "characters": 3045,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3228,
+      "original_page_sha256": "c7537560b39c23636b53d7c6958e7f020c1f72a5daa22960a50ad4731088b2a2",
+      "computed_text_sha256": "c7537560b39c23636b53d7c6958e7f020c1f72a5daa22960a50ad4731088b2a2",
+      "original_jsonl_row_sha256": "e446a3b8806cc83423582140c1cf46218084db38c27d0c3d998f54d90fd4417a",
+      "characters": 2491,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3229,
+      "original_page_sha256": "c744da78c9836d7ddb7396200e80234a229634fd503eb83d1ecfa5bfc02ec654",
+      "computed_text_sha256": "c744da78c9836d7ddb7396200e80234a229634fd503eb83d1ecfa5bfc02ec654",
+      "original_jsonl_row_sha256": "5e96941754fc9f4870760d77ef0ae6d5519591b4159976a0799abb122c40b6ed",
+      "characters": 2336,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3230,
+      "original_page_sha256": "67a20c4c8172e61591525656d79662b5939a030c38a0260b815586a170c25b3c",
+      "computed_text_sha256": "67a20c4c8172e61591525656d79662b5939a030c38a0260b815586a170c25b3c",
+      "original_jsonl_row_sha256": "ac63c9374c8a71b64cb80441cb17ba9934659e4801a3f55dc39d6241ea92eb09",
+      "characters": 749,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3231,
+      "original_page_sha256": "8a787c99b8dafba0a89957011d79428056696b64b0f2efa086468d2edd69fb01",
+      "computed_text_sha256": "8a787c99b8dafba0a89957011d79428056696b64b0f2efa086468d2edd69fb01",
+      "original_jsonl_row_sha256": "ceb3e7b11effeb6f0566a743dc078205bdcd54b41ddc6c6e717bf61d3b04a42a",
+      "characters": 2702,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3232,
+      "original_page_sha256": "d49079305476f4e3b1c91569e6986ed93edc9471753b2fa56d6d241eb04d9b1c",
+      "computed_text_sha256": "d49079305476f4e3b1c91569e6986ed93edc9471753b2fa56d6d241eb04d9b1c",
+      "original_jsonl_row_sha256": "2938b9d3fedd7f8dd5a0361fec70998f0a3f12f04d5d8dd8b57c3a64effb3201",
+      "characters": 2126,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3233,
+      "original_page_sha256": "56cee0f30df9e2a9eb9b407683814726055989c37a0d44c3cd9adfb68a01b81c",
+      "computed_text_sha256": "56cee0f30df9e2a9eb9b407683814726055989c37a0d44c3cd9adfb68a01b81c",
+      "original_jsonl_row_sha256": "b1e9e2fe3a4426bfb5a9ec671ceaeb2947cc1b6591f212ff483f1dbb97a59d52",
+      "characters": 2837,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3234,
+      "original_page_sha256": "f85dbed5adae0a2d11cc0112f4c90a71ef43d9f071c224fa19299b2ed8428ebd",
+      "computed_text_sha256": "f85dbed5adae0a2d11cc0112f4c90a71ef43d9f071c224fa19299b2ed8428ebd",
+      "original_jsonl_row_sha256": "866e7ee6c3ed0924d0054e1315570a4db085113389552b05c057b360f50f2bdd",
+      "characters": 1641,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3235,
+      "original_page_sha256": "d137f42600039b76319bf9748b1099e853b4a4b41966656e6cedf14c6da3fcef",
+      "computed_text_sha256": "d137f42600039b76319bf9748b1099e853b4a4b41966656e6cedf14c6da3fcef",
+      "original_jsonl_row_sha256": "dc53e9a18ddbc91a814a7e1a12a3db1f3aae73507e3a3b1c19b5063193bc9741",
+      "characters": 2209,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3236,
+      "original_page_sha256": "f96bdf2bb702155cdeaacce0ad4c42089bdb0a617878c4b40515986ac7b529f0",
+      "computed_text_sha256": "f96bdf2bb702155cdeaacce0ad4c42089bdb0a617878c4b40515986ac7b529f0",
+      "original_jsonl_row_sha256": "18957e352e53895eb29309bda7a69d9ae2c583232fea5c10f7bfab52ee40ed79",
+      "characters": 1245,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3237,
+      "original_page_sha256": "f59c63aafcc56497af777e26e3dfe031cefc03fd06ad4040c07c418fc7ae699b",
+      "computed_text_sha256": "f59c63aafcc56497af777e26e3dfe031cefc03fd06ad4040c07c418fc7ae699b",
+      "original_jsonl_row_sha256": "34c9263c31fbe34ba20245abb389802e5b38672345ba55d4d074b3a02be40caf",
+      "characters": 769,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    },
+    {
+      "page": 3238,
+      "original_page_sha256": "c922e7967c8422f65a6b4f5a1502bb20bb8735c1cabc749366057b97d25f1187",
+      "computed_text_sha256": "c922e7967c8422f65a6b4f5a1502bb20bb8735c1cabc749366057b97d25f1187",
+      "original_jsonl_row_sha256": "938e083c9f085eecbe9bc5e613f8c38f4e34889a290e37880c86058a979efc4b",
+      "characters": 3127,
+      "read": "semantic_full_extracted_text",
+      "visual_audit": false
+    }
+  ],
+  "sections": [
+    {
+      "id": "REF-0001",
+      "title": "MQL5 Reference",
+      "depth": 0,
+      "catalog_range": [
+        74,
+        7284
+      ],
+      "read_pages": [
+        3043,
+        3044,
+        3045,
+        3046,
+        3047,
+        3048,
+        3049,
+        3050,
+        3051,
+        3052,
+        3053,
+        3054,
+        3055,
+        3056,
+        3057,
+        3058,
+        3059,
+        3060,
+        3061,
+        3062,
+        3063,
+        3064,
+        3065,
+        3066,
+        3067,
+        3068,
+        3069,
+        3070,
+        3071,
+        3072,
+        3073,
+        3074,
+        3075,
+        3076,
+        3077,
+        3078,
+        3079,
+        3080,
+        3081,
+        3082,
+        3083,
+        3084,
+        3085,
+        3086,
+        3087,
+        3088,
+        3089,
+        3090,
+        3091,
+        3092,
+        3093,
+        3094,
+        3095,
+        3096,
+        3097,
+        3098,
+        3099,
+        3100,
+        3101,
+        3102,
+        3103,
+        3104,
+        3105,
+        3106,
+        3107,
+        3108,
+        3109,
+        3110,
+        3111,
+        3112,
+        3113,
+        3114,
+        3115,
+        3116,
+        3117,
+        3118,
+        3119,
+        3120,
+        3121,
+        3122,
+        3123,
+        3124,
+        3125,
+        3126,
+        3127,
+        3128,
+        3129,
+        3130,
+        3131,
+        3132,
+        3133,
+        3134,
+        3135,
+        3136,
+        3137,
+        3138,
+        3139,
+        3140,
+        3141,
+        3142,
+        3143,
+        3144,
+        3145,
+        3146,
+        3147,
+        3148,
+        3149,
+        3150,
+        3151,
+        3152,
+        3153,
+        3154,
+        3155,
+        3156,
+        3157,
+        3158,
+        3159,
+        3160,
+        3161,
+        3162,
+        3163,
+        3164,
+        3165,
+        3166,
+        3167,
+        3168,
+        3169,
+        3170,
+        3171,
+        3172,
+        3173,
+        3174,
+        3175,
+        3176,
+        3177,
+        3178,
+        3179,
+        3180,
+        3181,
+        3182,
+        3183,
+        3184,
+        3185,
+        3186,
+        3187,
+        3188,
+        3189,
+        3190,
+        3191,
+        3192,
+        3193,
+        3194,
+        3195,
+        3196,
+        3197,
+        3198,
+        3199,
+        3200,
+        3201,
+        3202,
+        3203,
+        3204,
+        3205,
+        3206,
+        3207,
+        3208,
+        3209,
+        3210,
+        3211,
+        3212,
+        3213,
+        3214,
+        3215,
+        3216,
+        3217,
+        3218,
+        3219,
+        3220,
+        3221,
+        3222,
+        3223,
+        3224,
+        3225,
+        3226,
+        3227,
+        3228,
+        3229,
+        3230,
+        3231,
+        3232,
+        3233,
+        3234,
+        3235,
+        3236,
+        3237,
+        3238
+      ],
+      "status": "PARTIAL_SECTION_EXACT_PAGES_ONLY",
+      "knowledge": "Recorte da referência geral: indicadores técnicos, frames de otimização, timers/eventos, ciclo OpenCL e abertura da introdução SQLite. Este registro cobre somente3043–3238, sem afirmar leitura integral do livro.",
+      "stoikus_application_or_proposal": "Usar estas páginas como fonte de contratos de plataforma; não como prova do comportamento implementado do Stoikus.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0960",
+      "title": "Technical Indicators",
+      "depth": 1,
+      "catalog_range": [
+        2968,
+        3174
+      ],
+      "read_pages": [
+        3043,
+        3044,
+        3045,
+        3046,
+        3047,
+        3048,
+        3049,
+        3050,
+        3051,
+        3052,
+        3053,
+        3054,
+        3055,
+        3056,
+        3057,
+        3058,
+        3059,
+        3060,
+        3061,
+        3062,
+        3063,
+        3064,
+        3065,
+        3066,
+        3067,
+        3068,
+        3069,
+        3070,
+        3071,
+        3072,
+        3073,
+        3074,
+        3075,
+        3076,
+        3077,
+        3078,
+        3079,
+        3080,
+        3081,
+        3082,
+        3083,
+        3084,
+        3085,
+        3086,
+        3087,
+        3088,
+        3089,
+        3090,
+        3091,
+        3092,
+        3093,
+        3094,
+        3095,
+        3096,
+        3097,
+        3098,
+        3099,
+        3100,
+        3101,
+        3102,
+        3103,
+        3104,
+        3105,
+        3106,
+        3107,
+        3108,
+        3109,
+        3110,
+        3111,
+        3112,
+        3113,
+        3114,
+        3115,
+        3116,
+        3117,
+        3118,
+        3119,
+        3120,
+        3121,
+        3122,
+        3123,
+        3124,
+        3125,
+        3126,
+        3127,
+        3128,
+        3129,
+        3130,
+        3131,
+        3132,
+        3133,
+        3134,
+        3135,
+        3136,
+        3137,
+        3138,
+        3139,
+        3140,
+        3141,
+        3142,
+        3143,
+        3144,
+        3145,
+        3146,
+        3147,
+        3148,
+        3149,
+        3150,
+        3151,
+        3152,
+        3153,
+        3154,
+        3155,
+        3156,
+        3157,
+        3158,
+        3159,
+        3160,
+        3161,
+        3162,
+        3163,
+        3164,
+        3165,
+        3166,
+        3167,
+        3168,
+        3169,
+        3170,
+        3171,
+        3172,
+        3173,
+        3174
+      ],
+      "status": "PARTIAL_SECTION_EXACT_PAGES_ONLY",
+      "knowledge": "Ramo Technical Indicators parcialmente neste recorte(3043–3174). As 25 funções lidas criam handles; os exemplos verificam INVALID_HANDLE, consultam BarsCalculated, copiam buffers e liberam IndicatorRelease. O retorno inteiro não é a própria série calculada.",
+      "stoikus_application_or_proposal": "Proposta: encapsular identidade símbolo/timeframe/parâmetros, prontidão e validade dos dados; referências a indicadores não acrescentam sinais ao Monitor nem alteram critérios JPW.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0975",
+      "title": "iDEMA",
+      "depth": 2,
+      "catalog_range": [
+        3043,
+        3047
+      ],
+      "read_pages": [
+        3043,
+        3044,
+        3045,
+        3046,
+        3047
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iDEMA: um buffer, período de média, ma_shift e preço aplicado ou handle de outro indicador. Alternativa IndicatorCreate com IND_DEMA e3MqlParam inteiros. Exemplo ajusta PLOT_SHIFT e CopyBuffer(0,-shift,...).",
+      "stoikus_application_or_proposal": "Proposta: qualquer uso de DEMA deve registrar deslocamento separadamente do índice da barra; nenhum sinal DEMA do produto foi comprovado.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0976",
+      "title": "iDeMarker",
+      "depth": 2,
+      "catalog_range": [
+        3048,
+        3052
+      ],
+      "read_pages": [
+        3048,
+        3049,
+        3050,
+        3051,
+        3052
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iDeMarker: símbolo/timeframe/período, um buffer; exemplo usa14barras e níveis gráficos0.3/0.7. Criação genérica IND_DEMARKER recebe um parâmetro; cópia do buffer0 começa em0.",
+      "stoikus_application_or_proposal": "Os níveis demonstrativos não são norma JPW nem gatilho autorizado. Proposta de telemetria distinguir valor ausente de valor baixo.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0977",
+      "title": "iEnvelopes",
+      "depth": 2,
+      "catalog_range": [
+        3053,
+        3058
+      ],
+      "read_pages": [
+        3053,
+        3054,
+        3055,
+        3056,
+        3057,
+        3058
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iEnvelopes: período, deslocamento, métodoMA, preço/handle e deviation em porcentagem. Buffers0UPPER_LINE e1LOWER_LINE; não há buffer central documentado neste contrato. MqlParam final TYPE_DOUBLE; cópias compensam -ma_shift em ambos.",
+      "stoikus_application_or_proposal": "Proposta: nomear unidade percentual, evitando confundir deviation0.1 com pontos monetários, ticks ou fração; guardar ambas linhas como mesma amostra temporal.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0978",
+      "title": "iForce",
+      "depth": 2,
+      "catalog_range": [
+        3059,
+        3063
+      ],
+      "read_pages": [
+        3059,
+        3060,
+        3061,
+        3062,
+        3063
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iForce retorna um buffer e recebe períodoMA, método de suavização e ENUM_APPLIED_VOLUME. Exemplo13/MODE_SMA/VOLUME_TICK; criação IND_FORCE com3inteiros e cópia buffer0.",
+      "stoikus_application_or_proposal": "Proposta: tornar explícita a origem tick/real do volume em qualquer pesquisa; força não comprova fluxo financeiro negociado.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0979",
+      "title": "iFractals",
+      "depth": 2,
+      "catalog_range": [
+        3064,
+        3068
+      ],
+      "read_pages": [
+        3064,
+        3065,
+        3066,
+        3067,
+        3068
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iFractals recebe somente símbolo/timeframe e oferece0UPPER_LINE,1LOWER_LINE. Exemplo liga dois buffers, DRAW_ARROW com217/218 e criação IND_FRACTALS sem lista de parâmetros. Há propriedades1buffer/1plot repetidas antes de2/2 no texto fonte.",
+      "stoikus_application_or_proposal": "Proposta: tratar linhas como dois canais; o trecho não estabelece estabilidade/confirmabilidade de fractais recentes, portanto não inferir ausência de repaint ou disponibilidade imediata.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0980",
+      "title": "iFrAMA",
+      "depth": 2,
+      "catalog_range": [
+        3069,
+        3073
+      ],
+      "read_pages": [
+        3069,
+        3070,
+        3071,
+        3072,
+        3073
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iFrAMA: Fractal Adaptive Moving Average, um buffer; período, shift e preço/handle. IND_FRAMA usa3inteiros, PLOT_SHIFT e cópia em -shift.",
+      "stoikus_application_or_proposal": "Proposta: selecionar FrAMA exigiria pesquisa própria; nome adaptativo não implica superioridade nem presença no Stoikus.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0981",
+      "title": "iGator",
+      "depth": 2,
+      "catalog_range": [
+        3074,
+        3080
+      ],
+      "read_pages": [
+        3074,
+        3075,
+        3076,
+        3077,
+        3078,
+        3079,
+        3080
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iGator mede diferenças das linhasAlligator azul/vermelha no histograma superior e vermelha/verde no inferior. Buffer0superior,1cor superior,2inferior,3cor inferior. Parâmetros de períodos/shifts de jaw/teeth/lips, método e preço. Shifts das linhas base não movem diretamente o histograma; exemplo usa min(jaw_shift,teeth_shift) para os dois plots e CopyBuffer com negativo desse shift.",
+      "stoikus_application_or_proposal": "Proposta: separar valor de índice de cor e alinhamento visual de alinhamento temporal. Não usar buffer1como série inferior; não inferir deslocamento pela aparência.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0982",
+      "title": "iIchimoku",
+      "depth": 2,
+      "catalog_range": [
+        3081,
+        3087
+      ],
+      "read_pages": [
+        3081,
+        3082,
+        3083,
+        3084,
+        3085,
+        3086,
+        3087
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iIchimoku recebe tenkan,kijun,senkouB. Buffers0Tenkan,1Kijun,2SenkouA,3SenkouB,4Chikou. Exemplo9/26/52; DRAW_FILLING reúne2buffers em umplot, total5buffers/4plots. PLOT_SHIFT da nuvem=kijun; cópiaSenkou usa -kijun, Chikou já vem armazenado deslocado e é copiado em0.",
+      "stoikus_application_or_proposal": "Proposta: testar explicitamente identidade temporal das linhas antes de compará-las ao preço; projetar linha no futuro não é evidência de informação futura disponível.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0983",
+      "title": "iBWMFI",
+      "depth": 2,
+      "catalog_range": [
+        3088,
+        3092
+      ],
+      "read_pages": [
+        3088,
+        3089,
+        3090,
+        3091,
+        3092
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iBWMFI é Market Facilitation Index de BillWilliams, recebe ENUM_APPLIED_VOLUME. Prosa diz um buffer; exemplo declara2: valores0e índice de cores1, DRAW_COLOR_HISTOGRAM em4cores. IND_BWMFI recebe o volume como um inteiro.",
+      "stoikus_application_or_proposal": "Proposta: diferenciar BWMFI de MoneyFlowIndex(iMFI). Preservar ressalva entre buffer numérico único e buffer auxiliar de cor; não apagar essa nuance ao resumir.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0984",
+      "title": "iMomentum",
+      "depth": 2,
+      "catalog_range": [
+        3093,
+        3097
+      ],
+      "read_pages": [
+        3093,
+        3094,
+        3095,
+        3096,
+        3097
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iMomentum: um buffer, mom_period e preço/handle. Exemplo14/PRICE_CLOSE, IND_MOMENTUM com2inteiros e buffer0sem shift.",
+      "stoikus_application_or_proposal": "Proposta: registrar parametrização com o valor; trecho não define regra de compra/venda nem limiar JPW.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0985",
+      "title": "iMFI",
+      "depth": 2,
+      "catalog_range": [
+        3098,
+        3102
+      ],
+      "read_pages": [
+        3098,
+        3099,
+        3100,
+        3101,
+        3102
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iMFI é Money Flow Index, período e tipo de volume. Exemplo um buffer, níveis20/80,14eVOLUME_TICK; IND_MFI com2inteiros.",
+      "stoikus_application_or_proposal": "Proposta: níveis20/80 são apresentação do exemplo, não aceite de estratégia; registrar tipo de volume para reproduzir a pesquisa.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0986",
+      "title": "iMA",
+      "depth": 2,
+      "catalog_range": [
+        3103,
+        3107
+      ],
+      "read_pages": [
+        3103,
+        3104,
+        3105,
+        3106,
+        3107
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iMA: um buffer, período, shift, método e preço/handle. IND_MA recebe4MqlParam inteiros. Exemplo cria uma vez emOnInit, PLOT_SHIFT=ma_shift e CopyBuffer0começa em-ma_shift.",
+      "stoikus_application_or_proposal": "Proposta: demonstrar no manual que iMA retorna handle e não média pronta. O ciclo de vida e prontidão são reutilizáveis; não inferir que toda média do Stoikus use esta API.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0987",
+      "title": "iOsMA",
+      "depth": 2,
+      "catalog_range": [
+        3108,
+        3112
+      ],
+      "read_pages": [
+        3108,
+        3109,
+        3110,
+        3111,
+        3112
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iOsMA mostra diferença entre MACD e sua linha de sinal, com um buffer. RecebeEMA rápida/lenta, período de sinal e preço/handle; exemplo12/26/9 e DRAW_HISTOGRAM. Fonte observa que outros sistemas o chamam MACD histogram.",
+      "stoikus_application_or_proposal": "Proposta: em importação de pesquisas, comparar definição e buffers, pois o rótulo histogramaMACD é ambíguo entre plataformas.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0988",
+      "title": "iMACD",
+      "depth": 2,
+      "catalog_range": [
+        3113,
+        3118
+      ],
+      "read_pages": [
+        3113,
+        3114,
+        3115,
+        3116,
+        3117,
+        3118
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iMACD tem0MAIN_LINE e1SIGNAL_LINE e os mesmos quatro parâmetros principais doOsMA. No terminal aparece como histograma principal mais linha de sinal; em sistemas que chamamOsMA deMACDHistogram, oMACD é duas linhas. Exemplo copia separadamente0/1e usa IND_MACD.",
+      "stoikus_application_or_proposal": "Proposta: não identificar iMACD0com iOsMA0; avaliar diferenças por definição, não aparência. Nenhuma lucratividade é demonstrada.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0989",
+      "title": "iOBV",
+      "depth": 2,
+      "catalog_range": [
+        3119,
+        3123
+      ],
+      "read_pages": [
+        3119,
+        3120,
+        3121,
+        3122,
+        3123
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iOBV: OnBalanceVolume de um buffer, símbolo/timeframe e ENUM_APPLIED_VOLUME. ExemploVOLUME_TICK e IND_OBV com umMqlParam.",
+      "stoikus_application_or_proposal": "Proposta: tratar escala cumulativa e tipo de volume como metadados de pesquisa; a seção não demonstra equivalência entre corretoras.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0990",
+      "title": "iSAR",
+      "depth": 2,
+      "catalog_range": [
+        3124,
+        3128
+      ],
+      "read_pages": [
+        3124,
+        3125,
+        3126,
+        3127,
+        3128
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iSAR: um buffer; step e maximum são double, usualmente0.02/0.2. Exemplo IND_SAR com2TYPE_DOUBLE, DRAW_ARROW código159e cópia0sem shift.",
+      "stoikus_application_or_proposal": "O nome StopAndReverse não executa ordem nem configura stop. Uso como trailing doSupervisor seria proposta separada e não autorizado por esta leitura.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0991",
+      "title": "iRSI",
+      "depth": 2,
+      "catalog_range": [
+        3129,
+        3133
+      ],
+      "read_pages": [
+        3129,
+        3130,
+        3131,
+        3132,
+        3133
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iRSI: um buffer; período e preço/handle. Exemplo14/PRICE_CLOSE, janela0–100, níveis70/30 e IND_RSI com2inteiros.",
+      "stoikus_application_or_proposal": "Proposta: preservar a diferença entre níveis de visualização e critérios de negócio. O trecho não autoriza trocar critérios doMonitor porRSI.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0992",
+      "title": "iRVI",
+      "depth": 2,
+      "catalog_range": [
+        3134,
+        3138
+      ],
+      "read_pages": [
+        3134,
+        3135,
+        3136,
+        3137,
+        3138
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iRVI: RelativeVigorIndex recebe período de cálculo e fornece0MAIN_LINE/1SIGNAL_LINE. Exemplo10, IND_RVI com um inteiro e duas cópias. StringFormat do exemplo contém mais especificadores que valores aparentes.",
+      "stoikus_application_or_proposal": "Proposta: manter assinatura e buffer como contrato; reconstruir exemplos originais verificáveis em vez de copiar código dePDF com inconsistências editoriais.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0993",
+      "title": "iStdDev",
+      "depth": 2,
+      "catalog_range": [
+        3139,
+        3143
+      ],
+      "read_pages": [
+        3139,
+        3140,
+        3141,
+        3142,
+        3143
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iStdDev: um buffer, período, shift, métodoMA, preço/handle. Exemplo20/MODE_SMA, IND_STDDEV com4inteiros e cópia buffer0em-shift.",
+      "stoikus_application_or_proposal": "Proposta: volatilidade de indicador é distinta do limite normativo de risco ou exposição. Seria preciso declarar janela e unidade antes de usar em estudo.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0994",
+      "title": "iStochastic",
+      "depth": 2,
+      "catalog_range": [
+        3144,
+        3149
+      ],
+      "read_pages": [
+        3144,
+        3145,
+        3146,
+        3147,
+        3148,
+        3149
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iStochastic: Kperiod,Dperiod,slowing,métodoMA e ENUM_STO_PRICE; não é ENUM_APPLIED_PRICE. Buffers0MAIN_LINE e1SIGNAL_LINE. Exemplo5/3/3,STO_LOWHIGH;5MqlParam. Janela0–100 mas níveis textuais-100/100 no exemplo, uma inconsistência a preservar.",
+      "stoikus_application_or_proposal": "Proposta: testar configuração e limites em um candidato compilável; não promover níveis do exemplo a norma nem aceitar preço de outro enum por conversão silenciosa.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0995",
+      "title": "iTEMA",
+      "depth": 2,
+      "catalog_range": [
+        3150,
+        3154
+      ],
+      "read_pages": [
+        3150,
+        3151,
+        3152,
+        3153,
+        3154
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iTEMA: TripleExponentialMovingAverage de um buffer, período/shift/preço ou handle. IND_TEMA recebe3inteiros; exemploPLOT_SHIFT e CopyBuffer em-shift.",
+      "stoikus_application_or_proposal": "Proposta: distinguir a médiaTEMA do osciladorTriX; parametrizações semelhantes não fazem deles canais intercambiáveis.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0996",
+      "title": "iTriX",
+      "depth": 2,
+      "catalog_range": [
+        3155,
+        3159
+      ],
+      "read_pages": [
+        3155,
+        3156,
+        3157,
+        3158,
+        3159
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iTriX: oscilador TripleExponentialMovingAverages, um buffer; período e preço/handle, sem argumento ma_shift. IND_TRIX com2inteiros, exemplo14e buffer0.",
+      "stoikus_application_or_proposal": "Proposta: não inventar parâmetro de deslocamento por analogia aoTEMA; não afirmar adoção peloStoikus.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0997",
+      "title": "iWPR",
+      "depth": 2,
+      "catalog_range": [
+        3160,
+        3164
+      ],
+      "read_pages": [
+        3160,
+        3161,
+        3162,
+        3163,
+        3164
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iWPR: LarryWilliamsPercentRange de um buffer, calc_period; exemplo14, intervalo gráfico-100a0e níveis-20/-80. IND_WPR recebe um inteiro.",
+      "stoikus_application_or_proposal": "Proposta: manter sinal e escala negativos ao comparar estudos; não transplantar limiares70/30deRSI.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0998",
+      "title": "iVIDyA",
+      "depth": 2,
+      "catalog_range": [
+        3165,
+        3169
+      ],
+      "read_pages": [
+        3165,
+        3166,
+        3167,
+        3168,
+        3169
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iVIDyA: média dinâmica de um buffer; cmo_period controlaChandeMomentum e ema_period o fator de suavização, mais shift e preço/handle. IND_VIDYA usa4inteiros; exemplo15/12, cópia0em-shift.",
+      "stoikus_application_or_proposal": "Proposta: identificar os dois períodos por função, evitando uma configuração genérica de períodoMA que perca informação.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-0999",
+      "title": "iVolumes",
+      "depth": 2,
+      "catalog_range": [
+        3170,
+        3174
+      ],
+      "read_pages": [
+        3170,
+        3171,
+        3172,
+        3173,
+        3174
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "iVolumes recebe volume aplicado e retorna handle. Prosa diz um buffer; exemplo define2, valores0e cores1, verdes/vermelhas, viaIND_VOLUMES com um inteiro.",
+      "stoikus_application_or_proposal": "Proposta: não interpretar cor como volume nem assumir volume real quando padrão éVOLUME_TICK. O cabeçalho simplificado não elimina buffer de cor.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1000",
+      "title": "Working with Optimization Results",
+      "depth": 1,
+      "catalog_range": [
+        3175,
+        3186
+      ],
+      "read_pages": [
+        3175,
+        3176,
+        3177,
+        3178,
+        3179,
+        3180,
+        3181,
+        3182,
+        3183,
+        3184,
+        3185,
+        3186
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "Frames permitem transmitir dados simples/estruturas sem strings, objetos de classe ou arrays dinâmicos entre agentes e terminal. Recepção geraTesterPass; frames gravados emEA.MQD emMQL5/Files/Tester, na ordem de chegada. Fonte não limita quantidade de frames; CloudNetwork limita escrita em disco eRAM a4GBcada e pode cobrar tempo mesmo sem resultado.",
+      "stoikus_application_or_proposal": "Proposta de pesquisa/harness: incluir pass, parâmetros e versão de esquema para ordenar e reproduzir; chegada não é ordem de passes. Essas condições da fonte não verificam disponibilidade atual deinfra nem pilotoStoikus.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1001",
+      "title": "FrameFirst",
+      "depth": 2,
+      "catalog_range": [
+        3177,
+        3177
+      ],
+      "read_pages": [
+        3177
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "FrameFirst move cursor ao início e limpa filtro. Retorna bool; falha consultável viaGetLastError.",
+      "stoikus_application_or_proposal": "Proposta: iniciar consolidação completa com reset explícito, evitando herdar filtro de consulta anterior.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1002",
+      "title": "FrameFilter",
+      "depth": 2,
+      "catalog_range": [
+        3178,
+        3178
+      ],
+      "read_pages": [
+        3178
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "FrameFilter(name,id) define filtro e reinicia cursor. name vazio filtra sóid; id=ULONG_MAX filtra sótexto; combinação vazio/ULONG_MAX equivaleFrameFirst.",
+      "stoikus_application_or_proposal": "Proposta: separar rótulo de família e id de esquema/caso em frames de pesquisa; documentar os sentinelas para não perder registros.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1003",
+      "title": "FrameNext",
+      "depth": 2,
+      "catalog_range": [
+        3179,
+        3179
+      ],
+      "read_pages": [
+        3179
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "FrameNext tem variante com pass/name/id/value e outra com data[] adicional; lê um frame e avança. Aplicação deve interpretar corretamente tipo/conteúdo do array.",
+      "stoikus_application_or_proposal": "Proposta: conferir esquema, comprimento e identidade do pass antes de agregar dados; true não comprova significado do payload.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1004",
+      "title": "FrameInputs",
+      "depth": 2,
+      "catalog_range": [
+        3180,
+        3180
+      ],
+      "read_pages": [
+        3180
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "FrameInputs(pass,parameters[],parameters_count) devolve strings parameterN=valueN e contagem para o pass indicado.",
+      "stoikus_application_or_proposal": "Proposta: ligar parâmetros à evidência de cada caso e conservar pass original; não inferir configuração pela posição de chegada do frame.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1005",
+      "title": "FrameAdd",
+      "depth": 2,
+      "catalog_range": [
+        3181,
+        3181
+      ],
+      "read_pages": [
+        3181
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "FrameAdd oferece overload arquivo e array passado por referência; name/id filtráveis e value numérico para resultado único semelhanteOnTester. Arquivo deve estar emMQL5/Files. Bool maisGetLastError.",
+      "stoikus_application_or_proposal": "Proposta: preferir payload simples em memória para coleta de pesquisa quando adequado; validar retorno e não confundir frame criado com aprovação de estratégia.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1006",
+      "title": "ParameterGetRange",
+      "depth": 2,
+      "catalog_range": [
+        3182,
+        3184
+      ],
+      "read_pages": [
+        3182,
+        3183,
+        3184
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "ParameterGetRange devolve enable,value,start,step,stop por referência; overload long para inteiros/bool/enums e double para reais. Chamável apenasOnTesterInit,OnTesterPass,OnTesterDeinit. OnTesterInit pode usarresultado para redefinir otimização viaSetRange.",
+      "stoikus_application_or_proposal": "Proposta: registrar faixas efetivas, pois configurações visuais podem ser substituídas; fora dos handlers permitidos seria violação de contrato.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1007",
+      "title": "ParameterSetRange",
+      "depth": 2,
+      "catalog_range": [
+        3185,
+        3186
+      ],
+      "read_pages": [
+        3185,
+        3186
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "ParameterSetRange altera enable,valor,início,passo,fim, com overload long/double. SomenteOnTesterInit ao lançar otimização; pode excluir parâmetro independentemente daUI e incluir variável sinput.",
+      "stoikus_application_or_proposal": "Proposta: qualquer estudo deve salvar faixas após política aplicada; não alterar parâmetros de produção como consequência automática da otimização.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1008",
+      "title": "Working with Events",
+      "depth": 1,
+      "catalog_range": [
+        3187,
+        3196
+      ],
+      "read_pages": [
+        3187,
+        3188,
+        3189,
+        3190,
+        3191,
+        3192,
+        3193,
+        3194,
+        3195,
+        3196
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "Grupo reúne geradoresTimer, desligamento e evento customizado; handlers de eventos predefinidos são funções separadas.",
+      "stoikus_application_or_proposal": "Aplicação conceitual aoMonitor orientado aeventos: organizar ciclo, filas e comunicação sem alegar inspeção/alteração da implementação.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1009",
+      "title": "EventSetMillisecondTimer",
+      "depth": 2,
+      "catalog_range": [
+        3188,
+        3188
+      ],
+      "read_pages": [
+        3188
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "EventSetMillisecondTimer recebe intervalo subsegundo e retorna bool. Timer real não gera mais de uma vez a cada10–16ms por limitação dehardware; reduzir período aumenta tempo de teste. Só umtimer por programa; se eventoTimer já está na fila ou processando, novoTimer não é adicionado.",
+      "stoikus_application_or_proposal": "Proposta: medir tempo decorrido por timestamps e tolerâncias, nunca contar chamadasOnTimer como relógio garantido; handlers curtos e teste de atraso seriam exigidos paraMonitor.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1010",
+      "title": "EventSetTimer",
+      "depth": 2,
+      "catalog_range": [
+        3189,
+        3189
+      ],
+      "read_pages": [
+        3189
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "EventSetTimer(seconds) normalmente emOnInit/construtor; OnTimer processa. CadaEA/indicador tem timer próprio, no máximo um por programa. EventoTimer pendente/processando causa descarte do novo evento; parada destrói timer não desligado.",
+      "stoikus_application_or_proposal": "Proposta: alertas e agendamentos dos quatro programas devem reconciliar estado atual após atraso; periodicidade configurada não garante contagem nem execução pontual.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1011",
+      "title": "EventKillTimer",
+      "depth": 2,
+      "catalog_range": [
+        3190,
+        3190
+      ],
+      "read_pages": [
+        3190
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "EventKillTimer não retorna valor e interrompe geraçãoTimer. NormalmenteOnDeinit se iniciadoOnInit, oudestrutor se criado no construtor; parada do programa também odestrói.",
+      "stoikus_application_or_proposal": "Proposta: parear explicitamente criação e desligamento para ciclo devida legível e ensaiar reanexação; ausência de retorno não prova que restante da limpeza ocorreu.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1012",
+      "title": "EventChartCustom",
+      "depth": 2,
+      "catalog_range": [
+        3191,
+        3196
+      ],
+      "read_pages": [
+        3191,
+        3192,
+        3193,
+        3194,
+        3195,
+        3196
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "EventChartCustom envia para chart_id(0atual), acrescentaCHARTEVENT_CUSTOM ao ushortcustom_event_id e transportalong,double,string; sparam acima63caracteres é truncado. true confirma somente inclusão na fila receptora. Tabela distingue teclas,repetição,mouseXY/máscaras,criação/remoção opcionais,clique/drag/endedit/alteração. Exemplo botão alternaID+1/+999e broadcast percorreChartFirst/Next limitadoCHARTS_MAX.",
+      "stoikus_application_or_proposal": "Proposta: protocolo entre componentes deve caber em63chars ou referenciar registro, validarId/remetente/esquema e confirmar processamento separadamente. Enfileirar não armaSupervisor nem garante processamento/aceite; nenhuma integração foi implementada.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1013",
+      "title": "Working with OpenCL",
+      "depth": 1,
+      "catalog_range": [
+        3197,
+        3237
+      ],
+      "read_pages": [
+        3197,
+        3198,
+        3199,
+        3200,
+        3201,
+        3202,
+        3203,
+        3204,
+        3205,
+        3206,
+        3207,
+        3208,
+        3209,
+        3210,
+        3211,
+        3212,
+        3213,
+        3214,
+        3215,
+        3216,
+        3217,
+        3218,
+        3219,
+        3220,
+        3221,
+        3222,
+        3223,
+        3224,
+        3225,
+        3226,
+        3227,
+        3228,
+        3229,
+        3230,
+        3231,
+        3232,
+        3233,
+        3234,
+        3235,
+        3236,
+        3237
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "OpenCL suporta classe de cálculos paralelos emdispositivos compatíveis; fonte cita1.1+. double pode exigir pragma cl_khr_fp64 eGPU compatível; pragma não cria capacidade inexistente. ErroOpenCL é obtido porCLGetInfoInteger(0,CL_LAST_ERROR), descrição porCLGetInfoString(código ouCL_LAST_ERROR,CL_ERROR_DESCRIPTION,...). RecomendaCL separado como recurso.",
+      "stoikus_application_or_proposal": "OpenCL é pesquisa futura, não componente atual declarado doStoikus. Proposta: avaliar capacidade, precisão, custo de transferências ebaselineCPU antes de qualquer adoção; todos exemplos lidos NOT_RUN.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1014",
+      "title": "CLHandleType",
+      "depth": 2,
+      "catalog_range": [
+        3199,
+        3199
+      ],
+      "read_pages": [
+        3199
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLHandleType retorna enumINVALID,CONTEXT,PROGRAM,KERNEL,BUFFER parahandleOpenCL.",
+      "stoikus_application_or_proposal": "Proposta: diagnosticar confusão entre handles sem tratar todos inteiros como identificadores intercambiáveis.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1015",
+      "title": "CLGetInfoInteger",
+      "depth": 2,
+      "catalog_range": [
+        3200,
+        3202
+      ],
+      "read_pages": [
+        3200,
+        3201,
+        3202
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLGetInfoInteger retorna long ou-1erro, dispositivos numerados desde0; CL_DEVICE_COUNT ignora handle. Propriedades incluem tipo/vendor/unidades/clock/memórias,tamanho de buffer/grupo/local/private e últimoerro. Enum tiposCPU,GPU,ACCELERATOR,DEFAULT,CUSTOM; exemplo criaGPUcontexto, imprime e libera.",
+      "stoikus_application_or_proposal": "Proposta: guardar capacidades reais do ambiente e dimensionar trabalho pelo dispositivo/kernel; nomeGPU não é evidência de desempenho nem suporte double.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1016",
+      "title": "CLGetInfoString",
+      "depth": 2,
+      "catalog_range": [
+        3203,
+        3205
+      ],
+      "read_pages": [
+        3203,
+        3204,
+        3205
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLGetInfoString retorna bool e string porreferência para plataforma, versão,perfil,extensões,dispositivo,driver,OpenCLC,kernels e descrição deerro. Exemplo consulta várias propriedades e libera contexto.",
+      "stoikus_application_or_proposal": "Proposta: anexar metadados driver/versões ao resultado de pesquisa para comparar ambientes; descrição doúltimoerro deve ser capturada antes de outras chamadas alterarem diagnóstico.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1017",
+      "title": "CLContextCreate",
+      "depth": 2,
+      "catalog_range": [
+        3206,
+        3206
+      ],
+      "read_pages": [
+        3206
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLContextCreate(device=CL_USE_ANY) aceita índice, ANY,CPU_ONLY,GPU_ONLY,GPU_DOUBLE_ONLY; retorna handle ou-1.",
+      "stoikus_application_or_proposal": "Proposta: política de seleção deve ser explícita; fallbackCPU sobANY não deve ser reportado como aceleraçãoGPU comprovada.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1018",
+      "title": "CLContextFree",
+      "depth": 2,
+      "catalog_range": [
+        3207,
+        3207
+      ],
+      "read_pages": [
+        3207
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLContextFree(context) remove contexto, sem retorno; _LastError muda emerro interno.",
+      "stoikus_application_or_proposal": "Proposta: liberar contexto após dependentes emtodas saídas de pesquisacandidata; não confirmar liberação pelo retorno inexistente.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1019",
+      "title": "CLGetDeviceInfo",
+      "depth": 2,
+      "catalog_range": [
+        3208,
+        3212
+      ],
+      "read_pages": [
+        3208,
+        3209,
+        3210,
+        3211,
+        3212
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLGetDeviceInfo recebe índice/contexto,property_id,uchar[] esaída size. Tabela0x1000–0x104B cobre tipo,larguras vetoriais,dimensões/grupos,memória,imagens,alinhamento,FP,endianness,compilador,versão,partição,interoperabilidade. Exemplo percorredispositivos e convertebuffer dofabricante emstring. Texto de size naassinatura conflita comdescrição; descrição indica tamanho recebido.",
+      "stoikus_application_or_proposal": "Proposta: preferir APIs tipadas para propriedades usuais; quando usar bytes validar tamanho/tipo e não copiar comentário deoffset. Exemplo não libera todoscontextos no laço, portanto não é modelo completo de limpeza.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1020",
+      "title": "CLProgramCreate",
+      "depth": 2,
+      "catalog_range": [
+        3213,
+        3217
+      ],
+      "read_pages": [
+        3213,
+        3214,
+        3215,
+        3216,
+        3217
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLProgramCreate compila string fonte emcontexto; overload devolvebuild_log. Retorna handle/-1; errosinvalidhandle,param,memory,programcreate. ExemploCPU/GPU dobra5arrays de100doubles, envia,executa,lê, compara erro absoluto agregado e libera buffer/kernel/program/contexto. Kernel usa get_global_id eoffset id*N.",
+      "stoikus_application_or_proposal": "Proposta: conservarlog compilador e verificar cada operação; guardafonte id>total_arrays não protegeid==total_arrays se grade aumentar, embora grade doexemplo tenhaTOTAL_ARRAYS itens. Não importar exemplo sem revisão delimites; nenhum resultado foi executado.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1021",
+      "title": "CLProgramFree",
+      "depth": 2,
+      "catalog_range": [
+        3218,
+        3218
+      ],
+      "read_pages": [
+        3218
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLProgramFree removeprograma, void, erro interno em_LastError.",
+      "stoikus_application_or_proposal": "Proposta: liberar depois doskernelsdependentes e antes docontexto emtodas falhas.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1022",
+      "title": "CLKernelCreate",
+      "depth": 2,
+      "catalog_range": [
+        3219,
+        3219
+      ],
+      "read_pages": [
+        3219
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLKernelCreate(program,kernel_name) encontra função deentrada, retorna handle/-1. Nomeacima127caracteres geraERR_OPENCL_TOO_LONG_KERNEL_NAME; demaisfalhasinvalidhandle,param,criação.",
+      "stoikus_application_or_proposal": "Proposta: fixar/registrar nome deentrada e separar erro decompilação deerro decriação dokernel.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1023",
+      "title": "CLKernelFree",
+      "depth": 2,
+      "catalog_range": [
+        3220,
+        3220
+      ],
+      "read_pages": [
+        3220
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLKernelFree(kernel) removefunção deentrada; void eerro interno consultável. Descrição deparâmetro chama kernel_name apesar daassinaturakernel.",
+      "stoikus_application_or_proposal": "Proposta: seguirassinatura tipada everificarciclo devida, sem inventar argumento textual para liberação.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1024",
+      "title": "CLSetKernelArg",
+      "depth": 2,
+      "catalog_range": [
+        3221,
+        3221
+      ],
+      "read_pages": [
+        3221
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLSetKernelArg vincula valor escalar àposição arg_index iniciada em0; bool; errosparam/handle/kernelparameter.",
+      "stoikus_application_or_proposal": "Proposta: espelhar tipo/tamanho/ordem deassinaturaOpenCLC evalidar cadaretornopara evitar execução comargumentos incompletos.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1025",
+      "title": "CLSetKernelArgMem",
+      "depth": 2,
+      "catalog_range": [
+        3222,
+        3222
+      ],
+      "read_pages": [
+        3222
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLSetKernelArgMem vincula handle debufferOpenCL comoargumento deumkernel; posição inicia em0e retorno ébool.",
+      "stoikus_application_or_proposal": "Proposta: distinguir passagem dehandle memória doconteúdo escalar; guardar vínculo buffer/kernel atéexecução/leitura completas.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1026",
+      "title": "CLSetKernelArgMemLocal",
+      "depth": 2,
+      "catalog_range": [
+        3223,
+        3223
+      ],
+      "read_pages": [
+        3223
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLSetKernelArgMemLocal reserva argumento debufferlocal por local_mem_size embytes, não pornúmero deelementos; retorna bool.",
+      "stoikus_application_or_proposal": "Proposta: calcular bytes comtipo ecompararcapacidade localdogrupo/dispositivo; não confundirlocal comglobalbuffer.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1027",
+      "title": "CLBufferCreate",
+      "depth": 2,
+      "catalog_range": [
+        3224,
+        3224
+      ],
+      "read_pages": [
+        3224
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLBufferCreate(context,uintsize,flags) aloca bytes; flagsREAD_WRITE,WRITE_ONLY,READ_ONLY,ALLOC_HOST_PTR. Retorna handle/-1; erroscontexto,memória,buffercreate.",
+      "stoikus_application_or_proposal": "Proposta: dimensionar elementos×sizeof comverificação deoverflow/capacidade ealinharflags aouso dokernel; alocação não inicia dados válidos automaticamente.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1028",
+      "title": "CLBufferFree",
+      "depth": 2,
+      "catalog_range": [
+        3225,
+        3225
+      ],
+      "read_pages": [
+        3225
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLBufferFree(buffer) removebuffer, semretorno e_LastError emerrointerno.",
+      "stoikus_application_or_proposal": "Proposta: liberar cadabuffer adquirido emfalha parcial efluxonormal, antesdekernel/program/contexto conforme cicloexemplificado.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1029",
+      "title": "CLBufferWrite",
+      "depth": 2,
+      "catalog_range": [
+        3226,
+        3230
+      ],
+      "read_pages": [
+        3226,
+        3227,
+        3228,
+        3229,
+        3230
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLBufferWrite array: buffer_offset embytes,data_offset emelementos,data_count elementos; retornaquantidade,0erro. AS_SERIES afetaíndice1D; multidimensionaléachatado eoffset contaelementos totais. Overloadsmatrix/vector descritos comboolsucesso apesarassinaturaextraída uint; parâmetrosmat/vec têmcomentáriodereadindesejado. Exemplo M3000×K2000 porK×N3000compara laço,MatMul,OpenCLfloat; grade2D(M,N),3buffers evínculos.",
+      "stoikus_application_or_proposal": "Proposta: não misturar unidades deoffset; verificarquantidade esperadaou contrato sobrecarga. Tempos54750/4578/922ms ezero diferenças a1e-12 são comentários dafonte, não benchmarklocal nemgarantiaGPU. MediçãoOpenCL apresentada omite setup ewrite anteriores, portanto comparaçãofimafim exige outra instrumentação.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1030",
+      "title": "CLBufferRead",
+      "depth": 2,
+      "catalog_range": [
+        3231,
+        3234
+      ],
+      "read_pages": [
+        3231,
+        3232,
+        3233,
+        3234
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLBufferRead array devolvecontagem,0erro, offsetbufferbytes eoffsetarrayelementos. Matriz pode manterdimensionamento ou receber rows/cols juntos, -1mantém; vetor size-1mantém. AS_SERIES1Deachatamento multidimensional tambémimportam. ExemploPi integra1e9passos,40000tarefas×25000somas, vetor.Sum×step;99.98ms écomentárioda fonte. Equação gráfica dap3232não aparececompleta notexto.",
+      "stoikus_application_or_proposal": "Proposta: validar contagem/dimensões eprecisão contraCPU antesdeconsumir; não inferir fórmula visual daextração nem declararruntimePi. Assinaturasextraídasconst/size-1euintvsboolprecisam confirmação no compiladorcandidadonativo antesdeusar.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1031",
+      "title": "CLExecute",
+      "depth": 2,
+      "catalog_range": [
+        3235,
+        3236
+      ],
+      "read_pages": [
+        3235,
+        3236
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLExecute oferece kernelúnico,grade global comdimensão/offset/tamanho evariante comgrade local. Exemplo3D40×100×320=1280000tarefas; local10×10×10divide cadadimensão semresto. Retornabool.",
+      "stoikus_application_or_proposal": "Proposta: validar dimensões,divisibilidade,capacidade eguardasdekernel; true da chamada não substitui status/resultadovalidado.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1032",
+      "title": "CLExecutionStatus",
+      "depth": 2,
+      "catalog_range": [
+        3237,
+        3237
+      ],
+      "read_pages": [
+        3237
+      ],
+      "status": "SEMANTIC_FULL_EXTRACTED_TEXT",
+      "knowledge": "CLExecutionStatus(kernel) retorna0COMPLETE,1RUNNING,2SUBMITTED,3QUEUED e-1erro da consulta.",
+      "stoikus_application_or_proposal": "Proposta: distinguir submissão,execuçãoeconclusão; não tratar qualquervalornão-negativo como dadofinalpronto. Polling nãodeve bloquearMonitor.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    },
+    {
+      "id": "REF-1033",
+      "title": "Working with databases",
+      "depth": 1,
+      "catalog_range": [
+        3238,
+        3317
+      ],
+      "read_pages": [
+        3238
+      ],
+      "status": "PARTIAL_SECTION_EXACT_PAGES_ONLY",
+      "knowledge": "Somenteintroduçãop3238lida, restante3239–3317fora dorecorte. SQLite emarquivoúnico, usosincluemhistórico,resultadosteste/otimização,intercâmbio,configuração/estado. DatabaseReadBind lê campos emestrutura; MEMORY éprivadoàaplicação enãocompartilhado; inserções/alterações emdisco devemagrupartransaçõesBegin/Commit/Rollback. Lista inicial atéDatabaseBind.",
+      "stoikus_application_or_proposal": "Proposta futura dearquivopesquisa; não afirmaSQLiteprodutivoStoikus. A promessa deaceleração emcentenasvezes éda fonte, não medição. ContratosAPIespecíficos nãoforamestudados nestapágina eprecisamcontinuação.",
+      "examples": "NOT_RUN",
+      "visual_audit": false
+    }
+  ],
+  "limitations": [
+    "Read all extracted text, not a visual facsimile audit; missing graphic equation p3232 not inferred.",
+    "Right-edge code/comment truncation present in source extraction is retained; no native compilation or execution claimed.",
+    "All examples MQL5/OpenCL NOT_RUN.",
+    "Only introductory p3238 of database branch read; no claims for API details p3239 onward.",
+    "Existing batch10 record remains unchanged and covers2941–3042; union with10b is2941–3238.",
+    "No product/manual/harness/Git/instruction modifications."
+  ]
+}

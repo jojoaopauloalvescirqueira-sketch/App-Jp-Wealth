@@ -1,0 +1,2581 @@
+{
+  "book_id": "NN",
+  "source_title": "Neural Networks for Algorithmic Trading with MQL5.pdf",
+  "reader": "nn_final_research",
+  "assigned_pages": [
+    84,
+    227,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    431,
+    432,
+    433,
+    434,
+    435,
+    436,
+    437,
+    438,
+    439,
+    440,
+    441,
+    442,
+    443,
+    444,
+    445,
+    446,
+    447,
+    448,
+    449,
+    450,
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    457,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    475,
+    476,
+    477,
+    478,
+    479,
+    480,
+    481,
+    482,
+    483,
+    484,
+    485,
+    486,
+    487,
+    488,
+    489,
+    490,
+    491,
+    492,
+    493,
+    494,
+    495,
+    496,
+    497,
+    498,
+    499,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520,
+    521,
+    522,
+    523,
+    524,
+    525,
+    526,
+    527,
+    528,
+    529,
+    530,
+    531,
+    532,
+    533,
+    534,
+    535,
+    536,
+    537,
+    538,
+    539,
+    540,
+    541,
+    542,
+    543,
+    544,
+    545,
+    546,
+    547,
+    548,
+    549,
+    550,
+    551,
+    552,
+    553,
+    554,
+    555,
+    556,
+    557,
+    558,
+    559,
+    560,
+    561,
+    562,
+    563,
+    564,
+    565,
+    566,
+    567,
+    568,
+    569,
+    570,
+    571,
+    572,
+    573,
+    574,
+    575,
+    576,
+    577,
+    578,
+    579,
+    580,
+    581,
+    582,
+    583,
+    584,
+    585,
+    586,
+    587,
+    588,
+    589,
+    590,
+    591,
+    592,
+    593,
+    594,
+    595,
+    596,
+    597,
+    598,
+    599,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    607,
+    608,
+    609,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624,
+    625,
+    626,
+    627,
+    628,
+    629,
+    630,
+    631,
+    632,
+    633,
+    634,
+    635,
+    636,
+    637,
+    638,
+    639,
+    640,
+    641,
+    642,
+    643,
+    644,
+    645,
+    646,
+    647,
+    648,
+    649,
+    650
+  ],
+  "read_pages": [
+    84,
+    227,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    431,
+    432,
+    433,
+    434,
+    435,
+    436,
+    437,
+    438,
+    439,
+    440,
+    441,
+    442,
+    443,
+    444,
+    445,
+    446,
+    447,
+    448,
+    449,
+    450,
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    457,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    475,
+    476,
+    477,
+    478,
+    479,
+    480,
+    481,
+    482,
+    483,
+    484,
+    485,
+    486,
+    487,
+    488,
+    489,
+    490,
+    491,
+    492,
+    493,
+    494,
+    495,
+    496,
+    497,
+    498,
+    499,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520,
+    521,
+    522,
+    523,
+    524,
+    525,
+    526,
+    527,
+    528,
+    529,
+    530,
+    531,
+    532,
+    533,
+    534,
+    535,
+    536,
+    537,
+    538,
+    539,
+    540,
+    541,
+    542,
+    543,
+    544,
+    545,
+    546,
+    547,
+    548,
+    549,
+    550,
+    551,
+    552,
+    553,
+    554,
+    555,
+    556,
+    557,
+    558,
+    559,
+    560,
+    561,
+    562,
+    563,
+    564,
+    565,
+    566,
+    567,
+    568,
+    569,
+    570,
+    571,
+    572,
+    573,
+    574,
+    575,
+    576,
+    577,
+    578,
+    579,
+    580,
+    581,
+    582,
+    583,
+    584,
+    585,
+    586,
+    587,
+    588,
+    589,
+    590,
+    591,
+    592,
+    593,
+    594,
+    595,
+    596,
+    597,
+    598,
+    599,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    607,
+    608,
+    609,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624,
+    625,
+    626,
+    627,
+    628,
+    629,
+    630,
+    631,
+    632,
+    633,
+    634,
+    635,
+    636,
+    637,
+    638,
+    639,
+    640,
+    641,
+    642,
+    643,
+    644,
+    645,
+    646,
+    647,
+    648,
+    649,
+    650
+  ],
+  "distinct_read_count": 252,
+  "coverage_kind": "Full extracted text semantic reading, not extraction or indexing",
+  "source_corpus": "/private/tmp/stoikus-mql5-research-20261015/corpus-fast/NN/pages.jsonl",
+  "source_corpus_sha256": "d8c16636000017acf66bc5fc2cb68c6e0cd761056261e549715691e19c13164e",
+  "sections": [
+    {
+      "physical_pages": "84",
+      "section": "Fim2.4; introdução3",
+      "reader_evidence": "Limites declarados: trabalho prático, não tratado matemático abrangente de IA.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "227",
+      "section": "3.9 Creating training and testing samples",
+      "reader_evidence": "Sorteio de20% dos índices, exportação CSV e separação no momento da escrita.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "401",
+      "section": "Fim4.2; abertura5",
+      "reader_evidence": "Conclusão recorrente local e motivação de atenção.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "402–406",
+      "section": "5;5.1;5.1.1; início5.1.2",
+      "reader_evidence": "Encoder/decoder, QKV, softmax escalado, residual e normalização.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "407–415",
+      "section": "5.1.2 Building Self-Attention with MQL5 tools",
+      "reader_evidence": "Composição de cinco camadas, dimensões, alias de buffers e contexto OpenCL.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "416–422",
+      "section": "5.1.2.1 Self-Attention feed-forward method",
+      "reader_evidence": "Layout transposto, multiplicação QK, soma ponderada, duas residuais.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "423–430",
+      "section": "5.1.2.2 Self-Attention backpropagation methods",
+      "reader_evidence": "Jacobiano softmax, quatro caminhos de gradiente, derivada da normalização.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "431–434",
+      "section": "5.1.2.3 File operations",
+      "reader_evidence": "Ordem Save/Load, tipos e recomposição dos aliases.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "434–456",
+      "section": "5.1.3 Organizing parallel computing in the attention block",
+      "reader_evidence": "Seis kernels, reduções locais, fronteiras de barreira, ponte host/device.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "456–459",
+      "section": "5.1.4 Testing the attention mechanism",
+      "reader_evidence": "Substituição de arquitetura; convergência menor nas demonstrações.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "459–464",
+      "section": "5.2;5.2.1",
+      "reader_evidence": "Cabeças, concatenação e projeção W0.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "464–473",
+      "section": "5.2.2 Building Multi-Head Self-Attention in MQL5",
+      "reader_evidence": "Inicialização recomposta, `step` como heads, layout dos scores.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "474–478",
+      "section": "5.2.2.1",
+      "reader_evidence": "Passagem por cabeça, concatenação, W0, normalização e FFN.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "479–485",
+      "section": "5.2.2.2",
+      "reader_evidence": "Gradiente W0 calculado antes de reutilizar seu buffer.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "486–488",
+      "section": "5.2.2.3",
+      "reader_evidence": "Persistência herdada mais heads/W0; redimensionamento scores.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "488–499",
+      "section": "5.2.3",
+      "reader_evidence": "Kernels compartilhados passam a duas dimensões; reparar chamadas single-head.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "499–506",
+      "section": "5.2.4;5.2.4.1",
+      "reader_evidence": "Camada Keras customizada, build/call e serialização.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "507–511",
+      "section": "5.2.4.2",
+      "reader_evidence": "Quatro arquiteturas, fit/evaluate, treinamento e avaliação.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "511–516",
+      "section": "5.2.5",
+      "reader_evidence": "Comparação local de convergência e consumo por cabeça.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "516–518",
+      "section": "5.3;5.3.1",
+      "reader_evidence": "Motivação GPT, decoder, causalidade e cache.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "518–528",
+      "section": "5.3.2",
+      "reader_evidence": "Bloco multicamada, memória K/V, estado e posição circular.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "529–533",
+      "section": "5.3.2.1",
+      "reader_evidence": "Atualiza uma entrada, consulta memória e passa residual/FFN.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "534–542",
+      "section": "5.3.2.2",
+      "reader_evidence": "Backprop corrente; coleções percorridas inversamente.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "543–547",
+      "section": "5.3.2.3",
+      "reader_evidence": "Salvar posição e coleções, recompor formatos e aquecer histórico.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "547–559",
+      "section": "5.3.3",
+      "reader_evidence": "Kernels GPT por cabeça, score temporário e offsets concatenados.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "559–570",
+      "section": "5.3.4",
+      "reader_evidence": "Teste com cinco candles por entrada,40/60 estados, warm-up e ruído.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "570–575",
+      "section": "6;6.1;6.1.1",
+      "reader_evidence": "BN, escala/deslocamento e alternativa EMA.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "575–577",
+      "section": "6.1.2",
+      "reader_evidence": "γ/β no buffer de pesos e três estatísticas por elemento.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "578–580",
+      "section": "6.1.2.1",
+      "reader_evidence": "Normalização online por EMA, ativação opcional, bypass batch≤1.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "581–585",
+      "section": "6.1.2.2",
+      "reader_evidence": "Gradiente corrente e acumulação de γ/β.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "586–588",
+      "section": "6.1.2.3",
+      "reader_evidence": "Persistência das estatísticas e batch.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "588–598",
+      "section": "6.1.3",
+      "reader_evidence": "TYPE4, tratamento da cauda, kernels de forward/gradiente.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "598–600",
+      "section": "6.1.4",
+      "reader_evidence": "BN Keras distingue treinamento de inferência.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "601–608",
+      "section": "6.1.4.1",
+      "reader_evidence": "Dados normais/brutos, modelos de1/3 camadas, avaliação.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "608–623",
+      "section": "6.1.5",
+      "reader_evidence": "Experimentos de entrada/intermediárias e learning-rate10×.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "623–625",
+      "section": "6.2",
+      "reader_evidence": "Co-adaptação, máscara e compensação1/q.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "625–628",
+      "section": "6.2.1",
+      "reader_evidence": "TrainMode, clamp de probabilidade e ausência de pesos.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "629–630",
+      "section": "6.2.1.1",
+      "reader_evidence": "Máscara de cardinalidade fixa e aplicação por produto.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "631–632",
+      "section": "6.2.1.2",
+      "reader_evidence": "Reutilização da máscara no gradiente.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "633–634",
+      "section": "6.2.1.3",
+      "reader_evidence": "Salvar probabilidade e restaurar valores derivados.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "635–640",
+      "section": "6.2.2",
+      "reader_evidence": "MaskMult e cópia via ativação linear em inferência.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "641–646",
+      "section": "6.2.3",
+      "reader_evidence": "Dropout Keras, seed/noise_shape, quatro variantes e gráficos.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_pages": "646–650",
+      "section": "6.2.4, parcial por fronteira atribuída",
+      "reader_evidence": "Pior teste local apesar de menor divergência treino/validação.",
+      "status": "READ_TEXT_SEMANTICALLY"
+    }
+  ],
+  "pages": [
+    {
+      "physical_page": 84,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "870a4812d1188ac4ec82915ccaf90e23eebd6b022e5c3e748cc9d404a3cd9b0f",
+      "characters": 2261,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 227,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2a7bb0cb77ea2fd6694b4d816c87ed11a536beaf00dd4cbb524b14e22b8a9076",
+      "characters": 2987,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 401,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "1790eb87894914f3ff289af2fea97933ade204e122b8c84293e974ad13d882bc",
+      "characters": 4051,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 402,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f924ac7eb80f8a617368bcce5b75d66096a345c1ce34ad82b404c32836883364",
+      "characters": 1915,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 403,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c369cf77af3d0d3775a6f4b12318c45bde7b8e876a9198c6ae2f529c9dc90895",
+      "characters": 1758,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 404,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "69ec7ec6207357ac3a928fd66a91286d954b8ba66ebbbb3bc910a473015c43c5",
+      "characters": 793,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 405,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8e0a4e0115acba4d39becc5201fb0faeb0b9f5dc599446f4c89ac26759973e48",
+      "characters": 1443,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 406,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d989a7344f8d963fe7fcb8e11fa7fe71b6a8c9dc3f6d5b73a287b3e6eb94f922",
+      "characters": 2786,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 407,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a44d7d6f26f4d107b0066f04cb7c0e6d32a07cd5fd6ae38c8746a529dfd8bc13",
+      "characters": 3026,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 408,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5b84b5008ea959819f04cfc18f6dadfddb3280e235fe19cb4f6f849360b4566e",
+      "characters": 2481,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 409,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "bd70a85e2b54c15c4ab0406584bd2c4ce4cd715a46c93d84ae14b5bc27ff8662",
+      "characters": 3123,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 410,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "839c020b6cffe6a8307f114c1aeffb4e6523d0b4283b641a45369484c21180ba",
+      "characters": 3267,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 411,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "b6429caef31ddb9f21be93503b60e5d18e2bb197bbc90c6dd440b0aa68ec580b",
+      "characters": 2503,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 412,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "53e56d00be09ff500e480e5cacc398aaae0f4b6d2c86070fcf0ae1b308fceda4",
+      "characters": 2875,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 413,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7b2116a1f9b665e12f13529d1c8345a27704d3b658037f7ce68df2e2785ae06b",
+      "characters": 2905,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 414,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "eb1300504fe5deeebd542c53392dd262d3ee2f1f1e18a105f21d4c6f48290a57",
+      "characters": 2788,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 415,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7dcef99178e0a15e8b73d8f2524e69fb507f0142594bb10ffa25fa760e9c7618",
+      "characters": 232,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 416,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "6ff11861ec877b64bcefd5f250d999ef7450003f1ca2a791e6657a6c83a87050",
+      "characters": 3706,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 417,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f2a54f650b5cadd6fae2ab472c0aa09118a43ed2b9af0bbeeaf1f378a428cea0",
+      "characters": 3942,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 418,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ecc5cc88f5aa26f56b4b5c52820da69f0ea66646e10979f1c83bff89dfe25a9b",
+      "characters": 3041,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 419,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "fc4b70a7d70bfb73331740fc91e97078ab5d5ba0b8d0e5112433e6da8aa088ed",
+      "characters": 2942,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 420,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "57e6c1bcf33e59e5495d07085143259bf826279b8546bacff79617e7f4181c20",
+      "characters": 2079,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 421,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7b234b5e5a4c181633cb57f62e86407ef93362a233a2e85f5c1459e13f53307e",
+      "characters": 1779,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 422,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "147e0d3cfe4f2180368986a3ad5df6f9ec7833cb836cd66401bd8edd7a57374f",
+      "characters": 1054,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 423,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "99c342666339284cc325206d3c0b893ae3b471fa371de145a1d9287573f9583e",
+      "characters": 3563,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 424,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8ed5616275886d5465f0b0a28358573336ba4c0c10673ba601298786427aa626",
+      "characters": 1607,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 425,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2f95876998491bca773c155dd0e56067474c416eb77179d8045e87c517377ba8",
+      "characters": 3216,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 426,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7eaf36a7cc2d061b091d699a14c6900def4a92a650f0797b12bf4d5eeaa0a1c2",
+      "characters": 3278,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 427,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8d18d78e6718d865a42c570dfecb872a93b6ae8b4ecc1458e6b1a2c2a0bb3942",
+      "characters": 3037,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 428,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0aa8fb9c2f4756e288a8bd1e404378779ac49014e34d6b80214971745541725a",
+      "characters": 2704,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 429,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7683d7529d22cf68f293c3e86ac0a5a5215d0e4ca46444e72c7e837a19ab9aae",
+      "characters": 1920,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 430,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "21151316cf7154377c341bee221bf2d73318054f9257731b31aa462599634697",
+      "characters": 2172,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 431,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "beb3f422b28f107a5546123ae49b72d2fda4ccb3f4aa3d872f255729c24f6656",
+      "characters": 3102,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 432,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a53e8cd534201b9ebda0b2faac9bad7a6e028a5b02adf9f528bec39e37889657",
+      "characters": 2711,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 433,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e53c2b2c06c1efa6e3b36ab83469697dbe943394e5aae84764c0557475d6adae",
+      "characters": 3035,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 434,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "b84c350be2cb21a297880316d99c3bc5f3f2da9440e2b515ed4a38129447b1c6",
+      "characters": 2878,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 435,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e6189e33187311d5b90ddb960c88ece23b2c4f731420225fef47c676b09a55ff",
+      "characters": 2638,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 436,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e18bad08ba02173a6f2f86672463b5b81f824cd1248bbb7267a03b86ba7eabc0",
+      "characters": 3382,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 437,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a8941f6b7114155396a92abbf00e4d1ae9553a2477653d0dfb36d8dc6257c0e2",
+      "characters": 3707,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 438,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "48c8b7231a822f2aeda431d3e920e87e6cc0390321fc457c3753b85cbd06a527",
+      "characters": 2340,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 439,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ec1d1c88516f4fc4aef8c45556fe68cd846ecec3c7589a2a4b89412403e04e9f",
+      "characters": 2252,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 440,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "367a09c037abebe181dae5bc215c1fa247e99ded539925566f8911b8310c1a91",
+      "characters": 3013,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 441,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "42b1c9f7f2330792bbc0493e4ec92323abd790523df25db8f835b64237408c7b",
+      "characters": 3779,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 442,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c47bb8a485b1f9c98656d02eee803e0adb74538cdbdfd70992fb8c9965606c06",
+      "characters": 3940,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 443,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a843d228204e881d9d7ee7a16ba4ea76adb0dda7a8b36f5ac459e3223b40532e",
+      "characters": 3630,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 444,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a964a6e13d0512e8f7c75d4cef4ecdeb391dd4ba9d3a44ea9246500d7adf3e8d",
+      "characters": 3083,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 445,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "36a744fccabd938704e055a50d8e62dfa3a19d7b3ee2813e472138ae575804c8",
+      "characters": 3262,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 446,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8f971ac467725d3c41d3f33c7cb02d591cc2f558bd1619cd5833d8288cfc2c38",
+      "characters": 2442,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 447,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7db561b979ab7f6be791a4aab866bbadb792046be8d8d576778a1cbb82d2c7ac",
+      "characters": 2415,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 448,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c7e0c545670876bf8c4409491785fbf1025bd2a6c52717256239d32b551a5cd9",
+      "characters": 2516,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 449,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "eb5cff500709764c69e9f2ef2e972b545e2d044ebb189c2a481f272020d32d41",
+      "characters": 2251,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 450,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0ee2222e18e2e844e1010bfac6db54c89a1a6065a6d2347a6ba7e832673adcf6",
+      "characters": 1958,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 451,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "de31ff9564f2eb0134476f8e794662f1d926e1f426a01373abe2a7e9b32e9781",
+      "characters": 3024,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 452,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "96c6985f5f506a64792c1ba2110abdb5beb94540e66bc583acaebe8a6863c2e1",
+      "characters": 2796,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 453,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "3c84ae72baac125ffea7bb812265871535f38ca7cdef4e91a9a518928046a7a8",
+      "characters": 2993,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 454,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "9546107e04a71a8cb53e5c97e7bef5e4dfe2ab12eb9a26c3b7a3283b1d4dec99",
+      "characters": 2634,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 455,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "486b5794bcd9978fb1a6da720962c0e48af91daaa884bb41b3089b50e96de8b3",
+      "characters": 2781,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 456,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a710c5380b00b2113d75ec611da749bf9e001543364baa0069583cf60153aeff",
+      "characters": 3390,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 457,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "15ee535444f7b733bb4231b2b5206fcb13de214ee1dad0bd550da4f0f688286f",
+      "characters": 3160,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 458,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "54020ae40db6035d37c9308669779c9f0513e13ed2c54032ab17d531cac45ba4",
+      "characters": 1390,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 459,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7854c4cbd96f42cdc56fee7a8afbda6cd41232d3320c8cbebcd091ef37eeaac6",
+      "characters": 2131,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 460,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c6fa850c5c93cacbe8ab35c8f6489e2e991da3009f5fe0b76464c2ffc09aba27",
+      "characters": 733,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 461,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2488f28cade86f9de752c1541baf3fa280b4337f7c33b670abc2303cac3584c1",
+      "characters": 3175,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 462,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7bcdde95a3555a42557d803b39fd125544160f9bdb51e6a4b536ade546feb716",
+      "characters": 2899,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 463,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "43d56d52db61e07bd8b3a36f18a2b6c9e5db2043aef45d82487fc0e4cca7987a",
+      "characters": 2359,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 464,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "fdc185828b2d7cf37dcea4cafe33f5a47f48a710f13d013d5b502097374fe4f6",
+      "characters": 3255,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 465,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7e7c695a5f94bee0fb95d9009863d5b757ba47c23bd6a0dab5105077d2f7b2c4",
+      "characters": 2817,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 466,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "88d9df497ef243bcf16049569976b4c4361ff37f2e720f86ec30c207cc875bbc",
+      "characters": 3421,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 467,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c764b2fb6475218b78cdb7f174ab7e13ebe6efdc3fb3d7a520de3b2ddc716b5e",
+      "characters": 3077,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 468,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a7709e3769db29ff18c002f9b130e5b9e3e8615baf1b49606306e349de161889",
+      "characters": 2629,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 469,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "97b7744dafe69b2711ec2c40abb19d8744ddc7c7c6471d6a85d098f6a8fca056",
+      "characters": 2925,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 470,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "fe28c2b2f4ca96e84cfabce1bee854deb38ee3a62beb8e96505749bfc2777795",
+      "characters": 3496,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 471,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "54deebc0a583883709530dc52c480a9aa4e8d497d1802b94c51ebb52b4a350c4",
+      "characters": 3356,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 472,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ee490deaa4c43d91b657ee6b4283ed1da5f6f42ab2cd4d26dad6d549dda98ad7",
+      "characters": 3150,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 473,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "9a7a3b61e4f7d23e5d1418b897dc247c68432b06a5cb0b90f33fe28c5b9ee20c",
+      "characters": 1189,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 474,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "befb65c5a948d111e80be4f0c7f962f8886d48905f5eb8616b926d10e85dfa2c",
+      "characters": 3332,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 475,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "154554ced5fb6a26ad627bd27613f9003a9a7954565f53cca624aba3ed27098c",
+      "characters": 3074,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 476,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "63be3812a46f9caae82b6e8d8aafcd84c6299bf566d959228024777f28af0e9e",
+      "characters": 3096,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 477,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f1a694220f57fecc348a8612d35012cfc8052c10b1ac160281e8473b19f85794",
+      "characters": 2777,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 478,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "abbb5fbcd5ef3800713110e5c1fa8369a29fe72d6c6e44707512d06aeb0b2d17",
+      "characters": 832,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 479,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "22809a73578b8eef3445541b13239895a80c8c716abbd28ca74935615df29bb5",
+      "characters": 3629,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 480,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "1a46fce99b5266e074b6fb6ad624d856ad43ae92293df3615f40e5208516780d",
+      "characters": 3159,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 481,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d5c65ff26a670e5f734c1d0e3b573f22712d3fd7616b7aba0757578552788245",
+      "characters": 3182,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 482,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8b0ac2b589490e8f86e9e5c506f45f78c07bd6f1672c0bfb44d087e88deee5a4",
+      "characters": 3166,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 483,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0612987c531b58a1cbe1987607f48aa82d8f63c540090d89def65d5b9734d4f1",
+      "characters": 3738,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 484,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8bb9323cb6cf99a61c4b4d90810900e38239cd0ca91fb5d78cc1a7dbc432e0ea",
+      "characters": 2967,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 485,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f0939f5abada8b4c5785fd79d02b3c0806352f3e9eeac5f2f2c69b9f753c5020",
+      "characters": 2388,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 486,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0b64c27e6d68a15a3c5e867f365654da4b69ef1edbefb8384b8236664a2dc931",
+      "characters": 3409,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 487,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "9ffd6823a3b91fdff2e38bb322dbd835582b7fbc077fa995a711b3dd3ef3da70",
+      "characters": 2867,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 488,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "342dbb169c7b1fdf376dc83acea5e0cfe8962f21dd5b04ff4889581e1e2c5619",
+      "characters": 2878,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 489,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d9f5206edf10504f77569e2efe0404456a012ebf32c103580cc3a79db28764d5",
+      "characters": 3443,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 490,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "6774c3c0fb4f1ae4936b1c54cb2c651894dd1c66acf42da78e0c9ab95f187833",
+      "characters": 3303,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 491,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "134d8295d6c22ed47dd14e210f340129654c2438a4ab842d2070d7f991f0d20b",
+      "characters": 3297,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 492,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "008eee471f323b095d959366fb1d5e90dfd0fc187d4973907bec217bef94aecb",
+      "characters": 3439,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 493,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "481270b54eff264db8c6ed51dee4084f0b9f98938d8777babde894871c877a16",
+      "characters": 2572,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 494,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ce4711ca9d7137036a2e01fe08f978eac30feac59984b4bf84cf28937a235a61",
+      "characters": 3266,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 495,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7355e7b3987cdd3112ec1de48845f358984d4d82ba6a4085dd189b5b586ebd63",
+      "characters": 3074,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 496,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "6117d75d6a4b1e663ae65e2c18436a6b5f6a1d73e8a06bbfe65dc0f48c518e94",
+      "characters": 3192,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 497,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5f72a9fc15a6370441c6338d7cea13c2558abb73f7260d8b54ffb3d5e82506cb",
+      "characters": 2533,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 498,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "319a209cbb9ce98bed765c10fa8125c4a953fe1414df5e116a3b01bb69ec6fa4",
+      "characters": 3054,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 499,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c65d68458d58533156a2a99318b396a4654c5b43fca8541f6fd5788aefe4edec",
+      "characters": 2076,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 500,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "817e27ccdecfa0cdcc019d397d02b35a650591d50716b55735bc2085c28eb99f",
+      "characters": 1478,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 501,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "44bdf0d265fed4f74a551a26d7d0c936105b1de3b621dc42bb274174bcbb4ff9",
+      "characters": 1879,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 502,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "9163d6873b60e4438e4584573f31325aec6320a7c81790dc0c2bc4f2bb2d03ac",
+      "characters": 3451,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 503,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7b0219200eba55ab42ea3082242f474228f17fb2cebbe8c41412f5295cfa74bc",
+      "characters": 2909,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 504,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ccd73ff8ad08178ad986ced6ad94dc01f61e25533831a488021ba6fc982f7d79",
+      "characters": 2999,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 505,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "052f87d339eadb09c00412b9bc4b0d7b199924643f586f6f31f15f7b75463dae",
+      "characters": 3314,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 506,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a77cbaeed1570331dabda621177ca4cee2ef2aca21ef2135764e24d12fab62e1",
+      "characters": 411,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 507,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "00f74d03acb22e1b750114d599774e0720afb6a6b53fc52db1329f6a800a08bc",
+      "characters": 3485,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 508,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "819940e408e5e3caf34a7b6993262e664ec4c65c63af1de1f809ed3004756126",
+      "characters": 2384,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 509,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "484a49e8fc9e9b8d74b167d0f21add3d837e4f14508db374ea54ee734e2ca959",
+      "characters": 3284,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 510,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e1981af703087a93a34e5c9aed81c083125f2ac2ce16d11b6631adab46f8850b",
+      "characters": 2621,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 511,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "fab70745cf5b0609412229b81fc0332b311ff60f2c3b52cf016699740c7d96fb",
+      "characters": 2745,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 512,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "180ba5b0498e2c860656caa2758be13c1882daf2171469a2c493cd014efbd5e0",
+      "characters": 2480,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 513,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c97e6d6e66e75f558bfb71e322c040b70659dadd4e85a42973248568aa42a594",
+      "characters": 500,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 514,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "591f506a278ea1b10b4533630184ee247c7a9a2f5e94d944c6129ab8c794c09b",
+      "characters": 1800,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 515,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "b20ef133f2410c56f27ce49cd2be313241382a7a0575d8f50155e5b7dda5a871",
+      "characters": 273,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 516,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "924359fe2adb26bebc98a5b0f8cd1532976dc445cbdc5c07ab1f6480ac39e65a",
+      "characters": 2165,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 517,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7366b051951b1e151f13b74aec5db021c5be2929c993871c0c0e345710daa242",
+      "characters": 2699,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 518,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a79e94e4d065206415e118564b302837dba79bd87dc1a866ed289308fa4e8063",
+      "characters": 3520,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 519,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "808ee99b81715ca895dd527ca90602457eefa775c1b2c1d6f00aa6b61900ceb4",
+      "characters": 2944,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 520,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8a15ec01e2b041eda77b79c50707269e06f2efc5617d2939632629533009bad7",
+      "characters": 3370,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 521,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "481c0549782bbdbe7735a44b02f015a19805e0bd6bea77eb47b95fccce432dd6",
+      "characters": 3117,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 522,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "da484bdbb019250801d8f34c5d20797862ca63aa1081b11adc4e96ad25170727",
+      "characters": 2871,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 523,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "939f382592eee86d9175e81862a3bc10e9ce7d6560deb46e0cd42ae700e223d3",
+      "characters": 1696,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 524,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0a2571c2b008bda8b8a958e0c3070ee2d9ad97b213b22f7a127fdded34100780",
+      "characters": 2716,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 525,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "289e6a86b1d1ef4714b6a2964affab839204367cdffe0c454c06996d5f37b842",
+      "characters": 2160,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 526,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "1472e90e2cac2e9b08f79e2c817a65598d24d56aef025aee09b3b4d01147796d",
+      "characters": 1989,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 527,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "73890dcb2d460ed55724e23fb57176aafc375a8c87f93f6cf2afc893be2f537d",
+      "characters": 2066,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 528,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8d62713ed9606e6779d7b071a28947193682033c0e459c8306eae38accbe9049",
+      "characters": 2100,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 529,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "b8472243ec838d8952c6cae93baff7b19be9d898cc24b624f32339aaff9e6b51",
+      "characters": 3669,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 530,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "91ea0325841fb37f62c4e1410a097db6de15a9c800ca3bcfc5614c51b5b27551",
+      "characters": 2889,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 531,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "31c63df3db41c9f15977008e084da804a65548d79345df69b2f71c49c0266415",
+      "characters": 3304,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 532,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2a1c63f4097251477bbf63b5ed448e7d79ceb852814f6ca584bf0e61da51d343",
+      "characters": 2426,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 533,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "45d3bca70432bac9e3d5a6cee609cbd53ee611f6c9e19dc7a4bb9feeddffb97d",
+      "characters": 2328,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 534,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "94b630029e4f9774c55485fa4c6e8cddf41d7d361f83bf29c5f8e4137ac8f1fc",
+      "characters": 3005,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 535,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "12fcdb2dbd037b37e113cf26f02ae2f4a61f99b7abdf0a3992ec7fcc63c866c0",
+      "characters": 2842,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 536,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "3c45513728f0302867b05149cab955e9b3913c030a9484852bdb6d2994e0e466",
+      "characters": 3039,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 537,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2bf65f5df243fbed9ba93be327a7cb2a4c1dca1634c112f321bb9b304b69755b",
+      "characters": 3780,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 538,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "802ede13f6e0173f8e56f5e6b1cf4015bb04ce9b7db80a94d694f94ba8dbb70e",
+      "characters": 3277,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 539,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "129af2718fbd061a3d2d3719751a22454517a818f84ecc9f6b02da4bc91ceba1",
+      "characters": 3369,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 540,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "b27a7d0df99fe76b6672e71afd109a2bd5be60726d5a43db9c702e1e1ef1afe3",
+      "characters": 3247,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 541,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f35bfbf3b4e92c6fc25baa66ca6cc3fe68a37832af6ca5ed9d8c2ba78984d0bc",
+      "characters": 3188,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 542,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ffefd25fba44e6682637b2153da6fce79afa28f82bc6fc2de070aea6ed369f8a",
+      "characters": 832,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 543,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "df9abc691d4b07a1b235410dfd0b4a6ab33ef9e553d38e972571e924e0590182",
+      "characters": 2943,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 544,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c6490109dfb084863cba0b71105403124a8ded3cae90e92a3783c9e930363056",
+      "characters": 3068,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 545,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7564e074d092a4085025e4f13b33d309e0e3e7dfad5afe5473146183149de6d2",
+      "characters": 2674,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 546,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c54650b55241ee57a296c8b8b978555bd5b8ee96ab13ed770e0e7152de475cda",
+      "characters": 2662,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 547,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "09a4fa8759efceab9a8c1c6e8c382a042e4a88cb8e76702a1b5990034999b263",
+      "characters": 2481,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 548,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e89cadceb6fdc839efb562b712a879700c3b78e1633c0bd0c24177ab8d731f7c",
+      "characters": 3791,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 549,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "bc13f73d653959bcd762ac3bc5d701bed22b3a00ca041a3d201e73b60e8e1c65",
+      "characters": 3516,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 550,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d933fa1d0ec4fe99fa720d50f518ffa5541ad027b56bf0378f6712137268e9cf",
+      "characters": 3111,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 551,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "39299fc3332724c0f8b27dff62683c7f00455965be2cf9b68bd1b88b1ea20739",
+      "characters": 3490,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 552,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c63de68bf64f1508c831cf868e5b35a66f881e9130aeec01de597c0fa9164cc8",
+      "characters": 2784,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 553,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8f12cc2e47dfe39a4b4694a63424fe738c83e97468f86860b99f9f3f522104b7",
+      "characters": 2652,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 554,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8dde70549eda7a9048b48de37ac05ea4bf85464f122650020e87de360b151e12",
+      "characters": 2155,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 555,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "86ce728574bac92b4e235a55fa132db15d19f7dee7e276ad7a9dd675f80ea6cb",
+      "characters": 2315,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 556,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "50f36014496a976980aa551aa9a1125a9f6807e286fc99323c43c28bd0ac74e3",
+      "characters": 2754,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 557,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "44351b58d42afb7655f553cf73f8390deca9d03882d2369c087f2f2a210b9708",
+      "characters": 3018,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 558,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c6f0b3d1893ce9e3486114add7447d7cfa923363bfc72162404e48fef13982ea",
+      "characters": 3032,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 559,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "3184aac20344eb00f90a5ccd21db3b96f2b2d3658ff2e50d50aabe492a545b32",
+      "characters": 3311,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 560,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "835e6ab818654e8f5e2a20dce44893a77d9727f290359f55d2846ee74512ce21",
+      "characters": 2953,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 561,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8eaa9d9cb965afa880439e521f290ef5fee4eb54414f7a46450270bf280eeead",
+      "characters": 3159,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 562,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "3a6d24961bd95de17a64f7e19d53457dbaa68e7814d6f534da2110e3f113fa20",
+      "characters": 2623,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 563,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e4cb82bcd1bd7d8421b90708b72ae0ced306549a46a84ecbf7dfe107cea5ef40",
+      "characters": 2770,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 564,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "672f9d38b0e45ca6faed2fd7c8e2bb5c22cf835658015ccb3c18a672537f67da",
+      "characters": 2557,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 565,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2b0c3bab5eab78a09167ba3571be121c270d37d98de07f3672960215bad2929d",
+      "characters": 2276,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 566,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0a1bdee2bdc78d4f9d9c4ad3e6fe9fa72e9b649d07c156d8b61286d76691de06",
+      "characters": 548,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 567,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ee23dc49897e825cc28adfc4fb61779f8480c6d8f4b7dd4244f1c3cf76b097ee",
+      "characters": 1006,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 568,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e2bde195428d7a7ec5fcb2c06f74edb205d6ed3cde8ae2a824a24a4380dcf725",
+      "characters": 565,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 569,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "af885554b1033dfcddce6504422f81f6293343a46f0085821539495fd90190ce",
+      "characters": 1236,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 570,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5738bd26c9cdb3a88b2f5ce02981c20f54aafbc14611b55f1281d41bd0d64676",
+      "characters": 2339,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 571,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2a048b7f5665c508c8acea1156e9ef6fee8122d5266f004818abae59c99966b9",
+      "characters": 3094,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 572,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "08231690b4224f3a4dcc3825480fc9598c3d45a96a149cff763ce3787d648752",
+      "characters": 1787,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 573,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f9684bf0fdec3c441ad234c47a08089129248f89406182f9b1f4f518e1d45fe7",
+      "characters": 1910,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 574,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0d23e5a621f581ac2e824520765ab9bed6acff07fc0a95b7c19e97133160ac81",
+      "characters": 1296,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 575,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "67ff84f185445f90c999e89fdf1bde6d692e4bb1a7aa218f05212ef3b49abdeb",
+      "characters": 2766,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 576,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0d2cadf46cf55a0499811cfdad76891dd6d0ee9ccd89c65512487815e52e09cf",
+      "characters": 2793,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 577,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7f981409148490da7a5384c7b803121c339e3a7d87028b0a04d53ec065302c6e",
+      "characters": 2418,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 578,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "68c2ba1de185c20805a67702b07005c65e24bd5247314ceb804ff93b2588527f",
+      "characters": 3976,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 579,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8998a2760d8c1f89da794452f4861f39f95167435c6ae9c3e36716aa15f5b844",
+      "characters": 2448,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 580,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d1a309ab964ae974edf2c3a0c475c0ff9a93a58f66884781d707dd64628225eb",
+      "characters": 1882,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 581,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7350e9cfd8f012ae6d3b939d157873522325170da43e2673be02b2b2d61291f7",
+      "characters": 3445,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 582,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "fa996b2f828b96ba4a5ab262005a502851f34469b8af05bbe2302b0c9f8f28fc",
+      "characters": 2393,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 583,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5d08d92405aaf1187195983ed98e9b0528a52113925a570e93ab37034ab190d8",
+      "characters": 2179,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 584,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "4b1a5b10af04e688c42960d98eb6652d0ae04dbfd946a0aebfd7f052bd74d51a",
+      "characters": 2908,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 585,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e02c18c27e4c17f9901c51d6309f2c2fc33ff9021d2465c2626f2a58eab13db9",
+      "characters": 2399,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 586,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "98773407ff013ddbba2079555481a85df641c65b2510e3db0ba42e9a0a97f613",
+      "characters": 3276,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 587,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "1c82a2806f4b814af7723f27bfad0cf8cbca31e263b044902dc428b539021320",
+      "characters": 3572,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 588,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f1efbc7498ba94c6b90973b3f53a89cfca4c806275b63f02f983d472ba4e9fda",
+      "characters": 2786,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 589,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "bb52731fd781e01e86c6f6713ace06c01776b470439a191beab74aae90222ad1",
+      "characters": 3340,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 590,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e5818f2b8f7d0cf8964279e9a61c41163e70a0720cb64f2adddf3f66a146a795",
+      "characters": 3026,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 591,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "7fc0a267b7d9d5b288104a55b441d06ab9b40a48892786a9c62686f6b0844c64",
+      "characters": 2201,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 592,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d02d35b9789963c5014390705cafd63b25b92bec7723a2f4f16b8b49d9727b7e",
+      "characters": 2554,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 593,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "573e72dcdce3af3cfdf6f860dae5ce03cf352a1fbfc275eab15d9dd8692f3f1f",
+      "characters": 2519,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 594,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0db9444e499284558131cb507b82661c83126fcf486e4f2ab2feb313ab736080",
+      "characters": 2222,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 595,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "db57a2b8619a1c236dbb5dcf378af0c796dc0ce13d110b1a01bb92d62dc21d82",
+      "characters": 3067,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 596,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a73a87b295ca40e83410274493b82cf4c6877644562b2be46c100d382d170999",
+      "characters": 2714,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 597,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "8135fb485ac344fd2b434b175f1d564206aea8491c570611c7d59426221a1156",
+      "characters": 2395,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 598,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ed03335063f850a9e90f869dc1a1e19be28585f4edf1da52e55226821bdf6759",
+      "characters": 2559,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 599,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ed243b621348f39005179968282bd4487f4a58c742196d2c9170f83161afcf36",
+      "characters": 3030,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 600,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "12a79fdd53ef4ce6300a8ad476cfb37a0915b474c8f6b7ac411ac09087206e61",
+      "characters": 448,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 601,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "426cc2ac127b13a69fca007d497c25eb98c09db176544f8d6d72ea25d6e507b7",
+      "characters": 3132,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 602,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "4d4fca00fc620e7626f561ad091319e5715bf7fcbb0210e9b6f4be2c33813569",
+      "characters": 2878,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 603,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "bda47296bba602433ad94a72b2a8ff26ca8219679b8dbe423db0accc23f5654d",
+      "characters": 2983,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 604,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a10725fe71ce56cd08d6737664ddf28514ce76e8895e7fd2b0e942cfbab089ab",
+      "characters": 2903,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 605,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "38a7baef3827722c3c9fa24edc349393404d6602f692cb32026094463c37597f",
+      "characters": 3102,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 606,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "ef239f39a234779a34317e190f15b069f49a9d483c3255b0b1768f5f7c617600",
+      "characters": 3040,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 607,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "907482371f87fddbc124c3631faa769fb5be5f0638ec9c6fb0576c4f3038d192",
+      "characters": 2473,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 608,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c94cdfb2c63ce847abc5d28ede5aea04ddf312788f117fc94e680df85e1c8c69",
+      "characters": 2562,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 609,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c4eed564193c55c50452c46f73b347c14e4f550d901a1b8601ee9eabf02bc78c",
+      "characters": 2834,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 610,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "46d7d133d5161fd7d51c94e08e8f5b363b5524f59ce8ee3f9e88e3a963224a7a",
+      "characters": 2870,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 611,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "673f740515683144390c6eb1b907d6790aedaf6f794a0b475a54fd134c23d51d",
+      "characters": 2838,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 612,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "13a7e0f0131e5340937bd0be7cbb033c96b3b686c1a00deb638d27493c3b8d5a",
+      "characters": 2207,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 613,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "57dc93b5ecf664454888ad0bb8e67a15d0f9505c548381213a4ebc99a8eafeee",
+      "characters": 921,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 614,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "bb5d3e36303fe48b3984e31e3e1f8ca7586b5f6c990223e4ffcd7d4194b35e5b",
+      "characters": 433,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 615,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "c0f9e80bd27370f9a14a63f92dd6ef458acb7c68d25240a5e88036bdd4826c7d",
+      "characters": 321,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 616,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "4c0d9bd118ee201e359aee5a72f73b1f775fd1e1d7f78a9caea29f73023f3fbf",
+      "characters": 1686,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 617,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2f3cc3cacef286d60eb71c99e29ed79b0ec8e406464554cfaf643c3c857cf14b",
+      "characters": 1716,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 618,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5f9029508d2cb3c775079e4d98c138fb0fb44adfe7b7ef40d6e0d45e4e162bdc",
+      "characters": 616,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 619,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "989d32958cc51d8567a7ec8ff90322644bf4a56d413b55234554ba0afd9d8c2d",
+      "characters": 968,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 620,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a7cdc42509575044f8ad00b794404795475204a5575a1df4debaa7f570503b63",
+      "characters": 334,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 621,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "39aaca30bff672b37b6254a87262593eb9f19c95e062777319d2d9a90eef7db4",
+      "characters": 739,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 622,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "9c14436d0ae67aa751ad2550acae1f87335ef2771ad5c0405d356412fe1efa53",
+      "characters": 664,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 623,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "fc209ac2c643147fcaa33b9265d9154a9e6276de4c363a540fd8c62700b32107",
+      "characters": 2066,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 624,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "4678175cc5cdf60bfca758c9f345e3f1c35bd39171f59a5d335c8635b39391ee",
+      "characters": 2645,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 625,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "926254c343374234c1ea61083b774afeb0db078004f91b6a6ff2223a237fd675",
+      "characters": 3012,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 626,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "15483a37c68d6f751c75c6f2ada4408affc8309b2c8606b118186040629008bc",
+      "characters": 3347,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 627,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5b402c6789b6828aa3dbd21d25a5f4862bbf90bdb3ca5db396667ab6c06dbb35",
+      "characters": 2615,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 628,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "9492db4b14515006f3501bb1b159e6ca69569798dd889c8b2ab8da295bf722f7",
+      "characters": 358,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 629,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "41af99ae645ec5e351c0340104b3f20704b92f4bfae7034791dbde7b8c77c5b3",
+      "characters": 2905,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 630,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "629be31dbafbeeb5a0b66b1e7362e16c983d0f0625f2abbda6b2498057993fcf",
+      "characters": 2276,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 631,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "973c6bfa9315a2d0d80d8bc2ef761c1963d48d9fdac0276651deaaa1c1fdfbbb",
+      "characters": 3586,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 632,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "50d86a86d5bcfaf3862daaf9e1c880160190b8fc4d4d2c832f095888037366ce",
+      "characters": 2048,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 633,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "250b6ff696b5e6bbc622d207856836830e7584412fc6a4d28e3ab8090a699033",
+      "characters": 3308,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 634,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "88f97b1a01aafd0d0d0274ab4b236f6e2da729a368be70abcc4a450e5148f02e",
+      "characters": 2667,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 635,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "df8df78321a87bc7bc5ab19d25b24f1cd7dbb0ef9f2af14b043edd001d8b49ab",
+      "characters": 3345,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 636,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "f44aea46bf1b93dc2a41e5489ff3e25b023acd650819f64b8949c2e9d9cb2b16",
+      "characters": 2292,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 637,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "0c4222abe55732bd06a8f768ec54d89f01c48b3459aa74697bca39649d2bd454",
+      "characters": 2983,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 638,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "556912346d45fc0995a42affff48f9c3eff9928127f9a0c6d38e7ac6cf2bc56b",
+      "characters": 2606,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 639,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "6a44fe7f113af1331baeba654f53dcb3e6c98669c7f0e811ca22ac296f5ad4b0",
+      "characters": 2353,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 640,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "142cc4075ceb41d0e41737d358313046f48c10a813a1b94e5d3f45c6bdd40f82",
+      "characters": 2429,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 641,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "07b6d6d994abf119f5e23d7aa70f4e4f0c63c1756707d59f082ad3272819f50c",
+      "characters": 3255,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 642,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d65afd848ce4e8708c4f235e1287e78ed7d74dc575d91782041ce4cca49445b5",
+      "characters": 3172,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 643,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "d62d562d89b1ea8123e0c3874c1eb2759d13f27beb6acc9feed55c04db6fa595",
+      "characters": 2797,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 644,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "46980215eee6a6b232086e5a7e6999f206a0aa37f6fd7a182862e9ffe835e0f8",
+      "characters": 3227,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 645,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "155e584b59a0b7ae22e79eb2241ad62697536390d657a2a1bcc1d1a05a8af748",
+      "characters": 3093,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 646,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a7ca8573a930e5b595018d66bce98b89f8c586e2fb008202f932412fc833b57a",
+      "characters": 2745,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 647,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "5546ed7d5a1ea78663d253671a88223fd5ef5711a3af3b2cb7758499b920c91c",
+      "characters": 595,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 648,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "a0ce208eeda5e8f504aea645537c6cfaa01c5ce3ce110eec05b3ce70234084b9",
+      "characters": 429,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 649,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "e6c42ff1f0e18091152899eb7cff36ae000197482e73bf32e525630f159aca0c",
+      "characters": 1805,
+      "status": "READ_TEXT_SEMANTICALLY"
+    },
+    {
+      "physical_page": 650,
+      "printed_page": "same number visible in extracted footer; not visually audited",
+      "text_sha256": "2a436dbe9577f881d70de25f24c3cb4997a1e26c935f0a613a23feb9f3fe3242",
+      "characters": 307,
+      "status": "READ_TEXT_SEMANTICALLY"
+    }
+  ],
+  "truncation_repair_rereads": [
+    [
+      407,
+      417
+    ],
+    [
+      433,
+      434
+    ],
+    [
+      493,
+      493
+    ]
+  ],
+  "pending_assigned_read_pages": [],
+  "limitations": [
+    "No PDF visual verification of charts or image formulas",
+    "Some code lines already clipped in extracted corpus, e.g. page429",
+    "No source-code appendix inspection",
+    "Section6.2.4 continues after650; not claimed fully read",
+    "Current product context derives from BRIEF, no fresh code audit",
+    "Pilot answers not consulted"
+  ],
+  "experiments_status": "NOT_RUN",
+  "remaining_experiments": [
+    "temporal split",
+    "CPU attention oracle",
+    "finite differences",
+    "OpenCL parity and memory",
+    "serialization round-trip",
+    "GPT cache/reset/warm-up and gradients",
+    "online versus minibatch BN",
+    "Dropout distribution/bounds/modes",
+    "predictive comparison",
+    "economic evaluation",
+    "native MT5 compile/runtime"
+  ],
+  "review_file": "nn-final-review.md"
+}

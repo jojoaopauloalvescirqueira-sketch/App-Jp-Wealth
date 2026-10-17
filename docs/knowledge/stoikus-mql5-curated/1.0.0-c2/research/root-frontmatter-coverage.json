@@ -1,0 +1,14 @@
+{
+  "book": "NN",
+  "reader": "root",
+  "full_text_page_ranges": [
+    [
+      1,
+      5
+    ]
+  ],
+  "method": "PDF1,4,5 full text; PDF2,3 contents reread removing only repeated dot leaders and whitespace after first output truncation",
+  "classification": "front matter and table of contents; not evidence of child body reading",
+  "body_read_claim": false,
+  "source_edits": false
+}

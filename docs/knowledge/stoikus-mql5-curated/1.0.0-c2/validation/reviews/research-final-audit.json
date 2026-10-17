@@ -1,0 +1,106 @@
+{
+  "schema": "stoikus-research-independent-audit/1",
+  "date_utc": "2026-10-15T17:22:29.115976+00:00",
+  "reviewer": "/root/research_final_critic",
+  "verdict": "PASS_DOCUMENTARY_TRACEABILITY_AND_TARGETED_TEXT_SAMPLE",
+  "full_independent_source_reread": false,
+  "source_original_pdf_rehash_by_this_reviewer": false,
+  "original_pdf_hash_provenance": "provided source-manifest; independent recomputation here concerns extracted text and evidence files",
+  "scope": [
+    "global extraction identity and inventory",
+    "global catalog and page-union consistency",
+    "reader-ledger evidence hashes",
+    "targeted source-body versus notes and manual claims",
+    "delivery guidance and separation of evidence scopes"
+  ],
+  "snapshot_sha256": {
+    "research/source-manifest.json": "49d661e249a42ea3c4767fe357227e69840fb1e62c003f045bc191fe9eb599a3",
+    "research/coverage-summary.json": "d2fdc07b96002927db77ab7356f25d3e11e9a76aef89ac37a2abd4dede4bf142",
+    "research/coverage-matrix.jsonl": "d2081d1f2a4f2c7b0daa5e131ec3b650f9b98a71b43b0ad065d39e4a51a5b906",
+    "research/section-catalog.jsonl": "37730f6cbc1f152c6074e2e813fb691dad24234e1a64efb8179e127e67c80099",
+    "research/page-inventory.jsonl.gz": "83c7c4c0fc12c8e4febcf0558ed656178cfe89668456ff7015e5add12e23c4ae",
+    "research/LEIA_ME.md": "c01543c75efa0a615a84501ad23177452f0c2641d14c93cac15dc257428cf43a",
+    "research/critical-synthesis.md": "2873f7008009b432aa128f90f6b953664ffd8f45127614fc86b55ad11a140186",
+    "MANUAL.md": "49812f58f6d563a05c50ff4f35fe70548a26d70a0a5db7063b1d4f5f9c24571f",
+    "COMECE_AQUI.md": "4212be2e2ee9d916c71933f4745f181bc8ff26b12f38c9038255cbdd16365092",
+    "validation/source-visual-review.json": "9fab3d71924ce7849005f2b5efb4d3b48e80304048df32f8a2721820f313e5b8"
+  },
+  "checks": {
+    "unique_extracted_pages": 10021,
+    "extracted_text_hash_recomputations": 10021,
+    "extracted_text_hash_failures": 0,
+    "inventory_unique_pages": 10021,
+    "inventory_identity_and_read_flags_all_match": true,
+    "catalog_entries": 4821,
+    "catalog_unique_ids": 4821,
+    "matrix_entries": 4821,
+    "matrix_union_mismatches": 0,
+    "summary_evidence_entries": 40,
+    "summary_evidence_hash_failures": 0,
+    "recognized_ledger_page_hash_comparisons": 7177,
+    "recognized_ledger_page_hash_failures": 0,
+    "declared_read_union": {
+      "REF": 7284,
+      "TRD": 2047,
+      "NN": 690
+    },
+    "pending_page_ranges": {
+      "REF": [],
+      "TRD": [],
+      "NN": []
+    }
+  },
+  "full_text_page_sample": {
+    "REF": [
+      1042,
+      1770,
+      2082,
+      2639,
+      6181,
+      6659,
+      6824,
+      7217
+    ],
+    "TRD": [
+      286,
+      1450,
+      1511
+    ],
+    "NN": [
+      42,
+      93,
+      547,
+      676,
+      688,
+      689
+    ]
+  },
+  "sample_count": 17,
+  "findings": [],
+  "nonblocking_observations": [
+    {
+      "id": "R-P3-01",
+      "priority": 3,
+      "issue": "Matrix semantic_notes is a generic route to reader records; note lookup still requires title/section/range matching for some TRD/NN entries.",
+      "evidence": "383 catalog IDs absent literally from combined research Markdown; their numerical headings and JSON records can still locate notes. Absence of literal ID is not absence of reading.",
+      "recommendation": "Optional future addition of note_file/note_heading pointers per catalog entry, preserving historical ledgers."
+    }
+  ],
+  "prior_P1_disposition": "Documentary coverage gap no longer observed: final union complete and targeted semantic evidence substantive. This is not certification of every source interpretation.",
+  "not_repeated": [
+    "full 10021-page semantic reread",
+    "all source-page visual audit",
+    "56-page publication visual audit",
+    "36-output R3 pilot judgment",
+    "native MetaEditor/MT5/EX5 execution",
+    "financial acceptance",
+    "native Word reopen"
+  ],
+  "limits": [
+    "17 source-text pages fully displayed and inspected; source figures not independently inspected here.",
+    "Ledger statements of reading are audited as declarations, not proof of private cognitive process.",
+    "7,177 ledger hash comparisons use recognized field formats; remaining ledger schemas were not all normalized.",
+    "Manual assessed through framing, targeted citations and prior review boundaries, not a fresh complete substantive review.",
+    "Original PDF hashes taken from supplied manifest; originals not mutated."
+  ]
+}

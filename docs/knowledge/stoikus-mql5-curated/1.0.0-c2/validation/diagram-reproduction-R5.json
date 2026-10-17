@@ -1,0 +1,38 @@
+[
+  {
+    "source": "01-arquitetura.md",
+    "source_edge_count": 7,
+    "rendered_edge_count": 7,
+    "labels": {
+      "T": "Terminal e histórico",
+      "A": "Adaptadores de leitura",
+      "O": "Observações com identidade e qualidade",
+      "D": "Interpretação segundo contratos vigentes",
+      "P": "Publicação identificada",
+      "C": "Conta e detalhes",
+      "G": "Interação em NoCuda",
+      "E": "Estudos e rascunhos"
+    },
+    "failure": null
+  },
+  {
+    "source": "03-eventos.md",
+    "source_edge_count": 9,
+    "rendered_edge_count": 8,
+    "labels": {},
+    "failure": "old parser drops initial marker, transition labels and decision nodes/branches"
+  },
+  {
+    "source": "05-persistencia.md",
+    "source_edge_count": 5,
+    "rendered_edge_count": 3,
+    "labels": {
+      "A": "Preparar geração nova",
+      "B": "Gravar dados",
+      "C": "Conferir conjunto e identidade",
+      "E": "Anunciar geração utilizável",
+      "F": "Preservar anterior e motivo"
+    },
+    "failure": "old parser drops initial marker, transition labels and decision nodes/branches"
+  }
+]

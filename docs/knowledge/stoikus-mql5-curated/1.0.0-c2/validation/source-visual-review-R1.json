@@ -1,0 +1,316 @@
+{
+  "schema": "stoikus-source-visual/1",
+  "date": "2026-10-15",
+  "pages": [
+    {
+      "book": "NN",
+      "physical_page": 145,
+      "printed_page": 145,
+      "render_file": "NN-145.png",
+      "render_sha256": "a5deed74e438c1597399b359df4ffa63fc7edbe3beca8befa55baf56f69190a2",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 147,
+      "printed_page": 147,
+      "render_file": "NN-147.png",
+      "render_sha256": "6cd44e5728b6ad3a8c1ca902305d28f2f638adfd3f285014c379acfb522a54d1",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 160,
+      "printed_page": 160,
+      "render_file": "NN-160.png",
+      "render_sha256": "e9b5bfb18e135b69edd3c37cc14130c9cea3d6676c74593f7bd88fec07e0b6fc",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 185,
+      "printed_page": 185,
+      "render_file": "NN-185.png",
+      "render_sha256": "7327caddc472489bc0a476cbb5cd5142f2481eed50aff0d333c3540c56b7e505",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 225,
+      "printed_page": 225,
+      "render_file": "NN-225.png",
+      "render_sha256": "78f29e38cd0861e6dec92f717ada07d6e88f3dc04942a4a55bbf1732068beb1d",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 226,
+      "printed_page": 226,
+      "render_file": "NN-226.png",
+      "render_sha256": "39fb8b3b3e9326f24a346d0a645ae8136486c5fc8c690b03839e765929d9cb76",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 230,
+      "printed_page": 230,
+      "render_file": "NN-230.png",
+      "render_sha256": "3ca3f1311f164c4e62c4ecb36823b69ed82cc32d414b707c0d10bd3eeaf7682d",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 265,
+      "printed_page": 265,
+      "render_file": "NN-265.png",
+      "render_sha256": "33a1862eadbe7767a32ef76318b6513885a8c5101b517caef0f9261be8b27e72",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 28,
+      "printed_page": 28,
+      "render_file": "NN-28.png",
+      "render_sha256": "2a49cd59f34c315b616a54b4248d0a4c73db95f40b0ad367376fc1282bf08cf7",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 33,
+      "printed_page": 33,
+      "render_file": "NN-33.png",
+      "render_sha256": "0a5e913bd85afc35d96457978c5316c3c18ce5d678e65c92ea82e209f0b36884",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 335,
+      "printed_page": 335,
+      "render_file": "NN-335.png",
+      "render_sha256": "402b996e5ba9bad7535dd4e4243bd0ff743c9deb0a516905be9ab1195b8eefeb",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 46,
+      "printed_page": 46,
+      "render_file": "NN-46.png",
+      "render_sha256": "9fd4414ffe82fbd4544fec9a11934202deef93cce8f5db23f5b3c61b28b3d96c",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 47,
+      "printed_page": 47,
+      "render_file": "NN-47.png",
+      "render_sha256": "c75cae7292c8e4afec60d90a19cbb5da18b4f53c3a8586e05019041086f1c5da",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 675,
+      "printed_page": 675,
+      "render_file": "NN-675.png",
+      "render_sha256": "d969723b43d80c531f5a8e5dd40a6432897379b893361eb012658485ee7bc35e",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 676,
+      "printed_page": 676,
+      "render_file": "NN-676.png",
+      "render_sha256": "7080533de3e51b0e1364cc98b7605498dd97829d1d4df7b42b8d18081b3c6619",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 688,
+      "printed_page": 688,
+      "render_file": "NN-688.png",
+      "render_sha256": "62e0f52668dba24fe9ca1ef5a4e0eea4e116736c403444c8e2af7deeb92df071",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 689,
+      "printed_page": 689,
+      "render_file": "NN-689.png",
+      "render_sha256": "af2f862bb2362920fa5f06ba9b9266a0f16c729160fbec521b003f7b3f4fa511",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 91,
+      "printed_page": 91,
+      "render_file": "NN-91.png",
+      "render_sha256": "ee1e550d2ff2361658c5df5e524a15e33b5fa86e637bd31d36252c881afbe0fa",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 93,
+      "printed_page": 93,
+      "render_file": "NN-93.png",
+      "render_sha256": "1d1ab411ff890fe6c219d99625b7d674a655ae678cf5d8012a78518ddeaa91c7",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "NN",
+      "physical_page": 95,
+      "printed_page": 95,
+      "render_file": "NN-95.png",
+      "render_sha256": "8135b3f30f8c2f7663da8250d497752eb0278be292f4e47ab7f248d67f9e087f",
+      "reviewer": "root",
+      "view": "INDIVIDUAL_PAGE",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "REF",
+      "physical_page": 1154,
+      "printed_page": 1154,
+      "render_file": "REF-1154.png",
+      "render_sha256": "5a6b3b09a4bd94f7a7a6d11e7800e0af7d46fbeb4a9a59863ed1b7f0cf2888b8",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "REF",
+      "physical_page": 1892,
+      "printed_page": 1892,
+      "render_file": "REF-1892.png",
+      "render_sha256": "15734f5b9feaf9ff406ab7ad388ccdeaba29cc3717a391a658cdb0ef82251114",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "REF",
+      "physical_page": 2231,
+      "printed_page": 2231,
+      "render_file": "REF-2231.png",
+      "render_sha256": "4623a6840ace7247353f768781a9cd08eb2008804826e3e9ecf858a28a8d48c5",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "REF",
+      "physical_page": 2447,
+      "printed_page": 2447,
+      "render_file": "REF-2447.png",
+      "render_sha256": "7e819ba298374687fc53660ae4f4c3810cb9772bfecc433edb042df4422921a7",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "REF",
+      "physical_page": 2952,
+      "printed_page": 2952,
+      "render_file": "REF-2952.png",
+      "render_sha256": "805aada7ff811d6a7d3bbb9b48633104fda7e8cb2f18a0dfd5925155cc402374",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "REF",
+      "physical_page": 2963,
+      "printed_page": 2963,
+      "render_file": "REF-2963.png",
+      "render_sha256": "0312103de34a69212dbedb9dd578953a6eeaf87442b397857641d23754267b36",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "TRD",
+      "physical_page": 490,
+      "printed_page": 490,
+      "render_file": "TRD-490.png",
+      "render_sha256": "bed10c42b6f96af213d6ec713c05e98de0bcd3aa22c10e8d28c88ff4f6986327",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "TRD",
+      "physical_page": 616,
+      "printed_page": 616,
+      "render_file": "TRD-616.png",
+      "render_sha256": "7155174f14f00c294c052b6d906d5bea741ba41e7ed112c2211aa23458c326fd",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "TRD",
+      "physical_page": 625,
+      "printed_page": 625,
+      "render_file": "TRD-625.png",
+      "render_sha256": "078b6191413338b9c98cbfec98d805019eb7e357d1cff903cc223a988fb62564",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    },
+    {
+      "book": "TRD",
+      "physical_page": 628,
+      "printed_page": 628,
+      "render_file": "TRD-628.png",
+      "render_sha256": "55b30c727f20d633096a0b2299d6e19d7dab2338b243b641d28a9fd11d66d8e7",
+      "reviewer": "root",
+      "view": "CONTACT_SHEET",
+      "scope": "Directed visual inspection of cited formula/table/diagram/code/prose; not character-by-character code verification"
+    }
+  ],
+  "count": 30,
+  "findings": [
+    "NN93 is the zero-Pearson/independence claim; corrected an initial NN95 citation in original research synthesis/example comments",
+    "NN95 contains a separate generalization about nonlinear neural capacity",
+    "NN47 bias-correction notation/code, NN145 initialization, NN147 resource ownership and NN160 restored state require critical reading",
+    "NN225/226 normalization/split and NN675/676 parameter fitting need explicit temporal contract",
+    "Some original code screenshots/text extend or clip at the right source margin; missing characters not invented"
+  ],
+  "whole_corpus_visual_audit": false,
+  "native_execution": "NOT_RUN"
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "REF",
+      "filename": "MQL5 Language REFERENCE.pdf",
+      "sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+      "pages": 7284
+    },
+    {
+      "id": "TRD",
+      "filename": "MQL5 Programming for Traders.pdf",
+      "sha256": "9ff6c55090527afa0efce722d67760805ee335fc64dad3c83638a89e6c79a145",
+      "pages": 2047
+    },
+    {
+      "id": "NN",
+      "filename": "Neural Networks for Algorithmic Trading with MQL5.pdf",
+      "sha256": "850e21e204f296b4c661895fcea4893ab263c81c7a0ead242a22234716611287",
+      "pages": 690
+    }
+  ],
+  "identity_only": true,
+  "semantic_read_claim": false
+}

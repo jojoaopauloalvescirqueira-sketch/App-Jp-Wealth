@@ -1,0 +1,3881 @@
+{
+  "book": "REF",
+  "source_pdf_sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+  "assigned_pages": [
+    356,
+    658
+  ],
+  "consolidation_full_text_pages": [
+    356,
+    357,
+    358,
+    359,
+    360,
+    361,
+    362,
+    363,
+    364,
+    365,
+    366,
+    367,
+    368,
+    369,
+    370,
+    371,
+    372,
+    373,
+    374,
+    375,
+    376,
+    377,
+    378,
+    379,
+    380,
+    381,
+    382,
+    383,
+    384,
+    385,
+    386,
+    387,
+    388,
+    389,
+    390,
+    391,
+    392,
+    393,
+    394,
+    395,
+    396,
+    397,
+    398,
+    399,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    431,
+    432,
+    433,
+    434,
+    435,
+    436,
+    437,
+    438,
+    439,
+    440,
+    441,
+    442,
+    443,
+    444,
+    445,
+    446,
+    447,
+    448,
+    449,
+    450,
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    457,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    475,
+    476,
+    477,
+    478,
+    479,
+    480,
+    481,
+    482,
+    483,
+    484,
+    485,
+    486,
+    487,
+    488,
+    489,
+    490,
+    491,
+    492,
+    493,
+    494,
+    495,
+    496,
+    497,
+    498,
+    499,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520,
+    521,
+    522,
+    523,
+    524,
+    525,
+    526,
+    527,
+    528,
+    529,
+    530,
+    531,
+    532,
+    533,
+    534,
+    535,
+    536,
+    537,
+    538,
+    539,
+    540,
+    541,
+    542,
+    543,
+    544,
+    545,
+    546,
+    547,
+    548,
+    549,
+    550,
+    551,
+    552,
+    553,
+    554,
+    555,
+    556,
+    557,
+    558,
+    559,
+    560,
+    561,
+    562,
+    563,
+    564,
+    565,
+    566,
+    567,
+    568,
+    569,
+    570,
+    571,
+    572,
+    573,
+    574,
+    575,
+    576,
+    577,
+    578,
+    579,
+    580,
+    581,
+    582,
+    583,
+    584,
+    585,
+    586,
+    587,
+    588,
+    589,
+    590,
+    591,
+    592,
+    593,
+    594,
+    595,
+    596,
+    597,
+    598,
+    599,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    607,
+    608,
+    609,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624,
+    625,
+    626,
+    627,
+    628,
+    629,
+    630,
+    631,
+    632,
+    633,
+    634,
+    635,
+    636,
+    637,
+    638,
+    639,
+    640,
+    641,
+    642,
+    643,
+    644,
+    645,
+    646,
+    647,
+    648,
+    649,
+    650,
+    651,
+    652,
+    653,
+    654,
+    655,
+    656,
+    657,
+    658
+  ],
+  "page_hashes": [
+    {
+      "page": 356,
+      "corpus_sha256": "0342365ece2dd93debdc87325f700bc74d5c76f279d80d14e3b92a247c0c3ee6",
+      "recomputed_text_sha256": "0342365ece2dd93debdc87325f700bc74d5c76f279d80d14e3b92a247c0c3ee6",
+      "characters": 2124,
+      "error": null
+    },
+    {
+      "page": 357,
+      "corpus_sha256": "6c7e5237c4c5ac2ec1824ca0a9ece0b8130436cebdba44afc4fb1278bf9f8c30",
+      "recomputed_text_sha256": "6c7e5237c4c5ac2ec1824ca0a9ece0b8130436cebdba44afc4fb1278bf9f8c30",
+      "characters": 2111,
+      "error": null
+    },
+    {
+      "page": 358,
+      "corpus_sha256": "1683b9564927514b1e79aaafbdbce3eb0609131cfe3d0bb68ffa7a5cd18066f8",
+      "recomputed_text_sha256": "1683b9564927514b1e79aaafbdbce3eb0609131cfe3d0bb68ffa7a5cd18066f8",
+      "characters": 2241,
+      "error": null
+    },
+    {
+      "page": 359,
+      "corpus_sha256": "a288d3f030b1c8cfcff22df63c1f53d31bbb080bb91ac0ed3cbcb81aa2eac596",
+      "recomputed_text_sha256": "a288d3f030b1c8cfcff22df63c1f53d31bbb080bb91ac0ed3cbcb81aa2eac596",
+      "characters": 2204,
+      "error": null
+    },
+    {
+      "page": 360,
+      "corpus_sha256": "52531bd616e1e17cc305a6c455351a46bcd835d8f3277e3534bd82083e2d78b4",
+      "recomputed_text_sha256": "52531bd616e1e17cc305a6c455351a46bcd835d8f3277e3534bd82083e2d78b4",
+      "characters": 2203,
+      "error": null
+    },
+    {
+      "page": 361,
+      "corpus_sha256": "4da5f9fbd511a607d20036203a91f25b0075932d0bbe1e51c2ce806cb7fec7d5",
+      "recomputed_text_sha256": "4da5f9fbd511a607d20036203a91f25b0075932d0bbe1e51c2ce806cb7fec7d5",
+      "characters": 2146,
+      "error": null
+    },
+    {
+      "page": 362,
+      "corpus_sha256": "30602e6179f8c876ff02a3873e19a2b02e534f571065c03673faf23c0b1ef5fb",
+      "recomputed_text_sha256": "30602e6179f8c876ff02a3873e19a2b02e534f571065c03673faf23c0b1ef5fb",
+      "characters": 2244,
+      "error": null
+    },
+    {
+      "page": 363,
+      "corpus_sha256": "9f964c0808afcb6eb2687b2b426a63fc2ccbc6859c4b85e7643453e60ce774da",
+      "recomputed_text_sha256": "9f964c0808afcb6eb2687b2b426a63fc2ccbc6859c4b85e7643453e60ce774da",
+      "characters": 2090,
+      "error": null
+    },
+    {
+      "page": 364,
+      "corpus_sha256": "fd5f54dff3e11a54666998a1c6db286075b2af42f18f774d2f58ef0625044851",
+      "recomputed_text_sha256": "fd5f54dff3e11a54666998a1c6db286075b2af42f18f774d2f58ef0625044851",
+      "characters": 2345,
+      "error": null
+    },
+    {
+      "page": 365,
+      "corpus_sha256": "3ea5c72adb9df34e09a456b7d90e6e0f3a144e9e4cbd4776153186d9ff66a603",
+      "recomputed_text_sha256": "3ea5c72adb9df34e09a456b7d90e6e0f3a144e9e4cbd4776153186d9ff66a603",
+      "characters": 2094,
+      "error": null
+    },
+    {
+      "page": 366,
+      "corpus_sha256": "03166bdb3d762811e775ba6b871623bf1d967a78ed568af9e8dda4e530c1e6b5",
+      "recomputed_text_sha256": "03166bdb3d762811e775ba6b871623bf1d967a78ed568af9e8dda4e530c1e6b5",
+      "characters": 2132,
+      "error": null
+    },
+    {
+      "page": 367,
+      "corpus_sha256": "0a1e9de05bf2a16b8ec59dd20979907cadce3dcab274c088a5af1dac28fdcbd7",
+      "recomputed_text_sha256": "0a1e9de05bf2a16b8ec59dd20979907cadce3dcab274c088a5af1dac28fdcbd7",
+      "characters": 2258,
+      "error": null
+    },
+    {
+      "page": 368,
+      "corpus_sha256": "69c925360dd424704c8cfb7c0be83025cce057317a0793153d587f3bd27fba2a",
+      "recomputed_text_sha256": "69c925360dd424704c8cfb7c0be83025cce057317a0793153d587f3bd27fba2a",
+      "characters": 2221,
+      "error": null
+    },
+    {
+      "page": 369,
+      "corpus_sha256": "1c6a8bc5839a4376b637c5e2db6b7199b0f3915094d5693f3768563e81b8ebab",
+      "recomputed_text_sha256": "1c6a8bc5839a4376b637c5e2db6b7199b0f3915094d5693f3768563e81b8ebab",
+      "characters": 2201,
+      "error": null
+    },
+    {
+      "page": 370,
+      "corpus_sha256": "c0706865d580c4f984febcbd5d1a4aff66154daed6aede5c6bc628128d8a9622",
+      "recomputed_text_sha256": "c0706865d580c4f984febcbd5d1a4aff66154daed6aede5c6bc628128d8a9622",
+      "characters": 2216,
+      "error": null
+    },
+    {
+      "page": 371,
+      "corpus_sha256": "742c26e7767bd2ebb96b1658f143cbc15889f11dc8ce536b6bac43df286c8715",
+      "recomputed_text_sha256": "742c26e7767bd2ebb96b1658f143cbc15889f11dc8ce536b6bac43df286c8715",
+      "characters": 2443,
+      "error": null
+    },
+    {
+      "page": 372,
+      "corpus_sha256": "5217ff4003d20b17880e64ca5524d24acc9e51f3ef7ca24cf98d28a85cb3b2ed",
+      "recomputed_text_sha256": "5217ff4003d20b17880e64ca5524d24acc9e51f3ef7ca24cf98d28a85cb3b2ed",
+      "characters": 2283,
+      "error": null
+    },
+    {
+      "page": 373,
+      "corpus_sha256": "a3ad11721136823faaddd6144e5217c0a71b0553d1f7fc25f4a7a98c552b1250",
+      "recomputed_text_sha256": "a3ad11721136823faaddd6144e5217c0a71b0553d1f7fc25f4a7a98c552b1250",
+      "characters": 2231,
+      "error": null
+    },
+    {
+      "page": 374,
+      "corpus_sha256": "da55070da2330bbfc8ae6e625797a36a7b57bbff2e1fefebcd754cc64d7455ed",
+      "recomputed_text_sha256": "da55070da2330bbfc8ae6e625797a36a7b57bbff2e1fefebcd754cc64d7455ed",
+      "characters": 2017,
+      "error": null
+    },
+    {
+      "page": 375,
+      "corpus_sha256": "4f641d7c3bf81ad4a2b18ba56f95a45cf83ecfd3514a3f761708c44141e99ee3",
+      "recomputed_text_sha256": "4f641d7c3bf81ad4a2b18ba56f95a45cf83ecfd3514a3f761708c44141e99ee3",
+      "characters": 2206,
+      "error": null
+    },
+    {
+      "page": 376,
+      "corpus_sha256": "ee38f166d8de9d72c3401fa736e18c4b46fa3e2be60375c54015c6ced2222dd8",
+      "recomputed_text_sha256": "ee38f166d8de9d72c3401fa736e18c4b46fa3e2be60375c54015c6ced2222dd8",
+      "characters": 2384,
+      "error": null
+    },
+    {
+      "page": 377,
+      "corpus_sha256": "23b249ef58e4a126aeb5d7ab793b66c926bf9b58dec716f515cc19d22740f6b2",
+      "recomputed_text_sha256": "23b249ef58e4a126aeb5d7ab793b66c926bf9b58dec716f515cc19d22740f6b2",
+      "characters": 2178,
+      "error": null
+    },
+    {
+      "page": 378,
+      "corpus_sha256": "a85d21cbb304b5ea4de68aea84fe2bb409af3b63bb856806f7028f15231f88eb",
+      "recomputed_text_sha256": "a85d21cbb304b5ea4de68aea84fe2bb409af3b63bb856806f7028f15231f88eb",
+      "characters": 2147,
+      "error": null
+    },
+    {
+      "page": 379,
+      "corpus_sha256": "b3c13fb0da19d3f3a4ab06b1a67fdbafd862460be77259710e1cab67c54be9b2",
+      "recomputed_text_sha256": "b3c13fb0da19d3f3a4ab06b1a67fdbafd862460be77259710e1cab67c54be9b2",
+      "characters": 2112,
+      "error": null
+    },
+    {
+      "page": 380,
+      "corpus_sha256": "fc7707019557f69d1ffb792eefcd54856b2c2be2877bb061a3fdbf0aed70320e",
+      "recomputed_text_sha256": "fc7707019557f69d1ffb792eefcd54856b2c2be2877bb061a3fdbf0aed70320e",
+      "characters": 2186,
+      "error": null
+    },
+    {
+      "page": 381,
+      "corpus_sha256": "f9e9f28214e38848d993accb71296e948b77ff03bfd9c5a3ad1f58d9336949f9",
+      "recomputed_text_sha256": "f9e9f28214e38848d993accb71296e948b77ff03bfd9c5a3ad1f58d9336949f9",
+      "characters": 2273,
+      "error": null
+    },
+    {
+      "page": 382,
+      "corpus_sha256": "793c12ff79d77bb8a1595913c3038d8f1ad709b527b2c83f2a926c44f74d195c",
+      "recomputed_text_sha256": "793c12ff79d77bb8a1595913c3038d8f1ad709b527b2c83f2a926c44f74d195c",
+      "characters": 2547,
+      "error": null
+    },
+    {
+      "page": 383,
+      "corpus_sha256": "32e66fbfbf080f735f2602415841f32408fbada52187116db741c2ae9fd9ddd0",
+      "recomputed_text_sha256": "32e66fbfbf080f735f2602415841f32408fbada52187116db741c2ae9fd9ddd0",
+      "characters": 2242,
+      "error": null
+    },
+    {
+      "page": 384,
+      "corpus_sha256": "10613922f4e39f9e74d498d007e2a4cceb21d4a93321cee01e628363d2273c18",
+      "recomputed_text_sha256": "10613922f4e39f9e74d498d007e2a4cceb21d4a93321cee01e628363d2273c18",
+      "characters": 2122,
+      "error": null
+    },
+    {
+      "page": 385,
+      "corpus_sha256": "f23480ba19887ccdf370dbe5933d1351497664c6363d7a2f906d4bcd955b62ec",
+      "recomputed_text_sha256": "f23480ba19887ccdf370dbe5933d1351497664c6363d7a2f906d4bcd955b62ec",
+      "characters": 2302,
+      "error": null
+    },
+    {
+      "page": 386,
+      "corpus_sha256": "2f14325578a701e552ac99e5b5a0d8bc01a2a5081a2d8262f2ad576441fed96a",
+      "recomputed_text_sha256": "2f14325578a701e552ac99e5b5a0d8bc01a2a5081a2d8262f2ad576441fed96a",
+      "characters": 2079,
+      "error": null
+    },
+    {
+      "page": 387,
+      "corpus_sha256": "cc5d31a014656e418b98564a487e4f6f7fa0491f51aba5211d94895b25422225",
+      "recomputed_text_sha256": "cc5d31a014656e418b98564a487e4f6f7fa0491f51aba5211d94895b25422225",
+      "characters": 2068,
+      "error": null
+    },
+    {
+      "page": 388,
+      "corpus_sha256": "b872938454b3281cd8b727fb20cf90823aaea025d40395eb7b1b432fafadff8c",
+      "recomputed_text_sha256": "b872938454b3281cd8b727fb20cf90823aaea025d40395eb7b1b432fafadff8c",
+      "characters": 3060,
+      "error": null
+    },
+    {
+      "page": 389,
+      "corpus_sha256": "e17e99ef9046b74fc8bb07167f9ed6ac570ef8c7fbc14e069584e45b60066b19",
+      "recomputed_text_sha256": "e17e99ef9046b74fc8bb07167f9ed6ac570ef8c7fbc14e069584e45b60066b19",
+      "characters": 2625,
+      "error": null
+    },
+    {
+      "page": 390,
+      "corpus_sha256": "281622f08e8ded25aa4e5a7120bdcb53d1dee4f8fcbcf2d90f061b8b49194c66",
+      "recomputed_text_sha256": "281622f08e8ded25aa4e5a7120bdcb53d1dee4f8fcbcf2d90f061b8b49194c66",
+      "characters": 2312,
+      "error": null
+    },
+    {
+      "page": 391,
+      "corpus_sha256": "89d1a4eb25f3cfa77bdbbf5a39ec57a6d68460e66eca8cce6cc18409db6c035a",
+      "recomputed_text_sha256": "89d1a4eb25f3cfa77bdbbf5a39ec57a6d68460e66eca8cce6cc18409db6c035a",
+      "characters": 2277,
+      "error": null
+    },
+    {
+      "page": 392,
+      "corpus_sha256": "2b6978a96378bd3c2acfe670d0fa7c2ba6d2ef66e15fc0dba55b22b99b29dd6d",
+      "recomputed_text_sha256": "2b6978a96378bd3c2acfe670d0fa7c2ba6d2ef66e15fc0dba55b22b99b29dd6d",
+      "characters": 2244,
+      "error": null
+    },
+    {
+      "page": 393,
+      "corpus_sha256": "c6d9731d17f8c6274b3ed0fc30396a59c2809af21ef997dea93a17548ca319ba",
+      "recomputed_text_sha256": "c6d9731d17f8c6274b3ed0fc30396a59c2809af21ef997dea93a17548ca319ba",
+      "characters": 2557,
+      "error": null
+    },
+    {
+      "page": 394,
+      "corpus_sha256": "e3dc6ec39239f974598c211db143543efc4ef4691ce98154ae4f8c3e440930eb",
+      "recomputed_text_sha256": "e3dc6ec39239f974598c211db143543efc4ef4691ce98154ae4f8c3e440930eb",
+      "characters": 2320,
+      "error": null
+    },
+    {
+      "page": 395,
+      "corpus_sha256": "68ae41a4a17a77bf109e1d51e3b9d48ca98d721366104be3121e122c4d803c6b",
+      "recomputed_text_sha256": "68ae41a4a17a77bf109e1d51e3b9d48ca98d721366104be3121e122c4d803c6b",
+      "characters": 2556,
+      "error": null
+    },
+    {
+      "page": 396,
+      "corpus_sha256": "580d5e6ffd905b247d2fed90827febe695791487d5371ed2f3f2f2542d284b22",
+      "recomputed_text_sha256": "580d5e6ffd905b247d2fed90827febe695791487d5371ed2f3f2f2542d284b22",
+      "characters": 2108,
+      "error": null
+    },
+    {
+      "page": 397,
+      "corpus_sha256": "f4da2122372e6a0a279abf771c603e16df11f12931775946aa5f05ac95313093",
+      "recomputed_text_sha256": "f4da2122372e6a0a279abf771c603e16df11f12931775946aa5f05ac95313093",
+      "characters": 1978,
+      "error": null
+    },
+    {
+      "page": 398,
+      "corpus_sha256": "459e0da9617fe5469b4eb324e349d90fda37760560c82eb3e1de79361b9289e5",
+      "recomputed_text_sha256": "459e0da9617fe5469b4eb324e349d90fda37760560c82eb3e1de79361b9289e5",
+      "characters": 2776,
+      "error": null
+    },
+    {
+      "page": 399,
+      "corpus_sha256": "d142975b10f4d3799beb172d6ea697a29b376caec88cbcce45b3608533bdd4ed",
+      "recomputed_text_sha256": "d142975b10f4d3799beb172d6ea697a29b376caec88cbcce45b3608533bdd4ed",
+      "characters": 1678,
+      "error": null
+    },
+    {
+      "page": 400,
+      "corpus_sha256": "ff29fb352611f52ef2e276d1b0aad57e0f6d1aaec0baf08e781632727a6fc80e",
+      "recomputed_text_sha256": "ff29fb352611f52ef2e276d1b0aad57e0f6d1aaec0baf08e781632727a6fc80e",
+      "characters": 381,
+      "error": null
+    },
+    {
+      "page": 401,
+      "corpus_sha256": "613fe090f30ee221b2ba0d772ae549004ecd09b3cd531a45ed8482118a4d7e66",
+      "recomputed_text_sha256": "613fe090f30ee221b2ba0d772ae549004ecd09b3cd531a45ed8482118a4d7e66",
+      "characters": 968,
+      "error": null
+    },
+    {
+      "page": 402,
+      "corpus_sha256": "635e9dcaa1680f4d537b4abd96d8c4ffa6e40434281b567970efcf7978eba62f",
+      "recomputed_text_sha256": "635e9dcaa1680f4d537b4abd96d8c4ffa6e40434281b567970efcf7978eba62f",
+      "characters": 2336,
+      "error": null
+    },
+    {
+      "page": 403,
+      "corpus_sha256": "9ee7897e33a47218b12cb4c7418abe60b4cce371589be2abb7211983028b0a4d",
+      "recomputed_text_sha256": "9ee7897e33a47218b12cb4c7418abe60b4cce371589be2abb7211983028b0a4d",
+      "characters": 1445,
+      "error": null
+    },
+    {
+      "page": 404,
+      "corpus_sha256": "ad91c3ffcf32bd349418a8657e0a201f73e01fecaa852dc81a7c2e40e86b324b",
+      "recomputed_text_sha256": "ad91c3ffcf32bd349418a8657e0a201f73e01fecaa852dc81a7c2e40e86b324b",
+      "characters": 1515,
+      "error": null
+    },
+    {
+      "page": 405,
+      "corpus_sha256": "d22e0abc0d492692fce487e5fe77c65fdaeeed2324c6a06e07dfd4dcaefc4c7d",
+      "recomputed_text_sha256": "d22e0abc0d492692fce487e5fe77c65fdaeeed2324c6a06e07dfd4dcaefc4c7d",
+      "characters": 3238,
+      "error": null
+    },
+    {
+      "page": 406,
+      "corpus_sha256": "dfdafc8a53d995f4eb3c788c9cc141fa402c66831e5dbbd6c97c68ff9d0e9307",
+      "recomputed_text_sha256": "dfdafc8a53d995f4eb3c788c9cc141fa402c66831e5dbbd6c97c68ff9d0e9307",
+      "characters": 2174,
+      "error": null
+    },
+    {
+      "page": 407,
+      "corpus_sha256": "66498b832802c6e49760c9756264640ef520f8e92edbf4609427b7c89efe9cf7",
+      "recomputed_text_sha256": "66498b832802c6e49760c9756264640ef520f8e92edbf4609427b7c89efe9cf7",
+      "characters": 1883,
+      "error": null
+    },
+    {
+      "page": 408,
+      "corpus_sha256": "13d0d1f274de120974de9e156bfcea8961c651647e8f024055af5ea5520f3934",
+      "recomputed_text_sha256": "13d0d1f274de120974de9e156bfcea8961c651647e8f024055af5ea5520f3934",
+      "characters": 347,
+      "error": null
+    },
+    {
+      "page": 409,
+      "corpus_sha256": "7d4e3b2a3dbf2636c0a99cd8a4339717745383bdae7b5617005062780f950eaf",
+      "recomputed_text_sha256": "7d4e3b2a3dbf2636c0a99cd8a4339717745383bdae7b5617005062780f950eaf",
+      "characters": 1688,
+      "error": null
+    },
+    {
+      "page": 410,
+      "corpus_sha256": "550fd02f5bffb766438a28bc5b305c09bb3f689ba251a832fc9aa03a65783603",
+      "recomputed_text_sha256": "550fd02f5bffb766438a28bc5b305c09bb3f689ba251a832fc9aa03a65783603",
+      "characters": 3062,
+      "error": null
+    },
+    {
+      "page": 411,
+      "corpus_sha256": "9fb4ec8f4b5170d4c84bc6011b37f592a3b7eef74052c60411ff90ecc952826d",
+      "recomputed_text_sha256": "9fb4ec8f4b5170d4c84bc6011b37f592a3b7eef74052c60411ff90ecc952826d",
+      "characters": 2064,
+      "error": null
+    },
+    {
+      "page": 412,
+      "corpus_sha256": "3104c7043c1a08ea45fdf25ef8a6dc64a5677698508ff38699b1deb80117c831",
+      "recomputed_text_sha256": "3104c7043c1a08ea45fdf25ef8a6dc64a5677698508ff38699b1deb80117c831",
+      "characters": 1903,
+      "error": null
+    },
+    {
+      "page": 413,
+      "corpus_sha256": "621dbe39ec838b1523eac07c2c5108393c721c8a398d91af43ad776394b7d1a6",
+      "recomputed_text_sha256": "621dbe39ec838b1523eac07c2c5108393c721c8a398d91af43ad776394b7d1a6",
+      "characters": 140,
+      "error": null
+    },
+    {
+      "page": 414,
+      "corpus_sha256": "61636a3e9cd49612b596cbc9d0efe137be39282cf71f7fa08e2c6a44fd26ccb7",
+      "recomputed_text_sha256": "61636a3e9cd49612b596cbc9d0efe137be39282cf71f7fa08e2c6a44fd26ccb7",
+      "characters": 1509,
+      "error": null
+    },
+    {
+      "page": 415,
+      "corpus_sha256": "d81f72d1e265a188034e14b21c7736c81052222704b2610e300f7369f58ef1a2",
+      "recomputed_text_sha256": "d81f72d1e265a188034e14b21c7736c81052222704b2610e300f7369f58ef1a2",
+      "characters": 3402,
+      "error": null
+    },
+    {
+      "page": 416,
+      "corpus_sha256": "0a9da68f2eda6f2870a2df87d4527699df9b62911e6881bb9877585584ae2a1c",
+      "recomputed_text_sha256": "0a9da68f2eda6f2870a2df87d4527699df9b62911e6881bb9877585584ae2a1c",
+      "characters": 2784,
+      "error": null
+    },
+    {
+      "page": 417,
+      "corpus_sha256": "ff1a6985f9c5701664e02ab13280de4bf53d776b7da9b457b8d5a8c3148cba40",
+      "recomputed_text_sha256": "ff1a6985f9c5701664e02ab13280de4bf53d776b7da9b457b8d5a8c3148cba40",
+      "characters": 2363,
+      "error": null
+    },
+    {
+      "page": 418,
+      "corpus_sha256": "bac137fe5dc31a9fd53125f38e6e1eec11f31a36a4b8bd5498634f5761d88420",
+      "recomputed_text_sha256": "bac137fe5dc31a9fd53125f38e6e1eec11f31a36a4b8bd5498634f5761d88420",
+      "characters": 2075,
+      "error": null
+    },
+    {
+      "page": 419,
+      "corpus_sha256": "17dff47625e6104c402935ee6f8a7eab96cac3df65affdb3ccac48978d71fe19",
+      "recomputed_text_sha256": "17dff47625e6104c402935ee6f8a7eab96cac3df65affdb3ccac48978d71fe19",
+      "characters": 1754,
+      "error": null
+    },
+    {
+      "page": 420,
+      "corpus_sha256": "363ee4ddf0e273e7e10c1598b5f8dbe0c6cd28101b69dce7a7d0bcaaa4b207b9",
+      "recomputed_text_sha256": "363ee4ddf0e273e7e10c1598b5f8dbe0c6cd28101b69dce7a7d0bcaaa4b207b9",
+      "characters": 281,
+      "error": null
+    },
+    {
+      "page": 421,
+      "corpus_sha256": "9a8ed20083c13cb5ae2a5690338606f28ac25b2b1e939808ab5e3075e24fdc55",
+      "recomputed_text_sha256": "9a8ed20083c13cb5ae2a5690338606f28ac25b2b1e939808ab5e3075e24fdc55",
+      "characters": 1577,
+      "error": null
+    },
+    {
+      "page": 422,
+      "corpus_sha256": "6bbef911048ad7342afee223524beb32059c4a0c6d82e006ba017b730f14734e",
+      "recomputed_text_sha256": "6bbef911048ad7342afee223524beb32059c4a0c6d82e006ba017b730f14734e",
+      "characters": 3387,
+      "error": null
+    },
+    {
+      "page": 423,
+      "corpus_sha256": "d5b150a721420916f7bdab5d7182be9e9fd55271f26610c1823dde6a68013b3f",
+      "recomputed_text_sha256": "d5b150a721420916f7bdab5d7182be9e9fd55271f26610c1823dde6a68013b3f",
+      "characters": 2996,
+      "error": null
+    },
+    {
+      "page": 424,
+      "corpus_sha256": "52ffca68f4df20b09fa4827db14dbfa1ebce3313eebc9f1061a85fcc58207503",
+      "recomputed_text_sha256": "52ffca68f4df20b09fa4827db14dbfa1ebce3313eebc9f1061a85fcc58207503",
+      "characters": 2345,
+      "error": null
+    },
+    {
+      "page": 425,
+      "corpus_sha256": "cca47389e582f5682258b7993cd9119af1deeb342b88e1a7fcd70cbedd5cd978",
+      "recomputed_text_sha256": "cca47389e582f5682258b7993cd9119af1deeb342b88e1a7fcd70cbedd5cd978",
+      "characters": 2192,
+      "error": null
+    },
+    {
+      "page": 426,
+      "corpus_sha256": "eae04d2deeec7714f9ae7fddb324da32531d9b350a41e50ab963fe0014aee680",
+      "recomputed_text_sha256": "eae04d2deeec7714f9ae7fddb324da32531d9b350a41e50ab963fe0014aee680",
+      "characters": 1189,
+      "error": null
+    },
+    {
+      "page": 427,
+      "corpus_sha256": "c8b46ad5cd8ca7d09590b065f17d22b29849e8b42c48f1c8de09cfda5fae4465",
+      "recomputed_text_sha256": "c8b46ad5cd8ca7d09590b065f17d22b29849e8b42c48f1c8de09cfda5fae4465",
+      "characters": 1514,
+      "error": null
+    },
+    {
+      "page": 428,
+      "corpus_sha256": "d3bdc61e172239ea1caf97c4f7ebeaa05440da52b61671322ff0764fe3175a90",
+      "recomputed_text_sha256": "d3bdc61e172239ea1caf97c4f7ebeaa05440da52b61671322ff0764fe3175a90",
+      "characters": 3417,
+      "error": null
+    },
+    {
+      "page": 429,
+      "corpus_sha256": "dda0ad0ca1a536bf7f0e241b4f97cf72866b90f563e0bd92f6d48a2f8f1a7287",
+      "recomputed_text_sha256": "dda0ad0ca1a536bf7f0e241b4f97cf72866b90f563e0bd92f6d48a2f8f1a7287",
+      "characters": 2322,
+      "error": null
+    },
+    {
+      "page": 430,
+      "corpus_sha256": "49625cb42565462b7e1a03f8c265ef3f47833f7b23f3af96bdb8aaa717ea3392",
+      "recomputed_text_sha256": "49625cb42565462b7e1a03f8c265ef3f47833f7b23f3af96bdb8aaa717ea3392",
+      "characters": 2448,
+      "error": null
+    },
+    {
+      "page": 431,
+      "corpus_sha256": "73104d48c6fbe39c03d2eeb993010cbb2c64afb5b71d58abf97dd5df4a51e219",
+      "recomputed_text_sha256": "73104d48c6fbe39c03d2eeb993010cbb2c64afb5b71d58abf97dd5df4a51e219",
+      "characters": 1983,
+      "error": null
+    },
+    {
+      "page": 432,
+      "corpus_sha256": "6a5e274deace0f505bf2f18d388b267065496c3f30011d669ae3284a9db4ff21",
+      "recomputed_text_sha256": "6a5e274deace0f505bf2f18d388b267065496c3f30011d669ae3284a9db4ff21",
+      "characters": 1016,
+      "error": null
+    },
+    {
+      "page": 433,
+      "corpus_sha256": "cfcbf83e9eabc96108824e19bbbc93305be66510c81c654e63d6ac8677d6c708",
+      "recomputed_text_sha256": "cfcbf83e9eabc96108824e19bbbc93305be66510c81c654e63d6ac8677d6c708",
+      "characters": 1701,
+      "error": null
+    },
+    {
+      "page": 434,
+      "corpus_sha256": "4d6cffba3b4fa35a9eba0e6d4bf65f51f7d243007479831b001cb8a6bd2746af",
+      "recomputed_text_sha256": "4d6cffba3b4fa35a9eba0e6d4bf65f51f7d243007479831b001cb8a6bd2746af",
+      "characters": 3376,
+      "error": null
+    },
+    {
+      "page": 435,
+      "corpus_sha256": "ddd5fcbada6695e68aee24b26774a066d999066eef30ffb62dcb92fbae5ae41d",
+      "recomputed_text_sha256": "ddd5fcbada6695e68aee24b26774a066d999066eef30ffb62dcb92fbae5ae41d",
+      "characters": 2507,
+      "error": null
+    },
+    {
+      "page": 436,
+      "corpus_sha256": "1a38c39815933c3a8e690e938f2da4126c567ed58617d653abc264547da59ec3",
+      "recomputed_text_sha256": "1a38c39815933c3a8e690e938f2da4126c567ed58617d653abc264547da59ec3",
+      "characters": 2271,
+      "error": null
+    },
+    {
+      "page": 437,
+      "corpus_sha256": "6fc00da3d885b7c0eaf9847a3f0c71875140bcbca532a53443c5181184db1458",
+      "recomputed_text_sha256": "6fc00da3d885b7c0eaf9847a3f0c71875140bcbca532a53443c5181184db1458",
+      "characters": 2011,
+      "error": null
+    },
+    {
+      "page": 438,
+      "corpus_sha256": "7fe223f9fc72fa76426f91838475b55bd0ef813bafb579427d3515413de58ba8",
+      "recomputed_text_sha256": "7fe223f9fc72fa76426f91838475b55bd0ef813bafb579427d3515413de58ba8",
+      "characters": 1524,
+      "error": null
+    },
+    {
+      "page": 439,
+      "corpus_sha256": "e7387d2027219c176dcb99748bba59b803da5a5c072e26d707c48684b25da332",
+      "recomputed_text_sha256": "e7387d2027219c176dcb99748bba59b803da5a5c072e26d707c48684b25da332",
+      "characters": 1568,
+      "error": null
+    },
+    {
+      "page": 440,
+      "corpus_sha256": "41e8fcd15a12554e11a10aa7832963a26f477c578dc1c7608d484293becddd9d",
+      "recomputed_text_sha256": "41e8fcd15a12554e11a10aa7832963a26f477c578dc1c7608d484293becddd9d",
+      "characters": 3628,
+      "error": null
+    },
+    {
+      "page": 441,
+      "corpus_sha256": "6a625d84cf2d245dd9fee0550e0cfd825d240917576b8da709a963efdfef6600",
+      "recomputed_text_sha256": "6a625d84cf2d245dd9fee0550e0cfd825d240917576b8da709a963efdfef6600",
+      "characters": 2954,
+      "error": null
+    },
+    {
+      "page": 442,
+      "corpus_sha256": "6478967e0bc2087a97c28aa48ee7de4055bd7afa46cd1953863af1f30975deac",
+      "recomputed_text_sha256": "6478967e0bc2087a97c28aa48ee7de4055bd7afa46cd1953863af1f30975deac",
+      "characters": 2535,
+      "error": null
+    },
+    {
+      "page": 443,
+      "corpus_sha256": "9fe7c05010ca01f72047686fc35aac629ad3b14c486075f42dd193493b08eb84",
+      "recomputed_text_sha256": "9fe7c05010ca01f72047686fc35aac629ad3b14c486075f42dd193493b08eb84",
+      "characters": 2344,
+      "error": null
+    },
+    {
+      "page": 444,
+      "corpus_sha256": "7dd1a2898b15540b2c9c1605d335123230be8affd740a65f9cb9291c6b0e53dc",
+      "recomputed_text_sha256": "7dd1a2898b15540b2c9c1605d335123230be8affd740a65f9cb9291c6b0e53dc",
+      "characters": 1727,
+      "error": null
+    },
+    {
+      "page": 445,
+      "corpus_sha256": "4bcf64ebd0de848303ca3a581aee345085217443b45f74dccbfba84bd96ceca8",
+      "recomputed_text_sha256": "4bcf64ebd0de848303ca3a581aee345085217443b45f74dccbfba84bd96ceca8",
+      "characters": 886,
+      "error": null
+    },
+    {
+      "page": 446,
+      "corpus_sha256": "e5b4f949187481e1834d67f97fa1738bb26fc3baf6e4a3a801467c7b8dfeaee0",
+      "recomputed_text_sha256": "e5b4f949187481e1834d67f97fa1738bb26fc3baf6e4a3a801467c7b8dfeaee0",
+      "characters": 1628,
+      "error": null
+    },
+    {
+      "page": 447,
+      "corpus_sha256": "9a56cb02c77d0df6ab935bf8150f5147df1406124ef7d27c88242187b4d4d8f3",
+      "recomputed_text_sha256": "9a56cb02c77d0df6ab935bf8150f5147df1406124ef7d27c88242187b4d4d8f3",
+      "characters": 3637,
+      "error": null
+    },
+    {
+      "page": 448,
+      "corpus_sha256": "f3a5cab2afe27175c1cb28edec65ff0f7c54d4d70b162fbea5d898364205be6c",
+      "recomputed_text_sha256": "f3a5cab2afe27175c1cb28edec65ff0f7c54d4d70b162fbea5d898364205be6c",
+      "characters": 3089,
+      "error": null
+    },
+    {
+      "page": 449,
+      "corpus_sha256": "65770fdb7400c377d70d2bd11834b76043e0dbf08e798044f9f8df6be178cb4f",
+      "recomputed_text_sha256": "65770fdb7400c377d70d2bd11834b76043e0dbf08e798044f9f8df6be178cb4f",
+      "characters": 2247,
+      "error": null
+    },
+    {
+      "page": 450,
+      "corpus_sha256": "91f2d06f5d3b3c58fc8960fd9e428fd5202f6a5dfec8e4462f7012d65554fc50",
+      "recomputed_text_sha256": "91f2d06f5d3b3c58fc8960fd9e428fd5202f6a5dfec8e4462f7012d65554fc50",
+      "characters": 2219,
+      "error": null
+    },
+    {
+      "page": 451,
+      "corpus_sha256": "9eb712ebc0888897996d1d9e4ba9dc023e8da0091d868bc191d64ac6f8d378de",
+      "recomputed_text_sha256": "9eb712ebc0888897996d1d9e4ba9dc023e8da0091d868bc191d64ac6f8d378de",
+      "characters": 1724,
+      "error": null
+    },
+    {
+      "page": 452,
+      "corpus_sha256": "f9e51a77fd4de88f800265dde13de1ad5687d750d8ad3a91f78d6d3e02061de9",
+      "recomputed_text_sha256": "f9e51a77fd4de88f800265dde13de1ad5687d750d8ad3a91f78d6d3e02061de9",
+      "characters": 129,
+      "error": null
+    },
+    {
+      "page": 453,
+      "corpus_sha256": "aae83f010e0fef2ab28f376379b83faf09fe9c34141e6d49f15a750adcdbf30e",
+      "recomputed_text_sha256": "aae83f010e0fef2ab28f376379b83faf09fe9c34141e6d49f15a750adcdbf30e",
+      "characters": 1598,
+      "error": null
+    },
+    {
+      "page": 454,
+      "corpus_sha256": "71e9d3f0cd07df9be4c1c5614394511ef46620155bd1c57527c12cf6e93ad403",
+      "recomputed_text_sha256": "71e9d3f0cd07df9be4c1c5614394511ef46620155bd1c57527c12cf6e93ad403",
+      "characters": 3563,
+      "error": null
+    },
+    {
+      "page": 455,
+      "corpus_sha256": "731667ca32ffd3819439e8cca2d7959f97541adea5103136a35e6ccfd8d5885b",
+      "recomputed_text_sha256": "731667ca32ffd3819439e8cca2d7959f97541adea5103136a35e6ccfd8d5885b",
+      "characters": 2754,
+      "error": null
+    },
+    {
+      "page": 456,
+      "corpus_sha256": "a8c044bbf7cab23c5d0ef10dc7008d4cdc16cd6b2911ccb1599ab508bb5bcfb5",
+      "recomputed_text_sha256": "a8c044bbf7cab23c5d0ef10dc7008d4cdc16cd6b2911ccb1599ab508bb5bcfb5",
+      "characters": 2271,
+      "error": null
+    },
+    {
+      "page": 457,
+      "corpus_sha256": "b70e6e55de852ccbd44cabd2d33f3a5e85eec77f739646c92328a8f091cc9018",
+      "recomputed_text_sha256": "b70e6e55de852ccbd44cabd2d33f3a5e85eec77f739646c92328a8f091cc9018",
+      "characters": 2030,
+      "error": null
+    },
+    {
+      "page": 458,
+      "corpus_sha256": "0a842ca430631b1ffbac43dd1b18f30b9dcf407786571df7d811cf9202fefc73",
+      "recomputed_text_sha256": "0a842ca430631b1ffbac43dd1b18f30b9dcf407786571df7d811cf9202fefc73",
+      "characters": 388,
+      "error": null
+    },
+    {
+      "page": 459,
+      "corpus_sha256": "f9719056b2ae82c3fc812df2d2c54cf6f27810dee65343a20271e6ce8c2edac0",
+      "recomputed_text_sha256": "f9719056b2ae82c3fc812df2d2c54cf6f27810dee65343a20271e6ce8c2edac0",
+      "characters": 1658,
+      "error": null
+    },
+    {
+      "page": 460,
+      "corpus_sha256": "dba07b08cd59c239fc7a4b428900d131ae8ce1b582ef55c4841bee4214478a93",
+      "recomputed_text_sha256": "dba07b08cd59c239fc7a4b428900d131ae8ce1b582ef55c4841bee4214478a93",
+      "characters": 3606,
+      "error": null
+    },
+    {
+      "page": 461,
+      "corpus_sha256": "2ff745da18c7c1ce5aa101bd58ab6b11fd24101d974eb1eca0d59219eeb7c6d4",
+      "recomputed_text_sha256": "2ff745da18c7c1ce5aa101bd58ab6b11fd24101d974eb1eca0d59219eeb7c6d4",
+      "characters": 3177,
+      "error": null
+    },
+    {
+      "page": 462,
+      "corpus_sha256": "8fda8e845f17c7cd70a28dfad29690a01099e1e2c8cdc2aeae438d9acf14f82d",
+      "recomputed_text_sha256": "8fda8e845f17c7cd70a28dfad29690a01099e1e2c8cdc2aeae438d9acf14f82d",
+      "characters": 2364,
+      "error": null
+    },
+    {
+      "page": 463,
+      "corpus_sha256": "840f50afa775cd56cc71bc1fb89837f08fc3d5206402ff45e0b5ebfbfac94361",
+      "recomputed_text_sha256": "840f50afa775cd56cc71bc1fb89837f08fc3d5206402ff45e0b5ebfbfac94361",
+      "characters": 2643,
+      "error": null
+    },
+    {
+      "page": 464,
+      "corpus_sha256": "5abf2e865369264f25745931e59861744f3dad5788eaa3389f4d998acb78b356",
+      "recomputed_text_sha256": "5abf2e865369264f25745931e59861744f3dad5788eaa3389f4d998acb78b356",
+      "characters": 2112,
+      "error": null
+    },
+    {
+      "page": 465,
+      "corpus_sha256": "45e0dbd498c38cb6fbeee6c89dc32e8529c87dd9552b199077d055c7c295c621",
+      "recomputed_text_sha256": "45e0dbd498c38cb6fbeee6c89dc32e8529c87dd9552b199077d055c7c295c621",
+      "characters": 1751,
+      "error": null
+    },
+    {
+      "page": 466,
+      "corpus_sha256": "07c2c437ba1eaa50d6628d0921e24aceae54d36bbf4673d34558b82c20ee54ec",
+      "recomputed_text_sha256": "07c2c437ba1eaa50d6628d0921e24aceae54d36bbf4673d34558b82c20ee54ec",
+      "characters": 366,
+      "error": null
+    },
+    {
+      "page": 467,
+      "corpus_sha256": "3edfd4c61043cc3d9dbb593e7daf509f210cf21d1d6499ba5693e005ea6f6e99",
+      "recomputed_text_sha256": "3edfd4c61043cc3d9dbb593e7daf509f210cf21d1d6499ba5693e005ea6f6e99",
+      "characters": 1524,
+      "error": null
+    },
+    {
+      "page": 468,
+      "corpus_sha256": "8c8a28fdcd308b65a43010b33d6155b5140db906e1e3907fe340616a4659d39a",
+      "recomputed_text_sha256": "8c8a28fdcd308b65a43010b33d6155b5140db906e1e3907fe340616a4659d39a",
+      "characters": 3469,
+      "error": null
+    },
+    {
+      "page": 469,
+      "corpus_sha256": "08c0990c0b3bf038e162a77173ffde20dd8c00b153294bf66cadc01d984e3ff8",
+      "recomputed_text_sha256": "08c0990c0b3bf038e162a77173ffde20dd8c00b153294bf66cadc01d984e3ff8",
+      "characters": 2956,
+      "error": null
+    },
+    {
+      "page": 470,
+      "corpus_sha256": "4f38adee206f2dd80bd282d6a352552e31bbbb5382aa7a148f8190ff84673af5",
+      "recomputed_text_sha256": "4f38adee206f2dd80bd282d6a352552e31bbbb5382aa7a148f8190ff84673af5",
+      "characters": 2363,
+      "error": null
+    },
+    {
+      "page": 471,
+      "corpus_sha256": "e1b30eedbf76dd09e7ec9fd9428abfc1adb12c6bea01050d89937842bf1f245f",
+      "recomputed_text_sha256": "e1b30eedbf76dd09e7ec9fd9428abfc1adb12c6bea01050d89937842bf1f245f",
+      "characters": 2328,
+      "error": null
+    },
+    {
+      "page": 472,
+      "corpus_sha256": "c5b2d29c50f8c67d36c06b49ad6f201f911efa095283cf04f49531ce7f89b87d",
+      "recomputed_text_sha256": "c5b2d29c50f8c67d36c06b49ad6f201f911efa095283cf04f49531ce7f89b87d",
+      "characters": 2058,
+      "error": null
+    },
+    {
+      "page": 473,
+      "corpus_sha256": "59d5a46aa24bf913d84f66fda7d2feb65aeb57ffd7ca9155160b263755ee0f6b",
+      "recomputed_text_sha256": "59d5a46aa24bf913d84f66fda7d2feb65aeb57ffd7ca9155160b263755ee0f6b",
+      "characters": 1068,
+      "error": null
+    },
+    {
+      "page": 474,
+      "corpus_sha256": "30d6952a90f333e50ead5c035f58c11c52a075b3d0967cd92a5a5bd3034b58cc",
+      "recomputed_text_sha256": "30d6952a90f333e50ead5c035f58c11c52a075b3d0967cd92a5a5bd3034b58cc",
+      "characters": 1544,
+      "error": null
+    },
+    {
+      "page": 475,
+      "corpus_sha256": "443b6cbea048d5bd4380f8bda881bb989d0f0e8491e9a2d4c54528714eb5d8c7",
+      "recomputed_text_sha256": "443b6cbea048d5bd4380f8bda881bb989d0f0e8491e9a2d4c54528714eb5d8c7",
+      "characters": 3376,
+      "error": null
+    },
+    {
+      "page": 476,
+      "corpus_sha256": "28f5cae29f57191212bb8e0d593ed8b37c5fae71595e99a40fbe26f5aa50a57f",
+      "recomputed_text_sha256": "28f5cae29f57191212bb8e0d593ed8b37c5fae71595e99a40fbe26f5aa50a57f",
+      "characters": 2777,
+      "error": null
+    },
+    {
+      "page": 477,
+      "corpus_sha256": "9c4a4ab9447175859e87bf95f6c3dbf9ef53cd4fb383336ed4ef81035dc76045",
+      "recomputed_text_sha256": "9c4a4ab9447175859e87bf95f6c3dbf9ef53cd4fb383336ed4ef81035dc76045",
+      "characters": 2288,
+      "error": null
+    },
+    {
+      "page": 478,
+      "corpus_sha256": "52df7c33ffff552cf6fdc96b2fdfde3887872fe004faaf5f7a7aaa58d32e84c8",
+      "recomputed_text_sha256": "52df7c33ffff552cf6fdc96b2fdfde3887872fe004faaf5f7a7aaa58d32e84c8",
+      "characters": 2198,
+      "error": null
+    },
+    {
+      "page": 479,
+      "corpus_sha256": "9ba4144061bbf5e3d434bb78508fadb15325416349ffe52ea9a514434614fd89",
+      "recomputed_text_sha256": "9ba4144061bbf5e3d434bb78508fadb15325416349ffe52ea9a514434614fd89",
+      "characters": 1993,
+      "error": null
+    },
+    {
+      "page": 480,
+      "corpus_sha256": "083175d2ca085ede3bbd86e6b58d7ebe367b4351934e46960041568040b33453",
+      "recomputed_text_sha256": "083175d2ca085ede3bbd86e6b58d7ebe367b4351934e46960041568040b33453",
+      "characters": 192,
+      "error": null
+    },
+    {
+      "page": 481,
+      "corpus_sha256": "d756cfde8ae31ccfab8b21c889b0dc81853bcdd42a35cbf03bec5cecc56a8845",
+      "recomputed_text_sha256": "d756cfde8ae31ccfab8b21c889b0dc81853bcdd42a35cbf03bec5cecc56a8845",
+      "characters": 1558,
+      "error": null
+    },
+    {
+      "page": 482,
+      "corpus_sha256": "ca2b4717c8d9c2d6901322609e724de8857d96f89b9ec5fcfee05e2629e37e99",
+      "recomputed_text_sha256": "ca2b4717c8d9c2d6901322609e724de8857d96f89b9ec5fcfee05e2629e37e99",
+      "characters": 3403,
+      "error": null
+    },
+    {
+      "page": 483,
+      "corpus_sha256": "5bdf79ad3e33a62d7c464ac3e0284f34ebbddece44cd6e7ed03ab42303c8f5f7",
+      "recomputed_text_sha256": "5bdf79ad3e33a62d7c464ac3e0284f34ebbddece44cd6e7ed03ab42303c8f5f7",
+      "characters": 2791,
+      "error": null
+    },
+    {
+      "page": 484,
+      "corpus_sha256": "382f2f4921f82094f89fc4b11deb21adf3c1997967f98cb6328885c01bfc5ffd",
+      "recomputed_text_sha256": "382f2f4921f82094f89fc4b11deb21adf3c1997967f98cb6328885c01bfc5ffd",
+      "characters": 2302,
+      "error": null
+    },
+    {
+      "page": 485,
+      "corpus_sha256": "d9bd048b50ad6a88699f495fd099d1f005e9c2603152bbafc7cfcca60d8d0cd3",
+      "recomputed_text_sha256": "d9bd048b50ad6a88699f495fd099d1f005e9c2603152bbafc7cfcca60d8d0cd3",
+      "characters": 2192,
+      "error": null
+    },
+    {
+      "page": 486,
+      "corpus_sha256": "ee83eeece021180c27c8b6f908c7e67938c5c701c06655213fef8227c2ab328f",
+      "recomputed_text_sha256": "ee83eeece021180c27c8b6f908c7e67938c5c701c06655213fef8227c2ab328f",
+      "characters": 1983,
+      "error": null
+    },
+    {
+      "page": 487,
+      "corpus_sha256": "3673d67c9073d68823f67141e49f19fd177fde4c0c7bcedc28aae7161e4ced12",
+      "recomputed_text_sha256": "3673d67c9073d68823f67141e49f19fd177fde4c0c7bcedc28aae7161e4ced12",
+      "characters": 827,
+      "error": null
+    },
+    {
+      "page": 488,
+      "corpus_sha256": "166819ad300bfc75d5b544e5e07696df25b77e3178895de21c5712594019d160",
+      "recomputed_text_sha256": "166819ad300bfc75d5b544e5e07696df25b77e3178895de21c5712594019d160",
+      "characters": 1607,
+      "error": null
+    },
+    {
+      "page": 489,
+      "corpus_sha256": "834aaff6b0029fb1bdc9d223b34f7bfbda793180885ec1de9eb83165e84f39d5",
+      "recomputed_text_sha256": "834aaff6b0029fb1bdc9d223b34f7bfbda793180885ec1de9eb83165e84f39d5",
+      "characters": 3563,
+      "error": null
+    },
+    {
+      "page": 490,
+      "corpus_sha256": "1af8a48e64b5abb5b6a7d08a6f6137208afe24c5c77ada1cbe7cf83cf8fffaa7",
+      "recomputed_text_sha256": "1af8a48e64b5abb5b6a7d08a6f6137208afe24c5c77ada1cbe7cf83cf8fffaa7",
+      "characters": 3033,
+      "error": null
+    },
+    {
+      "page": 491,
+      "corpus_sha256": "16438baec11887b4646096e2bd9b175883cb30aa0337dd1c58603fae5f989c4d",
+      "recomputed_text_sha256": "16438baec11887b4646096e2bd9b175883cb30aa0337dd1c58603fae5f989c4d",
+      "characters": 2440,
+      "error": null
+    },
+    {
+      "page": 492,
+      "corpus_sha256": "3a8190f40518159b5c49ab3d296bdc48afdcd51a7031253e368c9df4ed90920d",
+      "recomputed_text_sha256": "3a8190f40518159b5c49ab3d296bdc48afdcd51a7031253e368c9df4ed90920d",
+      "characters": 2403,
+      "error": null
+    },
+    {
+      "page": 493,
+      "corpus_sha256": "8cb39ccd2f93a994558702d4a1cda5453a768d864d3c925873612e878ee5f3dc",
+      "recomputed_text_sha256": "8cb39ccd2f93a994558702d4a1cda5453a768d864d3c925873612e878ee5f3dc",
+      "characters": 1990,
+      "error": null
+    },
+    {
+      "page": 494,
+      "corpus_sha256": "10a8c3a0362e52d21417d2b87c353935227ae65e37d61012a8690db817fe3039",
+      "recomputed_text_sha256": "10a8c3a0362e52d21417d2b87c353935227ae65e37d61012a8690db817fe3039",
+      "characters": 817,
+      "error": null
+    },
+    {
+      "page": 495,
+      "corpus_sha256": "774e6ec24a9a5983bdef4a8dd7494e6f42acf2e1537847c352a70ba0f0093433",
+      "recomputed_text_sha256": "774e6ec24a9a5983bdef4a8dd7494e6f42acf2e1537847c352a70ba0f0093433",
+      "characters": 1594,
+      "error": null
+    },
+    {
+      "page": 496,
+      "corpus_sha256": "4054b68752e3e024e31a6adb2a11d4a5d23011f220ea00bc124a0f0c57893ad8",
+      "recomputed_text_sha256": "4054b68752e3e024e31a6adb2a11d4a5d23011f220ea00bc124a0f0c57893ad8",
+      "characters": 3474,
+      "error": null
+    },
+    {
+      "page": 497,
+      "corpus_sha256": "130798bd132002408185b7541e9a9379057bdcd5b13340d67c004e89cac1f278",
+      "recomputed_text_sha256": "130798bd132002408185b7541e9a9379057bdcd5b13340d67c004e89cac1f278",
+      "characters": 2890,
+      "error": null
+    },
+    {
+      "page": 498,
+      "corpus_sha256": "432043cb9148c8bed869815f983b074b025af8963e371bf63065a2fef4717dfa",
+      "recomputed_text_sha256": "432043cb9148c8bed869815f983b074b025af8963e371bf63065a2fef4717dfa",
+      "characters": 2282,
+      "error": null
+    },
+    {
+      "page": 499,
+      "corpus_sha256": "49d4b0f272e006403ba3e2a7fb8c42b77d93df1be15e87e4df7f701878ad162a",
+      "recomputed_text_sha256": "49d4b0f272e006403ba3e2a7fb8c42b77d93df1be15e87e4df7f701878ad162a",
+      "characters": 2302,
+      "error": null
+    },
+    {
+      "page": 500,
+      "corpus_sha256": "cb46f6517269b07c59d1ae0d49dd356faec2e471af5e901a662c6fbf8e015114",
+      "recomputed_text_sha256": "cb46f6517269b07c59d1ae0d49dd356faec2e471af5e901a662c6fbf8e015114",
+      "characters": 1856,
+      "error": null
+    },
+    {
+      "page": 501,
+      "corpus_sha256": "7ce93c70fa8db21e2dfd4825b0a470e5329a5166b40faacf9affa25d7671e871",
+      "recomputed_text_sha256": "7ce93c70fa8db21e2dfd4825b0a470e5329a5166b40faacf9affa25d7671e871",
+      "characters": 638,
+      "error": null
+    },
+    {
+      "page": 502,
+      "corpus_sha256": "63d81edfd5eed8f86cf4a435ff45eefc50461a39e3e5ab50883772a506e3abf5",
+      "recomputed_text_sha256": "63d81edfd5eed8f86cf4a435ff45eefc50461a39e3e5ab50883772a506e3abf5",
+      "characters": 1553,
+      "error": null
+    },
+    {
+      "page": 503,
+      "corpus_sha256": "63beeacfa048af3a66af4251180ab24514ec1dac840ac308b39879de1500b7b6",
+      "recomputed_text_sha256": "63beeacfa048af3a66af4251180ab24514ec1dac840ac308b39879de1500b7b6",
+      "characters": 3418,
+      "error": null
+    },
+    {
+      "page": 504,
+      "corpus_sha256": "8e81bc17f827c7e59dfd09b4b56fe05b33c8a5f7deb50db29e2937a918154d68",
+      "recomputed_text_sha256": "8e81bc17f827c7e59dfd09b4b56fe05b33c8a5f7deb50db29e2937a918154d68",
+      "characters": 2843,
+      "error": null
+    },
+    {
+      "page": 505,
+      "corpus_sha256": "ca82fc5090fe92533b86613aa23a28e65eff0357449ea67c8a812dce18aa213a",
+      "recomputed_text_sha256": "ca82fc5090fe92533b86613aa23a28e65eff0357449ea67c8a812dce18aa213a",
+      "characters": 2255,
+      "error": null
+    },
+    {
+      "page": 506,
+      "corpus_sha256": "859b40ca8f534e4dd248ebed3937c02496e6e53b62da306f7de32400f531f003",
+      "recomputed_text_sha256": "859b40ca8f534e4dd248ebed3937c02496e6e53b62da306f7de32400f531f003",
+      "characters": 2343,
+      "error": null
+    },
+    {
+      "page": 507,
+      "corpus_sha256": "23ca41cb28abfec8e54579ca40d28c3cafa7f09b4e1f2077e790a4c38d976356",
+      "recomputed_text_sha256": "23ca41cb28abfec8e54579ca40d28c3cafa7f09b4e1f2077e790a4c38d976356",
+      "characters": 1899,
+      "error": null
+    },
+    {
+      "page": 508,
+      "corpus_sha256": "aafda12b7801701357b6551bb170d762c65b608f34d0fc47e399310bfbcc48c9",
+      "recomputed_text_sha256": "aafda12b7801701357b6551bb170d762c65b608f34d0fc47e399310bfbcc48c9",
+      "characters": 534,
+      "error": null
+    },
+    {
+      "page": 509,
+      "corpus_sha256": "88e66b95b47786735377a5910d80384af1a152e84d37010f322149632c8b19c1",
+      "recomputed_text_sha256": "88e66b95b47786735377a5910d80384af1a152e84d37010f322149632c8b19c1",
+      "characters": 1582,
+      "error": null
+    },
+    {
+      "page": 510,
+      "corpus_sha256": "88b2ecd599aefe8d2ec500f510039397b139cc3acace0fda57b0549ce7d606ec",
+      "recomputed_text_sha256": "88b2ecd599aefe8d2ec500f510039397b139cc3acace0fda57b0549ce7d606ec",
+      "characters": 3346,
+      "error": null
+    },
+    {
+      "page": 511,
+      "corpus_sha256": "f7ba1ea0fcb2386b9310e6c6a4f6d012f5d264c754f83f90a53bd9519918456a",
+      "recomputed_text_sha256": "f7ba1ea0fcb2386b9310e6c6a4f6d012f5d264c754f83f90a53bd9519918456a",
+      "characters": 3003,
+      "error": null
+    },
+    {
+      "page": 512,
+      "corpus_sha256": "1c0da814c9bdd8d5e7e951295668f74067427979cb301a218876389bd9156881",
+      "recomputed_text_sha256": "1c0da814c9bdd8d5e7e951295668f74067427979cb301a218876389bd9156881",
+      "characters": 2347,
+      "error": null
+    },
+    {
+      "page": 513,
+      "corpus_sha256": "cf8406a18c281f374fe0649df6a4caa09e2d3dad342483ce2e7397b6f570b445",
+      "recomputed_text_sha256": "cf8406a18c281f374fe0649df6a4caa09e2d3dad342483ce2e7397b6f570b445",
+      "characters": 2410,
+      "error": null
+    },
+    {
+      "page": 514,
+      "corpus_sha256": "c61a3bf9011e86fba745c24dc6f9c9432e8fe4647ead2d477247907f5e1728f6",
+      "recomputed_text_sha256": "c61a3bf9011e86fba745c24dc6f9c9432e8fe4647ead2d477247907f5e1728f6",
+      "characters": 1999,
+      "error": null
+    },
+    {
+      "page": 515,
+      "corpus_sha256": "3006fff7f9b599add1bd51953891ae665bc90decb0913b67da5fddb4e2e3fefb",
+      "recomputed_text_sha256": "3006fff7f9b599add1bd51953891ae665bc90decb0913b67da5fddb4e2e3fefb",
+      "characters": 917,
+      "error": null
+    },
+    {
+      "page": 516,
+      "corpus_sha256": "56289c584749fcc5b27a0059613777e04466d29189ca92122ef331f46db86d36",
+      "recomputed_text_sha256": "56289c584749fcc5b27a0059613777e04466d29189ca92122ef331f46db86d36",
+      "characters": 1605,
+      "error": null
+    },
+    {
+      "page": 517,
+      "corpus_sha256": "cdc634c032a156a855fdc3da3fd06ec97088bbd95353f7541e16e75446dadbbd",
+      "recomputed_text_sha256": "cdc634c032a156a855fdc3da3fd06ec97088bbd95353f7541e16e75446dadbbd",
+      "characters": 3707,
+      "error": null
+    },
+    {
+      "page": 518,
+      "corpus_sha256": "214cbaa3a1f7a7cbcdf42a1d508f4f9c8957ce98ff7e1e3f609471c8bfee6a98",
+      "recomputed_text_sha256": "214cbaa3a1f7a7cbcdf42a1d508f4f9c8957ce98ff7e1e3f609471c8bfee6a98",
+      "characters": 3191,
+      "error": null
+    },
+    {
+      "page": 519,
+      "corpus_sha256": "5b52f68c1d87cafaa98127a646a45b136eb956d35b07aa0ad697f709a740072f",
+      "recomputed_text_sha256": "5b52f68c1d87cafaa98127a646a45b136eb956d35b07aa0ad697f709a740072f",
+      "characters": 2444,
+      "error": null
+    },
+    {
+      "page": 520,
+      "corpus_sha256": "4ba0bcbb9908ce47936eaac839150dedbe51c18e5bc19ea1ab550b3d4891e668",
+      "recomputed_text_sha256": "4ba0bcbb9908ce47936eaac839150dedbe51c18e5bc19ea1ab550b3d4891e668",
+      "characters": 2578,
+      "error": null
+    },
+    {
+      "page": 521,
+      "corpus_sha256": "51a2ccd2fe1487c75e917d9b37d4f6842e4422b810b2359e5a7ebed4be5f3412",
+      "recomputed_text_sha256": "51a2ccd2fe1487c75e917d9b37d4f6842e4422b810b2359e5a7ebed4be5f3412",
+      "characters": 2084,
+      "error": null
+    },
+    {
+      "page": 522,
+      "corpus_sha256": "3cd5bb65f01f8331a52fd8961bf806e5ef2de7d1347befad23d8a09fa3fc276b",
+      "recomputed_text_sha256": "3cd5bb65f01f8331a52fd8961bf806e5ef2de7d1347befad23d8a09fa3fc276b",
+      "characters": 1750,
+      "error": null
+    },
+    {
+      "page": 523,
+      "corpus_sha256": "25de33b6dbb488f6a90dc5b7f61b68ee2ef879486aec42bae888ed725478f85e",
+      "recomputed_text_sha256": "25de33b6dbb488f6a90dc5b7f61b68ee2ef879486aec42bae888ed725478f85e",
+      "characters": 353,
+      "error": null
+    },
+    {
+      "page": 524,
+      "corpus_sha256": "6be0075b569f7c062353f527475c504cfd51e350498d593b57e75b4bc5819021",
+      "recomputed_text_sha256": "6be0075b569f7c062353f527475c504cfd51e350498d593b57e75b4bc5819021",
+      "characters": 1610,
+      "error": null
+    },
+    {
+      "page": 525,
+      "corpus_sha256": "8baa2183de76bef9981ba5dcfdf867211ba7de12570ee086a1a0201f3509f290",
+      "recomputed_text_sha256": "8baa2183de76bef9981ba5dcfdf867211ba7de12570ee086a1a0201f3509f290",
+      "characters": 3746,
+      "error": null
+    },
+    {
+      "page": 526,
+      "corpus_sha256": "cecebb75b9ff164fba19baf50d2bf42e811b66b2003f31233ae2814bc02da801",
+      "recomputed_text_sha256": "cecebb75b9ff164fba19baf50d2bf42e811b66b2003f31233ae2814bc02da801",
+      "characters": 3219,
+      "error": null
+    },
+    {
+      "page": 527,
+      "corpus_sha256": "2769653e2ab9339ac2d94b6f73101b93a2a65b2befd8ca1b69b9d7d3af5cc895",
+      "recomputed_text_sha256": "2769653e2ab9339ac2d94b6f73101b93a2a65b2befd8ca1b69b9d7d3af5cc895",
+      "characters": 2477,
+      "error": null
+    },
+    {
+      "page": 528,
+      "corpus_sha256": "68413f2b2aa3eded0e8f60084605e8447bbc9dc65b6913d507af25f9904c24e5",
+      "recomputed_text_sha256": "68413f2b2aa3eded0e8f60084605e8447bbc9dc65b6913d507af25f9904c24e5",
+      "characters": 2543,
+      "error": null
+    },
+    {
+      "page": 529,
+      "corpus_sha256": "3d8ad6a040fc3eb1a6037520872a98cfb758673636332c229cb8b3f344808cac",
+      "recomputed_text_sha256": "3d8ad6a040fc3eb1a6037520872a98cfb758673636332c229cb8b3f344808cac",
+      "characters": 2129,
+      "error": null
+    },
+    {
+      "page": 530,
+      "corpus_sha256": "8342b160ee9e49fd048803cac67ae2c596ba65ab9801aaab3e0534e4aea5f04d",
+      "recomputed_text_sha256": "8342b160ee9e49fd048803cac67ae2c596ba65ab9801aaab3e0534e4aea5f04d",
+      "characters": 1744,
+      "error": null
+    },
+    {
+      "page": 531,
+      "corpus_sha256": "b4278da1f2304b272a16817376c6c0de1e3bf1550ef88baf49b1896252e31d4d",
+      "recomputed_text_sha256": "b4278da1f2304b272a16817376c6c0de1e3bf1550ef88baf49b1896252e31d4d",
+      "characters": 324,
+      "error": null
+    },
+    {
+      "page": 532,
+      "corpus_sha256": "7e21bec6861f8a314aaf2a10c8a5425d2c56a1d08f1e45e901be945e875bbd3f",
+      "recomputed_text_sha256": "7e21bec6861f8a314aaf2a10c8a5425d2c56a1d08f1e45e901be945e875bbd3f",
+      "characters": 1607,
+      "error": null
+    },
+    {
+      "page": 533,
+      "corpus_sha256": "71d2f4dc547fa44c14e20c1c52c18a13d8bcf5b545ad24182eab6c918c89b57d",
+      "recomputed_text_sha256": "71d2f4dc547fa44c14e20c1c52c18a13d8bcf5b545ad24182eab6c918c89b57d",
+      "characters": 4299,
+      "error": null
+    },
+    {
+      "page": 534,
+      "corpus_sha256": "a98ad921d6770e168eeeace39dfd26fdf561efd0259feb89cfe279670c3837bb",
+      "recomputed_text_sha256": "a98ad921d6770e168eeeace39dfd26fdf561efd0259feb89cfe279670c3837bb",
+      "characters": 2964,
+      "error": null
+    },
+    {
+      "page": 535,
+      "corpus_sha256": "3cecfd76ef712f34b7d6c926f755d40ffd7cc9e446562506a0127f393adbd0a7",
+      "recomputed_text_sha256": "3cecfd76ef712f34b7d6c926f755d40ffd7cc9e446562506a0127f393adbd0a7",
+      "characters": 2437,
+      "error": null
+    },
+    {
+      "page": 536,
+      "corpus_sha256": "64f2c1e3857d0eca2750feb8e6277b772d68298ecc324a24d3f1e4d7827838f6",
+      "recomputed_text_sha256": "64f2c1e3857d0eca2750feb8e6277b772d68298ecc324a24d3f1e4d7827838f6",
+      "characters": 2438,
+      "error": null
+    },
+    {
+      "page": 537,
+      "corpus_sha256": "e95210e0502a02c4465578617f3d8060ebfae42e708022101febae074cf3fcfe",
+      "recomputed_text_sha256": "e95210e0502a02c4465578617f3d8060ebfae42e708022101febae074cf3fcfe",
+      "characters": 2163,
+      "error": null
+    },
+    {
+      "page": 538,
+      "corpus_sha256": "555defe758688b69271578036f415766b1515edfe63752a18bd2141e330c9f03",
+      "recomputed_text_sha256": "555defe758688b69271578036f415766b1515edfe63752a18bd2141e330c9f03",
+      "characters": 1752,
+      "error": null
+    },
+    {
+      "page": 539,
+      "corpus_sha256": "21cfac0cccf37672dad24e7d48355d022cb4870a300f2c61fac20b1b07fc29f3",
+      "recomputed_text_sha256": "21cfac0cccf37672dad24e7d48355d022cb4870a300f2c61fac20b1b07fc29f3",
+      "characters": 365,
+      "error": null
+    },
+    {
+      "page": 540,
+      "corpus_sha256": "7e6f0c9c74712549b6bb9c38da0ceb463eda1cf885e04520d4250773b18af3d1",
+      "recomputed_text_sha256": "7e6f0c9c74712549b6bb9c38da0ceb463eda1cf885e04520d4250773b18af3d1",
+      "characters": 1636,
+      "error": null
+    },
+    {
+      "page": 541,
+      "corpus_sha256": "56c91038c5e53c890065f8064e14270507c6d181a030730cc6f17b3313cf1898",
+      "recomputed_text_sha256": "56c91038c5e53c890065f8064e14270507c6d181a030730cc6f17b3313cf1898",
+      "characters": 3956,
+      "error": null
+    },
+    {
+      "page": 542,
+      "corpus_sha256": "a09fc5c1f801d10d6a3802ac03082571bb06da22f048d7055c50ff5351a6a754",
+      "recomputed_text_sha256": "a09fc5c1f801d10d6a3802ac03082571bb06da22f048d7055c50ff5351a6a754",
+      "characters": 2899,
+      "error": null
+    },
+    {
+      "page": 543,
+      "corpus_sha256": "185867f0ecbe836475f7cb7a4a4c582395904a5d846c4f793b8077026b3ed86b",
+      "recomputed_text_sha256": "185867f0ecbe836475f7cb7a4a4c582395904a5d846c4f793b8077026b3ed86b",
+      "characters": 2415,
+      "error": null
+    },
+    {
+      "page": 544,
+      "corpus_sha256": "9971a266cd3a8aff2ec05008983cf583790a823237276fbe847afe001915e71a",
+      "recomputed_text_sha256": "9971a266cd3a8aff2ec05008983cf583790a823237276fbe847afe001915e71a",
+      "characters": 2381,
+      "error": null
+    },
+    {
+      "page": 545,
+      "corpus_sha256": "aa1b9fdd0340eb27a9bf5c7f787490267720e0e06e0cf9e9210b7ca2357dd8d5",
+      "recomputed_text_sha256": "aa1b9fdd0340eb27a9bf5c7f787490267720e0e06e0cf9e9210b7ca2357dd8d5",
+      "characters": 1733,
+      "error": null
+    },
+    {
+      "page": 546,
+      "corpus_sha256": "7a99c4ca93887529f220feca9adb37fdb808e86da9868f606f276e09a6ac4d15",
+      "recomputed_text_sha256": "7a99c4ca93887529f220feca9adb37fdb808e86da9868f606f276e09a6ac4d15",
+      "characters": 255,
+      "error": null
+    },
+    {
+      "page": 547,
+      "corpus_sha256": "549dad715d26b7e99ba30713613d67e14874ada938c84c6bf90ce48b790977cb",
+      "recomputed_text_sha256": "549dad715d26b7e99ba30713613d67e14874ada938c84c6bf90ce48b790977cb",
+      "characters": 1515,
+      "error": null
+    },
+    {
+      "page": 548,
+      "corpus_sha256": "b69533869986651a4627deb9091ed8bd3ed126637c3a0487e52e85542fbc03da",
+      "recomputed_text_sha256": "b69533869986651a4627deb9091ed8bd3ed126637c3a0487e52e85542fbc03da",
+      "characters": 3533,
+      "error": null
+    },
+    {
+      "page": 549,
+      "corpus_sha256": "29a6f89caeb49079cdbf1013ec14cd0a0c85193a8c2eb1db0213a7f9c62b4d7b",
+      "recomputed_text_sha256": "29a6f89caeb49079cdbf1013ec14cd0a0c85193a8c2eb1db0213a7f9c62b4d7b",
+      "characters": 2575,
+      "error": null
+    },
+    {
+      "page": 550,
+      "corpus_sha256": "233e2f996d1c62fa87d9dccb969271be8bac9b7f612f0eb9186204992d00444b",
+      "recomputed_text_sha256": "233e2f996d1c62fa87d9dccb969271be8bac9b7f612f0eb9186204992d00444b",
+      "characters": 2451,
+      "error": null
+    },
+    {
+      "page": 551,
+      "corpus_sha256": "026f4f373fd76fad5ff596250d70d6b2461855e38557b64e8746f78fcebd4313",
+      "recomputed_text_sha256": "026f4f373fd76fad5ff596250d70d6b2461855e38557b64e8746f78fcebd4313",
+      "characters": 2004,
+      "error": null
+    },
+    {
+      "page": 552,
+      "corpus_sha256": "8c926eb2b5742e4ded5c08e1b8f43f36a40ef81482f8ebdcf1c389e8cf8af166",
+      "recomputed_text_sha256": "8c926eb2b5742e4ded5c08e1b8f43f36a40ef81482f8ebdcf1c389e8cf8af166",
+      "characters": 1376,
+      "error": null
+    },
+    {
+      "page": 553,
+      "corpus_sha256": "fd444643842e5d3dd4c65ba92f68da26c77338a32e5050771f5281a3bad8b4f9",
+      "recomputed_text_sha256": "fd444643842e5d3dd4c65ba92f68da26c77338a32e5050771f5281a3bad8b4f9",
+      "characters": 1548,
+      "error": null
+    },
+    {
+      "page": 554,
+      "corpus_sha256": "38f8b01e1e8d1f5609843469e37bfd760d49a2000adad39e917d4d98dce70581",
+      "recomputed_text_sha256": "38f8b01e1e8d1f5609843469e37bfd760d49a2000adad39e917d4d98dce70581",
+      "characters": 3526,
+      "error": null
+    },
+    {
+      "page": 555,
+      "corpus_sha256": "156ac31795800bcc4a1698e6cddbd8fedbdfa8ac33ae1d0cfc237dff5423da50",
+      "recomputed_text_sha256": "156ac31795800bcc4a1698e6cddbd8fedbdfa8ac33ae1d0cfc237dff5423da50",
+      "characters": 2765,
+      "error": null
+    },
+    {
+      "page": 556,
+      "corpus_sha256": "ef764b3d0d8f9bdeea7da02cce20a8bb229926263b999a3e9a39dcd9e85bf0c8",
+      "recomputed_text_sha256": "ef764b3d0d8f9bdeea7da02cce20a8bb229926263b999a3e9a39dcd9e85bf0c8",
+      "characters": 2493,
+      "error": null
+    },
+    {
+      "page": 557,
+      "corpus_sha256": "591903e292bc6d1e7349de1c68f7702944d1761c7e4894edf61cf6c66e381997",
+      "recomputed_text_sha256": "591903e292bc6d1e7349de1c68f7702944d1761c7e4894edf61cf6c66e381997",
+      "characters": 2158,
+      "error": null
+    },
+    {
+      "page": 558,
+      "corpus_sha256": "2303c6331e5ffcea6da2176db2bc764aba059e97b3b2455ee64944a2bbf32e10",
+      "recomputed_text_sha256": "2303c6331e5ffcea6da2176db2bc764aba059e97b3b2455ee64944a2bbf32e10",
+      "characters": 1722,
+      "error": null
+    },
+    {
+      "page": 559,
+      "corpus_sha256": "ed753a9bb6996a32d2761a45037fdd2abef2771add9afa7f5f8f2913484f3d98",
+      "recomputed_text_sha256": "ed753a9bb6996a32d2761a45037fdd2abef2771add9afa7f5f8f2913484f3d98",
+      "characters": 575,
+      "error": null
+    },
+    {
+      "page": 560,
+      "corpus_sha256": "ca87f2e18f65725139c48b746ee469abb69352e044d7238ef549c1c6cda70325",
+      "recomputed_text_sha256": "ca87f2e18f65725139c48b746ee469abb69352e044d7238ef549c1c6cda70325",
+      "characters": 1622,
+      "error": null
+    },
+    {
+      "page": 561,
+      "corpus_sha256": "9ba9adfb8d5cdad560c6a1dccd82b018bcf23ac2cd5d2908185417703b225d37",
+      "recomputed_text_sha256": "9ba9adfb8d5cdad560c6a1dccd82b018bcf23ac2cd5d2908185417703b225d37",
+      "characters": 3513,
+      "error": null
+    },
+    {
+      "page": 562,
+      "corpus_sha256": "af5c7182348ce53e4df4ff4ea18b9fb84f62d943fa527e4a6c713b9d2e6553a6",
+      "recomputed_text_sha256": "af5c7182348ce53e4df4ff4ea18b9fb84f62d943fa527e4a6c713b9d2e6553a6",
+      "characters": 2667,
+      "error": null
+    },
+    {
+      "page": 563,
+      "corpus_sha256": "c80a3eaa2af27136b5e17fdae76a70870ecaf9e76f0551556d850256761efa67",
+      "recomputed_text_sha256": "c80a3eaa2af27136b5e17fdae76a70870ecaf9e76f0551556d850256761efa67",
+      "characters": 2548,
+      "error": null
+    },
+    {
+      "page": 564,
+      "corpus_sha256": "fb9bf5aceba64fbefe526f688d30612de8760d9e819b8c6e5f1320937ae5d206",
+      "recomputed_text_sha256": "fb9bf5aceba64fbefe526f688d30612de8760d9e819b8c6e5f1320937ae5d206",
+      "characters": 2115,
+      "error": null
+    },
+    {
+      "page": 565,
+      "corpus_sha256": "bb81ff2fa92c7559c70bc57f5eb0d72af7b066aafb1174225450a3fe906fb2bb",
+      "recomputed_text_sha256": "bb81ff2fa92c7559c70bc57f5eb0d72af7b066aafb1174225450a3fe906fb2bb",
+      "characters": 1672,
+      "error": null
+    },
+    {
+      "page": 566,
+      "corpus_sha256": "17c752f4c23f6769a0dbfee76c4891004d8a01739e58503956bb2e18497d3fe1",
+      "recomputed_text_sha256": "17c752f4c23f6769a0dbfee76c4891004d8a01739e58503956bb2e18497d3fe1",
+      "characters": 1447,
+      "error": null
+    },
+    {
+      "page": 567,
+      "corpus_sha256": "e82f1c9d974798c25603a47fc05a8b71fa9189f58be8461f9056634aee046f2a",
+      "recomputed_text_sha256": "e82f1c9d974798c25603a47fc05a8b71fa9189f58be8461f9056634aee046f2a",
+      "characters": 3403,
+      "error": null
+    },
+    {
+      "page": 568,
+      "corpus_sha256": "db1b206d3b19f967f5985ef5ade98930e69a2e728585c35a3c84db9f570b0098",
+      "recomputed_text_sha256": "db1b206d3b19f967f5985ef5ade98930e69a2e728585c35a3c84db9f570b0098",
+      "characters": 2558,
+      "error": null
+    },
+    {
+      "page": 569,
+      "corpus_sha256": "6cac2f7a7efcc977a6f44b6a1a18039b5dbafa0c79410447db69f389841fe47f",
+      "recomputed_text_sha256": "6cac2f7a7efcc977a6f44b6a1a18039b5dbafa0c79410447db69f389841fe47f",
+      "characters": 2271,
+      "error": null
+    },
+    {
+      "page": 570,
+      "corpus_sha256": "24d898b5f791ba88ab19a8882a6178b6d4596c3bfa69222d62d79268768eab12",
+      "recomputed_text_sha256": "24d898b5f791ba88ab19a8882a6178b6d4596c3bfa69222d62d79268768eab12",
+      "characters": 2080,
+      "error": null
+    },
+    {
+      "page": 571,
+      "corpus_sha256": "0206bf955224b1a234a28bf9b4a45b2b6199e2ccb167dd00dfb2226ce62ae0cb",
+      "recomputed_text_sha256": "0206bf955224b1a234a28bf9b4a45b2b6199e2ccb167dd00dfb2226ce62ae0cb",
+      "characters": 1269,
+      "error": null
+    },
+    {
+      "page": 572,
+      "corpus_sha256": "f9f141721f3038a45ad09da4ae2abd9c69869c023f7199051cf7c689cac645b8",
+      "recomputed_text_sha256": "f9f141721f3038a45ad09da4ae2abd9c69869c023f7199051cf7c689cac645b8",
+      "characters": 1401,
+      "error": null
+    },
+    {
+      "page": 573,
+      "corpus_sha256": "f5dd6e3bfe3c0763c3f6545562454017af9538ecd004094c53529ff4bd19d9a1",
+      "recomputed_text_sha256": "f5dd6e3bfe3c0763c3f6545562454017af9538ecd004094c53529ff4bd19d9a1",
+      "characters": 3452,
+      "error": null
+    },
+    {
+      "page": 574,
+      "corpus_sha256": "5ca6c9b9ded71140402ac258df12a6a99d54d67d90e00a8ca2f5567cd5143d3a",
+      "recomputed_text_sha256": "5ca6c9b9ded71140402ac258df12a6a99d54d67d90e00a8ca2f5567cd5143d3a",
+      "characters": 2637,
+      "error": null
+    },
+    {
+      "page": 575,
+      "corpus_sha256": "0bf0ace55bd0a6079d46b9e5ac530d844af52ceaf3db841c872d3b10b7704b39",
+      "recomputed_text_sha256": "0bf0ace55bd0a6079d46b9e5ac530d844af52ceaf3db841c872d3b10b7704b39",
+      "characters": 2266,
+      "error": null
+    },
+    {
+      "page": 576,
+      "corpus_sha256": "9d8ed9bc42ca2a2195ce205ab3822cc446d7f6ecd6db7240ebc425f4086e4b5f",
+      "recomputed_text_sha256": "9d8ed9bc42ca2a2195ce205ab3822cc446d7f6ecd6db7240ebc425f4086e4b5f",
+      "characters": 2096,
+      "error": null
+    },
+    {
+      "page": 577,
+      "corpus_sha256": "6c7e7c87bde316151a32e1a1cb714f36d9ebdfc36b3a5ff4b360a6f2f703335e",
+      "recomputed_text_sha256": "6c7e7c87bde316151a32e1a1cb714f36d9ebdfc36b3a5ff4b360a6f2f703335e",
+      "characters": 1286,
+      "error": null
+    },
+    {
+      "page": 578,
+      "corpus_sha256": "78b2cbaa2886bde8a88985e7180915f9d5aefe02b647c38a8337c208aaec309f",
+      "recomputed_text_sha256": "78b2cbaa2886bde8a88985e7180915f9d5aefe02b647c38a8337c208aaec309f",
+      "characters": 1446,
+      "error": null
+    },
+    {
+      "page": 579,
+      "corpus_sha256": "1cd2015ad1dd78312c7343e6f7ec7cf9c951c69a07885a7d486c983b933a5faf",
+      "recomputed_text_sha256": "1cd2015ad1dd78312c7343e6f7ec7cf9c951c69a07885a7d486c983b933a5faf",
+      "characters": 3329,
+      "error": null
+    },
+    {
+      "page": 580,
+      "corpus_sha256": "d17de7723cb2ec997d4dceb77f63691b850ed2e3651162618d5ac83d630faf47",
+      "recomputed_text_sha256": "d17de7723cb2ec997d4dceb77f63691b850ed2e3651162618d5ac83d630faf47",
+      "characters": 2533,
+      "error": null
+    },
+    {
+      "page": 581,
+      "corpus_sha256": "a28ade30b0a12caa6600471d116e31bb68eb565b1b4ce3a532b4491b111d4a00",
+      "recomputed_text_sha256": "a28ade30b0a12caa6600471d116e31bb68eb565b1b4ce3a532b4491b111d4a00",
+      "characters": 2260,
+      "error": null
+    },
+    {
+      "page": 582,
+      "corpus_sha256": "7451a24d2c6409bf49694bd09f8b95919032ce8c51d7c720973793196c796fcc",
+      "recomputed_text_sha256": "7451a24d2c6409bf49694bd09f8b95919032ce8c51d7c720973793196c796fcc",
+      "characters": 2082,
+      "error": null
+    },
+    {
+      "page": 583,
+      "corpus_sha256": "8cfba54a26b579d98a387e01a3877e5317647bfe5d8214ccace6f7448fff11b8",
+      "recomputed_text_sha256": "8cfba54a26b579d98a387e01a3877e5317647bfe5d8214ccace6f7448fff11b8",
+      "characters": 643,
+      "error": null
+    },
+    {
+      "page": 584,
+      "corpus_sha256": "1a0d1e7eafc07b7e104b21a2ff46849ddc77ff892c376f524f5109a3825a43aa",
+      "recomputed_text_sha256": "1a0d1e7eafc07b7e104b21a2ff46849ddc77ff892c376f524f5109a3825a43aa",
+      "characters": 1545,
+      "error": null
+    },
+    {
+      "page": 585,
+      "corpus_sha256": "3a891ba7880b892c140611debbd03669adcf08699ff10e98ee4dda3bca741ffe",
+      "recomputed_text_sha256": "3a891ba7880b892c140611debbd03669adcf08699ff10e98ee4dda3bca741ffe",
+      "characters": 3372,
+      "error": null
+    },
+    {
+      "page": 586,
+      "corpus_sha256": "e9c63cdd36511f9102ba3c791d2c1aae47d2fc44e6049463fdcb885877cba060",
+      "recomputed_text_sha256": "e9c63cdd36511f9102ba3c791d2c1aae47d2fc44e6049463fdcb885877cba060",
+      "characters": 2518,
+      "error": null
+    },
+    {
+      "page": 587,
+      "corpus_sha256": "61e7124b07c1fc8675b575601b73c668fab48f27a2d7ef0dc1f569d2a04c9d88",
+      "recomputed_text_sha256": "61e7124b07c1fc8675b575601b73c668fab48f27a2d7ef0dc1f569d2a04c9d88",
+      "characters": 2305,
+      "error": null
+    },
+    {
+      "page": 588,
+      "corpus_sha256": "1384b5cda3fcb6babd1946a1de5c3906b55685a4fdc8cdb588ae350cc6462a92",
+      "recomputed_text_sha256": "1384b5cda3fcb6babd1946a1de5c3906b55685a4fdc8cdb588ae350cc6462a92",
+      "characters": 2046,
+      "error": null
+    },
+    {
+      "page": 589,
+      "corpus_sha256": "7658fb29046d01995faa98d959e2ee68b0e9f49692aa1c0c2676edfef00ce743",
+      "recomputed_text_sha256": "7658fb29046d01995faa98d959e2ee68b0e9f49692aa1c0c2676edfef00ce743",
+      "characters": 609,
+      "error": null
+    },
+    {
+      "page": 590,
+      "corpus_sha256": "d463d6b3fbbc6455c7a35d0bdaad36b79d9d83836b5f26e99912bf082cc147aa",
+      "recomputed_text_sha256": "d463d6b3fbbc6455c7a35d0bdaad36b79d9d83836b5f26e99912bf082cc147aa",
+      "characters": 1453,
+      "error": null
+    },
+    {
+      "page": 591,
+      "corpus_sha256": "058e695dda304f531355ddf7fb4f1c64bfc424d3042565608fc07eca6c5a65e7",
+      "recomputed_text_sha256": "058e695dda304f531355ddf7fb4f1c64bfc424d3042565608fc07eca6c5a65e7",
+      "characters": 3377,
+      "error": null
+    },
+    {
+      "page": 592,
+      "corpus_sha256": "6aa496f8f8f64b5d1004ca289c374eca20e425726e03847f1efff33fc17f55c8",
+      "recomputed_text_sha256": "6aa496f8f8f64b5d1004ca289c374eca20e425726e03847f1efff33fc17f55c8",
+      "characters": 2554,
+      "error": null
+    },
+    {
+      "page": 593,
+      "corpus_sha256": "406cce2f29bce0cdb8ff3afe85fedb181b3e77ae48294bbd0f90a31dbb956f11",
+      "recomputed_text_sha256": "406cce2f29bce0cdb8ff3afe85fedb181b3e77ae48294bbd0f90a31dbb956f11",
+      "characters": 2265,
+      "error": null
+    },
+    {
+      "page": 594,
+      "corpus_sha256": "39d88c1283d1aacb3ae88493ddd8e671dab07905768ede541c931d0f09611bf4",
+      "recomputed_text_sha256": "39d88c1283d1aacb3ae88493ddd8e671dab07905768ede541c931d0f09611bf4",
+      "characters": 2076,
+      "error": null
+    },
+    {
+      "page": 595,
+      "corpus_sha256": "60eda169684c91af5c4cded4ef70d00668f81d1797246299832b0bf9a379a74a",
+      "recomputed_text_sha256": "60eda169684c91af5c4cded4ef70d00668f81d1797246299832b0bf9a379a74a",
+      "characters": 1257,
+      "error": null
+    },
+    {
+      "page": 596,
+      "corpus_sha256": "32ef9704ee76ae0f3a734535589bd001a7528c08620d43fd621f409f88d73da5",
+      "recomputed_text_sha256": "32ef9704ee76ae0f3a734535589bd001a7528c08620d43fd621f409f88d73da5",
+      "characters": 1440,
+      "error": null
+    },
+    {
+      "page": 597,
+      "corpus_sha256": "883f91c0d95db52be6bec11d0602420f732f851a9b79dd5a7457f17d688e5758",
+      "recomputed_text_sha256": "883f91c0d95db52be6bec11d0602420f732f851a9b79dd5a7457f17d688e5758",
+      "characters": 3368,
+      "error": null
+    },
+    {
+      "page": 598,
+      "corpus_sha256": "0e326e765ba12bf98c5d43f66ffd6dcc350f3451f6e1368b1a02a47e10dd8071",
+      "recomputed_text_sha256": "0e326e765ba12bf98c5d43f66ffd6dcc350f3451f6e1368b1a02a47e10dd8071",
+      "characters": 2556,
+      "error": null
+    },
+    {
+      "page": 599,
+      "corpus_sha256": "42a79c0d698893ade22fd9cf3a9ede1aa0ab7cbaedd874ee6aa83008fc7b8883",
+      "recomputed_text_sha256": "42a79c0d698893ade22fd9cf3a9ede1aa0ab7cbaedd874ee6aa83008fc7b8883",
+      "characters": 2269,
+      "error": null
+    },
+    {
+      "page": 600,
+      "corpus_sha256": "853162102aab7a0c2bc2b52eb14d94e67cf7f8329659b0b0f437257ebf978e52",
+      "recomputed_text_sha256": "853162102aab7a0c2bc2b52eb14d94e67cf7f8329659b0b0f437257ebf978e52",
+      "characters": 2079,
+      "error": null
+    },
+    {
+      "page": 601,
+      "corpus_sha256": "0c3e89f0b89eabf8a378b0630046c81ecb9659e40df11e3fd71214bf8ed8ce81",
+      "recomputed_text_sha256": "0c3e89f0b89eabf8a378b0630046c81ecb9659e40df11e3fd71214bf8ed8ce81",
+      "characters": 1263,
+      "error": null
+    },
+    {
+      "page": 602,
+      "corpus_sha256": "e8245ca551cae3fab1d4c32ee58470fbf88eab2127627fe69f5cf8f5012b7b0f",
+      "recomputed_text_sha256": "e8245ca551cae3fab1d4c32ee58470fbf88eab2127627fe69f5cf8f5012b7b0f",
+      "characters": 1755,
+      "error": null
+    },
+    {
+      "page": 603,
+      "corpus_sha256": "30254e4e3c8d716eefbab79311554155366d845dbfbb265dccc57549da57377d",
+      "recomputed_text_sha256": "30254e4e3c8d716eefbab79311554155366d845dbfbb265dccc57549da57377d",
+      "characters": 3287,
+      "error": null
+    },
+    {
+      "page": 604,
+      "corpus_sha256": "7714b2668a7e768abf6c0f1fb151faff1bd62ccabe883e8de84081a0e954295a",
+      "recomputed_text_sha256": "7714b2668a7e768abf6c0f1fb151faff1bd62ccabe883e8de84081a0e954295a",
+      "characters": 2337,
+      "error": null
+    },
+    {
+      "page": 605,
+      "corpus_sha256": "159d3d2117244f5a355f51e30c3c26b2dc119f30c6755131c19a4649adeb7344",
+      "recomputed_text_sha256": "159d3d2117244f5a355f51e30c3c26b2dc119f30c6755131c19a4649adeb7344",
+      "characters": 2244,
+      "error": null
+    },
+    {
+      "page": 606,
+      "corpus_sha256": "3a1c97ded4a8f76e8db8f64f16de11d1fc14b3e684bbcc31b83beb40630ec598",
+      "recomputed_text_sha256": "3a1c97ded4a8f76e8db8f64f16de11d1fc14b3e684bbcc31b83beb40630ec598",
+      "characters": 1063,
+      "error": null
+    },
+    {
+      "page": 607,
+      "corpus_sha256": "f8685359a9e8098810fa4f99c01ffce03616d4c14afcac80716ebc313e5ad07f",
+      "recomputed_text_sha256": "f8685359a9e8098810fa4f99c01ffce03616d4c14afcac80716ebc313e5ad07f",
+      "characters": 1762,
+      "error": null
+    },
+    {
+      "page": 608,
+      "corpus_sha256": "0766585026d1dcddd848b90de3a3a26dcd2b8f2e4fe194a69d18722d626b2df6",
+      "recomputed_text_sha256": "0766585026d1dcddd848b90de3a3a26dcd2b8f2e4fe194a69d18722d626b2df6",
+      "characters": 3302,
+      "error": null
+    },
+    {
+      "page": 609,
+      "corpus_sha256": "1ba003fee4427baa65dbc85e698ef2e8447cade2f2cb4f26b3f207aeea466dcd",
+      "recomputed_text_sha256": "1ba003fee4427baa65dbc85e698ef2e8447cade2f2cb4f26b3f207aeea466dcd",
+      "characters": 2350,
+      "error": null
+    },
+    {
+      "page": 610,
+      "corpus_sha256": "73e3ef43b63dd32f88e653c162e375cbdbb481f64f44a40833be28dc40af13ad",
+      "recomputed_text_sha256": "73e3ef43b63dd32f88e653c162e375cbdbb481f64f44a40833be28dc40af13ad",
+      "characters": 2246,
+      "error": null
+    },
+    {
+      "page": 611,
+      "corpus_sha256": "faf6251fd5923a5beb4ac535c2beb04be892bca103ab8b9089dc3e59f78f4f3e",
+      "recomputed_text_sha256": "faf6251fd5923a5beb4ac535c2beb04be892bca103ab8b9089dc3e59f78f4f3e",
+      "characters": 1056,
+      "error": null
+    },
+    {
+      "page": 612,
+      "corpus_sha256": "0dcb85d85bb62753f4616f41451cc5d54aa8fc58f727b521362fc48049868bfe",
+      "recomputed_text_sha256": "0dcb85d85bb62753f4616f41451cc5d54aa8fc58f727b521362fc48049868bfe",
+      "characters": 1859,
+      "error": null
+    },
+    {
+      "page": 613,
+      "corpus_sha256": "d0ad153be406ba84dfed07eb4c94bccf7637d358eaa07b2d9509a6d6eac89081",
+      "recomputed_text_sha256": "d0ad153be406ba84dfed07eb4c94bccf7637d358eaa07b2d9509a6d6eac89081",
+      "characters": 2698,
+      "error": null
+    },
+    {
+      "page": 614,
+      "corpus_sha256": "411adafb23d549e9d620e8f457be4767280b9457cdcd085d98f7c402feee6a8c",
+      "recomputed_text_sha256": "411adafb23d549e9d620e8f457be4767280b9457cdcd085d98f7c402feee6a8c",
+      "characters": 2351,
+      "error": null
+    },
+    {
+      "page": 615,
+      "corpus_sha256": "5055fd113a1ab1e745fe9a159996f19ed7c79d55bcd3a9d164614e04332dadcc",
+      "recomputed_text_sha256": "5055fd113a1ab1e745fe9a159996f19ed7c79d55bcd3a9d164614e04332dadcc",
+      "characters": 1907,
+      "error": null
+    },
+    {
+      "page": 616,
+      "corpus_sha256": "dbbba18eca17024dff1724b5b5d5dc1ecd1c254498a394341162cbfe86360c4f",
+      "recomputed_text_sha256": "dbbba18eca17024dff1724b5b5d5dc1ecd1c254498a394341162cbfe86360c4f",
+      "characters": 430,
+      "error": null
+    },
+    {
+      "page": 617,
+      "corpus_sha256": "0aed6cc1dc1b98d53dea0b08cbd92fcf546f35b6c4a64bf0a797558c07c5e29b",
+      "recomputed_text_sha256": "0aed6cc1dc1b98d53dea0b08cbd92fcf546f35b6c4a64bf0a797558c07c5e29b",
+      "characters": 1878,
+      "error": null
+    },
+    {
+      "page": 618,
+      "corpus_sha256": "15a0c1d4f20e8c553151e2b5ade10764f21b4c4bc983f552f695b83370873e61",
+      "recomputed_text_sha256": "15a0c1d4f20e8c553151e2b5ade10764f21b4c4bc983f552f695b83370873e61",
+      "characters": 2711,
+      "error": null
+    },
+    {
+      "page": 619,
+      "corpus_sha256": "05ae20cbd3e6ace3ea018a3cfd622483a8dc8ef1e4c2deff7ce56a2a7acdfb9b",
+      "recomputed_text_sha256": "05ae20cbd3e6ace3ea018a3cfd622483a8dc8ef1e4c2deff7ce56a2a7acdfb9b",
+      "characters": 2356,
+      "error": null
+    },
+    {
+      "page": 620,
+      "corpus_sha256": "5b7b727c55650dbaf67f1b249988e0c9f42ac4f2dc96ea0b59e79d4b1b66a41a",
+      "recomputed_text_sha256": "5b7b727c55650dbaf67f1b249988e0c9f42ac4f2dc96ea0b59e79d4b1b66a41a",
+      "characters": 1913,
+      "error": null
+    },
+    {
+      "page": 621,
+      "corpus_sha256": "3337eb688de4046709b604e150db1c73643241c6b30a17047b236a180c3e4da6",
+      "recomputed_text_sha256": "3337eb688de4046709b604e150db1c73643241c6b30a17047b236a180c3e4da6",
+      "characters": 433,
+      "error": null
+    },
+    {
+      "page": 622,
+      "corpus_sha256": "1f735c769e6a5122aedee81892618b20ecc466252c4e701250dccf6527d2f365",
+      "recomputed_text_sha256": "1f735c769e6a5122aedee81892618b20ecc466252c4e701250dccf6527d2f365",
+      "characters": 1501,
+      "error": null
+    },
+    {
+      "page": 623,
+      "corpus_sha256": "45461acdc90a95be3d1bd0d6b8325ba4c57d9e9bdd8ad8f8dd848b0baa1c6a06",
+      "recomputed_text_sha256": "45461acdc90a95be3d1bd0d6b8325ba4c57d9e9bdd8ad8f8dd848b0baa1c6a06",
+      "characters": 3246,
+      "error": null
+    },
+    {
+      "page": 624,
+      "corpus_sha256": "601158214b85fd9f5d72dbe8326bebb96f08286308fc0bcf234bf94139e65af2",
+      "recomputed_text_sha256": "601158214b85fd9f5d72dbe8326bebb96f08286308fc0bcf234bf94139e65af2",
+      "characters": 2622,
+      "error": null
+    },
+    {
+      "page": 625,
+      "corpus_sha256": "71e3964cc2deaeac53ebcc445e93bfb0e72b4328056152601884e91522224aed",
+      "recomputed_text_sha256": "71e3964cc2deaeac53ebcc445e93bfb0e72b4328056152601884e91522224aed",
+      "characters": 2332,
+      "error": null
+    },
+    {
+      "page": 626,
+      "corpus_sha256": "a4dd97624f9864103db24381e1c14dce8d66676c8772b20f608bf444aacb5412",
+      "recomputed_text_sha256": "a4dd97624f9864103db24381e1c14dce8d66676c8772b20f608bf444aacb5412",
+      "characters": 2187,
+      "error": null
+    },
+    {
+      "page": 627,
+      "corpus_sha256": "de75b2c838b0a3b354ec3d387b2302cf6f22f59bc28ee000514400a17a1676fd",
+      "recomputed_text_sha256": "de75b2c838b0a3b354ec3d387b2302cf6f22f59bc28ee000514400a17a1676fd",
+      "characters": 1045,
+      "error": null
+    },
+    {
+      "page": 628,
+      "corpus_sha256": "87dff8eff3aa7246b1737f276de9232bb445ba782969719a616f27828ca70ff0",
+      "recomputed_text_sha256": "87dff8eff3aa7246b1737f276de9232bb445ba782969719a616f27828ca70ff0",
+      "characters": 1544,
+      "error": null
+    },
+    {
+      "page": 629,
+      "corpus_sha256": "9f67fd05fa5e9adeaa9797d685480d1a755fe72cf8e2c07b1159e878cda10c39",
+      "recomputed_text_sha256": "9f67fd05fa5e9adeaa9797d685480d1a755fe72cf8e2c07b1159e878cda10c39",
+      "characters": 3187,
+      "error": null
+    },
+    {
+      "page": 630,
+      "corpus_sha256": "a4667f71697a32f207afbfa469f671e5e6ab72c6e5fb2463afb3904b313c4d52",
+      "recomputed_text_sha256": "a4667f71697a32f207afbfa469f671e5e6ab72c6e5fb2463afb3904b313c4d52",
+      "characters": 2249,
+      "error": null
+    },
+    {
+      "page": 631,
+      "corpus_sha256": "61db2f220a29da26ddbe92044fd2445ecc82a6e0ad717d4d3e0e7001b252cdb8",
+      "recomputed_text_sha256": "61db2f220a29da26ddbe92044fd2445ecc82a6e0ad717d4d3e0e7001b252cdb8",
+      "characters": 2362,
+      "error": null
+    },
+    {
+      "page": 632,
+      "corpus_sha256": "31f194ec22a1df5f700bf7099a46ed37a4f5766f5973a26dd92e56be9f5912c6",
+      "recomputed_text_sha256": "31f194ec22a1df5f700bf7099a46ed37a4f5766f5973a26dd92e56be9f5912c6",
+      "characters": 1895,
+      "error": null
+    },
+    {
+      "page": 633,
+      "corpus_sha256": "38795c9ad1a54c2b02a78a1066c0e13811a4fffa219bfee675857f19f2080331",
+      "recomputed_text_sha256": "38795c9ad1a54c2b02a78a1066c0e13811a4fffa219bfee675857f19f2080331",
+      "characters": 747,
+      "error": null
+    },
+    {
+      "page": 634,
+      "corpus_sha256": "16b74af1c0f28eeb2771c6a0dccfe1d5e86496aa0e8e1e4dc105a328cb4af9f8",
+      "recomputed_text_sha256": "16b74af1c0f28eeb2771c6a0dccfe1d5e86496aa0e8e1e4dc105a328cb4af9f8",
+      "characters": 1515,
+      "error": null
+    },
+    {
+      "page": 635,
+      "corpus_sha256": "6c798379a1e5d6d6f49b8be68e499530186a19e885cc202ece50e86ceaaf7841",
+      "recomputed_text_sha256": "6c798379a1e5d6d6f49b8be68e499530186a19e885cc202ece50e86ceaaf7841",
+      "characters": 3233,
+      "error": null
+    },
+    {
+      "page": 636,
+      "corpus_sha256": "c943ac6362fc7e65d95dd13347c63cb8ad7bd9785bf0a478e50fe3f06811015a",
+      "recomputed_text_sha256": "c943ac6362fc7e65d95dd13347c63cb8ad7bd9785bf0a478e50fe3f06811015a",
+      "characters": 2652,
+      "error": null
+    },
+    {
+      "page": 637,
+      "corpus_sha256": "73ebe50fbcc9460a716c6a45907effa02aface53db8cf3e3dae85af7ceea3444",
+      "recomputed_text_sha256": "73ebe50fbcc9460a716c6a45907effa02aface53db8cf3e3dae85af7ceea3444",
+      "characters": 2207,
+      "error": null
+    },
+    {
+      "page": 638,
+      "corpus_sha256": "f1931e19e1e2882410da987af35948c8bf8bd03c04fdedc35f8725075dfcc6f7",
+      "recomputed_text_sha256": "f1931e19e1e2882410da987af35948c8bf8bd03c04fdedc35f8725075dfcc6f7",
+      "characters": 1955,
+      "error": null
+    },
+    {
+      "page": 639,
+      "corpus_sha256": "434a01cb2dc31d929e24a051ac1b3c71fe8f5e9ce849e67f31bbd5b8c1ce88ab",
+      "recomputed_text_sha256": "434a01cb2dc31d929e24a051ac1b3c71fe8f5e9ce849e67f31bbd5b8c1ce88ab",
+      "characters": 1860,
+      "error": null
+    },
+    {
+      "page": 640,
+      "corpus_sha256": "7732fd877d2fc0c92dac464a8cc8de5d1e90ab6f651a2e350606e6132affb061",
+      "recomputed_text_sha256": "7732fd877d2fc0c92dac464a8cc8de5d1e90ab6f651a2e350606e6132affb061",
+      "characters": 1960,
+      "error": null
+    },
+    {
+      "page": 641,
+      "corpus_sha256": "a6d14460f4373b39024ef2ff0ac9839e3e83fd868a30d0dcd97123189b0a438f",
+      "recomputed_text_sha256": "a6d14460f4373b39024ef2ff0ac9839e3e83fd868a30d0dcd97123189b0a438f",
+      "characters": 201,
+      "error": null
+    },
+    {
+      "page": 642,
+      "corpus_sha256": "72a4b33bf74eefd136514f0f2efe9d7e6fcfe2f54fc02284c1d62971aac9d7b6",
+      "recomputed_text_sha256": "72a4b33bf74eefd136514f0f2efe9d7e6fcfe2f54fc02284c1d62971aac9d7b6",
+      "characters": 1588,
+      "error": null
+    },
+    {
+      "page": 643,
+      "corpus_sha256": "b3440da740b76819c051496270f3f8584c34aae76dfd733b373fac1d21a32baa",
+      "recomputed_text_sha256": "b3440da740b76819c051496270f3f8584c34aae76dfd733b373fac1d21a32baa",
+      "characters": 3351,
+      "error": null
+    },
+    {
+      "page": 644,
+      "corpus_sha256": "5130bfedb5e77e8d27ea3d0b0e823cb850666505101e4000d44c6781395e7d8b",
+      "recomputed_text_sha256": "5130bfedb5e77e8d27ea3d0b0e823cb850666505101e4000d44c6781395e7d8b",
+      "characters": 2634,
+      "error": null
+    },
+    {
+      "page": 645,
+      "corpus_sha256": "4de78e5fcb8e6c0a10d815e9b4f6b3a9d24b7a677f9682600747b6e930362804",
+      "recomputed_text_sha256": "4de78e5fcb8e6c0a10d815e9b4f6b3a9d24b7a677f9682600747b6e930362804",
+      "characters": 2403,
+      "error": null
+    },
+    {
+      "page": 646,
+      "corpus_sha256": "ebdb543e8ac30098f484fe03fafb4b860096258ad9895076cc3673a2481a241e",
+      "recomputed_text_sha256": "ebdb543e8ac30098f484fe03fafb4b860096258ad9895076cc3673a2481a241e",
+      "characters": 2030,
+      "error": null
+    },
+    {
+      "page": 647,
+      "corpus_sha256": "d9ea460887c395cde50f8f470ed7370f460a604713149585698c0c0eb8cf6efc",
+      "recomputed_text_sha256": "d9ea460887c395cde50f8f470ed7370f460a604713149585698c0c0eb8cf6efc",
+      "characters": 1938,
+      "error": null
+    },
+    {
+      "page": 648,
+      "corpus_sha256": "e92555c46ec9d508d2f13c313f4d5a58d6c1ad1f84797f601d0a7106d022a9fa",
+      "recomputed_text_sha256": "e92555c46ec9d508d2f13c313f4d5a58d6c1ad1f84797f601d0a7106d022a9fa",
+      "characters": 192,
+      "error": null
+    },
+    {
+      "page": 649,
+      "corpus_sha256": "dd576c9ec81584d8f5171441630d271d9e2a873dbd8b5b27ac06140e2b008c20",
+      "recomputed_text_sha256": "dd576c9ec81584d8f5171441630d271d9e2a873dbd8b5b27ac06140e2b008c20",
+      "characters": 1418,
+      "error": null
+    },
+    {
+      "page": 650,
+      "corpus_sha256": "d684590780beba74ce2695971e4404be97c7827638847b999607bcc2c48ce8f8",
+      "recomputed_text_sha256": "d684590780beba74ce2695971e4404be97c7827638847b999607bcc2c48ce8f8",
+      "characters": 3775,
+      "error": null
+    },
+    {
+      "page": 651,
+      "corpus_sha256": "b0f2982733e04f43f959578902668c5899bfb68f4200351e9338e97d7b26a042",
+      "recomputed_text_sha256": "b0f2982733e04f43f959578902668c5899bfb68f4200351e9338e97d7b26a042",
+      "characters": 2941,
+      "error": null
+    },
+    {
+      "page": 652,
+      "corpus_sha256": "164724a5e4861a2b0841f380221f95a0a9d124546c2cad78dcf0098933019b09",
+      "recomputed_text_sha256": "164724a5e4861a2b0841f380221f95a0a9d124546c2cad78dcf0098933019b09",
+      "characters": 2415,
+      "error": null
+    },
+    {
+      "page": 653,
+      "corpus_sha256": "7b9a7ae98e2b235620033eeab443ae40903a348b6f37b9d6fcba13e7c14273b0",
+      "recomputed_text_sha256": "7b9a7ae98e2b235620033eeab443ae40903a348b6f37b9d6fcba13e7c14273b0",
+      "characters": 2278,
+      "error": null
+    },
+    {
+      "page": 654,
+      "corpus_sha256": "199c8edeb1091d95f6dd85280c606b1c7c2c0315f5acda86956915111045051f",
+      "recomputed_text_sha256": "199c8edeb1091d95f6dd85280c606b1c7c2c0315f5acda86956915111045051f",
+      "characters": 1863,
+      "error": null
+    },
+    {
+      "page": 655,
+      "corpus_sha256": "6d2f8a3204a9b1d522955222835327399e54ef5f55c1fb8d6745838d7da5f92c",
+      "recomputed_text_sha256": "6d2f8a3204a9b1d522955222835327399e54ef5f55c1fb8d6745838d7da5f92c",
+      "characters": 1210,
+      "error": null
+    },
+    {
+      "page": 656,
+      "corpus_sha256": "46d493430db96ae85aafa51203dd7c60f4f2767cccc1de0b622ba9dcd8b9e48f",
+      "recomputed_text_sha256": "46d493430db96ae85aafa51203dd7c60f4f2767cccc1de0b622ba9dcd8b9e48f",
+      "characters": 1660,
+      "error": null
+    },
+    {
+      "page": 657,
+      "corpus_sha256": "3264c8a580c02b3eb8d97fb8d48f6cbb7ba132a3e6b8d183c1893f680f2ff73a",
+      "recomputed_text_sha256": "3264c8a580c02b3eb8d97fb8d48f6cbb7ba132a3e6b8d183c1893f680f2ff73a",
+      "characters": 3351,
+      "error": null
+    },
+    {
+      "page": 658,
+      "corpus_sha256": "a192048645fde476ac148f2d9f0b54559a90ee1bee743b2b7d183f3824d76b17",
+      "recomputed_text_sha256": "a192048645fde476ac148f2d9f0b54559a90ee1bee743b2b7d183f3824d76b17",
+      "characters": 2902,
+      "error": null
+    }
+  ],
+  "reading_method": "Todos os corpos textuais exibidos e lidos em lotes; whitespace periférico removido nos lotes446–658, sem exclusão de linhas não vazias. Truncamento de saída371–390 reparado com releitura379–382. Não confundir leitura textual com renderização ou execução.",
+  "sections": [
+    {
+      "depth": 3,
+      "title": "Examples of Working with the Chart",
+      "start": 343,
+      "end": 400,
+      "id": "REF-0092",
+      "pages_read": [
+        356,
+        357,
+        358,
+        359,
+        360,
+        361,
+        362,
+        363,
+        364,
+        365,
+        366,
+        367,
+        368,
+        369,
+        370,
+        371,
+        372,
+        373,
+        374,
+        375,
+        376,
+        377,
+        378,
+        379,
+        380,
+        381,
+        382,
+        383,
+        384,
+        385,
+        386,
+        387,
+        388,
+        389,
+        390,
+        391,
+        392,
+        393,
+        394,
+        395,
+        396,
+        397,
+        398,
+        399,
+        400
+      ],
+      "status": "CONTINUATION_READ_356_400_BEGINNING_PREVIOUS_BATCH",
+      "knowledge": "Wrappers tipados consultam ChartGetInteger/Double/String e escrevem ChartSet*. A continuação começa em ChartShowOHLCSet; cobre linhas Bid/Ask/Last, separadores, grid, volumes, descrições, geometria/janelas e cores. Valores de falha são -1, clrNONE, EMPTY_VALUE ou WRONG_VALUE convertido para enum; o retorno de consulta deve permanecer separado do valor booleano consultado. SHIFT_SIZE 10–50 depende de CHART_SHIFT; FIXED_POSITION exige autoscroll falso; FIXED_MAX/MIN dependem SCALEFIX; POINTS_PER_BAR depende SCALE_PT_PER_BAR. O painel388–400 enumera propriedades, divide consulta/tipo/controle e trata OBJECT_CLICK por nome Button_index, libera estado e redesenha. Os getters maximizado/minimizado387–388 declaram long value, mas chamam sobrecarga direta sem saída e depois copiam value: não são modelo seguro. LAST_PROPERTY_NUMBER111 é limite do exemplo, não descoberta robusta de API.",
+      "application": "proposta futura: adaptadores explícitos para painel/diagnóstico Stoikus, preservando propriedades do usuário; nenhuma confirmação do código atual.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 2,
+      "title": "Objects Constants",
+      "start": 401,
+      "end": 732,
+      "id": "REF-0093",
+      "pages_read": [
+        401,
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420,
+        421,
+        422,
+        423,
+        424,
+        425,
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        432,
+        433,
+        434,
+        435,
+        436,
+        437,
+        438,
+        439,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445,
+        446,
+        447,
+        448,
+        449,
+        450,
+        451,
+        452,
+        453,
+        454,
+        455,
+        456,
+        457,
+        458,
+        459,
+        460,
+        461,
+        462,
+        463,
+        464,
+        465,
+        466,
+        467,
+        468,
+        469,
+        470,
+        471,
+        472,
+        473,
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483,
+        484,
+        485,
+        486,
+        487,
+        488,
+        489,
+        490,
+        491,
+        492,
+        493,
+        494,
+        495,
+        496,
+        497,
+        498,
+        499,
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520,
+        521,
+        522,
+        523,
+        524,
+        525,
+        526,
+        527,
+        528,
+        529,
+        530,
+        531,
+        532,
+        533,
+        534,
+        535,
+        536,
+        537,
+        538,
+        539,
+        540,
+        541,
+        542,
+        543,
+        544,
+        545,
+        546,
+        547,
+        548,
+        549,
+        550,
+        551,
+        552,
+        553,
+        554,
+        555,
+        556,
+        557,
+        558,
+        559,
+        560,
+        561,
+        562,
+        563,
+        564,
+        565,
+        566,
+        567,
+        568,
+        569,
+        570,
+        571,
+        572,
+        573,
+        574,
+        575,
+        576,
+        577,
+        578,
+        579,
+        580,
+        581,
+        582,
+        583,
+        584,
+        585,
+        586,
+        587,
+        588,
+        589,
+        590,
+        591,
+        592,
+        593,
+        594,
+        595,
+        596,
+        597,
+        598,
+        599,
+        600,
+        601,
+        602,
+        603,
+        604,
+        605,
+        606,
+        607,
+        608,
+        609,
+        610,
+        611,
+        612,
+        613,
+        614,
+        615,
+        616,
+        617,
+        618,
+        619,
+        620,
+        621,
+        622,
+        623,
+        624,
+        625,
+        626,
+        627,
+        628,
+        629,
+        630,
+        631,
+        632,
+        633,
+        634,
+        635,
+        636,
+        637,
+        638,
+        639,
+        640,
+        641,
+        642,
+        643,
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650,
+        651,
+        652,
+        653,
+        654,
+        655,
+        656,
+        657,
+        658
+      ],
+      "status": "PARTIAL_SECTION",
+      "knowledge": "O capítulo organiza44objetos e nove grupos de constantes: tipo, propriedades, binding, corner, visibilidade, níveis Elliott, Gann, cores e Wingdings. Página401 é introdução; filhos posteriores a658 não foram lidos neste lote.",
+      "application": "sem uso direto: mapa de consulta; pai parcial até732.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 3,
+      "title": "Object Types",
+      "start": 402,
+      "end": 687,
+      "id": "REF-0094",
+      "pages_read": [
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420,
+        421,
+        422,
+        423,
+        424,
+        425,
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        432,
+        433,
+        434,
+        435,
+        436,
+        437,
+        438,
+        439,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445,
+        446,
+        447,
+        448,
+        449,
+        450,
+        451,
+        452,
+        453,
+        454,
+        455,
+        456,
+        457,
+        458,
+        459,
+        460,
+        461,
+        462,
+        463,
+        464,
+        465,
+        466,
+        467,
+        468,
+        469,
+        470,
+        471,
+        472,
+        473,
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483,
+        484,
+        485,
+        486,
+        487,
+        488,
+        489,
+        490,
+        491,
+        492,
+        493,
+        494,
+        495,
+        496,
+        497,
+        498,
+        499,
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520,
+        521,
+        522,
+        523,
+        524,
+        525,
+        526,
+        527,
+        528,
+        529,
+        530,
+        531,
+        532,
+        533,
+        534,
+        535,
+        536,
+        537,
+        538,
+        539,
+        540,
+        541,
+        542,
+        543,
+        544,
+        545,
+        546,
+        547,
+        548,
+        549,
+        550,
+        551,
+        552,
+        553,
+        554,
+        555,
+        556,
+        557,
+        558,
+        559,
+        560,
+        561,
+        562,
+        563,
+        564,
+        565,
+        566,
+        567,
+        568,
+        569,
+        570,
+        571,
+        572,
+        573,
+        574,
+        575,
+        576,
+        577,
+        578,
+        579,
+        580,
+        581,
+        582,
+        583,
+        584,
+        585,
+        586,
+        587,
+        588,
+        589,
+        590,
+        591,
+        592,
+        593,
+        594,
+        595,
+        596,
+        597,
+        598,
+        599,
+        600,
+        601,
+        602,
+        603,
+        604,
+        605,
+        606,
+        607,
+        608,
+        609,
+        610,
+        611,
+        612,
+        613,
+        614,
+        615,
+        616,
+        617,
+        618,
+        619,
+        620,
+        621,
+        622,
+        623,
+        624,
+        625,
+        626,
+        627,
+        628,
+        629,
+        630,
+        631,
+        632,
+        633,
+        634,
+        635,
+        636,
+        637,
+        638,
+        639,
+        640,
+        641,
+        642,
+        643,
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650,
+        651,
+        652,
+        653,
+        654,
+        655,
+        656,
+        657,
+        658
+      ],
+      "status": "PARTIAL_SECTION",
+      "knowledge": "ENUM_OBJECT é o discriminante passado a ObjectCreate;402–403 lista tipos de geometria, anotações de preço/tempo e controles de interface. Propriedades adicionais são configuradas depois da criação. Esta leitura cobre introdução e filhos até início bitmap; não cobre toda a seção402–687.",
+      "application": "proposta futura: separar objetos ligados ao mercado de controles em pixels, sem inferir adoção atual.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_VLINE",
+      "start": 404,
+      "end": 408,
+      "id": "REF-0095",
+      "pages_read": [
+        404,
+        405,
+        406,
+        407,
+        408
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_VLINE usa uma data; preço0 em ObjectCreate/ObjectMove é irrelevante ao eixo temporal. OBJPROP_RAY permite exibir a linha em todas as janelas. Exemplo valida percentual0–100, copia datas das barras visíveis, move por índices, consulta IsStopped e elimina objeto nominal.",
+      "application": "proposta futura: demarcações temporais de sessão no Monitor; não constitui regra de horário JPW.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_HLINE",
+      "start": 409,
+      "end": 413,
+      "id": "REF-0096",
+      "pages_read": [
+        409,
+        410,
+        411,
+        412,
+        413
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_HLINE usa preço, com data0; helper substitui preço0 pelo Bid atual. Exemplo discretiza intervalo CHART_PRICE_MIN/MAX em1000valores, posiciona por percentual e move com ObjectMove índice0 antes da exclusão.",
+      "application": "proposta futura: níveis informativos; linha visual não é ordem/stop negociado.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_TREND",
+      "start": 414,
+      "end": 420,
+      "id": "REF-0097",
+      "pages_read": [
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_TREND recebe dois pares data/preço. RAY_LEFT e RAY_RIGHT controlam prolongamentos independentemente. Helper de pontos vazios usa TimeCurrent/Bid e CopyTime de10barras para outro extremo. Exemplo move cada ponto verticalmente e ambos horizontalmente.",
+      "application": "sem uso direto: técnica de anotação opcional, sem sinal ou estratégia demonstrada.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_TRENDBYANGLE",
+      "start": 421,
+      "end": 426,
+      "id": "REF-0098",
+      "pages_read": [
+        421,
+        422,
+        423,
+        424,
+        425,
+        426
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_TRENDBYANGLE aceita inclinação por ângulo ou segunda âncora; ao alterar OBJPROP_ANGLE a segunda coordenada é redefinida automaticamente. Criação usa ponto auxiliar para facilitar arraste. Ambos os raios configuráveis; exemplo move primeiro ponto e gira.",
+      "application": "sem uso direto: ângulo gráfico não demonstra taxa econômica de variação nem previsão.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_CYCLES",
+      "start": 427,
+      "end": 432,
+      "id": "REF-0099",
+      "pages_read": [
+        427,
+        428,
+        429,
+        430,
+        431,
+        432
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_CYCLES define espaçamento entre linhas pelas datas de duas âncoras. Exemplo cria com dois pares e muda distância ao mover primeiro/segundo pontos; preço é componente da assinatura, mas o contrato do espaçamento é temporal.",
+      "application": "sem uso direto: não confundir ciclos desenhados com calendário operacional normativo.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROWED_LINE",
+      "start": 433,
+      "end": 438,
+      "id": "REF-0100",
+      "pages_read": [
+        433,
+        434,
+        435,
+        436,
+        437,
+        438
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROWED_LINE desenha segmento com seta entre dois pares data/preço. Helpers expõem cor/estilo/largura, plano, seleção, ocultação e prioridade; movimentação escolhe índice da âncora e remoção usa nome.",
+      "application": "proposta futura: explicação visual de transição de estado, sem comando de negociação.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_CHANNEL",
+      "start": 439,
+      "end": 445,
+      "id": "REF-0101",
+      "pages_read": [
+        439,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_CHANNEL recebe três pares data/preço: dois formam linha base e terceiro define afastamento. Pode preencher com OBJPROP_FILL e prolongar à esquerda/direita. Exemplo move âncoras0/1no tempo e2no preço. Defaults usam preço de referência e diferença em SYMBOL_POINT.",
+      "application": "sem uso direto: canal ilustrativo, não limite de risco Stoikus.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_STDDEVCHANNEL",
+      "start": 446,
+      "end": 452,
+      "id": "REF-0102",
+      "pages_read": [
+        446,
+        447,
+        448,
+        449,
+        450,
+        451,
+        452
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_STDDEVCHANNEL usa duas datas, com preços0; largura ajustada por OBJPROP_DEVIATION. Há FILL e raios independentes. Exemplo desloca ambas datas e expande desvio em laço; não apresenta validação estatística do canal como sinal.",
+      "application": "sem uso direto: eventual estudo visual separado do cálculo normativo.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_REGRESSION",
+      "start": 453,
+      "end": 458,
+      "id": "REF-0103",
+      "pages_read": [
+        453,
+        454,
+        455,
+        456,
+        457,
+        458
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_REGRESSION também delimita intervalo por duas datas e preços0; admite preenchimento/raios. O exemplo desloca início/fim conjuntamente; não fornece nesta seção contrato de inferência estatística ou garantia preditiva.",
+      "application": "sem uso direto: regressão desenhada não altera programas diários.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_PITCHFORK",
+      "start": 459,
+      "end": 466,
+      "id": "REF-0104",
+      "pages_read": [
+        459,
+        460,
+        461,
+        462,
+        463,
+        464,
+        465,
+        466
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_PITCHFORK utiliza três pares, raios e níveis configuráveis. OBJPROP_LEVELS antecede LEVELVALUE/LEVELCOLOR/LEVELSTYLE/LEVELWIDTH/LEVELTEXT indexados; texto percentual deriva100*valor. Em461 a checagem de tamanhos repete widths e omite values, embora values[i] seja lido. Exemplo move pontos e apaga.",
+      "application": "sem uso direto: se reutilizar helper no futuro, validar todos os vetores e cada setter.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_GANNLINE",
+      "start": 467,
+      "end": 473,
+      "id": "REF-0105",
+      "pages_read": [
+        467,
+        468,
+        469,
+        470,
+        471,
+        472,
+        473
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_GANNLINE admite ângulo Gann, escala e segunda âncora; mudanças de ângulo/escala recalculam segunda coordenada. OBJPROP_SCALE é comentado como pips por barra. Permite raios e métodos separados para mudar ângulo/escala.",
+      "application": "sem uso direto: unidade gráfica não substitui Point/tick-size financeiro nem regra JPW.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_GANNFAN",
+      "start": 474,
+      "end": 480,
+      "id": "REF-0106",
+      "pages_read": [
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_GANNFAN recebe duas datas e preço inicial; OBJPROP_SCALE controla inclinação e OBJPROP_DIRECTION controla tendência. Exemplo booleano documenta true descendente/false ascendente e inverte direção após movimento.",
+      "application": "sem uso direto: enum Gann é direção da figura, não posição comprada/vendida.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_GANNGRID",
+      "start": 481,
+      "end": 487,
+      "id": "REF-0107",
+      "pages_read": [
+        481,
+        482,
+        483,
+        484,
+        485,
+        486,
+        487
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_GANNGRID repete contrato escala/direção da grade Gann e usa data/preço inicial mais segunda data. Exemplo desloca primeiro preço e segunda data, muda direção e elimina; não equivale ao CHART_SHOW_GRID do gráfico.",
+      "application": "sem uso direto: não há uso atual demonstrado.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_FIBO",
+      "start": 488,
+      "end": 494,
+      "id": "REF-0108",
+      "pages_read": [
+        488,
+        489,
+        490,
+        491,
+        492,
+        493,
+        494
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_FIBO utiliza duas âncoras e raios independentes. Níveis recebem quantidade e propriedades indexadas; labels formatam100*values[i]. FiboLevelsSet490 valida colors/styles/widths, mas não values. Exemplo desloca os preços das âncoras e exclui.",
+      "application": "sem uso direto: proporções de desenho não são metas autorizadas do Stoikus.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_FIBOTIMES",
+      "start": 495,
+      "end": 501,
+      "id": "REF-0109",
+      "pages_read": [
+        495,
+        496,
+        497,
+        498,
+        499,
+        500,
+        501
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_FIBOTIMES projeta zonas temporais a partir de duas âncoras; aceita quantidade/valor/cor/estilo/largura/texto por nível. Texto usa values diretamente, diferentemente do percentual de retração.497 repete widths na validação e não testa values. Default segunda data vem de3barras.",
+      "application": "sem uso direto: não substitui relógio/calendário de execução.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_FIBOFAN",
+      "start": 502,
+      "end": 508,
+      "id": "REF-0110",
+      "pages_read": [
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_FIBOFAN cria leque a partir de dois pares data/preço e níveis configuráveis; funções movem âncoras por índice.504 repete validação incompleta de arrays. Exemplo muda primeiro preço e segunda data com redesenho.",
+      "application": "sem uso direto: ferramenta visual sem estratégia demonstrada.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_FIBOARC",
+      "start": 509,
+      "end": 515,
+      "id": "REF-0111",
+      "pages_read": [
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_FIBOARC aceita escala OBJPROP_SCALE e OBJPROP_ELLIPSE para elipse inteira/meia; raio decorre também das âncoras. Níveis indexados como retração;511 repete widths e omite values no guard. Exemplo move âncoras.",
+      "application": "sem uso direto: aplicação puramente ilustrativa.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_FIBOCHANNEL",
+      "start": 516,
+      "end": 523,
+      "id": "REF-0112",
+      "pages_read": [
+        516,
+        517,
+        518,
+        519,
+        520,
+        521,
+        522,
+        523
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_FIBOCHANNEL usa três pares e raios independentes; níveis personalizados podem receber valores e estilos individuais.518 usa guard incompleto de arrays. Default terceiro ponto coincide com primeira data e preço da segunda; exemplo move três âncoras.",
+      "application": "sem uso direto: nenhum canal adotado foi verificado.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_EXPANSION",
+      "start": 524,
+      "end": 531,
+      "id": "REF-0113",
+      "pages_read": [
+        524,
+        525,
+        526,
+        527,
+        528,
+        529,
+        530,
+        531
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_EXPANSION é projeção Fibonacci de três pares; tem raios e níveis indexados, com texto FE percentual.526 repete guard sem values.528 cria temp dinâmico, preenche por CopyTime somente se time1 vazio e usa temp[2] se time2 vazio; combinação time1 informado/time2 ausente requer correção antes de reutilização.",
+      "application": "sem uso direto: lógica de defaults do exemplo demanda revisão, NOT_RUN.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ELLIOTWAVE5",
+      "start": 532,
+      "end": 539,
+      "id": "REF-0114",
+      "pages_read": [
+        532,
+        533,
+        534,
+        535,
+        536,
+        537,
+        538,
+        539
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ELLIOTWAVE5 recebe cinco pares data/preço. OBJPROP_DRAWLINES liga/desliga conexão e OBJPROP_DEGREE recebe ENUM_ELLIOT_WAVE_DEGREE. Defaults recorrem a10datas e offsets em SYMBOL_POINT; exemplo desloca diferentes grupos de pontos. A figura não detecta ondas automaticamente.",
+      "application": "sem uso direto: contagem discricionária de ondas não integra regra Stoikus.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ELLIOTWAVE3",
+      "start": 540,
+      "end": 546,
+      "id": "REF-0115",
+      "pages_read": [
+        540,
+        541,
+        542,
+        543,
+        544,
+        545,
+        546
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ELLIOTWAVE3 recebe três pares, DEGREE e DRAWLINES análogos. Defaults usam datas0/4/8do histórico copiado e diferenças de preço em pontos; exemplo move terceiro ponto e depois primeiro/segundo.",
+      "application": "sem uso direto: API apenas representa correção já especificada.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_RECTANGLE",
+      "start": 547,
+      "end": 552,
+      "id": "REF-0116",
+      "pages_read": [
+        547,
+        548,
+        549,
+        550,
+        551,
+        552
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_RECTANGLE representa região por duas âncoras data/preço, com FILL opcional independente de BACK. ObjectMove atualiza cantos por índice; exemplo muda largura temporal e altura por laços separados.",
+      "application": "proposta futura: destacar faixas/intervalos informativos em gráfico; não prova uso atual.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_TRIANGLE",
+      "start": 553,
+      "end": 559,
+      "id": "REF-0117",
+      "pages_read": [
+        553,
+        554,
+        555,
+        556,
+        557,
+        558,
+        559
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_TRIANGLE usa três pares e preenchimento por FILL; criação, movimento individual e exclusão seguem nomes. Exemplo valida percentuais e desloca três vértices; mensagem de erro de exclusão556 diz ellipse apesar de TriangleDelete.",
+      "application": "sem uso direto: escolher geometria não acrescenta significado normativo.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ELLIPSE",
+      "start": 560,
+      "end": 565,
+      "id": "REF-0118",
+      "pages_read": [
+        560,
+        561,
+        562,
+        563,
+        564,
+        565
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ELLIPSE usa três pares, largura/estilo/cor e FILL; exemplo move primeiro e segundo preços em sentidos opostos e terceira data, depois remove.",
+      "application": "sem uso direto: anotação opcional.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_THUMB_UP",
+      "start": 566,
+      "end": 571,
+      "id": "REF-0119",
+      "pages_read": [
+        566,
+        567,
+        568,
+        569,
+        570,
+        571
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_THUMB_UP é sinal de uma âncora data/preço com ENUM_ARROW_ANCHOR top/bottom. Tamanho maior que5requer OBJPROP_WIDTH via código. Exemplo muda posição e âncora relativa ao sinal, explicitando diferença entre mover mercado e mudar ponto de ancoragem.",
+      "application": "proposta futura: ícone informativo de estado; não confundir thumbs-up com aprovação de operação.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_THUMB_DOWN",
+      "start": 572,
+      "end": 577,
+      "id": "REF-0120",
+      "pages_read": [
+        572,
+        573,
+        574,
+        575,
+        576,
+        577
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_THUMB_DOWN possui mesmo contrato de âncora top/bottom e largura maior que5via código; exemplo move à direita/abaixo e muda ANCHOR_TOP. STYLE controla borda, WIDTH tamanho.",
+      "application": "proposta futura: ícone de condição, sem sinal de venda implícito.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_UP",
+      "start": 578,
+      "end": 583,
+      "id": "REF-0121",
+      "pages_read": [
+        578,
+        579,
+        580,
+        581,
+        582,
+        583
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_UP usa âncora data/preço, ANCHOR_TOP/BOTTOM e tamanho por WIDTH. Exemplo mantém data e move preço para cima, depois troca âncora e apaga; InpSelection falso contrasta com helper selecionável por default.",
+      "application": "proposta futura: anotação de evento, sem direção negociável inferida.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_DOWN",
+      "start": 584,
+      "end": 589,
+      "id": "REF-0122",
+      "pages_read": [
+        584,
+        585,
+        586,
+        587,
+        588,
+        589
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_DOWN espelha sinal para baixo; não precisa de segunda âncora nem corner em pixels. Exemplo desloca preço para baixo e depois muda ANCHOR_TOP; seleção/ocultação/prioridade continuam propriedades independentes.",
+      "application": "proposta futura: marcador de diagnóstico, sem autorização de venda.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_STOP",
+      "start": 590,
+      "end": 595,
+      "id": "REF-0123",
+      "pages_read": [
+        590,
+        591,
+        592,
+        593,
+        594,
+        595
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_STOP é desenho de placa stop com enum de âncora e largura grande via código. Exemplo move no tempo, alterna âncora e move novamente; ObjectDelete apenas elimina placa.",
+      "application": "proposta futura: indicação visual de bloqueio; placa não interrompe EA nem coloca stop-loss.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_CHECK",
+      "start": 596,
+      "end": 601,
+      "id": "REF-0124",
+      "pages_read": [
+        596,
+        597,
+        598,
+        599,
+        600,
+        601
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_CHECK é desenho check com contrato idêntico de âncora/tamanho. Exemplo muda ANCHOR_BOTTOM entre dois deslocamentos temporais. Nome e aparência não constituem resultado de validação executada.",
+      "application": "proposta futura: representar estado já calculado e comprovado; nunca fabricar aprovação a partir do ícone.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_LEFT_PRICE",
+      "start": 602,
+      "end": 606,
+      "id": "REF-0125",
+      "pages_read": [
+        602,
+        603,
+        604,
+        605,
+        606
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_LEFT_PRICE anota preço à esquerda em uma âncora data/preço. Exemplo transforma percentual de altura em preço e move verticalmente; WIDTH define tamanho da etiqueta. Não usa o enum de âncora do grupo de setas no helper.",
+      "application": "proposta futura: etiqueta de nível informativo.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_RIGHT_PRICE",
+      "start": 607,
+      "end": 611,
+      "id": "REF-0126",
+      "pages_read": [
+        607,
+        608,
+        609,
+        610,
+        611
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_RIGHT_PRICE é etiqueta de preço à direita, criada/movida por data/preço. Exemplo começa no percentual temporal0 e altura90, desloca preço para baixo; cada operação conserva nome.",
+      "application": "proposta futura: etiqueta complementar de diagnóstico, sem ordem real.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_BUY",
+      "start": 612,
+      "end": 616,
+      "id": "REF-0127",
+      "pages_read": [
+        612,
+        613,
+        614,
+        615,
+        616
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_BUY é sinal gráfico; STYLE/WIDTH referem-se à linha quando selecionado. Exemplo CopyTime/Low/High nas barras visíveis, cria sinal em Low para cada barra, move a High e elimina. Não contém OrderSend.",
+      "application": "proposta futura: marcar operação histórica confirmada somente depois de reconciliar dados; não demonstrado no atual.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW_SELL",
+      "start": 617,
+      "end": 621,
+      "id": "REF-0128",
+      "pages_read": [
+        617,
+        618,
+        619,
+        620,
+        621
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW_SELL também é sinal gráfico, com cor default distinta. Exemplo cria em High de cada barra, move a Low e elimina; CopyTime/Low/High verificam -1, sem conferir correspondência exata das contagens copiadas.",
+      "application": "proposta futura: anotações de histórico; não confundir figura Sell com execução.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_ARROW",
+      "start": 622,
+      "end": 627,
+      "id": "REF-0129",
+      "pages_read": [
+        622,
+        623,
+        624,
+        625,
+        626,
+        627
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_ARROW recebe uchar de Wingdings via OBJPROP_ARROWCODE, além de âncora e WIDTH. Exemplo cria código32 e percorre33–255, verificando interrupção/redesenhando com Sleep500. É catálogo visual, não teste de todos os ambientes de fonte.",
+      "application": "proposta futura: símbolo de UI escolhido e conferido visualmente no MT5 alvo.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_TEXT",
+      "start": 628,
+      "end": 633,
+      "id": "REF-0130",
+      "pages_read": [
+        628,
+        629,
+        630,
+        631,
+        632,
+        633
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_TEXT é texto ligado a uma âncora data/preço; ENUM_ANCHOR_POINT e OBJPROP_ANGLE controlam ancoragem/inclinação. TEXT/FONT/FONTSIZE configurados após criação. Exemplo anota High/Low com espaçamento por CHART_SCALE:12/6/4/2nas escalas0/1/2/3e1nas demais. Formatação fixa5casas é escolha do exemplo.",
+      "application": "proposta futura: valores ligados a candles, formatados por símbolo; painel fixo exige Label.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_LABEL",
+      "start": 634,
+      "end": 641,
+      "id": "REF-0131",
+      "pages_read": [
+        634,
+        635,
+        636,
+        637,
+        638,
+        639,
+        640,
+        641
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_LABEL ancora em pixels por XDISTANCE/YDISTANCE, corner relativo ao gráfico e ENUM_ANCHOR_POINT relativo ao texto. Criação usa data/preço0. Exemplo move em pixels e muda corners sem converter para preço, atualiza texto e verifica dimensões da janela. Helper MoveAndTextChange retorna false, mas laços638–639não testam retorno.",
+      "application": "proposta futura: painel fixo de estado Stoikus, com teste de resize/DPI/cantos; uso atual não inspecionado.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_BUTTON",
+      "start": 642,
+      "end": 648,
+      "id": "REF-0132",
+      "pages_read": [
+        642,
+        643,
+        644,
+        645,
+        646,
+        647,
+        648
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_BUTTON é controle em pixels com corner, XSIZE/YSIZE, texto/fonte, cor de texto/fundo/borda e OBJPROP_STATE. Seleção para arrastar é separada de estado pressionado. Exemplo reduz dimensões e alterna STATE; não implementa ação comercial ou handler de consentimento.",
+      "application": "proposta futura: controle de UI somente com transição explicitamente validada; desenho do botão não autoriza Supervisor.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_CHART",
+      "start": 649,
+      "end": 655,
+      "id": "REF-0133",
+      "pages_read": [
+        649,
+        650,
+        651,
+        652,
+        653,
+        654,
+        655
+      ],
+      "status": "FULL_TEXT_READ",
+      "knowledge": "OBJ_CHART é gráfico incorporado posicionado por pixels/corner, com símbolo/período/escala e visibilidade de escalas. Não é exibido em teste visual649. OBJPROP_CHART_ID obtém ID interno diferente do chart_ID hospedeiro usado nos setters de objeto. Exemplo exige símbolo no Market Watch e escala0–5, redimensiona e troca período paraM1.",
+      "application": "sem uso direto: eventual visualização secundária exige validação no terminal real; ausência no tester não basta para diagnosticar falha.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_BITMAP",
+      "start": 656,
+      "end": 662,
+      "id": "REF-0134",
+      "pages_read": [
+        656,
+        657,
+        658
+      ],
+      "status": "PARTIAL_SECTION",
+      "knowledge": "Início OBJ_BITMAP656–658: imagem ligada à âncora data/preço, caminho em OBJPROP_BMPFILE; XSIZE/YSIZE delimitam região visível e XOFFSET/YOFFSET escolhem recorte. Se dimensão pedida excede fonte, comentário documenta imagem não desenhada; não é escala automática. BitmapSetImage testa retorno. Leitura termina no início de BitmapMove, antes do corpo da função.",
+      "application": "proposta futura: recurso visual sujeito a arquivo/recorte; seção parcial, continuar659–662.",
+      "examples": "MQL_NOT_RUN",
+      "visuals": "NOT_CERTIFIED"
+    }
+  ],
+  "limits": [
+    "Nenhum exemplo MQL compilado/executado; NOT_RUN.",
+    "Imagens e aparência final das figuras não foram conferidas; NOT_CERTIFIED.",
+    "Linhas longas de código já cortadas na fonte textual/PDF não foram reconstruídas por adivinhação; não servem de código copiável (p.ex.393,398,517,541,632,654).",
+    "Aplicações ao Stoikus são propostas por analogia; não foi inspecionado código atual neste lote.",
+    "REF-0093/0094 são pais parcialmente lidos, restantes659–732/659–687em outros lotes."
+  ],
+  "next_exact_page": 659,
+  "handoff": [
+    {
+      "id": "REF-0134",
+      "title": "OBJ_BITMAP",
+      "remaining": [
+        659,
+        662
+      ],
+      "cursor": "658 termina comentário inicial de BitmapMove; continuar659."
+    }
+  ],
+  "output_truncation_repaired_pages": [
+    379,
+    380,
+    381,
+    382
+  ]
+}

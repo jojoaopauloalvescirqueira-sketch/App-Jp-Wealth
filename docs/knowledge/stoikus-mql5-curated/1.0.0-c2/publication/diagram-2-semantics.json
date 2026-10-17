@@ -1,0 +1,77 @@
+{
+  "dialect": "stateDiagram-v2",
+  "nodes": {
+    "[*]": {
+      "label": "[*]",
+      "shape": "initial"
+    },
+    "Espera": {
+      "label": "Espera",
+      "shape": "box"
+    },
+    "Preparando": {
+      "label": "Preparando",
+      "shape": "box"
+    },
+    "Auditando": {
+      "label": "Auditando",
+      "shape": "box"
+    },
+    "Pronta": {
+      "label": "Pronta",
+      "shape": "box"
+    },
+    "Degradada": {
+      "label": "Degradada",
+      "shape": "box"
+    }
+  },
+  "edges": [
+    {
+      "from": "[*]",
+      "to": "Espera",
+      "label": ""
+    },
+    {
+      "from": "Espera",
+      "to": "Preparando",
+      "label": "identidade disponível"
+    },
+    {
+      "from": "Preparando",
+      "to": "Auditando",
+      "label": "fotografia obtida"
+    },
+    {
+      "from": "Auditando",
+      "to": "Auditando",
+      "label": "próxima fatia"
+    },
+    {
+      "from": "Auditando",
+      "to": "Pronta",
+      "label": "cobertura concluída"
+    },
+    {
+      "from": "Auditando",
+      "to": "Degradada",
+      "label": "erro ou perda de propriedade"
+    },
+    {
+      "from": "Pronta",
+      "to": "Preparando",
+      "label": "mudança pertinente"
+    },
+    {
+      "from": "Pronta",
+      "to": "Espera",
+      "label": "contexto invalidado"
+    },
+    {
+      "from": "Degradada",
+      "to": "Preparando",
+      "label": "condição recuperada"
+    }
+  ],
+  "source_sha256": "3c8f0bdd32d74eb36f90cbe9d880cbeffdc408822c761c9abd46c2234e6da12b"
+}

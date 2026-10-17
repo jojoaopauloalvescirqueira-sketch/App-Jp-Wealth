@@ -1,0 +1,5115 @@
+{
+  "book": "REF",
+  "assigned_pdf_pages": [
+    1195,
+    1586
+  ],
+  "status": "IN_PROGRESS",
+  "consolidation_full_text_pages": [
+    1195,
+    1196,
+    1197,
+    1198,
+    1199,
+    1200,
+    1201,
+    1202,
+    1203,
+    1204,
+    1205,
+    1206,
+    1207,
+    1208,
+    1209,
+    1210,
+    1211,
+    1212,
+    1213,
+    1214,
+    1215,
+    1216,
+    1217,
+    1218,
+    1219,
+    1220,
+    1221,
+    1222,
+    1223,
+    1224,
+    1225,
+    1226,
+    1227,
+    1228,
+    1229,
+    1230,
+    1231,
+    1232,
+    1233,
+    1234,
+    1235,
+    1236,
+    1237,
+    1238,
+    1239,
+    1240,
+    1241,
+    1242,
+    1243,
+    1244,
+    1245,
+    1246,
+    1247,
+    1248,
+    1249,
+    1250,
+    1251,
+    1252,
+    1253,
+    1254,
+    1255,
+    1256,
+    1257,
+    1258,
+    1259,
+    1260,
+    1261,
+    1262,
+    1263,
+    1264,
+    1265,
+    1266,
+    1267,
+    1268,
+    1269,
+    1270,
+    1271,
+    1272,
+    1273,
+    1274,
+    1275,
+    1276,
+    1277,
+    1278,
+    1279,
+    1280,
+    1281,
+    1282,
+    1283,
+    1284,
+    1285,
+    1286,
+    1287,
+    1288,
+    1289,
+    1290,
+    1291,
+    1292,
+    1293,
+    1294,
+    1295,
+    1296,
+    1297,
+    1298,
+    1299,
+    1300,
+    1301,
+    1302,
+    1303,
+    1304,
+    1305,
+    1306,
+    1307,
+    1308,
+    1309,
+    1310,
+    1311,
+    1312,
+    1313,
+    1314,
+    1315,
+    1316,
+    1317,
+    1318,
+    1319,
+    1320,
+    1321,
+    1322,
+    1323,
+    1324,
+    1325,
+    1326,
+    1327,
+    1328,
+    1329,
+    1330,
+    1331,
+    1332,
+    1333,
+    1334,
+    1335,
+    1336,
+    1337,
+    1338,
+    1339,
+    1340,
+    1341,
+    1342,
+    1343,
+    1344,
+    1345,
+    1346,
+    1347,
+    1348,
+    1349,
+    1350,
+    1351,
+    1352,
+    1353,
+    1354,
+    1355,
+    1356,
+    1357,
+    1358,
+    1359,
+    1360,
+    1361,
+    1362,
+    1363,
+    1364,
+    1365,
+    1366,
+    1367,
+    1368,
+    1369,
+    1370,
+    1371,
+    1372,
+    1373,
+    1374,
+    1375,
+    1376,
+    1377,
+    1378,
+    1379,
+    1380,
+    1381,
+    1382,
+    1383,
+    1384,
+    1385,
+    1386,
+    1387,
+    1388,
+    1389,
+    1390
+  ],
+  "next_pdf_page": 1391,
+  "remaining_pdf_pages": [
+    1391,
+    1392,
+    1393,
+    1394,
+    1395,
+    1396,
+    1397,
+    1398,
+    1399,
+    1400,
+    1401,
+    1402,
+    1403,
+    1404,
+    1405,
+    1406,
+    1407,
+    1408,
+    1409,
+    1410,
+    1411,
+    1412,
+    1413,
+    1414,
+    1415,
+    1416,
+    1417,
+    1418,
+    1419,
+    1420,
+    1421,
+    1422,
+    1423,
+    1424,
+    1425,
+    1426,
+    1427,
+    1428,
+    1429,
+    1430,
+    1431,
+    1432,
+    1433,
+    1434,
+    1435,
+    1436,
+    1437,
+    1438,
+    1439,
+    1440,
+    1441,
+    1442,
+    1443,
+    1444,
+    1445,
+    1446,
+    1447,
+    1448,
+    1449,
+    1450,
+    1451,
+    1452,
+    1453,
+    1454,
+    1455,
+    1456,
+    1457,
+    1458,
+    1459,
+    1460,
+    1461,
+    1462,
+    1463,
+    1464,
+    1465,
+    1466,
+    1467,
+    1468,
+    1469,
+    1470,
+    1471,
+    1472,
+    1473,
+    1474,
+    1475,
+    1476,
+    1477,
+    1478,
+    1479,
+    1480,
+    1481,
+    1482,
+    1483,
+    1484,
+    1485,
+    1486,
+    1487,
+    1488,
+    1489,
+    1490,
+    1491,
+    1492,
+    1493,
+    1494,
+    1495,
+    1496,
+    1497,
+    1498,
+    1499,
+    1500,
+    1501,
+    1502,
+    1503,
+    1504,
+    1505,
+    1506,
+    1507,
+    1508,
+    1509,
+    1510,
+    1511,
+    1512,
+    1513,
+    1514,
+    1515,
+    1516,
+    1517,
+    1518,
+    1519,
+    1520,
+    1521,
+    1522,
+    1523,
+    1524,
+    1525,
+    1526,
+    1527,
+    1528,
+    1529,
+    1530,
+    1531,
+    1532,
+    1533,
+    1534,
+    1535,
+    1536,
+    1537,
+    1538,
+    1539,
+    1540,
+    1541,
+    1542,
+    1543,
+    1544,
+    1545,
+    1546,
+    1547,
+    1548,
+    1549,
+    1550,
+    1551,
+    1552,
+    1553,
+    1554,
+    1555,
+    1556,
+    1557,
+    1558,
+    1559,
+    1560,
+    1561,
+    1562,
+    1563,
+    1564,
+    1565,
+    1566,
+    1567,
+    1568,
+    1569,
+    1570,
+    1571,
+    1572,
+    1573,
+    1574,
+    1575,
+    1576,
+    1577,
+    1578,
+    1579,
+    1580,
+    1581,
+    1582,
+    1583,
+    1584,
+    1585,
+    1586
+  ],
+  "source_pdf_sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+  "corpus_path": "/private/tmp/stoikus-mql5-research-20261015/corpus-fast/REF/pages.jsonl",
+  "pages": [
+    {
+      "page": 1195,
+      "sha256": "a642821de354af12a4e501ee062a6e4004c7f165de3049ae8cec4a49f1b45026",
+      "characters": 1698,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1196,
+      "sha256": "4568c3e2551f1a033abc74d6965e32b0a933be571e69f5be5b13d2ecb3506e5c",
+      "characters": 2610,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1197,
+      "sha256": "5defc8b4ed43b3f81d47e2e3a1eae4e7433ad8525cec8dde14a5fda129863d7a",
+      "characters": 2640,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1198,
+      "sha256": "fb4e1765eb041a2031e5563787d45a0b3144c8206a1a43fba41bb1edbd83fe65",
+      "characters": 162,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1199,
+      "sha256": "809b1371abce0ee1d4dd334792a930ac09e306171bc8f022a1ae7bd7bb859b6b",
+      "characters": 2378,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1200,
+      "sha256": "81c1851813945d06f3a2820d741c5babbf1e917a741a214e546d15e26a191c0e",
+      "characters": 2399,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1201,
+      "sha256": "7a30635a8c04235beb68b7cdcda18416d12b60499a4c8435780ee74caf705428",
+      "characters": 2047,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1202,
+      "sha256": "9660b984183bacee4db412c1fbc916a63cc85038b7eb211d0fc7a629dfd5ad7a",
+      "characters": 2098,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1203,
+      "sha256": "58b1dd5002a473fdce53addc671373b4428789a7b20ec4d3b2a325c4b8c1abf6",
+      "characters": 1316,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1204,
+      "sha256": "8370c3718c78d44d74618797431ae465e5fe73dfa329c6756e68970bba404a49",
+      "characters": 2257,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1205,
+      "sha256": "b2e1bf1bf22409c2c0b82a6afb23c2a7047c034f86c01398bc5a4826ad65b185",
+      "characters": 2129,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1206,
+      "sha256": "4251ada60ace3ca574c01caef7f6610f195057cd483eb6346118e9a7254377fb",
+      "characters": 2298,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1207,
+      "sha256": "4e3bc0bb2dfdecee01da848a65e288c7d13723b8cc3af463a595a3024cc133c2",
+      "characters": 1937,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1208,
+      "sha256": "9f56afec0aa254df4ed36661740b48084e9dcbaacf7ee5662d527a2971e06bb1",
+      "characters": 2451,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1209,
+      "sha256": "5d1383c0307ed480b6228385f579666c89726bf66f405e652380497be45f9792",
+      "characters": 2579,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1210,
+      "sha256": "b61cd2a5b59f09775909dab64a8d7390c762ecaf1a5c79f37d3715acfdbd383c",
+      "characters": 3017,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1211,
+      "sha256": "b6db8837369fae9c202c1c795c8870b42f8abf218053455a778be2ba825988fe",
+      "characters": 2252,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1212,
+      "sha256": "ae6039cd3cfd5aa4e5b993475b7fafde3e099be17307ce8c985aab596f0f733a",
+      "characters": 2209,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1213,
+      "sha256": "5fc3b8fae1af04507d8a5458625964fa5edbcb9b4de11295bfb455e3563de06c",
+      "characters": 2417,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1214,
+      "sha256": "483509fae1b6f8d3453a4dc7ba6f872af9a3387e489008d8c738fdce795e8bf3",
+      "characters": 2342,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1215,
+      "sha256": "d087bff51513873356e05688b4a39d29f2a9463e143275c90f3be3a6005298e0",
+      "characters": 430,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1216,
+      "sha256": "0835be748d2fc1f7a7ce374e26ba099939b752f84d547dd2309731e0280e1f93",
+      "characters": 2420,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1217,
+      "sha256": "3cb67a69b71cceb6d2642534194ebbf1a5fd043105137a9452ad1327b07744ef",
+      "characters": 2276,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1218,
+      "sha256": "226dcb35495e84a717e70c75f9c95d3cf48e17974587fb4b68d5bb6032b944af",
+      "characters": 1012,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1219,
+      "sha256": "43793e29c5a79a6944d68b75b3bfa249d2a4f6e272df0c32909135d928fa1ea2",
+      "characters": 1714,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1220,
+      "sha256": "80f55f6bd49b277688a1d62b209e4859b45a1cf6edc446238ff917a6c3a8bd5e",
+      "characters": 2073,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1221,
+      "sha256": "8f03be7916f68c948ee4e96cd9a86046151583f70341e309d233b37f6439a4a3",
+      "characters": 1871,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1222,
+      "sha256": "7527559987c6c65a9c647b82f58942176edae7ebf9e40209babdfdae34f881f7",
+      "characters": 202,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1223,
+      "sha256": "f923cf6c7164b269f33590d5f3760ea280441c71a916fe8d92063d7003f675e1",
+      "characters": 2102,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1224,
+      "sha256": "7f56f6583f96df3676d1ecc43907844519f5e14115c62c3ff6d96fc0617de2ba",
+      "characters": 1794,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1225,
+      "sha256": "55fef994e1fe88eda6b0b6bde523c38994db4201e47c839f306904a8ebc02b87",
+      "characters": 2039,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1226,
+      "sha256": "885c5e9ec51ac5aa22b5dd2e4731aa6b756cb40448aa69cca0c83dcce896ee04",
+      "characters": 595,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1227,
+      "sha256": "dc8481487e7b54b75c2980e80301109f4a095b9646579a6284ea193888a4463c",
+      "characters": 2066,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1228,
+      "sha256": "e721d415ef7442594532846ac6811f24d3b5dc1ec8e486fca3c3c80e3a0fa2ae",
+      "characters": 2724,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1229,
+      "sha256": "b791f69ff5ce27735264df19a878c0ca11d8bb0b3b14b3d641530f905de71dfb",
+      "characters": 3163,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1230,
+      "sha256": "d8bf940c222f1c8c0382093ff8996add47949d8f881ab3d0120a25023f82437e",
+      "characters": 3173,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1231,
+      "sha256": "ef892cccbb234833f2c21fed102f1b85e72766c71247e2e688b5396c924dd064",
+      "characters": 2502,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1232,
+      "sha256": "60957fd9f088ba184d81d5f940693898f9f082ecafd7f8142b1ccc4914e22806",
+      "characters": 2538,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1233,
+      "sha256": "64161e2cfe4b73bb5f8ad62e2131e6566373620d1b638f3caf18f6608e20dc23",
+      "characters": 2482,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1234,
+      "sha256": "91bd5ccd87a03464127910be7a98947df0e24e480ddf292363ad090bc4ef0e6a",
+      "characters": 2344,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1235,
+      "sha256": "3831c1ad02f185faaaceb269d1b54b79bea2bec41f42685f7966c0a2abd453b9",
+      "characters": 2789,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1236,
+      "sha256": "6ba6975594bc2469ecc60cddee6bc84b16d06eeedb0078b84709cde665c53186",
+      "characters": 2804,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1237,
+      "sha256": "6f1a0935cddfb4e1431b785b0989495f899da30078e606170d588c21edba38af",
+      "characters": 2168,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1238,
+      "sha256": "0a2d6a425790ddb19a296858a8d623aba4938a092b97180776bb0a88a470c5a0",
+      "characters": 2065,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1239,
+      "sha256": "413760b9c44fe4437991052c0db95b62bbdd3dfc2e5d420eecee0d2d8d6e9124",
+      "characters": 2724,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1240,
+      "sha256": "8590af4dbb1e4effa48208e8380167be90bf214571b661ead65aa65cd56e7443",
+      "characters": 3163,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1241,
+      "sha256": "44958f424bfdecbd70162397378d5b825c51fc443464ba90a38f9bdf33e03785",
+      "characters": 3173,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1242,
+      "sha256": "f6c8f7d1b419fd99590f320b1ba5f4af5526fdfe4cbee635a25811dd5732dc5b",
+      "characters": 2502,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1243,
+      "sha256": "44e72643152875944bf3542e4599ebae4c77b2776ff9a13c0c69ad994f1f0f64",
+      "characters": 2538,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1244,
+      "sha256": "c55880de6d74df0ef07e57df383fca7b8c3d7dc309595c2151ac636210b3687d",
+      "characters": 2482,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1245,
+      "sha256": "64815b6322834487fbc6945b0e1da12c7c45d2690d56f2dbe8f76b0fcbf46dec",
+      "characters": 2344,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1246,
+      "sha256": "fd310d258757e2ecf86faf22358b278e650ec0ec5201ed364a976b5df154e611",
+      "characters": 2793,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1247,
+      "sha256": "a62da8e6c3ce06f237c0146b977ece7b1140556eb5f7d1daa132ad9aaa7ac32d",
+      "characters": 2772,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1248,
+      "sha256": "b7ee2489fe63151cc50d920343b07326ba8a66ec731929a3ff14084806668b2d",
+      "characters": 2135,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1249,
+      "sha256": "eeea7edaa2a1f0c33df20816df90f59ac4d228de1adff1081218ce8b501e44b7",
+      "characters": 2560,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1250,
+      "sha256": "6ee569cf0ca5ee554d0f2a5d07f479e09dcdd60abe31a81c9068c8e787b9551d",
+      "characters": 3181,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1251,
+      "sha256": "11805942118f4d3882ad59af94a59e19c9d096baf325987b71944c6f266e5e85",
+      "characters": 115,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1252,
+      "sha256": "cf62201d40a91c8a74baf154adbb7a394443b6f2809b0236316bd62a7eff1cc5",
+      "characters": 1386,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1253,
+      "sha256": "6f46594649cd8cbd818d7a85ff00d4d65c40ecf6236cd5ead91b5ae673c510b5",
+      "characters": 2569,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1254,
+      "sha256": "dcda962dad6bccecf2b7c63ec0595cd85ab5939c0b63f0edfa80859c1d585269",
+      "characters": 2047,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1255,
+      "sha256": "8208f499fe3835a5eb4ffe6e8c18da587c215824b81e73e01ea4a3549fafe57c",
+      "characters": 846,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1256,
+      "sha256": "16fbe0d28e25a938fdd3ef9670bb676c7505787b2982678fe93f8860eb654802",
+      "characters": 2494,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1257,
+      "sha256": "9ee3a4ab49e06422b9b4369d47cbba211a985c3a8db9eaad5e0cec60b680eb12",
+      "characters": 2191,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1258,
+      "sha256": "bba06415dbfd62cce552a64697d60916b5dfee27823c7f78d277afaf4c193e96",
+      "characters": 81,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1259,
+      "sha256": "594bdf7c6365f8488ba047b0ecbf7359512df2e64fc3e0625ca1927dc8808bec",
+      "characters": 2664,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1260,
+      "sha256": "33a85f3d4e0f2f4858f67c53e445d7a09379fecc03893e4361ff94e8fe0896bf",
+      "characters": 1065,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1261,
+      "sha256": "99f8eeaefb1d79f4f01bfac745a00a442ccc8ec69a2094cd23868def8e4efff2",
+      "characters": 2058,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1262,
+      "sha256": "c70f793fbd7fd476a4ca922ac9a103c45dba97eb741a69e1e760341eb4bc62cf",
+      "characters": 455,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1263,
+      "sha256": "050229b066ef0728529007346b90c5808c85b9948f1594c0cc110fb8fa4c40fd",
+      "characters": 1259,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1264,
+      "sha256": "241944d98dc5c3322f8d98278c36909d64914002ef8d74efced893db63a4069e",
+      "characters": 2408,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1265,
+      "sha256": "d14a86732e6d7437baef1108388001aff1dbeffa2d21c2db7d48e73e8db3e1c4",
+      "characters": 169,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1266,
+      "sha256": "4a8827adc5a46fda1c63a8f779077a97abe6b4ca5cb741072df20419abfea0b9",
+      "characters": 1698,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1267,
+      "sha256": "1201c52f8ae7f21710ecf32e6b76e737e8f43c2d479fd6aef5ac0ba8dd28ba17",
+      "characters": 762,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1268,
+      "sha256": "432ba11178977eb0a105c5a5759fcbca38cc68b74a3537328b7a4c3545a34661",
+      "characters": 2205,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1269,
+      "sha256": "3797b0b38fdcf85f5008a944f561baa2216cef06eceee355ebcdb4befda82c0c",
+      "characters": 2433,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1270,
+      "sha256": "67687b9e0a618476171f483465493e94105f33b4df10a5f05e287714c85b6f26",
+      "characters": 2277,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1271,
+      "sha256": "ed3d0c9707baba7d639fa4a720a04a69011c3ed429a4fb6f8853db40456d2b5d",
+      "characters": 2190,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1272,
+      "sha256": "9908f26394987957bbfa42a3b4eb1271525dcd351beab5a0b20647dee4f38e05",
+      "characters": 555,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1273,
+      "sha256": "8e696fe46aad01b1399f5fcb3ff2b76b7d8ffe02f2c9a8f03578e84d0fc438eb",
+      "characters": 1930,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1274,
+      "sha256": "321c1ee8a9296b290b311468dbb4460555b0c48d9cf1bff62fa0d6dee78deaf4",
+      "characters": 1183,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1275,
+      "sha256": "783460c60037cd52b1a7513d8aeb37b6c5580fcfbcf189bb2e95611bc37a604b",
+      "characters": 2418,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1276,
+      "sha256": "cd2f3c2eaf76e700d8139172df3042cfce78915185368eef8c98e4704a103c65",
+      "characters": 2185,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1277,
+      "sha256": "97e9f5787c6b14574eda6efdc65e07fac71f63a00df69f3080328e13f17ca96e",
+      "characters": 533,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1278,
+      "sha256": "eb3a768f52fe260a3e3b30f4f1f782a332d1cf882ff2cda6ecbd32c2c42c44f7",
+      "characters": 2119,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1279,
+      "sha256": "bb626e056fe126a82c96ae70e1307c9dc43299287636bcdbb00b7d3e471d4be7",
+      "characters": 2511,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1280,
+      "sha256": "da7c0104c8d899edde6edd6b803d897b05eb6f461434492c9c1e0af84a62836f",
+      "characters": 290,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1281,
+      "sha256": "2b94c626df4927d06ac2c778ec24698f26b14de86c931d0787325c5541a187b5",
+      "characters": 2450,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1282,
+      "sha256": "651ebb6e590479985f070fc836d506d2a05cf23357108e301b55d3c0e983a539",
+      "characters": 2186,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1283,
+      "sha256": "da66987d62a2b2ea3d42812b613673994150b2cce04afb57b5fd787691489bb7",
+      "characters": 531,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1284,
+      "sha256": "cf4a1b7ca520f7a5f401cffa89b83d806e97b46af4a07f0e6aa0cbcf99fe9efd",
+      "characters": 2188,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1285,
+      "sha256": "d9067418ab915f5bf33938f337536c381dd0809b7ca381004fb728b49a7b4301",
+      "characters": 2391,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1286,
+      "sha256": "5f91f31cc322e8b30e1c3a992e905e6cc4d51e16242926c166c512498b3a56eb",
+      "characters": 411,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1287,
+      "sha256": "4518eeda8c86e0b098971882ab39189cd71b3ccb3f3a7885dd6aa92599da3ce0",
+      "characters": 2970,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1288,
+      "sha256": "9bd3182e05975769d611cefdc256f652853074442b34000fdae8af143d34cd03",
+      "characters": 2815,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1289,
+      "sha256": "fc24657f27489534a63d79b5868037a0acee8122531b2cd066b3dc32034a2c8f",
+      "characters": 2595,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1290,
+      "sha256": "019e4098b2eba557d99d22022dad290bc23d4c64e550bafa08840944fedebd4d",
+      "characters": 2873,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1291,
+      "sha256": "50f34e302da73fe2983669d9b02b30c158164e65da2fc5f6c5c5554c4e1102be",
+      "characters": 2754,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1292,
+      "sha256": "e2bcbea7a5a2fa3424658b94e1360615b353ef00ea3e51d06154dff65f76e656",
+      "characters": 2808,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1293,
+      "sha256": "6cb80fa2777bbd117898c2e3b8b0823e629a3b3b06cf3b05d5be9cdbc450016a",
+      "characters": 1896,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1294,
+      "sha256": "541e27208428817fe64c583cb52ddfd7cdb0400a8d4fe42b99f32fcc134b2ed2",
+      "characters": 1648,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1295,
+      "sha256": "7d71d0dad8bd987fd66904fb957a31696d8db56362924c8f3bfebf3976b6ecb5",
+      "characters": 1672,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1296,
+      "sha256": "b91d8a3a8dce77fbfa292d2989073615f1e8a3b80917d5765171991dfeddb8de",
+      "characters": 1818,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1297,
+      "sha256": "3cd19289db62464ba6124e6ac542583ab038d002342cfe9c3719ed82336543bd",
+      "characters": 2207,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1298,
+      "sha256": "5d28e4f4e4ad118c43f3fb5e87b7fdfd05d4c3a8e3cfbf43503dc98dfb6a65fb",
+      "characters": 1827,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1299,
+      "sha256": "510a4ca0b6618bfa0b8721c0a067815af4ef51c3448bd342d3ab57a2b48c1a35",
+      "characters": 755,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1300,
+      "sha256": "6052394406a23090996aa1776a049d067734f73f31cbbb632834c12b63a1e432",
+      "characters": 2838,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1301,
+      "sha256": "07e24d587746989254c37fe0ad3874674e4c6c90056cd44b3b164c63556d8abc",
+      "characters": 2241,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1302,
+      "sha256": "e559cee2ed4ab805089fa2982277936cd972d9c166e0f040e840abedf729637e",
+      "characters": 1359,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1303,
+      "sha256": "2763db9273fef73f60b753dc0cea08ebafd92388f5f7096dad4c1b533ce9ac54",
+      "characters": 1565,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1304,
+      "sha256": "7ea0b3e3c5bca0c4301e8e762b409c32e9aee03a69d92e86b872338583ecd14c",
+      "characters": 990,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1305,
+      "sha256": "ef75b93f82853f95b39e6748314fd248adbf0c3f6af27cb5016502fe6a9311c4",
+      "characters": 2121,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1306,
+      "sha256": "be9413be3299b3ed24c15dc664236904ea64a1085b83612cd410b3c43044e3ea",
+      "characters": 1957,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1307,
+      "sha256": "999df76027d218afacf2c4b4d2a9fae6350fe9ddf12f4bc431d99aad6fe3b898",
+      "characters": 2610,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1308,
+      "sha256": "0d289b2c18a4f8b5ab7142912a944da8df821e78f18dc280c22f993d92673890",
+      "characters": 2020,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1309,
+      "sha256": "f2b7de5f91e2be026b5c7ee3001b375111552d3beba551208df6860df1505d4e",
+      "characters": 3697,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1310,
+      "sha256": "80914855f7b7bd6b22c5c42876ed824dc1ae51ba75c295460b38396ed2f0fe2b",
+      "characters": 2618,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1311,
+      "sha256": "45aa758e9b7ef20cc290b1f24063f8c841cc53265259cf97324d4207a78b213d",
+      "characters": 2551,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1312,
+      "sha256": "39c7b37d1e69d0cf05f2627c5c356eac35b0a5934e560bacd852a6993c1e661b",
+      "characters": 2672,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1313,
+      "sha256": "948749d174c12f97bcc953bf2ed0452cbd3ecfae83678d350dc4483edfa1e781",
+      "characters": 3670,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1314,
+      "sha256": "5e99086f53d41fba1600c892399bc6f1761976cd989aadafd39821bff52f40a0",
+      "characters": 1870,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1315,
+      "sha256": "b6e7b8d727f3f6e5c8bbc0b4ef01f14cc1b428bea6753e03b0b3bce32810810f",
+      "characters": 2876,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1316,
+      "sha256": "a9071fb457a07536d7ee315fea62e5ae2dfb07daef48402a07d7d1f5d86be398",
+      "characters": 966,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1317,
+      "sha256": "85c544c80c5d3bc27e0681a71ea4f9692ae710e1c70de65e01eb74dd38ba1cad",
+      "characters": 1453,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1318,
+      "sha256": "c49f6f4c6e72e189696dd4d8ff76ae551a83b6dce963a91b97c93123c9eecb58",
+      "characters": 330,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1319,
+      "sha256": "6a7532ec6663ee5ec72b1a81cf38fa5543cb509f164281831428941155001a1f",
+      "characters": 1547,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1320,
+      "sha256": "8b0fec3e00f7ba0f78b7afbe8c6ef8bfa4f8724c4ce9e36274165afa8098f86d",
+      "characters": 161,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1321,
+      "sha256": "59b1a076268bf8f9e9a39388c94a1b14aae74280f12eac45f1dcd20a2cc1b4c2",
+      "characters": 993,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1322,
+      "sha256": "d8fa820d5cd551c771bd275dc025ac161cbd12da1181fef2081ed0b0caa303af",
+      "characters": 982,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1323,
+      "sha256": "1035e9f0003855ce818c04d08ef3ce96a3da137ae3aa59a399350deec14d5319",
+      "characters": 1179,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1324,
+      "sha256": "97ce9e6f97b27c8f946557cf2abcefb4c6800354db3741dfc0d95632fdeb5fbe",
+      "characters": 1502,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1325,
+      "sha256": "0d6828999d8b9a69f866d09a0cd8a63a28e1c1ea3ea73354efa16b9ad9c89013",
+      "characters": 1395,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1326,
+      "sha256": "24e2a26da361be45ce881086dab68ee22482e2517062b7abd5eb75e78368cd58",
+      "characters": 1655,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1327,
+      "sha256": "011d51694e404306c9afc1eccdcdcc0846679357bac92d7906a01977d594f322",
+      "characters": 795,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1328,
+      "sha256": "679b93a2825d2e3f9cdcd6ea2d79817b7b97386717e2a058f93c497156bb15c4",
+      "characters": 1688,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1329,
+      "sha256": "3c80a17973c70c856966d1b44472180c2f04d9cc23c497b1e4ae76f8af5d5aaf",
+      "characters": 1888,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1330,
+      "sha256": "ff75e39618ebfb308e2634dfb1fe71a72b56ebc4760a2cade12ecce51493be3f",
+      "characters": 3017,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1331,
+      "sha256": "0b7697cfc55ea448bcac134d85e3706c46c37f14f3232f7b3c5413b6ae9a92c3",
+      "characters": 1220,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1332,
+      "sha256": "d8af8603b5097d93fcda50ec56072c0b30b8de07f92c74198e516f4df4db8478",
+      "characters": 1015,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1333,
+      "sha256": "38fe50b24877d20688bf6dd4b73a0376da85d8caab11063028cc87f671516a7b",
+      "characters": 862,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1334,
+      "sha256": "b71b9b756b31ba33fca34ae9d9a5bd24b8ebc4d3db56338eeadb705694d673d8",
+      "characters": 1694,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1335,
+      "sha256": "e6cdde204716dfed553ab5a191226a169ee2ebf18ad2798746ec4f85a2ba340e",
+      "characters": 1198,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1336,
+      "sha256": "65e12940f3808a4c78401610c99a6184036444816b7718409742c1d5317ecd8b",
+      "characters": 1628,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1337,
+      "sha256": "a1fd1f618499f7391151754444c6676cf9c4aee38edee33409d0b79ce7410b73",
+      "characters": 1049,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1338,
+      "sha256": "5fc9b8258214ef22d63d9e398756cdce150b1f23ea6129cf65dcd84a50b73493",
+      "characters": 1181,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1339,
+      "sha256": "63ff5419322203de404fae2b5245b013ec3350a06c4c23757365c185636edab3",
+      "characters": 212,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1340,
+      "sha256": "3bbdd847961b507e3452c2b9667fc7ca96a8b5cdf5154989174d3dc5b052e6e5",
+      "characters": 1719,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1341,
+      "sha256": "b38c7808f8258eaa10379f3c833eeca080ad85415cb6134a33c3283fd60ce664",
+      "characters": 1091,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1342,
+      "sha256": "73daf7b705a9cd86eac5ad6a095b3728cc766b696c362189e5a4133e0a106ca9",
+      "characters": 1020,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1343,
+      "sha256": "01a534ce324c5229efa4e3d09bb51dac880919202e90b4b3ccd317c0cc865c59",
+      "characters": 1783,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1344,
+      "sha256": "98cd9ab96eb064fcd75f3e55d0e281b266684c08ec20deab59180621076c30c5",
+      "characters": 611,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1345,
+      "sha256": "267dc865c68c1e4f5aa9036dd594f049d140affaca59a4d7060a6289f6f798b6",
+      "characters": 1423,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1346,
+      "sha256": "904eb4d7089bf442d62a870c222060399d7f59d56622416ed5f88133940a990e",
+      "characters": 258,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1347,
+      "sha256": "f4fd32ec119260998683d09f44d05af5cd2dfc23d5af53b67b5e268935b3e409",
+      "characters": 1464,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1348,
+      "sha256": "52ae7e7c7e022f3d544835ed01b33396a478010b14e3ade9403f50fb01525956",
+      "characters": 254,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1349,
+      "sha256": "0831d8b8669c5c42c7222c3e0b44e909d810b25d79bcc8e5264a7ff097d6862e",
+      "characters": 1072,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1350,
+      "sha256": "7bd134ecd2e8ff6ee9a31eb0076b18cee8304cf8dcd4f64472ce44be28be6f5d",
+      "characters": 402,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1351,
+      "sha256": "f06265c358e3b9fa8cceeaab082c5c867df67b352fba45c59b3c143124246020",
+      "characters": 1303,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1352,
+      "sha256": "83a6b30ff4606fcf8752332b4e60bcbde00a743a6c526ea7b6c4a4f0028dc229",
+      "characters": 1717,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1353,
+      "sha256": "2fc4c1f18dfa18227a793b7664c6fa19a686e992133dfae026d51d0e2aae2960",
+      "characters": 366,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1354,
+      "sha256": "a54c0cf9a306a10812e30ada002ff52c62a4bf838b37124a626200effb745488",
+      "characters": 1924,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1355,
+      "sha256": "cae013210fc47d8864ac1fd3bfc47965869c9b54ccb82a3c974953a43f1381cd",
+      "characters": 357,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1356,
+      "sha256": "9ab57956e3f400358d5cb5602362c86a90503cf9572f63d7f2ce60537df61f10",
+      "characters": 1696,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1357,
+      "sha256": "8d720d10f5d91af052cf4082f047c161e61efd695a86e8d5c0005fdcef5a1f0b",
+      "characters": 739,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1358,
+      "sha256": "62bc2bc7497f461851988baa4bd67d072f02fd267863f14e0632f1404242b13a",
+      "characters": 1849,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1359,
+      "sha256": "7eadc2d036f26ecb1c9a8b84f95f5386baee1b54c6209c0674f22997ff35e107",
+      "characters": 1939,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1360,
+      "sha256": "396a572674c95558bb24b8eb445b5153af2f66d04ebb86a32730547101879caf",
+      "characters": 152,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1361,
+      "sha256": "8a0e1e5e87e19a68b2be52c0097fb57837329c3d8971e6bccc6984ca103e30c4",
+      "characters": 1339,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1362,
+      "sha256": "5681ebeea82f5134ce5b56ef808d7f4857469bf65b5986c6c0e321e1d8150720",
+      "characters": 162,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1363,
+      "sha256": "166017ed42f18b47cf2de88319d42fb50a2610c6027abc895a0f912c102750b8",
+      "characters": 1119,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1364,
+      "sha256": "1b8dc0d0e1fa59278f33cba398e1432caec7725fad03c1c7eb92371556d53075",
+      "characters": 1425,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1365,
+      "sha256": "d3cc75fbc73b0768375eaf5c235934c0ea183e582145d55ff97fe930f82b9a92",
+      "characters": 135,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1366,
+      "sha256": "1a150ac6b8579408058bca85666fed9863b19a0f76883365f2ec8f4d9d7064ea",
+      "characters": 1701,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1367,
+      "sha256": "9c94ed86121fa7b8611b397ac07d8511c83e5acbd363505c7b1e65bf78899343",
+      "characters": 415,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1368,
+      "sha256": "26713203685ac831cf90b9f15ab32f818787b6ebfafdf2e87f21ffde96b674b0",
+      "characters": 1640,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1369,
+      "sha256": "6561f899df8226bbe3b7b2bb1b874d183327f2b743454c2f87dce6fd5efd388b",
+      "characters": 726,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1370,
+      "sha256": "1bf6879bed91e7f745f4231d60cd336a777bbbc8e280d065af378972f08d990e",
+      "characters": 1305,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1371,
+      "sha256": "aaf5d28b11feba858b09cec49ce8cb78efd18d5e0f13fffb2a35f2906805d9dd",
+      "characters": 1313,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1372,
+      "sha256": "e100ab1f460b23deb133a95d3778120c8876719fa3bd50a49773182e5625f0f4",
+      "characters": 1860,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1373,
+      "sha256": "62c7caf14b3fb6ee26749963c914c12defec9234f207150e5cda263859bafe2b",
+      "characters": 1225,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1374,
+      "sha256": "107b8d6423e6b8082545070e28b319374670c42ad42b544d4640ec15c08f571b",
+      "characters": 1923,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1375,
+      "sha256": "5e8dedd2bed8cedbb8188fc9798c26f4ffc460914d558d8a49cc10a6c27fd46c",
+      "characters": 984,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1376,
+      "sha256": "c9fd02a84d85ee9414f204e3b5769b282a6d62a0d9356c058891123b2ebeeb6f",
+      "characters": 1886,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1377,
+      "sha256": "04be0fbebd620d98c2596f3914c30ed30f496ee6318a3831040148cb2d8ec9d1",
+      "characters": 1028,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1378,
+      "sha256": "a80e065da1e73266f4bbfd15b58ce6bf549cfbf45e052c4192135c642dc49b0f",
+      "characters": 1894,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1379,
+      "sha256": "d66449af937b8c992a29064e614d2898d86549a4122be30d8303d11b87d288ad",
+      "characters": 2111,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1380,
+      "sha256": "efea9a46e4f75a044ce5c2594e33c532531eddfb736102d684f79a3c8a658ec3",
+      "characters": 856,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1381,
+      "sha256": "30094a80bd172fe90f9d1b5430eb321d3af6b8210c6d2255f629073b757dba3e",
+      "characters": 2382,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1382,
+      "sha256": "0a2b80f6167467abb8f5bfaffd4db3aaffd1f52df75a8619f2cf4849da5fafb6",
+      "characters": 866,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1383,
+      "sha256": "86cbbd0de2c836afc1c0f9f94fecdc80f97f554f4ea54618ede5af4678b3dfd7",
+      "characters": 1391,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1384,
+      "sha256": "56fd0d77157358232d272567aee3daa7089fcd338a8ff53f55e655bd6dea06c8",
+      "characters": 1837,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1385,
+      "sha256": "ee8acce6c9f899c4ced26b649c675fd5f996f6443fe690502409421e4893c507",
+      "characters": 1552,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1386,
+      "sha256": "297d1ae8ccc872ce4e4184e0d5bf2fc6f39db807dc9039cc96f23463c0295214",
+      "characters": 1928,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1387,
+      "sha256": "0c4a786a400bd90b38ce26346126b5d8a27959eaf2ab99de8d1f41e982d8355d",
+      "characters": 1497,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1388,
+      "sha256": "b34f81d773ade511e2c6158da8934c4e69e1481a946ca9bc863f46a7e356d01a",
+      "characters": 1880,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1389,
+      "sha256": "9289dece22fa941e44e6cad9f1deab691c706bf5c80891947292464440630460",
+      "characters": 1702,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1390,
+      "sha256": "a13aaa1b9767781f09ded61cbb429b70370125e5d23db4f60841096b4fad4fe8",
+      "characters": 699,
+      "status": "FULL_TEXT_READ"
+    },
+    {
+      "page": 1391,
+      "sha256": "adfea4dbe888ea9ece54a6352ab51eecc8618c816947be1c0c2e052ae383a202",
+      "characters": 2956,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1392,
+      "sha256": "2d6942489b8efc91067a428c02ddbdc0f0853f6bdaad2cc736087a1b4a7073cf",
+      "characters": 1791,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1393,
+      "sha256": "4f4b8b99e3ccd2cfe1a0e2393122c0c0b3c6948fa797e03789af82aed9c1c657",
+      "characters": 1881,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1394,
+      "sha256": "87f4fde44ba9db41cabbd4d6ba9f6b27b6743fb06ddc39f3a1944c53219073c5",
+      "characters": 559,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1395,
+      "sha256": "a46c4d32e9d1f6cf71fb0122044d0a8db478a6ef0c05ae29588926977ce24105",
+      "characters": 1686,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1396,
+      "sha256": "bb639cffb37352026b760028289741c07e961c67ae829d5acecea5395a6719f8",
+      "characters": 999,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1397,
+      "sha256": "1438cc7aa72533532c74f3c1dd7c913d6cae99fa7952b5b6965357d6c9376c44",
+      "characters": 648,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1398,
+      "sha256": "ce11a74a954ae47138e5fb31d42f982ac43c83a0dc77e8b107ac50bc55b908b4",
+      "characters": 1174,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1399,
+      "sha256": "16b52fb26baee380646180f25d4d197dee0fcb21ed555570613c0cd04ad8f93b",
+      "characters": 250,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1400,
+      "sha256": "4b5bc5df37905a0c85cd6bb3291356d73119bd02c25537c61bfac9b40154f620",
+      "characters": 1335,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1401,
+      "sha256": "27b4ad0c44c8f5fc6844ace2aaeb532895b010a05df1b1d33d8f867b161d61f9",
+      "characters": 999,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1402,
+      "sha256": "154a745e4349ba09c013ce501e7711f545e61f2d3a39c63f9a9c2d4aea97cdaa",
+      "characters": 1301,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1403,
+      "sha256": "b24d3b895e419d716d1d1e11be3c21e191d5bb33a94961d795f2cd4b884aebc9",
+      "characters": 877,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1404,
+      "sha256": "54fc4d380d6e77f3ff4e510516ce1312e6db081a057de24bafc32b25f7bdd359",
+      "characters": 1461,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1405,
+      "sha256": "96fdf98f1fd112e7bfbd178e9855c750dfafb7fa54232e47f2cd834704f33787",
+      "characters": 1549,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1406,
+      "sha256": "e873b0046e3b6093646004ac02edfac4fd8904f1d176167fac515a41eb72fd1e",
+      "characters": 1130,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1407,
+      "sha256": "01a22558209812f5e8d98c54476dca0c5b0f36a8c21bce7df926715dc1720e8d",
+      "characters": 1740,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1408,
+      "sha256": "87568816a1e5a254cb1a3bb021b8989169c9288da08f864d75bb4e3b7001acb2",
+      "characters": 1691,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1409,
+      "sha256": "e905047c6612c31a64669599b768fa46c10901bc5062af643153ba2948808698",
+      "characters": 1842,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1410,
+      "sha256": "95257e0116b26e489cf24937afd071f8f8a6122a365fe161548ffd60048844ae",
+      "characters": 101,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1411,
+      "sha256": "5de0c3ca87628cd0cf4ab459952a9787240b863f7dc3284725a4f646fb51ba9e",
+      "characters": 1736,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1412,
+      "sha256": "12d81103b990d1f6dc2ef3d5e78d0d2c25dceff2c0d48624bdede3f53015598f",
+      "characters": 1665,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1413,
+      "sha256": "93a091d496a4f05ecdbb7333a5ea5f35f06aa49817beb90c86d82faf02b3d505",
+      "characters": 1248,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1414,
+      "sha256": "14adb12c6d9c66c4614213895c52a66008ddc242dcfaf6e21eb5f848ea14fd21",
+      "characters": 1698,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1415,
+      "sha256": "8a19dc56df0a13e99c47d121a377e30ac0153436471feab48a70793c9967e5c6",
+      "characters": 1553,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1416,
+      "sha256": "20cf4a8d5f683c6ed76bbad2285e2a104225b43b6dbbb684861a61806eb1c4a2",
+      "characters": 757,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1417,
+      "sha256": "3d11046c255171c5c5a4e1dd8fff8fffff592eaabefd3239194ad95301116a52",
+      "characters": 1686,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1418,
+      "sha256": "295a55e4137a4160a72bec7b539bbe3d14cc0984d27a240dcf9c9c951132e44a",
+      "characters": 1548,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1419,
+      "sha256": "291636ebe5006a4141baa2cf0059ee6d0de16a9a7473abe114c36277026996df",
+      "characters": 704,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1420,
+      "sha256": "fe3d341c7478a7f02838825b619a982f218538c0662056bb6b68de99e3ce5118",
+      "characters": 1498,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1421,
+      "sha256": "ae228d4237de53cedb92754d2f6547dd33956034d1ef1100897320dc327a4620",
+      "characters": 1524,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1422,
+      "sha256": "2b8b002f238a429208058c9477e644eaae38a1565a08f89f993bfc1b42ea184e",
+      "characters": 1769,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1423,
+      "sha256": "796e393f92d85fd53b0ac740d19a46961d34fcc8a47ec4a9cd278c1d21529d2d",
+      "characters": 1889,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1424,
+      "sha256": "eb3940110e85f472eb3b036c71ffb9aeb8fd7dc5ebad73c6ab5434ad059ea32e",
+      "characters": 820,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1425,
+      "sha256": "1ad08c2ee18ddd7670530661709b625a7001317c2024206e185e994b83d8fe8a",
+      "characters": 618,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1426,
+      "sha256": "31e7a20a998188d6a7a236470c36e0cf3eb4a81078137868a5362b34742e0f62",
+      "characters": 1406,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1427,
+      "sha256": "b1b1c72e157a42fcf2c51e2f3318a98883b1fc70212910489cffa303713276bc",
+      "characters": 183,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1428,
+      "sha256": "3b24b5d545d4d1697d7747dc55149a5967ef5bde5a402cd9e00af5b094551a8d",
+      "characters": 1571,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1429,
+      "sha256": "d47730c6ac55dd14c647dce4deefa7cdf1ad1ea09af549a77161c96b3b97fbf8",
+      "characters": 612,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1430,
+      "sha256": "cadf47a1e903096ddbbc0f964cb33293d6ef867029533c04ce79e3bffa64255a",
+      "characters": 1660,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1431,
+      "sha256": "5ac36032c1458f01f7d3c98ef0a760c94924f0589d003825b4358d56f78f5e13",
+      "characters": 527,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1432,
+      "sha256": "e1766d41fa333569cdce7903e97111a275e4936d7d0c03767c1765b344f66888",
+      "characters": 1585,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1433,
+      "sha256": "5a576155f3abb8a0a31eeeec213476354ca132d923afbcd837f8f5aaddb6bb0a",
+      "characters": 2012,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1434,
+      "sha256": "e5fe04d4455b723785ec724b745dbabcf50d45789857992ae104d4b7c803e22c",
+      "characters": 794,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1435,
+      "sha256": "5618f3b5a47e3d80b2ad11fec736782bbcc02c1dd049caf159dc45d7c035a2ee",
+      "characters": 2444,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1436,
+      "sha256": "aa873643fd6a17a4354f0245175fcdd5490d9454609c6b402e61235acaf7b79d",
+      "characters": 1136,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1437,
+      "sha256": "916e1e8efdf7c8ef59db6e58a02ce8fc71a613b75c028f1331654e96430545ce",
+      "characters": 1135,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1438,
+      "sha256": "16b9e93c2b75f824f009f57482f213acb558343415ef967171166192bdc18f2b",
+      "characters": 1089,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1439,
+      "sha256": "ccbc42b0684b8222f5ee090a781fb26bddde90c9371a7d192aebe93a94f7c0dc",
+      "characters": 1082,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1440,
+      "sha256": "e810bf5a4334c708096050e455e53bcf03a55ff91385733479e881a4fc98a956",
+      "characters": 1208,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1441,
+      "sha256": "2caf7b02ea1ed716817f0cb38699232e02fe4e302278b94c2feb574961d7fbdd",
+      "characters": 1203,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1442,
+      "sha256": "2fd1c064dd6cbffbc3a9fc45438b6be15503945feec0c865b6f00ce17e82f410",
+      "characters": 1481,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1443,
+      "sha256": "e1146cf3834b70e7eb90b1316ba31dae651fec9549b53cec9806fa31a07d0db3",
+      "characters": 147,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1444,
+      "sha256": "fdbf5bf6776a8eca24d54e1f2b80f879740764593625887aeac4e813a622af03",
+      "characters": 1299,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1445,
+      "sha256": "315d9b596afb0d8cbec03e5806137832c79009478adae17fbb5de37002ca7582",
+      "characters": 201,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1446,
+      "sha256": "cab2db9e6c983b9a119458473a5fe22d29df197d36d212c80550b111ec3d646b",
+      "characters": 1392,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1447,
+      "sha256": "34d6f3e9082989e6aa4ab467e11936360beb86e26383809debed0268175c6203",
+      "characters": 257,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1448,
+      "sha256": "b950ccc0443408a27cceb692675b08eb7eb9f3275f68e2588cad0a60244fb2f1",
+      "characters": 1561,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1449,
+      "sha256": "89502aa45e397508273976786a294c14d149f5b6d85263d580cb9e290ab79bcb",
+      "characters": 325,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1450,
+      "sha256": "32c9b00fe6c9669d6ad5384340da388f1f639600d594baf9b4d6405c47213bdd",
+      "characters": 1599,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1451,
+      "sha256": "c574e25ef239ad2ebc8ce02adae9e4af8725c7544bdee826fca3fd72adae4042",
+      "characters": 302,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1452,
+      "sha256": "7927ea965c15d262cccc998f6d418a1eb75c9ee0f088c40413d800dae8ec992f",
+      "characters": 1388,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1453,
+      "sha256": "9b277ae2d651e6f2882bbefe3999ef32477dce3728064ed0bfa2567ca9635d02",
+      "characters": 175,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1454,
+      "sha256": "ec5c31a2cf0e47b9aa8b50669d2376da815202133fa767db744b5a9a1e31ed83",
+      "characters": 1112,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1455,
+      "sha256": "c7739af482362b90a3a69700c73c23273bd0b29ee256111229d1f20c9a6f46d0",
+      "characters": 1398,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1456,
+      "sha256": "91a87b9e8a71817c0e3cab3ae630058a8064fcb8de85a1608ebcc4fbbdc5b7c5",
+      "characters": 287,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1457,
+      "sha256": "c56b47a3e007c662ef09a540fa677f3392d1d3f7272cdcc6cff751031778a479",
+      "characters": 1631,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1458,
+      "sha256": "d6b79f796e84caf63a0798aab054c438f98b45a894c05737c13dc76e921b5541",
+      "characters": 635,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1459,
+      "sha256": "fd879e1668f79015ae804430d12402c62a47941211de79fc04826bee45c13b6a",
+      "characters": 1545,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1460,
+      "sha256": "5ac075820734f4471e96b291c6a2998c8028736a823ce7dc9abcfce985152b0c",
+      "characters": 582,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1461,
+      "sha256": "de29d7edcfca44823d18e76d1a452e7ce41a2b85599bbbe0f3c813a950f81186",
+      "characters": 1107,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1462,
+      "sha256": "6d4e04c542fa42e96e79ad048835aa30b5c4377dc4255cc0c132c1e967358720",
+      "characters": 1800,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1463,
+      "sha256": "edbcccef5530dc60572f07d9dc2396d1cffe94dc7db72c4313da4c2397232b1f",
+      "characters": 1681,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1464,
+      "sha256": "4d6dc0605b6b908898c76713c0d668aa1697f3da44481ba4712369301612a94b",
+      "characters": 1325,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1465,
+      "sha256": "5ede868a0effc71eda6eed8da7f321214c5f4fec233a2368a5b96d4ec0d2a7e8",
+      "characters": 627,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1466,
+      "sha256": "0f009de2ab43ae0a77d7426295278dbbb87cc4d4fd311410c3e26b1f0f11bd40",
+      "characters": 630,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1467,
+      "sha256": "1c9af9f9185f478760ab66042ee718ed2170dca16f76296ecd2739d0073ce8b3",
+      "characters": 608,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1468,
+      "sha256": "854abbdc5f4799f2458d8cab3b041814c5c6dde068084d080f536f6696978192",
+      "characters": 2292,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1469,
+      "sha256": "bd3b141098f60acf7c92492ee392a25bf45b19bca28e0bece565804972d481c5",
+      "characters": 1813,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1470,
+      "sha256": "fadd825ee1b30df7baeeaa7560a8a4537fa7bf3579f6c2f4fc44ed86d4c2f95e",
+      "characters": 1536,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1471,
+      "sha256": "a5460bcdf6974b35a0cc8bb49d01d98299b13fa1075237f9846be20b3f1f8790",
+      "characters": 1814,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1472,
+      "sha256": "74146d80284c8efaf3b0b46240b0854ee00feca44270268629bf3735e7444ac9",
+      "characters": 1942,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1473,
+      "sha256": "e25616c163eaa70ef978f0709754fe319cf01e50befdf7c0eaddc3431b102402",
+      "characters": 543,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1474,
+      "sha256": "f8366ae475251493b1f0b0b0db552bede0eda0a5e40fbc718e33565d15e729cf",
+      "characters": 1483,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1475,
+      "sha256": "20dafa438bc22808f05137a41c77da5e7c1699d85aad4d1aacaf234de2d09584",
+      "characters": 156,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1476,
+      "sha256": "aec7f0b125d88e320f262401c92fa0793684fd4071984d93a6d43172a4be76c1",
+      "characters": 1156,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1477,
+      "sha256": "66ab6ede720ef184a14dedd6836162b856152bcc5dd0462fe7a0a05d8cec4901",
+      "characters": 1457,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1478,
+      "sha256": "b25544193b0c6517208f921e5c26aa6d0e016c6df82f962154ec07935133995f",
+      "characters": 1173,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1479,
+      "sha256": "369915a2a343e3f3237e440ef2c947290f7d8eb1bf6ec6d6032f690a6d4d4481",
+      "characters": 250,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1480,
+      "sha256": "e4ade61c6d022729d7109a88a1ee4e687120677b1749ba0b915cf09bc41aa3aa",
+      "characters": 907,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1481,
+      "sha256": "ac88a9e66964ca306e3e8df277c3b995d92740bd3edef10cc6c46e29827e994e",
+      "characters": 1069,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1482,
+      "sha256": "bcc8a36939634b53eee018ff852feb4a69afce4f526bd8f174a41ca40f6054a8",
+      "characters": 1644,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1483,
+      "sha256": "d3ffc37c154ae3575ef0316a1667c0bc3cd7ef64ebd0e93c3ce2cac0671fd35c",
+      "characters": 379,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1484,
+      "sha256": "2ae7186d59a924972fb88b73bfa2839d7a2b04fd2a6ddbee30771c3188a18261",
+      "characters": 577,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1485,
+      "sha256": "5cf356f19ebb53a642124ea5dddd33c4a5e68b0370d62931f2cd00db37342012",
+      "characters": 785,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1486,
+      "sha256": "cf1278fb32f561e045f3e57d9b7c1062b55d96d37a22c14fa19372cc7237debc",
+      "characters": 786,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1487,
+      "sha256": "b229ca5de6653441880d04e827c1e899ee80d611cb2611adb5995176224d451c",
+      "characters": 1536,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1488,
+      "sha256": "7e12476c431523ce59e156bce4ecd16fa75fa1f85cd9e6fe62572caf8cd4be61",
+      "characters": 764,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1489,
+      "sha256": "05fa2e0813296b51a5d156ac4f9833727e5f2186df50a578fd6ad297af53a98c",
+      "characters": 764,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1490,
+      "sha256": "07f08d8edb62988fec1f2dbfc4d8c68cda9aac6fb27389599816a18de4374b12",
+      "characters": 715,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1491,
+      "sha256": "5843973382fa50d54756e03ca35098340f5b38b2d3d1ea42c694d7c416b5971d",
+      "characters": 725,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1492,
+      "sha256": "67665e75c9690615bc95b6ae2aba30989180590f240fe573de95aa7df818e8ee",
+      "characters": 722,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1493,
+      "sha256": "dbe5b4717ce7313c788e995cc35fd23f922afb9e664059bb91c21c5e93bc99af",
+      "characters": 666,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1494,
+      "sha256": "54daf4b12f2c4513249e15668a58bb117ce67d876a1f100f2ab3ec5cf481128e",
+      "characters": 720,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1495,
+      "sha256": "74c63911c8379fb669230cdfb72c3c62e402ef1a7ccafb3cb2be6b1e54e72ba5",
+      "characters": 968,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1496,
+      "sha256": "2a21b2b5c2629715be702b6019d4d920f7caf80d266617599ff5df980080f569",
+      "characters": 947,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1497,
+      "sha256": "98c7fe2b495147a240840e62ffaf6a69931bd074552061b02365508e62859c31",
+      "characters": 1099,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1498,
+      "sha256": "b685ed68fa7c094363a78f9141e66f69b400e19727ed683b4e995205bcf0d0ac",
+      "characters": 1615,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1499,
+      "sha256": "7ba93e4736b7b7e08fa523c04d7288509a06dfe71c490d7a4ca791e1f930be0b",
+      "characters": 727,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1500,
+      "sha256": "fc11c462fe82f80de6c7e517da8855ec2659125b4de4bf420d4705f754e78461",
+      "characters": 1122,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1501,
+      "sha256": "a6c9ecde049cfcc5794b2debcf73facd00bf6cabc92840bab30851361e31f4f8",
+      "characters": 3518,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1502,
+      "sha256": "a213f35ec7f57a739d57caf73f0e75ec0d9c809cabf0369891f8bc65329aa3bc",
+      "characters": 2805,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1503,
+      "sha256": "00704fb93b03e04c18447fd4d5cc5fd6e7f6148fc69c845482ac68ed1864d5e5",
+      "characters": 2209,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1504,
+      "sha256": "03eeec6849affcf3e90275bd6b7b6adfa5e972b104c64d2099751f84a02ab7e0",
+      "characters": 2427,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1505,
+      "sha256": "f19be8b1a46331bc983d76a4ebad6599baffd3e2f597ee3f1c9b5d9f51606ce1",
+      "characters": 2184,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1506,
+      "sha256": "15d8359abe7f573938d73cc16c57b3b762d86e151fade65819f3910e8dfb9431",
+      "characters": 1886,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1507,
+      "sha256": "8a496c05419dd19ff51441a47912c9803ae56f05fe5b1b7820f5a2c82b8c1de1",
+      "characters": 1325,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1508,
+      "sha256": "a8223d7fbdcd35c2495f9c32cbae023b864b0eab264bb15955263e30272f6369",
+      "characters": 1663,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1509,
+      "sha256": "6c81758f8b01e093cca04c16d8a9f694ee610d04cf3fbe29f308b69b43c76aa0",
+      "characters": 1288,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1510,
+      "sha256": "8611e9bd927636790ba6871f819af8a005592bccb92b6651243c600d09bc20a1",
+      "characters": 1999,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1511,
+      "sha256": "4ad1f786bed63766709e19b0ad9c0dddf8f65ac906712d0bc68999b2223d32a6",
+      "characters": 101,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1512,
+      "sha256": "8cd041e72a89a6d53346e60503241c0c55436dcd7527026f70b1dd385beebec3",
+      "characters": 1678,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1513,
+      "sha256": "771066cf6799b7dec5fa1b2a9c15e4be144f2372280936e272865ab0483336e7",
+      "characters": 1109,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1514,
+      "sha256": "fc0db3c1362718c7fb736947af0be27fb77c4a052b6cf2652b26878ef859961f",
+      "characters": 1827,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1515,
+      "sha256": "5bd0bb88fab24784bc40656297adace4cd6a4e9f346ae89f5a4bb21ac56e376f",
+      "characters": 1729,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1516,
+      "sha256": "512a55ad975ba7cb6e8a7974a4cdb1f28e0638c382a68e92de1a1ec36b1b9fb7",
+      "characters": 1995,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1517,
+      "sha256": "c300c515b7965be9f883df2d3c987657bc60d7c8026d8dfa2a39611963e72eeb",
+      "characters": 624,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1518,
+      "sha256": "6baf418ee2f3cff95901c1593a2f00e49b884a2c761c074319156a7bc960ace0",
+      "characters": 1935,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1519,
+      "sha256": "c3c9f8adaadc8d385335695f8e9d8367185f95e207ea595fdc6d88006f6a4b8c",
+      "characters": 824,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1520,
+      "sha256": "9893c9a150f8e153661dceb19b2e61bcd7647e17bc7069ee206752eb0cca938c",
+      "characters": 1663,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1521,
+      "sha256": "6e26f7a4a4ce12ca5599a852a8eee964ea65e65295f3c1ca622ce749cba643a3",
+      "characters": 350,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1522,
+      "sha256": "c513a56b9dbabaa7569b4e9609040d27d98796f547863043439a4674ce0e2b3e",
+      "characters": 2530,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1523,
+      "sha256": "5497eb30077d319d07e6195cf8a1b1d8010b47decb8cd4501276e9b2841769c7",
+      "characters": 3046,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1524,
+      "sha256": "df8d17fd6688a9ac6265cebb45b47e167c17f2d35f5d23420a8acf4f07186b2a",
+      "characters": 2522,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1525,
+      "sha256": "f5f1758bed6b32e673ffb2eeff6d0e1dfe9f3babd4aa608c07b61813289a9a6d",
+      "characters": 212,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1526,
+      "sha256": "4b36c5544a6fac765a6ba49eeca928b5e4d6b2c9633df92b301c09abd3ece8b3",
+      "characters": 2405,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1527,
+      "sha256": "1bd24c7b2968ced3efcac14e5881e2d17ffa52f57f0e7fd8bc1a5d0c0a7bda02",
+      "characters": 4321,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1528,
+      "sha256": "4f4e082bed07a0b77b497fed133ff2b15a70db5d5a36a4fb89bdce81b5163682",
+      "characters": 3054,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1529,
+      "sha256": "cb2c3ad957628f6825a64cf0367885cbd1d1b61ae11bb850858bd9231f883170",
+      "characters": 2254,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1530,
+      "sha256": "4b4894777ebc2802b3a03db5f93cd27cc69aa9cf596d8d4d1f7c8135fa6884da",
+      "characters": 2403,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1531,
+      "sha256": "8f606e09a05682d67e51523dc636e6e9f388b4f78eaa46cdbe410202eca4cf30",
+      "characters": 1989,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1532,
+      "sha256": "1e074d4365d37c02ba6248cb26e42b20a4e9d2744e70b17820ee7d410d5e1f7f",
+      "characters": 130,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1533,
+      "sha256": "4efa1559c31b3b635fc4b9441ba2f5ff639b04d9333aa3e4934364792b341ba3",
+      "characters": 101,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1534,
+      "sha256": "2db173ec6bcbcfcf20eac4e6fed790f52c1377d0a4bad2e7fde62e639fb85e01",
+      "characters": 2515,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1535,
+      "sha256": "6d02fe657b395884cc20f70c5837f81b2665bde1d6a0e4d4343018f48580775e",
+      "characters": 859,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1536,
+      "sha256": "4593bfe244fe9193b50d016039527c54ae71059830d4ade4e9e07b156d58f7c4",
+      "characters": 101,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1537,
+      "sha256": "67de1cc673a7df277c57343bccee87026583d671bdb2d28eecc6489e79ddc27c",
+      "characters": 418,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1538,
+      "sha256": "576acfa03909f65944b9a8daffb88005b0c0fcc32d4e632909935fad959c6f0b",
+      "characters": 3273,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1539,
+      "sha256": "186f6a6ee9d44c7ab71914137d5de103830df97a3ce35de9a78cc560b0c64751",
+      "characters": 4537,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1540,
+      "sha256": "dd3b91dc25254845631191ed45d4b7f1d43f457a1b213753bb89bbfec367b305",
+      "characters": 2816,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1541,
+      "sha256": "99233a77988d090f03f053cd5a9d2787716547d3cd55db22fd9dc2ff71099bab",
+      "characters": 3363,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1542,
+      "sha256": "eb08fd9faeebd997dd4f1315643f4a15cf685508831507610116d70549cbab78",
+      "characters": 2217,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1543,
+      "sha256": "85acb1f7c455519ff9a12c39e17e8df925965025f1d46b1f30829f5e114d790d",
+      "characters": 1368,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1544,
+      "sha256": "a0a0b91c789e80a9400c581bee544f29614f97d2f9436f62bd3fc14806ec0e5a",
+      "characters": 2359,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1545,
+      "sha256": "5385adf602399302e175bb8310908cb6b238aa390957af54315d2849dcfe25ff",
+      "characters": 1632,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1546,
+      "sha256": "4aa9d9ac7ba11275cd06489978984d2467fc068e63f42af526b4c41559e2517c",
+      "characters": 2711,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1547,
+      "sha256": "a1f8abe563cb4797c52cacb2fa164a98206475642022700abfb0eee120e0c926",
+      "characters": 1874,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1548,
+      "sha256": "e99d3467d957e72e2f0f8fc6b3005e4b1c620e837498e32ada4a2cdd9bc8630e",
+      "characters": 2367,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1549,
+      "sha256": "da6758ce02eaa6c152803ff261a99ab0d7ebdc5ac353f9c81a7ee084473b9000",
+      "characters": 612,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1550,
+      "sha256": "571c96c4d18ea3f0d92243b74a37f30b9d684eb784c14f74e938c5109d403f20",
+      "characters": 2834,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1551,
+      "sha256": "28638fa551b31b1b719085c95ea16e0e9a9e1d9c735c2f36a19d7a9c84fbf5aa",
+      "characters": 1841,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1552,
+      "sha256": "31168cebb8791287aa0ef9dbe6599dde3ccc6299c365d6d4765d55ca6e4fee45",
+      "characters": 1154,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1553,
+      "sha256": "71cdfbe780d983aca9e96aa564d821b88b2c5e70a98005d4e69de2ab8b812cc3",
+      "characters": 3092,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1554,
+      "sha256": "8e142eb15da3aeb27f3df0c6b2d4c16b41eba2b9d1c44d6795d1dd600d6956b6",
+      "characters": 2735,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1555,
+      "sha256": "ff2ca78fd457ca79cfdadcba23f61565be09701a5fb0c9feee7c524ca8027bda",
+      "characters": 2773,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1556,
+      "sha256": "af40360235bbec360a0064dc2f413b12036941d3206ebf44978b3e9cea4400dc",
+      "characters": 2135,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1557,
+      "sha256": "dc360817d327eae15b517a3d71915168a61f6e2d5dab3169d376ba9669e69eea",
+      "characters": 833,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1558,
+      "sha256": "3da07602ff09dbe50e7e2760abde37d248307389f3b72a56d9ba35e17a5b75c7",
+      "characters": 2909,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1559,
+      "sha256": "0dc760df2e729dfdcccd094b0e429d54cc7e557a5d4998e243ae09c7f554489e",
+      "characters": 2600,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1560,
+      "sha256": "54c1e9732cc3f47a16f50da6e175b788660ffb3252de10ee9305195bbf96362d",
+      "characters": 1969,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1561,
+      "sha256": "e925feceeb875533682341bcbc31ec398bcefb564b39b480a4efd0c688d1b521",
+      "characters": 1875,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1562,
+      "sha256": "db30473165c54eea544eb934ea3af16723c20943dec9747950a153a56510844b",
+      "characters": 767,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1563,
+      "sha256": "50cafc923ba22d2602f80e9c255054506fae7a924c785fa9ccc6fde50dd65fb8",
+      "characters": 2289,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1564,
+      "sha256": "a377dea9f77d332fa07cd6c8829c091585efed930b59750578576d70cfad03dd",
+      "characters": 1797,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1565,
+      "sha256": "6d6690cad49fa331ca3a88db2f28eb4ce2d3a901866b9186e3f2d7e24ab4e65c",
+      "characters": 608,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1566,
+      "sha256": "8c6fc72f8706f40fc2f2c3c3486804d6763b5fe37fd8a93ebbaa401dd8a0957c",
+      "characters": 2386,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1567,
+      "sha256": "afbacb55faf2f099adbe596c178567e8149a785102c506ee3aff32bf221963e0",
+      "characters": 1538,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1568,
+      "sha256": "504da2b2339fd134c1b9d8431ef9086d048e8715238eeed770f285977e9caa15",
+      "characters": 4089,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1569,
+      "sha256": "51f4d6301579622320557be0838087a54144ebfe8e7e21de7ac193505beb7927",
+      "characters": 4177,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1570,
+      "sha256": "f5d6d0ca1e5797e986e248cf047b9c1f49c8697c1ac3b222417ec20830a91853",
+      "characters": 3832,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1571,
+      "sha256": "09f7467853c231064be184004b42dc7643d4a16ea8ed0a2b2d69c766714ca6f1",
+      "characters": 501,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1572,
+      "sha256": "b4a771057b0cc4efd40c0a925384f095983221ebb553da3909bc8ca2bd33fb3d",
+      "characters": 4234,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1573,
+      "sha256": "edb4c36648e22793880d6d42364addf4ffef6b91151b86c2bc1c3347f8538e91",
+      "characters": 1907,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1574,
+      "sha256": "d828b74777d7bd97502f1c8334e37fb2fec2ee908efc97ec6da8200cd2e3a5b4",
+      "characters": 2603,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1575,
+      "sha256": "d1923b8c1f9ac2b41501311065a9284381eb33a3da52f105b848a7d156280be2",
+      "characters": 1751,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1576,
+      "sha256": "831c26a11086f7aad56b7928e81f108dd31b95946d5f255c970138f40e82d89a",
+      "characters": 3875,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1577,
+      "sha256": "a1cf29e1c3829b5d0ecc2e11dee15233dc72ac5991d47b0d61f2c45a1623cef3",
+      "characters": 3336,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1578,
+      "sha256": "9f82957c11dc8cf62dcd13b6511405c702e320e512783386e598fd931259b122",
+      "characters": 1947,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1579,
+      "sha256": "81955f8fccac9c459b10c6d1f9f62e0425253d93eb401342a1c7601eb40dcc94",
+      "characters": 1626,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1580,
+      "sha256": "e1872bf7e7195bad12e6cf9613131774cdf0ab2e05d9833fd3b150a385c01c2a",
+      "characters": 2574,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1581,
+      "sha256": "968614c9e78755804c57e0cb04ac19904cbaeaaa43fbb2fca422e7210f6ce5cc",
+      "characters": 1041,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1582,
+      "sha256": "65ae02ababb890efe3b78a5478e70c0e4492dae03f19e766e7440f0676ab7ea4",
+      "characters": 3110,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1583,
+      "sha256": "ff7d8f081aced271f33bafa9f41bf23ad2ad3f816253907ea180af284191a6b8",
+      "characters": 1966,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1584,
+      "sha256": "adc793103c5d28a28324d1edf6130c2fc7935692e2087aae166b9fd44bcd8f31",
+      "characters": 494,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1585,
+      "sha256": "2275ebd09cd52b964a51e3cf93aad58b784647936268000dd1772e1895f6613c",
+      "characters": 4288,
+      "status": "QUEUED_NOT_READ"
+    },
+    {
+      "page": 1586,
+      "sha256": "e70b4b9adf8d675f0442647f809c9ba0d731e159a8f244025dbbc65ddf110ea5",
+      "characters": 4299,
+      "status": "QUEUED_NOT_READ"
+    }
+  ],
+  "sections": [
+    {
+      "depth": 1,
+      "title": "Array Functions",
+      "start": 1193,
+      "end": 1286,
+      "id": "REF-0251",
+      "read_pages": [
+        1195,
+        1196,
+        1197,
+        1198,
+        1199,
+        1200,
+        1201,
+        1202,
+        1203,
+        1204,
+        1205,
+        1206,
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1215,
+        1216,
+        1217,
+        1218,
+        1219,
+        1220,
+        1221,
+        1222,
+        1223,
+        1224,
+        1225,
+        1226,
+        1227,
+        1228,
+        1229,
+        1230,
+        1231,
+        1232,
+        1233,
+        1234,
+        1235,
+        1236,
+        1237,
+        1238,
+        1239,
+        1240,
+        1241,
+        1242,
+        1243,
+        1244,
+        1245,
+        1246,
+        1247,
+        1248,
+        1249,
+        1250,
+        1251,
+        1252,
+        1253,
+        1254,
+        1255,
+        1256,
+        1257,
+        1258,
+        1259,
+        1260,
+        1261,
+        1262,
+        1263,
+        1264,
+        1265,
+        1266,
+        1267,
+        1268,
+        1269,
+        1270,
+        1271,
+        1272,
+        1273,
+        1274,
+        1275,
+        1276,
+        1277,
+        1278,
+        1279,
+        1280,
+        1281,
+        1282,
+        1283,
+        1284,
+        1285,
+        1286
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Continuação do capítulo: leitura deste lote começa em 1195; introdução1193–1194 pertence ao lote anterior. Contratos de arrays distinguem tamanho lógico, reserva, propriedade do terminal e sentido de indexação."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayBsearch",
+      "start": 1195,
+      "end": 1198,
+      "id": "REF-0252",
+      "read_pages": [
+        1195,
+        1196,
+        1197,
+        1198
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Busca binária exige array numérico crescente; percorre dimensão zero e retorna índice do valor mais próximo quando não encontra igualdade. Proposta de teste: nunca tratar índice encontrado como confirmação de existência; comparar valor e validar array não vazio. Exemplo RSI ordena cópia e estima proporções; não estabelece regra financeira Stoikus."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayCopy",
+      "start": 1199,
+      "end": 1203,
+      "id": "REF-0253",
+      "read_pages": [
+        1199,
+        1200,
+        1201,
+        1202,
+        1203
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Copia da esquerda para direita, ajustando início para séries; count negativo ou maior que restante copia restante; retorna quantidade copiada. Conversão entre numéricos possível; strings só para strings, estruturas só mesmo tipo e sem objetos que exijam inicialização. Destino dinâmico pode crescer, não encolhe automaticamente. Exemplo candles colore extremos com janela de confirmação e usa prev_calculated. Aplicação proposta: validar contagem e orientação antes de consumir snapshots."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayCompare",
+      "start": 1204,
+      "end": 1206,
+      "id": "REF-0254",
+      "read_pages": [
+        1204,
+        1205,
+        1206
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Comparação lexicográfica de tipos iguais: -1/0/1, erro -2 para incompatibilidade ou intervalo inválido. WHOLE_ARRAY inclui diferença de tamanho mesmo se um array for prefixo fiel. Estruturas complexas com strings/arrays/classes excluídas. Aplicação proposta: comparadores de fixture devem separar erro de resultado menor, e igualdade exata de tolerância numérica."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayFree",
+      "start": 1207,
+      "end": 1215,
+      "id": "REF-0255",
+      "read_pages": [
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1215
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Libera buffer dinâmico e zera dimensão zero, sem retorno; buffers de indicador são geridos pelo terminal. Exemplo de diálogo monitora memória física/disponível/usada, muda tipo de array após liberar e recua tamanho quando falha alocação. Proposta: liberar caches descartáveis em ciclo de vida explícito, sem assumir controle sobre buffer vinculado."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayGetAsSeries",
+      "start": 1216,
+      "end": 1218,
+      "id": "REF-0256",
+      "read_pages": [
+        1216,
+        1217,
+        1218
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Consulta flag AS_SERIES, diferente de pertencer a série temporal. OnCalculate não garante sentido esperado. Exemplo normaliza first/second/buffer para indexação direta e recalcula último elemento. Proposta aplicada ao monitor: declarar orientação no contrato de entrada, sem inferir por origem."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayInitialize",
+      "start": 1219,
+      "end": 1220,
+      "id": "REF-0257",
+      "read_pages": [
+        1219,
+        1220
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Inicializa elementos numéricos atuais e retorna quantidade; não inicializa reserva. Crescimento dentro da reserva produz valores indefinidos, mesmo após preenchimento anterior com EMPTY_VALUE. Proposta: inicializar somente novo segmento e testar limites de expansão."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayFill",
+      "start": 1221,
+      "end": 1222,
+      "id": "REF-0258",
+      "read_pages": [
+        1221,
+        1222
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Preenche intervalo de tipo simples, sempre indexação física direta, ignora AS_SERIES; multidimensional tratado linearmente (2x4, start5/count2 alcança [1][1] e [1][2]). Sem retorno. Proposta: não transportar índices de série diretamente para ArrayFill sem tradução."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayIsDynamic",
+      "start": 1223,
+      "end": 1224,
+      "id": "REF-0259",
+      "read_pages": [
+        1223,
+        1224
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ArrayIsDynamic informa natureza dinâmica, não autorização para controlar buffer de indicador. Exemplo tenta ArrayFree em dinâmico, estático e buffer vinculado e registra tamanhos. Proposta: separar propriedade/capacidade de redimensionamento de mera declaração dinâmica."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayIsSeries",
+      "start": 1225,
+      "end": 1226,
+      "id": "REF-0260",
+      "read_pages": [
+        1225,
+        1226
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ArrayIsSeries consulta pertencimento a série temporal; ordem de acesso deve ser consultada por ArrayGetAsSeries. Exemplo detecta open em OnCalculate. Proposta: não usar IsSeries como substituto do teste de orientação."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayMaximum",
+      "start": 1227,
+      "end": 1237,
+      "id": "REF-0261",
+      "read_pages": [
+        1227,
+        1228,
+        1229,
+        1230,
+        1231,
+        1232,
+        1233,
+        1234,
+        1235,
+        1236,
+        1237
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Máximo retorna índice considerando AS_SERIES, -1 em falha; só pesquisa primeira dimensão mesmo para multidimensionais. Exemplo grande compõe candles de período superior com 16 buffers e oito plots, CopyTime, alternância de preenchimento e limpeza, atualizando candle em formação. Proposta: validar índice -1 antes de acessar valor; exemplo visual não é sinal operacional."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayMinimum",
+      "start": 1238,
+      "end": 1248,
+      "id": "REF-0262",
+      "read_pages": [
+        1238,
+        1239,
+        1240,
+        1241,
+        1242,
+        1243,
+        1244,
+        1245,
+        1246,
+        1247,
+        1248
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Mínimo tem contrato análogo a máximo: primeira dimensão, start/count e AS_SERIES, falha -1. Exemplo integral repete composição de candles superiores; period checks exigem período maior, múltiplo e pelo menos3x para faixa intradiária, semanas/meses tratados à parte. Proposta: fixture com mínimo interior, borda, intervalo vazio e ambas orientações; não importar regras do exemplo como norma JPW."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayPrint",
+      "start": 1249,
+      "end": 1251,
+      "id": "REF-0263",
+      "read_pages": [
+        1249,
+        1250,
+        1251
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ArrayPrint aceita tipos/estruturas simples, sem retorno; padrão imprime cabeçalho/índice/alinhamento e limita aos primeiros100+últimos100 elementos. Campos array e ponteiros são omitidos. Datas têm flags próprias. Proposta de evidência: log padrão não prova integridade do array nem estrutura; serialização específica necessária para evidência completa."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayRange",
+      "start": 1252,
+      "end": 1252,
+      "id": "REF-0264",
+      "read_pages": [
+        1252
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ArrayRange devolve extensão de dimensão selecionada, índices de dimensão começam em0. Exemplo quatro dimensões10x5x2x4. Proposta: distinguir extensão de dimensão e total, evitando assumir que ArraySize seja número de linhas."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayResize",
+      "start": 1253,
+      "end": 1255,
+      "id": "REF-0265",
+      "read_pages": [
+        1253,
+        1254,
+        1255
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Redimensiona primeira dimensão de array dinâmico; sucesso retorna total de elementos, falha -1 preserva array. Estático/série/buffer não realocam; se new_size<=ArraySize podem retornar new_size sem mudar tamanho. Limite total2147483647. Reserva só atua na alocação física e reduz realocações, sem inicializar novos elementos. Benchmark publicado é exemplo NOT_RUN, sem promessa de tempo no Stoikus."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayInsert",
+      "start": 1256,
+      "end": 1258,
+      "id": "REF-0266",
+      "read_pages": [
+        1256,
+        1257,
+        1258
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Insere elementos independentes da origem; bool e GetLastError:5052 limites/origem vazia,5056 buffer indicador,4006 autocópia/tipos/objetos,4005 nãoPOD. Destino fixo não cresce; descrição afirma deslocamento/queda da cauda, mas resultado impresso do exemplo mostra substituição em4..6 preservando7..9. Divergência documental deve ser resolvida em harness nativo antes de depender; não escolher silenciosamente. Proposta: testar destino fixo/dinâmico, autocópia e objetos."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayRemove",
+      "start": 1259,
+      "end": 1260,
+      "id": "REF-0267",
+      "read_pages": [
+        1259,
+        1260
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Remove intervalo; dinâmicos gerem tamanho, fixos mantêm tamanho e copiam cauda fisicamente, deixando valores duplicados no fim (0..9, remove4,2=>0,1,2,3,6,7,8,9,8,9). Buffers de indicador proibidos5056; limites5052/4003; estruturas/classes com destrutor4005/4006 por risco de dupla destruição. Proposta: política explícita de tamanho lógico em buffers fixos."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayReverse",
+      "start": 1261,
+      "end": 1262,
+      "id": "REF-0268",
+      "read_pages": [
+        1261,
+        1262
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Reverte fisicamente intervalo, retorna bool; difere de SetAsSeries que apenas muda endereçamento lógico. Exemplo reverte4..6=>6,5,4. Proposta: nunca aplicar ambos inadvertidamente e inverter temporalidade duas vezes."
+    },
+    {
+      "depth": 2,
+      "title": "ArraySetAsSeries",
+      "start": 1263,
+      "end": 1265,
+      "id": "REF-0269",
+      "read_pages": [
+        1263,
+        1264,
+        1265
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Define AS_SERIES só em arrays dinâmicos unidimensionais, não em estáticos/multidimensionais; bool de sucesso. Exemplo vincula buffer antes de definir flag e usa time[0] para detectar nova barra. Proposta: validação explícita de retorno e vínculo temporal para monitor."
+    },
+    {
+      "depth": 2,
+      "title": "ArraySize",
+      "start": 1266,
+      "end": 1267,
+      "id": "REF-0270",
+      "read_pages": [
+        1266,
+        1267
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ArraySize é total de elementos; coincide com ArrayRange(a,0) somente em1D. Reserva não integra tamanho lógico. Exemplo multidimensional deriva dimensão zero pelo produto das outras. Proposta: validar capacidade vs número de registros e tamanho após expansão."
+    },
+    {
+      "depth": 2,
+      "title": "ArraySort",
+      "start": 1268,
+      "end": 1272,
+      "id": "REF-0271",
+      "read_pages": [
+        1268,
+        1269,
+        1270,
+        1271,
+        1272
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Ordena dimensão zero crescente independentemente de AS_SERIES; bool. Exemplo calcula limiares percentuais de tick volume em cópia ordenada de um mês, trata mês anterior com dia<=28, exige percentuais0<=p<50 e recalcula limites ao crescer histórico. Proposta: ordenar cópia para preservar correspondência tempo/preço; limiares exemplares não são norma ou funcionalidade existente."
+    },
+    {
+      "depth": 2,
+      "title": "ArraySwap",
+      "start": 1273,
+      "end": 1274,
+      "id": "REF-0272",
+      "read_pages": [
+        1273,
+        1274
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Troca conteúdo de arrays dinâmicos de mesmo tipo e mesmas dimensões exceto primeira; inteiros ignoram sinal(char/uchar). Falha bool/ERR_INVALID_ARRAY. Exemplo move tabela OHLCV para destino vazio e verifica origem vazia. Proposta: swap para substituir snapshot completo após validar construção, sem publicação parcial."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayToFP16",
+      "start": 1275,
+      "end": 1277,
+      "id": "REF-0273",
+      "read_pages": [
+        1275,
+        1276,
+        1277
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Converte float/double para ushort que armazena formato FLOAT16/BFLOAT16; bool, enum seleciona formato. Formatos usados em MQL5 para ONNX e OnnxRun; não é conversão numérica ushort comum. Proposta futura apenas: testar quantização/erro antes de modelo, nunca reduzir precisão de dinheiro/regra normativa."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayToFP8",
+      "start": 1278,
+      "end": 1280,
+      "id": "REF-0274",
+      "read_pages": [
+        1278,
+        1279,
+        1280
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Converte float/double para uchar codificado FP8 conforme ENUM_FLOAT8_FORMAT; bool. Exemplo prepara3x5 e compara reconversão com saída ONNX_NO_CONVERSION. Proposta futura apenas, sem ML no Stoikus atual; testar saturação/faixa e preservar formato junto aos bytes."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayFromFP16",
+      "start": 1281,
+      "end": 1283,
+      "id": "REF-0275",
+      "read_pages": [
+        1281,
+        1282,
+        1283
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Reconverte ushort FLOAT16/BFLOAT16 para float/double usando mesmo enum; bool. Exemplo inspeciona representação e soma erro absoluto após execução ONNX; resultado publicado não foi executado nesta pesquisa. Proposta futura: metadado de formato e tolerância explícita, sem usar para contabilidade."
+    },
+    {
+      "depth": 2,
+      "title": "ArrayFromFP8",
+      "start": 1284,
+      "end": 1286,
+      "id": "REF-0276",
+      "read_pages": [
+        1284,
+        1285,
+        1286
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Reconverte uchar FP8 para float/double com formato enumerado, bool. Saída compacta ONNX requer interpretação correta; exemplar compara valores reconvertidos e modelo e chama OnnxRelease em erros. Proposta futura/sem uso direto atual: validar forma, formato e erro numérico em fixtures nativas."
+    },
+    {
+      "depth": 1,
+      "title": "Matrix and Vector Methods",
+      "start": 1287,
+      "end": 1878,
+      "id": "REF-0277",
+      "read_pages": [
+        1287,
+        1288,
+        1289,
+        1290,
+        1291,
+        1292,
+        1293,
+        1294,
+        1295,
+        1296,
+        1297,
+        1298,
+        1299,
+        1300,
+        1301,
+        1302,
+        1303,
+        1304,
+        1305,
+        1306,
+        1307,
+        1308,
+        1309,
+        1310,
+        1311,
+        1312,
+        1313,
+        1314,
+        1315,
+        1316,
+        1317,
+        1318,
+        1319,
+        1320,
+        1321,
+        1322,
+        1323,
+        1324,
+        1325,
+        1326,
+        1327,
+        1328,
+        1329,
+        1330,
+        1331,
+        1332,
+        1333,
+        1334,
+        1335,
+        1336,
+        1337,
+        1338,
+        1339,
+        1340,
+        1341,
+        1342,
+        1343,
+        1344,
+        1345,
+        1346,
+        1347,
+        1348,
+        1349,
+        1350,
+        1351,
+        1352,
+        1353,
+        1354,
+        1355,
+        1356,
+        1357,
+        1358,
+        1359,
+        1360,
+        1361,
+        1362,
+        1363,
+        1364,
+        1365,
+        1366,
+        1367,
+        1368,
+        1369,
+        1370,
+        1371,
+        1372,
+        1373,
+        1374,
+        1375,
+        1376,
+        1377,
+        1378,
+        1379,
+        1380,
+        1381,
+        1382,
+        1383,
+        1384,
+        1385,
+        1386,
+        1387,
+        1388,
+        1389,
+        1390
+      ],
+      "status": "PARTIAL",
+      "knowledge_note": "Introdução1287–1293 lida: matriz2D/vetor1D double/float/complex, dimensão dinâmica; vetor não carrega orientação horizontal/vertical, determinada pela operação. Passagem DLL é ponteiro de buffer e exige passar tamanhos. Advertência antiga sobre complex não pode anular métodos complex posteriores sem teste. Continuação do capítulo após1335 pendente. Aplicação: referência para pesquisa futura, sem alegar matriz/ML no núcleo atual."
+    },
+    {
+      "depth": 2,
+      "title": "Matrix and Vector Types",
+      "start": 1294,
+      "end": 1299,
+      "id": "REF-0278",
+      "read_pages": [
+        1294,
+        1295,
+        1296,
+        1297,
+        1298,
+        1299
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Tipos matrix/matrixf/matrixc e vector/vectorf/vectorc; templates matrix<double>/matrix<float> equivalentes. Inicializadores estáticos separados de métodos de objeto. Proposta futura: tipo e precisão fazem parte do esquema de dados, não substituíveis implicitamente."
+    },
+    {
+      "depth": 3,
+      "title": "Enumerations",
+      "start": 1295,
+      "end": 1299,
+      "id": "REF-0279",
+      "read_pages": [
+        1295,
+        1296,
+        1297,
+        1298,
+        1299
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Enums de averaging(NONE/BINARY/MICRO/MACRO/WEIGHTED), normas, convolução FULL/SAME/VALID, regressão(MAE/MSE/RMSE/R2/MAPE/MSPE/RMSLE/SMAPE/MAXE/MEDE/MPD/MGD/EXPV), classificação, perdas e ativações; eixo AXIS_NONE reduz todos elementos, HORZ/VERT explícitos; ordenação ASC/DESC. Nota: tabela LOSS_MSE descreve root mean square apesar do identificadorMSE; exigir confirmação antes de fixar definição matemática. Aplicação futura apenas; métricas não equivalem a qualidade financeira ou conformidade."
+    },
+    {
+      "depth": 2,
+      "title": "Initialization",
+      "start": 1300,
+      "end": 1329,
+      "id": "REF-0280",
+      "read_pages": [
+        1300,
+        1301,
+        1302,
+        1303,
+        1304,
+        1305,
+        1306,
+        1307,
+        1308,
+        1309,
+        1310,
+        1311,
+        1312,
+        1313,
+        1314,
+        1315,
+        1316,
+        1317,
+        1318,
+        1319,
+        1320,
+        1321,
+        1322,
+        1323,
+        1324,
+        1325,
+        1326,
+        1327,
+        1328,
+        1329
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Declaração sem dimensões não aloca; declaração com dimensões aloca sem inicializar. Sequência inicializadora determina forma; callback pode preencher após alocação, parâmetros variáveis permitidos. Métodos estáticos criam objetos, Init/Fill alteram existentes. Proposta: inicializar explicitamente fixtures e não ler memória apenas alocada."
+    },
+    {
+      "depth": 3,
+      "title": "Assign",
+      "start": 1303,
+      "end": 1304,
+      "id": "REF-0281",
+      "read_pages": [
+        1303,
+        1304
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Assign copia matriz/vetor/array com cast automático e ajusta tamanho ao da origem, bool de sucesso; Copy não aceita array da mesma maneira. Exemplo contém Print de a sob título c, portanto saída textual ilustrativa não prova cópia errada. Proposta: assert de valores reais e forma em vez de confiar no rótulo do log."
+    },
+    {
+      "depth": 3,
+      "title": "CopyIndicatorBuffer",
+      "start": 1305,
+      "end": 1306,
+      "id": "REF-0282",
+      "read_pages": [
+        1305,
+        1306
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "CopyIndicatorBuffer bool em três variantes posição/quantidade, data/quantidade e intervalo; start0 é barra atual mas memória física recebe mais antigo primeiro. Pré-alocar para quantidade fixa; vetor intermediário para cópia parcial. Indicador retorna false imediatamente e inicia construção/download; EA/script podem aguardar timeout. Texto menciona amount apesar de assinatura bool: verificar Size e disponibilidade, não usar bool como contagem. Proposta: recuperação assíncrona com estado pending no monitor."
+    },
+    {
+      "depth": 3,
+      "title": "CopyRates",
+      "start": 1307,
+      "end": 1311,
+      "id": "REF-0283",
+      "read_pages": [
+        1307,
+        1308,
+        1309,
+        1310,
+        1311
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "CopyRates de matriz/vetor retorna bool, mais antigo no começo; vetor aceita só uma série, matriz combina máscaras em ordem fixaOPEN/HIGH/LOW/CLOSE/TIME/VOLUME/SPREAD. COPY_RATES_VERTICAL muda orientação de séries para colunas e registros para linhas. Dados fora servidor/MAXBARS falham; requisição por data usa aberturas<=data, intervalo exige abertura dentro dele (sem barra semanal se abertura fora). TIME em float perde cerca100s porque inteiros>2^24 inexatos. Proposta: conservar datetime/long/double apropriado e validar completude, barra0 incompleta explicitamente."
+    },
+    {
+      "depth": 3,
+      "title": "CopyTicks",
+      "start": 1312,
+      "end": 1314,
+      "id": "REF-0284",
+      "read_pages": [
+        1312,
+        1313,
+        1314
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "CopyTicks retorna bool, índice0 mais antigo, from_msc em milissegundos,0 busca últimos count; omissão limita2000. Primeira chamada sincroniza base, indicador não espera; EA/script pode esperar45s. OnTick é aviso de mudança e pode representar lote, não garante callback por tick. Cache4096 ou65536 com MarketDepth. Tabela desta edição parece descrever INFO/TRADE/ALL de forma deslocada (INFO=all,TRADE=Bid/Ask,ALL=Last/volume), além de menção High/Low inadequada; não propagar sem conferir documentação nativa/harness. Proposta: capturar cursor/flags para monitor sem supor cobertura por OnTick."
+    },
+    {
+      "depth": 3,
+      "title": "CopyTicksRange",
+      "start": 1315,
+      "end": 1316,
+      "id": "REF-0285",
+      "read_pages": [
+        1315,
+        1316
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "CopyTicksRange usa limites inclusivos >=from_msc e <=to_msc, mais antigo primeiro, flags do tick indicam campo alterado. Vetor uma seleção; erros timeout, buffer pequeno e memória insuficiente podem coexistir com dados parciais descritos no texto. Proposta: paginação por milissegundo com cuidado com múltiplos ticks no mesmo instante, diagnosticar completude sem transformar timeout em ausência de ticks."
+    },
+    {
+      "depth": 3,
+      "title": "Eye",
+      "start": 1317,
+      "end": 1318,
+      "id": "REF-0286",
+      "read_pages": [
+        1317,
+        1318
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Eye estático cria zeros e uns na diagonal k; positivo acima, negativo abaixo, rows/cols independentes. Proposta futura: construir fixtures retangulares/diagonal deslocada; sem uso direto no monitor atual."
+    },
+    {
+      "depth": 3,
+      "title": "Identity",
+      "start": 1319,
+      "end": 1320,
+      "id": "REF-0287",
+      "read_pages": [
+        1319,
+        1320
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Identity tem construtor estático rows/cols e método in-place sem retorno; exemplos retangulares3x5 confirmam diagonal de uns apesar da frase posterior chamar quadrada. Proposta futura: testar forma além da diagonal, não exigir quadratura por descrição genérica."
+    },
+    {
+      "depth": 3,
+      "title": "Ones",
+      "start": 1321,
+      "end": 1321,
+      "id": "REF-0288",
+      "read_pages": [
+        1321
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Ones cria nova matriz rows/cols ou vetor size com todos1. Proposta futura: fixtures de dimensão e baseline de redução; sem função financeira atual."
+    },
+    {
+      "depth": 3,
+      "title": "Zeros",
+      "start": 1322,
+      "end": 1322,
+      "id": "REF-0289",
+      "read_pages": [
+        1322
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Zeros cria nova matriz/vetor totalmente zero de forma solicitada. Proposta futura: inicialização explícita que evita tratar memória alocada como zerada."
+    },
+    {
+      "depth": 3,
+      "title": "Full",
+      "start": 1323,
+      "end": 1323,
+      "id": "REF-0290",
+      "read_pages": [
+        1323
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Full cria matriz/vetor novo preenchido por valor, distingue-se de Fill in-place. Proposta futura: usar sentinelas controladas em teste, sem confundir zero com ausência."
+    },
+    {
+      "depth": 3,
+      "title": "Tri",
+      "start": 1324,
+      "end": 1324,
+      "id": "REF-0291",
+      "read_pages": [
+        1324
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Tri cria matriz com uns na diagonal k e abaixo, zeros acima; k<0 desloca abaixo e k>0 acima; aceita retangular. Proposta futura: fixture para máscaras triangulares, sem autorização de mudança no produto."
+    },
+    {
+      "depth": 3,
+      "title": "Init",
+      "start": 1325,
+      "end": 1326,
+      "id": "REF-0292",
+      "read_pages": [
+        1325,
+        1326
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Init dimensiona matriz/vetor e aceita callback opcional com argumentos adicionais; void. Exemplo callback percorre rows/cols ou Size e mostra acúmulo de erro float/double em progressão0.1. Proposta futura: comparação por tolerância adequada, sem confundir render decimal com erro de implementação."
+    },
+    {
+      "depth": 3,
+      "title": "Fill",
+      "start": 1327,
+      "end": 1327,
+      "id": "REF-0293",
+      "read_pages": [
+        1327
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Fill modifica matriz/vetor existente com valor e retorna void. Proposta futura: inicialização explícita de scratch buffer; tamanho precisa existir antes do preenchimento."
+    },
+    {
+      "depth": 3,
+      "title": "Random",
+      "start": 1328,
+      "end": 1329,
+      "id": "REF-0294",
+      "read_pages": [
+        1328,
+        1329
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Random possui fábrica estática e método in-place, distribuição uniforme em[min,max] descrita sem prova de inclusão das bordas; padrões0..1. Assinaturas matriz usam float para limites e vetor double. Proposta futura: fixtures aleatórias com registro de dados/gerador, não assumir reprodutibilidade nem usar para sinais do Stoikus."
+    },
+    {
+      "depth": 2,
+      "title": "Manipulations",
+      "start": 1330,
+      "end": 1380,
+      "id": "REF-0295",
+      "read_pages": [
+        1330,
+        1331,
+        1332,
+        1333,
+        1334,
+        1335,
+        1336,
+        1337,
+        1338,
+        1339,
+        1340,
+        1341,
+        1342,
+        1343,
+        1344,
+        1345,
+        1346,
+        1347,
+        1348,
+        1349,
+        1350,
+        1351,
+        1352,
+        1353,
+        1354,
+        1355,
+        1356,
+        1357,
+        1358,
+        1359,
+        1360,
+        1361,
+        1362,
+        1363,
+        1364,
+        1365,
+        1366,
+        1367,
+        1368,
+        1369,
+        1370,
+        1371,
+        1372,
+        1373,
+        1374,
+        1375,
+        1376,
+        1377,
+        1378,
+        1379,
+        1380
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Manipulações1330–1331 lidas como visão de conjunto: forma, partes, cópias, ordenação, tolerâncias e NaNs são operações distintas; filhos após1335 pendentes. Aplicação futura: pipeline deve registrar transformações e preservar fonte."
+    },
+    {
+      "depth": 3,
+      "title": "HasNan",
+      "start": 1332,
+      "end": 1332,
+      "id": "REF-0296",
+      "read_pages": [
+        1332
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "HasNan retorna contagem ulong, não bool. Compare/CompareByDigits consideram NaNs em posições correspondentes iguais embora comparação escalar NaN!=NaN. Proposta crítica: checar NaNs antes de aceitar igualdade numérica de fixture."
+    },
+    {
+      "depth": 3,
+      "title": "ReplaceNan",
+      "start": 1333,
+      "end": 1333,
+      "id": "REF-0297",
+      "read_pages": [
+        1333
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ReplaceNan substitui NaNs in-place e retorna quantidade; overloads float/double em matriz/vetor. Proposta futura: imputação deve ser política explícita e contagem auditada, não converter falha numérica em zero silenciosamente."
+    },
+    {
+      "depth": 3,
+      "title": "ReplaceToZero",
+      "start": 1334,
+      "end": 1335,
+      "id": "REF-0298",
+      "read_pages": [
+        1334,
+        1335
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ReplaceToZero substitui se abs(valor)<=abs_tol, para complex usa módulo; retorna contagem. Exemplo A@Inv(A) limpa resíduos1e-5 mas diagonal ainda aproxima1. Proposta futura: limpeza cosmética não prova inversão exata e não deve apagar resíduo significativo de regra financeira."
+    },
+    {
+      "depth": 3,
+      "title": "NormalizeDouble",
+      "start": 1336,
+      "end": 1337,
+      "id": "REF-0299",
+      "read_pages": [
+        1336,
+        1337
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "NormalizeDouble retorna matriz/vetor arredondado com0–11 casas decimais; partes real/imaginária separadas. Exemplo arredonda A@Inv(A) para identidade visual. Proposta futura: arredondamento é transformação de dados, não prova de erro zero nem norma monetária."
+    },
+    {
+      "depth": 3,
+      "title": "Transpose",
+      "start": 1338,
+      "end": 1339,
+      "id": "REF-0300",
+      "read_pages": [
+        1338,
+        1339
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Transpose retorna matriz com eixos permutados; exemplo2x3=>3x2 e algoritmo indexa c[i][j]=a[j][i]. Proposta futura: registrar orientação de features e amostras antes/depois; sem uso direto atual."
+    },
+    {
+      "depth": 3,
+      "title": "TransposeConjugate",
+      "start": 1340,
+      "end": 1340,
+      "id": "REF-0301",
+      "read_pages": [
+        1340
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "TransposeConjugate troca índices e inverte sinal da parte imaginária; algoritmo cria nova matriz cols x rows. Nota sobre Conjugate em reais devolver cópia deve ser distinguida da transposição. Proposta futura: testar matriz complexa não simétrica, não apenas real."
+    },
+    {
+      "depth": 3,
+      "title": "TriL",
+      "start": 1341,
+      "end": 1341,
+      "id": "REF-0302",
+      "read_pages": [
+        1341
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "TriL retorna cópia preservando valores na região inferior e zerando acima da diagonal k. Exemplo k=-1 mantém4,7,8 etc.; frase de retorno que diz preencher com uns é incompatível com descrição/exemplo e parece resíduo de Tri. Proposta futura: preservar valores e testar diagonal deslocada nativamente."
+    },
+    {
+      "depth": 3,
+      "title": "TriU",
+      "start": 1342,
+      "end": 1342,
+      "id": "REF-0303",
+      "read_pages": [
+        1342
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "TriU retorna cópia preservando parte superior e zerando abaixo da diagonal k, negativos incluem subdiagonais. Exemplo retangular4x3 k=-1 preserva8 e12 na parte inferior próxima à diagonal. Proposta futura: testar retangulares e offset; sem uso direto atual."
+    },
+    {
+      "depth": 3,
+      "title": "Diag",
+      "start": 1343,
+      "end": 1344,
+      "id": "REF-0304",
+      "read_pages": [
+        1343,
+        1344
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Diag tem leitura de diagonal para vetor e escrita de vetor na diagonal. Matriz sem alocação nasce zerada com forma compatível, incluindo offset; existente não muda dimensões nem valores fora do segmento escrito. Proposta futura: diferenciar construção e atualização parcial para não supor limpeza do resto."
+    },
+    {
+      "depth": 3,
+      "title": "Row",
+      "start": 1345,
+      "end": 1346,
+      "id": "REF-0305",
+      "read_pages": [
+        1345,
+        1346
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Row lê vetor da linha ou escreve vetor. Sem dimensões cria matriz zerada com nrow+1 linhas; existente mantém forma e valores além do vetor. Exemplo escreve3 valores em linha de5 e preserva dois7. Proposta futura: validar comprimento/índice e preservar schema de amostras."
+    },
+    {
+      "depth": 3,
+      "title": "Col",
+      "start": 1347,
+      "end": 1348,
+      "id": "REF-0306",
+      "read_pages": [
+        1347,
+        1348
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Col lê/escreve coluna; sem alocação cria zero com ncol+1 colunas e tamanho do vetor em linhas. Existente conserva demais células, inclusive trecho da coluna além do vetor. Proposta futura: teste de atualização parcial e formas retangulares; sem uso direto atual."
+    },
+    {
+      "depth": 3,
+      "title": "Copy",
+      "start": 1349,
+      "end": 1350,
+      "id": "REF-0307",
+      "read_pages": [
+        1349,
+        1350
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Copy é método bool de destino que copia matriz/vetor, não aceita array com cast como Assign. Exemplo compara Copy e inicialização por atribuição; exemplo Python b=a não demonstra propriedade de cópia MQL. Proposta futura: testar independência após mutação da origem e verificar retorno."
+    },
+    {
+      "depth": 3,
+      "title": "Conjugate",
+      "start": 1351,
+      "end": 1351,
+      "id": "REF-0308",
+      "read_pages": [
+        1351
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Conjugate retorna matriz/vetor com sinal imaginário trocado; real retorna cópia inalterada. Algoritmo preserva real e nega imag. Proposta futura: reconstrução complexa e teste conjugate duas vezes; sem uso no monitor atual."
+    },
+    {
+      "depth": 3,
+      "title": "Concat",
+      "start": 1352,
+      "end": 1353,
+      "id": "REF-0309",
+      "read_pages": [
+        1352,
+        1353
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Concat sem eixo achata matrizes sucessivamente em vetor; com axis0 empilha linhas, axis1 agrega colunas e exige dimensão compatível. Assinatura impressa usa matrix::Split na variante com eixo, enquanto exemplos chamam Concat; anomalia a confirmar no compilador. Proposta futura: teste de shape em vez de confiar em nome horizontal/vertical."
+    },
+    {
+      "depth": 3,
+      "title": "Compare",
+      "start": 1354,
+      "end": 1355,
+      "id": "REF-0310",
+      "read_pages": [
+        1354,
+        1355
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Compare retorna número de elementos diferentes por epsilon, não -1/1 lexicográfico. Operadores==/!= são exatos; para complex calcula distância euclidiana entre números. Proposta: comparador de fixture deve também rejeitar NaN e escolher tolerância pelo domínio, sem esconder falha financeira."
+    },
+    {
+      "depth": 3,
+      "title": "CompareByDigits",
+      "start": 1356,
+      "end": 1357,
+      "id": "REF-0311",
+      "read_pages": [
+        1356,
+        1357
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "CompareByDigits retorna contagem de divergências por algarismos significativos; útil quando magnitudes variam1e-20..1e20. Exemplo oposição de sinais em termos minúsculos é invisível ao epsilon mas detectada por dígitos. Proposta: distinguir precisão relativa de casas decimais fixas."
+    },
+    {
+      "depth": 3,
+      "title": "CompareEqual",
+      "start": 1358,
+      "end": 1360,
+      "id": "REF-0312",
+      "read_pages": [
+        1358,
+        1359,
+        1360
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "CompareEqual achata por linhas e compara até primeira diferença: -1/0/1. NaNs correspondentes iguais, sinal deNaN ignorado e NaN menor que numérico. Exemplo ainda discrimina matrizA/B não inicializada(-2/+2) e tamanhos(-3/+3); assinatura ulong conflita com negativos e exemplo int. Proposta futura: confirmar tipo/retornos nativos e não aceitar igualdade como validade numérica."
+    },
+    {
+      "depth": 3,
+      "title": "Flat",
+      "start": 1361,
+      "end": 1362,
+      "id": "REF-0313",
+      "read_pages": [
+        1361,
+        1362
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Flat lê por índice linear ou escreve com bool, ordem por linhas;3x3 Flat4 equivale[1][1]. Exemplo ArgMax seguido de Flat para ler e zerar maior. Proposta futura: validar limite rows*cols e mapear índice para evidência de célula."
+    },
+    {
+      "depth": 3,
+      "title": "Clip",
+      "start": 1363,
+      "end": 1363,
+      "id": "REF-0314",
+      "read_pages": [
+        1363
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Clip altera in-place cada valor para intervalo[min,max], retorna bool e não cria cópia. Proposta futura: preservar original e registrar contagem/razão de saturações; clipping não substitui validação de dados de mercado."
+    },
+    {
+      "depth": 3,
+      "title": "Reshape",
+      "start": 1364,
+      "end": 1365,
+      "id": "REF-0315",
+      "read_pages": [
+        1364,
+        1365
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Reshape void altera in-place forma em ordem linear e permite mudar total; novos elementos indefinidos. Exemplo3x5 contém valores arbitrários extras, não contrato de zero. Proposta futura: proibir leitura antes de inicializar faixa nova e testar perda por redução."
+    },
+    {
+      "depth": 3,
+      "title": "Resize",
+      "start": 1366,
+      "end": 1367,
+      "id": "REF-0316",
+      "read_pages": [
+        1366,
+        1367
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Resize bool in-place preserva dados por linha, diferentemente de Reshape linear; reduzindo colunas trunca cada linha, crescendo linhas/colunas cria valores indefinidos; reserve em itens. Descrição inicial que diz retornar nova matriz conflita com assinatura/nota. Proposta futura: verificar bool e preencher novos segmentos explicitamente."
+    },
+    {
+      "depth": 3,
+      "title": "Set",
+      "start": 1368,
+      "end": 1369,
+      "id": "REF-0317",
+      "read_pages": [
+        1368,
+        1369
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Set(index,value) de vetor é equivalente a atribuição por colchetes e retorna bool. Exemplo duas callbacks preenchem potências de2 por métodos distintos. Proposta futura: validar retorno/limites, sem inferir alteração de dimensão porSet."
+    },
+    {
+      "depth": 3,
+      "title": "SwapRows",
+      "start": 1370,
+      "end": 1370,
+      "id": "REF-0318",
+      "read_pages": [
+        1370
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "SwapRows troca linhas por índices e bool; exemplo demonstra equivalência a multiplicação por matriz de permutação à esquerda. Proposta futura: preservar vínculo entre amostra e metadados ao permutar linhas."
+    },
+    {
+      "depth": 3,
+      "title": "SwapCols",
+      "start": 1371,
+      "end": 1371,
+      "id": "REF-0319",
+      "read_pages": [
+        1371
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "SwapCols troca colunas por índices e bool; equivalente a permutação à direita. Assinatura chama parâmetros row1/row2, descrição é coluna. Proposta futura: schema de features deve acompanhar permutação, sem trocar colunas monetárias por preço silenciosamente."
+    },
+    {
+      "depth": 3,
+      "title": "Split",
+      "start": 1372,
+      "end": 1373,
+      "id": "REF-0320",
+      "read_pages": [
+        1372,
+        1373
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Split com número de partes exige divisibilidade de rows(axis0) ou cols(axis1). Array de tamanhos aceita partes diferentes e sobra final se tamanhos terminam. Assinatura da variantearray é void mas exemplo atribui resultado a bool; confirmar compilação. Proposta futura: testar sobra e soma das formas antes de reconstruir dados."
+    },
+    {
+      "depth": 3,
+      "title": "Hsplit",
+      "start": 1374,
+      "end": 1375,
+      "id": "REF-0321",
+      "read_pages": [
+        1374,
+        1375
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Hsplit equivale Split axis0 e divide linhas (nomenclatura difere de expectativas NumPy); count exige divisibilidade, tamanhos explícitos podem consumir só restante. Exemplo5linhas/2falha4003, /5sucesso. Proposta futura: afirmar shapes no harness para evitar transposição implícita."
+    },
+    {
+      "depth": 3,
+      "title": "Vsplit",
+      "start": 1376,
+      "end": 1377,
+      "id": "REF-0322",
+      "read_pages": [
+        1376,
+        1377
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Vsplit equivale Split axis1 e divide colunas, exige divisibilidade para count; array{2,3} em6colunas produz2,3,1. Proposta futura: testar resto e reconstrução ordenada, sem uso direto atual."
+    },
+    {
+      "depth": 3,
+      "title": "ArgSort",
+      "start": 1378,
+      "end": 1378,
+      "id": "REF-0323",
+      "read_pages": [
+        1378
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "ArgSort retorna vetor/matriz de índices da ordenação indireta; padrão crescente, comparator opcional com contexto, eixo0/1. Assinaturas impressas chamamSort embora título ArgSort e retorno índices: não copiar cegamente. Proposta futura: aplicar permutação única a séries alinhadas, preservando timestamp."
+    },
+    {
+      "depth": 3,
+      "title": "Sort",
+      "start": 1379,
+      "end": 1380,
+      "id": "REF-0324",
+      "read_pages": [
+        1379,
+        1380
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Sort void altera in-place; aceita ASC/DESC ou comparador int(x1,x2[,context]) e contexto opcional. Exemplo declara vetor sem inicializar valores antes de ordenar, portanto não é fixture determinística válida. Proposta futura: definir dados conhecidos, testar estabilidade apenas se garantida separadamente."
+    },
+    {
+      "depth": 2,
+      "title": "Operations",
+      "start": 1381,
+      "end": 1384,
+      "id": "REF-0325",
+      "read_pages": [
+        1381,
+        1382,
+        1383,
+        1384
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "Operações matemáticas distinguem aritmética elemento a elemento e funções vetorizadas; exemplo calcula desvio padrão populacional dividindo soma quadrática porSize e comparaStd. Proposta futura: não transportar denominadorN para norma financeira sem definição própria."
+    },
+    {
+      "depth": 3,
+      "title": "Mathematical operations",
+      "start": 1383,
+      "end": 1383,
+      "id": "REF-0326",
+      "read_pages": [
+        1383
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "+,-,*,/ entre matrizes/vetores de mesmo tipo e dimensões são elemento a elemento; escalar apropriado pode operar em todos elementos, com+=,/=in-place. * é Hadamard, não produto matricial. Proposta crítica futura: distinguir @/MatMul de multiplicação de componentes."
+    },
+    {
+      "depth": 3,
+      "title": "Mathematical functions",
+      "start": 1384,
+      "end": 1384,
+      "id": "REF-0327",
+      "read_pages": [
+        1384
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "MathAbs/trig/exponenciais/logs/arredondamentos/hiperbólicas operam elemento a elemento; MathMod/MathPow aceitam segundo escalar ou matriz/vetor compatível. Proposta futura: checar domínio matemático e NaNs antes da comparação, por exemplo raiz/log inválidos."
+    },
+    {
+      "depth": 2,
+      "title": "Products",
+      "start": 1385,
+      "end": 1419,
+      "id": "REF-0328",
+      "read_pages": [
+        1385,
+        1386,
+        1387,
+        1388,
+        1389,
+        1390
+      ],
+      "status": "PARTIAL",
+      "knowledge_note": "Produtos agrupam MatMul/GeMM/Power/Dot/Kron/Inner/Outer/CorrCoef/Cov/Correlate/Convolve. Leitura introdutória1385 concluída; filhos além1390 pendentes. Proposta futura: selecionar operação pela definição e dimensionalidade, sem alegar analytics existente."
+    },
+    {
+      "depth": 3,
+      "title": "MatMul",
+      "start": 1386,
+      "end": 1390,
+      "id": "REF-0329",
+      "read_pages": [
+        1386,
+        1387,
+        1388,
+        1389,
+        1390
+      ],
+      "status": "FULL_TEXT_READ_IN_ASSIGNED_RANGE",
+      "knowledge_note": "MatMul: MxK comKxN=>MxN, vetorK à esquerda deKxN=>N, MxK com vetorK=>M, dois vetores iguais=>escalar Dot. Não comutativo. Nota genérica que vetor deve casar cols conflita com caso vetoràesquerda e exemplo3x5; seguir contratos por sobrecarga e validar nativamente. Proposta futura: fixtures retangulares e operandos invertidos; nenhum uso direto confirmado no núcleo atual."
+    },
+    {
+      "depth": 3,
+      "title": "GeMM",
+      "start": 1391,
+      "end": 1394,
+      "id": "REF-0330",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Power",
+      "start": 1395,
+      "end": 1397,
+      "id": "REF-0331",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Dot",
+      "start": 1398,
+      "end": 1399,
+      "id": "REF-0332",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Kron",
+      "start": 1400,
+      "end": 1401,
+      "id": "REF-0333",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Inner",
+      "start": 1402,
+      "end": 1403,
+      "id": "REF-0334",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Outer",
+      "start": 1404,
+      "end": 1406,
+      "id": "REF-0335",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "CorrCoef",
+      "start": 1407,
+      "end": 1410,
+      "id": "REF-0336",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Cov",
+      "start": 1411,
+      "end": 1413,
+      "id": "REF-0337",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Correlate",
+      "start": 1414,
+      "end": 1416,
+      "id": "REF-0338",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Convolve",
+      "start": 1417,
+      "end": 1419,
+      "id": "REF-0339",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "Transformations",
+      "start": 1420,
+      "end": 1434,
+      "id": "REF-0340",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Cholesky",
+      "start": 1421,
+      "end": 1421,
+      "id": "REF-0341",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Eig",
+      "start": 1422,
+      "end": 1424,
+      "id": "REF-0342",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "EigVals",
+      "start": 1425,
+      "end": 1425,
+      "id": "REF-0343",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "LU",
+      "start": 1426,
+      "end": 1427,
+      "id": "REF-0344",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "LUP",
+      "start": 1428,
+      "end": 1429,
+      "id": "REF-0345",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "QR",
+      "start": 1430,
+      "end": 1431,
+      "id": "REF-0346",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "SVD",
+      "start": 1432,
+      "end": 1434,
+      "id": "REF-0347",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "Statistics",
+      "start": 1435,
+      "end": 1463,
+      "id": "REF-0348",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ArgMax",
+      "start": 1436,
+      "end": 1436,
+      "id": "REF-0349",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ArgMin",
+      "start": 1437,
+      "end": 1437,
+      "id": "REF-0350",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Max",
+      "start": 1438,
+      "end": 1438,
+      "id": "REF-0351",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Min",
+      "start": 1439,
+      "end": 1439,
+      "id": "REF-0352",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Ptp",
+      "start": 1440,
+      "end": 1440,
+      "id": "REF-0353",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Sum",
+      "start": 1441,
+      "end": 1441,
+      "id": "REF-0354",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Prod",
+      "start": 1442,
+      "end": 1443,
+      "id": "REF-0355",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "CumSum",
+      "start": 1444,
+      "end": 1445,
+      "id": "REF-0356",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "CumProd",
+      "start": 1446,
+      "end": 1447,
+      "id": "REF-0357",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Percentile",
+      "start": 1448,
+      "end": 1449,
+      "id": "REF-0358",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Quantile",
+      "start": 1450,
+      "end": 1451,
+      "id": "REF-0359",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Median",
+      "start": 1452,
+      "end": 1453,
+      "id": "REF-0360",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Mean",
+      "start": 1454,
+      "end": 1454,
+      "id": "REF-0361",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Average",
+      "start": 1455,
+      "end": 1456,
+      "id": "REF-0362",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Std",
+      "start": 1457,
+      "end": 1458,
+      "id": "REF-0363",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Var",
+      "start": 1459,
+      "end": 1460,
+      "id": "REF-0364",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "LinearRegression",
+      "start": 1461,
+      "end": 1463,
+      "id": "REF-0365",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "Features",
+      "start": 1464,
+      "end": 1481,
+      "id": "REF-0366",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Rows",
+      "start": 1465,
+      "end": 1465,
+      "id": "REF-0367",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Cols",
+      "start": 1466,
+      "end": 1466,
+      "id": "REF-0368",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Size",
+      "start": 1467,
+      "end": 1467,
+      "id": "REF-0369",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Norm",
+      "start": 1468,
+      "end": 1470,
+      "id": "REF-0370",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Cond",
+      "start": 1471,
+      "end": 1473,
+      "id": "REF-0371",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Det",
+      "start": 1474,
+      "end": 1475,
+      "id": "REF-0372",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "SLogDet",
+      "start": 1476,
+      "end": 1476,
+      "id": "REF-0373",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Rank",
+      "start": 1477,
+      "end": 1479,
+      "id": "REF-0374",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Trace",
+      "start": 1480,
+      "end": 1480,
+      "id": "REF-0375",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Spectrum",
+      "start": 1481,
+      "end": 1481,
+      "id": "REF-0376",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "Matrix Classification",
+      "start": 1482,
+      "end": 1494,
+      "id": "REF-0377",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsSymmetric",
+      "start": 1483,
+      "end": 1483,
+      "id": "REF-0378",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsHermitian",
+      "start": 1484,
+      "end": 1484,
+      "id": "REF-0379",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsUpperTriangular",
+      "start": 1485,
+      "end": 1485,
+      "id": "REF-0380",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsLowerTriangular",
+      "start": 1486,
+      "end": 1486,
+      "id": "REF-0381",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsTrapezoidal",
+      "start": 1487,
+      "end": 1487,
+      "id": "REF-0382",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsUpperHessenberg",
+      "start": 1488,
+      "end": 1488,
+      "id": "REF-0383",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsLowerHessenberg",
+      "start": 1489,
+      "end": 1489,
+      "id": "REF-0384",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsTridiagonal",
+      "start": 1490,
+      "end": 1490,
+      "id": "REF-0385",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsUpperBidiagonal",
+      "start": 1491,
+      "end": 1491,
+      "id": "REF-0386",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsLowerBidiagonal",
+      "start": 1492,
+      "end": 1492,
+      "id": "REF-0387",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsDiagonal",
+      "start": 1493,
+      "end": 1493,
+      "id": "REF-0388",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "IsScalar",
+      "start": 1494,
+      "end": 1494,
+      "id": "REF-0389",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "Solutions",
+      "start": 1495,
+      "end": 1500,
+      "id": "REF-0390",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Solve",
+      "start": 1496,
+      "end": 1496,
+      "id": "REF-0391",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "LstSq",
+      "start": 1497,
+      "end": 1497,
+      "id": "REF-0392",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Inv",
+      "start": 1498,
+      "end": 1499,
+      "id": "REF-0393",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "PInv",
+      "start": 1500,
+      "end": 1500,
+      "id": "REF-0394",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "Machine learning",
+      "start": 1501,
+      "end": 1537,
+      "id": "REF-0395",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Activation",
+      "start": 1506,
+      "end": 1509,
+      "id": "REF-0396",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Derivative",
+      "start": 1510,
+      "end": 1511,
+      "id": "REF-0397",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Loss",
+      "start": 1512,
+      "end": 1513,
+      "id": "REF-0398",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "LossGradient",
+      "start": 1514,
+      "end": 1515,
+      "id": "REF-0399",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "RegressionMetric",
+      "start": 1516,
+      "end": 1517,
+      "id": "REF-0400",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ConfusionMatrix",
+      "start": 1518,
+      "end": 1519,
+      "id": "REF-0401",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ConfusionMatrixMultilabel",
+      "start": 1520,
+      "end": 1521,
+      "id": "REF-0402",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ClassificationMetric",
+      "start": 1522,
+      "end": 1525,
+      "id": "REF-0403",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ClassificationScore",
+      "start": 1526,
+      "end": 1529,
+      "id": "REF-0404",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "PrecisionRecall",
+      "start": 1530,
+      "end": 1533,
+      "id": "REF-0405",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "ReceiverOperatingCharacteristic",
+      "start": 1534,
+      "end": 1537,
+      "id": "REF-0406",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 2,
+      "title": "OpenBLAS",
+      "start": 1538,
+      "end": 1878,
+      "id": "REF-0407",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Singular Value Decomposition",
+      "start": 1541,
+      "end": 1567,
+      "id": "REF-0408",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionDC",
+      "start": 1542,
+      "end": 1543,
+      "id": "REF-0409",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionQR",
+      "start": 1544,
+      "end": 1545,
+      "id": "REF-0410",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionQRPivot",
+      "start": 1546,
+      "end": 1549,
+      "id": "REF-0411",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionBisection",
+      "start": 1550,
+      "end": 1552,
+      "id": "REF-0412",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionJacobiHigh",
+      "start": 1553,
+      "end": 1557,
+      "id": "REF-0413",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionJacobiLow",
+      "start": 1558,
+      "end": 1560,
+      "id": "REF-0414",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionBidiagDC",
+      "start": 1561,
+      "end": 1562,
+      "id": "REF-0415",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionBidiagBisect",
+      "start": 1563,
+      "end": 1565,
+      "id": "REF-0416",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "SingularValueDecompositionBidiagQR",
+      "start": 1566,
+      "end": 1567,
+      "id": "REF-0417",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 3,
+      "title": "Eigen Values",
+      "start": 1568,
+      "end": 1655,
+      "id": "REF-0418",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 4,
+      "title": "General Matrices",
+      "start": 1572,
+      "end": 1604,
+      "id": "REF-0419",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 5,
+      "title": "EigenSolver",
+      "start": 1574,
+      "end": 1575,
+      "id": "REF-0420",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 5,
+      "title": "EigenSolverX",
+      "start": 1576,
+      "end": 1579,
+      "id": "REF-0421",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 5,
+      "title": "EigenSolverSchur",
+      "start": 1580,
+      "end": 1581,
+      "id": "REF-0422",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 5,
+      "title": "EigenSolver2",
+      "start": 1582,
+      "end": 1584,
+      "id": "REF-0423",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    },
+    {
+      "depth": 5,
+      "title": "EigenSolver2X",
+      "start": 1585,
+      "end": 1589,
+      "id": "REF-0424",
+      "read_pages": [],
+      "status": "QUEUED_NOT_READ",
+      "knowledge_note": "PENDENTE: leitura semântica ainda não realizada; índice não conta como leitura."
+    }
+  ],
+  "limits": [
+    "Corpus textual lido; visuais não conferidos automaticamente.",
+    "Exemplos NOT_RUN; sem compilação/MT5/EX5/piloto.",
+    "Truncamento inicial1204–1215 reparado por releitura integral.",
+    "Algumas linhas longas do código já cortadas no texto extraído; não reivindica fidelidade visual nem compilabilidade integral."
+  ],
+  "read_batches": [
+    [
+      1195,
+      1203
+    ],
+    [
+      1204,
+      1215
+    ],
+    [
+      1216,
+      1220
+    ],
+    [
+      1221,
+      1237
+    ],
+    [
+      1238,
+      1255
+    ],
+    [
+      1256,
+      1274
+    ],
+    [
+      1275,
+      1286
+    ],
+    [
+      1287,
+      1304
+    ],
+    [
+      1305,
+      1316
+    ],
+    [
+      1317,
+      1335
+    ],
+    [
+      1336,
+      1353
+    ],
+    [
+      1354,
+      1371
+    ],
+    [
+      1372,
+      1390
+    ]
+  ]
+}

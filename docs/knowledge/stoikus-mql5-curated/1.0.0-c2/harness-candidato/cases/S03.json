@@ -1,0 +1,29 @@
+{
+  "id": "S03",
+  "kind": "new_synthetic_case",
+  "topic": "series",
+  "fixture_isolation": "builder receives builder-inputs/S03.json only; this oracle case is judge-only",
+  "prompt": "Explique memória física e índice lógico; neste contrato só copie completo antes de consumir.",
+  "input": {
+    "physical_oldest_first": [
+      10,
+      20,
+      30
+    ],
+    "as_series": true,
+    "requested": 3,
+    "copied": 2
+  },
+  "expected": {
+    "current_if_complete": 30,
+    "status": "DATA_NOT_READY",
+    "consume_partial": false,
+    "forbidden": [
+      "current_is_10",
+      "trade_on_partial"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

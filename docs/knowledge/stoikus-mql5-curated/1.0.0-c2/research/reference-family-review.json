@@ -1,0 +1,496 @@
+[
+  {
+    "section_id": "REF-0002",
+    "title": "Language Basics",
+    "start": 77,
+    "end": 318,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 77,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Tipos, funções, lifetime e namespaces estruturam contratos; semântica de C++ não pode ser transferida sem conferir MQL5.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0085",
+    "title": "Constants, Enumerations and Structures",
+    "start": 319,
+    "end": 1040,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 319,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Constantes têm domínios funcionais e estruturas definem mensagens; conta, trade e gráfico não compartilham semântica apenas por representarem inteiros.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0199",
+    "title": "MQL5 programs",
+    "start": 1041,
+    "end": 1096,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1041,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "EA, indicador, script, serviço e biblioteca têm handlers e persistência de execução diferentes; o limite de um EA por gráfico fundamenta dois gráficos do Stoikus.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0207",
+    "title": "Predefined Variables",
+    "start": 1097,
+    "end": 1108,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1097,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Símbolo e período descrevem o gráfico atual; não devem substituir identidade explícita de uma coleção multicurrency.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0218",
+    "title": "Common Functions",
+    "start": 1109,
+    "end": 1192,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1109,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Recursos, logs, temporizadores e erros são mecanismos técnicos; sucesso da chamada não prova aceite do resultado financeiro.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0251",
+    "title": "Array Functions",
+    "start": 1193,
+    "end": 1286,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1193,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Indexação começa em zero; resize e cópia têm restrições. Precisão, ownership e arrays com membros complexos exigem contratos específicos.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0277",
+    "title": "Matrix and Vector Methods",
+    "start": 1287,
+    "end": 1878,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1287,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Dimensões, tipo e orientação resultam do contexto; memória dinâmica e interfaces de buffer exigem shapes explícitos. Uso no produto seria evolução.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0566",
+    "title": "Conversion Functions",
+    "start": 1879,
+    "end": 1924,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1879,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Conversão de representação, arredondamento e conversão monetária são problemas distintos. ARGB e texto têm contratos próprios.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0588",
+    "title": "Math Functions",
+    "start": 1925,
+    "end": 2014,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 1925,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Operações podem ser elementwise em arrays matemáticos; finitude e domínio matemático antecedem interpretação financeira.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0621",
+    "title": "String Functions",
+    "start": 2015,
+    "end": 2043,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2015,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Comparação e índices representam texto; número de caracteres não mede pixels. Serialização e unidade não devem depender de legenda traduzida.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0641",
+    "title": "Date and Time",
+    "start": 2044,
+    "end": 2057,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2044,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Tempo de cotação, relógio civil e duração monotônica têm papéis diferentes e precisam ser identificados nos registros.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0650",
+    "title": "Account Information",
+    "start": 2058,
+    "end": 2062,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2058,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Propriedades são valores da conta corrente; snapshot contextual deve verificar identidade e atualidade.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0654",
+    "title": "Checkup",
+    "start": 2063,
+    "end": 2076,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2063,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Verificações de ambiente e erro são instrumentação; registrar motivo sem atribuir causa que o retorno não demonstra.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0667",
+    "title": "Event Handling",
+    "start": 2077,
+    "end": 2137,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2077,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Assinatura exata seleciona handler. Fila e orçamento de execução moldam aquisição cooperativa e recuperação.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0682",
+    "title": "Market Info",
+    "start": 2138,
+    "end": 2164,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2138,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Informação de símbolo precisa de existência, seleção e sincronização; usar um tick evita misturar campos de chamadas independentes.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0698",
+    "title": "Economic Calendar",
+    "start": 2165,
+    "end": 2195,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2165,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "APIs usam timezone de servidor e trazem eventos; o calendário é pesquisa adicional, não condição já implementada no Monitor.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0709",
+    "title": "Timeseries and Indicators Access",
+    "start": 2196,
+    "end": 2297,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2196,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Retorno de quantidade e preparação assíncrona obrigam validar janela completa, ordem e barra ainda aberta.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0744",
+    "title": "Custom Symbols",
+    "start": 2298,
+    "end": 2373,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2298,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Permitem construir fontes controladas em terminal isolado. Metadados artificiais não validam automaticamente um contrato real de corretora.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0760",
+    "title": "Chart Operations",
+    "start": 2374,
+    "end": 2440,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2374,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Comandos são enfileirados; retornos aceitos e aparência final são provas distintas. Preservar interação temporariamente alterada.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0793",
+    "title": "Trade Functions",
+    "start": 2441,
+    "end": 2546,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2441,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Ordem, negócio e posição são entidades distintas. Leitura contábil precisa reconciliação; envio de ordens pertence a executor separado.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0827",
+    "title": "Trade Signals",
+    "start": 2547,
+    "end": 2559,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2547,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Gerência de cópia é capacidade da plataforma; não é aprendizado neural nem autorização para assinatura/cópia nesta entrega.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0840",
+    "title": "Network Functions",
+    "start": 2560,
+    "end": 2623,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2560,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Sockets/WebRequest dependem de permissões configuradas pelo usuário. Não acrescentar rede ao Monitor por conveniência do harness.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0859",
+    "title": "Global Variables of the Terminal",
+    "start": 2624,
+    "end": 2650,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2624,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Globais do terminal diferem do escopo global do programa e são compartilhadas entre aplicações; lifetime documentado não equivale a banco de auditoria.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0871",
+    "title": "File Functions",
+    "start": 2651,
+    "end": 2762,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2651,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Sandbox e diretório Common são fronteiras distintas; formatar path não concede ownership nem permissão para sobrescrever dados.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0912",
+    "title": "Custom Indicators",
+    "start": 2763,
+    "end": 2894,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2763,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Buffers/plots pertencem a indicadores. Painel por objetos pode ser indicador analítico; não implica execução de trades.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0941",
+    "title": "Object Functions",
+    "start": 2895,
+    "end": 2967,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2895,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Propriedades são comandos de gráfico. Ownership, geometria e hit targets precisam de testes específicos além de pixels.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-0960",
+    "title": "Technical Indicators",
+    "start": 2968,
+    "end": 3174,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 2968,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Handles representam cálculos cacheados; criar handle não garante buffer pronto. Aquisição/liberação precisam de ciclo de vida.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1000",
+    "title": "Working with Optimization Results",
+    "start": 3175,
+    "end": 3186,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3175,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Frames agregam resultados de agentes. Ordem de chegada e optimização não justificam seleção pós-hoc do melhor resultado sem trilha.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1008",
+    "title": "Working with Events",
+    "start": 3187,
+    "end": 3196,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3187,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Timer e eventos customizados organizam trabalho; pedir frequência alta não garante execução com periodicidade rígida.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1013",
+    "title": "Working with OpenCL",
+    "start": 3197,
+    "end": 3237,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3197,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Benefício depende de dispositivo, precisão e tamanho do trabalho. Disponibilidade de GPU e double devem ser testadas antes de assumir aceleração.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1033",
+    "title": "Working with databases",
+    "start": 3238,
+    "end": 3317,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3238,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "SQLite oferece transações e consultas. Integridade financeira depende também de esquema, ownership, snapshot e auditoria de aplicação.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1060",
+    "title": "Working with DirectX",
+    "start": 3318,
+    "end": 3346,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3318,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "API 3D depende de capacidades gráficas; não há benefício demonstrado para o painel informativo atual. Classificar como referência, sem ampliar dependências.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1083",
+    "title": "Python Integration",
+    "start": 3347,
+    "end": 3437,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3347,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Integração consulta terminal por comunicação entre processos. Uma bancada Python independente não é execução MQL5 ou inferência neural dentro do Monitor.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1116",
+    "title": "ONNX models",
+    "start": 3438,
+    "end": 3483,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3438,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Modelo e shapes têm sessão e tipos próprios. Carga e execução precisam de identidade e erro explícitos; converter modelo não valida a previsão.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-1136",
+    "title": "Standard Library",
+    "start": 3484,
+    "end": 7007,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 3484,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Wrappers e classes organizam acesso, mas seus métodos não eliminam contratos das APIs subjacentes. Versão da biblioteca faz parte das dependências.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-4126",
+    "title": "Moving from MQL4",
+    "start": 7008,
+    "end": 7010,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 7008,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Migração exige revisar handlers, inicialização, índices e operações de negociação. Renomear extensões não migra semântica.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-4127",
+    "title": "List of MQL5 Functions",
+    "start": 7011,
+    "end": 7044,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 7011,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Índice alfabético auxilia localização e identificação de família; não é uma explicação completa dos parâmetros ou prova de execução.",
+    "all_descendant_entries_reviewed": false
+  },
+  {
+    "section_id": "REF-4128",
+    "title": "List of MQL5 Constants",
+    "start": 7045,
+    "end": 7284,
+    "scope": "FAMILY_OVERVIEW_ANALYZED",
+    "read_evidence": {
+      "page": 7045,
+      "reading": "opening exposition and family contract/catalog; selected API pages separately logged"
+    },
+    "interpretation": "Catálogo alfabético não demonstra regra de domínio. Domínio da constante e API correspondente precisam de consulta antes de uso.",
+    "all_descendant_entries_reviewed": false
+  }
+]

@@ -1,0 +1,232 @@
+{
+  "render": "R5",
+  "scope": "Pages 1-28 individually opened with view_image; not approval of pages 29-56 or native Word reopen",
+  "pdf_sha256": "b4649f085fa0fe1d0df5e4f2d6c55d2d8eea2dd4583d9c1f51c8de1885b6fce4",
+  "pages": [
+    {
+      "page": 1,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-1.png",
+      "sha256": "405a8f1a3a253365e17126cd35e1366a6f36e616eb0b406c82b7492abc21fd75",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Capa legível; título quebra IA para segunda linha sem corte."
+    },
+    {
+      "page": 2,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-2.png",
+      "sha256": "bafc1af216d30eeec3da3b49c1548c12e3abc383b28ddb7b9d5f12c8961bfbcf",
+      "visually_inspected": true,
+      "status": "REPAIR_REQUIRED",
+      "note": "REPAIR_REQUIRED: números ausentes para capítulos 4 e 6; paginação preliminar a reconciliar em R6."
+    },
+    {
+      "page": 3,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-3.png",
+      "sha256": "2cdd3f21840a4fbe9c9a5b2517a0f1ffe934f574eb142610ce7828fd056349a8",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 4,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-4.png",
+      "sha256": "1e7e1c3452b3fbaa1d85e1637ba340ed7a6331538d58db3de75e2379b50da4fc",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Página curta com parágrafo final da introdução, sem perda; opção editorial de capítulo seguinte em nova página."
+    },
+    {
+      "page": 5,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-5.png",
+      "sha256": "606a5b91da59d30bf581e65c761babe300532f378ef76c036dbd93dd8cae89e5",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 6,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-6.png",
+      "sha256": "045ac9461581bf23418db28e2facf8017d5a61edd98772cf4ff446385b0837e3",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 7,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-7.png",
+      "sha256": "59ec407218bf21c33bb5d9221a0cbd8091625e803b9f628dcd1ac21f55dfdf48",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Figura 1 legível, conexões coerentes; struct Reading inicia ao fim e continua p8, sem perda."
+    },
+    {
+      "page": 8,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-8.png",
+      "sha256": "f6fa1a1f9e9c1f40e1906d293aea109c34bcf4e6abfeb13fc166343a93d7c359",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Continuação de código p7 íntegra; melhoria opcional manter bloco unido."
+    },
+    {
+      "page": 9,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-9.png",
+      "sha256": "aee84b30782549405ffcfdeb78e7d9820abe3cfd581c00fccf83b22fda3ff3f9",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 10,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-10.png",
+      "sha256": "02dbd10e62f4b20ee8b43b907b1e11fee855482fbac93f69661b134a7a9fd2d0",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Equação de tolerância legível, índices e barras preservados."
+    },
+    {
+      "page": 11,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-11.png",
+      "sha256": "44d9653ea92588a7416fe49d1cd87b2ee82641c23e271d14c1b5e4320eeb0655",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Bloco LimiteDemonstrativo legível, indentação e operadores sem corte."
+    },
+    {
+      "page": 12,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-12.png",
+      "sha256": "468b4a1b511ed02234e62ab4d3ba14aedd336d4bdaf618d882fd21b53470f9ff",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 13,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-13.png",
+      "sha256": "17a9127349e871b4a2bebed3d1f6f6f6dc694838f4095e516acfb940f953635e",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 14,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-14.png",
+      "sha256": "59f586962a5f249ef2753ccb9f8c89ec2edb04dd08173f7138c48959b5bfe7b1",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 15,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-15.png",
+      "sha256": "25306508848478b8c7fbe9c3aeccecb134d3d3f3e3f0cc38679cba7c39f2dbb8",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 16,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-16.png",
+      "sha256": "91c1e7cb41b713ba5275a37f544d95f5405a59ccb2ba7b55766de679b5a8c0e4",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 17,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-17.png",
+      "sha256": "a510d3d5415a58ce02df9d08aaa8809e01dc1fc0410fd66cd375f9714176c244",
+      "visually_inspected": true,
+      "status": "REPAIR_REQUIRED",
+      "note": "REPAIR_REQUIRED: figura 2 sem rótulos de transições e self-loop; linhas sobrepostas/ambíguas. ProcessSlice legível."
+    },
+    {
+      "page": 18,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-18.png",
+      "sha256": "f007c2795c841032e34f3d875123154bc62633b5eafc75c8b9e8975de3576b34",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 19,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-19.png",
+      "sha256": "48b56b7dad29bf60fcab738b1ce06153f57ab715baa38d5895ba745ad8b33657",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Título capítulo 4 com pontuação consistente."
+    },
+    {
+      "page": 20,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-20.png",
+      "sha256": "6ac85ab2154189018ce73ad31f5493bb8e00c2f77e8db524b747841d4ed8530a",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 21,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-21.png",
+      "sha256": "3d647963cb04604e1b1c695593c1563e99b0cea756a4d486daacb5934115abff",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 22,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-22.png",
+      "sha256": "d374be8f5df7e3e8f6387b1c1e677c07aac34aab83a60b6c1a259d857012e521",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 23,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-23.png",
+      "sha256": "ec43b2712f9e17af5eeac54a0aa277c56d2973d31fbf50ddc30c23501a88b829",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 24,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-24.png",
+      "sha256": "107f02fde39f3239e5ac88a69b653615e9021f39b21b1ff6c7b740dac86697bb",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 25,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-25.png",
+      "sha256": "a3798d3bed5dd47bb053fdb30e3af414aa792202af5eb9be8a72574961f2f793",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 26,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-26.png",
+      "sha256": "ce5c8608f8579d867f97b1e955a417b075e2ca3f43eeb98916db516748652484",
+      "visually_inspected": true,
+      "status": "REPAIR_REQUIRED",
+      "note": "REPAIR_REQUIRED: figura 3 exibe D em vez de Concluído?; ramos sim/não e conexões com destinos ausentes. Código legível."
+    },
+    {
+      "page": 27,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-27.png",
+      "sha256": "27d0040d6f2839ce35cd2b652f9405311ecb54626fb2b05d6752569310cba39f",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    },
+    {
+      "page": 28,
+      "png": "/private/tmp/stoikus-mql5-research-20261015/render-r5/page-28.png",
+      "sha256": "136774b428be33a38b36ea908b64a19674303ed430add678d7defa11a136db6e",
+      "visually_inspected": true,
+      "status": "PASS_VISUAL_IN_SCOPE",
+      "note": "Texto/cabeçalhos/rodapé legíveis; sem cortes ou sobreposições observados nas margens."
+    }
+  ],
+  "reuse_rule": "Reuse visual approval only for identical PNG SHA-256; changed pages require new visual review. Pages 2,17,26 remain unapproved even if unchanged."
+}
