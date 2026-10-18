@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "candidate": "example:synthetic-only",
+  "suites": [
+    {
+      "id": "example-local",
+      "status": "PASS",
+      "tests": [{"id": "example_case", "status": "PASS"}]
+    }
+  ]
+}

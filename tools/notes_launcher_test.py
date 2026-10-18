@@ -591,6 +591,8 @@ def run(args):
                     for name, test in [('icon-background-contrast', launcher_icon_contrast), ('click-keyboard', click_and_keyboard), ('movement-cancellation', movement),
                             ('settings-ranges-focus', settings_flow), ('overlay-isolation', overlay_isolation),
                             ('render-navigation-resize', rendering_navigation)]:
+                        if name == 'render-navigation-resize':
+                            assert page.evaluate("JPWModuleAvailability.setState('personal-finance','active').ok")
                         before = snapshot(page)
                         measurements = test(page)
                         allowed_writes = {'movement-cancellation': 4, 'settings-ranges-focus': 43,

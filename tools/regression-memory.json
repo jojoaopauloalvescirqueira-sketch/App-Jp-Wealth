@@ -1,0 +1,723 @@
+{
+  "schema": "jpwealth/regression-memory/v1",
+  "scope_note": "Índice factual PARCIAL de bugs e pendências; não é norma, lista integral do legado, evidência de execução atual ou runtime de memória. Ler fontes/testes e revalidar bytes antes de agir. Memória global não alterada.",
+  "authority": "Fontes e autorização vigentes prevalecem; registros não autorizam edição, fechamento ou Git.",
+  "coverage_note": "Índice parcial; focais de Bolsas são adicionais ao runnerfull atual. W2 e downloads estão no FULL. Outros testes legados também estão fora do runner; migração da cobertura fica pendente em escopo próprio. Nenhum gate foi alterado.",
+  "entries": [
+    {
+      "id": "resize_focus",
+      "state": "fixed_regression",
+      "summary": "Foco transferido antes de ocultar o botão de mapa na troca para desktop.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "preservação do foco"
+      },
+      "stimulus": "Focar o botão no celular e redimensionar para1280×900.",
+      "expected": "Foco em controle visível e não inert, diferente de body.",
+      "cause": "O botão focado era escondido na troca de layout.",
+      "protection": {
+        "path": "tools/market_hours_redesign_test.py",
+        "case": "focused mobile map toggle transfers focus to a visible control when desktop hides it",
+        "command": "python3 tools/market_hours_redesign_test.py --only \"focused mobile\" --out-dir /private/tmp/jpw-memory-resize",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/resize-focus-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED pelo defeito de foco.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/candidate-final-redesign/result.json",
+          "result": "PASS",
+          "note": "GREEN no mesmo caso;16grupos aprovados.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "8971c6f07bd923fc1a856b9aa19d7d3787af670ce7562447fdbc93c2778fb63a",
+        "date": "2026-10-16",
+        "scope": "historical receipt inspected; not reexecuted by installation checker"
+      }
+    },
+    {
+      "id": "reveal_scrolled_selection",
+      "state": "fixed_regression",
+      "summary": "Mostrar na lista revela de fato uma seleção fora da rolagem.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "seleção fora do filtro"
+      },
+      "stimulus": "Selecionar extra-23 em29venues sintéticas, buscar no-match e acionar Mostrar na lista.",
+      "expected": "Botão selecionado inteiramente na interseção da tabela com a viewport.",
+      "cause": "Restaurar filtros/foco não garantia trazer a linha à área visível.",
+      "protection": {
+        "path": "tools/market_hours_redesign_test.py",
+        "case": "explicit reveal brings an offscreen selected row into the table and page viewport",
+        "command": "python3 tools/market_hours_redesign_test.py --only \"offscreen\" --out-dir /private/tmp/jpw-memory-reveal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/reveal-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED com seleção fora da rolagem.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/candidate-final-redesign/result.json",
+          "result": "PASS",
+          "note": "GREEN no mesmo caso.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "8971c6f07bd923fc1a856b9aa19d7d3787af670ce7562447fdbc93c2778fb63a",
+        "date": "2026-10-16",
+        "scope": "historical receipt inspected; not reexecuted by installation checker"
+      }
+    },
+    {
+      "id": "narrow_zoom",
+      "state": "fixed_regression",
+      "summary": "Coluna HH:mm cabe em painel móvel estreito.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "HH:mm e apresentação responsiva"
+      },
+      "stimulus": "Painel em155CSSpx e CSSzoom2.",
+      "expected": "scrollWidth<=clientWidth+1; HH:mm em uma linha e dentro da coluna.",
+      "cause": "Largura da coluna não reservava o espaço de fonte monoespaçada e padding.",
+      "protection": {
+        "path": "tools/market_hours_redesign_test.py",
+        "case": "narrow mobile panel at 155 CSS px and zoom 2 contains HH:mm without local overflow",
+        "command": "python3 tools/market_hours_redesign_test.py --only \"155 CSS\" --out-dir /private/tmp/jpw-memory-narrow",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/narrow-zoom-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED local da coluna.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/candidate-final-redesign/result.json",
+          "result": "PASS",
+          "note": "GREEN local; não corrige o cabeçalho global.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "8971c6f07bd923fc1a856b9aa19d7d3787af670ce7562447fdbc93c2778fb63a",
+        "date": "2026-10-16",
+        "scope": "historical receipt inspected; not reexecuted by installation checker"
+      }
+    },
+    {
+      "id": "W2",
+      "state": "open_incident",
+      "summary": "Timeout intermitente ao recarregar o build histórico AlladinV4.",
+      "source": {
+        "path": "docs/governance/QUALITY-GATES.md",
+        "section": "casos históricos precisam executar"
+      },
+      "stimulus": "Rodar a suíte AlladinFoundation no mesmo candidato.",
+      "expected": "W2 executa todas as assertivas de schema futuro/preservação/recusa de escrita; reload timeout não é aprovação.",
+      "cause": "Não estabelecida; focal e3diagnósticos posteriores passaram sem correção.",
+      "protection": {
+        "path": "tools/alladin_foundation_test.py",
+        "case": "caso_w2",
+        "command": "python3 tools/alladin_foundation_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "alladin-foundation"
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/full-raw-attempt1.json",
+          "result": "PRODUCT_FAIL",
+          "note": "reload timeout30000 antes das assertivas financeiras; preservado.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "8971c6f07bd923fc1a856b9aa19d7d3787af670ce7562447fdbc93c2778fb63a",
+        "date": "2026-10-16",
+        "scope": "historical receipt inspected; not reexecuted by installation checker"
+      }
+    },
+    {
+      "id": "draft-clear",
+      "state": "open_incident",
+      "summary": "Boas-vindas interceptam clique no teste de downloads.",
+      "source": {
+        "path": "docs/governance/QUALITY-GATES.md",
+        "section": "validade da evidência e isolamento"
+      },
+      "stimulus": "Contexto vazio, closeModal antes do timerwelcome e clique NoCuda durante recurso pendente.",
+      "expected": "A ação deliberada Limpar invalida a operação; recurso termina com bytes originais sem download/status atrasado.",
+      "cause": "Overlay observado no bruto; replay parcial demonstrou timer abrindo welcome após closeModal, em clique anterior, sem provar todos os eventos retroativos.",
+      "protection": {
+        "path": "tools/download_assets_browser_test.py",
+        "case": "draft-clear",
+        "command": "python3 tools/download_assets_browser_test.py --out-dir /private/tmp/jpw-memory-downloads",
+        "full_gate": {
+          "included": true,
+          "check_id": "download-assets-browser"
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/full-raw-attempt2.json",
+          "result": "PRODUCT_FAIL",
+          "note": "#nocudaClear bloqueado por welcome.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/welcome-diagnostic/summary.json",
+          "result": "PARTIAL_DIAGNOSTIC",
+          "note": "Reprodução em #nocudaEditable; contrafactual não é correção ou PASS do gate.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "8971c6f07bd923fc1a856b9aa19d7d3787af670ce7562447fdbc93c2778fb63a",
+        "date": "2026-10-16",
+        "scope": "historical receipt inspected; not reexecuted by installation checker"
+      }
+    },
+    {
+      "id": "sharedShellBaselineIssues",
+      "state": "baseline_limitation",
+      "summary": "Cabeçalho compartilhado excede viewport em parte dos casosCSS200.",
+      "source": {
+        "path": "docs/work/CHG-JPW-MARKET-HOURS-REDESIGN-20261016.md",
+        "section": "matriz responsiva e limites"
+      },
+      "stimulus": "sidebar,390×900,dark,CSSzoom2; comparar Dashboard e Bolsas.",
+      "expected": "Conteúdo global caberia na viewport; o painel de Bolsas não agrava a baseline.",
+      "cause": "Geometria do cabeçalho produz588px antes e depois de Bolsas; causa de layout completa não corrigida neste escopo.",
+      "protection": {
+        "path": "tools/market_hours_integration_test.py",
+        "case": "sharedShellBaselineIssues / css200Cases",
+        "command": "python3 tools/market_hours_integration_test.py --out-dir /private/tmp/jpw-memory-css200",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/redesign-20261016/integration-http/result.json",
+          "result": "BASELINE_FAIL",
+          "note": "Seis casos globais por modo; painel local PASS não fecha o cabeçalho. Zoom nativo não executado.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "8971c6f07bd923fc1a856b9aa19d7d3787af670ce7562447fdbc93c2778fb63a",
+        "date": "2026-10-16",
+        "scope": "historical receipt inspected; not reexecuted by installation checker"
+      }
+    },
+    {
+      "id": "time-twins-integrated-lifecycle",
+      "state": "open_incident",
+      "summary": "Clique automatizado não concluiu a abertura de Gêmeos do Tempo no caso integrado de lifecycle.",
+      "source": {
+        "path": "docs/architecture/TIME-TWINS.md",
+        "section": "lifecycle e instância única"
+      },
+      "stimulus": "Executar integrated game switching, real dialogs and hidden pause same instances em tools/time_twins_browser_test.py.",
+      "expected": "A entrada deliberada abre uma instância; o caso então verifica troca de jogos, pausa em diálogos/ocultação, retomada explícita e preservação financeira sintética.",
+      "cause": "UNKNOWN. O bruto mostra botão visível/habilitado/estável e timeout durante scrollIntoView no primeiro open_game, antes das assertivas de lifecycle. Não há captura do estado falho. O mesmo caso passou isoladamente no mesmo ambiente, sem mudança de produto/teste; isso não demonstra correção.",
+      "protection": {
+        "path": "tools/time_twins_browser_test.py",
+        "case": "integrated game switching, real dialogs and hidden pause same instances",
+        "command": "python3 tools/time_twins_browser_test.py --mode integrated --case \"integrated game switching\" --out-dir /private/tmp/jpw-memory-time-twins-lifecycle",
+        "full_gate": {
+          "included": true,
+          "check_id": "time-twins-browser"
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/jp-engineering-install-20261016/full-install-raw.json",
+          "result": "PRODUCT_FAIL",
+          "sha256": "07c65b0865b8c27423e08385e5d5d96eb12b55eb60132eaf35469986055fa552",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone",
+          "note": "Gate80PASS/1PRODUCT_FAIL;standalone33PASS e integrado5/6. Timeout antes de abrir o jogo."
+        },
+        {
+          "path": "tools/.artifacts/jp-engineering-install-20261016/time-twins-lifecycle-focal",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone",
+          "note": "Apenas o caso original integrado,1/1, sem alterar estímulo/expectativa; não substitui o gate."
+        }
+      ],
+      "last_verified": {
+        "build": "c8fd7da22a39d838",
+        "tested_map_sha256": "72ce28f26e5cfcc84ad2addff8ca2bf342d26e099792da1fa87d33270e995c50",
+        "date": "2026-10-16",
+        "scope": "Gate integral e execução focal originais observados neste incremento; causa não determinada"
+      }
+    },
+    {
+      "id": "macos_reveal_complete_row",
+      "state": "fixed_regression",
+      "summary": "Mostrar na lista revela a linha inteira após aumento da tipografia, sem corte na borda de rolagem.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Composição macOS — preservação da seleção e rolagem"
+      },
+      "stimulus": "Selecionar extra-23 em29bolsas sintéticas; filtrar no-match e acionar Mostrar na lista com lista rolável.",
+      "expected": "Controle selecionado inteiramente na interseção da viewport/lista; a manobra revela a linha completa.",
+      "cause": "ScrollIntoView do botão pequeno com a nova altura da linha permitia corte fracionário: bottom851.953125 contra limite851.796875; linha terminava879.34375.",
+      "protection": {
+        "path": "tools/market_hours_redesign_test.py",
+        "case": "explicit reveal brings an offscreen selected row into the table and page viewport",
+        "command": "python3 tools/market_hours_redesign_test.py --only \"offscreen\" --out-dir /private/tmp/jpw-macos-reveal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/macos-20261016/final-redesign/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED preservado, com reveal-diagnostic.json; oráculo de reveal inalterado.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/macos-20261016/redesign-final2/result.json",
+          "result": "PASS",
+          "note": "GREEN16/16 observado no recibo do construtor; nova mesma fonte scrolla a linha inteira com margem4px.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/macos-20261016/whole-row-mutant-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Contraprova isolada reverte somente alvo do scroll; produto intacto.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/macos-20261016/candidate-final-redesign/result.json",
+          "result": "PASS",
+          "note": "Root executou16/16 no build oficial, com oráculo adicional da linha inteira.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "af389c3e93393b08",
+        "date": "2026-10-16",
+        "scope": "focal16/16 executado pelo root após geração oficial; full separado no relatório",
+        "source_sha256": {
+          "src/js/40-app/31-market-hours/03-view.js": "855617a294c6185c6a3f1fdf25621254968cc59fde5d60dac504cb1f522c33dd",
+          "src/js/40-app/31-market-hours/04-controller.js": "79d1ab641a1a27a8f2316a2c1785e00b972e9391cb11b7a77e6cb949f7fb7900",
+          "src/styles/app.css": "2808b28b386ea8d0aad62dcc0d3ea8e54718f500faa7a9eb90321f868b60a80d",
+          "tools/market_hours_redesign_test.py": "c4bbbe378ed3a45edf06e42b55e082576077eddd3b2ec357c7dba047daed026f"
+        }
+      }
+    },
+    {
+      "id": "noon_resume_single_focus",
+      "state": "fixed_regression",
+      "summary": "Retomada após prazo de exploração emite um único foco geográfico de meio-dia.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Próximas sessões e orientação pelo meio-dia — retomada"
+      },
+      "stimulus": "Selecionar uma cidade, ocultar/blur/recolher/diálogo/sair de rota, avançar além do prazo monotônico e retomar.",
+      "expected": "Exatamente um foco no meio-dia UTC atual, sem mudar seleção; nenhum timer/processamento enquanto suspenso.",
+      "cause": "Na primeira implementação do incremento, tick e sync aplicavam separadamente o sinal de retomada e emitiam foco duplicado. O sinal passou somente pelo tick.",
+      "protection": {
+        "path": "tools/market_hours_noon_test.py",
+        "case": "hidden resumed after deadline uses current noon immediately (and blur/collapse/dialog/routeHidden variants)",
+        "command": "python3 tools/market_hours_noon_test.py --out-dir /private/tmp/jpw-noon-memory-check",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/noon-openings-20261016/controller-green-attempt1/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Primeira implementação:27PASS/5falhas por foco duplicado; mesmos oráculos.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/noon-openings-20261016/controller-final-green/result.json",
+          "result": "PASS",
+          "note": "33casos; mesmos5estímulos aprovados depois do reparo causal.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "e3a3e248e50edc96",
+        "source_sha256": "0ead463a6dc569417a3dbb2cb8f46f0d7f811c160c222b0053956e6852c3675e",
+        "date": "2026-10-16",
+        "scope": "current VM deterministic tests and independent controller review; browser/full recorded separately",
+        "tested_map_sha256": "515422312dd9448028dcd692ba26181f029cfc68ea8d1e554be0b0b05120f9c4",
+        "current_full_raw_sha256": "c492b67879453ac06e173fd258d031b8f6b7e1d1219b21074b89963e73b03cad"
+      }
+    },
+    {
+      "id": "noon_primary_pointer_hold",
+      "state": "fixed_regression",
+      "summary": "Segundo toque não encerra nem substitui o gesto primário ainda pressionado.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Próximas sessões e orientação pelo meio-dia — interação aceita"
+      },
+      "stimulus": "Pressionar dois dedos, soltar o segundo e mover/soltar o primeiro; repetir ordem inversa e cancelamento.",
+      "expected": "Um único start/end do gesto primário, captura e movimento preservados após soltar o secundário; retorno não pode começar cedo.",
+      "cause": "O wrapper aceitava segundo down e sobrescrevia interactionPointer/nativepointerId, deixando o primeiro start sem end. A guarda conserva o ponteiro aceito até seu encerramento.",
+      "protection": {
+        "path": "tools/market_globe_test.py",
+        "case": "pointer-multipointer-hold",
+        "command": "python3 tools/market_globe_test.py --case noon-adapter --out-dir /private/tmp/jpw-noon-adapter-memory-check",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/noon-openings-20261016/adapter-round1-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED causal contra bundle301da027;7casos anteriores passam. Eventos touch nativos/teclas antes deRAF registrados.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/noon-openings-20261016/adapter-round1-green/result.json",
+          "result": "PASS",
+          "note": "Mesmos estímulos e expectativas,9/9casos no bundle oficial65d25e3f.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "e3a3e248e50edc96",
+        "source_sha256": "1649f2c79c057e47db399e8566c0739d7cb14e0cb84d0901bbc1c21041c8f1dc",
+        "date": "2026-10-16",
+        "scope": "native Chromium148 permanent focal; independent scoped review and final integrated matrix recorded separately",
+        "tested_map_sha256": "515422312dd9448028dcd692ba26181f029cfc68ea8d1e554be0b0b05120f9c4",
+        "current_full_raw_sha256": "c492b67879453ac06e173fd258d031b8f6b7e1d1219b21074b89963e73b03cad"
+      }
+    },
+    {
+      "id": "noon_pending_focus_key_interrupt",
+      "state": "fixed_regression",
+      "summary": "Tecla nativa interrompe retorno pendente mesmo sem delta numérico instantâneo.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Próximas sessões e orientação pelo meio-dia — interação aceita"
+      },
+      "stimulus": "No mesmo task antes deRAF, agendar foco geográfico fora da orientação Home/limiteUp e pressionar Home/Up; repetir depois, em repouso.",
+      "expected": "Tecla cancela alvo pendente e notifica uma vez; Home/Up realmente ociosos e teclas prevenidas/modificadas continuam sem notificação.",
+      "cause": "O wrapper comparava somente vel/spin/tiltTarget e ignorava o alvo pendente. Cancelar a mudança agendada é efeito manipulador mesmo sem delta imediato.",
+      "protection": {
+        "path": "tools/market_globe_test.py",
+        "case": "keyboard-pending-focus-cancellation",
+        "command": "python3 tools/market_globe_test.py --case noon-adapter --out-dir /private/tmp/jpw-noon-adapter-memory-check",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/noon-openings-20261016/adapter-round1-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED causal contra bundle301da027;7casos anteriores passam. Eventos touch nativos/teclas antes deRAF registrados.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/noon-openings-20261016/adapter-round1-green/result.json",
+          "result": "PASS",
+          "note": "Mesmos estímulos e expectativas,9/9casos no bundle oficial65d25e3f.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "e3a3e248e50edc96",
+        "source_sha256": "1649f2c79c057e47db399e8566c0739d7cb14e0cb84d0901bbc1c21041c8f1dc",
+        "date": "2026-10-16",
+        "scope": "native Chromium148 permanent focal; independent scoped review and final integrated matrix recorded separately",
+        "tested_map_sha256": "515422312dd9448028dcd692ba26181f029cfc68ea8d1e554be0b0b05120f9c4",
+        "current_full_raw_sha256": "c492b67879453ac06e173fd258d031b8f6b7e1d1219b21074b89963e73b03cad"
+      }
+    },
+    {
+      "id": "market_minimal_unfiltered_empty",
+      "state": "fixed_regression",
+      "summary": "Ausência de sessões abertas não é uma pesquisa sem resultados.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Interface minimalista —16/10/2026"
+      },
+      "stimulus": "Entrar em Abertas sem busca/fase adicional com calendário fechado ou vencido; depois aplicar uma busca sem correspondência.",
+      "expected": "Sem busca adicional, mostrar ausência de abertas/próximas confirmadas; mostrar pesquisa sem resultados somente com restrição adicional.",
+      "cause": "A apresentação antiga exibia a mensagem genérica sempre que nenhuma linha era visível, confundindo ausência de sessão com pesquisa.",
+      "protection": {
+        "path": "tools/market_hours_minimal_test.py",
+        "case": "MIN-08",
+        "command": "python3 tools/market_hours_minimal_test.py --only MIN-08",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/minimal-20261016/red/result.json",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/minimal-20261016/final-build-minimal/result.json",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "a876c103a4777b0a",
+        "source_sha256": "016eaf33c27028115700e452c34fa365f503b0c0445ad4e82089425a096baee1",
+        "date": "2026-10-16",
+        "scope": "Focal final Chromium MIN01–09 PASS; host/distributions/native200 separate. Current FULL:80 PASS/1 PRODUCT_FAIL(download-assets-browser draft-clear welcome overlay), not approved; these cases remain outside FULL. Historical incidents open.",
+        "candidate_map_sha256": "9dc5108df7f8a4babe68fd20df6f44e98039d6f691b4892bcded5c032a2fc4b5",
+        "full_receipt_sha256": "bf398dc5f4db47d7a591b895ffec9ec1a610001cc433e5d6277906c31935dd83"
+      }
+    },
+    {
+      "id": "market_minimal_zoom_close",
+      "state": "fixed_regression",
+      "summary": "Ajuda mantém Fechar acessível quando o texto exige rolagem com zoom.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Interface minimalista —16/10/2026"
+      },
+      "stimulus": "Abrir ajuda em390px com zoomCSS200%, mantendo a viewport e premissas sintéticas.",
+      "expected": "Balão cabe na viewport e Fechar permanece alcançável no cabeçalho durante rolagem.",
+      "cause": "O botão ficava depois de todo o texto; o max-height e flex-shrink permitiam que ele ficasse fora da janela visível. Cabeçalho no início e altura natural dos parágrafos conservam rolagem.",
+      "protection": {
+        "path": "tools/market_hours_minimal_test.py",
+        "case": "MIN-06",
+        "command": "python3 tools/market_hours_minimal_test.py --only MIN-06",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/minimal-20261016/green-attempt1/result.json",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/minimal-20261016/final-build-minimal/result.json",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "a876c103a4777b0a",
+        "source_sha256": "016eaf33c27028115700e452c34fa365f503b0c0445ad4e82089425a096baee1",
+        "date": "2026-10-16",
+        "scope": "Focal final Chromium MIN01–09 PASS; host/distributions/native200 separate. Current FULL:80 PASS/1 PRODUCT_FAIL(download-assets-browser draft-clear welcome overlay), not approved; these cases remain outside FULL. Historical incidents open.",
+        "candidate_map_sha256": "9dc5108df7f8a4babe68fd20df6f44e98039d6f691b4892bcded5c032a2fc4b5",
+        "full_receipt_sha256": "bf398dc5f4db47d7a591b895ffec9ec1a610001cc433e5d6277906c31935dd83"
+      }
+    },
+    {
+      "id": "market_minimal_portal_resize_focus",
+      "state": "fixed_regression",
+      "summary": "Recolher mapa com foco no balão transfere foco para Explorar mapa.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Interface minimalista —16/10/2026"
+      },
+      "stimulus": "Abrir ajuda do mapa no desktop; reduzir somente host para600px com foco dentro do portal.",
+      "expected": "Fechar balão e focar o botão do mapa agora visível, preservando seleção e câmera.",
+      "cause": "O balão vive no portal, fora de mapContent; o teste de descendência ignorava o foco que seria removido. Capturar ambos antes de ocultar e focar após tornar o controle visível.",
+      "protection": {
+        "path": "tools/market_hours_minimal_test.py",
+        "case": "MIN-09",
+        "command": "python3 tools/market_hours_minimal_test.py --only MIN-09",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/minimal-20261016/resize-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/minimal-20261016/final-build-minimal/result.json",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "a876c103a4777b0a",
+        "source_sha256": "016eaf33c27028115700e452c34fa365f503b0c0445ad4e82089425a096baee1",
+        "date": "2026-10-16",
+        "scope": "Focal final Chromium MIN01–09 PASS; host/distributions/native200 separate. Current FULL:80 PASS/1 PRODUCT_FAIL(download-assets-browser draft-clear welcome overlay), not approved; these cases remain outside FULL. Historical incidents open.",
+        "candidate_map_sha256": "9dc5108df7f8a4babe68fd20df6f44e98039d6f691b4892bcded5c032a2fc4b5",
+        "full_receipt_sha256": "bf398dc5f4db47d7a591b895ffec9ec1a610001cc433e5d6277906c31935dd83"
+      }
+    },
+    {
+      "id": "market_rounded_surface",
+      "state": "fixed_regression",
+      "summary": "Painel externo mantém cantos perceptivelmente arredondados e respiro do conteúdo.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-16-market-minimal.md",
+        "section": "Correção após avaliação visual —16/10/2026"
+      },
+      "stimulus": "Renderizar o painel em desktop/390px, claro/escuro e zoomCSS200; observar pintura dos quatro cantos e inset dos controles.",
+      "expected": "Os quatro cantos deixam aparecer o fundo externo em vez de um retângulo opaco; filtros têm respiro, não há overflow horizontal e foco permanece acessível.",
+      "cause": "O refinamento anterior zerou border-radius e retirou padding do painel, embora a direção humana pedisse acabamento suave.",
+      "protection": {
+        "path": "tools/market_hours_minimal_test.py",
+        "case": "MIN-10",
+        "command": "python3 tools/market_hours_minimal_test.py --only MIN-10",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/market-hours/rounded-20261016/red/result.json",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/market-hours/rounded-20261016/final-minimal/result.json",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "f682e54eda2adc11",
+        "source_sha256": "0a98340f105889fae9cf4f34e0b7ae0a6b293d3097325a53ed97a7dd8e54c63d",
+        "date": "2026-10-16",
+        "scope": "Final-build MIN01–10 PASS, six painted-corner presentations,11 affected commands exit0, four distributions/native200 separately; six800/801 states PASS. CurrentFULL81PASS/0others; MIN10 remains outside FULL. Historical incidents stay open and human acceptance separate.",
+        "candidate_map_sha256": "9dfcab6e62ea2775a0739195216463d13ec9ea4bf8d2530ad352d04f12c69cdf",
+        "full_receipt_sha256": "c7e920cfaa24de4820fbaec78e85c783f0be2c9670925481183490b09ca14f43"
+      }
+    },
+    {
+      "id": "module_freeze_original_focus",
+      "state": "fixed_regression",
+      "summary": "Retomar formulário preserva o foco original quando outro módulo já está congelado.",
+      "source": {
+        "path": "docs/work/CHG-JPW-PF-DEFAULT-FROZEN-20261016.md",
+        "section": "Regressão revelada e correção delimitada"
+      },
+      "stimulus": "Com PF congelado por padrão, abrir formulárioAlladin, congelar por outra aba e descongelar pelo controle de recuperação.",
+      "expected": "O rascunho e os dados permanecem intactos; o foco retorna a alladinFldName, sem apontar para um botão removido.",
+      "cause": "Refresh de PFjácongelado chamou noticeAlladin antes de suspendAlladin e o alvooriginal foi substituído pelo controle de recuperação.",
+      "protection": {
+        "path": "tools/module_availability_work_test.py",
+        "case": "AV-WORK-FOCUS",
+        "command": "python3 tools/module_availability_work_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/pf-default-frozen-20261016/work-red-stable.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/pf-default-frozen-20261016/race-probe/js-summary.json",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/pf-default-frozen-20261016/work-green.log",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "7b12beb62d30bb4d",
+        "source_sha256": "8a9dc3595f12cc0d6f1d8d3f104f173687630f114d91ee42ffe1cf4a9c527d69",
+        "date": "2026-10-17",
+        "scope": "StableRED to GREEN for AV-WORK-FOCUS, core26PASS, finalUI24contexts, backup14/0; currentFULL80PASS/1PRODUCT_FAIL(downloads/welcome) and18supplementalcommands exit0. Source/test/generatedbytes frozen. Historical incidents remain open; human acceptance separate.",
+        "candidate_map_sha256": "07c56ce5b0378ed353bebe529f76823f6bdcc369177e6b7a4df703d926d86cd3",
+        "full_receipt_sha256": "c080926790c255a8e48ab15001f00dc94a1f36f7d71d92b5faac1db511ed45e4"
+      }
+    },
+    {
+      "id": "frozen_sidebar_exploration",
+      "state": "fixed_regression",
+      "summary": "Congelar remove submenu explorado mesmo quando a rota permanece em outra área.",
+      "source": {
+        "path": "docs/architecture/MODULE-AVAILABILITY.md",
+        "section": "Interface e acessos — preview/pin"
+      },
+      "stimulus": "Explorar PF por hover/teclado na lateral; congelar em segunda aba, mantendo Dashboard; repetir com lateral recolhida e pinTools válido.",
+      "expected": "Botão e submenu somem, submenu inert, foco útil; pinválido/rota/dados/nós preservados; descongelar não reabre exploração antiga.",
+      "cause": "sidebarPaint não reconsultava disponibilidade e sidebarSyncRoute só limpava exploração após mudança de rota.",
+      "protection": {
+        "path": "tools/module_availability_test.py",
+        "case": "AV-NAV-FROZEN",
+        "command": "python3 tools/module_availability_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "tools/.artifacts/pf-hidden-menu-20261017/permanent-red-final.json",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "tools/.artifacts/pf-hidden-menu-20261017/permanent-green-final.json",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-17",
+        "source_sha256": "b357497957b11e446fe5329b021e1947dfd6836087bae9d9d608121b88b58854",
+        "build": "40045045ce5acd15",
+        "test_sha256": "5bd155c1f4dc396b6f878fb1b8f50edbb2d09411c4de1f491f1b77af44223a48",
+        "scope": "CausalRED/GREEN6cases; core26/UI30/work/backup14/sidebar16/lifecyclePASS. CurrentFULL 81 PASS; expandedcontextual BASELINE_FAIL firstdialog-open refusal; historicalincidentsremainopen. Actualuserclient/humanacceptance unobserved.",
+        "candidate_map_sha256": "dad790a4457e3997ba3037b13f9d9ac6e13f6b4d6754d198dac86f7f236d59cb",
+        "full_receipt_sha256": "99cf8648cbe581e83c03f8746b93981d36566e1bb26e59d4379173250fa7b23c"
+      }
+    }
+  ]
+}

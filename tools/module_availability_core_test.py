@@ -40,13 +40,35 @@ function fixture(initial=null,setup){
   return {api:context.JPWModuleAvailability,context,map,storage,writes,errors,events,
     reads:()=>reads,dispatch(event){(events.storage||[]).forEach(fn=>fn(event));}};
 }
-test('Absent preference defaults to frozen Alladin with no incidental writes',()=>{
+test('Absent preference freezes PF and Alladin with no incidental writes',()=>{
   const f=fixture();assert.equal(f.api.KEY,key);
-  assert.deepEqual(clean(f.api.snapshot().states),{research:'active',forex:'active','personal-finance':'active',alladin:'frozen'});
+  assert.deepEqual(clean(f.api.snapshot().states),{research:'active',forex:'active','personal-finance':'frozen',alladin:'frozen'});
   assert.equal(f.api.snapshot().writable,true);assert.equal(f.api.snapshot().confirmed,true);
   assert.equal(f.writes.length,0);assert.equal(f.map.has(key),false);
   ['dashboard','tools','settings','editor','notes','backup'].forEach(id=>assert.equal(f.api.canAccess(id),true));
   assert.equal(f.api.canAccess('alladin'),false);
+  assert.equal(f.api.canAccess('personal-finance'),false);
+});
+test('Explicit PF active and frozen choices survive reload without rewriting sparse raw',()=>{
+  for(const state of ['active','frozen']){
+    const input=raw({'personal-finance':state,research:'frozen',alladin:'active'}),f=fixture(input);
+    assert.equal(f.api.getState('personal-finance'),state);assert.equal(f.api.canAccess('personal-finance'),state==='active');
+    assert.equal(f.api.reload().states['personal-finance'],state);
+    assert.equal(fixture(input).api.getState('personal-finance'),state);
+    assert.equal(f.api.getState('research'),'frozen');assert.equal(f.api.getState('alladin'),'active');
+    assert.equal(f.map.get(key),input);assert.equal(f.writes.length,0);
+  }
+});
+test('Sparse, null and incompatible PF preferences use frozen presentation without writes',()=>{
+  for(const [input,valid] of [[null,true],[raw({}),true],[raw({alladin:'active'}),true],
+    [raw({'personal-finance':'invalid',forex:'frozen'}),false],['{bad',false],
+    ['{"schemaVersion":2,"modules":{"personal-finance":"active"}}',false]]){
+    const f=fixture(input);
+    assert.equal(f.api.canAccess('personal-finance'),false,input);
+    assert.equal(f.api.snapshot().valid,valid);assert.equal(f.api.snapshot().writable,valid);
+    assert.equal(f.map.has(key),input!==null);assert.equal(f.map.get(key),input===null?undefined:input);
+    assert.equal(f.writes.length,0);
+  }
 });
 test('Sparse valid choices preserve defaults and survive reload',()=>{
   const f=fixture(raw({alladin:'active',research:'frozen'}));
@@ -57,12 +79,15 @@ test('Sparse valid choices preserve defaults and survive reload',()=>{
 test('Inspector is pure and validator accepts null and sparse v1',()=>{
   const f=fixture(),n=f.reads();
   assert.equal(f.api.inspect(null).valid,true);assert.equal(f.api.validate(raw({})).valid,true);
+  assert.equal(f.api.inspect(null).states['personal-finance'],'frozen');
+  assert.equal(f.api.validate(raw({})).states['personal-finance'],'frozen');
   assert.equal(f.api.inspect(raw({forex:'frozen'})).states.forex,'frozen');
   assert.equal(f.api.getState('forex'),'active');assert.equal(f.reads(),n);assert.equal(f.writes.length,0);
 });
 test('Invalid field fallback does not reset other valid fields or rewrite raw',()=>{
-  const input=raw({research:'frozen',forex:'invalid',alladin:'active'}),f=fixture(input);
+  const input=raw({research:'frozen',forex:'invalid',alladin:'active','personal-finance':'active'}),f=fixture(input);
   assert.equal(f.api.getState('research'),'frozen');assert.equal(f.api.getState('alladin'),'active');assert.equal(f.api.getState('forex'),'active');
+  assert.equal(f.api.canAccess('personal-finance'),true);
   assert.equal(f.api.snapshot().confirmed,false);assert.equal(f.api.snapshot().writable,false);
   assert.equal(f.api.setState('forex','frozen').reason,'invalid-preference');
   assert.equal(f.map.get(key),input);assert.equal(f.writes.length,0);assert.throws(()=>f.api.validate(input));
@@ -122,13 +147,15 @@ test('Write that commits and then throws is confirmed only by equal read-back',(
 test('Initial inaccessible storage keeps safe in-memory defaults and prohibits writes',()=>{
   const f=fixture(null,storage=>{storage.read=()=>{throw new Error('read denied');};});
   assert.equal(f.api.snapshot().readable,false);assert.equal(f.api.snapshot().confirmed,false);assert.equal(f.api.getState('alladin'),'frozen');
+  assert.equal(f.api.canAccess('personal-finance'),false);
   assert.equal(f.api.setState('alladin','active').reason,'read-error');assert.equal(f.writes.length,0);
   f.storage.read=null;assert.equal(f.api.reload().writable,true);assert.equal(f.writes.length,0);
 });
 test('Subsequent read failure preserves last confirmed choices including frozen modules',()=>{
-  const f=fixture(raw({alladin:'active',forex:'frozen'}));
+  const f=fixture(raw({alladin:'active',forex:'frozen','personal-finance':'active'}));
   f.storage.read=()=>{throw new Error('read denied');};f.api.reload();
   assert.equal(f.api.getState('alladin'),'active');assert.equal(f.api.getState('forex'),'frozen');assert.equal(f.api.snapshot().confirmed,false);assert.equal(f.writes.length,0);
+  assert.equal(f.api.canAccess('personal-finance'),true);
 });
 test('Failed pre-write read does not attempt persistence',()=>{
   const f=fixture();f.storage.read=()=>{throw new Error('read denied');};
@@ -161,8 +188,10 @@ test('Concurrent malformed value stays intact and blocks follow-up writes',()=>{
 });
 test('Storage changes re-read actual storage, including removal, with no writes',()=>{
   const f=fixture(),calls=[];f.api.subscribe((snap,reason)=>calls.push([reason,snap.states.alladin]));
-  f.map.set(key,raw({alladin:'active'}));f.dispatch({key,newValue:'ignored',storageArea:f.storage});assert.equal(f.api.getState('alladin'),'active');
+  f.map.set(key,raw({alladin:'active','personal-finance':'active'}));f.dispatch({key,newValue:'ignored',storageArea:f.storage});assert.equal(f.api.getState('alladin'),'active');
+  assert.equal(f.api.canAccess('personal-finance'),true);
   f.map.delete(key);f.dispatch({key:null,storageArea:f.storage});assert.equal(f.api.getState('alladin'),'frozen');
+  assert.equal(f.api.canAccess('personal-finance'),false);
   assert.deepEqual(calls,[['storage','active'],['storage','frozen']]);assert.equal(f.writes.length,0);
 });
 test('Unrelated and sessionStorage events do not change availability',()=>{

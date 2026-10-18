@@ -39,6 +39,7 @@ CASES = [
     ("tools", "leverage", "tools-leverage", "tools", "tools-leverage"),
     ("tools", "minigames", "tools-minigames", "tools", "tools-minigames"),
     ("tools", "galton", "tools-minigames", "tools", "tools-minigames"),
+    ("tools", "time-twins", "tools-minigames", "tools", "tools-minigames"),
     ("research", "nocoda", "research-forex", "research", "research-forex"),
     ("research", "pivots", "research-forex", "research", "research-forex"),
     ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
@@ -70,6 +71,8 @@ window.scrollTo=options=>event('scroll',{options});
 function maybeShowOnboardingNavReminder(screen){event('reminder',{screen});}
 function syncNavSubState(){event('sub',{current:JPWNavigation.current()});}
 function fxSetContextExpanded(expanded){event('context',{expanded});}
+// Navigation delegates accepted presentation to 03-main-render.js.
+function renderPresentation(options={}){if(options.expandContext)fxSetContextExpanded(true);}
 function syncActiveScreen(){event('active',{current:JPWNavigation.current()});}
 window.JPWForex={executionBoardUI:{guardNavigation(){return true;},openTool(name){event('tool',{name});}}};
 window.openSettingsModal=(leaf)=>event('settings',{leaf});

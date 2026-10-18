@@ -1,0 +1,6 @@
+interface:
+  display_name: "JP Engenharia com IA"
+  short_description: "Desenvolva com intervenção mínima e provas"
+  default_prompt: "Use $jp-ai-engineering para atender ao pedido seguindo os padrões do projeto, com intervenção mínima e validação proporcional."
+policy:
+  allow_implicit_invocation: false

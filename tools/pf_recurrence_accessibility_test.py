@@ -75,6 +75,7 @@ def main():
             page.on("dialog", lambda dialog: dialog.accept())
             page.goto(url, wait_until="load")
             bootstrap.wait_bootstrap(page)
+            page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
             page.evaluate("""() => {
                 closeModal(); const r=pfActAddIncome(pfCurrentMonthKey(),{name:'Receita sintética X1',projectedAmount:123400});
                 if(!r.ok) throw new Error('seed PF recusado');

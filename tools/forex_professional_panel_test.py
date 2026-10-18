@@ -403,7 +403,7 @@ def native_zoom(pw,url,out,case):
         assert financial(page)==before
         curve(page).scroll_into_view_if_needed();settle(page)
         cdp=context.new_cdp_session(page)
-        (out/'professional-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':False,'captureBeyondViewport':False})['data']))
+        (out/'professional-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':True,'captureBeyondViewport':False})['data']))
         assert_fixture_requests(context);case['nativeZoom']=ratio
     finally:context.close();shutil.rmtree(profile)
 

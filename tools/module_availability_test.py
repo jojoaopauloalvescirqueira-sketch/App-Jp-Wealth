@@ -2,6 +2,7 @@
 """Approved module availability: actual UI, isolated synthetic origins, no user data."""
 import json
 from pathlib import Path
+from urllib.parse import urljoin
 from playwright.sync_api import sync_playwright
 from dashboard_macro_test import launch_browser
 from dashboard_forex_relocation_test import serve
@@ -156,6 +157,58 @@ def settings_forex_boundaries(browser,url,passed):
     passed.append('Legacy period modal retained and suspended on remote freeze without new actions')
     ctx.close()
 
+def frozen_exploration(browser,url,passed):
+    """AV-NAV-FROZEN: freezing a group removes same-route exploration too.
+
+    Omitting the shell's availability recheck leaves a real, clickable submenu
+    exposed. No route change may be used to make that stale projection vanish.
+    """
+    cases=[('personal-finance','finpes','expanded','pin',False),
+           ('personal-finance','finpes','collapsed','pin',False),
+           ('personal-finance','finpes','expanded','hover',False),
+           ('personal-finance','finpes','expanded','hover',True),
+           ('research','research','expanded','pin',False),
+           ('forex','exec','expanded','pin',False)]
+    for module,surface,rail,gesture,valid_pin in cases:
+      ctx,q,errors=boot(browser,url)
+      try:
+        q.evaluate("id=>JPWModuleAvailability.setState(id,'active')",module)
+        q.evaluate("rail=>{localStorage.setItem('jpw_rail',rail);applyRailState();}",rail)
+        if valid_pin:q.locator('#toolsNavTrigger').click()
+        trigger=q.locator('#'+surface+'NavTrigger')
+        panel=q.locator('#'+surface+'NavSubmenu')
+        if gesture=='pin':trigger.focus();q.keyboard.press('ArrowRight')
+        else:
+          q.locator('#brandHomeBtn').focus()
+          trigger.hover()
+        q.wait_for_function("id=>document.getElementById(id).getAttribute('aria-hidden')==='false'",arg=surface+'NavSubmenu')
+        assert panel.is_visible()
+        before=q.evaluate("JSON.stringify({state:S,route:JPWNavigation.current(),storage:Object.entries(localStorage).filter(([k])=>k!=='jpw_module_availability_v1').sort()})")
+        q.evaluate("window.__frozenNavNodes=[...document.querySelectorAll('#nav > .tab,.nav-sub-menu')]")
+        remote=ctx.new_page();remote.goto(urljoin(url,'/build-id.js'))
+        def remote_state(state):
+            remote.evaluate("([key,id,state])=>{const raw=JSON.parse(localStorage.getItem(key))||{schemaVersion:1,modules:{}};raw.modules[id]=state;localStorage.setItem(key,JSON.stringify(raw));}",[KEY,module,state])
+            q.wait_for_function("([id,state])=>JPWModuleAvailability.getState(id)===state",arg=[module,state])
+        remote_state('frozen')
+        assert not trigger.is_visible()
+        assert not panel.is_visible(), 'AV-NAV-FROZEN: frozen exploration remains visible'
+        assert panel.evaluate("e=>e.inert&&e.getAttribute('aria-hidden')==='true'")
+        assert q.evaluate("!!document.activeElement?.getClientRects().length&&!document.activeElement.closest('[hidden],[inert]')&&document.activeElement!==document.body"), 'AV-NAV-FROZEN: focus stranded in hidden navigation'
+        if gesture=='pin':assert q.evaluate('document.activeElement.id')=='brandHomeBtn' or q.evaluate('document.activeElement.dataset.primary')=='dashboard'
+        if valid_pin:
+            assert q.locator('#toolsNavSubmenu').is_visible(), 'Available pinned group was discarded'
+        q.wait_for_timeout(500)  # Both existing dwell and close deadlines have elapsed.
+        assert not panel.is_visible(), 'AV-NAV-FROZEN: delayed callback reopened frozen group'
+        remote_state('active')
+        assert not panel.is_visible(), 'AV-NAV-FROZEN: thaw replayed stale exploration'
+        assert q.evaluate("JSON.stringify({state:S,route:JPWNavigation.current(),storage:Object.entries(localStorage).filter(([k])=>k!=='jpw_module_availability_v1').sort()})")==before
+        assert q.evaluate("__frozenNavNodes.every(e=>e.isConnected&&(!e.id||document.getElementById(e.id)===e))")
+        trigger.focus();q.keyboard.press('ArrowRight')
+        assert panel.is_visible(), 'Explicit exploration after thaw must still work'
+        assert not errors,errors
+        passed.append(f'AV-NAV-FROZEN {module}/{rail}/{gesture}/valid-pin={valid_pin}: same route, hide/inert/focus/no replay/no financial write')
+      finally:ctx.close()
+
 def main():
     ART.mkdir(parents=True,exist_ok=True);server,url=serve(ROOT);passed=[]
     try:
@@ -166,31 +219,44 @@ def main():
             for theme in ['light','dark']:
               ctx,q,errors=boot(browser,url,layout,width,theme)
               q.evaluate('window.__beforeState=JSON.stringify(S);window.__orderRaw=localStorage.getItem("jpw_nav_order");window.__navNodes=[...document.querySelectorAll("#nav > .tab")];')
-              assert q.locator('#nav > [data-primary="alladin"]').count()==1
-              assert not q.locator('#nav > [data-primary="alladin"]').is_visible()
               assert q.evaluate('localStorage.getItem("'+KEY+'")') is None
-              assert q.evaluate("JPWNavigation.navigate('alladin')") is False
-              assert q.locator('#moduleUnavailableDialog').is_visible()
-              q.locator('[data-availability-manage]').click()
-              assert q.locator('#moduleAvailabilityCard').is_visible()
-              assert q.locator('[data-module-toggle]').evaluate_all('els=>els.every(el=>el.getBoundingClientRect().height>=44)'), 'Availability actions must retain 44px targets inside Settings'
-              assert q.locator('[data-module-row="alladin"] p').inner_text().startswith('Congelado')
-              q.locator('[data-module-toggle="alladin"]').click()
-              assert q.evaluate("JPWModuleAvailability.getState('alladin')")=='active'
-              assert q.evaluate('JPWNavigation.current().primary')=='dashboard'
-              assert q.evaluate('JSON.stringify(S)===window.__beforeState')
-              assert q.evaluate('localStorage.getItem("jpw_nav_order")===window.__orderRaw')
-              q.locator('[data-module-toggle="alladin"]').click()
-              assert q.evaluate("JPWModuleAvailability.getState('alladin')")=='frozen'
-              assert q.evaluate('window.__navNodes.every(n=>[...document.querySelectorAll("#nav > .tab")].includes(n))')
-              assert q.locator('[data-module-toggle="alladin"]').evaluate('el=>el===document.activeElement')
-              assert q.evaluate('JSON.stringify(S)===window.__beforeState')
+              for module in ['alladin','personal-finance']:
+                assert q.locator('#nav > [data-primary="'+module+'"]').count()==1
+                assert not q.locator('#nav > [data-primary="'+module+'"]').is_visible()
+                assert q.locator('[data-dm-card="'+module+'"]').count()==0
+                assert q.evaluate('id=>JPWNavigation.navigate(id)',module) is False
+                assert q.locator('#moduleUnavailableDialog').is_visible()
+                q.locator('[data-availability-manage]').click()
+                assert q.locator('#moduleAvailabilityCard').is_visible()
+                assert q.locator('[data-module-toggle]').evaluate_all('els=>els.every(el=>el.getBoundingClientRect().height>=44)'), 'Availability actions must retain 44px targets inside Settings'
+                assert q.locator('[data-module-row="'+module+'"] p').inner_text().startswith('Congelado')
+                q.locator('[data-module-toggle="'+module+'"]').click()
+                assert q.evaluate('id=>JPWModuleAvailability.getState(id)',module)=='active'
+                assert q.evaluate('JPWNavigation.current().primary')=='dashboard'
+                assert q.locator('#nav > [data-primary="'+module+'"]').evaluate('el=>!el.hidden')
+                assert q.locator('[data-dm-card="'+module+'"]').count()==1
+                assert q.evaluate('JSON.stringify(S)===window.__beforeState')
+                assert q.evaluate('localStorage.getItem("jpw_nav_order")===window.__orderRaw')
+                q.locator('#settingsCloseBtn').click()
+                assert q.evaluate('id=>JPWNavigation.navigate(id)',module) is True
+                assert q.evaluate('JPWNavigation.current().primary')==module
+                assert q.evaluate('JSON.stringify(S)===window.__beforeState')
+                assert q.evaluate("JPWNavigation.navigate('dashboard')") is True
+                q.evaluate('id=>JPWModuleAvailabilityUI.manage(id)',module)
+                q.locator('[data-module-toggle="'+module+'"]').click()
+                assert q.evaluate('id=>JPWModuleAvailability.getState(id)',module)=='frozen'
+                assert q.locator('[data-dm-card="'+module+'"]').count()==0
+                assert q.evaluate('window.__navNodes.every(n=>[...document.querySelectorAll("#nav > .tab")].includes(n))')
+                assert q.locator('[data-module-toggle="'+module+'"]').evaluate('el=>el===document.activeElement')
+                assert q.evaluate('JSON.stringify(S)===window.__beforeState')
+                if module=='alladin':q.locator('#settingsCloseBtn').click()
               # Clickable close and menu prove overlap/focus beyond screenshots.
               q.locator('#settingsCloseBtn').click()
               assert not q.locator('#settingsOverlay').is_visible()
               if width<900:
                 q.locator('[data-shell-menu-toggle]').click()
                 assert not q.locator('#nav > [data-primary="alladin"]').is_visible()
+                assert not q.locator('#nav > [data-primary="personal-finance"]').is_visible()
                 assert q.locator('#nav > [data-primary="research"]').is_visible()
                 q.keyboard.press('Escape')
               q.evaluate("JPWModuleAvailabilityUI.manage('alladin')")
@@ -198,24 +264,31 @@ def main():
               q.screenshot(path=str(ART/f'{layout}-{width}-{theme}.png'))
               q.reload();q.wait_for_function('window.JPWModuleAvailabilityUI');wait_bootstrap(q)
               assert q.evaluate("JPWModuleAvailability.getState('alladin')")=='frozen'
+              assert q.evaluate("JPWModuleAvailability.getState('personal-finance')")=='frozen'
               assert not errors,errors
-              passed.append(f'{layout}/{width}/{theme}: default/admin/explicit-cycle/no-domain-write/order/focus/reload')
+              passed.append(f'{layout}/{width}/{theme}: PF+Alladin default/admin/explicit-cycle/no-domain-write/order/focus/reload')
               ctx.close()
         # Real storage event between two pages in the same disposable context.
-        ctx,a,errors=boot(browser,url)
-        a.evaluate("JPWModuleAvailability.setState('alladin','active')")
-        b=ctx.new_page();b.on('dialog',lambda d:d.accept());b.goto(url);b.wait_for_function('window.JPWModuleAvailabilityUI');wait_bootstrap(b)
-        assert b.evaluate("JPWModuleAvailability.getState('alladin')")=='active'
-        b.evaluate("JPWNavigation.navigate('alladin')")
-        a.evaluate("JPWModuleAvailabilityUI.requestChange('alladin','frozen')")
-        b.wait_for_function("JPWModuleAvailability.getState('alladin')==='frozen'")
-        assert b.evaluate('JPWNavigation.current().primary')=='dashboard'
-        assert b.evaluate("JPWNavigation.navigate('alladin')") is False
-        b.locator('[data-availability-stay]').click()
-        passed.append('cross-tab: frozen before route; safe Dashboard when no work')
-        ctx.close()
+        for module in ['alladin','personal-finance']:
+          ctx,a,errors=boot(browser,url)
+          a.evaluate("id=>JPWModuleAvailability.setState(id,'active')",module)
+          b=ctx.new_page();b.on('dialog',lambda d:d.accept());b.on('pageerror',lambda e:errors.append(str(e)))
+          b.goto(url);b.wait_for_function('window.JPWModuleAvailabilityUI');wait_bootstrap(b)
+          assert b.evaluate('id=>JPWModuleAvailability.getState(id)',module)=='active'
+          assert b.evaluate('id=>JPWNavigation.navigate(id)',module) is True
+          before=b.evaluate('JSON.stringify(S)')
+          a.evaluate("id=>JPWModuleAvailabilityUI.requestChange(id,'frozen')",module)
+          b.wait_for_function("id=>JPWModuleAvailability.getState(id)==='frozen'",arg=module)
+          assert b.evaluate('JPWNavigation.current().primary')=='dashboard'
+          assert b.evaluate('id=>JPWNavigation.navigate(id)',module) is False
+          b.locator('[data-availability-stay]').click()
+          assert b.evaluate('JSON.stringify(S)')==before
+          assert not errors,errors
+          passed.append(module+': cross-tab freeze before route; safe Dashboard without financial writes')
+          ctx.close()
         passed.extend(notification_and_suspended_work(browser,url))
         settings_forex_boundaries(browser,url,passed)
+        frozen_exploration(browser,url,passed)
         browser.close()
       (ART/'results.json').write_text(json.dumps({'result':'PASS','cases':passed},indent=2))
       print('module_availability_test PASS',len(passed),'contexts')

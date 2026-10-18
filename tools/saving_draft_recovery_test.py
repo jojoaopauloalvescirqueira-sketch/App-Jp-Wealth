@@ -25,6 +25,7 @@ def main():
             page.on('pageerror',lambda e:errors.append(str(e)))
             page.on('dialog',lambda d:d.accept())
             page.goto(f'http://127.0.0.1:{server.server_port}/{path}');wait_bootstrap(page)
+            page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
             page.evaluate("closeModal();window.__onbShown=true;S.onboarding.done=true;save();")
             assert not errors,errors
             def check(name,js):

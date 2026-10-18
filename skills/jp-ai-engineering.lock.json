@@ -1,0 +1,33 @@
+{
+  "files": {
+    "SKILL.md": "0b50e483e1c013c23fafeb3d8063c62e00a2eaf62540b92f522603cf7f90520f",
+    "agents/openai.yaml": "710f47b5e65c62735660832e9527bd2137bc63aaaa44d9ad4afff34c4b0ee8b5",
+    "assets/AGENTS.template.md": "4acff8f91d3d507b8e2f11395154ae3908fb285b1fb54a57a8d5e03be812d8d4",
+    "assets/personas/critico-integracao.toml": "100ef64cdf5b38f518a3da87afc300ee4d90f59fc4d2ea28cd144f6625a19002",
+    "assets/personas/engenheiro-integracao.toml": "e7c72108c2f68a8e996dbb6c15af98f06c129796923a46fe25a2c83d689817fa",
+    "assets/personas/operador-adversidades.toml": "3a2de4471dd213aa87369df7f107eee3a261696d144fd1a7fb6df632eac909c3",
+    "assets/personas/operador-informado.toml": "fbca198b7af56ed41930ac3c228474a03031a3d23d5c3cce5ba3064799dacce8",
+    "assets/personas/usuario-iniciante.toml": "0b3a5469a5c30e6f19cb169e390296bbae0c11f35d219932d8f097d0e97a8d36",
+    "assets/protections.example.json": "0492ba8d2d091f0ea70370480e0e5d928aacb6f795d87e6e37e0adadb4ec8c74",
+    "assets/report.example.json": "6300a873ea0e3449226d1cec8a547c8af1f9e8e961c3e7278a66591b65b22010",
+    "references/contratos.md": "53dc48689b029782e853b77e4dcbc2c491d5875d66754f0a0afae10bda124825",
+    "references/diagnostico.md": "e2958cbcf3b728192db16b49d5369849e3bda1eef12d09d727f007c61b062d7c",
+    "references/fronteiras.md": "7d995331ba77c316fecc33f07d46d4ebe9222419326242c741573f598a5d7966",
+    "references/integracao-personas.md": "ae854b73546272aa84d096ebe59c3c06545b9291582f3cfeab408f3bddcdf962",
+    "references/jp-wealth.md": "2db8e3f80bf8fdb24880b2f3eb8d9f5840fdb324bc5014538d5765ebc064a3f7",
+    "references/orquestracao.md": "c745aa80cde6eaa8becfd5c7bcd20e40ab433ae92d75316ca1b8307fe1b8b0c7",
+    "references/provenance.json": "456ddd32171f955e5863dd5dea8068a2fbd158c9ebff1ada6f60158092db4772",
+    "references/regras-regressoes.md": "1520c84dbca531c0b175211762e005fef50b21d898a9f26bfaf5832b7d2fca65",
+    "references/validacao.md": "ec2f301ea5c50ca4584557c3a7da4150910854e5f5facb88c90d7fe74e9fae99",
+    "scripts/verify_protections.py": "e51fff22c91d56f8c5a7d9725b304fef4be3fc65e5664ce3af8aecb57e928e39"
+  },
+  "name": "jp-ai-engineering",
+  "policy": "frozen_import",
+  "schema": "jpwealth/skill-import/v1",
+  "source": {
+    "origin": "owner-provided installed plugin package; frozen repository import",
+    "plugin": "jp-ai-engineering",
+    "version": "1.3.0"
+  },
+  "version": "1.3.0"
+}

@@ -1,0 +1,14 @@
+{
+  "bundleSHA256": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd",
+  "bytes": 786375,
+  "three": "0.186.1",
+  "esbuild": "0.25.12",
+  "sourceSHA256": "11208679f0598d6813913d079140f29f620b0a82cc2d27a1ced651b0d67ea7b5",
+  "engineSHA256": "fc2f7834baa15ee479351cb3fd97604de18b2bcea8eb8f01c8f351594dac0305",
+  "entrySHA256": "1649f2c79c057e47db399e8566c0739d7cb14e0cb84d0901bbc1c21041c8f1dc",
+  "format": "iife",
+  "target": "es2020",
+  "legalComments": "inline",
+  "inputCount": 4,
+  "externalImports": false
+}

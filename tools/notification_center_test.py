@@ -37,7 +37,7 @@ class Quiet(SimpleHTTPRequestHandler):
         pass
 
 
-def prepare(browser, url, viewport=None, theme='light'):
+def prepare(browser, url, viewport=None, theme='light', *, personal_finance_active=False):
     context = browser.new_context(viewport=viewport or {'width': 1440, 'height': 900},
                                   timezone_id='UTC', service_workers='block')
     install_bootstrap(context)
@@ -53,6 +53,8 @@ def prepare(browser, url, viewport=None, theme='light'):
     page.on('pageerror', lambda error: page.notification_errors.append(str(error)))
     page.goto(url, wait_until='load')
     wait_bootstrap(page)
+    if personal_finance_active:
+        page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
     page.evaluate("theme=>{window.__onbShown=true;closeModal();document.documentElement.dataset.theme=theme;}", theme)
     return context, page, dialogs
 
@@ -577,7 +579,8 @@ def main():
             for name, callback, viewport, theme in cases:
                 context = None
                 try:
-                    context, page, dialogs = prepare(browser, url, viewport, theme)
+                    context, page, dialogs = prepare(browser, url, viewport, theme,
+                        personal_finance_active=name in {'resolution-navigation', 'event-area-provenance'})
                     page.set_default_timeout(5000)
                     details = callback(page, dialogs)
                     assert_fixture_requests(context)

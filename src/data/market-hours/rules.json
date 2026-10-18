@@ -1,0 +1,2247 @@
+{
+  "schemaVersion": 1,
+  "tzdbVersion": "2026b",
+  "fromDate": "2026-10-15",
+  "untilDate": "2026-12-31",
+  "sources": [
+    "asx-calendar",
+    "asx-hours",
+    "b3-calendar2026",
+    "b3-oc005",
+    "b3-oc050",
+    "bse-calendar-pending",
+    "bse-cash-pending",
+    "euronext-appendix-oct19",
+    "euronext-calendar",
+    "hkex-calendar",
+    "hkex-hours",
+    "jpx-calendar2026",
+    "jpx-hours",
+    "krx-cash",
+    "lse-calendar",
+    "lse-mit201",
+    "lse-parameters",
+    "nasdaq-alerts",
+    "nasdaq-hours",
+    "nasdaq-overnight-announcement",
+    "nse-calendar",
+    "nse-cas",
+    "nse-preopen",
+    "nyse-hours",
+    "saudi-calendar",
+    "saudi-hours",
+    "sebi-review-pending",
+    "sse-calendar",
+    "sse-hours",
+    "szse-annual-pending",
+    "szse-hours",
+    "tsx-calendar",
+    "tsx-hours",
+    "xetra-auctions",
+    "xetra-calendar",
+    "xetra-retail"
+  ],
+  "venues": [
+    {
+      "id": "b3",
+      "name": "B3",
+      "city": "São Paulo",
+      "country": "Brasil",
+      "region": "Américas",
+      "timeZone": "America/Sao_Paulo",
+      "lat": -23.5505,
+      "lng": -46.6333,
+      "groups": [
+        {
+          "id": "cash",
+          "label": "Ações à vista/fracionário; after em validação",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "b3-oc005",
+            "b3-oc050",
+            "b3-calendar2026"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-03-09",
+              "validUntil": "2026-11-02",
+              "sourceIds": [
+                "b3-oc005"
+              ],
+              "sessions": [
+                {
+                  "start": "09:45",
+                  "end": "10:00",
+                  "phase": "preopen",
+                  "reason": "Pré-abertura: entrada de ordens, sem contínuo"
+                },
+                {
+                  "start": "10:00",
+                  "end": "16:55",
+                  "phase": "continuous",
+                  "reason": "Negociação contínua de ações à vista/fracionário — OC005"
+                },
+                {
+                  "start": "16:55",
+                  "end": "17:00",
+                  "phase": "auction",
+                  "reason": "Call de fechamento previsto — sujeito a prorrogação"
+                },
+                {
+                  "start": "17:00",
+                  "end": "19:00",
+                  "phase": "unknown",
+                  "reason": "Grade after depende de vencimentos cuja lista específica ainda não foi validada"
+                }
+              ]
+            },
+            {
+              "validFrom": "2026-11-03",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "b3-oc050"
+              ],
+              "sessions": [
+                {
+                  "start": "09:45",
+                  "end": "10:00",
+                  "phase": "preopen",
+                  "reason": "Pré-abertura: entrada de ordens, sem contínuo"
+                },
+                {
+                  "start": "10:00",
+                  "end": "17:55",
+                  "phase": "continuous",
+                  "reason": "Negociação contínua de ações à vista/fracionário — OC050, vigência 03/11/2026"
+                },
+                {
+                  "start": "17:55",
+                  "end": "18:00",
+                  "phase": "auction",
+                  "reason": "Call de fechamento previsto — sujeito a prorrogação"
+                },
+                {
+                  "start": "18:00",
+                  "end": "20:00",
+                  "phase": "unknown",
+                  "reason": "Grade after depende de vencimentos cuja lista específica ainda não foi validada; cancelamento não é negociação"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-11-02",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "b3-calendar2026"
+              ]
+            },
+            {
+              "date": "2026-11-20",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "b3-calendar2026"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "b3-calendar2026"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "b3-calendar2026"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "b3-calendar2026"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nyse",
+      "name": "NYSE",
+      "city": "Nova York",
+      "country": "Estados Unidos",
+      "region": "Américas",
+      "timeZone": "America/New_York",
+      "lat": 40.7069,
+      "lng": -74.0113,
+      "groups": [
+        {
+          "id": "tape-a",
+          "label": "NYSE Tape A (ações listadas NYSE)",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "nyse-hours"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "nyse-hours"
+              ],
+              "sessions": [
+                {
+                  "start": "06:30",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "NYSE Tape A: entrada de ordens; leilão de abertura previsto às 09:30"
+                },
+                {
+                  "start": "09:30",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "NYSE Tape A core; imbalance 15:50–16:00 não interrompe contínuo; closing auction às 16:00"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-11-26",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "nyse-hours"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "nyse-hours"
+              ]
+            },
+            {
+              "date": "2026-11-27",
+              "sourceIds": [
+                "nyse-hours"
+              ],
+              "sessions": [
+                {
+                  "start": "06:30",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "NYSE Tape A: entrada de ordens antes do pregão reduzido"
+                },
+                {
+                  "start": "09:30",
+                  "end": "13:00",
+                  "phase": "continuous",
+                  "reason": "Pregão reduzido: core termina às 13:00; closing auction nesse instante"
+                }
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "sourceIds": [
+                "nyse-hours"
+              ],
+              "sessions": [
+                {
+                  "start": "06:30",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "NYSE Tape A: entrada de ordens antes do pregão reduzido"
+                },
+                {
+                  "start": "09:30",
+                  "end": "13:00",
+                  "phase": "continuous",
+                  "reason": "Pregão reduzido: core termina às 13:00; closing auction nesse instante"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nasdaq",
+      "name": "Nasdaq",
+      "city": "Nova York",
+      "country": "Estados Unidos",
+      "region": "Américas",
+      "timeZone": "America/New_York",
+      "lat": 40.7069,
+      "lng": -74.0113,
+      "groups": [
+        {
+          "id": "cash",
+          "label": "Nasdaq Stock Market — ações cash; overnight anunciado em validação",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "nasdaq-hours",
+            "nasdaq-alerts",
+            "nasdaq-overnight-announcement"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-05",
+              "sourceIds": [
+                "nasdaq-hours",
+                "nasdaq-alerts",
+                "nasdaq-overnight-announcement"
+              ],
+              "sessions": [
+                {
+                  "start": "04:00",
+                  "end": "09:30",
+                  "phase": "extended",
+                  "reason": "Nasdaq pré-market negociável, distinto da pré-abertura NYSE"
+                },
+                {
+                  "start": "09:30",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "Nasdaq Stock Market core; crosses nos instantes de abertura/fechamento"
+                },
+                {
+                  "start": "16:00",
+                  "end": "20:00",
+                  "phase": "extended",
+                  "reason": "Nasdaq after-market"
+                }
+              ]
+            },
+            {
+              "validFrom": "2026-12-06",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "nasdaq-hours",
+                "nasdaq-overnight-announcement"
+              ],
+              "sessions": [
+                {
+                  "start": "00:00",
+                  "end": "04:00",
+                  "phase": "unknown",
+                  "reason": "Overnight 23/5 anunciado, ativação não confirmada"
+                },
+                {
+                  "start": "04:00",
+                  "end": "09:30",
+                  "phase": "extended",
+                  "reason": "Nasdaq pré-market negociável, distinto da pré-abertura NYSE"
+                },
+                {
+                  "start": "09:30",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "Nasdaq Stock Market core; crosses nos instantes de abertura/fechamento"
+                },
+                {
+                  "start": "16:00",
+                  "end": "20:00",
+                  "phase": "extended",
+                  "reason": "Nasdaq after-market"
+                },
+                {
+                  "start": "20:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Overnight 23/5 anunciado, ativação não confirmada"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-11-26",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nasdaq-hours"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nasdaq-hours"
+              ]
+            },
+            {
+              "date": "2026-11-27",
+              "sessions": [
+                {
+                  "start": "04:00",
+                  "end": "09:30",
+                  "phase": "extended",
+                  "reason": "Nasdaq pré-market negociável, distinto da pré-abertura NYSE"
+                },
+                {
+                  "start": "09:30",
+                  "end": "13:00",
+                  "phase": "continuous",
+                  "reason": "Nasdaq core reduzido termina13:00"
+                },
+                {
+                  "start": "13:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Alertas de sistema do meio pregão ainda não revisados; não projetar after normal"
+                }
+              ],
+              "sourceIds": [
+                "nasdaq-hours",
+                "nasdaq-alerts"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "sessions": [
+                {
+                  "start": "04:00",
+                  "end": "09:30",
+                  "phase": "extended",
+                  "reason": "Nasdaq pré-market negociável, distinto da pré-abertura NYSE"
+                },
+                {
+                  "start": "09:30",
+                  "end": "13:00",
+                  "phase": "continuous",
+                  "reason": "Nasdaq core reduzido termina13:00"
+                },
+                {
+                  "start": "13:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Alertas de sistema do meio pregão ainda não revisados; não projetar after normal"
+                }
+              ],
+              "sourceIds": [
+                "nasdaq-hours",
+                "nasdaq-alerts"
+              ]
+            },
+            {
+              "date": "2026-12-06",
+              "unknownReason": "Início de overnight anunciado para este domingo, condicionado; produção não confirmada",
+              "sourceIds": [
+                "nasdaq-overnight-announcement"
+              ]
+            },
+            {
+              "date": "2026-12-13",
+              "sourceIds": [
+                "nasdaq-overnight-announcement"
+              ],
+              "sessions": [
+                {
+                  "start": "21:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Overnight23/5 dominical recorrente anunciado, ativação operacional não confirmada"
+                }
+              ]
+            },
+            {
+              "date": "2026-12-20",
+              "sourceIds": [
+                "nasdaq-overnight-announcement"
+              ],
+              "sessions": [
+                {
+                  "start": "21:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Overnight23/5 dominical recorrente anunciado, ativação operacional não confirmada"
+                }
+              ]
+            },
+            {
+              "date": "2026-12-27",
+              "sourceIds": [
+                "nasdaq-overnight-announcement"
+              ],
+              "sessions": [
+                {
+                  "start": "21:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Overnight23/5 dominical recorrente anunciado, ativação operacional não confirmada"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tsx",
+      "name": "TSX",
+      "city": "Toronto",
+      "country": "Canadá",
+      "region": "Américas",
+      "timeZone": "America/Toronto",
+      "lat": 43.6532,
+      "lng": -79.3832,
+      "groups": [
+        {
+          "id": "cash",
+          "label": "TSX ações cash; MOC/PME condicional explícito",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "tsx-hours",
+            "tsx-calendar"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "tsx-hours",
+                "tsx-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "07:00",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "TSX entrada de ordens, MOO09:30"
+                },
+                {
+                  "start": "09:30",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "TSX core; MOC15:50–16:00 não interrompe contínuo"
+                },
+                {
+                  "start": "16:00",
+                  "end": "16:10",
+                  "phase": "unknown",
+                  "reason": "Possível Price Movement Extension: extensão condicional, execução não observada"
+                },
+                {
+                  "start": "16:15",
+                  "end": "17:00",
+                  "phase": "extended",
+                  "reason": "TSX extended ao último preço"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "tsx-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-28",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "tsx-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "sessions": [
+                {
+                  "start": "07:00",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "TSX entrada de ordens, MOO09:30"
+                },
+                {
+                  "start": "09:30",
+                  "end": "13:00",
+                  "phase": "continuous",
+                  "reason": "TSX dia reduzido"
+                },
+                {
+                  "start": "13:00",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Fases após13:00 do meio pregão ainda sem aviso específico"
+                }
+              ],
+              "sourceIds": [
+                "tsx-calendar",
+                "tsx-hours"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lse",
+      "name": "London Stock Exchange",
+      "city": "Londres",
+      "country": "Reino Unido",
+      "region": "Europa",
+      "timeZone": "Europe/London",
+      "lat": 51.5155,
+      "lng": -0.0922,
+      "groups": [
+        {
+          "id": "sets-set1",
+          "label": "LSE SETS-L1 / SET1; demais ciclos fora de escopo",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "lse-parameters",
+            "lse-mit201",
+            "lse-calendar"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "lse-parameters",
+                "lse-mit201",
+                "lse-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "05:05",
+                  "end": "07:50",
+                  "phase": "preopen",
+                  "reason": "SETS-L1 pré-negociação"
+                },
+                {
+                  "start": "07:50",
+                  "end": "08:00:30",
+                  "phase": "auction",
+                  "reason": "SETS-L1 call de abertura com random30s",
+                  "transitionWindow": {
+                    "earliest": "08:00",
+                    "latest": "08:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "08:00:30",
+                  "end": "16:30",
+                  "phase": "continuous",
+                  "reason": "SETS-L1 SET1 negociação contínua"
+                },
+                {
+                  "start": "16:30",
+                  "end": "16:35:30",
+                  "phase": "auction",
+                  "reason": "SETS call de fechamento, random30s; extensão não observada",
+                  "transitionWindow": {
+                    "earliest": "16:35",
+                    "latest": "16:35:30",
+                    "nextPhase": "unknown"
+                  }
+                },
+                {
+                  "start": "16:35:30",
+                  "end": "16:40",
+                  "phase": "unknown",
+                  "reason": "AVD/CPX dependem do closing uncross real; horário exato não confirmado pelo calendário"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "lse-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-28",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "lse-calendar"
+              ]
+            },
+            {
+              "date": "2026-10-16",
+              "sessions": [
+                {
+                  "start": "05:05",
+                  "end": "07:50",
+                  "phase": "preopen",
+                  "reason": "SETS-L1 pré-negociação"
+                },
+                {
+                  "start": "07:50",
+                  "end": "08:00:30",
+                  "phase": "auction",
+                  "reason": "SETS-L1 call de abertura com random30s",
+                  "transitionWindow": {
+                    "earliest": "08:00",
+                    "latest": "08:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "08:00:30",
+                  "end": "10:10",
+                  "phase": "continuous",
+                  "reason": "SETS SET1 antes do EDSP"
+                },
+                {
+                  "start": "10:10",
+                  "end": "10:15:30",
+                  "phase": "auction",
+                  "reason": "SETS SET1 call EDSP na terceira sexta, random30s",
+                  "transitionWindow": {
+                    "earliest": "10:15",
+                    "latest": "10:15:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:15:30",
+                  "end": "16:30",
+                  "phase": "continuous",
+                  "reason": "SETS SET1 após EDSP"
+                },
+                {
+                  "start": "16:30",
+                  "end": "16:35:30",
+                  "phase": "auction",
+                  "reason": "SETS call de fechamento, random30s; extensão não observada",
+                  "transitionWindow": {
+                    "earliest": "16:35",
+                    "latest": "16:35:30",
+                    "nextPhase": "unknown"
+                  }
+                },
+                {
+                  "start": "16:35:30",
+                  "end": "16:40",
+                  "phase": "unknown",
+                  "reason": "AVD/CPX dependem do closing uncross real; horário exato não confirmado pelo calendário"
+                }
+              ],
+              "sourceIds": [
+                "lse-parameters",
+                "lse-mit201"
+              ]
+            },
+            {
+              "date": "2026-11-20",
+              "sessions": [
+                {
+                  "start": "05:05",
+                  "end": "07:50",
+                  "phase": "preopen",
+                  "reason": "SETS-L1 pré-negociação"
+                },
+                {
+                  "start": "07:50",
+                  "end": "08:00:30",
+                  "phase": "auction",
+                  "reason": "SETS-L1 call de abertura com random30s",
+                  "transitionWindow": {
+                    "earliest": "08:00",
+                    "latest": "08:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "08:00:30",
+                  "end": "10:10",
+                  "phase": "continuous",
+                  "reason": "SETS SET1 antes do EDSP"
+                },
+                {
+                  "start": "10:10",
+                  "end": "10:15:30",
+                  "phase": "auction",
+                  "reason": "SETS SET1 call EDSP na terceira sexta, random30s",
+                  "transitionWindow": {
+                    "earliest": "10:15",
+                    "latest": "10:15:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:15:30",
+                  "end": "16:30",
+                  "phase": "continuous",
+                  "reason": "SETS SET1 após EDSP"
+                },
+                {
+                  "start": "16:30",
+                  "end": "16:35:30",
+                  "phase": "auction",
+                  "reason": "SETS call de fechamento, random30s; extensão não observada",
+                  "transitionWindow": {
+                    "earliest": "16:35",
+                    "latest": "16:35:30",
+                    "nextPhase": "unknown"
+                  }
+                },
+                {
+                  "start": "16:35:30",
+                  "end": "16:40",
+                  "phase": "unknown",
+                  "reason": "AVD/CPX dependem do closing uncross real; horário exato não confirmado pelo calendário"
+                }
+              ],
+              "sourceIds": [
+                "lse-parameters",
+                "lse-mit201"
+              ]
+            },
+            {
+              "date": "2026-12-18",
+              "sessions": [
+                {
+                  "start": "05:05",
+                  "end": "07:50",
+                  "phase": "preopen",
+                  "reason": "SETS-L1 pré-negociação"
+                },
+                {
+                  "start": "07:50",
+                  "end": "08:00:30",
+                  "phase": "auction",
+                  "reason": "SETS-L1 call de abertura com random30s",
+                  "transitionWindow": {
+                    "earliest": "08:00",
+                    "latest": "08:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "08:00:30",
+                  "end": "10:10",
+                  "phase": "continuous",
+                  "reason": "SETS SET1 antes do EDSP"
+                },
+                {
+                  "start": "10:10",
+                  "end": "10:15:30",
+                  "phase": "auction",
+                  "reason": "SETS SET1 call EDSP na terceira sexta, random30s",
+                  "transitionWindow": {
+                    "earliest": "10:15",
+                    "latest": "10:15:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:15:30",
+                  "end": "16:30",
+                  "phase": "continuous",
+                  "reason": "SETS SET1 após EDSP"
+                },
+                {
+                  "start": "16:30",
+                  "end": "16:35:30",
+                  "phase": "auction",
+                  "reason": "SETS call de fechamento, random30s; extensão não observada",
+                  "transitionWindow": {
+                    "earliest": "16:35",
+                    "latest": "16:35:30",
+                    "nextPhase": "unknown"
+                  }
+                },
+                {
+                  "start": "16:35:30",
+                  "end": "16:40",
+                  "phase": "unknown",
+                  "reason": "AVD/CPX dependem do closing uncross real; horário exato não confirmado pelo calendário"
+                }
+              ],
+              "sourceIds": [
+                "lse-parameters",
+                "lse-mit201"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "sessions": [
+                {
+                  "start": "05:05",
+                  "end": "07:50",
+                  "phase": "preopen",
+                  "reason": "SETS-L1 pré-negociação"
+                },
+                {
+                  "start": "07:50",
+                  "end": "08:00:30",
+                  "phase": "auction",
+                  "reason": "SETS-L1 call de abertura com random30s",
+                  "transitionWindow": {
+                    "earliest": "08:00",
+                    "latest": "08:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "08:00:30",
+                  "end": "12:30",
+                  "phase": "continuous",
+                  "reason": "SETS-L1 SET1 negociação contínua"
+                },
+                {
+                  "start": "12:30",
+                  "end": "12:35:30",
+                  "phase": "auction",
+                  "reason": "SETS call de fechamento, random30s; extensão não observada",
+                  "transitionWindow": {
+                    "earliest": "12:35",
+                    "latest": "12:35:30",
+                    "nextPhase": "unknown"
+                  }
+                },
+                {
+                  "start": "12:35:30",
+                  "end": "12:40",
+                  "phase": "unknown",
+                  "reason": "AVD/CPX dependem do closing uncross real; horário exato não confirmado pelo calendário"
+                }
+              ],
+              "sourceIds": [
+                "lse-parameters",
+                "lse-calendar",
+                "lse-mit201"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "sessions": [
+                {
+                  "start": "05:05",
+                  "end": "07:50",
+                  "phase": "preopen",
+                  "reason": "SETS-L1 pré-negociação"
+                },
+                {
+                  "start": "07:50",
+                  "end": "08:00:30",
+                  "phase": "auction",
+                  "reason": "SETS-L1 call de abertura com random30s",
+                  "transitionWindow": {
+                    "earliest": "08:00",
+                    "latest": "08:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "08:00:30",
+                  "end": "12:30",
+                  "phase": "continuous",
+                  "reason": "SETS-L1 SET1 negociação contínua"
+                },
+                {
+                  "start": "12:30",
+                  "end": "12:35:30",
+                  "phase": "auction",
+                  "reason": "SETS call de fechamento, random30s; extensão não observada",
+                  "transitionWindow": {
+                    "earliest": "12:35",
+                    "latest": "12:35:30",
+                    "nextPhase": "unknown"
+                  }
+                },
+                {
+                  "start": "12:35:30",
+                  "end": "12:40",
+                  "phase": "unknown",
+                  "reason": "AVD/CPX dependem do closing uncross real; horário exato não confirmado pelo calendário"
+                }
+              ],
+              "sourceIds": [
+                "lse-parameters",
+                "lse-calendar",
+                "lse-mit201"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xetra",
+      "name": "Xetra",
+      "city": "Frankfurt",
+      "country": "Alemanha",
+      "region": "Europa",
+      "timeZone": "Europe/Berlin",
+      "lat": 50.115,
+      "lng": 8.6821,
+      "groups": [
+        {
+          "id": "dax-cash",
+          "label": "Xetra ações DAX; transições aleatórias em validação",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "xetra-auctions",
+            "xetra-calendar",
+            "xetra-retail"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "xetra-auctions",
+                "xetra-calendar",
+                "xetra-retail"
+              ],
+              "sessions": [
+                {
+                  "start": "08:00",
+                  "end": "08:55",
+                  "phase": "extended",
+                  "reason": "Xetra Retail early: só ordens e provedores registrados elegíveis"
+                },
+                {
+                  "start": "08:55",
+                  "end": "09:00",
+                  "phase": "auction",
+                  "reason": "DAX opening call;09:00 mínimo aproximado"
+                },
+                {
+                  "start": "09:00",
+                  "end": "13:00",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório do opening call sem limite máximo confirmado; contínuo subsequente não recebe instante exato inventado"
+                },
+                {
+                  "start": "13:00",
+                  "end": "13:02",
+                  "phase": "auction",
+                  "reason": "DAX call intraday; mínimo2min ou5min em vencimentos"
+                },
+                {
+                  "start": "13:02",
+                  "end": "17:30",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório/possível extensão do intraday sem limite máximo confirmado; horário de retorno ao contínuo em validação"
+                },
+                {
+                  "start": "17:30",
+                  "end": "17:35",
+                  "phase": "auction",
+                  "reason": "DAX closing call;17:35 mínimo aproximado"
+                },
+                {
+                  "start": "17:35",
+                  "end": "22:00",
+                  "phase": "unknown",
+                  "reason": "TAC e início retail late dependem do closing uncross e elegibilidade; início exato não validado"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-12-24",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "xetra-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "xetra-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "xetra-calendar"
+              ]
+            },
+            {
+              "date": "2026-10-16",
+              "sessions": [
+                {
+                  "start": "08:00",
+                  "end": "08:55",
+                  "phase": "extended",
+                  "reason": "Xetra Retail early: só ordens e provedores registrados elegíveis"
+                },
+                {
+                  "start": "08:55",
+                  "end": "09:00",
+                  "phase": "auction",
+                  "reason": "DAX opening call;09:00 mínimo aproximado"
+                },
+                {
+                  "start": "09:00",
+                  "end": "13:00",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório do opening call sem limite máximo confirmado; contínuo subsequente não recebe instante exato inventado"
+                },
+                {
+                  "start": "13:00",
+                  "end": "13:05",
+                  "phase": "auction",
+                  "reason": "DAX call intraday; mínimo2min ou5min em vencimentos"
+                },
+                {
+                  "start": "13:05",
+                  "end": "17:30",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório/possível extensão do intraday sem limite máximo confirmado; horário de retorno ao contínuo em validação"
+                },
+                {
+                  "start": "17:30",
+                  "end": "17:35",
+                  "phase": "auction",
+                  "reason": "DAX closing call;17:35 mínimo aproximado"
+                },
+                {
+                  "start": "17:35",
+                  "end": "22:00",
+                  "phase": "unknown",
+                  "reason": "TAC e início retail late dependem do closing uncross e elegibilidade; início exato não validado"
+                }
+              ],
+              "sourceIds": [
+                "xetra-auctions",
+                "xetra-retail"
+              ]
+            },
+            {
+              "date": "2026-11-20",
+              "sessions": [
+                {
+                  "start": "08:00",
+                  "end": "08:55",
+                  "phase": "extended",
+                  "reason": "Xetra Retail early: só ordens e provedores registrados elegíveis"
+                },
+                {
+                  "start": "08:55",
+                  "end": "09:00",
+                  "phase": "auction",
+                  "reason": "DAX opening call;09:00 mínimo aproximado"
+                },
+                {
+                  "start": "09:00",
+                  "end": "13:00",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório do opening call sem limite máximo confirmado; contínuo subsequente não recebe instante exato inventado"
+                },
+                {
+                  "start": "13:00",
+                  "end": "13:05",
+                  "phase": "auction",
+                  "reason": "DAX call intraday; mínimo2min ou5min em vencimentos"
+                },
+                {
+                  "start": "13:05",
+                  "end": "17:30",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório/possível extensão do intraday sem limite máximo confirmado; horário de retorno ao contínuo em validação"
+                },
+                {
+                  "start": "17:30",
+                  "end": "17:35",
+                  "phase": "auction",
+                  "reason": "DAX closing call;17:35 mínimo aproximado"
+                },
+                {
+                  "start": "17:35",
+                  "end": "22:00",
+                  "phase": "unknown",
+                  "reason": "TAC e início retail late dependem do closing uncross e elegibilidade; início exato não validado"
+                }
+              ],
+              "sourceIds": [
+                "xetra-auctions",
+                "xetra-retail"
+              ]
+            },
+            {
+              "date": "2026-12-18",
+              "sessions": [
+                {
+                  "start": "08:00",
+                  "end": "08:55",
+                  "phase": "extended",
+                  "reason": "Xetra Retail early: só ordens e provedores registrados elegíveis"
+                },
+                {
+                  "start": "08:55",
+                  "end": "09:00",
+                  "phase": "auction",
+                  "reason": "DAX opening call;09:00 mínimo aproximado"
+                },
+                {
+                  "start": "09:00",
+                  "end": "13:00",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório do opening call sem limite máximo confirmado; contínuo subsequente não recebe instante exato inventado"
+                },
+                {
+                  "start": "13:00",
+                  "end": "13:05",
+                  "phase": "auction",
+                  "reason": "DAX call intraday; mínimo2min ou5min em vencimentos"
+                },
+                {
+                  "start": "13:05",
+                  "end": "17:30",
+                  "phase": "unknown",
+                  "reason": "Fim aleatório/possível extensão do intraday sem limite máximo confirmado; horário de retorno ao contínuo em validação"
+                },
+                {
+                  "start": "17:30",
+                  "end": "17:35",
+                  "phase": "auction",
+                  "reason": "DAX closing call;17:35 mínimo aproximado"
+                },
+                {
+                  "start": "17:35",
+                  "end": "22:00",
+                  "phase": "unknown",
+                  "reason": "TAC e início retail late dependem do closing uncross e elegibilidade; início exato não validado"
+                }
+              ],
+              "sourceIds": [
+                "xetra-auctions",
+                "xetra-retail"
+              ]
+            },
+            {
+              "date": "2026-12-30",
+              "unknownReason": "Último pregão anual pode ter grade especial; circular2026 pendente",
+              "sourceIds": [
+                "xetra-calendar"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "euronext-paris",
+      "name": "Euronext Paris",
+      "city": "Paris",
+      "country": "França",
+      "region": "Europa",
+      "timeZone": "Europe/Paris",
+      "lat": 48.8566,
+      "lng": 2.3522,
+      "groups": [
+        {
+          "id": "cash-continuous",
+          "label": "Paris grupos11/12/14/16/17/21/22; DU13/23 fora de escopo",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "euronext-appendix-oct19",
+            "euronext-calendar"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-19",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "euronext-appendix-oct19",
+                "euronext-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "00:00",
+                  "end": "09:00",
+                  "phase": "unknown",
+                  "reason": "Início da pré-abertura não extraído do apêndice; não confundir ausência com fechado"
+                },
+                {
+                  "start": "09:00",
+                  "end": "09:00:30",
+                  "phase": "auction",
+                  "reason": "Grupos Paris11/12/14/16/17/21/22: abertura aleatória até30s",
+                  "transitionWindow": {
+                    "earliest": "09:00",
+                    "latest": "09:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "09:00:30",
+                  "end": "17:30",
+                  "phase": "continuous",
+                  "reason": "Paris grupos cash contínuos11/12/14/16/17/21/22 (exclui DU13/23)"
+                },
+                {
+                  "start": "17:30",
+                  "end": "17:35",
+                  "phase": "auction",
+                  "reason": "Call de fechamento Paris;17:35 é uncross nominal aleatório, sem teto confirmado"
+                },
+                {
+                  "start": "17:35",
+                  "end": "17:40",
+                  "phase": "unknown",
+                  "reason": "TAL nominal17:35–17:40 depende do uncross aleatório; teto do leilão não confirmado"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "euronext-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "unknownReason": "Meio pregão anunciado; apêndice end-of-year2026 com horários ainda não obtido",
+              "sourceIds": [
+                "euronext-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "unknownReason": "Meio pregão anunciado; apêndice end-of-year2026 com horários ainda não obtido",
+              "sourceIds": [
+                "euronext-calendar"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jpx",
+      "name": "JPX / TSE",
+      "city": "Tóquio",
+      "country": "Japão",
+      "region": "Ásia",
+      "timeZone": "Asia/Tokyo",
+      "lat": 35.6762,
+      "lng": 139.6503,
+      "groups": [
+        {
+          "id": "domestic-cash",
+          "label": "TSE ações domésticas",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "jpx-hours",
+            "jpx-calendar2026"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "jpx-hours"
+              ],
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "11:30",
+                  "phase": "continuous",
+                  "reason": "TSE Zaraba — sessão da manhã"
+                },
+                {
+                  "start": "11:30",
+                  "end": "12:30",
+                  "phase": "break",
+                  "reason": "Intervalo entre as sessões da manhã e tarde"
+                },
+                {
+                  "start": "12:30",
+                  "end": "15:25",
+                  "phase": "continuous",
+                  "reason": "TSE Zaraba — sessão da tarde"
+                },
+                {
+                  "start": "15:25",
+                  "end": "15:30",
+                  "phase": "auction",
+                  "reason": "Pré-fechamento: somente entrada de ordens; Itayose previsto às 15:30"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-11-03",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "jpx-calendar2026"
+              ]
+            },
+            {
+              "date": "2026-11-23",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "jpx-calendar2026"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "closedReason": "Feriado/encerramento oficial de 2026",
+              "sourceIds": [
+                "jpx-calendar2026"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hkex",
+      "name": "HKEX",
+      "city": "Hong Kong",
+      "country": "Hong Kong",
+      "region": "Ásia",
+      "timeZone": "Asia/Hong_Kong",
+      "lat": 22.3193,
+      "lng": 114.1694,
+      "groups": [
+        {
+          "id": "ordinary-shares",
+          "label": "HKEX ações ordinárias elegíveis CAS; sem extended-morning",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "hkex-hours",
+            "hkex-calendar"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "hkex-hours",
+                "hkex-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "HKEX pre-opening session, inclui matching de abertura"
+                },
+                {
+                  "start": "09:30",
+                  "end": "12:00",
+                  "phase": "continuous",
+                  "reason": "HKEX ações ordinárias — manhã"
+                },
+                {
+                  "start": "12:00",
+                  "end": "13:00",
+                  "phase": "break",
+                  "reason": "HKEX almoço de ações ordinárias; extended morning elegível fora deste escopo"
+                },
+                {
+                  "start": "13:00",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "HKEX ações ordinárias — tarde"
+                },
+                {
+                  "start": "16:00",
+                  "end": "16:10",
+                  "phase": "auction",
+                  "reason": "HKEX CAS, fim aleatório16:08–16:10",
+                  "transitionWindow": {
+                    "earliest": "16:08",
+                    "latest": "16:10",
+                    "nextPhase": "closed"
+                  }
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-10-19",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "hkex-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "hkex-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "HKEX pre-opening session, inclui matching de abertura"
+                },
+                {
+                  "start": "09:30",
+                  "end": "12:00",
+                  "phase": "continuous",
+                  "reason": "HKEX ações ordinárias — manhã"
+                },
+                {
+                  "start": "12:00",
+                  "end": "12:10",
+                  "phase": "auction",
+                  "reason": "HKEX CAS de meio pregão, fim aleatório12:08–12:10",
+                  "transitionWindow": {
+                    "earliest": "12:08",
+                    "latest": "12:10",
+                    "nextPhase": "closed"
+                  }
+                }
+              ],
+              "sourceIds": [
+                "hkex-hours",
+                "hkex-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "09:30",
+                  "phase": "preopen",
+                  "reason": "HKEX pre-opening session, inclui matching de abertura"
+                },
+                {
+                  "start": "09:30",
+                  "end": "12:00",
+                  "phase": "continuous",
+                  "reason": "HKEX ações ordinárias — manhã"
+                },
+                {
+                  "start": "12:00",
+                  "end": "12:10",
+                  "phase": "auction",
+                  "reason": "HKEX CAS de meio pregão, fim aleatório12:08–12:10",
+                  "transitionWindow": {
+                    "earliest": "12:08",
+                    "latest": "12:10",
+                    "nextPhase": "closed"
+                  }
+                }
+              ],
+              "sourceIds": [
+                "hkex-hours",
+                "hkex-calendar"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sse",
+      "name": "Shanghai Stock Exchange",
+      "city": "Xangai",
+      "country": "China",
+      "region": "Ásia",
+      "timeZone": "Asia/Shanghai",
+      "lat": 31.2304,
+      "lng": 121.4737,
+      "groups": [
+        {
+          "id": "mainboard-cash",
+          "label": "SSE main-board cash; STAR pós-mercado fora de escopo",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "sse-hours",
+            "sse-calendar"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "sse-hours",
+                "sse-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "09:15",
+                  "end": "09:25",
+                  "phase": "auction",
+                  "reason": "Call de abertura de ações cash"
+                },
+                {
+                  "start": "09:25",
+                  "end": "09:30",
+                  "phase": "unknown",
+                  "reason": "Buffer após call; entrada de ordens não revalidada nesta rodada"
+                },
+                {
+                  "start": "09:30",
+                  "end": "11:30",
+                  "phase": "continuous",
+                  "reason": "Cash manhã"
+                },
+                {
+                  "start": "11:30",
+                  "end": "13:00",
+                  "phase": "break",
+                  "reason": "Intervalo de almoço"
+                },
+                {
+                  "start": "13:00",
+                  "end": "14:57",
+                  "phase": "continuous",
+                  "reason": "Cash tarde"
+                },
+                {
+                  "start": "14:57",
+                  "end": "15:00",
+                  "phase": "auction",
+                  "reason": "Call de fechamento de ações cash"
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "id": "szse",
+      "name": "Shenzhen Stock Exchange",
+      "city": "Shenzhen",
+      "country": "China",
+      "region": "Ásia",
+      "timeZone": "Asia/Shanghai",
+      "lat": 22.5431,
+      "lng": 114.0579,
+      "groups": [
+        {
+          "id": "cash-calendar-pending",
+          "label": "SZSE ações cash — calendário anual pendente",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "szse-hours",
+            "szse-annual-pending"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [],
+          "exceptions": [],
+          "unknownReason": "Calendário anual SZSE2026 localizado mas corpo indisponível; não transferir o calendário SSE"
+        }
+      ]
+    },
+    {
+      "id": "nse",
+      "name": "National Stock Exchange of India",
+      "city": "Mumbai",
+      "country": "Índia",
+      "region": "Ásia",
+      "timeZone": "Asia/Kolkata",
+      "lat": 19.076,
+      "lng": 72.8777,
+      "groups": [
+        {
+          "id": "cas",
+          "label": "NSE cash CAS fase1: ações com derivativos disponíveis",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "nse-cas",
+            "nse-preopen",
+            "nse-calendar",
+            "sebi-review-pending"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-11-07",
+              "sourceIds": [
+                "nse-cas",
+                "nse-preopen",
+                "nse-calendar",
+                "sebi-review-pending"
+              ],
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "09:15",
+                  "phase": "preopen",
+                  "reason": "NSE envelope pré-abertura revisto: matching/buffer incluídos, sem contínuo"
+                },
+                {
+                  "start": "09:15",
+                  "end": "15:15",
+                  "phase": "continuous",
+                  "reason": "NSE cash CAS fase1: ações com derivativos disponíveis"
+                },
+                {
+                  "start": "15:15",
+                  "end": "15:20",
+                  "phase": "break",
+                  "reason": "CAS transição/referência, não negociação contínua"
+                },
+                {
+                  "start": "15:20",
+                  "end": "15:30",
+                  "phase": "auction",
+                  "reason": "CAS ordens; encerramento aleatório15:28–15:30, matching continua até15:35"
+                },
+                {
+                  "start": "15:30",
+                  "end": "15:35",
+                  "phase": "auction",
+                  "reason": "CAS matching/confirmação; não prometer execução em segundo exato"
+                },
+                {
+                  "start": "15:35",
+                  "end": "15:50",
+                  "phase": "break",
+                  "reason": "CAS transição ao pós-fechamento"
+                },
+                {
+                  "start": "15:50",
+                  "end": "16:00",
+                  "phase": "extended",
+                  "reason": "NSE pós-fechamento CAS"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-10-20",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-11-10",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-11-24",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-11-08",
+              "unknownReason": "Muhurat domingo anunciado; horário específico não confirmado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "non-cas",
+          "label": "NSE cash não-CAS",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "nse-cas",
+            "nse-preopen",
+            "nse-calendar",
+            "sebi-review-pending"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-11-07",
+              "sourceIds": [
+                "nse-cas",
+                "nse-preopen",
+                "nse-calendar",
+                "sebi-review-pending"
+              ],
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "09:15",
+                  "phase": "preopen",
+                  "reason": "NSE envelope pré-abertura revisto: matching/buffer incluídos, sem contínuo"
+                },
+                {
+                  "start": "09:15",
+                  "end": "15:30",
+                  "phase": "continuous",
+                  "reason": "NSE ações cash não elegíveis CAS"
+                },
+                {
+                  "start": "15:30",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "Fases posteriores para não-CAS não revalidadas; não copiar automaticamente grade CAS"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-10-20",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-11-10",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-11-24",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            },
+            {
+              "date": "2026-11-08",
+              "unknownReason": "Muhurat domingo anunciado; horário específico não confirmado",
+              "sourceIds": [
+                "nse-calendar"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bse",
+      "name": "BSE",
+      "city": "Mumbai",
+      "country": "Índia",
+      "region": "Ásia",
+      "timeZone": "Asia/Kolkata",
+      "lat": 19.076,
+      "lng": 72.8777,
+      "groups": [
+        {
+          "id": "cash-pending",
+          "label": "BSE ações cash — regra operacional e anual pendentes",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "bse-cash-pending",
+            "bse-calendar-pending"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [],
+          "exceptions": [],
+          "unknownReason": "BSE cash atual e calendário anual retornamHTTP403; anúncio corporativo de fevereiro não comprova vigência CAS"
+        }
+      ]
+    },
+    {
+      "id": "krx",
+      "name": "Korea Exchange / KOSPI",
+      "city": "Seul",
+      "country": "Coreia do Sul",
+      "region": "Ásia",
+      "timeZone": "Asia/Seoul",
+      "lat": 37.5665,
+      "lng": 126.978,
+      "groups": [
+        {
+          "id": "kospi-cash-pending",
+          "label": "KRX KOSPI cash — calendário anual e sessão especial pendentes",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "krx-cash"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [],
+          "exceptions": [],
+          "unknownReason": "KRX regra semanal conhecida; calendário operacional anual2026 e horário especial19/11 não confirmados"
+        }
+      ]
+    },
+    {
+      "id": "saudi",
+      "name": "Saudi Exchange",
+      "city": "Riad",
+      "country": "Arábia Saudita",
+      "region": "Oriente Médio",
+      "timeZone": "Asia/Riyadh",
+      "lat": 24.7136,
+      "lng": 46.6753,
+      "groups": [
+        {
+          "id": "main-cash",
+          "label": "Saudi ações main market; calendário oficial indexado",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "saudi-hours",
+            "saudi-calendar"
+          ],
+          "weekdays": [
+            7,
+            1,
+            2,
+            3,
+            4
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "saudi-hours",
+                "saudi-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "09:30",
+                  "end": "10:00:30",
+                  "phase": "auction",
+                  "reason": "Saudi opening auction, uncross na janela10:00–10:00:30",
+                  "transitionWindow": {
+                    "earliest": "10:00",
+                    "latest": "10:00:30",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:00:30",
+                  "end": "15:00",
+                  "phase": "continuous",
+                  "reason": "Saudi equity main market regular"
+                },
+                {
+                  "start": "15:00",
+                  "end": "15:10:30",
+                  "phase": "auction",
+                  "reason": "Saudi closing auction, uncross15:10–15:10:30",
+                  "transitionWindow": {
+                    "earliest": "15:10",
+                    "latest": "15:10:30",
+                    "nextPhase": "extended"
+                  }
+                },
+                {
+                  "start": "15:10:30",
+                  "end": "15:20",
+                  "phase": "extended",
+                  "reason": "Saudi trade at last; negotiated deals posteriores fora de escopo"
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "id": "asx",
+      "name": "Australian Securities Exchange",
+      "city": "Sydney",
+      "country": "Austrália",
+      "region": "Oceania",
+      "timeZone": "Australia/Sydney",
+      "lat": -33.8688,
+      "lng": 151.2093,
+      "groups": [
+        {
+          "id": "cash",
+          "label": "ASX ações cash, sem antiga abertura alfabética",
+          "verifiedAt": "2026-10-15",
+          "sourceIds": [
+            "asx-hours",
+            "asx-calendar"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-10-15",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "asx-hours",
+                "asx-calendar"
+              ],
+              "sessions": [
+                {
+                  "start": "07:00",
+                  "end": "09:59",
+                  "phase": "preopen",
+                  "reason": "ASX pré-negociação"
+                },
+                {
+                  "start": "09:59",
+                  "end": "10:00",
+                  "phase": "auction",
+                  "reason": "ASX OSPA/buffer; início contínuo aleatório09:59:45–10:00",
+                  "transitionWindow": {
+                    "earliest": "09:59:45",
+                    "latest": "10:00",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:00",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "ASX cash contínuo"
+                },
+                {
+                  "start": "16:00",
+                  "end": "16:10",
+                  "phase": "auction",
+                  "reason": "ASX pré-CSPA: entrada de ordens, sem contínuo"
+                },
+                {
+                  "start": "16:10",
+                  "end": "16:11",
+                  "phase": "auction",
+                  "reason": "ASX CSPA: início aleatório16:10–16:10:30, termina16:11"
+                },
+                {
+                  "start": "16:11",
+                  "end": "16:21:30",
+                  "phase": "extended",
+                  "reason": "ASX post-close ao preço CSPA"
+                },
+                {
+                  "start": "16:21:30",
+                  "end": "19:00",
+                  "phase": "unknown",
+                  "reason": "ASX Adjust posterior fora do contínuo; elegibilidade e fases não revalidadas"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-12-25",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "asx-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-28",
+              "closedReason": "Sem pregão no calendário oficial deste mercado",
+              "sourceIds": [
+                "asx-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-24",
+              "sessions": [
+                {
+                  "start": "07:00",
+                  "end": "09:59",
+                  "phase": "preopen",
+                  "reason": "ASX pré-negociação"
+                },
+                {
+                  "start": "09:59",
+                  "end": "10:00",
+                  "phase": "auction",
+                  "reason": "ASX OSPA/buffer; início contínuo aleatório09:59:45–10:00",
+                  "transitionWindow": {
+                    "earliest": "09:59:45",
+                    "latest": "10:00",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:00",
+                  "end": "14:10",
+                  "phase": "continuous",
+                  "reason": "ASX cash meio pregão: contínuo cessa14:10"
+                },
+                {
+                  "start": "14:10",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "ASX fases após14:10 do meio pregão carecem tabela própria; não deslocar automaticamente CSPA"
+                }
+              ],
+              "sourceIds": [
+                "asx-hours",
+                "asx-calendar"
+              ]
+            },
+            {
+              "date": "2026-12-31",
+              "sessions": [
+                {
+                  "start": "07:00",
+                  "end": "09:59",
+                  "phase": "preopen",
+                  "reason": "ASX pré-negociação"
+                },
+                {
+                  "start": "09:59",
+                  "end": "10:00",
+                  "phase": "auction",
+                  "reason": "ASX OSPA/buffer; início contínuo aleatório09:59:45–10:00",
+                  "transitionWindow": {
+                    "earliest": "09:59:45",
+                    "latest": "10:00",
+                    "nextPhase": "continuous"
+                  }
+                },
+                {
+                  "start": "10:00",
+                  "end": "14:10",
+                  "phase": "continuous",
+                  "reason": "ASX cash meio pregão: contínuo cessa14:10"
+                },
+                {
+                  "start": "14:10",
+                  "end": "24:00",
+                  "phase": "unknown",
+                  "reason": "ASX fases após14:10 do meio pregão carecem tabela própria; não deslocar automaticamente CSPA"
+                }
+              ],
+              "sourceIds": [
+                "asx-hours",
+                "asx-calendar"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -65,6 +65,7 @@ def main():
             page.on('requestfailed', lambda request: events.append({'type': 'requestfailed', 'url': request.url, 'failure': request.failure}))
             page.goto(url)
             wait_bootstrap(page)
+            page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
             page.evaluate("closeModal(); window.__onbShown=true;")
             return page
 

@@ -159,6 +159,7 @@ def main():
                 assert any('com sucesso' in message for message in receipt['alerts']), receipt
                 source.evaluate("""()=>{
                   if(!JPWModuleAvailability.setState('alladin','active').ok)throw Error('Fixture activation failed');
+                  if(!JPWModuleAvailability.setState('personal-finance','active').ok)throw Error('PF fixture activation failed');
                   if(!JPWModuleAvailability.setState('forex','frozen').ok)throw Error('Fixture freeze failed');
                 }""")
                 new_backup = source.evaluate("""async()=>JSON.parse(await dgBuildBackupBlob(2,'current.json','2026-09-24T12:00:00Z').text())""")
@@ -172,13 +173,16 @@ def main():
                     before = financial(page)
                     receipt = submit(page, new_backup)
                     assert any('Alladin: Congelado → Ativo' in message for message in receipt['confirms']), receipt
+                    assert any('Finanças Pessoais: Congelado → Ativo' in message for message in receipt['confirms']), receipt
                     assert any('Forex: Ativo → Congelado' in message for message in receipt['confirms']), receipt
                     assert any('com sucesso' in message for message in receipt['alerts']), receipt
                     assert financial(page) == expected_financial(new_backup) and financial(page) != before
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') == new_backup['workspace']['preferences'][KEY]
                     assert page.evaluate("JPWModuleAvailability.getState('alladin')") == 'active'
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'active'
                     page.reload();page.wait_for_function('window.JPWModuleAvailability');wait_bootstrap(page)
                     assert financial(page) == expected_financial(new_backup)
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'active'
                     assert page.evaluate('S.workspaceRecovery.pending') is False
                     assert not errors, errors
                     context.close()
@@ -189,6 +193,7 @@ def main():
                     before = state_and_storage(page);policy['accept'] = False
                     receipt = submit(page, new_backup, cancelled=True)
                     assert any('Alladin: Congelado → Ativo' in message for message in receipt['confirms']), receipt
+                    assert any('Finanças Pessoais: Congelado → Ativo' in message for message in receipt['confirms']), receipt
                     assert not receipt['alerts'];assert state_and_storage(page) == before
                     assert not errors, errors;context.close()
                 check('cancelled restoration leaves state, availability, storage and barriers unchanged', cancellation)
@@ -197,6 +202,7 @@ def main():
                     context, page, errors, _ = current()
                     for invalid in ['', '{bad', json.dumps({'schemaVersion':2,'modules':{'alladin':'active'}}),
                                     json.dumps({'schemaVersion':1,'modules':{'alladin':'unknown'}}),
+                                    json.dumps({'schemaVersion':1,'modules':{'personal-finance':'unknown'}}),
                                     json.dumps({'schemaVersion':1,'modules':{'unknown':'active'}})]:
                         payload = copy.deepcopy(new_backup);payload['workspace']['preferences'][KEY] = invalid
                         before = state_and_storage(page);receipt = submit(page, payload)
@@ -231,24 +237,47 @@ def main():
 
                 def old_and_null():
                     context, page, errors, _ = current()
-                    page.evaluate("JPWModuleAvailability.setState('alladin','active')")
+                    page.evaluate("JPWModuleAvailability.setState('alladin','active');JPWModuleAvailability.setState('personal-finance','active')")
                     explicit = page.evaluate('localStorage.getItem("'+KEY+'")')
                     receipt = submit(page, baseline_backup)
                     assert any('com sucesso' in message for message in receipt['alerts']), receipt
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') == explicit
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'active'
                     assert financial(page) == expected_financial(baseline_backup)
                     payload = copy.deepcopy(new_backup);payload['workspace']['preferences'][KEY] = None
                     payload = valid_v2_fixture(page, payload)
                     receipt = submit(page, payload)
                     assert any('Alladin: Ativo → Congelado' in message for message in receipt['confirms']), receipt
+                    assert any('Finanças Pessoais: Ativo → Congelado' in message for message in receipt['confirms']), receipt
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') is None
                     assert page.evaluate("JPWModuleAvailability.getState('alladin')") == 'frozen'
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'frozen'
                     assert financial(page) == expected_financial(payload);assert not errors, errors;context.close()
                     context, page, errors, _ = current();submit(page, baseline_backup)
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') is None
                     assert page.evaluate("JPWModuleAvailability.getState('alladin')") == 'frozen'
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'frozen'
                     assert not errors, errors;context.close()
                 check('actual old export preserves explicit choice or absent default; null resets explicitly', old_and_null)
+
+                def sparse_pf_default():
+                    context, page, errors, _ = current()
+                    page.evaluate("JPWModuleAvailability.setState('personal-finance','active')")
+                    sparse = json.dumps({'schemaVersion':1,'modules':{'alladin':'active'}})
+                    payload = copy.deepcopy(new_backup);payload['workspace']['preferences'][KEY] = sparse
+                    payload = valid_v2_fixture(page, payload)
+                    receipt = submit(page, payload)
+                    assert any('Finanças Pessoais: Ativo → Congelado' in message for message in receipt['confirms']), receipt
+                    assert any('com sucesso' in message for message in receipt['alerts']), receipt
+                    assert page.evaluate('localStorage.getItem("'+KEY+'")') == sparse
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'frozen'
+                    assert financial(page) == expected_financial(payload)
+                    page.reload();page.wait_for_function('window.JPWModuleAvailability');wait_bootstrap(page)
+                    assert page.evaluate('localStorage.getItem("'+KEY+'")') == sparse
+                    assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'frozen'
+                    assert financial(page) == expected_financial(payload)
+                    assert not errors, errors;context.close()
+                check('sparse backup omits PF override and adopts frozen default without normalizing raw', sparse_pf_default)
 
                 def recovery():
                     context, page, errors, policy = current();submit(page, baseline_backup)
@@ -267,10 +296,11 @@ def main():
                         suffix = 'empty' if corrupt == '' else 'malformed'
                         (evidence / ('recovery-'+suffix+'-backup.json')).write_text(json.dumps(payload, indent=2))
                         destination, other, other_errors, _ = current()
-                        other.evaluate("JPWModuleAvailability.setState('alladin','active')")
+                        other.evaluate("JPWModuleAvailability.setState('alladin','active');JPWModuleAvailability.setState('personal-finance','active')")
                         selected = other.evaluate('localStorage.getItem("'+KEY+'")')
                         submit(other, payload)
                         assert other.evaluate('localStorage.getItem("'+KEY+'")') == selected
+                        assert other.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'active'
                         other.evaluate('jpwWorkspaceShowDrafts()')
                         texts = other.locator('#workspaceDraftDialog textarea').evaluate_all('nodes=>nodes.map(node=>node.value)')
                         assert corrupt in texts;assert other.locator('#workspaceDraftDialog script').count() == 0
@@ -280,9 +310,9 @@ def main():
 
                 def interrupted(failure_key, initial_active=False):
                     context, page, errors, _ = current()
-                    if initial_active:page.evaluate("JPWModuleAvailability.setState('alladin','active')")
+                    if initial_active:page.evaluate("JPWModuleAvailability.setState('alladin','active');JPWModuleAvailability.setState('personal-finance','active')")
                     payload = copy.deepcopy(new_backup)
-                    payload['workspace']['preferences'][KEY] = json.dumps({'schemaVersion':1,'modules':{'alladin':'frozen'}})
+                    payload['workspace']['preferences'][KEY] = json.dumps({'schemaVersion':1,'modules':{'alladin':'frozen','personal-finance':'frozen'}})
                     payload['workspace']['preferences']['jpw_fs'] = '2'
                     payload = valid_v2_fixture(page, payload)
                     page.evaluate("""target=>{window.__originalPut=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){
@@ -296,6 +326,7 @@ def main():
                     assert financial(page) == expected_financial(payload)
                     if initial_active:
                         assert page.evaluate("JPWModuleAvailability.getState('alladin')") == 'frozen'
+                        assert page.evaluate("JPWModuleAvailability.getState('personal-finance')") == 'frozen'
                     page.reload();page.wait_for_function('window.JPWModuleAvailability');wait_bootstrap(page)
                     assert page.evaluate('S.workspaceRecovery.pending') is False
                     assert page.evaluate('localStorage.getItem("'+KEY+'")') == payload['workspace']['preferences'][KEY]

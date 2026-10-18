@@ -194,7 +194,10 @@ def main():
           if args.case and name not in args.case:continue
           context=None
           try:
-            context,page,_=prepare(browser,f'http://127.0.0.1:{server.server_port}/index.html');idle(page)
+            context,page,_=prepare(browser,f'http://127.0.0.1:{server.server_port}/index.html',
+                personal_finance_active=name in {'hidden-dom-zero-writes','hidden-critical-flags',
+                    'entry-reads-current-state','moved-clearance-current','unavailable-calendar-destination',
+                    'context-alias-single-paint'});idle(page)
             results.append({'case':name,'result':'PASS','evidence':case(page)})
           except Exception as exc: results.append({'case':name,'result':'PRODUCT_FAIL' if isinstance(exc,AssertionError) else 'TEST_HARNESS_FAIL','evidence':str(exc),'trace':traceback.format_exc()})
           finally:

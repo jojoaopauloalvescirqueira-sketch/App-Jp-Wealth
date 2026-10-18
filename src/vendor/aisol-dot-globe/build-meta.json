@@ -1,0 +1,69 @@
+{
+  "inputs": {
+    "src/js/40-app/31-market-hours/aisol/engine.js": {
+      "bytes": 35994,
+      "format": "esm",
+      "imports": [
+        {
+          "kind": "import-statement",
+          "original": "three",
+          "path": "three/build/three.module.js"
+        }
+      ]
+    },
+    "src/js/40-app/31-market-hours/aisol/entry.js": {
+      "bytes": 21513,
+      "format": "esm",
+      "imports": [
+        {
+          "kind": "import-statement",
+          "original": "./engine.js",
+          "path": "src/js/40-app/31-market-hours/aisol/engine.js"
+        }
+      ]
+    },
+    "three/build/three.core.js": {
+      "bytes": 1458113,
+      "format": "esm",
+      "imports": []
+    },
+    "three/build/three.module.js": {
+      "bytes": 662772,
+      "format": "esm",
+      "imports": [
+        {
+          "kind": "import-statement",
+          "original": "./three.core.js",
+          "path": "three/build/three.core.js"
+        },
+        {
+          "kind": "import-statement",
+          "original": "./three.core.js",
+          "path": "three/build/three.core.js"
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "src/vendor/aisol-dot-globe/aisol-globe.iife.js": {
+      "bytes": 786375,
+      "entryPoint": "src/js/40-app/31-market-hours/aisol/entry.js",
+      "exports": [],
+      "imports": [],
+      "inputs": {
+        "src/js/40-app/31-market-hours/aisol/engine.js": {
+          "bytesInOutput": 26827
+        },
+        "src/js/40-app/31-market-hours/aisol/entry.js": {
+          "bytesInOutput": 15483
+        },
+        "three/build/three.core.js": {
+          "bytesInOutput": 377480
+        },
+        "three/build/three.module.js": {
+          "bytesInOutput": 365283
+        }
+      }
+    }
+  }
+}

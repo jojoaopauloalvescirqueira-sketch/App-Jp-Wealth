@@ -1,4 +1,24 @@
+# Recorte atual em validação — aprendizado do campo vivo — 15/10/2026
+
+Correntes de Capital mantém seis scripts na pasta `src/js/40-app/30-capital-currents/`. `02-scenarios.js` é agora o catálogo de introdução/descobertas e experiências controladas pelo motor puro; `03-progress.js` trata somente a nova chave `jpwealth_capital_field_v1`. View/controlador integram lições opcionais, observação local, leitura/prática/salto e releitura/reinício seguros. A chave da campanha anterior é preservada sem conversão. Motor/renderer aceitos, outros jogos e contratos financeiros não mudam. [Contrato atual](CAPITAL-CURRENTS.md). Gate completo e validação final em curso nesta fotografia.
+
+## Fotografias anteriores preservadas
+
+# Recorte em execução — campo vivo — 15/10/2026
+
+O terceiro jogo mantém a pasta `src/js/40-app/30-capital-currents/`, API de lifecycle e rota. Seu motor puro passa a `fieldAt`/`advance`/`trace`; o renderer Canvas dedicado fica em `04-field-renderer.js`, antes de view/controlador no manifesto. O modelo de pressão/preço substitui a campanha triangular. A primeira fatia não grava progresso; catálogo/progresso anteriores ficam dormentes, sem conversão. [Contrato focal](CAPITAL-CURRENTS.md). Fotografia de implementação, sem aprovação final; fontes financeiras, outros jogos e autoridades não mudam.
+
+## Fotografias anteriores preservadas
+
+## Correntes de Capital — complemento local 15/10/2026
+
+O candidate possui 117 scripts clássicos: os cinco módulos `40-app/30-capital-currents` seguem os cinco do Gêmeos do Tempo e antecedem o loader de downloads/Tools, preservando a ordem relativa dos112 anteriores. `JPWCapitalCurrents` separa engine/catálogo/progresso/view/controller. O canvas é uma projeção dos saldos simulados; nenhuma regra financeira do produto é consumida. A view local `capital-currents` compartilha o child MiniGames e monta somente após navegação aceita. Progresso próprio AUX fora de S/Backup Completo, descarte na sessão e nenhuma remontagem por observadores. [Contrato](CAPITAL-CURRENTS.md). Fotografias abaixo conservam revisão e contagens originais.
+
 # Arquitetura do sistema
+
+## Gêmeos do Tempo — complemento local 15/10/2026
+
+O candidate carrega 112 scripts clássicos: cinco módulos `40-app/29-time-twins` são inseridos antes do loader de downloads e seu consumidor Tools, preservando a ordem relativa dos 107 anteriores e os quatro módulos finais do guia. `window.JPWTimeTwins` separa simulação/catálogo/progresso/view/controlador; Tools mantém uma instância lazy na view local `time-twins`, sob o child MiniGames. Progresso auxiliar contém somente IDs/estados, fora de `S` e do Backup Completo. O hook de sessão descarta a instância; observadores não a recriam. [Contrato e APIs](TIME-TWINS.md). As contagens históricas abaixo descrevem suas revisões originais.
 
 ## Visão geral
 

@@ -14,7 +14,7 @@ ou uma promessa de desempenho**.
 
 Na revisão local 2026-10-14, `tools-minigames` é o último filho de Ferramentas e
 Serviços. A visão `tools/minigames` apresenta `#minigamesHub`, seu título
-`#minigamesTitle` e um único cartão Galton Board com **Abrir**. A visão
+`#minigamesTitle` e dois cartões com **Abrir**: Galton Board e [Gêmeos do Tempo](TIME-TWINS.md), acrescentado em 15/10/2026. A visão
 `tools/galton` usa o mesmo child e apresenta `#minigamesGame`, título
 `#minigamesGaltonTitle` e **Voltar para MiniGames**. O foco vai ao título do jogo
 na entrada e retorna a Abrir na volta. A central não monta nem inicia o jogo.

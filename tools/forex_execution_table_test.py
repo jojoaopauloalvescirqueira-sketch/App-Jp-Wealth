@@ -335,9 +335,9 @@ def native_zoom(pw, url, artifacts, results):
         assert page.evaluate("document.activeElement.dataset.f==='brokerHash'&&document.activeElement.matches(':focus-visible')")
         page.locator('#ebPhase-0').scroll_into_view_if_needed();settle(page)
         cdp=context.new_cdp_session(page)
-        (artifacts/'table-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':False,'captureBeyondViewport':False})['data']))
+        (artifacts/'table-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':True,'captureBeyondViewport':False})['data']))
         page.evaluate("window.scrollTo({top:0,behavior:'instant'})");settle(page)
-        (artifacts/'board-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':False,'captureBeyondViewport':False})['data']))
+        (artifacts/'board-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':True,'captureBeyondViewport':False})['data']))
         assert not errors,errors
         assert_fixture_requests(context)
         results.append('PASS: native browser 200% zoom (outer/inner=2; CSS zoom=1), compact table/cards without overflow, focus and dedicated screenshots')

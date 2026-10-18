@@ -57,6 +57,8 @@ def boot(browser, url, mutacao_js=None):
     page.wait_for_function(
         "() => typeof S === 'object' && typeof pfCompMetrics === 'function'"
         " && typeof finpesOverviewRender === 'function'")
+    # Fixture operacional explícita; o default congelado continua sendo do app.
+    page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
     if mutacao_js:
         page.evaluate(f"""() => {{
             {mutacao_js}

@@ -1,0 +1,72 @@
+{
+  "schema": "jp-ai-engineering/provenance/v3",
+  "skill_version": "1.3.0",
+  "status": "candidate_under_evaluation_not_installed",
+  "base_variant": {
+    "version": "1.0.0-lean.1",
+    "tree_sha256": "86d4149bd03897d8b3333eb2cf0fb5a75bbb64e1e6eaa5b4b9c49b0f58c83166",
+    "entry_sha256": "ac11910ce2dbae89d98040f97db0b2306b4cdb2b803c12ff02b781e5fdecb901"
+  },
+  "approval": {
+    "date": "2026-10-15",
+    "scope": "Implement approved1.3 evolution and up to28CLI sessions, Web/PWA pilot in isolated JP Wealth copies; no installation/integration/publication.",
+    "user_statement": "PLEASE IMPLEMENT THIS PLAN: JP Engenharia1.3.0: testes de integração com personas"
+  },
+  "preferences_recorded": [
+    "General software projects; JP Wealth profile only when requested and project identity verified.",
+    "Explicit invocation, smallest sufficient change and proportional evidence.",
+    "Economy of model tokens and user explanations without omitting essential quality/security checks.",
+    "No presumed personal language, architecture, library or style preferences."
+  ],
+  "changes": [
+    "Shared approved workflow in entrypoint.",
+    "References separated by concrete risk/mode triggers.",
+    "Representation-boundary checks added for affected data contracts.",
+    "Validation plan for brief requests delivered outside runtime package.",
+    "Mandatory project AGENTS with hierarchy and normative rule traceability.",
+    "Permanent bug regression cases with defect-specific RED/GREEN.",
+    "New/changed rule protections, progressive legacy migration, full accumulated local/CI gates.",
+    "Optional stdlib normalized-evidence gate and concise templates.",
+    "Repair seven original reference destinations; reconcile internal candidate version1.2.0.",
+    "Risk-triggered real application exploration with five reusable roles and explicit generic fallback.",
+    "Coverage reuse by property/boundary/state/oracle/actual execution; permanent deterministic tests without LLM.",
+    "Canonical source/build/artifact gates and independent negative controls; inherited normalized-report helper is not execution proof."
+  ],
+  "historical_sources_declared_in_base": [
+    {
+      "id": "A0",
+      "original_path": "/Users/joaopauloalves/Library/Mobile Documents/iCloud~md~obsidian/Documents/2 - TRABALHO/9 - SOFTWARE/A0 - HARNESS - JP Wealth MASTER SPECIFICATION.md",
+      "sha256": "b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95",
+      "bytes": 65817,
+      "lines": 1460
+    },
+    {
+      "id": "B01",
+      "original_path": "/Users/joaopauloalves/Library/Mobile Documents/iCloud~md~obsidian/Documents/2 - TRABALHO/9 - SOFTWARE/B01 AGENTE -   ENGENHARIA SEGURA.md",
+      "sha256": "1b56648b91cf6ea43956100e7a21e69953fb048c43e306968a45b9661c2778ef",
+      "bytes": 13440,
+      "lines": 318
+    },
+    {
+      "id": "C01",
+      "original_path": "/Users/joaopauloalves/Library/Mobile Documents/iCloud~md~obsidian/Documents/2 - TRABALHO/9 - SOFTWARE/C01 - Prompt de Retorno - Vibe Code com Ia.md",
+      "sha256": "61f045102d7cae28d436f984186383cfc92b1c675f8304a36c8748a060f94bdb",
+      "bytes": 15005,
+      "lines": 346
+    }
+  ],
+  "historical_classification": {
+    "A0_core": "lines 1–1268: normative source used for derived guidance, current project source still governs",
+    "A0_appendix": "lines 1273–1460: proposal task, not adopted as canonical instructions",
+    "B01": "one-round read-only constraints limited to consult/planning; context and security principles reused",
+    "C01": "consult mode rules and bounded autonomy; readonly role not global"
+  },
+  "historical_failure_exception": "requires current verified activation; no activation conferred by this package",
+  "evidence_limit": "Effectiveness and economy of1.3.0 require the separately frozen real-product pilot. Prior1.2.0 was rejected. Packaging and deterministic gate tests do not establish agent compliance, universal coverage, remote CI enforcement or production readiness.",
+  "previous_candidate": {
+    "version": "1.2.0",
+    "decision": "rejected_for_installation",
+    "frozen_preserved": true,
+    "entry_sha256": "bfed44d573aecd3eaa9b5747c89be8e05c2c84988d8259dbf2640aa959b49daa"
+  }
+}

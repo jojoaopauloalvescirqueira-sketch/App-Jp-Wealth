@@ -1,0 +1,29 @@
+[
+  {
+    "id": "bse-cash",
+    "url": "https://www.bseindia.com/markets/MarketInfo/DispNewNoticesCirculars.aspx?page=20260801-1",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "bse-annual",
+    "url": "https://www.bseindia.com/markets/MarketInfo/DispNewNoticesCirculars.aspx?page=20251212-8",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "szse-annual",
+    "url": "https://www.szse.cn/disclosure/notice/t20251222_618087.html",
+    "error": "<urlopen error timed out>"
+  },
+  {
+    "id": "krx-hours",
+    "url": "https://global.krx.co.kr/contents/GLB/06/0602/0602010201/GLB0602010201T1.jsp",
+    "status": 200,
+    "bytes": 4654,
+    "sha256": "beccdf071e36ca2d8cd2313fd0de3363760480f0e312c0f3dca80b3ea5153266"
+  },
+  {
+    "id": "sebi-review",
+    "url": "https://www.sebi.gov.in/sebi_data/attachdocs/oct-2026/1792079571420.pdf",
+    "error": "<urlopen error _ssl.c:1112: The handshake operation timed out>"
+  }
+]

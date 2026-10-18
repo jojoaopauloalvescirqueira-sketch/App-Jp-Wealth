@@ -102,6 +102,12 @@ FULL = STANDARD + (
     ("stoikus-downloads", [sys.executable, "tools/stoikus_download_test.py"]),
     ("download-assets-unit", [os.environ.get("JPW_NODE", "node"), "tools/download_assets_test.js"]),
     ("download-assets-browser", [sys.executable, "tools/download_assets_browser_test.py", "--out-dir", full_evidence('downloads')]),
+    ("capital-currents-unit", [os.environ.get("JPW_NODE", "node"), "tools/capital_currents_unit_test.js"]),
+    ("capital-currents-progress", [os.environ.get("JPW_NODE", "node"), "tools/capital_currents_progress_test.js"]),
+    ("capital-currents-browser", [sys.executable, "tools/capital_currents_browser_test.py", "--mode", "all", "--out-dir", full_evidence('capital-currents')]),
+    ("time-twins-unit", [os.environ.get("JPW_NODE", "node"), "tools/time_twins_unit_test.js"]),
+    ("time-twins-browser", [sys.executable, "tools/time_twins_browser_test.py", "--mode", "all", "--out-dir", full_evidence('time-twins')]),
+    ("minigames", [sys.executable, "tools/minigames_test.py"]),
 )
 TIERS = {"fast": FAST, "standard": STANDARD, "full": FULL}
 ENVIRONMENT_MARKERS = (

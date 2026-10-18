@@ -83,6 +83,7 @@ def run():
             page.on('pageerror', lambda e: errors.append(str(e)))
             page.goto(f'http://127.0.0.1:{server.server_port}/index.html', wait_until='load')
             wait_bootstrap(page)
+            page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
             seed(page)
             check('original twelve-month table', page.locator('#fcSeries .fc-srow:not(.fc-head)').count() == 12)
             if args.baseline:

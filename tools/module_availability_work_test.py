@@ -41,6 +41,7 @@ def main():
         assert page.evaluate("typeof alladinCatalogoLabels==='function' && typeof JPWAlladin.leitura.accounts==='function'")
         print('PASS frozen default: no operational mount; shared readers preserved',flush=True)
 
+        assert page.evaluate("JPWModuleAvailability.getState('personal-finance')")=='frozen'
         activate('alladin');page.evaluate("JPWNavigation.navigate('alladin');JPWAlladinUI.selectView('accounts')")
         page.locator('[data-ald-new="account"]').click()
         page.locator('#alladinFldName').fill('Synthetic unsaved account')
@@ -63,7 +64,7 @@ def main():
         assert page.evaluate("document.activeElement.id")=='alladinFldName'
         page.locator('[data-ald-act="cancelar"]').click()
         assert not page.evaluate("JPWModuleWork.hasPending('alladin')")
-        print('PASS Alladin draft: local refusal, remote retention, backup and explicit resume',flush=True)
+        print('PASS AV-WORK-FOCUS Alladin draft: local refusal, remote retention, backup and explicit resume',flush=True)
 
         # A record already committed with warning must still reach its decision.
         page.evaluate("""()=>{const a=JPWAlladin.cadastro.addAccount({name:'Synthetic',institution:'Fixture',accountType:'BANK'});JPWAlladin.cadastro.addCashAccount({accountId:a.recordId,currency:'BRL'});JPWAlladinUI.selectView('cashAccounts');}""")
@@ -93,9 +94,15 @@ def main():
         print('PASS Research draft and guarded save preserved without financial writes',flush=True)
 
         # PF atomic modal stays in RAM and is guarded before its financial command.
+        activate('personal-finance')
         page.evaluate("JPWNavigation.navigate('personal-finance');JPWNavigation.navigateLocal('finpes','cenarios');fsOpenScenarioModal(null)")
         field=page.locator('#modalBox [data-qid="name"] input');field.fill('Synthetic pending scenario')
         assert page.evaluate("JPWModuleWork.hasPending('personal-finance')")
+        raw=page.evaluate('localStorage.getItem('+json.dumps(KEY)+')')
+        assert page.evaluate("JPWModuleAvailabilityUI.requestChange('personal-finance','frozen')") is False
+        assert page.evaluate('localStorage.getItem('+json.dumps(KEY)+')')==raw
+        assert page.evaluate("JPWModuleAvailability.canAccess('personal-finance')")
+        assert field.input_value()=='Synthetic pending scenario'
         value=before();freeze('personal-finance');unchanged(value)
         page.locator('#modalConfirm').dispatch_event('click');unchanged(value)
         assert field.input_value()=='Synthetic pending scenario'

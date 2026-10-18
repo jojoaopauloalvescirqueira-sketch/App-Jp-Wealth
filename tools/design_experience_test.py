@@ -452,7 +452,7 @@ def run(args):
                 name=f'{width}-{theme}-zoom{zoom}'
                 c=Checks(name);reports.append({'case':name,'assertions':c.items})
                 context=browser.new_context(viewport={'width':width,'height':1000},has_touch=True,service_workers='block',reduced_motion='reduce')
-                install_bootstrap(context);context.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
+                install_bootstrap(context);context.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active','personal-finance':'active'}}));")
                 page=context.new_page();errors=[];console=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 page.on('console',lambda m:console.append(m.text) if m.type=='error' else None)

@@ -39,12 +39,18 @@ def settle(page):
 
 
 def boot(browser, url, preference=None, width=1440, style="classic", rail="expanded", read_failure=False,
-         tint=None, tint_read_failure=False, submenu_rail=None, submenu_rail_read_failure=False, alladin_active=False):
+         tint=None, tint_read_failure=False, submenu_rail=None, submenu_rail_read_failure=False, alladin_active=False,
+         personal_finance_active=False):
     seed = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
             "jpw_nav": style, "jpw_rail": rail}
-    # Opt-in da fixture; consumidores do helper mantêm o default congelado.
+    # Opt-ins da fixture; consumidores do helper mantêm os defaults congelados.
+    modules = {}
     if alladin_active:
-        seed["jpw_module_availability_v1"] = json.dumps({"schemaVersion": 1, "modules": {"alladin": "active"}})
+        modules['alladin'] = 'active'
+    if personal_finance_active:
+        modules['personal-finance'] = 'active'
+    if modules:
+        seed["jpw_module_availability_v1"] = json.dumps({"schemaVersion": 1, "modules": modules})
     if preference is not None:
         seed[KEY] = preference
     if tint is not None:
@@ -276,7 +282,7 @@ def run_preferences(browser, url, evidence):
     cases = [None, "sidebar", "topbar", "glass", "submenu", "", "TOPBAR", " topbar ", "future-layout", '{"mode":"topbar"}']
     evidence["preferences"] = []
     for preference in cases:
-        context, page, observed = boot(browser, url, preference, style="kinetic", rail="collapsed", alladin_active=True)
+        context, page, observed = boot(browser, url, preference, style="kinetic", rail="collapsed", alladin_active=True, personal_finance_active=True)
         try:
             expected = preference if preference in {"sidebar", "topbar", "glass", "submenu"} else "sidebar"
             assert_structure(page, expected)
@@ -591,7 +597,7 @@ def module_entry_keys(page, layout, evidence):
 def run_navigation(browser, url, evidence):
     evidence['module_entry_keys'] = []
     for layout in ["sidebar", "topbar", "glass"]:
-        context, page, observed = boot(browser, url, layout, alladin_active=True)
+        context, page, observed = boot(browser, url, layout, alladin_active=True, personal_finance_active=True)
         try:
             before = raw(page)
             module_entry_keys(page, layout, evidence['module_entry_keys'])
@@ -844,7 +850,7 @@ def run_submenu(browser, url, evidence):
 
 def run_notes(browser, url, evidence):
     for layout in ['sidebar', 'topbar', 'glass', 'submenu']:
-        context, page, observed = boot(browser, url, layout, alladin_active=True)
+        context, page, observed = boot(browser, url, layout, alladin_active=True, personal_finance_active=True)
         try:
             page.locator('#execNavTrigger').click()
             page.locator('[data-nav-child="forex-management-accounts"]').click()
