@@ -241,6 +241,14 @@ class DeliveryTest(unittest.TestCase):
         for name, _mime, raw in ARTIFACTS.values():
             self.write(PREFIX + name, raw)
         self.write('tools/rebuild_monolith.py', (ROOT / 'tools/rebuild_monolith.py').read_bytes())
+        # The real offline builder requires its declared Market inputs even in
+        # this bounded distribution fixture; preserve the production integrity checks.
+        market_inputs = next(ast.literal_eval(node.value)
+            for node in ast.parse((ROOT / 'tools/rebuild_monolith.py').read_text()).body
+            if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and
+                target.id == 'MARKET_HOURS_BUILD_INPUTS' for target in node.targets))
+        for relative in market_inputs:
+            self.write(relative, (ROOT / relative).read_bytes())
         self.write('tools/build_leverage_package.py',
             b'import json\ndef build(root):\n    return json.loads((root/"fixture-manifest.json").read_text())\n')
 

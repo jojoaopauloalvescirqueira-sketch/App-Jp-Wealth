@@ -1,0 +1,8 @@
+  Stoikus.Installer.Core -> /private/tmp/jpw-stoikus-installer-20261014/tools/stoikus-installer/src/Stoikus.Installer.Core/bin/Debug/net10.0/Stoikus.Installer.Core.dll
+  Stoikus.Installer.App -> /private/tmp/jpw-stoikus-installer-20261014/tools/stoikus-installer/src/Stoikus.Installer.App/bin/Debug/net10.0-windows/win-x64/JPWealth.Stoikus.Installer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:21.57

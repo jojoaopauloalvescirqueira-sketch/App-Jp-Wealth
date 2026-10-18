@@ -20,6 +20,7 @@ from pathlib import Path
 import json
 import os
 import threading
+from urllib.parse import urlsplit
 
 from playwright.sync_api import sync_playwright
 
@@ -66,11 +67,22 @@ def launch_browser(playwright):
     return playwright.chromium.launch(**options)
 
 
-def boot(browser, url, viewport=None, *, service_workers="allow", prepare_context=None, alladin_active=False):
-    context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900}, service_workers=service_workers)
-    # Apenas cenários que entram no Alladin solicitam a fixture ativa.
+def boot(browser, url, viewport=None, *, service_workers="allow", prepare_context=None, alladin_active=False,
+         personal_finance_active=False):
+    # Opt-ins locais, sem reaplicar a preferência ao recarregar/restaurar.
+    modules = {}
     if alladin_active:
-        context.add_init_script("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
+        modules['alladin'] = 'active'
+    if personal_finance_active:
+        modules['personal-finance'] = 'active'
+    options = {}
+    if modules:
+        origin = urlsplit(url)
+        options['storage_state'] = {'origins': [{'origin': f'{origin.scheme}://{origin.netloc}',
+            'localStorage': [{'name': 'jpw_module_availability_v1',
+                             'value': json.dumps({'schemaVersion': 1, 'modules': modules})}]}]}
+    context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900},
+                                  service_workers=service_workers, **options)
     if prepare_context is not None:
         prepare_context(context)
     context.add_init_script("window.__onbShown = true;")
@@ -89,7 +101,7 @@ def boot(browser, url, viewport=None, *, service_workers="allow", prepare_contex
     page.goto(url, wait_until="load")
     page.wait_for_function(
         "() => window.JPWDashMacro && window.JPWNavigation "
-        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(4 if alladin_active else 3)
+        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(2 + int(alladin_active) + int(personal_finance_active))
     )
     return context, page, observed
 
@@ -436,7 +448,7 @@ def assert_responsividade(browser, url):
         def prepare(context):
             install_bootstrap(context)
             context.add_init_script('localStorage.setItem("jpw_nav_layout",'+json.dumps(navigation)+');localStorage.setItem("jpw_rail",'+json.dumps(rail)+');')
-        context, page, observed = boot(browser, url, viewport={'width':width,'height':1000}, service_workers='block',prepare_context=prepare)
+        context, page, observed = boot(browser, url, viewport={'width':width,'height':1000}, service_workers='block',prepare_context=prepare,personal_finance_active=True)
         result = {'case':rotulo,'result':'NOT_RUN','zoom_limit':'CSS zoom stress; not browser-native zoom proof'}
         results.append(result)
         try:
@@ -574,7 +586,7 @@ def assert_links_profundos(page):
 def assert_resumos_preenchidos(browser,url):
     from alladin_ui_tx_reverse_test import SEMEAR
     from finpes_comparison_test import seed_completo
-    ctx,page,observed=boot(browser,url,service_workers="block",alladin_active=True)
+    ctx,page,observed=boot(browser,url,service_workers="block",alladin_active=True,personal_finance_active=True)
     try:
         # Relógio do DOMÍNIO fixo: meses corrente/anterior e fixtures correspondem.
         page.evaluate("() => { window.__dmMonth=pfCurrentMonthKey; pfCurrentMonthKey=()=> '2026-08'; }")
@@ -633,7 +645,8 @@ def assert_frozen_projection(browser,url):
     context,page,observed=boot(browser,url,service_workers="block")
     try:
         page.locator('#dmTools').evaluate('el=>el.open=true')
-        assert page.locator('[data-dm-card="alladin"],.cp-panorama-index [href="#dm-title-alladin"]').count()==0
+        assert page.locator('[data-dm-card="alladin"],.cp-panorama-index [href="#dm-title-alladin"],'
+                            '[data-dm-card="personal-finance"],.cp-panorama-index [href="#dm-title-personal-finance"]').count()==0
         for module in ['forex','personal-finance','research','alladin']:
             page.evaluate("id=>JPWModuleAvailability.setState(id,'frozen')",module)
             page.evaluate("JPWNavigation.navigate('dashboard')")
@@ -690,7 +703,7 @@ def main():
     try:
         with sync_playwright() as playwright:
             browser = launch_browser(playwright)
-            context, page, observed = boot(browser, url, service_workers="block", alladin_active=True)
+            context, page, observed = boot(browser, url, service_workers="block", alladin_active=True, personal_finance_active=True)
             try:
                 assert_estrutura_e_isolamento_do_layout(page)
                 assert_migracao_forex_fatia2(page)

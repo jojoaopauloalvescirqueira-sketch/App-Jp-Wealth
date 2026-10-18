@@ -143,3 +143,12 @@ Relatar ação executada ou fonte lida/importada somente com evidência observá
 Atualizar contexto, auditoria, changelog e handoff afetados **somente dentro do CHG/CTX autorizado**. Representação fora do contrato exige proposta, não escrita automática. Histórico correto permanece histórico; índice antigo não é estado atual.
 
 Prontidão técnica exige escopo/invariantes preservados, gates classificados, diff revisado, documentação mutável autorizada reconciliada e riscos declarados. Depois, **aguardar teste manual do usuário e seu aceite**; teste do agente não o substitui. Autorização específica de commit continua sendo gate humano posterior, assim como push, integração e publicação. Apresentar candidate não significa aceite, commit obrigatório ou encerramento integral do projeto.
+
+
+## JP Engenharia — proteção acumulada e memória do projeto
+
+Para implementar, corrigir, diagnosticar ou revisar código deste projeto, abrir [JP Engenharia local](skills/jp-ai-engineering/SKILL.md) e aplicar suas referências pertinentes, sem exigir nova menção do proprietário a cada acompanhamento. É a versão1.3.0 importada integralmente e congelada; AGENTS, fontes vigentes e autorização humana prevalecem. O roteamento escrito do projeto é distinto de seleção automática do cliente; a política original de invocação explícita permanece intacta.
+
+Consultar [memória factual de regressões](tools/regression-memory.json) nas áreas afetadas: fontes, estímulos, oráculos, casos, vínculo real ao gate e pendências. Cada nova correção acrescenta/atualiza o caso permanente e o registro pertinente conforme o procedimento; registrar RED/GREEN e os bytes correspondentes, sem fechar incidente por repetição bem-sucedida. A cobertura do legado é parcial e não deve ser promovida a integral por esse índice. Dados reais e segredos não entram na memória; não há serviço automático de memória nem edição de memória global.
+
+Conferência focal da instalação: `python3 tools/jp_engineering_integration_test.py`. Esse comando verifica integridade e referências, não executa as regressões do produto nem substitui `python3 tools/quality_gate.py --tier full` e os focais pertinentes. Contrato, proveniência, cobertura e limites: [instalação delimitada](docs/work/CHG-JPW-ENGINEERING-INSTALL-20261016.md). Gates, CI e permissões anteriores permanecem os mesmos.

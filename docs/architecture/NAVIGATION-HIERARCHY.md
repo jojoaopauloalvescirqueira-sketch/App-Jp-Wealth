@@ -1,4 +1,20 @@
+## Bolsas Globais — apresentação de consulta — 16/10/2026
+
+O redesign preserva `tools-market-hours`, a visão local, os hosts e o foco do título. A consulta passa a priorizar lista e estados; no celular, Explorar mapa é um estado visual local, sem navegação, gravação ou alteração da bolsa selecionada. Recolher o mapa suspende seu renderer sem pausar o relógio da lista descoberta. Seleção pela lista e pelo globo usa as mesmas identidades. [Contrato e limites](MARKET-HOURS.md).
+
+## Bolsas Globais — complemento local 15/10/2026
+
+Ferramentas tem seis filhos, nesta ordem: `tools-calendar`, `tools-market-hours`, `tools-nocuda`, `tools-leverage`, `tools-normative`, `tools-minigames`. A nova rota seleciona a visão `market-hours` em `#tools`, seção `#marketHoursTool`, slot `#toolsMarketHoursSlot`, título focável `#marketHoursTitle`. O evento publicado após navegação aceita inicia a montagem; navegação recusada não carrega dados nem renderer. Host verifica diálogo/visibilidade antes de ativar. MiniGames e seus três jogos conservam hosts e aliases. [Contrato](MARKET-HOURS.md). Fotografias anteriores permanecem datadas.
+
+## Correntes de Capital — complemento local 15/10/2026
+
+MiniGames tem três cartões. `navigateLocal('tools','capital-currents')` e o alias `capital-currents` selecionam `#minigamesCapitalCurrentsGame`, título `#minigamesCapitalCurrentsTitle`, slot `#toolsCapitalCurrentsSlot`. A entrada aceita monta uma instância pausada; Voltar seleciona a central e devolve foco a `#minigamesOpenCapitalCurrents`. Disponibilidade, diálogos e rascunhos passam pelas guardas existentes. Observar fechamento de diálogo não recria controlador descartado. Galton e TimeTwins conservam hosts e aliases. [Contrato](CAPITAL-CURRENTS.md). Fotografias seguintes mantêm seus limites históricos.
+
 # Navegação hierárquica — contrato de implementação
+
+## Gêmeos do Tempo — complemento local 15/10/2026
+
+MiniGames conserva o mesmo child e ganha um segundo cartão. `navigateLocal('tools','time-twins')` e alias `time-twins` abrem `#minigamesTimeTwinsGame`, título `#minigamesTimeTwinsTitle`, slot `#toolsTimeTwinsSlot`. Abrir monta uma instância somente após aceite; Voltar retorna ao hub e foca `#minigamesOpenTimeTwins`. Os aliases antigos continuam abrindo Galton Board. Entrada em qualquer jogo é recusada com diálogo aberto; disponibilidade de Tools continua vigente e Research congelado não impede o novo jogo. Observadores não remontam após descarte: somente nova entrada aceita pode fazê-lo. [Contrato](TIME-TWINS.md). As fotografias datadas seguintes conservam seu contexto histórico.
 
 ## MiniGames — revisão local corrente 2026-10-14
 

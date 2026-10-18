@@ -329,6 +329,7 @@ SOFTWARE.
     </nav>
     <nav class="nav-sub-menu" id="toolsNavSubmenu" aria-labelledby="toolsNavTrigger" aria-hidden="true" hidden inert>
       <button type="button" data-nav-item data-nav-child="tools-calendar"><span class="nav-sub-item-title">Calendário Econômico</span><span class="nav-sub-item-desc">Eventos da semana</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-market-hours"><span class="nav-sub-item-title">Bolsas Globais</span><span class="nav-sub-item-desc">Globo e sessões de ações</span></button>
       <button type="button" data-nav-item data-nav-child="tools-nocuda"><span class="nav-sub-item-title">Nocuda Tool</span><span class="nav-sub-item-desc">Downloads e parâmetros</span></button>
       <button type="button" data-nav-item data-nav-child="tools-leverage"><span class="nav-sub-item-title">Stoikus — MT5</span><span class="nav-sub-item-desc">Ferramentas e instalação</span></button>
       <button type="button" data-nav-item data-nav-child="tools-normative"><span class="nav-sub-item-title">Estrutura Normativa JP Wealth</span><span class="nav-sub-item-desc">Leitura do Estatuto V11</span></button>
@@ -1446,6 +1447,18 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
         <span class="cp-kicker">CONSULTA OPCIONAL · PACOTES AVULSOS</span><h2 id="jpwLeverageDownloadsTitle">Fontes já incluídas no kit</h2>
         <p>Versão <strong data-jpw-leverage-meta="version">indisponível</strong>. O kit R5 já contém o ZIP de uso correspondente. <strong>Se você baixou o kit, não precisa baixar as fontes de novo.</strong> Estes links servem para consulta técnica; não mudam a sequência de conferência e recibo.</p>
 
+        <article class="leverage-package" data-stoikus-installer-download aria-labelledby="jpwStoikusInstallerTitle">
+          <span class="leverage-package-kicker">ASSISTENTE WINDOWS · BETA NÃO ASSINADO</span>
+          <h3 id="jpwStoikusInstallerTitle">Instalador Stoikus 1.0.0-beta.1</h3>
+          <p>Assistente para instalar, verificar, reparar ou remover os quatro programas de uso. Requer Windows 11, MetaTrader 5 e MetaEditor. Em Mac, o Windows precisa estar disponível no Parallels; o assistente é x64.</p>
+          <p class="leverage-package-state" data-jpw-leverage-meta="installer-status">Download público indisponível. Testes do mesmo candidato em Windows x64, Parallels ARM e navegador: NOT_RUN.</p>
+          <button type="button" class="reset-btn" data-jpw-leverage-download="installer" disabled>Instalador .exe · indisponível</button>
+          <details class="leverage-package-integrity"><summary>Estado do candidato e requisitos</summary>
+            <p>Produto 1.23.0 · cálculo 1.9.0. Beta não assinado: o Windows pode exibir uma confirmação de segurança. O download só será liberado após provas nativas e de distribuição do mesmo EXE. Neste momento, utilize as fontes de uso e o guia abaixo.</p>
+            <p>O assistente compila localmente com o MetaEditor. Após instalar, você abre os gráficos seguindo o guia. As provas locais dos quatro programas ficam separadas da validação de engenharia do SDK completo.</p>
+            <p class="leverage-hash">SHA-256 público: <code data-jpw-leverage-meta="installer-sha">—</code></p>
+          </details>
+        </article>
         <div class="leverage-download-grid">
           <article class="leverage-package leverage-package--daily" aria-labelledby="jpwLeverageDailyTitle">
             <span class="leverage-package-kicker">QUATRO PROGRAMAS · MESMOS FONTES DO KIT</span>
@@ -1833,6 +1846,10 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
       <div class="nr-status-row"><span id="nrStatus" role="status" aria-live="polite">Abra o Estatuto para consultar o original.</span><button id="nrRetry" type="button">Tentar novamente</button></div>
     </div>
 
+    <div class="tools-view market-hours-tool" id="marketHoursTool" data-tools-view="market-hours" role="region" aria-labelledby="marketHoursTitle" hidden inert>
+      <header><div class="mh-title-row"><h2 id="marketHoursTitle" data-route-focus tabindex="-1">Bolsas Globais</h2></div></header>
+      <div id="toolsMarketHoursSlot"></div>
+    </div>
     <div class="tools-view minigames-hub" id="minigamesHub" data-tools-view="minigames" role="region" aria-labelledby="minigamesTitle" hidden inert>
       <header class="minigames-header"><h2 id="minigamesTitle" data-route-focus tabindex="-1">MiniGames</h2><p>Explore ideias e padrões com jogos e experimentos interativos.</p></header>
       <div class="minigames-catalog">
@@ -1841,11 +1858,29 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
           <h3 id="minigamesGaltonCardTitle">Galton Board</h3><p>Solte bolas, acompanhe suas trajetórias e observe a distribuição que se forma no tabuleiro.</p>
           <button type="button" id="minigamesOpenGalton">Abrir</button>
         </article>
+        <article class="card minigames-card" id="minigamesTimeTwinsCard" aria-labelledby="minigamesTimeTwinsCardTitle">
+          <svg class="minigames-card-art" viewBox="0 0 240 120" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="3"><path d="M25 100H215M35 95Q100 90 205 20M35 95Q130 93 205 50"/><circle cx="65" cy="30" r="12"/><circle cx="110" cy="30" r="12"/><path d="M45 65Q65 40 85 65M90 65Q110 40 130 65"/></g></svg>
+          <h3 id="minigamesTimeTwinsCardTitle">Gêmeos do Tempo</h3><p>Compare dois investidores fictícios e investigue o efeito do tempo, dos aportes e dos juros compostos.</p>
+          <button type="button" id="minigamesOpenTimeTwins">Abrir</button>
+        </article>
+        <article class="card minigames-card" id="minigamesCapitalCurrentsCard" aria-labelledby="minigamesCapitalCurrentsCardTitle">
+          <svg class="minigames-card-art" viewBox="0 0 240 120" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M25 105H215M120 108V12" opacity=".3"/><path d="M35 92Q105 98 155 20M55 108Q128 92 175 12M25 60Q85 78 125 18M88 110Q158 84 205 12" opacity=".55"/><path d="m45 44 13 5-7-11m0 11-13 3M80 70l17 1-11-8m11 8-11 7M140 64l12-15-10 5m10-5 1 12M175 40l10-17-10 6m10-6 3 12"/></g><circle cx="136" cy="73" r="4" fill="currentColor"/></svg>
+          <h3 id="minigamesCapitalCurrentsCardTitle">Correntes de Capital</h3><p>Explore um campo vivo: aplique pressão, altere a profundidade e investigue como os cenários se movem.</p>
+          <button type="button" id="minigamesOpenCapitalCurrents">Abrir</button>
+        </article>
       </div>
     </div>
     <div class="tools-view minigames-game" id="minigamesGame" data-tools-view="galton" role="region" aria-labelledby="minigamesGaltonTitle" hidden inert>
       <header class="minigames-header"><button type="button" id="minigamesBack" class="reset-btn">Voltar para MiniGames</button><h2 id="minigamesGaltonTitle" data-route-focus tabindex="-1">Galton Board</h2><p>Explore probabilidade e distribuição. Ao sair ou abrir uma janela, a simulação pausa; use Continuar para retomá-la.</p></header>
       <div id="toolsGaltonSlot"></div>
+    </div>
+    <div class="tools-view minigames-game" id="minigamesTimeTwinsGame" data-tools-view="time-twins" role="region" aria-labelledby="minigamesTimeTwinsTitle" hidden inert>
+      <div class="minigames-header" role="group" aria-labelledby="minigamesTimeTwinsTitle"><button type="button" id="minigamesTimeTwinsBack" class="reset-btn">Voltar para MiniGames</button><h2 id="minigamesTimeTwinsTitle" data-route-focus tabindex="-1">Gêmeos do Tempo</h2><p>Uma jornada fictícia sobre juros compostos. Ao sair ou abrir uma janela, o tempo pausa; use Continuar para retomar.</p></div>
+      <div id="toolsTimeTwinsSlot"></div>
+    </div>
+    <div class="tools-view minigames-game" id="minigamesCapitalCurrentsGame" data-tools-view="capital-currents" role="region" aria-labelledby="minigamesCapitalCurrentsTitle" hidden inert>
+      <div class="minigames-header" role="group" aria-labelledby="minigamesCapitalCurrentsTitle"><button type="button" id="minigamesCapitalCurrentsBack" class="reset-btn">Voltar para MiniGames</button><h2 id="minigamesCapitalCurrentsTitle" data-route-focus tabindex="-1">Correntes de Capital</h2><p>Um laboratório visual de pressão e preço. Ao sair ou abrir uma janela, o tempo pausa; continue quando decidir retomar.</p></div>
+      <div id="toolsCapitalCurrentsSlot"></div>
     </div>
   </section>
 
@@ -2558,7 +2593,22 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
 <script src="src/js/10-domain/18-execution-board-model.js"></script>
 <script src="src/js/20-ui/30-execution-board.js"></script>
 <script src="src/js/10-domain/16-nocuda-transfer.js"></script>
+<script src="src/js/40-app/29-time-twins/01-simulation.js"></script>
+<script src="src/js/40-app/29-time-twins/02-missions.js"></script>
+<script src="src/js/40-app/29-time-twins/03-progress.js"></script>
+<script src="src/js/40-app/29-time-twins/04-view.js"></script>
+<script src="src/js/40-app/29-time-twins/05-controller.js"></script>
+<script src="src/js/40-app/30-capital-currents/01-engine.js"></script>
+<script src="src/js/40-app/30-capital-currents/02-scenarios.js"></script>
+<script src="src/js/40-app/30-capital-currents/03-progress.js"></script>
+<script src="src/js/40-app/30-capital-currents/04-field-renderer.js"></script>
+<script src="src/js/40-app/30-capital-currents/04-view.js"></script>
+<script src="src/js/40-app/30-capital-currents/05-controller.js"></script>
 <script src="src/js/00-core/10-download-assets.js"></script>
+<script src="src/js/40-app/31-market-hours/01-sessions.js"></script>
+<script src="src/js/40-app/31-market-hours/02-assets.js"></script>
+<script src="src/js/40-app/31-market-hours/03-view.js"></script>
+<script src="src/js/40-app/31-market-hours/04-controller.js"></script>
 <script src="src/js/20-ui/31-tools-services.js"></script>
 <script src="src/js/20-ui/34-normative-reader.js"></script>
 <script src="src/js/20-ui/31-forex-accounts.js"></script>

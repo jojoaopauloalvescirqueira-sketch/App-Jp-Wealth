@@ -20,14 +20,21 @@ def check(page):
     assert page.evaluate('sessionEpochCurrent()')
     before = page.evaluate("JSON.stringify({state:S,storage:{...localStorage}})")
     children = page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")
-    assert children == ['tools-calendar','tools-nocuda','tools-leverage','tools-normative','tools-minigames'], ('MiniGames must be the last Tools destination', children)
+    assert children == ['tools-calendar','tools-market-hours','tools-nocuda','tools-leverage','tools-normative','tools-minigames'], ('MiniGames must be the last Tools destination', children)
     assert page.evaluate("JPWNavigation.navigate('tools-minigames')") is True
     assert page.evaluate("JPWNavigation.current().localView.view") == 'minigames'
     assert page.locator('#tools').get_by_role('heading', name='MiniGames', exact=True).is_visible()
-    capture_dir=Path(tempfile.mkdtemp(prefix='test-minigames-visual-',dir=Path(__file__).resolve().parent/'.artifacts/minigames-work'))
+    capture_root=Path(__file__).resolve().parent/'.artifacts/minigames-work'
+    capture_root.mkdir(parents=True,exist_ok=True)
+    capture_dir=Path(tempfile.mkdtemp(prefix='test-minigames-visual-',dir=capture_root))
     page.screenshot(path=str(capture_dir/'hub-desktop.png'),animations='disabled')
     assert page.locator('[data-galton-root]').count() == 0, 'catalog must not mount the game'
-    opener = page.locator('#tools').get_by_role('button', name='Abrir', exact=True)
+    assert page.locator('#minigamesHub article').count() == 3
+    assert page.locator('#minigamesHub').get_by_role('button',name='Abrir',exact=True).count() == 3
+    assert page.locator('#minigamesHub').get_by_role('heading',name='Galton Board',exact=True).count() == 1
+    assert page.locator('#minigamesTimeTwinsCard').get_by_role('heading',name='Gêmeos do Tempo',exact=True).count() == 1
+    assert page.locator('#minigamesCapitalCurrentsCard').get_by_role('heading',name='Correntes de Capital',exact=True).count() == 1
+    opener = page.locator('#minigamesOpenGalton')
     assert opener.count() == 1
     opener.focus(); opener.press('Enter')
     page.wait_for_function("document.querySelector('[data-galton-root]')?.__galtonController?.active")
@@ -46,7 +53,7 @@ def check(page):
     prepared=page.evaluate("({snapshot:__mini.snapshot(),staged:__mini.staged})")
     assert prepared['snapshot']['settledCount'] > 0 and prepared['staged'] == 10, prepared
     for _ in range(3):
-        page.locator('#tools').get_by_role('button',name='Voltar para MiniGames',exact=True).click()
+        page.locator('#minigamesGame').get_by_role('button',name='Voltar para MiniGames',exact=True).click()
         hidden=page.evaluate("""() => ({same:document.querySelector('[data-galton-root]').__galtonController===__mini,
           active:__mini.active,paused:__mini.manualPaused,raf:__mini.raf,observers:__galtonDebug.resizeObservers,
           mounts:__galtonDebug.mounts,roots:document.querySelectorAll('[data-galton-root]').length,

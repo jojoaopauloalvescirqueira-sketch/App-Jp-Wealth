@@ -1,0 +1,21 @@
+  Stoikus.Installer.Core -> /private/tmp/jpw-stoikus-installer-20261014/tools/stoikus-installer/src/Stoikus.Installer.Core/bin/Debug/net10.0/Stoikus.Installer.Core.dll
+  Stoikus.Installer.UiTests -> /private/tmp/jpw-stoikus-installer-20261014/tools/stoikus-installer/ui-tests/bin/Debug/net10.0/Stoikus.Installer.UiTests.dll
+PASS selection stays locked during delayed inspection
+PASS delayed A cannot become preview of selected B
+PASS action change invalidates pending preview
+PASS A to B to A still invalidates old A response
+PASS concurrent inspections are rejected
+PASS accepted preview executes only same target action and mode
+PASS readonly result cannot authorize repair
+PASS failed inspection unlocks but leaves no executable preview
+PASS cancel plus manual recovery failure keeps result visible
+PASS message text never upgrades failed recovery
+PASS missing result keeps window visible
+PASS successful result closes only after explicit close request
+PASS integrated first install interruption exposes recovery before receipt
+PASS integrated partial repair restores receipt and requires new preview
+PASS integrated recovery conflict preserves user bytes and report
+PASS integrated open process blocks recovery preview
+PASS integrated already cancelled recovery leaves target and journal intact
+PASS integrated recovery requires explicit confirmation and matching snapshot
+18/18 PASS; 0 FAIL

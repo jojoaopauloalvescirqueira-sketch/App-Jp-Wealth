@@ -20,6 +20,25 @@ const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.loc
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
 const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
 const PRECACHE_URLS = [
+  './src/js/40-app/31-market-hours/01-sessions.js',
+  './src/js/40-app/31-market-hours/02-assets.js',
+  './src/js/40-app/31-market-hours/03-view.js',
+  './src/js/40-app/31-market-hours/04-controller.js',
+  './src/vendor/aisol-dot-globe/aisol-globe.iife.js',
+  './src/data/market-hours/calendar-v1.json',
+
+  './src/js/40-app/30-capital-currents/01-engine.js',
+  './src/js/40-app/30-capital-currents/02-scenarios.js',
+  './src/js/40-app/30-capital-currents/03-progress.js',
+  './src/js/40-app/30-capital-currents/04-field-renderer.js',
+  './src/js/40-app/30-capital-currents/04-view.js',
+  './src/js/40-app/30-capital-currents/05-controller.js',
+  './src/js/40-app/29-time-twins/01-simulation.js',
+  './src/js/40-app/29-time-twins/02-missions.js',
+  './src/js/40-app/29-time-twins/03-progress.js',
+  './src/js/40-app/29-time-twins/04-view.js',
+  './src/js/40-app/29-time-twins/05-controller.js',
+
   './src/js/40-app/26-learning-catalog.js',
   './src/js/00-core/09-learning-progress.js',
   './src/js/40-app/27-learning-view.js',

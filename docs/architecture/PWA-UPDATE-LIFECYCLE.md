@@ -1,3 +1,11 @@
+## Bolsas Globais — redesign local — 16/10/2026
+
+Somente fontes de apresentação/controlador e predicado compartilhado mudam neste incremento; não há recurso de runtime, dependência ou protocolo novo. O gerador oficial atualiza fingerprints, manifesto e portátil, preservando a ordem dos scripts e os originais de calendário/globo. No celular, recolher o mapa adia sua solicitação ao loader; recursos precacheados não são executados por essa instalação. O ciclo conservador do worker abaixo continua vigente. Não usar uma página de prévia aninhada sob o scope do PWA: a navegação controlada recebe o index canônico; a prévia direta usa origem local separada.
+
+## Bolsas Globais — recursos locais 15/10/2026
+
+O precache acrescenta quatro scripts clássicos de coordenação, `src/data/market-hours/calendar-v1.json` e `src/vendor/aisol-dot-globe/aisol-globe.iife.js`. O sidecar `src/vendor/market-hours/runtime-payload.js` é exclusivo de file e permanece fora da lista web. A transferência de instalação da PWA não executa o IIFE; sua carga/execução é acionada pela entrada aceita. Portátil contém JSON inerte com os mesmos bytes. Build ID inclui insumos explícitos e verifica a correspondência do vendor congelado; nenhuma instalação ou requisição externa ocorre no build normal. O ciclo waiting/ativação/cache coerente descrito abaixo é preservado. [Contrato](MARKET-HOURS.md).
+
 # Ciclo de atualização da PWA
 
 ## Diagnóstico

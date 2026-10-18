@@ -78,7 +78,11 @@
       'O preenchimento permanece nesta sessão. Descongele explicitamente para continuar ou preserve-o pelo Backup Completo.');
     if(bar.firstElementChild.textContent!==message)bar.firstElementChild.textContent=message;
     if(continuing)restoreInert(id,host);
-    else for(const child of host.children)if(child!==bar)makeInert(child,id);
+    else {
+      // A refresh for another frozen module can reach this modal before suspend(id).
+      if(containedFocus&&owner(focused)===id&&!focused.closest('[data-module-work-notice]')&&!focusBefore.has(id))focusBefore.set(id,focused);
+      for(const child of host.children)if(child!==bar)makeInert(child,id);
+    }
     // Only move focus when it was made unavailable; never steal it from Settings.
     if(containedFocus&&focused.closest('[inert]'))bar.querySelector('button').focus();
   }
@@ -122,7 +126,7 @@
   function suspend(id,reason){
     if(!screens[id])return false;
     if(!suspended.has(id))causes.set(id,reason);
-    if(!suspended.has(id)&&owner(document.activeElement)===id)focusBefore.set(id,document.activeElement);
+    if(!suspended.has(id)&&!focusBefore.has(id)&&owner(document.activeElement)===id&&!document.activeElement.closest('[data-module-work-notice]'))focusBefore.set(id,document.activeElement);
     suspended.add(id);
     if(id==='research'&&typeof researchLeaveModule==='function')researchLeaveModule();
     refresh();return true;

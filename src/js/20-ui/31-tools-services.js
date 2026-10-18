@@ -33,10 +33,42 @@
     const dialog=openDialog();if(!dialog)return true;
     let notice=dialog.querySelector('[data-minigames-navigation-status]');
     if(!notice){notice=document.createElement('p');notice.dataset.minigamesNavigationStatus='';notice.className='minigames-navigation-status';notice.setAttribute('role','status');dialog.append(notice);}
-    notice.textContent='Feche a janela atual e abra Ferramentas e Serviços → MiniGames → Galton Board.';
+    notice.textContent='Feche a janela atual antes de abrir um jogo em MiniGames';
     return false;
   }
-  function syncMiniGames(){
+  let marketEntryPending=false;
+  function syncMarketHours(allowMount=false){
+    const slot=el('toolsMarketHoursSlot');if(!slot)return;
+    if(allowMount)marketEntryPending=true;
+    if(view!=='market-hours'||!el('tools').classList.contains('active'))marketEntryPending=false;
+    const visible=view==='market-hours'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&isVisible(slot);
+    if(!visible){window.JPWMarketHours?.deactivate();return;}
+    // Only accepted navigation may mount. Visibility observers cannot recreate
+    // a finalized controller, and async completion must recheck the real host.
+    if(marketEntryPending){marketEntryPending=false;window.JPWMarketHours?.mount(slot).then(()=>syncMarketHours()).catch(()=>{});}
+    window.JPWMarketHours?.activate();
+  }
+  function syncMiniGames(allowMount=false){
+    const capitalSlot=el('toolsCapitalCurrentsSlot');
+    if(capitalSlot){
+      const capitalVisible=view==='capital-currents'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&!capitalSlot.closest('[hidden],[inert]')&&capitalSlot.getClientRects().length>0;
+      let capital=capitalSlot.__capitalCurrentsController;
+      if(capital?.snapshot().destroyed)capital=null;
+      if(capitalVisible&&allowMount&&!capital)capital=window.JPWCapitalCurrents?.mount(capitalSlot);
+      if(capitalVisible&&capital&&!capital.snapshot().active)capital.activate();
+      else if(!capitalVisible&&capital?.snapshot().active)capital.deactivate();
+    }
+    const twinsSlot=el('toolsTimeTwinsSlot');
+    if(twinsSlot){
+      const twinsVisible=view==='time-twins'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&!twinsSlot.closest('[hidden],[inert]')&&twinsSlot.getClientRects().length>0;
+      let twins=twinsSlot.__timeTwinsController;
+      if(twins?.snapshot().destroyed)twins=null;
+      // Only a newly accepted entry may create an instance. Dialog/visibility
+      // observers can reactivate a live instance, never resurrect a disposed one.
+      if(twinsVisible&&allowMount&&!twins)twins=window.JPWTimeTwins?.mount(twinsSlot);
+      if(twinsVisible&&twins&&!twins.snapshot().active)twins.activate();
+      else if(!twinsVisible&&twins?.snapshot().active)twins.deactivate();
+    }
     const slot=el('toolsGaltonSlot');if(!slot)return;
     const visible=view==='galton'&&el('tools').classList.contains('active')&&!openDialog()&&!slot.closest('[hidden],[inert]')&&slot.getClientRects().length>0;
     if(visible&&!slot.querySelector('[data-galton-root]')){
@@ -49,11 +81,23 @@
     else if(!visible&&controller?.active)window.deactivateGaltonBoard?.({resume:false});
   }
   window.JPWNavigation?.subscribe(({current})=>{
-    syncMiniGames();
+    syncMarketHours(current.primary==='tools'&&current.localView?.view==='market-hours');
+    syncMiniGames(current.primary==='tools'&&['time-twins','capital-currents'].includes(current.localView?.view));
     if(current.primary!=='tools'||openDialog())return;
+    if(current.localView?.view==='market-hours')el('marketHoursTitle').focus({preventScroll:true});
     if(current.localView?.view==='galton')el('minigamesGaltonTitle').focus({preventScroll:true});
+    if(current.localView?.view==='time-twins')el('minigamesTimeTwinsTitle').focus({preventScroll:true});
+    if(current.localView?.view==='capital-currents')el('minigamesCapitalCurrentsTitle').focus({preventScroll:true});
   });
   function initMiniGames(){
+    el('minigamesOpenCapitalCurrents').addEventListener('click',()=>window.JPWNavigation?.navigateLocal('tools','capital-currents'));
+    el('minigamesCapitalCurrentsBack').addEventListener('click',()=>{
+      if(window.JPWNavigation?.navigate('tools-minigames'))el('minigamesOpenCapitalCurrents').focus({preventScroll:true});
+    });
+    el('minigamesOpenTimeTwins').addEventListener('click',()=>window.JPWNavigation?.navigateLocal('tools','time-twins'));
+    el('minigamesTimeTwinsBack').addEventListener('click',()=>{
+      if(window.JPWNavigation?.navigate('tools-minigames'))el('minigamesOpenTimeTwins').focus({preventScroll:true});
+    });
     el('minigamesOpenGalton').addEventListener('click',()=>window.JPWNavigation?.navigateLocal('tools','galton'));
     el('minigamesBack').addEventListener('click',()=>{
       if(window.JPWNavigation?.navigate('tools-minigames'))el('minigamesOpenGalton').focus({preventScroll:true});
@@ -62,13 +106,16 @@
     // canvas updates cannot trigger navigation or repeated activation.
     const containsDialog=node=>node instanceof Element&&(node.matches('dialog,[role="dialog"],[aria-modal="true"],'+overlaySelector)||!!node.querySelector('dialog,[role="dialog"],[aria-modal="true"],'+overlaySelector));
     const observer=new MutationObserver(records=>{
-      if(records.some(record=>record.type==='attributes'?containsDialog(record.target):[...record.addedNodes,...record.removedNodes].some(containsDialog)))syncMiniGames();
+      if(records.some(record=>record.type==='attributes'?containsDialog(record.target):[...record.addedNodes,...record.removedNodes].some(containsDialog))){syncMiniGames();syncMarketHours();}
     });
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncMiniGames();});
+    document.addEventListener('visibilitychange',()=>{syncMiniGames();syncMarketHours();});
     observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','inert','open','aria-hidden','role','aria-modal','style']});
   }
   function selectView(next){
-    if(!['calendar','nocuda','leverage','normative','minigames','galton'].includes(next))return;
+    if(!['calendar','market-hours','nocuda','leverage','normative','minigames','galton','time-twins','capital-currents'].includes(next))return;
+    if(view==='market-hours'&&next!=='market-hours')window.JPWMarketHours?.deactivate();
+    if(view==='capital-currents'&&next!=='capital-currents')window.JPWCapitalCurrents?.deactivate(el('toolsCapitalCurrentsSlot'));
+    if(view==='time-twins'&&next!=='time-twins')window.JPWTimeTwins?.deactivate(el('toolsTimeTwinsSlot'));
     if(view==='galton'&&next!=='galton')window.deactivateGaltonBoard?.({resume:false});
     if(view==='normative'&&next!=='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.leave();
     view=next;
@@ -175,7 +222,7 @@
       preview:{filename:'Previa_Stoikus_Interface_R4.html',mime:'text/html'}
     }};
     const artifactTypes=artifactCatalog[manifest?.interfaceRelease?.revision]||artifactCatalog.R5;
-    const kinds=['dailySource','source','compiled',...Object.keys(artifactTypes)];
+    const kinds=['dailySource','source','compiled',...Object.keys(artifactTypes),'installer'];
     const release=manifest&&manifest.interfaceRelease;
     const validRelease=release&&((release.revision==='R4'&&release.candidate==='1.22.3-interface'&&release.archiveVariant==='interface'&&manifest.version==='1.22.3')||
       (release.revision==='R5'&&release.candidate==='1.23.0-interface'&&release.archiveVariant===''&&manifest.version==='1.23.0'))&&release.state==='SOURCE_ONLY_NATIVE_PENDING'&&
@@ -188,6 +235,18 @@
         /^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path))&&
       entry.filename===entry.path.split('/').pop()&&/^[a-f0-9]{64}$/.test(entry.sha256)&&
       Number.isSafeInteger(entry.bytes)&&entry.bytes>0;
+    const installerFilename='Stoikus_Setup_1.0.0-beta.1_win-x64.exe';
+    const releasePrefix='https://github.com/jojoaopauloalvescirqueira-sketch/App-Jp-Wealth/releases/download/';
+    const validInstaller=entry=>entry&&entry.available===true&&entry.installerVersion==='1.0.0-beta.1'&&
+      entry.productVersion===manifest?.version&&entry.platform==='win-x64'&&entry.unsigned===true&&
+      entry.filename===installerFilename&&entry.path==='downloads/jpw-alavancagem-atual/'+installerFilename&&
+      /^[a-f0-9]{64}$/.test(entry.sha256)&&Number.isSafeInteger(entry.bytes)&&entry.bytes>0&&
+      typeof entry.releaseUrl==='string'&&entry.releaseUrl.startsWith(releasePrefix)&&
+      /^[A-Za-z0-9._-]+\/Stoikus_Setup_1\.0\.0-beta\.1_win-x64\.exe$/.test(entry.releaseUrl.slice(releasePrefix.length))&&
+      ['windowsX64','parallelsArm','browser'].every(stage=>entry.nativeTests?.[stage]==='PASS'&&
+        /^docs\/validation\/[A-Za-z0-9_./-]+\.json$/.test(entry.nativeEvidence?.[stage]?.path||'')&&
+        !entry.nativeEvidence[stage].path.split('/').some(part=>part==='..'||part==='.')&&
+        /^[a-f0-9]{64}$/.test(entry.nativeEvidence[stage].sha256));
     const validManifest=manifest&&manifest.schemaVersion===1&&
       typeof manifest.version==='string'&&/^[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.version)&&
       manifest.downloads&&manifest.validation;
@@ -221,13 +280,14 @@
       set(stage,state+(detail?' · '+detail:''));
     }
     for(const kind of kinds){
-      const type=artifactTypes[kind]||{mime:'application/zip'};
+      const isInstaller=kind==='installer',type=isInstaller?{mime:'application/vnd.microsoft.portable-executable'}:artifactTypes[kind]||{mime:'application/zip'};
       const entry=Object.hasOwn(artifactTypes,kind)?(validRelease?release.artifacts[kind]:null):manifest.downloads[kind],buttons=document.querySelectorAll('[data-jpw-leverage-download="'+kind+'"]');
       const disable=value=>buttons.forEach(button=>{button.disabled=value;});
       const resource=window.JPW_DOWNLOAD_MANIFEST?.resources?.['leverage/'+kind];
-      const ready=validEntry(entry,kind)&&!!resource&&resource.mime===type.mime&&
+      const ready=isInstaller?location.protocol!=='file:'&&validInstaller(entry):validEntry(entry,kind)&&!!resource&&resource.mime===type.mime&&
         ['path','filename','sha256','bytes'].every(key=>resource[key]===entry[key]);
       disable(!ready);
+      if(isInstaller)buttons.forEach(button=>{button.textContent=ready?'Baixar instalador .exe':'Instalador .exe · indisponível';});
       set(kind+'-sha',ready?entry.sha256:'—');
       if(ready) set(kind+'-status','Disponível · '+entry.filename+' · '+entry.bytes.toLocaleString('pt-BR')+' bytes');
       else if(entry&&entry.available===false&&typeof entry.reason==='string'&&entry.reason)
@@ -237,7 +297,19 @@
         if(!ready||button.disabled)return;
         const action=downloadAction();disable(true);notice('Verificando o arquivo antes do download…');
         try{
-          const bytes=await window.JPWDownloadAssets.getBytes('leverage/'+kind,{signal:action.signal});
+          let bytes;
+          if(isInstaller){
+            const response=await fetch(entry.releaseUrl,{signal:action.signal,credentials:'omit',cache:'no-store'});
+            if(!response.ok)throw new Error('Arquivo não encontrado neste endereço.');
+            const mime=(response.headers?.get('content-type')||'').split(';')[0].trim().toLowerCase();
+            if(!['application/octet-stream','application/x-msdownload','application/vnd.microsoft.portable-executable'].includes(mime))
+              throw new Error('Tipo de arquivo diferente do esperado.');
+            bytes=new Uint8Array(await response.arrayBuffer());
+            if(bytes.length!==entry.bytes)throw new Error('Tamanho do pacote diferente do manifesto.');
+            if(!crypto.subtle)throw new Error('Verificação criptográfica indisponível neste navegador.');
+            const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
+            if(digest!==entry.sha256)throw new Error('Hash do pacote diferente do manifesto.');
+          }else bytes=await window.JPWDownloadAssets.getBytes('leverage/'+kind,{signal:action.signal});
           if(!action.current())return;
           const url=URL.createObjectURL(new Blob([bytes],{type:type.mime}));
           const link=document.createElement('a');link.href=url;link.download=entry.filename;document.body.append(link);link.click();link.remove();

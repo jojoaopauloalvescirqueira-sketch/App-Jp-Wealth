@@ -95,7 +95,7 @@ def close_group(page):
 
 
 def run_timing(browser, url, evidence, capture, artifacts):
-    context, page, observed = boot(browser, url, 'sidebar')
+    context, page, observed = boot(browser, url, 'sidebar', personal_finance_active=True)
     try:
         go(page, 'forex-management-accounts')
         page.locator('#brandHomeBtn').focus()
@@ -364,7 +364,7 @@ def run_overlay(browser,url,evidence,capture,artifacts):
         finally:finish_context(context)
     evidence['overlay']=rows
     for key in ['research','exec','finpes','tools']:
-        context,page,observed=boot(browser,url,'sidebar',rail='collapsed')
+        context,page,observed=boot(browser,url,'sidebar',rail='collapsed',personal_finance_active=key=='finpes')
         try:
             instrument(page);before=snapshot(page)
             # First physical click, with no dwell or forced dispatch. Opening

@@ -68,6 +68,8 @@ def boot(browser, url, mutacao_js=None):
     page.goto(url, wait_until="load")
     page.wait_for_function(
         "() => typeof S === 'object' && window.JPWFin && typeof window.JPWFin.ui.selectView === 'function'")
+    # Fixture operacional explícita; não reaplicada ao recarregar/restaurar.
+    page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
     if mutacao_js:
         page.evaluate(f"""() => {{
             {mutacao_js}

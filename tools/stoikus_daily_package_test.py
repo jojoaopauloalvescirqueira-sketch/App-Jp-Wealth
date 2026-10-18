@@ -118,7 +118,9 @@ def fixture(root):
     raw = (ROOT / BASELINE_ARCHIVE).read_bytes()
     assert_historical_stoikus_archive(raw)  # Literal size/hash before extraction.
     manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
-    manifest.pop('interfaceRelease', None)  # Original default-path controls remain independent.
+    manifest.pop('interfaceRelease', None)
+    # This historical synthetic release has no installer; never inherit current-version metadata.
+    manifest.get('downloads', {}).pop('installer', None)  # Original default-path controls remain independent.
     manifest['version'] = '1.22.3'
     manifest['coverage'] = manifest['coverage'].replace('1.22.0', '1.22.3')
     manifest['sourceFiles'] = sorted(PRODUCT + name for name in SDK_MEMBERS)

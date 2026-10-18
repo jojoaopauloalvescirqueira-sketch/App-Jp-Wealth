@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "required_suites": ["example-local"],
+  "protections": [
+    {
+      "id": "EXAMPLE-ONLY-001",
+      "kind": "regression",
+      "source": "Synthetic format example; replace with an approved project source",
+      "scope": "Synthetic example, no project rule is established",
+      "required": true,
+      "tests": ["example_case"],
+      "suites": ["example-local"]
+    }
+  ]
+}

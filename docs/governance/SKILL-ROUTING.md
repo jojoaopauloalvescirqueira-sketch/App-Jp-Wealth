@@ -73,3 +73,10 @@ Recorte de gráficos de cenários: após a X1, abrir o
 Planejamento FX (`JPW-FEAT-0011`) no Atlas. Ele localiza o componente e seus
 limites; não aciona novas fontes financeiras, permissões, dependências ou gates.
 Sua adoção focal está no CHG-SCENARIO-FAN-CONTROL, sem alterar a filosofia X1.
+
+
+## JP Engenharia com IA — fonte local1.3.0
+
+Em implementação, correção, diagnóstico e revisão de código, abrir `skills/jp-ai-engineering/SKILL.md`, conforme o núcleo AGENTS; carregar referências por necessidade. A mesma fonte congelada é descoberta pelos links locais `.agents/skills/jp-ai-engineering` e `.claude/skills/jp-ai-engineering`; nenhuma cópia concorrente ou caminho ao cache pessoal. `allow_implicit_invocation:false` permanece como no pacote. Leitura por instrução do projeto não comprova autodisparo nativo nem instalação de conector/MCP.
+
+A memória factual fica em `tools/regression-memory.json`: entrada por bug/cenário, fonte, oráculo, teste e execução efetiva. Consultar esse índice e atualizar apenas fatos autorizados. Casos fora do runner ficam explicitamente fora; testes de integridade não provam o comportamento indexado. Não há nova base de memória, varredura autônoma ou dependência. [Contrato e recuperação](../work/CHG-JPW-ENGINEERING-INSTALL-20261016.md).

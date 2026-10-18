@@ -1,3 +1,21 @@
+# JP Wealth — consolidação em validação
+
+A integração atual reúne site, correção F01 e instalador beta para Stoikus1.23.0/R5. [Escopo, testes e limites](docs/work/CHG-JPW-CONSOLIDACAO-INTEGRAL-20261018.md). O instalador permanece privado até provas próprias. Os cabeçalhos abaixo preservam as entregas anteriores e seus respectivos estados; não aprovam o conjunto.
+
+# Instalador Stoikus — atualização R4 para 1.23.0 — 18/10/2026
+
+Candidato local beta 1.0.0-beta.1, cálculo 1.9.0; fontes 1.23.0/R5 preservadas. O assistente permanece indisponível para download público até provas próprias. [Contrato e estados](docs/work/CHG-STOIKUS-INSTALLER-R4-20261018.md), [geração local](tools/stoikus-installer/README.md).
+
+# Consolidação local do JP Wealth — 18/10/2026
+
+Candidato em reconciliação na branch `codex/bolsas-globais-aisol-20261015`, base `bf0b1e8a882c9cdf880129f68f7c111e06e6f0c4` (main após PR42). O pedido humano vigente autoriza resolver pendências, commit, push, merge e limpeza das worktrees após validação; esta etapa apenas prepara e testa a combinação. Publicação do site não integra esta entrega.
+
+Reúne os trabalhos locais de Gêmeos do Tempo, Correntes de Capital/campo vivo, Bolsas Globais e disponibilidade PF, com a instalação delimitada JP Engenharia1.3.0. Preserva fontes/pacotes Stoikus1.23.0/R5, cálculo1.9.0, edição documental curada1.0.0-c2 e fixture de downloads já integrada. [Contrato de reconciliação](docs/work/CHG-JPW-CONSOLIDACAO-SITE-20261018.md).
+
+A validação desta combinação terá evidências novas; o FULL81/81 do build40045045ce5acd15 é histórico e não aprova os bytes reconciliados. Os incidentes anteriores permanecem identificados nos seus recibos, sem transferir sua classificação para uma execução nova. O sintoma de PF ainda visível na aba pessoal continua dependente da versão/DOM do cliente; leitura sintética não comprova a aba real. Nenhum dado/cache/preferência pessoal será limpo. Aceite visual humano, compreensão dos jogos, Safari, leitor de tela e toque físico permanecem provas separadas.
+
+## Fotografias anteriores preservadas
+
 # Integração Stoikus 1.23.0/R5 ao JP Wealth — 2026-10-16
 
 Autorizada a integração, commit, push e merge à `main` atual (`2b22175a4f3f47b1f289deca65366c4dc0445dca`), preservando as melhorias recentes do aplicativo. Trabalho na branch existente `codex/stoikus-continuity-20261014`. O [registro desta integração](docs/work/CHG-STOIKUS-GIT-INTEGRATION-20261016.md) separa o catálogo de distribuição, a página e a validação final.
@@ -30,7 +48,7 @@ Compilação e uso MT5, instalação demo e aceite humano continuam **NOT_RUN**.
 Use o kit de compilação Windows e o pin separado; são arquivos de preparação,
 sem EX5 e sem instalação automática. O site não executa os componentes MT5.
 
-A assinatura aprovada é **Stoikus by JP Wealth**: Arial regular24px, by12px e logo vermelha original12px em composição240×28px lógicos. NoCuda conserva sua identidade. A revisão muda apresentação/distribuição; cálculo1.9.0, IDs, dados e negociação permanecem sob os contratos existentes.
+A assinatura aprovada é **Stoikus by JP Wealth**: Arial regular24px, by12px e logo vermelha original12px em composição240×28px lógicos. NoCuda conserva sua identidade. A revisão muda apresentação/distribuição; cálculo 1.9.0, IDs, dados e negociação permanecem sob os contratos existentes.
 
 
 ---
@@ -59,7 +77,38 @@ As correções possuem regressões host e crítica independente. O congelamento 
 
 Esta tarefa não autoriza commit, push, merge nem publicação. O instalador beta preparado em outra worktree conserva o payload 1.22.1; não representa automaticamente estas correções. Instruções AGENTS antigas permanecem revogadas e preservadas como documentos históricos.
 
+
+## Fotografia local anterior recuperada — sem transferência de validação
+
+# Candidate local — Correntes de Capital: aprendizado opcional — 15/10/2026
+
+O campo visual aprovado pelo proprietário agora recebe uma introdução opcional de três passos e três descobertas: retirar pressão, repetir o mesmo pulso com duas profundidades e atravessar uma faixa rasa. A exploração livre continua disponível desde a abertura, pausada. Cada comparação usa trajetórias recalculadas pelo mesmo motor, condições iniciais e eixos comuns; não modifica o experimento livre.
+
+O progresso distingue orientação vista, prática realizada e etapa pulada. Só IDs/estados e versão ficam em `jpwealth_capital_field_v1`; parâmetros e trajetórias ficam na memória. Registros incompatíveis são preservados, conflitos entre abas exigem releitura e falhas comprovadas de armazenamento permitem uso temporário com aviso. A chave antiga não é convertida e o Backup Completo mantém seu contrato. Galton Board, Gêmeos do Tempo, dados e regras financeiras permanecem fora deste delta.
+
+Implementação local; gate completo, revisão final e aceite do conjunto são evidências separadas, vinculadas ao candidate no relatório `tools/.artifacts/capital-field-work-20261015/phase2/REPORT.md`. A resposta “sim” do proprietário confirmou a direção visual do primeiro campo, sem provar compreensão ou diversão. [Modelo e limites](docs/architecture/CAPITAL-CURRENTS.md). Sem commit, merge, push ou publicação.
+
+## Fotografias das fases anteriores preservadas
+
+# Fotografia focal — Correntes de Capital: campo vivo — 15/10/2026
+
+O proprietário aprovou substituir a expedição por um laboratório plano de pressão e preço. A primeira fatia está implementada e em validação sobre o candidate completo de Gêmeos do Tempo + Correntes de Capital (`fc7280e02921c857`), na branch `codex/minigames-capital-currents-20261015`. O campo é mostrado desde a abertura, pausado, com vetores, linhas de corrente, partículas e seleção de cenário. [Contrato e limites](docs/architecture/CAPITAL-CURRENTS.md) · [CHG/CTX](docs/work/CHG-JPW-CAPITAL-FIELD-20261015.md).
+
+Baseline recuperável de 1.043 arquivos e provas próprias em `tools/.artifacts/capital-field-work-20261015/`. Nenhuma alteração de regra financeira, dados, norma, instruções ou formato de backup; os outros dois jogos e seus deltas pendentes são preservados. Nesta fatia não há gravação de progresso; a chave antiga permanece. Os resultados da expedição anterior são históricos e não aprovam o redesign.
+
+O ponto de avaliação previsto é uma prévia jogável antes de ampliar descobertas/progresso. Gate completo, host/distribuição e compreensão/diversão humanas ainda pendentes para o novo candidate. Sem commit, merge, push ou publicação.
+
+## Fotografias anteriores preservadas
+
+# Candidate local — Correntes de Capital, 15/10/2026
+
+Em **Ferramentas e Serviços → MiniGames**, Correntes de Capital acrescenta uma expedição espacial de alocação aos cartões Galton Board e Gêmeos do Tempo. A nave representa pesos de dois ativos fictícios e caixa; pilotar solicita negociações, enquanto os pulsos do mercado alteram os pesos. Patrimônio, caixa, custos e compromissos permanecem separados. Campanha de seis missões e laboratório livre, sem autoplay.
+
+O campo representa o efeito do último pulso, sem previsão. A investigação pausa e permite comparar manobras com preços externos idênticos, recalculando restrições, custos e pagamentos. O progresso guarda somente IDs/estados em chave auxiliar; valores e configurações ficam na sessão. Não há acesso a contas, escritores financeiros ou regras normativas. [Modelo, experiência e limites](docs/architecture/CAPITAL-CURRENTS.md). Candidate local sujeito a validação e aceite; nenhum commit, merge, push ou publicação nesta entrega. As revisões anteriores seguem abaixo.
+
 # JP Wealth — Stoikus 1.22.1 e correções de auditoria — 2026-10-13
+
+Candidate local de **Gêmeos do Tempo (15/10/2026)**: segundo cartão em Ferramentas e Serviços → MiniGames. Dois investidores fictícios, seis missões e laboratório livre exploram tempo, aportes e juros compostos. Montagem sob demanda, pausa ao sair/ocultar/abrir diálogo e progresso isolado de IDs/estados. O guia conserva 57 passos, sete trilhas e versão 1. [Modelo, lifecycle e testes](docs/architecture/TIME-TWINS.md). Sem alteração de regras financeiras; validação, revisão e aceite humano são evidências separadas.
 
 Candidate local de **MiniGames (14/10/2026)**: Ferramentas e Serviços → MiniGames reúne o cartão Galton Board. **Abrir** entra no jogo e **Voltar para MiniGames** retorna à central. A montagem ocorre somente ao abrir o jogo; a simulação não começa automaticamente. Sair ou cobrir o jogo pausa a mesma instância em memória; voltar exige **Continuar**. Preferências, física, estatística e dados financeiros preservados. O guia mantém seus 57 passos em sete trilhas, inclusive o ID anterior do Laboratório. [Contrato vigente](docs/architecture/GALTON-BOARD.md). Validação e aceite são separados; sem merge, push ou publicação nesta tarefa.
 

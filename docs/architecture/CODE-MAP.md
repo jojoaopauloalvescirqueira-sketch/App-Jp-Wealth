@@ -1,3 +1,27 @@
+# Recorte atual em validação — aprendizado do campo vivo — 15/10/2026
+
+Correntes de Capital mantém seis scripts na pasta `src/js/40-app/30-capital-currents/`. `02-scenarios.js` é agora o catálogo de introdução/descobertas e experiências controladas pelo motor puro; `03-progress.js` trata somente a nova chave `jpwealth_capital_field_v1`. View/controlador integram lições opcionais, observação local, leitura/prática/salto e releitura/reinício seguros. A chave da campanha anterior é preservada sem conversão. Motor/renderer aceitos, outros jogos e contratos financeiros não mudam. [Contrato atual](CAPITAL-CURRENTS.md). Gate completo e validação final em curso nesta fotografia.
+
+## Fotografias anteriores preservadas
+
+# Recorte em execução — campo vivo — 15/10/2026
+
+O terceiro jogo mantém a pasta `src/js/40-app/30-capital-currents/`, API de lifecycle e rota. Seu motor puro passa a `fieldAt`/`advance`/`trace`; o renderer Canvas dedicado fica em `04-field-renderer.js`, antes de view/controlador no manifesto. O modelo de pressão/preço substitui a campanha triangular. A primeira fatia não grava progresso; catálogo/progresso anteriores ficam dormentes, sem conversão. [Contrato focal](CAPITAL-CURRENTS.md). Fotografia de implementação, sem aprovação final; fontes financeiras, outros jogos e autoridades não mudam.
+
+## Fotografias anteriores preservadas
+
+# Correntes de Capital — complemento local 15/10/2026
+
+`40-app/30-capital-currents/01-engine.js`, `02-scenarios.js`, `03-progress.js`, `04-view.js`, `05-controller.js` compõem `JPWCapitalCurrents`. `20-ui/31-tools-services.js` hospeda a instância lazy; `01-navigation.js` resolve a view no mesmo child MiniGames; `07-finalize-session.js` descarta a instância e inclui somente a nova chave AUX. O guia conserva IDs/versão. Testes próprios de motor, progresso e browser complementam as regressões preservadas. [APIs e lifecycle](CAPITAL-CURRENTS.md). Registros anteriores seguem abaixo.
+
+---
+
+# Gêmeos do Tempo — complemento local 15/10/2026
+
+`40-app/29-time-twins/01-simulation.js`, `02-missions.js`, `03-progress.js`, `04-view.js` e `05-controller.js` compõem `window.JPWTimeTwins`: cálculo puro, catálogo, progresso estrito, HTML e controlador. `20-ui/31-tools-services.js` hospeda a view local lazy após navegação aceita; `40-app/01-navigation.js` resolve o mesmo child MiniGames; `07-finalize-session.js` inclui chave AUX e hook dispose. Guia conserva versão/IDs. Ordem e hashes no manifesto; SW/portátil derivados pelo gerador oficial. Nenhum acesso ao domínio financeiro. [APIs e lifecycle](TIME-TWINS.md). Registros anteriores preservados abaixo.
+
+---
+
 # Notas — APPLE NOTES EXPERIENCE MATCH, 2026-09-14
 
 Base integrada conferida: `9ca32073e1fa032318b7e6e6eb50b5f693efe2d9`. Revisão local na branch `codex/apple-notes-match-20260914`, sem integração. `index.html` e `src/styles/app.css` reorganizam os controles existentes em três zonas de toolbar/painéis. `14-mvp-notes.js` preserva CRUD/dirty/ordem/exportação/larguras e projeta aparência por atributos; preferência auxiliar `jpwealth_notes_appearance_v1` com confirmed/draft, read-back, recusa/retry e bloqueio UNKNOWN/conflito. `09-settings-modal.js` conecta prévia/cancelamento ao cartão Notas existente; `07-finalize-session.js` inclui somente a chave nova na limpeza auxiliar. Conteúdo, schemas, matemática e políticas dos tickets permanecem. Fonte e validação focal: [CHG/CTX](../work/CHG-APPLE-NOTES-MATCH-20260914.md), `tools/apple_notes_match_test.py`. As seções seguintes são registros anteriores; suas afirmações de integração/contexto não substituem a base Git agora conferida.

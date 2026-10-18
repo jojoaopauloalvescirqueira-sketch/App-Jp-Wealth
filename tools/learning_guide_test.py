@@ -273,12 +273,15 @@ def cross_tab(page,row):
 
 def suspension(page,row,kind):
     before=financial(page)
-    if kind=='frozen-alladin':
+    if kind in {'frozen-alladin','frozen-personal-finance'}:
+        module = 'alladin' if kind=='frozen-alladin' else 'personal-finance'
+        first_step = 'alladin-start' if module=='alladin' else 'personal-finance-overview'
         availability=page.evaluate("localStorage.getItem('jpw_module_availability_v1')")
-        central(page);click(page,'[data-learning-track="alladin"]');assert snap(page)['paused']
+        assert page.evaluate("id=>!JPWModuleAvailability.canAccess(id)",module)
+        central(page);click(page,'[data-learning-track="'+module+'"]');assert snap(page)['paused']
         assert 'congelado' in snap(page)['notice'].lower(),snap(page)
         assert page.evaluate("localStorage.getItem('jpw_module_availability_v1')")==availability
-        assert record(page,'alladin-start') is None
+        assert record(page,first_step) is None
     elif kind=='missing-anchor':
         start(page,'basics');page.locator('#dash').evaluate('e=>e.hidden=true');settle(page)
         assert snap(page)['paused'] and record(page,'basics-home') is None
@@ -660,22 +663,57 @@ def research_drafts(page,row):
 ORIGINAL_SCRIPT_PATHS_SHA256 = '40a619eac3b449f7e0704d8aa2be46f38280902d0340f961e898057d22b36c82'
 DOWNLOAD_LOADER = 'src/js/00-core/10-download-assets.js'
 DOWNLOAD_CONSUMER = 'src/js/20-ui/31-tools-services.js'
+TIME_TWINS_MODULES = [f'src/js/40-app/29-time-twins/{name}.js' for name in
+    ('01-simulation','02-missions','03-progress','04-view','05-controller')]
+
+CAPITAL_CURRENTS_MODULES = [f'src/js/40-app/30-capital-currents/{name}.js' for name in
+    ('01-engine','02-scenarios','03-progress','04-field-renderer','04-view','05-controller')]
+
+MARKET_HOURS_MODULES = [f'src/js/40-app/31-market-hours/{name}.js' for name in
+    ('01-sessions','02-assets','03-view','04-controller')]
 
 def assert_startup_scripts(root,scripts,expected):
-    original=[path for path in expected if path!=DOWNLOAD_LOADER]
-    assert len(original)==106 and hashlib.sha256('\n'.join(original).encode()).hexdigest()==ORIGINAL_SCRIPT_PATHS_SHA256,{'original':original}
     assert scripts==expected and scripts[-4:]==MODULES,{'scripts':scripts,'manifest':expected}
+    if any(path in expected for path in MARKET_HOURS_MODULES):
+        assert all(expected.count(path)==1 for path in MARKET_HOURS_MODULES),expected
+        assert DOWNLOAD_LOADER in expected,'Market hours must follow the download loader'
+        market_start=expected.index(DOWNLOAD_LOADER)+1
+        assert expected[market_start:market_start+4]==MARKET_HOURS_MODULES,'Market hours must form one ordered block immediately after the download loader'
+        # Validate the approved block before applying the unchanged legacy oracles.
+        expected=expected[:market_start]+expected[market_start+4:]
+    twins_present=any(path in expected for path in TIME_TWINS_MODULES)
+    capital_present=any(path in expected for path in CAPITAL_CURRENTS_MODULES)
+    if capital_present:
+        assert twins_present, 'The third game must preserve Time Twins'
+        assert all(expected.count(path)==1 for path in CAPITAL_CURRENTS_MODULES),expected
+        capital_start=expected.index(CAPITAL_CURRENTS_MODULES[0])
+        assert expected[capital_start:capital_start+6]==CAPITAL_CURRENTS_MODULES,expected
+        assert capital_start+6==expected.index(DOWNLOAD_LOADER),'Capital Currents must immediately precede the download loader'
+    if twins_present:
+        assert all(expected.count(path)==1 for path in TIME_TWINS_MODULES),expected
+        start=expected.index(TIME_TWINS_MODULES[0])
+        assert expected[start:start+5]==TIME_TWINS_MODULES,expected
+        assert start+5==expected.index(CAPITAL_CURRENTS_MODULES[0] if capital_present else DOWNLOAD_LOADER),'Time Twins must precede the next isolated game or the download loader'
+    original=[path for path in expected if path!=DOWNLOAD_LOADER and path not in TIME_TWINS_MODULES and path not in CAPITAL_CURRENTS_MODULES]
+    assert len(original)==106 and hashlib.sha256('\n'.join(original).encode()).hexdigest()==ORIGINAL_SCRIPT_PATHS_SHA256,{'original':original}
     if DOWNLOAD_LOADER in expected:
-        assert len(expected)==107 and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
+        assert len(expected)==(118 if capital_present else 112 if twins_present else 107) and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
         assert (Path(root)/DOWNLOAD_LOADER).is_file(),'Declared download loader source is missing'
         assert expected.index(DOWNLOAD_LOADER)+1==expected.index(DOWNLOAD_CONSUMER),'Download loader must immediately precede tools-services'
     else:
-        assert len(expected)==106,expected
+        assert not twins_present and len(expected)==106,expected
 
 def startup_surface(page,row):
     assert page.evaluate("!!(JPWLearningGuide&&JPWLearningProgress&&JPWLearningCatalog&&JPWLearningView)")
     start(page,'basics');click(page,'#jpwLearningUnderstand');seen(page,'basics-home')
     assert len(page.evaluate('JPWLearningCatalog.tracks'))==7
+    assert page.evaluate('JPWLearningCatalog.version')==1
+    if page.locator('#minigamesTimeTwinsCard').count():
+        entry=page.evaluate("JPWLearningCatalog.tracks.flatMap(t=>t.steps).find(s=>s.id==='general-settings-probability-lab')")
+        assert 'Gêmeos do Tempo' in entry['instruction'] and 'Galton Board' in entry['instruction']
+        assert ('três cartões' if page.locator('#minigamesCapitalCurrentsCard').count() else 'dois cartões') in entry['expected']
+        if page.locator('#minigamesCapitalCurrentsCard').count():
+            assert 'Correntes de Capital' in entry['instruction'] and 'Correntes de Capital' in entry['expected']
     if not row['config'].get('surface'):
         scripts=page.evaluate('[...document.scripts].map(x=>x.getAttribute("src")).filter(x=>x&&x!=="build-id.js")')
         expected=[item['path'] for item in json.loads((Path(row['root'])/'src/js/manifest.json').read_text())['files']]
@@ -828,15 +866,15 @@ def prepare(context,url,row,welcome_case=False):
     return page
 
 def case_list():
-    cases=[('welcome-permanent-entry',welcome,{}),('readonly-all-57-native-actions',readonly,{'active_alladin':True}),
+    cases=[('welcome-permanent-entry',welcome,{}),('readonly-all-57-native-actions',readonly,{'active_alladin':True,'active_pf':True}),
       ('progress-skip-pause-reload-resume-restart',progress_lifecycle,{}),('invalid-version-raw-preserved',invalid_progress,{}),
       ('guide-storage-read-refused',lambda p,r:guide_storage(p,r,'read-refused'),{}),
       ('guide-storage-write-refused',lambda p,r:guide_storage(p,r,'refused'),{}),
-      ('cross-tabs-conflict-before-receipt',cross_tab,{}),('cleanup-dispose-clear-stale-boot',cleanup,{})]
-    cases += [(kind,lambda p,r,k=kind:suspension(p,r,k),{}) for kind in ['frozen-alladin','missing-anchor','off-route','foreign-dialog']]
+      ('cross-tabs-conflict-before-receipt',cross_tab,{'active_pf':True}),('cleanup-dispose-clear-stale-boot',cleanup,{})]
+    cases += [(kind,lambda p,r,k=kind:suspension(p,r,k),{'active_pf':True} if kind in {'off-route','foreign-dialog'} else {}) for kind in ['frozen-alladin','frozen-personal-finance','missing-anchor','off-route','foreign-dialog']]
     cases += [(f'layout/{layout}/{width}/{theme}',geometry,{'layout':layout,'width':width,'theme':theme})
       for layout in ['sidebar','topbar','glass','submenu'] for width,theme in [(1440,'dark'),(390,'light')]]
-    cases += [(f'native-pf/{kind}',lambda p,r,k=kind:pf_practice(p,r,k),{})
+    cases += [(f'native-pf/{kind}',lambda p,r,k=kind:pf_practice(p,r,k),{'active_pf':True})
       for kind in ['confirmed','refused','unknown','escape']]
     cases += [(f'native-notes/{kind}',lambda p,r,k=kind:notes_practice(p,r,k),{})
       for kind in ['confirmed','refused','unknown','dirty-refusal']]
@@ -844,7 +882,7 @@ def case_list():
       for kind in ['button','escape','backdrop']]
     cases += [('native-contextual-help',contextual_help,{}),('native-pending-account-guard',account_guard,{}),
       ('native-research-draft-preservation-local-refusal',research_drafts,{}),('actual-backup-excludes-guide',backup,{}),
-      ('actual-backup-import-pauses-invalidates-practice',import_revalidation,{}),
+      ('actual-backup-import-pauses-invalidates-practice',import_revalidation,{'active_pf':True}),
       ('startup-source-manifest',startup_surface,{}),('startup-portable-http',startup_surface,{'surface':'portable-http'}),
       ('startup-portable-file',startup_surface,{'surface':'portable-file'}),('offline-sw-four-guide-modules',offline,{'service_workers':'allow'})]
     cases += [(kind,lambda p,r,k=kind:viewport_events(p,r,k),{})
@@ -854,8 +892,8 @@ def case_list():
     cases += [(f'native-metadata-geometry/{width}x{height}',native_metadata_geometry,{'width':width,'height':height})
       for width,height in [(1440,900),(390,844),(320,640)]]
     cases += [(f'readonly-all-57-native-actions/mobile-{width}x{height}',readonly,
-      {'width':width,'height':height,'active_alladin':True}) for width,height in [(390,844),(320,700)]]
-    cases += [('native-pf/confirmed/mobile-390x844',lambda p,r:pf_practice(p,r,'confirmed'),{'width':390,'height':844})]
+      {'width':width,'height':height,'active_alladin':True,'active_pf':True}) for width,height in [(390,844),(320,700)]]
+    cases += [('native-pf/confirmed/mobile-390x844',lambda p,r:pf_practice(p,r,'confirmed'),{'width':390,'height':844,'active_pf':True})]
     return cases
 
 def main():
@@ -895,10 +933,12 @@ def main():
                         context=browser.new_context(viewport={'width':config.get('width',1440),'height':config.get('height',1000)},
                             service_workers=config.get('service_workers','block'),reduced_motion='reduce',accept_downloads=True)
                     context.add_init_script('localStorage.setItem("jpw_nav_layout",'+json.dumps(config.get('layout','sidebar'))+');')
-                    if config.get('active_alladin'):
-                        context.add_init_script('localStorage.setItem("jpw_module_availability_v1",'+json.dumps(json.dumps({'schemaVersion':1,'modules':{'alladin':'active'}}))+');')
                     surface=config.get('surface');url=(root/PORTABLE).as_uri() if surface=='portable-file' else prefix+(PORTABLE if surface=='portable-http' else 'index.html')
                     page=prepare(context,url,row,name=='welcome-permanent-entry')
+                    # Ativação nominal única, preservando outros overrides e futuros reloads/imports.
+                    for module, enabled in [('alladin',config.get('active_alladin')),('personal-finance',config.get('active_pf'))]:
+                        if enabled:
+                            assert page.evaluate("id=>JPWModuleAvailability.setState(id,'active').ok",module), module
                     if config.get('nativeZoom'):
                         row['nativeZoomMeasurement']=page.evaluate('({ratio:outerWidth/innerWidth,cssZoom:getComputedStyle(document.documentElement).zoom})')
                         assert page.evaluate('Math.abs(outerWidth/innerWidth-2)<0.02 && getComputedStyle(document.documentElement).zoom==="1"'), 'HARNESS_NATIVE_ZOOM: Chromium native 200% was not established'

@@ -16,7 +16,7 @@ CHG-MODULE-AVAILABILITY-20260924, N2/A3. Base inspecionada ad5c23e7884be108ceaf3
 
 ## Fonte e alcance
 
-`JPWModuleAvailability` lê `localStorage.jpw_module_availability_v1`: `{schemaVersion:1,modules:{alladin:"frozen"}}`. Mapa sparse dos IDs research/forex/personal-finance/alladin; enum active/frozen. Defaults em memória: Alladin frozen e os demais active. Nenhuma escrita inicial, migração de S ou normalização automática. Ativo significa disponível, não módulo completo. Preferência por navegador/perfil/origem; portas diferentes não se sincronizam. Não é autenticação nem barreira contra DevTools.
+`JPWModuleAvailability` lê `localStorage.jpw_module_availability_v1`: `{schemaVersion:1,modules:{alladin:"frozen"}}`. Mapa sparse dos IDs research/forex/personal-finance/alladin; enum active/frozen. Defaults em memória: Finanças Pessoais e Alladin frozen; Research e Forex active. A alteração de PF foi aprovada em [16/10/2026](../decisions/2026-10-16-personal-finance-congelado.md); escolhas explícitas active/frozen permanecem respeitadas. Nenhuma escrita inicial, migração de S ou normalização automática. Ativo significa disponível, não módulo completo. Preferência por navegador/perfil/origem; portas diferentes não se sincronizam. Não é autenticação nem barreira contra DevTools.
 
 `inspect` conserva escolhas individualmente válidas em v1, aplicando fallback só aos campos inválidos; JSON/top-level/versão incompatível mantém raw e usa defaults de apresentação. `validate` recusa qualquer incompatibilidade no import. Escritas ficam bloqueadas com raw inválido/ilegível; exportação recupera o bruto. Falha de leitura conserva último estado confirmado da sessão; inicialmente defaults. `setState` compara raw observado, escreve e relê; falha comprovada conserva estado, resultado desconhecido bloqueia tentativas até releitura segura. Não há atomicidade garantida entre abas: eventos storage convergem para o raw observado, conflitos não reaplicam intenção antiga.
 
@@ -25,6 +25,8 @@ CHG-MODULE-AVAILABILITY-20260924, N2/A3. Base inspecionada ad5c23e7884be108ceaf3
 Seção única Módulos e disponibilidade no Editor, movida pelo host existente da Central de Configurações. Busca e links administrativos apontam para ela. Dashboard/apoio não congeláveis. A ordem canônica conserva os seis IDs e os mesmos nós/listeners; só a projeção operacional é filtrada. navApply consulta política antes de render; shell consulta antes de explorar; notificações consultam antes de fechar/trocar conta/período e novamente em callbacks adiados. Aliases permanecem. Não há router URL ou tela persistida nova.
 
 Congelar localmente exige ausência de trabalho pendente, confirmação humana e readback. Cancelamento/falha não congela. Se o destino estiver aberto e seguro, vai ao Dashboard. Descongelar restaura acesso sem navegar. Política bloqueia novas ações de superfícies suspensas; confirmações já iniciadas não são abandonadas. Suporte e gestão permanecem disponíveis.
+
+Na lateral, o congelamento também invalida preview/pin do grupo quando a rota ativa continua em outra área. O submenu desaparece imediatamente e deixa de receber foco; se tinha foco, a navegação o transfere ao Dashboard. Um pin ainda disponível é preservado. Descongelar permite nova exploração explícita, sem reabrir a exploração invalidada. Regressão permanente AV-NAV-FROZEN em `tools/module_availability_test.py`; esse focal permanece adicional ao runnerFULL.
 
 ## Trabalho e dados
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import argparse
 import base64
 import hashlib
 import json
@@ -7,11 +8,15 @@ import re
 from build_leverage_package import build as build_leverage_package
 
 ROOT = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description='Generate the canonical JP Wealth distribution offline.')
+parser.add_argument('--refresh-manifest', action='store_true',
+                    help='Refresh declared classic-script hashes, preserving their order and metadata.')
+args = parser.parse_args()
 # The manifest is the single authority for version, declared sources, states,
 # package paths and hashes. Generate archives before fingerprinting their bytes.
 leverage_manifest = build_leverage_package(ROOT)
 leverage_downloads = {
-    kind: item for kind, item in leverage_manifest['downloads'].items() if item['available']
+    kind: item for kind, item in leverage_manifest['downloads'].items() if item['available'] and kind != 'installer'
 }
 # Optional R4 delivery inputs are bounded records, never a directory scan or
 # native proof. Keep historical ZIP payloads unchanged when the field is absent.
@@ -62,6 +67,15 @@ leverage_delivery_files = {
 leverage_delivery_files.update(interface_delivery_files())
 manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
 build_id_path = ROOT / 'build-id.js'
+if args.refresh_manifest:
+    for item in manifest['files']:
+        source = ROOT / item['path']
+        if not source.is_file():
+            raise SystemExit(f"ERRO: input oficial do build ausente: {item['path']}")
+        item['sha256'] = hashlib.sha256(source.read_bytes()).hexdigest()
+    (ROOT / 'src/js/manifest.json').write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
 
 # JPW-BUILD-DSSTORE — inputs OFICIAIS do fingerprint, declarados um a um.
 #
@@ -90,9 +104,81 @@ PROJECT_DOCUMENTS = (
     ('README.md', 'text/markdown;charset=utf-8', 'README.md'),
     ('CHANGELOG.md', 'text/markdown;charset=utf-8', 'CHANGELOG.md'),
 )
+# Build-only sources are provenance inputs, never classic-script bootstrap entries.
+# Keep this list explicit: research files, local reports and tool installations do
+# not participate. Normal distribution needs no packages, vendor build or network.
+MARKET_HOURS_BUILD_INPUTS = (
+    'src/js/40-app/31-market-hours/aisol/engine.js',
+    'src/js/40-app/31-market-hours/aisol/entry.js',
+    'src/vendor/aisol-dot-globe/aisol-globe.iife.js',
+    'src/vendor/aisol-dot-globe/component.original.js',
+    'src/vendor/aisol-dot-globe/build-lock.json',
+    'src/vendor/aisol-dot-globe/build-meta.json',
+    'src/vendor/aisol-dot-globe/build-receipt.json',
+    'src/vendor/aisol-dot-globe/NOTICES.md',
+    'src/vendor/aisol-dot-globe/THREE-LICENSE.txt',
+    'src/vendor/aisol-dot-globe/ESBUILD-LICENSE.txt',
+    'src/data/market-hours/calendar-v1.json',
+    'src/data/market-hours/rules.json',
+    'src/data/market-hours/sources.json',
+    'src/data/market-hours/zoneinfo/manifest.json',
+    'src/data/market-hours/zoneinfo/UTC',
+    'src/data/market-hours/zoneinfo/America/Sao_Paulo',
+    'src/data/market-hours/zoneinfo/America/New_York',
+    'src/data/market-hours/zoneinfo/America/Toronto',
+    'src/data/market-hours/zoneinfo/Europe/London',
+    'src/data/market-hours/zoneinfo/Europe/Berlin',
+    'src/data/market-hours/zoneinfo/Europe/Paris',
+    'src/data/market-hours/zoneinfo/Asia/Tokyo',
+    'src/data/market-hours/zoneinfo/Asia/Hong_Kong',
+    'src/data/market-hours/zoneinfo/Asia/Shanghai',
+    'src/data/market-hours/zoneinfo/Asia/Kolkata',
+    'src/data/market-hours/zoneinfo/Asia/Seoul',
+    'src/data/market-hours/zoneinfo/Asia/Riyadh',
+    'src/data/market-hours/zoneinfo/Australia/Sydney',
+    'tools/compile_market_hours.py', 'tools/build_market_globe.py',
+)
+
+
+def check_market_vendor():
+    # Refuse a stale vendored executable before distributing it. A fresh receipt
+    # must come from the dedicated vendor builder, not this distribution step.
+    for relative in MARKET_HOURS_BUILD_INPUTS:
+        path = ROOT / relative
+        if not path.is_file() or path.is_symlink():
+            raise SystemExit(f'ERRO: input oficial do build ausente: {relative}')
+    vendor = ROOT / 'src/vendor/aisol-dot-globe'
+    receipt = json.loads((vendor / 'build-receipt.json').read_text(encoding='utf-8'))
+    lock = json.loads((vendor / 'build-lock.json').read_text(encoding='utf-8'))
+    bindings = {
+        'sourceSHA256': vendor / 'component.original.js',
+        'engineSHA256': ROOT / 'src/js/40-app/31-market-hours/aisol/engine.js',
+        'entrySHA256': ROOT / 'src/js/40-app/31-market-hours/aisol/entry.js',
+        'bundleSHA256': vendor / 'aisol-globe.iife.js',
+    }
+    for key, path in bindings.items():
+        if receipt.get(key) != hashlib.sha256(path.read_bytes()).hexdigest():
+            raise SystemExit(f'ERRO: recibo Aisol divergente: {key}')
+    if (receipt.get('sourceSHA256') != lock.get('sourceSHA256') or
+            receipt.get('three') != lock.get('threeVersion') or
+            receipt.get('esbuild') != lock.get('esbuildVersion') or
+            receipt.get('bytes') != bindings['bundleSHA256'].stat().st_size or
+            receipt.get('format') != 'iife' or receipt.get('externalImports') is not False):
+        raise SystemExit('ERRO: recibo Aisol diferente do lock/formato/tamanho')
+    meta = json.loads((vendor / 'build-meta.json').read_text(encoding='utf-8'))
+    output = meta.get('outputs', {}).get('src/vendor/aisol-dot-globe/aisol-globe.iife.js', {})
+    if (output.get('bytes') != receipt['bytes'] or output.get('imports') != [] or
+            output.get('entryPoint') != 'src/js/40-app/31-market-hours/aisol/entry.js' or
+            receipt.get('inputCount') != len(meta.get('inputs', {})) or
+            any(item.get('external') for source in meta.get('inputs', {}).values() for item in source.get('imports', []))):
+        raise SystemExit('ERRO: metadados Aisol divergentes do recibo')
+
+
+check_market_vendor()
 FINGERPRINT_FIXED_INPUTS = (
     'index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js',
     'tools/rebuild_monolith.py', 'tools/build_leverage_package.py',
+    *MARKET_HOURS_BUILD_INPUTS,
     'downloads/jpw-alavancagem-atual/manifest.json',
     *leverage_manifest['sourceFiles'],
     *(item['path'] for _mime, item in leverage_delivery_files.values()),
@@ -213,6 +299,29 @@ download_manifest = dict(schemaVersion=1, buildId=current_build_id, resources=re
 leverage_json = json.dumps(leverage_manifest, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
 build_id_source += 'if (typeof window !== "undefined") {window.JPW_LEVERAGE_MANIFEST = ' + leverage_json + ';window.JPW_DOWNLOAD_MANIFEST = ' + json.dumps(download_manifest, separators=(',', ':')) + ';}\n'
 build_id_source += 'if (typeof self !== "undefined" && typeof window === "undefined") {self.JPW_DOWNLOAD_MANIFEST = ' + json.dumps(download_manifest, separators=(',', ':')) + ';}\n'
+# Catalog/renderer text remains outside executable bootstrap. file:// loads a
+# separate lazy script; the standalone portable carries the same inert envelope.
+market_paths = dict(catalog='src/data/market-hours/calendar-v1.json',
+                    renderer='src/vendor/aisol-dot-globe/aisol-globe.iife.js')
+market_files = {key: (ROOT / relative).read_bytes().decode('utf-8')
+                for key, relative in market_paths.items()}
+market_resources = {key: dict(path=relative, bytes=len((ROOT / relative).read_bytes()),
+                            sha256=hashlib.sha256((ROOT / relative).read_bytes()).hexdigest())
+                    for key, relative in market_paths.items()}
+market_payload = dict(path='src/vendor/market-hours/runtime-payload.js',
+                      elementId='jpw-market-hours-payload')
+market_manifest = dict(schemaVersion=1, buildId=current_build_id,
+                       resources=market_resources, payload=market_payload)
+market_notices = {name: (ROOT / 'src/vendor/aisol-dot-globe' / name).read_bytes().decode('utf-8')
+                  for name in ('NOTICES.md', 'THREE-LICENSE.txt', 'ESBUILD-LICENSE.txt')}
+market_envelope = dict(schemaVersion=1, buildId=current_build_id,
+                       files=market_files, notices=market_notices)
+market_json = json.dumps(market_envelope, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
+market_sidecar = ROOT / market_payload['path']
+market_sidecar.parent.mkdir(parents=True, exist_ok=True)
+market_sidecar.write_text('window.JPWMarketHoursAssets.register(' + market_json + ');\n', encoding='utf-8')
+portable_market = '<script type="application/json" id="' + market_payload['elementId'] + '">' + market_json + '</script>\n'
+build_id_source += 'if (typeof window !== "undefined") {window.JPW_MARKET_HOURS_MANIFEST = ' + json.dumps(market_manifest, separators=(',', ':')) + ';}\n'
 build_id_path.write_text(build_id_source, encoding='utf-8')
 
 index = (ROOT / 'index.html').read_text(encoding='utf-8')
@@ -240,7 +349,7 @@ html = html.replace('<script src="build-id.js"></script>', '<script>\n' + portab
 for item in manifest['files']:
     tag = f'<script src="{item["path"]}"></script>'
     html = html.replace(tag, '', 1)
-html = html.replace('\n</body>', portable_downloads + '<script>\n' + js + '\n</script>\n</body>', 1)
+html = html.replace('\n</body>', portable_downloads + portable_market + '<script>\n' + js + '\n</script>\n</body>', 1)
 
 # O portátil precisa entregar os originais sem depender de pastas externas.
 # Base64 mantém os bytes e não introduz conteúdo normativo como HTML executável.

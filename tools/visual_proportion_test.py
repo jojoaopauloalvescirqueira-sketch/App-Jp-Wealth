@@ -107,7 +107,7 @@ def run(args):
                     context=pw.chromium.launch_persistent_context(str(profile.resolve()),headless=False,no_viewport=True,args=['--window-size=1440,1000'],service_workers='block',reduced_motion='reduce')
                 else:
                     context=browser.new_context(viewport={'width':width,'height':1000},service_workers='block',reduced_motion='reduce')
-                install_bootstrap(context); context.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
+                install_bootstrap(context); context.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active','personal-finance':'active'}}));")
                 page=context.pages[0] if context.pages else context.new_page(); errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 try:

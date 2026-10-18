@@ -1,0 +1,61 @@
+{
+  "candidateRevision": "R3",
+  "preservedInputs": 160,
+  "privateCandidate": {
+    "schemaVersion": 1,
+    "candidateRevision": "R3",
+    "installerVersion": "1.0.0-beta.1",
+    "productVersion": "1.23.0",
+    "platform": "win-x64",
+    "filename": "Stoikus_Setup_1.0.0-beta.1_win-x64.exe",
+    "sha256": "0d5919f1908f2dd87ce793221fd863ae46db6b4ca467971d6381ea3ee9d17e85",
+    "bytes": 117146165,
+    "unsigned": true,
+    "scope": "LOCAL_CANDIDATE_ONLY",
+    "sdkVersion": "10.0.402",
+    "payloadSha256": "0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3",
+    "payloadManifestSha256": "0b43fb7d5d68281d2ff041aca499cf4ac633fc8290540040bac293c647cfc0a8",
+    "nativeTests": {
+      "windowsX64": "NOT_RUN",
+      "parallelsArm": "NOT_RUN",
+      "browser": "NOT_RUN"
+    },
+    "publicDownloadAvailable": false
+  },
+  "provenance": "Native exit convention observed in earlier MetaEditor characterization; tests are fresh synthetic Core tests, not an R3 native run",
+  "nativeStages": {
+    "windowsX64": "NOT_RUN",
+    "parallelsArm": "NOT_RUN",
+    "browserDownload": "NOT_RUN",
+    "mt5Runtime": "NOT_RUN",
+    "humanAcceptance": "NOT_RUN"
+  },
+  "publication": "NOT_RUN",
+  "tests": {
+    "core": {
+      "pass": 62,
+      "fail": 0
+    },
+    "uiLogic": {
+      "pass": 18,
+      "fail": 0
+    },
+    "payload": {
+      "pass": 12,
+      "fail": 0
+    },
+    "downloader": "PASS",
+    "historicalNativeLogParserReplay": {
+      "pass": 7,
+      "fail": 0
+    },
+    "structuralAndPackages": "PASS"
+  },
+  "rootReview": "PENDING",
+  "hostSuite": {
+    "PASS": 47,
+    "PRODUCT_FAIL": 1,
+    "reason": "HUD_TARGETS internal 60 second timeout; source and test unchanged; no reclassification"
+  },
+  "webFull": "PENDING_COMBINED_CANDIDATE"
+}

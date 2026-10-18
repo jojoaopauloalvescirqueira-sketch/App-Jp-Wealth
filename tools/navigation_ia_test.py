@@ -90,7 +90,7 @@ def boot(browser, url, viewport=None):
     context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900})
     # Fixture de navegação completa, sem mudar o default do aplicativo.
     context.add_init_script("""
-      localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));
+      localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active','personal-finance':'active'}}));
       window.__onbShown = true;
       window.__navStorageOps = [];
       for (const method of ['setItem', 'removeItem', 'clear']) {
@@ -136,7 +136,7 @@ def assert_registry(page):
     assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
     tools = page.evaluate("() => window.JPWNavigation.children('tools')")
     assert [(child["id"], child["localView"]["view"]) for child in tools] == [
-        ("tools-calendar", "calendar"), ("tools-nocuda", "nocuda"),
+        ("tools-calendar", "calendar"), ("tools-market-hours", "market-hours"), ("tools-nocuda", "nocuda"),
         ("tools-leverage", "leverage"), ("tools-normative", "normative"),
         ("tools-minigames", "minigames")], tools
     assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []

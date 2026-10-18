@@ -14,7 +14,7 @@ arquivos rastreados pelo Git e de qualquer input oficial já declarado no manife
 é tocada.
 """
 from pathlib import Path
-import base64, hashlib, importlib.util, json, os, re, shutil, subprocess, sys, tempfile
+import ast, base64, hashlib, importlib.util, json, os, re, shutil, subprocess, sys, tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -61,6 +61,12 @@ def artefatos_interface_declarados(leverage, root=ROOT):
     for kind, (relative, _mime) in INTERFACE_ARTIFACTS.items():
         assert records[kind]['path'] == relative, ('input de interface inesperado', kind)
     return records
+# The official builder owns this explicit list. Parse its literal declaration so
+# fixtures include newly added/untracked inputs without executing a build here.
+MARKET_HOURS_BUILD_INPUTS = next(
+    ast.literal_eval(node.value) for node in ast.parse((ROOT/'tools/rebuild_monolith.py').read_text()).body
+    if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'MARKET_HOURS_BUILD_INPUTS'
+                                          for target in node.targets))
 
 
 def artefatos_nativos_declarados(leverage):
@@ -102,6 +108,7 @@ def arquivos_do_candidato():
     arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
     arquivos.update(BRAND_BUILD_INPUTS)
     arquivos.update(NOCUDA_BUILD_INPUTS)
+    arquivos.update(MARKET_HOURS_BUILD_INPUTS)
     leverage = json.loads((ROOT / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))
     arquivos.update((LEVERAGE_MANIFEST, LEVERAGE_BUILDER))
     arquivos.update(leverage['sourceFiles'])
@@ -137,6 +144,7 @@ def rebuild(destino: Path):
 def fatos(destino: Path):
     leverage = json.loads((destino / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))
     return {
+        'market_sidecar': (destino/'src/vendor/market-hours/runtime-payload.js').read_bytes(),
         'download_sidecars': {p.name:p.read_bytes() for p in sorted((destino/'src/vendor/downloads').glob('*-payload.*'))},
         'build_id': (destino / 'build-id.js').read_text(encoding='utf-8').strip(),
         'monolito': (destino / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html').read_bytes(),
@@ -170,6 +178,7 @@ def main():
 
         assert a['build_id'] == b['build_id'], (
             f"LIXO ALTEROU O BUILD ID\n  limpo: {a['build_id']}\n  sujo : {b['build_id']}")
+        assert a['market_sidecar'] == b['market_sidecar'], 'lixo alterou payload de Bolsas Globais'
         assert a['download_sidecars'] == b['download_sidecars'], 'lixo alterou payloads de download'
         assert a['monolito'] == b['monolito'], 'lixo alterou o monólito portátil'
         assert a['manifest'] == b['manifest'], 'lixo alterou os hashes do manifest'
@@ -284,6 +293,20 @@ def main():
                     assert all((destino / rel).read_bytes() == raw for rel, raw in before.items()), 'recusa de interface alterou outputs'
                     interface_controls.append({'control': control, 'kind': kind, 'path': item['path'],
                                                'returncode': erro.returncode, 'result': 'EXPECTED_REFUSAL'})
+
+        # Market original bytes and notices survive as inert JSON, never as
+        # immediately executable renderer code or bulk build-ID metadata.
+        market_inert = re.search(r'<script type="application/json" id="jpw-market-hours-payload">(.*?)</script>', html, re.S)
+        assert market_inert and '<' not in market_inert[1], 'payload de mercado ausente/inseguro'
+        market = json.loads(market_inert[1])
+        registered = a['market_sidecar'].decode().split('register(', 1)[1].removesuffix(');\n')
+        assert market == json.loads(registered), 'web file e portable usam bytes diferentes'
+        for key, rel in (('catalog', 'src/data/market-hours/calendar-v1.json'),
+                         ('renderer', 'src/vendor/aisol-dot-globe/aisol-globe.iife.js')):
+            assert market['files'][key].encode('utf-8') == (limpo/rel).read_bytes(), rel
+        for name in ('NOTICES.md', 'THREE-LICENSE.txt', 'ESBUILD-LICENSE.txt'):
+            assert market['notices'][name].encode() == (limpo/'src/vendor/aisol-dot-globe'/name).read_bytes(), name
+        assert len(a['build_id'].encode()) < 50000, 'bootstrap de build contem payload volumoso'
 
         # ---- 5. cada input da marca declarado e ausente precisa falhar alto ----
         for relative in BRAND_BUILD_INPUTS:

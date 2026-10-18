@@ -288,6 +288,7 @@ def check_pf_live(browser):
     page.on('pageerror',lambda e:errors.append(str(e)))
     try:
         page.goto(url,wait_until='load');wait_bootstrap(page)
+        page.evaluate("() => { if(!JPWModuleAvailability.setState('personal-finance','active').ok) throw Error('PF fixture refused'); }")
         seed=page.evaluate("""()=>{
           window.alert=message=>__live.alerts.push(message);closeModal();
           navigateToScreen('finpes');JPWFin.ui.selectView('mensal');

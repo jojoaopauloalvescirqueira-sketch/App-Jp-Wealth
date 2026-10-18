@@ -182,7 +182,7 @@ def run(a):
    b=p.chromium.launch(headless=True,executable_path=os.environ.get('JP_WEALTH_CHROMIUM'))
    for w in a.widths:
     for theme in ['light','dark']:
-     c=b.new_context(viewport={'width':w,'height':1000},service_workers='block',reduced_motion='reduce');install_bootstrap(c);c.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));");page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+     c=b.new_context(viewport={'width':w,'height':1000},service_workers='block',reduced_motion='reduce');install_bootstrap(c);c.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active','personal-finance':'active'}}));");page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
      page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page);page.evaluate(SETUP,theme);page.evaluate(ALLADIN_SEED)
      prefix=f'{w}/{theme}'
      for id,label in [('headerNotificationsBtn','Notificações'),('headerConfigBtn','Configurações'),('finalizeSessionBtn','Finalizar sessão')]:

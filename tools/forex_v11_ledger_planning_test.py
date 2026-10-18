@@ -58,6 +58,59 @@ test('stale correction and missing reason',()=>{
  assert(!c.JPWLedger.correct(row.id,{data:row.data,resultado:99,saldo:1099},{expectedVersion:1}).ok);
  eq(c.S,b);assert.equal(writes,n);
 });
+test('ledger revision reaches the last safe integer then refuses without writes',()=>{
+ assert(record().ok);period().ledger[0].version=Number.MAX_SAFE_INTEGER-1;
+ assert(c.JPWForex.state.supported());
+ const input={...context(),id:one().id,action:'CORRECTED',data:'2026-01-02',resultado:20,saldo:1020};
+ assert(c.JPWForex.state.recordAccountLedger(input,{reason:'Last representable revision'}).ok);
+ assert.equal(one().version,Number.MAX_SAFE_INTEGER);assert(c.JPWForex.state.supported());
+ const before=JSON.stringify(c.S),persisted=disk,n=writes;
+ const rejected=c.JPWForex.state.recordAccountLedger({...input,resultado:30,saldo:1030},{reason:'Counter exhausted'});
+ assert.equal(rejected.ok,false);assert.equal(rejected.persistido,false);
+ assert.equal(JSON.stringify(c.S),before);assert.equal(disk,persisted);assert.equal(writes,n);
+ assert.equal(unknown,false);assert(c.JPWForex.state.supported());
+});
+for(const missing of ['absent','null'])test(`derived legacy ${missing} revision becomes a safe integer only on explicit correction`,()=>{
+ assert(record().ok);
+ assert(c.JPWLedger.record({data:'2026-01-03',resultado:5,saldo:''}).ok);
+ const derived=period().ledger.find(r=>r.data==='2026-01-03');
+ if(missing==='absent')delete derived.version;else derived.version=null;
+ const untouched=JSON.stringify(c.S),n=writes;
+ assert(c.JPWForex.state.supported());c.JPWForex.state.accountLedger(context());
+ assert.equal(JSON.stringify(c.S),untouched);assert.equal(writes,n);
+ const result=c.JPWForex.state.recordAccountLedger({...context(),id:period().ledger[0].id,
+  action:'CORRECTED',data:'2026-01-02',resultado:20,saldo:1020},{reason:'Explicit earlier observation correction'});
+ assert(result.ok,result.error);const after=period().ledger.find(r=>r.data==='2026-01-03');
+ assert.equal(after.saldo,1025);assert.equal(after.version,1);assert(Number.isSafeInteger(after.version));
+ assert(c.JPWForex.state.supported());assert.equal(writes,n+1);
+ const audit=period().ledgerEvents.at(-1);assert.equal(audit.action,'BALANCE_RECALCULATED');
+ assert.equal(Object.hasOwn(audit.before,'version'),missing!=='absent');
+ if(missing==='null')assert.equal(audit.before.version,null);
+ assert.equal(audit.after.version,1);eq(JSON.parse(disk),c.S);
+});
+test('exhausted derived revision rolls back earlier recalculations and all audit state',()=>{
+ assert(record().ok);
+ assert(c.JPWLedger.record({data:'2026-01-03',resultado:5,saldo:''}).ok);
+ assert(c.JPWLedger.record({data:'2026-01-04',resultado:7,saldo:''}).ok);
+ period().ledger.find(r=>r.data==='2026-01-04').version=Number.MAX_SAFE_INTEGER;
+ assert(c.JPWForex.state.supported());const before=JSON.stringify(c.S),persisted=disk,n=writes;
+ const result=c.JPWForex.state.recordAccountLedger({...context(),id:period().ledger[0].id,
+  action:'CORRECTED',data:'2026-01-02',resultado:20,saldo:1020},{reason:'Recompute a chain with exhausted last revision'});
+ assert.equal(result.ok,false);assert.equal(result.persistido,false);
+ assert.equal(JSON.stringify(c.S),before);assert.equal(disk,persisted);assert.equal(writes,n);
+ assert.equal(unknown,false);assert(c.JPWForex.state.supported());
+});
+test('an unchanged derived row at the maximum revision does not block another correction',()=>{
+ assert(record().ok);
+ assert(c.JPWLedger.record({data:'2026-01-03',resultado:5,saldo:''}).ok);
+ period().ledger.find(r=>r.data==='2026-01-03').version=Number.MAX_SAFE_INTEGER;
+ const n=writes,result=c.JPWForex.state.recordAccountLedger({...context(),id:period().ledger[0].id,
+  action:'CORRECTED',data:'2026-01-02',resultado:10,saldo:1010,nota:'Only a note changed'},
+  {reason:'Keep the unchanged derived observation'});
+ assert(result.ok,result.error);assert.equal(writes,n+1);
+ assert.equal(period().ledger.find(r=>r.data==='2026-01-03').version,Number.MAX_SAFE_INTEGER);
+ assert(c.JPWForex.state.supported());
+});
 test('invalid date and absent result are not zero',()=>{for(const v of [null,'',' ',undefined,Infinity,NaN,true,false,[],{}])assert(!c.window.JPWLedger.record({data:'2026-01-02',resultado:v,saldo:1000}).ok);assert(!c.window.JPWLedger.record({data:'2026-02-30',resultado:0,saldo:1000}).ok);assert.equal(writes,0);});
 test('void retains original audit',()=>{
  assert(record().ok);assert(c.JPWLedger.void(one().id,{reason:'duplicate',expectedVersion:1}).ok);

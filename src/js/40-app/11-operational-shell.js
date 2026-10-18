@@ -85,6 +85,22 @@ function sidebarMarkCurrent(){
 }
 function sidebarPaint(options={}){
   if(!shellSidebar())return;
+  // A disponibilidade pode mudar sem navegação, inclusive durante um preview.
+  const unavailable=surface=>surface&&!shellModuleAvailable(submenuPrimaryForSurface(surface));
+  const frozenPreview=unavailable(sidebarUI.preview),frozenPin=unavailable(sidebarUI.pinned);
+  if(frozenPreview||frozenPin||unavailable(sidebarUI.target?.dataset.navSurface)){
+    sidebarClearTimers();
+    if(frozenPreview)sidebarUI.preview=null;
+    if(frozenPin)sidebarUI.pinned=null;
+    if(!sidebarUI.pinned)sidebarUI.overlayPinned=false;
+    if(!sidebarUI.preview&&!sidebarUI.pinned)sidebarUI.overlay=false;
+    options={...options,immediate:true};
+  }
+  if(unavailable(sidebarUI.suppressed))sidebarUI.suppressed=null;
+  const focusedPanel=document.activeElement?.closest('#navSubShell .nav-sub-menu');
+  if(focusedPanel&&unavailable(focusedPanel.id.replace('NavSubmenu',''))){
+    document.querySelector('#nav > [data-primary="dashboard"]')?.focus({preventScroll:true});
+  }
   const root=document.documentElement,shell=document.getElementById('navSubShell');
   const surface=sidebarUI.preview||sidebarUI.pinned;
   const visible=!!surface&&!sidebarBlocked()&&(!sidebarCollapsed()||sidebarUI.overlay);

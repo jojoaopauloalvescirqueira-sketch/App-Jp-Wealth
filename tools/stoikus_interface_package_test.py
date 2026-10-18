@@ -61,6 +61,8 @@ class InterfacePackageTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
         self.manifest.pop('interfaceRelease', None)
+        # Reconstruct an independent historical release, without a current-version optional installer.
+        self.manifest.get('downloads', {}).pop('installer', None)
         self.manifest['version'] = self.version
         self.manifest['sourceFiles'] = sorted(PRODUCT + name for name in self.members)
         self.populate_sources()

@@ -254,7 +254,7 @@ function renderLedger(){
     const ref=ledgerFinite(r.referenceBalance)?r.referenceBalance:null;
     const dd=ref>0?Math.max(0,(ref-r.saldo)/ref):null;
     const cell=(key,text)=>`<td data-ledger-field="${key}" tabindex="${r.id===ledgerUI.selected&&key==='data'?'0':'-1'}">${text}</td>`;
-    return `<tr data-ledger-row="${esc(r.id)}" aria-selected="${r.id===ledgerUI.selected}">${cell('data',esc(r.data))}${cell('resultado',fmtForexMoney(r.resultado,{currency:r.currency}))}${cell('saldo',fmtForexMoney(r.saldo,{currency:r.currency}))}<td>${dd==null?'—':fmtPct(dd)}<span class="sr-only"> derivado</span></td>${cell('nota',esc(r.nota||''))}<td><button type="button" data-ledger-correct="${esc(r.id)}">Corrigir</button><button type="button" class="row-del" data-ledger-void="${esc(r.id)}" title="Anular lançamento preservando auditoria">✕</button><small>v${r.version}</small></td></tr>`;
+    return `<tr data-ledger-row="${esc(r.id)}" aria-selected="${r.id===ledgerUI.selected}">${cell('data',esc(r.data))}${cell('resultado',fmtForexMoney(r.resultado,{currency:r.currency}))}${cell('saldo',fmtForexMoney(r.saldo,{currency:r.currency}))}<td>${dd==null?'—':fmtPct(dd)}<span class="sr-only"> derivado</span></td>${cell('nota',esc(r.nota||''))}<td><button type="button" data-ledger-correct="${esc(r.id)}">Corrigir</button><button type="button" class="row-del" data-ledger-void="${esc(r.id)}" title="Anular lançamento preservando auditoria">✕</button><small>v${esc(r.version)}</small></td></tr>`;
   }).join('');
   if($('ledgerCount'))$('ledgerCount').textContent=rows.length+' de '+ledgerRows().length+' lançamentos desta conta/período';
   tb.querySelectorAll('[data-ledger-correct]').forEach(b=>b.onclick=()=>ledgerBeginEdit(b.dataset.ledgerCorrect));

@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "b3-oc005",
+      "title": "B3 OC 005/2026-PRE — grade vigente até 02/11/2026",
+      "url": "https://www.b3.com.br/data/files/E3/B2/C2/12/BC09C910F37907C9AC094EA8/OC%20005-2026%20PRE%20NOVOS%20HORARIOS%20DE%20NEGOCIACAO_PT.pdf",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "b3-oc050",
+      "title": "B3 OC 050/2026-VNC — ações vigentes desde 03/11/2026",
+      "url": "https://b3.com.br/data/files/99/B7/82/67/8A631A103BBB511AAC094EA8/OC%20050-2026-VNC%20NOVOS%20HORARIOS%20DE%20NEGOCIACAO_PT.pdf",
+      "publishedAt": "2026-10-13",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "b3-calendar2026",
+      "title": "B3 — calendário de negociação de 2026",
+      "url": "https://www.b3.com.br/pt_br/noticias/calendario-de-negociacao-da-b3-confira-o-funcionamento-da-bolsa-em-2026.htm",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nyse-hours",
+      "title": "NYSE — Holidays & Trading Hours (Tape A)",
+      "url": "https://www.nyse.com/trade/hours-calendars",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "jpx-hours",
+      "title": "JPX/TSE — Domestic Stocks Trading System",
+      "url": "https://www.jpx.co.jp/english/equities/trading/domestic/04.html",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "jpx-calendar2026",
+      "title": "JPX — Market Holidays 2026",
+      "url": "https://www.jpx.co.jp/english/corporate/about-jpx/calendar/index.html",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nasdaq-hours",
+      "title": "Nasdaq Stock Market — own hours and 2026 holiday schedule",
+      "url": "https://www.nasdaq.com/market-activity/stock-market-holiday-schedule",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nasdaq-alerts",
+      "title": "NasdaqTrader — shortened days require specific system-time alerts",
+      "url": "https://www.nasdaqtrader.com/Trader.aspx?id=Calendar",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nasdaq-overnight-announcement",
+      "title": "Nasdaq DN2026-3 — announced overnight remains conditional, not production confirmation",
+      "url": "https://www.nasdaqtrader.com/TraderNews.aspx?id=DN2026-3",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "tsx-hours",
+      "title": "TSX — equity trading hours, MOC and extended session",
+      "url": "https://www.tsx.com/en/trading/calendars-and-trading-hours/trading-hours",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "tsx-calendar",
+      "title": "TSX — 2026 calendar, December 24 short day",
+      "url": "https://www.tsx.com/en/trading/calendars-and-trading-hours/calendar",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "lse-parameters",
+      "title": "LSE Business Parameters v10.0 — SETS-L1 / SET1 production schedule",
+      "url": "https://docs.londonstockexchange.com/sites/default/files/documents/20260727-mit-and-te-parameters-version-10-0.xlsx",
+      "publishedAt": "2026-07-27",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "lse-mit201",
+      "title": "LSE MIT201 issue15.9 — random auctions, AVD and conditional CPX",
+      "url": "https://docs.londonstockexchange.com/sites/default/files/documents/mit201-guide-to-the-trading-system-15-9-20260727.pdf",
+      "publishedAt": "2026-07-27",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "lse-calendar",
+      "title": "LSE Business Days — current October–December 2026 table",
+      "url": "https://www.londonstockexchange.com/equities-trading/business-days",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "xetra-auctions",
+      "title": "Xetra auction plan — DAX cash scope; times approximate/random",
+      "url": "https://www.cashmarket.deutsche-boerse.com/resource/blob/4758664/28c6df1866755c93046fcf895c62baf5/data/Auktionsplan.pdf",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "xetra-calendar",
+      "title": "Deutsche Börse — 2026 trading calendar and hours",
+      "url": "https://www.cashmarket.deutsche-boerse.com/cash-de/Handel/handelskalender-und-zeiten",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "xetra-retail",
+      "title": "Deutsche Börse circular052/25 — retail eligibility and variable transitions",
+      "url": "https://www.cashmarket.deutsche-boerse.com/cash-en/Stay-Informed/circulars-newsletters/deutsche-boerse-circulars/Introduction-of-the-Extended-Xetra-Retail-Service-early-and-late-trading-Planned-changes-to-the-trading-process-valid-from-1-December-2025-4793480",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "euronext-appendix-oct19",
+      "title": "Euronext appendix 4-01 — Paris continuous groups, effective 19 October 2026 (future at review)",
+      "url": "https://www.euronext.com/sites/default/files/2026-10/appendix%20to%20Euronext%20Instructions%204-01%204-03%20Trading%20Manuals.xlsx",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "euronext-calendar",
+      "title": "Euronext — Paris 2026 holidays, short-day final hours pending",
+      "url": "https://www.euronext.com/en/trading/trading-hours-holidays",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "hkex-hours",
+      "title": "HKEX — securities sessions and random CAS, ordinary shares",
+      "url": "https://www.hkex.com.hk/Services/Trading-hours-and-Severe-Weather-Arrangements/Trading-Hours/Securities-Market?sc_lang=en",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "hkex-calendar",
+      "title": "HKEX CT/075/25 — 2026 securities calendar",
+      "url": "https://www.hkex.com.hk/-/media/HKEX-Market/Services/Circulars-and-Notices/Participant-and-Members-Circulars/SEHK/2025/ce_SEHK_CT_075_2025.pdf",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "sse-hours",
+      "title": "SSE — cash trading schedule (original source review)",
+      "url": "https://english.sse.com.cn/start/trading/schedule/",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "sse-calendar",
+      "title": "SSE — Chinese official 2026 closures, not stale English calendar",
+      "url": "https://www.sse.com.cn/disclosure/dealinstruc/closed/",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "szse-hours",
+      "title": "SZSE — cash trading overview (original source review)",
+      "url": "https://investor.szse.cn/English/services/trading/tradOverview/index.html",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "szse-annual-pending",
+      "title": "SZSE 2026 annual notice — located; body unavailable, does not confirm annual coverage",
+      "url": "https://www.szse.cn/disclosure/notice/general/t20251222_618087.html",
+      "publishedAt": "2025-12-22",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nse-cas",
+      "title": "NSE — cash CAS, phase1 eligible stocks and separate non-CAS",
+      "url": "https://www.nseindia.com/static/products-services/closing-auction-session",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nse-preopen",
+      "title": "NSE — revised pre-open auction, official indexed body reviewed",
+      "url": "https://www.nseindia.com/static/products-services/equity-market-pre-open",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "nse-calendar",
+      "title": "NSE CMTR71775 — 2026 cash holidays and Muhurat timing pending",
+      "url": "https://nsearchives.nseindia.com/content/circulars/CMTR71775.pdf",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "sebi-review-pending",
+      "title": "SEBI review 15 October — HTML read, linked annex unavailable; future vigency not established",
+      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/review-of-certain-aspects-of-the-closing-auction-session-market-timings-and-settlement-methodology-for-derivatives-contracts_105293.html",
+      "publishedAt": "2026-10-15",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "bse-cash-pending",
+      "title": "BSE cash 20260801-1 — located, HTTP403, operational body unconfirmed",
+      "url": "https://www.bseindia.com/markets/MarketInfo/DispNewNoticesCirculars.aspx?page=20260801-1",
+      "publishedAt": "2026-08-01",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "bse-calendar-pending",
+      "title": "BSE 20251212-8 — annual notice located, HTTP403, body unconfirmed",
+      "url": "https://www.bseindia.com/markets/MarketInfo/DispNewNoticesCirculars.aspx?page=20251212-8",
+      "publishedAt": "2025-12-12",
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "krx-cash",
+      "title": "KRX KOSPI — holiday rules and general hours; body obtained Task5, annual/special-session pending",
+      "url": "https://global.krx.co.kr/contents/GLB/06/0602/0602010201/GLB0602010201T1.jsp",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15",
+      "sha256": "beccdf071e36ca2d8cd2313fd0de3363760480f0e312c0f3dca80b3ea5153266"
+    },
+    {
+      "id": "saudi-hours",
+      "title": "Saudi Exchange — current equity trading cycle, random uncross windows",
+      "url": "https://www.saudiexchange.sa/wps/portal/saudiexchange/rules-guidance/capital-market-overview/trading-cycle-and-times?csrt=10820450772539872392&locale=en",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "saudi-calendar",
+      "title": "Saudi Exchange — 2026 holiday calendar, official indexed body reviewed; direct fetch unavailable",
+      "url": "https://www.saudiexchange.sa/wps/portal/saudiexchange/about-saudi-exchange/exchange-media-centre/saudi-exchange-holiday-calendar?csrt=7290425018528260842&locale=en",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "asx-hours",
+      "title": "ASX — current cash opening auction, CSPA and post-close (not former alphabetical schedule)",
+      "url": "https://www.asx.com.au/markets/market-resources/trading-hours-calendar/cash-market-trading-hours",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    },
+    {
+      "id": "asx-calendar",
+      "title": "ASX — 2026 trading calendar, short-day continuous ends14:10",
+      "url": "https://www.asx.com.au/markets/market-resources/trading-hours-calendar/cash-market-trading-hours/trading-calendar",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-15"
+    }
+  ]
+}

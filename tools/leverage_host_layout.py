@@ -256,7 +256,9 @@ def compile_cpp(cpp,name,compiler=None):
         if os.environ.get("JPW_JUDGE_KEEP_TEMP"):
             retained=Path(os.environ["JPW_JUDGE_KEEP_TEMP"]);retained.mkdir(parents=True,exist_ok=True)
             (retained/(name+"-"+hashlib.sha256(cpp.encode()).hexdigest()[:12]+".cpp")).write_text(cpp)
-        for command in ([compiler,"-std=c++17","-Wall","-Wextra",str(path),"-o",str(binary)],[str(binary)]):
+        # Compile raster stress replays with optimization; case counts, negative
+        # controls, assertions and the 60-second execution budget remain unchanged.
+        for command in ([compiler,"-std=c++17","-O2","-Wall","-Wextra",str(path),"-o",str(binary)],[str(binary)]):
             result=subprocess.run(command,capture_output=True,text=True,timeout=60)
             print(result.stdout,end="");print(result.stderr,end="")
             if result.returncode:return result.returncode

@@ -667,6 +667,7 @@ def canvas_evidence(page):
 
 def test_navigation_continuity(page):
     """A13-A: navigation preserves a paused experiment, not only its preferences."""
+    assert page.evaluate("JPWModuleAvailability.setState('personal-finance','active').ok")
     enter_galton(page)
     page.locator('[data-galton-action="reset"]').click()
     prepared = page.evaluate("""() => {

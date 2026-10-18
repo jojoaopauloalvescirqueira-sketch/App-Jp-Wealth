@@ -1,0 +1,20 @@
+{
+  "version": "2026b",
+  "origin": "macOS /usr/share/zoneinfo -> /var/db/timezone/zoneinfo; frozen 2026-10-15",
+  "files": {
+    "UTC": "8b85846791ab2c8a5463c83a5be3c043e2570d7448434d41398969ed47e3e6f2",
+    "America/Sao_Paulo": "04c06744ee3fe078ef3b8b779e38eb30666bf993e67a092fcaf2fc28f63a64ce",
+    "America/New_York": "e9ed07d7bee0c76a9d442d091ef1f01668fee7c4f26014c0a868b19fe6c18a95",
+    "America/Toronto": "a587a1a1607439f7bac283e1815f2bdbafb9649a453d18e06c2e44e6996d888f",
+    "Europe/London": "c85495070dca42687df6a1c3ee780a27cbcb82f1844750ea6f642833a44d29b4",
+    "Europe/Berlin": "5ee475f71a0fc1a32faeb849f8c39c6e7aa66d6d41ec742b97b3a7436b3b0701",
+    "Europe/Paris": "ab77a1488a2dd4667a4f23072236e0d2845fe208405eec1b4834985629ba7af8",
+    "Asia/Tokyo": "a02b9e66044dc5c35c5f76467627fdcba4aee1cc958606b85c777095cad82ceb",
+    "Asia/Hong_Kong": "6a5fcee243e5ab92698242d88c4699ceb7208a22ee97d342d11e41ebd2555a17",
+    "Asia/Shanghai": "64ffc2e43a94435a043c040d1d3af7e92d031adc78e7737af1861baa4eeef3e6",
+    "Asia/Kolkata": "e90c341036cb7203200e293cb3b513267e104a39a594f35e195254e6bc0a17cf",
+    "Asia/Seoul": "2c8f4bb15dd77090b497e2a841ff3323ecbbae4f9dbb9edead2f8dd8fb5d8bb4",
+    "Asia/Riyadh": "a02287eee69f37c475a3e8a35c6a13e54d49671c2fa0bcc9bbfd82ab28b68543",
+    "Australia/Sydney": "42c3857585b16db2f8ffd47ba19faa60f473340de8d4fe9320ea7be861605906"
+  }
+}
