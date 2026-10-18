@@ -101,7 +101,7 @@ with tempfile.TemporaryDirectory(prefix='jpw-portable-downloads-') as directory,
       # Hold the response until navigation/invalidation happened, then release
       # it and await both the real resource and the actual UI async handler.
       for scenario in ['navigation','hash','size','draft-reset','draft-clear','draft-input','session','pagehide']:
-        ctx=browser.new_context(service_workers='block',accept_downloads=True);install_bootstrap(ctx);ctx.add_init_script(HANDLER_PROBE)
+        ctx=browser.new_context(service_workers='block',accept_downloads=True);install_bootstrap(ctx);ctx.add_init_script('window.__onbShown=true;');ctx.add_init_script(HANDLER_PROBE)
         page=ctx.new_page();page.goto(base+'/index.html');wait_bootstrap(page)
         page.evaluate("closeModal();S.onboarding.done=true;JPWNavigation.navigate('tools-nocuda');document.getElementById('nocudaExample').click()")
         downloaded=[];page.on('download',lambda value:downloaded.append(value))

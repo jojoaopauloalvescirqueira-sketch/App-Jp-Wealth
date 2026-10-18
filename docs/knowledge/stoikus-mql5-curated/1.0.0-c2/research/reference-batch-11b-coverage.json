@@ -1,0 +1,3591 @@
+{
+  "book": "REF",
+  "reader": "reference-batch-11b",
+  "source": "/private/tmp/stoikus-mql5-research-20261015/corpus-fast/REF/pages.jsonl",
+  "consolidation_full_text_pages": [
+    3431,
+    3432,
+    3433,
+    3434,
+    3435,
+    3436,
+    3437,
+    3438,
+    3439,
+    3440,
+    3441,
+    3442,
+    3443,
+    3444,
+    3445,
+    3446,
+    3447,
+    3448,
+    3449,
+    3450,
+    3451,
+    3452,
+    3453,
+    3454,
+    3455,
+    3456,
+    3457,
+    3458,
+    3459,
+    3460,
+    3461,
+    3462,
+    3463,
+    3464,
+    3465,
+    3466,
+    3467,
+    3468,
+    3469,
+    3470,
+    3471,
+    3472,
+    3473,
+    3474,
+    3475,
+    3476,
+    3477,
+    3478,
+    3479,
+    3480,
+    3481,
+    3482,
+    3483,
+    3484,
+    3485,
+    3486,
+    3487,
+    3488,
+    3489,
+    3490,
+    3491,
+    3492,
+    3493,
+    3494,
+    3495,
+    3496,
+    3497,
+    3498,
+    3499,
+    3500,
+    3501,
+    3502,
+    3503,
+    3504,
+    3505,
+    3506,
+    3507,
+    3508,
+    3509,
+    3510,
+    3511,
+    3512,
+    3513,
+    3514,
+    3515,
+    3516,
+    3517,
+    3518,
+    3519,
+    3520,
+    3521,
+    3522,
+    3523,
+    3524,
+    3525,
+    3526,
+    3527,
+    3528,
+    3529,
+    3530,
+    3531,
+    3532,
+    3533,
+    3534,
+    3535,
+    3536,
+    3537,
+    3538,
+    3539,
+    3540,
+    3541,
+    3542,
+    3543,
+    3544,
+    3545,
+    3546,
+    3547,
+    3548,
+    3549,
+    3550,
+    3551,
+    3552,
+    3553,
+    3554,
+    3555,
+    3556,
+    3557,
+    3558,
+    3559,
+    3560,
+    3561,
+    3562,
+    3563,
+    3564,
+    3565,
+    3566,
+    3567,
+    3568,
+    3569,
+    3570,
+    3571,
+    3572,
+    3573,
+    3574,
+    3575,
+    3576,
+    3577,
+    3578,
+    3579,
+    3580,
+    3581,
+    3582,
+    3583,
+    3584,
+    3585,
+    3586,
+    3587,
+    3588,
+    3589,
+    3590,
+    3591,
+    3592,
+    3593,
+    3594,
+    3595,
+    3596,
+    3597,
+    3598,
+    3599,
+    3600,
+    3601,
+    3602,
+    3603,
+    3604,
+    3605,
+    3606,
+    3607
+  ],
+  "page_count": 177,
+  "full_text_read_method": "Batches13–23 shown in full via cat, each <=30000characters, max_output_tokens20000; no tool truncation reported. Semantic reading of displayed text, not index-only.",
+  "page_original_hashes": [
+    {
+      "page": 3431,
+      "sha256": "dbb50d484ffddc4a218a3991282d29d9d8e774e777c87c829e457d5f5cf7f42a",
+      "characters": 1208
+    },
+    {
+      "page": 3432,
+      "sha256": "bd18ab9804304c752ab78b61a7f005e2247ee637d4c992a19d3c90724dadecb0",
+      "characters": 1727
+    },
+    {
+      "page": 3433,
+      "sha256": "92689d12021bebc52263e6108849364d6754b126812244dfc60c67501003c29a",
+      "characters": 175
+    },
+    {
+      "page": 3434,
+      "sha256": "856edf5b4537302d5eaecf92c44aaa3c1fb7ff5e19e667189037096acb416dbb",
+      "characters": 2370
+    },
+    {
+      "page": 3435,
+      "sha256": "b54654ccf751b5c05537173698d8f57b0bea338fea86158e4120fa6c1de85f76",
+      "characters": 2711
+    },
+    {
+      "page": 3436,
+      "sha256": "d8eae67d55976a3b6e882d78a28b3c1b3ceffd5ee7c20a3e62e4ebc0a9b24863",
+      "characters": 3239
+    },
+    {
+      "page": 3437,
+      "sha256": "748134ffe04c1b6ee645617515478fe606f868e34e8bf5164d76c1c597f3a0cc",
+      "characters": 175
+    },
+    {
+      "page": 3438,
+      "sha256": "f80383e16032a9a17d8727b194b4f45136b58248f89477376f0e8e8883bd2fd1",
+      "characters": 2464
+    },
+    {
+      "page": 3439,
+      "sha256": "8403aa2e7ab836ba8adf7cbd1cbf840cb29fa7d339085b9cbb040113c6d0bebe",
+      "characters": 1786
+    },
+    {
+      "page": 3440,
+      "sha256": "880259aa5fd58acebbfcd460076c25cbf05668f07421b9ee49b7963de0eabfdf",
+      "characters": 73
+    },
+    {
+      "page": 3441,
+      "sha256": "f17b96512bd1a4a43a08630ee1484c0247139f89b43634bec2bc1d24bd3f3ee8",
+      "characters": 1067
+    },
+    {
+      "page": 3442,
+      "sha256": "649aa8e654027c701c94919526b59ac292ff5ab2dbe8b81bbfd9d859a938a5d9",
+      "characters": 2332
+    },
+    {
+      "page": 3443,
+      "sha256": "29e577096c62be7a3aa1a39a2e7035876751d3765f4b8eb8280dcd2c969bd0a4",
+      "characters": 2129
+    },
+    {
+      "page": 3444,
+      "sha256": "c536c49da336cc6672da865662a1394025db48697eb0d086f15ff498db0b0a2f",
+      "characters": 2547
+    },
+    {
+      "page": 3445,
+      "sha256": "2599cda703ca6e52f48ab8b4ff41d1dac044b164eec12a6c5ad5641a9eb81ec6",
+      "characters": 97
+    },
+    {
+      "page": 3446,
+      "sha256": "5b547c283dc2074bb13b29321022760493b08971ad759e9f172d51d4cca2214d",
+      "characters": 1999
+    },
+    {
+      "page": 3447,
+      "sha256": "ee60d669be57c0b01dc0e097d8f96a4429f705f208ce10b1f2ad3972f05c6e62",
+      "characters": 1705
+    },
+    {
+      "page": 3448,
+      "sha256": "6e6dd29b2c449898d5a0fb99b5e0e48e8e805954cedac164386c5bb29527c320",
+      "characters": 496
+    },
+    {
+      "page": 3449,
+      "sha256": "c3a9a7dc1db196e40ee5e01c95707952150a059fedcc5fbbb8ddeb7e7f5cc7f1",
+      "characters": 265
+    },
+    {
+      "page": 3450,
+      "sha256": "f0790fb2e4578711afcdf1a8603148227baf6d8e5e2b03e4ff1134311da168f2",
+      "characters": 995
+    },
+    {
+      "page": 3451,
+      "sha256": "f0370f780208d9eee75d5e773f56ec7f7ceda40f81de39d28c94d1168eeaa154",
+      "characters": 499
+    },
+    {
+      "page": 3452,
+      "sha256": "db0c47468242f5f30739d8d955bc3853e210fca9e0d22b9852146ec855543058",
+      "characters": 389
+    },
+    {
+      "page": 3453,
+      "sha256": "44e626da8a2dd5342da5d5d46808b1920083f20f7fec4b3498ed5276e3b2b6a6",
+      "characters": 2421
+    },
+    {
+      "page": 3454,
+      "sha256": "428dd35aa0e64c89fe0298435ad2e353bda50e4d4432d6b16b020aee6df0f1a6",
+      "characters": 2042
+    },
+    {
+      "page": 3455,
+      "sha256": "231c68a23d36a25efc8292ef5a4bd4f609c46a601e3afb7f334bcf46c2f3b68f",
+      "characters": 2443
+    },
+    {
+      "page": 3456,
+      "sha256": "42be60437e4c3323efc22636f9cdd285863ba6deb8dac892d98f4280d091cdcb",
+      "characters": 2395
+    },
+    {
+      "page": 3457,
+      "sha256": "87ad9fc9b65de4deec7138ade4fa95198b669b40075f56fc332460bc16662f21",
+      "characters": 1794
+    },
+    {
+      "page": 3458,
+      "sha256": "281d3f7b1876ecde3e2302acc827ab3e1fda200a0c5d1f5c7124c0aefc13290b",
+      "characters": 73
+    },
+    {
+      "page": 3459,
+      "sha256": "19615d3f0a96dc95a9e8dff867721cc6a432a217e674784089c65d2d5b8a74b8",
+      "characters": 2320
+    },
+    {
+      "page": 3460,
+      "sha256": "5d8b2b09ba6ada55ac889ddaecbf1b222a9498412706292c955b6f2399182b44",
+      "characters": 2214
+    },
+    {
+      "page": 3461,
+      "sha256": "6ba17fb55815449c15227048b6e0abd6fba033ca1bc0b7e1aee68445227680d2",
+      "characters": 1876
+    },
+    {
+      "page": 3462,
+      "sha256": "b9fe0d21bea67ef48022385b8eb409a629f274c4139e8b2a5a390b0c31f4446a",
+      "characters": 401
+    },
+    {
+      "page": 3463,
+      "sha256": "847816bc2867020e33d5ed51af9745f93d7b0d99649f546371adf0f310e71879",
+      "characters": 73
+    },
+    {
+      "page": 3464,
+      "sha256": "35942f23bd8dddc92cbeb116b438635bd43173a0a42c0f115a26d102fa95f9c0",
+      "characters": 923
+    },
+    {
+      "page": 3465,
+      "sha256": "baf8681b2c3356047ab44c6932823c102c9e1a1443e3c67d0ce2d985d271dc0f",
+      "characters": 747
+    },
+    {
+      "page": 3466,
+      "sha256": "d55c7b41aebd80b573827e92a04f00fc973296dcc300ff3fcb4a7e16416e5853",
+      "characters": 513
+    },
+    {
+      "page": 3467,
+      "sha256": "b5fdf0e7b1de5c3793f8d34b141c1345b04087ab5744dce42fba6c16d24224aa",
+      "characters": 2309
+    },
+    {
+      "page": 3468,
+      "sha256": "25e38d36546a25078332cedb18da3ec3a21df6bf9951b762ff1d98e5a19bb29a",
+      "characters": 2298
+    },
+    {
+      "page": 3469,
+      "sha256": "1954ce5ce3dac58a0361ed493b3da6985ad0f6f29d664c5c2c65a5afe15c3888",
+      "characters": 1300
+    },
+    {
+      "page": 3470,
+      "sha256": "cbdc3effda9a0e33e5fa1fc08492e6300a22be03640c3d5d0e2eb56abdeef51f",
+      "characters": 571
+    },
+    {
+      "page": 3471,
+      "sha256": "0f2e385405444f6446d262fdfeb17dc700ef38a1ed38139054f703831db2f621",
+      "characters": 574
+    },
+    {
+      "page": 3472,
+      "sha256": "65eb809092599541b70777b16825ee1e1733db17fcc642f48dd05a27bbb16a4b",
+      "characters": 701
+    },
+    {
+      "page": 3473,
+      "sha256": "67962400920ed857d1ec2872ebd4362bbb1f4db392767602175b54ccf9d4ff1c",
+      "characters": 705
+    },
+    {
+      "page": 3474,
+      "sha256": "712ea1b849268e2a0aaa8d6a6be81e8a1af5f291b153f065efe2dc34621a6b82",
+      "characters": 886
+    },
+    {
+      "page": 3475,
+      "sha256": "09bad3e704ab14a836af370e23de0a63f4a24731aed552fd7cb9d8ab18531c49",
+      "characters": 891
+    },
+    {
+      "page": 3476,
+      "sha256": "23bf38500bd20b681f59e54787c5613ab71daf3b9e1b232a48ddc0f3004e622e",
+      "characters": 1764
+    },
+    {
+      "page": 3477,
+      "sha256": "2a8d3a7ee6a9fe71ea9f3f548c70d38a0de3cdc3e43b3562f7eb4aa39d5dbb49",
+      "characters": 1770
+    },
+    {
+      "page": 3478,
+      "sha256": "1855df7ed58e4abd2eb61dc8a39abbd16bf6ae23ab0d9eb078120e0b314bd46c",
+      "characters": 1993
+    },
+    {
+      "page": 3479,
+      "sha256": "5a1c4325976ddd71aeb19400c0e360a0283a9073cb610230d736341eb40f00e9",
+      "characters": 1845
+    },
+    {
+      "page": 3480,
+      "sha256": "a1a4c03a328cfba9ab5ecb6d3b4ce96c72b12f28ea8b0520ffe0bb4165a72d24",
+      "characters": 2609
+    },
+    {
+      "page": 3481,
+      "sha256": "ac2b1a894c6f77bf53eec80b6399af1819653fdbf687d5ef868f0057ccaf31bf",
+      "characters": 3626
+    },
+    {
+      "page": 3482,
+      "sha256": "80604d42bc5a3b29c295f9f329420c526c66cbc16da9d6dc6a8680bf0ea9ee61",
+      "characters": 3203
+    },
+    {
+      "page": 3483,
+      "sha256": "a2b6b9bcde233d0c50e877330201da409d41250ece989dd5a6b3a9d6c06728e8",
+      "characters": 438
+    },
+    {
+      "page": 3484,
+      "sha256": "0e9c095e05977afba62443a4d8a4ff4d4573b79f09ba5a918036ccf47129e45b",
+      "characters": 1843
+    },
+    {
+      "page": 3485,
+      "sha256": "9959ddb33c6a55f09345962f8a50bedae23b0ae8c7c485433609bc27cf272c78",
+      "characters": 661
+    },
+    {
+      "page": 3486,
+      "sha256": "afb95cbefc6b23ad5a4b3c433e5d193758d1e10da5ac778eb92370fc2ba566e0",
+      "characters": 1786
+    },
+    {
+      "page": 3487,
+      "sha256": "7146d9311cd967891564ccdc878f8800cc42e587d6c0b9230130c8af79eaa667",
+      "characters": 3382
+    },
+    {
+      "page": 3488,
+      "sha256": "936768f9d33490bfae86a7c39b5eff659b9904f0c93054afba7b9cfba7b9b7ac",
+      "characters": 1577
+    },
+    {
+      "page": 3489,
+      "sha256": "0d59f14e32e25a4e3d525dc097f0af4bc3b2c4371c8b173a8266f7d6f7c5246d",
+      "characters": 1223
+    },
+    {
+      "page": 3490,
+      "sha256": "bc6daa38e8dc29128a078a6ee5d6f676c605616db08d749a9a9d2c86d05de973",
+      "characters": 674
+    },
+    {
+      "page": 3491,
+      "sha256": "f24760a3efa9705eb1ecaac005e1592811af6230dabd3bcb624debac693d3b18",
+      "characters": 674
+    },
+    {
+      "page": 3492,
+      "sha256": "dcbcca70516d8ce7a36ecb9172bb3a70f8b70d13892c72b22e3f71652ed3cf02",
+      "characters": 704
+    },
+    {
+      "page": 3493,
+      "sha256": "81e826422d77e6246b4bc22fffe382b7ef238b2aa1d50fd6bc124c054a98c4ba",
+      "characters": 1063
+    },
+    {
+      "page": 3494,
+      "sha256": "2c5c0fe8b2c3b68d9dece0934ef8b35737c5d4fc5afc24bcf0ea25f5aa09a5de",
+      "characters": 1827
+    },
+    {
+      "page": 3495,
+      "sha256": "31bc57493b2338bcc43c635342aed5ff96c0ecf403962997a9421e90a1208c96",
+      "characters": 669
+    },
+    {
+      "page": 3496,
+      "sha256": "975b35bd4eae0769fc0bb910a0a318b46a7dbbc8dc64d50aea66ab334bee8d6f",
+      "characters": 699
+    },
+    {
+      "page": 3497,
+      "sha256": "d2b16ea93d5c93b13362c86002536b0666803b2ac789cbd6206e56ab8793fa38",
+      "characters": 714
+    },
+    {
+      "page": 3498,
+      "sha256": "465fe13db1766d6e6c8c5a7e9fb6e69a96311efd459564fb2ee0aec3d3df4743",
+      "characters": 1331
+    },
+    {
+      "page": 3499,
+      "sha256": "bce1d95728362b610fb1797cc40a7a79fa805c7bf461a11a4d178b126ea8dd8d",
+      "characters": 2513
+    },
+    {
+      "page": 3500,
+      "sha256": "ee5ac6d14c35974a424ec83b119c6194d80a913dd3b7cc84edcbe9e428ed9002",
+      "characters": 2123
+    },
+    {
+      "page": 3501,
+      "sha256": "ad5adccc47fab11aa61e9ea453ffe77fb99677b7e2d350e8c2600859138e0a1a",
+      "characters": 997
+    },
+    {
+      "page": 3502,
+      "sha256": "2563f8ad4250217430fb61d0181e14ea407ef906c3721245b49a85e9304b9606",
+      "characters": 2887
+    },
+    {
+      "page": 3503,
+      "sha256": "c3f9d76b275d72a26b04a52f0a4f74437048d32bec909376c69309359de60a0b",
+      "characters": 676
+    },
+    {
+      "page": 3504,
+      "sha256": "0c6103d89d7fc982db3d5b7a026eb0a37bf76531933b7eb2c8fcf82f61d87a8f",
+      "characters": 2631
+    },
+    {
+      "page": 3505,
+      "sha256": "ef853a98bab26f6fdf7f275588e288b0d7bc3f05e75ebd8e6f36d99a54e9abd0",
+      "characters": 811
+    },
+    {
+      "page": 3506,
+      "sha256": "cb1a1e2a1da7787e7a74706ae9b83599021cf949896d771c1d07225a62f050e1",
+      "characters": 2885
+    },
+    {
+      "page": 3507,
+      "sha256": "58b032d4601c17e41d47637a7315ef862816bd1da7f991d110a86615d1bdcade",
+      "characters": 784
+    },
+    {
+      "page": 3508,
+      "sha256": "a2dd37ced0a8f60a276dfa28e83e99d4087704affbb0516a6bcb6e3408ba9944",
+      "characters": 1554
+    },
+    {
+      "page": 3509,
+      "sha256": "4276b3986141c57d90f9b38d89c0ec9b7b9035125b47284d9ba6a9e5bd70458b",
+      "characters": 1468
+    },
+    {
+      "page": 3510,
+      "sha256": "6bfd3838b4285640abcd7f751781ab9522fbbeb2e7df6df7aab90abb4911b04b",
+      "characters": 1592
+    },
+    {
+      "page": 3511,
+      "sha256": "811e79174c924318d7ee2ca5e2bf630e02092eac624ffc7a39024ebc51425ef7",
+      "characters": 2540
+    },
+    {
+      "page": 3512,
+      "sha256": "8177100561497784117bb40763c30040ebc6c1dda2ddc4f5374b4ff88061aa73",
+      "characters": 2222
+    },
+    {
+      "page": 3513,
+      "sha256": "ba00058c48b7f276739b6025d5bbafe225be2263d447d8e7bf3bc996f2227563",
+      "characters": 919
+    },
+    {
+      "page": 3514,
+      "sha256": "c8a435e6246dda6214cec076f9ffdda08dcd9ec3d71aa697318f88faf6ee3f50",
+      "characters": 2934
+    },
+    {
+      "page": 3515,
+      "sha256": "cf58ea4e7180ea47b65a6ecfe3ef77f2a219a16e22dfce9a6383912f343c740e",
+      "characters": 674
+    },
+    {
+      "page": 3516,
+      "sha256": "2f3ef4a771eeaff02772b0bbd285a2b7fbc58e725d98884bb658bed1a7145311",
+      "characters": 3069
+    },
+    {
+      "page": 3517,
+      "sha256": "b5d0dd28bc73b2517e819f7602a9ac75f9e73c5eb8f7a8bf2b53102aec16d9b7",
+      "characters": 795
+    },
+    {
+      "page": 3518,
+      "sha256": "660998f327f1f096e3270c4f6fd8cbeda18b947505b196f8826de0c708f0bc43",
+      "characters": 3337
+    },
+    {
+      "page": 3519,
+      "sha256": "ccb483c72101e3b2fb9ef4950448b8b6185d18c6c10366bee7d6a0b984c22ed6",
+      "characters": 724
+    },
+    {
+      "page": 3520,
+      "sha256": "9db361e984511b3704f502e28db8d7ea33f6fa64c54e68271e64bc1eebf283c8",
+      "characters": 1637
+    },
+    {
+      "page": 3521,
+      "sha256": "69ca8e8ff9710cfdeff2235c833de0f33a4f917c114b194b1f47cd922bb2f058",
+      "characters": 1596
+    },
+    {
+      "page": 3522,
+      "sha256": "9ea0dd8557f885768cff2e52df2dbed446d563effeda20d34ae185d8fdde2315",
+      "characters": 1520
+    },
+    {
+      "page": 3523,
+      "sha256": "f528d6d6d46727a3bcc59084d84cb5b5627a2c1c40ff73f535a8b25d4b7c485c",
+      "characters": 2481
+    },
+    {
+      "page": 3524,
+      "sha256": "7e6e6bbcb1f4e33dbc7ced49c71f4af23fcabbf4ebbf807d4ec24572082888b8",
+      "characters": 2279
+    },
+    {
+      "page": 3525,
+      "sha256": "d53db540dba786d081fee3896fb5c654eb20a521da941506e95f82100a0f1258",
+      "characters": 679
+    },
+    {
+      "page": 3526,
+      "sha256": "5942022e95f66bc4987721eb6e5386fa58cd721d09e0649e4b8d5a5d33fa9dda",
+      "characters": 2829
+    },
+    {
+      "page": 3527,
+      "sha256": "70a546432c2a2cdb166f83c950c88e7b1bfea4e212f272539d9dc382295025f9",
+      "characters": 655
+    },
+    {
+      "page": 3528,
+      "sha256": "5e398a9d5d6dc4b25b44ad02f2b66e9a5ae0e1558cdd40621820b7699f9e7dca",
+      "characters": 3009
+    },
+    {
+      "page": 3529,
+      "sha256": "5bddc5ac0df107098920847c8f1311ad5d6d3307a22ab34948bead8586325bac",
+      "characters": 778
+    },
+    {
+      "page": 3530,
+      "sha256": "b507afd7510ead4c05fc0fea6db6321588b9bcd36f24ddf25e11fa2bd5c55434",
+      "characters": 3181
+    },
+    {
+      "page": 3531,
+      "sha256": "3b035b30cb21297a132945440bd94124c66e80e53bb6fa5e485c720211f04c3d",
+      "characters": 723
+    },
+    {
+      "page": 3532,
+      "sha256": "b0d17407169a2787b58d0b000c7106544f97641879b5e3770d23203e7dd8753c",
+      "characters": 1665
+    },
+    {
+      "page": 3533,
+      "sha256": "1f0379f8194c7a05a1cc5d5ee33c86bb7349a9b150e284fffbe8db5d247b6efe",
+      "characters": 1526
+    },
+    {
+      "page": 3534,
+      "sha256": "5a2fb352f35a2352a056edffcec40224c114e8ef195e97bf444f63fd9b7d219c",
+      "characters": 1549
+    },
+    {
+      "page": 3535,
+      "sha256": "164d1b9ae7ed7a9839b795a6489781e2df78b983c889b16c00137469b3b0525c",
+      "characters": 2617
+    },
+    {
+      "page": 3536,
+      "sha256": "73709741df1f79b806cc9ba49d72a926fcc46cb77268c6d873b882fa72f57d01",
+      "characters": 2182
+    },
+    {
+      "page": 3537,
+      "sha256": "809a8aee8d748c8553aae61ca3deea02c4e66f67cd376707628a3990cbb4cbb4",
+      "characters": 1033
+    },
+    {
+      "page": 3538,
+      "sha256": "b016aeadd0146c6932f2bdb6d5d4542c714090ae571b8adfa853300ab444af6c",
+      "characters": 3154
+    },
+    {
+      "page": 3539,
+      "sha256": "e5dcf84bc9f394762020c0bd7698fe980ce52106250f3b734cd32ca33257261a",
+      "characters": 773
+    },
+    {
+      "page": 3540,
+      "sha256": "b0231cc39962ddb352638453f3529a638b68f728f378c2367cf766b24d0c9824",
+      "characters": 3321
+    },
+    {
+      "page": 3541,
+      "sha256": "447d9bb9ef2fc8744f8cf6a01f7ad8c8c172b9a32ff44da68aabf0518b99daa6",
+      "characters": 937
+    },
+    {
+      "page": 3542,
+      "sha256": "44e4eece486d2799ecbb67d2409cd14fc982dde2c23d2036087ba3a485445038",
+      "characters": 3402
+    },
+    {
+      "page": 3543,
+      "sha256": "3d88b168a2887c915b8286e5c46347ea691e94148208a45ea876785fe86f0adb",
+      "characters": 1061
+    },
+    {
+      "page": 3544,
+      "sha256": "24334aca0eb2e2edc4b8eabd9aab3801964295238f87044a88efcc531de33b2a",
+      "characters": 1868
+    },
+    {
+      "page": 3545,
+      "sha256": "0d0af811266688024011b4659724808273111dffd7088daebce5f4047c81d99f",
+      "characters": 1634
+    },
+    {
+      "page": 3546,
+      "sha256": "98120dfb9a7f06d74f5c1b79aae9fad3ba0a99284a4af7c402f99dd8a05c5e2d",
+      "characters": 1534
+    },
+    {
+      "page": 3547,
+      "sha256": "0f305fc3b760a240604acd72bc958f6bb51741dd16a5c211bee4f2fa5dcab093",
+      "characters": 2472
+    },
+    {
+      "page": 3548,
+      "sha256": "ea38a7f9ed66b514bfd382a3783213626a4b7b54f53976c90abc91b4a06df79a",
+      "characters": 2232
+    },
+    {
+      "page": 3549,
+      "sha256": "75838eef5d3a7b311bbe7da53aa64237d1305cecffa3963761500ea1fb6881ca",
+      "characters": 919
+    },
+    {
+      "page": 3550,
+      "sha256": "19acb763c98751d545b03994e33284c6f6a4f37d392bbf44d751127b9d004af0",
+      "characters": 2822
+    },
+    {
+      "page": 3551,
+      "sha256": "a53a72a39aec467d718e454580560e5d8c2a0d6b3a8f7af80cc339c9d8c1966d",
+      "characters": 650
+    },
+    {
+      "page": 3552,
+      "sha256": "40d650543281ed43ef00d7f8906810d447a9f5aca053423537e7e8b303a01915",
+      "characters": 2999
+    },
+    {
+      "page": 3553,
+      "sha256": "41292328d8afbc0b43f03381a9ff3b7b1a968f9c4c24be255fa0346de98be84d",
+      "characters": 772
+    },
+    {
+      "page": 3554,
+      "sha256": "1930013788c573790a4cfd5c56ccfc00654deeaafdf4dfa839f063254adc0330",
+      "characters": 3220
+    },
+    {
+      "page": 3555,
+      "sha256": "ebe206f14c550da5a97dd2cd666c83d01388ca408fb921156b75849b8ae1769d",
+      "characters": 708
+    },
+    {
+      "page": 3556,
+      "sha256": "1c7a4de3af900afa2e4e990fc72d835e07dc8edb9953e0faaf91959ff6b62c86",
+      "characters": 1634
+    },
+    {
+      "page": 3557,
+      "sha256": "dc7df1e07730eb59f17e5b696377026fb6b66bc185bee583689c5b2d5f3d17f1",
+      "characters": 1557
+    },
+    {
+      "page": 3558,
+      "sha256": "324c65ead4b1ca5d77e80fb9674818ba5db4b19056e716f1009cca19d512573b",
+      "characters": 1386
+    },
+    {
+      "page": 3559,
+      "sha256": "fa0773c5711df5ee9b0f52972226fcdef969f737e7dde4d2bd1cea20e2f1f46c",
+      "characters": 2471
+    },
+    {
+      "page": 3560,
+      "sha256": "8910379dd6105e25b585eb05c2bc03bbf16a79f77d6392a75bb995d8140dd7c8",
+      "characters": 2146
+    },
+    {
+      "page": 3561,
+      "sha256": "3739949dc29143e75191fe6186ca47b0e6774a6b04f01d4d62d43664f9fa0585",
+      "characters": 919
+    },
+    {
+      "page": 3562,
+      "sha256": "a399ff1bcd2c479d6a64117492d45ecd101b6c58a0f67cee8fe40ea7fdb4c0fc",
+      "characters": 2679
+    },
+    {
+      "page": 3563,
+      "sha256": "6c766334576ba6c080bffb9d0721fe1272c71dec354f731d24916ed6c45cb250",
+      "characters": 419
+    },
+    {
+      "page": 3564,
+      "sha256": "cb13509014185d262e1732623c83476c3bd5122cd67775bc4fa13685dbbec089",
+      "characters": 2841
+    },
+    {
+      "page": 3565,
+      "sha256": "3980911cb9204f7dbb6c274dfd4b66e8e6e09461422050c7c96f636d3444f9cf",
+      "characters": 556
+    },
+    {
+      "page": 3566,
+      "sha256": "92c90bef788425886fc242fdfeec44028f3ba804ceb846d13e80b007c9146c27",
+      "characters": 2934
+    },
+    {
+      "page": 3567,
+      "sha256": "13eeaf7a2172c10ace7c3a9159214c1acc2c57e9618f301203ac23dd3ce32934",
+      "characters": 464
+    },
+    {
+      "page": 3568,
+      "sha256": "44d43800d4b02a2f4f7887b237fe7569809a377c9f61bb286a4e77033a683acc",
+      "characters": 1378
+    },
+    {
+      "page": 3569,
+      "sha256": "2aefe5e3ee979d276d5236090a3fb7be7b16bf08366bf4c66a7a15eabf12d9c1",
+      "characters": 1375
+    },
+    {
+      "page": 3570,
+      "sha256": "5ef1295b62f3c2a6e137295b754ac9fde7450d7b8043e65f0c26a2414ccda6e2",
+      "characters": 1564
+    },
+    {
+      "page": 3571,
+      "sha256": "d9300186e2fdf22a8e2fc4ddb380cf30bcd6869ef44ed184f658c35d037a0cea",
+      "characters": 2576
+    },
+    {
+      "page": 3572,
+      "sha256": "394e178082d5f37600e8c1d0446019bc2841842c7761a03edddfc5af9007e1cf",
+      "characters": 2232
+    },
+    {
+      "page": 3573,
+      "sha256": "0148dad07d9b349ea067f478b82cc71f4985592a8d3ca392cd4904d5c40e174e",
+      "characters": 1078
+    },
+    {
+      "page": 3574,
+      "sha256": "f562821c0f11f89dcecadc11d21571b2adc56530a95e7b64bee2e4d17e63491f",
+      "characters": 2911
+    },
+    {
+      "page": 3575,
+      "sha256": "b13443f459a7ab46705ce724f9f6ca690febbda8cabb96d15316008207ef8827",
+      "characters": 631
+    },
+    {
+      "page": 3576,
+      "sha256": "dc6144389e785b274ad3e698e4c2b865d4bf5e333681ee3435ebf3481e44fc3f",
+      "characters": 3094
+    },
+    {
+      "page": 3577,
+      "sha256": "51a0b0f4ea82dc2953f3937eebb5fdbcdb2d00ffb254afc830f6794a1af2efee",
+      "characters": 764
+    },
+    {
+      "page": 3578,
+      "sha256": "e3b9d0fbb745a59a0887dc87f4ac3124f872c0bc33e1b52faa56cf7e6df1222a",
+      "characters": 3129
+    },
+    {
+      "page": 3579,
+      "sha256": "77d3856788df836555f4338037c662f5752035b4bb32c4eb862650e8a1157b6e",
+      "characters": 689
+    },
+    {
+      "page": 3580,
+      "sha256": "7c484734fdd23bf979e2a55aade5d0bcd108c643800e386461f55fddd56b9acf",
+      "characters": 1622
+    },
+    {
+      "page": 3581,
+      "sha256": "32a0d522a05ca342fb09d89a9201e8d065ca55206d86e66940340881c62b3d47",
+      "characters": 1473
+    },
+    {
+      "page": 3582,
+      "sha256": "5dadb9ab6097e5a0317e236bf5688c90de8f39d3cb4cb75e09ecbb1ed62ae7b1",
+      "characters": 1557
+    },
+    {
+      "page": 3583,
+      "sha256": "9aedcab79693b84959d2a17e3f512ff917c328c0a64b158c4b82a4e484635ef8",
+      "characters": 2450
+    },
+    {
+      "page": 3584,
+      "sha256": "aa64e84cd9ce5f0258144db3d37e3b91c459005ef6da99ab849afa4bdbacba51",
+      "characters": 2352
+    },
+    {
+      "page": 3585,
+      "sha256": "636a5fb2772cb3e207523a2ca9f7a9e04075f777abedf56673d92dc51b88d7b9",
+      "characters": 482
+    },
+    {
+      "page": 3586,
+      "sha256": "864347caac9ffabe910bad14a7a81d1f7bbfe27c0f74af1bfba8cbc67359ba15",
+      "characters": 2632
+    },
+    {
+      "page": 3587,
+      "sha256": "2a344d957ede92e5a0969c6cdbcbb65a47af8e2bf7491e9cac6d60e43126fe30",
+      "characters": 419
+    },
+    {
+      "page": 3588,
+      "sha256": "67a93eff34648d98e36ea7f1135cc6958172b04ffd452bb6e9a2d9263058d0e5",
+      "characters": 2751
+    },
+    {
+      "page": 3589,
+      "sha256": "df8aeb4b5f83ba96c7af9b828007178582584c84cf343502ea50b36933fa15ad",
+      "characters": 556
+    },
+    {
+      "page": 3590,
+      "sha256": "c0104c5689a8108df7e69508941f1d9bd0a11a8d24444e6c58710e0b15bbf920",
+      "characters": 2815
+    },
+    {
+      "page": 3591,
+      "sha256": "e702302b3ccbf80209fc21fa6ef2b0014b6af269b6d20678ffe45724c0dd709c",
+      "characters": 528
+    },
+    {
+      "page": 3592,
+      "sha256": "7f6a785c1fedc46b3e8f1e6b21a7d6594fab358ad1486b63c6ec5619443f1ab2",
+      "characters": 1333
+    },
+    {
+      "page": 3593,
+      "sha256": "0c0be815bbacf7b66d2f55a7ec2994ad4dbfda46b2a5a1935ff5089bfeb73a17",
+      "characters": 1358
+    },
+    {
+      "page": 3594,
+      "sha256": "7f5c6f914bfe02ad9cfebb6a29acd6f825aa584f02ea127754159ad552e3e960",
+      "characters": 1412
+    },
+    {
+      "page": 3595,
+      "sha256": "f4acb3561591c989adb249686abd70b5a203a46aeedcd8bdb89312bba342b150",
+      "characters": 2502
+    },
+    {
+      "page": 3596,
+      "sha256": "3cd7a4aff3ec2cc49c1025fc674f2904907c07074e25405774a061d0f64a0328",
+      "characters": 2108
+    },
+    {
+      "page": 3597,
+      "sha256": "3ed3d2e7c9aff9973db24576de14cb80013f0d4a6bd6311159fccce2078cc198",
+      "characters": 997
+    },
+    {
+      "page": 3598,
+      "sha256": "cb9539e8be8133e9abc6153efeb4824d22d992289ed5d3d4affb1b8a86decb27",
+      "characters": 3036
+    },
+    {
+      "page": 3599,
+      "sha256": "a4f41083f9ae3249e4ce86479cfb865da63f7f5904bb69b0811cae7cdecc2b6f",
+      "characters": 684
+    },
+    {
+      "page": 3600,
+      "sha256": "1b047efb509cecd8228946c57264e1ccf65feb001ae162426d09b1736003d83f",
+      "characters": 3188
+    },
+    {
+      "page": 3601,
+      "sha256": "048a269c4287bf09f447bacf141dddbc52fd63ff55460bd5b9b2a0f018e7fcda",
+      "characters": 817
+    },
+    {
+      "page": 3602,
+      "sha256": "ac171284c08329c3dca74249d90c7bbb21dadebcd8492fd94dd7288de6e15c9c",
+      "characters": 3359
+    },
+    {
+      "page": 3603,
+      "sha256": "53f4172839539170493e25c3fd1995cef9dea370c535b701f589ba4afd2bc17a",
+      "characters": 753
+    },
+    {
+      "page": 3604,
+      "sha256": "f043e00d854332a4702871bd978aab9344fb48ac06bb8d09a5876362493a434b",
+      "characters": 1716
+    },
+    {
+      "page": 3605,
+      "sha256": "a991e8fdc1423c50d62e2135ba72d6b8ee0970a53d8bdf5cef261d59fa85b402",
+      "characters": 1599
+    },
+    {
+      "page": 3606,
+      "sha256": "0d99e2b4694cfe592c717a88db914cb9c38d4955e34747d4f776b946f2b883e9",
+      "characters": 1379
+    },
+    {
+      "page": 3607,
+      "sha256": "ed2b0f544ddb028050b52ba996f60e9c9270770a006777528e1bac807fc95993",
+      "characters": 2641
+    }
+  ],
+  "sections": [
+    {
+      "book": "REF",
+      "depth": 0,
+      "title": "MQL5 Reference",
+      "start": 74,
+      "end": 7284,
+      "id": "REF-0001",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3431,
+        3432,
+        3433,
+        3434,
+        3435,
+        3436,
+        3437,
+        3438,
+        3439,
+        3440,
+        3441,
+        3442,
+        3443,
+        3444,
+        3445,
+        3446,
+        3447,
+        3448,
+        3449,
+        3450,
+        3451,
+        3452,
+        3453,
+        3454,
+        3455,
+        3456,
+        3457,
+        3458,
+        3459,
+        3460,
+        3461,
+        3462,
+        3463,
+        3464,
+        3465,
+        3466,
+        3467,
+        3468,
+        3469,
+        3470,
+        3471,
+        3472,
+        3473,
+        3474,
+        3475,
+        3476,
+        3477,
+        3478,
+        3479,
+        3480,
+        3481,
+        3482,
+        3483,
+        3484,
+        3485,
+        3486,
+        3487,
+        3488,
+        3489,
+        3490,
+        3491,
+        3492,
+        3493,
+        3494,
+        3495,
+        3496,
+        3497,
+        3498,
+        3499,
+        3500,
+        3501,
+        3502,
+        3503,
+        3504,
+        3505,
+        3506,
+        3507,
+        3508,
+        3509,
+        3510,
+        3511,
+        3512,
+        3513,
+        3514,
+        3515,
+        3516,
+        3517,
+        3518,
+        3519,
+        3520,
+        3521,
+        3522,
+        3523,
+        3524,
+        3525,
+        3526,
+        3527,
+        3528,
+        3529,
+        3530,
+        3531,
+        3532,
+        3533,
+        3534,
+        3535,
+        3536,
+        3537,
+        3538,
+        3539,
+        3540,
+        3541,
+        3542,
+        3543,
+        3544,
+        3545,
+        3546,
+        3547,
+        3548,
+        3549,
+        3550,
+        3551,
+        3552,
+        3553,
+        3554,
+        3555,
+        3556,
+        3557,
+        3558,
+        3559,
+        3560,
+        3561,
+        3562,
+        3563,
+        3564,
+        3565,
+        3566,
+        3567,
+        3568,
+        3569,
+        3570,
+        3571,
+        3572,
+        3573,
+        3574,
+        3575,
+        3576,
+        3577,
+        3578,
+        3579,
+        3580,
+        3581,
+        3582,
+        3583,
+        3584,
+        3585,
+        3586,
+        3587,
+        3588,
+        3589,
+        3590,
+        3591,
+        3592,
+        3593,
+        3594,
+        3595,
+        3596,
+        3597,
+        3598,
+        3599,
+        3600,
+        3601,
+        3602,
+        3603,
+        3604,
+        3605,
+        3606,
+        3607
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Contêiner bibliográfico; somente interseção 3431–3607 lida nesta entrega, sem reivindicar o livro completo.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 1,
+      "title": "Python Integration",
+      "start": 3347,
+      "end": 3437,
+      "id": "REF-1083",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3431,
+        3432,
+        3433,
+        3434,
+        3435,
+        3436,
+        3437
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Continuação da integração Python: exemplos encerram conexão com shutdown; histórico de ordens e negócios deve permanecer distinto. Proposta Stoikus: análise externa somente de leitura, sem habilitar envio de ordens.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "history_orders_get",
+      "start": 3429,
+      "end": 3431,
+      "id": "REF-1113",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3431
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Apenas p.3431: final do exemplo converte time_setup/time_done em datetime pandas e mostra duas ordens da mesma posição. Não reivindica leitura 3429–3430 nesta entrega; pode unir ao leitor anterior.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "history_deals_total",
+      "start": 3432,
+      "end": 3433,
+      "id": "REF-1114",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3432,
+        3433
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Conta negócios entre date_from/date_to (datetime ou segundos desde1970); exemplo inicializa terminal e encerra conexão. Inteiro retornado não equivale a lucro nem número de posições. Proposta: reconciliação de quantidade, sem negociação.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "history_deals_get",
+      "start": 3434,
+      "end": 3437,
+      "id": "REF-1115",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3434,
+        3435,
+        3436,
+        3437
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Consulta negócios por intervalo, ticket da ordem em DEAL_ORDER ou posição em DEAL_POSITION_ID; namedtuple e None em erro com last_error. group aplica inclusão antes de exclusão sequencial, máscaras * e !. Proposta: rastreabilidade dos fills por posição, distinguindo ausência de dados de falha.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 1,
+      "title": "ONNX models",
+      "start": 3438,
+      "end": 3483,
+      "id": "REF-1116",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3438,
+        3439,
+        3440,
+        3441,
+        3442,
+        3443,
+        3444,
+        3445,
+        3446,
+        3447,
+        3448,
+        3449,
+        3450,
+        3451,
+        3452,
+        3453,
+        3454,
+        3455,
+        3456,
+        3457,
+        3458,
+        3459,
+        3460,
+        3461,
+        3462,
+        3463,
+        3464,
+        3465,
+        3466,
+        3467,
+        3468,
+        3469,
+        3470,
+        3471,
+        3472,
+        3473,
+        3474,
+        3475,
+        3476,
+        3477,
+        3478,
+        3479,
+        3480,
+        3481,
+        3482,
+        3483
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Visão e APIs ONNX: carregar sessão, shapes, executar, liberar, inspecionar nomes/tipos. Aplicação exclusivamente proposta futura; Stoikus não usa ML conforme brief.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "ONNX Support",
+      "start": 3439,
+      "end": 3440,
+      "id": "REF-1117",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3439,
+        3440
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Formato interoperável de operadores/modelos entre ferramentas e execução no terminal; alegação de desempenho e gráfico são relato da fonte, sem medição ou leitura visual deste agente.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Format Conversion",
+      "start": 3441,
+      "end": 3441,
+      "id": "REF-1118",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3441
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Conversão por ONNXMLTools e wrappers de Keras/TensorFlow/scikit-learn entre outros; compatibilidade e versões citadas não foram verificadas online nem instaladas. Proposta futura requer fixar ferramenta/opset/runtime.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Automatic data type conversion",
+      "start": 3442,
+      "end": 3445,
+      "id": "REF-1119",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3442,
+        3443,
+        3444,
+        3445
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Autoconversão copia dados para tensores; ONNX_NO_CONVERSION usa dados sem cópia adicional. Overflow/truncamento não é controlado. color é uint e datetime long; tipos não suportados geram5802. BFLOAT16/string aparecem como não suportados nesta seção. Proposta: contrato explícito de tipos e validação de faixa.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Creating a Model",
+      "start": 3446,
+      "end": 3452,
+      "id": "REF-1120",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3446,
+        3447,
+        3448,
+        3449,
+        3450,
+        3451,
+        3452
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Treinar em ferramenta externa, converter, incorporar em EA; Python pode ser configurado no MetaEditor e scripts executados com F7. Exemplo projeto ONNX.Price.Prediction exige módulos e EURUSD/conexão. Nada instalado ou executado; comandos antigos são evidência documental, não receita validada.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Running a model",
+      "start": 3453,
+      "end": 3458,
+      "id": "REF-1121",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3453,
+        3454,
+        3455,
+        3456,
+        3457,
+        3458
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Carregar→definir shapes→OnnxRun→OnnxRelease. Exemplo normaliza OHLC10×4 por média/desvio, usa matrixf/vectorf, desnormaliza Close; teste10000 janelas relata51,34% de direção. Proposta: testar sigma zero, ausência de barras, separação temporal e custo; percentual do livro não é resultado Stoikus.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Validation in the Strategy Tester",
+      "start": 3459,
+      "end": 3463,
+      "id": "REF-1122",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3459,
+        3460,
+        3461,
+        3462,
+        3463
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Exemplo move criação para OnInit, liberação para OnDeinit, inferência para OnTick com filtro de nova barra EURUSD/H1, compara previsão anterior com Close concluído. Resultado pouco acima50% em2022 é da fonte. Revisar primeiro valor predict e divisão por zero em predictions antes de adaptar; não comprova estratégia rentável.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxCreate",
+      "start": 3464,
+      "end": 3464,
+      "id": "REF-1123",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3464
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "OnnxCreate recebe arquivo relativo a MQL5/Files e flags; devolve handle ou INVALID_HANDLE/GetLastError; tenta extensão.onnx caso arquivo não encontrado. Proposta: hash/versionar artefato e recusar falha.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxCreateFromBuffer",
+      "start": 3465,
+      "end": 3465,
+      "id": "REF-1124",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3465
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "OnnxCreateFromBuffer recebe const uchar& e flags; handle ou INVALID_HANDLE. Permite recurso incorporado em versão futura, sem provar existência de modelo no produto.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxRelease",
+      "start": 3466,
+      "end": 3466,
+      "id": "REF-1125",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3466
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "OnnxRelease fecha sessão criada por arquivo/buffer; bool e GetLastError na falha. Proposta: liberar também em caminhos intermediários de erro.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxRun",
+      "start": 3467,
+      "end": 3469,
+      "id": "REF-1126",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3467,
+        3468,
+        3469
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "OnnxRun variádico recebe entradas/saídas conforme contrato; bool/GetLastError. Flags de log, NO_CONVERSION, COMMON_FOLDER, CPU_ONLY, CUDA0–7 e profiling; múltiplas GPUs escolhem menor índice, índice inexistente seleção automática. Não inferir GPU usada sem receipt.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxGetInputCount",
+      "start": 3470,
+      "end": 3470,
+      "id": "REF-1127",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3470
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Conta entradas; long, -1 em erro. Proposta: validar contagem esperada antes de inferir.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxGetOutputCount",
+      "start": 3471,
+      "end": 3471,
+      "id": "REF-1128",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3471
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Conta saídas; long, -1 em erro. Proposta: validar contagem esperada antes de interpretar sinal.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxGetInputName",
+      "start": 3472,
+      "end": 3472,
+      "id": "REF-1129",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3472
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Nome de entrada por índice zero-based, NULL em erro; GetLastError. Proposta: fixar nome ao contrato do modelo.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxGetOutputName",
+      "start": 3473,
+      "end": 3473,
+      "id": "REF-1130",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3473
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Nome de saída por índice zero-based, NULL em erro; GetLastError. Proposta: impedir interpretação de saída diferente após troca de modelo.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxGetInputTypeInfo",
+      "start": 3474,
+      "end": 3474,
+      "id": "REF-1131",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3474
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Preenche OnnxTypeInfo da entrada por índice; bool/GetLastError. Proposta: confrontar tensor e dimensão com dados preparados.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxGetOutputTypeInfo",
+      "start": 3475,
+      "end": 3475,
+      "id": "REF-1132",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3475
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Preenche OnnxTypeInfo da saída por índice; bool/GetLastError. Proposta: recusar tipo/shape inesperado.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxSetInputShape",
+      "start": 3476,
+      "end": 3476,
+      "id": "REF-1133",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3476
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Define shape de entrada por índice com array de dimensões; assinatura bool mas parágrafo retorno fala nome/NULL. Inconsistência editorial registrada, requer headers/build nativos antes de código.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "OnnxSetOutputShape",
+      "start": 3477,
+      "end": 3477,
+      "id": "REF-1134",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3477
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Define shape de saída por índice; exemplo testa !retorno e libera handle. Mesma contradição bool versus nome/NULL; não copiar prosa como contrato compilável.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Data structures",
+      "start": 3478,
+      "end": 3483,
+      "id": "REF-1135",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3478,
+        3479,
+        3480,
+        3481,
+        3482,
+        3483
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "OnnxTypeInfo agrega tensor/map/sequence; tensor contém data_type/dimensions. Texto contradiz entrada somente tensor com frase tipos tensor/map/sequence para entrada; não resolver por inferência. Profiling grava JSON em MQL5/Files/OnnxProfileReports com tempos/provedor/nós; FP16/FP8 conversões usam ushort/uchar e formatos explícitos. Proposta: medir latência e erro numérico, não acoplar a limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 1,
+      "title": "Standard Library",
+      "start": 3484,
+      "end": 7007,
+      "id": "REF-1136",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3484,
+        3485,
+        3486,
+        3487,
+        3488,
+        3489,
+        3490,
+        3491,
+        3492,
+        3493,
+        3494,
+        3495,
+        3496,
+        3497,
+        3498,
+        3499,
+        3500,
+        3501,
+        3502,
+        3503,
+        3504,
+        3505,
+        3506,
+        3507,
+        3508,
+        3509,
+        3510,
+        3511,
+        3512,
+        3513,
+        3514,
+        3515,
+        3516,
+        3517,
+        3518,
+        3519,
+        3520,
+        3521,
+        3522,
+        3523,
+        3524,
+        3525,
+        3526,
+        3527,
+        3528,
+        3529,
+        3530,
+        3531,
+        3532,
+        3533,
+        3534,
+        3535,
+        3536,
+        3537,
+        3538,
+        3539,
+        3540,
+        3541,
+        3542,
+        3543,
+        3544,
+        3545,
+        3546,
+        3547,
+        3548,
+        3549,
+        3550,
+        3551,
+        3552,
+        3553,
+        3554,
+        3555,
+        3556,
+        3557,
+        3558,
+        3559,
+        3560,
+        3561,
+        3562,
+        3563,
+        3564,
+        3565,
+        3566,
+        3567,
+        3568,
+        3569,
+        3570,
+        3571,
+        3572,
+        3573,
+        3574,
+        3575,
+        3576,
+        3577,
+        3578,
+        3579,
+        3580,
+        3581,
+        3582,
+        3583,
+        3584,
+        3585,
+        3586,
+        3587,
+        3588,
+        3589,
+        3590,
+        3591,
+        3592,
+        3593,
+        3594,
+        3595,
+        3596,
+        3597,
+        3598,
+        3599,
+        3600,
+        3601,
+        3602,
+        3603,
+        3604,
+        3605,
+        3606,
+        3607
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Biblioteca padrão reside em Include e agrupa Math, Arrays, Generic, Files, Controls, Trade etc. Somente abertura e Math/stat até3607 lidas, sem reivindicar todas as classes.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 2,
+      "title": "Mathematics",
+      "start": 3485,
+      "end": 3935,
+      "id": "REF-1137",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3485,
+        3486,
+        3487,
+        3488,
+        3489,
+        3490,
+        3491,
+        3492,
+        3493,
+        3494,
+        3495,
+        3496,
+        3497,
+        3498,
+        3499,
+        3500,
+        3501,
+        3502,
+        3503,
+        3504,
+        3505,
+        3506,
+        3507,
+        3508,
+        3509,
+        3510,
+        3511,
+        3512,
+        3513,
+        3514,
+        3515,
+        3516,
+        3517,
+        3518,
+        3519,
+        3520,
+        3521,
+        3522,
+        3523,
+        3524,
+        3525,
+        3526,
+        3527,
+        3528,
+        3529,
+        3530,
+        3531,
+        3532,
+        3533,
+        3534,
+        3535,
+        3536,
+        3537,
+        3538,
+        3539,
+        3540,
+        3541,
+        3542,
+        3543,
+        3544,
+        3545,
+        3546,
+        3547,
+        3548,
+        3549,
+        3550,
+        3551,
+        3552,
+        3553,
+        3554,
+        3555,
+        3556,
+        3557,
+        3558,
+        3559,
+        3560,
+        3561,
+        3562,
+        3563,
+        3564,
+        3565,
+        3566,
+        3567,
+        3568,
+        3569,
+        3570,
+        3571,
+        3572,
+        3573,
+        3574,
+        3575,
+        3576,
+        3577,
+        3578,
+        3579,
+        3580,
+        3581,
+        3582,
+        3583,
+        3584,
+        3585,
+        3586,
+        3587,
+        3588,
+        3589,
+        3590,
+        3591,
+        3592,
+        3593,
+        3594,
+        3595,
+        3596,
+        3597,
+        3598,
+        3599,
+        3600,
+        3601,
+        3602,
+        3603,
+        3604,
+        3605,
+        3606,
+        3607
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Abertura enumera Statistics, fuzzy Mamdani/Sugeno e ALGLIB (regressão, otimização etc.). Não implica esses métodos no Stoikus; limites desta leitura não cobrem restante3935.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 3,
+      "title": "Statistics",
+      "start": 3486,
+      "end": 3843,
+      "id": "REF-1138",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3486,
+        3487,
+        3488,
+        3489,
+        3490,
+        3491,
+        3492,
+        3493,
+        3494,
+        3495,
+        3496,
+        3497,
+        3498,
+        3499,
+        3500,
+        3501,
+        3502,
+        3503,
+        3504,
+        3505,
+        3506,
+        3507,
+        3508,
+        3509,
+        3510,
+        3511,
+        3512,
+        3513,
+        3514,
+        3515,
+        3516,
+        3517,
+        3518,
+        3519,
+        3520,
+        3521,
+        3522,
+        3523,
+        3524,
+        3525,
+        3526,
+        3527,
+        3528,
+        3529,
+        3530,
+        3531,
+        3532,
+        3533,
+        3534,
+        3535,
+        3536,
+        3537,
+        3538,
+        3539,
+        3540,
+        3541,
+        3542,
+        3543,
+        3544,
+        3545,
+        3546,
+        3547,
+        3548,
+        3549,
+        3550,
+        3551,
+        3552,
+        3553,
+        3554,
+        3555,
+        3556,
+        3557,
+        3558,
+        3559,
+        3560,
+        3561,
+        3562,
+        3563,
+        3564,
+        3565,
+        3566,
+        3567,
+        3568,
+        3569,
+        3570,
+        3571,
+        3572,
+        3573,
+        3574,
+        3575,
+        3576,
+        3577,
+        3578,
+        3579,
+        3580,
+        3581,
+        3582,
+        3583,
+        3584,
+        3585,
+        3586,
+        3587,
+        3588,
+        3589,
+        3590,
+        3591,
+        3592,
+        3593,
+        3594,
+        3595,
+        3596,
+        3597,
+        3598,
+        3599,
+        3600,
+        3601,
+        3602,
+        3603,
+        3604,
+        3605,
+        3606,
+        3607
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Cinco famílias por distribuição: densidade,CDF,quantil,pseudoaleatório,momentos; overloads para arrays. Exemplo normal calcula probabilidades por diferença deCDF, intervalo por quantis e compara amostra1M com momentos. Proposta: pesquisa offline, sem mudar regras JPW.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Statistical Characteristics",
+      "start": 3489,
+      "end": 3497,
+      "id": "REF-1139",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3489,
+        3490,
+        3491,
+        3492,
+        3493,
+        3494,
+        3495,
+        3496,
+        3497
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Características amostrais incluem média,variância,assimetria,curtose,mediana,desvio-padrão/desvio absoluto. Não assumir distribuição a partir desses números; registrar janela e observações válidas.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMean",
+      "start": 3490,
+      "end": 3490,
+      "id": "REF-1140",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3490
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Média de array; NaN em erro. Parâmetros narram start/count embora assinatura mostrada tenha só array. Proposta: estatística de diagnóstico com verificação de finitude.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathVariance",
+      "start": 3491,
+      "end": 3491,
+      "id": "REF-1141",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3491
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Variância de array, analogia var do R; NaN em erro. Convenção exata de divisor não demonstrada nesta página; verificar implementação antes de equivalência quantitativa.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathSkewness",
+      "start": 3492,
+      "end": 3492,
+      "id": "REF-1142",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3492
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Assimetria (terceiro momento), analogia skewness e1071; NaN em erro. Proposta: caracterização de amostras sem converter em limite automático.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathKurtosis",
+      "start": 3493,
+      "end": 3493,
+      "id": "REF-1143",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3493
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Curtose é excesso: kurtosis−3, normal zero; NaN em erro. Proposta: relatório deve rotular excesso de curtose para evitar diferença de3.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMoments",
+      "start": 3494,
+      "end": 3494,
+      "id": "REF-1144",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3494
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Calcula quatro momentos via referências e start/count; retorno narrado bool contradiz double na assinatura. Excesso de curtose confirmado. Proposta: verificar contrato nativo e todos outputs antes de aceitar.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMedian",
+      "start": 3495,
+      "end": 3495,
+      "id": "REF-1145",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3495
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Mediana de array, NaN em erro. Proposta: centro robusto para diagnóstico externo, sem pressupor mudança no cálculo produtivo.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathStandardDeviation",
+      "start": 3496,
+      "end": 3496,
+      "id": "REF-1146",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3496
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Desvio-padrão de array, analogia sd do R, NaN em erro. Proposta: conferir unidade e janela, sem confundir com desvio absoluto.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathAverageDeviation",
+      "start": 3497,
+      "end": 3497,
+      "id": "REF-1147",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3497
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Desvio absoluto médio de array, analogia aad do R, NaN em erro. Proposta: comparativo de dispersão separado de desvio-padrão.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Normal Distribution",
+      "start": 3498,
+      "end": 3509,
+      "id": "REF-1148",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3498,
+        3499,
+        3500,
+        3501,
+        3502,
+        3503,
+        3504,
+        3505,
+        3506,
+        3507,
+        3508,
+        3509
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Normal: média/desvio e overloads escalares/arrays; exemplo1M amostras,51bins, densidade teórica versus histograma reescalado por máximos. Não é teste formal de aderência nem prova de normalidade dos retornos.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityNormal",
+      "start": 3502,
+      "end": 3503,
+      "id": "REF-1149",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3502,
+        3503
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: mu média e sigma desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionNormal",
+      "start": 3504,
+      "end": 3505,
+      "id": "REF-1150",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3504,
+        3505
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: mu média e sigma desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileNormal",
+      "start": 3506,
+      "end": 3507,
+      "id": "REF-1151",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3506,
+        3507
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: mu média e sigma desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomNormal",
+      "start": 3508,
+      "end": 3508,
+      "id": "REF-1152",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3508
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: mu média e sigma desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsNormal",
+      "start": 3509,
+      "end": 3509,
+      "id": "REF-1153",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3509
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: mu média e sigma desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Log-normal distribution",
+      "start": 3510,
+      "end": 3521,
+      "id": "REF-1154",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3510,
+        3511,
+        3512,
+        3513,
+        3514,
+        3515,
+        3516,
+        3517,
+        3518,
+        3519,
+        3520,
+        3521
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Lognormal: parâmetros em escala log; exemplo1M/51bins e eixoY manual. Proposta futura para variáveis positivas exige validar parametrização; não concluir que retornos Stoikus seguem essa lei.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityLognormal",
+      "start": 3514,
+      "end": 3515,
+      "id": "REF-1155",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3514,
+        3515
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: mu/sigma no domínio log conforme nomenclatura da fonte; não são diretamente média/desvio de X. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionLognormal",
+      "start": 3516,
+      "end": 3517,
+      "id": "REF-1156",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3516,
+        3517
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: mu/sigma no domínio log conforme nomenclatura da fonte; não são diretamente média/desvio de X. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileLognormal",
+      "start": 3518,
+      "end": 3519,
+      "id": "REF-1157",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3518,
+        3519
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: mu/sigma no domínio log conforme nomenclatura da fonte; não são diretamente média/desvio de X. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomLognormal",
+      "start": 3520,
+      "end": 3520,
+      "id": "REF-1158",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3520
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: mu/sigma no domínio log conforme nomenclatura da fonte; não são diretamente média/desvio de X. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsLognormal",
+      "start": 3521,
+      "end": 3521,
+      "id": "REF-1159",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3521
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: mu/sigma no domínio log conforme nomenclatura da fonte; não são diretamente média/desvio de X. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Beta distribution",
+      "start": 3522,
+      "end": 3533,
+      "id": "REF-1160",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3522,
+        3523,
+        3524,
+        3525,
+        3526,
+        3527,
+        3528,
+        3529,
+        3530,
+        3531,
+        3532,
+        3533
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Beta: dois shapes a,b; exemplo2,5,1M amostras e51bins. Proposta pesquisa de proporções somente após justificar suporte/modelo; não é regra JPW.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityBeta",
+      "start": 3526,
+      "end": 3527,
+      "id": "REF-1161",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3526,
+        3527
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: a,b shapes. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionBeta",
+      "start": 3528,
+      "end": 3529,
+      "id": "REF-1162",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3528,
+        3529
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: a,b shapes. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileBeta",
+      "start": 3530,
+      "end": 3531,
+      "id": "REF-1163",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3530,
+        3531
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: a,b shapes. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomBeta",
+      "start": 3532,
+      "end": 3532,
+      "id": "REF-1164",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3532
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: a,b shapes. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsBeta",
+      "start": 3533,
+      "end": 3533,
+      "id": "REF-1165",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3533
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: a,b shapes. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Noncentral beta distribution",
+      "start": 3534,
+      "end": 3545,
+      "id": "REF-1166",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3534,
+        3535,
+        3536,
+        3537,
+        3538,
+        3539,
+        3540,
+        3541,
+        3542,
+        3543,
+        3544,
+        3545
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Beta não central acrescenta lambda; exemplo2,5,1 e53bins. Proposta: cenários estatísticos externos, sem necessidade atual demonstrada no Stoikus.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityNoncentralBeta",
+      "start": 3538,
+      "end": 3539,
+      "id": "REF-1167",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3538,
+        3539
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: a,b shapes e lambda não central. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionNoncentralBeta",
+      "start": 3540,
+      "end": 3541,
+      "id": "REF-1168",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3540,
+        3541
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: a,b shapes e lambda não central. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileNoncentralBeta",
+      "start": 3542,
+      "end": 3543,
+      "id": "REF-1169",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3542,
+        3543
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: a,b shapes e lambda não central. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomNoncentralBeta",
+      "start": 3544,
+      "end": 3544,
+      "id": "REF-1170",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3544
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: a,b shapes e lambda não central. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsNoncentralBeta",
+      "start": 3545,
+      "end": 3545,
+      "id": "REF-1171",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3545
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: a,b shapes e lambda não central. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Gamma distribution",
+      "start": 3546,
+      "end": 3557,
+      "id": "REF-1172",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3546,
+        3547,
+        3548,
+        3549,
+        3550,
+        3551,
+        3552,
+        3553,
+        3554,
+        3555,
+        3556,
+        3557
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gamma usa shape/scale; exemplo9 e0,5,1M amostras. Proposta pesquisa de valores positivos/tempos com ajuste e diagnóstico; nunca substituir fórmula produtiva sem validação.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityGamma",
+      "start": 3550,
+      "end": 3551,
+      "id": "REF-1173",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3550,
+        3551
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: a shape e b scale, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionGamma",
+      "start": 3552,
+      "end": 3553,
+      "id": "REF-1174",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3552,
+        3553
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: a shape e b scale, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileGamma",
+      "start": 3554,
+      "end": 3555,
+      "id": "REF-1175",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3554,
+        3555
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: a shape e b scale, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomGamma",
+      "start": 3556,
+      "end": 3556,
+      "id": "REF-1176",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3556
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: a shape e b scale, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsGamma",
+      "start": 3557,
+      "end": 3557,
+      "id": "REF-1177",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3557
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: a shape e b scale, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Chi-squared distribution",
+      "start": 3558,
+      "end": 3569,
+      "id": "REF-1178",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3558,
+        3559,
+        3560,
+        3561,
+        3562,
+        3563,
+        3564,
+        3565,
+        3566,
+        3567,
+        3568,
+        3569
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Qui-quadrado parametrizado por nu graus de liberdade; exemplo nu5 e1M amostras. Proposta teste estatístico offline requer hipóteses e graus de liberdade justificados.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityChiSquare",
+      "start": 3562,
+      "end": 3563,
+      "id": "REF-1179",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3562,
+        3563
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: nu graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionChiSquare",
+      "start": 3564,
+      "end": 3565,
+      "id": "REF-1180",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3564,
+        3565
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: nu graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileChiSquare",
+      "start": 3566,
+      "end": 3567,
+      "id": "REF-1181",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3566,
+        3567
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: nu graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomChiSquare",
+      "start": 3568,
+      "end": 3568,
+      "id": "REF-1182",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3568
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: nu graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsChiSquare",
+      "start": 3569,
+      "end": 3569,
+      "id": "REF-1183",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3569
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: nu graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Noncentral chi-squared distribution",
+      "start": 3570,
+      "end": 3581,
+      "id": "REF-1184",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3570,
+        3571,
+        3572,
+        3573,
+        3574,
+        3575,
+        3576,
+        3577,
+        3578,
+        3579,
+        3580,
+        3581
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Qui-quadrado não central: nu e sigma não central; exemplo8,1 e1M amostras, eixoX manual. Proposta pesquisa de potência/cenários, sem confundir sigma com desvio.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityNoncentralChiSquare",
+      "start": 3574,
+      "end": 3575,
+      "id": "REF-1185",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3574,
+        3575
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: nu graus de liberdade e sigma parâmetro não central, não desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionNoncentralChiSquare",
+      "start": 3576,
+      "end": 3577,
+      "id": "REF-1186",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3576,
+        3577
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: nu graus de liberdade e sigma parâmetro não central, não desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileNoncentralChiSquare",
+      "start": 3578,
+      "end": 3579,
+      "id": "REF-1187",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3578,
+        3579
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: nu graus de liberdade e sigma parâmetro não central, não desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomNoncentralChiSquare",
+      "start": 3580,
+      "end": 3580,
+      "id": "REF-1188",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3580
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: nu graus de liberdade e sigma parâmetro não central, não desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsNoncentralChiSquare",
+      "start": 3581,
+      "end": 3581,
+      "id": "REF-1189",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3581
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: nu graus de liberdade e sigma parâmetro não central, não desvio-padrão. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Exponential distribution",
+      "start": 3582,
+      "end": 3593,
+      "id": "REF-1190",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3582,
+        3583,
+        3584,
+        3585,
+        3586,
+        3587,
+        3588,
+        3589,
+        3590,
+        3591,
+        3592,
+        3593
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Exponencial usa mu esperado; exemplo1,5 tem comentário errado graus de liberdade. Histograma usa limites inferiores min+i*width apesar comentário centros. Proposta tempos de espera só com hipótese documentada, sem assumir taxa=mu.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityExponential",
+      "start": 3586,
+      "end": 3587,
+      "id": "REF-1191",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3586,
+        3587
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: mu valor esperado, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionExponential",
+      "start": 3588,
+      "end": 3589,
+      "id": "REF-1192",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3588,
+        3589
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: mu valor esperado, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileExponential",
+      "start": 3590,
+      "end": 3591,
+      "id": "REF-1193",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3590,
+        3591
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: mu valor esperado, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomExponential",
+      "start": 3592,
+      "end": 3592,
+      "id": "REF-1194",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3592
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: mu valor esperado, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsExponential",
+      "start": 3593,
+      "end": 3593,
+      "id": "REF-1195",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3593
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: mu valor esperado, não taxa. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "F-distribution",
+      "start": 3594,
+      "end": 3605,
+      "id": "REF-1196",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3594,
+        3595,
+        3596,
+        3597,
+        3598,
+        3599,
+        3600,
+        3601,
+        3602,
+        3603,
+        3604,
+        3605
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "FisherF: nu1/nu2 graus de liberdade; exemplo100/100,1M amostras. Proposta comparação estatística offline requer amostras/hipóteses justificadas; sem inferir regime do mercado.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathProbabilityDensityF",
+      "start": 3598,
+      "end": 3599,
+      "id": "REF-1197",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3598,
+        3599
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Densidade escalar ou array; log_mode devolve log natural da densidade. Escalar NaN em erro, array bool/result. Parâmetros: nu1 e nu2 graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathCumulativeDistributionF",
+      "start": 3600,
+      "end": 3601,
+      "id": "REF-1198",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3600,
+        3601
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "CDF escalar/array; tail=true significa P(X<=x), log_mode calcula log da probabilidade. Escalar NaN, array false em erro. Parâmetros: nu1 e nu2 graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathQuantileF",
+      "start": 3602,
+      "end": 3603,
+      "id": "REF-1199",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3602,
+        3603
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Inverte distribuição a partir de probabilidade; tail=false usa1−p, log_mode interpreta Exp(probability). Overloads escalares/arrays; algumas assinaturas array double contradizem narrativa false. Parâmetros: nu1 e nu2 graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathRandomF",
+      "start": 3604,
+      "end": 3604,
+      "id": "REF-1200",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3604
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Gera variável pseudoaleatória ou data_count valores em result; escalar NaN em erro, array false narrado. Registrar semente, parâmetros e contagem para reprodutibilidade; não usar seed GetTickCount em prova comparativa. Parâmetros: nu1 e nu2 graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 5,
+      "title": "MathMomentsF",
+      "start": 3605,
+      "end": 3605,
+      "id": "REF-1201",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3605
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": true,
+      "knowledge": "Obtém quatro momentos teóricos via referências e error_code; sucesso narrado true/false embora assinatura double. Não confundir momentos teóricos com estimativas amostrais. Parâmetros: nu1 e nu2 graus de liberdade. Aplicação Stoikus: somente proposta de pesquisa/diagnóstico offline; checar finitude, retorno e código de erro, sem alterar limites financeiros.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    },
+    {
+      "book": "REF",
+      "depth": 4,
+      "title": "Noncentral F-distribution",
+      "start": 3606,
+      "end": 3617,
+      "id": "REF-1202",
+      "extraction": "COMPLETE",
+      "semanticReview": "SEE_SEPARATE_READER_RECORDS",
+      "consolidation_full_text_pages": [
+        3606,
+        3607
+      ],
+      "semantic_status": "FULL_INTERSECTION_READ",
+      "section_complete_in_this_record": false,
+      "knowledge": "Leitura parcial3606–3607: F não central usa nu1,nu2,sigma não central; lista cinco APIs e inicia exemplo com20,20,10 e1M amostras. Continuação3608–3617 não lida aqui; não reivindicar exemplos completos ou assinaturas filhas.",
+      "application_status": "PROPOSAL_ONLY_OR_DOCUMENTATION",
+      "examples_status": "NOT_RUN",
+      "visual_status": "NOT_INSPECTED"
+    }
+  ],
+  "unread_assigned_pages": [],
+  "examples_status": "NOT_RUN",
+  "native_mt5_status": "NOT_RUN",
+  "visual_status": "NOT_INSPECTED",
+  "limitations": [
+    "Only extracted text read; image-only formulas and screenshots not visually inferred.",
+    "Page3431 begins continuation of history_orders_get; pages3429–3430 belong to previous reader.",
+    "NoncentralF section continues beyond3607; continuation not claimed.",
+    "No source/product/manual/harness/Git modifications."
+  ]
+}

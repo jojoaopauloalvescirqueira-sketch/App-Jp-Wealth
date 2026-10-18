@@ -1,0 +1,42 @@
+{
+  "revision": "R3",
+  "frozen_before_attempts": true,
+  "missing_required_result": "INCONCLUSIVE",
+  "required_observable": [
+    "attempt_id",
+    "case_id",
+    "repetition",
+    "fresh_session_id",
+    "model_requested",
+    "fresh_mode",
+    "input_sha256",
+    "output_sha256",
+    "raw_input_log",
+    "raw_output_log",
+    "tool_log",
+    "tools_used",
+    "dispatch_log",
+    "dispatch_sha256",
+    "infrastructure_record"
+  ],
+  "required_after_judgment": [
+    "judge_session_id",
+    "judge_model_requested",
+    "judge_calibration_log",
+    "judge_result",
+    "judge_scores",
+    "judge_evidence"
+  ],
+  "optional_unavailable_allowed": [
+    "model_backend_exact_build",
+    "reasoning_hidden"
+  ],
+  "unknown_optional_rule": "null plus nonempty unavailable_reasons[field], never infer hidden version/reasoning",
+  "tools_rule": "tool_log always exists; no tools => explicit empty log and tools_used=[]; tool_versions records only observed versions; unavailable version needs explanation",
+  "fresh_rule": "fresh_session_id distinct across attempts and from author/judge; fresh_mode=new_context_session; retain exact dispatched payload and infrastructure receipt R3 is a complete 36-new-session round, not selective repair of R2 attempts.",
+  "model_rule": "model_requested is observable routing target, not claim of actual backend build",
+  "hash_rule": "hash exact input and raw output bytes; judge checks files against hashes and frozen builder-inputs",
+  "acceptance_rule": "validate_provenance is structural only; required logs must actually exist and hash-match before judge can PASS; unavailable required observation => INCONCLUSIVE",
+  "dispatch_rule": "Before spawning any builder, save readable full outer payload including wrapper instructions, ENTRY bytes, case projection, target/model and fresh settings. Hash saved exact bytes before dispatch; record infrastructure and write timing. Do not reconstruct after output. input log alone is insufficient.",
+  "dispatch_verification": "validate_provenance(receipt,evidence_root) verifies dispatch SHA-256 against actual bytes under declared evidence root and infrastructure record existence. One-argument form validates structure only. Independent judge confirms payload completeness and pre-spawn ordering from operator/infrastructure receipts."
+}

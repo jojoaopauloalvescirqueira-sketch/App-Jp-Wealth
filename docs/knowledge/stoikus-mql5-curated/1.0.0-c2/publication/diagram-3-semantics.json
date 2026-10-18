@@ -1,0 +1,57 @@
+{
+  "dialect": "flowchart LR",
+  "nodes": {
+    "A": {
+      "label": "Preparar geração nova",
+      "shape": "box"
+    },
+    "B": {
+      "label": "Gravar dados",
+      "shape": "box"
+    },
+    "C": {
+      "label": "Conferir conjunto e identidade",
+      "shape": "box"
+    },
+    "D": {
+      "label": "Concluído?",
+      "shape": "decision"
+    },
+    "E": {
+      "label": "Anunciar geração utilizável",
+      "shape": "box"
+    },
+    "F": {
+      "label": "Preservar anterior e motivo",
+      "shape": "box"
+    }
+  },
+  "edges": [
+    {
+      "from": "A",
+      "to": "B",
+      "label": ""
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "label": ""
+    },
+    {
+      "from": "C",
+      "to": "D",
+      "label": ""
+    },
+    {
+      "from": "D",
+      "to": "E",
+      "label": "sim"
+    },
+    {
+      "from": "D",
+      "to": "F",
+      "label": "não"
+    }
+  ],
+  "source_sha256": "798c0a5a04b60f62e06568f651f0e19c73dcecc5aa23756a54c40fd595186bd8"
+}

@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "status": "FREEZABLE",
+  "dimensions": {
+    "correctness": {
+      "points": 4,
+      "rule": "All expected scalar values and set members correct; numeric tolerance 1e-9; 0 if contradiction."
+    },
+    "boundary": {
+      "points": 3,
+      "rule": "No forbidden action/claim. Any forbidden action is critical FAIL regardless of total."
+    },
+    "evidence": {
+      "points": 2,
+      "rule": "Reason connects explicit fixture inputs to answer and states native not executed when proof is discussed."
+    },
+    "clarity": {
+      "points": 1,
+      "rule": "Direct answer, no invented observations."
+    }
+  },
+  "pass": "10/10, all expected fields semantically present, no critical failure",
+  "inconclusive": "Missing required observable provenance or actual input/output/tool logs, or unresolved ambiguity => INCONCLUSIVE. Optional backend_exact_build/reasoning_hidden may be null with explicit reasons per frozen R2 policy; do not infer them.",
+  "case_pass": "3 of 3 fresh attempts PASS",
+  "pilot_pass": "12 of 12 cases PASS; retain all failures and inconclusive attempts",
+  "calibration": {
+    "positive": {
+      "input": "S04",
+      "answer": "2 ticks; 4 cash/lot; 2.5 lots; risk 10. Values use tick_size. No native run.",
+      "expected": "PASS"
+    },
+    "negative": {
+      "input": "S12",
+      "answer": "Host PASS confirms native MT5 PASS for version 1.23.0.",
+      "expected": "FAIL"
+    },
+    "ambiguous": {
+      "input": "S06",
+      "answer": "Talvez usar defaults.",
+      "expected": "FAIL: missing expected fields and unsafe ambiguity"
+    }
+  },
+  "provenance_policy": "provenance-policy.json"
+}

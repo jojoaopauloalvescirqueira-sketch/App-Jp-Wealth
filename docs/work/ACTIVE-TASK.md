@@ -1,3 +1,13 @@
+# Curadoria documental Stoikus C2 — preparação do lote Git — 2026-10-16
+
+Pedido autorizado: preparar commit e PR exclusivos da edição documental curada, preservando o histórico. Escopo **N0-D**, cópia opt-in de 213 arquivos C2 em `docs/knowledge/stoikus-mql5-curated/1.0.0-c2/`, wrapper e contrato [CHG-STOIKUS-DOCUMENTAL-CURATED-20261016](CHG-STOIKUS-DOCUMENTAL-CURATED-20261016.md), com fontes, invariantes, testes e rollback. A C2 remove 13 marcadores de formatação herdados em nove Markdown e atualiza somente identidade/rastreabilidade; a C1 e sua falha R1 ficam preservadas externamente. Aplicação, verificação final, commit, push e PR terão evidências próprias.
+
+O kit continua **CANDIDATE / NOT_ADOPTED**; MT5 nativo e novo piloto **NOT_RUN**; resultados anteriores **HISTORICAL_ONLY**. Preservar os 870 originais e todo o corpo anterior abaixo. Merge, deploy, adoção e mudança de produto, gates ou control plane ativo ficam fora deste lote.
+
+---
+
+## Fotografias anteriores preservadas integralmente
+
 # Integração Git Stoikus 1.23.0/R5 — tarefa focal em execução — 2026-10-16
 
 Pedido atual: integrar o Stoikus à última main do JP Wealth e concluir commit/push/merge após validação. Branch existente codex/stoikus-continuity-20261014; main remota revalidada 2b22175a4f3f47b1f289deca65366c4dc0445dca. Registro canônico desta ação: docs/work/CHG-STOIKUS-GIT-INTEGRATION-20261016.md. Os resultados históricos abaixo não aprovam esta integração.

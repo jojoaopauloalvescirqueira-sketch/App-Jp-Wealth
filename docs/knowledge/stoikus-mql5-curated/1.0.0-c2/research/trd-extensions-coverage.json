@@ -1,0 +1,2525 @@
+{
+  "book": "TRD",
+  "source_pdf_sha256": "9ff6c55090527afa0efce722d67760805ee335fc64dad3c83638a89e6c79a145",
+  "scope_pdf_pages": [
+    1562,
+    1774
+  ],
+  "consolidation_full_text_pages": [
+    1562,
+    1563,
+    1564,
+    1565,
+    1566,
+    1567,
+    1568,
+    1569,
+    1570,
+    1571,
+    1572,
+    1573,
+    1574,
+    1575,
+    1576,
+    1577,
+    1578,
+    1579,
+    1580,
+    1581,
+    1582,
+    1583,
+    1584,
+    1585,
+    1586,
+    1587,
+    1588,
+    1589,
+    1590,
+    1591,
+    1592,
+    1593,
+    1594,
+    1595,
+    1596,
+    1597,
+    1598,
+    1599,
+    1600,
+    1601,
+    1602,
+    1603,
+    1604,
+    1605,
+    1606,
+    1607,
+    1608,
+    1609,
+    1610,
+    1611,
+    1612,
+    1613,
+    1614,
+    1615,
+    1616,
+    1617,
+    1618,
+    1619,
+    1620,
+    1621,
+    1622,
+    1623,
+    1624,
+    1625,
+    1626,
+    1627,
+    1628,
+    1629,
+    1630,
+    1631,
+    1632,
+    1633,
+    1634,
+    1635,
+    1636,
+    1637,
+    1638,
+    1639,
+    1640,
+    1641,
+    1642,
+    1643,
+    1644,
+    1645,
+    1646,
+    1647,
+    1648,
+    1649,
+    1650,
+    1651,
+    1652,
+    1653,
+    1654,
+    1655,
+    1656,
+    1657,
+    1658,
+    1659,
+    1660,
+    1661,
+    1662,
+    1663,
+    1664,
+    1665,
+    1666,
+    1667,
+    1668,
+    1669,
+    1670,
+    1671,
+    1672,
+    1673,
+    1674,
+    1675,
+    1676,
+    1677,
+    1678,
+    1679,
+    1680,
+    1681,
+    1682,
+    1683,
+    1684,
+    1685,
+    1686,
+    1687,
+    1688,
+    1689,
+    1690,
+    1691,
+    1692,
+    1693,
+    1694,
+    1695,
+    1696,
+    1697,
+    1698,
+    1699,
+    1700,
+    1701,
+    1702,
+    1703,
+    1704,
+    1705,
+    1706,
+    1707,
+    1708,
+    1709,
+    1710,
+    1711,
+    1712,
+    1713,
+    1714,
+    1715,
+    1716,
+    1717,
+    1718,
+    1719,
+    1720,
+    1721,
+    1722,
+    1723,
+    1724,
+    1725,
+    1726,
+    1727,
+    1728,
+    1729,
+    1730,
+    1731,
+    1732,
+    1733,
+    1734,
+    1735,
+    1736,
+    1737,
+    1738,
+    1739,
+    1740,
+    1741,
+    1742,
+    1743,
+    1744,
+    1745,
+    1746,
+    1747,
+    1748,
+    1749,
+    1750,
+    1751,
+    1752,
+    1753,
+    1754,
+    1755,
+    1756,
+    1757,
+    1758,
+    1759,
+    1760,
+    1761,
+    1762,
+    1763,
+    1764,
+    1765,
+    1766,
+    1767,
+    1768,
+    1769,
+    1770,
+    1771,
+    1772,
+    1773,
+    1774
+  ],
+  "full_text_page_count": 213,
+  "reader": "trd_extensions_research",
+  "method": "Full extracted page bodies received and semantically read in sequential batches; initial response truncation1567-1572 repaired by full reread. Extraction alone not counted.",
+  "native_examples_status": "NOT_RUN",
+  "visual_pdf_status": "NOT_INSPECTED",
+  "stoikus_source_code_status": "NOT_REVIEWED_BY_THIS_READER",
+  "gaps": [],
+  "boundary_gaps": [
+    "7.4 only introductory paragraph on1774; remainder1775+ not read",
+    "7.3.12 continues on1774 although outline ends1773; read through actual transition"
+  ],
+  "tool_truncation_repairs": [
+    {
+      "initial_batch": [
+        1562,
+        1580
+      ],
+      "reread_full_pages": [
+        1567,
+        1568,
+        1569,
+        1570,
+        1571,
+        1572
+      ],
+      "status": "REPAIRED"
+    }
+  ],
+  "reading_batches": [
+    [
+      1562,
+      1580
+    ],
+    [
+      1567,
+      1572
+    ],
+    [
+      1581,
+      1591
+    ],
+    [
+      1592,
+      1602
+    ],
+    [
+      1603,
+      1615
+    ],
+    [
+      1616,
+      1628
+    ],
+    [
+      1629,
+      1638
+    ],
+    [
+      1639,
+      1648
+    ],
+    [
+      1649,
+      1658
+    ],
+    [
+      1659,
+      1668
+    ],
+    [
+      1669,
+      1678
+    ],
+    [
+      1679,
+      1688
+    ],
+    [
+      1689,
+      1698
+    ],
+    [
+      1699,
+      1708
+    ],
+    [
+      1709,
+      1718
+    ],
+    [
+      1719,
+      1728
+    ],
+    [
+      1729,
+      1741
+    ],
+    [
+      1742,
+      1752
+    ],
+    [
+      1753,
+      1764
+    ],
+    [
+      1765,
+      1774
+    ]
+  ],
+  "page_hashes": {
+    "1562": {
+      "corpus_sha256": "7971991a6903912afa7d3bdf1c0a59eec72cd96f13c9779b56a3fd9f2e828fa6",
+      "recomputed_utf8_sha256": "7971991a6903912afa7d3bdf1c0a59eec72cd96f13c9779b56a3fd9f2e828fa6",
+      "characters": 3286,
+      "error": null
+    },
+    "1563": {
+      "corpus_sha256": "61f7e17b068a4474e9846a047fff967b3a379841135c45b5d9043be49a6a89c5",
+      "recomputed_utf8_sha256": "61f7e17b068a4474e9846a047fff967b3a379841135c45b5d9043be49a6a89c5",
+      "characters": 3224,
+      "error": null
+    },
+    "1564": {
+      "corpus_sha256": "73c2cffc3cfb4bbef0279a17820f84ece80025c9a29401d66fc92754b3e55fb7",
+      "recomputed_utf8_sha256": "73c2cffc3cfb4bbef0279a17820f84ece80025c9a29401d66fc92754b3e55fb7",
+      "characters": 3455,
+      "error": null
+    },
+    "1565": {
+      "corpus_sha256": "8dd89b3cd7f2d729e2ca8fd3e6d8fb5634d51d4c8101169ac77fec005cf6f671",
+      "recomputed_utf8_sha256": "8dd89b3cd7f2d729e2ca8fd3e6d8fb5634d51d4c8101169ac77fec005cf6f671",
+      "characters": 2996,
+      "error": null
+    },
+    "1566": {
+      "corpus_sha256": "18fc0761a4ecd27355a271db8dcad6daa3d569eed73c5a999cb0b86fb8f498eb",
+      "recomputed_utf8_sha256": "18fc0761a4ecd27355a271db8dcad6daa3d569eed73c5a999cb0b86fb8f498eb",
+      "characters": 4028,
+      "error": null
+    },
+    "1567": {
+      "corpus_sha256": "fae063d3314e0e79e901e7f68fe9d5a871ce92062440167101d718f13c6e2952",
+      "recomputed_utf8_sha256": "fae063d3314e0e79e901e7f68fe9d5a871ce92062440167101d718f13c6e2952",
+      "characters": 3237,
+      "error": null
+    },
+    "1568": {
+      "corpus_sha256": "ed8e2f43f58a71b348de9c0b3184aa5aaa48bb25f36cb33ee2eccccc9371fe2d",
+      "recomputed_utf8_sha256": "ed8e2f43f58a71b348de9c0b3184aa5aaa48bb25f36cb33ee2eccccc9371fe2d",
+      "characters": 2308,
+      "error": null
+    },
+    "1569": {
+      "corpus_sha256": "fa20996335d57058635b20a1da54782d57471651e199d87eb13ab08d3beedeed",
+      "recomputed_utf8_sha256": "fa20996335d57058635b20a1da54782d57471651e199d87eb13ab08d3beedeed",
+      "characters": 2474,
+      "error": null
+    },
+    "1570": {
+      "corpus_sha256": "218860047c5deedb3505262a51182c2521e9705d43d47df672fa6373525689af",
+      "recomputed_utf8_sha256": "218860047c5deedb3505262a51182c2521e9705d43d47df672fa6373525689af",
+      "characters": 2764,
+      "error": null
+    },
+    "1571": {
+      "corpus_sha256": "1b0bf7768b630492f726188fc127c0c5eac54ffb70c00607037294a0ee10de38",
+      "recomputed_utf8_sha256": "1b0bf7768b630492f726188fc127c0c5eac54ffb70c00607037294a0ee10de38",
+      "characters": 1725,
+      "error": null
+    },
+    "1572": {
+      "corpus_sha256": "fc3a58d89ba243aecf7969e761a0c32ff80a1669c7c3d23a2e844058231c7111",
+      "recomputed_utf8_sha256": "fc3a58d89ba243aecf7969e761a0c32ff80a1669c7c3d23a2e844058231c7111",
+      "characters": 2068,
+      "error": null
+    },
+    "1573": {
+      "corpus_sha256": "da5d99594962c42b8f1083f7cc594673e5bfb4b0a167f31cd0f40d6f10fd9a42",
+      "recomputed_utf8_sha256": "da5d99594962c42b8f1083f7cc594673e5bfb4b0a167f31cd0f40d6f10fd9a42",
+      "characters": 2880,
+      "error": null
+    },
+    "1574": {
+      "corpus_sha256": "25a8a7b907b21c51c5151cf4749a1d8d2b158f72408433ae69693ae0b75061d2",
+      "recomputed_utf8_sha256": "25a8a7b907b21c51c5151cf4749a1d8d2b158f72408433ae69693ae0b75061d2",
+      "characters": 2003,
+      "error": null
+    },
+    "1575": {
+      "corpus_sha256": "279215da617bc2c3413e4a5a41707c148a6b07167301810c61485cca3bab92e1",
+      "recomputed_utf8_sha256": "279215da617bc2c3413e4a5a41707c148a6b07167301810c61485cca3bab92e1",
+      "characters": 1115,
+      "error": null
+    },
+    "1576": {
+      "corpus_sha256": "5127f69a1bee2f49d1809a7d8311094d1b9b68938dbb0cd8049d2b3f1f5c1e14",
+      "recomputed_utf8_sha256": "5127f69a1bee2f49d1809a7d8311094d1b9b68938dbb0cd8049d2b3f1f5c1e14",
+      "characters": 3683,
+      "error": null
+    },
+    "1577": {
+      "corpus_sha256": "126e4177553163340d9e3d23c850f4b900bb040c485b7a31fa81bb60283ec2f0",
+      "recomputed_utf8_sha256": "126e4177553163340d9e3d23c850f4b900bb040c485b7a31fa81bb60283ec2f0",
+      "characters": 3292,
+      "error": null
+    },
+    "1578": {
+      "corpus_sha256": "d06c956f633e4174119fa3f77ded1d9abe82edb7b5b83921e15f3a4a02874431",
+      "recomputed_utf8_sha256": "d06c956f633e4174119fa3f77ded1d9abe82edb7b5b83921e15f3a4a02874431",
+      "characters": 2040,
+      "error": null
+    },
+    "1579": {
+      "corpus_sha256": "313f0633c4ee13f56c7a90280c7e4e232db77483ebe5d4471cda873e01d43897",
+      "recomputed_utf8_sha256": "313f0633c4ee13f56c7a90280c7e4e232db77483ebe5d4471cda873e01d43897",
+      "characters": 2407,
+      "error": null
+    },
+    "1580": {
+      "corpus_sha256": "d8e8d5c1deadea1c7558360c21fb464472471a3e369f98fa0d99980102a61f0d",
+      "recomputed_utf8_sha256": "d8e8d5c1deadea1c7558360c21fb464472471a3e369f98fa0d99980102a61f0d",
+      "characters": 288,
+      "error": null
+    },
+    "1581": {
+      "corpus_sha256": "2937e06eb514007ea8e9488fcd9068cc68dfd34e65269dc9237cc182d659e4e1",
+      "recomputed_utf8_sha256": "2937e06eb514007ea8e9488fcd9068cc68dfd34e65269dc9237cc182d659e4e1",
+      "characters": 1582,
+      "error": null
+    },
+    "1582": {
+      "corpus_sha256": "dcb8a2cdd8d29b8736287f80c975c77d544534bdbffbbb70181e4d28eda93922",
+      "recomputed_utf8_sha256": "dcb8a2cdd8d29b8736287f80c975c77d544534bdbffbbb70181e4d28eda93922",
+      "characters": 3074,
+      "error": null
+    },
+    "1583": {
+      "corpus_sha256": "52c3f96918c385bdd2eb9b2643b8d74f4f1eb8cc336b03cb825c33dda3aa9671",
+      "recomputed_utf8_sha256": "52c3f96918c385bdd2eb9b2643b8d74f4f1eb8cc336b03cb825c33dda3aa9671",
+      "characters": 2089,
+      "error": null
+    },
+    "1584": {
+      "corpus_sha256": "14c0015f33890b4bb110850f9174e96b1a86bea863b9de7e303018b193e151f1",
+      "recomputed_utf8_sha256": "14c0015f33890b4bb110850f9174e96b1a86bea863b9de7e303018b193e151f1",
+      "characters": 2424,
+      "error": null
+    },
+    "1585": {
+      "corpus_sha256": "4955086ef2235831d60f474bd2c16061042bc45c60c9f23bc60735a4ff8943e4",
+      "recomputed_utf8_sha256": "4955086ef2235831d60f474bd2c16061042bc45c60c9f23bc60735a4ff8943e4",
+      "characters": 2555,
+      "error": null
+    },
+    "1586": {
+      "corpus_sha256": "fad015ff51f488ebb39e2d9d5ffcbb8292b94b3f0e65a1ef1b459cedde9fbc7e",
+      "recomputed_utf8_sha256": "fad015ff51f488ebb39e2d9d5ffcbb8292b94b3f0e65a1ef1b459cedde9fbc7e",
+      "characters": 2124,
+      "error": null
+    },
+    "1587": {
+      "corpus_sha256": "6f93d813b3d9bf8f01b9cd0eecb3da07d328922a4b8a458041d95f98148337f1",
+      "recomputed_utf8_sha256": "6f93d813b3d9bf8f01b9cd0eecb3da07d328922a4b8a458041d95f98148337f1",
+      "characters": 1796,
+      "error": null
+    },
+    "1588": {
+      "corpus_sha256": "734e781317f51aff1364bdd1f350373c5385ac3e662ad888948c06472e7517ba",
+      "recomputed_utf8_sha256": "734e781317f51aff1364bdd1f350373c5385ac3e662ad888948c06472e7517ba",
+      "characters": 1256,
+      "error": null
+    },
+    "1589": {
+      "corpus_sha256": "8306a07af7075dc273225b3aacabf07aebdd85b8c153640c68ebde163f8e16e4",
+      "recomputed_utf8_sha256": "8306a07af7075dc273225b3aacabf07aebdd85b8c153640c68ebde163f8e16e4",
+      "characters": 1424,
+      "error": null
+    },
+    "1590": {
+      "corpus_sha256": "98f8abed43f3dac6f139ba1b538fc9daf04ecad35eb241c5dc20ec4c3247d683",
+      "recomputed_utf8_sha256": "98f8abed43f3dac6f139ba1b538fc9daf04ecad35eb241c5dc20ec4c3247d683",
+      "characters": 1851,
+      "error": null
+    },
+    "1591": {
+      "corpus_sha256": "01f9268e8d92dfd980bc0a563145aa3471ef77401b0a0c8483a9e5def976ca91",
+      "recomputed_utf8_sha256": "01f9268e8d92dfd980bc0a563145aa3471ef77401b0a0c8483a9e5def976ca91",
+      "characters": 2569,
+      "error": null
+    },
+    "1592": {
+      "corpus_sha256": "b5b19e5300a7c5534f6053cb49224fbd2c962733bf0e269b5729d429a2d01d68",
+      "recomputed_utf8_sha256": "b5b19e5300a7c5534f6053cb49224fbd2c962733bf0e269b5729d429a2d01d68",
+      "characters": 3062,
+      "error": null
+    },
+    "1593": {
+      "corpus_sha256": "66bbb61f476e3c0e66c2e82b4cd5be463af37b863382639eac56c45f10cf0dbd",
+      "recomputed_utf8_sha256": "66bbb61f476e3c0e66c2e82b4cd5be463af37b863382639eac56c45f10cf0dbd",
+      "characters": 2039,
+      "error": null
+    },
+    "1594": {
+      "corpus_sha256": "14debfcba8cb2c96f8d3bf2c6b4e7a3c3ab63360c04594a1609ddde1c1bf6446",
+      "recomputed_utf8_sha256": "14debfcba8cb2c96f8d3bf2c6b4e7a3c3ab63360c04594a1609ddde1c1bf6446",
+      "characters": 1325,
+      "error": null
+    },
+    "1595": {
+      "corpus_sha256": "d9b4a5c0ebcfd5e28369df48bdda0c557d84839803b6a7472e4b24345252b7f2",
+      "recomputed_utf8_sha256": "d9b4a5c0ebcfd5e28369df48bdda0c557d84839803b6a7472e4b24345252b7f2",
+      "characters": 2570,
+      "error": null
+    },
+    "1596": {
+      "corpus_sha256": "328e8bece11ac7094ea42693664faa436838d90c3b16593fb0d2d3ed4a8de920",
+      "recomputed_utf8_sha256": "328e8bece11ac7094ea42693664faa436838d90c3b16593fb0d2d3ed4a8de920",
+      "characters": 1821,
+      "error": null
+    },
+    "1597": {
+      "corpus_sha256": "21d37ca0cb951e1c867d2f5a433740233c936c1f3184f365297dcfce2eec453e",
+      "recomputed_utf8_sha256": "21d37ca0cb951e1c867d2f5a433740233c936c1f3184f365297dcfce2eec453e",
+      "characters": 1280,
+      "error": null
+    },
+    "1598": {
+      "corpus_sha256": "68b9f57a380e24cf81eecb0646255cd2a6b8d927509e129ce945cff964bf44bd",
+      "recomputed_utf8_sha256": "68b9f57a380e24cf81eecb0646255cd2a6b8d927509e129ce945cff964bf44bd",
+      "characters": 1896,
+      "error": null
+    },
+    "1599": {
+      "corpus_sha256": "e1c4f0b1e63e22fe8a3bef9f05dba86395241639633a125726ce5bdaa32d368f",
+      "recomputed_utf8_sha256": "e1c4f0b1e63e22fe8a3bef9f05dba86395241639633a125726ce5bdaa32d368f",
+      "characters": 1709,
+      "error": null
+    },
+    "1600": {
+      "corpus_sha256": "9e9fd6cca945484c2d8ffdc689ca6af7f9662bc85e4a47d417895aa17368efbc",
+      "recomputed_utf8_sha256": "9e9fd6cca945484c2d8ffdc689ca6af7f9662bc85e4a47d417895aa17368efbc",
+      "characters": 1116,
+      "error": null
+    },
+    "1601": {
+      "corpus_sha256": "d5ff6f33f585c1552b627f0d94b22c49793cd589a50a579ae6584bdabc3d6066",
+      "recomputed_utf8_sha256": "d5ff6f33f585c1552b627f0d94b22c49793cd589a50a579ae6584bdabc3d6066",
+      "characters": 1584,
+      "error": null
+    },
+    "1602": {
+      "corpus_sha256": "9aff15aa1d148953d8ab571d7012ddde5ad336ffe11d8a2f67fd89d2de9048fc",
+      "recomputed_utf8_sha256": "9aff15aa1d148953d8ab571d7012ddde5ad336ffe11d8a2f67fd89d2de9048fc",
+      "characters": 1649,
+      "error": null
+    },
+    "1603": {
+      "corpus_sha256": "f7ce4c73c28249e69694dad8e594f4d883652c5b14af39d735c8e1ba6f6d7f06",
+      "recomputed_utf8_sha256": "f7ce4c73c28249e69694dad8e594f4d883652c5b14af39d735c8e1ba6f6d7f06",
+      "characters": 1535,
+      "error": null
+    },
+    "1604": {
+      "corpus_sha256": "44bc23abbb74ec4e3fa78d1d404f73a4fd73ae5529492e9f0c51c182d3b10230",
+      "recomputed_utf8_sha256": "44bc23abbb74ec4e3fa78d1d404f73a4fd73ae5529492e9f0c51c182d3b10230",
+      "characters": 3498,
+      "error": null
+    },
+    "1605": {
+      "corpus_sha256": "1150db8d51f177a8c41dfc3b08d48570ef4275cac21b0f4a523e059f2cd1fa02",
+      "recomputed_utf8_sha256": "1150db8d51f177a8c41dfc3b08d48570ef4275cac21b0f4a523e059f2cd1fa02",
+      "characters": 2708,
+      "error": null
+    },
+    "1606": {
+      "corpus_sha256": "99ee97661d65a8a3a9f1af546fb432589abb4e515eaea90413bf8e5066046062",
+      "recomputed_utf8_sha256": "99ee97661d65a8a3a9f1af546fb432589abb4e515eaea90413bf8e5066046062",
+      "characters": 2547,
+      "error": null
+    },
+    "1607": {
+      "corpus_sha256": "0419056189859805cee6c69663552e01d4f0f7d25ceb66d5f8def3c11e7e5e96",
+      "recomputed_utf8_sha256": "0419056189859805cee6c69663552e01d4f0f7d25ceb66d5f8def3c11e7e5e96",
+      "characters": 2222,
+      "error": null
+    },
+    "1608": {
+      "corpus_sha256": "8c151618b5387fcde94af34a7df312d65fcfed0af088202f6d8e211fb736e747",
+      "recomputed_utf8_sha256": "8c151618b5387fcde94af34a7df312d65fcfed0af088202f6d8e211fb736e747",
+      "characters": 1957,
+      "error": null
+    },
+    "1609": {
+      "corpus_sha256": "634ce487b68bff389ce31a05ac7268a08638c9bf2ebac0a41fe7d92ab9c0ca9e",
+      "recomputed_utf8_sha256": "634ce487b68bff389ce31a05ac7268a08638c9bf2ebac0a41fe7d92ab9c0ca9e",
+      "characters": 1512,
+      "error": null
+    },
+    "1610": {
+      "corpus_sha256": "7f682671c51b01e9609a50dbc516b87fa093c4fb527e6fd210bec43a3d3718d6",
+      "recomputed_utf8_sha256": "7f682671c51b01e9609a50dbc516b87fa093c4fb527e6fd210bec43a3d3718d6",
+      "characters": 1452,
+      "error": null
+    },
+    "1611": {
+      "corpus_sha256": "9cffdf7fa9fb02be42b2c8997acaf8e14301f9fb24b15f1061803f5831dac6e0",
+      "recomputed_utf8_sha256": "9cffdf7fa9fb02be42b2c8997acaf8e14301f9fb24b15f1061803f5831dac6e0",
+      "characters": 949,
+      "error": null
+    },
+    "1612": {
+      "corpus_sha256": "66593c60cd1b8f8c4ab3516956059c2805be4859cb40fad45bdbc2f8d1386696",
+      "recomputed_utf8_sha256": "66593c60cd1b8f8c4ab3516956059c2805be4859cb40fad45bdbc2f8d1386696",
+      "characters": 1844,
+      "error": null
+    },
+    "1613": {
+      "corpus_sha256": "2e603b2f28436ed7a64db4a36d2e1b164137a84fa4299a83dde99eee61f1fa5a",
+      "recomputed_utf8_sha256": "2e603b2f28436ed7a64db4a36d2e1b164137a84fa4299a83dde99eee61f1fa5a",
+      "characters": 1383,
+      "error": null
+    },
+    "1614": {
+      "corpus_sha256": "f1ed3482ab1984081549ca492187f18e8868285e826f9131e8d3337f2bd48c27",
+      "recomputed_utf8_sha256": "f1ed3482ab1984081549ca492187f18e8868285e826f9131e8d3337f2bd48c27",
+      "characters": 1843,
+      "error": null
+    },
+    "1615": {
+      "corpus_sha256": "0b4fce5e94e70f5a8fa65de3aadd113bb1b1ff68a253fdcb58c406ab698811de",
+      "recomputed_utf8_sha256": "0b4fce5e94e70f5a8fa65de3aadd113bb1b1ff68a253fdcb58c406ab698811de",
+      "characters": 1262,
+      "error": null
+    },
+    "1616": {
+      "corpus_sha256": "6363f97d20eb4a868442d6f58abbd37d5284415fc9a23760698971c1c27d7ff6",
+      "recomputed_utf8_sha256": "6363f97d20eb4a868442d6f58abbd37d5284415fc9a23760698971c1c27d7ff6",
+      "characters": 2124,
+      "error": null
+    },
+    "1617": {
+      "corpus_sha256": "5abdb2702964d212469f8a27ab0b0bb40491f6dbcd8889d3a847f1c1a61e07d8",
+      "recomputed_utf8_sha256": "5abdb2702964d212469f8a27ab0b0bb40491f6dbcd8889d3a847f1c1a61e07d8",
+      "characters": 2114,
+      "error": null
+    },
+    "1618": {
+      "corpus_sha256": "1b015161aa890060f0b19d5a6a568d28e92054c6cf5e0e1ba7b3d9ffc127620a",
+      "recomputed_utf8_sha256": "1b015161aa890060f0b19d5a6a568d28e92054c6cf5e0e1ba7b3d9ffc127620a",
+      "characters": 1097,
+      "error": null
+    },
+    "1619": {
+      "corpus_sha256": "28e996d61434dd98e292d1fafd9640887513b6306334e4885d6e7a9e7839e5bb",
+      "recomputed_utf8_sha256": "28e996d61434dd98e292d1fafd9640887513b6306334e4885d6e7a9e7839e5bb",
+      "characters": 1972,
+      "error": null
+    },
+    "1620": {
+      "corpus_sha256": "9876bbdb328a255c7c4b5dc699571462425ce50a0e087721dc8794426ac00728",
+      "recomputed_utf8_sha256": "9876bbdb328a255c7c4b5dc699571462425ce50a0e087721dc8794426ac00728",
+      "characters": 1101,
+      "error": null
+    },
+    "1621": {
+      "corpus_sha256": "cea5570afc1c4abf9aeadd243d0ddda0b9d088751472c281399192333515f3aa",
+      "recomputed_utf8_sha256": "cea5570afc1c4abf9aeadd243d0ddda0b9d088751472c281399192333515f3aa",
+      "characters": 1762,
+      "error": null
+    },
+    "1622": {
+      "corpus_sha256": "e390c1afc0c37bd2bea88c13c638d9aae83f8625ad38a4a9a5fcd5fbc875dc1d",
+      "recomputed_utf8_sha256": "e390c1afc0c37bd2bea88c13c638d9aae83f8625ad38a4a9a5fcd5fbc875dc1d",
+      "characters": 1902,
+      "error": null
+    },
+    "1623": {
+      "corpus_sha256": "4ce717c50effde4a8ce7bd5b3bb9736ba3ee65a3e11adcb61fd4adc6522f113f",
+      "recomputed_utf8_sha256": "4ce717c50effde4a8ce7bd5b3bb9736ba3ee65a3e11adcb61fd4adc6522f113f",
+      "characters": 1850,
+      "error": null
+    },
+    "1624": {
+      "corpus_sha256": "3afc9eaf7b972d500bc249a1b3f929a1fc515a864566cab0685cf368bc82f8c4",
+      "recomputed_utf8_sha256": "3afc9eaf7b972d500bc249a1b3f929a1fc515a864566cab0685cf368bc82f8c4",
+      "characters": 1903,
+      "error": null
+    },
+    "1625": {
+      "corpus_sha256": "2c814fa1feec42afab968e28f151fce62022136dfd2037047eea01b49c73be89",
+      "recomputed_utf8_sha256": "2c814fa1feec42afab968e28f151fce62022136dfd2037047eea01b49c73be89",
+      "characters": 3981,
+      "error": null
+    },
+    "1626": {
+      "corpus_sha256": "e4f394ea44ddfcab345c3326d2412e32823492f2cb9bd87f36f3830b0df9c28f",
+      "recomputed_utf8_sha256": "e4f394ea44ddfcab345c3326d2412e32823492f2cb9bd87f36f3830b0df9c28f",
+      "characters": 3789,
+      "error": null
+    },
+    "1627": {
+      "corpus_sha256": "1a1ca5cae8bca8560e8e363360c3cd2f7b6f4926a551c993dd01e758fbf95077",
+      "recomputed_utf8_sha256": "1a1ca5cae8bca8560e8e363360c3cd2f7b6f4926a551c993dd01e758fbf95077",
+      "characters": 2321,
+      "error": null
+    },
+    "1628": {
+      "corpus_sha256": "911fdc1451fdcd828cd3e11eafc579969171480c676c5cfd9091c76284b827fc",
+      "recomputed_utf8_sha256": "911fdc1451fdcd828cd3e11eafc579969171480c676c5cfd9091c76284b827fc",
+      "characters": 2830,
+      "error": null
+    },
+    "1629": {
+      "corpus_sha256": "2f7a11dea2cf430da219aa1e0687de110a9b56354d7fbcf432ba2ca854befd34",
+      "recomputed_utf8_sha256": "2f7a11dea2cf430da219aa1e0687de110a9b56354d7fbcf432ba2ca854befd34",
+      "characters": 3727,
+      "error": null
+    },
+    "1630": {
+      "corpus_sha256": "d5dd7270f39cff0f5a14aa06d2507a50d8f0aa40148735bfb83f5c905598202c",
+      "recomputed_utf8_sha256": "d5dd7270f39cff0f5a14aa06d2507a50d8f0aa40148735bfb83f5c905598202c",
+      "characters": 2964,
+      "error": null
+    },
+    "1631": {
+      "corpus_sha256": "96efff040578ce5f7e7cedbdc807dc9e3fa4dd7afb5aff5848b9cb1edf04e5a2",
+      "recomputed_utf8_sha256": "96efff040578ce5f7e7cedbdc807dc9e3fa4dd7afb5aff5848b9cb1edf04e5a2",
+      "characters": 3104,
+      "error": null
+    },
+    "1632": {
+      "corpus_sha256": "d5f8ec99b4631d5c13dd14b6669bd54b73ab654a361ae4f525ec917d89063d8c",
+      "recomputed_utf8_sha256": "d5f8ec99b4631d5c13dd14b6669bd54b73ab654a361ae4f525ec917d89063d8c",
+      "characters": 2949,
+      "error": null
+    },
+    "1633": {
+      "corpus_sha256": "2933bac025c5e46fdad36547ed8439018fae33d568bd1b2a8d3c01207f236161",
+      "recomputed_utf8_sha256": "2933bac025c5e46fdad36547ed8439018fae33d568bd1b2a8d3c01207f236161",
+      "characters": 2422,
+      "error": null
+    },
+    "1634": {
+      "corpus_sha256": "90ad5604bdb609994a585826d1002bf94d076e0d62681f9f26f65c53fb308c47",
+      "recomputed_utf8_sha256": "90ad5604bdb609994a585826d1002bf94d076e0d62681f9f26f65c53fb308c47",
+      "characters": 2060,
+      "error": null
+    },
+    "1635": {
+      "corpus_sha256": "41e79e60a1a7b7d23ea6ea9088a1c3d0c592d0ec49fe4ea270e2134c789c825d",
+      "recomputed_utf8_sha256": "41e79e60a1a7b7d23ea6ea9088a1c3d0c592d0ec49fe4ea270e2134c789c825d",
+      "characters": 1023,
+      "error": null
+    },
+    "1636": {
+      "corpus_sha256": "b0f86bf7330d4a5a418d05a21b94b86257b5c8df9047eaf070e7dbdf189c5eb5",
+      "recomputed_utf8_sha256": "b0f86bf7330d4a5a418d05a21b94b86257b5c8df9047eaf070e7dbdf189c5eb5",
+      "characters": 1897,
+      "error": null
+    },
+    "1637": {
+      "corpus_sha256": "5f6fcb36426b4ab040544842badc52ee86b28a5c4950ad066d2fbd22c7def6ea",
+      "recomputed_utf8_sha256": "5f6fcb36426b4ab040544842badc52ee86b28a5c4950ad066d2fbd22c7def6ea",
+      "characters": 1350,
+      "error": null
+    },
+    "1638": {
+      "corpus_sha256": "12e65967d54ad6fa1879eece2f62827d33efe53ad94928471972941536d8755c",
+      "recomputed_utf8_sha256": "12e65967d54ad6fa1879eece2f62827d33efe53ad94928471972941536d8755c",
+      "characters": 332,
+      "error": null
+    },
+    "1639": {
+      "corpus_sha256": "a1f6de10dc57c01d343080e800c4bbd73320994888a4449ecbdec8d2b4b49b4b",
+      "recomputed_utf8_sha256": "a1f6de10dc57c01d343080e800c4bbd73320994888a4449ecbdec8d2b4b49b4b",
+      "characters": 3821,
+      "error": null
+    },
+    "1640": {
+      "corpus_sha256": "fde8815a156e08a760bea5faec6ad27db2d39b28370614df0313077ff6757d13",
+      "recomputed_utf8_sha256": "fde8815a156e08a760bea5faec6ad27db2d39b28370614df0313077ff6757d13",
+      "characters": 3253,
+      "error": null
+    },
+    "1641": {
+      "corpus_sha256": "c213b183bc76f32da002c9424853af5e14ccaee1b5179f180fb7a160cbce4164",
+      "recomputed_utf8_sha256": "c213b183bc76f32da002c9424853af5e14ccaee1b5179f180fb7a160cbce4164",
+      "characters": 3379,
+      "error": null
+    },
+    "1642": {
+      "corpus_sha256": "7559f7285860a58768ff86f7d3803eb6bf49d30b766687365073fe40194f0304",
+      "recomputed_utf8_sha256": "7559f7285860a58768ff86f7d3803eb6bf49d30b766687365073fe40194f0304",
+      "characters": 2152,
+      "error": null
+    },
+    "1643": {
+      "corpus_sha256": "1c9ba6184123f62017be0608c19069cf0c140878e0d3dcd8f0302f8191bc80d1",
+      "recomputed_utf8_sha256": "1c9ba6184123f62017be0608c19069cf0c140878e0d3dcd8f0302f8191bc80d1",
+      "characters": 1919,
+      "error": null
+    },
+    "1644": {
+      "corpus_sha256": "161080331fc19878d1ad773bad4802a466e72b46287012b3c5cd708e5cf22251",
+      "recomputed_utf8_sha256": "161080331fc19878d1ad773bad4802a466e72b46287012b3c5cd708e5cf22251",
+      "characters": 2165,
+      "error": null
+    },
+    "1645": {
+      "corpus_sha256": "20459ae4f6b99285cb359191e53f5a453da9a9266e93cbbb0be86e45c521c155",
+      "recomputed_utf8_sha256": "20459ae4f6b99285cb359191e53f5a453da9a9266e93cbbb0be86e45c521c155",
+      "characters": 1097,
+      "error": null
+    },
+    "1646": {
+      "corpus_sha256": "d7a2964a7e2cdb4e5d37d8101a68e118fa8711b87e0a019b3342233a369152dd",
+      "recomputed_utf8_sha256": "d7a2964a7e2cdb4e5d37d8101a68e118fa8711b87e0a019b3342233a369152dd",
+      "characters": 2509,
+      "error": null
+    },
+    "1647": {
+      "corpus_sha256": "31b9fa59c36f29e29f0964cab0e3151f547d378e110ea34e02d0ae7a67e3ea2d",
+      "recomputed_utf8_sha256": "31b9fa59c36f29e29f0964cab0e3151f547d378e110ea34e02d0ae7a67e3ea2d",
+      "characters": 3024,
+      "error": null
+    },
+    "1648": {
+      "corpus_sha256": "e946563ee54a3f2972187982d09353638e7abaf7114e5fe51fafcb8fddc22f6a",
+      "recomputed_utf8_sha256": "e946563ee54a3f2972187982d09353638e7abaf7114e5fe51fafcb8fddc22f6a",
+      "characters": 2941,
+      "error": null
+    },
+    "1649": {
+      "corpus_sha256": "5ce0e96a64b80697ed028e360cefd0505acb70e516b29a68fe6ea79adb3d2efe",
+      "recomputed_utf8_sha256": "5ce0e96a64b80697ed028e360cefd0505acb70e516b29a68fe6ea79adb3d2efe",
+      "characters": 1028,
+      "error": null
+    },
+    "1650": {
+      "corpus_sha256": "2969cf5dab4919c54e0fa4946872dcda834921adde8e4d1a4f589e2279ef241c",
+      "recomputed_utf8_sha256": "2969cf5dab4919c54e0fa4946872dcda834921adde8e4d1a4f589e2279ef241c",
+      "characters": 2130,
+      "error": null
+    },
+    "1651": {
+      "corpus_sha256": "271dac804ec769b179c471e69bb3eb7124e112316bf578aff8dc865a84a5b9c7",
+      "recomputed_utf8_sha256": "271dac804ec769b179c471e69bb3eb7124e112316bf578aff8dc865a84a5b9c7",
+      "characters": 1506,
+      "error": null
+    },
+    "1652": {
+      "corpus_sha256": "4ebf6541358a241613ee7d98aedf1a492b59ba4341cb218692bc84929d304ec9",
+      "recomputed_utf8_sha256": "4ebf6541358a241613ee7d98aedf1a492b59ba4341cb218692bc84929d304ec9",
+      "characters": 2235,
+      "error": null
+    },
+    "1653": {
+      "corpus_sha256": "2841aac6d7e7b8ef585c0af6f52fe7385fb3dff218f4cad73a529a2e6bcb1bdd",
+      "recomputed_utf8_sha256": "2841aac6d7e7b8ef585c0af6f52fe7385fb3dff218f4cad73a529a2e6bcb1bdd",
+      "characters": 2140,
+      "error": null
+    },
+    "1654": {
+      "corpus_sha256": "6d36ca08d4cde652ac76606a3fdcdabd67ed5d870271595b0ee3f82d883a7386",
+      "recomputed_utf8_sha256": "6d36ca08d4cde652ac76606a3fdcdabd67ed5d870271595b0ee3f82d883a7386",
+      "characters": 2230,
+      "error": null
+    },
+    "1655": {
+      "corpus_sha256": "d2f842a3349c3440036c188fb55769c3f3ba1874808023e41a85d20346b8a336",
+      "recomputed_utf8_sha256": "d2f842a3349c3440036c188fb55769c3f3ba1874808023e41a85d20346b8a336",
+      "characters": 1494,
+      "error": null
+    },
+    "1656": {
+      "corpus_sha256": "bad831ff8ef6e83472199330e44e5a82515b787afb0c52e19db913314c444ab0",
+      "recomputed_utf8_sha256": "bad831ff8ef6e83472199330e44e5a82515b787afb0c52e19db913314c444ab0",
+      "characters": 2773,
+      "error": null
+    },
+    "1657": {
+      "corpus_sha256": "0362173fcdef6605c64766c7a1ad22530dedc6c789a5546ad91cd3be7d9dac97",
+      "recomputed_utf8_sha256": "0362173fcdef6605c64766c7a1ad22530dedc6c789a5546ad91cd3be7d9dac97",
+      "characters": 2044,
+      "error": null
+    },
+    "1658": {
+      "corpus_sha256": "6259697451641dc83ea7f014a54bf849fd73aa1bbfd56a1e4f0039c1e7f5f08a",
+      "recomputed_utf8_sha256": "6259697451641dc83ea7f014a54bf849fd73aa1bbfd56a1e4f0039c1e7f5f08a",
+      "characters": 2033,
+      "error": null
+    },
+    "1659": {
+      "corpus_sha256": "876c0d4da9500460af0a3d71f1488cc14996b5a566a1354d66c64024a41900e0",
+      "recomputed_utf8_sha256": "876c0d4da9500460af0a3d71f1488cc14996b5a566a1354d66c64024a41900e0",
+      "characters": 1888,
+      "error": null
+    },
+    "1660": {
+      "corpus_sha256": "761dc42bc604ea03ae4dc3f35a4d74e2a95105f37ae6f5c0dc90a8e90b07551d",
+      "recomputed_utf8_sha256": "761dc42bc604ea03ae4dc3f35a4d74e2a95105f37ae6f5c0dc90a8e90b07551d",
+      "characters": 1915,
+      "error": null
+    },
+    "1661": {
+      "corpus_sha256": "501f23bbdd81734cd49947dbd0537cbaea6a5a1be6132ff23a368a3c572d01d2",
+      "recomputed_utf8_sha256": "501f23bbdd81734cd49947dbd0537cbaea6a5a1be6132ff23a368a3c572d01d2",
+      "characters": 1981,
+      "error": null
+    },
+    "1662": {
+      "corpus_sha256": "cd4cba8096ef8c91fb69deb6175d08c2e39f8d06071465fe47828d09818d28b2",
+      "recomputed_utf8_sha256": "cd4cba8096ef8c91fb69deb6175d08c2e39f8d06071465fe47828d09818d28b2",
+      "characters": 2532,
+      "error": null
+    },
+    "1663": {
+      "corpus_sha256": "99aec15590d404a3e5c21745b5b308481a3957ea4aa713f06810e5f5b2522ca8",
+      "recomputed_utf8_sha256": "99aec15590d404a3e5c21745b5b308481a3957ea4aa713f06810e5f5b2522ca8",
+      "characters": 2180,
+      "error": null
+    },
+    "1664": {
+      "corpus_sha256": "9cf8aaf07b92ea77e45379428061a77a44b1bae3516d13edb32f27ad3de0d6fb",
+      "recomputed_utf8_sha256": "9cf8aaf07b92ea77e45379428061a77a44b1bae3516d13edb32f27ad3de0d6fb",
+      "characters": 1443,
+      "error": null
+    },
+    "1665": {
+      "corpus_sha256": "649b87ad1716803c79b37ca8ba1ece1e2fd13e3f360b4bece663fd38c15a64ea",
+      "recomputed_utf8_sha256": "649b87ad1716803c79b37ca8ba1ece1e2fd13e3f360b4bece663fd38c15a64ea",
+      "characters": 505,
+      "error": null
+    },
+    "1666": {
+      "corpus_sha256": "8dafc6b0d3dcfef87c1f75efa1074a59789cb04b0057b306e784fe7d2fb5b9c9",
+      "recomputed_utf8_sha256": "8dafc6b0d3dcfef87c1f75efa1074a59789cb04b0057b306e784fe7d2fb5b9c9",
+      "characters": 3371,
+      "error": null
+    },
+    "1667": {
+      "corpus_sha256": "491947afbf96d50edbf927977ebffc17d6276084f02b39dc9cd7b73378845682",
+      "recomputed_utf8_sha256": "491947afbf96d50edbf927977ebffc17d6276084f02b39dc9cd7b73378845682",
+      "characters": 2700,
+      "error": null
+    },
+    "1668": {
+      "corpus_sha256": "17c37dd3a4a229a03f43fd04b5ef1fc104719cd10008610ee13d9c88fa9e5d27",
+      "recomputed_utf8_sha256": "17c37dd3a4a229a03f43fd04b5ef1fc104719cd10008610ee13d9c88fa9e5d27",
+      "characters": 2449,
+      "error": null
+    },
+    "1669": {
+      "corpus_sha256": "8cb56b3ff4a1e3325c51550a0a7b2486080bcdad1b23e2779116b57ed9a04436",
+      "recomputed_utf8_sha256": "8cb56b3ff4a1e3325c51550a0a7b2486080bcdad1b23e2779116b57ed9a04436",
+      "characters": 1093,
+      "error": null
+    },
+    "1670": {
+      "corpus_sha256": "68b0a6341ae43e3d1b8ff36cb068c5bf3f63eea1a3922bc299673c5e6441ef55",
+      "recomputed_utf8_sha256": "68b0a6341ae43e3d1b8ff36cb068c5bf3f63eea1a3922bc299673c5e6441ef55",
+      "characters": 1876,
+      "error": null
+    },
+    "1671": {
+      "corpus_sha256": "c89aab7747a1a5cd0a9c86f6bbbd3b08f77eceafdd3a089b7133bd0b37424f37",
+      "recomputed_utf8_sha256": "c89aab7747a1a5cd0a9c86f6bbbd3b08f77eceafdd3a089b7133bd0b37424f37",
+      "characters": 1642,
+      "error": null
+    },
+    "1672": {
+      "corpus_sha256": "fccc89ed8029f30ca2db0bf0da70e261676a8cd77a964e93450f275acb8ea7dc",
+      "recomputed_utf8_sha256": "fccc89ed8029f30ca2db0bf0da70e261676a8cd77a964e93450f275acb8ea7dc",
+      "characters": 2012,
+      "error": null
+    },
+    "1673": {
+      "corpus_sha256": "ea682754c56a04f90d521dd8d84dedcffeb156585156ed2c185b35e8001dafc6",
+      "recomputed_utf8_sha256": "ea682754c56a04f90d521dd8d84dedcffeb156585156ed2c185b35e8001dafc6",
+      "characters": 3247,
+      "error": null
+    },
+    "1674": {
+      "corpus_sha256": "c61beca2224bc7248329d24e6d2743232acd35abe2306d3c79a1fcdaa297b616",
+      "recomputed_utf8_sha256": "c61beca2224bc7248329d24e6d2743232acd35abe2306d3c79a1fcdaa297b616",
+      "characters": 1502,
+      "error": null
+    },
+    "1675": {
+      "corpus_sha256": "f62cc0a463a5d334875485df7bd113fb353d5a710d7e3ce53d47f7afaff3eaa7",
+      "recomputed_utf8_sha256": "f62cc0a463a5d334875485df7bd113fb353d5a710d7e3ce53d47f7afaff3eaa7",
+      "characters": 2267,
+      "error": null
+    },
+    "1676": {
+      "corpus_sha256": "e055231dfa6c03411c4c6c21eb7e0749665788fe54a1cd83b05822df05907537",
+      "recomputed_utf8_sha256": "e055231dfa6c03411c4c6c21eb7e0749665788fe54a1cd83b05822df05907537",
+      "characters": 1851,
+      "error": null
+    },
+    "1677": {
+      "corpus_sha256": "b91344498528314096d05c8357adc2bf6dbfa8b1e2fd1412cbc0769331588532",
+      "recomputed_utf8_sha256": "b91344498528314096d05c8357adc2bf6dbfa8b1e2fd1412cbc0769331588532",
+      "characters": 1803,
+      "error": null
+    },
+    "1678": {
+      "corpus_sha256": "6aa7815e48ffc6a8df9656eebea86e2b99be9eb543afe0b99a8c231ebb1ea0ee",
+      "recomputed_utf8_sha256": "6aa7815e48ffc6a8df9656eebea86e2b99be9eb543afe0b99a8c231ebb1ea0ee",
+      "characters": 3204,
+      "error": null
+    },
+    "1679": {
+      "corpus_sha256": "1f90018cb33a84bf64120a8bd77f69f250f0c4ef7c0e7af60d91084324de75cc",
+      "recomputed_utf8_sha256": "1f90018cb33a84bf64120a8bd77f69f250f0c4ef7c0e7af60d91084324de75cc",
+      "characters": 748,
+      "error": null
+    },
+    "1680": {
+      "corpus_sha256": "b18365b62360bae6d41af95def5e53a077f5635f2c0ea0fe19bcb35a38c323a1",
+      "recomputed_utf8_sha256": "b18365b62360bae6d41af95def5e53a077f5635f2c0ea0fe19bcb35a38c323a1",
+      "characters": 426,
+      "error": null
+    },
+    "1681": {
+      "corpus_sha256": "e09680f077e2a3f2d9fe41aca7dedbd44ec72d80e6e89409c33becabc21a0d61",
+      "recomputed_utf8_sha256": "e09680f077e2a3f2d9fe41aca7dedbd44ec72d80e6e89409c33becabc21a0d61",
+      "characters": 2480,
+      "error": null
+    },
+    "1682": {
+      "corpus_sha256": "96f9fd4cf76f26fb0e3511e24ab56b2019ecf49272ab504233a027282c2561cc",
+      "recomputed_utf8_sha256": "96f9fd4cf76f26fb0e3511e24ab56b2019ecf49272ab504233a027282c2561cc",
+      "characters": 2564,
+      "error": null
+    },
+    "1683": {
+      "corpus_sha256": "72cde92b26a0b3d1b8c5a8f69c09bc289031d4fdff2d9e7c0accf3a6c218073a",
+      "recomputed_utf8_sha256": "72cde92b26a0b3d1b8c5a8f69c09bc289031d4fdff2d9e7c0accf3a6c218073a",
+      "characters": 2433,
+      "error": null
+    },
+    "1684": {
+      "corpus_sha256": "8eb0404100a6449216b7e7fadd1930ca849a860812e5239b2dcda10dbab44c04",
+      "recomputed_utf8_sha256": "8eb0404100a6449216b7e7fadd1930ca849a860812e5239b2dcda10dbab44c04",
+      "characters": 500,
+      "error": null
+    },
+    "1685": {
+      "corpus_sha256": "8a83024405c0b4934a4d59b998453c61e8007d824b0ba0f82bdb3bbd37678d0f",
+      "recomputed_utf8_sha256": "8a83024405c0b4934a4d59b998453c61e8007d824b0ba0f82bdb3bbd37678d0f",
+      "characters": 878,
+      "error": null
+    },
+    "1686": {
+      "corpus_sha256": "28a2a6e4dff27bb546d35de0ac39c49c037db0d2a42709c02bc6a20fe88743ba",
+      "recomputed_utf8_sha256": "28a2a6e4dff27bb546d35de0ac39c49c037db0d2a42709c02bc6a20fe88743ba",
+      "characters": 1473,
+      "error": null
+    },
+    "1687": {
+      "corpus_sha256": "40c614cc8822d1f19610ba3a1777bcf9197694ea080cee999b3db99e66466de1",
+      "recomputed_utf8_sha256": "40c614cc8822d1f19610ba3a1777bcf9197694ea080cee999b3db99e66466de1",
+      "characters": 1414,
+      "error": null
+    },
+    "1688": {
+      "corpus_sha256": "94ca0b698926bf1ea618c8b2394239fd0eb1945ac579901b38eb416c1a635513",
+      "recomputed_utf8_sha256": "94ca0b698926bf1ea618c8b2394239fd0eb1945ac579901b38eb416c1a635513",
+      "characters": 3947,
+      "error": null
+    },
+    "1689": {
+      "corpus_sha256": "e8a29243743286f643f91397685270e658a274de1776777763fa426cb9dd4241",
+      "recomputed_utf8_sha256": "e8a29243743286f643f91397685270e658a274de1776777763fa426cb9dd4241",
+      "characters": 3615,
+      "error": null
+    },
+    "1690": {
+      "corpus_sha256": "7e9781085b55f75cf76a004afed086ac2046b95dd96e82af686ef38a82f1eda1",
+      "recomputed_utf8_sha256": "7e9781085b55f75cf76a004afed086ac2046b95dd96e82af686ef38a82f1eda1",
+      "characters": 3542,
+      "error": null
+    },
+    "1691": {
+      "corpus_sha256": "fe6aa08aba0e60204f1d56e8eeb766e8b6791ed825f3f3e9b2ab6159925c1362",
+      "recomputed_utf8_sha256": "fe6aa08aba0e60204f1d56e8eeb766e8b6791ed825f3f3e9b2ab6159925c1362",
+      "characters": 1877,
+      "error": null
+    },
+    "1692": {
+      "corpus_sha256": "8d55d95847d42ef0b7de868c5778a89080cc69d770b58950a1ecbf132dda265d",
+      "recomputed_utf8_sha256": "8d55d95847d42ef0b7de868c5778a89080cc69d770b58950a1ecbf132dda265d",
+      "characters": 2314,
+      "error": null
+    },
+    "1693": {
+      "corpus_sha256": "2b2a7e360ba9edab58be89b409581f558d591f8b755dca0718651c2594dc3fa6",
+      "recomputed_utf8_sha256": "2b2a7e360ba9edab58be89b409581f558d591f8b755dca0718651c2594dc3fa6",
+      "characters": 2861,
+      "error": null
+    },
+    "1694": {
+      "corpus_sha256": "d05d40215e39fc577c5003c313833b9ebd9f09eda70f43302ea18eea86a614f8",
+      "recomputed_utf8_sha256": "d05d40215e39fc577c5003c313833b9ebd9f09eda70f43302ea18eea86a614f8",
+      "characters": 553,
+      "error": null
+    },
+    "1695": {
+      "corpus_sha256": "cd4cccb1ddc350ccef4c3ab5a972db3fe336e3674d7faf687ec05cdab3668e0e",
+      "recomputed_utf8_sha256": "cd4cccb1ddc350ccef4c3ab5a972db3fe336e3674d7faf687ec05cdab3668e0e",
+      "characters": 3605,
+      "error": null
+    },
+    "1696": {
+      "corpus_sha256": "b226e1cf170fda152cfa0b03173c72d30dc3ce7f1417474ce242a040a2195e64",
+      "recomputed_utf8_sha256": "b226e1cf170fda152cfa0b03173c72d30dc3ce7f1417474ce242a040a2195e64",
+      "characters": 3434,
+      "error": null
+    },
+    "1697": {
+      "corpus_sha256": "6c33ba16a963efec68b77dfb5cb201b1d6565eda12de0d8c247a2ca7eac9c3eb",
+      "recomputed_utf8_sha256": "6c33ba16a963efec68b77dfb5cb201b1d6565eda12de0d8c247a2ca7eac9c3eb",
+      "characters": 3790,
+      "error": null
+    },
+    "1698": {
+      "corpus_sha256": "a1a8a2457046c0b845c12459ab60bd01684e2451a4629bf5544578e3a02172ad",
+      "recomputed_utf8_sha256": "a1a8a2457046c0b845c12459ab60bd01684e2451a4629bf5544578e3a02172ad",
+      "characters": 2892,
+      "error": null
+    },
+    "1699": {
+      "corpus_sha256": "beaeb27cf8fcf421e4099b640780b0c3c532f9dcce9b33ca0a86ccda87ab301b",
+      "recomputed_utf8_sha256": "beaeb27cf8fcf421e4099b640780b0c3c532f9dcce9b33ca0a86ccda87ab301b",
+      "characters": 3909,
+      "error": null
+    },
+    "1700": {
+      "corpus_sha256": "354fe2d143456f7a7f9ff8351bda65b4bc086a7e5fc51f5d0006c932d00819e4",
+      "recomputed_utf8_sha256": "354fe2d143456f7a7f9ff8351bda65b4bc086a7e5fc51f5d0006c932d00819e4",
+      "characters": 4008,
+      "error": null
+    },
+    "1701": {
+      "corpus_sha256": "5a1135b5e3704647b29015abf5cdddf7680cf55da7d88bf04c379cc90a488b8d",
+      "recomputed_utf8_sha256": "5a1135b5e3704647b29015abf5cdddf7680cf55da7d88bf04c379cc90a488b8d",
+      "characters": 2908,
+      "error": null
+    },
+    "1702": {
+      "corpus_sha256": "5f7ea1c31b2e3f5197e20b97cd118fd8521130b5cce54c8a9932331f3af068c2",
+      "recomputed_utf8_sha256": "5f7ea1c31b2e3f5197e20b97cd118fd8521130b5cce54c8a9932331f3af068c2",
+      "characters": 4592,
+      "error": null
+    },
+    "1703": {
+      "corpus_sha256": "dcdf0e608c464328d697dc1362bd512814dc7613aaa2300ab78431d123aef567",
+      "recomputed_utf8_sha256": "dcdf0e608c464328d697dc1362bd512814dc7613aaa2300ab78431d123aef567",
+      "characters": 3568,
+      "error": null
+    },
+    "1704": {
+      "corpus_sha256": "c46b97a759d76994784f421c6760e087e01587e750ee5cea047df1f11c2b863e",
+      "recomputed_utf8_sha256": "c46b97a759d76994784f421c6760e087e01587e750ee5cea047df1f11c2b863e",
+      "characters": 2165,
+      "error": null
+    },
+    "1705": {
+      "corpus_sha256": "e360196c26559c0de0fe96d89feea2080180c152e04af3bd29176a11727bf9a2",
+      "recomputed_utf8_sha256": "e360196c26559c0de0fe96d89feea2080180c152e04af3bd29176a11727bf9a2",
+      "characters": 1404,
+      "error": null
+    },
+    "1706": {
+      "corpus_sha256": "537af7913a55d9522032275c86094336e087bfa97ec24b917080e7126206ebc1",
+      "recomputed_utf8_sha256": "537af7913a55d9522032275c86094336e087bfa97ec24b917080e7126206ebc1",
+      "characters": 3442,
+      "error": null
+    },
+    "1707": {
+      "corpus_sha256": "8fe28c7c2e593fc043f2f4e0f30a01b2865ada24500017b34c6f3d714c6ab137",
+      "recomputed_utf8_sha256": "8fe28c7c2e593fc043f2f4e0f30a01b2865ada24500017b34c6f3d714c6ab137",
+      "characters": 2638,
+      "error": null
+    },
+    "1708": {
+      "corpus_sha256": "ce2f835a095e8843fd2adb6cb8afb8ab41be7d3b5eaaa7bbd0c2dbb0e2d682d6",
+      "recomputed_utf8_sha256": "ce2f835a095e8843fd2adb6cb8afb8ab41be7d3b5eaaa7bbd0c2dbb0e2d682d6",
+      "characters": 1486,
+      "error": null
+    },
+    "1709": {
+      "corpus_sha256": "c27d2e34dea1dd1deae17c17e345e25300e97e37af35595060e6eb0e55f8633e",
+      "recomputed_utf8_sha256": "c27d2e34dea1dd1deae17c17e345e25300e97e37af35595060e6eb0e55f8633e",
+      "characters": 4579,
+      "error": null
+    },
+    "1710": {
+      "corpus_sha256": "bfc0a547f9c46784b7cb55c26dc4413d153baa7f163f2a7138dfaebec75e7f89",
+      "recomputed_utf8_sha256": "bfc0a547f9c46784b7cb55c26dc4413d153baa7f163f2a7138dfaebec75e7f89",
+      "characters": 2352,
+      "error": null
+    },
+    "1711": {
+      "corpus_sha256": "2c96330c53fbba56269a64fbfd72d2d6acc56771cc9c108384dfc84f56fb7b48",
+      "recomputed_utf8_sha256": "2c96330c53fbba56269a64fbfd72d2d6acc56771cc9c108384dfc84f56fb7b48",
+      "characters": 1492,
+      "error": null
+    },
+    "1712": {
+      "corpus_sha256": "9e5a813471037f76199e5bc881b994eda8b6f52e1f82b2acf0760b6d04e3c3ce",
+      "recomputed_utf8_sha256": "9e5a813471037f76199e5bc881b994eda8b6f52e1f82b2acf0760b6d04e3c3ce",
+      "characters": 2589,
+      "error": null
+    },
+    "1713": {
+      "corpus_sha256": "9b424472011001a6020c8b1b10b4107aee70a034228ebcf952e3a8f81ba720af",
+      "recomputed_utf8_sha256": "9b424472011001a6020c8b1b10b4107aee70a034228ebcf952e3a8f81ba720af",
+      "characters": 3160,
+      "error": null
+    },
+    "1714": {
+      "corpus_sha256": "cd8d079059dc8dee71c817ead20792bbae51d931d309f8dea19ead26e473e415",
+      "recomputed_utf8_sha256": "cd8d079059dc8dee71c817ead20792bbae51d931d309f8dea19ead26e473e415",
+      "characters": 2645,
+      "error": null
+    },
+    "1715": {
+      "corpus_sha256": "bf2704a808fd72c37ea84e8020dc63e525c4ad6cd98fbde47b7f77b2d7297554",
+      "recomputed_utf8_sha256": "bf2704a808fd72c37ea84e8020dc63e525c4ad6cd98fbde47b7f77b2d7297554",
+      "characters": 551,
+      "error": null
+    },
+    "1716": {
+      "corpus_sha256": "7494457efd32d4b5258ecd27ab5d83b00c6a43462dee3068c3a072c41524a35a",
+      "recomputed_utf8_sha256": "7494457efd32d4b5258ecd27ab5d83b00c6a43462dee3068c3a072c41524a35a",
+      "characters": 1619,
+      "error": null
+    },
+    "1717": {
+      "corpus_sha256": "dee4959d8db8e65a440e52c41d74852ffd56e81c96961fdcae7152ab3797e6b7",
+      "recomputed_utf8_sha256": "dee4959d8db8e65a440e52c41d74852ffd56e81c96961fdcae7152ab3797e6b7",
+      "characters": 1451,
+      "error": null
+    },
+    "1718": {
+      "corpus_sha256": "26869d159ff06d14ae8348600116bf196f5fb0a14895627e366e3c7b2a20b110",
+      "recomputed_utf8_sha256": "26869d159ff06d14ae8348600116bf196f5fb0a14895627e366e3c7b2a20b110",
+      "characters": 2811,
+      "error": null
+    },
+    "1719": {
+      "corpus_sha256": "f31d29d13f3632f592a6f0929092736a698dbc64a452f27e7f95d5e8a2815697",
+      "recomputed_utf8_sha256": "f31d29d13f3632f592a6f0929092736a698dbc64a452f27e7f95d5e8a2815697",
+      "characters": 1655,
+      "error": null
+    },
+    "1720": {
+      "corpus_sha256": "d4b65b0d05fdb7016e3f0cb25a6ce4e4c4a243f1673d4d88df86c2988fec93c1",
+      "recomputed_utf8_sha256": "d4b65b0d05fdb7016e3f0cb25a6ce4e4c4a243f1673d4d88df86c2988fec93c1",
+      "characters": 1221,
+      "error": null
+    },
+    "1721": {
+      "corpus_sha256": "cbd259bada4905cc91b4d87ba6d498e41fb587110e0e87b229c673bdb874d086",
+      "recomputed_utf8_sha256": "cbd259bada4905cc91b4d87ba6d498e41fb587110e0e87b229c673bdb874d086",
+      "characters": 712,
+      "error": null
+    },
+    "1722": {
+      "corpus_sha256": "5f27d73916941b18f7796b0362e15fdb1721beb9890fe2b91bfbdf341a4a8588",
+      "recomputed_utf8_sha256": "5f27d73916941b18f7796b0362e15fdb1721beb9890fe2b91bfbdf341a4a8588",
+      "characters": 1994,
+      "error": null
+    },
+    "1723": {
+      "corpus_sha256": "020c74581cb2fd4ecabc4a320c8f9f36636928fe8a6cd022152ee5fa572ab819",
+      "recomputed_utf8_sha256": "020c74581cb2fd4ecabc4a320c8f9f36636928fe8a6cd022152ee5fa572ab819",
+      "characters": 3120,
+      "error": null
+    },
+    "1724": {
+      "corpus_sha256": "f9ee88c476bed9cc0c4b34db82f1e30aad0c817dbeebdd3129121b83838494df",
+      "recomputed_utf8_sha256": "f9ee88c476bed9cc0c4b34db82f1e30aad0c817dbeebdd3129121b83838494df",
+      "characters": 3334,
+      "error": null
+    },
+    "1725": {
+      "corpus_sha256": "e0f4f97e7a60a264bf68f27a26404c89a0402c9ef92a37f1fdb492a450787a89",
+      "recomputed_utf8_sha256": "e0f4f97e7a60a264bf68f27a26404c89a0402c9ef92a37f1fdb492a450787a89",
+      "characters": 2133,
+      "error": null
+    },
+    "1726": {
+      "corpus_sha256": "20a86940ab885fa463063c9c13bd32cbb2a2b99d0b6740affe15933030badaff",
+      "recomputed_utf8_sha256": "20a86940ab885fa463063c9c13bd32cbb2a2b99d0b6740affe15933030badaff",
+      "characters": 2824,
+      "error": null
+    },
+    "1727": {
+      "corpus_sha256": "8095544c8c8d5cfa09e153d63bcff3e37ddb3dee28e531c853688826669ce8e7",
+      "recomputed_utf8_sha256": "8095544c8c8d5cfa09e153d63bcff3e37ddb3dee28e531c853688826669ce8e7",
+      "characters": 2345,
+      "error": null
+    },
+    "1728": {
+      "corpus_sha256": "8527e495230efd26e7b973a9e790c40fdc649b5da89f2bdf5c176b81612a7baa",
+      "recomputed_utf8_sha256": "8527e495230efd26e7b973a9e790c40fdc649b5da89f2bdf5c176b81612a7baa",
+      "characters": 1350,
+      "error": null
+    },
+    "1729": {
+      "corpus_sha256": "a3879f341288c724657d8cd50563c17129f09327e7afa9ce6fc6ef1600c634ba",
+      "recomputed_utf8_sha256": "a3879f341288c724657d8cd50563c17129f09327e7afa9ce6fc6ef1600c634ba",
+      "characters": 2113,
+      "error": null
+    },
+    "1730": {
+      "corpus_sha256": "a92259875335810995c5f1dfac86edc1793e77675243b6a42e7960b568505fd7",
+      "recomputed_utf8_sha256": "a92259875335810995c5f1dfac86edc1793e77675243b6a42e7960b568505fd7",
+      "characters": 3003,
+      "error": null
+    },
+    "1731": {
+      "corpus_sha256": "d31ca63b14d023d299819288399c7b4ac446058d05a2dc50ad99e5a2da4cb836",
+      "recomputed_utf8_sha256": "d31ca63b14d023d299819288399c7b4ac446058d05a2dc50ad99e5a2da4cb836",
+      "characters": 2014,
+      "error": null
+    },
+    "1732": {
+      "corpus_sha256": "a72413294f10f02deed2e57de1d69c579ae0e6b41a7108805132c37106db8097",
+      "recomputed_utf8_sha256": "a72413294f10f02deed2e57de1d69c579ae0e6b41a7108805132c37106db8097",
+      "characters": 2321,
+      "error": null
+    },
+    "1733": {
+      "corpus_sha256": "737c463902d5d363d0103cfe792aa287e3bbb671853099527dc15ab20fbf729f",
+      "recomputed_utf8_sha256": "737c463902d5d363d0103cfe792aa287e3bbb671853099527dc15ab20fbf729f",
+      "characters": 2299,
+      "error": null
+    },
+    "1734": {
+      "corpus_sha256": "fec76658685d27a98721fe5fd24547edc06743f4c3fa07f3b51c22b988bb71b5",
+      "recomputed_utf8_sha256": "fec76658685d27a98721fe5fd24547edc06743f4c3fa07f3b51c22b988bb71b5",
+      "characters": 1952,
+      "error": null
+    },
+    "1735": {
+      "corpus_sha256": "36cb6daac416aa93fbcf74e4c19890d29bf6f90d0f45153ecfc3f0b296a8b4a7",
+      "recomputed_utf8_sha256": "36cb6daac416aa93fbcf74e4c19890d29bf6f90d0f45153ecfc3f0b296a8b4a7",
+      "characters": 3157,
+      "error": null
+    },
+    "1736": {
+      "corpus_sha256": "4dd68bf799614903bc78805abbfd603092893d48935cdc2638840bd81bde3529",
+      "recomputed_utf8_sha256": "4dd68bf799614903bc78805abbfd603092893d48935cdc2638840bd81bde3529",
+      "characters": 2157,
+      "error": null
+    },
+    "1737": {
+      "corpus_sha256": "b1c53b2bb33cfd962f4a035f053dfb28da24c1d4f046f332c2b0e5da4cc8836f",
+      "recomputed_utf8_sha256": "b1c53b2bb33cfd962f4a035f053dfb28da24c1d4f046f332c2b0e5da4cc8836f",
+      "characters": 1953,
+      "error": null
+    },
+    "1738": {
+      "corpus_sha256": "656526ce60db2f68d625cf133b6068288f33a42c217712e4c2d27758981aab86",
+      "recomputed_utf8_sha256": "656526ce60db2f68d625cf133b6068288f33a42c217712e4c2d27758981aab86",
+      "characters": 4054,
+      "error": null
+    },
+    "1739": {
+      "corpus_sha256": "9310879a948a76658dc32c76b3f33c78c71186492b31d1c1462b200cecee0baf",
+      "recomputed_utf8_sha256": "9310879a948a76658dc32c76b3f33c78c71186492b31d1c1462b200cecee0baf",
+      "characters": 820,
+      "error": null
+    },
+    "1740": {
+      "corpus_sha256": "7271e33d220e25484f540f1b517dae6e95c1138f0d456e3565b8f17e2bd2a924",
+      "recomputed_utf8_sha256": "7271e33d220e25484f540f1b517dae6e95c1138f0d456e3565b8f17e2bd2a924",
+      "characters": 1296,
+      "error": null
+    },
+    "1741": {
+      "corpus_sha256": "5eec260883d5a90b75e558873a074d491c56f75e07a528f5198b922ffee0ac26",
+      "recomputed_utf8_sha256": "5eec260883d5a90b75e558873a074d491c56f75e07a528f5198b922ffee0ac26",
+      "characters": 1960,
+      "error": null
+    },
+    "1742": {
+      "corpus_sha256": "97e98312d1d7b04b4acd8e6e6187b7662217da998572521b2234b925e269c1d8",
+      "recomputed_utf8_sha256": "97e98312d1d7b04b4acd8e6e6187b7662217da998572521b2234b925e269c1d8",
+      "characters": 2060,
+      "error": null
+    },
+    "1743": {
+      "corpus_sha256": "f075f70bdb3dc2251634a9e30cb8f404868e5ca0d487f17271cbabe78f8abbca",
+      "recomputed_utf8_sha256": "f075f70bdb3dc2251634a9e30cb8f404868e5ca0d487f17271cbabe78f8abbca",
+      "characters": 1705,
+      "error": null
+    },
+    "1744": {
+      "corpus_sha256": "5a7fcd0a0c0cb8e477a4caa061b514e30891373071b3fd430e96eda29d480429",
+      "recomputed_utf8_sha256": "5a7fcd0a0c0cb8e477a4caa061b514e30891373071b3fd430e96eda29d480429",
+      "characters": 1404,
+      "error": null
+    },
+    "1745": {
+      "corpus_sha256": "70e0d062abaacb13cc5d3bd402eacd6f209d3741fc017f228a8803ef6c85cdbc",
+      "recomputed_utf8_sha256": "70e0d062abaacb13cc5d3bd402eacd6f209d3741fc017f228a8803ef6c85cdbc",
+      "characters": 2547,
+      "error": null
+    },
+    "1746": {
+      "corpus_sha256": "e85c9b6b48a0a76e7092c7fb27694ad8b63807493df3411c3d68623a391a28fa",
+      "recomputed_utf8_sha256": "e85c9b6b48a0a76e7092c7fb27694ad8b63807493df3411c3d68623a391a28fa",
+      "characters": 1867,
+      "error": null
+    },
+    "1747": {
+      "corpus_sha256": "3baeaef05e4472d4843f3dbf304beebd8630b7cfc77ac90ffbe1fabc71c56115",
+      "recomputed_utf8_sha256": "3baeaef05e4472d4843f3dbf304beebd8630b7cfc77ac90ffbe1fabc71c56115",
+      "characters": 1517,
+      "error": null
+    },
+    "1748": {
+      "corpus_sha256": "34929dc45e4c60aa3bcb9d424f1ab5a62913b0e0e28df74949cdd7860bd6f5dc",
+      "recomputed_utf8_sha256": "34929dc45e4c60aa3bcb9d424f1ab5a62913b0e0e28df74949cdd7860bd6f5dc",
+      "characters": 2236,
+      "error": null
+    },
+    "1749": {
+      "corpus_sha256": "15d63e6f3f1637611098cfd60ca083dc9a94610916a282d9ef810325ea088e6e",
+      "recomputed_utf8_sha256": "15d63e6f3f1637611098cfd60ca083dc9a94610916a282d9ef810325ea088e6e",
+      "characters": 664,
+      "error": null
+    },
+    "1750": {
+      "corpus_sha256": "2b6c16d694334b2f91b07660ec29a07c31f23d86ef989697f22cfac4bc724bf2",
+      "recomputed_utf8_sha256": "2b6c16d694334b2f91b07660ec29a07c31f23d86ef989697f22cfac4bc724bf2",
+      "characters": 2314,
+      "error": null
+    },
+    "1751": {
+      "corpus_sha256": "3c3838803ed1496de113d7a43876f1491694101824d89484ecac47f5604f9ad3",
+      "recomputed_utf8_sha256": "3c3838803ed1496de113d7a43876f1491694101824d89484ecac47f5604f9ad3",
+      "characters": 3077,
+      "error": null
+    },
+    "1752": {
+      "corpus_sha256": "cca6b7c5c161e1ec58dda7d14c67047fb059fc8ab2148132fd9343ed5210f872",
+      "recomputed_utf8_sha256": "cca6b7c5c161e1ec58dda7d14c67047fb059fc8ab2148132fd9343ed5210f872",
+      "characters": 1345,
+      "error": null
+    },
+    "1753": {
+      "corpus_sha256": "be7e130be2e82a8d951a3f934160a9b966ce1115a246e7d1a1826c257171f480",
+      "recomputed_utf8_sha256": "be7e130be2e82a8d951a3f934160a9b966ce1115a246e7d1a1826c257171f480",
+      "characters": 2171,
+      "error": null
+    },
+    "1754": {
+      "corpus_sha256": "5c04d9ab6ede6c3b2204845de347c53a16bc96a5ff689c096f4fb3e8c46a9037",
+      "recomputed_utf8_sha256": "5c04d9ab6ede6c3b2204845de347c53a16bc96a5ff689c096f4fb3e8c46a9037",
+      "characters": 2622,
+      "error": null
+    },
+    "1755": {
+      "corpus_sha256": "013ad7e14c0d3aef99e50fc4e8999ff11b461002fce5976b79c4b3b5e6d5879d",
+      "recomputed_utf8_sha256": "013ad7e14c0d3aef99e50fc4e8999ff11b461002fce5976b79c4b3b5e6d5879d",
+      "characters": 2518,
+      "error": null
+    },
+    "1756": {
+      "corpus_sha256": "797cd2049bc807ac90f3b5fde6b060c49dc3a64beaae8d83cc2111eb211b1d2f",
+      "recomputed_utf8_sha256": "797cd2049bc807ac90f3b5fde6b060c49dc3a64beaae8d83cc2111eb211b1d2f",
+      "characters": 505,
+      "error": null
+    },
+    "1757": {
+      "corpus_sha256": "337cca6b2cb1d4c6c77b4f2201f977d6d5c48a6bc90d1c38408217b4468cf5bb",
+      "recomputed_utf8_sha256": "337cca6b2cb1d4c6c77b4f2201f977d6d5c48a6bc90d1c38408217b4468cf5bb",
+      "characters": 1801,
+      "error": null
+    },
+    "1758": {
+      "corpus_sha256": "8dc5a36d4c012f33446b46976f26c5f2634b319c14fb90aa186ed9aee102b480",
+      "recomputed_utf8_sha256": "8dc5a36d4c012f33446b46976f26c5f2634b319c14fb90aa186ed9aee102b480",
+      "characters": 2491,
+      "error": null
+    },
+    "1759": {
+      "corpus_sha256": "5bf3d9e29c7fd321f18a8032549c3763d1c069ef49abd37b8a6825dbe76ac1f0",
+      "recomputed_utf8_sha256": "5bf3d9e29c7fd321f18a8032549c3763d1c069ef49abd37b8a6825dbe76ac1f0",
+      "characters": 1621,
+      "error": null
+    },
+    "1760": {
+      "corpus_sha256": "ae5b54904caed2bcc09a674759142b5f98ee219ac70375982429ff863fd88b91",
+      "recomputed_utf8_sha256": "ae5b54904caed2bcc09a674759142b5f98ee219ac70375982429ff863fd88b91",
+      "characters": 2153,
+      "error": null
+    },
+    "1761": {
+      "corpus_sha256": "e6c017dc918a380c40cddd040bdcbf1ccf85c0b6f8075ee9afe90d3cc2caa97d",
+      "recomputed_utf8_sha256": "e6c017dc918a380c40cddd040bdcbf1ccf85c0b6f8075ee9afe90d3cc2caa97d",
+      "characters": 1924,
+      "error": null
+    },
+    "1762": {
+      "corpus_sha256": "3aacc378d0a8e3da15911f2cd299ec01cdd62ae52b30b1ee92e71da3125890e6",
+      "recomputed_utf8_sha256": "3aacc378d0a8e3da15911f2cd299ec01cdd62ae52b30b1ee92e71da3125890e6",
+      "characters": 1628,
+      "error": null
+    },
+    "1763": {
+      "corpus_sha256": "f32f7d5fe4f77813d1c8ab2523b017e8db376483a0b8ac04ef1c635703dc2a3a",
+      "recomputed_utf8_sha256": "f32f7d5fe4f77813d1c8ab2523b017e8db376483a0b8ac04ef1c635703dc2a3a",
+      "characters": 2317,
+      "error": null
+    },
+    "1764": {
+      "corpus_sha256": "9b176071366c47418f61f6531d77798e827edf3060cbb4d2f4704af64bf94021",
+      "recomputed_utf8_sha256": "9b176071366c47418f61f6531d77798e827edf3060cbb4d2f4704af64bf94021",
+      "characters": 1484,
+      "error": null
+    },
+    "1765": {
+      "corpus_sha256": "b0983f7c1b1db4ce215bc1bc1410882e86a6740396e107ff0295ab4ef17b98c3",
+      "recomputed_utf8_sha256": "b0983f7c1b1db4ce215bc1bc1410882e86a6740396e107ff0295ab4ef17b98c3",
+      "characters": 3575,
+      "error": null
+    },
+    "1766": {
+      "corpus_sha256": "a71e1f3357ac5ed2963403aa2bad82b0e18f141fa35d3e2796abf41a8a56dd8b",
+      "recomputed_utf8_sha256": "a71e1f3357ac5ed2963403aa2bad82b0e18f141fa35d3e2796abf41a8a56dd8b",
+      "characters": 1315,
+      "error": null
+    },
+    "1767": {
+      "corpus_sha256": "d4046c909fa724bbf765a8758db95f9eb4397bde80eb6b15861bc9e6d1c823ef",
+      "recomputed_utf8_sha256": "d4046c909fa724bbf765a8758db95f9eb4397bde80eb6b15861bc9e6d1c823ef",
+      "characters": 1633,
+      "error": null
+    },
+    "1768": {
+      "corpus_sha256": "f6b1958a41af2b821196b1c0971316058706b01d066ed1098cd15624afa86fb0",
+      "recomputed_utf8_sha256": "f6b1958a41af2b821196b1c0971316058706b01d066ed1098cd15624afa86fb0",
+      "characters": 1636,
+      "error": null
+    },
+    "1769": {
+      "corpus_sha256": "dc18bfd89c80551a6a2b9061b761857dd9b46af586a66f69f6c65b959efc7c0d",
+      "recomputed_utf8_sha256": "dc18bfd89c80551a6a2b9061b761857dd9b46af586a66f69f6c65b959efc7c0d",
+      "characters": 2633,
+      "error": null
+    },
+    "1770": {
+      "corpus_sha256": "ffff98e5e914e9949b458b8eb9ad56b6be6c093514a11f52b19a91399ceb4241",
+      "recomputed_utf8_sha256": "ffff98e5e914e9949b458b8eb9ad56b6be6c093514a11f52b19a91399ceb4241",
+      "characters": 2150,
+      "error": null
+    },
+    "1771": {
+      "corpus_sha256": "cae51f7c00e205f64c193675d683b6ef056acaeed5a1137459ac3b843537660b",
+      "recomputed_utf8_sha256": "cae51f7c00e205f64c193675d683b6ef056acaeed5a1137459ac3b843537660b",
+      "characters": 1043,
+      "error": null
+    },
+    "1772": {
+      "corpus_sha256": "ee6135aa1c6c0e931ab1f4d647aa152504f1b12d7b57a11f80ad33ebcee3ad5d",
+      "recomputed_utf8_sha256": "ee6135aa1c6c0e931ab1f4d647aa152504f1b12d7b57a11f80ad33ebcee3ad5d",
+      "characters": 1566,
+      "error": null
+    },
+    "1773": {
+      "corpus_sha256": "ab057d2b7b7e04d8e79ad369b53c888ca056a4af1c273fbcfef810a99b421cfa",
+      "recomputed_utf8_sha256": "ab057d2b7b7e04d8e79ad369b53c888ca056a4af1c273fbcfef810a99b421cfa",
+      "characters": 2900,
+      "error": null
+    },
+    "1774": {
+      "corpus_sha256": "5e98ee76e454af17596f6e02e62c7659b00d1ece96125677b6a4e3da473e9229",
+      "recomputed_utf8_sha256": "5e98ee76e454af17596f6e02e62c7659b00d1ece96125677b6a4e3da473e9229",
+      "characters": 2154,
+      "error": null
+    }
+  },
+  "sections": [
+    {
+      "section": "7.1.1",
+      "title": "diretiva resource",
+      "pdf_start": 1563,
+      "pdf_end": 1564,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "O caminho inicial com barra invertida parte de MQL5; sem ela, a referência é relativa ao arquivo de fonte que contém a diretiva, inclusive quando esse arquivo é MQH. Strings usam barras invertidas duplicadas; caminhos com subida e unidade são proibidos. O livro estabelece63 caracteres para caminho literal,128MB para recurso estático e compressão de incorporação. A referência em execução usa `::` e remove a barra inicial. BMP/WAV atendem à forma simples, enquanto outras modalidades são tratadas adiante. Aplicação conceitual Stoikus: qualquer futura incorporação de ícones ou modelos deve registrar o hash e a versão do insumo no momento da compilação, porque mudar o arquivo externo depois não muda o EX5. Isso é proposta de rastreabilidade, não exigência normativa JPW. Experimento futuro de distribuição sem arquivo auxiliar: NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.2",
+      "title": "compartilhamento entre programas",
+      "pdf_start": 1564,
+      "pdf_end": 1565,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Recursos são endereçados com qualificação do EX5 proprietário e nome interno; o proprietário não precisa estar executando para permitir leitura dos recursos incorporados. Caminho absoluto aqui significa relativo à raiz MQL5, e caminho curto depende do diretório do consumidor. Recursos dinâmicos permitem comunicação em memória entre programas. Conhecimento aplicável: nomes e resolução de caminhos pertencem ao contrato de interface. Proposta futura: prefixo por componente, versão do protocolo e instância, em vez de tratar disponibilidade pelo nome como autenticidade ou integridade. Não há evidência de uso pelo Stoikus.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.3",
+      "title": "variáveis de recurso",
+      "pdf_start": 1565,
+      "pdf_end": 1569,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "A forma `as` produz variáveis constantes; imagens podem ser arrays1D ou2D com mesma memória, mas indexação diferente. Texto é convertido em Unicode com reconhecimento de BOM/encoding. Pixel uint ARGB usa ordem diferente do tipo color; conversão explícita evita cores trocadas. Recursos vinculados a variável deixam de ser acessíveis pelo nome `::` e não são compartilháveis externamente. O exemplo BmpOwner/BmpUser comprova a distinção na narrativa do livro: o segundo bitmap dá objeto vazio/vermelho quando acessado externamente. Variável não utilizada pode ser removida pelo compilador, com ressalva para imagens. Aplicação conceitual: selecionar representação conforme finalidade; não prometer acesso compartilhado de uma variável incorporada. NOT_RUN para BOM, transparência e visibilidade entre EX5.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.4",
+      "title": "indicadores incorporados",
+      "pdf_start": 1569,
+      "pdf_end": 1575,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Um EX5 de indicador pode ser incorporado e passado a iCustom. O caso especial é indicador que cria cópia de si: somente o nome simples falha quando o código está dentro de outro EX5. O exemplo primeiro falha4802 e depois usa MQL_PROGRAM_PATH, extraindo a parte MQL5 e preservando a qualificação de recurso. Há condição explícita que impede reprodução infinita; a descarga de cópias não é imediata, de modo que reinícios próximos podem reutilizar instâncias. DeltaPrice ilustra diferenciação de séries por cópias recursivas finitas, não estratégia financeira aprovada. Proposta futura: ensaio de empacotamento em terminal limpo, criação/erro/liberação de handles e reinício depois da descarga. Sem aplicação imediata à negociação do Monitor. Todos esses ensaios NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.5",
+      "title": "ResourceCreate",
+      "pdf_start": 1576,
+      "pdf_end": 1580,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Uma sobrecarga carrega arquivo/recurso; outra recebe pixels, dimensões, offsets, stride e modo de cor. O prefixo `::` é opcional na criação, não em todas as operações posteriores. Nomes longos, tipos não suportados, duplicação estático/dinâmico e ausência têm códigos próprios. A segunda forma atualiza recurso próprio de mesmo nome em vez de sempre recriar. Nomes por ChartID evitam colisão entre instâncias. ARGB_NORMALIZE pré-multiplica canais RGB por alpha; RAW não o faz, XRGB ignora alpha. Para dados arbitrários, XRGB evita transformação destrutiva. O limite dinâmico descrito é INT_MAX bytes, diferente de128MB estáticos. Proposta Stoikus de baixo acoplamento: gestão explícita de propriedade, limites de alocação e modo de cor em eventual painel. Nenhuma otimização mensurada; NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.6",
+      "title": "ResourceFree",
+      "pdf_start": 1581,
+      "pdf_end": 1581,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "O recurso dinâmico permanece até fechar o terminal se não for liberado. Só o proprietário pode liberá-lo; a operação exige nome com `::`. Objetos existentes podem conservar a imagem após liberação, enquanto novos objetos já não a encontram. Portanto imagem visível não prova recurso ainda disponível nem prova ausência de vazamento. Aplicação conceitual imediata à revisão: ciclos de vida de objeto e recurso são distintos. Proposta futura de inspeção de memória em reinicializações repetidas; NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.7",
+      "title": "ResourceReadImage e Reservoir",
+      "pdf_start": 1581,
+      "pdf_end": 1592,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "A leitura serve a imagem e dados arbitrários; buffers insuficientes podem falhar5052. O exemplo de três execuções separa criação dos recursos, criação do objeto e limpeza. Reservoir serializa tipos simples em bytes, depois uint, grava tamanho antes de cada bloco e usa strings UTF8 separadamente. Objetos e arrays dinâmicos como valores internos não são serializáveis por simples cópia da representação. O próprio código contém TODO de overflow em tamanho; verificar apenas divisibilidade por sizeof não equivale a validar o tipo ou a integridade do protocolo. O texto propõe passar o nome do recurso em sparam para contornar o tamanho de eventos customizados. Proposta futura: protocolo versionado com comprimento máximo, tipo, sequência, produtor e validação de limites antes de leitura. Não promover esse armazenamento volátil a banco durável JPW. NOT_RUN para roundtrip, buffer truncado, concorrência e recuperação.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.8",
+      "title": "ResourceSave e rasterização",
+      "pdf_start": 1592,
+      "pdf_end": 1603,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "ResourceSave exporta imagem BMP em MQL5/Files, cria diretórios intermediários e sobrescreve destino existente. Não é exportador geral de dados de recursos. A interface Drawing desacopla formas de backend; MyDrawing possui canvas, objetos, recursos e destrutor, desenha pixels/linhas/retângulos e atualiza recurso seguido de ChartRedraw. A demonstração compara sobreposição simples, complemento, XOR, soma e OR, sem torná-los equivalentes em significado visual. Conhecimento útil para um futuro painel: estado visual é derivado; não substituir valores numéricos auditáveis por pixels. As fórmulas demonstrativas de figuras e acesso linear não foram auditadas como biblioteca segura. Sem aplicação imediata ao cálculo Stoikus. NOT_RUN para exportação e diferença visual.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.9",
+      "title": "fontes e texto",
+      "pdf_start": 1603,
+      "pdf_end": 1616,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "TextSetFont seleciona fonte Windows ou TTF incorporada; tamanho positivo é pixel e negativo é décimo de ponto. Orientação é décimo de grau. Uma configuração afeta TextOut subsequente até mudança. TextGetSize mede texto horizontal mesmo quando haverá rotação, cabendo ao programa calcular retângulo final. TextOut opera sobre buffer e exige republicação com ResourceCreate; âncora não é alinhamento. O exemplo alterna dimensões em90 graus e outros usam âncoras e ângulos aleatórios. O editor SimpleDrawing mostra seleção, arraste, Ctrl para dimensão e nomes ChartID. Proposta futura de UI: fontes/acentos/DPI e clipping precisam ensaio visual nativo; não há evidência desses ensaios. Rotacionar rótulos não tem aplicação operacional imediata. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.1.10",
+      "title": "perfil de volume por barra",
+      "pdf_start": 1616,
+      "pdf_end": 1624,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "DeltaVolumeProfile é indicador sem buffers, acionado por clique: converte XY em tempo/preço, lê ticks do intervalo fechado pela última milissegunda anterior à próxima barra e desenha OBJ_BITMAP ancorado em preço/tempo. Níveis são bins de pixels, logo sua agregação depende da escala. Volume real usa flags BUY/SELL; fallback por movimento Bid/Ask é estimativa, não fluxo verdadeiro. O exemplo tenta novamente até5 vezes para histórico indisponível e redesenha quando muda o gráfico. O destrutor contém TODO de limpeza de recursos. Divisões pelo range e máximo e índices merecem tratamento de barra plana/ausência de volume antes de reutilização; isto é observação da listagem do livro, não bug confirmado Stoikus. Proposta futura somente analítica; nenhum sinal ou filtro JPW é autorizado por uma visualização. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.1",
+      "title": "criação e exclusão",
+      "pdf_start": 1625,
+      "pdf_end": 1628,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Nome é único na hierarquia inteira, limitado31 caracteres; path tem127 incluindo prefixo, separadores e nome. Origin transfere propriedades, não barras/ticks, não seleciona automaticamente no Market Watch e pode deixar defaults quando inválido. SYMBOL_PATH inclui o nome original: copiá-lo sem remover o último elemento cria grupo adicional. Exclusão exige ausência de gráficos e seleção, inclusive implícita; histórico pode demorar a desaparecer. Proposta futura: nomes descartáveis por sessão e limpeza verificável em ambiente de pesquisa. Não executar exclusão como rotina de produto. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.2",
+      "title": "propriedades",
+      "pdf_start": 1628,
+      "pdf_end": 1629,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CustomSymbolSetInteger/Double/String diferem por tipo; campos somente leitura e valores inválidos possuem erros próprios. Alterar modo de gráfico, dígitos, point, tick size/value ou fórmula pode apagar histórico minuto e tick. Propriedades têm dependências e ordem: digits influencia point; Forex default deduz moedas a partir do nome; mudar modo de cálculo antes de moedas evita pseudo-códigos. Aplicação conceitual: copiar especificação exige comparação final campo a campo e nova validação do histórico, não confiar apenas no sucesso de criação. Não redefinir condições de corretora como regra JPW. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.3",
+      "title": "margem",
+      "pdf_start": 1629,
+      "pdf_end": 1630,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CustomSymbolSetMarginRate configura taxa inicial e manutenção por tipo/direção, combinadas com modo de cálculo e propriedades de margem. Emular servidor indisponível é proposta de ambiente, não equivalência comprovada com a corretora. Futuro teste de risco exigiria manifesto da especificação e cálculos comparados com referências nativas. Regra JPW de risco permanece externa ao livro. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.4",
+      "title": "sessões",
+      "pdf_start": 1630,
+      "pdf_end": 1630,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Sessões começam no índice0 e só podem ser adicionadas sequencialmente. Horários em segundos admitem atravessar meia-noite até dois dias; from deve anteceder to. Zeros removem sessão e renumeram as seguintes. Negociação deve caber nas sessões de cotação. Proposta futura: casos fronteira à meia-noite e timezone; não adotar janela operacional inferida desses exemplos. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.5",
+      "title": "barras",
+      "pdf_start": 1630,
+      "pdf_end": 1639,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Update faz upsert por timestamp, conservando barras omitidas; Replace apaga o intervalo inclusivo e insere apenas dados do intervalo. Ambos recebem M1 válido, sem segundos, e os períodos superiores são derivados. Delete recebe intervalo inclusivo. O exemplo de random walk/ruído fixa seed para reprodutibilidade, recria símbolo e limpa explicitamente histórico para não misturar dados antigos após exclusão atrasada. CopyRates sofre limite de barras do terminal. Dados de barras sem ticks reais mudam a modelagem do tester. Proposta futura: datasets sintéticos com seed, origem, intervalo e condições preservados, sem converter resultados de ruído em aprovação financeira. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.6",
+      "title": "ticks, replay e negociação virtual",
+      "pdf_start": 1639,
+      "pdf_end": 1666,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CustomTicksAdd exige seleção Market Watch e ordem temporal não decrescente; alimenta eventos, enquanto Replace grava direto no banco. Mais de256 ticks em Add muda o caminho de processamento: apenas os128 finais passam pelo Market Watch. time_msc prevalece sobre time; ambos zero usam hora corrente. volume_real prevalece e flags de direção BUY/SELL não são acrescentadas no histórico próprio. Replace é inclusivo em milissegundos; desordem pode retornar-1 com erro0 depois de dias anteriores já aplicados, sem atomicidade integral. Deletar ticks remove barras correspondentes, mas deletar barras não remove ticks.\n\nO primeiro experimento filtra ticks por sequências, spread/flutter ou fractais. Resultados de tempo/memória/profit são do autor e dependem de estratégia, instrumento e histórico; não comprovam aceleração segura do Stoikus. Fractais usam vizinhos futuros dentro de lote: sua utilização como transformação offline não pode ser confundida com um filtro causal online. Redução pode alterar disparos, número de trades e drawdown, mesmo preservando aparência da curva.\n\nO segundo exemplo CustomTester reproduz histórico por timer e CustomTicksAdd, permitindo interação normal de gráficos. Ele verifica tick size/value após criação e pode corrigi-los. KeyboardSpy transfere teclas do gráfico dependente; o livro descreve limitações de leitura de modificadores em indicadores criados por código. CustomTrade substitui funções via macros, armazena ordens/deals/posições em arrays e usa hora do símbolo virtual em vez de TimeCurrent. O autor declara cálculos simplificados, modos ausentes e validação incompleta; swaps e comissões não entram no relatório demonstrado. Logo não é uma prova de execução, nem substituto completo do Strategy Tester, nem motor de risco JPW. Proposta futura de replay isolado para ergonomia visual, com rótulo de simulação e relógio explícito. NOT_RUN para todos os três grupos de ensaios; nenhum replay foi instalado.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.7",
+      "title": "livro de ofertas",
+      "pdf_start": 1666,
+      "pdf_end": 1672,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CustomBookAdd substitui o snapshot inteiro, requer preços/volumes positivos e respeita profundidade configurada. Consumidores assinam MarketBookAdd e leem MarketBookGet. Atualizar book não atualiza Bid/Ask: ticks precisam de outra operação. O livro relata assinatura implícita/lock que pode impedir ocultar/deletar símbolo até MarketBookRelease. PseudoMarketBook inventa níveis a partir de movimentos de cotações e hipóteses sobre realização de lucro; é dado sintético, não liquidez observada. Proposta futura: fixture formal para testes de parsing/eventos, sempre marcada como sintética; sem aplicação atual como fonte de pressão de mercado. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.2.8",
+      "title": "sinal, símbolo real e relógio",
+      "pdf_start": 1672,
+      "pdf_end": 1689,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "EqualVolumeBars implementa ticks/volume real/range com barras M1 artificiais. Dados históricos são processados em lotes; online há ticks para gerar eventos e ajuste do contador da barra. Barras rápidas podem avançar ao futuro, barras lentas comprimem vários minutos e timestamp original se perde. O exemplo não gera ticks históricos na versão apresentada, portanto selecionar modo de ticks não restaura informação ausente. O autor propõe tanto adaptar chamadas de negociação com CustomOrder/macro quanto deixar EA no símbolo real e obter indicadores do símbolo de sinal. Origin não é vínculo operacional automático; SYMBOL_BASIS não garante convenção compartilhada.\n\nA adaptação de request pode trocar também Bid/Ask no tester para conter dessincronização; isso é artifício, não prova de correspondência histórica. Renko/PAF de reversão podem embutir informação futura no open, e mesmo usar indicadores de barras fechadas não elimina o preço de execução irreal da barra0. O livro recomenda validar em conjunto com execução do símbolo real. Sua heurística de tomar a alternativa menos lucrativa não substitui prova causal e econômica. Proposta futura: separar explicitamente event_time, synthetic_bar_time, signal_time e execution_time, mantendo ticks originais e comparação contra referência causal. Para Stoikus, o valor imediato é critério de revisão de evidência; nenhuma negociação foi adicionada. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.1",
+      "title": "entidades e ausências",
+      "pdf_start": 1689,
+      "pdf_end": 1696,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "País, tipo de evento e ocorrência são três entidades relacionadas por IDs distintos. Ocorrência contém hora, período de referência, revisão, actual/previous/revised/forecast e impacto. Ausência é LONG_MIN; valores existentes estão em milionésimos. Get converte para double ou NaN, mas unidade, multiplier e digits do tipo continuam relevantes. Não confundir período econômico com momento de publicação. Impacto é interpretação potencial após comparação, podendo ser ambígua e não garantir reação do preço. change_id cresce com alterações, mas não fornece horário nem conteúdo histórico das alterações. Proposta futura: schema com ID de entidade, unidade, ausência e proveniência, sem substituir desconhecido por zero. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.2",
+      "title": "países",
+      "pdf_start": 1696,
+      "pdf_end": 1698,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarCountries preenche array; buffers fixos insuficientes podem produzir dados parciais e5400, timeout5401. CalendarCountryById retorna false/no-data se ID não existe. WW/ALL representa global e EU/EUR abrange relações que não equivalem a um país único. Contagens do exemplo são snapshot do livro, não inventário atual. Proposta: evitar listas congeladas de países como requisito de cobertura; testar ausência e erro separadamente. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.3",
+      "title": "tipos por país/moeda",
+      "pdf_start": 1698,
+      "pdf_end": 1702,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarEventByCountry/ByCurrency consultam metadados, não ocorrências. Vazio desliga filtro; moeda inválida pode retornar0 sem erro. Arrays fixos podem conter apenas parte. O padrão numérico de IDs explicado pelo autor não deve virar parser obrigatório de país/fonte quando há campos relacionais próprios e exceção global. Proposta futura: cachear metadados por ID, atualizar e registrar idioma do terminal; não deduzir impacto pela string traduzida. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.4",
+      "title": "tipo por ID",
+      "pdf_start": 1702,
+      "pdf_end": 1702,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarEventById resolve event_id em descrição, importância, país e demais atributos; não confundir ID de ocorrência com ID de tipo. Útil ao rastreamento de uma eventual observação de notícias, sem nova política financeira. Erro de resolução deve permanecer explícito. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.5",
+      "title": "ocorrências por país/moeda",
+      "pdf_start": 1702,
+      "pdf_end": 1706,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarValueHistory usa intervalo **from inclusivo/to exclusivo**, diferente dos intervalos inclusivos de séries próprias. to0 inclui futuros; ambos0 consultam toda base disponível. País e moeda simultâneos são AND. Ordem retornada pode não ser cronológica; consumidor deve ordenar, mesmo em consulta única. MqlCalendarRecord enriquece ocorrências com metadados para impressão, sem alterar a entidade original. Proposta de interface: separar campo bruto, conversão e rótulo; distinguir nenhum evento de sincronização/timeout/resultado parcial. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.6",
+      "title": "ocorrências por tipo",
+      "pdf_start": 1706,
+      "pdf_end": 1709,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarValueHistoryByEvent consulta um tipo e intervalo. Tipo existente pode não ter ocorrência na janela e produzir0/erro0; a estatística do exemplo exclui esses tipos por testar o retorno como booleano. Proposta futura: não reportar falha de conectividade a partir de lista vazia; contar total solicitado, obtido e erro. Nenhuma seleção de evento foi autorizada por frequência histórica. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.7",
+      "title": "acompanhamento por ocorrência",
+      "pdf_start": 1709,
+      "pdf_end": 1712,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Não há OnCalendar; polling é responsabilidade do programa. CalendarValueById atualiza estado da ocorrência. O exemplo acompanha um indicador futuro e para após actual surgir. A narrativa chama-o mais próximo, mas o laço pega o primeiro compatível; como a API não garante ordem, uma adaptação deve ordenar ou calcular mínimo. Hora programada pode diferir da publicação real, e esse instante não é recuperável no histórico. Proposta: timer limitado, status de atraso e registro do instante observado, sem confundi-lo com instante exato de disponibilização na origem. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.8",
+      "title": "mudanças por país/moeda",
+      "pdf_start": 1713,
+      "pdf_end": 1722,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarValueLast recebe change_id por referência; zero inicializa cursor e retorna0 sem registros. Zero também significa nenhuma mudança, portanto erro exige inspeção separada. IDs crescem mas podem saltar; não são contadores contíguos. Só o último estado de cada ocorrência existe na API. CalendarChangeSaver registra horário observado e IDs em arquivo; não grava versões integrais dos valores, por isso sozinho não reconstrói todas as revisões. O protocolo empacota número de registros em bits altos e exige validação de comprimento/contagem/arquivo antes de uso real, omitida no exemplo. ChangeFileReader reproduz IDs por relógio virtual, com granularidade dependente do passo. Proposta futura: capturar snapshots completos, sequência, timestamps do servidor e observador, versão de schema e lacunas de coleta. Nenhum coletor ativado; NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.9",
+      "title": "mudanças por tipo",
+      "pdf_start": 1723,
+      "pdf_end": 1723,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "CalendarValueLastByEvent mantém semântica de cursor mas restringe um event_id. Zero inicializa, não é perda de dados comprovada nem erro. Cursor de um contexto não deve avançar indevidamente o de outro ao agregar consultas; qualquer implementação multi-filtro precisa verificar contrato efetivo de cada cursor. Proposta futura de adapter com estado explícito por consulta. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.10",
+      "title": "CalendarFilter e monitor",
+      "pdf_start": 1723,
+      "pdf_end": 1742,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Classe do livro, não API nativa: distingue contexto inicial imutável, seletores e resultados. Strings de2/3 caracteres sem wildcard são interpretadas como país/moeda, demais como nome/fonte; isso explica necessidade de `*GDP*`. Só um eixo entre países/moedas comporta múltiplos no algoritmo apresentado, o outro usa primeiro valor; condições incoerentes não viram união automática. Strings são indexadas em cache e campos numéricos usam long; constantes em milionésimos precisam permanecer coerentes. select acumula, filtra e ordena em algumas condições; como consulta única também pode vir desordenada, a adaptação não deveria depender apenas de count>1 para ordenar. `LESS` no trecho abreviado nega greater, incluindo igualdade, potencial divergência do nome: requer exame do fonte integral antes de adoção.\n\nformat produz linhas legíveis e delimiter separa passado/futuro, enquanto limit remove os mais distantes. update mantém cursor para alterações recentes. CalendarMonitor lê moedas base/lucro do gráfico, filtra importância mínima e redesenha tabela em timer; uma moeda do ticker não garante cobertura suficiente de todos seus fatores macroeconômicos. Há linha visivelmente corrompida no texto de1741, impeditiva de compilação literal. Proposta futura: adapter tipado em vez de sintaxe ambígua por tamanho da string, ordenação universal, deduplicação por ocorrência e status de cobertura. Política de bloquear operação por notícia requer fonte normativa JPW e autorização específica. NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.11",
+      "title": "cache e tester",
+      "pdf_start": 1742,
+      "pdf_end": 1764,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "Cache representa instanteX: não permite testar validamente além da captura e deve esconder actual antes de sua disponibilidade. DST atual é aplicado na extração inclusive ao passado; a amostra omite correção histórica. Países/tipos contêm strings e precisam serialização de dicionário além das estruturas simples; header identifica versão, mas não é validação completa de comprimentos, limites ou integridade. Arrays por IDs e por tempo permitem hashing/busca binária; o exemplo de find acessa índice sem demonstrar guarda contra célula vazia, e a ordem de guarda do while temporal merece revisão de limites. São pontos da listagem didática, não bugs do produto.\n\nCalendarCache substitui change_id pela hora simulada e libera notícias pela hora programada: isso não reproduz alterações reais, forecasts revisados ou atraso de publicação. O histórico de IDs coletado anteriormente poderia ajudar, mas precisaria snapshots para fidelidade integral. CalendarFilterCached mantém interface e redireciona chamadas. tester_file transfere cache a agentes; nome alterado exige recompilação ou compartilhamento local, que não atende agente remoto. O exemplo falha inicialização do tester sem arquivo; online pode gerar cache e pedir reinício. Proposta futura: manifesto com hash, capturaX, intervalo, broker/timezone/DST, schema, versões de registros e função explícita de disponibilidade temporal, mais testes de leitura truncada e limites. NOT_RUN; não existe prova de cache produzido ou reaberto neste trabalho.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    },
+    {
+      "section": "7.3.12",
+      "title": "negociação de notícias",
+      "pdf_start": 1765,
+      "pdf_end": 1774,
+      "analysis_status": "SEMANTIC_READ",
+      "knowledge_and_application": "O EA didático usa indicador quantitativo de alta importância, moedas do par, forecast e impacto; soma direções invertendo sinal para moeda cotada, permite várias posições em hedging, atribui o último event_id ao magic e faz trailing em OnTick. Agregar eventos e atribuir apenas o último ao magic perde atribuição causal completa; comentário com lista ajuda, mas não resolve análise estatística automaticamente. O OnTester agrupa resultado por magic e soma profit/swap/commission nos deals selecionados de saída; validar comissões de entrada e divisão parcial seria necessário antes de chamar isso contabilidade integral.\n\nOs resultados publicados pelo autor não mostram garantia de lucro, NFP/GDP não são sinais universalmente bons e seleção posterior do evento mais lucrativo traz viés de seleção. Impacto esperado não é retorno previsto, e atraso de notícia/DST/cache afeta teste. A ausência do cache provoca fallback online no exemplo, comportamento que nunca deve ser transplantado silenciosamente para um candidato sem contrato de modo. Para Stoikus este tópico é conhecimento de fronteira; negociar notícias, aumentar posições ou usar defaults de500 pontos/25 posições não é aplicação autorizada nem regra JPW. Proposta de pesquisa exclusivamente futura e isolada; todos os experimentos NOT_RUN.",
+      "platform_contract": "Documented in supplied TRD edition; not freshly validated on installed terminal",
+      "stoikus_code_observation": "NOT_REVIEWED by this reader",
+      "jpw_rule": "No normative policy inferred from textbook",
+      "native_experiment_status": "NOT_RUN"
+    }
+  ],
+  "branch_sections": [
+    {
+      "section": "Part7",
+      "status": "PARTIAL",
+      "read_pdf_pages": [
+        1562,
+        1774
+      ],
+      "not_claimed_pdf_pages": [
+        1775,
+        2047
+      ]
+    },
+    {
+      "section": "7.1",
+      "status": "SEMANTIC_READ",
+      "children": "7.1.1-7.1.10"
+    },
+    {
+      "section": "7.2",
+      "status": "SEMANTIC_READ",
+      "children": "7.2.1-7.2.8"
+    },
+    {
+      "section": "7.3",
+      "status": "SEMANTIC_READ",
+      "children": "7.3.1-7.3.12"
+    },
+    {
+      "section": "7.4",
+      "status": "INTRODUCTION_ONLY",
+      "read_pdf_page": 1774
+    }
+  ],
+  "queues": [
+    {
+      "type": "SEMANTIC_READING_NOT_DONE_BY_THIS_READER",
+      "pages": [
+        1775,
+        1776,
+        1777,
+        1778,
+        1779,
+        1780,
+        1781,
+        1782,
+        1783,
+        1784,
+        1785,
+        1786,
+        1787,
+        1788,
+        1789,
+        1790,
+        1791,
+        1792,
+        1793,
+        1794,
+        1795,
+        1796,
+        1797,
+        1798,
+        1799,
+        1800,
+        1801,
+        1802,
+        1803,
+        1804,
+        1805,
+        1806,
+        1807,
+        1808,
+        1809,
+        1810,
+        1811,
+        1812,
+        1813,
+        1814,
+        1815,
+        1816,
+        1817,
+        1818,
+        1819,
+        1820,
+        1821,
+        1822,
+        1823,
+        1824,
+        1825,
+        1826,
+        1827,
+        1828,
+        1829,
+        1830,
+        1831,
+        1832,
+        1833,
+        1834,
+        1835,
+        1836,
+        1837,
+        1838,
+        1839,
+        1840,
+        1841,
+        1842,
+        1843,
+        1844,
+        1845,
+        1846,
+        1847,
+        1848,
+        1849,
+        1850,
+        1851,
+        1852,
+        1853,
+        1854,
+        1855,
+        1856,
+        1857,
+        1858,
+        1859,
+        1860,
+        1861,
+        1862,
+        1863,
+        1864,
+        1865,
+        1866,
+        1867,
+        1868,
+        1869,
+        1870,
+        1871,
+        1872,
+        1873,
+        1874,
+        1875,
+        1876,
+        1877,
+        1878,
+        1879,
+        1880,
+        1881,
+        1882,
+        1883,
+        1884,
+        1885,
+        1886,
+        1887,
+        1888,
+        1889,
+        1890,
+        1891,
+        1892,
+        1893,
+        1894,
+        1895,
+        1896,
+        1897,
+        1898,
+        1899,
+        1900,
+        1901,
+        1902,
+        1903,
+        1904,
+        1905,
+        1906,
+        1907,
+        1908,
+        1909,
+        1910,
+        1911,
+        1912,
+        1913,
+        1914,
+        1915,
+        1916,
+        1917,
+        1918,
+        1919,
+        1920,
+        1921,
+        1922,
+        1923,
+        1924,
+        1925,
+        1926,
+        1927,
+        1928,
+        1929,
+        1930,
+        1931,
+        1932,
+        1933,
+        1934,
+        1935,
+        1936,
+        1937,
+        1938,
+        1939,
+        1940,
+        1941,
+        1942,
+        1943,
+        1944,
+        1945,
+        1946,
+        1947,
+        1948,
+        1949,
+        1950,
+        1951,
+        1952,
+        1953,
+        1954,
+        1955,
+        1956,
+        1957,
+        1958,
+        1959,
+        1960,
+        1961,
+        1962,
+        1963,
+        1964,
+        1965,
+        1966,
+        1967,
+        1968,
+        1969,
+        1970,
+        1971,
+        1972,
+        1973,
+        1974,
+        1975,
+        1976,
+        1977,
+        1978,
+        1979,
+        1980,
+        1981,
+        1982,
+        1983,
+        1984,
+        1985,
+        1986,
+        1987,
+        1988,
+        1989,
+        1990,
+        1991,
+        1992,
+        1993,
+        1994,
+        1995,
+        1996,
+        1997,
+        1998,
+        1999,
+        2000,
+        2001,
+        2002,
+        2003,
+        2004,
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026,
+        2027,
+        2028,
+        2029,
+        2030,
+        2031,
+        2032,
+        2033,
+        2034,
+        2035,
+        2036,
+        2037,
+        2038,
+        2039,
+        2040,
+        2041,
+        2042,
+        2043,
+        2044,
+        2045,
+        2046,
+        2047
+      ]
+    },
+    {
+      "type": "VISUAL_QA",
+      "pages": [
+        1562,
+        1563,
+        1564,
+        1565,
+        1566,
+        1567,
+        1568,
+        1569,
+        1570,
+        1571,
+        1572,
+        1573,
+        1574,
+        1575,
+        1576,
+        1577,
+        1578,
+        1579,
+        1580,
+        1581,
+        1582,
+        1583,
+        1584,
+        1585,
+        1586,
+        1587,
+        1588,
+        1589,
+        1590,
+        1591,
+        1592,
+        1593,
+        1594,
+        1595,
+        1596,
+        1597,
+        1598,
+        1599,
+        1600,
+        1601,
+        1602,
+        1603,
+        1604,
+        1605,
+        1606,
+        1607,
+        1608,
+        1609,
+        1610,
+        1611,
+        1612,
+        1613,
+        1614,
+        1615,
+        1616,
+        1617,
+        1618,
+        1619,
+        1620,
+        1621,
+        1622,
+        1623,
+        1624,
+        1625,
+        1626,
+        1627,
+        1628,
+        1629,
+        1630,
+        1631,
+        1632,
+        1633,
+        1634,
+        1635,
+        1636,
+        1637,
+        1638,
+        1639,
+        1640,
+        1641,
+        1642,
+        1643,
+        1644,
+        1645,
+        1646,
+        1647,
+        1648,
+        1649,
+        1650,
+        1651,
+        1652,
+        1653,
+        1654,
+        1655,
+        1656,
+        1657,
+        1658,
+        1659,
+        1660,
+        1661,
+        1662,
+        1663,
+        1664,
+        1665,
+        1666,
+        1667,
+        1668,
+        1669,
+        1670,
+        1671,
+        1672,
+        1673,
+        1674,
+        1675,
+        1676,
+        1677,
+        1678,
+        1679,
+        1680,
+        1681,
+        1682,
+        1683,
+        1684,
+        1685,
+        1686,
+        1687,
+        1688,
+        1689,
+        1690,
+        1691,
+        1692,
+        1693,
+        1694,
+        1695,
+        1696,
+        1697,
+        1698,
+        1699,
+        1700,
+        1701,
+        1702,
+        1703,
+        1704,
+        1705,
+        1706,
+        1707,
+        1708,
+        1709,
+        1710,
+        1711,
+        1712,
+        1713,
+        1714,
+        1715,
+        1716,
+        1717,
+        1718,
+        1719,
+        1720,
+        1721,
+        1722,
+        1723,
+        1724,
+        1725,
+        1726,
+        1727,
+        1728,
+        1729,
+        1730,
+        1731,
+        1732,
+        1733,
+        1734,
+        1735,
+        1736,
+        1737,
+        1738,
+        1739,
+        1740,
+        1741,
+        1742,
+        1743,
+        1744,
+        1745,
+        1746,
+        1747,
+        1748,
+        1749,
+        1750,
+        1751,
+        1752,
+        1753,
+        1754,
+        1755,
+        1756,
+        1757,
+        1758,
+        1759,
+        1760,
+        1761,
+        1762,
+        1763,
+        1764,
+        1765,
+        1766,
+        1767,
+        1768,
+        1769,
+        1770,
+        1771,
+        1772,
+        1773,
+        1774
+      ],
+      "status": "NOT_INSPECTED"
+    },
+    {
+      "type": "NATIVE_EXPERIMENTS",
+      "status": "NOT_RUN"
+    },
+    {
+      "type": "STOIKUS_CODE_CONFRONTATION",
+      "status": "NOT_REVIEWED"
+    },
+    {
+      "type": "SOURCE_LISTING_FIDELITY",
+      "pages": [
+        1642,
+        1657,
+        1741
+      ],
+      "reason": "Long/corrupted listing lines in supplied extracted text; attached source files not inspected"
+    }
+  ]
+}

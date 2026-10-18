@@ -1,0 +1,15 @@
+{
+  "id": "S02",
+  "topic": "event_budget",
+  "prompt": "Use a regra: eventos Timer novos não entram enquanto um está em processamento; proponha orçamento, sem inferir throughput real.",
+  "input": {
+    "timer_period_ms": 100,
+    "handler_cost_ms": 250,
+    "arrivals_ms": [
+      0,
+      100,
+      200
+    ],
+    "handler_finishes_ms": 250
+  }
+}

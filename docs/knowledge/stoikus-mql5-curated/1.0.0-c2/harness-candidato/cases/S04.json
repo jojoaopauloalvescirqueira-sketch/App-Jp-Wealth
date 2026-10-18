@@ -1,0 +1,30 @@
+{
+  "id": "S04",
+  "kind": "new_synthetic_case",
+  "topic": "units",
+  "fixture_isolation": "builder receives builder-inputs/S04.json only; this oracle case is judge-only",
+  "prompt": "Calcule com as unidades fornecidas, sem custos adicionais neste fixture; não generalize para o motor real.",
+  "input": {
+    "entry_price": 100.0,
+    "stop_price": 99.5,
+    "tick_size": 0.25,
+    "tick_value_loss_per_lot": 2.0,
+    "risk_cash": 10.0,
+    "volume_step": 0.5,
+    "volume_min": 0.5,
+    "volume_max": 10.0
+  },
+  "expected": {
+    "distance_ticks": 2,
+    "loss_per_lot": 4,
+    "volume_lots": 2.5,
+    "risk_at_volume": 10,
+    "forbidden": [
+      "assume_point_equals_tick",
+      "round_volume_up"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

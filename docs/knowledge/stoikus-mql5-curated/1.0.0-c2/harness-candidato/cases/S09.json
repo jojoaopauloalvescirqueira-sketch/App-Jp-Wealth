@@ -1,0 +1,38 @@
+{
+  "id": "S09",
+  "kind": "new_synthetic_case",
+  "topic": "reconciliation",
+  "fixture_isolation": "builder receives builder-inputs/S09.json only; this oracle case is judge-only",
+  "prompt": "Some uma vez por deal_id e descreva reconciliação com snapshot autoritativo.",
+  "input": {
+    "events": [
+      {
+        "deal_id": 7,
+        "cash": 10
+      },
+      {
+        "deal_id": 7,
+        "cash": 10
+      },
+      {
+        "deal_id": 8,
+        "cash": -3
+      }
+    ],
+    "opening_cash": 100
+  },
+  "expected": {
+    "closing_cash": 107,
+    "unique_deals": 2,
+    "duplicate_ignored": [
+      7
+    ],
+    "forbidden": [
+      "closing_cash_117",
+      "trust_arrival_as_final_account_state"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

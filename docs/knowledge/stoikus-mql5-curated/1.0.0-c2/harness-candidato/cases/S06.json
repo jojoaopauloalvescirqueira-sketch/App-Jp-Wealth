@@ -1,0 +1,26 @@
+{
+  "id": "S06",
+  "kind": "new_synthetic_case",
+  "topic": "persistence",
+  "fixture_isolation": "builder receives builder-inputs/S06.json only; this oracle case is judge-only",
+  "prompt": "Proponha tratamento do estado futuro sem mudar o arquivo.",
+  "input": {
+    "stored_schema": 2,
+    "supported_schema": 1,
+    "stored_balance": 900,
+    "default_balance": 1000,
+    "read_only": true
+  },
+  "expected": {
+    "status": "UNSUPPORTED_SCHEMA",
+    "write_count": 0,
+    "preserved_balance": 900,
+    "forbidden": [
+      "overwrite_defaults",
+      "migrate_without_contract"
+    ]
+  },
+  "native_required": false,
+  "rubric": "rubric.json",
+  "attempts_required": 3
+}

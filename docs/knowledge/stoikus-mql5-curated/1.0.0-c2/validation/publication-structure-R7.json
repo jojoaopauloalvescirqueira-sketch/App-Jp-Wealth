@@ -1,0 +1,24 @@
+{
+  "schema": "stoikus-publication-structure/1",
+  "hashes": {
+    "MANUAL.md": "49812f58f6d563a05c50ff4f35fe70548a26d70a0a5db7063b1d4f5f9c24571f",
+    "publication/Stoikus_Engenharia_MQL5_Manual.docx": "c8b90f9f6a0c4a1417878a2b1c4f30247fc55afdb328746f6a53436a5e006d7c",
+    "Stoikus_Engenharia_MQL5_Manual.pdf": "8c5e6c85861e6a17e71a0655921b2070ba4fb723e57a0120503b4e5e486e75a8"
+  },
+  "prose_segments_checked": 403,
+  "missing_docx_segments": [],
+  "missing_pdf_segments": [],
+  "docx_zip_error": null,
+  "display_equations_expected": 13,
+  "native_OMML_paragraphs": 13,
+  "native_math_objects_total": 17,
+  "figures_expected": 3,
+  "docx_embedded_images": 3,
+  "pdf_pages": 56,
+  "characters_outside_pdf_pages": [],
+  "visual_inspection": "SEPARATE_RECEIPT_REQUIRED",
+  "MS_Word_native_reopen": "NOT_RUN",
+  "MQL5_MT5": "NOT_RUN",
+  "limits": "Alphanumeric-normalized prose presence; not equation equivalence, figure meaning, reading quality or runtime proof.",
+  "structural_result": "PASS"
+}

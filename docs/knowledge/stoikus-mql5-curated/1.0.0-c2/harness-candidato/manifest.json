@@ -1,0 +1,623 @@
+{
+  "schema_version": 1,
+  "version": "0.1.0",
+  "status": "CANDIDATE",
+  "adoption": "NOT_ADOPTED",
+  "behavioral_pilot": "NOT_RUN",
+  "native_mt5": "NOT_RUN",
+  "files": [
+    {
+      "root": "kit",
+      "path": "ARCHITECTURE.md",
+      "sha256": "018b6c28676a58123d309a3a8ee062cbad91e34d4ab00a21019040adac415c85"
+    },
+    {
+      "root": "kit",
+      "path": "ENTRY.md",
+      "sha256": "4da4c8a53b8abe3175a9ed971b4354b7b09aa504cd559490671aef6a88a5c2d0"
+    },
+    {
+      "root": "kit",
+      "path": "PILOT.md",
+      "sha256": "27d7864ed72d45ca7b1524c333d8d8ce197bedca110423bbbf41be6be8b1dbeb"
+    },
+    {
+      "root": "kit",
+      "path": "README.md",
+      "sha256": "168679f75b8696e79d6d2b0215b820f098aaf820b03b3f1036e2d2bd6fdfc202"
+    },
+    {
+      "root": "kit",
+      "path": "attempt-template.json",
+      "sha256": "35c12e2a4053c5587de239e5c648b39dc384deae09cbe0d2e7d2b39073e9a5e8"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S01.json",
+      "sha256": "507f3acaad8afb1e35d3077f2c5c3a42a361bbf6b7406809afb51c6f2f5a6b7f"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S02.json",
+      "sha256": "f9313b212a383f12b5e2e934bd5ed47d292a92710e59b35f1c3ffb34e46503fa"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S03.json",
+      "sha256": "b018c3abd2afc31701f40fbde812531087abed98ec9ba5171e19aaec65731d87"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S04.json",
+      "sha256": "0cd908a9816a4e6f09fc0f72d5074cdc4806fe6e6915703304ac1eafa05d8b03"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S05.json",
+      "sha256": "0531bed958635532f682f9968bba961742da2d25b268005d4ccef3f84865d9bb"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S06.json",
+      "sha256": "419ac449e1ae0b0c65b6c60808beea6c7629e2faf67e7c8c8df10db09572aa48"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S07.json",
+      "sha256": "c1927e5b50c53c007860530bb8add598e58a32f547edf900a044b19b8caee5e2"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S08.json",
+      "sha256": "ee58b1941405ca008620ecd7f6a0643767a42ffd39e82e763373ff3c736b62b9"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S09.json",
+      "sha256": "b5424543ad063b49bdb62b128cae0027859488e20ac7cb421e658d692b3ce321"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S10.json",
+      "sha256": "161aff9f89ee62e549f5843127e427a762f5020a135e3240216b0f0554183f50"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S11.json",
+      "sha256": "954dc44b33a2c5bdbea616808615de9dc7824147646396b361ad08f35d181947"
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S12.json",
+      "sha256": "677deb2d9506305d75bcc114f485cf70afac8da0413a5dc2243571692b1458b9"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S01.json",
+      "sha256": "338060406c040c15069456027ed5ff617c4f5abe039eeab913d0221b51453a77"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S02.json",
+      "sha256": "1ed728887218f29cbb5da95c07b92a072bef80e16458550a060ad5a1615a7d27"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S03.json",
+      "sha256": "509bec721b31e3322ff93e67b0cdcb8325c255ee4aff29c84db9281334fa35e5"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S04.json",
+      "sha256": "d1a3786e3191b871e387b55c4a6d4493c86e9cd464c33f79440208e4ad13317b"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S05.json",
+      "sha256": "52cc01beecfa4ef0671fa2092aeb261fc3b5d3301890e348e8cfc12033a06d94"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S06.json",
+      "sha256": "e1f75cf7cee1d269515f17c967dc8354657bfac4d0299d24486bb7530b2aa65b"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S07.json",
+      "sha256": "42b21307a0ea4db470cde72ab906b46be658c545071c5dd9d260206501ecbd60"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S08.json",
+      "sha256": "fd7ae3402027b2d0c4482daf30489fb1e9bb80f541696b0cae7c722bda1e49fa"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S09.json",
+      "sha256": "099daba434fc035fcc4fb0371d95b0ba681a2854d14a8eb5c17f0376a4b3152c"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S10.json",
+      "sha256": "ebc573f2bcdb3fa5fa561f612d98a5d727edfdf6d71836da71806f3be7751145"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S11.json",
+      "sha256": "41306467edb8fc93a22c8487663b95ea8b6216b2908ee1f4710bf9974b90bd95"
+    },
+    {
+      "root": "kit",
+      "path": "cases/S12.json",
+      "sha256": "56d043574c16b9b385cf9dd2f4b9eecd6baedb04c974cdf7315b26c0abaabd9b"
+    },
+    {
+      "root": "kit",
+      "path": "check_harness.py",
+      "sha256": "ccf2f823b63168db5de569e62e3897409f5c92e0ec37f377298425ebbf8b5a8a"
+    },
+    {
+      "root": "kit",
+      "path": "context/task-context.md",
+      "sha256": "c2a318d3261aa126518af953e84f621e1fcf62630b4ebb14f2852cbf8cd7f968"
+    },
+    {
+      "root": "kit",
+      "path": "prompts/build.md",
+      "sha256": "47f16aa3d2f89fed1d781cd4d44345755bf41ed26b4e9a368c8d91f2c76bd719"
+    },
+    {
+      "root": "kit",
+      "path": "prompts/diagnosis.md",
+      "sha256": "14220f979bf581411f128240fb2c79e8816cd7e674f7a6fe1835c5b4c2ce32bb"
+    },
+    {
+      "root": "kit",
+      "path": "prompts/judge.md",
+      "sha256": "28141c198b70debf6439c23aedd4fb0c96427b585920ec39c99bb24e1a63af92"
+    },
+    {
+      "root": "kit",
+      "path": "prompts/review.md",
+      "sha256": "b0f7b7648afb499e790b06c47a4853ffc7053d4a46a13e5c3ff9f8751a83aa07"
+    },
+    {
+      "root": "kit",
+      "path": "provenance-policy.json",
+      "sha256": "c73a8ca9f2c65501419f89831b820d1bdc00f4caac58d42255456c5ad920e27d"
+    },
+    {
+      "root": "kit",
+      "path": "recipes.md",
+      "sha256": "d1ee64dd067e78b5b3c9d73fddc743552939243a1d2037495c2c97ff64d6c415"
+    },
+    {
+      "root": "kit",
+      "path": "rubric.json",
+      "sha256": "bf1da88d2d99b049a6e84ab645bc99d16f68b96630317f0e559630cbd3c596aa"
+    },
+    {
+      "root": "kit",
+      "path": "source-identities.json",
+      "sha256": "6d7b01a818ff723487c9e3e0c6cb42805ef2c05d06b8896767380aa28a03b6ff"
+    },
+    {
+      "root": "kit",
+      "path": "templates/contract.md",
+      "sha256": "32e370909d1785ee8a5fc87e7f0cfdc2f61466c3e7f3e4ec0be0552be30a57cf"
+    },
+    {
+      "root": "kit",
+      "path": "templates/decision.md",
+      "sha256": "529bcc5be3ee07abc36c56ef22ca4bf6591fc4b7a8611ca78824868c7100099f"
+    },
+    {
+      "root": "kit",
+      "path": "templates/delivery.md",
+      "sha256": "ff0624f639bc4f7d64957f95a0bb70b1285068dee4b976726d18c476c9ad77ec"
+    },
+    {
+      "root": "kit",
+      "path": "templates/test.md",
+      "sha256": "13fe487d3d75f25d941766f08912ab83c4c726e604483446227907bdab094c99"
+    },
+    {
+      "root": "kit",
+      "path": "tests/test_check_harness.py",
+      "sha256": "9547bfdf35532c049753c56ecf4660e2257f2c451dcf0b07b0b40a31a91f1716"
+    }
+  ],
+  "references": [
+    {
+      "root": "sources",
+      "path": "MQL5 Language REFERENCE.pdf",
+      "sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499"
+    },
+    {
+      "root": "sources",
+      "path": "MQL5 Programming for Traders.pdf",
+      "sha256": "9ff6c55090527afa0efce722d67760805ee335fc64dad3c83638a89e6c79a145"
+    },
+    {
+      "root": "sources",
+      "path": "Neural Networks for Algorithmic Trading with MQL5.pdf",
+      "sha256": "850e21e204f296b4c661895fcea4893ab263c81c7a0ead242a22234716611287"
+    },
+    {
+      "root": "repo",
+      "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5"
+    },
+    {
+      "root": "repo",
+      "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Accountant.mq5"
+    },
+    {
+      "root": "repo",
+      "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Supervisor.mq5"
+    },
+    {
+      "root": "repo",
+      "path": "tools/jpw_stoikus_monitor_state_test.py"
+    },
+    {
+      "root": "repo",
+      "path": "tools/jpw_stoikus_risk_test.py"
+    },
+    {
+      "root": "repo",
+      "path": "tools/jpw_stoikus_ui_test.py"
+    },
+    {
+      "root": "repo",
+      "path": "tools/stoikus_daily_package_test.py"
+    },
+    {
+      "root": "repo",
+      "path": "tools/stoikus_window_package_test.py"
+    }
+  ],
+  "documents": [
+    {
+      "root": "kit",
+      "path": "cases/S01.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S02.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S03.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S04.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S05.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S06.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S07.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S08.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S09.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S10.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S11.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "cases/S12.json",
+      "required_fields": [
+        "id",
+        "kind",
+        "topic",
+        "fixture_isolation",
+        "prompt",
+        "input",
+        "expected",
+        "native_required",
+        "rubric",
+        "attempts_required"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "rubric.json",
+      "required_fields": [
+        "version",
+        "status",
+        "dimensions",
+        "pass",
+        "case_pass",
+        "pilot_pass",
+        "calibration"
+      ],
+      "status_allowed": [
+        "FREEZABLE"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S01.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S02.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S03.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S04.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S05.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S06.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S07.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S08.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S09.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S10.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S11.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "builder-inputs/S12.json",
+      "required_fields": [
+        "id",
+        "topic",
+        "prompt",
+        "input"
+      ]
+    },
+    {
+      "root": "kit",
+      "path": "provenance-policy.json",
+      "required_fields": [
+        "revision",
+        "required_observable",
+        "required_after_judgment",
+        "optional_unavailable_allowed",
+        "acceptance_rule"
+      ]
+    }
+  ],
+  "revision": "R3",
+  "state_revision": 1,
+  "validation_policy": "MANUAL_CANDIDATE"
+}

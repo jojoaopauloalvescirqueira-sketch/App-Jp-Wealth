@@ -1,0 +1,178 @@
+{
+  "schema": "stoikus-format-visual/1",
+  "revision": "R7",
+  "reader": "root",
+  "timestamp_utc": "2026-10-15T17:00:57.599427+00:00",
+  "method": "Each page PNG opened and visually examined via view_image in batches of four; not contact-sheet inference",
+  "scope": "Visual legibility/layout, not native Word reopen or native MQL behavior",
+  "pages": [
+    {
+      "page": 29,
+      "sha256": "9b578cca5b428839fe69fd26a972deb1937c17e69ef9f87c840a0309fc8a1244",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Capítulo6 e parágrafos legíveis; continuação normal entre páginas."
+    },
+    {
+      "page": 30,
+      "sha256": "65a121aea89dc6a3027d25a9151e87b830b0ec9cb114bf2fa81f33d1d24a7c24",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "ARGB e código inline legíveis; sem corte."
+    },
+    {
+      "page": 31,
+      "sha256": "12096ba04546f1037de76dff5c0a59afa7631b9789a932cc9d9a711d5eed5b64",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "DPI e fonte; hierarquia e margens preservadas."
+    },
+    {
+      "page": 32,
+      "sha256": "8539c5ae24265028529ac265223d2fbbfc429027879c829b09e3ec2e9e820f8b",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Movimento/minimização; sem colisão visual."
+    },
+    {
+      "page": 33,
+      "sha256": "1fa44a33aba14ebd3517dd0ff9dd48231bf568b8a4da7f56b640c30c4d908b2a",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Fechamento capítulo6 com espaço final editorial."
+    },
+    {
+      "page": 34,
+      "sha256": "577b1cd656fe8b357472e5c1d59b668a1e4822d860b7d30905fd7ec83e79f376",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Título capítulo7, fontes e nomes legíveis."
+    },
+    {
+      "page": 35,
+      "sha256": "506564539a00e8bc91b2dc4bbcffbceb04bef59da9ee55d8ae927acf4f9957f8",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Tester e interação; continuação normal."
+    },
+    {
+      "page": 36,
+      "sha256": "40ae77e16d80c49e2c60933c72826cf764333ea5598b5d1a2ad3b25049915d48",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Critério e callbacks legíveis."
+    },
+    {
+      "page": 37,
+      "sha256": "c7c72a6ed05d45062bd15496e31f5ffdb58896e5cb89363770c920c4717009ec",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Harness histórico; code inline legível."
+    },
+    {
+      "page": 38,
+      "sha256": "8ed1f99fddec6437b149e2ad87e0f0a687d7bd67ecf0051fb976a6c55acde5ef",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Último parágrafo do capítulo; página curta intencional."
+    },
+    {
+      "page": 39,
+      "sha256": "dd892411b77ee0ff64b685d2b5ac9c81a5d5e7ac970316844e1e49ac1e092364",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Capítulo8; duas equações editáveis renderizadas legivelmente."
+    },
+    {
+      "page": 40,
+      "sha256": "f25bd0d74413ae2c539e78e4caf39ab2785cdee8d21c8ac66163db674edf0355",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Gradiente/convolução/comprimento: fórmulas legíveis."
+    },
+    {
+      "page": 41,
+      "sha256": "f7aea48796d1f3fffecfc1c47494a45b43e0de6d8aebb4967bc0ba87616ca057",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "LSTM e atenção: índices, frações e alinhamento preservados."
+    },
+    {
+      "page": 42,
+      "sha256": "a7ca0ecc517f21d8a8f453e5d14626f055c92da14fcafcbeb3312738b4cb6af3",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Multihead/normalização: equação legível."
+    },
+    {
+      "page": 43,
+      "sha256": "c38c706ef588e975af99f07a664b78422f04ffc27f49b9a453ea93e4e8b953a9",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Integração e URLs cabem sem invasão."
+    },
+    {
+      "page": 44,
+      "sha256": "88d4f2e5cea269cb3356421f6de1804b840fb575f18244e2019cac8bd45741e8",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Capítulo9; duas equações de gradiente legíveis."
+    },
+    {
+      "page": 45,
+      "sha256": "066412330d8d18ddced6f7102ddea729d0e1bbc4297b0e736b9431ad0b047073",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Temporalidade; blocos legíveis."
+    },
+    {
+      "page": 46,
+      "sha256": "93827103ce920ea0a85f63e74739879bd91f084bf9ff1475237f870dd443c90f",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Custos; equação legível."
+    },
+    {
+      "page": 47,
+      "sha256": "d5d773842ed0ac8b72dd060e4aaf37b0bb2ff7e64e8066e0f00fefe6594c62a8",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Resultados citados e limites; continuação normal."
+    },
+    {
+      "page": 48,
+      "sha256": "6969f0ca0324eecd44ec8d400894109a88e2bc7c6fcccaec05878f00f71eac12",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Fechamento capítulo9 com espaço final editorial."
+    },
+    {
+      "page": 49,
+      "sha256": "75e57870dd2837139f19decc78804cba7c7919203eb5f414fd01744d0d4680a6",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Capítulo10; estados e limites legíveis."
+    },
+    {
+      "page": 50,
+      "sha256": "da1d671aef7b7447ea0370373b71006b4e9e62d6a0776fd320335b92a60381bb",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Contratos/fixtures: números e operadores legíveis."
+    },
+    {
+      "page": 51,
+      "sha256": "4f84ef9eaa5b213f11cc7bf7b6f91e7aea48c16504fa364e37851ae16c1f664e",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Eventos/persistência legíveis."
+    },
+    {
+      "page": 52,
+      "sha256": "1abd961bb3f1488a05b2a993f5d3a39614b59c232a9256c8a57f7e872be6ce8d",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Checker/piloto sem cortes."
+    },
+    {
+      "page": 53,
+      "sha256": "3d50cd4e9857d1991e9c2f0cfd797014612b1193211b6988f7392b45c4262c87",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Proveniência e resultados72/36 legíveis."
+    },
+    {
+      "page": 54,
+      "sha256": "c8f4e3c57a5922daf63429046331744f4df1d25f11d12d4b17a399285cca737a",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Histórico e prioridades legíveis."
+    },
+    {
+      "page": 55,
+      "sha256": "0c5316dba321afe1d712952acbfd5bc5af8ea364c7221be4e06d27ef8ed53c23",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Conclusão do capítulo com espaço final."
+    },
+    {
+      "page": 56,
+      "sha256": "075667864c5d5790df8fe48bc3408715b1ea4233963c2095f8774d6f9f78e090",
+      "status": "INSPECTED_NO_LAYOUT_DEFECT_OBSERVED",
+      "note": "Referências finais; URLs e nomes legíveis."
+    }
+  ]
+}

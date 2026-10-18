@@ -1,0 +1,11 @@
+{
+  "id": "S01",
+  "topic": "lifecycle",
+  "prompt": "Explique o retorno e a limpeza idempotente; não crie handles fictícios.",
+  "input": {
+    "handle_valid": false,
+    "timer_created": false,
+    "phase": "OnInit",
+    "handle_required": true
+  }
+}

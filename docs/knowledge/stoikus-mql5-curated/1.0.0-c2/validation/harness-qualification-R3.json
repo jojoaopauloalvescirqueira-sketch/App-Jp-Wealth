@@ -1,0 +1,37 @@
+{
+  "kit_version": "0.1.0",
+  "kit_revision": "R3",
+  "status": "CANDIDATE",
+  "adoption": "NOT_ADOPTED",
+  "manifest_sha256": "004f96cc9a4a094d1dfdeebd803c83ebaf4482d8af07a3d0e1984124ec0328b6",
+  "freeze_sha256": "73b70d83c22d17cb6fbad37ed9d1b8e8e0c1b16221339dd26bfe5152e8ad6da7",
+  "result": "PASS",
+  "scope": "12_FIXED_SYNTHETIC_CASES_3_FRESH_CONTEXTS_EACH",
+  "attempts": 36,
+  "passed": 36,
+  "failed": 0,
+  "inconclusive": 0,
+  "judgments_sha256": "dccc55bf9809f0e288d3df7baab7c16178711294bb1b32bd656bb5ae57816674",
+  "independent_report_sha256": "f0164913ec4f6f8a629cfe5b869e1396021363894b00f5f683d9a34fb57a6f58",
+  "calibration_sha256": "270c9c2476f50031b7f549d588755e527328d8805f9e328ee9d0985c7f036416",
+  "preflight_sha256": "c5b1606e4b24cacfdce4ecdeb18dc2193e5c3f6a9268905ca08bab8a026f7ad5",
+  "previous_round": {
+    "revision": "R2",
+    "result": "INCONCLUSIVE",
+    "PASS": 19,
+    "INCONCLUSIVE": 17,
+    "content_adherence_PASS": 33,
+    "content_oracle_conflicts": 3,
+    "location": "pilot-R2"
+  },
+  "manifest_state": "Immutable pre-pilot snapshot; initial behavioral_pilot NOT_RUN is not rewritten; this is the subsequent qualification for those exact bytes",
+  "native_mt5": "NOT_RUN",
+  "financial_approval": "NOT_RUN",
+  "general_superiority": "NOT_ESTABLISHED",
+  "limits": [
+    "Synthetic short fixtures, shared filesystem, same builder model target",
+    "SELF_RECORDED per-agent tools; infrastructure messages encrypted, readable pre-spawn closures retained",
+    "Model requested is routing target; exact backend build unavailable",
+    "Fixture precondition and capture changed from R2; no causal performance comparison"
+  ]
+}

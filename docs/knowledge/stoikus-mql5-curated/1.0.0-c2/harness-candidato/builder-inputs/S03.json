@@ -1,0 +1,15 @@
+{
+  "id": "S03",
+  "topic": "series",
+  "prompt": "Explique memória física e índice lógico; neste contrato só copie completo antes de consumir.",
+  "input": {
+    "physical_oldest_first": [
+      10,
+      20,
+      30
+    ],
+    "as_series": true,
+    "requested": 3,
+    "copied": 2
+  }
+}

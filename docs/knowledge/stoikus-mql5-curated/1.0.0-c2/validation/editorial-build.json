@@ -1,0 +1,61 @@
+{
+  "manualMarkdownSHA256": "49812f58f6d563a05c50ff4f35fe70548a26d70a0a5db7063b1d4f5f9c24571f",
+  "chapterFiles": [
+    {
+      "path": "chapters/01-arquitetura.md",
+      "sha256": "d04fe0ca932b9da575015811502759566c47f925554c28475ecf52cac9c32712"
+    },
+    {
+      "path": "chapters/02-contratos.md",
+      "sha256": "436cc404cd659cf2ea96287a6167f42cdae3425ac6dcc5dfc3b21303ae5b5178"
+    },
+    {
+      "path": "chapters/03-eventos.md",
+      "sha256": "cf2076401fd182c22767322e0f29803e94fe455a2365b47a27d8830aaaa85652"
+    },
+    {
+      "path": "chapters/04-dados-racional.md",
+      "sha256": "5b3f1757ea44d3c5e6c2a9e4b203a524e33fd0756e303a6106478d5bf14a66a9"
+    },
+    {
+      "path": "chapters/05-persistencia.md",
+      "sha256": "fb704e3aa207be164c5bee4e8f64952954cc0a9aaf75133b523c619def8738fe"
+    },
+    {
+      "path": "chapters/06-interface.md",
+      "sha256": "a447863ea638b9ad46d7a9dcaa4b191d89a85813433402fee028a3d81240e4c9"
+    },
+    {
+      "path": "chapters/07-testes.md",
+      "sha256": "57740bcd449c349874597b76f85bb42ffda25b3c3214cba995699a529f68c8e2"
+    },
+    {
+      "path": "chapters/08-redes-neurais.md",
+      "sha256": "b6c6f3d1a01f617372f4880076f5f5b8afb65eaa69c638fcd21f1698bbaef2db"
+    },
+    {
+      "path": "chapters/09-avaliacao.md",
+      "sha256": "05062ac47f2a9809afd9a4cd0801442ecad3401fb20dd1d913af3a7387325727"
+    },
+    {
+      "path": "chapters/10-ia-propostas.md",
+      "sha256": "6a9fb8aa3d6e6172cff3515656837ea93740ee7bdaf9d26a8e5d194a138975d7"
+    }
+  ],
+  "wordCount": 25100,
+  "equationCount": 13,
+  "diagrams": 3,
+  "codeLines": 54,
+  "docx": "Stoikus_Engenharia_MQL5_Manual.docx",
+  "docxSHA256": "c8b90f9f6a0c4a1417878a2b1c4f30247fc55afdb328746f6a53436a5e006d7c",
+  "renderState": "RENDERED_AND_VISUALLY_INSPECTED",
+  "pdf": "publication/Stoikus_Engenharia_MQL5_Manual.pdf",
+  "pdfSHA256": "8c5e6c85861e6a17e71a0655921b2070ba4fb723e57a0120503b4e5e486e75a8",
+  "pdfPages": 56,
+  "visualReceipts": [
+    "validation/reviews/format-pages1-28-R7.json",
+    "validation/format-pages29-56-R7.json"
+  ],
+  "nativeWordReopen": "NOT_RUN",
+  "MQL5": "NOT_RUN"
+}

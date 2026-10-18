@@ -1,0 +1,2686 @@
+{
+  "book": "REF",
+  "batch": "03",
+  "source_pdf_sha256": "9ae05ce748d23ce0de9b230fc6c7093a2af0adc3ce3544244a74e1c7d628d499",
+  "source_pages_jsonl": "/private/tmp/stoikus-mql5-research-20261015/corpus-fast/REF/pages.jsonl",
+  "consolidation_full_text_pages": [
+    659,
+    660,
+    661,
+    662,
+    663,
+    664,
+    665,
+    666,
+    667,
+    668,
+    669,
+    670,
+    671,
+    672,
+    673,
+    674,
+    675,
+    676,
+    677,
+    678,
+    679,
+    680,
+    681,
+    682,
+    683,
+    684,
+    685,
+    686,
+    687,
+    688,
+    689,
+    690,
+    691,
+    692,
+    693,
+    694,
+    695,
+    696,
+    697,
+    698,
+    699,
+    700,
+    701,
+    702,
+    703,
+    704,
+    705,
+    706,
+    707,
+    708,
+    709,
+    710,
+    711,
+    712,
+    713,
+    714,
+    715,
+    716,
+    717,
+    718,
+    719,
+    720,
+    721,
+    722,
+    723,
+    724,
+    725,
+    726,
+    727,
+    728,
+    729,
+    730,
+    731,
+    732,
+    733,
+    734,
+    735,
+    736,
+    737,
+    738,
+    739,
+    740,
+    741,
+    742,
+    743,
+    744,
+    745,
+    746,
+    747,
+    748,
+    749,
+    750,
+    751,
+    752,
+    753,
+    754,
+    755,
+    756,
+    757,
+    758,
+    759,
+    760,
+    761,
+    762,
+    763,
+    764,
+    765,
+    766,
+    767,
+    768,
+    769,
+    770,
+    771,
+    772,
+    773,
+    774,
+    775,
+    776,
+    777,
+    778,
+    779,
+    780,
+    781,
+    782,
+    783,
+    784,
+    785,
+    786,
+    787,
+    788,
+    789,
+    790,
+    791,
+    792,
+    793,
+    794,
+    795,
+    796,
+    797,
+    798,
+    799,
+    800,
+    801,
+    802,
+    803,
+    804,
+    805,
+    806,
+    807,
+    808,
+    809,
+    810,
+    811,
+    812,
+    813,
+    814,
+    815,
+    816,
+    817,
+    818,
+    819,
+    820,
+    821,
+    822,
+    823,
+    824,
+    825,
+    826,
+    827,
+    828,
+    829,
+    830,
+    831,
+    832,
+    833,
+    834,
+    835,
+    836,
+    837,
+    838,
+    839,
+    840,
+    841,
+    842,
+    843,
+    844,
+    845,
+    846,
+    847,
+    848,
+    849,
+    850,
+    851,
+    852,
+    853,
+    854,
+    855,
+    856,
+    857,
+    858,
+    859,
+    860,
+    861,
+    862,
+    863,
+    864,
+    865,
+    866,
+    867,
+    868,
+    869,
+    870,
+    871,
+    872,
+    873,
+    874,
+    875,
+    876,
+    877,
+    878,
+    879,
+    880,
+    881,
+    882,
+    883,
+    884,
+    885,
+    886,
+    887,
+    888,
+    889,
+    890,
+    891,
+    892,
+    893,
+    894
+  ],
+  "full_text_page_count": 236,
+  "page_hashes": [
+    {
+      "page": 659,
+      "sha256": "f57fbd978e036c41ad9d6a995c5ec8a2b4f84d1c7b3ff7adb947737c7eb485f2",
+      "characters": 2369,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 660,
+      "sha256": "dfce55bd8e223aa88be24f24f343adff26c9c74532e7ec5c7019ce82f4eae827",
+      "characters": 2226,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 661,
+      "sha256": "80a767dfc2ffdce55eda55cf7414cf5337439bbd0ab94b83c9403b3329969198",
+      "characters": 1818,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 662,
+      "sha256": "e9d981f80fc532aacc5701460affb1cf8fca814ca4e406ea006afbb17d76af81",
+      "characters": 1259,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 663,
+      "sha256": "96f309346887e66a6320815dc3edba392e1ea5b809fc224ce64a1d681d8fa8fc",
+      "characters": 1640,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 664,
+      "sha256": "39bf776162e3138c4b4149be6f3b67f86a893a8480b0c197411b453ea3432df7",
+      "characters": 3736,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 665,
+      "sha256": "598475299dab4c3a3c497519573727e994194b92dc259fcdba9a3cd2dc7eee91",
+      "characters": 3238,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 666,
+      "sha256": "968ca0ef7b1ee5202f95cd64310502ec3ae31b04e1169a990debac6d1c06fc7f",
+      "characters": 2323,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 667,
+      "sha256": "9600eec22b2123ef636c7edd96bc7f27afe489d14bd3de8396f3806a78ba2e9a",
+      "characters": 2442,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 668,
+      "sha256": "d1597fc92f036aa8555a03435d575515a86337ba11cdd9878e686af5dce01667",
+      "characters": 1997,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 669,
+      "sha256": "fb80ea8cfbfceada572fb6ba463b5dcb1c7d85924064225253462a55523e377c",
+      "characters": 1416,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 670,
+      "sha256": "26b03fdd08dd6f06e03fa1d17b0252ca0af113fc962ee57a767978adcfce5a57",
+      "characters": 1548,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 671,
+      "sha256": "fda9f89532ffc27e6e0b947ff1e05312faa91196d47878f784963d8701717088",
+      "characters": 3413,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 672,
+      "sha256": "2509d1c5daccf2b800d13ecc9455918fa6612a632e6633138b9604b19527268f",
+      "characters": 2674,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 673,
+      "sha256": "429964ff85dfada5be3e7c3d7eb66c06e4a0d15367b7e4a00ffad5670a6064f1",
+      "characters": 2211,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 674,
+      "sha256": "6d7de1bf482756a2cb3863deb0b5e669f65da14a12849306d22d32d0ce24d66e",
+      "characters": 2130,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 675,
+      "sha256": "8f0bf837ba7e944fb14b5ed152845881879712a3ebfe8297c62860017c3d187d",
+      "characters": 1965,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 676,
+      "sha256": "77a79c45755e5ac0df6cd356b36a3d17060912a5a7a91b17fec55ab0c6e77baa",
+      "characters": 481,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 677,
+      "sha256": "d60a746bafc8ceb01e1554c0d9108b5e8f210a34672bd23c6f04e4139483db92",
+      "characters": 1445,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 678,
+      "sha256": "91e49e016b2d5718264980e8a9b14b83d0f1e20c333c58320aa8715269d2bc56",
+      "characters": 3009,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 679,
+      "sha256": "098067aae271f633373c5f93c2d6596d1f6b6ea24ef55604600596a5fc10e37c",
+      "characters": 2117,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 680,
+      "sha256": "2bee85c36b4ad54a5c365a47c570d1a07e12fc34a6d4f0aa2080c64a8b8e0b0b",
+      "characters": 1946,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 681,
+      "sha256": "e3ba9552c41a4f2d3a2802818c67f92e1915c817824fa8ea77afa39a2371d20d",
+      "characters": 802,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 682,
+      "sha256": "2b893eee3a3c5d04cf09b7499722f2e69c30f6ee73f4b3ee9f7efbd43d1c4f13",
+      "characters": 1629,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 683,
+      "sha256": "4c78aec99ff6c1289a8c68bb5d34a4f6e7c92638a7a863714382a7fe2035648b",
+      "characters": 3462,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 684,
+      "sha256": "6999ce7592d53840a6462499a50fbca2aae1d3112b493e01f2527a10abccb25d",
+      "characters": 2719,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 685,
+      "sha256": "28a0830ceaa70626811c20a2fd05e654fd6d39de3bd28c090157ad4929f65d1a",
+      "characters": 2249,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 686,
+      "sha256": "d0a0da96103c528be94b02bd996f748f5be33d0985bc21d705feb43219482df1",
+      "characters": 1963,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 687,
+      "sha256": "c9b11ad62ab0e0fc5af2086a84af18f75846fbd2c4884a8f3a1ea4e2c65098ee",
+      "characters": 1014,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 688,
+      "sha256": "0f2a40600a61d2c401c49780ab83104fcee5fba43e470570143b8686cd01c96e",
+      "characters": 3418,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 689,
+      "sha256": "db50bd544397ceb0de2ccf73ff6877fd99a883707a3ec3c60ea217db9d0261bf",
+      "characters": 2497,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 690,
+      "sha256": "5f1a58b69dbec2543a9e8b7d6ccaf660b068cf5a3bf5acc1113d40ba6ea4365d",
+      "characters": 2299,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 691,
+      "sha256": "c05b1c14f84c2c51a800ef8252ebd7ad9ecf787f3be942186f02ca9cda2b1a9d",
+      "characters": 2301,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 692,
+      "sha256": "b4fcc4ea805a50941426052a7d4aec26bf3edc5385ab063fba8162183ba3ed33",
+      "characters": 2318,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 693,
+      "sha256": "bc55d8b83a528e0bb15b82a9158e6392dbdabff334e160b64939d28e39486c21",
+      "characters": 2304,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 694,
+      "sha256": "db30f613b83e3b0e72f0bae3e50c2ea4f305712f32e2022b66c2df8c0482294e",
+      "characters": 2259,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 695,
+      "sha256": "c45c9998ae010fd298f186e33d55a6175dd84a7d65861cb5bc66c71a20828af3",
+      "characters": 2173,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 696,
+      "sha256": "a22d9d510f2515779cb84d0a3c3ced87211b3e8924980c9ee455985af8ca2bd2",
+      "characters": 2285,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 697,
+      "sha256": "b8728a617e7aafdac1fed3948ac90d4e70a26f83d53f58421847a14d92225f1d",
+      "characters": 2262,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 698,
+      "sha256": "1e65971e0d16f146c3c3e6bfd0797b5c3f47f3c3a7347e9b27137c69e15c903b",
+      "characters": 2361,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 699,
+      "sha256": "1c4767d3590c4c569ce85b8a06fc6ddb40cca770ae672810322d4809af338163",
+      "characters": 2252,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 700,
+      "sha256": "e77324b8ae93107032051f988d8695db5ea51683f578803a3aa8330564f0e695",
+      "characters": 2232,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 701,
+      "sha256": "a373eafa3319e6c8faf32ec6aecc7b510f74ded1b7de0d0bd2d41fac8d5a6af9",
+      "characters": 2304,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 702,
+      "sha256": "03a6f0e88fd68d6f47202eb3d908cbc76c8b42f21bec9e41851a4c35190dca37",
+      "characters": 2292,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 703,
+      "sha256": "b5690e3490cc6386f4d8df0eedffa03b9140dda66b8b3bf9b8cde6f0ecc61d8f",
+      "characters": 2293,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 704,
+      "sha256": "ea6b7cd0d659b92f5f478028d920e023c37bfc505994e6beb0aee6f244b6f0ce",
+      "characters": 2301,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 705,
+      "sha256": "4a21d0174448952165653ec1e2e750eaa375a4545d05027f9fff9f5d54810bcb",
+      "characters": 2301,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 706,
+      "sha256": "b7e38b3984234ac5ce9f32b3c82701aa2fd3d663d79d05f4105efac73d29faaf",
+      "characters": 2299,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 707,
+      "sha256": "459a7cb75636765303d5d26dc36b02d8bf64484e123caa7ad8e443395a3cb768",
+      "characters": 2237,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 708,
+      "sha256": "5a1053b551967b6409f7dacf1c4ae176d46a1348d215810ed29c89b976364cc4",
+      "characters": 2257,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 709,
+      "sha256": "95100ab6f587c3b8421d4016d007f6ef2e21052c0673de93520af2b3280ef3b3",
+      "characters": 2647,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 710,
+      "sha256": "39d6d90d54402484a3ec85eb90548379f0f839e3eba03fa191e2da0cd6e46efe",
+      "characters": 2403,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 711,
+      "sha256": "5661491c712101b29717f9a5d98f8dddbce0c99639e38da66a0991b6734885c6",
+      "characters": 2302,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 712,
+      "sha256": "dab382ff85719b426eb7dfb11e30cf9cfa63f521b98127b1f6e4b2bc01750df5",
+      "characters": 2324,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 713,
+      "sha256": "c565b1f915d72f4b88c630095fdd30607daa5bc8e27680e4599161495fdf5494",
+      "characters": 2261,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 714,
+      "sha256": "2f9b94b36b9f9699f566df668590907e45e8b67a59d70f428de1b82f20408df4",
+      "characters": 2223,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 715,
+      "sha256": "6163c5d2bb3a1102ba766834029a297db0498d8a02caf948192aa90d04b676cd",
+      "characters": 620,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 716,
+      "sha256": "be6af438886b4fcb87557444e6687426fc6d958b5b725c8f27599b7e81b72c52",
+      "characters": 2971,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 717,
+      "sha256": "7f97e432c7f4f6e10149295c6d020221332ec409438141169325b836d0b56593",
+      "characters": 2778,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 718,
+      "sha256": "a9fc165c50df58526da01dbca5d25dc8989d22e33e889c34691fb09c519ccdb9",
+      "characters": 1763,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 719,
+      "sha256": "c3b897b201ddb9cde26579da1bddd4ddb5b9baa8a28637c2e77b3aa82c9dc400",
+      "characters": 2135,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 720,
+      "sha256": "88e77fbb19cb29afcdbdefb86fe3890c08783bcb1a9e7c83d5cb6c6ae9bf7b8e",
+      "characters": 117,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 721,
+      "sha256": "8cf33998fd27c383ebce3e505db14ed3cec163d19df6ba0771d2c946a7cc4eef",
+      "characters": 2924,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 722,
+      "sha256": "074e1857755da75376489508edf691a163acaa6821b6c5497ed4853d6c61992d",
+      "characters": 2517,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 723,
+      "sha256": "02a192d2d7a7f6cea86dca617e63a2d2adeeef39475e7c95055bd24d27ae9b0a",
+      "characters": 638,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 724,
+      "sha256": "198136831d05ed3e90869e6803b8ba65ca34f0bbf5aa60c3674065065bcd75bb",
+      "characters": 3568,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 725,
+      "sha256": "e76f7b9cbd449b1d6e6314e5ff5ebedb4a3efe575123925d7fdae383117179e8",
+      "characters": 2820,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 726,
+      "sha256": "d997fed11b57e25a14c9e81d9096159843e6a33667e2e00f7608dbb157baa750",
+      "characters": 1629,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 727,
+      "sha256": "147f6366f9a11c421c777520c811f330ce2a675ebb6e8194b643cf0dbdd534c9",
+      "characters": 2076,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 728,
+      "sha256": "37a2bb63bab822316f5e88df68de75df01590e2e840c32cd52e31c605970c7b9",
+      "characters": 1640,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 729,
+      "sha256": "ffd23c75a150bb2722f77696473c1b8699fcff65f608d55422b89c0a90429e04",
+      "characters": 2374,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 730,
+      "sha256": "c14318e0d5fd9f8f0113fd961cddf24db69268ba7ea78d5355b3fd6ecdd8404a",
+      "characters": 4270,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 731,
+      "sha256": "69f73b51d3699990f10e2fa2b5ecb7a248e98a4dcc17b540567faf815bde25ee",
+      "characters": 533,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 732,
+      "sha256": "058f77587e44933f518e56415c0eefda345c5d85970a7111989b092b7355e697",
+      "characters": 1148,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 733,
+      "sha256": "91c701dd362c2fde5a8d6768bb522eb81ad2b6b645c9cc5350c027768327d6dd",
+      "characters": 1231,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 734,
+      "sha256": "86883aec78c15ee788a61e69ba8d6bdbf34a97e737183b445d1b0b4ca1a64147",
+      "characters": 2608,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 735,
+      "sha256": "d228b111d74111cbbae80dc752a902d9b7e8a2cb4cd1a637da75ff68cf945c8d",
+      "characters": 2315,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 736,
+      "sha256": "3769dced9e9705dd2d82aa76c052a66336a4ed214a34b4873b89152def74b5d8",
+      "characters": 1039,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 737,
+      "sha256": "003ee386cfb2dee8846ec1841f814062249b3e877d83a6e0ebae6460fea0dd86",
+      "characters": 1350,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 738,
+      "sha256": "ad27374805435653bd8346037d1c5d7950cd160bbb16cd86b2ebc5276231b736",
+      "characters": 2587,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 739,
+      "sha256": "c2f327045e3c5c65a00d7a5063fe9695cffd6b0c00bbc90d3962eba6c16e63ac",
+      "characters": 1134,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 740,
+      "sha256": "daf685eb81a385355e25cf5cada958669ebcb2d37c0540f49a48e7b00b26f01d",
+      "characters": 3268,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 741,
+      "sha256": "0f356bb2f14d8081bb0fea404e82434ae9d5ff608cc623a49f63c3c317403b81",
+      "characters": 2857,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 742,
+      "sha256": "cdac3c11eb00d8ddec8de8b967dd619b4ee426485c8dd69df631300bc620bbe7",
+      "characters": 2706,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 743,
+      "sha256": "c3ecc23bdca076a5204d86fdb96455e0f8a0b4d0f2a7cedf20efecd48e87827c",
+      "characters": 2540,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 744,
+      "sha256": "cf69c9ab460a287604c2ac154be075642d1e71be21121816b195eeefef730b92",
+      "characters": 2057,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 745,
+      "sha256": "e10e6d34283dd0cc30563b432c2cc79c52d8c5bc7fc4b1c14b1ebe78ef7b8bae",
+      "characters": 2539,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 746,
+      "sha256": "be0d23894aa3c75c327f1c43c81278e84eabb5c1641234d379ef16bd2e9ae621",
+      "characters": 2317,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 747,
+      "sha256": "af4c185326d6d41be9218483fde8563df64f69998710fb3a7b832e20c60e2ca0",
+      "characters": 2303,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 748,
+      "sha256": "8deab6b35195426be494ca1aff3ca799751fa52704ba096ec194822af9c735de",
+      "characters": 2192,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 749,
+      "sha256": "2ce09d351b0b2bd6c9bdc19c6a24ace23d588433822379c3675efbdb5213626c",
+      "characters": 2106,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 750,
+      "sha256": "58b4b497f9550fca4dd8413d86b89b4b611446a0ea922a278b542709581dc6b2",
+      "characters": 1212,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 751,
+      "sha256": "4afb090bb601a3b8f486f8a694afca6f5d49c99bc9799dc99ff6626d62f4d80b",
+      "characters": 2461,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 752,
+      "sha256": "00ab7d53e97b1de85d6b44a9012799cf92e64b90d39e66439f735af999befbe3",
+      "characters": 1180,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 753,
+      "sha256": "dc341661f0e7105f54227be0ccf4a0b0ba12ead9b9968f1af9b4b73fad918773",
+      "characters": 1625,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 754,
+      "sha256": "3d6a5041c5a15ebbf9fdf7244655d89b30d6413935d48ef8610d688b1fbca67b",
+      "characters": 638,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 755,
+      "sha256": "cc99a887cb0936e94a91780e633cd91d2762a6ccb2cf2362e5953a5b7183fff5",
+      "characters": 3142,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 756,
+      "sha256": "306cbecd75033fbd07494e5899b2ac1227390790ecb3a7046095b483d22b0ea6",
+      "characters": 3316,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 757,
+      "sha256": "f656e6de072c60b74e9ee7712457d7c0604c7422f10b15e157f34bb4b25561d4",
+      "characters": 3082,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 758,
+      "sha256": "e920f44e9be8aba218f50e3c64c71d7419d0db2f3e4757b3b0f0a5cba787f516",
+      "characters": 3162,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 759,
+      "sha256": "61ff7d69a72710f83ef69d7cccbc90929f4a9c5ea18c401d1c749a91143c1001",
+      "characters": 3089,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 760,
+      "sha256": "d9c8769c758e63bafc10c2381bb9ee9e40b94b2f1c22deccb86a7986883c3ee2",
+      "characters": 2451,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 761,
+      "sha256": "63b5f7cde7262ff39cc74054044c67bbe1156da148dda13e1ed7365f5a6f82fc",
+      "characters": 3117,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 762,
+      "sha256": "b008f4cd00e98fa8f315c63c029ca84e2aa16a7899e4daa93fccf15567ee4359",
+      "characters": 3238,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 763,
+      "sha256": "9b156db7707e89e1094be76df1948426e18efcb2b2f86a61745f84fc92b4d71b",
+      "characters": 3370,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 764,
+      "sha256": "d3115246ba32daaa8197b1e354d10fc5eaf53308fd27e189ce558927b3511c1f",
+      "characters": 471,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 765,
+      "sha256": "8ddbfe204d489d1c5c884edbd35a25cd38e5af84dc32a70b2c88f01ee01bef99",
+      "characters": 2863,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 766,
+      "sha256": "56ad6e9193e81316b3d1a59985d8e5e625087d0b9792d7ea7e7325d382e0714f",
+      "characters": 3016,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 767,
+      "sha256": "a1c754788ab00dce690b6a2dd1874a90265bb813d90f85bf9a90988b75341035",
+      "characters": 2431,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 768,
+      "sha256": "58fb426cbdb54a1443071bdabcb4e51f46a3b3f4e50a9d1fc9892af0f81498f0",
+      "characters": 1763,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 769,
+      "sha256": "9daf96f8d56fb353f123ad20042f80db0672db7a29cfab3bab045b5f384841a6",
+      "characters": 2995,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 770,
+      "sha256": "4963ceea4df298d5948192cb9b5dbeff37bfe6892d8dd896d9a79ba6c580576f",
+      "characters": 2872,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 771,
+      "sha256": "23c8e281f4f360c0c4672bb09523f37fbf57bd7378f5cc5cc45b94d99e84091e",
+      "characters": 2825,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 772,
+      "sha256": "cda6a45f38f49b957a33b620df0f2711f9cf43db9a32b9c9bf7926d3d47179b8",
+      "characters": 2809,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 773,
+      "sha256": "c10c20b3431088b183b1b9916794233da500d9b043fe8e5061de40d39f2d3be4",
+      "characters": 2785,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 774,
+      "sha256": "a043e8e2d255919033b9e1d82732cacb0305048f5ec25be58b4911de0162c0c6",
+      "characters": 2881,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 775,
+      "sha256": "bd560e00f53bd396835f2e1280bdb3dbd92b064c6795555020c2e1c2861b6434",
+      "characters": 2789,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 776,
+      "sha256": "0dba8d86f5d42dd88e6ba906607be2841097a8debed215b9dd7e888a614caf6f",
+      "characters": 2749,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 777,
+      "sha256": "a7b610289ae7e0c050e201489838ac58e67333884e20bf4a15ff64a45cb86432",
+      "characters": 2862,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 778,
+      "sha256": "778c8074306460ef06bb4570ad32d514bad2a1fc340e47bd7a4a6132428dbb21",
+      "characters": 2768,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 779,
+      "sha256": "880a9ee53ed8fec4e033f36d55788d5cdb6779e451c4fbce46e45703e437bf1c",
+      "characters": 2843,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 780,
+      "sha256": "9520652a079770827e2602c6e678acf6e433124f356136eb63f9498973f809c0",
+      "characters": 2887,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 781,
+      "sha256": "e4e669fe7d5e5b4d2b59ac7c943e52ecbffb97376ec3107d2209ba6951f69d14",
+      "characters": 2873,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 782,
+      "sha256": "90801207fea9f00881be5b71a9ad13b11d1bd259c93918f6aed8d741507e0e0d",
+      "characters": 2608,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 783,
+      "sha256": "711065a1a2ea4835ff2011d70697a2389abaed61b6daae86487033457091ae7d",
+      "characters": 2789,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 784,
+      "sha256": "124e4ae2fe7d6eaea08198aa5b62f92dc3924aa8d83f752cc09095c1383f365a",
+      "characters": 2938,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 785,
+      "sha256": "1fbe144192c54568180d8cf00d27410df8df0fe4271f30c6aa6f6e59b57a9af1",
+      "characters": 3033,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 786,
+      "sha256": "36647f5c36bfd15d07c11586e6e5468af4322274af00fc5d9d98512c8ba48616",
+      "characters": 2873,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 787,
+      "sha256": "49a934ff63fab5da37564d0f980f82b503d68add67036bfab9bfbef28f51bad5",
+      "characters": 2907,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 788,
+      "sha256": "e78d6434d86e00df1dd87ab92a2e9ec8ebbcca8bb34691a3e34c8d8735f7bc08",
+      "characters": 2939,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 789,
+      "sha256": "0cdaa8551d6fe9346549d469b852dd5416ff43d94c6cde455493aca8057734d2",
+      "characters": 2923,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 790,
+      "sha256": "0f65e2daae8ad8f61c61902f3eb0f2effc70fc1bcee041987f38b05eb0745b61",
+      "characters": 2949,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 791,
+      "sha256": "8e622cdc3c0ff4cf4c906cc0d58535be9495430f3660728cbbfbc1525ce16fc4",
+      "characters": 2931,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 792,
+      "sha256": "d8af22f0a8c2e9eabdef684ad21e34e8bdd77d91dce66088e51db119b37c7383",
+      "characters": 2939,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 793,
+      "sha256": "3a98759bcda33a9ea4642ceb41a9dcc0efea4e1df87fc9723bd3e6f707939623",
+      "characters": 3052,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 794,
+      "sha256": "24dd2317b916c595aaf4a21a7fe1fe8a8fc368d73e1c107859d7bb35ceec1f7b",
+      "characters": 2878,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 795,
+      "sha256": "31b5a5bd1344954f68ff4898864e176bc3fbe54eed0adcdc145f25dc15e719c0",
+      "characters": 3165,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 796,
+      "sha256": "dc02f9452efa01ab7632dc230f2d1670794381411a6ecba353f8e5eb988fb9db",
+      "characters": 2925,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 797,
+      "sha256": "0b1aaa721dd6a1316ea8aa2aa48295109537f619ac42865676e2811aaffd40a0",
+      "characters": 2987,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 798,
+      "sha256": "a26c3e8a5cf9c74e5b85771b94743d2c5de340254100c7349b2ec57af4d8848d",
+      "characters": 2966,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 799,
+      "sha256": "8ed18369bd1007d74b9ad430dacffdcc1ea7e68dbba5b81a8d74bd554ed8b9ae",
+      "characters": 2990,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 800,
+      "sha256": "4781dacf2dfe5dd186b52beab2b70edd6575eaef6b2200937a1dc11c3cb21740",
+      "characters": 2890,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 801,
+      "sha256": "be7ca132f17cfcffc293e38de903253c2eef66a0b315edb1a7fe5b5bead29059",
+      "characters": 2901,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 802,
+      "sha256": "83cd442b39e983819c174a925faf72c785b7cec4b3301b9c96a73f082df99408",
+      "characters": 2857,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 803,
+      "sha256": "883ecf6fd91e068dec7b4e716d0234f65cf624d2b5f4573f4959d78bbce9ed47",
+      "characters": 2980,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 804,
+      "sha256": "58dd72b40debd1c19fe052099badff61aac634711990682d4bc6a9b2cd457d2d",
+      "characters": 2739,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 805,
+      "sha256": "2781dbf10e46fcfecd7fd06fb55a49da35d6f43b1cfa619bd021f14c6bc10c6c",
+      "characters": 2909,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 806,
+      "sha256": "855b83f4b8dccd03510fea892cfbc92fc84ba18c4d16584141ce8c660c3e0d63",
+      "characters": 3006,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 807,
+      "sha256": "3c73e956532a65c61f237534b4f0bbf94b9d49fe22e556cfce1ee8a773255091",
+      "characters": 3021,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 808,
+      "sha256": "4bc6093ad90e52e95d1ff89fbdef907a404b678a42407c6c31f9c26e2a8433e4",
+      "characters": 3022,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 809,
+      "sha256": "af80c3dd32b8b79ca98aaa5ac46b70257f72bfe5332c67da2c09571b00a09348",
+      "characters": 2974,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 810,
+      "sha256": "fcb77ad95b6e31b32bb01b0b04d86a4e0594104bd83fd41fdd71596205e1ccec",
+      "characters": 3000,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 811,
+      "sha256": "98514e6471156537746e2b0dbdca240908500cf4964631997bf09905c18dd685",
+      "characters": 2960,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 812,
+      "sha256": "d49fe42b7f6aeae325e92ec20f35cce442ef0960c633a2e8741736981cd18967",
+      "characters": 3707,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 813,
+      "sha256": "87bd5c024d470980a989798a65092dca08fb1e62cbcd705d89dba4e50adcebdb",
+      "characters": 4041,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 814,
+      "sha256": "3a04012e47d1395b38bc612d305ce2cbf27f77b6de8ad89c5fdaca489c23b7eb",
+      "characters": 4043,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 815,
+      "sha256": "94de4aba68e92e3c28646016b14bda3af01505746e9da96b3e8bf739208b0e99",
+      "characters": 4121,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 816,
+      "sha256": "d1b976d81d98c44267322af8ef20bc59c35674fbf66b636ded00f604bf087f71",
+      "characters": 4121,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 817,
+      "sha256": "abf10617d9e0d5fbb30533e674dc4b63124a4c54d6a18ac3ddea261f3ed3d50b",
+      "characters": 4041,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 818,
+      "sha256": "1ac536c254fb5f9a816de5fc35c8551b60bdc515b6b0439c2c02ecbb7795452f",
+      "characters": 4121,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 819,
+      "sha256": "b1f2768bd13a21a1371887650af54efaad4b612d5d5331be82f8a20f96c6821b",
+      "characters": 4042,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 820,
+      "sha256": "52861959d0fe67a45280358b436022029f9184913e5372f15b0c65cf0fd2d28b",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 821,
+      "sha256": "aeb27022b62cd0c9dbe466794fc768ae0c7930bf826be7d51ea4ed94a1e3eb1b",
+      "characters": 4469,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 822,
+      "sha256": "38a7bcf5c3b2a87734a1ee876f1cf97b2bf17a7c6de914e2d47e182df53c654e",
+      "characters": 4122,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 823,
+      "sha256": "42296da7e79c971f352b6c793197df2ea35e45518e5ed55cc4cc893def824746",
+      "characters": 4120,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 824,
+      "sha256": "204e80424d0287dad5702dae8ea202aefb4f69f413891bfb0f44c1f60c1d4cfe",
+      "characters": 4124,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 825,
+      "sha256": "52860852790cbae4b356de38c088b77307096da74c9d370a481da0f11f95d661",
+      "characters": 4121,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 826,
+      "sha256": "c92078e45eabcaf3691fbd5947a0fbc9a169a202783037f10647d730ecaf9e10",
+      "characters": 4041,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 827,
+      "sha256": "30f9f6fdc089459aa7d476dcb89f880fd8962b3ebf8b394d6b42c661081e6f3c",
+      "characters": 4122,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 828,
+      "sha256": "d09e41e71edf2b1f42bdf95e7b48f45e6f05184ed6a1289926d4673c25dd61ee",
+      "characters": 4043,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 829,
+      "sha256": "74b4724b34f65bffa21e4aea3ec825032bf3f9f6c22e245a383ec61ccaa9741d",
+      "characters": 4468,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 830,
+      "sha256": "d60c6d0989e0ccc37d04a04823ccebdaca9e6c6de65918093b07742df292f8bf",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 831,
+      "sha256": "d4a472bcc1b93104d56e61b5e0b53990b7f69e00ae3434749eb3a85f9b45d8ee",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 832,
+      "sha256": "4157841e7bab24cd3d4169cd444455e774b37c9f7bd1239c878c9b067bda7c62",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 833,
+      "sha256": "6fedefe1467d3ab0aa29534cac24deea5562e0f4495117a2db56c3d1011c9a59",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 834,
+      "sha256": "b6fc324f30f888ecea6f3d48ab0a32622fc78b65c8c4c6063c23ecf66ae78d97",
+      "characters": 4040,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 835,
+      "sha256": "f5e7f9d512f163e186284e8893c3fd774626436a7e4aa7aa47e1e206042fc4e0",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 836,
+      "sha256": "2bf1e81dc764a879ecb1e5900699a7fefef3ec11b86599a9388639b884153353",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 837,
+      "sha256": "03d9a534aebf3a449ce84d54c9cf7e0a954c65310046521bef553c2f182410d2",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 838,
+      "sha256": "2c66d4a37a3758c8f7f5d1da0119ec75fe59cee5e8b73e981cf003d1c17448e8",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 839,
+      "sha256": "ff425ca195b96418d2d99cbdd44d9ac6b0c6af14a58d405290f0386f62bf8cc5",
+      "characters": 4040,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 840,
+      "sha256": "45f39340186534401b6410dd443b56866ab6e58644319f4ef72103a1e581390d",
+      "characters": 4120,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 841,
+      "sha256": "82d14eb75d1c791ccc2d638c2c025a393d1885cc5de7589113cde211e2d9f758",
+      "characters": 4120,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 842,
+      "sha256": "3524ae5f033fec85cbfe8b0a1a0e0dbacdc38db7af1f4ba23ca5484a392b0daf",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 843,
+      "sha256": "a02bad553c74032f847db3c209c606a5b927a3720947efa4ab6668795d1ad88b",
+      "characters": 4123,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 844,
+      "sha256": "a6ac681a9659bfe0cf102442c66bf27b6b061fb134c416f3d050a19673ba5292",
+      "characters": 4120,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 845,
+      "sha256": "40fdd7a446ea177ed03adc2dad98445335552dd1069ec421e096d85304c45f1e",
+      "characters": 4041,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 846,
+      "sha256": "18cc10fe8009d862614cf072c41280cb13ba96e902cfb66a9bdb9f10678c6dac",
+      "characters": 4122,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 847,
+      "sha256": "a9a7ab805580a77bdaaf80988bb726c688ca294e53860e9b6b79b58a4c35366c",
+      "characters": 4041,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 848,
+      "sha256": "9cc938c3e0d6f8662ab2d056b245c4dfb0e30138f5fb918fb234d5b2806c0842",
+      "characters": 4119,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 849,
+      "sha256": "c399bf07075e3cb1f378b6f789a693ea0e40671262a1101d20e387126b634453",
+      "characters": 5292,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 850,
+      "sha256": "69da8141a362db0ea448ca9a9001ca620bca9aaca5d28f11a2c3896b1f045a55",
+      "characters": 2969,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 851,
+      "sha256": "9626102e0e050a0c6ca0a6a30fc6036fa52c0e69423f5382c86dadf042769c16",
+      "characters": 2502,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 852,
+      "sha256": "c8b735ec4c78e56c16deba77b452a1fe83064940e6f84b3bed05d8ab0a2ae2bf",
+      "characters": 2530,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 853,
+      "sha256": "f6f68a6b309c35e10c0886abb37b4154b680e7667c13749d3b4aadad2c726b92",
+      "characters": 2613,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 854,
+      "sha256": "6bfd68a7d2dbc3d10f396671f8c0e7a5cad2192990c6b611d0179eb902839ce5",
+      "characters": 2565,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 855,
+      "sha256": "fb8e17b8b6dccb2086ac1a697aa69e93998584c2cac4f84ba84d600c2eb9fb14",
+      "characters": 2472,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 856,
+      "sha256": "5e0da5f3f45e58c53871daab348c0c7e46865e3f3d82aa7b813e2b6b21c07391",
+      "characters": 3608,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 857,
+      "sha256": "abedd2c861f8f46d5fd461845f49ed66230f31bd904cbe7dd7293e9aa27cc698",
+      "characters": 3439,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 858,
+      "sha256": "7dfa970c0371c919bba423ddd3589c42e6e8cb42dbab8f194d1e7a5b75105e50",
+      "characters": 2718,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 859,
+      "sha256": "002a1f1d5a2129c0a2084fa128fb3f24d3f47508937f7c3c1d98f21d07104213",
+      "characters": 2740,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 860,
+      "sha256": "5597fbbe32d0bd72c3ed4620fd58e1544259c63b4070012d8d3b0845c419c40d",
+      "characters": 2837,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 861,
+      "sha256": "863f4717fa90976fb7c497f642fe407896ff458dfe560bd8f11a28f7544879b9",
+      "characters": 2791,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 862,
+      "sha256": "4f200148aea34de25e44871633bc20a09f85526f6ed4d025c2772472354645ca",
+      "characters": 2513,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 863,
+      "sha256": "e88495b5af116dc7b69b953560e727338d00538c8299e22eb1d7736c0ab85a89",
+      "characters": 2527,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 864,
+      "sha256": "fe802ce2056025e4d2a53fb869b3019353a1e8d92eb2dddf4729662b491a969a",
+      "characters": 2603,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 865,
+      "sha256": "55d8c045bd1da4730df416e68866ac85bc1b0811a3f44bd353d53c6a2f0edd00",
+      "characters": 2623,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 866,
+      "sha256": "aa769a0e7c7b5258383360772a66cac4b59cae5769dbc1b17c056b9d50de48ac",
+      "characters": 2623,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 867,
+      "sha256": "4f84a7df7547769fb65f0f745661254fc59ba2a380af2d9b51e8f397646e81db",
+      "characters": 2575,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 868,
+      "sha256": "566f95940bf206f2e615242df26b4c2e00b4d4ad5de6f7040a48be6a2ba58aa9",
+      "characters": 2680,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 869,
+      "sha256": "afd043ad4e24fa1bccf9737a4937505c01cdd7d8c60822e0cc3f647a8d704d09",
+      "characters": 2755,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 870,
+      "sha256": "caaaadaeca6ac64776955cbfdba4bef51df2374a1bcb6cd9e3a53cd276824d5f",
+      "characters": 2712,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 871,
+      "sha256": "144faf6d6d617ff09c0f92139e1c10691f6e541327b570786fed6daa4a7bb9c2",
+      "characters": 2512,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 872,
+      "sha256": "1340e2ffd3e3366bdb36cb5391910b7cee966b2b27e1c078a16dfc5b0fc6297a",
+      "characters": 2308,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 873,
+      "sha256": "353cba9e0aaca2a226b52c8b3a9a6f98765ca6d88bf3679cebec0da4499311a8",
+      "characters": 3541,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 874,
+      "sha256": "6762daa19c1b6e5f1dbfbf6a9f9811abb363d09bcc855538df1cb00b5329cccb",
+      "characters": 2658,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 875,
+      "sha256": "0dec3c2282d88ceae6cd2da1ea57f8a6cc0df5639fe5d22696e66110836012f5",
+      "characters": 2153,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 876,
+      "sha256": "d94efcab25b402fd8cabbde13c74e56b6d34a8c2dd69366777f95d26b0882b82",
+      "characters": 2291,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 877,
+      "sha256": "14083da2b037fbc4523d9543dbe57fd09821d81a08c81cd1b80edfed87f9ac2b",
+      "characters": 2343,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 878,
+      "sha256": "a7b1ccb05109d1f4bd5de5756f0e3abca17bbf1992f5489ccf978b7e448ec180",
+      "characters": 2405,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 879,
+      "sha256": "02503bff16b8ca1f4b401958416c848e3d7c060c091dc535042196ad1e20693d",
+      "characters": 2484,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 880,
+      "sha256": "9d16878fee3472a52e1f13b8e5bb92baaf34bc63b18fa918804a395f4683a733",
+      "characters": 2464,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 881,
+      "sha256": "a132fcb4e204c8222454b056ea9800dc3216e71c32a370f4e04ae1f28aee3911",
+      "characters": 932,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 882,
+      "sha256": "878d1303c23930bf0f2d3da0a227592fca29df9145bac2f38afd48cfddd2975e",
+      "characters": 3130,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 883,
+      "sha256": "d508a92badb14015c7be497e7171fcbebafa74ae2a7fee1a3567d328713f5f17",
+      "characters": 3252,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 884,
+      "sha256": "3558f7ecd3138c78461f8f8a648e122764bac6823eb1ea002f79ef8dfe668556",
+      "characters": 3172,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 885,
+      "sha256": "a0464ca3fa595d2bdd7c2d25fb5b17b790c70e5c8e9ec90c478db66f3cc23a7c",
+      "characters": 3155,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 886,
+      "sha256": "aab6b16e3368d7ff1c2ff4cf0d03ec0ab2ce65626fd639660dc8ad064b168baa",
+      "characters": 3136,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 887,
+      "sha256": "865df9a15f6e0c287f33cc3d91d1db5ba399df084bf531bad67f316cc9194ec6",
+      "characters": 3262,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 888,
+      "sha256": "b4043d24395c224376c9cb4e7257641a80b3788eeb910057c7275eb1908408f1",
+      "characters": 2986,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 889,
+      "sha256": "34fedcbe937a58e0889d2f1fb39ea3d8051d7571dde2f385f4c6e7309d372b5d",
+      "characters": 3259,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 890,
+      "sha256": "d398486ce8602d38b754b9ad38d9ad4cadef5613a262ecdb697959f21915852d",
+      "characters": 2652,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 891,
+      "sha256": "26f068a0cd4344b368344681fedb9a683a48d82647dcd2bb246bbface18e871b",
+      "characters": 202,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 892,
+      "sha256": "b59b97b5872c8c6e140594795640bfb335654b39d7c35771f149b33c75388637",
+      "characters": 3045,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 893,
+      "sha256": "ec53f73707cfcb9ff6989f6ea83506f41a78e877e8f99abf95b4d9d1cabe8491",
+      "characters": 3082,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    },
+    {
+      "page": 894,
+      "sha256": "77f9ab2ae081064341c310b606e814c5c7faca62a568e999cb7d3ee08f42bad2",
+      "characters": 3236,
+      "extraction_error": null,
+      "original_hash_matches_text": true
+    }
+  ],
+  "sections": [
+    {
+      "depth": 4,
+      "title": "OBJ_BITMAP",
+      "start": 656,
+      "end": 662,
+      "id": "REF-0134",
+      "read_pages": [
+        659,
+        660,
+        661,
+        662
+      ],
+      "status": "partial_continuation",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_BITMAP_LABEL",
+      "start": 663,
+      "end": 669,
+      "id": "REF-0135",
+      "read_pages": [
+        663,
+        664,
+        665,
+        666,
+        667,
+        668,
+        669
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_EDIT",
+      "start": 670,
+      "end": 676,
+      "id": "REF-0136",
+      "read_pages": [
+        670,
+        671,
+        672,
+        673,
+        674,
+        675,
+        676
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_EVENT",
+      "start": 677,
+      "end": 681,
+      "id": "REF-0137",
+      "read_pages": [
+        677,
+        678,
+        679,
+        680,
+        681
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 4,
+      "title": "OBJ_RECTANGLE_LABEL",
+      "start": 682,
+      "end": 687,
+      "id": "REF-0138",
+      "read_pages": [
+        682,
+        683,
+        684,
+        685,
+        686,
+        687
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Object Properties",
+      "start": 688,
+      "end": 715,
+      "id": "REF-0139",
+      "read_pages": [
+        688,
+        689,
+        690,
+        691,
+        692,
+        693,
+        694,
+        695,
+        696,
+        697,
+        698,
+        699,
+        700,
+        701,
+        702,
+        703,
+        704,
+        705,
+        706,
+        707,
+        708,
+        709,
+        710,
+        711,
+        712,
+        713,
+        714,
+        715
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Methods of Object Binding",
+      "start": 716,
+      "end": 720,
+      "id": "REF-0140",
+      "read_pages": [
+        716,
+        717,
+        718,
+        719,
+        720
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Chart Corner",
+      "start": 721,
+      "end": 723,
+      "id": "REF-0141",
+      "read_pages": [
+        721,
+        722,
+        723
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Visibility of Objects",
+      "start": 724,
+      "end": 726,
+      "id": "REF-0142",
+      "read_pages": [
+        724,
+        725,
+        726
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Levels of Elliott Wave",
+      "start": 727,
+      "end": 727,
+      "id": "REF-0143",
+      "read_pages": [
+        727
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Gann Objects",
+      "start": 728,
+      "end": 729,
+      "id": "REF-0144",
+      "read_pages": [
+        728,
+        729
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Web Colors",
+      "start": 730,
+      "end": 731,
+      "id": "REF-0145",
+      "read_pages": [
+        730,
+        731
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Wingdings",
+      "start": 732,
+      "end": 732,
+      "id": "REF-0146",
+      "read_pages": [
+        732
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 2,
+      "title": "Indicator Constants",
+      "start": 733,
+      "end": 753,
+      "id": "REF-0147",
+      "read_pages": [
+        733,
+        734,
+        735,
+        736,
+        737,
+        738,
+        739,
+        740,
+        741,
+        742,
+        743,
+        744,
+        745,
+        746,
+        747,
+        748,
+        749,
+        750,
+        751,
+        752,
+        753
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Price Constants",
+      "start": 734,
+      "end": 736,
+      "id": "REF-0148",
+      "read_pages": [
+        734,
+        735,
+        736
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Smoothing Methods",
+      "start": 737,
+      "end": 737,
+      "id": "REF-0149",
+      "read_pages": [
+        737
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Indicators Lines",
+      "start": 738,
+      "end": 739,
+      "id": "REF-0150",
+      "read_pages": [
+        738,
+        739
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Drawing Styles",
+      "start": 740,
+      "end": 744,
+      "id": "REF-0151",
+      "read_pages": [
+        740,
+        741,
+        742,
+        743,
+        744
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Custom Indicator Properties",
+      "start": 745,
+      "end": 750,
+      "id": "REF-0152",
+      "read_pages": [
+        745,
+        746,
+        747,
+        748,
+        749,
+        750
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Indicator Types",
+      "start": 751,
+      "end": 752,
+      "id": "REF-0153",
+      "read_pages": [
+        751,
+        752
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Data Type Identifiers",
+      "start": 753,
+      "end": 753,
+      "id": "REF-0154",
+      "read_pages": [
+        753
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 2,
+      "title": "Environment State",
+      "start": 754,
+      "end": 896,
+      "id": "REF-0155",
+      "read_pages": [
+        754,
+        755,
+        756,
+        757,
+        758,
+        759,
+        760,
+        761,
+        762,
+        763,
+        764,
+        765,
+        766,
+        767,
+        768,
+        769,
+        770,
+        771,
+        772,
+        773,
+        774,
+        775,
+        776,
+        777,
+        778,
+        779,
+        780,
+        781,
+        782,
+        783,
+        784,
+        785,
+        786,
+        787,
+        788,
+        789,
+        790,
+        791,
+        792,
+        793,
+        794,
+        795,
+        796,
+        797,
+        798,
+        799,
+        800,
+        801,
+        802,
+        803,
+        804,
+        805,
+        806,
+        807,
+        808,
+        809,
+        810,
+        811,
+        812,
+        813,
+        814,
+        815,
+        816,
+        817,
+        818,
+        819,
+        820,
+        821,
+        822,
+        823,
+        824,
+        825,
+        826,
+        827,
+        828,
+        829,
+        830,
+        831,
+        832,
+        833,
+        834,
+        835,
+        836,
+        837,
+        838,
+        839,
+        840,
+        841,
+        842,
+        843,
+        844,
+        845,
+        846,
+        847,
+        848,
+        849,
+        850,
+        851,
+        852,
+        853,
+        854,
+        855,
+        856,
+        857,
+        858,
+        859,
+        860,
+        861,
+        862,
+        863,
+        864,
+        865,
+        866,
+        867,
+        868,
+        869,
+        870,
+        871,
+        872,
+        873,
+        874,
+        875,
+        876,
+        877,
+        878,
+        879,
+        880,
+        881,
+        882,
+        883,
+        884,
+        885,
+        886,
+        887,
+        888,
+        889,
+        890,
+        891,
+        892,
+        893,
+        894
+      ],
+      "status": "partial_at_batch_end",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Client Terminal Properties",
+      "start": 755,
+      "end": 764,
+      "id": "REF-0156",
+      "read_pages": [
+        755,
+        756,
+        757,
+        758,
+        759,
+        760,
+        761,
+        762,
+        763,
+        764
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Running MQL5 Program Properties",
+      "start": 765,
+      "end": 768,
+      "id": "REF-0157",
+      "read_pages": [
+        765,
+        766,
+        767,
+        768
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Symbol Properties",
+      "start": 769,
+      "end": 881,
+      "id": "REF-0158",
+      "read_pages": [
+        769,
+        770,
+        771,
+        772,
+        773,
+        774,
+        775,
+        776,
+        777,
+        778,
+        779,
+        780,
+        781,
+        782,
+        783,
+        784,
+        785,
+        786,
+        787,
+        788,
+        789,
+        790,
+        791,
+        792,
+        793,
+        794,
+        795,
+        796,
+        797,
+        798,
+        799,
+        800,
+        801,
+        802,
+        803,
+        804,
+        805,
+        806,
+        807,
+        808,
+        809,
+        810,
+        811,
+        812,
+        813,
+        814,
+        815,
+        816,
+        817,
+        818,
+        819,
+        820,
+        821,
+        822,
+        823,
+        824,
+        825,
+        826,
+        827,
+        828,
+        829,
+        830,
+        831,
+        832,
+        833,
+        834,
+        835,
+        836,
+        837,
+        838,
+        839,
+        840,
+        841,
+        842,
+        843,
+        844,
+        845,
+        846,
+        847,
+        848,
+        849,
+        850,
+        851,
+        852,
+        853,
+        854,
+        855,
+        856,
+        857,
+        858,
+        859,
+        860,
+        861,
+        862,
+        863,
+        864,
+        865,
+        866,
+        867,
+        868,
+        869,
+        870,
+        871,
+        872,
+        873,
+        874,
+        875,
+        876,
+        877,
+        878,
+        879,
+        880,
+        881
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Account Properties",
+      "start": 882,
+      "end": 891,
+      "id": "REF-0159",
+      "read_pages": [
+        882,
+        883,
+        884,
+        885,
+        886,
+        887,
+        888,
+        889,
+        890,
+        891
+      ],
+      "status": "full_text_read",
+      "note_file": "reference-batch-03-review.md"
+    },
+    {
+      "depth": 3,
+      "title": "Testing Statistics",
+      "start": 892,
+      "end": 896,
+      "id": "REF-0160",
+      "read_pages": [
+        892,
+        893,
+        894
+      ],
+      "status": "partial_at_batch_end",
+      "note_file": "reference-batch-03-review.md"
+    }
+  ],
+  "reading_evidence": {
+    "method": "Actual sequential full extracted text displayed and semantically read; whitespace-only reflow in later batches; no automatic semantic coverage inference",
+    "batches": [
+      [
+        659,
+        680
+      ],
+      [
+        666,
+        671
+      ],
+      [
+        681,
+        695
+      ],
+      [
+        696,
+        715
+      ],
+      [
+        704,
+        706
+      ],
+      [
+        716,
+        732
+      ],
+      [
+        733,
+        753
+      ],
+      [
+        754,
+        773
+      ],
+      [
+        774,
+        797
+      ],
+      [
+        798,
+        821
+      ],
+      [
+        822,
+        845
+      ],
+      [
+        846,
+        863
+      ],
+      [
+        864,
+        881
+      ],
+      [
+        882,
+        894
+      ]
+    ],
+    "truncation_repairs": [
+      [
+        666,
+        671
+      ],
+      [
+        704,
+        706
+      ]
+    ],
+    "visual_verification": false,
+    "native_status": "MQL_NOT_RUN"
+  },
+  "limits": [
+    "No ownership claimed for pages1–658",
+    "REF-0134 begins656; only continuation659–662 read here",
+    "REF-0155 and REF-0160 continue895–896",
+    "Figures and visual layout not checked",
+    "Extracted clipped code lines not compiled; editorial suspicions qualified in review",
+    "No live web corroboration; PDF source analyzed as supplied"
+  ],
+  "queue": {
+    "next_page": 895,
+    "next_section_continuation": "REF-0160 Testing Statistics; parent REF-0155 Environment State",
+    "remaining_section_pages": [
+      895,
+      896
+    ]
+  },
+  "product_changes": false,
+  "kit_changes": false,
+  "pilot_changes": false
+}

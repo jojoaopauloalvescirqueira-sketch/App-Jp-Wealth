@@ -1,0 +1,75 @@
+{
+  "dialect": "flowchart LR",
+  "nodes": {
+    "T": {
+      "label": "Terminal e histórico",
+      "shape": "box"
+    },
+    "A": {
+      "label": "Adaptadores de leitura",
+      "shape": "box"
+    },
+    "O": {
+      "label": "Observações com identidade e qualidade",
+      "shape": "box"
+    },
+    "D": {
+      "label": "Interpretação segundo contratos vigentes",
+      "shape": "box"
+    },
+    "P": {
+      "label": "Publicação identificada",
+      "shape": "box"
+    },
+    "C": {
+      "label": "Conta e detalhes",
+      "shape": "box"
+    },
+    "G": {
+      "label": "Interação em NoCuda",
+      "shape": "box"
+    },
+    "E": {
+      "label": "Estudos e rascunhos",
+      "shape": "box"
+    }
+  },
+  "edges": [
+    {
+      "from": "T",
+      "to": "A",
+      "label": ""
+    },
+    {
+      "from": "A",
+      "to": "O",
+      "label": ""
+    },
+    {
+      "from": "O",
+      "to": "D",
+      "label": ""
+    },
+    {
+      "from": "D",
+      "to": "P",
+      "label": ""
+    },
+    {
+      "from": "P",
+      "to": "C",
+      "label": ""
+    },
+    {
+      "from": "G",
+      "to": "E",
+      "label": ""
+    },
+    {
+      "from": "E",
+      "to": "P",
+      "label": ""
+    }
+  ],
+  "source_sha256": "237ef7d43b4ac0206050402725541724128a84a6be5361bebb93a64673242aa0"
+}

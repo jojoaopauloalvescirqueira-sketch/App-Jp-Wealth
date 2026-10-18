@@ -1,0 +1,11 @@
+{
+  "id": "S08",
+  "topic": "ui",
+  "prompt": "Defina estado e rótulos; a UI não pode transformar dado velho em autorização.",
+  "input": {
+    "account_connected": false,
+    "snapshot_age_s": 120,
+    "max_age_s": 10,
+    "last_risk": 50
+  }
+}
