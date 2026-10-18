@@ -123,7 +123,9 @@
       (o.recordStatus!=='recorded'||o.accountId===p.accountId&&o.periodId===p.periodId&&
         o.currency===p.currency&&text(o.operationId))))&&
     Array.isArray(p.ledgerEvents)&&Array.isArray(p.ledger)&&p.ledger.every(r=>object(r)&&r.accountId===p.accountId&&
-      r.periodId===p.periodId&&r.currency===p.currency&&civilDate(r.data)&&finite(r.resultado)&&finite(r.saldo))&&
+      r.periodId===p.periodId&&r.currency===p.currency&&
+      (r.version==null||Number.isSafeInteger(r.version)&&r.version>=0)&&
+      civilDate(r.data)&&finite(r.resultado)&&finite(r.saldo))&&
     (p.activeOperation===null||object(p.activeOperation)&&text(p.activeOperation.operationId)&&
       p.activeOperation.recordContext?.accountId===p.accountId&&
       p.activeOperation.recordContext?.periodId===p.periodId&&
@@ -441,6 +443,13 @@
     return {status:'OK',value:ctx.value.ledger.slice().sort((a,b)=>a.data.localeCompare(b.data)),
       currency:ctx.value.currency,openingBook:ctx.value.openingBook,revision:ctx.revision,findings:[]};
   }
+  function nextLedgerVersion(version){
+    // Legacy absence remains readable; only an explicit writer advances it.
+    const current=version??0;
+    if(!Number.isSafeInteger(current)||current<0||current===Number.MAX_SAFE_INTEGER)
+      throw new Error('Limite de revisão do lançamento atingido; preserve o histórico para revisão.');
+    return current+1;
+  }
   function recordAccountLedger(input,{reason='',expectedEpoch,expectedRevision}={}){
     if(!object(input)||!text(input.accountId)||!text(input.periodId)||
       !['RECORDED','CORRECTED','VOIDED'].includes(input.action)||
@@ -468,7 +477,7 @@
         if(input.saldo===null&&!finite(opening))throw new Error('Saldo inicial book ausente; informe o saldo observado sem presumir zero.');
         after={...old,id:old?.id||id('ld'),accountId:input.accountId,periodId:input.periodId,currency:p.currency,
           data:input.data,resultado:input.resultado,saldo:input.saldo===null?opening+input.resultado:input.saldo,
-          nota:text(input.nota),version:(old?.version||0)+1,origin:'MANUAL',
+          nota:text(input.nota),version:nextLedgerVersion(old?.version),origin:'MANUAL',
           balanceInput:input.saldo===null?'DERIVED_FROM_PREVIOUS':'OBSERVED',
           referenceBalance:p.openingBook,createdAt:old?.createdAt||now(),updatedAt:now()};
         if(old)p.ledger[index]=after;else p.ledger.push(after);
@@ -483,7 +492,7 @@
           if(!finite(balance))throw new Error('Cadeia anterior sem saldo confirmado; informe observação explícita.');
           const revised=balance+row.resultado;
           if(!finite(revised))throw new Error('Saldo derivado inválido.');
-          if(revised!==row.saldo){const before=clone(row);row.saldo=revised;row.version++;
+          if(revised!==row.saldo){const before=clone(row),version=nextLedgerVersion(row.version);row.saldo=revised;row.version=version;
             row.updatedAt=now();p.ledgerEvents.push({id:id('lde'),action:'BALANCE_RECALCULATED',at:now(),
               reason:'Revisão da cadeia após '+input.action+' · '+text(reason),before,after:clone(row)});}
         }
