@@ -1,0 +1,14 @@
+{
+  "tools/stoikus-installer/src/Stoikus.Installer.App/ManualTargetForm.cs": "ddd8d06be5fa0ce7045a1d1e9ad1770c727c82ca3debf2428005f00035d0c45f",
+  "tools/stoikus-installer/src/Stoikus.Installer.App/Program.cs": "5727cdd9320725b6a0c7862c7694a3f8c2a3fdede5f3fd200c798a10a6088f37",
+  "tools/stoikus-installer/src/Stoikus.Installer.App/Stoikus.Installer.App.csproj": "e729992ff0d639439a02f5f05ac78826953f2db23c9271c0cf1b3c8b70674418",
+  "tools/stoikus-installer/src/Stoikus.Installer.App/WizardForm.cs": "3c4c922eb98f3549c1a7de3a4627e21eec299376bd444f20b252e974536f5ebf",
+  "tools/stoikus-installer/src/Stoikus.Installer.App/WizardOperationState.cs": "40c8ce5c60b808652c4b0d9ce4348c650c27a0f16396c49bf114162753e41c2d",
+  "tools/stoikus-installer/src/Stoikus.Installer.App/app.manifest": "bd24e7fcf7638722a6e80ea571aeb19b193807a6e1bebc5dc17a06afd1bf8cf7",
+  "tools/stoikus-installer/docs/CLAREZA-REFERENCIA.md": "eb00eca8cb6b54a0605da53d44795de077b5c8dbe665642a8bf300c59b9890b7",
+  "tools/stoikus-installer/docs/VALIDACAO-INTERFACE.md": "9770fc47ae8ecf6f91df034ee00677bbb797c2550111c8f88d7a97eb2a4cb73c",
+  "tools/stoikus-installer/docs/guia-primeiro-uso.html": "fe3a4302fe826d1c5e586f555d007c7249d0e837c90b772b42e3263bd407412f",
+  "tools/stoikus-installer/ui-tests/Program.cs": "db457e9321618462915dafc5aab6150cfbeeb1e85e301763a8ebae66dddf25b4",
+  "tools/stoikus-installer/ui-tests/RecoveryIntegrationTests.cs": "5f244002ce8adbb2265931942432c68e7ebe8a0fad1f66b7eed1777a66c55645",
+  "tools/stoikus-installer/ui-tests/Stoikus.Installer.UiTests.csproj": "c8706bccabb66f4d44f38f375e7fc33aa702fca67c5f76c5e25366f96fc94a34"
+}

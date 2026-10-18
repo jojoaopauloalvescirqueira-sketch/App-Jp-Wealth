@@ -84,3 +84,10 @@ npm-debug.log*
 !downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.23.0.zip
 !downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip
 !downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Interface.zip
+
+# Stoikus installer local derivatives; candidate executables stay private.
+tools/stoikus-installer/generated/
+tools/stoikus-installer/artifacts/
+tools/stoikus-installer/**/bin/
+tools/stoikus-installer/**/obj/
+tools/stoikus-installer/history/

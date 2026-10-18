@@ -1,0 +1,21 @@
+{
+  "webMql": {
+    "count": 280,
+    "changed": []
+  },
+  "baseline": {
+    "count": 142,
+    "changed": [
+      "downloads/jpw-alavancagem-atual/manifest.json"
+    ]
+  },
+  "codeR2": {
+    "count": 23,
+    "changed": []
+  },
+  "historicalSnapshotsByteIdentical": {
+    "CURRENT-STATE": true,
+    "ACTIVE-TASK": true,
+    "HANDOFF": true
+  }
+}

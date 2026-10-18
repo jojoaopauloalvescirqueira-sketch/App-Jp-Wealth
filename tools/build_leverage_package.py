@@ -260,11 +260,65 @@ def daily_inventory(sources: list[str], dependencies: dict[str, set[str]]) -> se
     return selected | {DAILY_GUIDE}
 
 
-def build(root: Path = ROOT) -> dict:
+
+INSTALLER_FILENAME = "Stoikus_Setup_1.0.0-beta.1_win-x64.exe"
+INSTALLER_RELEASE_PREFIX = "https://github.com/jojoaopauloalvescirqueira-sketch/App-Jp-Wealth/releases/download/"
+
+
+def validate_installer_record(root: Path, record: dict, product_version: str) -> None:
+    """Installer evidence is separate from the SDK's nativeArtifact contract."""
+    if (not isinstance(record, dict) or type(record.get("available")) is not bool
+            or record.get("installerVersion") != "1.0.0-beta.1"
+            or record.get("productVersion") != product_version or record.get("platform") != "win-x64"
+            or record.get("filename") != INSTALLER_FILENAME or record.get("unsigned") is not True):
+        raise ValueError("Metadados do instalador invalidos")
+    stages = record.get("nativeTests")
+    if not isinstance(stages, dict) or set(stages) != {"windowsX64", "parallelsArm", "browser"}:
+        raise ValueError("Estados nativos do instalador ausentes")
+    if any(value not in ("PASS", "NOT_RUN", "PRODUCT_FAIL", "ENVIRONMENT_ERROR") for value in stages.values()):
+        raise ValueError("Estado nativo do instalador invalido")
+    if record["available"]:
+        sha = record.get("sha256")
+        if not re.fullmatch(r"[a-f0-9]{64}", str(sha)) or not all(value == "PASS" for value in stages.values()):
+            raise ValueError("Instalador publico exige provas do mesmo EXE")
+        relative = record.get("path")
+        if relative != OUTPUT + INSTALLER_FILENAME:
+            raise ValueError("Caminho do instalador invalido")
+        raw = checked_file(root, relative, OUTPUT).read_bytes()
+        if (type(record.get("bytes")) is not int or not 0 < record["bytes"] <= 9007199254740991
+                or len(raw) != record["bytes"] or hashlib.sha256(raw).hexdigest() != sha):
+            raise ValueError("EXE diverge dos metadados")
+        url = record.get("releaseUrl")
+        if not isinstance(url, str) or not re.fullmatch(re.escape(INSTALLER_RELEASE_PREFIX) + r"[A-Za-z0-9._-]+/" + re.escape(INSTALLER_FILENAME), url):
+            raise ValueError("Release URL do instalador nao autorizada")
+        evidence = record.get("nativeEvidence")
+        if not isinstance(evidence, dict) or set(evidence) != set(stages):
+            raise ValueError("Recibos nativos do instalador ausentes")
+        for stage, item in evidence.items():
+            if (not isinstance(item, dict) or not isinstance(item.get("path"), str)
+                    or not re.fullmatch(r"docs/validation/[A-Za-z0-9_./-]+\.json", item["path"])):
+                raise ValueError("Recibo nativo invalido")
+            receipt_raw = checked_file(root, item.get("path"), "docs/validation/").read_bytes()
+            if hashlib.sha256(receipt_raw).hexdigest() != item.get("sha256"):
+                raise ValueError("Hash do recibo nativo diverge")
+            receipt = json.loads(receipt_raw)
+            if receipt.get("candidateSha256") != sha or receipt.get("stage") != stage or receipt.get("status") != "PASS":
+                raise ValueError("Recibo nativo pertence a outro candidato ou etapa")
+    else:
+        if any(record.get(key) is not None for key in ("path", "releaseUrl", "sha256", "bytes", "nativeEvidence")):
+            raise ValueError("Instalador indisponivel nao deve anunciar artefato publico")
+        if not isinstance(record.get("reason"), str) or not record["reason"]:
+            raise ValueError("Instalador indisponivel exige motivo")
+
+
+def build(root: Path = ROOT, *, installer_record: dict | None = None) -> dict:
     manifest_file = checked_file(root, MANIFEST_PATH, OUTPUT)
     manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(manifest.get("version", ""))):
         raise ValueError("Manifesto de alavancagem sem schema ou versao valida")
+    installer = installer_record if installer_record is not None else manifest.get("downloads", {}).get("installer")
+    if installer is not None:
+        validate_installer_record(root, installer, manifest["version"])
     sources = manifest.get("sourceFiles")
     if (not isinstance(sources, list) or len(sources) < 4
             or not all(isinstance(relative, str) for relative in sources)
@@ -404,6 +458,8 @@ def build(root: Path = ROOT) -> dict:
         compiled_zip = make_archive(native_members)
         downloads["compiled"] = download_record(compiled_path, compiled_zip)
 
+    if installer is not None:
+        downloads["installer"] = installer
     manifest["downloads"] = downloads
     write_changed(root / source_path, source_zip)
     write_changed(root / daily_path, daily_zip)

@@ -1,0 +1,42 @@
+{
+  "base": "0037bd3c8a7ab2b4e21f7fdcb60f66ed93230874",
+  "scope": "final recovery delta; source only, before R2 EXE",
+  "R1CodeReconstructionMatched": 22,
+  "changedSinceR1": [
+    "tools/stoikus-installer/docs/VALIDACAO-INTERFACE.md",
+    "tools/stoikus-installer/docs/guia-primeiro-uso.html",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/WizardForm.cs",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/WizardOperationState.cs",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/Contracts.cs",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/InstallerService.cs",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/Transactions.cs",
+    "tools/stoikus-installer/tests/Stoikus.Installer.Tests/Program.cs",
+    "tools/stoikus-installer/ui-tests/Program.cs",
+    "tools/stoikus-installer/ui-tests/RecoveryIntegrationTests.cs"
+  ],
+  "sha256": {
+    "tools/stoikus-installer/docs/CLAREZA-REFERENCIA.md": "eb00eca8cb6b54a0605da53d44795de077b5c8dbe665642a8bf300c59b9890b7",
+    "tools/stoikus-installer/docs/VALIDACAO-INTERFACE.md": "9770fc47ae8ecf6f91df034ee00677bbb797c2550111c8f88d7a97eb2a4cb73c",
+    "tools/stoikus-installer/docs/guia-primeiro-uso.html": "fe3a4302fe826d1c5e586f555d007c7249d0e837c90b772b42e3263bd407412f",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/ManualTargetForm.cs": "ddd8d06be5fa0ce7045a1d1e9ad1770c727c82ca3debf2428005f00035d0c45f",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/Program.cs": "5727cdd9320725b6a0c7862c7694a3f8c2a3fdede5f3fd200c798a10a6088f37",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/Stoikus.Installer.App.csproj": "e729992ff0d639439a02f5f05ac78826953f2db23c9271c0cf1b3c8b70674418",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/WizardForm.cs": "3c4c922eb98f3549c1a7de3a4627e21eec299376bd444f20b252e974536f5ebf",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/WizardOperationState.cs": "40c8ce5c60b808652c4b0d9ce4348c650c27a0f16396c49bf114162753e41c2d",
+    "tools/stoikus-installer/src/Stoikus.Installer.App/app.manifest": "bd24e7fcf7638722a6e80ea571aeb19b193807a6e1bebc5dc17a06afd1bf8cf7",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/Compilation.cs": "49445ef6465c6b3c2e16caf4eb83e87d416510fdd546c957c3deb023be221853",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/Contracts.cs": "7f1999eb7117c2d77bb2900b070586a24424869044f0d51da4c7efc5d907fc59",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/InstallerService.cs": "70abcaaadc122629e4d0c910c35c21e427ff9cefd0ebcac593e6fd24b16939ad",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/StateModels.cs": "79d05deb013a344a421d1bbaffffc0804fd8da57007fc03c3a65dd5c4db7cbef",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/Stoikus.Installer.Core.csproj": "32d8bca01eca74ff14fc01efd84cd620d38f1ff6e27e262159fce7c698bf54a7",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/Transactions.cs": "1082b0f2a49f5118a999b9436d9b8e9291463874f71e87c2d009d43c08b3557f",
+    "tools/stoikus-installer/src/Stoikus.Installer.Core/WindowsInstallerPlatform.cs": "993c2ff0ed56fa2adf09006bca200dc0fa5a2cb618d846625cbe0ca3302465d0",
+    "tools/stoikus-installer/tests/NuGet.Config": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c",
+    "tools/stoikus-installer/tests/README.md": "828d7f4c5d4dd28383dcd3ecadbfce872adc5c09460354c87b6ae13bb5505437",
+    "tools/stoikus-installer/tests/Stoikus.Installer.Tests/Program.cs": "f06420d65da0c2aafd52e927351ce14782af498e5b2d79c126bdd9575dc40ec7",
+    "tools/stoikus-installer/tests/Stoikus.Installer.Tests/Stoikus.Installer.Tests.csproj": "a9195c4c0e42c8b935cebf18af5f13cbd583f62035e2d69254555c0129ff9c24",
+    "tools/stoikus-installer/ui-tests/Program.cs": "db457e9321618462915dafc5aab6150cfbeeb1e85e301763a8ebae66dddf25b4",
+    "tools/stoikus-installer/ui-tests/RecoveryIntegrationTests.cs": "5f244002ce8adbb2265931942432c68e7ebe8a0fad1f66b7eed1777a66c55645",
+    "tools/stoikus-installer/ui-tests/Stoikus.Installer.UiTests.csproj": "c8706bccabb66f4d44f38f375e7fc33aa702fca67c5f76c5e25366f96fc94a34"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "candidate": "R2",
+  "filename": "Stoikus_Setup_1.0.0-beta.1_win-x64.exe",
+  "bytes": 116779573,
+  "sha256": "e326a7e9e5fb2bf2dd36e6406468a10d82af8ba1696c6affa672ca056bbcb1eb",
+  "machine": "0x8664",
+  "optionalMagic": "0x20b",
+  "certificateTable": {
+    "offset": 0,
+    "bytes": 0
+  },
+  "unsigned": true,
+  "nativeExecution": "NOT_RUN",
+  "metadataMatches": true,
+  "scope": "PE structure and local provenance only"
+}

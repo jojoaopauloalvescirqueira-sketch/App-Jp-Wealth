@@ -338,6 +338,25 @@
       "sha256": null,
       "bytes": null,
       "reason": "NOT_RUN: nenhum EX5 deste candidato comprovado."
+    },
+    "installer": {
+      "available": false,
+      "installerVersion": "1.0.0-beta.1",
+      "productVersion": "1.23.0",
+      "platform": "win-x64",
+      "filename": "Stoikus_Setup_1.0.0-beta.1_win-x64.exe",
+      "path": null,
+      "releaseUrl": null,
+      "sha256": null,
+      "bytes": null,
+      "unsigned": true,
+      "nativeTests": {
+        "windowsX64": "NOT_RUN",
+        "parallelsArm": "NOT_RUN",
+        "browser": "NOT_RUN"
+      },
+      "nativeEvidence": null,
+      "reason": "Candidato beta não assinado. Provas do mesmo EXE em Windows x64, Parallels ARM e navegador: NOT_RUN; download público indisponível."
     }
   },
   "integration": {

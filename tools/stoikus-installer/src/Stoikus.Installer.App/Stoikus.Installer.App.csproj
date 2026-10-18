@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishAot>false</PublishAot>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>1.0.0-beta.1</Version>
+    <AssemblyName>JPWealth.Stoikus.Installer</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Stoikus.Installer.Core/Stoikus.Installer.Core.csproj" />
+    <EmbeddedResource Include="../../generated/payload.zip" LogicalName="Stoikus.Payload.zip" />
+    <EmbeddedResource Include="../../generated/payload.json" LogicalName="Stoikus.Payload.json" />
+    <EmbeddedResource Include="../../docs/guia-primeiro-uso.html" LogicalName="Stoikus.Guide.html" />
+    <EmbeddedResource Include="Assets/stoikus-assinatura-clara-2x.png" LogicalName="Stoikus.Brand.Light.png" />
+    <EmbeddedResource Include="Assets/stoikus-assinatura-escura-2x.png" LogicalName="Stoikus.Brand.Dark.png" />
+  </ItemGroup>
+</Project>

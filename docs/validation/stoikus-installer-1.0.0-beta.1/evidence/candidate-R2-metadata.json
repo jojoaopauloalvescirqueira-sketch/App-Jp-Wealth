@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "installerVersion": "1.0.0-beta.1",
+  "productVersion": "1.22.1",
+  "platform": "win-x64",
+  "filename": "Stoikus_Setup_1.0.0-beta.1_win-x64.exe",
+  "sha256": "e326a7e9e5fb2bf2dd36e6406468a10d82af8ba1696c6affa672ca056bbcb1eb",
+  "bytes": 116779573,
+  "unsigned": true,
+  "scope": "LOCAL_CANDIDATE_ONLY",
+  "sdkVersion": "10.0.402",
+  "payloadSha256": "2dd00aa8a4b4cb90f6b4eca36af4ef8d3e475ad5c856e163d9dc5c19fe6a99cf",
+  "payloadManifestSha256": "c92cc8223df899af7a90b3b7106a9d69c4326ec0b7d371dd24c6fc8586a12515",
+  "nativeTests": {
+    "windowsX64": "NOT_RUN",
+    "parallelsArm": "NOT_RUN",
+    "browser": "NOT_RUN"
+  },
+  "publicDownloadAvailable": false
+}

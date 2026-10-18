@@ -16,10 +16,10 @@ const entry = kind => ({ available: true, path: `downloads/jpw-alavancagem-atual
 const manifest = () => ({ schemaVersion: 1, version: '1.22.1', validation: {
   compilation: { status: 'pending', detail: 'NOT_RUN' }, terminal: { status: 'pending', detail: 'NOT_RUN' } },
   downloads: { dailySource: entry('dailySource'), source: entry('source'), compiled: entry('compiled') } });
-function harness({ metadata = manifest(), bytes = payload, protocol = 'https:', embedded = {}, missingButton, duplicateKind, onFetch, responseOK=true, cryptoAvailable=true, networkFailure=false, redirect307=false, pageURL='https://jp.example/sub/index.html' } = {}) {
+function harness({ metadata = manifest(), bytes = payload, protocol = 'https:', embedded = {}, missingButton, duplicateKind, onFetch, responseOK=true, cryptoAvailable=true, networkFailure=false, redirect307=false, pageURL='https://jp.example/sub/index.html', mime='application/zip' } = {}) {
   const downloads = [], requests=[], blobs=[], notices = { textContent: '', dataset: {} }, metas = new Map(), buttons = {}, extraButtons = {};
-  const makeButton = () => ({ disabled: false, handlers: {}, addEventListener(event, fn) { this.handlers[event] = fn; } });
-  for (const kind of ['dailySource', 'source', 'compiled','nativeKit','nativePin','preview']) {
+  const makeButton = () => ({ disabled: false, textContent: 'Instalador .exe · indisponível', handlers: {}, addEventListener(event, fn) { this.handlers[event] = fn; } });
+  for (const kind of ['dailySource', 'source', 'compiled','nativeKit','nativePin','preview','installer']) {
     if (kind === missingButton) continue;
     buttons[kind] = makeButton();
     if(kind === duplicateKind)extraButtons[kind] = makeButton();
@@ -42,7 +42,7 @@ function harness({ metadata = manifest(), bytes = payload, protocol = 'https:', 
     downloadAction:()=>({signal:undefined,current:()=>true,done(){}}),
     document, el: () => notices, location: { protocol, href:pageURL }, Uint8Array, Blob, crypto:cryptoAvailable?webcrypto:{},
     fetch: async (url, options) => { requests.push({url,options});if(redirect307&&options?.redirect==='error')throw new Error('Hosted 307 redirect refused');if(networkFailure)throw new Error('Network unavailable');if(onFetch)await onFetch({buttons,extraButtons});
-      return { ok: responseOK&&!redirect307, arrayBuffer: async () => Uint8Array.from(bytes).buffer }; },
+      return { ok: responseOK&&!redirect307, headers:{get:()=>mime}, arrayBuffer: async () => Uint8Array.from(bytes).buffer }; },
     URL: class extends URL { static createObjectURL(blob) {blobs.push(blob);return 'blob:fixture';} static revokeObjectURL() {} }, setTimeout() {},
     atob: value => Buffer.from(value, 'base64').toString('binary') });
   const resources={},payloads={};
@@ -170,10 +170,40 @@ function harness({ metadata = manifest(), bytes = payload, protocol = 'https:', 
     const guarded=harness({metadata,redirect307:true,embedded:{[kind]:{mime,base64:payload.toString('base64')}}});
     await guarded.click(kind);assert.deepEqual(guarded.downloads,[]);assert.equal(guarded.requests.length,1);assert.equal(guarded.requests[0].options.redirect,'error');
   }
+  console.log('PASS installer release guard, version, filename, native receipt, MIME, size/hash and portable exclusion');
   console.log('PASS hosted preview pinned bytes despite 307/injected HTML; missing/wrong MIME/corrupt embedded preview refused without network fallback on HTTP/HTTPS/file');
   for(const change of [m=>delete m.interfaceRelease,m=>{m.interfaceRelease.revision='R2';},m=>{m.interfaceRelease.candidate='1.22.1-interface';},m=>{m.interfaceRelease.state='PASSED';},m=>{m.interfaceRelease.nativeCompilation='PASS';},m=>{m.downloads.compiled=entry('compiled');}]){
     const metadata=interfaceManifest();change(metadata);const h=artifactHarness('preview',{metadata});assert(['nativeKit','nativePin','preview'].every(k=>h.buttons[k].disabled));await h.click('source');assert.deepEqual(h.downloads,['fixture-source.zip']);}
   console.log('PASS '+releaseRevision+' nativeKit/nativePin/preview real bytes and MIME; size/hash/corruption/path refusal; offline and network errors; no crypto; optional metadata; page URL; concurrent double click');
+  const installer = () => ({ available: true, installerVersion: '1.0.0-beta.1', productVersion: '1.23.0',
+    platform: 'win-x64', unsigned: true, filename: 'Stoikus_Setup_1.0.0-beta.1_win-x64.exe',
+    path: 'downloads/jpw-alavancagem-atual/Stoikus_Setup_1.0.0-beta.1_win-x64.exe',
+    releaseUrl: 'https://github.com/jojoaopauloalvescirqueira-sketch/App-Jp-Wealth/releases/download/installer-v1.0.0-beta.1/Stoikus_Setup_1.0.0-beta.1_win-x64.exe',
+    sha256: sha(payload), bytes: payload.length,
+    nativeTests: { windowsX64: 'PASS', parallelsArm: 'PASS', browser: 'PASS' },
+    nativeEvidence: Object.fromEntries(['windowsX64','parallelsArm','browser'].map(stage => [stage,
+      {path: `docs/validation/stoikus-installer/${stage}.json`, sha256: sha(payload)}])) });
+  const installerRelease=manifest();installerRelease.version='1.23.0';installerRelease.downloads.installer=installer();
+  const enabledInstaller=harness({metadata:installerRelease,mime:'application/octet-stream'});
+  assert.equal(enabledInstaller.buttons.installer.disabled,false,'verified installer metadata must enable its explicit download');
+  await enabledInstaller.click('installer');assert.deepEqual(enabledInstaller.downloads,[installer().filename]);
+  assert.equal(enabledInstaller.requests[0].url,installer().releaseUrl,'installer must use the declared repository release URL');
+  const offlineInstaller=harness({metadata:installerRelease,protocol:'file:'});
+  assert.equal(offlineInstaller.buttons.installer.disabled,true,'installer must never be embedded in the portable page');
+  for(const delta of [{available:false},{productVersion:'1.22.1'},{filename:'Stoikus_Setup_other.exe'},
+    {nativeTests:{windowsX64:'NOT_RUN',parallelsArm:'PASS',browser:'PASS'}},
+    {releaseUrl:'https://evil.example/setup.exe'},{nativeEvidence:null},{unsigned:false},
+    {releaseUrl:installer().releaseUrl+'?unsafe=1'},{path:'downloads/jpw-alavancagem-atual/../bad.exe'}]){
+    const metadata=structuredClone(installerRelease);metadata.downloads.installer={...installer(),...delta};
+    const h=harness({metadata});assert.equal(h.buttons.installer.disabled,true);
+    await h.click('installer');assert.deepEqual(h.downloads,[]);
+  }
+  for(const [opts,expected] of [[{mime:'text/html'},/Tipo/],
+    [{mime:'application/octet-stream',bytes:Buffer.alloc(payload.length,120)},/Hash/],
+    [{mime:'application/octet-stream',bytes:Buffer.concat([payload,Buffer.from('x')])},/Tamanho/]]){
+    const h=harness({metadata:installerRelease,...opts});await h.click('installer');
+    assert.deepEqual(h.downloads,[]);assert.match(h.notices.textContent,expected);
+  }
   console.log('PASS daily/source/compiled online; daily offline; corrupt size/hash; legacy and invalid manifests; unsafe records; absent button');
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

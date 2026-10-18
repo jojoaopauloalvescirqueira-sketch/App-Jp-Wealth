@@ -1,0 +1,9 @@
+{
+  "tools/stoikus-installer/src/Stoikus.Installer.Core/WindowsInstallerPlatform.cs": "993c2ff0ed56fa2adf09006bca200dc0fa5a2cb618d846625cbe0ca3302465d0",
+  "tools/stoikus-installer/src/Stoikus.Installer.Core/StateModels.cs": "79d05deb013a344a421d1bbaffffc0804fd8da57007fc03c3a65dd5c4db7cbef",
+  "tools/stoikus-installer/src/Stoikus.Installer.Core/Transactions.cs": "1082b0f2a49f5118a999b9436d9b8e9291463874f71e87c2d009d43c08b3557f",
+  "tools/stoikus-installer/src/Stoikus.Installer.Core/InstallerService.cs": "70abcaaadc122629e4d0c910c35c21e427ff9cefd0ebcac593e6fd24b16939ad",
+  "tools/stoikus-installer/src/Stoikus.Installer.Core/Compilation.cs": "49445ef6465c6b3c2e16caf4eb83e87d416510fdd546c957c3deb023be221853",
+  "tools/stoikus-installer/src/Stoikus.Installer.Core/Contracts.cs": "7f1999eb7117c2d77bb2900b070586a24424869044f0d51da4c7efc5d907fc59",
+  "tools/stoikus-installer/tests/Stoikus.Installer.Tests/Program.cs": "f06420d65da0c2aafd52e927351ce14782af498e5b2d79c126bdd9575dc40ec7"
+}
