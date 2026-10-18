@@ -1,3 +1,15 @@
+## Consolidação18/10/2026 — candidato integrado em validação
+
+Reúne as entregas web, F01 e instalador para Stoikus1.23.0/R5, com commits e provas por trilha. O runner visual recebe somente a opção de compilação autorizada; cálculos, fontes MQL, curadoriaC2 e pacotes históricos permanecem. Novos gates do conjunto e estados nativos são registrados separadamente.
+
+# Candidato de integração — 18/10/2026 — consolidação dos trabalhos locais
+
+- Reconciliar Gêmeos do Tempo, campo vivo, Bolsas Globais, PF congelado e JP Engenharia com a main pósPR42, preservando Stoikus1.23.0/R5 e documentação curada.
+- Preservar a ordem relativa dos scripts existentes e os controles R5/worker/downloads, acrescentando os módulos locais e a distribuição de mercado pelo gerador oficial.
+- Resultados da combinação pertencem a novas evidências; testes antigos e incidentes históricos permanecem separados. Sem alteração de regra financeira ou dado real; publicação fora desta ação.
+
+## Fotografias anteriores preservadas
+
 # 2026-10-16 — integração Stoikus 1.23.0/R5
 
 - Integra fontes, interface e guias R5 ao JP Wealth atual, preservando o carregamento de downloads sob demanda, os MiniGames e os demais módulos da main.
@@ -18,6 +30,83 @@
 - Histórico Pessoal conserva auditoria integral e tipada em etapas no mesmo snapshot. Verifica mudanças externas de geração e ownership antes de mutações, confirma recuperação antes de publicá-la, cancela consultas antigas e só confirma exportações completas. Schema, registros e cálculo1.9.0 preservados.
 - Monitor diferencia espera, atividade, degradação e recuperação; a mesma condição não repete logs a cada segundo. Falha de abertura de lock informa erro e causas possíveis sem atribuir ownership a outro produtor sem prova.
 - Produto1.22.2 / MQL1.222. Pacotes anteriores e recibos históricos preservados. Compilação, instalação e aceite nativos dependem dos mesmos bytes; Windows ARM/Parallels e Windows x64 têm provas distintas. Sem negociação, commit, push, merge ou publicação nesta tarefa.
+
+
+## Fotografia local anterior recuperada — sem transferência de validação
+
+# Candidato local —2026-10-17 — remoção completa do menu congelado
+
+- Corrigida a permanência do submenu explorado na lateral após congelar o módulo enquanto outra página continua ativa. Botão e submenu desaparecem juntos; o foco sai dos itens ocultados.
+- Explorações válidas, rota, dados e preferências são preservados. Descongelar não reabre o submenu antigo. Caso permanente AV-NAV-FROZEN, com reprodução causal; resultados e limites no registro de Finanças Pessoais abaixo.
+
+# Candidato local —2026-10-16 — Finanças Pessoais congelado por padrão
+
+- Finanças Pessoais passa a usar o estado congelado quando não há preferência explícita; a mesma gestão reversível permanece em Configurações.
+- Dados, histórico, fórmulas e formato de backup preservados, sem migração ou gravação inicial. Overrides explícitos continuam válidos.
+- Retomada de formulários conserva o foco original mesmo quando outro módulo já está congelado; a regressão revelada pelo novo padrão recebe proteção permanente.
+- Testes operacionais mantêm cobertura mediante ativação sintética deliberada. [Escopo e evidências](docs/work/CHG-JPW-PF-DEFAULT-FROZEN-20261016.md). Sem commit, merge, push ou publicação.
+
+# Candidato local —2026-10-16 — Bolsas Globais: próximas sessões e meio-dia
+
+## 2026-10-16 — Bolsas Globais minimalista (candidato local)
+
+- Correção após avaliação visual: contorno externo arredondado e respiro responsivo, com foco preservado. FonteCSS local e caso visualMIN10; execução/limites no CHG dedicado.
+
+- Superfície sem cartões/divisórias repetidos; resumo selecionado compacto e dois balões[i] com teclado/toque e fechamento por ciclo de vida.
+- Referência HH:mmUTC, explicações sob demanda e mensagens vazias distintas; sessões, próximas24h, câmera de meio-dia/10s e dados preservados.
+- Provas causais permanentes para pesquisa vazia, Fechar em zoom e foco ao recolher mapa; validação e limites no CHG-JPW-MARKET-MINIMAL-20261016, com aceite humano separado. Sem Git/publicação.
+
+- Abertas passa a ser o primeiro filtro e a entrada inicial. Próximas24horas separa aberturas e retomadas confirmadas, com espera e janelas precisas, sem inflar a contagem de abertas agora.
+- Índice efêmero de próximas sessões respeita lacunas e cobertura; calendários compilados e fusos preservados. Seleção, linhas, foco e rolagem conservam seus contratos.
+- Globo orientado pelo meridiano aproximado do meio-dia solar médio, com exploração livre, retorno após10segundos e pausa completa quando oculto. Movimento reduzido e fallback recebem o mesmo destino geográfico.
+- [Contrato e provas](docs/architecture/MARKET-HOURS.md). Sem dependências, dados persistidos ou regras financeiras novas; três minigames e design macOS preservados. Sem commit, merge, push ou publicação.
+
+# Candidato local —2026-10-16 — Bolsas Globais: composição macOS
+
+- Superfície integrada com filtros segmentados, pesquisa e lista com seleção na linha inteira; fatos da bolsa selecionada aparecem acima do globo.
+- Layout responde à largura disponível no aplicativo; painel estreito mantém lista primeiro e mapa recolhido, sob demanda. Foco, consulta e instância do globo conservam seus contratos.
+- Fonte do sistema, divisórias discretas, superfícies claras/escuras e halo reduzido pelas opções existentes do Aisol. Sem novas dependências, calendário, persistência ou regra financeira.
+- [Contrato e provas](docs/architecture/MARKET-HOURS.md); validação e aceite humano são estados separados. Preservados os três minigames e a instalação JP Engenharia. Sem commit, merge, push ou publicação.
+
+# Candidato local — 2026-10-16 — Bolsas Globais: consulta primeiro
+
+- Lista prioriza bolsas abertas, com resumo, busca e atalhos Todas/Abertas/Sem confirmação. Estados e próxima mudança usam linguagem direta, preservando lacunas e janelas do calendário.
+- Desktop reúne consulta à esquerda e mapa/detalhe à direita; celular inicia com lista, mapa expansível e detalhe junto à seleção. Informações técnicas ficam em seções recolhíveis.
+- Um predicado compartilhado mantém contagem e filtro coerentes, inclusive em praças parcialmente abertas. Seleção, foco e busca são preservados; mapa recolhido fica suspenso.
+- Sem mudança financeira, persistência, calendários, Aisol ou dependências. Guia conserva IDs. [Contrato](docs/architecture/MARKET-HOURS.md); testes e aceite pertencem aos recibos do candidato resultante. Sem commit, merge, push ou publicação.
+
+# Candidate em validação — 2026-10-15 — Bolsas Globais
+
+- Nova área Ferramentas e Serviços → Bolsas Globais, globo Aisol/Three local e tabela sincronizada de16praças com B3 inicial.
+- Fases de ações conforme calendário, grupos e fontes explícitos, fusos congelados e lacunas preservadas como desconhecidas; sem dados financeiros ou preferência nova.
+- Renderer e catálogo sob demanda com verificação de integridade; distribuição HTTP/PWA/file/portátil pelo gerador oficial, mantendo os três minigames.
+- Evidências e revisão final em curso; sem commit, merge, push ou publicação nesta entrega.
+
+# Candidate em validação — 2026-10-15 — aprendizado no campo vivo
+
+- Introdução opcional em três passos e descobertas controladas, preservando o campo aceito e a exploração livre.
+- Orientação vista, prática observada e salto separados; progresso auxiliar estrito em nova chave, sem guardar parâmetros ou dados financeiros.
+- Comparações com mesmo início, prazo e eixos, calculadas pelo motor puro; mudança de profundidade explica o efeito local.
+- Registros incompatíveis, conflito entre abas, falha/resultado desconhecido e reinício explícito recebem tratamentos distintos. As regressões passam a exercitar o campo e suas lições, preservando os comandos do gate; a nova chave integra a limpeza auxiliar explícita.
+- Validação final em curso; resultado de cada execução fica no seu próprio recibo. Sem operações Git ou publicação.
+
+# Em execução — 2026-10-15 — Correntes de Capital: campo vivo
+
+- Redesign aprovado após teste do proprietário: campo plano de pressão/preço substitui nave e campanha.
+- Primeira fatia em desenvolvimento: motor puro, vetores/linhas/partículas, seleção e controles, sem gravação de parâmetros/progresso.
+- Preview de percepção antes de ampliar descobertas. Resultados históricos abaixo permanecem nas suas revisões; validação final e aceite ainda pendentes. Sem operações Git/publicação.
+
+# Candidate local — Correntes de Capital, 15/10/2026
+
+- Terceiro cartão MiniGames: nave-carteira com campo vetorial de alocação, seis missões, compromissos de caixa e laboratório livre. Galton Board e Gêmeos do Tempo preservados.
+- Motor puro com passo fixo, execução com custos/capacidade e replays determinísticos; camada de investigação distingue deslocamento, patrimônio e caixa, sem revelar pulsos futuros.
+- Progresso auxiliar estrito, montagem lazy, pausa/descarte por sessão, regressões dedicadas e distribuições pelo gerador oficial. Guia mantém seus identificadores. [Contrato](docs/architecture/CAPITAL-CURRENTS.md). Resultados e limites serão associados ao candidate nos recibos próprios; sem operações Git/publicação.
+
+# Candidate local — Gêmeos do Tempo, 15/10/2026
+
+- MiniGames recebe um segundo cartão, com jornada de seis experimentos e laboratório livre para dois investidores fictícios. A apresentação separa principal, retornos e aportes futuros, com trajetória individual e comparação contrafactual.
+- Cinco módulos clássicos isolados, montagem lazy e descarte por sessão; progresso de IDs/estados em chave auxiliar própria, fora do estado financeiro e Backup Completo. Guia mantém IDs, 57 passos, sete trilhas e versão 1.
+- Manifesto, precache e gerador oficial incorporam as fontes locais. Checks dedicados de unidade/browser e MiniGames entram em FULL, preservando os anteriores. [Contrato e limites](docs/architecture/TIME-TWINS.md); resultados são documentados nos recibos do candidato. Sem commit, merge, push ou publicação nesta tarefa.
 
 # Candidate local — guia interativo de 13/10/2026
 

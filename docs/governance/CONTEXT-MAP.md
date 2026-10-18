@@ -1,3 +1,24 @@
+## Foco atual — integração das pendências18/10/2026
+
+- [Contrato da combinação](../work/CHG-JPW-CONSOLIDACAO-INTEGRAL-20261018.md); tarefa e estado reconciliados, fotografias individuais preservadas.
+- F01, site e instalador têm recibos focais. FULL/host, Git, Windows/MT5 e aceite da combinação são estados separados.
+
+# Rota focal — instalador 1.23.0/R4 — 18/10/2026
+
+[Contrato autorizado](../work/CHG-STOIKUS-INSTALLER-R4-20261018.md), [implementação e geração](../../tools/stoikus-installer/README.md), [estado atual](CURRENT-STATE.md). Os recibos R1/R2 do instalador permanecem históricos do produto1.22.1; R3 permanece histórico com contraprova transacional registrada no R4. O novo candidato usa pacote1.23.0/R5; execução nativa e publicação não são inferidas da compilação cruzada.
+
+## Mapa anterior preservado
+
+# Consolidação local do JP Wealth — 18/10/2026
+
+Candidato em reconciliação na branch `codex/bolsas-globais-aisol-20261015`, base `bf0b1e8a882c9cdf880129f68f7c111e06e6f0c4` (main após PR42). O pedido humano vigente autoriza resolver pendências, commit, push, merge e limpeza das worktrees após validação; esta etapa apenas prepara e testa a combinação. Publicação do site não integra esta entrega.
+
+Reúne os trabalhos locais de Gêmeos do Tempo, Correntes de Capital/campo vivo, Bolsas Globais e disponibilidade PF, com a instalação delimitada JP Engenharia1.3.0. Preserva fontes/pacotes Stoikus1.23.0/R5, cálculo1.9.0, edição documental curada1.0.0-c2 e fixture de downloads já integrada. [Contrato de reconciliação](../work/CHG-JPW-CONSOLIDACAO-SITE-20261018.md).
+
+A validação desta combinação terá evidências novas; o FULL81/81 do build40045045ce5acd15 é histórico e não aprova os bytes reconciliados. Os incidentes anteriores permanecem identificados nos seus recibos, sem transferir sua classificação para uma execução nova. O sintoma de PF ainda visível na aba pessoal continua dependente da versão/DOM do cliente; leitura sintética não comprova a aba real. Nenhum dado/cache/preferência pessoal será limpo. Aceite visual humano, compreensão dos jogos, Safari, leitor de tela e toque físico permanecem provas separadas.
+
+## Fotografias anteriores preservadas
+
 # Integração Git Stoikus 1.23.0/R5 — rota corrente — 2026-10-16
 
 Comece pelo [registro desta integração](../work/CHG-STOIKUS-GIT-INTEGRATION-20261016.md) e pelos [recibos da integração](../validation/stoikus-git-integration-20261016/README.md). A combinação com a main `2b22175a4f3f47b1f289deca65366c4dc0445dca` usa fontes candidatas **1.23.0 / MQL 1.230**, cálculo **1.9.0**, e build web congelado `a4672bde6f6e8965`. O catálogo Git desta integração inclui os pacotes R5 selados; o texto de 15/10 sobre entrega fora dos downloads publicados descreve a fotografia anterior.
@@ -59,6 +80,70 @@ Esta atualização documental e o novo grafo cobrem somente a suíte Stoikus do 
 ---
 
 ## Rotas anteriores preservadas
+
+
+## Fotografia local anterior recuperada — sem transferência de validação
+
+# Rota de engenharia local —16/10/2026
+
+Para trabalho de código: núcleo [AGENTS](../../AGENTS.md) → [roteamento](SKILL-ROUTING.md) → [JP Engenharia1.3.0](../../skills/jp-ai-engineering/SKILL.md) e [memória factual parcial](../../tools/regression-memory.json). Fontes, restrições e gates existentes prevalecem; o índice não é norma nem comprovação de cobertura completa. [Contrato da instalação](../work/CHG-JPW-ENGINEERING-INSTALL-20261016.md). Estado atual e tarefa continuam em [CURRENT-STATE](CURRENT-STATE.md) e [ACTIVE-TASK](../work/ACTIVE-TASK.md). Sem runtime de memória ou mudanças no produto.
+
+## Fotografias anteriores preservadas
+
+# Candidate completo — campo vivo com aprendizado opcional — 15/10/2026
+
+A implementação reúne o campo aprovado pelo proprietário, introdução opcional em três passos e três descobertas controladas. A abertura continua pausada e a exploração livre não depende de lições. Orientação vista, prática observada e salto são distintos; a prática registra ação e resultado, sem declarar compreensão humana. O “sim” do proprietário confirmou a direção visual da primeira fatia, não o aceite de todo o conjunto.
+
+Chave `jpwealth_capital_field_v1` restrita a versão/IDs/estados, com falha temporária, incompatibilidade, conflito e reinício explícito. A chave antiga permanece sem conversão; a nova participa somente da limpeza auxiliar solicitada. Galton, Gêmeos do Tempo, motor/renderer aceitos, núcleo financeiro, MT5/downloads, normas e instruções preservados. Sem mudança do Backup Completo ou dependências; sem commit, merge, push ou publicação.
+
+Raiz `/private/tmp/jpw-time-twins-20261015`, branch `codex/minigames-capital-currents-20261015`, HEAD/base `2b22175a4f3f47b1f289deca65366c4dc0445dca` mais o delta completo anterior. A revisão Git sozinha não identifica os bytes pendentes. Fontes, mapas, comandos, resultados dos gates, revisão independente, limites e recuperação são vinculados ao candidate no relatório `tools/.artifacts/capital-field-work-20261015/phase2/REPORT.md`. Consultar os recibos próprios; fotografias antigas não transferem aprovação. Baseline recuperável da continuação: `phase2/baseline.tar.gz` (1.047 arquivos).
+
+Diagnóstico corrigido da matriz: a antiga observação de 198 px de excesso no cabeçalho e a sobreposição posterior de Notas ocorreram com injeção de zoom CSS sem eventos de redimensionamento. Sem alterar o app, simular os eventos e aguardar o layout eliminou ambos nas 48 combinações; as asserções de excesso horizontal e seis pontos dos botões foram mantidas. Os REDs e a reclassificação como falha do teste ficam preservados. Isso verifica reflow CSS; zoom nativo, toque físico, leitor de tela e compreensão/diversão humana continuam sem prova própria.
+
+Prévia local isolada em `http://127.0.0.1:56627/`; o relatório identifica a versão servida. No aplicativo completo: Ferramentas e Serviços → MiniGames → Correntes de Capital. Modelo didático de pressão efetiva e deslocamento do preço; nenhuma previsão ou leitura de contas reais. Finalização técnica, avaliação humana e eventual operação Git são etapas separadas.
+
+## Fotografias anteriores preservadas
+
+# Estado focal — campo vivo com aprendizado opcional — 15/10/2026
+
+O proprietário confirmou com “sim” que a prévia apresenta a sensação de campo vetorial esperada. A continuação implementa a introdução opcional em três passos, três descobertas calculadas e progresso separado de orientação vista, prática observada e salto. A exploração livre permanece imediata e pausada. Essa resposta confirma a direção visual; compreensão, diversão e aceite integral não foram medidos.
+
+Candidate na raiz `/private/tmp/jpw-time-twins-20261015`, branch `codex/minigames-capital-currents-20261015`, HEAD/base `2b22175a4f3f47b1f289deca65366c4dc0445dca` mais o delta completo anterior de Gêmeos do Tempo. O motor e renderer aceitos permanecem; catálogo, progresso e apresentação foram revistos de forma independente. A nova chave `jpwealth_capital_field_v1` guarda somente versão, IDs e estados, preservando o progresso antigo. A integração de limpeza e regressões, a revisão final e os gates completos estão em execução; recibos históricos não certificam este candidate.
+
+Contrato: [CAPITAL-CURRENTS](../architecture/CAPITAL-CURRENTS.md) · execução e autoridade: [CHG/CTX](../work/CHG-JPW-CAPITAL-FIELD-20261015.md). Provas e mapas próprios em `tools/.artifacts/capital-field-work-20261015/phase2/`; baseline recuperável de 1.047 arquivos em `baseline.tar.gz`. A prévia `http://127.0.0.1:56627/` permanece na fatia visual aprovada enquanto a continuação é validada; não representa ainda todas as lições atuais.
+
+Limitação existente, preservada separadamente: cabeçalho compartilhado com excesso horizontal em 390 px e zoom CSS 200%, reproduzido antes de montar o campo; o campo cabe e não agrava. A verificação final registrará o resultado bruto, sem transformar dívida da baseline em PASS. Sem mudança de fórmulas/dados financeiros, formato de backup, regras, instruções ou dependências; sem commit, merge, push ou publicação.
+
+## Fotografias anteriores preservadas
+
+# Fotografia focal — Correntes de Capital: campo vivo — 15/10/2026
+
+## Checkpoint da primeira fatia — 15/10/2026
+
+Build `3488bf9e0a518eb0`, fontes verificadas pelo mapa `tools/.artifacts/capital-field-work-20261015/final-test-map.json` (1.047 arquivos, SHA-256 `4eb542438698583662b462b0ae5230eaf1c1a5aa80bd96771268fca774b11640`). Motor 8/8 PASS; teste Chromium focal PASS com gesto nativo de rolagem, seleção, zoom, pausa e isolamento. Integração PASS para a superfície em 48 combinações de layout/tela/tema/zoom, três diálogos e navegação dos outros jogos. HTTP, modular file, portátil isolado e PWA offline exercitam o cálculo real e preservam estado/armazenamento sintéticos. Validação do projeto e reprodutibilidade PASS. Fontes financeiras (40), MT5/downloads originais (147), Galton (6), Gêmeos (5) e instruções/normas (23) conservam os hashes da baseline.
+
+Limitação existente separada: BASELINE_FAIL no cabeçalho compartilhado em 390 px com CSS zoom 200% (198 px de excesso horizontal antes de montar o campo e também com ele; campo cabe e não agrava). Não corrigida neste recorte. Revisão independente de código/fix clean; crítico visual preferiu o campo nas duas telas e verificou a correção da explicação de profundidade. Comparação A/B tem pistas de identidade, sem cegamento completo; não é teste humano.
+
+Prévia direta isolada: `http://127.0.0.1:56627/`, sem bootstrap financeiro ou gravação de armazenamento. O jogo também está no terceiro cartão do candidate completo. Ponto humano previsto no plano: avaliar a presença/interação do campo antes de ampliar introdução guiada, descobertas e progresso. Novas persistência/gate completo/suíte host permanecem NOT_RUN nesta fatia intermediária; resultados anteriores não são transferidos. Sem commit, merge, push ou publicação. Detalhes, comandos, limites e recibos em `tools/.artifacts/capital-field-work-20261015/CHECKPOINT.md`.
+
+
+O proprietário aprovou substituir a expedição por um laboratório plano de pressão e preço. A primeira fatia está implementada e em validação sobre o candidate completo de Gêmeos do Tempo + Correntes de Capital (`fc7280e02921c857`), na branch `codex/minigames-capital-currents-20261015`. O campo é mostrado desde a abertura, pausado, com vetores, linhas de corrente, partículas e seleção de cenário. [Contrato e limites](../architecture/CAPITAL-CURRENTS.md) · [CHG/CTX](../work/CHG-JPW-CAPITAL-FIELD-20261015.md).
+
+Baseline recuperável de 1.043 arquivos e provas próprias em `tools/.artifacts/capital-field-work-20261015/`. Nenhuma alteração de regra financeira, dados, norma, instruções ou formato de backup; os outros dois jogos e seus deltas pendentes são preservados. Nesta fatia não há gravação de progresso; a chave antiga permanece. Os resultados da expedição anterior são históricos e não aprovam o redesign.
+
+O ponto de avaliação previsto é uma prévia jogável antes de ampliar descobertas/progresso. Gate completo, host/distribuição e compreensão/diversão humanas ainda pendentes para o novo candidate. Sem commit, merge, push ou publicação.
+
+## Fotografias anteriores preservadas
+
+# Candidate local — Correntes de Capital — 15/10/2026
+
+Fotografia focal deste trabalho: raiz `/private/tmp/jpw-time-twins-20261015`, branch `codex/minigames-capital-currents-20261015`, base Git `2b22175a4f3f47b1f289deca65366c4dc0445dca` mais o delta completo já existente de Gêmeos do Tempo e a implementação Correntes de Capital. A baseline de 1.033 arquivos e o freeze final identificam os bytes; o SHA de base sozinho não representa o candidate.
+
+Terceiro cartão de Ferramentas e Serviços → MiniGames, seis missões e laboratório livre. Progresso AUX isolado de IDs/estados, nenhuma escrita financeira. Galton, Gêmeos do Tempo, núcleo financeiro, fontes MT5 e downloads são preservados por comparação independente com a baseline. Contratos focais: [CHG/CTX](../work/CHG-JPW-CAPITAL-CURRENTS-20261015.md) e [modelo e experiência](../architecture/CAPITAL-CURRENTS.md). Evidências correntes em `tools/.artifacts/capital-currents-work/`; resultados finais pertencem aos recibos do mesmo freeze. A conclusão dos gates não é inferida desta fotografia.
+
+A autorização humana deste recorte cobre a implementação e a documentação delimitadas; não inclui commit, merge, push ou publicação. Aprendizado/diversão humana e aceite do proprietário permanecem NOT_RUN. Estes registros informativos não alteram norma, instruções, precedência ou critérios de aprovação. As autorizações de outras tarefas no histórico não se transferem a esta.
+
+## Fotografias anteriores preservadas
 
 # Rota corrente — entrega GitHub Stoikus — 2026-10-13
 

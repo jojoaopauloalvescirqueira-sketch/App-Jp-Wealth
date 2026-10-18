@@ -50,7 +50,7 @@
       "path": "src/js/00-core/08-module-availability.js",
       "section": "Module availability · local preference",
       "order": 8,
-      "sha256": "55241f8e5a7360dc26533c9a1a2d59aa2dfa0d780cf22408165f1c92f8b33237"
+      "sha256": "ac5f219d040a3512c4accbf1083e6be3baeca02e54370ec878d673a8689002a9"
     },
     {
       "path": "src/js/00-core/07-workspace-backup.js",
@@ -92,7 +92,7 @@
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
       "order": 15,
-      "sha256": "56fb0bcb92671ba7d68c1148fa6f37e70dacb1a2589f15df5c074862eaaa1d25"
+      "sha256": "b0dc2d2db1e9917c69c7200aee40e8e90bc4ec91ab8d6058af95f772116b8ac6"
     },
     {
       "order": 16,
@@ -170,7 +170,7 @@
       "order": 28,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "a5169e6040f9293ba31f3ad0e689a591f264cdf07bae900ee4bef7374371b4e2"
+      "sha256": "747a850939ba5300d5f336515c7a871b903600ad7e665dfa21d53c9ec36c5234"
     },
     {
       "order": 29,
@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "49529ee8221fb170db68b1bd8834c9cb21e4a4036c705dedbdbd7423ae7de00e"
+      "sha256": "04ca607bdc6665efc090f19c4bc182c3c9d3dcdc573438054fd49587128f14bf"
     },
     {
       "order": 34,
@@ -266,7 +266,7 @@
       "order": 44,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "ae3e0dc136fe1f7882a675a6c57bdec815945d3f92bb5c399922f88ddec2cba0"
+      "sha256": "2bec5f7bd975ed7e01980d4c7e4fee17f0ee930cefb99308c9bf512e53308f06"
     },
     {
       "order": 45,
@@ -302,7 +302,7 @@
       "order": 50,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "3b69863e10be08e2a73ded3c89a644403264c90dfb4c04ed04d1b2c436fc6440"
+      "sha256": "b357497957b11e446fe5329b021e1947dfd6836087bae9d9d608121b88b58854"
     },
     {
       "order": 51,
@@ -586,63 +586,153 @@
       "sha256": "f70d4b16b25c63cd75eedf65a7e873455fcb43ec5186957a26a7302cc2c1a7cb"
     },
     {
-      "path": "src/js/00-core/10-download-assets.js",
+      "path": "src/js/40-app/29-time-twins/01-simulation.js",
+      "section": "TIME TWINS · isolated educational game",
       "order": 98,
+      "sha256": "f7f09c0093f0b5d3584f1204bf55996bc60c9b31f7ba9587fe2588ee423922bb"
+    },
+    {
+      "path": "src/js/40-app/29-time-twins/02-missions.js",
+      "section": "TIME TWINS · isolated educational game",
+      "order": 99,
+      "sha256": "bbb810d3da792a9b1fd3f5750945891f2b4d1b8d8b9e1715fba2e788340df5ec"
+    },
+    {
+      "path": "src/js/40-app/29-time-twins/03-progress.js",
+      "section": "TIME TWINS · isolated educational game",
+      "order": 100,
+      "sha256": "bfe5eee4ef986f8c3aa573b8a4178fee62d408499291fe42e1402bbed96e50db"
+    },
+    {
+      "path": "src/js/40-app/29-time-twins/04-view.js",
+      "section": "TIME TWINS · isolated educational game",
+      "order": 101,
+      "sha256": "8be683d390d27da8b94f34ddca92056829e11dd8464b15d0e336a846db5c400d"
+    },
+    {
+      "path": "src/js/40-app/29-time-twins/05-controller.js",
+      "section": "TIME TWINS · isolated educational game",
+      "order": 102,
+      "sha256": "331473c0a627f4d18e85f7c472ee818394c2e5f0546cbbb16420feb9c53016d8"
+    },
+    {
+      "path": "src/js/40-app/30-capital-currents/01-engine.js",
+      "section": "CAPITAL CURRENTS · isolated educational game",
+      "order": 103,
+      "sha256": "55f6409cc25e6bfc3eee02d581c9b2b9d6f083485937b805e298d17075c69b1b"
+    },
+    {
+      "path": "src/js/40-app/30-capital-currents/02-scenarios.js",
+      "section": "CAPITAL CURRENTS · isolated educational game",
+      "order": 104,
+      "sha256": "fdab0dd90693d4278b24c5643788bf4768266b96332b6d9d21257862441ce7ea"
+    },
+    {
+      "path": "src/js/40-app/30-capital-currents/03-progress.js",
+      "section": "CAPITAL CURRENTS · isolated educational game",
+      "order": 105,
+      "sha256": "2c5511293709f599ed26f5bb850ada2273f36ddbed56f6c1a262b321d5df7b55"
+    },
+    {
+      "path": "src/js/40-app/30-capital-currents/04-field-renderer.js",
+      "section": "CAPITAL CURRENTS · isolated educational game",
+      "order": 106,
+      "sha256": "4bd8fbdf99c8c22e57de1724bf13570009a569f9e4b26f6b93b83476d164a3c4"
+    },
+    {
+      "path": "src/js/40-app/30-capital-currents/04-view.js",
+      "section": "CAPITAL CURRENTS · isolated educational game",
+      "order": 107,
+      "sha256": "89ca1fc0ab82c60067ff25be55cc8a32ed2a6ea3c519eca2696ea09b3921a868"
+    },
+    {
+      "path": "src/js/40-app/30-capital-currents/05-controller.js",
+      "section": "CAPITAL CURRENTS · isolated educational game",
+      "order": 108,
+      "sha256": "f1feb9ea39cfea07e5b1bd285fbf42bb390ba5f6fab39286ef32681f6cac72de"
+    },
+    {
+      "path": "src/js/00-core/10-download-assets.js",
+      "order": 109,
       "sha256": "e42f18df8612ac5599aeabc3b0fe364c314878d7bd13c0f6ad2fcc810470b378",
       "section": "PUBLIC DOWNLOADS · lazy verified assets"
     },
     {
+      "path": "src/js/40-app/31-market-hours/01-sessions.js",
+      "section": "BOLSAS GLOBAIS · 01-sessions",
+      "order": 110,
+      "sha256": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27"
+    },
+    {
+      "path": "src/js/40-app/31-market-hours/02-assets.js",
+      "section": "BOLSAS GLOBAIS · 02-assets",
+      "order": 111,
+      "sha256": "8b738a41e7ad2c625c1f7fac9afb770117df941970c46d55af140f2aabec8309"
+    },
+    {
+      "path": "src/js/40-app/31-market-hours/03-view.js",
+      "section": "BOLSAS GLOBAIS · 03-view",
+      "order": 112,
+      "sha256": "2617750ed456dd94bbb6bfbe13eb504083573b4bd09d27fe44c932e36613305a"
+    },
+    {
+      "path": "src/js/40-app/31-market-hours/04-controller.js",
+      "section": "BOLSAS GLOBAIS · 04-controller",
+      "order": 113,
+      "sha256": "70e678f588742b061c425e01da950a4ad07bab00959cfeee7676339e5a23ab33"
+    },
+    {
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
-      "order": 99,
-      "sha256": "62839f6e324f81f9d39b9a07d9c9076bd5711fba7d685a29a3a94592068fdcae"
+      "order": 114,
+      "sha256": "39470eb4b221ef1e5b6a72ea610243e964055e4b1dab5e19c7a7c7b964eb6b3b"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",
       "section": "Estrutura Normativa · local PDF reader",
-      "order": 100,
+      "order": 115,
       "sha256": "beaf00bb9f531496914d7147fd619bb6448cb761df6a6c6bc44a47f3dd3d3f8d"
     },
     {
       "path": "src/js/20-ui/31-forex-accounts.js",
       "section": "Contas e Período · gestão contextual de contas CFDs",
-      "order": 101,
+      "order": 116,
       "sha256": "2aab5fda4525f02f8d9c701fee28fac733578028cc7020b444e5336cb4688fd5"
     },
     {
       "path": "src/js/20-ui/33-module-work.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 102,
-      "sha256": "43325410aedc6d2e972d34b9618510f6f1cf2d224e7e08bb8b39d28ce9d1919f"
+      "order": 117,
+      "sha256": "8a9dc3595f12cc0d6f1d8d3f104f173687630f114d91ee42ffe1cf4a9c527d69"
     },
     {
       "path": "src/js/20-ui/32-module-availability.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 103,
+      "order": 118,
       "sha256": "c8bf4d2169885378efdc1f0ba9a03571f8cd8bd8c4b5c4da948d3b10c71ed261"
     },
     {
       "path": "src/js/40-app/26-learning-catalog.js",
       "section": "GUIA DO SITE · catálogo editorial local",
-      "order": 104,
-      "sha256": "dd1500f866666dec48e2cfba51263034faefd56e8e1d0904a28772ee23eb06b5"
+      "order": 119,
+      "sha256": "536521efada0bf4003444f7ee65ee556f278c7b2f429ee3e72958fa81b407879"
     },
     {
       "path": "src/js/00-core/09-learning-progress.js",
       "section": "GUIA DO SITE · progresso auxiliar validado",
-      "order": 105,
+      "order": 120,
       "sha256": "86396ca40e0fc1941c476e2b4645dac96618e11133941fd85f6a25927c0a2db2"
     },
     {
       "path": "src/js/40-app/27-learning-view.js",
       "section": "GUIA DO SITE · central e orientação contextual",
-      "order": 106,
+      "order": 121,
       "sha256": "6fbddab78dc3cbb402d6c41d699a4491e665a4d5a60293511a7f11060b75e729"
     },
     {
       "path": "src/js/40-app/28-learning-guide.js",
       "section": "GUIA DO SITE · controlador de observação",
-      "order": 107,
+      "order": 122,
       "sha256": "7ab6d853405f9bb8b6e54984f8f1d817d2856e6c2c88afa7fba68b32b2cd93e7"
     }
   ],
