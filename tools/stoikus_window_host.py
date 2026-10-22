@@ -7,6 +7,17 @@ INC=Path(__file__).resolve().parents[1]/'mt5/jpw-alavancagem-atual/MQL5/Include/
 def production(events_only=False):
     visual=(INC/'JPW_Stoikus_Visual.mqh').read_text()
     hud=(INC/'JPW_Stoikus_HUD.mqh').read_text()
+    # Includes are loaded in their production order. Focus is already supplied
+    # by callers; all three panel modules and the visual codec are real source.
+    def expand(name, seen):
+        if name in seen or name=='JPW_UI_Focus.mqh': return ''
+        seen.add(name)
+        return re.sub(r'#include <JPWealth/([^>]+)>',lambda m:expand(m[1],seen),(INC/name).read_text())
+    if not events_only:
+        cockpit=(INC/'JPW_Alavancagem_Cockpit.mqh').read_text()
+        codec=cockpit[cockpit.index('void JPWCockpitDefault('):cockpit.index('bool JPWCockpitVisible(')]
+        constants='\n'.join(line for line in cockpit.splitlines() if line.startswith('#define JPW_COCKPIT_') and not line.startswith('#define JPW_COCKPIT_METRIC_COUNT'))
+        return translate_arrays(constants+'\n'+codec+expand('JPW_Stoikus_HUD.mqh',set()))
     hud=re.sub(r'^#include[^\n]*','',hud,flags=re.M)
     if events_only:
         start=hud.index('string JPWStoikusHUDResource(')
@@ -14,10 +25,20 @@ def production(events_only=False):
         functions=[]
         for signature in ['void JPWStoikusHUDCancel()', 'string JPWStoikusHUDHit(const int x,const int y)', 'bool JPWStoikusHUDCovered(const int x,const int y)', 'bool JPWStoikusHUDEvent(const int id,const long &lparam,const double &dparam,const string &sparam,string &route)']:
             functions.append(signature+'{'+body_of(hud,signature)+'}\n')
-        hud=state+'\n'.join(functions)+'\n#endif\n'
+        prefs=(INC/'JPW_Stoikus_PanelPrefs.mqh').read_text()
+        bridge=(INC/'JPW_Stoikus_PanelBridge.mqh').read_text()
+        editor=(INC/'JPW_Stoikus_PanelEditor.mqh').read_text()
+        render='void JPWStoikusPanelEditorRender(const int cw,const int ch,const color ink,const color fill)'
+        actual_render=render+'{'+body_of(editor,render)+'}'
+        # Event-only fixtures intentionally have no painter. Keep every state,
+        # codec, persistence and editor event function real; exclude the unused
+        # render body rather than replacing editor outcomes.
+        start=editor.index(render);stop=editor.index('bool JPWStoikusPanelEditorKey(',start)
+        editor=editor[:start]+editor[stop:]
+        hud=state+'\n'+prefs+bridge+'extern bool g_raiz_details_open;\n'+editor+'\nint g_stoikus_metric_page=0;\n'+'\n'.join(functions)+'\n#endif\n'
     return translate_arrays(visual+'\n'+hud)
 
-def native(existing):
+def native(existing, panel=False):
     """Only OS API/type seams absent from the caller; no product helper replacements."""
     out='#include <vector>\n#include <map>\nusing uchar=unsigned char;\n'
     constants={'CHART_MOUSE_SCROLL':600,'CHARTEVENT_MOUSE_MOVE':601,'CHARTEVENT_CLICK':602,'CHARTEVENT_OBJECT_CLICK':603,'CHARTEVENT_CHART_CHANGE':604,'CHARTEVENT_KEYDOWN':605,'CHARTEVENT_CUSTOM':1000,'TA_LEFT':0,'TA_TOP':0,'COLOR_FORMAT_ARGB_NORMALIZE':0,'OBJ_BITMAP_LABEL':606,'OBJ_RECTANGLE_LABEL':607,'OBJPROP_XSIZE':608,'OBJPROP_YSIZE':609,'CHART_WIDTH_IN_PIXELS':610,'CHART_HEIGHT_IN_PIXELS':611}
@@ -25,6 +46,7 @@ def native(existing):
         if not re.search(r'\b'+name+r'\s*=',existing):out+=f'constexpr int {name}={value};\n'
     for name,definition in {
       'ObjectGetString':'string ObjectGetString(int,const string&n,int p){auto o=objects.find(n);if(o==objects.end())return \"\";auto v=o->second.text.find(p);return v==o->second.text.end()?\"\":v->second;}',
+      'MathIsValidNumber':'bool MathIsValidNumber(double v){return std::isfinite(v);}',
       'StringToInteger':'long StringToInteger(const string&s){try{return std::stol(s);}catch(...){return 0;}}',
       'StringSubstr':'string StringSubstr(const string&s,int a,int n=-1){return s.substr(a,n<0?string::npos:n);}',
       'MathMin':'template<class A,class B>A MathMin(A a,B b){return a<b?a:(A)b;}',
@@ -41,7 +63,22 @@ bool ChartSetInteger(int,int p,long v){if(p==CHART_MOUSE_SCROLL)host_window_scro
 long WindowChartGetInteger(int c,int p){return p==CHART_MOUSE_SCROLL?host_window_scroll:ChartGetInteger(c,p);}
 #define ChartGetInteger WindowChartGetInteger
 '''
+    if not panel: return out
+    out += r"""
+#include <cstdio>
+#include <sstream>
+"""
+    definitions={
+     'TERMINAL_KEYSTATE_SHIFT':'constexpr int TERMINAL_KEYSTATE_SHIFT=1001;',
+     'MathFloor':'double MathFloor(double v){return std::floor(v);}',
+     'GetMicrosecondCount':'ulong GetMicrosecondCount(){return GetTickCount64()*1000+1;}',
+     'StringFormat':'template<class... A>string StringFormat(const string &f,A...a){char b[256];std::snprintf(b,sizeof(b),f.c_str(),a...);return b;}',
+     'StringSplit':'int StringSplit(const string&s,int d,std::vector<string>&v){v.clear();size_t start=0;for(size_t i=0;i<=s.size();i++)if(i==s.size()||s[i]==d){v.push_back(s.substr(start,i-start));start=i+1;}return v.size();}'
+    }
+    for name,definition in definitions.items():
+        if name not in existing:out+=definition+'\n'
     return out
+
 
 RASTER=r'''
 struct HostWindowText {string text;int x,y,font;uint ink,w,h;};
@@ -65,6 +102,7 @@ bool ResourceCreate(const string&n,const std::vector<uint>&p,int w,int h,int,int
 }
 bool ResourceFree(const string&n){host_window_text.erase(n);return host_window_resources.erase(n)>0;}
 string WindowText(const string&name){string result;for(const auto&t:host_window_text[name+"_ARGB"]){if(!result.empty())result+=" ";result+=t.text;}return result;}
+string WindowCaption(const string&name){return objects.count(name)&&objects.at(name).number.at(-1)==OBJ_BUTTON?objects.at(name).text.at(OBJPROP_TEXT):WindowText(name);}
 bool WindowTextValid(const string&name,const int padding=0){
  auto object=objects.find(name);if(object==objects.end())return false;
  const auto &n=object->second.number;auto prop=[&](int p){auto at=n.find(p);return at==n.end()?0L:at->second;};
@@ -112,7 +150,7 @@ template<class A,class B>A MathMax(A a,B b){return a>b?a:(A)b;}
 int host_hud_redraws=0;void JPWRenderHUD(){host_hud_redraws++;}
 int host_owner_events=0;bool EventChartCustom(int,int,long,double,const string&){host_owner_events++;return true;}
 '''
-    base+=native(existing+base)
+    base+=native(existing+base,panel=True)
     base+='struct JPWPanelRect{int x=0,y=0,width=0,height=0;};\n'
     design=(INC/'JPW_UI_Design.mqh').read_text()
     # The event fixtures use native DPI96; production scaling still executes.
@@ -120,13 +158,18 @@ int host_owner_events=0;bool EventChartCustom(int,int,long,double,const string&)
     base+='constexpr int TERMINAL_SCREEN_DPI=490;\n'
     for sig in ['double JPWUIDesignScale()','int JPWUIDesignPx(const int logical)']:
         base+=sig+'{'+body_of(design,sig)+'}\n'
-    if focus_present:base+='string JPWUIOwner();\n#define JPW_UI_OWNER_EVENT 3107\n'
+    if focus_present:base+='string JPWUIOwner();bool JPWUIOwns(const string);bool JPWUIAcquire(const string);void JPWUIRelease(const string);\n#define JPW_UI_OWNER_EVENT 3107\n'
     else:base+=(INC/'JPW_UI_Focus.mqh').read_text()
+    if not focus_present:
+        cockpit=(INC/'JPW_Alavancagem_Cockpit.mqh').read_text()
+        base+='struct JPWCockpitPrefs'+cockpit.split('struct JPWCockpitPrefs',1)[1].split('};',1)[0]+'};\n'
+        base+='\n'.join(line for line in cockpit.splitlines() if line.startswith('#define JPW_COCKPIT_'))+'\n'
+        base+=cockpit[cockpit.index('void JPWCockpitDefault('):cockpit.index('bool JPWCockpitVisible(')]
     result=base+production(events_only=True)
     result+=(INC/'JPW_Stoikus_Window.mqh').read_text()
     present=(INC/'JPW_Alavancagem_Presentation.mqh').read_text()
     actions=(INC/'JPW_Alavancagem_Actions.mqh').read_text()
-    for name in ['JPW_ACTION_MINIMIZE']:
+    for name in ['JPW_ACTION_MINIMIZE','JPW_ACTION_PANEL_CUSTOMIZE']:
         match=re.search(r'const int '+name+r'=\d+;',present);assert match,name
         result+=match[0]+'\n'
     result+='JPWStoikusWindowGesture g_account_window_gesture;JPWPanelRect g_account_window_rect,g_details_rect;int g_details_control=36,g_details_pad=8;\n'
@@ -139,7 +182,7 @@ int host_owner_events=0;bool EventChartCustom(int,int,long,double,const string&)
             result+=sig+'{'+body_of(present,sig)+'}\n'
     for sig in ['void JPWAccountMinimize()', 'bool JPWAccountWindowEvent(const int id,const long &lp,const double &dp,const string &sp)']:
         result+=sig+'{'+body_of(actions,sig)+'}\n'
-    return result
+    return translate_arrays(result)
 
 def layout_text():
     """Synthetic native metrics, actual cached text width and paragraph wrapping."""

@@ -21,6 +21,11 @@ leverage_downloads = {
 # Optional R4 delivery inputs are bounded records, never a directory scan or
 # native proof. Keep historical ZIP payloads unchanged when the field is absent.
 INTERFACE_DELIVERY_CATALOG = {
+ 'C5': {
+    'nativeKit': ('Kit_Windows_Stoikus_Painel_C5_D1.zip', 'application/zip'),
+    'nativePin': ('root-pin-Painel-C5-D1.json', 'application/json'),
+    'preview': ('Previa_Stoikus_Painel_C5.html', 'text/html'),
+ },
  'R5': {
     'nativeKit': ('Kit_Windows_Stoikus_Janelas_R5.zip', 'application/zip'),
     'nativePin': ('root-pin-R5.json', 'application/json'),

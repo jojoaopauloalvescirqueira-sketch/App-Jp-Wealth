@@ -249,17 +249,22 @@ def build() -> tuple[str, list[Path], list[dict[str, str]]]:
     # New lifecycle state is loaded from production, never replaced by test state.
     lifecycle_state = "\n".join(re.findall(r"^bool g_nocuda_(?:resources_admitted|initialized)=false;", mainsource, re.M))
     state_reset = re.sub(r"\bbool ", "", lifecycle_state)
-    main_bodies = [(INDICATOR, name, function(mainsource, name)) for name in ("JPWNoCudaClearAnchors", "JPWNoCudaResetContext", "JPWNoCudaAction", "OnInit", "OnDeinit", "OnTimer", "OnChartEvent")]
+    main_bodies = [(INDICATOR, name, function(mainsource, name)) for name in ("JPWNoCudaClearAnchors", "JPWNoCudaResetContext", "JPWNoCudaAction", "JPWNoCudaOpenFromPanel", "OnInit", "OnDeinit", "OnTimer", "OnChartEvent")]
     controller = controller_test.transform((INC / "JPW_NoCuda_Fibo_Controller.mqh").read_text())
     sync = (INC / "JPW_NoCuda_Fibo_Sync.mqh").read_text()
+    bridge_path = INC / "JPW_Stoikus_PanelBridge.mqh"
+    bridge = bridge_path.read_text()
+    shared_access = re.search(r"^bool g_nocuda_ui_shared_access=false;", manual_ui, re.M)[0]
     forward = "void JPWNoCudaUIClear(const string);void JPWNoCudaFiboUIClear(const string);"
     # Manual resource and UI globals must exist before the production controller.
     code = shim + db.DBSHIM + termshim + core + store + db.DBREAD + terminal + types + "\nint chart_event_writes=0;\n" + uiseams + legacy_defs + context_seams + ownership_seams + lifecycle_state + forward
     from stoikus_window_nocuda_host import fibo_cancel,FIBO_WINDOW_BOUNDARY,manual_window
     code += fibo_cancel()+FIBO_WINDOW_BOUNDARY+manual_window(code,native_scroll=False)
     code += "\n" + "\n".join(body for _, _, body in bodies) + "\n" + focus + sync + controller
+    # MathFloor is an MQL API seam; bridge/open behavior is production code.
+    code += "\ndouble MathFloor(double v){return std::floor(v); }\n" + shared_access + "\n" + bridge
     code += "\n" + "\n".join(body for _, _, body in main_bodies) + CASES.replace("// HOST_LIFECYCLE_RESET", state_reset)
-    files = [ct.CORE, db.STORE, INC / "JPW_NoCuda_Fibo_Terminal.mqh", INC / "JPW_NoCuda_Fibo_Sync.mqh", INC / "JPW_NoCuda_Fibo_Controller.mqh", INDICATOR, legacy_path, INC / "JPW_NoCuda_Render.mqh", INC / "JPW_NoCuda_UI.mqh", INC / "JPW_NoCuda_Fibo_UI.mqh", focus_path, INC / "JPW_Stoikus_Window.mqh", ROOT / "tools/stoikus_window_nocuda_host.py", Path(__file__), Path(controller_test.__file__), Path(db.__file__), Path(term.__file__)]
+    files = [bridge_path, ct.CORE, db.STORE, INC / "JPW_NoCuda_Fibo_Terminal.mqh", INC / "JPW_NoCuda_Fibo_Sync.mqh", INC / "JPW_NoCuda_Fibo_Controller.mqh", INDICATOR, legacy_path, INC / "JPW_NoCuda_Render.mqh", INC / "JPW_NoCuda_UI.mqh", INC / "JPW_NoCuda_Fibo_UI.mqh", focus_path, INC / "JPW_Stoikus_Window.mqh", ROOT / "tools/stoikus_window_nocuda_host.py", Path(__file__), Path(controller_test.__file__), Path(db.__file__), Path(term.__file__)]
     extracted = [{"file": str(path.relative_to(ROOT)), "function": name, "body_sha256": hashlib.sha256(body.encode()).hexdigest()} for path, name, body in bodies + main_bodies]
     return code, files, extracted
 

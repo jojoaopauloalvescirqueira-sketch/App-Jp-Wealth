@@ -8,10 +8,13 @@ import time
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from leverage_suite import aggregate_result, classify, fingerprint, run_check
+from leverage_suite import aggregate_result, classify, fingerprint, run_check, DISTRIBUTION, HOST
 
 
 def main() -> int:
+    assert DISTRIBUTION.count("stoikus_c5_release_test") == 1
+    assert "stoikus_c5_release_test" not in HOST
+    assert Path(__file__).with_name("stoikus_c5_release_test.py").is_file()
     cases = [
         (0, "PASS; native compilation NOT_RUN", "PASS"),
         (1, "assertion failed", "PRODUCT_FAIL"),

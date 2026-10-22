@@ -32,6 +32,7 @@ using ushort=unsigned short;
 using ulong=unsigned long;
 bool MathIsValidNumber(double x){return std::isfinite(x);}
 constexpr int CORNER_LEFT_UPPER=0,CORNER_LEFT_LOWER=1,CORNER_RIGHT_LOWER=3,CORNER_RIGHT_UPPER=2;
+string IntegerToString(int n){return std::to_string(n);}
 int StringLen(const string &s) { return static_cast<int>(s.size()); }
 ushort StringGetCharacter(const string &s,int i) { return static_cast<ushort>(s.at(i)); }
 int StringFind(const string &s,const string &needle) {

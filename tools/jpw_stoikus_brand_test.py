@@ -242,17 +242,19 @@ int main(){
   mock_screen_dpi=dpi;InpFontSize=10;g_stoikus_options=false;
   host_window_resource_fail=failure==1;host_window_text_fail=failure==2;
   DrawHUD(width,1200,0,0,false);g_stoikus_visual.collapsed=collapsed;JPWRenderHUD();
-  const string target=g_panel_prefix+(collapsed?"HUD_RESTORE":"RAIZ_DETAILS_BUTTON");
-  check(objects.count(target)&&WindowTextValid(target,JPWUIDesignPx(4)),"functional Conta has measured opaque text and bounded resource/native target");
-  const string caption=failure?objects[target].text[OBJPROP_TEXT]:WindowText(target);
-  check(caption=="Conta","approved functional launcher caption remains Conta");
+  const bool pill=objects.count(g_panel_prefix+"HUD_RESTORE");
+  const string target=g_panel_prefix+(pill?"HUD_RESTORE":"RAIZ_DETAILS_BUTTON");
+  check(objects.count(target)&&WindowTextValid(target,JPWUIDesignPx(4)),"functional Conta has measured opaque text and bounded resource/native target dpi="+IntegerToString(dpi)+" width="+IntegerToString(width)+" failure="+IntegerToString(failure)+" collapsed="+IntegerToString(collapsed));
+  if(!objects.count(target)){cases++;continue;}
+  const string caption=WindowCaption(target);
+  check(caption==(pill?"Stoikus":"Conta"),"approved functional launcher caption follows shared panel contract dpi="+IntegerToString(dpi)+" width="+IntegerToString(width)+" failure="+IntegerToString(failure)+" caption="+caption);
   const auto &n=objects[target].number;long x=n.at(OBJPROP_XDISTANCE)+n.at(OBJPROP_XSIZE)/2;double y=n.at(OBJPROP_YDISTANCE)+n.at(OBJPROP_YSIZE)/2;
   check(n.at(OBJPROP_XDISTANCE)>=0&&n.at(OBJPROP_YDISTANCE)>=0&&n.at(OBJPROP_XDISTANCE)+n.at(OBJPROP_XSIZE)<=width&&n.at(OBJPROP_YDISTANCE)+n.at(OBJPROP_YSIZE)<=1200,"launcher geometry stays inside chart");
   scope_clock_ms+=300;string route;
   check(JPWStoikusHUDEvent(CHARTEVENT_CLICK,x,y,"",route),"actual HUD rectangle dispatch accepts launcher click");
   if(collapsed)check(!g_stoikus_visual.collapsed&&route=="","collapsed Conta restores summary through actual action");
   else {
-   check(route==target,"launcher routes exact canonical account target");
+   check(route==g_panel_prefix+"RAIZ_DETAILS_BUTTON","launcher routes exact canonical account target");
    g_raiz_details_open=false;int opened=account_open_calls;LauncherAction(route);check(account_open_calls==opened+1&&g_raiz_details_open,"actual launcher action opens Conta");
    int fronted=account_front_calls;LauncherAction(route);check(account_front_calls==fronted+1&&JPWUIOwner()==g_panel_prefix,"actual repeated launcher action fronts owned Conta");
   }

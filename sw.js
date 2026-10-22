@@ -18,7 +18,7 @@ const NOCUDA_DOCUMENT_URLS = [
 ].map(path => new URL(path, self.location.href).href);
 const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.location.href).href;
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
-const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
+const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html','Previa_Stoikus_Painel_C5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
 const PRECACHE_URLS = [
   './src/js/40-app/31-market-hours/01-sessions.js',
   './src/js/40-app/31-market-hours/02-assets.js',
@@ -152,7 +152,7 @@ self.addEventListener('install', event => {
       // do not broaden the historical ZIP allowlist or establish native proof.
       if(Object.prototype.hasOwnProperty.call(manifest,'interfaceRelease')){
         const artifacts=manifest.interfaceRelease?.artifacts;
-        const catalog={R5:{nativeKit:'Kit_Windows_Stoikus_Janelas_R5.zip',nativePin:'root-pin-R5.json',preview:'Previa_Stoikus_Janelas_R5.html'},R4:{nativeKit:'Kit_Windows_Stoikus_Assinatura_R4.zip',nativePin:'root-pin-R4.json',preview:'Previa_Stoikus_Interface_R4.html'}};
+        const catalog={C5:{nativeKit:'Kit_Windows_Stoikus_Painel_C5_D1.zip',nativePin:'root-pin-Painel-C5-D1.json',preview:'Previa_Stoikus_Painel_C5.html'},R5:{nativeKit:'Kit_Windows_Stoikus_Janelas_R5.zip',nativePin:'root-pin-R5.json',preview:'Previa_Stoikus_Janelas_R5.html'},R4:{nativeKit:'Kit_Windows_Stoikus_Assinatura_R4.zip',nativePin:'root-pin-R4.json',preview:'Previa_Stoikus_Interface_R4.html'}};
         const expected=catalog[manifest.interfaceRelease.revision];
         if(!expected)throw new Error('Revisao de entrega da interface invalida');
         if(!artifacts||typeof artifacts!=='object'||Array.isArray(artifacts)||

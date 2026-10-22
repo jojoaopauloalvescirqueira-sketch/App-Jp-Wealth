@@ -179,6 +179,20 @@ def geometry(geo=None):
     old_extent='if(x<0||x+(int)measured>width)'
     assert geo.HUD_MAIN.count(old_extent)==1, 'long financial extent oracle drift'
     geo.HUD_MAIN=geo.HUD_MAIN.replace(old_extent,'if(!WindowTextValid(object)||x<0||x+objects[object].number[OBJPROP_XSIZE]>width)')
+    geo.HUD_MAIN=geo.HUD_MAIN.replace(' JPWRenderHUD();\n const string bg=', r"""
+ ObjectCreate(0,JPW_COCKPIT_PREF_OBJECT,OBJ_LABEL,0,0,0);
+ ObjectSetString(0,JPW_COCKPIT_PREF_OBJECT,OBJPROP_TEXT,JPWCockpitEncode(g_cockpit_prefs));
+ ObjectCreate(0,JPW_STOIKUS_VISUAL_OBJECT,OBJ_LABEL,0,0,0);
+ ObjectSetString(0,JPW_STOIKUS_VISUAL_OBJECT,OBJPROP_TEXT,JPWStoikusVisualEncode(g_stoikus_visual));
+ JPWStoikusVisualLoad();JPWStoikusPanelLoad();
+ JPWRenderHUD();
+ const string bg=""")
+    # Approved compact access is now Stoikus, with preference objects retained.
+    geo.HUD_MAIN=geo.HUD_MAIN.replace('const string cockpit_button=g_panel_prefix+"RAIZ_DETAILS_BUTTON";', 'const string cockpit_button=g_panel_prefix+"HUD_RESTORE";')
+    geo.HUD_MAIN=geo.HUD_MAIN.replace('WindowText(cockpit_button).find("Conta")', 'WindowText(cockpit_button).find("Stoikus")')
+    geo.HUD_MAIN=geo.HUD_MAIN.replace('objects.size()!=1||!objects.count("FOREIGN_STUDY_OBJECT")', 'objects.size()!=3||!objects.count(JPW_COCKPIT_PREF_OBJECT)||!objects.count(JPW_STOIKUS_VISUAL_OBJECT)||!objects.count("FOREIGN_STUDY_OBJECT")')
+    geo.HUD_MAIN=geo.HUD_MAIN.replace('shot.y!=expected_inset', 'shot.y!=std::min(expected_inset,1200-shot.height)||shot.y<scaled_reserve')
+    geo.HUD_MAIN=geo.HUD_MAIN.replace('g_panel_count>0&&!objects.count(g_panel_prefix+"RAIZ_DETAILS_BUTTON")', 'g_panel_count>0&&!objects.count(g_panel_prefix+"RAIZ_DETAILS_BUTTON")&&!objects.count(g_panel_prefix+"HUD_RESTORE")')
     def hud_replay(compiler):
         panel=geo.FILES[0].read_text()
         panel=re.sub(r"C'(\d+),(\d+),(\d+)'",lambda m:str(int(m[1])|(int(m[2])<<8)|(int(m[3])<<16)),panel)
@@ -191,7 +205,7 @@ def geometry(geo=None):
         tiny=tiny_cockpit()
         focus=(INC/'JPW_UI_Focus.mqh').read_text()
         # Real owner helpers; chart broadcast is a recorded native boundary.
-        seams=native(base+tiny)+"string StringSubstr(const string&,int,int);\n"+RASTER+"\nint host_owner_events=0;bool EventChartCustom(int,int,long,double,const string&){host_owner_events++;return true;}\nvoid JPWRenderHUD();\n"
+        seams=native(base+tiny,panel=True)+"void JPWAccountMinimize(){g_raiz_details_open=false;}\n"+"string StringSubstr(const string&,int,int);\n"+RASTER+"\nint host_owner_events=0;bool EventChartCustom(int,int,long,double,const string&){host_owner_events++;return true;}\nvoid JPWRenderHUD();\n"
         cpp=hud_native_text(translate_arrays(base+seams+focus+production()+runtime+tiny+geo.HUD_MAIN))
         return compile_cpp(cpp,"hud",compiler)
     geo.hud_layout_replay=hud_replay
@@ -348,28 +362,28 @@ def panel(module=None):
             # check its source contracts instead of obsolete inline label tokens.
             code='''def check_narrow_chart(hud):
     require('JPWStoikusHUDRender();' in hud and 'JPWStoikusHUDWidth(' in hud and
-            'JPWStoikusHUDWrap(full,content-2*pad,one,two)' in hud and
+            'JPWStoikusHUDWrap(quality+" · "+scope,content-2*pad,meta1[count],meta2[count])' in hud and
             'TextGetSize(line1,firstw,firsth)' in hud and 'TextGetSize(line2,secondw,secondh)' in hud,
             'delegated HUD must measure every emitted line against its reserved surface')
     require('JPWCockpitMetricValue(i,metric.value)' in hud and
             'JPWCockpitQualityLabel(JPWGenetrixMetricQuality(i,metric.quality))' in hud and
-            'full+" · "+metric.reason' in hud and 'one="Detalhes"' in hud and
+            '" · "+metric.reason' in hud and 'JPWStoikusHUDFit(value,content-2*pad)' in hud and
             'StringSubstr(metric.value' not in hud,
             'overflow must retain complete financial value, quality, reason and named details access')
-    require('count==0 ? "Sem métricas"' in hud and '"RAIZ_DETAILS_BUTTON"' in hud and
+    require('count==0 ? "Personalize para adicionar métricas"' in hud and '"RAIZ_DETAILS_BUTTON"' in hud and
             '"Conta"' in hud and 'g_hud_summary_source=-1' in hud,
             'all-hidden configuration retains a functional account launcher without invented metric')
     require('2*(int)th+2*pad' in hud and 'JPWUIDesignPx(44)' in hud and
-            'lower ? ch-JPWUIDesignPx(44)-MathMax(0,InpOffsetY) : ch-MathMax(InpOffsetY,JPWUIDesignPx(44))' in hud,
+            'available=MathMax(0,ch-2*pad-JPWUIDesignPx(44))' in hud,
             'default upper HUD budgets measured rows below the DPI-scaled44logical native heading')
-    require('JPWStoikusClamp(x,0,cw-width)' in hud and 'JPWStoikusClamp(y,0,ch-height)' in hud and
-            'width>cw || height>ch' in hud and 'if(collapsed || tiny)' in hud,
+    require('JPWStoikusClamp(x,0,cw-width)' in hud and 'JPWStoikusClamp(y,minimum_y,ch-height)' in hud and
+            'tiny=(height>ch-2*pad' in hud and 'if(collapsed || tiny)' in hud,
             'all corners retain bounded full content or measured Conta fallback')
 '''
         if name=='check_six_labels_and_lifecycle':
             first=code.index("    require('for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++)'")
             last=code.index("    require('JPWUIDesignDelete(g_panel_prefix+IntegerToString(i))'",first)
-            code=code[:first]+'''    require('JPWStoikusMetricVisible(g_stoikus_visual.mode,g_cockpit_prefs.visible_mask,i)' in hud and
+            code=code[:first]+'''    require('shown.order[slot]; if((shown.visible_mask&(1<<i))==0) continue;' in hud and
             'JPWCockpitMetric metric=g_cockpit_snapshot.metric[i];' in hud and 'g_panel_count=7;' in hud,
             'delegated HUD reads canonical typed metrics using unchanged visibility-mask bits')
     require('g_dd_line' not in hud and 'JPWMDDObserve' not in hud,
@@ -380,8 +394,8 @@ def panel(module=None):
             'OBJ_BITMAP_LABEL' in hud and 'OBJ_BUTTON' in hud and 'OBJPROP_BGCOLOR,fill' in hud and
             all(token in hud for token in ('OBJPROP_XDISTANCE,x','OBJPROP_YDISTANCE,y','OBJPROP_XSIZE,w','OBJPROP_YSIZE,h')),
             'retained bitmap/native targets have absolute bounded hit geometry and contrasting fallback')
-    require('OBJPROP_TOOLTIP' in hud and 'full+" · "+metric.reason' in hud and
-            'IntegerToString(i),x+pad,yy,content,row' in hud,
+    require('OBJPROP_TOOLTIP' in hud and '" · "+metric.reason' in hud and
+            'IntegerToString(i),x+pad,yy,content,main_height' in hud,
             'abbreviated HUD preserves full value/reason and canonical detail target')
 '''+code[last:]
         if name=='check_defaults_and_status_source':

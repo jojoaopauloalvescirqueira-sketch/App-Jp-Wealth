@@ -101,10 +101,10 @@ INTERFACE_DAILY_SHA256 = "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21b
 
 # Bounded approved release catalog: selecting a version never relaxes its pins.
 SEALED_RELEASES = {
-    "1.22.3": dict(values=INTERFACE_RELEASE_VALUES, artifacts=INTERFACE_ARTIFACTS,
+    ("1.22.3", "R4"): dict(values=INTERFACE_RELEASE_VALUES, artifacts=INTERFACE_ARTIFACTS,
                    build=INTERFACE_BUILD_ID, fingerprint=INTERFACE_MQL_FINGERPRINT,
                    daily=INTERFACE_DAILY_SHA256),
-    "1.23.0": dict(
+    ("1.23.0", "R5"): dict(
         values=dict(INTERFACE_RELEASE_VALUES, revision="R5", candidate="1.23.0-interface", archiveVariant=""),
         artifacts={
             "nativeKit": ("Kit_Windows_Stoikus_Janelas_R5.zip", "5c32d1a5bf3ff2e2023c2c0e7b29c6425d1cc1bd5169f5fdf03f277d8fc9f8f4"),
@@ -115,7 +115,22 @@ SEALED_RELEASES = {
         fingerprint="62c9bb7d36aed866983449c4327fb529b994464cb1422bf9516c639ea4fb94ac",
         daily="0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3",
         sdk="65ed7e2cb6f9fe680695ef67e47eb9aa873a66e2bfd214c1ebd71a41367fcf63"),
+    ("1.23.0", "C5"): dict(
+        values=dict(INTERFACE_RELEASE_VALUES, revision="C5", candidate="1.23.0-interface", archiveVariant="painel-C5"),
+        artifacts={'nativeKit': ('Kit_Windows_Stoikus_Painel_C5_D1.zip', '92a05d3198fcae3dcbea2558f07cf13a20fbdddac63f1c8902e6dd4ac6b28983'), 'nativePin': ('root-pin-Painel-C5-D1.json', 'e0bf392d17e4a28efda316fdc13593101bbb25775be578e8b5f0abec8ef0101d'), 'preview': ('Previa_Stoikus_Painel_C5.html', '380cfe50b26dd6b438e9d5e374482406fe56b86e124e478fcafd05ebebb18afa')},
+        build='406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161',
+        fingerprint='26473298967abb055d077c3cc440cab1efc9f92e5e8f54f06bcc30ef2dc8f347',
+        daily='0d323ea010c21e043922a318252911262ea2dbf9b4b0217d67b0b9a1fe0242b5',
+        sdk='aa20c1f65f7b3dbc883eadf6babe312c8f30d9944ea787e89e686fe8aac7bbb2'),
 }
+
+
+def sealed_release_contract(manifest: dict):
+    release = manifest.get("interfaceRelease")
+    revision = release.get("revision") if isinstance(release, dict) else None
+    if not isinstance(revision, str):
+        return None
+    return SEALED_RELEASES.get((manifest["version"], revision))
 
 
 def validate_interface_release(root: Path, manifest: dict) -> str:
@@ -123,7 +138,7 @@ def validate_interface_release(root: Path, manifest: dict) -> str:
     if "interfaceRelease" not in manifest:
         return ""
     release = manifest["interfaceRelease"]
-    contract = SEALED_RELEASES.get(manifest["version"])
+    contract = sealed_release_contract(manifest)
     if contract is None:
         raise ValueError("Versao sem contrato selado")
     values, artifacts_contract = contract["values"], contract["artifacts"]
@@ -416,7 +431,7 @@ def build(root: Path = ROOT, *, installer_record: dict | None = None) -> dict:
     ]
     daily_zip = make_archive(daily_members)
     downloads["dailySource"] = download_record(daily_path, daily_zip)
-    contract = SEALED_RELEASES.get(version) if "interfaceRelease" in manifest else None
+    contract = sealed_release_contract(manifest) if "interfaceRelease" in manifest else None
     if contract and (downloads["dailySource"]["sha256"] != contract["daily"]
             or manifest["runtimeBuildId"] != contract["build"]
             or ("sdk" in contract and downloads["source"]["sha256"] != contract["sdk"])):

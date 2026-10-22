@@ -47,16 +47,22 @@ HOST = (
     "stoikus_account_interface_test",
     "stoikus_account_review_regression_test", "stoikus_risk_presentation_test",
     "stoikus_hud_targets_test",
+    "stoikus_window_hud_test", "stoikus_hud_text_fit_test",
+    "stoikus_panel_prefs_test", "stoikus_panel_editor_test",
+    "stoikus_panel_bridge_test", "stoikus_custom_panel_hud_test",
+    "stoikus_custom_panel_preview",
     "jpw_nocuda_fibo_ui_prerequisites",
     "jpw_nocuda_fibo_controller_prerequisites",
 )
 HOST_VARIANTS = {
+    "stoikus_custom_panel_preview": ("stoikus_custom_panel_preview_runner.py",),
     "jpw_nocuda_fibo_ui_prerequisites": ("jpw_nocuda_fibo_ui_test.py", "--interface-r1"),
     "jpw_nocuda_fibo_controller_prerequisites": ("jpw_nocuda_fibo_controller_test.py", "--interface-r1"),
 }
 DISTRIBUTION = ("leverage_package_test", "leverage_page_test",
                 "stoikus_daily_package_test", "stoikus_download_test",
-                "stoikus_usage_page_test", "stoikus_interface_delivery_test")
+                "stoikus_usage_page_test", "stoikus_interface_delivery_test",
+                "stoikus_c5_release_test")
 
 
 def classify(returncode: int, output: str) -> str:
@@ -87,7 +93,9 @@ def input_hashes(root: Path = ROOT) -> dict[str, str]:
     for pattern in (
         "mt5/jpw-alavancagem-atual/**/*", "tools/leverage_*.py",
         "tools/core_*_judge.py", "tools/jpw_genetrix*.py", "tools/jpw_stoikus*.py", "tools/jpw_nocuda*.py",
-        "tools/stoikus_*.py", "tools/stoikus_*.js",
+        "tools/stoikus_*.py", "tools/stoikus_*.js", "tools/stoikus_*.mjs",
+        "docs/preview/stoikus-painel-personalizavel/**/*",
+        "assets/stoikus/stoikus-assinatura-*.svg",
         "tools/jpw_personal_history*.py", "tools/jpw_positions*.py", "tools/jpw_signal_copy*.py", "tools/jpw_mt5_design*.py", "tools/personal_history_host/**/*",
         "tests/fixtures/genetrix/*.json",
         "tools/build_leverage_package.py", "tools/browser_bootstrap_fixture.py",

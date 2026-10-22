@@ -148,7 +148,9 @@ def check_browser(root, evidence, interface_fixture=False):
             assert panel.locator('.stoikus-phase').evaluate_all('ns=>ns.map(n=>n.id)') == expected_phases
             # Compare every command with the independently sealed kit, never with a second web copy.
             from zipfile import ZipFile
-            with ZipFile(root/'downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip') as native_kit:
+            selected=page.evaluate('window.JPW_LEVERAGE_MANIFEST.interfaceRelease')
+            native_path=selected['artifacts']['nativeKit']['path'] if selected else 'downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip'
+            with ZipFile(root/native_path) as native_kit:
                 sealed_guide = native_kit.read('LEIA-PRIMEIRO.md').decode()
             commands = re.findall(r'```powershell\n(.*?)```', sealed_guide, re.S)
             assert len(commands) == 5

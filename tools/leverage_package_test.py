@@ -239,7 +239,7 @@ def assert_historical_stoikus_archive(raw: bytes) -> None:
 
 
 def assert_release_inventory(manifest: dict) -> None:
-    members = release_members(manifest["version"])
+    members = release_members(manifest["version"], manifest.get("interfaceRelease", {}).get("revision"))
     expected = {"mt5/jpw-alavancagem-atual/" + member for member in members}
     assert len(manifest["sourceFiles"]) == len(set(manifest["sourceFiles"])) == len(members)
     assert set(manifest["sourceFiles"]) == expected, "source inventory differs from the explicit release contract"
@@ -255,8 +255,18 @@ R5_MEMBERS = EXPECTED_MEMBERS | R5_WINDOW_HEADERS
 assert len(R5_MEMBERS) == 139
 
 
-def release_members(version):
+C5_PANEL_HEADERS = {"MQL5/Include/JPWealth/JPW_Stoikus_" + name + ".mqh"
+                    for name in ("PanelPrefs", "PanelEditor", "PanelBridge")}
+C5_MEMBERS = R5_MEMBERS | C5_PANEL_HEADERS
+assert len(C5_MEMBERS) == 142
+
+
+def release_members(version, revision=None):
     assert version in ("1.22.3", "1.23.0"), "unrecognized release inventory"
+    if revision == "C5":
+        assert version == "1.23.0", "C5 requires its exact product version"
+        return C5_MEMBERS
+    assert revision in (None, "R4" if version == "1.22.3" else "R5"), "unrecognized release revision"
     return R5_MEMBERS if version == "1.23.0" else EXPECTED_MEMBERS
 
 
@@ -372,7 +382,7 @@ def main() -> None:
     print("PASS immutable Stoikus 1.22.1 SDK and size/hash counterexamples")
     template = json.loads((ROOT / MANIFEST_PATH).read_text(encoding="utf-8"))
     version = template["version"]
-    members = release_members(version)
+    members = release_members(version, template.get("interfaceRelease", {}).get("revision"))
     expected_sources = {"mt5/jpw-alavancagem-atual/" + member for member in members}
     assert len(members) == len(members)
     assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == len(members)

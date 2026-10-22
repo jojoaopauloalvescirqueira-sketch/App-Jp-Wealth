@@ -1,0 +1,42 @@
+{
+  "kind": "JPW_STOIKUS_UI_NATIVE_KIT_ROOT_PIN",
+  "status": "SEALED_SOURCE_ONLY",
+  "candidate": "1.23.0-interface",
+  "freeze_id": "stoikus-interface-R5",
+  "interface_fingerprint": "f6e8773eb9875fee9e66af72acc5b90f6717c171bb281400bba899b9c344eed9",
+  "runtime_build_id": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+  "calculation_version": "1.9.0",
+  "root_freeze_sha256": "284f8fc5cc12c6c01f5a65fd5b6293588eb1d31a7818d08cabbf22e790c218dd",
+  "mql_source_fingerprint": "26473298967abb055d077c3cc440cab1efc9f92e5e8f54f06bcc30ef2dc8f347",
+  "source_zip_sha256": "6703537ab5a610a9fe4586c28481a929d243db024b2ef295eed373cc2bd224f5",
+  "files_sha256": {
+    "Compile-Stoikus-UI.ps1": "9502c0efd2b94fe15e66177e38c221f47c6a2751f1d90c6de2a9917c9ba198b1",
+    "JPW_Stoikus_Uso_Fontes_v1.23.0_interface.zip": "6703537ab5a610a9fe4586c28481a929d243db024b2ef295eed373cc2bd224f5",
+    "LEIA-PRIMEIRO.md": "85ef1d424c973f7132b9951a4fcdd0648431fe333acf2cc177205065cdfd600f",
+    "NativeKit.Core.ps1": "2dba568c184e31f1e28814c706d3e6a9459fe4e45524e33b52db14c0776ed542",
+    "Test-NativeUI-Kit.ps1": "273eb45f814d4bd99f5e5810164171ca3bc7c61ede93a87f16cb64a586fba43c",
+    "identity.schema.json": "905840751ce7d8afe7dda2ba63baa2d0b501d4a3557284e04a1d08e596bb063d",
+    "source-freeze-R5.json": "284f8fc5cc12c6c01f5a65fd5b6293588eb1d31a7818d08cabbf22e790c218dd",
+    "stoikus-1.23.0-interface.identity.json": "ba0a8ff6f6683e668210e29e7706f51d3434815ed8d2c2478d470b93f53f6463",
+    "verify_native_ui_kit.py": "0388749de4337aa5a01a66ab0f75a716e7db9882e0083268e925a055771d22ca"
+  },
+  "reviews": {
+    "source_and_manifest": "NOT_RUN_AT_SEAL",
+    "host_full": "NOT_RUN_AT_SEAL",
+    "python_independent_byte_check": "NOT_RUN_AT_SEAL",
+    "negative_tamper_fixtures": "NOT_RUN_AT_SEAL",
+    "powershell_static_review": "NOT_RUN_AT_SEAL",
+    "windows_power_shell_fixtures": "NOT_RUN_AT_SEAL",
+    "mt5_compilation": "NOT_RUN_AT_SEAL",
+    "mt5_demo_runtime": "NOT_RUN_AT_SEAL",
+    "independent_windows_x64": "NOT_RUN_AT_SEAL",
+    "owner_acceptance": "NOT_RUN_AT_SEAL"
+  },
+  "compilation_status": "NOT_RUN",
+  "runtime_status": "NOT_RUN",
+  "independent_windows_x64": "NOT_RUN",
+  "human_acceptance": "NOT_RUN",
+  "kit_package_filename": "Kit_Windows_Stoikus_Janelas_R5.zip",
+  "kit_package_sha256": "92a05d3198fcae3dcbea2558f07cf13a20fbdddac63f1c8902e6dd4ac6b28983",
+  "kit_package_bytes": 513845
+}

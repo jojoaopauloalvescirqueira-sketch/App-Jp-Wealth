@@ -31,6 +31,13 @@ void JPWCockpitLoadPrefs()
 
 bool JPWCockpitOwnedSuffix(const string suffix)
   {
+   string panel_names[15]={"HUD_NOCUDA","HUD_PERSONALIZE","HUD_PREVIOUS","HUD_NEXT","HUD_PAGE",
+      "CUST_BG","CUST_TITLE","CUST_APPLY","CUST_CANCEL","CUST_DEFAULT","CUST_NOTICE",
+      "CUST_PREV","CUST_NEXT","CUST_OPACITY","HUD_TITLE"};
+   for(int i=0;i<15;i++) if(suffix==panel_names[i]) return(true);
+   for(int i=0;i<7;i++)
+     {const string n=IntegerToString(i);if(suffix==n+"_META" || suffix=="CUST_TOGGLE_"+n ||
+        suffix=="CUST_UP_"+n || suffix=="CUST_DOWN_"+n)return(true);}
    if(suffix=="HUD_NOTICE" || suffix=="HUD_MIN" || suffix=="HUD_OPTIONS" || suffix=="HUD_RESTORE" || suffix=="HUD_MODE" || suffix=="HUD_OPACITY" || suffix=="HUD_RESET" || suffix=="HUD_RESIZE") return(true);
    if(suffix=="HUD_BG" || suffix=="HUD_RISK_SCOPE" || suffix=="RAIZ_DETAILS_BUTTON") return(true);
    if(StringLen(suffix)==1 && StringGetCharacter(suffix,0)>='0' &&
@@ -894,6 +901,8 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
        if(!g_raiz_details_open) JPWOpenCockpit(5);
        else { g_cockpit_selected=5; JPWRaizSwitchTab(JPW_ROUTE_METRIC); }
        return; }
+   if(sparam==g_panel_prefix+"HUD_NOTICE")
+     { if(!g_raiz_details_open) JPWOpenCockpit();JPWRaizSwitchTab(JPW_ROUTE_SYSTEM);return; }
    for(int metric=0;metric<JPW_COCKPIT_METRIC_COUNT;metric++)
       if(sparam==g_panel_prefix+IntegerToString(metric))
         {
@@ -913,6 +922,8 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
      }
    if(!g_raiz_details_open) return;
    if(!JPWDetailsContextCurrent()) return;
+   if(sparam==JPWActionObject(JPW_ACTION_PANEL_CUSTOMIZE))
+     { JPWStoikusPanelEditorOpen();JPWRenderHUD();return; }
    if(sparam==JPWActionObject(JPW_ACTION_SECTIONS))
      { g_cockpit_sections_open=!g_cockpit_sections_open; g_cockpit_section_page=0;
        JPWInvalidateDialogContent(); JPWRenderRaizDetails(); return; }
@@ -937,6 +948,7 @@ void JPWHandleChartEventBody(const int id,const long &lparam,const double &dpara
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_CARD_FIRST+i)) ||
          sparam==JPWRaizUI("CARD_BG_"+IntegerToString(i)) ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_TITLE") ||
+         sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_DETAILS") ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_REASON2") ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_VALUE") ||
          sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_QUALITY") ||
