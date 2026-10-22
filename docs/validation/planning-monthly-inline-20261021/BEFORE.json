@@ -1,0 +1,174 @@
+{
+  "candidate_build": "2ddbac03d67141d0",
+  "checked_at": "2026-10-22T01:19:27.109259+00:00",
+  "presentation_sources": {
+    "src/js/30-accounting/06-planning/03-ui.js": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+    "src/styles/app.css": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f"
+  },
+  "cases": [
+    {
+      "observed": {
+        "width": 977.625,
+        "rows": [
+          {
+            "month": "2026-08",
+            "height": 106.5,
+            "state": "✓ Finalizado",
+            "bg": "rgb(246, 247, 249)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-09",
+            "height": 106.5,
+            "state": "Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-10",
+            "height": 106.5,
+            "state": "Em andamento",
+            "bg": "rgba(0, 104, 214, 0.08)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-11",
+            "height": 132.5,
+            "state": "Projetado · Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 2
+          },
+          {
+            "month": "2026-12",
+            "height": 132.5,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 2
+          },
+          {
+            "month": "2027-01",
+            "height": 132.5,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 2
+          },
+          {
+            "month": "2027-02",
+            "height": 132.5,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 2
+          },
+          {
+            "month": "2027-03",
+            "height": 132.5,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 2
+          }
+        ],
+        "repeatedLabels": 120,
+        "viewport": 1440,
+        "fixture": {
+          "id": "planning_account_d52b183f-3871-4889-a983-c6494da54aaa",
+          "closed": "planning_account_c9e3eb01-9354-4a65-9ecc-fd285b7f46ff",
+          "large": "planning_account_42dfaf6a-72c2-4b38-b0a2-3b70bc5f7c83",
+          "future": "planning_account_ed95eca4-cf90-4bda-900e-38945c9414ff",
+          "start": "2026-08",
+          "pending": "2026-09",
+          "today": "2026-10",
+          "blank": "2026-11",
+          "zero": "2026-12",
+          "negative": "2027-01"
+        }
+      },
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      },
+      "financial_unchanged": true
+    },
+    {
+      "observed": {
+        "width": 298,
+        "rows": [
+          {
+            "month": "2026-08",
+            "height": 67,
+            "state": "✓ Finalizado",
+            "bg": "rgb(246, 247, 249)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-09",
+            "height": 67,
+            "state": "Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-10",
+            "height": 85,
+            "state": "Em andamento",
+            "bg": "rgba(0, 104, 214, 0.08)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-11",
+            "height": 85,
+            "state": "Projetado · Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-12",
+            "height": 67,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-01",
+            "height": 67,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-02",
+            "height": 67,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-03",
+            "height": 67,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          }
+        ],
+        "repeatedLabels": 120,
+        "viewport": 390,
+        "fixture": {
+          "id": "planning_account_21e98c04-6aca-4eb3-a2d4-35cc36eaadae",
+          "closed": "planning_account_507b86bf-e1d5-48f0-b54b-f8156821958e",
+          "large": "planning_account_e229b1be-9e9d-43c5-b675-f785ac523a96",
+          "future": "planning_account_970deda6-cdae-4a74-8640-1f842327190e",
+          "start": "2026-08",
+          "pending": "2026-09",
+          "today": "2026-10",
+          "blank": "2026-11",
+          "zero": "2026-12",
+          "negative": "2027-01"
+        }
+      },
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      },
+      "financial_unchanged": true
+    }
+  ]
+}

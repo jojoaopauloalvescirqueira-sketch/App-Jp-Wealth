@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T03:03:26.449884+00:00",
+  "reason": "Old temporary runtime lost pyvenv.cfg/module sources at local midnight; original failed execution receipts retained. Cause of removal not asserted.",
+  "recovery": "Extracted exact existing cached wheels into new ignored task-private venv, without pip, network, or project-dependency changes.",
+  "python": "bundled3.12.14",
+  "libraries": [
+    {
+      "name": "playwright",
+      "cached_wheel": "/Users/joaoalvescirqueira/Library/Caches/pip/http-v2/7/b/b/e/a/7bbea9d7cccf687e4448c4903a004639285dba60a1e9e4e529fab744.body",
+      "sha256": "39b5420ba6145045b69ced4c5c47d4d9fe5bddfc8ff816c518913afcb25ec7a5",
+      "metadata": "playwright-1.60.0.dist-info/METADATA",
+      "files": 213
+    },
+    {
+      "name": "pyee",
+      "cached_wheel": "/Users/joaoalvescirqueira/Library/Caches/pip/http-v2/1/7/f/1/7/17f173d4c16b424d43b50854fd292be946c248478e8d8bb27b9e0cc4.body",
+      "sha256": "af2f8fede4171ef667dfded53f96e2ed0d6e6bd7ee3bb46437f77e3b57689228",
+      "metadata": "pyee-13.0.1.dist-info/METADATA",
+      "files": 14
+    },
+    {
+      "name": "greenlet",
+      "cached_wheel": "/Users/joaoalvescirqueira/Library/Caches/pip/http-v2/4/b/e/b/5/4beb5370fc447b23ee93889332f226e69920f5f7eae3ba9bfc272789.body",
+      "sha256": "a5876d0a60355af98d535c47f6cd6eb0f8a432396dab26845d380b92f8412422",
+      "metadata": "greenlet-3.5.6.dist-info/METADATA",
+      "files": 99
+    }
+  ],
+  "original_runtime": "/private/tmp/jpw-pf-default-frozen-runtime-20261017",
+  "new_runtime": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime",
+  "project_source_test_changed": false
+}

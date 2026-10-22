@@ -2,7 +2,7 @@
 const SESSION_CHECKPOINT_KEY='jpwealth_session_checkpoint_v1';
 const SESSION_WIPE_CHANNEL='jpwealth_session_events_v1';
 const SESSION_WIPE_STORAGE_KEY='jpwealth_session_wipe_signal_v1';
-const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_module_availability_v1','jpw_rail','jpw_nav_submenu_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1','jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_learning_guide_v1','jpwealth_time_twins_v1','jpwealth_capital_currents_v1','jpwealth_capital_field_v1',SESSION_WIPE_STORAGE_KEY];
+const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_module_availability_v1','jpw_rail','jpw_nav_submenu_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1','jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_learning_guide_v1','jpwealth_time_twins_v1','jpwealth_capital_currents_v1','jpwealth_capital_field_v1','jpwealth_planning_monthly_view_v1',SESSION_WIPE_STORAGE_KEY];
 // ---- ALD-C3-PRE-EPOCH · geração causal da base -----------------------------
 // CONTROL PLANE, não data plane. Metadado compartilhado entre abas, sem PII e sem
 // conteúdo financeiro. NÃO integra JP_WEALTH_AUX_STORAGE_KEYS, não entra em backup
@@ -894,6 +894,7 @@ async function finalizeJPWealthSession(){
       if(!commit.ok){ renderSessionCommitError(commit.erro,commit); return; }
       S=novoEstado;
       sessionResetAuxiliarySurfaces();
+      window.JPWPlanning?.ui?.reset();
       jpwWorkspaceEdited.clear();
       window.JPWForex?.executionBoardUI?.discard();
       const report=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false,preserveMain:true});

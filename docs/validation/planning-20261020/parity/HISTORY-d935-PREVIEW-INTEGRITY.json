@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "build": "d93561c064cf5f40",
+  "served_sha256": {
+    "index.html": "df5f6ad5527d5d1d31f84f054387c7db794d5c1d4aacad1ddda2a4ff08253bea",
+    "build-id.js": "88e72c6e9743617e59ea3b4d33d1bd2417d13634f0c5a5f8b08925ab8dbbd734",
+    "src/styles/app.css": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25",
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa"
+  },
+  "limits": "Server bytes only; no operator browser profile, cache, service worker or storage inspected/cleared."
+}

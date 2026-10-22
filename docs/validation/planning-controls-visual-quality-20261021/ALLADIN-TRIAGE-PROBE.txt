@@ -1,0 +1,38 @@
+import ast,hashlib,importlib.util,json,pathlib,sys,time,traceback
+ROOT=pathlib.Path.cwd();OUT=ROOT/'.superpowers/sdd/planning-controls-visual-quality-20261021/alladin-triage'
+path=ROOT/'tools/alladin_foundation_test.py'
+spec=importlib.util.spec_from_file_location('original_foundation',path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+from playwright.sync_api import Browser,sync_playwright
+receipt={'scope':'Exact original caso_f AST function; observers only, all original boot/timeout/assertions preserved','source_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'historical_build':m.OLD_BUILD_SHA,'events':[],'failures':[],'not_run':[]}
+start=time.monotonic(); original_context=Browser.new_context
+contexts=[]
+def ev(kind,**data):receipt['events'].append({'seconds':round(time.monotonic()-start,3),'event':kind,**data})
+def context_observer(self,*a,**kw):
+ c=original_context(self,*a,**kw);contexts.append(c)
+ def page_seen(p):
+  p.on('request',lambda r:ev('request',url=r.url,type=r.resource_type))
+  p.on('requestfinished',lambda r:ev('finished',url=r.url))
+  p.on('requestfailed',lambda r:ev('failed',url=r.url,failure=r.failure))
+  p.on('response',lambda r:ev('response',url=r.url,status=r.status))
+  p.on('domcontentloaded',lambda:ev('domcontentloaded',url=p.url))
+  p.on('load',lambda:ev('load',url=p.url))
+  p.on('pageerror',lambda error:ev('pageerror',error=str(error)))
+ c.on('page',page_seen);return c
+Browser.new_context=context_observer
+module=ast.parse(path.read_text());main=next(n for n in module.body if isinstance(n,ast.FunctionDef) and n.name=='main');node=next(n for n in main.body if isinstance(n,ast.With) for n in n.body if isinstance(n,ast.FunctionDef) and n.name=='caso_f')
+receipt['original_lines']=[node.lineno,node.end_lineno]
+code=compile(ast.fix_missing_locations(ast.Module(body=[node],type_ignores=[])),str(path),'exec')
+try:
+ with sync_playwright() as p:
+  b=p.chromium.launch();g=dict(vars(m));g.update(browser=b,falhas=receipt['failures'],nao_executados=receipt['not_run']);exec(code,g)
+  m.executar(receipt['failures'],'F',g['caso_f'])
+  for c in contexts:
+   for page in c.pages:
+    try:ev('final-page',url=page.url,state=page.evaluate('document.readyState'))
+    except Exception:pass
+  b.close()
+ receipt['result']='PRODUCT_FAIL' if receipt['failures'] else 'NOT_RUN' if receipt['not_run'] else 'PASS'
+except Exception as e:receipt.update(result='ENVIRONMENT_ERROR',exception=traceback.format_exc())
+finally:
+ receipt['duration_seconds']=round(time.monotonic()-start,3);(OUT/'case-f-observer.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+ print(json.dumps({k:v for k,v in receipt.items() if k!='events'},ensure_ascii=False,indent=2));print('events',len(receipt['events']))

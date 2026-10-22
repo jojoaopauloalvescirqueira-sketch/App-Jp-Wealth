@@ -1,0 +1,91 @@
+{
+  "raw_default_sha256": "9b42f91cee454748a34c5b32e62145b7cf32dd21c7ea92a8ebb8d9f56d458056",
+  "summary_sha256": "477d9d42d2ee035e89cbf72fcd11dc0ad69063024a0b05f392820531c8ba7366",
+  "cases": 239,
+  "unique_ids": 239,
+  "all_pass": true,
+  "all_page_errors_empty": true,
+  "required_matches_executed": true,
+  "all_old206_executed_pass": true,
+  "all150_current_source_bindings_match": true,
+  "source_binding_count": 150,
+  "binding_mismatches": [],
+  "source_unchanged_during_run": true,
+  "coverage": {
+    "executed": 239,
+    "required": 239,
+    "unique": true
+  },
+  "classification": "PASS",
+  "registry": {
+    "old_count": 53,
+    "current_count": 60,
+    "old_exact_order_prefix": true,
+    "old_ids_unchanged": true,
+    "new": [
+      {
+        "id": "planning-monthly-inline-20261021-result-input",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "58bbaa3d84c66e2cb2deecb386d373a89305f3125e0c00aa864748f6fd0a0273",
+          "scope": "Focal/revisão de Task1; não substitui integração/browser/novoFULL. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      },
+      {
+        "id": "planning-monthly-inline-20261021-density",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+          "scope": "Focal green-8:33/33 deste candidato; não substitui novoFULL/aceite humano. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      },
+      {
+        "id": "planning-monthly-inline-20261021-explicit-write",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+          "scope": "Focal green-8:33/33 deste candidato; não substitui novoFULL/aceite humano. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      },
+      {
+        "id": "planning-monthly-inline-20261021-preferences",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+          "scope": "Focal green-8:33/33 deste candidato; não substitui novoFULL/aceite humano. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      },
+      {
+        "id": "planning-monthly-inline-20261021-context-companion",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+          "scope": "Focal green-8:33/33 deste candidato; não substitui novoFULL/aceite humano. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      },
+      {
+        "id": "planning-monthly-inline-20261021-menu-escape",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+          "scope": "Focal green-8:33/33 deste candidato; não substitui novoFULL/aceite humano. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      },
+      {
+        "id": "planning-monthly-inline-20261021-editor-actions",
+        "last_verified": {
+          "date": "2026-10-21",
+          "test_sha256": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+          "scope": "Focal green-8 e sondas independentes; aceite humano separado. Revalidação pós-rebuild: estado68/68 e browser33/33 no build6ca8a3b8971e249a; FULL próprio permanece obrigatório.",
+          "build": "6ca8a3b8971e249a"
+        }
+      }
+    ]
+  }
+}

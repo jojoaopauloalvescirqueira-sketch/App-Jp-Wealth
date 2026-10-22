@@ -1,0 +1,160 @@
+{
+  "scope": "Disposable synthetic browser context; real site document writer, no user profile. No Google runtime.",
+  "before": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "checks": [
+    {
+      "pass": true,
+      "name": "Full-scope reset preview displays all account facts before confirmation"
+    },
+    {
+      "pass": true,
+      "name": "Full-scope reset preview explicitly names both target accounts"
+    },
+    {
+      "pass": true,
+      "name": "Switching reset scope writes no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Canceling reset preserves every financial fact"
+    },
+    {
+      "pass": true,
+      "name": "Full reset uses exactly one confirmed document write"
+    },
+    {
+      "pass": true,
+      "name": "Full reset archives both accounts and leaves no invented active premises"
+    },
+    {
+      "pass": true,
+      "name": "Full reset reserves first active primary identity"
+    },
+    {
+      "pass": true,
+      "name": "Full reset archive preserves complete synthetic plan Synthetic primary"
+    },
+    {
+      "pass": true,
+      "name": "Full reset archive preserves complete synthetic plan Synthetic secondary"
+    },
+    {
+      "pass": true,
+      "name": "Full reset returns to initial configuration"
+    },
+    {
+      "pass": true,
+      "name": "Reconfiguration review writes no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Reconfiguration back writes no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Reconfiguration final confirm writes exactly once"
+    },
+    {
+      "pass": true,
+      "name": "Reconfiguration reuses reserved primary identity"
+    },
+    {
+      "pass": true,
+      "name": "Reconfiguration preserves all prior archives byte for byte"
+    },
+    {
+      "pass": true,
+      "name": "Reconfiguration clears pending reservation only after confirmation"
+    },
+    {
+      "pass": true,
+      "name": "Stale reviewed new account is rejected before any document write"
+    },
+    {
+      "pass": true,
+      "name": "Stale form conflict preserves current account state"
+    },
+    {
+      "pass": true,
+      "name": "Stale form visibly asks for review instead of showing success"
+    },
+    {
+      "pass": true,
+      "name": "Registrar rentabilidade questionnaire and review write no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Canceled monthly result questionnaire leaves all facts unchanged"
+    },
+    {
+      "pass": true,
+      "name": "Registrar rentabilidade questionnaire and review write no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Registrar rentabilidade saves exactly once after explicit confirmation"
+    },
+    {
+      "pass": true,
+      "name": "Registrar aporte questionnaire and review write no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Registrar aporte saves exactly once after explicit confirmation"
+    },
+    {
+      "pass": true,
+      "name": "Registrar saque questionnaire and review write no financial document"
+    },
+    {
+      "pass": true,
+      "name": "Registrar saque saves exactly once after explicit confirmation"
+    },
+    {
+      "pass": true,
+      "name": "Actual monthly DOM flow closes USD50 + USD3 result + USD10 contribution - USD2 withdrawal = USD61"
+    },
+    {
+      "pass": true,
+      "name": "All synthetic browser journeys have no page errors"
+    }
+  ],
+  "resetCountComparison": {
+    "displayed": "0 meses finalizados · 1 aportes · 1 resultados · 0 saques",
+    "expected": {
+      "closed": 0,
+      "contributions": 1,
+      "results": 1,
+      "withdrawals": 0
+    },
+    "targets": [
+      {
+        "id": "planning_account_5282d6cc-9440-411d-bb6d-fdd9a6516b16",
+        "name": "Synthetic primary",
+        "label": "C001 · Synthetic primary",
+        "code": "C001"
+      },
+      {
+        "id": "planning_account_99abcd20-859b-4493-964f-671797e2600b",
+        "name": "Synthetic secondary",
+        "label": "C002 · Synthetic secondary",
+        "code": "C002"
+      }
+    ]
+  },
+  "errors": [],
+  "after": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "candidateStable": true
+}

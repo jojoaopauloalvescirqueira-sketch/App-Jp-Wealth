@@ -1,40 +1,17 @@
 // ============ MOTOR DA CONTABILIDADE (perfis V10 centralizados) ============
 function acctProfile(){ return getActiveRiskProfile(); }
-// Monthly projection belongs to JPWFx. No annual target is selected from the
-// policy range, and an absent plan is unavailable rather than a zero-return plan.
+// Accounting contains operational facts only; planning is a separate primary module.
 function acctModel(){
-  const pr=acctProfile(),api=window.JPWFx;
-  const live=api&&api.state?api.state.fxOverviewLive():null;
-  const projected=live?live.forecast:[];
   const scope=window.JPWForex?.state?.operationalSelection?.()||{};
   const period=scope.accountId&&scope.periodId?window.JPWForex.state.accountContext(scope):null;
-  return {pr,saldoIni:period?.status==='OK'?period.value.openingBook:null,diasSem:S.acct&&S.acct.diasSemana||4.5,
-    mesesAno:S.acct&&S.acct.mesesAno||10.5,diasAno:null,target:null,metaDia:null,metaMes:null,
-    saldoFim:projected.length?projected[projected.length-1].close:null,
-    available:!!live,source:'PLAN',live};
+  return {pr:acctProfile(),saldoIni:period?.status==='OK'?period.value.openingBook:null,
+    target:null,saldoFim:null,available:false,source:'OPERATIONAL',live:null};
 }
-function acctProjection(){
-  const m=acctModel();
-  const start=new Date((m.live?m.live.plan.baseline.startMonth+'-01':S.params.inicio||todayISO())+'T00:00:00');
-  const series=m.live?m.live.forecast:[];
-  const rows=series.map((r,i)=>{
-    const [year,month]=r.month.split('-').map(Number),date=new Date(year,month,0);
-    return {idx:i+1,date,iso:dateISO(date),open:r.open,res:r.profit,close:r.close,
-      cumPct:m.live.plan.baseline.initialBalanceUsd>0?r.close/m.live.plan.baseline.initialBalanceUsd-1:null};
-  });
-  return {m,start,rows};
-}
+function acctProjection(){return {m:acctModel(),start:new Date(todayISO()+'T00:00:00'),rows:[]};}
 function acctRealByDate(){ const map={}; ledgerSorted().forEach(e=>map[e.data]=e.saldo); return map; }
 function acctRealNow(){ const led=ledgerSorted(); return led.length?led[led.length-1].saldo:acctModel().saldoIni; }
 function acctPace(){
-  const proj=acctProjection(), m=proj.m, today=todayISO(), real=acctRealNow();
-  let k7=null; // data projetada em que o saldo projetado alcança o saldo real (K7)
-  if(real<=m.saldoIni){ k7=dateISO(proj.start); }
-  else { for(const r of proj.rows){ if(r.close>=real){ k7=r.iso; break; } } }
-  const k8 = k7 ? Math.round((new Date(k7+'T00:00:00')-new Date(today+'T00:00:00'))/86400000) : null; // K8
-  let idealToday=m.saldoIni;
-  for(const r of proj.rows){ if(r.iso<=today) idealToday=r.close; else break; }
-  return {m, real, idealToday, k7, k8, endDate:proj.rows.length?proj.rows[proj.rows.length-1].iso:today, proj};
+  const proj=acctProjection();return {m:proj.m,real:acctRealNow(),idealToday:null,k7:null,k8:null,endDate:null,proj};
 }
 function weekKey(d){ const x=new Date(d); const off=(x.getDay()+6)%7; x.setDate(x.getDate()-off); return dateISO(x); }
 function acctWeekRow(sum){ return `<tr style="background:var(--panel-2)"><td colspan="3" style="font-weight:700;color:var(--ink)">Σ semana</td><td style="color:var(--f1);font-weight:700">${fmtMoney2(sum)}</td><td colspan="4"></td></tr>`; }
@@ -54,7 +31,7 @@ function renderAcctSummary(m,p){
 }
 function renderAcct(){
   const box=$('acctPeriodSummary');if(!box)return;
-  const m=acctModel(),api=window.JPWFx,refs=api&&api.state&&api.state.fxPlanningReferences?api.state.fxPlanningReferences():null;
+  const m=acctModel();
   const percent=v=>Number.isFinite(v)?(v*100).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%':'indisponível';
   const scope=window.JPWForex?.state?.operationalSelection?.()||{};
   const period=scope.accountId&&scope.periodId?window.JPWForex.state.accountContext(scope):null;
@@ -68,10 +45,10 @@ function renderAcct(){
   }
   const detail=$('acctPeriodDetail'),toggle=$('acctPeriodToggle');if(detail)detail.style.display='none';if(toggle)toggle.hidden=true;
   const chart=$('rvpChart');
-  if(chart)chart.innerHTML='<div class="acct-planning-link"><p class="fxp-note">'+(m.available?'Consulte o plano global, suas premissas e a comparação mensal entre realizado e projetado.':'Sem plano explícito: projeção indisponível. Crie um plano com suas próprias premissas.')+'</p><button type="button" id="acctGoPlanning" class="reset-btn">Abrir Planejamento patrimonial</button></div><details class="acct-planning-reference"><summary>Referências do plano global</summary><p>Referência mensal: '+(refs?percent(refs.monthly):'indisponível')+' · Referência anual distinta: '+(refs&&Array.isArray(refs.annualRange)?refs.annualRange.map(percent).join(' – '):'indisponível')+'. O plano global não atribui meta a esta conta.</p></details>';
-  if($('acctGoPlanning'))$('acctGoPlanning').onclick=()=>window.JPWNavigation.navigate('forex-planning');
+  if(chart)chart.innerHTML='<div class="acct-planning-link"><p class="fxp-note">Planos, metas e resultados mensais pertencem ao menu Planejamento. Os registros desta conta operacional permanecem separados.</p><button type="button" id="acctGoPlanning" class="reset-btn">Abrir Planejamento</button></div>';
+  if($('acctGoPlanning'))$('acctGoPlanning').onclick=()=>window.JPWNavigation.navigate('planning');
   const proj=$('acctProjWrap');if(proj)proj.innerHTML='';
-  const pace=$('dashCyclePace');if(pace)pace.innerHTML='<p class="fxp-note">Acompanhe ACTUAL × PLAN no Planejamento FX. As referências de retorno não determinam um ritmo obrigatório de execução.</p>';
+  const pace=$('dashCyclePace');if(pace)pace.innerHTML='<p class="fxp-note">Consulte a comparação entre realizado e referência no menu Planejamento. As projeções não determinam um ritmo obrigatório de execução.</p>';
   const sim=$('acctSimWrap');
   if(sim)sim.innerHTML='<p class="fxp-note">Simulação por conta indisponível nesta transição: não existe premissa estatística homologada para atribuir o plano global a esta conta.</p>';
   const th=$('ledgerBody')?.closest('table')?.querySelectorAll('thead th')[3];if(th)th.textContent='Queda book vs referência';
@@ -176,4 +153,45 @@ function drawRvpChart2(p){
     ${callouts}
     ${stats}
   </svg>${realPts.length?'':'<p style="font-size:var(--fs-sm);color:var(--ink-faint);margin-top:6px">Sem fechamentos ainda — a curva Real aparece a partir do primeiro lançamento.</p>'}`;
+}
+
+// Compatibility reader for the Forex Reserves boundary. No planning engine/state.
+function fxReservePanelData(){
+  const api=window.JPWForex&&window.JPWForex.state;
+  const view=api&&api.read?api.read():{},reserves=view.reserves&&view.reserves.observations||{};
+  const context=api&&api.accountContext?api.accountContext(view.budgetScope):null;
+  const unavailable=()=>({status:'NOT_COMPUTABLE',value:null,unit:'ACCOUNT_CURRENCY',findings:[]});
+  // Consume the exact results: a selected satellite, conflict or missing basis
+  // cannot regain a Mestre requirement through this presentation adapter.
+  const fcr=view.metrics?.fcrRequirement||unavailable(),feo=view.metrics?.feoRequirement||unavailable();
+  const number=v=>typeof v==='number'&&Number.isFinite(v)?v:null;
+  const fcrReq=fcr.status==='OK'?number(fcr.value):null,feoReq=feo.status==='OK'?number(feo.value):null;
+  const fcrCur=number(reserves.fcrConstituted),feoCur=number(reserves.feoConstituted);
+  const coverage=(cur,req)=>cur!==null&&req>0?cur/req*100:null;
+  const difference=(cur,req)=>cur!==null&&req!==null?cur-req:null;
+  const status=(cur,req)=>cur===null||req===null?'Pendente':cur<req?'Insuficiente':'Constituído — verificar governança';
+  const hasDeficit=(fcrReq!==null&&fcrCur!==null&&fcrCur<fcrReq)||(feoReq!==null&&feoCur!==null&&feoCur<feoReq);
+  const findings=[...fcr.findings,...feo.findings];
+  if(fcr.findings.some(f=>f.code==='FCR_NOMINAL_CONFLICT'))findings.push({code:'NOMINAL_CAPITAL_DIVERGENCE',message:'Capital nominal da conta e da apuração divergem. Reconcilie os registros; nenhuma base foi escolhida automaticamente.'});
+  return {accountId:view.budgetScope?.accountId||null,periodId:view.budgetScope?.periodId||null,
+    currency:context?.status==='OK'?context.value.currency:null,
+    capital:fcr.status==='OK'?number(fcr.base):null,masterCapital:fcr.status==='OK'?number(fcr.base):null,
+    fcrReq,feoReq,fcrCur,feoCur,fcrStatus:status(fcrCur,fcrReq),feoStatus:status(feoCur,feoReq),
+    fcrCoverage:coverage(fcrCur,fcrReq),feoCoverage:coverage(feoCur,feoReq),
+    fcrDiff:difference(fcrCur,fcrReq),feoDiff:difference(feoCur,feoReq),hasDeficit,
+    generalStatus:hasDeficit?'Déficit registrado':fcrReq===null||feoReq===null?'Requisitos não calculáveis':'Constituição informada; elegibilidade depende de governança',
+    generalTone:hasDeficit?'var(--f4)':'var(--ink-dim)',status:'PENDING_GOVERNANCE',requirements:{fcr,feo},findings};
+}
+function fxpMoneyOrPending(value,context){return Number.isFinite(value)?fmtForexMoney(value,context):'não informado';}
+function fxpReservesHTML(res){
+  const row=(k,v)=>`<tr class="fxp-reserve-row"><td>${k}</td><td>${v}</td></tr>`;
+  return `<details class="mc-disclosure fxp-disc fxp-reserves"><summary>Detalhes e governança das reservas</summary><div class="mc-disclosure-body"><div class="fxp-tablewrap"><table class="dtable"><tbody>
+    ${row('Capital nominal explícito da Conta Mestre',fxpMoneyOrPending(res.capital,res))}
+    ${row('FCR exigido pelo motor V11',fxpMoneyOrPending(res.fcrReq,res))}
+    ${row('FCR constituído',fxpMoneyOrPending(res.fcrCur,res))}
+    ${row('FEO apurado para seis meses de despesas reais',fxpMoneyOrPending(res.feoReq,res))}
+    ${row('FEO constituído',fxpMoneyOrPending(res.feoCur,res))}
+    ${row('Situação quantitativa',esc(res.generalStatus))}
+    ${row('Governança',esc(res.status||'PENDING_GOVERNANCE'))}
+    </tbody></table></div><ul>${(res.findings||[]).map(f=>`<li>${esc(f.message||f.code)}</li>`).join('')}</ul><p class="fxp-note">Valor calculado não resolve conflitos documentais nem concede autorização operacional. SI não substitui capital nominal; uma média mensal não substitui a apuração explícita de seis meses.</p></div></details>`;
 }

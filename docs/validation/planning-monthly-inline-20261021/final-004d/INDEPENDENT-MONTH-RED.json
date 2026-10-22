@@ -1,0 +1,23 @@
+{
+  "fixture": {
+    "id": "planning_account_a18ab934-b1c5-42cb-80c2-24a1f40c3a00",
+    "closed": "planning_account_ff0d02e6-e3b8-4a39-98ff-c9d56f19f16c",
+    "large": "planning_account_27647cb9-bf5a-4f8d-827d-c9b2a947e5c6",
+    "future": "planning_account_89d1e350-2905-4c14-9b6d-c2e131eccced",
+    "start": "2026-08",
+    "pending": "2026-09",
+    "today": "2026-10",
+    "blank": "2026-11",
+    "zero": "2026-12",
+    "negative": "2027-01"
+  },
+  "selected_month_before": "2026-10",
+  "visible_selected_month_after_cancel": "2026-10",
+  "visible_context_before": "Registrar rentabilidade\nRegistrar aporte\nRegistrar saque\nFinalizado = Sim\nCorrigir aporte / informar custo\nCorrigir saque",
+  "visible_context_after_cancel": "Registrar rentabilidade\nRegistrar aporte\nRegistrar saque\nFinalizado = Sim\nCorrigir aporte / informar custo\nCorrigir saque",
+  "editor_opened_text": "set. de 2026 · Registro realizado\nUnidade\nPercentual · %\nDólares · US$\nResultado realizado\n\nSalvar\nCancelar",
+  "following_finalize_dialog": "Planejamento\n\nFinalizar mês\n\nConfira os registros efetivos de set. de 2026. Os aportes previstos não entram no fechamento.\n\nResultado registrado · USD\nUS$ 0,00\nAportes registrados · USD\nUS$ 0,00\nSaques registrados · USD\nUS$ 0,00\nFechamento efetivo · USD\nUS$ 1.065,00\nConferi todos os aportes e saques efetivos deste mês.\n\nRascunho nesta sessão\nCancelar\nConfirmar fechamento",
+  "following_finalize_key": "finalize:planning_account_a18ab934-b1c5-42cb-80c2-24a1f40c3a00:2026-09:",
+  "financial_unchanged": true,
+  "observed_mismatch": true
+}

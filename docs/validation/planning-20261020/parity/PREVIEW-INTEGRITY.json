@@ -1,0 +1,45 @@
+{
+  "result": "PASS",
+  "build": "443c1a59f2c1f46d",
+  "base_url": "http://127.0.0.1:53221/",
+  "files": {
+    "index.html": {
+      "http_status": 200,
+      "url": "http://127.0.0.1:53221/index.html",
+      "content_type": null,
+      "bytes": 548524,
+      "served_sha256": "df5f6ad5527d5d1d31f84f054387c7db794d5c1d4aacad1ddda2a4ff08253bea",
+      "local_sha256": "df5f6ad5527d5d1d31f84f054387c7db794d5c1d4aacad1ddda2a4ff08253bea",
+      "same": true
+    },
+    "build-id.js": {
+      "http_status": 200,
+      "url": "http://127.0.0.1:53221/build-id.js",
+      "content_type": null,
+      "bytes": 39062,
+      "served_sha256": "b58fc4c40e01d2c2dd5f40b25933f443d011e4e36a5bb71f8e6bbd5a7ad70797",
+      "local_sha256": "b58fc4c40e01d2c2dd5f40b25933f443d011e4e36a5bb71f8e6bbd5a7ad70797",
+      "same": true,
+      "served_build": "443c1a59f2c1f46d"
+    },
+    "src/styles/app.css": {
+      "http_status": 200,
+      "url": "http://127.0.0.1:53221/src/styles/app.css",
+      "content_type": null,
+      "bytes": 895614,
+      "served_sha256": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25",
+      "local_sha256": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25",
+      "same": true
+    },
+    "src/js/30-accounting/06-planning/03-ui.js": {
+      "http_status": 200,
+      "url": "http://127.0.0.1:53221/src/js/30-accounting/06-planning/03-ui.js",
+      "content_type": null,
+      "bytes": 129438,
+      "served_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+      "local_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+      "same": true
+    }
+  },
+  "limits": "HTTP response bytes only. No operator browser profile, cache, service worker, storage or visual/interactive experience was inspected or cleared."
+}

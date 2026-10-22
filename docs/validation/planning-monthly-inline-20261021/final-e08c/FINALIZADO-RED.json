@@ -1,0 +1,37 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/finalized-selector-red",
+  "started_at": "2026-10-22T03:45:09.617214+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "1e293bdb463d9bc1c3e8ce5fd0be858c0ab362876dc6b05fe8fdf63b325199a7",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "29fcc377cd10436908eb1637784f10a007dd385a1f3f9b3645a3fb1370e3c164"
+  },
+  "cases": [
+    {
+      "id": "inline-month-context-identity",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-month-context-identity",
+      "started_at": "2026-10-22T03:45:11.786184+00:00",
+      "error": "pending confirmation never displays an unconfirmed finalized state",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 640, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 608, in month_context_identity\n    finalized_paths=finalized_selector_paths(page,fixture,harness)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 571, in finalized_selector_paths\n    assert page.locator('[data-pl-finalized-month=\"'+month+'\"]').input_value()==actual,'pending confirmation never displays an unconfirmed finalized state'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pending confirmation never displays an unconfirmed finalized state\n",
+      "finished_at": "2026-10-22T03:45:11.973330+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-month-context-identity"
+  ],
+  "only": [
+    "inline-month-context-identity"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T03:45:12.357429+00:00"
+}

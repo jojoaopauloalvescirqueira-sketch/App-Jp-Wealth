@@ -1,4 +1,20 @@
-## Foco atual — integração das pendências18/10/2026
+# Rota focal — Planejamento: posições e proporções
+
+[Contrato](../architecture/PLANNING.md), [plano aprovado](../superpowers/plans/2026-10-21-planning-proportions.md), [tarefa](../work/ACTIVE-TASK.md) e [provas com limites](../validation/planning-proportions-20261021/README.md). Correções de apresentação implementadas com regressões; três abas e finanças preservadas. Resultado atual somente no recibo FULL próprio e identidade congelada, nunca em fotografias históricas.
+
+## Fotografia anterior preservada
+
+# Planejamento — mapa da correção de paridade — 20/10/2026
+
+Contrato vigente: [Planejamento](../architecture/PLANNING.md) tem somente Comece aqui, Consolidado e Preenchimento mensal, menu Stoikus operacional separado e referência inicial interna. Formulário sempre acessível e dois marcos de renda durante o preenchimento. Padrão editável após Research; Notas globais com Mostrar ativo, ocultas em modais. [Plano humano](../superpowers/plans/2026-10-20-planning-three-tabs.md). Motor/estado/backup preservados;91checks anteriores não aprovam o novo delta. Sem dados reais, norma, instruções, Git ou publicação.
+
+## Fotografia anterior preservada
+
+## Rota atual — Planejamento independente — 20/10/2026
+
+Menu principal `planning`, fonte `src/js/30-accounting/06-planning/`, contrato [PLANNING](../architecture/PLANNING.md) e [CHG delimitado](../work/CHG-JPW-PLANNING-20261020.md). Base ea15afc, candidato local ff0f078f70b9fb97 na branch autorizada. Legado preservado para exportação; sem migração automática nem alteração de norma Forex. [Validação e limites](../validation/planning-20261020/README.md). As fotografias anteriores abaixo conservam suas datas e não autorizam novas ações.
+
+## Foco da fotografia — integração das pendências18/10/2026
 
 - [Contrato da combinação](../work/CHG-JPW-CONSOLIDACAO-INTEGRAL-20261018.md); tarefa e estado reconciliados, fotografias individuais preservadas.
 - F01, site e instalador têm recibos focais. FULL/host, Git, Windows/MT5 e aceite da combinação são estados separados.
@@ -256,12 +272,22 @@ consumidores compartilhados e a preferência v6 na análise de impacto.
 Forex reúne preparação, conta, execução, apuração e planejamento do risco
 operacional. Identifique cálculo, renderizador, ato mutável e consumidor antes
 de modificar uma apresentação. Use `src/js/10-domain/02-risk-calculations.js`,
-`src/js/20-ui/04-operational-clearance.js`, `src/js/20-ui/13-exec-views.js` e,
-quando afetado, `docs/architecture/FX-PLANNING.md` e seu diretório
-`src/js/30-accounting/05-fx-planning/`. Leia M0/M2 se o delta alcançar regras:
+`src/js/20-ui/04-operational-clearance.js` e `src/js/20-ui/13-exec-views.js`.
+O planejamento patrimonial foi separado conforme a rota abaixo; o contrato
+`docs/architecture/FX-PLANNING.md` conserva sua fotografia histórica. Leia M0/M2 se o delta alcançar regras:
 V11 documental não homologa o motor legado. Preserve bloqueios, unidades,
 histórico e distinção PLANEJADO/REALIZADO/NORMATIVO. Catálogo, reservas e
 clearance têm consumidores fora da tela operacional.
+
+### Planejamento patrimonial
+
+Menu independente de Forex, com Consolidado, Mensal, Referência e Contas.
+O contrato atual é `docs/architecture/PLANNING.md`; motor, comandos e apresentação
+estão em `src/js/30-accounting/06-planning/`. O agregado opcional
+`S.patrimonialPlanning` não importa fatos operacionais nem migra `S.fxPlanning`.
+Perfis hipotéticos não são política normativa Forex. Fluxos, proteção do writer,
+backup, rascunhos, disponibilidade e aliases têm consumidores compartilhados
+descritos no contrato. A implementação antiga deixou a distribuição ativa.
 
 ### Research
 

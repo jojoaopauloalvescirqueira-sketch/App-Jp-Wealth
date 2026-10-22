@@ -1,0 +1,8 @@
+{
+  "source_returns_exact_original_after_removing_new_query_and_export": true,
+  "state_test_returns_exact_original_after_removing_single_invocation": true,
+  "old_case_ids": 54,
+  "new_case_ids": 14,
+  "original_source_sha256": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+  "engine_sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2"
+}

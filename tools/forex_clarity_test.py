@@ -22,7 +22,7 @@ SEED = TABLE_SEED.replace('  return scope;', '''  S.accounts.push({forexAccountI
   require(api.recordAccountPeriod({accountId:'TABLE-B',startedAt:'2026-08-01',currency:'USD',si:5000,openingBook:5000,source:'Synthetic second opening',activateCurrentPeriod:true},{reason:'Synthetic second account'}));
   require(api.selectOperationalContext(scope.accountId,scope.periodId));render();
   return scope;''')
-OWNED = ['src/js/20-ui/'+name+'.js' for name in ('01-header-readout','13-exec-views','16-operation-history','26-forex-engine-views','28-fx-consolidated','30-execution-board','31-forex-accounts')]+['src/js/30-accounting/05-fx-planning/05-fx-ui.js']
+OWNED = ['src/js/20-ui/'+name+'.js' for name in ('01-header-readout','13-exec-views','16-operation-history','26-forex-engine-views','28-fx-consolidated','30-execution-board','31-forex-accounts')]+['src/js/30-accounting/06-planning/03-ui.js']
 
 def seed(page):
     scope=page.evaluate(SEED);settle(page);prepare_drafts(page);return scope
@@ -53,15 +53,23 @@ def assert_control_targets(page,scope):
 
 def run(page,out,results):
     scope=seed(page)
+    # Populate the separate synthetic public-market cache before the strict
+    # navigation no-write snapshot, as the independent Planning opens it lazily.
+    quote=page.evaluate('async () => await JPWMarket.usdBrl.refresh(false)')
+    assert quote['status']=='fresh',quote
     results.append('Synthetic layout setup: six explicit drafts via Add; anonymous zero slots removed only in disposable fixture; financial values unchanged')
     before=persisted(page)
     for route in ['forex-consolidated','forex-management-accounts','forex-operation','forex-history','forex-accounting','forex-planning','forex-reserves']:
         assert page.evaluate('(r)=>JPWNavigation.navigate(r)',route)
         settle(page)
-        assert page.locator('#hdrPeriod').inner_text()=='01/09/2026',(route,page.locator('#hdrPeriod').inner_text())
+        if route=='forex-planning':
+            assert page.evaluate('JPWNavigation.current().primary')=='planning'
+            assert page.evaluate('JPWForex.state.operationalSelection().periodId')==scope['periodId']
+        else:
+            assert page.locator('#hdrPeriod').inner_text()=='01/09/2026',(route,page.locator('#hdrPeriod').inner_text())
         assert persisted(page)==before,('Read-only navigation changed state',route)
         assert_control_targets(page,'.screen.active')
-    results.append('PASS: same operational period on seven Forex routes; navigation preserves confirmed state and storage')
+    results.append('PASS: six Forex routes retain the operational header; independent planning preserves Forex scope and confirmed state/storage')
     page.evaluate("JPWNavigation.navigate('forex-management-accounts')")
     assert page.evaluate("JPWForex.accountsUI.examine('TABLE-B')")
     assert page.evaluate('JPWForex.state.operationalSelection().accountId')=='TABLE-A'
@@ -159,18 +167,13 @@ def run(page,out,results):
     results.append('PASS: light/dark continuous workbook and mobile list at 1440/1024/390/320, 44px actions, contained desktop scroll without page/mobile overflow or state mutation')
     page.set_viewport_size({'width':1440,'height':960})
     page.evaluate("JPWNavigation.navigate('forex-planning')")
-    # Exercise new selectors in the original form/binder without creating a plan.
-    page.evaluate("()=>{const host=document.createElement('div');host.id='clarityLedgerHost';document.getElementById('fxPlanningRoot').append(host);host.innerHTML=fxpLedgerImportHTML({nextOpenMonth:'2026-09'});fxpBindLedgerImport(host)}")
-    assert page.locator('#fxpLedgerAccount').evaluate("e=>e.tagName==='SELECT'")
-    assert 'Conta B sintética' in page.locator('#fxpLedgerAccount').inner_text()
-    assert '2026-09-01' in page.locator('#fxpLedgerPeriod').inner_text()
-    page.locator('#fxpLedgerAccount').select_option('TABLE-B');settle(page)
-    assert page.locator('#fxpLedgerPeriod').input_value()==''
-    assert '2026-08-01' in page.locator('#fxpLedgerPeriod').inner_text()
-    assert page.locator('#fxpLedgerImportBtn').is_disabled()
+    # Planning is independent: the retired Forex import form and automatic
+    # account association cannot remain active after the approved replacement.
+    assert page.locator('#fxpLedgerAccount,#fxpLedgerPeriod,#fxpLedgerImportBtn').count()==0
+    assert page.evaluate('JPWPlanning.queries.snapshot().accounts.length')==0
+    assert page.evaluate('JPWForex.state.operationalSelection().accountId')=='TABLE-A'
     assert persisted(page)==saved
-    page.evaluate("document.getElementById('clarityLedgerHost').remove()")
-    results.append('PASS: ACTUAL origin selectors display names/dates, retain IDs, invalidate preview on explicit account change, never write on selection')
+    results.append('PASS: independent planning has no retired Forex ledger import or automatic account association; scope and storage unchanged')
     page.evaluate("JPWNavigation.navigate('forex-consolidated')")
     assert page.locator('#fxcNextAction').is_visible()
     page.locator('#fxcNextAction details').evaluate('e=>e.open=true')

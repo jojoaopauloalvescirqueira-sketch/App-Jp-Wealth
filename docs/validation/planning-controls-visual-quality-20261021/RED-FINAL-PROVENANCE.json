@@ -1,0 +1,9 @@
+{
+  "mode": "synthetic HTTP source overrides from preserved0dc archive; no productdiskchange",
+  "override_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+    "src/styles/app.css": "482dfd3055edd884a19ef24edf2ac216fd1bf5648b4b152ddc225eab69e7bfd8"
+  },
+  "test_sha256": "2c85119b2ad6a2c7ca9736d790943295cf92556e65a073e5abd14770471ef0e7",
+  "archive_sha256": "8241b0f1911bf878a8196f7176ecb898484ce02a29d2b5980550169bd698bfa7"
+}

@@ -1,0 +1,73 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/critical-red",
+  "started_at": "2026-10-22T01:53:15.420744+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "d6a0144943dd6405905b80aef05efd1f0704dc6f9a785b5ae4294f08cdcfd6c2",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "c2cd08c5b92056857213122642a334b6b84142f43595e10cdc36b0c6d866d9f1",
+    "tools/planning_monthly_inline_test.py": "a3f4246aa1b6d0e2c6c8191855132fabf2087b499424cf125981725ac4cee521"
+  },
+  "cases": [
+    {
+      "id": "inline-dirty-context-guards",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-dirty-context-guards",
+      "started_at": "2026-10-22T01:53:16.918147+00:00",
+      "error": "('context guard', '[data-pl-finalized-month=\"2026-10\"]')",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 430, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 149, in guards\n    guard=page.locator('[data-pl-inline-guard]');assert guard.is_visible(),('context guard',selector)\n                                                        ^^^^^^^^^^^^^^^^^^\nAssertionError: ('context guard', '[data-pl-finalized-month=\"2026-10\"]')\n",
+      "finished_at": "2026-10-22T01:53:17.482571+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-stoikus-context-guard",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-stoikus-context-guard",
+      "started_at": "2026-10-22T01:53:18.418125+00:00",
+      "error": "Stoikus changing to another master account must resolve the active draft",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 430, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 377, in stoikus_context\n    guard=page.locator('[data-pl-inline-guard]');assert guard.is_visible(),'Stoikus changing to another master account must resolve the active draft'\n                                                        ^^^^^^^^^^^^^^^^^^\nAssertionError: Stoikus changing to another master account must resolve the active draft\n",
+      "finished_at": "2026-10-22T01:53:18.884086+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-future-context-companion",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-future-context-companion",
+      "started_at": "2026-10-22T01:53:19.784818+00:00",
+      "error": "('editing only B contribution must preserve B null rate despite different master A', {'rate': None, 'contributionUsd': ''}, {'rate': 0.03, 'contributionUsd': 17})",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 430, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 395, in future_context\n    assert actual=={'rate':None,'contributionUsd':17},('editing only B contribution must preserve B null rate despite different master A',original,actual)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('editing only B contribution must preserve B null rate despite different master A', {'rate': None, 'contributionUsd': ''}, {'rate': 0.03, 'contributionUsd': 17})\n",
+      "finished_at": "2026-10-22T01:53:20.395262+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-menu-escape-ownership",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-menu-escape-ownership",
+      "started_at": "2026-10-22T01:53:21.309727+00:00",
+      "error": "menu owns Escape and preserves underlying draft",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 430, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 404, in menu_escape\n    assert editor.count()==1 and editor.locator('[name=value]').input_value()=='3' and page.evaluate('JPWPlanning.ui.hasPendingWork()'),'menu owns Escape and preserves underlying draft'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: menu owns Escape and preserves underlying draft\n",
+      "finished_at": "2026-10-22T01:53:21.436281+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-stoikus-context-guard",
+    "inline-future-context-companion",
+    "inline-menu-escape-ownership",
+    "inline-dirty-context-guards"
+  ],
+  "only": [
+    "inline-stoikus-context-guard",
+    "inline-future-context-companion",
+    "inline-menu-escape-ownership",
+    "inline-dirty-context-guards"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 4,
+    "required": 4,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T01:53:21.904783+00:00"
+}

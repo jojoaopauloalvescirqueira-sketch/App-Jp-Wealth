@@ -1,0 +1,49 @@
+{
+  "started_at": "2026-10-22T13:14:55.561725+00:00",
+  "out": ".superpowers/sdd/2026-10-22-planning-monthly-close/browser-red",
+  "only": [
+    "closure-missing-result-recovery",
+    "closure-cancelled-review-conflict"
+  ],
+  "required_case_ids": [
+    "closure-missing-result-recovery",
+    "closure-cancelled-review-conflict"
+  ],
+  "cases": [
+    {
+      "id": "closure-missing-result-recovery",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "closure-missing-result-recovery",
+      "started_at": "2026-10-22T13:14:58.718326+00:00",
+      "error": "blocked closure must offer result entry in the same dialog",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_close_test.py\", line 218, in <lambda>\n    harness.record(report,case_id,lambda:action(page,fixture,harness),page)\n                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_close_test.py\", line 71, in missing_recovery\n    dialog=open_close(page,fixture);section=result_section(dialog)\n                                            ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_close_test.py\", line 51, in result_section\n    assert section.count()==1 and section.is_visible(), 'blocked closure must offer result entry in the same dialog'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: blocked closure must offer result entry in the same dialog\n",
+      "finished_at": "2026-10-22T13:14:58.988801+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-cancelled-review-conflict",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "closure-cancelled-review-conflict",
+      "started_at": "2026-10-22T13:15:00.082619+00:00",
+      "error": "old reviewed context must have explicit refresh recovery",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_close_test.py\", line 218, in <lambda>\n    harness.record(report,case_id,lambda:action(page,fixture,harness),page)\n                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_close_test.py\", line 100, in cancelled_conflict\n    assert refresh.count()==1 and refresh.is_visible(), 'old reviewed context must have explicit refresh recovery'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: old reviewed context must have explicit refresh recovery\n",
+      "finished_at": "2026-10-22T13:15:01.033187+00:00",
+      "page_errors": []
+    }
+  ],
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/js/30-accounting/06-planning/03-ui.js": "50d5012858b3a3b95add0eefb407f94b790147b9530e9b20fb1973dfbfec201d",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_close_test.py": "9381ba07e22e5decf0e952f26ba56a9b678e33df18a78e0a362b61ac85ee56b1"
+  },
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 2,
+    "required": 2,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T13:15:01.610510+00:00"
+}

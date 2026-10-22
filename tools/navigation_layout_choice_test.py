@@ -196,7 +196,7 @@ def assert_structure(page, expected):
     }""", expected)
     expected_parent = "appSidebar" if expected == "sidebar" else "submenuNavStage" if expected == "submenu" else "gdTopbarNavSlot"
     assert result["navParent"] == expected_parent, result
-    assert result["primaryCount"] == 6 and result["duplicateIds"] == [], result
+    assert result["primaryCount"] == 7 and result["duplicateIds"] == [], result
     if expected == "sidebar":
         assert result["shellInSidebar"] and result["execParent"] == result["researchParent"] == "navLocalSlot", result
     elif expected == "topbar":
@@ -422,7 +422,7 @@ def current_snapshot(page):
     return page.evaluate("""() => ({
       state:JSON.stringify(S),compute:compute(),clearance:getOperationalClearance(),
       current:JPWNavigation.current(),exec:JPWExec.ui.getView(),finpes:JPWFin.ui.getView(),
-      research:JPWResearch.ui.getView(),fxplan:window.JPWFx?.ui?.getView(),
+      research:JPWResearch.ui.getView(),planning:window.JPWPlanning?.ui?.getView(),
       nocoda:{selected:ncSelectedId,draft:ncDraft,dirty:ncDirty},
       pivots:{instrument:pvInstrumentId,study:pvStudyId,newOpen:pvNewStudyOpen,
         newDraft:pvNewStudyDraft,formOpen:pvFormOpen,draft:pvDraft,filters:pvFilters,sort:pvSort},

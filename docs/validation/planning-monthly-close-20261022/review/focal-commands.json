@@ -1,0 +1,62 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "0de7f7c65cadb1573ddaa729b9e315c786e5f5db335b1be0ce344704ec427790"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/planning_parity_test.py",
+        "--case",
+        "all",
+        "--out",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/exploration/parity"
+      ],
+      "started": 1792676018.532824,
+      "exit": 0,
+      "finished": 1792676076.8990772
+    },
+    {
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/planning_three_tabs_test.py",
+        "--out",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/exploration/three-tabs",
+        "--receipt",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/exploration/three-tabs.json"
+      ],
+      "started": 1792676076.899468,
+      "exit": 1,
+      "finished": 1792676121.617963
+    },
+    {
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/planning_proportions_test.py",
+        "--case",
+        "regressions",
+        "--out",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/exploration/proportions-regressions"
+      ],
+      "started": 1792676121.618067,
+      "exit": 0,
+      "finished": 1792676123.907827
+    }
+  ],
+  "after": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "0de7f7c65cadb1573ddaa729b9e315c786e5f5db335b1be0ce344704ec427790"
+  },
+  "unchanged": true
+}

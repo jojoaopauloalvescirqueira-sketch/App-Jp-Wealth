@@ -1,0 +1,278 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be"
+  },
+  "cases": [
+    {
+      "id": "all-account-selector-and-real-chart-roundtrip",
+      "expected": "Every selector option works; charts render nonblank; no financial writes",
+      "observed": [
+        {
+          "account": "",
+          "selector": "data-pl-table-mode",
+          "options_exercised": [
+            "Anual · Resumo completo",
+            "Mensal · Patrimônio",
+            "Mensal · Aportes do mês",
+            "Mensal · Resultado do mês",
+            "Mensal · Rentabilidade"
+          ]
+        },
+        {
+          "account": "",
+          "selector": "data-pl-real-chart-mode",
+          "options_exercised": [
+            "Patrimônio e aportes (US$)",
+            "Rentabilidade mensal (%)",
+            "Aportes do mês (US$)",
+            "Saques do mês (US$)"
+          ]
+        },
+        {
+          "account": "",
+          "selector": "data-pl-chart-period",
+          "options_exercised": [
+            "full",
+            "current-year",
+            "next:3",
+            "next:6",
+            "next:12",
+            "next:24",
+            "next:36",
+            "next:60",
+            "next:120",
+            "last:3",
+            "last:6",
+            "last:12",
+            "year:2026",
+            "year:2027",
+            "year:2028",
+            "year:2029",
+            "year:2030",
+            "year:2031",
+            "year:2032",
+            "year:2033",
+            "year:2034",
+            "year:2035",
+            "year:2036"
+          ]
+        },
+        {
+          "account": "",
+          "chart_dimensions": [
+            901,
+            275
+          ],
+          "unique_colors": 198,
+          "paths": 4
+        },
+        {
+          "account": "planning_account_1bd28c88-c070-46b4-badf-4e665aa1370b",
+          "selector": "data-pl-table-mode",
+          "options_exercised": [
+            "Anual · Resumo completo",
+            "Mensal · Patrimônio",
+            "Mensal · Aportes do mês",
+            "Mensal · Resultado do mês",
+            "Mensal · Rentabilidade"
+          ]
+        },
+        {
+          "account": "planning_account_1bd28c88-c070-46b4-badf-4e665aa1370b",
+          "selector": "data-pl-real-chart-mode",
+          "options_exercised": [
+            "Patrimônio e aportes (US$)",
+            "Rentabilidade mensal (%)",
+            "Aportes do mês (US$)",
+            "Saques do mês (US$)"
+          ]
+        },
+        {
+          "account": "planning_account_1bd28c88-c070-46b4-badf-4e665aa1370b",
+          "selector": "data-pl-chart-period",
+          "options_exercised": [
+            "full",
+            "current-year",
+            "next:3",
+            "next:6",
+            "next:12",
+            "next:24",
+            "next:36",
+            "next:60",
+            "next:120",
+            "last:3",
+            "last:6",
+            "last:12",
+            "year:2026",
+            "year:2027",
+            "year:2028",
+            "year:2029",
+            "year:2030",
+            "year:2031",
+            "year:2032",
+            "year:2033",
+            "year:2034",
+            "year:2035",
+            "year:2036"
+          ]
+        },
+        {
+          "account": "planning_account_1bd28c88-c070-46b4-badf-4e665aa1370b",
+          "chart_dimensions": [
+            901,
+            275
+          ],
+          "unique_colors": 196,
+          "paths": 4
+        },
+        {
+          "account": "planning_account_071faeb7-21a5-418e-9035-2fc63be65db5",
+          "selector": "data-pl-table-mode",
+          "options_exercised": [
+            "Anual · Resumo completo",
+            "Mensal · Patrimônio",
+            "Mensal · Aportes do mês",
+            "Mensal · Resultado do mês",
+            "Mensal · Rentabilidade"
+          ]
+        },
+        {
+          "account": "planning_account_071faeb7-21a5-418e-9035-2fc63be65db5",
+          "selector": "data-pl-real-chart-mode",
+          "options_exercised": [
+            "Patrimônio e aportes (US$)",
+            "Rentabilidade mensal (%)",
+            "Aportes do mês (US$)",
+            "Saques do mês (US$)"
+          ]
+        },
+        {
+          "account": "planning_account_071faeb7-21a5-418e-9035-2fc63be65db5",
+          "selector": "data-pl-chart-period",
+          "options_exercised": [
+            "full",
+            "current-year",
+            "next:3",
+            "next:6",
+            "next:12",
+            "next:24",
+            "next:36",
+            "next:60",
+            "next:120",
+            "last:3",
+            "last:6",
+            "last:12",
+            "year:2026",
+            "year:2027",
+            "year:2028",
+            "year:2029",
+            "year:2030",
+            "year:2031",
+            "year:2032",
+            "year:2033",
+            "year:2034",
+            "year:2035",
+            "year:2036"
+          ]
+        },
+        {
+          "account": "planning_account_071faeb7-21a5-418e-9035-2fc63be65db5",
+          "chart_dimensions": [
+            901,
+            275
+          ],
+          "unique_colors": 196,
+          "paths": 4
+        }
+      ],
+      "classification": "PASS"
+    },
+    {
+      "id": "multi-account-goals-help",
+      "expected": "Explain goal scope and leave financial facts unchanged",
+      "observed": "Planejamento\n\nSeu plano inicial e o caminho atual\n\nConta não selecionada · Fechamento usado: out. de 2026.\n\nRenda adequada\n\nObjetivo atual: —/mês · Objetivo preservado: —/mês.\n\nPlano de referência\nNão alcançada no horizonte\nPrevisão atualizada\nNão alcançada no horizonte\n\nSelecione uma conta no Consolidado; rendas pessoais não são somadas entre contas.\n\nRenda ideal\n\nObjetivo atual: —/mês · Objetivo preservado: —/mês.\n\nPlano de referência\nNão alcançada no horizonte\nPrevisão atualizada\nNão alcançada no horizonte\n\nSelecione uma conta no Consolidado; rendas pessoais não são somadas entre contas.\n\nComo ler os prazos\nPlano de referência: capital inicial, aporte fixo e taxa do perfil registrados no formulário. Esta comparação é preservada por conta e plano; lançamentos posteriores não a substituem.\nPrevisão atualizada: parte do patrimônio no último fechamento contínuo, com os resultados, aportes e saques reais. Depois desse fechamento, segue exatamente as rentabilidades, aportes e saques projetados em Preenchimento mensal. Meses pendentes continuam sendo estimativas.\nPrazo restante: meses de calendário entre o mês atual e o primeiro mês em que o resultado mensal alcança a renda desejada. A data pode mudar com os lançamentos. Aportes e saques no fim de um mês afetam a renda do mês seguinte.\nAntes ou depois do plano: diferença entre as datas, em meses. A mudança pode vir da execução real ou de novas projeções. Se o objetivo de renda mudar, as metas ficam identificadas e a comparação di",
+      "classification": "PASS"
+    },
+    {
+      "id": "empty-reset-history",
+      "expected": "History is reachable without mutating facts",
+      "observed": "Planejamento\n\nHistórico de reinícios\nConta sintética 1\nHistórico e planos anteriores · 2 registros\nConta sintética 2\nHistórico e planos anteriores · 2 registros\n\nCancelar",
+      "classification": "PASS"
+    },
+    {
+      "id": "notes-from-monthly",
+      "expected": "Click, Enter and Space open Notes; close returns focus without altering Planning",
+      "observed": {
+        "triggers": [
+          "click",
+          "Enter",
+          "Space"
+        ],
+        "focus": "headerNotesBtn"
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "shell-away-return",
+      "expected": "Navigate to Dashboard and return; confirmed Planning facts retained",
+      "observed": {
+        "accounts": 2,
+        "unchanged": true
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "actual-backup-serialization",
+      "expected": "Actual backup serializer retains exact confirmed aggregate",
+      "observed": {
+        "type": "jpwealth_full_backup",
+        "aggregate_exact": true
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "session-preservation-contract",
+      "expected": "Session preservation carries exact Planning aggregate into next state",
+      "observed": {
+        "aggregate_exact": true,
+        "boundary": "actual preservation functions; finalization UI not clicked"
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "reload-active-accounts",
+      "expected": "Reload preserves active accounts and confirmed months exactly",
+      "observed": {
+        "aggregate_exact": true,
+        "accounts": 2
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "browser-runtime",
+      "expected": "No page exceptions or unrecognized external requests",
+      "observed": {
+        "pageerrors": [],
+        "unexpected_requests": []
+      },
+      "classification": "PASS"
+    }
+  ],
+  "started": 1792676154.455143,
+  "classification": "PASS",
+  "after": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be"
+  },
+  "finished": 1792676160.6238348,
+  "unchanged": true
+}

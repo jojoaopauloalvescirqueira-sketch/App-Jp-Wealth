@@ -1,3 +1,19 @@
+# Planejamento — contrato visual e jornada de três abas
+
+A finalidade e os cálculos permanecem no [contrato Planejamento](../architecture/PLANNING.md). A correção de21/10 exige centralização, alinhamento moeda/valor, cabeçalhos responsivos, previsão sem repetição e legenda/data da Parada; [plano aprovado](../superpowers/plans/2026-10-21-planning-proportions.md). O [estado operacional e provas](CURRENT-STATE.md) identifica a revisão realmente validada. Não altera perguntas, perfis, escritores, finanças, backup ou norma. Históricos preservados abaixo.
+
+## Fotografia anterior preservada
+
+# Correção funcional de Planejamento — 20/10/2026
+
+Contrato vigente: [Planejamento](../architecture/PLANNING.md) tem somente Comece aqui, Consolidado e Preenchimento mensal, menu Stoikus operacional separado e referência inicial interna. Formulário sempre acessível e dois marcos de renda durante o preenchimento. Padrão editável após Research; Notas globais com Mostrar ativo, ocultas em modais. [Plano humano](../superpowers/plans/2026-10-20-planning-three-tabs.md). Motor/estado/backup preservados;91checks anteriores não aprovam o novo delta. Sem dados reais, norma, instruções, Git ou publicação.
+
+## Fotografia anterior preservada
+
+# Execução atual — Planejamento — 20/10/2026
+
+Base main `ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34`; branch especificamente autorizada `codex/planejamento-patrimonial-20261020`. Candidato preserva três minigames e Bolsas Globais. Implementa o plano aprovado de menu independente, sem migração de legado. Fontes e oráculos sintéticos fixados; suítes/revisões finais em execução. Sem Git final/publicação autorizados. [Contrato](../architecture/PLANNING.md). Fotografias anteriores permanecem abaixo.
+
 # Contexto canonico do projeto
 
 Revisão geral histórica: 2026-09-09

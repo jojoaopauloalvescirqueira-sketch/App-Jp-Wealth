@@ -1,0 +1,18 @@
+[
+  {
+    "case": "future-companion-drift",
+    "guard": 0,
+    "before": {
+      "rate": null,
+      "contributionUsd": ""
+    },
+    "after": {
+      "rate": 0.03,
+      "contributionUsd": 17
+    },
+    "expected_after": {
+      "rate": null,
+      "contributionUsd": 17
+    }
+  }
+]

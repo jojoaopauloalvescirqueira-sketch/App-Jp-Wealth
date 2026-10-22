@@ -1,0 +1,37 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/flow-opener-focus-red",
+  "started_at": "2026-10-22T03:50:14.065007+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cc94fc8d07b2d7c2422f6bfc8d19c471a5ede66e2cd67fc32df04c556965d96d",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "9e31f989174e17f7fd7d42fe7a5c7d3a76706ef3b6a364b1e9c367f71bcde20c"
+  },
+  "cases": [
+    {
+      "id": "inline-month-context-identity",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-month-context-identity",
+      "started_at": "2026-10-22T03:50:15.357830+00:00",
+      "error": "cancelled legacy flow restores its live semantic opener focus",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 676, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 643, in month_context_identity\n    flow_paths=flow_month_context_paths(page,fixture,harness)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 568, in flow_month_context_paths\n    assert page.locator('[data-pl-month-context] [data-pl-action='+kind+']').evaluate('n=>document.activeElement===n'),'cancelled legacy flow restores its live semantic opener focus'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: cancelled legacy flow restores its live semantic opener focus\n",
+      "finished_at": "2026-10-22T03:50:15.666112+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-month-context-identity"
+  ],
+  "only": [
+    "inline-month-context-identity"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T03:50:15.953600+00:00"
+}

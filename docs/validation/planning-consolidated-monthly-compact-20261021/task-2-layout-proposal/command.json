@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    ".superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/task-2-layout-proposal/run-proposal.py"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "JP_WEALTH_CHROMIUM": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+  },
+  "started": "2026-10-21T23:29:55.794487+00:00",
+  "finished": "2026-10-21T23:30:21.200243+00:00",
+  "exit": 0
+}

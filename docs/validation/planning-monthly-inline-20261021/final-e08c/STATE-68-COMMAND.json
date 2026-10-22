@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "tools/planning_state_test.js"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T03:53:14.905133+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/state-final5-68.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T03:53:18.848791+00:00",
+  "log_sha256": "1d725865d0d0b747532bf43d9aaa2fd703ecde63cc5b5657e44795e2069c9ff3"
+}

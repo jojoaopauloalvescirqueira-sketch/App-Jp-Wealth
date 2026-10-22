@@ -21,8 +21,10 @@ from notes_launcher_test import launch_options, settle
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ['src/js/30-accounting/01-daily-ledger.js',
-           'src/js/30-accounting/05-fx-planning/03-fx-state.js',
-           'src/js/30-accounting/05-fx-planning/05-fx-ui.js',
+           'src/js/30-accounting/02-accounting-engine.js',
+           'src/js/30-accounting/06-planning/01-engine.js',
+           'src/js/30-accounting/06-planning/02-state.js',
+           'src/js/30-accounting/06-planning/03-ui.js',
            'src/js/10-domain/00-forex-state.js', 'src/js/10-domain/02-risk-calculations.js',
            'src/js/10-domain/07-reserve-requirements.js']
 
@@ -44,27 +46,6 @@ def instrument(page):
       Storage.prototype.setItem=function(k,v){if(this===localStorage&&k===LSKEY)__financeWrites.push('set');return set.call(this,k,v);};
       Storage.prototype.removeItem=function(k){if(this===localStorage&&k===LSKEY)__financeWrites.push('remove');return remove.call(this,k);};
     }""")
-
-
-def import_setup(page, profit=120):
-    page.evaluate("""profit => {
-      const yes=r=>{if(!r.ok)throw Error(JSON.stringify(r));return r;};
-      yes(JPWLedger.record({data:'2026-09-02',resultado:profit,saldo:12000+profit}));
-      yes(JPWFx.state.fxPlanCreate({name:'Synthetic FIN import',assumptions:{startMonth:'2026-09',horizonMonths:3,initialBalanceUsd:12000,defaultMonthlyReturn:.01}}));
-      JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');
-    }""", profit)
-    settle(page)
-
-
-def reviewed(page):
-    assert page.locator('#fxpLedgerContributionsConfirmed').count() == 1, 'ACTUAL import lacks explicit contribution review'
-    page.locator('#fxpLedgerComplete').check()
-    page.locator('#fxpLedgerContributionsConfirmed').check()
-    page.locator('#fxpLedgerPreviewBtn').click()
-    assert page.locator('#fxpLedgerImportBtn').is_enabled(), page.locator('#fxpLedgerPreview').inner_text()
-    geometry=page.locator('#fxpLedgerPreview').evaluate('el => ({width:el.clientWidth,content:el.scrollWidth})')
-    assert geometry['width']>0 and geometry['content']<=geometry['width']+1, ('Financial preview overflows',geometry)
-    page.locator('.fxp-ledger-import').screenshot(path=str(page.finance_evidence / (page.finance_case + '.png')))
 
 
 def query_b_while_a(page, scope):
@@ -98,99 +79,23 @@ def query_b_while_a(page, scope):
     return {'profitB': 30, 'rowsA': len(result['active']), 'selection': result['selected'], 'readAndWrongWritesUnchanged': True}
 
 
-def import_success(page, scope, profit):
-    import_setup(page, profit)
-    reviewed(page)
-    before = snapshot(page)
-    page.locator('#fxpLedgerImportBtn').click()
-    settle(page)
-    actual = page.evaluate("JPWFx.state.fxActivePlan().actuals['2026-09']||null")
-    assert actual is not None and actual['profitUsd'] == profit, page.locator('#fxpLedgerImportErr').inner_text()
-    assert actual['closureStatus'] == 'FINALIZED' and actual['contributionsConfirmed'] is True
-    assert actual['source']['accountId'] == scope['accountId'] and actual['source']['periodId'] == scope['periodId']
-    assert actual['confirmedSnapshot']['close'] == 12000 + profit
-    assert snapshot(page)['writes'] == before['writes'] + 1, 'Import must cross the writer exactly once'
-    disk = page.evaluate("JSON.parse(localStorage.getItem(LSKEY)).fxPlanning.plan.actuals['2026-09']")
-    assert disk == actual
-    page.reload(); ready(page)
-    restored = page.evaluate("JPWFx.state.fxActivePlan().actuals['2026-09']||null")
-    assert restored == actual, 'Reload changed the confirmed ACTUAL'
-    return {'profitUsd': profit, 'closingUsd': 12000 + profit, 'sourceRows': actual['source']['rows'], 'reloadExact': True}
-
-
-def missing_confirmation(page, scope):
-    import_setup(page)
-    before = snapshot(page)
-    page.locator('#fxpLedgerComplete').check(); page.locator('#fxpLedgerPreviewBtn').click()
-    assert page.locator('#fxpLedgerContributionsConfirmed').count() == 1, 'Missing contribution control'
-    assert page.locator('#fxpLedgerImportBtn').is_disabled(), 'Import enabled before contributions explicitly reviewed'
-    refused = page.evaluate("""a => {const p=JPWLedger.monthlyActual('2026-09',{...a,complete:true});
-      return JPWFx.state.fxPlanImportLedgerActual('2026-09',{...a,complete:true,sourceVersion:p.source.version});}""", scope)
-    assert refused['ok'] is False and any('depósitos' in error for error in refused['errors']), refused
-    unchanged(page, before)
-    return {'domainRefusal': refused, 'buttonDisabled': True, 'noWrite': True}
-
-
-def preview_invalidated(page, scope):
-    import_setup(page); reviewed(page)
-    before = snapshot(page)
-    page.locator('#fxpLedgerContributionsConfirmed').focus(); page.keyboard.press('Space')
-    assert not page.locator('#fxpLedgerContributionsConfirmed').is_checked()
-    assert page.locator('#fxpLedgerImportBtn').is_disabled()
-    assert page.evaluate('fxpLedgerPreview') is None
-    page.keyboard.press('Space')
-    assert page.locator('#fxpLedgerContributionsConfirmed').is_checked()
-    assert page.locator('#fxpLedgerImportBtn').is_disabled(), 'Changed confirmation reused earlier preview'
-    page.locator('#fxpLedgerPreviewBtn').click()
-    page.locator('#fxpLedgerPeriod').select_option('')
-    assert page.locator('#fxpLedgerImportBtn').is_disabled() and page.evaluate('fxpLedgerPreview') is None
-    unchanged(page, before)
-    return {'confirmationAndPeriodInvalidatePreview': True, 'noWrite': True}
-
-
-def stale_preview(page, scope):
-    import_setup(page); reviewed(page)
-    page.evaluate("""() => {const r=JPWLedger.rows()[0];const corrected=JPWLedger.correct(r.id,{data:r.data,resultado:121,saldo:12121},{reason:'Synthetic corrected source',expectedVersion:r.version});if(!corrected.ok)throw Error(JSON.stringify(corrected));}""")
-    before = snapshot(page)
-    page.locator('#fxpLedgerImportBtn').click(); settle(page)
-    assert page.evaluate("JPWFx.state.fxActivePlan().actuals['2026-09']||null") is None
-    error = page.locator('#fxpLedgerImportErr').inner_text()
-    assert 'origem mudou' in error, error
-    unchanged(page, before)
-    return {'error': error, 'noWrite': True}
-
-
-def contributions_refused(page, scope):
-    import_setup(page)
-    added=page.evaluate("""() => JPWFx.state.fxPlanAddContribution({month:'2026-09',source:'prop',originalCurrency:'USD',originalAmount:10,usdAmount:10,affectsFxCostBasis:false})""")
-    assert added['ok'], added
-    page.evaluate("renderFxPlanning()"); reviewed(page)
-    before = snapshot(page)
-    page.locator('#fxpLedgerImportBtn').click(); settle(page)
-    error = page.locator('#fxpLedgerImportErr').inner_text()
-    assert 'não discrimina fluxos' in error, error
-    unchanged(page, before)
-    return {'error': error, 'nonzeroContributionRefused': True, 'noWrite': True}
-
-
-def storage_refused(page, scope):
-    import_setup(page); reviewed(page)
-    before = snapshot(page)
-    page.evaluate("""() => {const original=Storage.prototype.setItem;window.__financeSet=original;
-      Storage.prototype.setItem=function(k,v){if(this===localStorage&&k===LSKEY)throw new DOMException('Synthetic quota refusal','QuotaExceededError');return original.call(this,k,v);};}""")
-    page.locator('#fxpLedgerImportBtn').click(); settle(page)
-    error = page.locator('#fxpLedgerImportErr').inner_text()
-    assert 'recusada' in error.lower(), error
-    unchanged(page, before)
-    assert page.evaluate("JPWFx.state.fxActivePlan().actuals['2026-09']||null") is None
-    page.evaluate('() => { Storage.prototype.setItem=window.__financeSet; }')
-    return {'error': error, 'rollbackExact': True, 'noWrite': True}
-
-
-def mobile_import(page, scope, theme):
-    page.set_viewport_size({'width':390,'height':900})
-    page.evaluate("theme => { S.theme=theme; applyTheme(); }",theme)
-    return import_success(page,scope,120)
+def independent_planning(page, scope):
+    before=snapshot(page)
+    result=page.evaluate("""() => {
+      const api=JPWPlanning,roots={forex:JSON.stringify(S.forex),ledger:JSON.stringify(S.ledger),legacy:JSON.stringify(S.fxPlanning),pf:JSON.stringify(S.personalFinance),alladin:JSON.stringify(S.alladin)};
+      const made=api.commands.execute('createAccount',{name:'Synthetic independent FIN',startMonth:'2026-09',initialUsd:12000,profileId:'base',monthlyContributionUsd:10,goals:{adequate:null,ideal:{value:500,currency:'USD'}}},api.queries.token());
+      if(!made.ok)throw Error(JSON.stringify(made));
+      const prior={state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),writes:__financeWrites.length};
+      const denied=api.commands.execute('importLedgerActual',{accountId:made.accountId,month:'2026-09'},api.queries.token(made.accountId));
+      return {denied,prior,after:{state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),writes:__financeWrites.length},roots,
+        rootsAfter:{forex:JSON.stringify(S.forex),ledger:JSON.stringify(S.ledger),legacy:JSON.stringify(S.fxPlanning),pf:JSON.stringify(S.personalFinance),alladin:JSON.stringify(S.alladin)}};
+    }""")
+    assert result['denied']['status']=='INVALID',result
+    assert result['prior']==result['after'] and result['roots']==result['rootsAfter'],result
+    assert snapshot(page)['writes']==before['writes']+1,'Only explicit account create may write'
+    page.evaluate("JPWNavigation.navigate('planning')")
+    assert page.locator('#fxpLedgerImportBtn').count()==0,'Retired import UI is still active'
+    return {'retiredImportRefused':True,'adjacentFinancialRootsUnchanged':True,'explicitCreateWrites':1}
 
 
 def reserves(page, scope, kind):
@@ -210,7 +115,7 @@ def reserves(page, scope, kind):
         feoConstituted:kind==='zero'?0:666,sixMonthExpenseAmount:kind==='zero'?0:666,source:'Synthetic new period reserves'},
         {target:next,reason:'Synthetic period-specific reserve',expectedEpoch:jpWealthPersistenceEpoch()}));
       const before={state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),writes:__financeWrites.length};
-      const model=api.read(),planning=JPWFx.state.fxReservePanelData();
+      const model=api.read(),planning=fxReservePanelData();
       return {kind,old,globalAfter:S.forex.reserves,next,modelReserve:model.reserves,planning,before,
         after:{state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),writes:__financeWrites.length}};
     }""", {'a': scope, 'kind': kind})
@@ -232,16 +137,8 @@ def main():
     parser.add_argument('--output-dir',type=Path,required=True)
     args=parser.parse_args(); root=args.root.resolve(); out=args.output_dir.resolve(); out.mkdir(parents=True,exist_ok=True)
     rows=[]
-    cases=[('FIN-01 explicit B query and scoped A writes', query_b_while_a),
-           ('FIN-02 zero result UI import and reload',lambda p,a:import_success(p,a,0)),
-           ('FIN-02 nonzero result UI import and reload',lambda p,a:import_success(p,a,120)),
-           ('FIN-02 mobile light import and reload',lambda p,a:mobile_import(p,a,'light')),
-           ('FIN-02 mobile dark import and reload',lambda p,a:mobile_import(p,a,'dark')),
-           ('FIN-02 missing contribution confirmation',missing_confirmation),
-           ('FIN-02 context and confirmation invalidate preview',preview_invalidated),
-           ('FIN-02 corrected ledger invalidates source version',stale_preview),
-           ('FIN-02 nonzero contributions remain refused',contributions_refused),
-           ('FIN-02 refused write restores ACTUAL and storage',storage_refused)]
+    cases=[('FIN-01 explicit B query and scoped A writes',query_b_while_a),
+           ('FIN-02 independent planning refuses retired ledger import',independent_planning)]
     cases.extend(('FIN-03 '+kind+' current period reserve',lambda p,a,k=kind:reserves(p,a,k)) for kind in ['recorded','absent','zero','conflict'])
     server=Server(('127.0.0.1',0),partial(Quiet,directory=str(root)))
     threading.Thread(target=server.serve_forever,daemon=True).start()

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "tools/planning_monthly_inline_test.py",
+    "--out",
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/month-context-green-escape"
+  ],
+  "exit": 0,
+  "seconds": 47.35969400405884,
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "1e293bdb463d9bc1c3e8ce5fd0be858c0ab362876dc6b05fe8fdf63b325199a7",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "bc9f8033809299166db63cfd00b109b6de48ad8632d52441aeeda2b4d85fea95",
+    "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+    "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5"
+  }
+}

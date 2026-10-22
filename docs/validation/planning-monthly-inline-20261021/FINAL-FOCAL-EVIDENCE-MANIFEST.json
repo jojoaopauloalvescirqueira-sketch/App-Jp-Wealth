@@ -1,0 +1,176 @@
+{
+  "build": "6ca8a3b8971e249a",
+  "files": {
+    "UI-DEFAULT-RESULTS.json": {
+      "source": "task2/visual-default-3/ui-visual-quality-results.json",
+      "sha256": "9b42f91cee454748a34c5b32e62145b7cf32dd21c7ea92a8ebb8d9f56d458056"
+    },
+    "UI-DEFAULT-COMMAND.json": {
+      "source": "task2/visual-default-3.receipt.json",
+      "sha256": "94b7af3b4622aea6843515645392533db558cea134c0c2ed66cfc6b37216bf96"
+    },
+    "UI-DEFAULT-VERIFIED-SUMMARY.json": {
+      "source": "task2/visual-default-3.verified-summary.json",
+      "sha256": "477d9d42d2ee035e89cbf72fcd11dc0ad69063024a0b05f392820531c8ba7366"
+    },
+    "UI-DEFAULT.stdout.log": {
+      "source": "task2/visual-default-3.stdout.log",
+      "sha256": "aabe1db6433496360efc3de606a6423301321f8c2f6e6726a6a5b43ace9abad7"
+    },
+    "UI-DEFAULT.stderr.log": {
+      "source": "task2/visual-default-3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "UI-CASE-PRESERVATION.json": {
+      "source": "task2/case-preservation.json",
+      "sha256": "c9940652388b1a872ac53cd6d4a2001888a8bb1c0a8cf7bb4c0309d432514690"
+    },
+    "UI-SOURCE-PRESERVATION.json": {
+      "source": "task2/preservation.json",
+      "sha256": "8e5c5940ad6b70d70a8bb4d6820218e71cc81fc6912982fddb407a40709e0784"
+    },
+    "UI-BUILDER.md": {
+      "source": "task-2-report.md",
+      "sha256": "784b9040bd31d7101252f9f2af200b61d53090a465d145728ddc0fb2eb5f4d72"
+    },
+    "FINAL-FOCAL-PIPELINE.json": {
+      "source": "final-focal-pipeline.json",
+      "sha256": "d2b570c71cd4ccc7f8117eabc292de568e72f87f83663bf774fc070288e83e1f"
+    },
+    "INLINE-FINAL-33.json": {
+      "source": "final-inline-33/results.json",
+      "sha256": "f7861cea082b0c08ef7057c2c0a59277610e243b2f144a1240aa73a9465dd68d"
+    },
+    "INLINE-FINAL-33-COMMAND.json": {
+      "source": "inline-final-33-command.json",
+      "sha256": "38386ad414639225b9d07bcadc33f25cdb15714f32fa201b9fbf20fb78d3e307"
+    },
+    "STATE-FINAL-68-COMMAND.json": {
+      "source": "state-final-68-command.json",
+      "sha256": "fdfeb6490b865dea1d6eb6827576af383949313712b591003ca11f58ecf18068"
+    },
+    "STATE-FINAL-68.log": {
+      "source": "state-final-68.log",
+      "sha256": "1d725865d0d0b747532bf43d9aaa2fd703ecde63cc5b5657e44795e2069c9ff3"
+    },
+    "REGISTRY-FINAL-PRESERVATION.json": {
+      "source": "regression-memory-preservation.json",
+      "sha256": "e372bc4d398c718a7bc00de1abe93f130f5a44e37777e6215802902433a66122"
+    },
+    "ENGINEERING-RED-COMMAND.json": {
+      "source": "engineering-reconciliation-command.json",
+      "sha256": "ae846184bd86ce33e8ed710f75cea022b08f5f7fc95a1d76aa3cf3ee92407a51"
+    },
+    "ENGINEERING-RED.log": {
+      "source": "engineering-reconciliation.log",
+      "sha256": "dd390830534014708007396cd50269994620eb5aec89b784108e8c70417471d3"
+    },
+    "ENGINEERING-GREEN-COMMAND.json": {
+      "source": "engineering-reconciliation-green-command.json",
+      "sha256": "a2c960906829e859f99a7fc290accb3c93e9005b9a78eb485eb2c6d578c08b3e"
+    },
+    "ENGINEERING-GREEN.log": {
+      "source": "engineering-reconciliation-green.log",
+      "sha256": "6fbbf8199806858fa05fd84cd574eca5bd2566c49f6c7f2f181580fb2dff4173"
+    },
+    "VALIDATE-COMMAND.json": {
+      "source": "validate-final-command.json",
+      "sha256": "6be7dd94657f7c9b97ebe64fd304b5cc1e42b9f3788dfa09bb4f0e9bdb6a47af"
+    },
+    "VALIDATE.log": {
+      "source": "validate-final.log",
+      "sha256": "e5ed97c4ddd960068f3c1b17c36f6fc05520fd21f0188382baa97b25458ed031"
+    },
+    "REPRODUCIBILITY-COMMAND.json": {
+      "source": "reproducibility-final-command.json",
+      "sha256": "82bdcdebcbae85d433e27f9028779670b6cf2b6546bc06ce54e8b2168a335526"
+    },
+    "REPRODUCIBILITY.log": {
+      "source": "reproducibility-final.log",
+      "sha256": "b0848a61b2bbe5ef68ddd07710c1b4a028234c56838170114a96dd2e897dff90"
+    },
+    "PDF-INSPECTION.json": {
+      "source": "pdf-final/PDF-INSPECTION.json",
+      "sha256": "f053c3bbf438b1bfd8196c132efffa1a2b74b09455c2743a9c8ab8d309a49f19"
+    },
+    "PDF-COMMAND.json": {
+      "source": "pdf-final-command.json",
+      "sha256": "99466143edb03ed11fbacf787456f126057ab112a6832e75870da28f592b316f"
+    },
+    "pdf/synthetic-report.pdf": {
+      "source": "final-real-planning-ui/ui-report.pdf",
+      "sha256": "3695a8584819c95c62fde4945e65dfde12c853cba75a919c4c0ac01167f7d22e"
+    },
+    "pdf/page-1.png": {
+      "source": "pdf-final/page-1.png",
+      "sha256": "40e6981a088f97ee1d67f2e5c4cc356265003ecb73b0e850ba2621573147ce40"
+    },
+    "pdf/page-2.png": {
+      "source": "pdf-final/page-2.png",
+      "sha256": "4d41901c3cca9c83a7775fc95efd9cd2b3f9fed51dafca39b604d1cff41364e0"
+    },
+    "focals/planning-parity-command.json": {
+      "source": "final-real-planning-parity-command.json",
+      "sha256": "25a4c2e4df945412710d4067591c20e82896f2881d58ffdca21eff2d25645625"
+    },
+    "focals/planning-parity.log": {
+      "source": "final-real-planning-parity.log",
+      "sha256": "65a5a66ae2146ccc4da1ef3b1b3544f96ab8bee36d9666dfae8a2a40e2dd07c3"
+    },
+    "focals/three-tabs-command.json": {
+      "source": "final-real-three-tabs-command.json",
+      "sha256": "bef0d07c06b47b7232ac505fafdf00b7152d6a19d112fc38bdd376545e6d53c7"
+    },
+    "focals/three-tabs.log": {
+      "source": "final-real-three-tabs.log",
+      "sha256": "288e056e0e4a2c620c9a896744f34ad97a13f8cfa2747a7820d9f6172f5e3cc4"
+    },
+    "focals/proportions-command.json": {
+      "source": "final-real-proportions-command.json",
+      "sha256": "8cdb4839eda7b3713a4f1662f9ca2364630c62ef5fd791ded8d5052b760ed43b"
+    },
+    "focals/proportions.log": {
+      "source": "final-real-proportions.log",
+      "sha256": "e61a8ec5c50effe9bb6a684609121c4b9561ecc9e3e38ec5808565eeedc739fc"
+    },
+    "focals/parity-layout-command.json": {
+      "source": "final-real-parity-layout-command.json",
+      "sha256": "c34c943acd83ba6886b0a55db534bb427d14d4c77963771a4214ba0c603f60d3"
+    },
+    "focals/parity-layout.log": {
+      "source": "final-real-parity-layout.log",
+      "sha256": "1b34cae5ba136ed8ec2a4c87eeedd8e8622e0268a12d13e74152a7863e9bbe7d"
+    },
+    "focals/planning-ui-command.json": {
+      "source": "final-real-planning-ui-command.json",
+      "sha256": "41d27868ac5bc138e2f34d0903522291f9d3ea18f5df2a6f378fd90d40f06f52"
+    },
+    "focals/planning-ui.log": {
+      "source": "final-real-planning-ui.log",
+      "sha256": "2a056879bfceddbf675a07df5a7c80f0f2cc572f9711993ad077471ee441113a"
+    },
+    "focals/distribution-command.json": {
+      "source": "final-real-distribution-command.json",
+      "sha256": "f7707d6c6980074d0fcbdc1ab1b0ad0c0236cb3a9097e2d175ea3f5ce60fae9f"
+    },
+    "focals/distribution.log": {
+      "source": "final-real-distribution.log",
+      "sha256": "4b37057d8901c58789133f7dbb61ceba0155be6a33da625498ef8f905510e27f"
+    },
+    "focals/finalize-command.json": {
+      "source": "final-real-finalize-command.json",
+      "sha256": "6d240d4370039979a9acbc2b4c5b9b0feff60866ce72f2ce99693e7358a6a874"
+    },
+    "focals/finalize.log": {
+      "source": "final-real-finalize.log",
+      "sha256": "d3dd115ea65ca7b0f0017a66a7ad62e4bdb2e4a0aaffb3b3f632341056291179"
+    }
+  },
+  "finite_results": {
+    "new_browser": 33,
+    "visual": 239,
+    "state": 68,
+    "affected_focals": 7
+  },
+  "full": "NOT_RUN until final protocol receipt"
+}

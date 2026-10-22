@@ -1,3 +1,25 @@
+# Navegação — três abas e Notas globais
+
+Ordem padrão editável: Dashboard → Research → Planejamento → Forex → Finanças Pessoais → Alladin → Ferramentas. Módulos congelados continuam ausentes. Ordens antigas5/6 recebem Planning após Research; a antiga ordem padrão7 projeta o novo padrão sem gravar. Ordens personalizadas válidas distintas dessa ordem canônica antiga permanecem editáveis. A lista antiga idêntica não informa intenção; não há nova chave ou redefinição persistente para distingui-la.
+
+Planejamento tem rota, owner e tela próprios; aliases forex-planning/fxplan passam pelo resolvedor e não dependem de Forex ativo. Somente Comece aqui(start), Consolidado(consolidated) e Preenchimento mensal(monthly) são públicas. A entrada abre Comece aqui; demais abas são liberadas após confirmação. Chamadas antigas reference/accounts resolvem Consolidado. A seleção mensal permanece própria; menu/PDF usa contexto do Consolidado, salvo escolha explícita dentro do formulário.
+
+Preencher o formulário sempre abre criação, edição ou escolha explícita criar/editar quando há várias contas sem seleção. Prévia não grava contas. Os dois marcos de renda são legíveis antes da revisão. Stoikus operacional fica separado; suporte/histórico não se tornam abas.
+
+Notas com Mostrar ativo mantém launcher em todos os menus. Overlays e dialog[open] o ocultam temporariamente; fechar restaura preferência e posição. Atalho interno Forex preservado. [Plano](../superpowers/plans/2026-10-20-planning-three-tabs.md).
+
+## Fotografia anterior preservada — candidato443c
+
+# Planejamento — contrato sucessor de 20/10/2026
+
+Sete menus primários, com Planejamento após Forex na ordem padrão. Forex tem seis filhos; `forex-planning` e `fxplan` são aliases do menu `planning`, tela `#planning`. O novo domínio vive em `30-accounting/06-planning`, separado de Forex. Preferências antigas de ordem são projetadas em memória incluindo o novo menu, sem gravação automática.
+
+As quatro abas públicas são **Comece aqui** (`start`), **Consolidado** (`consolidated`), **Preenchimento mensal** (`monthly`) e **Referência** (`reference`). A entrada abre Comece aqui. Sem conta ativa, somente essa aba fica visível; as demais são liberadas após a configuração confirmada. O destino local legado `accounts` é resolvido para `start`, sem criar uma quinta aba. Os aliases passam pelo mesmo resolvedor e pelas mesmas verificações de disponibilidade e trabalho pendente.
+
+Comece aqui oferece **Preencher o formulário**, com perguntas, comparação de perfis, prévias e revisão antes da confirmação de gravação. Voltar ou fechar o formulário conserva o rascunho da sessão; preencher ou consultar uma prévia não confirma alterações financeiras. Consolidado admite todas as contas ou uma conta; Preenchimento mensal e Referência mantêm seleções individuais próprias. A seleção de Consolidado é a referência do menu de edição e do relatório, mesmo quando outra conta estiver em consulta mensal.
+
+[Contrato completo](PLANNING.md). As fotografias anteriores abaixo mantêm suas respectivas datas e não redefinem esse contrato sucessor.
+
 ## Bolsas Globais — apresentação de consulta — 16/10/2026
 
 O redesign preserva `tools-market-hours`, a visão local, os hosts e o foco do título. A consulta passa a priorizar lista e estados; no celular, Explorar mapa é um estado visual local, sem navegação, gravação ou alteração da bolsa selecionada. Recolher o mapa suspende seu renderer sem pausar o relógio da lista descoberta. Seleção pela lista e pelo globo usa as mesmas identidades. [Contrato e limites](MARKET-HOURS.md).

@@ -1,0 +1,249 @@
+{
+  "result": "PASS",
+  "build": "443c1a59f2c1f46d",
+  "started_at": "2026-10-20T20:27:27.315475+00:00",
+  "finished_at": "2026-10-20T20:27:35.425159+00:00",
+  "finalization_receipt": ".superpowers/sdd/planning-parity-20261020/release-records-finalization.json",
+  "finalization_sha256": "aba9a7d60226f73b79e421eff24527cd08fddc76ffb26500b097880900218a35",
+  "environment": {
+    "python_requested": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "node_requested": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "chromium_requested": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "path": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin:/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/joaoalvescirqueira/.codex/tmp/arg0-macos/codex-arg0mnf9M4:/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "JPW_NODE": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "JP_WEALTH_CHROMIUM": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "orchestrator_python": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "executables": {
+      "python": {
+        "requested": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+        "resolved": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "exists": true,
+        "sha256": "8506f337a83611246ffcff62d6e96c6d2269e5db48508ca3ac2553d56c962aee"
+      },
+      "node": {
+        "requested": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "resolved": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "exists": true,
+        "sha256": "d0c6c74401e6a544bb4d4b2a9ded9c43298d4e6dcd5ebac4dd010c4c81774105"
+      },
+      "chromium": {
+        "requested": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+        "resolved": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+        "exists": true,
+        "sha256": "2447c7bdea8e8ad38b52594f1ba53e18821c05445e8a07ad1cf3b0f23931d89d"
+      }
+    },
+    "probes": [
+      {
+        "name": "python-environment",
+        "command": [
+          "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+          "-c",
+          "import sys,json,platform,shutil,importlib.metadata;print(json.dumps({'executable':sys.executable,'version':sys.version,'platform':platform.platform(),'node_on_path':shutil.which('node'),'playwright':importlib.metadata.version('playwright')}))"
+        ],
+        "returncode": 0,
+        "result": "PASS",
+        "duration_seconds": 0.068,
+        "stdout": "{\"executable\": \"/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3\", \"version\": \"3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]\", \"platform\": \"macOS-27.0.1-arm64-arm-64bit\", \"node_on_path\": \"/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node\", \"playwright\": \"1.60.0\"}\n",
+        "stderr": ""
+      },
+      {
+        "name": "node-environment",
+        "command": [
+          "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--version"
+        ],
+        "returncode": 0,
+        "result": "PASS",
+        "duration_seconds": 0.026,
+        "stdout": "v24.19.0\n",
+        "stderr": ""
+      },
+      {
+        "name": "chromium-environment",
+        "command": [
+          "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+          "--version"
+        ],
+        "returncode": 0,
+        "result": "PASS",
+        "duration_seconds": 0.081,
+        "stdout": "Google Chrome for Testing 148.0.7778.96 \n",
+        "stderr": ""
+      }
+    ],
+    "python_facts": {
+      "executable": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+      "version": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+      "platform": "macOS-27.0.1-arm64-arm-64bit",
+      "node_on_path": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "playwright": "1.60.0"
+    }
+  },
+  "final_checks": [
+    {
+      "name": "structure",
+      "command": [
+        "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+        "tools/validate_project.py"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "duration_seconds": 4.921,
+      "stdout": "VALIDACAO OK - 120 arquivos JS, 705 IDs estaticos, portatil reconstruido.\n",
+      "stderr": "",
+      "identities_after": {
+        "build": "443c1a59f2c1f46d",
+        "fingerprint_count": 327,
+        "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+        "runtime_resources_count": 397,
+        "tests_count": 257,
+        "runner_count": 1,
+        "unchanged": true
+      }
+    },
+    {
+      "name": "context",
+      "command": [
+        "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+        "tools/preflight_context_test.py"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "duration_seconds": 1.551,
+      "stdout": "[PASS] caso1_head_igual_source\n[PASS] caso2_context_only\n[PASS] caso3_fora_da_allowlist\n[PASS] caso4a_campo_ausente\n[PASS] caso4b_malformado\n[PASS] caso4c_sha_inexistente\n[PASS] caso5_nao_ancestral\nPREFLIGHT CONTEXT OK — TRUE/FALSE/UNKNOWN distintos; UNKNOWN != FALSE; reconciliacao contextual (context-only) nao dispara falso positivo.\n",
+      "stderr": "",
+      "identities_after": {
+        "build": "443c1a59f2c1f46d",
+        "fingerprint_count": 327,
+        "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+        "runtime_resources_count": 397,
+        "tests_count": 257,
+        "runner_count": 1,
+        "unchanged": true
+      }
+    },
+    {
+      "name": "preflight",
+      "command": [
+        "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+        "tools/agent_preflight.py",
+        "--mode",
+        "audit",
+        "--allow-dirty",
+        "--json"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "duration_seconds": 0.186,
+      "stdout": "{\n  \"result\": \"PASS\",\n  \"facts\": {\n    \"root\": \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS\",\n    \"mode\": \"audit\",\n    \"checked_at\": \"2026-10-20T17:27:34-03:00\",\n    \"git_root\": \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS\",\n    \"branch\": \"codex/planejamento-patrimonial-20261020\",\n    \"head\": \"ea15afc9c6a9\",\n    \"dirty_entries\": 98,\n    \"tracked_files\": 1576,\n    \"versionable_files\": 1642,\n    \"current_state_date\": \"2026-10-20\",\n    \"current_state_age_days\": 0,\n    \"source_revision\": \"ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34\",\n    \"source_revision_status\": \"valid\",\n    \"paths_since_source_revision_count\": 0,\n    \"potential_material_changes_since_source_revision\": false,\n    \"sensitive_candidate_paths\": [],\n    \"manifest_scripts\": 120,\n    \"manifest_runtime_assets\": 4\n  },\n  \"warnings\": [\n    \"arvore possui 98 alteracao(oes); confirme autoria e escopo\"\n  ],\n  \"errors\": []\n}\n",
+      "stderr": "",
+      "identities_after": {
+        "build": "443c1a59f2c1f46d",
+        "fingerprint_count": 327,
+        "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+        "runtime_resources_count": 397,
+        "tests_count": 257,
+        "runner_count": 1,
+        "unchanged": true
+      },
+      "payload": {
+        "result": "PASS",
+        "facts": {
+          "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+          "mode": "audit",
+          "checked_at": "2026-10-20T17:27:34-03:00",
+          "git_root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+          "branch": "codex/planejamento-patrimonial-20261020",
+          "head": "ea15afc9c6a9",
+          "dirty_entries": 98,
+          "tracked_files": 1576,
+          "versionable_files": 1642,
+          "current_state_date": "2026-10-20",
+          "current_state_age_days": 0,
+          "source_revision": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+          "source_revision_status": "valid",
+          "paths_since_source_revision_count": 0,
+          "potential_material_changes_since_source_revision": false,
+          "sensitive_candidate_paths": [],
+          "manifest_scripts": 120,
+          "manifest_runtime_assets": 4
+        },
+        "warnings": [
+          "arvore possui 98 alteracao(oes); confirme autoria e escopo"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "name": "jp-engineering-integration",
+      "command": [
+        "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+        "tools/jp_engineering_integration_test.py"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "duration_seconds": 0.321,
+      "stdout": "PASS: files=20 aliases=2 regression_entries=34 controls=13\nLIMIT: structural integrity/references only; no model discovery, behavior, Git tracking, or full/CI gate coverage is established.\n",
+      "stderr": "",
+      "identities_after": {
+        "build": "443c1a59f2c1f46d",
+        "fingerprint_count": 327,
+        "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+        "runtime_resources_count": 397,
+        "tests_count": 257,
+        "runner_count": 1,
+        "unchanged": true
+      }
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "duration_seconds": 0.297,
+      "stdout": "",
+      "stderr": "",
+      "identities_after": {
+        "build": "443c1a59f2c1f46d",
+        "fingerprint_count": 327,
+        "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+        "runtime_resources_count": 397,
+        "tests_count": 257,
+        "runner_count": 1,
+        "unchanged": true
+      }
+    }
+  ],
+  "identities_before": {
+    "build": "443c1a59f2c1f46d",
+    "fingerprint_count": 327,
+    "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+    "runtime_resources_count": 397,
+    "tests_count": 257,
+    "runner_count": 1,
+    "unchanged": true
+  },
+  "identities_after": {
+    "build": "443c1a59f2c1f46d",
+    "fingerprint_count": 327,
+    "fingerprint_sha256": "443c1a59f2c1f46d1f278da3dcee99d8689218cc35eea9d62e8e3a44385d49d0",
+    "runtime_resources_count": 397,
+    "tests_count": 257,
+    "runner_count": 1,
+    "unchanged": true
+  },
+  "preserved_history": {
+    "docs/validation/planning-20261020/parity/HISTORY-d935-FINAL-CHECKS.json": "386c95645c9f36ee7f2e80270cd47c6ba22314a8aaadf7f7c55c6f723072adbf",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-PREVIEW-INTEGRITY.json": "f3c5d390f9e9e4cfd0fcf9456c86136e1cf930b71ec8dd9f7db177cf33225aa3",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-SCOPE-FINAL.json": "5ba4974d92d84764c21652c3f2d2521b4f2b0acba25a4ca216be627d52c2efe9"
+  },
+  "error": null,
+  "scope_result": "PASS",
+  "preview_result": "PASS",
+  "limits": "These supplemental checks do not rerun FULL, inspect owner storage, execute Google Apps Script, establish human acceptance or mutate the project's Git state. The context test uses its own isolated fixture repositories. validate_project invokes the real builder and must preserve all identities."
+}

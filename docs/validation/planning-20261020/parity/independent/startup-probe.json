@@ -1,0 +1,69 @@
+{
+  "scope": "Four independent concurrent synthetic cold browser loads; no user profile or external Google service",
+  "before": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "cases": [
+    {
+      "case": 0,
+      "errors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "readiness": {
+        "state": "object",
+        "planning": "object",
+        "navigation": "function"
+      },
+      "navigation": "PASS"
+    },
+    {
+      "case": 1,
+      "errors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "readiness": {
+        "state": "object",
+        "planning": "object",
+        "navigation": "function"
+      },
+      "navigation": "PASS"
+    },
+    {
+      "case": 2,
+      "errors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "readiness": {
+        "state": "object",
+        "planning": "object",
+        "navigation": "function"
+      },
+      "navigation": "PASS"
+    },
+    {
+      "case": 3,
+      "errors": [],
+      "failedRequests": [],
+      "badResponses": [],
+      "readiness": {
+        "state": "object",
+        "planning": "object",
+        "navigation": "function"
+      },
+      "navigation": "PASS"
+    }
+  ],
+  "after": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "candidateStable": true,
+  "pass": true
+}

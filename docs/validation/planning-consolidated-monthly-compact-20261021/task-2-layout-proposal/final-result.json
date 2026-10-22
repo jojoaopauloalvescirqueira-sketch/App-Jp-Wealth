@@ -1,0 +1,68 @@
+{
+  "classification": "PASS",
+  "exit": 0,
+  "time": "2026-10-21T23:30:41.239831+00:00",
+  "cases": 24,
+  "case_classifications": [
+    "PASS"
+  ],
+  "long_projection_measurements": 8,
+  "full_report_source_unchanged": true,
+  "full_report_candidate_sha256": "23d26943d3618ea1fce1e9c48259b33e6cff351dab0d157428b63d8d23f70c0e",
+  "candidate_sha256": "23d26943d3618ea1fce1e9c48259b33e6cff351dab0d157428b63d8d23f70c0e",
+  "actual_report_hash_matches_candidate": true,
+  "source_unchanged": true,
+  "changed_source_paths": [],
+  "original_test_unchanged": true,
+  "original_test_sha256": "8ab2189cfa5f582a6661805da148d159f7d477cbac3fedfe8b8f71238a537fbe",
+  "counterproofs": [
+    {
+      "id": "truncate",
+      "classification": "PASS",
+      "rejection": "('long projection fixture lost complete money', {'shellClient': 350, 'shellScroll': 350, 'text': 'US$ 1\u2026', 'client': 298, 'scroll': 298, 'left': 46, 'right': 344, 'viewport': 390, 'overflow': 'clip', 'visibility': 'visible', 'display': 'block'})",
+      "actual_geometry": {
+        "shellClient": 350,
+        "shellScroll": 350,
+        "text": "US$ 1\u2026",
+        "client": 298,
+        "scroll": 298,
+        "left": 46,
+        "right": 344,
+        "viewport": 390,
+        "overflow": "clip",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      },
+      "financial_unchanged": true,
+      "recovered_measurements": 8
+    },
+    {
+      "id": "overflow",
+      "classification": "PASS",
+      "rejection": "('long projection escapes mobile surface', {'shellClient': 350, 'shellScroll': 2426, 'text': 'US$\\xa02.900.167.327,56', 'client': 2400, 'scroll': 2400, 'left': 46, 'right': 2446, 'viewport': 390, 'overflow': 'clip', 'visibility': 'visible', 'display': 'block'})",
+      "actual_geometry": {
+        "shellClient": 350,
+        "shellScroll": 2426,
+        "text": "US$\u00a02.900.167.327,56",
+        "client": 2400,
+        "scroll": 2400,
+        "left": 46,
+        "right": 2446,
+        "viewport": 390,
+        "overflow": "clip",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      },
+      "financial_unchanged": true,
+      "recovered_measurements": 8
+    }
+  ]
+}

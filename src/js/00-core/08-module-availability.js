@@ -3,8 +3,8 @@
   'use strict';
   if(root.JPWModuleAvailability)return;
   const KEY='jpw_module_availability_v1';
-  const IDS=Object.freeze(['research','forex','personal-finance','alladin']);
-  const DEFAULTS=Object.freeze({research:'active',forex:'active','personal-finance':'frozen',alladin:'frozen'});
+  const IDS=Object.freeze(['research','forex','planning','personal-finance','alladin']);
+  const DEFAULTS=Object.freeze({research:'active',forex:'active',planning:'active','personal-finance':'frozen',alladin:'frozen'});
   const listeners=new Set();
   const own=(object,key)=>Object.prototype.hasOwnProperty.call(object,key);
   const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);

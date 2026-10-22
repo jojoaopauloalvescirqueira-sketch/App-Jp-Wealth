@@ -1,0 +1,1436 @@
+{
+  "startedAt": "2026-10-21T17:12:52.541187+00:00",
+  "inputsBefore": {
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/styles/app.css": "482dfd3055edd884a19ef24edf2ac216fd1bf5648b4b152ddc225eab69e7bfd8",
+    "tools/notes_global_launcher_test.py": "5c3125f8251710c2d1d3d909f7f4735f3126304bff114016b66686242f50a61f",
+    "tools/notes_launcher_test.py": "49f6e9c4f125aff9cc72cfe635a6eb49c90d2cff8001301d5264c419b7c4d4d7",
+    "tools/browser_fixture_server.py": "be82e4b5b802a711bde25ffc4cd9d31d230b7149b8d6ef524f2f0ad529f1406b",
+    "tools/browser_bootstrap_fixture.py": "23d87b313d5d7a12c009b8814ee2239c7eb1341ef63aa59f59442be5a8ccdf30"
+  },
+  "checks": [
+    {
+      "name": "global-matrix",
+      "result": "PASS",
+      "evidence": {
+        "visits": 192,
+        "matrix": [
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "dashboard"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "research-forex"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "planning"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "alladin"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "tools"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-history"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "route": "forex-reserves"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "dashboard"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "research-forex"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "planning"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "personal-finance"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "alladin"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "tools"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-consolidated"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-management-accounts"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-operation"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-history"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-accounting"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "route": "forex-reserves"
+          }
+        ],
+        "noWrites": true
+      }
+    },
+    {
+      "name": "planning-native",
+      "result": "PASS",
+      "evidence": {
+        "matrix": [
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "sidebar",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "sidebar",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "topbar",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "topbar",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "submenu",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "submenu",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "glass",
+            "width": 1440,
+            "theme": "dark",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "light",
+            "parentClose": "escape"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "cancel"
+          },
+          {
+            "layout": "glass",
+            "width": 390,
+            "theme": "dark",
+            "parentClose": "escape"
+          }
+        ],
+        "nestedClosures": [
+          "button",
+          "Escape"
+        ],
+        "parentClosures": [
+          "cancel",
+          "Escape"
+        ],
+        "noWrites": true
+      }
+    },
+    {
+      "name": "native-lifecycle",
+      "result": "PASS",
+      "evidence": {
+        "nativeConfirm": true,
+        "dynamicNestedRemoval": true,
+        "alreadyOpenMount": true,
+        "noWrites": true
+      }
+    },
+    {
+      "name": "visibility-shortcuts",
+      "result": "PASS",
+      "evidence": {
+        "internalForexShortcut": true,
+        "focusReturned": true,
+        "hidePreferencePreserved": true
+      }
+    },
+    {
+      "name": "observer-finalization",
+      "result": "PASS",
+      "evidence": {
+        "oldCallbacksCancelled": true,
+        "freshControllerOnRender": true,
+        "noWrites": true
+      }
+    },
+    {
+      "name": "keyboard-observation",
+      "result": "PASS",
+      "evidence": {
+        "typingScans": 0,
+        "typingSyncs": 0,
+        "modalSyncObserved": true,
+        "noWrites": true
+      }
+    }
+  ],
+  "limits": [
+    "Synthetic Chromium contexts; no human acceptance, Safari or physical touch evidence."
+  ],
+  "inputsAfter": {
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/styles/app.css": "482dfd3055edd884a19ef24edf2ac216fd1bf5648b4b152ddc225eab69e7bfd8",
+    "tools/notes_global_launcher_test.py": "5c3125f8251710c2d1d3d909f7f4735f3126304bff114016b66686242f50a61f",
+    "tools/notes_launcher_test.py": "49f6e9c4f125aff9cc72cfe635a6eb49c90d2cff8001301d5264c419b7c4d4d7",
+    "tools/browser_fixture_server.py": "be82e4b5b802a711bde25ffc4cd9d31d230b7149b8d6ef524f2f0ad529f1406b",
+    "tools/browser_bootstrap_fixture.py": "23d87b313d5d7a12c009b8814ee2239c7eb1341ef63aa59f59442be5a8ccdf30"
+  },
+  "sameBytes": true,
+  "result": "PASS",
+  "finishedAt": "2026-10-21T17:13:16.115779+00:00"
+}

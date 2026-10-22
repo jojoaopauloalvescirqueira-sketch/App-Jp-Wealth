@@ -1,0 +1,43 @@
+{
+  "started_at": "2026-10-22T13:34:08.118558+00:00",
+  "out": ".superpowers/sdd/2026-10-22-planning-monthly-close/close-confirm-focus",
+  "only": [
+    "closure-missing-result-recovery"
+  ],
+  "required_case_ids": [
+    "closure-missing-result-recovery"
+  ],
+  "cases": [
+    {
+      "id": "closure-missing-result-recovery",
+      "classification": "PASS",
+      "criteria": "closure-missing-result-recovery",
+      "started_at": "2026-10-22T13:34:12.336117+00:00",
+      "evidence": {
+        "confirmed": true,
+        "commands": [
+          "recordResult",
+          "finalizeMonth"
+        ],
+        "effective_usd": 1000
+      },
+      "finished_at": "2026-10-22T13:34:12.993672+00:00",
+      "page_errors": []
+    }
+  ],
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "tools/planning_monthly_close_test.py": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405"
+  },
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PASS",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T13:34:13.353123+00:00"
+}

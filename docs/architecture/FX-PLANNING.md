@@ -1,3 +1,9 @@
+# Planejamento independente — 20/10/2026
+
+O candidato atual substitui o planejamento FX por menu principal independente. Contrato vigente: [PLANNING](PLANNING.md). As fotografias abaixo descrevem a implementação anterior, retirada da distribuição ativa; os dados `S.fxPlanning` continuam preservados e exportáveis, sem conversão automática.
+
+## Registro histórico preservado
+
 # Planejamento FX — contrato da feature
 
 Motor de planejamento patrimonial temporal para Forex, do domínio

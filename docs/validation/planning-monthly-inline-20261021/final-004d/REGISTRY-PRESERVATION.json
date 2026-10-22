@@ -1,0 +1,9 @@
+{
+  "old_count": 53,
+  "new_count": 61,
+  "old_entries_exactly_equal": true,
+  "before_sha256": "436df9f9618e960e3365caeeabb785a027d4bf39b2506ec450cf2529908eb7a0",
+  "current_sha256": "f219eeef4b8045e041bc559e1d221eb134a88dabcba9f7cb3313c0e73a9ad132",
+  "build": "004d0c6286d5a3d4",
+  "scope": "Only8 own new factual entries; original53 preserved. Build recorded only after post-rebuild34/68 actual PASS. No schema or gate change; FULL pending."
+}

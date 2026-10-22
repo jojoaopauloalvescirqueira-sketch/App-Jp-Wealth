@@ -1,0 +1,19 @@
+{
+  "classification": "PASS",
+  "scope": "FULL3 visual sub-check only; overall FULL pending",
+  "visual_sha256": "ce36c685b6a1d0546fd7be6be143e0c0351750f8a184029ef4c9f4d55f43106d",
+  "freeze_sha256": "e44b3241a8b5a44b54e630b93611f4281e242102a3dd65c8c119c17616d70f2f",
+  "checks": {
+    "exact278": true,
+    "allPASS": true,
+    "old240preserved": true,
+    "source_unchanged": true,
+    "source_hashes_bound": true,
+    "test_hash_bound": true,
+    "frozen_after": true
+  },
+  "source_hash_count": 151,
+  "build": "7430aeaf0109dcbe",
+  "started_at": "2026-10-22T14:34:24.302718+00:00",
+  "finished_at": "2026-10-22T14:47:51.870319+00:00"
+}

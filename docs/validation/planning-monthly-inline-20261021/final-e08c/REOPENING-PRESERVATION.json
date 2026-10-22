@@ -1,0 +1,77 @@
+{
+  "old34_bytes_exact_outside_identity_extension": true,
+  "old33_test_bodies_preserved": true,
+  "old206_ids_preserved": true,
+  "default_case_count": 240,
+  "unchanged_financial_ui_delegates": {
+    "actionDialog": true,
+    "runCommand": true,
+    "onSubmit": true,
+    "closeDialog": true
+  },
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "50d5012858b3a3b95add0eefb407f94b790147b9530e9b20fb1973dfbfec201d",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+    "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5",
+    "tools/quality_gate.py": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a"
+  },
+  "selectedMonth_assignment_review": {
+    "syncMonthlySelection": "central presentation helper",
+    "nextFlow": "helper, no render",
+    "selectMonthlyDetails": "helper then deliberate detail expansion",
+    "finalized": "requested value captured, helper, actual state restored, existing actionDialog",
+    "correct_annul_dataMonth": "helper before existing dialog",
+    "account_month_select": "existing render immediately follows",
+    "reset": "deactivate and lifecycle reset",
+    "ensureMonth": "existing model fallback",
+    "archive": "existing model fallback for archive dialog; no independent month choice"
+  },
+  "actual_attempts": {
+    "finalized-selector-red": {
+      "exit": 1,
+      "seconds": 2.8702948093414307,
+      "classification": "PRODUCT_FAIL",
+      "cases": 1,
+      "source_unchanged": true
+    },
+    "flow-month-selector-red": {
+      "exit": 1,
+      "seconds": 2.1583220958709717,
+      "classification": "PRODUCT_FAIL",
+      "cases": 1,
+      "source_unchanged": true
+    },
+    "finalized-flow-green-focused": {
+      "exit": 0,
+      "seconds": 9.11597490310669,
+      "classification": "PASS",
+      "cases": 1,
+      "source_unchanged": true
+    },
+    "finalized-flow-green-all": {
+      "exit": 0,
+      "seconds": 55.17626118659973,
+      "classification": "PASS",
+      "cases": 34,
+      "source_unchanged": true
+    },
+    "flow-opener-focus-red": {
+      "exit": 1,
+      "seconds": 1.9926581382751465,
+      "classification": "PRODUCT_FAIL",
+      "cases": 1,
+      "source_unchanged": true
+    },
+    "finalized-flow-focus-green-all": {
+      "exit": 0,
+      "seconds": 54.15507411956787,
+      "classification": "PASS",
+      "cases": 34,
+      "source_unchanged": true
+    }
+  },
+  "focus_contract": "Same action, individual record ID and kind remapped to live replacement; monthly selector fallback; no dialog policy change"
+}

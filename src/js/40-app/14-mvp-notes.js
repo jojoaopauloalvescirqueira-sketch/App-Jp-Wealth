@@ -38,7 +38,8 @@ const mvpNotesUI={
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null,   // pasta sendo arrastada na reordenação manual
   launcherPosition:{x:1,y:1}, launcherDrag:null, launcherSuppressClick:false, launcherBound:false,
-  launcherRaw:null, launcherBlocked:false, launcherEpoch:0, launcherBaseEpoch:null, launcherWriteSerial:0
+  launcherRaw:null, launcherBlocked:false, launcherEpoch:0, launcherBaseEpoch:null, launcherWriteSerial:0,
+  launcherModalObserver:null
 };
 
 function mvpn(id){ return document.getElementById(id); }
@@ -972,6 +973,7 @@ function mvpNotesResetLauncherPosition(){
   return mvpNotesPersistLauncherPosition(true);
 }
 function handleMvpNotesLauncherSessionWipe(){
+  mvpNotesUI.launcherModalObserver?.stop();
   mvpNotesFinishLauncherDrag(true);
   mvpNotesUI.launcherWriteSerial+=1;
   mvpNotesUI.launcherBlocked=true;
@@ -1014,10 +1016,49 @@ function mvpNotesFinishLauncherDrag(cancel){
   mvpNotesPlaceLauncher();
   if(!cancel && drag.moved)mvpNotesPersistLauncherPosition();
 }
+const MVP_NOTES_MODAL_OVERLAYS=['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay'];
+function mvpNotesObserveLauncherModals(){
+  mvpNotesUI.launcherModalObserver?.stop();
+  const epoch=Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0;
+  const dialogs=new Set(document.querySelectorAll('dialog'));
+  let cancelled=false;
+  const current=()=>!cancelled && epoch===(Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0);
+  const attributes=new MutationObserver(()=>{if(current())mvpNotesSyncLauncher();});
+  const observeAttributes=()=>{
+    attributes.disconnect();
+    MVP_NOTES_MODAL_OVERLAYS.forEach(id=>{
+      const el=mvpn(id);if(el)attributes.observe(el,{attributes:true,attributeFilter:['class']});
+    });
+    const host=mvpn('mvpNotesLauncher');if(host)attributes.observe(host,{attributes:true,attributeFilter:['inert']});
+    dialogs.forEach(dialog=>attributes.observe(dialog,{attributes:true,attributeFilter:['open']}));
+  };
+  // Descobrir apenas dialogs nos subtrees montados/removidos. Digitar em campos
+  // não consulta o documento inteiro nem observa seus atributos de apresentação.
+  const mounting=new MutationObserver(records=>{
+    if(!current())return;
+    let changed=false;
+    const inspect=node=>{
+      if(node.nodeType!==Node.ELEMENT_NODE)return;
+      const found=node.matches('dialog')?[node,...node.querySelectorAll('dialog')]:node.querySelectorAll('dialog');
+      found.forEach(dialog=>{
+        if(dialog.isConnected && !dialogs.has(dialog)){dialogs.add(dialog);changed=true;}
+        else if(!dialog.isConnected && dialogs.delete(dialog))changed=true;
+      });
+    };
+    records.forEach(record=>{record.addedNodes.forEach(inspect);record.removedNodes.forEach(inspect);});
+    if(changed){observeAttributes();mvpNotesSyncLauncher();}
+  });
+  const controller={epoch,dialogs,stop(){
+    cancelled=true;attributes.disconnect();mounting.disconnect();dialogs.clear();
+    if(mvpNotesUI.launcherModalObserver===controller)mvpNotesUI.launcherModalObserver=null;
+  }};
+  mvpNotesUI.launcherModalObserver=controller;
+  observeAttributes();mounting.observe(document.body,{childList:true,subtree:true});
+}
 function mvpNotesSyncLauncher(){
   const host=mvpn('mvpNotesLauncher');if(!host)return;
-  const covered=['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay']
-    .some(id=>mvpn(id)?.classList.contains('show'));
+  const covered=MVP_NOTES_MODAL_OVERLAYS.some(id=>mvpn(id)?.classList.contains('show')) ||
+    [...(mvpNotesUI.launcherModalObserver?.dialogs||[])].some(dialog=>dialog.isConnected && dialog.open);
   if(covered || host.inert || S.mvpNotes?.showHeaderIcon===false)mvpNotesFinishLauncherDrag(true);
   host.hidden=covered || !(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
   mvpNotesPlaceLauncher();
@@ -1086,11 +1127,7 @@ function bindMvpNotesLauncher(){
   window.addEventListener('resize',resize);
   window.visualViewport?.addEventListener('resize',resize);
   window.visualViewport?.addEventListener('scroll',resize);
-  const observer=new MutationObserver(mvpNotesSyncLauncher);
-  ['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay'].forEach(id=>{
-    const el=mvpn(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['class']});
-  });
-  observer.observe(mvpn('mvpNotesLauncher'),{attributes:true,attributeFilter:['inert']});
+  mvpNotesObserveLauncherModals();
   mvpNotesSyncLauncher();
 }
 function renderMvpNotesHeader(){
@@ -1105,7 +1142,10 @@ function renderMvpNotesHeader(){
   if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas');
   // No portátil, boot pode chamar esta função içada antes do estado da UI.
   // A inicialização do acionador faz o primeiro posicionamento no momento seguro.
-  if(btn?.dataset.notesLauncherReady==='true')mvpNotesSyncLauncher();
+  if(btn?.dataset.notesLauncherReady==='true'){
+    if(!mvpNotesUI.launcherModalObserver || mvpNotesUI.launcherModalObserver.epoch!==(Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0))mvpNotesObserveLauncherModals();
+    mvpNotesSyncLauncher();
+  }
   renderMvpNotesSettingsCard();
 }
 function renderMvpNotesSettingsCard(){

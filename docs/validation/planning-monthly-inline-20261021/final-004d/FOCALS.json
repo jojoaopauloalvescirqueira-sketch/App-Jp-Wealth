@@ -1,0 +1,37 @@
+{
+  "started_at": "2026-10-22T03:03:47.067533+00:00",
+  "cases": [
+    {
+      "name": "final4-real-planning-parity",
+      "actual_exit_code": 0
+    },
+    {
+      "name": "final4-real-three-tabs",
+      "actual_exit_code": 0
+    },
+    {
+      "name": "final4-real-proportions",
+      "actual_exit_code": 0
+    },
+    {
+      "name": "final4-real-parity-layout",
+      "actual_exit_code": 0
+    },
+    {
+      "name": "final4-real-planning-ui",
+      "actual_exit_code": 0
+    },
+    {
+      "name": "final4-real-distribution",
+      "actual_exit_code": 0
+    },
+    {
+      "name": "final4-real-finalize",
+      "actual_exit_code": 0
+    }
+  ],
+  "purpose": "Current official build affected journeys. Existing96FULL remains mandatory afterfinalfreeze.",
+  "finished_at": "2026-10-22T03:06:38.380650+00:00",
+  "complete": true,
+  "all_pass": true
+}

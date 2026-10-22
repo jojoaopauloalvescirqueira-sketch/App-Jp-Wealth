@@ -1,0 +1,17 @@
+{
+  "status": "TEST_HARNESS_FAIL",
+  "attempt": "One initial form_source_compare.py attempt dispatched concurrently with three independent fresh Chromium harness processes, before the final freeze notice",
+  "observed": "Page.evaluate: ReferenceError: S is not defined while invoking navigateToScreen('planning')",
+  "stack": [
+    "getSavedOnboardingStepStatus src/js/10-domain/01-risk-instruments.js:53",
+    "getOnboardingCompletionState src/js/10-domain/01-risk-instruments.js:101",
+    "maybeShowOnboardingNavReminder src/js/10-domain/01-risk-instruments.js:157",
+    "navApply src/js/40-app/01-navigation.js:222",
+    "form_source_compare.py:56 after goto and wait_bootstrap"
+  ],
+  "conditionActuallyAwaited": "wait_bootstrap checks ffNewsInFlight and fxUpdateBtn; it does not assert S or JPWPlanning.ui readiness",
+  "cause": "UNESTABLISHED. An insufficient readiness predicate is demonstrated by inspection, but no trace proves the precise cause of this attempt's missing S. Do not interpret retries as erasing the failure or proving it harmless.",
+  "candidateAttribution": "No complete before/after receipt was produced by this failed attempt. No frozen-candidate PASS claim is based on it.",
+  "laterEvidence": "After freeze, all four full harnesses passed sequentially on the exact five frozen hashes. A separate four-browser concurrent cold-load probe recorded S=object and JPWPlanning.ui=object in all four, with no page errors, failed requests or HTTP >=400 responses. See startup-probe.json.",
+  "handling": "Preserved as a failed harness attempt; root cause unresolved and not promoted to a product defect without a reproducible user-load case. Frozen complete retakes are separate evidence."
+}

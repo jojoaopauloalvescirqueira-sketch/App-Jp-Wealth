@@ -1,3 +1,60 @@
+# Planejamento — fechamento guiado e revisão de uso —22/10/2026
+
+Contrato aprovado: resolver resultado pendente na própria janela, revisar novamente dados alterados, conferir fluxos e finalizar explicitamente. Resultado e fechamento são gravações distintas; zero não é presumido. Meses anteriores pendentes têm orientação recuperável. Dados, fórmulas, histórico e backup preservados.
+
+[Plano](docs/superpowers/plans/2026-10-22-planning-monthly-close.md) · [Contrato](docs/architecture/PLANNING.md) · [Execução, testes e limites](docs/validation/planning-monthly-close-20261022/README.md). Resultado somente nos recibos próprios do novo candidato; validações anteriores são históricas. Aceite humano separado. Sem Git/publicação.
+
+## Fotografia anterior preservada
+
+# 2026-10-21 — Preenchimento mensal compacto e editável
+
+Execução autorizada: compactação das linhas e edição no contexto do mês, prévia somente leitura de resultado percentual/USD, Salvar explícito nas premissas futuras e preferências isoladas de destaque/filtro. Mantém comandos financeiros, revisão, confirmações, IDs, histórico, fórmulas e demais superfícies aprovadas.
+
+[Plano](docs/superpowers/plans/2026-10-21-planning-monthly-inline.md) e [provas deste candidato](docs/validation/planning-monthly-inline-20261021/README.md). O resultado técnico depende dos recibos atuais, sem transferir aprovação anterior ou presumir aceite visual humano. Sem Git/publicação.
+
+## Histórico anterior preservado
+
+# Planejamento — apresentação consolidada e mensal — 21/10/2026
+
+Entrega local do plano aprovado: três grupos no Consolidado, destaque do ano vigente e grade mensal essencial com detalhes, preservando dados, cálculos e confirmações. Testes e revisão têm [recibos próprios](docs/validation/planning-consolidated-monthly-compact-20261021/README.md); ausência ou nãoPASS mantém validação pendente. A adaptação do contrato de18colunas visíveis é deliberada e mantém todos os dados acessíveis. Sem Git/publicação.
+
+## Histórico anterior preservado
+
+## 2026-10-21 — Planejamento: controles e regra visual
+
+Organiza13ações Stoikus em cinco grupos, acrescenta navegação de menu por teclado e fechamento coerente com o ciclo da área. Substitui o fechar tipográfico por SVG simétrico e alinha conteúdo dos botões. Adiciona verificador visual reutilizável a standard/full sem retirar95checks; regra permanente local, cobertura inicial Planejamento e legado pendente. [Plano](docs/superpowers/plans/2026-10-21-planning-controls-visual-quality.md), [provas e limites](docs/validation/planning-controls-visual-quality-20261021/README.md). Sem mudanças financeiras ou no plugin congelado.
+
+### Fotografia anterior preservada
+
+## 2026-10-21 — Planejamento: posições e proporções
+
+Correção autorizada da centralização dos diálogos, alinhamento moeda/valor, cabeçalhos móveis, estados pendentes da previsão e legenda/data do simulador de parada. Preserva as três abas e os fluxos financeiros; amplia regressões geométricas e reconcilia duas expectativas antigas da ordem do menu. [Plano](docs/superpowers/plans/2026-10-21-planning-proportions.md) e [recibos próprios da execução](docs/validation/planning-proportions-20261021/README.md). Resultados históricos permanecem atribuídos às respectivas versões.
+
+### Fotografia anterior preservada
+
+# 20/10/2026 — Planejamento com três abas e Notas globais
+
+- Alinha a navegação pública às três abas atuais e conserva Referência nos dados/comparativos. Retira seções históricas ocultas e ações de infraestrutura, mantendo Stoikus operacional.
+- Torna o formulário acessível em cenários sem/uma/várias contas e apresenta os dois marcos na simulação, sem gravar antes da revisão e confirmação.
+- Coloca Planejamento após Research no padrão editável e nas projeções compatíveis antigas, preservando personalizações distintas da única ordem canônica antiga.
+- Restitui Notas em Forex com Mostrar ativo e respeita overlays/diálogos nativos, preservando conteúdo, posição e preferência.
+- [Resultados e limites desta correção](docs/validation/planning-three-tabs-20261020/README.md). Motores/escritor preservados; resultados anteriores seguem históricos.
+
+## Fotografia anterior preservada — candidato443c
+
+# 20/10/2026 — Planejamento, correção da dinâmica da planilha
+
+- Substitui a adaptação inicial por Comece aqui, perguntas e perfis do formulário, revisão sem escrita, confirmação e liberação das quatro abas.
+- Reproduz seletores, indicadores, gráficos, comparativo, tabela anual/mensal, dezoito colunas financeiras, referência e ações de registro/reinício/PDF.
+- Conserva células futuras ao editar sem Reaplicar, snapshots cambiais por objetivo e histórico arquivado. Correções cobertas: refresh explícito do câmbio, parada invalidada em rascunho e contagens do reinício.
+- Engenharia reversa documentada dos dez fontes Apps Script; diferenças da execução independente e limites da prova autenticada separados. [Resultados e limites da validação](docs/validation/planning-20261020/parity/README.md); recibos anteriores preservados. Execução Google autenticada e aceite humano têm provas próprias.
+
+## Fotografia anterior preservada
+
+# 20/10/2026 — Planejamento independente (candidato)
+
+Menu principal com contas/planos, metas, realizados USD e fluxos separados, referência inicial imutável, correções com reconferência e simulações de aportes. Persistência usa writer confirmado existente; o legado permanece exportável. Sem mudança de política Forex. Build ff0f078f70b9fb97: FULL 88/88 e 110 verificações de UI PASS, revisões financeira/segurança e crítica de UX delimitadas. Registros anteriores preservados; aceite humano e comparação nativa integral Sheets pendentes. Sem commit/publicação.
+
 ## Consolidação18/10/2026 — candidato integrado em validação
 
 Reúne as entregas web, F01 e instalador para Stoikus1.23.0/R5, com commits e provas por trilha. O runner visual recebe somente a opção de compilação autorizada; cálculos, fontes MQL, curadoriaC2 e pacotes históricos permanecem. Novos gates do conjunto e estados nativos são registrados separadamente.

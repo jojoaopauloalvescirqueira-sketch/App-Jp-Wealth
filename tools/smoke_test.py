@@ -71,9 +71,9 @@ try:
         })''')
         assert facts['compute']=='function', facts
         assert facts['render']=='function', facts
-        # NAV-01: o primeiro nível expõe exatamente seis rotas semânticas.
+        # NAV-01: o primeiro nível expõe exatamente sete rotas semânticas, incluindo Planejamento independente.
         # Destinos físicos legados continuam na fachada, não como primários.
-        assert facts['tabs']==6, facts
+        assert facts['tabs']==7, facts
         assert facts['headerActions']==4, facts
         assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count()==1
         assert page.locator('#headerActions #headerNotesBtn').count()==0
@@ -185,8 +185,8 @@ try:
         assert page.locator('[data-app-icon-option]').count()==2, 'biblioteca de ícones incompleta'
         page.evaluate('closeModal()')
         routes=page.eval_on_selector_all('#nav .tab[data-route]', 'els => els.map(e => e.dataset.route)')
-        # A10 changes visual default order, preserving the five route/screen identities.
-        expected_screens={'dashboard':'dash','research-forex':'research','forex-consolidated':'fxconsolidated','personal-finance':'finpes','alladin':'alladin','tools-calendar':'tools'}
+        # A10 changes visual default order, preserving existing identities and adding independent planning.
+        expected_screens={'dashboard':'dash','research-forex':'research','planning':'planning','forex-consolidated':'fxconsolidated','personal-finance':'finpes','alladin':'alladin','tools-calendar':'tools'}
         assert routes==list(expected_screens), routes
         for route in routes:
             parent=page.locator(f'#nav .tab[data-route="{route}"]')
@@ -250,4 +250,4 @@ finally:
 
 if errors:
     raise SystemExit('SMOKE FALHOU\n'+'\n'.join(errors))
-print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 6 rotas semânticas e Notas do MVP verificados.')
+print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 7 rotas semânticas e Notas do MVP verificados.')

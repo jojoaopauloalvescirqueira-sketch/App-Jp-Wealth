@@ -1,0 +1,13 @@
+{
+  "command": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/pdf_inspect_final3.py"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T03:07:04.418018+00:00",
+  "freeze_sha256_at_start": "f7656b40d6367830a0d64b6826b1e91dafc96f60fbce7f7d0ff97d109d07e668",
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/pdf-final3.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T03:07:04.971464+00:00",
+  "log_sha256": "53d10ea3afd3fa195f93c7e83b23d9d3f913799b2d58ce4836b536b9978caea2"
+}

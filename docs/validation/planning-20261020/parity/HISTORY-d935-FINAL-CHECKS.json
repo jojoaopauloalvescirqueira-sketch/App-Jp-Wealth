@@ -1,0 +1,41 @@
+{
+  "result": "PASS",
+  "build": "d93561c064cf5f40",
+  "final_checks": [
+    {
+      "name": "structure",
+      "result": "PASS",
+      "output": "VALIDACAO OK - 120 arquivos JS, 705 IDs estaticos, portatil reconstruido.\n"
+    },
+    {
+      "name": "context",
+      "result": "PASS",
+      "output": "[PASS] caso1_head_igual_source\n[PASS] caso2_context_only\n[PASS] caso3_fora_da_allowlist\n[PASS] caso4a_campo_ausente\n[PASS] caso4b_malformado\n[PASS] caso4c_sha_inexistente\n[PASS] caso5_nao_ancestral\nPREFLIGHT CONTEXT OK — TRUE/FALSE/UNKNOWN distintos; UNKNOWN != FALSE; reconciliacao contextual (context-only) nao dispara falso positivo.\n"
+    },
+    {
+      "name": "preflight",
+      "result": "PASS",
+      "branch": "codex/planejamento-patrimonial-20261020",
+      "head": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34"
+    },
+    {
+      "name": "diff-check",
+      "result": "PASS"
+    }
+  ],
+  "prior_supplemental_attempts": [
+    {
+      "name": "scope matcher",
+      "result": "TEST_HARNESS_FAIL",
+      "reason": "Omitted the already-approved derived_artifacts.allowed section; corrected matcher, unchanged CHG authority.",
+      "receipt": ".superpowers/sdd/planning-parity-20261020/scope-harness-first-failure.json"
+    },
+    {
+      "name": "structure",
+      "result": "ENVIRONMENT_ERROR",
+      "exitcode": 2,
+      "output": "nem Node.js nem Playwright estao disponiveis para validar sintaxe JavaScript",
+      "reason": "Invoked with default python/PATH instead of the full gate isolated runtime. Retaken with the exact full runtime; no dependency or source change."
+    }
+  ]
+}

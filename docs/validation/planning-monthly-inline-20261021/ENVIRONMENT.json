@@ -1,0 +1,25 @@
+{
+  "captured_at": "2026-10-22T01:33:42.664532+00:00",
+  "python": {
+    "executable": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "version": "3.12.14"
+  },
+  "playwright_python": "1.60.0",
+  "node": {
+    "path": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "version": "v24.19.0",
+    "sha256": "185d799cfb8945e6a66374e94e44aa3ffffd6318672aa83cef7505a6d97015a6"
+  },
+  "chromium": {
+    "path": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "version": "Google Chrome for Testing 148.0.7778.96",
+    "sha256": "2447c7bdea8e8ad38b52594f1ba53e18821c05445e8a07ad1cf3b0f23931d89d"
+  },
+  "scope": "Existing isolated runtimes only. No installs or user browser profiles. Explicit relevant variables only; no environment/credential dump.",
+  "test_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "JPW_NODE": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "JP_WEALTH_CHROMIUM": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "PATH_prefix": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/planning_parity_test.py",
+    "--case",
+    "all"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T03:53:14.936597+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/final5-real-planning-parity.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T03:54:06.908001+00:00",
+  "log_sha256": "65a5a66ae2146ccc4da1ef3b1b3544f96ab8bee36d9666dfae8a2a40e2dd07c3"
+}

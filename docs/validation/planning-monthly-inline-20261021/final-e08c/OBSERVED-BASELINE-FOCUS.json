@@ -1,0 +1,48 @@
+{
+  "cases": [
+    {
+      "candidate": "postfix-live",
+      "actual_baseline_responses": [],
+      "baseline_ui_sha256": null,
+      "active_after_cancel": {
+        "tag": "BODY",
+        "action": null,
+        "html": "<body>\n<!-- ============ SPRITE DE ÍCONES · SISTEMA JP WEALTH ============\n     SVGs legados: origem anterior não verificada. Símbolos shell-icon-*:\n     Lucide"
+      },
+      "visible_before": "2026-10",
+      "visible_after_cancel": "2026-09",
+      "row_finalized_control_after_cancel": "Não",
+      "first_dialog_key": "contribution:planning_account_a28c8998-2834-403f-912f-9d866a7f837b:2026-10:",
+      "second_top_action_dialog_key": "finalize:planning_account_a28c8998-2834-403f-912f-9d866a7f837b:2026-09:",
+      "first_dialog_copy": "Planejamento\n\nRegistrar aporte · Compacta sintética\nValor em dólares\n\nQuantos dólares você está aportando?\nExemplo: 1.000,00\n\nValor em dólares\n\nSaldo inicial do mês: US$ 1.065,00\n\nRascunho nesta sessão\nCancelar\nOK",
+      "second_dialog_copy": "Planejamento\n\nFinalizar mês\n\nConfira os registros efetivos de set. de 2026. Os aportes previstos não entram no fechamento.\n\nResultado registrado · USD\nUS$ 0,00\nAportes registrados · USD\nUS$ 0,00\nSaques registrados · USD\nUS$ 0,00\nFechamento efetivo · USD\nUS$ 1.065,00\nConferi todos os aportes e saques efetivos deste mês.\n\nRascunho nesta sessão\nCancelar\nConfirmar fechamento",
+      "mismatch": false,
+      "financial_unchanged": true,
+      "writer_calls": 0
+    },
+    {
+      "candidate": "baseline2dd_UI",
+      "actual_baseline_responses": [
+        "http://127.0.0.1:63242/src/js/30-accounting/06-planning/03-ui.js"
+      ],
+      "baseline_ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+      "active_after_cancel": {
+        "tag": "BUTTON",
+        "action": "contribution",
+        "html": "<button type=\"button\" class=\"pl-button pl-quiet\" data-pl-action=\"contribution\">Registrar aporte</button>"
+      },
+      "visible_before": "2026-10",
+      "visible_after_cancel": "2026-10",
+      "row_finalized_control_after_cancel": "Não",
+      "first_dialog_key": "contribution:planning_account_8e020d2a-a6d6-4448-b4e3-48f7624bb5d3:2026-10:",
+      "second_top_action_dialog_key": "finalize:planning_account_8e020d2a-a6d6-4448-b4e3-48f7624bb5d3:2026-09:",
+      "first_dialog_copy": "Planejamento\n\nRegistrar aporte · Compacta sintética\nValor em dólares\n\nQuantos dólares você está aportando?\nExemplo: 1.000,00\n\nValor em dólares\n\nSaldo inicial do mês: US$ 1.065,00\n\nRascunho nesta sessão\nCancelar\nOK",
+      "second_dialog_copy": "Planejamento\n\nFinalizar mês\n\nConfira os registros efetivos de set. de 2026. Os aportes previstos não entram no fechamento.\n\nResultado registrado · USD\nUS$ 0,00\nAportes registrados · USD\nUS$ 0,00\nSaques registrados · USD\nUS$ 0,00\nFechamento efetivo · USD\nUS$ 1.065,00\nConferi todos os aportes e saques efetivos deste mês.\n\nRascunho nesta sessão\nCancelar\nConfirmar fechamento",
+      "mismatch": true,
+      "financial_unchanged": true,
+      "writer_calls": 0
+    }
+  ],
+  "baseline_inheritance": false,
+  "limit": "Baseline UI exact original bytes served only inside disposable route; other current modules unchanged. Existing onChange/control paths byte-identical and additive state query unused."
+}

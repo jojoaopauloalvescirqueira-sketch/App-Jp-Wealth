@@ -1,0 +1,1104 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-10-21T16:54:32.436640+00:00",
+  "baseline_build": "09d53f0be43dce10",
+  "build": "0dc016f9c7618385",
+  "head": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+  "branch": "codex/planejamento-patrimonial-20261020",
+  "fingerprint_count": 327,
+  "runtime_resources_count": 397,
+  "test_count": 260,
+  "runner_count": 1,
+  "full_checks_count": 95,
+  "full_check_names": [
+    "preflight",
+    "structure",
+    "diff-check",
+    "preflight-context",
+    "navigation-ia",
+    "dashboard-macro",
+    "research-navigation",
+    "smoke",
+    "settings",
+    "brand-identity-contract",
+    "brand-identity-browser",
+    "statute-documentary",
+    "galton-board",
+    "planning-engine",
+    "planning-parity-engine",
+    "planning-state",
+    "planning-navigation",
+    "planning-quote",
+    "planning-boundaries",
+    "planning-ui",
+    "planning-parity-ui",
+    "planning-reserve-compat",
+    "exec-submenu",
+    "nocoda",
+    "pivot-studies",
+    "order-guards",
+    "operation-identity",
+    "operation-finalize",
+    "operation-history",
+    "operation-wiring",
+    "phases-visibility",
+    "exec-three-column",
+    "finpes-foundation",
+    "finpes-finalize-preservation",
+    "finpes-backup-roundtrip",
+    "finpes-navigation",
+    "finpes-budget",
+    "finpes-debt-credit",
+    "finpes-comparison",
+    "finpes-scenarios",
+    "finpes-overview",
+    "usd-brl-quote",
+    "alladin-unit",
+    "alladin-ledger",
+    "alladin-position",
+    "alladin-foundation",
+    "alladin-finalize-preservation",
+    "session-epoch-protocol",
+    "session-write-serialization",
+    "alladin-ui-readonly",
+    "alladin-ui-crud",
+    "alladin-ui-ledger",
+    "alladin-ui-tx-write",
+    "alladin-ui-tx-reverse",
+    "planning-distribution",
+    "planning-three-tabs",
+    "planning-proportions",
+    "planning-parity-layout",
+    "session-finalization",
+    "storage-governance",
+    "persistence-failure",
+    "persistence-recovery",
+    "investor-password",
+    "import-xss",
+    "state-integrity",
+    "async-generation",
+    "build-reproducibility",
+    "service-worker-upgrade",
+    "mvp-notes",
+    "notes-launcher",
+    "notes-global-launcher",
+    "notification-center",
+    "notification-efficiency",
+    "consolidated-efficiency",
+    "consolidated-model",
+    "consolidated-storage",
+    "consolidated-ui",
+    "forex-professional-panel",
+    "execution-efficiency",
+    "execution-table",
+    "execution-workbook",
+    "execution-proportions",
+    "forex-context",
+    "forex-navigation-journey",
+    "learning-guide",
+    "nocuda-tools",
+    "stoikus-downloads",
+    "download-assets-unit",
+    "download-assets-browser",
+    "capital-currents-unit",
+    "capital-currents-progress",
+    "capital-currents-browser",
+    "time-twins-unit",
+    "time-twins-browser",
+    "minigames"
+  ],
+  "auxiliary_evidence_support_not_in_260": {
+    "tools/browser_bootstrap_fixture.py": "23d87b313d5d7a12c009b8814ee2239c7eb1341ef63aa59f59442be5a8ccdf30",
+    "tools/browser_fixture_server.py": "be82e4b5b802a711bde25ffc4cd9d31d230b7149b8d6ef524f2f0ad529f1406b"
+  },
+  "protocol_sha256": "8521d0ad5e9635de8a92ce3179a1e41e02921ccb6c5bf68b95a5afd8fe2d20f2",
+  "baseline_sha256": "f6c524fa9fe8dfb529582335b4c1e0573a8163daee0863b457d7c7f29a72feb2",
+  "chg_sha256": "e99b21860a19e9d590dd4fc947979fd6fe98094e58bdbe539008480a6b8b9831",
+  "historical_source_sha256": {
+    ".superpowers/sdd/planning-proportions-20261021/baseline.json": "f6c524fa9fe8dfb529582335b4c1e0573a8163daee0863b457d7c7f29a72feb2",
+    ".superpowers/sdd/planning-proportions-20261021/prior-identities.json": "1ad942867a311578a6a14d734cc290c4e14609f1117758fd98acf997c0908e9e",
+    ".superpowers/sdd/planning-proportions-20261021/candidate-09d53-before.tar.gz": "38584c19e3d7e6793c159a017d0066bd907e5b9b17c6db658858fb008ab42f6e",
+    ".superpowers/sdd/planning-proportions-20261021/source-authority.json": "14a260672f9466eee74d6b4b913a5f3fdcb229c9b1f401f43fdc36e22111be3e",
+    ".superpowers/sdd/planning-proportions-20261021/prior-full-interrupted.json": "85c76847b2d2fe6d0fc568bb7f0506110d444ff37a9c651933a3775fc6041a1f",
+    ".superpowers/sdd/planning-proportions-20261021/prior-full-interrupted.log": "b7d1c18458338b28cd359a1f4bf96feeb6aecab497e60a38fedac02eb79da085",
+    ".superpowers/sdd/planning-three-tabs-20261020/release_protocol.py": "0d93609cde36366e36255bb17a514e03a96ec265df4a1296f82fbfdee69e7dd1"
+  },
+  "manifests": {
+    "docs/validation/planning-proportions-20261021/FINGERPRINT-INPUTS.json": "fd6f4a277917ff796cf2fcd503e6e07d528e690dfa2717e91421c0370cf60f1b",
+    "docs/validation/planning-proportions-20261021/RUNTIME-INPUTS.json": "32f0f931c8aedafb0aa557d551a283e6d142109754156ce18ac25d0350c2771b",
+    "docs/validation/planning-proportions-20261021/TEST-INPUTS.json": "cdfc224257357e0bc86d0c6243259db4883536161af704c7d8b84df8e6bb482e",
+    "docs/validation/planning-proportions-20261021/RUNNER-INPUT.json": "6024b3912d9e39788a27bffdd375466a605e185c6e4352e74121a7aaff0010ca"
+  },
+  "scope_at_freeze": {
+    "checked_at": "2026-10-21T16:54:31.575963+00:00",
+    "baseline_path": ".superpowers/sdd/planning-proportions-20261021/baseline.json",
+    "baseline_sha256": "f6c524fa9fe8dfb529582335b4c1e0573a8163daee0863b457d7c7f29a72feb2",
+    "baseline_build": "09d53f0be43dce10",
+    "baseline_files_count": 1661,
+    "git_head": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+    "git_branch": "codex/planejamento-patrimonial-20261020",
+    "attribution": "Actual current-file delta against09d53 baseline, not the preexisting HEAD diff",
+    "current_files_count": 1699,
+    "changed_paths_count": 68,
+    "changes": [
+      {
+        "path": "CHANGELOG.md",
+        "change": "modified",
+        "baseline_sha256": "8ff5b35082d9d4e83b9f623db6248e4efe6a0e26a23d0c0b8cda79dddecdde52",
+        "current_sha256": "f796d10fee3949c877a8cb8e76ff2fed5bccd5117cc2f73c51545de4f4aa4721",
+        "allowed_by": [
+          "CHANGELOG.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "README.md",
+        "change": "modified",
+        "baseline_sha256": "183ff13f5394a38f9bf90e8871fa03fb09de494d5c67061b8620cd108f558072",
+        "current_sha256": "d4e3a25bf8e12d5576b05c1e6c394b0056c4c8571a0563e255d6067e262201ce",
+        "allowed_by": [
+          "README.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "SESSION_HANDOFF.md",
+        "change": "modified",
+        "baseline_sha256": "9642264ec0dbd35e699c4b464940565989ff2c6bdbf26bf737a3e5ee9e4290d2",
+        "current_sha256": "cbf712d6194a4cb5c0e3506294296e3290f6f4105194fe28316d359a8a06c86b",
+        "allowed_by": [
+          "SESSION_HANDOFF.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "build-id.js",
+        "change": "modified",
+        "baseline_sha256": "3becef0894198031e3d127d4d8f5c4e168bb4af55aabf0c75cfee5f86e90a389",
+        "current_sha256": "dc6a4b1c80cfa20113f23c92aaa5dfaf6662c8a4f9aa1b6ee6ff3688659f36ca",
+        "allowed_by": [
+          "build-id.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+        "change": "modified",
+        "baseline_sha256": "3cebc6ba6872d970deb407e612acc692a5779c24985f1af9070b004e98d1c8e4",
+        "current_sha256": "aedad070dbea44790e9cfec9c7d3a04504f05248feb1a09f7237a3c4fb0dfba0",
+        "allowed_by": [
+          "dist/**"
+        ],
+        "derived": true
+      },
+      {
+        "path": "docs/architecture/PLANNING.md",
+        "change": "modified",
+        "baseline_sha256": "6fbaf3ae4d9635c393c1a7642f07c5add1d43a291829d262a798c019cac7b4aa",
+        "current_sha256": "bfbde5108cfdbe91206727249a3934bfc82a1df60e0104f40b7f75f8507772f0",
+        "allowed_by": [
+          "docs/architecture/PLANNING.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/governance/CONTEXT-MAP.md",
+        "change": "modified",
+        "baseline_sha256": "e075a58aaa8ab917de971e42a753d2cf1d7768fa467d1f26bf68ee2c5f2265ae",
+        "current_sha256": "06463534dea94f3665fddbe03e2f46ff2367fdffe272a7a3fccd936e0cb73c5b",
+        "allowed_by": [
+          "docs/governance/CONTEXT-MAP.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/governance/CURRENT-STATE.md",
+        "change": "modified",
+        "baseline_sha256": "8b7f2b04f6aa7092c8178aeb5285495ff57fdbedf1a5269c40768c428a11e74b",
+        "current_sha256": "aa9e53f8f6f694089f68c44d560433daf70a8de4d827e2b033bb59fe6cd1ec92",
+        "allowed_by": [
+          "docs/governance/CURRENT-STATE.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/governance/PROJECT-CONTEXT.md",
+        "change": "modified",
+        "baseline_sha256": "9cdaad6abadf15fd443f77250637663da6bed0cb9b9d4d1dff8def4cd38a02fe",
+        "current_sha256": "db9e5be8d02bc6ce0a3d98580a65ff8f53bcd01d189a2f3630e9181d0f980d6b",
+        "allowed_by": [
+          "docs/governance/PROJECT-CONTEXT.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/superpowers/plans/2026-10-21-planning-proportions.md",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "725bc60d5f4e4bdc36520a336aa9c22090542853061168011bcd5b6469e098b0",
+        "allowed_by": [
+          "docs/superpowers/plans/2026-10-21-planning-proportions.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/ADDITIONAL-CHECKS.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "97c984f54043161b57ed88c7728c56bb66876b39981a258dce7caa32cd98b997",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/FOCAL-GREEN.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "cd04e1880480c8bbee0fdf2608f8dab6fd7c5a16138d3b268862cfa3bd656c2f",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/FOCAL-PROVENANCE.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "7ebf65aad6cbaa0ea01d2633edf8645f0c48ab9fc425feee6657e851607b78c4",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-COUNTERPROOF.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "ce5fb243fffc8bc5025da2fc4565d7d5c999cdddeb353336f25146d39ca9111e",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-ORIGINAL.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "694abe3c67ea51a3730caed72773ab6d8d5241f94a298d37c10e557af4ef01ed",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/INDEPENDENT-AB.md",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "8b1014a1bda944a02cf254224a53e8fcce932851b6f7b606f9b0976588650a9b",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/INDEPENDENT-REVIEW.md",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "aeb8205d6d771349364f680914bdb6ab82b7ffba5bf26c7ca3f6f8b9a9a321cd",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/PREVIEW.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "84daa1b3f47eb1b08a6fb95df86fcc2eba4d625d76bbf004863e7e71299e72a5",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/README.md",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "db76acaa6fce4ca4b39cecb53f4c9efee1c4fb94f0d9b03aab170f219c6d9ea2",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/RUN-HISTORY.md",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "8fd9c30658ffd6847a0710071b68b19bba8e5d07030c01ce8f4ad3fc9c1fb4e2",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/after-dialog-center.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "755852fdf48ef108f06316c3ae83165cf003c78bddf12b3422e7f979cf7715a7",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/after-mobile-header.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "5b9638cd7ed702cf8eb6a0e4f10f5d17da15d5be385d6605a648089e383bbc55",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/after-money-bases.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "755852fdf48ef108f06316c3ae83165cf003c78bddf12b3422e7f979cf7715a7",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/after-pending-copy.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "f7dbe7b06892e00f0ebfcf9e7464cab3a74b3749d097da16e87e7d41aa5836b3",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/after-stop-legend.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "66429c1d38ae7f65c28d4eeeed8e475946a3b6f7ca866cbc8c336dc34f5f2ae8",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/FINGERPRINT-INPUTS.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "fd6f4a277917ff796cf2fcd503e6e07d528e690dfa2717e91421c0370cf60f1b",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/FULL-RESULT-FAILED.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "a6486d0cad83b7ddb5a669e32cdbc65e805df25c510a54570dca9b4b3350067b",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/GUIDE-METADATA-FOCAL.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "3f4718846205ba09da641c2bdf9a97a90f904240308fc187203dd7522d1933f3",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/GUIDE-MOBILE-FOCAL.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "5221a22a96c0f3a3cb39833d9945c73d90bacb5c7ead1e84100b766cb98b7504",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/OBSERVATION.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "992ee873cd9ef9cdd8722a44a17457b3840eecf4ff1ce7c0934b160d4f9b6eef",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/RELEASE-CANDIDATE.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "c41c682e00e3a75733b60fcac2358c520328b37bcc30de9910a5471a10522616",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/RUNNER-INPUT.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "6024b3912d9e39788a27bffdd375466a605e185c6e4352e74121a7aaff0010ca",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/RUNTIME-INPUTS.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "32f0f931c8aedafb0aa557d551a283e6d142109754156ce18ac25d0350c2771b",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/TEST-INPUTS.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "cdfc224257357e0bc86d0c6243259db4883536161af704c7d8b84df8e6bb482e",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/attempt-1/TWINS-STANDALONE-FOCAL.json",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "ada014dd68211e56601e5a09fa77e0a5ce352c6ab6962fd524a9b61c175b4ca1",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/before-dialog-center.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "7910ecf7160209463016293976b5102ec26b810a5d3d2a74990e3616cc6c7212",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/before-mobile-header.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "c9fe5be350ca25d63fcfb90829b6eae57a6448d735752de8b93740aa9ce5fc77",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/before-money-bases.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "0f98d4bd2ea46bac1d14c4c482035fa7359032c7341e6b04820ef104e769cbd6",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/before-pending-copy.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "2dc9c885d0ab897476ea4f7783ff03a5234a4fd66df8e6d8b5c8d884a84e535f",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/before-stop-legend.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "8bbbcf861195e53218e745168d3a6f61f70629d398720040d567b6c3ab5d6425",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/forecast-mobile.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "d295b3265da6ac9d56cee48d8f1aa783fdfc0cfc313944475c2b1368863c528c",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/form-desktop.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "bced04f1c8cbb61817dd8e8b32f5c649b02b838c808f196ae0802a89ae109c25",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/profiles-mobile.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "7bab0b199c01f8e3ac04c57ae730dbd8a329dff3f3d3c3695b075edc918a96fb",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/reference-form.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "a5a3c8f0962e9b02071521031203c1007560c4fabc59fdd1ab43b6bfac00a6be",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/validation/planning-proportions-20261021/stop-mobile.png",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "c018f0b9e10d58d86ff9aed353c295b1a53aea88a70afac52961d3a501bea926",
+        "allowed_by": [
+          "docs/validation/planning-proportions-20261021/**"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/work/ACTIVE-TASK.md",
+        "change": "modified",
+        "baseline_sha256": "d5af9ae6faa925d6f2cc87fba6442bc04239fe0035637c55037b12641bee684c",
+        "current_sha256": "6299c7f44170e3c073ec5a5eb054bc2b10fb251d5294196c4166c6738403f8ce",
+        "allowed_by": [
+          "docs/work/ACTIVE-TASK.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "docs/work/CHG-JPW-PLANNING-PROPORTIONS-20261021.md",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "e99b21860a19e9d590dd4fc947979fd6fe98094e58bdbe539008480a6b8b9831",
+        "allowed_by": [
+          "docs/work/CHG-JPW-PLANNING-PROPORTIONS-20261021.md"
+        ],
+        "derived": false
+      },
+      {
+        "path": "src/js/30-accounting/06-planning/03-ui.js",
+        "change": "modified",
+        "baseline_sha256": "4c35c87428863267e85142521c7e49a1ec6a85430ff4a5ddc7cf5c060c50396a",
+        "current_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "allowed_by": [
+          "src/js/30-accounting/06-planning/03-ui.js"
+        ],
+        "derived": false
+      },
+      {
+        "path": "src/js/40-app/26-learning-catalog.js",
+        "change": "modified",
+        "baseline_sha256": "632ea9ac8a74a117474c585d6693ad4050ba0094f8b0818d2ea3e8d02250147c",
+        "current_sha256": "30742f3194a2b5136348809a55a55106ebed01fdb8a784de246df8c137b37cd8",
+        "allowed_by": [
+          "src/js/40-app/26-learning-catalog.js"
+        ],
+        "derived": false
+      },
+      {
+        "path": "src/js/manifest.json",
+        "change": "modified",
+        "baseline_sha256": "29d6f2fb8c9374472539aad799a01c4796896068a61c7b199ddf282c376ae65a",
+        "current_sha256": "2fca45f91767c5dbfab826f30cb62b3d8e5a4e261f7c357feb273ad4d96c8d06",
+        "allowed_by": [
+          "src/js/manifest.json"
+        ],
+        "derived": false
+      },
+      {
+        "path": "src/styles/app.css",
+        "change": "modified",
+        "baseline_sha256": "238843772b9e60a68147b18fa69cb29ca5dab165bf502814f29abd5cdc568ad7",
+        "current_sha256": "482dfd3055edd884a19ef24edf2ac216fd1bf5648b4b152ddc225eab69e7bfd8",
+        "allowed_by": [
+          "src/styles/app.css"
+        ],
+        "derived": false
+      },
+      {
+        "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+        "change": "modified",
+        "baseline_sha256": "17551968e4f1bb06fee9a590c2b201cf8c7f46fb8fae6cbdefae488ed2138627",
+        "current_sha256": "9e9f4502cfc3b08735202e31e0b1f470a67d435ca6b8404f30f191495e34ef66",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+        "change": "modified",
+        "baseline_sha256": "92b0d8ad72dcd8d682b60d88987cf2cffc55867ea12611ac47001f3a3cdc7cfc",
+        "current_sha256": "8bcf3f05af086162a2a918408bd664664f004ec794762fe4aa8618031b8ca2f3",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+        "change": "modified",
+        "baseline_sha256": "3f0b1907fa55cfab5bb1b5da66c04564ce184959dbb169ff8ca2f77e3e7246b9",
+        "current_sha256": "9d59256cc814e715afe0be75f93377834ad7f79bb4a329d802592d0d8275a148",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/downloads/leverage-preview-payload.js",
+        "change": "modified",
+        "baseline_sha256": "5a8db71452a19074483a55bf6c6377889eee0bfb2300377c679f85e795911662",
+        "current_sha256": "2cdcd2b492492444f0e8a6d41062ae7f616ee8506f16a2414a5146cdfeef741a",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/downloads/leverage-preview-payload.json",
+        "change": "modified",
+        "baseline_sha256": "3b398b676b28da8b15219e3e93261c8494ab916d5f6d8b3bf93b06e8b3df1a70",
+        "current_sha256": "8b48a975cc2ce707ec3f454f126834cba95eeba78a0d15f70c943ecfbcf9a57e",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.json"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/downloads/leverage-source-payload.js",
+        "change": "modified",
+        "baseline_sha256": "bba8ec9d7be8c5f7ff6759d1522d5480bcbcd67cdc84e5d3a5b71de765640e07",
+        "current_sha256": "8fe050464da18f54a4bb23d750aa66686ca2b42111d59349137721b5fe0799d5",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/downloads/nocuda-payload.js",
+        "change": "modified",
+        "baseline_sha256": "208e4488a1d06602fff0027ada5f1f992d18bc90e94a2fbdba813a46a483ca56",
+        "current_sha256": "06b99666ffd6c5055ad4e2ad0b6c29f55a5658f897cead7cdb6efbcb8515f165",
+        "allowed_by": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "src/vendor/market-hours/runtime-payload.js",
+        "change": "modified",
+        "baseline_sha256": "561804767ca559289979760b67f571a0d4e8f3816c9b3bc2092a8bc6ae674271",
+        "current_sha256": "835f8a8b5e36f23afea54ef48b11ad23af07d6ddf92e39a4e23c9b6141f92490",
+        "allowed_by": [
+          "src/vendor/market-hours/runtime-payload.js"
+        ],
+        "derived": true
+      },
+      {
+        "path": "tools/exec_submenu_test.py",
+        "change": "modified",
+        "baseline_sha256": "cda007ae6493c93cc87d922e02b8d0ee3a0fad0b85b44f7ee116cb3b2e845413",
+        "current_sha256": "09ed8dc0b6704f15513d12d56f6ff14f4927d5fa4158c3407c67588a54795ffb",
+        "allowed_by": [
+          "tools/exec_submenu_test.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/planning_distribution_test.py",
+        "change": "modified",
+        "baseline_sha256": "19f5899980e523e8cd598956c69af4c71ab368769bed7fa17a29ed3161deb795",
+        "current_sha256": "44e088071d0c6c5060ca48ec1595d534de95437233bb73109a10159d3a6c184b",
+        "allowed_by": [
+          "tools/planning*_test.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/planning_parity_test.py",
+        "change": "modified",
+        "baseline_sha256": "abd37f996ca388f5b97e3263ee28c2a6994faf9e11140745c33a2f11ff196e1e",
+        "current_sha256": "7e160aeac97af61df2c00ba1fb786031620ad54ebb32a6a660c3218e6f9f4124",
+        "allowed_by": [
+          "tools/planning*_test.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/planning_proportions_test.py",
+        "change": "added",
+        "baseline_sha256": null,
+        "current_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+        "allowed_by": [
+          "tools/planning*_test.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/planning_three_tabs_test.py",
+        "change": "modified",
+        "baseline_sha256": "1ab8d79f3b2dd2799931b4038aef57aa154c2dd7692a95f9ab6e8b5750d4bccd",
+        "current_sha256": "9c21802d804a198948d8493201fb6607d535401fb442441a67cf5334749ceff7",
+        "allowed_by": [
+          "tools/planning*_test.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/planning_ui_test.py",
+        "change": "modified",
+        "baseline_sha256": "570707d1f3e5b7fe0c7dd1f7a12245c1af451f03a8b5657a0440d8dd8f8eb0a1",
+        "current_sha256": "4398063623657d5156c2c66ecea1eb952f286b92f0de0358bd7ca96815c0af12",
+        "allowed_by": [
+          "tools/planning*_test.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/quality_gate.py",
+        "change": "modified",
+        "baseline_sha256": "6413fcf8d61566c5a8009f2326fcf51666a44bbc816347d98d32e438385b8883",
+        "current_sha256": "51f6d3fe33907b70699226129679a96e8da221371136f43719bc9db10e9fbc8d",
+        "allowed_by": [
+          "tools/quality_gate.py"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/regression-memory.json",
+        "change": "modified",
+        "baseline_sha256": "dfe9bcf68134b4c9e9c7eeb3909c172281654540e7f0637363ab6b575a67d525",
+        "current_sha256": "068c43fbf3b8a5e3129e11275666dacc4ff1ca9d2069c9279d87b9350c8efa76",
+        "allowed_by": [
+          "tools/regression-memory.json"
+        ],
+        "derived": false
+      },
+      {
+        "path": "tools/smoke_test.py",
+        "change": "modified",
+        "baseline_sha256": "ca86557dace1e8542960bc45ca9d3a1952c289b4f21ac73ff73f27ac51336eb5",
+        "current_sha256": "620c6e08f9a95705fe40e3c24c43d05dcc438589f89ce8457aaf589765aa26b9",
+        "allowed_by": [
+          "tools/smoke_test.py"
+        ],
+        "derived": false
+      }
+    ],
+    "protected_count": 215,
+    "immutable_baseline_sha256": {
+      ".github/pull_request_template.md": "e56a7280964f70104b61715db6507597634a7459f7b62b8629146a82a8aed638",
+      ".github/workflows/mt5-host.yml": "7f7b1c798eb4d1faace5407beddf1b2e38f0e5bf2ff83b6dabc74f08d9379151",
+      ".github/workflows/quality-gate.yml": "9549a5494e52db2e0c1d993e077c68b8ded40ea1819e3ff611300e32248ec870",
+      "AGENTS.md": "f17608effe77d669dce42110797bb956a64fcf5a8fd5cec5dbca3d253b4d02d0",
+      "docs/normative/ANEXO_PARAMETRICO_CANONICO.md": "6240b6330a35fd488f16d4191129eeb01aff8f7a4707158c043afb37d91cdc23",
+      "docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf": "2dab6166bb8513cd9beb7fe39c574971af086ebae66683d99c0e6fac69eb6769",
+      "docs/normative/Organograma_JP_Wealth.pdf": "f96fc9b03fd22f4c989a445436345402c6473c8889e8741847d16ea6e3b97c2c",
+      "docs/normative/README.md": "6f90e08400baca40183479dec2b728e3d2f888005886acdfcb156d44de0bac13",
+      "downloads/jpw-alavancagem-atual/JPW_Alavancagem_Atual_Compilado_v1.20.0.zip": "0f23b0f0163d824a78ff0e2ee0b8bb90f08c5075b293968f2cc940666b5447ba",
+      "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.20.0.zip": "9a0bb0a4cb61b1e63eee99b10bde64a446f1d383ad5179bf5b05d9c85b65af7d",
+      "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip": "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip": "e3d07f6573c2e357ee4917ae4805374cdd552f663baf84dc3da0948b9aef7119",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.2.zip": "f4f99a5ea010b8cf9ec0bda1909bbecaacbbb0b6bfa46f53470a91d8a5313006",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.3_interface.zip": "736df358a40fbf15fca52432b44db406cd4677eccd2b5d5f147a9ebb6fe11be2",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.23.0.zip": "65ed7e2cb6f9fe680695ef67e47eb9aa873a66e2bfd214c1ebd71a41367fcf63",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip": "2dd00aa8a4b4cb90f6b4eca36af4ef8d3e475ad5c856e163d9dc5c19fe6a99cf",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.2.zip": "d1c36843909dc20730d9dfa935294d22f10fe69bdeba6a586a50a99c942d295d",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.3_interface.zip": "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21bf31e5855ef",
+      "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.23.0.zip": "0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3",
+      "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Assinatura_R4.zip": "86b9fb52e811c953f2e142f7670327685748bf75848c0ce2bea644eaa664d474",
+      "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Interface.zip": "c584076a3b1450bb5c0e0a17aaefce903291737a2c245833860942d10286ef97",
+      "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip": "5c32d1a5bf3ff2e2023c2c0e7b29c6425d1cc1bd5169f5fdf03f277d8fc9f8f4",
+      "downloads/jpw-alavancagem-atual/Previa_Stoikus_Interface.html": "d307917da8af693ab1ebbf573b03aad06b99e1bd7561f0a8e0677f0c369ad8a2",
+      "downloads/jpw-alavancagem-atual/Previa_Stoikus_Interface_R4.html": "b1e44151cc4acf5fa96fb0bb0a349b2ecab0ca631e59649629c253adb83f70f2",
+      "downloads/jpw-alavancagem-atual/Previa_Stoikus_Janelas_R5.html": "90fd6a0d542ce9abb538d61f0b5b8e5470d364eae1dd47ceed4504f6b67cbfd7",
+      "downloads/jpw-alavancagem-atual/manifest.json": "8130eb90fe284212c1bb85bc2e068a809dd44be1a43b51be914d1399f9de0d73",
+      "downloads/jpw-alavancagem-atual/root-pin-R3.json": "2a5efa5843b9f54304db3a99dd04ed64ec32e4b7d8800e53dd48b4e0c7a502e3",
+      "downloads/jpw-alavancagem-atual/root-pin-R4.json": "009cd46d458a4a85c14a0cae0c76ea9d730b47656304d36dfb7552fb952e8932",
+      "downloads/jpw-alavancagem-atual/root-pin-R5.json": "bb6ad986db99b3f9dca2437e83f9fd928f4df7830a9866da5d2b0b7bc731447a",
+      "downloads/nocuda/MT5-LEIA-ME.md": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+      "downloads/nocuda/Nocuda_Tool.ex5": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+      "downloads/nocuda/Nocuda_Tool.mq5": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+      "downloads/nocuda/Nocuda_Tool.pine": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+      "downloads/nocuda/TRADINGVIEW-LEIA-ME.md": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+      "mt5/jpw-alavancagem-atual/AGENTS.md": "fa1e7e3160f858709393d5f7ce071dcad23f3a420dfa11c4e1fd82baba27ce21",
+      "mt5/jpw-alavancagem-atual/GENETRIX_7X_LEDGER.md": "de84e7148a984f7b437e589fc33ab0ffada6bd3652f8b7192136c6cc9a4c6439",
+      "mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_20_1.md": "888d37de2b898ebce2da353275cb61601b13d5293c9891977c9b33cc5c5f7e2a",
+      "mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_21_0.md": "f547423389b4bbd093da718385206ee5fd90fd4be641de3a49c810617c9bb1fb",
+      "mt5/jpw-alavancagem-atual/GENETRIX_COMPILE_FIX_1_18_2.md": "51d35eff6437080d29466e181effec595a87de5210c1b5f990c09d8ccb2d1bc3",
+      "mt5/jpw-alavancagem-atual/GENETRIX_CORE_1_20_0.md": "0d494acfc9f0d54a81d50fe83e7094d8fcaca5b080d8647223ebb87b5c84746b",
+      "mt5/jpw-alavancagem-atual/GENETRIX_CORRECTIONS_1_21_2.md": "e3c913376524b3240909c5c9049a034afb5b1d569ead95783a0b12f5d7dfa1e4",
+      "mt5/jpw-alavancagem-atual/GENETRIX_PERSONAL_HISTORY.md": "f52fb0bfe81110ca010dc5182335da697699483d239541521605d2752e399b97",
+      "mt5/jpw-alavancagem-atual/GENETRIX_REPAIR_1_18_1.md": "0ccff0d81177b8bfec3f5efe2342a8389b2a3b72a004f0f0b8d8c119244fa78d",
+      "mt5/jpw-alavancagem-atual/GENETRIX_REVIEW_1_21_1.md": "62c11ce851918f6b173755d2ccbf8bf847aec5c61a5cc3ce8ed7ed6c3b74a4c8",
+      "mt5/jpw-alavancagem-atual/GENETRIX_UI_1_19_0.md": "3ab6f1faea138ec18f03cddc6075c0684e78bdb61bb64f4d0e1ba438b05d742d",
+      "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5": "5d3237f6e01da8409db0c3a76228930e9eb306824e79b1d84249fe4297958a5f",
+      "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Accountant.mq5": "bc93ccf06111a4ba8751e9c8c49cb512f39221248dc87763aa0275b46ed233e8",
+      "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5": "6a223efa0a69e2a9891f83e014c8a01ea8ed0ca86b26e019e45d664f28fafa1e",
+      "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Supervisor.mq5": "006f58fb84ac2121589a374f5c2ac1d827930059741f7793897c469bea570514",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp": "d812113962c031d866d776619be47565c99541fcf7dc5b372116c9f13594e781",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.provenance.md": "02d6dc261ad667917f97f3985ddbe2ca7c5f9a4de7697a61867b8d76b4f5fae0",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo.provenance.md": "271828a7fc78bebb1acaced426994a8c85f5a98d1dfb61798e36037003cf69fc",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_100.bmp": "749c2b28ff55b09434995a2be028f5bf86f2274c2be0ed860e1dca6f08b4d82d",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_125.bmp": "7d3679be4a8123e262d18a88424610f6f089528f5f897c7c5118adea5345d3e3",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_150.bmp": "ee123cab4b2b7df358f8759a50254fb768d18368e261868d8bdfbf93217844a7",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_200.bmp": "b756abb78bc3be7bb9abee6337338ccce1e5570847fa78016c1b664a3af483b1",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp": "dd815b191fa8e6e25669cad12134a0fba4f1e1bfd78a71f24953e551d4c3744a",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_125.bmp": "6208c8b01ebc0d5b6448324dea8d473cf7d800b4b8546705b8c885ce63b2ba65",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_150.bmp": "c943a80f6e77c7518051df9412bbf47fc6d0006ff266f2c9074213fe289b4d88",
+      "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_200.bmp": "ff4f6667c2f05ed4ccda8de73920ce87460b770bfd85666f8dee76215bb43727",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh": "77e50036f36ce279b40ec0e337a468f40d7cc7a19ad92da3ae6e6414ffc212a4",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh": "472f31cf5656c36d2561b098b8efb69ea405bfe9fd83c67eeaa3eefbd6211260",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh": "f6b37d3d98a3a2e8f217d20e5a9f86b307b46111f53990f854fee62e52252fb3",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh": "a2155822afe2bd921b6ce088edd2b64e04e5c7aedb53dbd5c3e1ce8f1368bf7b",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh": "98c47b0526c772846d1e70b048f01deab7881c8be879ba0e0ca9693902534418",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Core.mqh": "501eed7ae160dcb41043ea2d7862b1aae8d863b74b932bdab764b736653bbf01",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Store.mqh": "beaed74ea4915d8edea8e2d0dbf34d1c81d805b31ef82e4ea349b088cfa32cc8",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh": "10562cc54e96ca1e32795b8f0fdccaea83efd964b7a8b9c2472a903e9a3298e0",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Observer_Presence.mqh": "efb047a162c0fd0df409483dbdc81983e82d4181e1ce4a6e7fba17bca1394bcd",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Panel.mqh": "3e2799a970389708e2416ab52da748840486769d673e11c3aee4becc83021b3a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh": "baa9f19cf6358c5a570bedeed870754483128b62ba5205437a9dcc5f07d33a29",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "d4c67463f4038fa70102b20904cba17ae35888e871393380771b856c08e8968a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh": "50dcb401e51cf176a404846add48d59d14ce2e75c78c30b5fd2dd67abbfa444e",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh": "a34156a4e0d69d1516d6ecd1a2580948020be2ad326476f9f9639c79349a2653",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh": "cee189d989148d6cd2f5979bf2a0d4a73a5dd47789c6b86c0cdb2b853f7ec623",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh": "04f1b3ecdac6a0877f11a369d753ce7bdaacc0418457eacf25a1d3ff31224a8f",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Observer.mqh": "f112b2b71271040be2f642fa0ec62a9eeddf80b465b7d588d2571e91daf2cf3d",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh": "d9ede1cc0bcda749c0245f136331aa08efc0d71760873a8b629eb4fc7456b61f",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Samples.mqh": "3fdc0d03bc39672313ffe5fa89e43cdd4d5fd73bb601d891bde2828c0b048bc2",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh": "db48686d3ca3cf23d7f683fb1589ae8cd2fea21213b35ffedfdf66f5b7fc20fb",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Store.mqh": "e9ebf62726344003073bc801318e7f5f49b32c3adbda5d2bd016cde5650a7bf3",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Terminal.mqh": "b5232907de3b8ab5c928a0b7a176fd3c10c673ddcfb822d424766be76b47148b",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh": "1fe7397a337be945a77c0c3b68d3f4b317180d7929732f88525a94c127c000b2",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "d06027b523083ac058959f45cf3e473cc31903e4c4782248292bf293c5df5a27",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh": "9fed10b552abdd9ff3b8181b81332635270cb85a02393730b9b5b7bfb8988e71",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh": "c0525b71a0be9823722c1fe920f673ae04f95b722adf1404627adea4f48f4930",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh": "2fca05f5fe15d67089d462c503536d9a8000df9088dad1222f3bb502df05f42d",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh": "2ecf21ad6a65317ea029fc9e4575f8e5d1966773720024cf2907a780afd5c361",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh": "2d101ff677276ec23650be5c3e825a87ee716769e0273884b98ef8031f78a1f5",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh": "6f830d204a9ff05ccb66ce07ff2675eb12ae9f243446e21a26afd743a4d683a0",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh": "82a6afcb2ab0c559824d1c99c0a5ac5d9fa71ce4b35cb4fcfcbd239a21285d33",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh": "e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh": "ff89bc319bb956c46d4eba30eda24c2cfa7c3c400ece14ab408ac34f00e3b14a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh": "061945ec000dfccd8af3c04c30c2d32b92746798cea906779eb4a26741869b30",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh": "6fcdc1075adbc89427ed23c98457818b3ce080b8f53cf087570a3eac0ab7fb6a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh": "8173c91a2fe3e4c1d3a6b5b5d6ce55fafb6f6571b1fd58eec7e0fe7bcf81206a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh": "be42ab65bd9885937acf3df22f1ab71f5372e36c74252febe58b1b9fdd7dc3c4",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh": "d164c5af97d8a982891b330d02bd79870123b196e7917e50a5f99d8a46e5dd00",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh": "ca5d5220c762e1eb1752d213114292a25915e9e172b9d8d2bc872095dc001d8f",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Controller.mqh": "31cf2504f46ccab679bfbc51e5ef66f18cf378d1cae6eb2a5a63001dad1eb1c8",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh": "2c8f4284da8eee97e794cd9cbf7efb9d78808a97f859ef1752c48bb730f71601",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh": "b1667783a6f262c0731b2e867c46cab073975ec0fa6df284a6cdbcb9e66950c9",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh": "329fede70dec11c0f8b046c20ef70b4406b27e700313d8e48c76616435a41db5",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh": "1546a5a75ff53ad26bc52da45a8d892af59a66641a0bc0644199ca4a5cb98495",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Accountant_Runtime.mqh": "260f1c384fefe7b944dbf59d058d134b8b5c2889dc25fd76245ff702ec126dbb",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh": "a50b1b9932d58f3f1337a62be347614307613f2ef15008b915907b6b25f1092a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh": "3a1673443c6121a90b5625f73deafaa1d4570d20b865c26525e2a62180374400",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Bridge.mqh": "0fa261b0fd79b56272c16cd671ae99ca20f46f3319b3bc48f50a4208292a3cad",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Core.mqh": "7dc452123b987d227bffe7aaf210cc7a5c3b965369def66bf5120a62da0c76ee",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Preparation.mqh": "9231e1a4102c62b7d6db534d809127928603a872b7040755704aa7e17702dbe7",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Store.mqh": "53fb0b506bfe79e39da50efea7403e0e10600cc406bca8cf38ffb8c3ff7451be",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Terminal.mqh": "9051154f32fabf9a647061de1c2c2d176ec12797f5d96b77809458c04fc110c8",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Core.mqh": "f925790a27cd244df230b0959e6c0fd27ff0be2ea5cc23742390d7780e8f0880",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh": "6fd858b37bf61f9ff131fc2af80a2da1f5440ae875e36af69e6a5932c55c5bb9",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Status.mqh": "4658c7c9cdc65322e2022c434b8a6d7b0ed08f82c9ee4b79691797ac540c8d9d",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_UI.mqh": "53aec03d4f4daad0dbccfc063f0b8f216f0ce4dc2ddea008841ca1241e4b946b",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Observer_Runtime.mqh": "a357c1850931d6515f2f9d7c341df741f57e3ace328694ae2ac16963504edf2c",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh": "73ef12c0048ad3268a1324c25356cc613b6d03cf37f9337f683ab2270b125f9f",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Risk_Store.mqh": "451a47ba20b0764928ad3ecbc738859cf38cb3e3d93019ffedc40f5245ed5227",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Risk_Terminal.mqh": "7c03df1f9c48f2fa0e04a6c33c3b4aabb52af9163a0d683ac1290d5254220999",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_UI.mqh": "0fe1ffab6cc837397445b0f26a48abc3391ec33e7e38be9b1950b06687e59a0a",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Visual.mqh": "ad3d018fda14262b72a979b21fe5e6da1f8946502840accacd497a8b6a18c3f6",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Window.mqh": "849e18e358fbc0ef519b8f5e324a26de55b732d0dbb14c95f6c9b95c3420fafd",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_UI_Design.mqh": "8dca05adb5a74452cc76db0ae336998a74cc1e7a29dc6551cc0c5d175fba5b39",
+      "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_UI_Focus.mqh": "79ee34a078ac1a2bf81dc0027bfc413e162fcdfde04e9e1f489290b5e0652219",
+      "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "c1204b4e6b8b08a45e167368831d00dba2b6611cf4afd04377f9a8cdf9f35e00",
+      "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "2a15fb20699b43bbbe4f9259266f4a7ef47bc404174cb2b11b86f06dee309f6b",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5": "94158b95e02e194480fb87b74a6fbb91fc8cd73c7ff4b9c047ae34976009901b",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5": "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5": "8b50f01a9e9deea1dc29b12cad6ee70012b49abda84bb9dae4e81a18e19184bb",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.mq5": "bbec66651e0535fb7e4b52bfddb130295a439e32ff9019aac982ebab94891ae2",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5": "ad92555cc30c23fdd9f9c93ac0c5ddca79c79365398707a4637ffee655d4e6d8",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.mq5": "e20241aecbb6598a41f048de75c0fad50190cf9a78ca19cc863e65f696672c72",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.mq5": "ddc970066a98bb16dff88119794e91af947973cd5ca897b4e86d899dee0c648b",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5": "baa3f9f47a8e047fe626fa22af696301d4210a7ebf61be735507c29316d7ec34",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.mq5": "8e247c0457ae8b9aca78d8151516f7864859675fe8f0c624cb0800c2717dfa7a",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5": "53779e5d00dc6f9e903dca760406173182025bd903196cc6029eb38b3e11fb7a",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5": "55c9fd37a7d8829ddda11955b888eb9722179d01e8607edb769a78a9a0a1071e",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5": "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5": "e61a63c5c203c10991301fb3ca4867578d695f1db0db52fc2538ee99d939a6dc",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5": "2b1a92faf049a187b65d94e060ec2270cdd140477251935d3a7639b89429e1a4",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.mq5": "db1e18181fe075f9892084076600a5f8b53cdb8970396f6d87f54165864d225d",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.mq5": "3ef2ada9c413571d0790422d3a5deef6b3eaaaf0aafe46e0c37467a6de6eb11d",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5": "24fe2d818ea18a88e8688133a3295592ff064d60a1e8868a184e7b0100bd15f6",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5": "e8b0c1e87ebbb240e9d3e583097ed746cb873231bdcbd65a1eba26b437c49f61",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5": "a70aae42b8be574654b5b306bfa7515ee79a37b264ee7b0b3d026cb48bc6cf24",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5": "721774eadb99e86df51c459004b1e33575202e5bb25cce4a8cca523ebea69c0a",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5": "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5": "0c01efa287bc9a814aa67cd49f40b343583c643207f4857134c540de047a9635",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5": "18b2678bf6c1d094dfc2b47e0879e09a46a2d8ca68d0efce2cc05868ae2651f2",
+      "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Risk_Tests.mq5": "100a833f2ce488df1306cbee5e1dc796aed2ad6e61970736542f4c574af232e1",
+      "mt5/jpw-alavancagem-atual/README.md": "9ef7cda7a94bdc157c5165e706aebe788c1d60d2524d3b2cfcdff5d3822fb26a",
+      "mt5/jpw-alavancagem-atual/STOIKUS_RENAME_1_22_0.md": "4485d49833dcb02c0c5d53a85eed23611d355c8ffc874acdc0a3d699385c980f",
+      "mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md": "2bbb65e05f1613d3438e29168555ae64890abbd0c00f1e682d44ec43a95e0a3e",
+      "mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
+      "mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf": "0b7797c8ce561073c541ca3c75ad2904b15e36a7d377066f395ea1daded5f05e",
+      "mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
+      "mt5/jpw-alavancagem-atual/harness/MANUAL_DE_ATIVACAO.md": "74086dd8afd3bf740a237e9224d386ebce42403decf0c6620d3f6ab0cdc9fd2d",
+      "mt5/jpw-alavancagem-atual/harness/REPOSITORY_INTEGRATION.md": "be532e1ddea267d1edfabfb2dd4cabb3e24da86ca1bc7d89b878fe7e38cde392",
+      "mt5/jpw-alavancagem-atual/harness/contracts/ENG-AC01-12.json": "c0f93f1ffd9eaf83dac33fd6f9ae2a12c321049ae01491018b9ac6ce40954635",
+      "mt5/jpw-alavancagem-atual/harness/contracts/TEMPLATES.md": "7868e8711d1194dfaead7dad42caf6c019099d93735e95bf8705f415b3375df0",
+      "skills/agentic-evolution-governance/SKILL.md": "b484b6a9a5ec2495ef7c37efbb2b92b74e73b9a52bae0964e06a773d8d915335",
+      "skills/agentic-evolution-governance/references/templates-de-saida.md": "1d8a74464e7921170831f88ec1618ebd6c9a8db674009d50ed37e4a9767e915c",
+      "skills/jp-ai-engineering.lock.json": "8efd13af9f2ad1902e7aa9068dc3b4f18a65ba3507d028b3750e282f47e44ef6",
+      "skills/jp-ai-engineering/SKILL.md": "0b50e483e1c013c23fafeb3d8063c62e00a2eaf62540b92f522603cf7f90520f",
+      "skills/jp-ai-engineering/agents/openai.yaml": "710f47b5e65c62735660832e9527bd2137bc63aaaa44d9ad4afff34c4b0ee8b5",
+      "skills/jp-ai-engineering/assets/AGENTS.template.md": "4acff8f91d3d507b8e2f11395154ae3908fb285b1fb54a57a8d5e03be812d8d4",
+      "skills/jp-ai-engineering/assets/personas/critico-integracao.toml": "100ef64cdf5b38f518a3da87afc300ee4d90f59fc4d2ea28cd144f6625a19002",
+      "skills/jp-ai-engineering/assets/personas/engenheiro-integracao.toml": "e7c72108c2f68a8e996dbb6c15af98f06c129796923a46fe25a2c83d689817fa",
+      "skills/jp-ai-engineering/assets/personas/operador-adversidades.toml": "3a2de4471dd213aa87369df7f107eee3a261696d144fd1a7fb6df632eac909c3",
+      "skills/jp-ai-engineering/assets/personas/operador-informado.toml": "fbca198b7af56ed41930ac3c228474a03031a3d23d5c3cce5ba3064799dacce8",
+      "skills/jp-ai-engineering/assets/personas/usuario-iniciante.toml": "0b3a5469a5c30e6f19cb169e390296bbae0c11f35d219932d8f097d0e97a8d36",
+      "skills/jp-ai-engineering/assets/protections.example.json": "0492ba8d2d091f0ea70370480e0e5d928aacb6f795d87e6e37e0adadb4ec8c74",
+      "skills/jp-ai-engineering/assets/report.example.json": "6300a873ea0e3449226d1cec8a547c8af1f9e8e961c3e7278a66591b65b22010",
+      "skills/jp-ai-engineering/references/contratos.md": "53dc48689b029782e853b77e4dcbc2c491d5875d66754f0a0afae10bda124825",
+      "skills/jp-ai-engineering/references/diagnostico.md": "e2958cbcf3b728192db16b49d5369849e3bda1eef12d09d727f007c61b062d7c",
+      "skills/jp-ai-engineering/references/fronteiras.md": "7d995331ba77c316fecc33f07d46d4ebe9222419326242c741573f598a5d7966",
+      "skills/jp-ai-engineering/references/integracao-personas.md": "ae854b73546272aa84d096ebe59c3c06545b9291582f3cfeab408f3bddcdf962",
+      "skills/jp-ai-engineering/references/jp-wealth.md": "2db8e3f80bf8fdb24880b2f3eb8d9f5840fdb324bc5014538d5765ebc064a3f7",
+      "skills/jp-ai-engineering/references/orquestracao.md": "c745aa80cde6eaa8becfd5c7bcd20e40ab433ae92d75316ca1b8307fe1b8b0c7",
+      "skills/jp-ai-engineering/references/provenance.json": "456ddd32171f955e5863dd5dea8068a2fbd158c9ebff1ada6f60158092db4772",
+      "skills/jp-ai-engineering/references/regras-regressoes.md": "1520c84dbca531c0b175211762e005fef50b21d898a9f26bfaf5832b7d2fca65",
+      "skills/jp-ai-engineering/references/validacao.md": "ec2f301ea5c50ca4584557c3a7da4150910854e5f5facb88c90d7fe74e9fae99",
+      "skills/jp-ai-engineering/scripts/verify_protections.py": "e51fff22c91d56f8c5a7d9725b304fef4be3fc65e5664ce3af8aecb57e928e39",
+      "skills/jpw-browser-verification/SKILL.md": "c0afba374cc95b85ccbd5e0d7cf73e88f9c2f9535d99e668c3fd6633aad052b7",
+      "skills/jpw-change-control/SKILL.md": "899391c76bc3b575b49d70ead9c668ad20324424b5f9d312e62a2268febf16c0",
+      "skills/jpw-critical-review/SKILL.md": "5cba8455f8c55a68e2f014857c6945402eb7b2cc11775f06824d40b815c8b90f",
+      "skills/jpw-critical-review/agents/openai.yaml": "34300ca8ca5b385ef03042cc8dee02b57125af72c194c68411101922b64fc7eb",
+      "skills/jpw-critical-review/references/functional-logic.md": "d1fd71489ef11389ca690475502d18f46c834bc60ea0746b1a87aee4336061b7",
+      "skills/jpw-data-safety/SKILL.md": "efbb54398a00de8ef57c1e269e55d56b6a348f51845fc4a56504a8f9356056da",
+      "skills/jpw-design/SKILL.md": "32d9a2acda14894665a97e24cb7e54ee4e09dc897bf47cca23c24d009d20a5e9",
+      "skills/jpw-design/references/design-philosophy.md": "fcc11d3eab563f3464e84e5b8886ddb9ee4784cff75530702f07776d19e0dff7",
+      "skills/jpw-feature-atlas/SKILL.md": "e7787f51d744dbec31561818348b23bd92ff63bf0b2a617f5fb10edf26ef9238",
+      "skills/jpw-normative-audit/SKILL.md": "9712f67b1262a8856b359f1e65bbe03eb3c897d86337c0ba38f64895a7c08cca",
+      "skills/jpw-post-change-audit/SKILL.md": "e6c5f03a36a4121997327702d1e41ce13efbc85834014ba287f9b6d4eff8f2c3",
+      "skills/jpw-preflight/SKILL.md": "1fd9b39ae8e387bdd38bb0591e2031c3316eef77546c12bedf4b853588c7ae17",
+      "skills/jpw-security-audit/SKILL.md": "90368f20a7b7e8893d1394ada4c9bf002495d140d6eb11207841a34fcf649b48",
+      "skills/jpw-test-triage/SKILL.md": "37f0686baef9e07ed780dced776730773a3145dc58bfd92cf483a0856b0e9ed7",
+      "skills/repository-architecture/SKILL.md": "464e66a6fcdcc346dcd0bf458b4a429655dc82afb48be6fe25720635091d7bb9",
+      "skills/repository-architecture/references/templates-de-saida.md": "d92516b940135832e50e7ae7fc710bc5e55ba1fb63c8b5ef13b5ed3161320d1f",
+      "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+      "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3"
+    },
+    "links_count": 8,
+    "unchanged_links": {
+      ".agents/skills/jp-ai-engineering": "../../skills/jp-ai-engineering",
+      ".agents/skills/jpw-critical-review": "../../skills/jpw-critical-review",
+      ".agents/skills/jpw-design": "../../skills/jpw-design",
+      ".agents/skills/jpw-feature-atlas": "../../skills/jpw-feature-atlas",
+      ".claude/skills/jp-ai-engineering": "../../skills/jp-ai-engineering",
+      ".claude/skills/jpw-critical-review": "../../skills/jpw-critical-review",
+      ".claude/skills/jpw-design": "../../skills/jpw-design",
+      ".claude/skills/jpw-feature-atlas": "../../skills/jpw-feature-atlas"
+    },
+    "chg_path": "docs/work/CHG-JPW-PLANNING-PROPORTIONS-20261021.md",
+    "chg_sha256": "e99b21860a19e9d590dd4fc947979fd6fe98094e58bdbe539008480a6b8b9831",
+    "policy": {
+      "primary_allowed": [
+        "src/js/30-accounting/06-planning/03-ui.js",
+        "src/styles/app.css",
+        "src/js/40-app/26-learning-catalog.js",
+        "src/js/manifest.json",
+        "index.html",
+        "tools/planning*_test.py",
+        "tools/planning*_test.js",
+        "tools/smoke_test.py",
+        "tools/exec_submenu_test.py",
+        "tools/quality_gate.py",
+        "tools/regression-memory.json",
+        "docs/architecture/PLANNING.md",
+        "docs/architecture/PLANNING-MONTHLY.md",
+        "docs/governance/CURRENT-STATE.md",
+        "docs/governance/CONTEXT-MAP.md",
+        "docs/governance/PROJECT-CONTEXT.md",
+        "docs/work/ACTIVE-TASK.md",
+        "docs/work/CHG-JPW-PLANNING-PROPORTIONS-20261021.md",
+        "docs/superpowers/plans/2026-10-21-planning-proportions.md",
+        "docs/validation/planning-proportions-20261021/**",
+        "README.md",
+        "CHANGELOG.md",
+        "SESSION_HANDOFF.md"
+      ],
+      "derived_allowed": [
+        "build-id.js",
+        "sw.js",
+        "dist/**",
+        "src/vendor/downloads/*-payload.js",
+        "src/vendor/downloads/*-payload.json",
+        "src/vendor/market-hours/runtime-payload.js"
+      ],
+      "forbidden": [
+        "AGENTS.md",
+        "skills/**",
+        ".github/**",
+        "docs/normative/**",
+        "mt5/**",
+        "downloads/**",
+        "src/js/30-accounting/06-planning/01-engine.js",
+        "src/js/30-accounting/06-planning/02-state.js"
+      ]
+    },
+    "inventory_boundary": "Git cached+all nonignored untracked files; ignored task/test artifacts excluded"
+  },
+  "boundaries": "327 ordered fingerprint inputs; separate397 runtime/resources;260 tests;1 runner. No execution approval."
+}

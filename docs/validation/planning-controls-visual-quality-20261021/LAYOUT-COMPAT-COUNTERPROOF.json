@@ -1,0 +1,406 @@
+{
+  "classification": "PASS",
+  "authority": "Prepare ignored proposal/counterproof only; versioned edit awaits root authorization",
+  "original_test_sha256": "9fac456dc67deb403ca2365f9b1af937be87f1cf42333b17bdb26af1309a7812",
+  "proposal_sha256": "8ab2189cfa5f582a6661805da148d159f7d477cbac3fedfe8b8f71238a537fbe",
+  "probe_sha256": "271015e12f2a360642f56c187c948f0c31e91ed5d0a213102c3060c4a8795f99",
+  "source_sha256": {
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+    "build-id.js": "50f58113e4d7a8f8045bfa82e26fcdfb6042fdfa0d6295107843eae79b953af0",
+    "src/js/manifest.json": "519c7824f8f1ab7dd4e19178311068328ffab3ce907d196dfcfccbb6da3979e9",
+    "src/styles/app.css": "1f3229bcfa93d903f6a10535d425cfee666d2277412ee246d71a50cc79ec3af2",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/03-ui.js": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664",
+    "src/js/40-app/01-navigation.js": "0b8de6aaf210cba63caa2bed3c55b669e5f1eeeb86e8b08fc140a175a383b0f6"
+  },
+  "cases": [
+    {
+      "id": "original-red-six-svg-includes-close",
+      "classification": "PASS",
+      "mutation": "observe",
+      "rejection": "('profile/recovery chart geometry', [{'w': 20, 'h': 20}, {'w': 326, 'h': 112.0625}, {'w': 328, 'h': 112.75}, {'w': 328, 'h': 112.75}, {'w': 328, 'h': 112.75}, {'w': 748, 'h': 257.125}])",
+      "observed": {
+        "applied": true,
+        "before": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 326,
+            "height": 112.0625
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ],
+        "after": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 326,
+            "height": 112.0625
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ]
+      },
+      "unchanged_existing_function_evidence": {}
+    },
+    {
+      "id": "candidate-positive-five-real-charts-and-close",
+      "classification": "PASS",
+      "mutation": "observe",
+      "rejection": null,
+      "observed": {
+        "applied": true,
+        "before": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 326,
+            "height": 112.0625
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ],
+        "after": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 326,
+            "height": 112.0625
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ]
+      },
+      "unchanged_existing_function_evidence": {
+        "dialog": {
+          "outer": {
+            "left": 160,
+            "right": 1280,
+            "top": 24,
+            "bottom": 976,
+            "width": 1120,
+            "height": 952,
+            "viewport": 1440,
+            "viewHeight": 1000
+          },
+          "profile": {
+            "left": 320,
+            "right": 1120,
+            "top": 24,
+            "bottom": 976,
+            "width": 800,
+            "height": 952,
+            "viewport": 1440,
+            "viewHeight": 1000
+          },
+          "labels": 14,
+          "plots": [
+            {
+              "w": 326,
+              "h": 112.0625
+            },
+            {
+              "w": 328,
+              "h": 112.75
+            },
+            {
+              "w": 328,
+              "h": 112.75
+            },
+            {
+              "w": 328,
+              "h": 112.75
+            },
+            {
+              "w": 748,
+              "h": 257.125
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "candidate-negative-real-chart-removed",
+      "classification": "PASS",
+      "mutation": "remove",
+      "rejection": "('profile/recovery chart geometry', [{'w': 328, 'h': 112.75}, {'w': 328, 'h': 112.75}, {'w': 328, 'h': 112.75}, {'w': 748, 'h': 257.125}])",
+      "observed": {
+        "applied": true,
+        "before": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 326,
+            "height": 112.0625
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ],
+        "after": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ]
+      },
+      "unchanged_existing_function_evidence": {}
+    },
+    {
+      "id": "candidate-negative-real-chart-collapsed",
+      "classification": "PASS",
+      "mutation": "collapse",
+      "rejection": "('profile/recovery chart geometry', [{'w': 0, 'h': 0}, {'w': 328, 'h': 112.75}, {'w': 328, 'h': 112.75}, {'w': 328, 'h': 112.75}, {'w': 748, 'h': 257.125}])",
+      "observed": {
+        "applied": true,
+        "before": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 326,
+            "height": 112.0625
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ],
+        "after": [
+          {
+            "classes": null,
+            "close": true,
+            "width": 20,
+            "height": 20
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 0,
+            "height": 0
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 328,
+            "height": 112.75
+          },
+          {
+            "classes": "pl-native-chart",
+            "close": false,
+            "width": 748,
+            "height": 257.125
+          }
+        ]
+      },
+      "unchanged_existing_function_evidence": {}
+    }
+  ],
+  "browser": "148.0.7778.96",
+  "versioned_test_unchanged": true,
+  "source_unchanged": true
+}

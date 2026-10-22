@@ -1,0 +1,27 @@
+{
+  "observed_exit_code": 1,
+  "observed_session_id": 38951,
+  "summary": {
+    "PASS": 93,
+    "PRODUCT_FAIL": 2,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "failed_checks": [
+    "learning-guide",
+    "time-twins-browser"
+  ],
+  "candidate_build": "0dc016f9c7618385",
+  "candidate_archive_sha256": {
+    "FINGERPRINT-INPUTS.json": "fd6f4a277917ff796cf2fcd503e6e07d528e690dfa2717e91421c0370cf60f1b",
+    "RUNTIME-INPUTS.json": "32f0f931c8aedafb0aa557d551a283e6d142109754156ce18ac25d0350c2771b",
+    "TEST-INPUTS.json": "cdfc224257357e0bc86d0c6243259db4883536161af704c7d8b84df8e6bb482e",
+    "RUNNER-INPUT.json": "6024b3912d9e39788a27bffdd375466a605e185c6e4352e74121a7aaff0010ca",
+    "RELEASE-CANDIDATE.json": "c41c682e00e3a75733b60fcac2358c520328b37bcc30de9910a5471a10522616"
+  },
+  "raw_result_sha256": "a6486d0cad83b7ddb5a669e32cdbc65e805df25c510a54570dca9b4b3350067b",
+  "identity_after_run": "327official+397runtime+260tests+1runner unchanged; verify-after-attempt1.json exit0",
+  "interpretation": "Complete failed execution preserved; not approval. Actual 93PASS/2PRODUCT_FAIL classifications retained; timeouts under investigation. Active candidate will be frozen again before next full run."
+}

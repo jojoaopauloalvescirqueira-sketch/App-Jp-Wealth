@@ -1,3 +1,7 @@
+# Planejamento — contrato sucessor de 20/10/2026
+
+Sete menus primários, com Planejamento após Research e antes de Forex na ordem padrão editável. Forex tem seis filhos; forex-planning e fxplan são aliases do menu independente planning, tela #planning. Somente start/consolidated/monthly são abas públicas; reference/accounts legados abrem Consolidado. Referência inicial permanece dado interno. Ordens antigas são projetadas em memória; ordens personalizadas válidas permanecem, sem gravação automática. O domínio vive em30-accounting/06-planning; motor e escritor não mudam. Notas com Mostrar habilitado ficam disponíveis inclusive em Forex, temporariamente ocultas por overlays e diálogos nativos. [Contrato completo](PLANNING.md). As fotografias abaixo preservam suas datas e não redefinem o sucessor.
+
 # Recorte atual em validação — aprendizado do campo vivo — 15/10/2026
 
 Correntes de Capital mantém seis scripts na pasta `src/js/40-app/30-capital-currents/`. `02-scenarios.js` é agora o catálogo de introdução/descobertas e experiências controladas pelo motor puro; `03-progress.js` trata somente a nova chave `jpwealth_capital_field_v1`. View/controlador integram lições opcionais, observação local, leitura/prática/salto e releitura/reinício seguros. A chave da campanha anterior é preservada sem conversão. Motor/renderer aceitos, outros jogos e contratos financeiros não mudam. [Contrato atual](CAPITAL-CURRENTS.md). Gate completo e validação final em curso nesta fotografia.

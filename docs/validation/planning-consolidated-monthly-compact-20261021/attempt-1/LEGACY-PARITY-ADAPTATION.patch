@@ -1,0 +1,26 @@
+--- a971/tools/planning_parity_test.py
++++ candidate/tools/planning_parity_test.py
+@@ -207,10 +207,19 @@
+     for name in ['Registrar rentabilidade', 'Registrar aporte', 'Registrar saque']:
+         check(surface.get_by_role('button', name=name, exact=True).is_visible(),
+               'Preenchimento mensal preserves source button ' + name)
+-    # Native A:C are a merged account-selector footprint, not three data
+-    # columns. D:U contain the 18 actual financial headers.
+-    check(surface.locator('[data-pl-monthly-grid] thead th').count() == 18,
+-          'Preenchimento mensal exposes all 18 source financial columns')
++    # The approved compact presentation replaces18 simultaneous headers with
++    # seven/three principal columns. All source values remain reachable by month.
++    from planning_compact_table_test import monthly_geometry, detail_values
++    monthly_geometry(page)
++    presentation_before = page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')
++    rows = page.evaluate('''({id,month})=>JPWPlanning.queries.sheetView({accountId:id,month,
++      quote:JPWMarket.usdBrl.get()}).sheet.monthlyRows''', seeded)
++    check(len(rows) == 120, 'compact table retains all120 source months')
++    for row in rows:
++        detail_values(page, row)
++    surface.locator('[data-pl-month]').select_option(seeded['month'])
++    check(page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())') == presentation_before,
++          'every removed source column remains accessible per month without financial writes')
+     before = page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')
+     surface.get_by_role('button', name='Registrar rentabilidade', exact=True).click()
+     dialog = surface.locator('dialog.pl-dialog').first

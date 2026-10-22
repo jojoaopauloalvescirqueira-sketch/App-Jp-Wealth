@@ -9,6 +9,7 @@ necessary to prove integration with domain, storage, focus and full layouts.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -18,7 +19,7 @@ SOURCES = {
     "pf": ["src/js/10-domain/12-personal-finance.js", "src/js/20-ui/17-finpes-views.js", "src/js/20-ui/18-finpes-budget.js"],
     "alladin": ["src/js/20-ui/24-alladin-views.js"],
     "settings": ["src/js/40-app/09-settings-modal.js"],
-    "fx": ["src/js/30-accounting/05-fx-planning/05-fx-ui.js"],
+    "fx": ["src/js/30-accounting/06-planning/01-engine.js", "src/js/30-accounting/06-planning/03-ui.js"],
 }
 COMMON = r"""
 window.__t={events:[],errors:[],writes:0,draftReads:0,pfContext:null};
@@ -28,7 +29,7 @@ window.jpWealthPersistenceOutcomeIsUnknown=()=>false;
 window.esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 window.$=id=>document.getElementById(id);
 window.todayISO=()=>"2026-09-01";
-window.JPWAlladin={leitura:{}}; window.JPWFx={state:{},charts:{}};
+window.JPWAlladin={leitura:{}}; window.JPWPlanning={queries:{},commands:{},engine:{profiles:[]}};
 window.addEventListener('error',e=>{__t.errors.push(e.message);e.preventDefault();});
 window.save=()=>{__t.writes++;throw new Error('UNEXPECTED_WRITE');};
 Object.defineProperty(window,'S',{get(){if(__t.pfContext){__t.draftReads++;return __t.pfContext;}throw new Error('UNEXPECTED_FINANCIAL_READ');}});
@@ -198,81 +199,35 @@ def check_settings(page):
     return observations
 
 
-FX_SETUP = r"""()=>{
-  window.__fx={live:{plan:{name:'Sintético',baseline:{startMonth:'2026-01',horizonMonths:32}},forecast:Array.from({length:32},(_,i)=>({id:'f'+i})),baseline:Array.from({length:32},(_,i)=>({id:'b'+i}))},callback:null,sync:false};
-  window.jpWealthPersistenceEpoch=()=>0;window.fxActivePlanRaw=()=>__fx.live?.plan||null;JPWFx.state.fxEnvelopeIssue=()=>null;
-  fxpReferenceHTML=()=>'';fxpTimelineEditorHTML=()=>'';fxpBindTimeline=()=>{};fxpBindLedgerImport=()=>{};fxpLedgerImportHTML=()=>'';
-  JPWFx.state.fxOverviewLive=()=>{__t.events.push(['read']);return __fx.live;};
-  fxpOverviewHTML=()=>{__t.events.push(['html','overview']);return '<button id="fxpQuoteRefresh">Refresh</button><button data-fxp-cur="brl">BRL</button><button data-fxp-win="12">12m</button><button id="fxpGoOnboarding">Settings</button><button id="fxpGoLedger">Ledger</button><canvas id="fxpMainChart"></canvas><p id="fxpMainChartSummary"></p><details id="fxpReturnsBox"><canvas id="fxpReturnsChart"></canvas></details>';};
-  fxpPlanningHTML=()=>{__t.events.push(['html','planning']);return 'planning';};fxpActualsHTML=()=>{__t.events.push(['html','actuals']);return 'actuals';};fxpTableHTML=()=>{__t.events.push(['html','table']);return '<button data-fxp-hist="actual">History</button><canvas id="fxpMainChart"></canvas><p id="fxpMainChartSummary"></p>';};
-  fxpCreateFormHTML=()=>{__t.events.push(['html','empty']);return 'empty';};
-  fxpBindCreate=()=>__t.events.push(['bind','empty']);fxpBindPlanning=()=>__t.events.push(['bind','planning']);fxpBindActuals=()=>__t.events.push(['bind','actuals']);
-  const quoteBind=fxpBindQuote;fxpBindQuote=root=>{__t.events.push(['bind','quote']);quoteBind(root);};
-  JPWMarket={usdBrl:{onChange(fn){__t.events.push(['wire']);__fx.callback=fn;},refresh(force){__t.events.push(['refresh',force]);if(__fx.throw)throw new Error('REFRESH_TEST_FAILURE');if(__fx.switchView){fxpView=__fx.switchView;__fx.switchView=null;}if(__fx.sync){__fx.sync=false;__fx.callback();}}}};
-  JPWFx.charts={fxDrawMainChart(node,plan,live,mode){__fx.identities.push([node===document.getElementById('fxpMainChart'),plan===__fx.live.plan,live===__fx.live,live.forecast===__fx.live.forecast,live.baseline===__fx.live.baseline]);__t.events.push(['main',node.id,plan===__fx.live.plan,live.forecast.map(x=>x.id),live.baseline.map(x=>x.id),mode]);},fxMainChartSummaryText(plan,live,mode){__t.events.push(['summary',plan===__fx.live.plan,live.forecast.length,mode]);return 'resumo sintético';},fxDrawReturnsChart(node,live){__t.events.push(['returns',node.id,live===__fx.live]);}};
-  window.JPWNavigation={navigate:route=>__t.events.push(['navigate',route])};
-  document.body.innerHTML='<div id="fxPlanningCard"><div id="fxPlanningRoot" style="width:1120px"></div></div>';
-}"""
-FX_RUN = r"""c=>{__t.events=[];__t.errors=[];__fx.identities=[];if(c.switchView)__fx.switchView=c.switchView;if(c.fullWindow)fxpHorizonWin=100;if(c.width)$('fxPlanningRoot').style.width=c.width+'px';if(c.sync)__fx.sync=true;if(c.throw)__fx.throw=true;
-  let accepted=null,error=null;try{if(c.click)document.querySelector(c.click).click();else accepted=JPWFx.ui.selectView(c.view);}catch(e){error=e.message;}
-  __fx.throw=false;const root=$('fxPlanningRoot');return {accepted,error,events:JSON.parse(JSON.stringify(__t.events)),identities:__fx.identities,view:JPWFx.ui.getView(),mode:fxpChartMode,window:fxpHorizonWin,html:root.innerHTML,open:root.querySelector('#fxpReturnsBox')?.open??null,summary:root.querySelector('#fxpMainChartSummary')?.textContent??null,writes:__t.writes,errors:__t.errors};}"""
-
-
-def fx_draw(mode='usd',n=24):
-    return [['main','fxpMainChart',True,[f'f{i}' for i in range(n)],[f'b{i}' for i in range(n)],mode],['summary',True,n,mode],['returns','fxpReturnsChart',True]]
-
-
 def check_fx(page):
-    page.evaluate(FX_SETUP);rows=[]
-    cases=[(dict(view='overview'),[['read'],['html','overview'],['wire'],['bind','quote'],['refresh',False]]+fx_draw()),
-           (dict(view='overview',width=1119),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw()),
-           (dict(click='#fxpQuoteRefresh'),[['refresh',True]]),
-           (dict(click='[data-fxp-cur]'),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl')),
-           (dict(click='[data-fxp-win]'),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',12)),
-           (dict(click='#fxpGoOnboarding'),[['navigate','forex-reserves']]),
-           (dict(click='#fxpGoLedger'),[['read'],['html','actuals'],['bind','actuals']]),
-           (dict(view='planning'),[['read'],['html','planning'],['bind','planning']]),
-           (dict(view='table'),[['read'],['html','table'],['html','planning'],['bind','planning']]+fx_draw('brl',32)[:2]),
-           (dict(view='unknown'),[]),
-           (dict(view='overview',width=1120,sync=True),[['read'],['html','overview'],['bind','quote'],['refresh',False],['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',12)+fx_draw('brl',12)),
-           (dict(click='[data-fxp-cur]'),([['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',12))*2),
-           (dict(view='overview',fullWindow=True),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',32)),
-           (dict(view='overview',switchView='actuals'),[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',32)+[['bind','actuals']]),
-           (dict(view='overview',throw=True),[['read'],['html','overview'],['bind','quote'],['refresh',False]])]
-    expected_width=1120
-    for case,want in cases:
-        expected_width=case.get('width',expected_width)
-        got=page.evaluate(FX_RUN,case)
-        assert got['events']==want,(case,got,want)
-        assert got['identities']==[[True,True,len(event[3])==32,len(event[3])==32,len(event[3])==32] for event in want if event[0]=='main'], (case,got)
-        assert got['accepted']==(None if case.get('click') or case.get('throw') else case.get('view')!='unknown')
-        assert got['error']==('REFRESH_TEST_FAILURE' if case.get('throw') else None)
-        assert not got['errors'] and got['writes']==0
-        if got['view']=='overview' and not case.get('throw'):
-            assert got['open'] is True, got  # Same-context presentation retains the previously open chart.
-            assert got['summary']=='resumo sintético'
-        rows.append(dict(case=case,observation=got))
-    # A new presentation scope starts collapsed at 1119px; same-context reflow
-    # above retained the user's previous open state without a financial write.
-    page.evaluate("()=>{fxpPresentationByScope.clear();const root=$('fxPlanningRoot');root.innerHTML='';delete root.__fxpPresentationScope;}")
-    fresh=page.evaluate(FX_RUN,dict(view='overview',width=1119))
-    assert fresh['open'] is False and fresh['writes']==0 and not fresh['errors'],fresh
-    assert fresh['events']==[['read'],['html','overview'],['bind','quote'],['refresh',False]]+fx_draw('brl',32),fresh
-    rows.append(dict(case='fresh-narrow-context-starts-collapsed',observation=fresh))
-    page.evaluate('()=>{window.JPWMarket=null;}')
-    got=page.evaluate(FX_RUN,dict(view='overview'))
-    assert got['events']==[['read'],['html','overview'],['bind','quote']]+fx_draw('brl',32)
-    assert got['identities']==[[True,True,True,True,True]] and got['writes']==0 and not got['errors']
-    rows.append(dict(case='quote-unavailable',observation=got))
-    page.evaluate('()=>{__fx.live=null;}')
-    got=page.evaluate(FX_RUN,dict(view='overview'))
-    assert got['events']==[['read'],['html','empty'],['bind','empty']] and got['accepted'] is True
-    assert got['writes']==0 and not got['errors']
-    rows.append(dict(case='no-plan',observation=got))
-    page.evaluate('()=>{$("fxPlanningRoot").remove();__t.events=[];}')
-    got=page.evaluate('()=>({accepted:JPWFx.ui.selectView("overview"),events:__t.events})')
-    assert got==dict(accepted=True,events=[])
-    rows.append(dict(case='root-absent',observation=got))
+    """Current real renderer reads only its query boundary; no raw S/storage."""
+    page.evaluate(r'''() => {
+      document.body.innerHTML='<section id="planning" class="screen active"></section>';
+      window.__pl={reads:0,commands:0,snapshot:{schemaVersion:1,revision:0,accounts:[],archive:[],audit:[],operations:[]},model:{status:'EMPTY',rows:[],referenceRows:[],confirmed:{balanceUsd:null},goals:{},issues:[]}};
+      JPWPlanning.queries={snapshot(){__pl.reads++;return structuredClone(__pl.snapshot);},view(){__pl.reads++;return structuredClone(__pl.model);},legacy(){return null;},token(){return {revision:0};},account(id){return structuredClone(__pl.snapshot.accounts.find(a=>a.id===id)||null);}};
+      JPWPlanning.commands.execute=()=>{__pl.commands++;throw Error('UNEXPECTED_WRITE');};
+      window.JPWNavigation={navigate(){return true;}};
+    }''')
+    rows=[]
+    empty=page.evaluate("""() => ({rendered:JPWPlanning.ui.render(),text:document.querySelector('#planning').textContent,commands:__pl.commands})""")
+    assert empty['rendered'] and 'Comece aqui' in empty['text'] and 'Preencher o formulário' in empty['text'] and empty['commands']==0,empty
+    rows.append({'case':'empty query model renders without raw financial read','observation':empty})
+    # Three public pages; historical reference/accounts links share Consolidado.
+    for view, expected in [('start','start'),('consolidated','consolidated'),('monthly','monthly'),('reference','consolidated'),('accounts','consolidated')]:
+        got=page.evaluate("""view => ({accepted:JPWPlanning.ui.selectView(view),view:JPWPlanning.ui.getView(),commands:__pl.commands})""",view)
+        assert got=={'accepted':True,'view':expected,'commands':0},got
+        rows.append({'case':view,'observation':got})
+    invalid=page.evaluate("""() => {const reads=__pl.reads,view=JPWPlanning.ui.getView();return {accepted:JPWPlanning.ui.selectView('unknown'),same:JPWPlanning.ui.getView()===view,reads:__pl.reads-reads,commands:__pl.commands};}""")
+    assert invalid=={'accepted':False,'same':True,'reads':0,'commands':0},invalid
+    rows.append({'case':'unknown view refuses without data access','observation':invalid})
+    hidden=page.evaluate("""() => {const host=document.querySelector('#planning'),html=host.innerHTML,reads=__pl.reads;host.hidden=true;const out=JPWPlanning.ui.render();host.hidden=false;return {rendered:out,same:host.innerHTML===html,reads:__pl.reads-reads,commands:__pl.commands};}""")
+    assert hidden=={'rendered':False,'same':True,'reads':0,'commands':0},hidden
+    rows.append({'case':'hidden render preserves DOM and avoids reads','observation':hidden})
+    page.evaluate("document.querySelector('#planning').remove()")
+    absent=page.evaluate("""() => {const reads=__pl.reads;return {rendered:JPWPlanning.ui.render(),reads:__pl.reads-reads,commands:__pl.commands};}""")
+    assert absent=={'rendered':False,'reads':0,'commands':0},absent
+    rows.append({'case':'missing root avoids reads and writes','observation':absent})
+    assert not page.evaluate('__t.errors')
     return rows
 
 
@@ -355,7 +310,9 @@ def main():
             'test_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'observations':{},'passed':False}
     try:
         with sync_playwright() as pw:
-            browser=pw.chromium.launch(headless=True)
+            options={'headless':True}
+            if os.environ.get('JP_WEALTH_CHROMIUM'):options['executable_path']=os.environ['JP_WEALTH_CHROMIUM']
+            browser=pw.chromium.launch(**options)
             result['browser']=browser.version
             for area in areas:
                 if area=='pf-live':

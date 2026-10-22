@@ -1,0 +1,2921 @@
+{
+  "review": "read-only scope and preservation snapshot",
+  "recordedAt": "2026-10-20T19:39:00.143545+00:00",
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "branch": "codex/planejamento-patrimonial-20261020",
+  "head": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+  "inputs": {
+    "chg": "docs/work/CHG-JPW-PLANNING-20261020.md",
+    "chgSha256": "da45e9efb32f059ec32085e71acc2a167440652a9ff00cfa899febf0f454492e",
+    "baseline": ".superpowers/sdd/planning-20261020/baseline-map.json",
+    "baselineSha256": "0971a74ed11f61535275f8e4655cdae446700b0b672452f49d22fc36e13afba9",
+    "freeze": ".superpowers/sdd/planning-parity-20261020/stage2-runtime-final-freeze.json",
+    "freezeSha256": "99c16e8d9e0eea8eb3bf380f7e735e06387ac0ab5731d0e6404f4074cafb95ba"
+  },
+  "policy": {
+    "allowedFiles": [
+      "src/js/30-accounting/06-planning/**",
+      "src/js/30-accounting/05-fx-planning/**",
+      "src/js/30-accounting/02-accounting-engine.js",
+      "src/js/10-domain/08-usd-brl-quote.js",
+      "src/js/00-core/04-persistence.js",
+      "src/js/00-core/07-workspace-backup.js",
+      "src/js/00-core/08-module-availability.js",
+      "src/js/20-ui/25-dash-macro.js",
+      "src/js/20-ui/32-module-availability.js",
+      "src/js/20-ui/33-module-work.js",
+      "src/js/40-app/01-navigation.js",
+      "src/js/20-ui/03-main-render.js",
+      "src/js/20-ui/12-nav-style.js",
+      "src/js/40-app/06-boot.js",
+      "src/js/40-app/18-notification-center.js",
+      "src/js/30-accounting/01-daily-ledger.js",
+      "src/js/20-ui/26-forex-engine-views.js",
+      "src/styles/planning.css",
+      "src/js/40-app/07-finalize-session.js",
+      "src/js/40-app/11-operational-shell.js",
+      "src/js/40-app/12-global-dashboard.js",
+      "src/js/40-app/26-learning-catalog.js",
+      "src/js/manifest.json",
+      "sw.js",
+      "src/styles/app.css",
+      "index.html",
+      "tools/planning*",
+      "tools/smoke_test.py",
+      "tools/finpes_navigation_test.py",
+      "tools/fx_consolidated_ui_test.py",
+      "tools/contextual_sidebar_test.py",
+      "tools/forex_task_design_test.py",
+      "tools/forex_v11_journey_test.py",
+      "tools/visual_proportion_test.py",
+      "tools/fx_planning_test.py",
+      "tools/fx_monthly*",
+      "tools/scenario_fan_test.py",
+      "tools/financial_projection_audit_test.py",
+      "tools/behavior_finance_regression_test.py",
+      "tools/exec_submenu_test.py",
+      "tools/research_navigation_test.py",
+      "tools/forex_navigation*",
+      "tools/navigation*",
+      "tools/dashboard_macro_test.py",
+      "tools/module_availability*",
+      "tools/forex_v11_ledger_planning_test.py",
+      "tools/finalize_session_test.py",
+      "tools/usd_brl_quote_test.py",
+      "tools/forex_persistence_contract_test.py",
+      "tools/saving_draft_recovery_test.py",
+      "tools/forex_clarity_test.py",
+      "tools/presentation_refactor_contract_test.py",
+      "tools/learning_foundation_test.mjs",
+      "docs/validation/planning-20261020/**",
+      "tools/learning_guide_test.py",
+      "tools/quality_gate.py",
+      "tools/regression-memory.json",
+      "docs/architecture/PLANNING.md",
+      "docs/architecture/FX-PLANNING.md",
+      "docs/architecture/PLANNING-MONTHLY.md",
+      "docs/architecture/NAVIGATION-HIERARCHY.md",
+      "docs/architecture/STATE-SCHEMA.md",
+      "docs/architecture/CODE-MAP.md",
+      "docs/architecture/ARCHITECTURE.md",
+      "docs/governance/PROJECT-CONTEXT.md",
+      "docs/governance/CONTEXT-MAP.md",
+      "docs/governance/CURRENT-STATE.md",
+      "docs/work/ACTIVE-TASK.md",
+      "docs/work/CHG-JPW-PLANNING-20261020.md",
+      "docs/superpowers/plans/2026-10-20-planning.md",
+      "docs/decisions/2026-10-20-planning-reference.md",
+      "README.md",
+      "CHANGELOG.md",
+      "SESSION_HANDOFF.md"
+    ],
+    "derivedArtifacts": [
+      "build-id.js",
+      "dist/**",
+      "src/vendor/downloads/*-payload.js",
+      "src/vendor/downloads/*-payload.json",
+      "src/vendor/market-hours/runtime-payload.js"
+    ],
+    "forbiddenFiles": [
+      "AGENTS.md",
+      "skills/**",
+      ".github/**",
+      "docs/normative/**",
+      "mt5/**",
+      "downloads/**"
+    ]
+  },
+  "protected": {
+    "baselineCount": 213,
+    "unchangedCount": 213,
+    "violations": [],
+    "files": [
+      {
+        "path": ".github/pull_request_template.md",
+        "baseline": "e56a7280964f70104b61715db6507597634a7459f7b62b8629146a82a8aed638",
+        "actual": "e56a7280964f70104b61715db6507597634a7459f7b62b8629146a82a8aed638",
+        "unchanged": true
+      },
+      {
+        "path": ".github/workflows/mt5-host.yml",
+        "baseline": "7f7b1c798eb4d1faace5407beddf1b2e38f0e5bf2ff83b6dabc74f08d9379151",
+        "actual": "7f7b1c798eb4d1faace5407beddf1b2e38f0e5bf2ff83b6dabc74f08d9379151",
+        "unchanged": true
+      },
+      {
+        "path": ".github/workflows/quality-gate.yml",
+        "baseline": "9549a5494e52db2e0c1d993e077c68b8ded40ea1819e3ff611300e32248ec870",
+        "actual": "9549a5494e52db2e0c1d993e077c68b8ded40ea1819e3ff611300e32248ec870",
+        "unchanged": true
+      },
+      {
+        "path": "AGENTS.md",
+        "baseline": "f17608effe77d669dce42110797bb956a64fcf5a8fd5cec5dbca3d253b4d02d0",
+        "actual": "f17608effe77d669dce42110797bb956a64fcf5a8fd5cec5dbca3d253b4d02d0",
+        "unchanged": true
+      },
+      {
+        "path": "docs/normative/ANEXO_PARAMETRICO_CANONICO.md",
+        "baseline": "6240b6330a35fd488f16d4191129eeb01aff8f7a4707158c043afb37d91cdc23",
+        "actual": "6240b6330a35fd488f16d4191129eeb01aff8f7a4707158c043afb37d91cdc23",
+        "unchanged": true
+      },
+      {
+        "path": "docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf",
+        "baseline": "2dab6166bb8513cd9beb7fe39c574971af086ebae66683d99c0e6fac69eb6769",
+        "actual": "2dab6166bb8513cd9beb7fe39c574971af086ebae66683d99c0e6fac69eb6769",
+        "unchanged": true
+      },
+      {
+        "path": "docs/normative/Organograma_JP_Wealth.pdf",
+        "baseline": "f96fc9b03fd22f4c989a445436345402c6473c8889e8741847d16ea6e3b97c2c",
+        "actual": "f96fc9b03fd22f4c989a445436345402c6473c8889e8741847d16ea6e3b97c2c",
+        "unchanged": true
+      },
+      {
+        "path": "docs/normative/README.md",
+        "baseline": "6f90e08400baca40183479dec2b728e3d2f888005886acdfcb156d44de0bac13",
+        "actual": "6f90e08400baca40183479dec2b728e3d2f888005886acdfcb156d44de0bac13",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Alavancagem_Atual_Compilado_v1.20.0.zip",
+        "baseline": "0f23b0f0163d824a78ff0e2ee0b8bb90f08c5075b293968f2cc940666b5447ba",
+        "actual": "0f23b0f0163d824a78ff0e2ee0b8bb90f08c5075b293968f2cc940666b5447ba",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.20.0.zip",
+        "baseline": "9a0bb0a4cb61b1e63eee99b10bde64a446f1d383ad5179bf5b05d9c85b65af7d",
+        "actual": "9a0bb0a4cb61b1e63eee99b10bde64a446f1d383ad5179bf5b05d9c85b65af7d",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.21.2.zip",
+        "baseline": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+        "actual": "a9a77be170036747fec8322fdba7d80bd6256fbcae87e4c6dadb1348ff916261",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip",
+        "baseline": "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95",
+        "actual": "79d481a624d37dccb2237f37db7a35b2746a0b8281d183b1ce30fcba0bfc9c95",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.1.zip",
+        "baseline": "e3d07f6573c2e357ee4917ae4805374cdd552f663baf84dc3da0948b9aef7119",
+        "actual": "e3d07f6573c2e357ee4917ae4805374cdd552f663baf84dc3da0948b9aef7119",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.2.zip",
+        "baseline": "f4f99a5ea010b8cf9ec0bda1909bbecaacbbb0b6bfa46f53470a91d8a5313006",
+        "actual": "f4f99a5ea010b8cf9ec0bda1909bbecaacbbb0b6bfa46f53470a91d8a5313006",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.3_interface.zip",
+        "baseline": "736df358a40fbf15fca52432b44db406cd4677eccd2b5d5f147a9ebb6fe11be2",
+        "actual": "736df358a40fbf15fca52432b44db406cd4677eccd2b5d5f147a9ebb6fe11be2",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.23.0.zip",
+        "baseline": "65ed7e2cb6f9fe680695ef67e47eb9aa873a66e2bfd214c1ebd71a41367fcf63",
+        "actual": "65ed7e2cb6f9fe680695ef67e47eb9aa873a66e2bfd214c1ebd71a41367fcf63",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.1.zip",
+        "baseline": "2dd00aa8a4b4cb90f6b4eca36af4ef8d3e475ad5c856e163d9dc5c19fe6a99cf",
+        "actual": "2dd00aa8a4b4cb90f6b4eca36af4ef8d3e475ad5c856e163d9dc5c19fe6a99cf",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.2.zip",
+        "baseline": "d1c36843909dc20730d9dfa935294d22f10fe69bdeba6a586a50a99c942d295d",
+        "actual": "d1c36843909dc20730d9dfa935294d22f10fe69bdeba6a586a50a99c942d295d",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.22.3_interface.zip",
+        "baseline": "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21bf31e5855ef",
+        "actual": "0b3d6b2ba9897a04262baf703282dfe84abdeb19ab26e39c3da21bf31e5855ef",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.23.0.zip",
+        "baseline": "0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3",
+        "actual": "0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Assinatura_R4.zip",
+        "baseline": "86b9fb52e811c953f2e142f7670327685748bf75848c0ce2bea644eaa664d474",
+        "actual": "86b9fb52e811c953f2e142f7670327685748bf75848c0ce2bea644eaa664d474",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Interface.zip",
+        "baseline": "c584076a3b1450bb5c0e0a17aaefce903291737a2c245833860942d10286ef97",
+        "actual": "c584076a3b1450bb5c0e0a17aaefce903291737a2c245833860942d10286ef97",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Janelas_R5.zip",
+        "baseline": "5c32d1a5bf3ff2e2023c2c0e7b29c6425d1cc1bd5169f5fdf03f277d8fc9f8f4",
+        "actual": "5c32d1a5bf3ff2e2023c2c0e7b29c6425d1cc1bd5169f5fdf03f277d8fc9f8f4",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/Previa_Stoikus_Interface.html",
+        "baseline": "d307917da8af693ab1ebbf573b03aad06b99e1bd7561f0a8e0677f0c369ad8a2",
+        "actual": "d307917da8af693ab1ebbf573b03aad06b99e1bd7561f0a8e0677f0c369ad8a2",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/Previa_Stoikus_Interface_R4.html",
+        "baseline": "b1e44151cc4acf5fa96fb0bb0a349b2ecab0ca631e59649629c253adb83f70f2",
+        "actual": "b1e44151cc4acf5fa96fb0bb0a349b2ecab0ca631e59649629c253adb83f70f2",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/Previa_Stoikus_Janelas_R5.html",
+        "baseline": "90fd6a0d542ce9abb538d61f0b5b8e5470d364eae1dd47ceed4504f6b67cbfd7",
+        "actual": "90fd6a0d542ce9abb538d61f0b5b8e5470d364eae1dd47ceed4504f6b67cbfd7",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/manifest.json",
+        "baseline": "8130eb90fe284212c1bb85bc2e068a809dd44be1a43b51be914d1399f9de0d73",
+        "actual": "8130eb90fe284212c1bb85bc2e068a809dd44be1a43b51be914d1399f9de0d73",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/root-pin-R3.json",
+        "baseline": "2a5efa5843b9f54304db3a99dd04ed64ec32e4b7d8800e53dd48b4e0c7a502e3",
+        "actual": "2a5efa5843b9f54304db3a99dd04ed64ec32e4b7d8800e53dd48b4e0c7a502e3",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/root-pin-R4.json",
+        "baseline": "009cd46d458a4a85c14a0cae0c76ea9d730b47656304d36dfb7552fb952e8932",
+        "actual": "009cd46d458a4a85c14a0cae0c76ea9d730b47656304d36dfb7552fb952e8932",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/jpw-alavancagem-atual/root-pin-R5.json",
+        "baseline": "bb6ad986db99b3f9dca2437e83f9fd928f4df7830a9866da5d2b0b7bc731447a",
+        "actual": "bb6ad986db99b3f9dca2437e83f9fd928f4df7830a9866da5d2b0b7bc731447a",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/nocuda/MT5-LEIA-ME.md",
+        "baseline": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+        "actual": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/nocuda/Nocuda_Tool.ex5",
+        "baseline": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+        "actual": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/nocuda/Nocuda_Tool.mq5",
+        "baseline": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+        "actual": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/nocuda/Nocuda_Tool.pine",
+        "baseline": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+        "actual": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+        "unchanged": true
+      },
+      {
+        "path": "downloads/nocuda/TRADINGVIEW-LEIA-ME.md",
+        "baseline": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+        "actual": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/AGENTS.md",
+        "baseline": "fa1e7e3160f858709393d5f7ce071dcad23f3a420dfa11c4e1fd82baba27ce21",
+        "actual": "fa1e7e3160f858709393d5f7ce071dcad23f3a420dfa11c4e1fd82baba27ce21",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_7X_LEDGER.md",
+        "baseline": "de84e7148a984f7b437e589fc33ab0ffada6bd3652f8b7192136c6cc9a4c6439",
+        "actual": "de84e7148a984f7b437e589fc33ab0ffada6bd3652f8b7192136c6cc9a4c6439",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_20_1.md",
+        "baseline": "888d37de2b898ebce2da353275cb61601b13d5293c9891977c9b33cc5c5f7e2a",
+        "actual": "888d37de2b898ebce2da353275cb61601b13d5293c9891977c9b33cc5c5f7e2a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_CANDIDATE_1_21_0.md",
+        "baseline": "f547423389b4bbd093da718385206ee5fd90fd4be641de3a49c810617c9bb1fb",
+        "actual": "f547423389b4bbd093da718385206ee5fd90fd4be641de3a49c810617c9bb1fb",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_COMPILE_FIX_1_18_2.md",
+        "baseline": "51d35eff6437080d29466e181effec595a87de5210c1b5f990c09d8ccb2d1bc3",
+        "actual": "51d35eff6437080d29466e181effec595a87de5210c1b5f990c09d8ccb2d1bc3",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_CORE_1_20_0.md",
+        "baseline": "0d494acfc9f0d54a81d50fe83e7094d8fcaca5b080d8647223ebb87b5c84746b",
+        "actual": "0d494acfc9f0d54a81d50fe83e7094d8fcaca5b080d8647223ebb87b5c84746b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_CORRECTIONS_1_21_2.md",
+        "baseline": "e3c913376524b3240909c5c9049a034afb5b1d569ead95783a0b12f5d7dfa1e4",
+        "actual": "e3c913376524b3240909c5c9049a034afb5b1d569ead95783a0b12f5d7dfa1e4",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_PERSONAL_HISTORY.md",
+        "baseline": "f52fb0bfe81110ca010dc5182335da697699483d239541521605d2752e399b97",
+        "actual": "f52fb0bfe81110ca010dc5182335da697699483d239541521605d2752e399b97",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_REPAIR_1_18_1.md",
+        "baseline": "0ccff0d81177b8bfec3f5efe2342a8389b2a3b72a004f0f0b8d8c119244fa78d",
+        "actual": "0ccff0d81177b8bfec3f5efe2342a8389b2a3b72a004f0f0b8d8c119244fa78d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_REVIEW_1_21_1.md",
+        "baseline": "62c11ce851918f6b173755d2ccbf8bf847aec5c61a5cc3ce8ed7ed6c3b74a4c8",
+        "actual": "62c11ce851918f6b173755d2ccbf8bf847aec5c61a5cc3ce8ed7ed6c3b74a4c8",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/GENETRIX_UI_1_19_0.md",
+        "baseline": "3ab6f1faea138ec18f03cddc6075c0684e78bdb61bb64f4d0e1ba438b05d742d",
+        "actual": "3ab6f1faea138ec18f03cddc6075c0684e78bdb61bb64f4d0e1ba438b05d742d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5",
+        "baseline": "5d3237f6e01da8409db0c3a76228930e9eb306824e79b1d84249fe4297958a5f",
+        "actual": "5d3237f6e01da8409db0c3a76228930e9eb306824e79b1d84249fe4297958a5f",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Accountant.mq5",
+        "baseline": "bc93ccf06111a4ba8751e9c8c49cb512f39221248dc87763aa0275b46ed233e8",
+        "actual": "bc93ccf06111a4ba8751e9c8c49cb512f39221248dc87763aa0275b46ed233e8",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+        "baseline": "6a223efa0a69e2a9891f83e014c8a01ea8ed0ca86b26e019e45d664f28fafa1e",
+        "actual": "6a223efa0a69e2a9891f83e014c8a01ea8ed0ca86b26e019e45d664f28fafa1e",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Experts/JPWealth/JPW_Stoikus_Supervisor.mq5",
+        "baseline": "006f58fb84ac2121589a374f5c2ac1d827930059741f7793897c469bea570514",
+        "actual": "006f58fb84ac2121589a374f5c2ac1d827930059741f7793897c469bea570514",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
+        "baseline": "d812113962c031d866d776619be47565c99541fcf7dc5b372116c9f13594e781",
+        "actual": "d812113962c031d866d776619be47565c99541fcf7dc5b372116c9f13594e781",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.provenance.md",
+        "baseline": "02d6dc261ad667917f97f3985ddbe2ca7c5f9a4de7697a61867b8d76b4f5fae0",
+        "actual": "02d6dc261ad667917f97f3985ddbe2ca7c5f9a4de7697a61867b8d76b4f5fae0",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo.provenance.md",
+        "baseline": "271828a7fc78bebb1acaced426994a8c85f5a98d1dfb61798e36037003cf69fc",
+        "actual": "271828a7fc78bebb1acaced426994a8c85f5a98d1dfb61798e36037003cf69fc",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_100.bmp",
+        "baseline": "749c2b28ff55b09434995a2be028f5bf86f2274c2be0ed860e1dca6f08b4d82d",
+        "actual": "749c2b28ff55b09434995a2be028f5bf86f2274c2be0ed860e1dca6f08b4d82d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_125.bmp",
+        "baseline": "7d3679be4a8123e262d18a88424610f6f089528f5f897c7c5118adea5345d3e3",
+        "actual": "7d3679be4a8123e262d18a88424610f6f089528f5f897c7c5118adea5345d3e3",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_150.bmp",
+        "baseline": "ee123cab4b2b7df358f8759a50254fb768d18368e261868d8bdfbf93217844a7",
+        "actual": "ee123cab4b2b7df358f8759a50254fb768d18368e261868d8bdfbf93217844a7",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Dark_200.bmp",
+        "baseline": "b756abb78bc3be7bb9abee6337338ccce1e5570847fa78016c1b664a3af483b1",
+        "actual": "b756abb78bc3be7bb9abee6337338ccce1e5570847fa78016c1b664a3af483b1",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_100.bmp",
+        "baseline": "dd815b191fa8e6e25669cad12134a0fba4f1e1bfd78a71f24953e551d4c3744a",
+        "actual": "dd815b191fa8e6e25669cad12134a0fba4f1e1bfd78a71f24953e551d4c3744a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_125.bmp",
+        "baseline": "6208c8b01ebc0d5b6448324dea8d473cf7d800b4b8546705b8c885ce63b2ba65",
+        "actual": "6208c8b01ebc0d5b6448324dea8d473cf7d800b4b8546705b8c885ce63b2ba65",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_150.bmp",
+        "baseline": "c943a80f6e77c7518051df9412bbf47fc6d0006ff266f2c9074213fe289b4d88",
+        "actual": "c943a80f6e77c7518051df9412bbf47fc6d0006ff266f2c9074213fe289b4d88",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Stoikus_Logo_Light_200.bmp",
+        "baseline": "ff4f6667c2f05ed4ccda8de73920ce87460b770bfd85666f8dee76215bb43727",
+        "actual": "ff4f6667c2f05ed4ccda8de73920ce87460b770bfd85666f8dee76215bb43727",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+        "baseline": "77e50036f36ce279b40ec0e337a468f40d7cc7a19ad92da3ae6e6414ffc212a4",
+        "actual": "77e50036f36ce279b40ec0e337a468f40d7cc7a19ad92da3ae6e6414ffc212a4",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Cockpit.mqh",
+        "baseline": "472f31cf5656c36d2561b098b8efb69ea405bfe9fd83c67eeaa3eefbd6211260",
+        "actual": "472f31cf5656c36d2561b098b8efb69ea405bfe9fd83c67eeaa3eefbd6211260",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Coordinator.mqh",
+        "baseline": "f6b37d3d98a3a2e8f217d20e5a9f86b307b46111f53990f854fee62e52252fb3",
+        "actual": "f6b37d3d98a3a2e8f217d20e5a9f86b307b46111f53990f854fee62e52252fb3",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh",
+        "baseline": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+        "actual": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh",
+        "baseline": "a2155822afe2bd921b6ce088edd2b64e04e5c7aedb53dbd5c3e1ce8f1368bf7b",
+        "actual": "a2155822afe2bd921b6ce088edd2b64e04e5c7aedb53dbd5c3e1ce8f1368bf7b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh",
+        "baseline": "98c47b0526c772846d1e70b048f01deab7881c8be879ba0e0ca9693902534418",
+        "actual": "98c47b0526c772846d1e70b048f01deab7881c8be879ba0e0ca9693902534418",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Core.mqh",
+        "baseline": "501eed7ae160dcb41043ea2d7862b1aae8d863b74b932bdab764b736653bbf01",
+        "actual": "501eed7ae160dcb41043ea2d7862b1aae8d863b74b932bdab764b736653bbf01",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Store.mqh",
+        "baseline": "beaed74ea4915d8edea8e2d0dbf34d1c81d805b31ef82e4ea349b088cfa32cc8",
+        "actual": "beaed74ea4915d8edea8e2d0dbf34d1c81d805b31ef82e4ea349b088cfa32cc8",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh",
+        "baseline": "10562cc54e96ca1e32795b8f0fdccaea83efd964b7a8b9c2472a903e9a3298e0",
+        "actual": "10562cc54e96ca1e32795b8f0fdccaea83efd964b7a8b9c2472a903e9a3298e0",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Observer_Presence.mqh",
+        "baseline": "efb047a162c0fd0df409483dbdc81983e82d4181e1ce4a6e7fba17bca1394bcd",
+        "actual": "efb047a162c0fd0df409483dbdc81983e82d4181e1ce4a6e7fba17bca1394bcd",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Panel.mqh",
+        "baseline": "3e2799a970389708e2416ab52da748840486769d673e11c3aee4becc83021b3a",
+        "actual": "3e2799a970389708e2416ab52da748840486769d673e11c3aee4becc83021b3a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh",
+        "baseline": "baa9f19cf6358c5a570bedeed870754483128b62ba5205437a9dcc5f07d33a29",
+        "actual": "baa9f19cf6358c5a570bedeed870754483128b62ba5205437a9dcc5f07d33a29",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh",
+        "baseline": "d4c67463f4038fa70102b20904cba17ae35888e871393380771b856c08e8968a",
+        "actual": "d4c67463f4038fa70102b20904cba17ae35888e871393380771b856c08e8968a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh",
+        "baseline": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
+        "actual": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh",
+        "baseline": "50dcb401e51cf176a404846add48d59d14ce2e75c78c30b5fd2dd67abbfa444e",
+        "actual": "50dcb401e51cf176a404846add48d59d14ce2e75c78c30b5fd2dd67abbfa444e",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh",
+        "baseline": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+        "actual": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh",
+        "baseline": "a34156a4e0d69d1516d6ecd1a2580948020be2ad326476f9f9639c79349a2653",
+        "actual": "a34156a4e0d69d1516d6ecd1a2580948020be2ad326476f9f9639c79349a2653",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh",
+        "baseline": "cee189d989148d6cd2f5979bf2a0d4a73a5dd47789c6b86c0cdb2b853f7ec623",
+        "actual": "cee189d989148d6cd2f5979bf2a0d4a73a5dd47789c6b86c0cdb2b853f7ec623",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh",
+        "baseline": "04f1b3ecdac6a0877f11a369d753ce7bdaacc0418457eacf25a1d3ff31224a8f",
+        "actual": "04f1b3ecdac6a0877f11a369d753ce7bdaacc0418457eacf25a1d3ff31224a8f",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Observer.mqh",
+        "baseline": "f112b2b71271040be2f642fa0ec62a9eeddf80b465b7d588d2571e91daf2cf3d",
+        "actual": "f112b2b71271040be2f642fa0ec62a9eeddf80b465b7d588d2571e91daf2cf3d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh",
+        "baseline": "d9ede1cc0bcda749c0245f136331aa08efc0d71760873a8b629eb4fc7456b61f",
+        "actual": "d9ede1cc0bcda749c0245f136331aa08efc0d71760873a8b629eb4fc7456b61f",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Samples.mqh",
+        "baseline": "3fdc0d03bc39672313ffe5fa89e43cdd4d5fd73bb601d891bde2828c0b048bc2",
+        "actual": "3fdc0d03bc39672313ffe5fa89e43cdd4d5fd73bb601d891bde2828c0b048bc2",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh",
+        "baseline": "db48686d3ca3cf23d7f683fb1589ae8cd2fea21213b35ffedfdf66f5b7fc20fb",
+        "actual": "db48686d3ca3cf23d7f683fb1589ae8cd2fea21213b35ffedfdf66f5b7fc20fb",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Store.mqh",
+        "baseline": "e9ebf62726344003073bc801318e7f5f49b32c3adbda5d2bd016cde5650a7bf3",
+        "actual": "e9ebf62726344003073bc801318e7f5f49b32c3adbda5d2bd016cde5650a7bf3",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Terminal.mqh",
+        "baseline": "b5232907de3b8ab5c928a0b7a176fd3c10c673ddcfb822d424766be76b47148b",
+        "actual": "b5232907de3b8ab5c928a0b7a176fd3c10c673ddcfb822d424766be76b47148b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh",
+        "baseline": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+        "actual": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh",
+        "baseline": "1fe7397a337be945a77c0c3b68d3f4b317180d7929732f88525a94c127c000b2",
+        "actual": "1fe7397a337be945a77c0c3b68d3f4b317180d7929732f88525a94c127c000b2",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh",
+        "baseline": "d06027b523083ac058959f45cf3e473cc31903e4c4782248292bf293c5df5a27",
+        "actual": "d06027b523083ac058959f45cf3e473cc31903e4c4782248292bf293c5df5a27",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh",
+        "baseline": "9fed10b552abdd9ff3b8181b81332635270cb85a02393730b9b5b7bfb8988e71",
+        "actual": "9fed10b552abdd9ff3b8181b81332635270cb85a02393730b9b5b7bfb8988e71",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh",
+        "baseline": "c0525b71a0be9823722c1fe920f673ae04f95b722adf1404627adea4f48f4930",
+        "actual": "c0525b71a0be9823722c1fe920f673ae04f95b722adf1404627adea4f48f4930",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh",
+        "baseline": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+        "actual": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh",
+        "baseline": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd",
+        "actual": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh",
+        "baseline": "2fca05f5fe15d67089d462c503536d9a8000df9088dad1222f3bb502df05f42d",
+        "actual": "2fca05f5fe15d67089d462c503536d9a8000df9088dad1222f3bb502df05f42d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh",
+        "baseline": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1",
+        "actual": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh",
+        "baseline": "2ecf21ad6a65317ea029fc9e4575f8e5d1966773720024cf2907a780afd5c361",
+        "actual": "2ecf21ad6a65317ea029fc9e4575f8e5d1966773720024cf2907a780afd5c361",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh",
+        "baseline": "2d101ff677276ec23650be5c3e825a87ee716769e0273884b98ef8031f78a1f5",
+        "actual": "2d101ff677276ec23650be5c3e825a87ee716769e0273884b98ef8031f78a1f5",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh",
+        "baseline": "6f830d204a9ff05ccb66ce07ff2675eb12ae9f243446e21a26afd743a4d683a0",
+        "actual": "6f830d204a9ff05ccb66ce07ff2675eb12ae9f243446e21a26afd743a4d683a0",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh",
+        "baseline": "82a6afcb2ab0c559824d1c99c0a5ac5d9fa71ce4b35cb4fcfcbd239a21285d33",
+        "actual": "82a6afcb2ab0c559824d1c99c0a5ac5d9fa71ce4b35cb4fcfcbd239a21285d33",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh",
+        "baseline": "e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e",
+        "actual": "e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh",
+        "baseline": "ff89bc319bb956c46d4eba30eda24c2cfa7c3c400ece14ab408ac34f00e3b14a",
+        "actual": "ff89bc319bb956c46d4eba30eda24c2cfa7c3c400ece14ab408ac34f00e3b14a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh",
+        "baseline": "061945ec000dfccd8af3c04c30c2d32b92746798cea906779eb4a26741869b30",
+        "actual": "061945ec000dfccd8af3c04c30c2d32b92746798cea906779eb4a26741869b30",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh",
+        "baseline": "6fcdc1075adbc89427ed23c98457818b3ce080b8f53cf087570a3eac0ab7fb6a",
+        "actual": "6fcdc1075adbc89427ed23c98457818b3ce080b8f53cf087570a3eac0ab7fb6a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh",
+        "baseline": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+        "actual": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh",
+        "baseline": "8173c91a2fe3e4c1d3a6b5b5d6ce55fafb6f6571b1fd58eec7e0fe7bcf81206a",
+        "actual": "8173c91a2fe3e4c1d3a6b5b5d6ce55fafb6f6571b1fd58eec7e0fe7bcf81206a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh",
+        "baseline": "be42ab65bd9885937acf3df22f1ab71f5372e36c74252febe58b1b9fdd7dc3c4",
+        "actual": "be42ab65bd9885937acf3df22f1ab71f5372e36c74252febe58b1b9fdd7dc3c4",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh",
+        "baseline": "d164c5af97d8a982891b330d02bd79870123b196e7917e50a5f99d8a46e5dd00",
+        "actual": "d164c5af97d8a982891b330d02bd79870123b196e7917e50a5f99d8a46e5dd00",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh",
+        "baseline": "ca5d5220c762e1eb1752d213114292a25915e9e172b9d8d2bc872095dc001d8f",
+        "actual": "ca5d5220c762e1eb1752d213114292a25915e9e172b9d8d2bc872095dc001d8f",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Controller.mqh",
+        "baseline": "31cf2504f46ccab679bfbc51e5ef66f18cf378d1cae6eb2a5a63001dad1eb1c8",
+        "actual": "31cf2504f46ccab679bfbc51e5ef66f18cf378d1cae6eb2a5a63001dad1eb1c8",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh",
+        "baseline": "2c8f4284da8eee97e794cd9cbf7efb9d78808a97f859ef1752c48bb730f71601",
+        "actual": "2c8f4284da8eee97e794cd9cbf7efb9d78808a97f859ef1752c48bb730f71601",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh",
+        "baseline": "b1667783a6f262c0731b2e867c46cab073975ec0fa6df284a6cdbcb9e66950c9",
+        "actual": "b1667783a6f262c0731b2e867c46cab073975ec0fa6df284a6cdbcb9e66950c9",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh",
+        "baseline": "329fede70dec11c0f8b046c20ef70b4406b27e700313d8e48c76616435a41db5",
+        "actual": "329fede70dec11c0f8b046c20ef70b4406b27e700313d8e48c76616435a41db5",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_UI.mqh",
+        "baseline": "1546a5a75ff53ad26bc52da45a8d892af59a66641a0bc0644199ca4a5cb98495",
+        "actual": "1546a5a75ff53ad26bc52da45a8d892af59a66641a0bc0644199ca4a5cb98495",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Accountant_Runtime.mqh",
+        "baseline": "260f1c384fefe7b944dbf59d058d134b8b5c2889dc25fd76245ff702ec126dbb",
+        "actual": "260f1c384fefe7b944dbf59d058d134b8b5c2889dc25fd76245ff702ec126dbb",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Brand.mqh",
+        "baseline": "a50b1b9932d58f3f1337a62be347614307613f2ef15008b915907b6b25f1092a",
+        "actual": "a50b1b9932d58f3f1337a62be347614307613f2ef15008b915907b6b25f1092a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "baseline": "3a1673443c6121a90b5625f73deafaa1d4570d20b865c26525e2a62180374400",
+        "actual": "3a1673443c6121a90b5625f73deafaa1d4570d20b865c26525e2a62180374400",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Bridge.mqh",
+        "baseline": "0fa261b0fd79b56272c16cd671ae99ca20f46f3319b3bc48f50a4208292a3cad",
+        "actual": "0fa261b0fd79b56272c16cd671ae99ca20f46f3319b3bc48f50a4208292a3cad",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Core.mqh",
+        "baseline": "7dc452123b987d227bffe7aaf210cc7a5c3b965369def66bf5120a62da0c76ee",
+        "actual": "7dc452123b987d227bffe7aaf210cc7a5c3b965369def66bf5120a62da0c76ee",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Preparation.mqh",
+        "baseline": "9231e1a4102c62b7d6db534d809127928603a872b7040755704aa7e17702dbe7",
+        "actual": "9231e1a4102c62b7d6db534d809127928603a872b7040755704aa7e17702dbe7",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Store.mqh",
+        "baseline": "53fb0b506bfe79e39da50efea7403e0e10600cc406bca8cf38ffb8c3ff7451be",
+        "actual": "53fb0b506bfe79e39da50efea7403e0e10600cc406bca8cf38ffb8c3ff7451be",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Ledger_Terminal.mqh",
+        "baseline": "9051154f32fabf9a647061de1c2c2d176ec12797f5d96b77809458c04fc110c8",
+        "actual": "9051154f32fabf9a647061de1c2c2d176ec12797f5d96b77809458c04fc110c8",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Core.mqh",
+        "baseline": "f925790a27cd244df230b0959e6c0fd27ff0be2ea5cc23742390d7780e8f0880",
+        "actual": "f925790a27cd244df230b0959e6c0fd27ff0be2ea5cc23742390d7780e8f0880",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh",
+        "baseline": "6fd858b37bf61f9ff131fc2af80a2da1f5440ae875e36af69e6a5932c55c5bb9",
+        "actual": "6fd858b37bf61f9ff131fc2af80a2da1f5440ae875e36af69e6a5932c55c5bb9",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Status.mqh",
+        "baseline": "4658c7c9cdc65322e2022c434b8a6d7b0ed08f82c9ee4b79691797ac540c8d9d",
+        "actual": "4658c7c9cdc65322e2022c434b8a6d7b0ed08f82c9ee4b79691797ac540c8d9d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Monitor_UI.mqh",
+        "baseline": "53aec03d4f4daad0dbccfc063f0b8f216f0ce4dc2ddea008841ca1241e4b946b",
+        "actual": "53aec03d4f4daad0dbccfc063f0b8f216f0ce4dc2ddea008841ca1241e4b946b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Observer_Runtime.mqh",
+        "baseline": "a357c1850931d6515f2f9d7c341df741f57e3ace328694ae2ac16963504edf2c",
+        "actual": "a357c1850931d6515f2f9d7c341df741f57e3ace328694ae2ac16963504edf2c",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Risk_Core.mqh",
+        "baseline": "73ef12c0048ad3268a1324c25356cc613b6d03cf37f9337f683ab2270b125f9f",
+        "actual": "73ef12c0048ad3268a1324c25356cc613b6d03cf37f9337f683ab2270b125f9f",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Risk_Store.mqh",
+        "baseline": "451a47ba20b0764928ad3ecbc738859cf38cb3e3d93019ffedc40f5245ed5227",
+        "actual": "451a47ba20b0764928ad3ecbc738859cf38cb3e3d93019ffedc40f5245ed5227",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Risk_Terminal.mqh",
+        "baseline": "7c03df1f9c48f2fa0e04a6c33c3b4aabb52af9163a0d683ac1290d5254220999",
+        "actual": "7c03df1f9c48f2fa0e04a6c33c3b4aabb52af9163a0d683ac1290d5254220999",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_UI.mqh",
+        "baseline": "0fe1ffab6cc837397445b0f26a48abc3391ec33e7e38be9b1950b06687e59a0a",
+        "actual": "0fe1ffab6cc837397445b0f26a48abc3391ec33e7e38be9b1950b06687e59a0a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Visual.mqh",
+        "baseline": "ad3d018fda14262b72a979b21fe5e6da1f8946502840accacd497a8b6a18c3f6",
+        "actual": "ad3d018fda14262b72a979b21fe5e6da1f8946502840accacd497a8b6a18c3f6",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_Window.mqh",
+        "baseline": "849e18e358fbc0ef519b8f5e324a26de55b732d0dbb14c95f6c9b95c3420fafd",
+        "actual": "849e18e358fbc0ef519b8f5e324a26de55b732d0dbb14c95f6c9b95c3420fafd",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_UI_Design.mqh",
+        "baseline": "8dca05adb5a74452cc76db0ae336998a74cc1e7a29dc6551cc0c5d175fba5b39",
+        "actual": "8dca05adb5a74452cc76db0ae336998a74cc1e7a29dc6551cc0c5d175fba5b39",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_UI_Focus.mqh",
+        "baseline": "79ee34a078ac1a2bf81dc0027bfc413e162fcdfde04e9e1f489290b5e0652219",
+        "actual": "79ee34a078ac1a2bf81dc0027bfc413e162fcdfde04e9e1f489290b5e0652219",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+        "baseline": "c1204b4e6b8b08a45e167368831d00dba2b6611cf4afd04377f9a8cdf9f35e00",
+        "actual": "c1204b4e6b8b08a45e167368831d00dba2b6611cf4afd04377f9a8cdf9f35e00",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+        "baseline": "2a15fb20699b43bbbe4f9259266f4a7ef47bc404174cb2b11b86f06dee309f6b",
+        "actual": "2a15fb20699b43bbbe4f9259266f4a7ef47bc404174cb2b11b86f06dee309f6b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5",
+        "baseline": "94158b95e02e194480fb87b74a6fbb91fc8cd73c7ff4b9c047ae34976009901b",
+        "actual": "94158b95e02e194480fb87b74a6fbb91fc8cd73c7ff4b9c047ae34976009901b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5",
+        "baseline": "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
+        "actual": "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5",
+        "baseline": "8b50f01a9e9deea1dc29b12cad6ee70012b49abda84bb9dae4e81a18e19184bb",
+        "actual": "8b50f01a9e9deea1dc29b12cad6ee70012b49abda84bb9dae4e81a18e19184bb",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.mq5",
+        "baseline": "bbec66651e0535fb7e4b52bfddb130295a439e32ff9019aac982ebab94891ae2",
+        "actual": "bbec66651e0535fb7e4b52bfddb130295a439e32ff9019aac982ebab94891ae2",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5",
+        "baseline": "ad92555cc30c23fdd9f9c93ac0c5ddca79c79365398707a4637ffee655d4e6d8",
+        "actual": "ad92555cc30c23fdd9f9c93ac0c5ddca79c79365398707a4637ffee655d4e6d8",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.mq5",
+        "baseline": "e20241aecbb6598a41f048de75c0fad50190cf9a78ca19cc863e65f696672c72",
+        "actual": "e20241aecbb6598a41f048de75c0fad50190cf9a78ca19cc863e65f696672c72",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.mq5",
+        "baseline": "ddc970066a98bb16dff88119794e91af947973cd5ca897b4e86d899dee0c648b",
+        "actual": "ddc970066a98bb16dff88119794e91af947973cd5ca897b4e86d899dee0c648b",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5",
+        "baseline": "baa3f9f47a8e047fe626fa22af696301d4210a7ebf61be735507c29316d7ec34",
+        "actual": "baa3f9f47a8e047fe626fa22af696301d4210a7ebf61be735507c29316d7ec34",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.mq5",
+        "baseline": "8e247c0457ae8b9aca78d8151516f7864859675fe8f0c624cb0800c2717dfa7a",
+        "actual": "8e247c0457ae8b9aca78d8151516f7864859675fe8f0c624cb0800c2717dfa7a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5",
+        "baseline": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
+        "actual": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5",
+        "baseline": "53779e5d00dc6f9e903dca760406173182025bd903196cc6029eb38b3e11fb7a",
+        "actual": "53779e5d00dc6f9e903dca760406173182025bd903196cc6029eb38b3e11fb7a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5",
+        "baseline": "55c9fd37a7d8829ddda11955b888eb9722179d01e8607edb769a78a9a0a1071e",
+        "actual": "55c9fd37a7d8829ddda11955b888eb9722179d01e8607edb769a78a9a0a1071e",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+        "baseline": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+        "actual": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5",
+        "baseline": "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
+        "actual": "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5",
+        "baseline": "e61a63c5c203c10991301fb3ca4867578d695f1db0db52fc2538ee99d939a6dc",
+        "actual": "e61a63c5c203c10991301fb3ca4867578d695f1db0db52fc2538ee99d939a6dc",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5",
+        "baseline": "2b1a92faf049a187b65d94e060ec2270cdd140477251935d3a7639b89429e1a4",
+        "actual": "2b1a92faf049a187b65d94e060ec2270cdd140477251935d3a7639b89429e1a4",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.mq5",
+        "baseline": "db1e18181fe075f9892084076600a5f8b53cdb8970396f6d87f54165864d225d",
+        "actual": "db1e18181fe075f9892084076600a5f8b53cdb8970396f6d87f54165864d225d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.mq5",
+        "baseline": "3ef2ada9c413571d0790422d3a5deef6b3eaaaf0aafe46e0c37467a6de6eb11d",
+        "actual": "3ef2ada9c413571d0790422d3a5deef6b3eaaaf0aafe46e0c37467a6de6eb11d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5",
+        "baseline": "24fe2d818ea18a88e8688133a3295592ff064d60a1e8868a184e7b0100bd15f6",
+        "actual": "24fe2d818ea18a88e8688133a3295592ff064d60a1e8868a184e7b0100bd15f6",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5",
+        "baseline": "e8b0c1e87ebbb240e9d3e583097ed746cb873231bdcbd65a1eba26b437c49f61",
+        "actual": "e8b0c1e87ebbb240e9d3e583097ed746cb873231bdcbd65a1eba26b437c49f61",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5",
+        "baseline": "a70aae42b8be574654b5b306bfa7515ee79a37b264ee7b0b3d026cb48bc6cf24",
+        "actual": "a70aae42b8be574654b5b306bfa7515ee79a37b264ee7b0b3d026cb48bc6cf24",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5",
+        "baseline": "721774eadb99e86df51c459004b1e33575202e5bb25cce4a8cca523ebea69c0a",
+        "actual": "721774eadb99e86df51c459004b1e33575202e5bb25cce4a8cca523ebea69c0a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5",
+        "baseline": "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
+        "actual": "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
+        "baseline": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+        "actual": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5",
+        "baseline": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
+        "actual": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
+        "baseline": "0c01efa287bc9a814aa67cd49f40b343583c643207f4857134c540de047a9635",
+        "actual": "0c01efa287bc9a814aa67cd49f40b343583c643207f4857134c540de047a9635",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5",
+        "baseline": "18b2678bf6c1d094dfc2b47e0879e09a46a2d8ca68d0efce2cc05868ae2651f2",
+        "actual": "18b2678bf6c1d094dfc2b47e0879e09a46a2d8ca68d0efce2cc05868ae2651f2",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Stoikus_Risk_Tests.mq5",
+        "baseline": "100a833f2ce488df1306cbee5e1dc796aed2ad6e61970736542f4c574af232e1",
+        "actual": "100a833f2ce488df1306cbee5e1dc796aed2ad6e61970736542f4c574af232e1",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/README.md",
+        "baseline": "9ef7cda7a94bdc157c5165e706aebe788c1d60d2524d3b2cfcdff5d3822fb26a",
+        "actual": "9ef7cda7a94bdc157c5165e706aebe788c1d60d2524d3b2cfcdff5d3822fb26a",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/STOIKUS_RENAME_1_22_0.md",
+        "baseline": "4485d49833dcb02c0c5d53a85eed23611d355c8ffc874acdc0a3d699385c980f",
+        "actual": "4485d49833dcb02c0c5d53a85eed23611d355c8ffc874acdc0a3d699385c980f",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md",
+        "baseline": "2bbb65e05f1613d3438e29168555ae64890abbd0c00f1e682d44ec43a95e0a3e",
+        "actual": "2bbb65e05f1613d3438e29168555ae64890abbd0c00f1e682d44ec43a95e0a3e",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.md",
+        "baseline": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
+        "actual": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.pdf",
+        "baseline": "0b7797c8ce561073c541ca3c75ad2904b15e36a7d377066f395ea1daded5f05e",
+        "actual": "0b7797c8ce561073c541ca3c75ad2904b15e36a7d377066f395ea1daded5f05e",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/JPW_GENETRIX_MT5_ENGINEERING_HARNESS_v1.0.txt",
+        "baseline": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
+        "actual": "a0e6b6776c237899c048cd460ccb44ac3e916a0a6cd9958577884c42b03f70c9",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/MANUAL_DE_ATIVACAO.md",
+        "baseline": "74086dd8afd3bf740a237e9224d386ebce42403decf0c6620d3f6ab0cdc9fd2d",
+        "actual": "74086dd8afd3bf740a237e9224d386ebce42403decf0c6620d3f6ab0cdc9fd2d",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/REPOSITORY_INTEGRATION.md",
+        "baseline": "be532e1ddea267d1edfabfb2dd4cabb3e24da86ca1bc7d89b878fe7e38cde392",
+        "actual": "be532e1ddea267d1edfabfb2dd4cabb3e24da86ca1bc7d89b878fe7e38cde392",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/contracts/ENG-AC01-12.json",
+        "baseline": "c0f93f1ffd9eaf83dac33fd6f9ae2a12c321049ae01491018b9ac6ce40954635",
+        "actual": "c0f93f1ffd9eaf83dac33fd6f9ae2a12c321049ae01491018b9ac6ce40954635",
+        "unchanged": true
+      },
+      {
+        "path": "mt5/jpw-alavancagem-atual/harness/contracts/TEMPLATES.md",
+        "baseline": "7868e8711d1194dfaead7dad42caf6c019099d93735e95bf8705f415b3375df0",
+        "actual": "7868e8711d1194dfaead7dad42caf6c019099d93735e95bf8705f415b3375df0",
+        "unchanged": true
+      },
+      {
+        "path": "skills/agentic-evolution-governance/SKILL.md",
+        "baseline": "b484b6a9a5ec2495ef7c37efbb2b92b74e73b9a52bae0964e06a773d8d915335",
+        "actual": "b484b6a9a5ec2495ef7c37efbb2b92b74e73b9a52bae0964e06a773d8d915335",
+        "unchanged": true
+      },
+      {
+        "path": "skills/agentic-evolution-governance/references/templates-de-saida.md",
+        "baseline": "1d8a74464e7921170831f88ec1618ebd6c9a8db674009d50ed37e4a9767e915c",
+        "actual": "1d8a74464e7921170831f88ec1618ebd6c9a8db674009d50ed37e4a9767e915c",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering.lock.json",
+        "baseline": "8efd13af9f2ad1902e7aa9068dc3b4f18a65ba3507d028b3750e282f47e44ef6",
+        "actual": "8efd13af9f2ad1902e7aa9068dc3b4f18a65ba3507d028b3750e282f47e44ef6",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/SKILL.md",
+        "baseline": "0b50e483e1c013c23fafeb3d8063c62e00a2eaf62540b92f522603cf7f90520f",
+        "actual": "0b50e483e1c013c23fafeb3d8063c62e00a2eaf62540b92f522603cf7f90520f",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/agents/openai.yaml",
+        "baseline": "710f47b5e65c62735660832e9527bd2137bc63aaaa44d9ad4afff34c4b0ee8b5",
+        "actual": "710f47b5e65c62735660832e9527bd2137bc63aaaa44d9ad4afff34c4b0ee8b5",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/AGENTS.template.md",
+        "baseline": "4acff8f91d3d507b8e2f11395154ae3908fb285b1fb54a57a8d5e03be812d8d4",
+        "actual": "4acff8f91d3d507b8e2f11395154ae3908fb285b1fb54a57a8d5e03be812d8d4",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/personas/critico-integracao.toml",
+        "baseline": "100ef64cdf5b38f518a3da87afc300ee4d90f59fc4d2ea28cd144f6625a19002",
+        "actual": "100ef64cdf5b38f518a3da87afc300ee4d90f59fc4d2ea28cd144f6625a19002",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/personas/engenheiro-integracao.toml",
+        "baseline": "e7c72108c2f68a8e996dbb6c15af98f06c129796923a46fe25a2c83d689817fa",
+        "actual": "e7c72108c2f68a8e996dbb6c15af98f06c129796923a46fe25a2c83d689817fa",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/personas/operador-adversidades.toml",
+        "baseline": "3a2de4471dd213aa87369df7f107eee3a261696d144fd1a7fb6df632eac909c3",
+        "actual": "3a2de4471dd213aa87369df7f107eee3a261696d144fd1a7fb6df632eac909c3",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/personas/operador-informado.toml",
+        "baseline": "fbca198b7af56ed41930ac3c228474a03031a3d23d5c3cce5ba3064799dacce8",
+        "actual": "fbca198b7af56ed41930ac3c228474a03031a3d23d5c3cce5ba3064799dacce8",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/personas/usuario-iniciante.toml",
+        "baseline": "0b3a5469a5c30e6f19cb169e390296bbae0c11f35d219932d8f097d0e97a8d36",
+        "actual": "0b3a5469a5c30e6f19cb169e390296bbae0c11f35d219932d8f097d0e97a8d36",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/protections.example.json",
+        "baseline": "0492ba8d2d091f0ea70370480e0e5d928aacb6f795d87e6e37e0adadb4ec8c74",
+        "actual": "0492ba8d2d091f0ea70370480e0e5d928aacb6f795d87e6e37e0adadb4ec8c74",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/assets/report.example.json",
+        "baseline": "6300a873ea0e3449226d1cec8a547c8af1f9e8e961c3e7278a66591b65b22010",
+        "actual": "6300a873ea0e3449226d1cec8a547c8af1f9e8e961c3e7278a66591b65b22010",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/contratos.md",
+        "baseline": "53dc48689b029782e853b77e4dcbc2c491d5875d66754f0a0afae10bda124825",
+        "actual": "53dc48689b029782e853b77e4dcbc2c491d5875d66754f0a0afae10bda124825",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/diagnostico.md",
+        "baseline": "e2958cbcf3b728192db16b49d5369849e3bda1eef12d09d727f007c61b062d7c",
+        "actual": "e2958cbcf3b728192db16b49d5369849e3bda1eef12d09d727f007c61b062d7c",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/fronteiras.md",
+        "baseline": "7d995331ba77c316fecc33f07d46d4ebe9222419326242c741573f598a5d7966",
+        "actual": "7d995331ba77c316fecc33f07d46d4ebe9222419326242c741573f598a5d7966",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/integracao-personas.md",
+        "baseline": "ae854b73546272aa84d096ebe59c3c06545b9291582f3cfeab408f3bddcdf962",
+        "actual": "ae854b73546272aa84d096ebe59c3c06545b9291582f3cfeab408f3bddcdf962",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/jp-wealth.md",
+        "baseline": "2db8e3f80bf8fdb24880b2f3eb8d9f5840fdb324bc5014538d5765ebc064a3f7",
+        "actual": "2db8e3f80bf8fdb24880b2f3eb8d9f5840fdb324bc5014538d5765ebc064a3f7",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/orquestracao.md",
+        "baseline": "c745aa80cde6eaa8becfd5c7bcd20e40ab433ae92d75316ca1b8307fe1b8b0c7",
+        "actual": "c745aa80cde6eaa8becfd5c7bcd20e40ab433ae92d75316ca1b8307fe1b8b0c7",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/provenance.json",
+        "baseline": "456ddd32171f955e5863dd5dea8068a2fbd158c9ebff1ada6f60158092db4772",
+        "actual": "456ddd32171f955e5863dd5dea8068a2fbd158c9ebff1ada6f60158092db4772",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/regras-regressoes.md",
+        "baseline": "1520c84dbca531c0b175211762e005fef50b21d898a9f26bfaf5832b7d2fca65",
+        "actual": "1520c84dbca531c0b175211762e005fef50b21d898a9f26bfaf5832b7d2fca65",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/references/validacao.md",
+        "baseline": "ec2f301ea5c50ca4584557c3a7da4150910854e5f5facb88c90d7fe74e9fae99",
+        "actual": "ec2f301ea5c50ca4584557c3a7da4150910854e5f5facb88c90d7fe74e9fae99",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jp-ai-engineering/scripts/verify_protections.py",
+        "baseline": "e51fff22c91d56f8c5a7d9725b304fef4be3fc65e5664ce3af8aecb57e928e39",
+        "actual": "e51fff22c91d56f8c5a7d9725b304fef4be3fc65e5664ce3af8aecb57e928e39",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-browser-verification/SKILL.md",
+        "baseline": "c0afba374cc95b85ccbd5e0d7cf73e88f9c2f9535d99e668c3fd6633aad052b7",
+        "actual": "c0afba374cc95b85ccbd5e0d7cf73e88f9c2f9535d99e668c3fd6633aad052b7",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-change-control/SKILL.md",
+        "baseline": "899391c76bc3b575b49d70ead9c668ad20324424b5f9d312e62a2268febf16c0",
+        "actual": "899391c76bc3b575b49d70ead9c668ad20324424b5f9d312e62a2268febf16c0",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-critical-review/SKILL.md",
+        "baseline": "5cba8455f8c55a68e2f014857c6945402eb7b2cc11775f06824d40b815c8b90f",
+        "actual": "5cba8455f8c55a68e2f014857c6945402eb7b2cc11775f06824d40b815c8b90f",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-critical-review/agents/openai.yaml",
+        "baseline": "34300ca8ca5b385ef03042cc8dee02b57125af72c194c68411101922b64fc7eb",
+        "actual": "34300ca8ca5b385ef03042cc8dee02b57125af72c194c68411101922b64fc7eb",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-critical-review/references/functional-logic.md",
+        "baseline": "d1fd71489ef11389ca690475502d18f46c834bc60ea0746b1a87aee4336061b7",
+        "actual": "d1fd71489ef11389ca690475502d18f46c834bc60ea0746b1a87aee4336061b7",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-data-safety/SKILL.md",
+        "baseline": "efbb54398a00de8ef57c1e269e55d56b6a348f51845fc4a56504a8f9356056da",
+        "actual": "efbb54398a00de8ef57c1e269e55d56b6a348f51845fc4a56504a8f9356056da",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-design/SKILL.md",
+        "baseline": "32d9a2acda14894665a97e24cb7e54ee4e09dc897bf47cca23c24d009d20a5e9",
+        "actual": "32d9a2acda14894665a97e24cb7e54ee4e09dc897bf47cca23c24d009d20a5e9",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-design/references/design-philosophy.md",
+        "baseline": "fcc11d3eab563f3464e84e5b8886ddb9ee4784cff75530702f07776d19e0dff7",
+        "actual": "fcc11d3eab563f3464e84e5b8886ddb9ee4784cff75530702f07776d19e0dff7",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-feature-atlas/SKILL.md",
+        "baseline": "e7787f51d744dbec31561818348b23bd92ff63bf0b2a617f5fb10edf26ef9238",
+        "actual": "e7787f51d744dbec31561818348b23bd92ff63bf0b2a617f5fb10edf26ef9238",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-normative-audit/SKILL.md",
+        "baseline": "9712f67b1262a8856b359f1e65bbe03eb3c897d86337c0ba38f64895a7c08cca",
+        "actual": "9712f67b1262a8856b359f1e65bbe03eb3c897d86337c0ba38f64895a7c08cca",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-post-change-audit/SKILL.md",
+        "baseline": "e6c5f03a36a4121997327702d1e41ce13efbc85834014ba287f9b6d4eff8f2c3",
+        "actual": "e6c5f03a36a4121997327702d1e41ce13efbc85834014ba287f9b6d4eff8f2c3",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-preflight/SKILL.md",
+        "baseline": "1fd9b39ae8e387bdd38bb0591e2031c3316eef77546c12bedf4b853588c7ae17",
+        "actual": "1fd9b39ae8e387bdd38bb0591e2031c3316eef77546c12bedf4b853588c7ae17",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-security-audit/SKILL.md",
+        "baseline": "90368f20a7b7e8893d1394ada4c9bf002495d140d6eb11207841a34fcf649b48",
+        "actual": "90368f20a7b7e8893d1394ada4c9bf002495d140d6eb11207841a34fcf649b48",
+        "unchanged": true
+      },
+      {
+        "path": "skills/jpw-test-triage/SKILL.md",
+        "baseline": "37f0686baef9e07ed780dced776730773a3145dc58bfd92cf483a0856b0e9ed7",
+        "actual": "37f0686baef9e07ed780dced776730773a3145dc58bfd92cf483a0856b0e9ed7",
+        "unchanged": true
+      },
+      {
+        "path": "skills/repository-architecture/SKILL.md",
+        "baseline": "464e66a6fcdcc346dcd0bf458b4a429655dc82afb48be6fe25720635091d7bb9",
+        "actual": "464e66a6fcdcc346dcd0bf458b4a429655dc82afb48be6fe25720635091d7bb9",
+        "unchanged": true
+      },
+      {
+        "path": "skills/repository-architecture/references/templates-de-saida.md",
+        "baseline": "d92516b940135832e50e7ae7fc710bc5e55ba1fb63c8b5ef13b5ed3161320d1f",
+        "actual": "d92516b940135832e50e7ae7fc710bc5e55ba1fb63c8b5ef13b5ed3161320d1f",
+        "unchanged": true
+      }
+    ]
+  },
+  "baseline": {
+    "count": 1568,
+    "preserved": 1486,
+    "changedCount": 82,
+    "changedOutsideAllowlist": []
+  },
+  "routingLinks": [
+    {
+      "path": ".agents/skills/jp-ai-engineering",
+      "expected": "../../skills/jp-ai-engineering",
+      "actual": "../../skills/jp-ai-engineering",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/jpw-critical-review",
+      "expected": "../../skills/jpw-critical-review",
+      "actual": "../../skills/jpw-critical-review",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/jpw-design",
+      "expected": "../../skills/jpw-design",
+      "actual": "../../skills/jpw-design",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/jpw-feature-atlas",
+      "expected": "../../skills/jpw-feature-atlas",
+      "actual": "../../skills/jpw-feature-atlas",
+      "unchanged": true
+    },
+    {
+      "path": ".claude/skills/jp-ai-engineering",
+      "expected": "../../skills/jp-ai-engineering",
+      "actual": "../../skills/jp-ai-engineering",
+      "unchanged": true
+    },
+    {
+      "path": ".claude/skills/jpw-critical-review",
+      "expected": "../../skills/jpw-critical-review",
+      "actual": "../../skills/jpw-critical-review",
+      "unchanged": true
+    },
+    {
+      "path": ".claude/skills/jpw-design",
+      "expected": "../../skills/jpw-design",
+      "actual": "../../skills/jpw-design",
+      "unchanged": true
+    },
+    {
+      "path": ".claude/skills/jpw-feature-atlas",
+      "expected": "../../skills/jpw-feature-atlas",
+      "actual": "../../skills/jpw-feature-atlas",
+      "unchanged": true
+    }
+  ],
+  "gitStatus": {
+    "untrackedFiles": "all",
+    "pathCount": 129,
+    "statusStableDuringReview": true,
+    "sha256": "e1f6d266d0020ba61e32df0137a7faa86eb00bd076955c4315776ac6fd28f7d9",
+    "outsideAllowlist": [],
+    "paths": [
+      {
+        "status": " M",
+        "path": "CHANGELOG.md",
+        "allowedBy": [
+          "CHANGELOG.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "76a7d3323e86439f462d8978883ea875da891f2524c21c79a88232f252ef9a6a"
+      },
+      {
+        "status": " M",
+        "path": "README.md",
+        "allowedBy": [
+          "README.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "aeedb4ac51b0da22e841965c42619ea6f331197d954eb678b7b77ba7ed115d41"
+      },
+      {
+        "status": " M",
+        "path": "SESSION_HANDOFF.md",
+        "allowedBy": [
+          "SESSION_HANDOFF.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "9ea1840dff0ac0f05c08cbe7556a75b543c588fcab89e142db86b10d035e8a49"
+      },
+      {
+        "status": " M",
+        "path": "build-id.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "build-id.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "3f58d4bf0baba4cee77c6d43f0f798b1120c098484e523b66e2b4391d0c53fcc"
+      },
+      {
+        "status": " M",
+        "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+        "allowedBy": [],
+        "derivedBy": [
+          "dist/**"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "c8c6ed65fbd8189cc5ab74453309be167630239e010f4b4a2c7bb6b518d2180b"
+      },
+      {
+        "status": " M",
+        "path": "docs/architecture/ARCHITECTURE.md",
+        "allowedBy": [
+          "docs/architecture/ARCHITECTURE.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "76b31ac30e1bcaca3f27ebd218a6054a50c867dcc10cba3bad0f3e4155c1007e"
+      },
+      {
+        "status": " M",
+        "path": "docs/architecture/CODE-MAP.md",
+        "allowedBy": [
+          "docs/architecture/CODE-MAP.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "3049a7fb78a2cbc3ba38dd6ff52f229a6306719d901c60c3e8a2487565089e28"
+      },
+      {
+        "status": " M",
+        "path": "docs/architecture/FX-PLANNING.md",
+        "allowedBy": [
+          "docs/architecture/FX-PLANNING.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "984372fb805cb1e544bdca10a51fb88a14edf943fa4cecece9e2695b7f437233"
+      },
+      {
+        "status": " M",
+        "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+        "allowedBy": [
+          "docs/architecture/NAVIGATION-HIERARCHY.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "e46b10296a7751e21461964279da4746094e481750977ea98b1645f62287d225"
+      },
+      {
+        "status": " M",
+        "path": "docs/architecture/PLANNING-MONTHLY.md",
+        "allowedBy": [
+          "docs/architecture/PLANNING-MONTHLY.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "7b6b7e4d4a73a3113cff30e3f47f0f4de77d8126fa6559b91ada659e5a27b7f4"
+      },
+      {
+        "status": " M",
+        "path": "docs/architecture/STATE-SCHEMA.md",
+        "allowedBy": [
+          "docs/architecture/STATE-SCHEMA.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "63eb744af1701332c92464d7dbd103e8476c6dfb16c0cf29e65881df2c3c45d1"
+      },
+      {
+        "status": " M",
+        "path": "docs/governance/CONTEXT-MAP.md",
+        "allowedBy": [
+          "docs/governance/CONTEXT-MAP.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "1b02e67d8a82cf47c769105e4ed01f2eebe5f908afe65c19428a075e3790c2a7"
+      },
+      {
+        "status": " M",
+        "path": "docs/governance/CURRENT-STATE.md",
+        "allowedBy": [
+          "docs/governance/CURRENT-STATE.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "23838c63c62b7713529300ea448034603321d7be272dd47e9519a89580735b80"
+      },
+      {
+        "status": " M",
+        "path": "docs/governance/PROJECT-CONTEXT.md",
+        "allowedBy": [
+          "docs/governance/PROJECT-CONTEXT.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "b80f664434199994f63921e84ba98a7af6215c56412b49f55897687e9db7dcb4"
+      },
+      {
+        "status": " M",
+        "path": "docs/work/ACTIVE-TASK.md",
+        "allowedBy": [
+          "docs/work/ACTIVE-TASK.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "3362878ebc3aa8e74a04b122f9018784152b4a50b2cd5ca65e885a5e8dfd0b1e"
+      },
+      {
+        "status": " M",
+        "path": "index.html",
+        "allowedBy": [
+          "index.html"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "df5f6ad5527d5d1d31f84f054387c7db794d5c1d4aacad1ddda2a4ff08253bea"
+      },
+      {
+        "status": " M",
+        "path": "src/js/00-core/08-module-availability.js",
+        "allowedBy": [
+          "src/js/00-core/08-module-availability.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "44f40f5d5c0161b4ffc4fc85cb54fb594baff357c8dcf68ce1af6b184fe2cca9"
+      },
+      {
+        "status": " M",
+        "path": "src/js/10-domain/08-usd-brl-quote.js",
+        "allowedBy": [
+          "src/js/10-domain/08-usd-brl-quote.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "f86355fba756dbb267d3f4144dcd861bcc533d42295489727f55aebcb58eedd2"
+      },
+      {
+        "status": " M",
+        "path": "src/js/20-ui/03-main-render.js",
+        "allowedBy": [
+          "src/js/20-ui/03-main-render.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "3158767be64587d1911e08ae2115167702c10304185fec77f843d64c76e74df8"
+      },
+      {
+        "status": " M",
+        "path": "src/js/20-ui/12-nav-style.js",
+        "allowedBy": [
+          "src/js/20-ui/12-nav-style.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "6ac5a15d8f9c30949f2105bda30d77606b715a83b6ff71ed7a0d0ea8168d13c6"
+      },
+      {
+        "status": " M",
+        "path": "src/js/20-ui/25-dash-macro.js",
+        "allowedBy": [
+          "src/js/20-ui/25-dash-macro.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "5daf06408d8082fafb0f7947c9634949353558a001b56a2a442fcbd8239713f1"
+      },
+      {
+        "status": " M",
+        "path": "src/js/20-ui/26-forex-engine-views.js",
+        "allowedBy": [
+          "src/js/20-ui/26-forex-engine-views.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "fb3290a475ba57d58a9793a60ffc2fc335fbde9f37eba54a416f29cd71d6c4b0"
+      },
+      {
+        "status": " M",
+        "path": "src/js/20-ui/32-module-availability.js",
+        "allowedBy": [
+          "src/js/20-ui/32-module-availability.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "d3d4516fc2087e69d57e2053f0b9b2d54d70d38d3585f4dcbe421ac54c6f6a0a"
+      },
+      {
+        "status": " M",
+        "path": "src/js/20-ui/33-module-work.js",
+        "allowedBy": [
+          "src/js/20-ui/33-module-work.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "9094a3651edbbaab009f627a43122bb6e2c32f6d337e3ae6723624c7d960edd2"
+      },
+      {
+        "status": " M",
+        "path": "src/js/30-accounting/01-daily-ledger.js",
+        "allowedBy": [
+          "src/js/30-accounting/01-daily-ledger.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18"
+      },
+      {
+        "status": " M",
+        "path": "src/js/30-accounting/02-accounting-engine.js",
+        "allowedBy": [
+          "src/js/30-accounting/02-accounting-engine.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "185c29e78e1b935c1b05de82274f0f5320c632defc947f7a4fb48958108d081f"
+      },
+      {
+        "status": " D",
+        "path": "src/js/30-accounting/05-fx-planning/01-fx-model.js",
+        "allowedBy": [
+          "src/js/30-accounting/05-fx-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest"
+      },
+      {
+        "status": " D",
+        "path": "src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+        "allowedBy": [
+          "src/js/30-accounting/05-fx-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest"
+      },
+      {
+        "status": " D",
+        "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
+        "allowedBy": [
+          "src/js/30-accounting/05-fx-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest"
+      },
+      {
+        "status": " D",
+        "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+        "allowedBy": [
+          "src/js/30-accounting/05-fx-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest"
+      },
+      {
+        "status": " D",
+        "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+        "allowedBy": [
+          "src/js/30-accounting/05-fx-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest"
+      },
+      {
+        "status": " M",
+        "path": "src/js/40-app/01-navigation.js",
+        "allowedBy": [
+          "src/js/40-app/01-navigation.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+      },
+      {
+        "status": " M",
+        "path": "src/js/40-app/06-boot.js",
+        "allowedBy": [
+          "src/js/40-app/06-boot.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "1f81977ce86c986ad6cf8f2c73de733204148a59818e2c1b9a09c929c802808e"
+      },
+      {
+        "status": " M",
+        "path": "src/js/40-app/07-finalize-session.js",
+        "allowedBy": [
+          "src/js/40-app/07-finalize-session.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "fdb42e2788d1d9314b09dca62ca2865f29339a835c3aa9bdaf52bfe3cff2b484"
+      },
+      {
+        "status": " M",
+        "path": "src/js/40-app/11-operational-shell.js",
+        "allowedBy": [
+          "src/js/40-app/11-operational-shell.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "1077cb674671dd5ad2cd00c9166f1169f46b66616dc5cb578bb2de955547ab17"
+      },
+      {
+        "status": " M",
+        "path": "src/js/40-app/18-notification-center.js",
+        "allowedBy": [
+          "src/js/40-app/18-notification-center.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "7f852a4f0f24c35fdb0cc48c73b0137ad229472eef7944799ad601df5fb022e4"
+      },
+      {
+        "status": " M",
+        "path": "src/js/40-app/26-learning-catalog.js",
+        "allowedBy": [
+          "src/js/40-app/26-learning-catalog.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "46929873e16aeb776773363174f1f6127027545847a806e30669f6c34a0c2f16"
+      },
+      {
+        "status": " M",
+        "path": "src/js/manifest.json",
+        "allowedBy": [
+          "src/js/manifest.json"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "47ed208c852003a2ce505c0d3fbe413cbb192757ca2461dfdb96388abfe215ce"
+      },
+      {
+        "status": " M",
+        "path": "src/styles/app.css",
+        "allowedBy": [
+          "src/styles/app.css"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "64f82255539d1be9a088716a345155f5891e4ec6bec95744f6c285178d96c033"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "1deed4451e37d518dc263a0e367e1202f7749a57e9b4abc6ec724b2987da43f6"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "81f76883c7fe0d2c8d624f2a20de37d8c43d241d5c58fe3b1ef9a8cc02926022"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/leverage-preview-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "6fafc5d483cd94a363b65dbfe9072caf0cad8f09a9d95dcad54022e374c7f6ad"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/leverage-preview-payload.json",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.json"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "61a62652bf00da1672200871e4c4deec5068567a3c501d687fc3df6d0cbb3717"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/leverage-source-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "3c220bcb84fc165d6c8f38d9970ea49c7c927f389a0f4427186b739e02a122a8"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/downloads/nocuda-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/downloads/*-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "6a3b519b9b4b0bb6e109d8bd91bcc8d2e6fd4040f813f7b0d04bef4dcd93aee8"
+      },
+      {
+        "status": " M",
+        "path": "src/vendor/market-hours/runtime-payload.js",
+        "allowedBy": [],
+        "derivedBy": [
+          "src/vendor/market-hours/runtime-payload.js"
+        ],
+        "forbiddenBy": [],
+        "classification": "generated_distribution",
+        "sha256": "8d7fedde8e245a33ef0d86f2890e7bc59c98ffffdf62cbba6df272609d73e37b"
+      },
+      {
+        "status": " M",
+        "path": "sw.js",
+        "allowedBy": [
+          "sw.js"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "b02ed52c5d0f70bae17a98cafb75c205e2a55adafec6e46dc67a8f05b9875036"
+      },
+      {
+        "status": " M",
+        "path": "tools/behavior_finance_regression_test.py",
+        "allowedBy": [
+          "tools/behavior_finance_regression_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "03bf7bba247ad74c78eb595da4f8fe629d81071d61f88817d0d250a773482028"
+      },
+      {
+        "status": " M",
+        "path": "tools/contextual_sidebar_test.py",
+        "allowedBy": [
+          "tools/contextual_sidebar_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "06394917a30b2a1361eb7950efe6d6aa863ce06006bc64dac43117b2ed6b80d2"
+      },
+      {
+        "status": " M",
+        "path": "tools/dashboard_macro_test.py",
+        "allowedBy": [
+          "tools/dashboard_macro_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "2e469fa841d0cdc41204222ce5737ed5c97be484a8589c66edef9986adcf6bfb"
+      },
+      {
+        "status": " M",
+        "path": "tools/exec_submenu_test.py",
+        "allowedBy": [
+          "tools/exec_submenu_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "cda007ae6493c93cc87d922e02b8d0ee3a0fad0b85b44f7ee116cb3b2e845413"
+      },
+      {
+        "status": " M",
+        "path": "tools/financial_projection_audit_test.py",
+        "allowedBy": [
+          "tools/financial_projection_audit_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "3ddfde8f068fb308b9ba72ddb77e02403391efece7a9badaf20ec4f6a8cad9b6"
+      },
+      {
+        "status": " M",
+        "path": "tools/finpes_navigation_test.py",
+        "allowedBy": [
+          "tools/finpes_navigation_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "c09541d7eb5649d34be405688fcad0d46aaee7aa2e6a8b1f4d2ba852ecb20cc6"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_clarity_test.py",
+        "allowedBy": [
+          "tools/forex_clarity_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "3eba258f62d8a90abc538afa3b1fb88bef8f4e9f87e53081d881f8fc52859f44"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_navigation_journey_test.py",
+        "allowedBy": [
+          "tools/forex_navigation*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "4eeaf8a9403f7758b55e3023d8efc0182e92722f35a3c64148c024f479026163"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_navigation_table_test.py",
+        "allowedBy": [
+          "tools/forex_navigation*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "9f6a7f7567eea88ffde1b6bde74df3e8e1366c5f181d2f9c6c726cb88e643dc7"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_persistence_contract_test.py",
+        "allowedBy": [
+          "tools/forex_persistence_contract_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "632b0162c972d8cff35ed7481576134b43adfb8d7b69cb89d82200c79aa4c98d"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_task_design_test.py",
+        "allowedBy": [
+          "tools/forex_task_design_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "3ca6bd3fc33ccf1e04168c046917981ab61ad9ea2a4001a137e4bfabcf075936"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_v11_journey_test.py",
+        "allowedBy": [
+          "tools/forex_v11_journey_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "887facf0b6ab589ea4fa9bd0fc184f987af3ca1e42554b4f1e905ba378cff2ef"
+      },
+      {
+        "status": " M",
+        "path": "tools/forex_v11_ledger_planning_test.py",
+        "allowedBy": [
+          "tools/forex_v11_ledger_planning_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "261824a8be9eb54fbba2d9293a19fbf6a1d13aba18ccfb9f2a04c8b16367b36f"
+      },
+      {
+        "status": " M",
+        "path": "tools/fx_consolidated_ui_test.py",
+        "allowedBy": [
+          "tools/fx_consolidated_ui_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "c2be51360699049be3b8bc47e4eb2066ca3139fffd40c2d796e27617d9917e44"
+      },
+      {
+        "status": " M",
+        "path": "tools/fx_monthly_board_test.py",
+        "allowedBy": [
+          "tools/fx_monthly*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "9c64646d7c4dd83fcb9eec2016c6911a96e9bcbc8212f4dcd741bf6c0553e1ba"
+      },
+      {
+        "status": " M",
+        "path": "tools/fx_monthly_chart_test.py",
+        "allowedBy": [
+          "tools/fx_monthly*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "44adf9bd4e0e3130bcf58a5ce4c9460e4be912b718669f3297209ce8fa24b2a8"
+      },
+      {
+        "status": " M",
+        "path": "tools/fx_monthly_domain_test.py",
+        "allowedBy": [
+          "tools/fx_monthly*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "61eb52544e6196337ce2c5ee98911c4e2c15f125d0d3a3771e09c76508d8eab0"
+      },
+      {
+        "status": " M",
+        "path": "tools/fx_planning_test.py",
+        "allowedBy": [
+          "tools/fx_planning_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "8274d5f0b2d9b9ca895df4f23d7f8fcb234e1ce3ca686be7d9885d7ceda28d80"
+      },
+      {
+        "status": " M",
+        "path": "tools/learning_foundation_test.mjs",
+        "allowedBy": [
+          "tools/learning_foundation_test.mjs"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "c8ecd715eb9dcadc6067ff8a18bd9a62e9adc2ebfbc4e667c74cb6892f5ad4b6"
+      },
+      {
+        "status": " M",
+        "path": "tools/learning_guide_test.py",
+        "allowedBy": [
+          "tools/learning_guide_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "0fa600b379eb0f5e13ee831da66efeedbdf45e0586173e188e5bae0b0c17894b"
+      },
+      {
+        "status": " M",
+        "path": "tools/module_availability_core_test.py",
+        "allowedBy": [
+          "tools/module_availability*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "7f9d6b3167004c78339a190f695dbd456a90c6de5347e2d8723d6b7a19603c3d"
+      },
+      {
+        "status": " M",
+        "path": "tools/navigation_ia_test.py",
+        "allowedBy": [
+          "tools/navigation*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "73df9490537d5981bb495e886edefd45ebf8ff269e1da3584343b0d7fa49ca4c"
+      },
+      {
+        "status": " M",
+        "path": "tools/navigation_layout_choice_test.py",
+        "allowedBy": [
+          "tools/navigation*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "eeffef9e67ac448faf72166466d6d39b8213d4b6a051df7d8667523f2a3bf435"
+      },
+      {
+        "status": " M",
+        "path": "tools/navigation_local_contract_test.py",
+        "allowedBy": [
+          "tools/navigation*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "0c511469d2e2eeb9caa7f89ba15ae69e04b7978c5fc41d47497ef8efe11868fd"
+      },
+      {
+        "status": " M",
+        "path": "tools/navigation_order_test.py",
+        "allowedBy": [
+          "tools/navigation*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "f9ca52730e9d4fc14b5105e2a67d45544b89fe14833312436c7f76a42f5568e4"
+      },
+      {
+        "status": " M",
+        "path": "tools/presentation_refactor_contract_test.py",
+        "allowedBy": [
+          "tools/presentation_refactor_contract_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "120f40a25543fb0f8bd29f3427756abc110b9bf37139cd3509a6a51b569c6e90"
+      },
+      {
+        "status": " M",
+        "path": "tools/quality_gate.py",
+        "allowedBy": [
+          "tools/quality_gate.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "d895029e9fc7f24620d2979a51a853d62198a38fa12678e691c1543e00d3d01c"
+      },
+      {
+        "status": " M",
+        "path": "tools/regression-memory.json",
+        "allowedBy": [
+          "tools/regression-memory.json"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "6a63a83af81b0b6d07d9425893e838d2595e3d23df26653cc8f06c306f477616"
+      },
+      {
+        "status": " M",
+        "path": "tools/research_navigation_test.py",
+        "allowedBy": [
+          "tools/research_navigation_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "bd5060137c948beabd894cb50f1b70ec0d413884839488c3b94e457cfbb60f66"
+      },
+      {
+        "status": " M",
+        "path": "tools/saving_draft_recovery_test.py",
+        "allowedBy": [
+          "tools/saving_draft_recovery_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "7a43624155f7f28de1707927efb5a7d11e20382e9ee2b4dd1c1b2bb2b5d4db1c"
+      },
+      {
+        "status": " M",
+        "path": "tools/scenario_fan_test.py",
+        "allowedBy": [
+          "tools/scenario_fan_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "448bcb2e441a9f6911d235cc81ab51754abe7d48b107ad4f779a6064ce1bc117"
+      },
+      {
+        "status": " M",
+        "path": "tools/smoke_test.py",
+        "allowedBy": [
+          "tools/smoke_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "ca86557dace1e8542960bc45ca9d3a1952c289b4f21ac73ff73f27ac51336eb5"
+      },
+      {
+        "status": " M",
+        "path": "tools/usd_brl_quote_test.py",
+        "allowedBy": [
+          "tools/usd_brl_quote_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "22007c083dde7933ac97be5abd05d635b5e3b39f9858d975e80f6739a863a3df"
+      },
+      {
+        "status": " M",
+        "path": "tools/visual_proportion_test.py",
+        "allowedBy": [
+          "tools/visual_proportion_test.py"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "601b20bb5135ddfddf1b308bc6fcc4850b16822b69a2516212b997f85bf0c69a"
+      },
+      {
+        "status": "??",
+        "path": "docs/architecture/PLANNING.md",
+        "allowedBy": [
+          "docs/architecture/PLANNING.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "13f45afce16272aaaa240c7f6f6a0f585338cf070c340d524253d19cd88dc7a9"
+      },
+      {
+        "status": "??",
+        "path": "docs/decisions/2026-10-20-planning-reference.md",
+        "allowedBy": [
+          "docs/decisions/2026-10-20-planning-reference.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "c5e576a013aef3aba1e909065553f6c85c05e06705e4245c28b85de9fc8c69f3"
+      },
+      {
+        "status": "??",
+        "path": "docs/superpowers/plans/2026-10-20-planning.md",
+        "allowedBy": [
+          "docs/superpowers/plans/2026-10-20-planning.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "8f99201d80cb7719f5121937ca412971bbd11d824ef2b2a3f629c58878b8b989"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/FINANCIAL-REVIEW-R3.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "60697ca4a84e600ba4d538c96149ff13241985a143321e75b23af0b89b21ce64"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/FULL-CHECKS.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "40c2aed153390b06acb279424e06f260a5d09d933c7f170b1962d54749eb21b8"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/FULL-RESULT.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "fa39e8a7b57ecfdb88853c7a7a9859cc33ac36688c588f287809c8abb0e0e37a"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/LEGACY-COVERAGE.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "29946821f8488d77b6087b45a21155035aeaf18af486347d889e9bf220802e34"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/README.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "c5f28a50b0ba48ba9d8a32ba81ead99749ebb264a90e99a386c954a63f6a1408"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/REPRESENTATIONS-REVIEW.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "8b43d9e7d8f1d6d134d30574a5df520c3eb076ce34e5d70ac2bf8c60b4336011"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/RUNTIME-INPUTS.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "106c660e370f9db07160d1bc6eb9ece7243e15cd4999788319d2aed8fcb374eb"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/SCOPE.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "515263461bfe3e4019b615c10f7bf58e61d95e95b87c32308af14687e2922af2"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/SECURITY-REVIEW-R3.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "1bb7972a4be1c082a9ba854005908c63f015768ad8a6b1469913bd38cc27bef7"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/TEST-INPUTS.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "65d2c0ed31d1e5c9e0d746ad740f0f0ab5dcbf10c8042d876af38a4378336aa1"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/UX-REVIEW.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "68f669227e5f64f9d81c479663469fe7d16123f1abfa9409dfb00de0278cb80d"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/EARLY-FULL-ATTEMPT.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "8889b2dfe2c4c0a8e16f6158df5756f839e63fae6cad51456e0649edb2848563"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/INDEPENDENT-REVIEW.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "475b9e2f39e92e3e24173c16222fa6176b01273c9b1fa58ae0d87b5b3bfa7e2c"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/LAYOUT-RESULT.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "8751c1357fae40f1e4dc19e17a9dad4f7f299448336767331dca4338df4799a7"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/PRESENTATION-RESULT.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "712d85e075cd4e5c175eb958f7430a237acfa08858fa12cc4da3ce056f3ce2f8"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/README.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "0575d8fceb72b6d0baf58d6a307d50c4e2a5f232255e9aa92d5369b3a946974b"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/RECEIPT-COPIES.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "b754faf5de003d31900d28ffb78b3288806f99e8691de6bbfe8f09d631c548d1"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/RUNNER-INPUT.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "23a4663aa4750c99599f2d2c2133854df7b55a762e743f3dc93d6e145b1de52d"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/RUNTIME-INPUTS.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "961098d65da57da9aecef4fbf6270ae7839beabaf25e826aba2c49cba3430851"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/SCRIPT-INVENTORY.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "3a56a3321390e083270e52eba8da9c6c43442df13c0f776e9c59654a5fc128bc"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/SOURCE-MATRIX.md",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "26eddfa495d0f841924693faef863c1b30a11729e92d468512f1ba111392f1d8"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/TEST-INPUTS.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "cf655ad72b0aea561f92c764171c4c402bf7a0d7638c2bd366ab4bae7eec3b7b"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/form-source-compare.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "6e27c29ae9af41fc9a7cf8b8395066fdb273d3cf1f00ee18b5bac0dd974a8ebb"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/fx-edit-review.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "19d427b3af332ce8f5b2692fbd2ab4b63b57a54aacdd9fb5196f6d4675440232"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/startup-probe.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "15a8338fcafe7bbec4c01e0b5fa759635a94ea88973f4cf83a8a8f5f9e35bade"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/state-browser-review.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "2f3cd97db67f7e93d732a0b01c5604ed01210ea0aba0a1c5aaed0771ffad068f"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/stop-draft-review.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "0e76a62e4b3d8c36ed1e909325b9eababa3bc613939d1eb590426dfef266c31d"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/tabs-fixture-first-failure.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "347e242d8eb6ae95c728c847802ac889dfd2c66960d8d33adc331cd51c0978e6"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/tabs-review.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "3bb38d1a040acc451954fdd9b049174c6e36684e3bf5972646f2fab7d19a4d1f"
+      },
+      {
+        "status": "??",
+        "path": "docs/validation/planning-20261020/parity/independent/transient-startup-failure.json",
+        "allowedBy": [
+          "docs/validation/planning-20261020/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "05d3caa264d42f131796fdebc0dffa7ddb0e54227c17e81a15e14c3d77f47516"
+      },
+      {
+        "status": "??",
+        "path": "docs/work/CHG-JPW-PLANNING-20261020.md",
+        "allowedBy": [
+          "docs/work/CHG-JPW-PLANNING-20261020.md"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "documentation",
+        "sha256": "da45e9efb32f059ec32085e71acc2a167440652a9ff00cfa899febf0f454492e"
+      },
+      {
+        "status": "??",
+        "path": "src/js/30-accounting/06-planning/01-engine.js",
+        "allowedBy": [
+          "src/js/30-accounting/06-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2"
+      },
+      {
+        "status": "??",
+        "path": "src/js/30-accounting/06-planning/02-state.js",
+        "allowedBy": [
+          "src/js/30-accounting/06-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3"
+      },
+      {
+        "status": "??",
+        "path": "src/js/30-accounting/06-planning/03-ui.js",
+        "allowedBy": [
+          "src/js/30-accounting/06-planning/**"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "application_source_or_distribution_manifest",
+        "sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_boundaries_test.js",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "6c3fd5fdb18d052c1080fc4fd0a2b0f8c9bda00fe384363613db1023e2fd526a"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_distribution_test.py",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "19f5899980e523e8cd598956c69af4c71ab368769bed7fa17a29ed3161deb795"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_engine_test.js",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "a1ccb4500ca0cee7c41300eaa511ab15a51bc46733371dac0b372aa60b876b6c"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_navigation_test.js",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "a4d29a9a056a6efcd699e95d4f28af2c9ff90a6e6a57e40b5f3644798bc78cf6"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_parity_engine_test.js",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "26758501204f69f8cd8d77ef98bf6aff3e223ed9033cc1f1f0cbea3f2957d75f"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_parity_layout_test.py",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "043dc022e4e85450297db378ff46ecbf21eaf8f25e47ba4364ca4848d3626d06"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_parity_test.py",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "85a3194e8a61d024f6e3bec57c5d51af60d98f75b4b85577258a4cbdd2201fd7"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_quote_test.js",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "289a725bb8f1635da0d9615877de71fee8b70e23cc783e113dd08ff58c0eb13e"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_state_test.js",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "4a8dd009f2ec08b3b7fdba57176a22f7cfc00442f937c653d1eab4b0e9ec76fb"
+      },
+      {
+        "status": "??",
+        "path": "tools/planning_ui_test.py",
+        "allowedBy": [
+          "tools/planning*"
+        ],
+        "derivedBy": [],
+        "forbiddenBy": [],
+        "classification": "tests_or_runner",
+        "sha256": "c95fc2076ff632d7426c336406f472fa3816ab80b539dc84ffc31bf3f95da750"
+      }
+    ]
+  },
+  "frozenJavaScript": [
+    {
+      "path": "src/js/30-accounting/06-planning/01-engine.js",
+      "expected": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+      "actual": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+      "prefixMatchesRequest": true,
+      "unchanged": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/02-state.js",
+      "expected": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+      "actual": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+      "prefixMatchesRequest": true,
+      "unchanged": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "expected": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+      "actual": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+      "prefixMatchesRequest": true,
+      "unchanged": true
+    },
+    {
+      "path": "src/js/40-app/01-navigation.js",
+      "expected": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef",
+      "actual": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef",
+      "prefixMatchesRequest": true,
+      "unchanged": true
+    }
+  ],
+  "classification": {
+    "application_source_or_distribution_manifest": 28,
+    "documentation": 47,
+    "generated_distribution": 10,
+    "tests_or_runner": 44
+  },
+  "generatorEvidence": {
+    "file": "tools/rebuild_monolith.py",
+    "sha256": "d9872b73aa35775e223a45b122b4a1ba205e59e79fb3b1e939ce273a06758e7a",
+    "generatedOutputs": "build-id.js, portable HTML, download payload JS/JSON and market-hours runtime payload are emitted by the official builder.",
+    "sourceInputs": "sw.js and index.html remain allowlisted source inputs; the manifest is a source/index refreshed by the builder.",
+    "limit": "No rebuild or reproducibility test executed in this scope review. Classification uses CHG and inspected generator; it does not independently attest historical authorship of bytes."
+  },
+  "limits": [
+    "Hash comparison covers the 213 baseline protected files and eight existing routing symlinks; ignored files not surfaced by git status were not inventoried as new product paths.",
+    "No browser, financial data, external account, suite or concurrent test was accessed.",
+    "Read-only Git status/branch/head do not themselves prove absence of all historical Git actions.",
+    "This snapshot does not establish native Google execution, human acceptance, deployment or full-suite success."
+  ]
+}

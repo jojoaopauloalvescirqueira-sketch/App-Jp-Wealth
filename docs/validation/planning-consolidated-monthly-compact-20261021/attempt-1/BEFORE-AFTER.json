@@ -1,0 +1,46 @@
+{
+  "source_before": "RED-REVIEWED-FINAL.json",
+  "source_after": "FOCAL-GREEN.json",
+  "observations": [
+    {
+      "case": "compact-wide-seven-columns",
+      "viewport": 1440,
+      "useful_width": 978,
+      "before": {
+        "table_width": 2217.671875,
+        "headers": 18,
+        "scroll_width": 2218
+      },
+      "after": {
+        "table_width": 977.625,
+        "headers": 7,
+        "scroll_width": 978
+      },
+      "financial_unchanged": true,
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      }
+    },
+    {
+      "case": "compact-narrow-three-columns",
+      "viewport": 390,
+      "useful_width": 298,
+      "before": {
+        "table_width": 2217.671875,
+        "headers": 18,
+        "scroll_width": 2218
+      },
+      "after": {
+        "table_width": 298,
+        "headers": 3,
+        "scroll_width": 298
+      },
+      "financial_unchanged": true,
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      }
+    }
+  ]
+}

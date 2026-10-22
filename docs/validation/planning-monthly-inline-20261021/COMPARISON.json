@@ -1,0 +1,26 @@
+{
+  "baseline_build": "2ddbac03d67141d0",
+  "candidate_build": "6ca8a3b8971e249a",
+  "desktop_1440": {
+    "2026-08": {
+      "before_css_px": 106.5,
+      "after_css_px": 53
+    },
+    "2026-09": {
+      "before_css_px": 106.5,
+      "after_css_px": 53
+    },
+    "2026-10": {
+      "before_css_px": 106.5,
+      "after_css_px": 53
+    },
+    "2026-11": {
+      "before_css_px": 132.5,
+      "after_css_px": 53
+    }
+  },
+  "financial_writes_during_root_captures": 0,
+  "root_capture_sources_stable": true,
+  "limits": "Synthetic browser measurements/captures. Humanvisualacceptance pending; monetaryformulas unchanged and verified separately.",
+  "review_capture": "Default position after Save; vertical scrolling remains available for complete review/details."
+}

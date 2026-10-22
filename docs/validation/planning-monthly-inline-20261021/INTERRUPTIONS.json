@@ -1,0 +1,101 @@
+{
+  "meaning": "Interrupted runs are incomplete, neverPASS; finalfrozenFULL stillrequired.",
+  "attempts": [
+    {
+      "source": "task2/visual-default-1.interruption.json",
+      "sha256": "75aeb8a17f6f4cfaad197ab135a6e658a5fac73f3c67d65e7ceb317eb1c798c4",
+      "receipt": {
+        "command": [
+          "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+          "tools/ui_visual_quality_test.py",
+          "--out",
+          ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/visual-default-1"
+        ],
+        "exit": -15,
+        "seconds": 322.4339950084686,
+        "source_sha256": {
+          "src/js/30-accounting/06-planning/03-ui.js": "d6a0144943dd6405905b80aef05efd1f0704dc6f9a785b5ae4294f08cdcfd6c2",
+          "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+          "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+          "src/styles/app.css": "c2cd08c5b92056857213122642a334b6b84142f43595e10cdc36b0c6d866d9f1",
+          "tools/planning_monthly_inline_test.py": "53667722bb940f96085ff20b5ef102e0fb58f15afeddc4ba1af38047bbd2e0f0",
+          "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+          "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5"
+        },
+        "classification": "NOT_RUN",
+        "completion": "INTERRUPTED_INCOMPLETE",
+        "reason": "Parent authorized stopping only the active test child after independent critic confirmed a P1 future companion-rate write caused by cross-account Stoikus navigation. No PASS inferred from partial output.",
+        "partial_pass_lines": 122,
+        "signal": "SIGTERM",
+        "report_written": false
+      }
+    },
+    {
+      "source": "task2/visual-default-2.interruption.json",
+      "sha256": "67808e5173b238082bf0513bcefecc8041e50803cddea696832e6d169f33b632",
+      "receipt": {
+        "command": [
+          "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+          "tools/ui_visual_quality_test.py",
+          "--out",
+          ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/visual-default-2"
+        ],
+        "exit": -15,
+        "seconds": 133.06097888946533,
+        "source_sha256": {
+          "src/js/30-accounting/06-planning/03-ui.js": "8ac5ec798dc36bb3edf72103e8be104d5654fe09100160dc8169a84898962946",
+          "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+          "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+          "src/styles/app.css": "c2cd08c5b92056857213122642a334b6b84142f43595e10cdc36b0c6d866d9f1",
+          "tools/planning_monthly_inline_test.py": "28cb0971f36353a0bbd6fb5327df9d1383b448b438b62ea4731934641196a58a",
+          "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+          "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5"
+        },
+        "classification": "NOT_RUN",
+        "completion": "INTERRUPTED_INCOMPLETE",
+        "reason": "Parent authorized stopping only this test child after independent actual44px target measurements showed new inline action buttons were30px high.",
+        "partial_pass_lines": 46,
+        "signal": "SIGTERM",
+        "report_written": false
+      }
+    },
+    {
+      "source": "focal-pipeline-interruption.json",
+      "sha256": "de777011e0c762a919552e4fdef1e95f7cabbc9ab244df5efcdb37a4dff1a0d2",
+      "receipt": {
+        "at": "2026-10-22T02:01:27.707987+00:00",
+        "classification": "NOT_RUN",
+        "completion": "INTERRUPTED_INCOMPLETE",
+        "reason": "Independent confirmed P2 inline-action targets30px violate44px. Stop own active focal child before boundedsourcefix; completedfocals retain their finite receipts; no aggregatePASS.",
+        "termination_requested_only": [
+          {
+            "pid": 54303,
+            "ppid": 54301,
+            "command": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3 tools/finalize_session_test.py"
+          }
+        ],
+        "actual_exit": "See completed child command receipt and supervisor observed process exit."
+      }
+    },
+    {
+      "source": "focal-pipeline-interpretation.json",
+      "sha256": "6091af23fa763d72805c526087fcd512c5f4236f230711283620399c7b84bc63",
+      "receipt": {
+        "classification": "NOT_RUN",
+        "completion": "INTERRUPTED_INCOMPLETE",
+        "completed_focals_actual_exit0": [
+          "real-planning-parity",
+          "real-three-tabs",
+          "real-proportions",
+          "real-parity-layout",
+          "real-planning-ui",
+          "real-distribution"
+        ],
+        "last_child_actual_exit_code": -15,
+        "last_wrapper_exit_code": 241,
+        "supervisor_actual_exit_code": 1,
+        "interpretation": "Pipeline field complete only means all7attempts were listed. Last actualtest was deliberately terminated-15 for confirmedP2sourcefix; wrapperPythonSystemExit(-15) became241, supervisor1. No aggregatePASS; finalfreshcandidate requiresnewtests/FULL. Rawreceipts unchanged."
+      }
+    }
+  ]
+}

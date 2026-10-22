@@ -1,0 +1,11 @@
+--- a/tools/planning_parity_layout_test.py
++++ b/tools/planning_parity_layout_test.py
+@@ -143,7 +143,7 @@
+     profile_box = assert_box(page, '#pl-native-profileDialog', 'profile comparison')
+     assert profile_box['top'] >= -1 and profile_box['bottom'] <= profile_box['viewHeight'] + 1, ('profile dialog vertical clipping', profile_box)
+     assert profile.locator('[data-pl-choose-profile]').count() == 4, 'native chooser omits a profile'
+-    plot_sizes = profile.locator('svg').evaluate_all('els=>els.map(el=>({w:el.getBoundingClientRect().width,h:el.getBoundingClientRect().height}))')
++    plot_sizes = profile.locator('svg.pl-native-chart').evaluate_all('els=>els.map(el=>({w:el.getBoundingClientRect().width,h:el.getBoundingClientRect().height}))')
+     assert len(plot_sizes) == 5 and all(plot['w'] > 80 and plot['h'] > 40 for plot in plot_sizes), ('profile/recovery chart geometry', plot_sizes)
+     close = assert_box(page, '#pl-native-closeProfiles', 'profile close')
+     assert close['top'] >= profile_box['top'] - 1 and close['bottom'] <= profile_box['bottom'] + 1

@@ -21,7 +21,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-PRIMARY = ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin", "tools-calendar"]
+PRIMARY = ["dashboard", "forex-consolidated", "planning", "personal-finance", "research-forex", "alladin", "tools-calendar"]
 RESEARCH_CHILDREN = [
     ("research-forex", "Forex", "nocoda"),
     ("research-stocks-br", "Ações", "stocks-br"),
@@ -86,7 +86,7 @@ def boot(browser, url, viewport):
     )
     page.goto(url, wait_until="load")
     page.wait_for_function("""() => window.JPWNavigation && window.JPWResearch?.ui
-      && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWFx?.ui""")
+      && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWPlanning?.ui""")
     page.evaluate("() => { window.alert=()=>{}; closeModal(); window.__navStorageOps=[]; }")
     return context, page, observed
 

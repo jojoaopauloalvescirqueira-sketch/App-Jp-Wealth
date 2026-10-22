@@ -145,6 +145,14 @@ def prepare(context, url, theme='light', seed=True):
             throw Error('Epoch preparation changed the operational document');
           renderMvpNotesHeader();
         }""")
+        # The first daily market-cache refresh is real bootstrap setup. Later
+        # Planning entry must be measured after it completes, not forgiven as
+        # an arbitrary write inside the launcher's no-write boundary.
+        page.evaluate("""async () => {
+          const quote=await JPWMarket.usdBrl.refresh(false);
+          if(!Number.isFinite(quote.rate) || JPWMarket.usdBrl.isLoading())
+            throw Error('Synthetic setup could not finish the initial USD/BRL quote');
+        }""")
     settle(page)
     instrument(page)
     return page, observed
@@ -477,7 +485,8 @@ def rendering_navigation(page):
     mouse_move(page, -100, -80)
     position = geometry(page)
     before_projection = snapshot(page)
-    for route in ('personal-finance', 'research-forex', 'dashboard') * 3:
+    for route in ('personal-finance', 'research-forex', 'dashboard', 'planning',
+                  'forex-consolidated', 'forex-operation') * 3:
         assert page.evaluate('route=>JPWNavigation.navigate(route)', route)
         page.evaluate('renderMvpNotesHeader()')
         settle(page)

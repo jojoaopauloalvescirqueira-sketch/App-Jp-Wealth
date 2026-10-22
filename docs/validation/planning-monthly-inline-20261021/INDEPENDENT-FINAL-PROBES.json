@@ -1,0 +1,377 @@
+{
+  "started": "2026-10-22T02:11:56.031507+00:00",
+  "hashes_before": {
+    "src/js/30-accounting/06-planning/03-ui.js": "eb40224556cd804e5db39a42886b0cdf8513b64d72d41e8932aa5ee687ac31a4",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/js/40-app/01-navigation.js": "837f06cfabb8adbacfb1f0196d0d27c1f459e044ea8e65305deadba7d97d953d",
+    "src/js/40-app/07-finalize-session.js": "3c64c799468706964419158b56e46337115fe9a424615ecbf5328c2c5e1ee041",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+    "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+    "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5",
+    "tools/planning_ui_test.py": "495962feeb5122e9f668d671492a169c2333844555edd336e04c94ed153da894",
+    "src/js/manifest.json": "ac779a71051aa0d1d81fa644524e368f0d0b0054147f2f03a5619bb4c59a8585",
+    "build-id.js": "dbe3e4e75d496a0293d8622777f9d46d7471e6c224e893d143feff62556896f8"
+  },
+  "cases": [
+    {
+      "id": "original-p1-companion",
+      "classification": "PASS",
+      "observed": {
+        "live": {
+          "rate": null,
+          "contributionUsd": 17
+        },
+        "stored": {
+          "rate": null,
+          "contributionUsd": 17
+        },
+        "commands": [
+          "setProjection"
+        ],
+        "writers": 1
+      }
+    },
+    {
+      "id": "review-feedback-390",
+      "classification": "PASS",
+      "observed": {
+        "headingIntersection": 21,
+        "noninteractiveFocus": true,
+        "confirmFocused": false,
+        "reviewText": "Confira antes de confirmarSaldo de abertura: US$ 1.065,00Informado: 3%Resultado / lançamento: US$ 31,95 · taxa 3%Confirmar registro",
+        "buttons": [
+          {
+            "text": "Salvar",
+            "box": {
+              "x": 77,
+              "y": 608.5,
+              "width": 65.390625,
+              "height": 44
+            },
+            "centered": {
+              "outer": {
+                "left": 77,
+                "right": 142.390625,
+                "top": 608.5,
+                "bottom": 652.5,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 130.390625,
+                "top": 621.046875,
+                "bottom": 638.046875
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 130.390625,
+                  "top": 621.046875,
+                  "bottom": 638.046875,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          },
+          {
+            "text": "Cancelar",
+            "box": {
+              "x": 150.390625,
+              "y": 608.5,
+              "width": 83.25,
+              "height": 44
+            },
+            "centered": {
+              "outer": {
+                "left": 150.390625,
+                "right": 233.640625,
+                "top": 608.5,
+                "bottom": 652.5,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 162.390625,
+                "right": 221.640625,
+                "top": 621.046875,
+                "bottom": 638.046875
+              },
+              "textRects": [
+                {
+                  "left": 162.390625,
+                  "right": 221.640625,
+                  "top": 621.046875,
+                  "bottom": 638.046875,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          },
+          {
+            "text": "Confirmar registro",
+            "box": {
+              "x": 77,
+              "y": 814.5,
+              "width": 146.765625,
+              "height": 44
+            },
+            "centered": {
+              "outer": {
+                "left": 77,
+                "right": 223.765625,
+                "top": 814.5,
+                "bottom": 858.5,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 211.765625,
+                "top": 827.046875,
+                "bottom": 844.046875
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 211.765625,
+                  "top": 827.046875,
+                  "bottom": 844.046875,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "review-feedback-1440",
+      "classification": "PASS",
+      "observed": {
+        "headingIntersection": 20.78125,
+        "noninteractiveFocus": true,
+        "confirmFocused": false,
+        "reviewText": "Confira antes de confirmarSaldo de abertura: US$ 1.065,00Informado: 3%Resultado / lançamento: US$ 31,95 · taxa 3%Confirmar registro",
+        "buttons": [
+          {
+            "text": "Salvar",
+            "box": {
+              "x": 388.1875,
+              "y": 902.21875,
+              "width": 65.390625,
+              "height": 44
+            },
+            "centered": {
+              "outer": {
+                "left": 388.1875,
+                "right": 453.578125,
+                "top": 902.21875,
+                "bottom": 946.21875,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 914.765625,
+                "bottom": 931.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 441.578125,
+                  "top": 914.765625,
+                  "bottom": 931.765625,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          },
+          {
+            "text": "Cancelar",
+            "box": {
+              "x": 461.578125,
+              "y": 902.21875,
+              "width": 83.25,
+              "height": 44
+            },
+            "centered": {
+              "outer": {
+                "left": 461.578125,
+                "right": 544.828125,
+                "top": 902.21875,
+                "bottom": 946.21875,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 914.765625,
+                "bottom": 931.765625
+              },
+              "textRects": [
+                {
+                  "left": 473.578125,
+                  "right": 532.828125,
+                  "top": 914.765625,
+                  "bottom": 931.765625,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          },
+          {
+            "text": "Confirmar registro",
+            "box": {
+              "x": 388.1875,
+              "y": 1084.21875,
+              "width": 146.765625,
+              "height": 44
+            },
+            "centered": {
+              "outer": {
+                "left": 388.1875,
+                "right": 534.953125,
+                "top": 1084.21875,
+                "bottom": 1128.21875,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1096.765625,
+                "bottom": 1113.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 522.953125,
+                  "top": 1096.765625,
+                  "bottom": 1113.765625,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "far-future-save-focus",
+      "classification": "PASS",
+      "observed": {
+        "sameCellFocus": true,
+        "visibleIntersection": 43.78125,
+        "editors": 0,
+        "commands": [
+          "setProjection"
+        ],
+        "writers": 1
+      }
+    },
+    {
+      "id": "real-notes-escape",
+      "classification": "PASS",
+      "observed": {
+        "editors": 1,
+        "value": "3",
+        "pending": true,
+        "notesOpen": false
+      }
+    },
+    {
+      "id": "checkbox-label",
+      "classification": "PASS",
+      "observed": {
+        "width": 171.90625,
+        "height": 44,
+        "direction": "row",
+        "centerDelta": 0,
+        "left": 868.1875,
+        "right": 1040.09375,
+        "viewport": 1440
+      }
+    }
+  ],
+  "browser": "148.0.7778.96",
+  "hashes_after": {
+    "src/js/30-accounting/06-planning/03-ui.js": "eb40224556cd804e5db39a42886b0cdf8513b64d72d41e8932aa5ee687ac31a4",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/js/40-app/01-navigation.js": "837f06cfabb8adbacfb1f0196d0d27c1f459e044ea8e65305deadba7d97d953d",
+    "src/js/40-app/07-finalize-session.js": "3c64c799468706964419158b56e46337115fe9a424615ecbf5328c2c5e1ee041",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+    "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+    "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5",
+    "tools/planning_ui_test.py": "495962feeb5122e9f668d671492a169c2333844555edd336e04c94ed153da894",
+    "src/js/manifest.json": "ac779a71051aa0d1d81fa644524e368f0d0b0054147f2f03a5619bb4c59a8585",
+    "build-id.js": "dbe3e4e75d496a0293d8622777f9d46d7471e6c224e893d143feff62556896f8"
+  },
+  "source_unchanged": true,
+  "finished": "2026-10-22T02:12:06.430821+00:00",
+  "classification": "PASS"
+}

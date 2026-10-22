@@ -1,0 +1,23 @@
+{
+  "classification": "PASS",
+  "actual_exit": 0,
+  "seconds": 570.2154312133789,
+  "cases": 239,
+  "coverage": {
+    "executed": 239,
+    "required": 239,
+    "unique": true
+  },
+  "all206_preserved_executed": true,
+  "source_unchanged": true,
+  "compact_matrix_cases": 80,
+  "fields_per_matrix_case": 1920,
+  "boundary_cases": [
+    "compact-boundary-899",
+    "compact-boundary-900",
+    "compact-boundary-901"
+  ],
+  "native200_cases": 16,
+  "test_sha256": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5",
+  "result_sha256": "9b42f91cee454748a34c5b32e62145b7cf32dd21c7ea92a8ebb8d9f56d458056"
+}

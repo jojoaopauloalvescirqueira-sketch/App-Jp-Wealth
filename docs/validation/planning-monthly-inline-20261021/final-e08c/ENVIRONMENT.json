@@ -1,0 +1,12 @@
+{
+  "python_executable": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+  "python_version": "3.12.14",
+  "package_versions": {
+    "playwright": "1.60.0",
+    "pyee": "13.0.1",
+    "greenlet": "3.5.6"
+  },
+  "wheel_RECORD_files_verified": 292,
+  "application_dependencies_modified": false,
+  "restored_from_existing_cache": true
+}

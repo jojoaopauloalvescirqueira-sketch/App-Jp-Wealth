@@ -42,7 +42,7 @@ function fixture(initial=null,setup){
 }
 test('Absent preference freezes PF and Alladin with no incidental writes',()=>{
   const f=fixture();assert.equal(f.api.KEY,key);
-  assert.deepEqual(clean(f.api.snapshot().states),{research:'active',forex:'active','personal-finance':'frozen',alladin:'frozen'});
+  assert.deepEqual(clean(f.api.snapshot().states),{research:'active',forex:'active',planning:'active','personal-finance':'frozen',alladin:'frozen'});
   assert.equal(f.api.snapshot().writable,true);assert.equal(f.api.snapshot().confirmed,true);
   assert.equal(f.writes.length,0);assert.equal(f.map.has(key),false);
   ['dashboard','tools','settings','editor','notes','backup'].forEach(id=>assert.equal(f.api.canAccess(id),true));
@@ -118,7 +118,7 @@ test('Already effective state, invalid module and invalid state never write',()=
   assert.equal(f.api.setState('dashboard','frozen').reason,'invalid-module');assert.equal(f.api.setState('forex','disabled').reason,'invalid-state');
   assert.equal(f.writes.length,0);assert.equal(f.map.has(key),false);
 });
-test('All four managed IDs support both states with preserved independent choices',()=>{
+test('All five managed IDs support both states with preserved independent choices',()=>{
   const f=fixture();f.api.IDS.forEach(id=>{assert.equal(f.api.setState(id,'frozen').ok,true);assert.equal(f.api.getState(id),'frozen');});
   f.api.IDS.forEach(id=>assert.equal(f.api.canAccess(id),false));
   f.api.IDS.forEach(id=>{assert.equal(f.api.setState(id,'active').ok,true);assert.equal(f.api.getState(id),'active');});

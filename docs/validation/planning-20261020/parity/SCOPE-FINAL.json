@@ -1,0 +1,872 @@
+{
+  "result": "PASS",
+  "build": "443c1a59f2c1f46d",
+  "protected_count": 213,
+  "protected_changed": [],
+  "links_count": 8,
+  "links_changed": [],
+  "changed_paths_count": 148,
+  "paths": [
+    "CHANGELOG.md",
+    "README.md",
+    "SESSION_HANDOFF.md",
+    "build-id.js",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "docs/architecture/ARCHITECTURE.md",
+    "docs/architecture/CODE-MAP.md",
+    "docs/architecture/FX-PLANNING.md",
+    "docs/architecture/NAVIGATION-HIERARCHY.md",
+    "docs/architecture/PLANNING-MONTHLY.md",
+    "docs/architecture/STATE-SCHEMA.md",
+    "docs/governance/CONTEXT-MAP.md",
+    "docs/governance/CURRENT-STATE.md",
+    "docs/governance/PROJECT-CONTEXT.md",
+    "docs/work/ACTIVE-TASK.md",
+    "index.html",
+    "src/js/00-core/08-module-availability.js",
+    "src/js/10-domain/08-usd-brl-quote.js",
+    "src/js/20-ui/03-main-render.js",
+    "src/js/20-ui/12-nav-style.js",
+    "src/js/20-ui/25-dash-macro.js",
+    "src/js/20-ui/26-forex-engine-views.js",
+    "src/js/20-ui/32-module-availability.js",
+    "src/js/20-ui/33-module-work.js",
+    "src/js/30-accounting/01-daily-ledger.js",
+    "src/js/30-accounting/02-accounting-engine.js",
+    "src/js/30-accounting/05-fx-planning/01-fx-model.js",
+    "src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+    "src/js/30-accounting/05-fx-planning/03-fx-state.js",
+    "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+    "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+    "src/js/40-app/01-navigation.js",
+    "src/js/40-app/06-boot.js",
+    "src/js/40-app/07-finalize-session.js",
+    "src/js/40-app/11-operational-shell.js",
+    "src/js/40-app/18-notification-center.js",
+    "src/js/40-app/26-learning-catalog.js",
+    "src/js/manifest.json",
+    "src/styles/app.css",
+    "src/vendor/downloads/leverage-daily-source-payload.js",
+    "src/vendor/downloads/leverage-native-kit-payload.js",
+    "src/vendor/downloads/leverage-native-pin-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.json",
+    "src/vendor/downloads/leverage-source-payload.js",
+    "src/vendor/downloads/nocuda-payload.js",
+    "src/vendor/market-hours/runtime-payload.js",
+    "sw.js",
+    "tools/behavior_finance_regression_test.py",
+    "tools/contextual_sidebar_test.py",
+    "tools/dashboard_macro_test.py",
+    "tools/exec_submenu_test.py",
+    "tools/financial_projection_audit_test.py",
+    "tools/finpes_navigation_test.py",
+    "tools/forex_clarity_test.py",
+    "tools/forex_navigation_journey_test.py",
+    "tools/forex_navigation_table_test.py",
+    "tools/forex_persistence_contract_test.py",
+    "tools/forex_task_design_test.py",
+    "tools/forex_v11_journey_test.py",
+    "tools/forex_v11_ledger_planning_test.py",
+    "tools/fx_consolidated_ui_test.py",
+    "tools/fx_monthly_board_test.py",
+    "tools/fx_monthly_chart_test.py",
+    "tools/fx_monthly_domain_test.py",
+    "tools/fx_planning_test.py",
+    "tools/learning_foundation_test.mjs",
+    "tools/learning_guide_test.py",
+    "tools/module_availability_core_test.py",
+    "tools/navigation_ia_test.py",
+    "tools/navigation_layout_choice_test.py",
+    "tools/navigation_local_contract_test.py",
+    "tools/navigation_order_test.py",
+    "tools/presentation_refactor_contract_test.py",
+    "tools/quality_gate.py",
+    "tools/regression-memory.json",
+    "tools/research_navigation_test.py",
+    "tools/saving_draft_recovery_test.py",
+    "tools/scenario_fan_test.py",
+    "tools/smoke_test.py",
+    "tools/usd_brl_quote_test.py",
+    "tools/visual_proportion_test.py",
+    "docs/architecture/PLANNING.md",
+    "docs/decisions/2026-10-20-planning-reference.md",
+    "docs/superpowers/plans/2026-10-20-planning.md",
+    "docs/validation/planning-20261020/FINANCIAL-REVIEW-R3.md",
+    "docs/validation/planning-20261020/FULL-CHECKS.md",
+    "docs/validation/planning-20261020/FULL-RESULT.json",
+    "docs/validation/planning-20261020/LEGACY-COVERAGE.md",
+    "docs/validation/planning-20261020/README.md",
+    "docs/validation/planning-20261020/REPRESENTATIONS-REVIEW.md",
+    "docs/validation/planning-20261020/RUNTIME-INPUTS.json",
+    "docs/validation/planning-20261020/SCOPE.json",
+    "docs/validation/planning-20261020/SECURITY-REVIEW-R3.md",
+    "docs/validation/planning-20261020/TEST-INPUTS.json",
+    "docs/validation/planning-20261020/UX-REVIEW.md",
+    "docs/validation/planning-20261020/parity/EARLY-FULL-ATTEMPT.json",
+    "docs/validation/planning-20261020/parity/FINAL-CHECKS.json",
+    "docs/validation/planning-20261020/parity/FINGERPRINT-INPUTS.json",
+    "docs/validation/planning-20261020/parity/FULL-CHECKS.md",
+    "docs/validation/planning-20261020/parity/FULL-RESULT.json",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-FINAL-CHECKS.json",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-FULL-CHECKS.md",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-FULL-RESULT.json",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-LAYOUT-RESULT.json",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-PREVIEW-INTEGRITY.json",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-RECEIPT-COPIES.json",
+    "docs/validation/planning-20261020/parity/HISTORY-d935-SCOPE-FINAL.json",
+    "docs/validation/planning-20261020/parity/INDEPENDENT-REVIEW.md",
+    "docs/validation/planning-20261020/parity/LAYOUT-RESULT.json",
+    "docs/validation/planning-20261020/parity/PACKAGE-REVIEW.json",
+    "docs/validation/planning-20261020/parity/POST-FULL-DOCUMENT-DRIFT.json",
+    "docs/validation/planning-20261020/parity/PRESENTATION-RESULT.json",
+    "docs/validation/planning-20261020/parity/PREVIEW-INTEGRITY.json",
+    "docs/validation/planning-20261020/parity/PROJECT-DOCS-HISTORY-PROOF.json",
+    "docs/validation/planning-20261020/parity/README.md",
+    "docs/validation/planning-20261020/parity/RECEIPT-COPIES.json",
+    "docs/validation/planning-20261020/parity/RUNNER-INPUT.json",
+    "docs/validation/planning-20261020/parity/RUNTIME-INPUTS.json",
+    "docs/validation/planning-20261020/parity/SCOPE-FINAL.json",
+    "docs/validation/planning-20261020/parity/SCOPE-REVIEW.json",
+    "docs/validation/planning-20261020/parity/SCRIPT-INVENTORY.json",
+    "docs/validation/planning-20261020/parity/SOURCE-INTEGRITY.json",
+    "docs/validation/planning-20261020/parity/SOURCE-MATRIX.md",
+    "docs/validation/planning-20261020/parity/SOURCE-ORACLE-RESULT.json",
+    "docs/validation/planning-20261020/parity/TEST-INPUTS.json",
+    "docs/validation/planning-20261020/parity/independent/form-source-compare.json",
+    "docs/validation/planning-20261020/parity/independent/fx-edit-review.json",
+    "docs/validation/planning-20261020/parity/independent/startup-probe.json",
+    "docs/validation/planning-20261020/parity/independent/state-browser-review.json",
+    "docs/validation/planning-20261020/parity/independent/stop-draft-review.json",
+    "docs/validation/planning-20261020/parity/independent/tabs-fixture-first-failure.json",
+    "docs/validation/planning-20261020/parity/independent/tabs-review.json",
+    "docs/validation/planning-20261020/parity/independent/transient-startup-failure.json",
+    "docs/work/CHG-JPW-PLANNING-20261020.md",
+    "src/js/30-accounting/06-planning/01-engine.js",
+    "src/js/30-accounting/06-planning/02-state.js",
+    "src/js/30-accounting/06-planning/03-ui.js",
+    "tools/planning_boundaries_test.js",
+    "tools/planning_distribution_test.py",
+    "tools/planning_engine_test.js",
+    "tools/planning_navigation_test.js",
+    "tools/planning_parity_engine_test.js",
+    "tools/planning_parity_layout_test.py",
+    "tools/planning_parity_test.py",
+    "tools/planning_quote_test.js",
+    "tools/planning_state_test.js",
+    "tools/planning_ui_test.py"
+  ],
+  "statuses": [
+    {
+      "status": " M",
+      "path": "CHANGELOG.md"
+    },
+    {
+      "status": " M",
+      "path": "README.md"
+    },
+    {
+      "status": " M",
+      "path": "SESSION_HANDOFF.md"
+    },
+    {
+      "status": " M",
+      "path": "build-id.js"
+    },
+    {
+      "status": " M",
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/ARCHITECTURE.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/CODE-MAP.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/FX-PLANNING.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/NAVIGATION-HIERARCHY.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/PLANNING-MONTHLY.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/architecture/STATE-SCHEMA.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/governance/CONTEXT-MAP.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/governance/CURRENT-STATE.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/governance/PROJECT-CONTEXT.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/work/ACTIVE-TASK.md"
+    },
+    {
+      "status": " M",
+      "path": "index.html"
+    },
+    {
+      "status": " M",
+      "path": "src/js/00-core/08-module-availability.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/10-domain/08-usd-brl-quote.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/20-ui/03-main-render.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/20-ui/12-nav-style.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/20-ui/25-dash-macro.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/20-ui/26-forex-engine-views.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/20-ui/32-module-availability.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/20-ui/33-module-work.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/30-accounting/01-daily-ledger.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/30-accounting/02-accounting-engine.js"
+    },
+    {
+      "status": " D",
+      "path": "src/js/30-accounting/05-fx-planning/01-fx-model.js"
+    },
+    {
+      "status": " D",
+      "path": "src/js/30-accounting/05-fx-planning/02-fx-engine.js"
+    },
+    {
+      "status": " D",
+      "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js"
+    },
+    {
+      "status": " D",
+      "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js"
+    },
+    {
+      "status": " D",
+      "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/40-app/01-navigation.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/40-app/06-boot.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/40-app/07-finalize-session.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/40-app/11-operational-shell.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/40-app/18-notification-center.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/40-app/26-learning-catalog.js"
+    },
+    {
+      "status": " M",
+      "path": "src/js/manifest.json"
+    },
+    {
+      "status": " M",
+      "path": "src/styles/app.css"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/leverage-daily-source-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/leverage-native-kit-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/leverage-native-pin-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/leverage-preview-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/leverage-preview-payload.json"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/leverage-source-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/downloads/nocuda-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "src/vendor/market-hours/runtime-payload.js"
+    },
+    {
+      "status": " M",
+      "path": "sw.js"
+    },
+    {
+      "status": " M",
+      "path": "tools/behavior_finance_regression_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/contextual_sidebar_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/dashboard_macro_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/exec_submenu_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/financial_projection_audit_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/finpes_navigation_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_clarity_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_navigation_journey_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_navigation_table_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_persistence_contract_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_task_design_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_v11_journey_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/forex_v11_ledger_planning_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/fx_consolidated_ui_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/fx_monthly_board_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/fx_monthly_chart_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/fx_monthly_domain_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/fx_planning_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/learning_foundation_test.mjs"
+    },
+    {
+      "status": " M",
+      "path": "tools/learning_guide_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/module_availability_core_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/navigation_ia_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/navigation_layout_choice_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/navigation_local_contract_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/navigation_order_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/presentation_refactor_contract_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/quality_gate.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/regression-memory.json"
+    },
+    {
+      "status": " M",
+      "path": "tools/research_navigation_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/saving_draft_recovery_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/scenario_fan_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/smoke_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/usd_brl_quote_test.py"
+    },
+    {
+      "status": " M",
+      "path": "tools/visual_proportion_test.py"
+    },
+    {
+      "status": "??",
+      "path": "docs/architecture/PLANNING.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/decisions/2026-10-20-planning-reference.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/superpowers/plans/2026-10-20-planning.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/FINANCIAL-REVIEW-R3.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/FULL-CHECKS.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/FULL-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/LEGACY-COVERAGE.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/README.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/REPRESENTATIONS-REVIEW.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/RUNTIME-INPUTS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/SCOPE.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/SECURITY-REVIEW-R3.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/TEST-INPUTS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/UX-REVIEW.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/EARLY-FULL-ATTEMPT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/FINAL-CHECKS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/FINGERPRINT-INPUTS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/FULL-CHECKS.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-FINAL-CHECKS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-FULL-CHECKS.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-FULL-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-LAYOUT-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-PREVIEW-INTEGRITY.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-RECEIPT-COPIES.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/HISTORY-d935-SCOPE-FINAL.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/INDEPENDENT-REVIEW.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/LAYOUT-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/PACKAGE-REVIEW.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/POST-FULL-DOCUMENT-DRIFT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/PRESENTATION-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/PREVIEW-INTEGRITY.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/PROJECT-DOCS-HISTORY-PROOF.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/README.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/RECEIPT-COPIES.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/RUNNER-INPUT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/RUNTIME-INPUTS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/SCOPE-FINAL.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/SCOPE-REVIEW.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/SCRIPT-INVENTORY.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/SOURCE-INTEGRITY.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/SOURCE-MATRIX.md"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/SOURCE-ORACLE-RESULT.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/TEST-INPUTS.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/form-source-compare.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/fx-edit-review.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/startup-probe.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/state-browser-review.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/stop-draft-review.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/tabs-fixture-first-failure.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/tabs-review.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/validation/planning-20261020/parity/independent/transient-startup-failure.json"
+    },
+    {
+      "status": "??",
+      "path": "docs/work/CHG-JPW-PLANNING-20261020.md"
+    },
+    {
+      "status": "??",
+      "path": "src/js/30-accounting/06-planning/01-engine.js"
+    },
+    {
+      "status": "??",
+      "path": "src/js/30-accounting/06-planning/02-state.js"
+    },
+    {
+      "status": "??",
+      "path": "src/js/30-accounting/06-planning/03-ui.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_boundaries_test.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_distribution_test.py"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_engine_test.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_navigation_test.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_parity_engine_test.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_parity_layout_test.py"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_parity_test.py"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_quote_test.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_state_test.js"
+    },
+    {
+      "status": "??",
+      "path": "tools/planning_ui_test.py"
+    }
+  ],
+  "git_status_sha256": "f277e66c4fca6fd01bd2aa446be0d00374c829945ab33f999bf714838891030f",
+  "untracked_files": "all",
+  "outside_allowlist": [],
+  "derived_paths": [
+    "build-id.js",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "src/vendor/downloads/leverage-daily-source-payload.js",
+    "src/vendor/downloads/leverage-native-kit-payload.js",
+    "src/vendor/downloads/leverage-native-pin-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.json",
+    "src/vendor/downloads/leverage-source-payload.js",
+    "src/vendor/downloads/nocuda-payload.js",
+    "src/vendor/market-hours/runtime-payload.js"
+  ],
+  "policy": {
+    "primary_allowed": [
+      "src/js/30-accounting/06-planning/**",
+      "src/js/30-accounting/05-fx-planning/**",
+      "src/js/30-accounting/02-accounting-engine.js",
+      "src/js/10-domain/08-usd-brl-quote.js",
+      "src/js/00-core/04-persistence.js",
+      "src/js/00-core/07-workspace-backup.js",
+      "src/js/00-core/08-module-availability.js",
+      "src/js/20-ui/25-dash-macro.js",
+      "src/js/20-ui/32-module-availability.js",
+      "src/js/20-ui/33-module-work.js",
+      "src/js/40-app/01-navigation.js",
+      "src/js/20-ui/03-main-render.js",
+      "src/js/20-ui/12-nav-style.js",
+      "src/js/40-app/06-boot.js",
+      "src/js/40-app/18-notification-center.js",
+      "src/js/30-accounting/01-daily-ledger.js",
+      "src/js/20-ui/26-forex-engine-views.js",
+      "src/styles/planning.css",
+      "src/js/40-app/07-finalize-session.js",
+      "src/js/40-app/11-operational-shell.js",
+      "src/js/40-app/12-global-dashboard.js",
+      "src/js/40-app/26-learning-catalog.js",
+      "src/js/manifest.json",
+      "sw.js",
+      "src/styles/app.css",
+      "index.html",
+      "tools/planning*",
+      "tools/smoke_test.py",
+      "tools/finpes_navigation_test.py",
+      "tools/fx_consolidated_ui_test.py",
+      "tools/contextual_sidebar_test.py",
+      "tools/forex_task_design_test.py",
+      "tools/forex_v11_journey_test.py",
+      "tools/visual_proportion_test.py",
+      "tools/fx_planning_test.py",
+      "tools/fx_monthly*",
+      "tools/scenario_fan_test.py",
+      "tools/financial_projection_audit_test.py",
+      "tools/behavior_finance_regression_test.py",
+      "tools/exec_submenu_test.py",
+      "tools/research_navigation_test.py",
+      "tools/forex_navigation*",
+      "tools/navigation*",
+      "tools/dashboard_macro_test.py",
+      "tools/module_availability*",
+      "tools/forex_v11_ledger_planning_test.py",
+      "tools/finalize_session_test.py",
+      "tools/usd_brl_quote_test.py",
+      "tools/forex_persistence_contract_test.py",
+      "tools/saving_draft_recovery_test.py",
+      "tools/forex_clarity_test.py",
+      "tools/presentation_refactor_contract_test.py",
+      "tools/learning_foundation_test.mjs",
+      "docs/validation/planning-20261020/**",
+      "tools/learning_guide_test.py",
+      "tools/quality_gate.py",
+      "tools/regression-memory.json",
+      "docs/architecture/PLANNING.md",
+      "docs/architecture/FX-PLANNING.md",
+      "docs/architecture/PLANNING-MONTHLY.md",
+      "docs/architecture/NAVIGATION-HIERARCHY.md",
+      "docs/architecture/STATE-SCHEMA.md",
+      "docs/architecture/CODE-MAP.md",
+      "docs/architecture/ARCHITECTURE.md",
+      "docs/governance/PROJECT-CONTEXT.md",
+      "docs/governance/CONTEXT-MAP.md",
+      "docs/governance/CURRENT-STATE.md",
+      "docs/work/ACTIVE-TASK.md",
+      "docs/work/CHG-JPW-PLANNING-20261020.md",
+      "docs/superpowers/plans/2026-10-20-planning.md",
+      "docs/decisions/2026-10-20-planning-reference.md",
+      "README.md",
+      "CHANGELOG.md",
+      "SESSION_HANDOFF.md"
+    ],
+    "derived_allowed": [
+      "build-id.js",
+      "dist/**",
+      "src/vendor/downloads/*-payload.js",
+      "src/vendor/downloads/*-payload.json",
+      "src/vendor/market-hours/runtime-payload.js"
+    ],
+    "forbidden": [
+      "AGENTS.md",
+      "skills/**",
+      ".github/**",
+      "docs/normative/**",
+      "mt5/**",
+      "downloads/**"
+    ]
+  },
+  "baseline_sha256": "0971a74ed11f61535275f8e4655cdae446700b0b672452f49d22fc36e13afba9",
+  "baseline_links_sha256": "bc49a29f28a7b6b6994f5d0d7ec27dbc7799babb6f8c113e9ef4a667b5ea2b89",
+  "chg_sha256": "4f335c7c343123dee8e87d75a8e6abd26d4895b1aabcb22202fa9aa87a1916cc",
+  "independent_readonly_reference": {
+    "path": ".superpowers/sdd/planning-parity-20261020/critic/final-readonly-scope-443c-20261020.json",
+    "sha256": "07a75f94e05ae54b1d2c145af0a75d786eba666dd304592f54e61083b5ed8478",
+    "result": "PASS",
+    "candidate": "443c1a59f2c1f46d",
+    "note": "Earlier independent snapshot; its path count is not substituted for this final check's actual status."
+  },
+  "scope_note": "Matcher unions primary and derived CHG allowlists. Hashes prove the bounded baseline preservation, not authorship, Git history, publication, Google execution or human acceptance. Ignored new files are not inventoried by git status."
+}

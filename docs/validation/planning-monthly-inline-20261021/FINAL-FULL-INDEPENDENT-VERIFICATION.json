@@ -1,0 +1,27 @@
+{
+  "verdict": "PASS actual current complete finite execution",
+  "candidate_build": "e08c12101146ae7b",
+  "freeze_sha256": "ecfea699d070ad83fa904f5154b458ba2a7a47e3b5f880631741cc685308a6e7",
+  "command_actual_exit": 0,
+  "wrapper_started_at": "2026-10-22T03:55:39.031757+00:00",
+  "wrapper_finished_at": "2026-10-22T04:30:05.069845+00:00",
+  "raw_started_at": "2026-10-22T00:55:39-03:00",
+  "raw_finished_at": "2026-10-22T01:30:05-03:00",
+  "raw_sha256": "ffb9762a95daef630b9a42970069993f85799eedb7dc01feddeb4ae31fb43e1d",
+  "log_sha256": "3492c254ff9116819e88dd2870a4b2057b152fce32413c4b466b05c90a53fb54",
+  "96_exact_baseline_order_all_PASS": true,
+  "all_other_classifications_zero": true,
+  "5export_maps_and_receipt_hashes_exact": true,
+  "397runtime_264tests_1runner_37controls_current": true,
+  "default240_same_actual_full_artifact": true,
+  "visual_duration_seconds": 565.415,
+  "source_unchanged_after_full": true,
+  "limits": [
+    "finite current candidate only",
+    "no human acceptance",
+    "legacy confirmation focus BODY inherited",
+    "PDF footer-only page2 inherited",
+    "historical Alladin caseF remains open",
+    "prior incomplete6ca/004d attempts not passed"
+  ]
+}

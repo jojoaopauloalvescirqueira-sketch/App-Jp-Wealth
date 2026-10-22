@@ -1,0 +1,27 @@
+{
+  "result": "PASS",
+  "facts": {
+    "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+    "mode": "audit",
+    "checked_at": "2026-10-21T23:14:24-03:00",
+    "git_root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+    "branch": "codex/planejamento-patrimonial-20261020",
+    "head": "ea15afc9c6a9",
+    "dirty_entries": 128,
+    "tracked_files": 1576,
+    "versionable_files": 1945,
+    "current_state_date": "2026-10-20",
+    "current_state_age_days": 1,
+    "source_revision": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+    "source_revision_status": "valid",
+    "paths_since_source_revision_count": 0,
+    "potential_material_changes_since_source_revision": false,
+    "sensitive_candidate_paths": [],
+    "manifest_scripts": 120,
+    "manifest_runtime_assets": 4
+  },
+  "warnings": [
+    "arvore possui 128 alteracao(oes); confirme autoria e escopo"
+  ],
+  "errors": []
+}

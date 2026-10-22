@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-22T03:07:04.959006+00:00",
+  "candidate_build": "004d0c6286d5a3d4",
+  "source_pdf_sha256": "623575e2c18b7a211e7b92fb6bf62f67d7e001208950b4973acf494dadc04b07",
+  "pages": 2,
+  "page_sizes": [
+    {
+      "width": 842.88,
+      "height": 595.91998
+    },
+    {
+      "width": 842.88,
+      "height": 595.91998
+    }
+  ],
+  "page_text_lines": [
+    21,
+    2
+  ],
+  "renders": {
+    "page-1.png": "1e6ebb7be92da8f8c5f588cccae27aae4cfe278b7a80dd3076a5c41a6b394e72",
+    "page-2.png": "4d41901c3cca9c83a7775fc95efd9cd2b3f9fed51dafca39b604d1cff41364e0"
+  },
+  "pdfinfo_actual_exit": 0,
+  "render_actual_exit": 0,
+  "visual_review": "CONTENT_READABLE_WITH_INHERITED_PAGINATION_LIMITATION",
+  "scope": "Read-only inspection of app test report; baselinepagination limitation is not silentlyclosed or redesigned.",
+  "finding": "Both rendered pages reviewed. Numbers/text/chart readable; page2 contains only two footer lines, matching inherited print pagination. No PDF redesign or human acceptance claimed.",
+  "prior_inspection": "docs/validation/planning-monthly-inline-20261021/PDF-INSPECTION.json"
+}

@@ -1,0 +1,12 @@
+{
+  "candidate_build": "e08c12101146ae7b",
+  "classification": "PASS",
+  "coverage": {
+    "executed": 240,
+    "required": 240,
+    "unique": true
+  },
+  "source_unchanged": true,
+  "raw_sha256": "010a5106ad6fe34d2fdcd7def41b33781dfa80ec38d71b4c871de34b8dae00de",
+  "scope": "Completed visualcheck under actual ongoingFULL; no96PASS claim yet. Requiredidentityset covered; exactorderedidentity retainedfor96FULL."
+}

@@ -2,7 +2,7 @@
   "schema": "jpwealth/regression-memory/v1",
   "scope_note": "Índice factual PARCIAL de bugs e pendências; não é norma, lista integral do legado, evidência de execução atual ou runtime de memória. Ler fontes/testes e revalidar bytes antes de agir. Memória global não alterada.",
   "authority": "Fontes e autorização vigentes prevalecem; registros não autorizam edição, fechamento ou Git.",
-  "coverage_note": "Índice parcial; focais de Bolsas são adicionais ao runnerfull atual. W2 e downloads estão no FULL. Outros testes legados também estão fora do runner; migração da cobertura fica pendente em escopo próprio. Nenhum gate foi alterado.",
+  "coverage_note": "Índice parcial; focais de Bolsas são adicionais ao runnerfull atual. W2 e downloads estão no FULL. Outros testes legados também estão fora do runner; migração da cobertura fica pendente em escopo próprio. Nas revisões históricas abaixo, o gate não havia sido alterado. Em2026-10-20, a substituição autorizada do Planejamento trocou a entrada do produto retirado por suítes novas explícitas; demais verificações preservadas. Resultados históricos não são transferidos ao candidato.",
   "entries": [
     {
       "id": "resize_focus",
@@ -717,6 +717,2077 @@
         "scope": "CausalRED/GREEN6cases; core26/UI30/work/backup14/sidebar16/lifecyclePASS. CurrentFULL 81 PASS; expandedcontextual BASELINE_FAIL firstdialog-open refusal; historicalincidentsremainopen. Actualuserclient/humanacceptance unobserved.",
         "candidate_map_sha256": "dad790a4457e3997ba3037b13f9d9ac6e13f6b4d6754d198dac86f7f236d59cb",
         "full_receipt_sha256": "99cf8648cbe581e83c03f8746b93981d36566e1bb26e59d4379173250fa7b23c"
+      }
+    },
+    {
+      "id": "planning_confirmed_document",
+      "state": "fixed_regression",
+      "summary": "Uma confirmação de Planejamento não incorpora RAM ainda não confirmada.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Dados e gravação / Fluxo de uso / Verificação"
+      },
+      "stimulus": "Alterar RAM de outro domínio ou do próprio agregado antes de criar/registrar; repetir sem base salva e após boot.",
+      "expected": "CONFLICT sem writer; rascunho e RAM preservados; somente adoção validada pode liberar contexto.",
+      "cause": "O writer de documento completo poderia confirmar alterações adjacentes junto com o plano; reset sem base podia aprová-las implicitamente.",
+      "protection": {
+        "path": "tools/planning_state_test.js",
+        "case": "PLSTATE-28,32,35,36",
+        "command": "node tools/planning_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/adjacent-red.txt",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-final.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "ff0f078f70b9fb97",
+        "date": "2026-10-20",
+        "source_sha256": "c3df0b959be15a83e119f01c69fe8a8ade5d48292a24efcde855c8695e060f0f",
+        "scope": "Regressões sintéticas e revisões delimitadas; full final tem recibo próprio. Não encerra incidentes históricos nem comprova compreensão humana."
+      }
+    },
+    {
+      "id": "planning_backup_secret_boundary",
+      "state": "fixed_regression",
+      "summary": "O novo agregado não transporta chaves de segredo pelo Backup Completo.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Dados e gravação / Fluxo de uso / Verificação"
+      },
+      "stimulus": "Importar/exportar agregado v1 ou futuro com chaves de segredo aninhadas e campos desconhecidos não secretos.",
+      "expected": "Recusa anterior à aplicação/entrega; original intacto e campos desconhecidos não secretos preservados.",
+      "cause": "A validação inicial do motor não cobria a fronteira comum de importação/exportação.",
+      "protection": {
+        "path": "tools/planning_boundaries_test.js",
+        "case": "11 aliases e dois controles de versão futura",
+        "command": "node tools/planning_boundaries_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-boundaries"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/import-secrets-red.txt",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/boundaries-final.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "ff0f078f70b9fb97",
+        "date": "2026-10-20",
+        "source_sha256": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18",
+        "scope": "Regressões sintéticas e revisões delimitadas; full final tem recibo próprio. Não encerra incidentes históricos nem comprova compreensão humana."
+      }
+    },
+    {
+      "id": "planning_current_forecast",
+      "state": "fixed_regression",
+      "summary": "Aporte corrente previsto permanece até o fim do mês e registro efetivo o substitui.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Dados e gravação / Fluxo de uso / Verificação"
+      },
+      "stimulus": "Ler o mês corrente sem ledger; registrar aporte efetivo; finalizar sem aporte efetivo e conferir snapshot.",
+      "expected": "Sem soma duplicada; fechamento usa somente fatos e snapshot coincide com saldo efetivo.",
+      "cause": "A primeira interpretação expirava o previsto no início do mês; fechamento capturava prévia antes de aplicar a condição fechada.",
+      "protection": {
+        "path": "tools/planning_engine_test.js",
+        "case": "PLN-39; PLSTATE-29 no teste de estado",
+        "command": "node tools/planning_engine_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-engine"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/engine-current-expiry-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/engine-green.log",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "ff0f078f70b9fb97",
+        "date": "2026-10-20",
+        "source_sha256": "4ee816dc6f1e1e12517a62bdc104fe49c03cffcd7aaad6eb0fcafe1cbca03953",
+        "scope": "Regressões sintéticas e revisões delimitadas; full final tem recibo próprio. Não encerra incidentes históricos nem comprova compreensão humana."
+      }
+    },
+    {
+      "id": "planning_stop_candidate",
+      "state": "fixed_regression",
+      "summary": "Simulação, limite e aplicação de parada usam o mesmo candidato futuro.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Dados e gravação / Fluxo de uso / Verificação"
+      },
+      "stimulus": "Informar parada anterior ao mês permitido, teto0/5/100%, projeções futuras editadas e busca da primeira data viável.",
+      "expected": "Data recusada sem escrita quando inválida; aplicação válida idêntica à prévia; fatos e referência preservados.",
+      "cause": "Parada era simulada antes do mês corrente, mas o comando tratava outra fronteira e o marcador não correspondia às células futuras.",
+      "protection": {
+        "path": "tools/planning_state_test.js",
+        "case": "PLSTATE-37–39; PLN-41,43–46 e oráculo externo adicional",
+        "command": "node tools/planning_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-red-stop-cap.txt",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-r3-stop-green.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "ff0f078f70b9fb97",
+        "date": "2026-10-20",
+        "source_sha256": "c3df0b959be15a83e119f01c69fe8a8ade5d48292a24efcde855c8695e060f0f",
+        "scope": "Regressões sintéticas e revisões delimitadas; full final tem recibo próprio. Não encerra incidentes históricos nem comprova compreensão humana."
+      }
+    },
+    {
+      "id": "planning_annual_provisional",
+      "state": "fixed_regression",
+      "summary": "Resumo anual conserva a natureza provisória da taxa mensal vazia.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Dados e gravação / Fluxo de uso / Verificação"
+      },
+      "stimulus": "Deixar taxa futura vazia versus informar zero explícito e consultar a agregação anual.",
+      "expected": "Ano com qualquer mês provisório é identificado; zero explícito continua definitivo.",
+      "cause": "A agregação anual inicial omitia a indicação de premissa provisória.",
+      "protection": {
+        "path": "tools/planning_engine_test.js",
+        "case": "PLN-42",
+        "command": "node tools/planning_engine_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-engine"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/engine-annual-provisional-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/engine-green.log",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "ff0f078f70b9fb97",
+        "date": "2026-10-20",
+        "source_sha256": "4ee816dc6f1e1e12517a62bdc104fe49c03cffcd7aaad6eb0fcafe1cbca03953",
+        "scope": "Regressões sintéticas e revisões delimitadas; full final tem recibo próprio. Não encerra incidentes históricos nem comprova compreensão humana."
+      }
+    },
+    {
+      "id": "planning_preview_mobile",
+      "state": "fixed_regression",
+      "summary": "A prévia acionada pelo usuário fica legível sem ocultar título ou controles do formulário.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Dados e gravação / Fluxo de uso / Verificação"
+      },
+      "stimulus": "Em390px, revisar prévia, atualizar render global e rolar conteúdo; repetir com zoom nativo200%.",
+      "expected": "Foco apenas pela ação explícita, prévia alcançável, header/footer íntegros e render não move foco/rolagem.",
+      "cause": "Prévia surgia sob o rodapé; o flex shrink do cabeçalho encobria parte do título ao rolar.",
+      "protection": {
+        "path": "tools/planning_ui_test.py",
+        "case": "mobile_preview_journey: prévia/foco/header/footer; native200 adicional",
+        "command": "python3 tools/planning_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/ui-red-dialog-header.txt",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/ui-green.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "build": "ff0f078f70b9fb97",
+        "date": "2026-10-20",
+        "source_sha256": "b45711801a1a89b14abf798f1f19bd58e46cd189adadc9dadf0c481b9a2326b8",
+        "scope": "Regressões sintéticas e revisões delimitadas; full final tem recibo próprio. Não encerra incidentes históricos nem comprova compreensão humana."
+      }
+    },
+    {
+      "id": "planning_portfolio_derivations",
+      "state": "fixed_regression",
+      "summary": "Consolidado agrega custo de aquisição e não fabrica confirmações ao carregar saldo encerrado.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dados e gravação"
+      },
+      "stimulus": "Combinar contas com custos BRL conhecidos/parciais e calendários distantes.",
+      "expected": "Média ponderada com cobertura e carry sem ampliar confirmedThrough.",
+      "cause": "A primeira agregação não expunha média global e propagava a confirmação na linha de carry.",
+      "protection": {
+        "path": "tools/planning_engine_test.js",
+        "case": "PLN-35,37,38",
+        "command": "node tools/planning_engine_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-engine"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/engine-global-cost-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/engine-green.log",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "ff0f078f70b9fb97",
+        "source_sha256": "4ee816dc6f1e1e12517a62bdc104fe49c03cffcd7aaad6eb0fcafe1cbca03953",
+        "scope": "Regressão sintética permanente; não encerra incidentes históricos nem equivale a teste humano."
+      }
+    },
+    {
+      "id": "planning_edit_preserves_facts",
+      "state": "fixed_regression",
+      "summary": "A prévia de edição usa o mesmo candidato com fatos e ajustes preservados que será gravado.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dados e gravação"
+      },
+      "stimulus": "Renomear conta com resultados, ajustes futuros, parada e referência já existentes.",
+      "expected": "Prévia e modelo confirmado iguais, sem gravação antecipada nem perda de histórico.",
+      "cause": "A UI criava um plano vazio novo para prever uma edição de conta existente.",
+      "protection": {
+        "path": "tools/planning_ui_test.py",
+        "case": "metadata preview preserves ledger, future overrides and contribution stop; PLSTATE-30",
+        "command": "python3 tools/planning_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/ui-red-preview.txt",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/ui-green.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "ff0f078f70b9fb97",
+        "source_sha256": "29cb17e80a677ad768e77c3f402c96b8122b86b1d9ac5e5c144d83c77a55e7d7",
+        "scope": "Regressão sintética permanente; não encerra incidentes históricos nem equivale a teste humano."
+      }
+    },
+    {
+      "id": "planning_provisional_form",
+      "state": "fixed_regression",
+      "summary": "Uma taxa futura vazia reabre vazia e não é reconfirmada como zero.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dados e gravação"
+      },
+      "stimulus": "Salvar projeção com taxa vazia, reabrir e alterar somente o aporte.",
+      "expected": "rate:null permanece provisória; zero explícito continua válido e distinto.",
+      "cause": "O formulário exibia o zero de cálculo no lugar da premissa ausente.",
+      "protection": {
+        "path": "tools/planning_ui_test.py",
+        "case": "provisional rate reopens blank instead of a calculated zero",
+        "command": "python3 tools/planning_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/ui-red-provisional.txt",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/ui-green.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "ff0f078f70b9fb97",
+        "source_sha256": "29cb17e80a677ad768e77c3f402c96b8122b86b1d9ac5e5c144d83c77a55e7d7",
+        "scope": "Regressão sintética permanente; não encerra incidentes históricos nem equivale a teste humano."
+      }
+    },
+    {
+      "id": "planning_historical_fx",
+      "state": "fixed_regression",
+      "summary": "Fechamento passado não usa câmbio corrente como se fosse histórico.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dados e gravação"
+      },
+      "stimulus": "Fechar mês passado sem referência do mês; consultar referência compatível e variar cotação atual.",
+      "expected": "USD disponível; BRL ausente até fonte histórica válida; snapshot fechado não é reprificado.",
+      "cause": "A primeira captura não distinguia adequadamente referência presente da competência histórica.",
+      "protection": {
+        "path": "tools/planning_state_test.js",
+        "case": "PLSTATE-21,23",
+        "command": "node tools/planning_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-historical-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-final.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "ff0f078f70b9fb97",
+        "source_sha256": "c3df0b959be15a83e119f01c69fe8a8ade5d48292a24efcde855c8695e060f0f",
+        "scope": "Regressão sintética permanente; não encerra incidentes históricos nem equivale a teste humano."
+      }
+    },
+    {
+      "id": "planning_operation_replay",
+      "state": "fixed_regression",
+      "summary": "Replay de reinício confirmado não cria outro plano nem repete arquivamento.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dados e gravação"
+      },
+      "stimulus": "Reenviar recibo e token originais; repetir após outro reinício.",
+      "expected": "Uma confirmação retornada sem outra escrita; plano posterior recusa replay antigo.",
+      "cause": "A verificação de identidade nova do plano não reconhecia corretamente o recibo original do reinício.",
+      "protection": {
+        "path": "tools/planning_state_test.js",
+        "case": "PLSTATE-11,24",
+        "command": "node tools/planning_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-idempotency-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": ".superpowers/sdd/planning-20261020/state-final.txt",
+          "result": "PASS",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "ff0f078f70b9fb97",
+        "source_sha256": "c3df0b959be15a83e119f01c69fe8a8ade5d48292a24efcde855c8695e060f0f",
+        "scope": "Regressão sintética permanente; não encerra incidentes históricos nem equivale a teste humano."
+      }
+    },
+    {
+      "id": "planning_source_journey",
+      "state": "fixed_regression",
+      "summary": "Entrada e abas reproduzem a dinâmica pedida da planilha.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dinâmica da planilha"
+      },
+      "stimulus": "Abrir Planejamento sem configuração, preencher e revisar o formulário; confirmar uma vez.",
+      "expected": "Somente Comece aqui, Consolidado e Preenchimento mensal; Referência interna, formulário explícito, simulação/revisão sem gravação e confirmação deliberada.",
+      "cause": "A interface anterior era uma adaptação e não reproduzia a jornada original.",
+      "protection": {
+        "path": "tools/planning_three_tabs_test.py",
+        "case": "all ten cases (CASES declaration)",
+        "command": "python3 tools/planning_three_tabs_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-three-tabs"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-parity-20261020/parity-red.json",
+          "result": "SOURCE_RECEIPT",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/planning-20261020/parity/README.md",
+          "result": "PASS",
+          "note": "Provas focais e revisão delimitada; FULL tem recibo próprio."
+        },
+        {
+          "path": ".superpowers/sdd/planning-proportions-20261021/three-tabs-focal-final.json",
+          "result": "PASS",
+          "note": "10 casos focais atuais; não transfere aprovação do FULL histórico.",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "prebuild-ui-sha256:232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "source_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "scope": "Focal completo de três abas no candidato de apresentação; identidade final e execução FULL no recibo próprio, sem inferir aprovação pela existência deste índice."
+      },
+      "verification_history": [
+        {
+          "date": "2026-10-20",
+          "build": "d93561c064cf5f40",
+          "source_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+          "scope": "Regressão sintética da correção da dinâmica; não encerra incidentes históricos nem comprova execução Google autenticada ou aceite humano."
+        },
+        {
+          "date": "2026-10-20",
+          "build": "443c1a59f2c1f46d",
+          "source_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+          "scope": "Regressão sintética incluída no FULL próprio do pacote final; fontes preservadas. Focais originais mantêm suas datas; não prova Google autenticado, compreensão ou aceite humano.",
+          "full_receipt": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+        }
+      ],
+      "superseded_expectations": [
+        {
+          "expected": "Comece aqui e texto original; quatro abas liberadas após confirmação, sem gravação na leitura/revisão.",
+          "protection": {
+            "path": "tools/planning_parity_test.py",
+            "case": "start, form, consolidated, monthly, reference",
+            "command": "python3 tools/planning_parity_test.py",
+            "full_gate": {
+              "included": true,
+              "check_id": "planning-parity-ui"
+            }
+          },
+          "reason": "Contrato humano de três abas substitui a antiga expectativa de quarta aba; história preservada, não defeito de motor."
+        }
+      ]
+    },
+    {
+      "id": "planning_explicit_goal_fx",
+      "state": "fixed_regression",
+      "summary": "Atualização explícita reconverte somente o objetivo solicitado.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dinâmica da planilha"
+      },
+      "stimulus": "Salvar BRL10000 a5; consultar10; editar e atualizar explicitamente a renda desejada.",
+      "expected": "USD2000 antes do pedido explícito, USD1000 após; outro objetivo e referência inicial preservados.",
+      "cause": "O goal mantinha o snapshot antigo mesmo depois da intenção explícita de refresh.",
+      "protection": {
+        "path": "tools/planning_state_test.js",
+        "case": "PLSTATE-53,54; parity fx-edit",
+        "command": "node tools/planning_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-parity-20261020/fx-state-red.log",
+          "result": "SOURCE_RECEIPT",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/planning-20261020/parity/README.md",
+          "result": "PASS",
+          "note": "Provas focais e revisão delimitada; FULL tem recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "443c1a59f2c1f46d",
+        "source_sha256": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+        "scope": "Regressão sintética incluída no FULL próprio do pacote final; fontes preservadas. Focais originais mantêm suas datas; não prova Google autenticado, compreensão ou aceite humano.",
+        "full_receipt": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+      },
+      "verification_history": [
+        {
+          "date": "2026-10-20",
+          "build": "d93561c064cf5f40",
+          "source_sha256": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+          "scope": "Regressão sintética da correção da dinâmica; não encerra incidentes históricos nem comprova execução Google autenticada ou aceite humano."
+        }
+      ]
+    },
+    {
+      "id": "planning_invalidated_stop_draft",
+      "state": "fixed_regression",
+      "summary": "Parada invalidada não reaparece do rascunho.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dinâmica da planilha"
+      },
+      "stimulus": "Escolher parada, alterar capital inicial, fechar e reabrir o formulário.",
+      "expected": "Campos serializados de parada removidos; revisão e gravação final sem parada antiga.",
+      "cause": "A invalidação visual não removia stopAfter e stopImpactLimit serializados.",
+      "protection": {
+        "path": "tools/planning_parity_test.py",
+        "case": "stop-draft",
+        "command": "python3 tools/planning_parity_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-parity-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-parity-20261020/stop-draft-red.log",
+          "result": "SOURCE_RECEIPT",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/planning-20261020/parity/README.md",
+          "result": "PASS",
+          "note": "Provas focais e revisão delimitada; FULL tem recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "443c1a59f2c1f46d",
+        "source_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+        "scope": "Regressão sintética incluída no FULL próprio do pacote final; fontes preservadas. Focais originais mantêm suas datas; não prova Google autenticado, compreensão ou aceite humano.",
+        "full_receipt": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+      },
+      "verification_history": [
+        {
+          "date": "2026-10-20",
+          "build": "d93561c064cf5f40",
+          "source_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+          "scope": "Regressão sintética da correção da dinâmica; não encerra incidentes históricos nem comprova execução Google autenticada ou aceite humano."
+        }
+      ]
+    },
+    {
+      "id": "planning_reset_scope_counts",
+      "state": "fixed_regression",
+      "summary": "Prévia de reinício acompanha o alcance escolhido.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dinâmica da planilha"
+      },
+      "stimulus": "Abrir reinício de uma conta e mudar para TODAS em duas contas com fatos.",
+      "expected": "Mostrar nomes e contagens conjuntas; cancelar sem escrita; confirmação arquiva ambas.",
+      "cause": "A troca de alcance não atualizava a contagem e os nomes exibidos.",
+      "protection": {
+        "path": "tools/planning_parity_test.py",
+        "case": "reset-counts",
+        "command": "python3 tools/planning_parity_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-parity-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-parity-20261020/critic/state-browser-review.json",
+          "result": "SOURCE_RECEIPT",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/planning-20261020/parity/README.md",
+          "result": "PASS",
+          "note": "Provas focais e revisão delimitada; FULL tem recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "443c1a59f2c1f46d",
+        "source_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+        "scope": "Regressão sintética incluída no FULL próprio do pacote final; fontes preservadas. Focais originais mantêm suas datas; não prova Google autenticado, compreensão ou aceite humano.",
+        "full_receipt": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+      },
+      "verification_history": [
+        {
+          "date": "2026-10-20",
+          "build": "d93561c064cf5f40",
+          "source_sha256": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+          "scope": "Regressão sintética da correção da dinâmica; não encerra incidentes históricos nem comprova execução Google autenticada ou aceite humano."
+        }
+      ]
+    },
+    {
+      "id": "planning_blank_future_cell",
+      "state": "fixed_regression",
+      "summary": "Aporte futuro vazio preserva sua representação original.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dinâmica da planilha"
+      },
+      "stimulus": "Apagar uma célula azul futura de aporte.",
+      "expected": "Cálculo usa zero, apresentação preserva vazio e não o troca por zero explícito.",
+      "cause": "A validação exigia valor numérico mesmo quando o campo original permite vazio.",
+      "protection": {
+        "path": "tools/planning_parity_engine_test.js",
+        "case": "PLN-PARITY-15",
+        "command": "node tools/planning_parity_engine_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-parity-engine"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-parity-20261020/blank-cell-red-green.json",
+          "result": "SOURCE_RECEIPT",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/planning-20261020/parity/README.md",
+          "result": "PASS",
+          "note": "Provas focais e revisão delimitada; FULL tem recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "443c1a59f2c1f46d",
+        "source_sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+        "scope": "Regressão sintética incluída no FULL próprio do pacote final; fontes preservadas. Focais originais mantêm suas datas; não prova Google autenticado, compreensão ou aceite humano.",
+        "full_receipt": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+      },
+      "verification_history": [
+        {
+          "date": "2026-10-20",
+          "build": "d93561c064cf5f40",
+          "source_sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+          "scope": "Regressão sintética da correção da dinâmica; não encerra incidentes históricos nem comprova execução Google autenticada ou aceite humano."
+        }
+      ]
+    },
+    {
+      "id": "planning_mobile_labels_and_values",
+      "state": "fixed_regression",
+      "summary": "Abas e valores projetados permanecem íntegros no celular.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fluxo de uso / Dinâmica da planilha"
+      },
+      "stimulus": "Abrir Consolidado em390px nos quatro layouts e dois temas, inclusive com projeção longa.",
+      "expected": "Sem overflow externo, valor monetário integral e cada palavra dos quatro rótulos em um único fragmento.",
+      "cause": "Quatro abas comprimiam palavras; uma coluna monetária de140px não comportava a projeção.",
+      "protection": {
+        "path": "tools/planning_parity_layout_test.py",
+        "case": "24 layouts/themes/widths;8 long values;576 word ranges",
+        "command": "python3 tools/planning_parity_layout_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-parity-layout"
+        }
+      },
+      "evidence": [
+        {
+          "path": ".superpowers/sdd/planning-parity-20261020/layout/layout-results-red.json",
+          "result": "SOURCE_RECEIPT",
+          "availability": "local_ignored_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/planning-20261020/parity/README.md",
+          "result": "PASS",
+          "note": "Provas focais e revisão delimitada; FULL tem recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-20",
+        "build": "443c1a59f2c1f46d",
+        "source_sha256": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25",
+        "scope": "Regressão sintética incluída no FULL próprio do pacote final; fontes preservadas. Focais originais mantêm suas datas; não prova Google autenticado, compreensão ou aceite humano.",
+        "full_receipt": "docs/validation/planning-20261020/parity/FULL-RESULT.json"
+      },
+      "verification_history": [
+        {
+          "date": "2026-10-20",
+          "build": "d93561c064cf5f40",
+          "source_sha256": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25",
+          "scope": "Regressão sintética da correção da dinâmica; não encerra incidentes históricos nem comprova execução Google autenticada ou aceite humano."
+        }
+      ]
+    },
+    {
+      "id": "planning_proportions_dialog_center",
+      "state": "fixed_regression",
+      "summary": "Janelas de Planejamento centralizadas, inclusive no zoom nativo.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Posições e proporções dos diálogos —21/10/2026"
+      },
+      "stimulus": "Abrir formulário e subdiálogos, mudar dimensões e zoom.",
+      "expected": "Centro a no máximo 2 CSSpx do centro da viewport, com margens 24/12px.",
+      "cause": "Reset global removia margens automáticas; scrollbar também deslocava o centro no zoom.",
+      "protection": {
+        "path": "tools/planning_proportions_test.py",
+        "case": "bug-dialog-center",
+        "command": "python3 tools/planning_proportions_test.py --case regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-proportions"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Defeito reproduzido antes da mudança de produto."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo teste final rejeita os bytes09d53 preservados."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "94casos focais; ver proveniência. FULL é evidência separada."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "prebuild-ui-sha256:232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "source_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "test_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+        "scope": "RED/GREEN focal sintético atual, não aceite humano, não fechamento de incidentes históricos; resultado FULL somente em seu recibo."
+      }
+    },
+    {
+      "id": "planning_proportions_money_bases",
+      "state": "fixed_regression",
+      "summary": "Moeda e custo mensal alinhados pela base dos controles.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Posições e proporções dos diálogos —21/10/2026"
+      },
+      "stimulus": "Abrir formulário em320px e desktop, com indicação opcional.",
+      "expected": "Bases dos controles de moeda e valor diferem no máximo2px.",
+      "cause": "Opcional ocupava uma linha adicional separada na composição flex.",
+      "protection": {
+        "path": "tools/planning_proportions_test.py",
+        "case": "bug-money-bases",
+        "command": "python3 tools/planning_proportions_test.py --case regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-proportions"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Defeito reproduzido antes da mudança de produto."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo teste final rejeita os bytes09d53 preservados."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "94casos focais; ver proveniência. FULL é evidência separada."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "prebuild-ui-sha256:232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "source_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "test_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+        "scope": "RED/GREEN focal sintético atual, não aceite humano, não fechamento de incidentes históricos; resultado FULL somente em seu recibo."
+      }
+    },
+    {
+      "id": "planning_proportions_mobile_header",
+      "state": "fixed_regression",
+      "summary": "Fechar acessível ao lado do título completo em Perfis e Parada.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Posições e proporções dos diálogos —21/10/2026"
+      },
+      "stimulus": "Abrir Perfis/Parada em tela estreita e baixa.",
+      "expected": "Título completo sem sobreposição e alvo Fechar44px; corpo rola preservando cabeçalho.",
+      "cause": "Wrap global dos headers empurrava o botão para uma segunda linha.",
+      "protection": {
+        "path": "tools/planning_proportions_test.py",
+        "case": "bug-mobile-header",
+        "command": "python3 tools/planning_proportions_test.py --case regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-proportions"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Defeito reproduzido antes da mudança de produto."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo teste final rejeita os bytes09d53 preservados."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "94casos focais; ver proveniência. FULL é evidência separada."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "prebuild-ui-sha256:232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "source_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "test_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+        "scope": "RED/GREEN focal sintético atual, não aceite humano, não fechamento de incidentes históricos; resultado FULL somente em seu recibo."
+      }
+    },
+    {
+      "id": "planning_proportions_pending_copy",
+      "state": "fixed_regression",
+      "summary": "Previsão pendente com orientação única e tipografia proporcional.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Posições e proporções dos diálogos —21/10/2026"
+      },
+      "stimulus": "Abrir criação sem preencher campos obrigatórios.",
+      "expected": "Cada instrução aparece uma vez; destaque grande reservado ao número calculado.",
+      "cause": "Placeholder repetia a explicação com tamanho de resultado numérico.",
+      "protection": {
+        "path": "tools/planning_proportions_test.py",
+        "case": "bug-pending-copy",
+        "command": "python3 tools/planning_proportions_test.py --case regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-proportions"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Defeito reproduzido antes da mudança de produto."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo teste final rejeita os bytes09d53 preservados."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "94casos focais; ver proveniência. FULL é evidência separada."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "prebuild-ui-sha256:232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "source_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "test_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+        "scope": "RED/GREEN focal sintético atual, não aceite humano, não fechamento de incidentes históricos; resultado FULL somente em seu recibo."
+      }
+    },
+    {
+      "id": "planning_proportions_stop_legend",
+      "state": "fixed_regression",
+      "summary": "Simulador de parada apresenta amostras das séries e data usada.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Posições e proporções dos diálogos —21/10/2026"
+      },
+      "stimulus": "Abrir simulador e inspecionar legenda e rodapé.",
+      "expected": "Duas amostras visíveis, distintas e não sobrepostas; data utilizada no rodapé.",
+      "cause": "Amostras inline sem largura útil e rodapé sem data explícita.",
+      "protection": {
+        "path": "tools/planning_proportions_test.py",
+        "case": "bug-stop-legend",
+        "command": "python3 tools/planning_proportions_test.py --case regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-proportions"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Defeito reproduzido antes da mudança de produto."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-RED-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo teste final rejeita os bytes09d53 preservados."
+        },
+        {
+          "path": "docs/validation/planning-proportions-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "94casos focais; ver proveniência. FULL é evidência separada."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "prebuild-ui-sha256:232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "source_sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+        "test_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+        "scope": "RED/GREEN focal sintético atual, não aceite humano, não fechamento de incidentes históricos; resultado FULL somente em seu recibo."
+      }
+    },
+    {
+      "id": "planning_stoikus_grouped_controls",
+      "state": "fixed_regression",
+      "summary": "Stoikus vertical agrupado, ordenado e com texto à esquerda.",
+      "source": {
+        "path": "docs/governance/UI-VISUAL-QUALITY.md",
+        "section": "Contrato para cada superfície de interface alterada"
+      },
+      "stimulus": "Abrir Stoikus e percorrer13ações nas cinco categorias com mouse/teclado.",
+      "expected": "Grupos e ordem aprovados; uma linha poração;320px/gutter12; navegação/foco/scroll/lifecycle preservados.",
+      "cause": "Flex wrapping e ordem não agrupada; posterior estilo herdado também centralizava conteúdo.",
+      "protection": {
+        "path": "tools/ui_visual_quality_test.py",
+        "case": "regression-stoikus-vertical-groups",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Antes da correção, fonte estável."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/RED-FINAL-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo verificador final rejeita bytes0dc preservados por override HTTP sintético explícito."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "98casos finais, guardas/contraprovas e matriz; resultado FULL separado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "a9713063cd241820",
+        "source_sha256": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664",
+        "test_sha256": "2c85119b2ad6a2c7ca9736d790943295cf92556e65a073e5abd14770471ef0e7",
+        "scope": "Recorte sintético Planejamento, não aceite humano ou cobertura universal; histórico de falhas preservado."
+      }
+    },
+    {
+      "id": "planning_forecast_button_inner_center",
+      "state": "fixed_regression",
+      "summary": "Ver sua previsão centraliza o conteúdo interno.",
+      "source": {
+        "path": "docs/governance/UI-VISUAL-QUALITY.md",
+        "section": "Contrato para cada superfície de interface alterada"
+      },
+      "stimulus": "Abrir formulário em tela móvel/baixa e medirRange do texto; ativar destino.",
+      "expected": "Centro do texto nos dois eixos comdesvio≤2pxCSS; foco segue para previsão.",
+      "cause": "Inline-flex sem alinhamento de eixos deixava texto5px acima do centro.",
+      "protection": {
+        "path": "tools/ui_visual_quality_test.py",
+        "case": "regression-forecast-inner-center",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Antes da correção, fonte estável."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/RED-FINAL-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo verificador final rejeita bytes0dc preservados por override HTTP sintético explícito."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "98casos finais, guardas/contraprovas e matriz; resultado FULL separado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "a9713063cd241820",
+        "source_sha256": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664",
+        "test_sha256": "2c85119b2ad6a2c7ca9736d790943295cf92556e65a073e5abd14770471ef0e7",
+        "scope": "Recorte sintético Planejamento, não aceite humano ou cobertura universal; histórico de falhas preservado."
+      }
+    },
+    {
+      "id": "planning_close_svg_ink_center",
+      "state": "fixed_regression",
+      "summary": "Desenho simétrico do fechar mensurável em alvo44×44.",
+      "source": {
+        "path": "docs/governance/UI-VISUAL-QUALITY.md",
+        "section": "Contrato para cada superfície de interface alterada"
+      },
+      "stimulus": "Abrir formulário/Perfis/Parada e medir desenhoSVG além da caixa; ativar/Escape.",
+      "expected": "Desenho centrado≤2pxCSS; alvo44×44, nome acessível e retorno de foco preservados.",
+      "cause": "A verificação antiga cobria somente a caixa; caractere tipográfico não fornecia desenhoSVG mensurável conforme novo contrato.",
+      "protection": {
+        "path": "tools/ui_visual_quality_test.py",
+        "case": "regression-close-svg-ink-center",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/RED-ORIGINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Antes da correção, fonte estável."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/RED-FINAL-COUNTERPROOF.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Mesmo verificador final rejeita bytes0dc preservados por override HTTP sintético explícito."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "98casos finais, guardas/contraprovas e matriz; resultado FULL separado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "a9713063cd241820",
+        "source_sha256": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664",
+        "test_sha256": "2c85119b2ad6a2c7ca9736d790943295cf92556e65a073e5abd14770471ef0e7",
+        "scope": "Recorte sintético Planejamento, não aceite humano ou cobertura universal; histórico de falhas preservado."
+      }
+    },
+    {
+      "id": "planning_profile_svg_icon_chart_selector",
+      "state": "fixed_regression",
+      "summary": "Teste de gráficos distingue o SVG decorativo de Fechar dos cinco gráficos reais.",
+      "source": {
+        "path": "docs/work/CHG-JPW-UI-VISUAL-GATE-20261021.md",
+        "section": "Compatibilidade delimitada do teste antigo — execução observada"
+      },
+      "stimulus": "Abrir comparação de Perfis com fecharSVG e cinco gráficos, também removendo/colapsando um gráfico real em fixture.",
+      "expected": "Seletor considera cinco svg.pl-native-chart; mantém quantidade5 e dimensõesw>80/h>40, rejeitando gráfico ausente/colapsado.",
+      "cause": "O seletor genérico svg confundia o novo ícone20×20 aprovado com um sexto gráfico; erros posteriores eram cascata do diálogo retido.",
+      "protection": {
+        "path": "tools/planning_parity_layout_test.py",
+        "case": "dialog_checks: profile/recovery chart geometry nos24casos",
+        "command": "python3 tools/planning_parity_layout_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-parity-layout"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/attempt-1/FULL-RESULT.json",
+          "result": "TEST_HARNESS_FAIL",
+          "note": "PrimeiroFULL95PASS/1TEST_HARNESS_FAIL preservado, sem reclassificar raw filho."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/LAYOUT-COMPAT-COUNTERPROOF.json",
+          "result": "PASS",
+          "note": "4contraprovas reais: originalRED, proposta válida, gráfico removido e colapsado rejeitados."
+        },
+        {
+          "path": "docs/validation/planning-controls-visual-quality-20261021/LAYOUT-COMPAT-GREEN.json",
+          "result": "PASS",
+          "note": "Teste versionado real24/24 e8combinações de valores longos; FULL final separado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "a9713063cd241820",
+        "test_sha256": "8ab2189cfa5f582a6661805da148d159f7d477cbac3fedfe8b8f71238a537fbe",
+        "source_sha256": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664",
+        "scope": "Correção do instrumento, não defeito dos gráficos/cálculos. Mesmos95checks/limiares; aceite humano separado."
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-summary-groups",
+      "state": "fixed_regression",
+      "summary": "Consolidado com três grupos de leitura",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-summary-groups.",
+      "expected": "Posição confirmada, Projeção e objetivos e Referências de câmbio na ordem aprovada.",
+      "cause": "Resumo anterior sem separação semântica suficiente.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-summary-groups",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-current-calendar-year",
+      "state": "fixed_regression",
+      "summary": "Ano civil atual destacado sem depender da projeção",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-current-calendar-year.",
+      "expected": "Exatamente a linha do ano do read-model local recebe verde e Em andamento; sem inventar linha fora do horizonte.",
+      "cause": "Linha anual não tinha marcador/contraste temporal próprio.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-current-calendar-year",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-wide-seven-columns",
+      "state": "fixed_regression",
+      "summary": "Tabela mensal ampla limitada à largura útil",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-wide-seven-columns.",
+      "expected": "Sete colunas a partir de900px úteis, 120meses, sem overflow e dados completos.",
+      "cause": "Dezoito colunas ultrapassavam o espaço útil.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-wide-seven-columns",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-narrow-three-columns",
+      "state": "fixed_regression",
+      "summary": "Tabela mensal compacta adaptada ao espaço real",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-narrow-three-columns.",
+      "expected": "Três colunas abaixo900px úteis e detalhes expansíveis com campos únicos.",
+      "cause": "Grade anterior mantinha18colunas em telas estreitas.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-narrow-three-columns",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-month-details-complete",
+      "state": "fixed_regression",
+      "summary": "Dados complementares acessíveis por mês e subtotais completos",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-month-details-complete.",
+      "expected": "Valores de120meses, campos futuros e dez subtotais associados aos próprios campos nos dois modos.",
+      "cause": "Mudança deliberada de distribuição exige proteção dos dados antes simultaneamente visíveis.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-month-details-complete",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-calendar-vs-finalization",
+      "state": "fixed_regression",
+      "summary": "Tempo e finalização financeira são eixos separados",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-calendar-vs-finalization.",
+      "expected": "Passado finalizado/pendente, atual aberto/finalizado e futuro projetado corretamente identificados, sem gravação.",
+      "cause": "Rótulos de calendário e fechamento não eram apresentados de forma independente.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-calendar-vs-finalization",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-controls-draft-focus",
+      "state": "baseline_limitation",
+      "summary": "Proteção adicional de rascunho, foco e identidade dos campos",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-controls-draft-focus.",
+      "expected": "Mesmo nó, valor parcial e cursor ao migrar entre sete/três colunas, sem escritor/comando.",
+      "cause": "O RED anterior parava na geometria e não comprova defeito anterior de foco; este é um novo critério de preservação.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-controls-draft-focus",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-scenario-values",
+      "state": "fixed_regression",
+      "summary": "Valores extremos, vazios e seletor em320px",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Consolidado e Preenchimento mensal"
+      },
+      "stimulus": "Fixture sintética de calendário atual,120meses; seleção, expansão e redimensionamento real da interface. Caso compact-scenario-values.",
+      "expected": "Zero, vazio, negativo, ausência de câmbio e valores grandes preservados; grade e shell sem overflow.",
+      "cause": "Focal intermediário mostrou label flex da conta com mínimo intrínseco: shell280/scroll291. Regra local permite encolher sem esconder conteúdo.",
+      "protection": {
+        "path": "tools/planning_compact_table_test.py",
+        "case": "compact-scenario-values",
+        "command": "python3 tools/ui_visual_quality_test.py --case compact-regressions --out /private/tmp/jpw-planning-compact-regressions",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/RED-REVIEWED-FINAL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Oito RED com apresentação anterior servida poroverride documentado; falhas de pré-requisito não comprovam defeitos posteriores."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/FOCAL-GREEN.json",
+          "result": "PASS",
+          "note": "Oito focais no build oficial atual; fontes estáveis, oráculos revisados e delegates financeiros observados."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/COUNTERPROOFS.json",
+          "result": "PASS",
+          "note": "Oito violações deliberadas rejeitadas pelos oráculos positivos, com restauração e preservação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "scope": "Execução focal8/8 e contraprovas8/8. Default206 e FULL96 exigem recibos próprios; índice não é aprovação do pacote.",
+        "ui_sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+        "css_sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+        "test_sha256": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-reading-details-adapter",
+      "state": "fixed_regression",
+      "summary": "Adaptador delimitado de localização do teste: current_month_journey",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Adaptar expectativa antiga preservando demais critérios"
+      },
+      "stimulus": "Mesmo fluxo sintético e mesmos valores e limiares anteriores; leitura no destino deliberadamente aprovado.",
+      "expected": "Mesmas verificações financeiras e geométricas, acessando os campos completos na nova apresentação.",
+      "cause": "Leitura de td nth(8) e qualificador no corpo antigo da linha; a apresentação aprovada moveu ambos aos detalhes.",
+      "protection": {
+        "path": "tools/planning_ui_test.py",
+        "case": "current_month_journey",
+        "command": "python3 tools/planning_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/attempt-1/FULL-RESULT.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Classificação bruta preservada. Diagnóstico independente: TEST_HARNESS_FAIL de localização obsoleta, sem dispensa de nova suíte completa."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/REAL-PLANNING-UI-COMMAND.json",
+          "result": "PASS",
+          "note": "Execução focal real do arquivo versionável, saída zero; contraprovas e revisão independente nos relatórios anexos."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "test_sha256": "dc4525759aebbb2b585eb58ce7466a7a030637032159d83b8ac3033f9b516ec5",
+        "scope": "Focal real; não substitui o novo FULL96."
+      }
+    },
+    {
+      "id": "planning-monthly-20261021-projection-group-adapter",
+      "state": "fixed_regression",
+      "summary": "Adaptador delimitado de localização do teste: long_projection_geometry",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md",
+        "section": "Adaptar expectativa antiga preservando demais critérios"
+      },
+      "stimulus": "Mesmo fluxo sintético e mesmos valores e limiares anteriores; leitura no destino deliberadamente aprovado.",
+      "expected": "Mesmas verificações financeiras e geométricas, acessando os campos completos na nova apresentação.",
+      "cause": "Seletor singular pl-metrics tornou-se ambíguo com os três grupos aprovados do Consolidado.",
+      "protection": {
+        "path": "tools/planning_parity_layout_test.py",
+        "case": "long_projection_geometry",
+        "command": "python3 tools/planning_parity_layout_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-parity-layout"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/attempt-1/FULL-RESULT.json",
+          "result": "ENVIRONMENT_ERROR",
+          "note": "Classificação bruta preservada. Diagnóstico independente: TEST_HARNESS_FAIL de localização obsoleta, sem dispensa de nova suíte completa."
+        },
+        {
+          "path": "docs/validation/planning-consolidated-monthly-compact-20261021/REAL-PLANNING-LAYOUT-COMMAND.json",
+          "result": "PASS",
+          "note": "Execução focal real do arquivo versionável, saída zero; contraprovas e revisão independente nos relatórios anexos."
+        }
+      ],
+      "last_verified": {
+        "build": "2ddbac03d67141d0",
+        "date": "2026-10-21",
+        "test_sha256": "23d26943d3618ea1fce1e9c48259b33e6cff351dab0d157428b63d8d23f70c0e",
+        "scope": "Focal real; não substitui o novo FULL96."
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-result-input",
+      "state": "fixed_regression",
+      "summary": "Prévia factual percentual/USD usa abertura atual e centavos sem gravar dados.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Consulta previewResultInput somente leitura"
+      },
+      "stimulus": "1000USD a3pontos;112.55USD a3pontos; perdas/zero/vazio; alteração de abertura; recusa de escritor.",
+      "expected": "30USD/3.38USD e taxa derivada dos centavos; inválidos recusados, dados/tokens/storage/rede preservados.",
+      "cause": "A UI anterior não oferecia a consulta de entrada percentual; conversão errada precisa ser detectável antes da confirmação.",
+      "protection": {
+        "path": "tools/planning_monthly_result_input_test.js",
+        "case": "PLRESULT-01–14",
+        "command": "node tools/planning_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "Focal68/68 e revisão independente de Task1; a ausência da consulta deuRED14/14, mutação divisora1000 foi rejeitada. FULL deste candidato ainda pendente. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "58bbaa3d84c66e2cb2deecb386d373a89305f3125e0c00aa864748f6fd0a0273",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-density",
+      "state": "fixed_regression",
+      "summary": "Linhas mensais comuns compactas sem perder alvos nem valores.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "Linhas antigas106.5–132.5px; leitura de passado fechado/pendente, atual e futuro.",
+      "expected": "53pxCSS com alvos44px, altura automática, sete/três colunas e dados completos.",
+      "cause": "Rótulos e controles permanentes aumentavam a altura da leitura.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-ordinary-row-density",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "GREEN focal33/33; RED/contraprovas/revisão independente e interrupções preservados. Execução completa e aceite humano têm recibos próprios. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-explicit-write",
+      "state": "fixed_regression",
+      "summary": "Edição factual exige revisão e confirmação; premissas futuras exigem Salvar.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "Digitar resultado percentual/USD, alternar unidade, revisar, cancelar ou confirmar; testar fluxos individuais.",
+      "expected": "Nenhum fato antes deConfirmar; valores e custos validados pelos comandos anteriores, IDs e histórico preservados.",
+      "cause": "A edição anterior era limitada e as premissas futuras gravavam ao sair do campo.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-result-real-writer",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "GREEN focal33/33; RED/contraprovas/revisão independente e interrupções preservados. Execução completa e aceite humano têm recibos próprios. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-preferences",
+      "state": "fixed_regression",
+      "summary": "Destaque e período são preferências isoladas dos dados financeiros e do backup.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "Alternar verde passado e Atual em diante, combinar AnoTodos/ano específico, restaurar vazios e recarregar.",
+      "expected": "Somente versão e2booleanos na chave própria; financeiro inalterado, falhas temporárias/incompatíveis avisadas e preservadas.",
+      "cause": "Faltavam filtros temporais e opção de retirar a cor do passado.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-preferences-isolation",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "GREEN focal33/33; RED/contraprovas/revisão independente e interrupções preservados. Execução completa e aceite humano têm recibos próprios. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-context-companion",
+      "state": "fixed_regression",
+      "summary": "Correção do candidato: navegação Stoikus não troca o contexto de um rascunho nem preenche premissa nula.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "ConsolidadoA, MensalB com taxa:null/aporte:vazio; editar somente aporte17 e acionar StoikusPreencher meses.",
+      "expected": "Guarda preservaB ao continuar; Salvar grava aporte17 mantendo taxa:null; descarte retoma navegação inteira explicitamente.",
+      "cause": "navigateMaster ignorava recusa/same-view e a consulta do editor usava conta global mutável. AchadoP1 independente em dados sintéticos, anterior à entrega.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-future-context-companion",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "GREEN focal33/33; RED/contraprovas/revisão independente e interrupções preservados. Execução completa e aceite humano têm recibos próprios. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-menu-escape",
+      "state": "fixed_regression",
+      "summary": "Escape pertence ao menu Stoikus aberto e preserva a edição subjacente.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "Editar célula, abrir Stoikus e pressionar Escape; repetir Escape no editor sem camada proprietária.",
+      "expected": "Primeiro fecha apenas menu e conserva rascunho; Escape no editor cancela explicitamente.",
+      "cause": "O tratamento inline de Escape precedia a camada do menu e descartava o rascunho.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-menu-escape-ownership",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "GREEN focal33/33; RED/contraprovas/revisão independente e interrupções preservados. Execução completa e aceite humano têm recibos próprios. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-editor-actions",
+      "state": "fixed_regression",
+      "summary": "Ações do editor têm alvos44px e conteúdo centrado, com revisão visível e retorno à célula.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "Salvar/Cancelar/Confirmar e edição de lançamentos em desktop/celular; revisar e salvar mês distante por teclado.",
+      "expected": "Alvos>=44×44px, conteúdo<=2px do centro; Salvar mostra/foca título não interativo de revisão sem confirmar, sucesso devolve foco à célula atualizada.",
+      "cause": "Regra densa da tabela reduzia botões a30px; revisão ficava abaixo da área visível e render removia o acionador focado. Achados antes da entrega.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-editor-action-targets",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "RED geométrico30px e contraprovas de tamanho/deslocamento; GREEN33/33 e sondas independentes. FULL próprio obrigatório. Revalidação final3:34/34 browser e68/68estado; FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-inline-20261021-month-identity",
+      "state": "fixed_regression",
+      "summary": "Célula, seletor de mês, linha selecionada e ações superiores mantêm a mesma identidade após editar.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Contrato mensal compacto e editável"
+      },
+      "stimulus": "Seletor outubro; editar setembro e Cancelar/Escape/Salvar; FinalizadoSim/Não e cancelar/reabrir/confirmar; legadoRegistrar resultado/aporte/saque→escolher setembro→cancelar/Escape.",
+      "expected": "Mês, linha e contexto coerentes; Finalizado só mostra estado confirmado. Cancelar/Escape0writers e foco no acionador conectado/fallback seletor. Confirmações existentes1writer, sem duplicar comandos.",
+      "cause": "Ativação inline alterava mês privado sem sincronizarUI; revisão também confirmou na UI original os caminhos herdados Finalizado e nextFlow. syncMonthlySelection centraliza somente apresentação; restaura valor nativo real antes da confirmação e remapeia opener do contexto recriado. FocoBODY após confirmar modal legado é herdado, preservado e registrado separadamente; novo executeInline mantém foco na célula.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-month-context-identity",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-inline-20261021/README.md",
+          "result": "PASS",
+          "note": "RED permanente exit1 e reprodução independente 6ca preservados. GREEN34/34 e sonda independente Cancelar/Escape/Salvar3/3; contraprova do seletor incorreto rejeitada. FULL atual pendente. Final5 e08:34/34 browser e68/68estado confirmados; novoFULL pendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "test_sha256": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+        "scope": "Revalidação final5 pós-rebuild4: estado68/68 e browser34/34 sob e08c12101146ae7b, incluindo contexto/cancelamento herdados e retorno de foco. FULL atual obrigatório, aceite humano separado; tentativas6ca/004d interrompidas não aprovam estes bytes.",
+        "build": "e08c12101146ae7b"
+      }
+    },
+    {
+      "id": "planning-monthly-close-20261022-guided-result",
+      "state": "fixed_regression",
+      "summary": "Fechamento oferece registrar resultado pendente na mesma janela, com duas confirmações distintas.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fechamento guiado e recuperação de revisão"
+      },
+      "stimulus": "Abrir mês passado sem resultado → revisar zero explícito → salvar resultado → conferir fluxos → confirmar fechamento.",
+      "expected": "Resultado e fechamento têm um writer cada; projeções não viram fatos; Cancelar não grava.",
+      "cause": "Falta de resultado desabilitava fechamento sem recuperação; novo fluxo usa queries/comandos existentes.",
+      "protection": {
+        "path": "tools/planning_monthly_close_test.py",
+        "case": "closure-missing-result-recovery",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-close-20261022/README.md",
+          "result": "PASS",
+          "note": "Pós-build7e8c:38/38 casos focais; critério adicional foco/aviso após confirmação aprovado em focal próprio. Query74/74. FULL do novo candidato ainda pendente ao registrar este fato. REDs e falhas intermediárias preservados."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "build": "7e8cc9b03b5dca40",
+        "test_sha256": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+        "scope": "Produto7e8c;38 casos pós-build e foco pós-confirmação focal. Default278 integra os38 novos e240 antigos; execução FULL atual obrigatória, aceite humano separado."
+      }
+    },
+    {
+      "id": "planning-monthly-close-20261022-stale-review",
+      "state": "fixed_regression",
+      "summary": "Revisão antiga exige atualização explícita e nova conferência.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fechamento guiado e recuperação de revisão"
+      },
+      "stimulus": "Conferir → cancelar → registrar resultado na célula → reabrir fechamento.",
+      "expected": "Preservar campos, bloquear token antigo, Atualizar revisão e conferir novamente sem renovação silenciosa.",
+      "cause": "openDialog restaurava campos e token do rascunho anterior sem recuperação explícita.",
+      "protection": {
+        "path": "tools/planning_monthly_close_test.py",
+        "case": "closure-cancelled-review-conflict",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-close-20261022/README.md",
+          "result": "PASS",
+          "note": "Pós-build7e8c:38/38 casos focais; critério adicional foco/aviso após confirmação aprovado em focal próprio. Query74/74. FULL do novo candidato ainda pendente ao registrar este fato. REDs e falhas intermediárias preservados."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "build": "7e8cc9b03b5dca40",
+        "test_sha256": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+        "scope": "Produto7e8c;38 casos pós-build e foco pós-confirmação focal. Default278 integra os38 novos e240 antigos; execução FULL atual obrigatória, aceite humano separado."
+      }
+    },
+    {
+      "id": "planning-monthly-close-20261022-shared-draft",
+      "state": "fixed_regression",
+      "summary": "Diálogos legados também recuperam rascunhos sem renovar aprovação automaticamente.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fechamento guiado e recuperação de revisão"
+      },
+      "stimulus": "Rentabilidade5 → revisão → cancelar → novo aporte confirmado → reabrir → atualizar e revisar.",
+      "expected": "Campos preservados; prévia refeita e somente confirmação chama recordResult.",
+      "cause": "O armazenamento de rascunhos e token é compartilhado pelos diálogos.",
+      "protection": {
+        "path": "tools/planning_monthly_close_test.py",
+        "case": "closure-shared-flow-draft-refresh",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-close-20261022/README.md",
+          "result": "PASS",
+          "note": "Pós-build7e8c:38/38 casos focais; critério adicional foco/aviso após confirmação aprovado em focal próprio. Query74/74. FULL do novo candidato ainda pendente ao registrar este fato. REDs e falhas intermediárias preservados."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "build": "7e8cc9b03b5dca40",
+        "test_sha256": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+        "scope": "Produto7e8c;38 casos pós-build e foco pós-confirmação focal. Default278 integra os38 novos e240 antigos; execução FULL atual obrigatória, aceite humano separado."
+      }
+    },
+    {
+      "id": "planning-monthly-close-20261022-writer-recovery",
+      "state": "fixed_regression",
+      "summary": "Recusa e gravação indeterminada têm tratamentos diferentes.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fechamento guiado e recuperação de revisão"
+      },
+      "stimulus": "Salvar resultado com escritorREFUSED; atualizar revisão; escritorUNKNOWN.",
+      "expected": "Recusa mantém rascunho; nova revisão explícita; UNKNOWN bloqueia tentativa e refresh.",
+      "cause": "UI deve preservar entrada e impedir repetição cega de resultado indeterminado.",
+      "protection": {
+        "path": "tools/planning_monthly_close_test.py",
+        "case": "closure-writer-refusal-unknown",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-close-20261022/README.md",
+          "result": "PASS",
+          "note": "Pós-build7e8c:38/38 casos focais; critério adicional foco/aviso após confirmação aprovado em focal próprio. Query74/74. FULL do novo candidato ainda pendente ao registrar este fato. REDs e falhas intermediárias preservados."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "build": "7e8cc9b03b5dca40",
+        "test_sha256": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+        "scope": "Produto7e8c;38 casos pós-build e foco pós-confirmação focal. Default278 integra os38 novos e240 antigos; execução FULL atual obrigatória, aceite humano separado."
+      }
+    },
+    {
+      "id": "planning-monthly-close-20261022-backup-identity",
+      "state": "fixed_regression",
+      "summary": "Rascunho do resultado no fechamento permanece legível no Backup Completo existente.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fechamento guiado e recuperação de revisão"
+      },
+      "stimulus": "USD−12.50 → Escape → capturar backup → reabrir rascunho.",
+      "expected": "Mesmo formato/provedor; unidade/valor preservados, sem tokens e importação só leitura.",
+      "cause": "Nomes locais novos precisavam mapear a unit/value já permitidos no texto opaco do rascunho.",
+      "protection": {
+        "path": "tools/planning_monthly_close_test.py",
+        "case": "closure-draft-backup-retention",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-close-20261022/README.md",
+          "result": "PASS",
+          "note": "Pós-build7e8c:38/38 casos focais; critério adicional foco/aviso após confirmação aprovado em focal próprio. Query74/74. FULL do novo candidato ainda pendente ao registrar este fato. REDs e falhas intermediárias preservados."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "build": "7e8cc9b03b5dca40",
+        "test_sha256": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+        "scope": "Produto7e8c;38 casos pós-build e foco pós-confirmação focal. Default278 integra os38 novos e240 antigos; execução FULL atual obrigatória, aceite humano separado."
+      }
+    },
+    {
+      "id": "planning-monthly-close-20261022-context-invalidation",
+      "state": "fixed_regression",
+      "summary": "Troca de plano, raiz ou arquivamento não pode reautorizar rascunho antigo.",
+      "source": {
+        "path": "docs/architecture/PLANNING.md",
+        "section": "Fechamento guiado e recuperação de revisão"
+      },
+      "stimulus": "RevisarUSD17; substituir plano, trocar raiz ou arquivar conta em contextos sintéticos isolados.",
+      "expected": "Valor legível17 preservado; nenhuma gravação; revisão inválida não é renovada.",
+      "cause": "Atualizar revisão não pode transferir autorização entre gerações ou identidades.",
+      "protection": {
+        "path": "tools/planning_monthly_close_test.py",
+        "case": "closure-invalidated-context-no-refresh",
+        "command": "python3 tools/ui_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-monthly-close-20261022/README.md",
+          "result": "PASS",
+          "note": "Pós-build7e8c:38/38 casos focais; critério adicional foco/aviso após confirmação aprovado em focal próprio. Query74/74. FULL do novo candidato ainda pendente ao registrar este fato. REDs e falhas intermediárias preservados."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-22",
+        "build": "7e8cc9b03b5dca40",
+        "test_sha256": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+        "scope": "Produto7e8c;38 casos pós-build e foco pós-confirmação focal. Default278 integra os38 novos e240 antigos; execução FULL atual obrigatória, aceite humano separado."
       }
     }
   ]

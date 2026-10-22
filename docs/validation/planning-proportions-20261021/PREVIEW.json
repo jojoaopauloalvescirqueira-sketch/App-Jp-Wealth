@@ -1,0 +1,32 @@
+{
+  "url": "http://127.0.0.1:8000/index.html?v=0dc016f9c7618385",
+  "build": "0dc016f9c7618385",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+      "http_matches_file": true
+    },
+    {
+      "path": "build-id.js",
+      "sha256": "dc6a4b1c80cfa20113f23c92aaa5dfaf6662c8a4f9aa1b6ee6ff3688659f36ca",
+      "http_matches_file": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "sha256": "482dfd3055edd884a19ef24edf2ac216fd1bf5648b4b152ddc225eab69e7bfd8",
+      "http_matches_file": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "sha256": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+      "http_matches_file": true
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "sha256": "aedad070dbea44790e9cfec9c7d3a04504f05248feb1a09f7237a3c4fb0dfba0",
+      "http_matches_file": true
+    }
+  ],
+  "limit": "HTTP byte equality; does not prove currently displayed owner browser state."
+}

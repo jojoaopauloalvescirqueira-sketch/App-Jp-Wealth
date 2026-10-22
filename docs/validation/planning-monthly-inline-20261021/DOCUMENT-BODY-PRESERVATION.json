@@ -1,0 +1,38 @@
+{
+  "docs/architecture/PLANNING.md": {
+    "original_sha256": "84f06fc7c50903b862d2ae28bf5de77e4a487050abe783e515987ef4116f97c6",
+    "head_sha256": "2c1af4be6a283944fc42819f6756f5104ded9b86661e1211c7c3da1fb434b23d",
+    "new_sha256": "61ce0ff18966344f7bae16dfaf7bb63a2ff5f46ebf502dfa7281f0396fb1c85a",
+    "original_body_byte_preserved": true
+  },
+  "README.md": {
+    "original_sha256": "a888dec737043a4d42ea698ebbef0b8570231b219a1ae262d44ac3fd1ae9d19f",
+    "head_sha256": "7b368cebc3abd89fabecdcbf7ac133018fb05c826f964d4f88ecef52cb7ae78b",
+    "new_sha256": "c10e5c1e2ffa672d9b97b0c8eb79ba21a5c5e6a5826ea8490376867b9edc1d06",
+    "original_body_byte_preserved": true
+  },
+  "CHANGELOG.md": {
+    "original_sha256": "1a364d4a0f0cd57ed67b6bf00b85668b9f39949d48dd770633cbfd9ca6c5d05e",
+    "head_sha256": "66341fa8a07ec5139ae9219542cb8f56c933ebdc62caec28ada20d495b152728",
+    "new_sha256": "9cb6af2482aa97478b593fb0ba4c61b51360b477b94f4a0f977cf0fa0fb08a38",
+    "original_body_byte_preserved": true
+  },
+  "docs/work/ACTIVE-TASK.md": {
+    "original_sha256": "0a8578d0f04bc7d232302c544a84e4e587e633a4c26c17c1adaa7d32db371584",
+    "head_sha256": "3476c46d05ce847f6c24e0628e5928b6e04861e8a307bbe25dc242e2f393cdaa",
+    "new_sha256": "a75281330f38545769ace66df6537b02abebcca5bf752a67cfef8f8c3bd116e0",
+    "original_body_byte_preserved": true
+  },
+  "docs/governance/CURRENT-STATE.md": {
+    "original_sha256": "26183efea6fc714d99361f040588d47e55c03d8a6a314b9e70ff9556ffae4dfd",
+    "head_sha256": "7a7a80060700133a5242f7a3a1b0855d8dd491e002220c56f7d6c0253d2d4df5",
+    "new_sha256": "9e2b53f491cbf8b36c69a6fe5d5e9093cc16770934f48d74b1a3d2e01fa24004",
+    "original_body_byte_preserved": true
+  },
+  "SESSION_HANDOFF.md": {
+    "original_sha256": "7b0e9a3724b23a05f8bf4ab3fbae6a75bf2cf59f352538fc145462d85a599d41",
+    "head_sha256": "c36f990fad0ec8b4be2b3b2a7a1a9c35f48e64d1117cd41fde24122db610e075",
+    "new_sha256": "da3ae740434d20cea65d103813b8918b5f12972266961e564ed6eaf37e2903b3",
+    "original_body_byte_preserved": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "tools/planning_parity_test.py",
+    "--case",
+    "all"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T02:15:18.118993+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/final-real-planning-parity.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T02:16:05.604307+00:00",
+  "log_sha256": "65a5a66ae2146ccc4da1ef3b1b3544f96ab8bee36d9666dfae8a2a40e2dd07c3"
+}

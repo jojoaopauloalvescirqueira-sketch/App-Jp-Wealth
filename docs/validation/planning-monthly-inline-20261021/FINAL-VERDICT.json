@@ -1,0 +1,14 @@
+{
+  "verdict": "AUDIT_PASS_WITH_DEBT",
+  "candidate_build": "e08c12101146ae7b",
+  "report_sha256": "dbee70a80bb3287d8c7341986a4e45b8633c2b443e9057a61a8a0d61b2f24ed9",
+  "report_bytes": 23139,
+  "actual_FULL": "PASS96/96_exit0",
+  "actual_default": "PASS240/240",
+  "human_acceptance": "PENDING_SEPARATE",
+  "debts": [
+    "inherited legacy-confirm BODY focus",
+    "inheritedPDFfooter-only page2",
+    "historicalAlladincaseF remains open"
+  ]
+}

@@ -1,0 +1,4091 @@
+{
+  "source_hashes": {
+    "src/js/10-domain/12-personal-finance.js": "333a5b2f4c337aa684960f1a1f98279fd9f42d61e2d66ff0ae3dbe5f6498d416",
+    "src/js/20-ui/17-finpes-views.js": "3916e5e21c02817a5883bce84ab64f39fb579873f3a951f2e42ad38c062fa6b9",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/20-ui/24-alladin-views.js": "74da048037848e4ecd3183b9a441f7c18efb52d4d6e021bcb8cc665ba6c9a2b3",
+    "src/js/40-app/09-settings-modal.js": "46d0e44b729295cf1d44a4e2999bbe47d180baa8a0519d42e96c55192a04acae",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/03-ui.js": "2bb33a9f9ff2f5d34417489d09126758532f0dfd6855f88ab7801ca3b5e04bc0",
+    "src/js/00-core/00-forex-policy.js": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed",
+    "src/js/10-domain/00-forex-engine.js": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e",
+    "src/js/10-domain/07-reserve-requirements.js": "2c1a9d00cce4bda29e87be28398ae7fcd864e3c172f6df69b05246221a5d6a95",
+    "src/js/00-core/01-risk-profiles.js": "dbac835cead6b9f9d3807c7d02a7f45773e9c35466771480701efee5725de70e",
+    "src/js/00-core/02-platforms.js": "4d05633be18f223ee8440dbae841141c29848db53aee9ae5f5fea47d1a50c817",
+    "src/js/00-core/03-default-state.js": "4f7381a9f9fbf29c077120aab14564bb28867f1bb490ff1b50ba79ec0d0d9593",
+    "src/js/00-core/04-persistence.js": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+    "src/js/00-core/08-module-availability.js": "44f40f5d5c0161b4ffc4fc85cb54fb594baff357c8dcf68ce1af6b184fe2cca9",
+    "src/js/00-core/07-workspace-backup.js": "bedf27116fab90e0d5aab82dc77461e8f9a22ea76858e493400d4c28d2804a89",
+    "src/js/00-core/05-helpers.js": "e3198d6e5ecec9676e24e054424cd6a98ac129178754d263270ae53cc97216db",
+    "src/js/00-core/06-storage-fs.js": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7",
+    "src/vendor/fflate/fflate-0.8.2.min.js": "c3b34f2e9f5e74d4d7d64e01cac7a0c01954c6c406414d42185c7b53d6875ddf",
+    "src/js/00-core/09-evidence-archive.js": "0a2741062e89b1992abd23accea74fbae0cc193f39eb1c5f6282de0b55a14a0a",
+    "src/js/10-domain/01-risk-instruments.js": "f778f6e26bb00e3a7036c28df5cae357b097a7470f064da88b57161dd570713c",
+    "src/js/10-domain/00-forex-state.js": "b0dc2d2db1e9917c69c7200aee40e8e90bc4ec91ab8d6058af95f772116b8ac6",
+    "src/js/10-domain/02-risk-calculations.js": "78b106e981fc83950758a3323b222c2e390d23549c15ddb02223c05126ff9703",
+    "src/js/20-ui/01-header-readout.js": "8081c4b4a644cfc8728de519c3c8aaec6ae19dbe7feb0b94918f7dbc17ad8e20",
+    "src/js/20-ui/02-sidebar.js": "e3483db32bdcf6f99f24daf572ea8e20846d143401c5e8bb6baa331d3bce6879",
+    "src/js/20-ui/03-main-render.js": "3158767be64587d1911e08ae2115167702c10304185fec77f843d64c76e74df8",
+    "src/js/20-ui/04-operational-clearance.js": "da4c3f9bd553dffb87f5079ff26f7405daba3e220137d246cd724d82c43db750",
+    "src/js/20-ui/05-execution-clearance.js": "538eac18c2e7e93ba8df4fdb06cec68e923fbb46aaf230f66240cee31b2fe4af",
+    "src/js/10-domain/03-phase-transitions.js": "b6e07b345656faec3c278f1de181e93a3ca0a04dd6d708ff1dfb78614e85a859",
+    "src/js/10-domain/04-stop-statistics.js": "9d18b9dd123c0c1e2e3219f93a8428310b0d8dc882cc18a2383a1332e52a6355",
+    "src/js/20-ui/06-chart-terminal-chrome.js": "0223f08d7abfcce1f8f9c841f81b445c2c9ba4fac296565ea7e1140f4e38f842",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "007aa37da1993837fc3be68cd1a2baf4280310ec4aebe8c8cd025b6006c7a1e3",
+    "src/js/20-ui/08-scenario-fan.js": "1bdcdbdce612d2b0cd0513edc0e96ed85cdde57224c078cb2b260bd5148c3124",
+    "src/js/20-ui/08-input-bindings.js": "bb0eeb381249145171d7e20f4c7eb0e99c3260323b7968b41b32bc3a35d131aa",
+    "src/js/30-accounting/01-daily-ledger.js": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18",
+    "src/js/10-domain/05-brokers-prop-firms.js": "d87c0db5b9abe3d6a31c661462dcda7e68212afa077440ef4e3a8b1c636b21c3",
+    "src/js/30-accounting/02-accounting-engine.js": "185c29e78e1b935c1b05de82274f0f5320c632defc947f7a4fb48958108d081f",
+    "src/js/30-accounting/03-mei-jp.js": "0213ae6164606d68102de6190ae7c158bbb7a5879a977afed59841752bc60f46",
+    "src/js/30-accounting/04-patrimonial-simulation.js": "c710bbac4511e6ac37315aa11eef86f34d15eaafd94f21a84b8305d48501232c",
+    "src/js/40-app/01-navigation.js": "0b8de6aaf210cba63caa2bed3c55b669e5f1eeeb86e8b08fc140a175a383b0f6",
+    "src/js/40-app/02-reset.js": "43fe62ef9cd1efd3b5f05034b31a593e7dcd04565c8078cb69bc69e72420137b",
+    "src/js/40-app/03-theme.js": "3f3c899c9abf56d819e81b664cf11f5aee969e9936d82ae49ac2f125f3fcc2b3",
+    "src/js/20-ui/09-contextual-help.js": "b221ce7943a59a5febca8044b62944f81a7e08d059f848ac417a558042fe84b2",
+    "src/js/20-ui/10-font-scale.js": "b1dd06b7b322a9814863cd0109650ecf2baeff5619c4af9ee1cee30a42baaa78",
+    "src/js/10-domain/06-quarantine.js": "08975bcc4c59a25a4348b6ae997bb2ff26e93644c50d95b4f7fae952c4682a38",
+    "src/js/20-ui/11-phase-posture.js": "ca4258642cc1a05ddfbe56e9ee502862eb9f915944b242e7d1cb9d11fef22e5c",
+    "src/js/20-ui/12-nav-style.js": "41c9a9d0d390d8ee02100810b17ac30a705d7222edd933fed7b2aaadb1514483",
+    "src/js/40-app/04-onboarding.js": "14b4b6c053a0dc79641d0a8b0897b635e815a9718b61a990513b208f1271311f",
+    "src/js/40-app/05-wipe-all.js": "e91c282c00067b1250b0a75166c524fb664a500b6311655e08368b8cecdb6d68",
+    "src/js/40-app/06-app-icons.js": "40e5ada4a6887eea186bb4bbfaf3003973b81b9af6901a8bcfc67c2e3285fba3",
+    "src/js/40-app/07-finalize-session.js": "fdb42e2788d1d9314b09dca62ca2865f29339a835c3aa9bdaf52bfe3cff2b484",
+    "src/js/40-app/06-boot.js": "1f81977ce86c986ad6cf8f2c73de733204148a59818e2c1b9a09c929c802808e",
+    "src/js/40-app/08-educational-content.js": "877a1fd18350c797f21a9c356d3b439deef397871550154eda454b43dc4f2f23",
+    "src/js/40-app/09-profile-avatar-catalog.js": "2ef8f6552bcce28cad7fe76ea8a9330b3983051e43db29f51bf1d4ddf6275e2a",
+    "src/js/40-app/10-dashboard-immersive.js": "2dadd3ee1bcddd57fc9fe50954a475d54046d7055e65ce441e23dd16daca8b1e",
+    "src/js/40-app/11-operational-shell.js": "1077cb674671dd5ad2cd00c9166f1169f46b66616dc5cb578bb2de955547ab17",
+    "src/js/40-app/12-global-dashboard.js": "658e693366d5f993db9ed5715ff786a8f7442b900508d867597027912e0cdd73",
+    "src/js/40-app/13-dashboard-layout.js": "4b3ee2c6a31ed2d301e66304b33b0531c6f57e8074c50da7cf7d95c3daf9a97e",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/40-app/15-ff-news.js": "8763f9c7d00a45b6bcc11b96d80acb115dae4d9ebb0e6b42ad5f32657b4264e3",
+    "src/js/40-app/16-storage-governance.js": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be",
+    "src/js/40-app/17-economic-calendar.js": "8bb7d6f307613d07e3f987f0785073e8ee709ac50837372223b06182f0584618",
+    "src/vendor/planck/planck-1.5.0.min.js": "69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974",
+    "src/js/40-app/18-galton-board/01-config.js": "91412690159c995cadbbfad517bcefa6c495aca91c502e8bf0345a003ccae180",
+    "src/js/40-app/18-galton-board/02-rng.js": "88e21a92006eaa4650be783909237aee35304878b2d9805e239d87fc68e09c53",
+    "src/js/40-app/18-galton-board/03-statistics.js": "38157b5f6b21f17af4b63731ab4efa1375b4dc8cc34979305813fe3b97df7e63",
+    "src/js/40-app/18-galton-board/04-physics.js": "f121106f11dff0dbdf11307afb2ea6eb5bcb9c6ad80a9d85eafd9f3258a46f3a",
+    "src/js/40-app/18-galton-board/05-renderer.js": "2e1f1a47c89cc0cdae7c04d51de708bb1a56a72f657ca0fe6d6a4c882b742762",
+    "src/js/40-app/18-galton-board/06-controller.js": "1439457dd5f2e6cad8918cabc5f044fc30ee03dc29977038fedf46366b556141",
+    "src/js/10-domain/08-usd-brl-quote.js": "f86355fba756dbb267d3f4144dcd861bcc533d42295489727f55aebcb58eedd2",
+    "src/js/20-ui/13-exec-views.js": "a6a226a01765dccfe7d97f1dd222999106470f09643ce4e9e09dc6b10e0963ad",
+    "src/js/10-domain/09-nocoda-geometry.js": "268858faa34378c4dd3c90827699e59d48a1022a1f2287e6bc840bf51265147f",
+    "src/js/20-ui/14-nocoda-studies.js": "66c546fa9585b8c4dc30103817bf8c5b97ea8e77580cd7bb5e8a3b0a1c9c730d",
+    "src/js/10-domain/10-pivot-studies.js": "b2853c1f1856965d6d5b164fb7732e1c386f53e2aa6fda56cf3d1a222eaa3fb5",
+    "src/js/20-ui/15-pivot-studies.js": "a4ebe6d7c23b81fbdd6f44348f2a878b510d3f62001e50ba6e02e9e87c5464c1",
+    "src/js/10-domain/11-operation-lifecycle.js": "2e6057486e50603a98d18545452a020cb60661d552c563a00123578b0099e397",
+    "src/js/20-ui/16-operation-history.js": "4efe785de509f413fdb309ce21eb1e8bc808463353f12e46bddc14f6edcc2686",
+    "src/js/20-ui/19-finpes-debts.js": "3c042b7b90a5909de0e61144c213b49e3fd06884646857a3d89040b021de7b1f",
+    "src/js/20-ui/20-finpes-comparison.js": "85c6df4651dfc83047f30df5262dddd9786c8f9f297f26af9fc30a21f673ad30",
+    "src/js/20-ui/21-finpes-scenarios.js": "18715f24622a32c77a04c4d22aa442ad4cefcdc1fa977b7fc175496079e7cd87",
+    "src/js/20-ui/22-finpes-overview.js": "21eebce0f8a70feca61ff1f0547ea7fb35ecfb525ea5455aa23b2ec2a31f4e35",
+    "src/js/10-domain/13-alladin.js": "e03629ebb1028b4ab1a4e6a0d27b737b0f5feb20ebf43cdf8368da99ceb0d9ad",
+    "src/js/20-ui/23-research-views.js": "4a0b9f3a59e815576dc1335609c88a817c6b9f12823a0060e24eb745f0ecc721",
+    "src/js/20-ui/25-dash-macro.js": "5daf06408d8082fafb0f7947c9634949353558a001b56a2a442fcbd8239713f1",
+    "src/js/40-app/18-notification-center.js": "7f852a4f0f24c35fdb0cc48c73b0137ad229472eef7944799ad601df5fb022e4",
+    "src/js/20-ui/26-forex-engine-views.js": "fb3290a475ba57d58a9793a60ffc2fc335fbde9f37eba54a416f29cd71d6c4b0",
+    "src/js/10-domain/17-fx-consolidated-model.js": "b815e8c4cf16b08b9e5e1e727e411753bb72cb044bf06cd84f3eb677a4be3b7e",
+    "src/js/40-app/24-fx-consolidated-import.js": "b99ba4d2107841c7c3b2d2181df66dc8b9b1455be2380f6b04769836add3e50e",
+    "src/js/40-app/25-fx-consolidated-pdf.js": "016236f4dc85ca4e101b143904a03f8754635871af07bb454ba898812dbef10f",
+    "src/js/20-ui/28-fx-consolidated.js": "23a09f27f0e2d7069ad838cde454407dd9b36bc53fdd2fa8c9b208aaef7d0723",
+    "src/js/10-domain/19-execution-market.js": "c5511f91a328f671b7491098288f90a23d8f357d67ab47868c2b68f1769fd081",
+    "src/js/10-domain/18-execution-board-model.js": "380335798e74316f5035ae64a7f6b23c5f4aea240987c2ef8e5098e117a72ba1",
+    "src/js/20-ui/30-execution-board.js": "ebde74be7628992e691ec00e318f4cc83d2942454a0572601c6f341261789f1a",
+    "src/js/10-domain/16-nocuda-transfer.js": "f70d4b16b25c63cd75eedf65a7e873455fcb43ec5186957a26a7302cc2c1a7cb",
+    "src/js/40-app/29-time-twins/01-simulation.js": "f7f09c0093f0b5d3584f1204bf55996bc60c9b31f7ba9587fe2588ee423922bb",
+    "src/js/40-app/29-time-twins/02-missions.js": "bbb810d3da792a9b1fd3f5750945891f2b4d1b8d8b9e1715fba2e788340df5ec",
+    "src/js/40-app/29-time-twins/03-progress.js": "bfe5eee4ef986f8c3aa573b8a4178fee62d408499291fe42e1402bbed96e50db",
+    "src/js/40-app/29-time-twins/04-view.js": "8be683d390d27da8b94f34ddca92056829e11dd8464b15d0e336a846db5c400d",
+    "src/js/40-app/29-time-twins/05-controller.js": "331473c0a627f4d18e85f7c472ee818394c2e5f0546cbbb16420feb9c53016d8",
+    "src/js/40-app/30-capital-currents/01-engine.js": "55f6409cc25e6bfc3eee02d581c9b2b9d6f083485937b805e298d17075c69b1b",
+    "src/js/40-app/30-capital-currents/02-scenarios.js": "fdab0dd90693d4278b24c5643788bf4768266b96332b6d9d21257862441ce7ea",
+    "src/js/40-app/30-capital-currents/03-progress.js": "2c5511293709f599ed26f5bb850ada2273f36ddbed56f6c1a262b321d5df7b55",
+    "src/js/40-app/30-capital-currents/04-field-renderer.js": "4bd8fbdf99c8c22e57de1724bf13570009a569f9e4b26f6b93b83476d164a3c4",
+    "src/js/40-app/30-capital-currents/04-view.js": "89ca1fc0ab82c60067ff25be55cc8a32ed2a6ea3c519eca2696ea09b3921a868",
+    "src/js/40-app/30-capital-currents/05-controller.js": "f1feb9ea39cfea07e5b1bd285fbf42bb390ba5f6fab39286ef32681f6cac72de",
+    "src/js/00-core/10-download-assets.js": "e42f18df8612ac5599aeabc3b0fe364c314878d7bd13c0f6ad2fcc810470b378",
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/02-assets.js": "8b738a41e7ad2c625c1f7fac9afb770117df941970c46d55af140f2aabec8309",
+    "src/js/40-app/31-market-hours/03-view.js": "2617750ed456dd94bbb6bfbe13eb504083573b4bd09d27fe44c932e36613305a",
+    "src/js/40-app/31-market-hours/04-controller.js": "70e678f588742b061c425e01da950a4ad07bab00959cfeee7676339e5a23ab33",
+    "src/js/20-ui/31-tools-services.js": "39470eb4b221ef1e5b6a72ea610243e964055e4b1dab5e19c7a7c7b964eb6b3b",
+    "src/js/20-ui/34-normative-reader.js": "beaf00bb9f531496914d7147fd619bb6448cb761df6a6c6bc44a47f3dd3d3f8d",
+    "src/js/20-ui/31-forex-accounts.js": "2aab5fda4525f02f8d9c701fee28fac733578028cc7020b444e5336cb4688fd5",
+    "src/js/20-ui/33-module-work.js": "9094a3651edbbaab009f627a43122bb6e2c32f6d337e3ae6723624c7d960edd2",
+    "src/js/20-ui/32-module-availability.js": "d3d4516fc2087e69d57e2053f0b9b2d54d70d38d3585f4dcbe421ac54c6f6a0a",
+    "src/js/40-app/26-learning-catalog.js": "632ea9ac8a74a117474c585d6693ad4050ba0094f8b0818d2ea3e8d02250147c",
+    "src/js/00-core/09-learning-progress.js": "86396ca40e0fc1941c476e2b4645dac96618e11133941fd85f6a25927c0a2db2",
+    "src/js/40-app/27-learning-view.js": "6fbddab78dc3cbb402d6c41d699a4491e665a4d5a60293511a7f11060b75e729",
+    "src/js/40-app/28-learning-guide.js": "7ab6d853405f9bb8b6e54984f8f1d817d2856e6c2c88afa7fba68b32b2cd93e7",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3"
+  },
+  "test_sha256": "20a24a272dba9312b1d8ef9750c9d6c1dee36cf80c531c60cfb776685ad1d386",
+  "observations": {
+    "pf": [
+      {
+        "case": {
+          "kind": "income",
+          "field": "name",
+          "old": "17,00",
+          "value": "  Curso á <x>  "
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "name",
+              "  Curso á <x>  "
+            ],
+            [
+              "render",
+              "  Curso á <x>  "
+            ]
+          ],
+          "errors": [],
+          "value": "  Curso á <x>  ",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "name",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "name",
+              "10"
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fi-campo=\"name\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "\"17,00\"",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "name",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "name",
+              "10"
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fi-campo=\"name\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "\"\"",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "name",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "name",
+              "10"
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fi-campo=\"name\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "\"17,00\"",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "name",
+          "old": "17,00",
+          "value": "  Curso á <x>  "
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "name",
+              "  Curso á <x>  "
+            ],
+            [
+              "render",
+              "  Curso á <x>  "
+            ]
+          ],
+          "errors": [],
+          "value": "  Curso á <x>  ",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "name",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "name",
+              "10"
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fe-campo=\"name\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "\"17,00\"",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "name",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "name",
+              "10"
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fe-campo=\"name\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "\"\"",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "name",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "name",
+              "10"
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fe-campo=\"name\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "\"17,00\"",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": "1.234,50"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              123450
+            ],
+            [
+              "render",
+              "1.234,50"
+            ]
+          ],
+          "errors": [],
+          "value": "1.234,50",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": ""
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              null
+            ],
+            [
+              "render",
+              ""
+            ]
+          ],
+          "errors": [],
+          "value": "",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": "0"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              0
+            ],
+            [
+              "render",
+              "0"
+            ]
+          ],
+          "errors": [],
+          "value": "0",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": "2,3,4"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.",
+              "2,3,4"
+            ]
+          ],
+          "errors": [],
+          "value": "2,3,4",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — projectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "projectedAmount",
+                "selector": "[data-fi-campo=\"projectedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "2,3,4"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": "-1"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor negativo não é aceito: a direção já é do campo.",
+              "-1"
+            ]
+          ],
+          "errors": [],
+          "value": "-1",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — projectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "projectedAmount",
+                "selector": "[data-fi-campo=\"projectedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "-1"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — projectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "projectedAmount",
+                "selector": "[data-fi-campo=\"projectedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — projectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "projectedAmount",
+                "selector": "[data-fi-campo=\"projectedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "null",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "projectedAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — projectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "projectedAmount",
+                "selector": "[data-fi-campo=\"projectedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": "1.234,50"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "receivedAmount",
+              123450
+            ],
+            [
+              "render",
+              "1.234,50"
+            ]
+          ],
+          "errors": [],
+          "value": "1.234,50",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": ""
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "receivedAmount",
+              null
+            ],
+            [
+              "render",
+              ""
+            ]
+          ],
+          "errors": [],
+          "value": "",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": "0"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "receivedAmount",
+              0
+            ],
+            [
+              "render",
+              "0"
+            ]
+          ],
+          "errors": [],
+          "value": "0",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": "2,3,4"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.",
+              "2,3,4"
+            ]
+          ],
+          "errors": [],
+          "value": "2,3,4",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — receivedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "receivedAmount",
+                "selector": "[data-fi-campo=\"receivedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "2,3,4"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": "-1"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor negativo não é aceito: a direção já é do campo.",
+              "-1"
+            ]
+          ],
+          "errors": [],
+          "value": "-1",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — receivedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "receivedAmount",
+                "selector": "[data-fi-campo=\"receivedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "-1"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "receivedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — receivedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "receivedAmount",
+                "selector": "[data-fi-campo=\"receivedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "receivedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — receivedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "receivedAmount",
+                "selector": "[data-fi-campo=\"receivedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "null",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "receivedAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "receivedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — receivedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "incomes",
+                "id": "event-id",
+                "field": "receivedAmount",
+                "selector": "[data-fi-campo=\"receivedAmount\"][data-fi-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": "1.234,50"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "targetAmount",
+              123450
+            ],
+            [
+              "render",
+              "1.234,50"
+            ]
+          ],
+          "errors": [],
+          "value": "1.234,50",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": ""
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "targetAmount",
+              null
+            ],
+            [
+              "render",
+              ""
+            ]
+          ],
+          "errors": [],
+          "value": "",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": "0"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "targetAmount",
+              0
+            ],
+            [
+              "render",
+              "0"
+            ]
+          ],
+          "errors": [],
+          "value": "0",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": "2,3,4"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.",
+              "2,3,4"
+            ]
+          ],
+          "errors": [],
+          "value": "2,3,4",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — targetAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "targetAmount",
+                "selector": "[data-fe-campo=\"targetAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "2,3,4"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": "-1"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor negativo não é aceito: a direção já é do campo.",
+              "-1"
+            ]
+          ],
+          "errors": [],
+          "value": "-1",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — targetAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "targetAmount",
+                "selector": "[data-fe-campo=\"targetAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "-1"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "targetAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — targetAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "targetAmount",
+                "selector": "[data-fe-campo=\"targetAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "targetAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — targetAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "targetAmount",
+                "selector": "[data-fe-campo=\"targetAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "null",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "targetAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "targetAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — targetAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "targetAmount",
+                "selector": "[data-fe-campo=\"targetAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": "1.234,50"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "expectedAmount",
+              123450
+            ],
+            [
+              "render",
+              "1.234,50"
+            ]
+          ],
+          "errors": [],
+          "value": "1.234,50",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": ""
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "expectedAmount",
+              null
+            ],
+            [
+              "render",
+              ""
+            ]
+          ],
+          "errors": [],
+          "value": "",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": "0"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "expectedAmount",
+              0
+            ],
+            [
+              "render",
+              "0"
+            ]
+          ],
+          "errors": [],
+          "value": "0",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": "2,3,4"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.",
+              "2,3,4"
+            ]
+          ],
+          "errors": [],
+          "value": "2,3,4",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — expectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "expectedAmount",
+                "selector": "[data-fe-campo=\"expectedAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "2,3,4"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": "-1"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor negativo não é aceito: a direção já é do campo.",
+              "-1"
+            ]
+          ],
+          "errors": [],
+          "value": "-1",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — expectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "expectedAmount",
+                "selector": "[data-fe-campo=\"expectedAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "-1"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "expectedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — expectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "expectedAmount",
+                "selector": "[data-fe-campo=\"expectedAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "expectedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — expectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "expectedAmount",
+                "selector": "[data-fe-campo=\"expectedAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "null",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "expectedAmount",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "expectedAmount",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — expectedAmount (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "expectedAmount",
+                "selector": "[data-fe-campo=\"expectedAmount\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": "1.234,50"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCash",
+              123450
+            ],
+            [
+              "render",
+              "1.234,50"
+            ]
+          ],
+          "errors": [],
+          "value": "1.234,50",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": ""
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCash",
+              null
+            ],
+            [
+              "render",
+              ""
+            ]
+          ],
+          "errors": [],
+          "value": "",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": "0"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCash",
+              0
+            ],
+            [
+              "render",
+              "0"
+            ]
+          ],
+          "errors": [],
+          "value": "0",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": "2,3,4"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.",
+              "2,3,4"
+            ]
+          ],
+          "errors": [],
+          "value": "2,3,4",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCash (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCash",
+                "selector": "[data-fe-campo=\"executedCash\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "2,3,4"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": "-1"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor negativo não é aceito: a direção já é do campo.",
+              "-1"
+            ]
+          ],
+          "errors": [],
+          "value": "-1",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCash (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCash",
+                "selector": "[data-fe-campo=\"executedCash\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "-1"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCash",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCash (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCash",
+                "selector": "[data-fe-campo=\"executedCash\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCash",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCash (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCash",
+                "selector": "[data-fe-campo=\"executedCash\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "null",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCash",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCash",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCash (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCash",
+                "selector": "[data-fe-campo=\"executedCash\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": "1.234,50"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCard",
+              123450
+            ],
+            [
+              "render",
+              "1.234,50"
+            ]
+          ],
+          "errors": [],
+          "value": "1.234,50",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": ""
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCard",
+              null
+            ],
+            [
+              "render",
+              ""
+            ]
+          ],
+          "errors": [],
+          "value": "",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": "0"
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCard",
+              0
+            ],
+            [
+              "render",
+              "0"
+            ]
+          ],
+          "errors": [],
+          "value": "0",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": "2,3,4"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero.",
+              "2,3,4"
+            ]
+          ],
+          "errors": [],
+          "value": "2,3,4",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCard (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCard",
+                "selector": "[data-fe-campo=\"executedCard\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "2,3,4"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": "-1"
+        },
+        "observation": {
+          "events": [
+            [
+              "alert",
+              "⛔ Valor negativo não é aceito: a direção já é do campo.",
+              "-1"
+            ]
+          ],
+          "errors": [],
+          "value": "-1",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCard (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCard",
+                "selector": "[data-fe-campo=\"executedCard\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "-1"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCard",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "17,00",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCard (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCard",
+                "selector": "[data-fe-campo=\"executedCard\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "",
+          "value": "10",
+          "refuse": true,
+          "focus": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCard",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": true,
+          "prev": "",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCard (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCard",
+                "selector": "[data-fe-campo=\"executedCard\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "null",
+              "originalText": "",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "executedCard",
+          "old": "17,00",
+          "value": "10",
+          "refuse": true,
+          "focus": false
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "executedCard",
+              1000
+            ],
+            [
+              "alert",
+              "⛔ RECUSA_SINTÉTICA",
+              "10"
+            ]
+          ],
+          "errors": [],
+          "value": "10",
+          "focus": false,
+          "prev": null,
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — executedCard (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "executedCard",
+                "selector": "[data-fe-campo=\"executedCard\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "1700",
+              "originalText": "17,00",
+              "text": "10"
+            }
+          ]
+        }
+      },
+      {
+        "case": {
+          "kind": "income",
+          "field": "name",
+          "changedField": "projectedAmount",
+          "old": "17",
+          "value": "2,50",
+          "repeat": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              250
+            ],
+            [
+              "render",
+              "2,50"
+            ]
+          ],
+          "errors": [],
+          "value": "2,50",
+          "focus": true,
+          "prev": "17",
+          "repeated": [
+            [
+              "act",
+              "income",
+              "2026-09",
+              "event-id",
+              "projectedAmount",
+              250
+            ],
+            [
+              "render",
+              "2,50"
+            ]
+          ],
+          "writes": 0,
+          "draftReads": 2,
+          "unchanged": true,
+          "pending": []
+        }
+      },
+      {
+        "case": {
+          "kind": "expense",
+          "field": "name",
+          "old": "x",
+          "value": "y",
+          "throw": true
+        },
+        "observation": {
+          "events": [
+            [
+              "act",
+              "expense",
+              "2026-09",
+              "event-id",
+              "name",
+              "y"
+            ]
+          ],
+          "errors": [
+            "Uncaught Error: DOMAIN_TEST_FAILURE"
+          ],
+          "value": "y",
+          "focus": true,
+          "prev": "x",
+          "writes": 0,
+          "draftReads": 1,
+          "unchanged": true,
+          "pending": [
+            {
+              "label": "Finanças Pessoais — name (2026-09)",
+              "provider": "personal-finance-field",
+              "version": 1,
+              "context": {
+                "month": "2026-09",
+                "collection": "expenses",
+                "id": "event-id",
+                "field": "name",
+                "selector": "[data-fe-campo=\"name\"][data-fe-id=\"event-id\"]"
+              },
+              "baseReference": "\"x\"",
+              "originalText": "x",
+              "text": "y"
+            }
+          ]
+        }
+      }
+    ],
+    "alladin": [
+      {
+        "case": {
+          "accounts": [
+            {
+              "accountId": "a",
+              "name": "XP"
+            }
+          ],
+          "instruments": [],
+          "cash": [
+            {
+              "cashAccountId": "c",
+              "accountId": "a",
+              "currency": "BRL"
+            }
+          ],
+          "ids": [
+            "c",
+            "missing",
+            null
+          ]
+        },
+        "observation": {
+          "cat": {
+            "contas": {
+              "a": "XP"
+            },
+            "caixas": {
+              "c": "BRL · XP"
+            },
+            "instrumentos": {}
+          },
+          "error": null,
+          "events": [
+            "accounts",
+            "instruments",
+            "cashAccounts"
+          ],
+          "immutable": true,
+          "writes": 0,
+          "labels": [
+            "BRL · XP",
+            "missing",
+            "—"
+          ]
+        }
+      },
+      {
+        "case": {
+          "accounts": [
+            {
+              "accountId": "a",
+              "name": "XP"
+            },
+            {
+              "accountId": "b",
+              "name": "XP"
+            }
+          ],
+          "instruments": [
+            {
+              "instrumentId": "i",
+              "name": "Nome",
+              "symbol": ""
+            }
+          ],
+          "cash": [
+            {
+              "cashAccountId": "c1",
+              "accountId": "a",
+              "currency": "BRL"
+            },
+            {
+              "cashAccountId": "c2",
+              "accountId": "b",
+              "currency": "BRL",
+              "recordStatus": "INACTIVE"
+            },
+            {
+              "cashAccountId": "c3",
+              "accountId": "a",
+              "currency": "USD"
+            }
+          ],
+          "ids": [
+            "c1",
+            "c2",
+            "c3"
+          ]
+        },
+        "observation": {
+          "cat": {
+            "contas": {
+              "a": "XP",
+              "b": "XP"
+            },
+            "caixas": {
+              "c1": "BRL · XP · c1",
+              "c2": "BRL · XP · c2",
+              "c3": "USD · XP"
+            },
+            "instrumentos": {
+              "i": "Nome"
+            }
+          },
+          "error": null,
+          "events": [
+            "accounts",
+            "instruments",
+            "cashAccounts"
+          ],
+          "immutable": true,
+          "writes": 0,
+          "labels": [
+            "BRL · XP · c1",
+            "BRL · XP · c2",
+            "USD · XP"
+          ]
+        }
+      },
+      {
+        "case": {
+          "accounts": [
+            {
+              "accountId": "a",
+              "name": ""
+            },
+            {
+              "name": "ignored"
+            }
+          ],
+          "instruments": [
+            {
+              "instrumentId": "i",
+              "symbol": "S<\"&",
+              "name": "N"
+            }
+          ],
+          "cash": [
+            {
+              "cashAccountId": "c1",
+              "accountId": "a"
+            },
+            {
+              "cashAccountId": "c2",
+              "accountId": "unknown",
+              "currency": "EUR"
+            },
+            {
+              "cashAccountId": "c3"
+            },
+            {
+              "accountId": "a",
+              "currency": "USD"
+            }
+          ],
+          "ids": [
+            "c1",
+            "c2",
+            "c3",
+            ""
+          ]
+        },
+        "observation": {
+          "cat": {
+            "contas": {
+              "a": ""
+            },
+            "caixas": {
+              "c1": "a",
+              "c2": "EUR · unknown",
+              "c3": "—"
+            },
+            "instrumentos": {
+              "i": "S<\"&"
+            }
+          },
+          "error": null,
+          "events": [
+            "accounts",
+            "instruments",
+            "cashAccounts"
+          ],
+          "immutable": true,
+          "writes": 0,
+          "labels": [
+            "a",
+            "EUR · unknown",
+            "—",
+            "—"
+          ]
+        }
+      },
+      {
+        "case": {
+          "accounts": [
+            {
+              "accountId": "a",
+              "name": "<img onerror=x>&"
+            }
+          ],
+          "instruments": [],
+          "cash": [
+            {
+              "cashAccountId": "c",
+              "accountId": "a",
+              "currency": "BRL"
+            }
+          ],
+          "ids": [
+            "c"
+          ]
+        },
+        "observation": {
+          "cat": {
+            "contas": {
+              "a": "<img onerror=x>&"
+            },
+            "caixas": {
+              "c": "BRL · <img onerror=x>&"
+            },
+            "instrumentos": {}
+          },
+          "error": null,
+          "events": [
+            "accounts",
+            "instruments",
+            "cashAccounts"
+          ],
+          "immutable": true,
+          "writes": 0,
+          "labels": [
+            "BRL · <img onerror=x>&"
+          ]
+        }
+      },
+      {
+        "case": {
+          "accounts": [],
+          "instruments": [],
+          "cash": [],
+          "ids": []
+        },
+        "observation": {
+          "cat": {
+            "contas": {},
+            "caixas": {},
+            "instrumentos": {}
+          },
+          "error": null,
+          "events": [
+            "accounts",
+            "instruments",
+            "cashAccounts"
+          ],
+          "immutable": true,
+          "writes": 0,
+          "labels": []
+        }
+      },
+      {
+        "case": {
+          "accounts": [],
+          "instruments": [],
+          "cash": [],
+          "ids": [],
+          "throw": true
+        },
+        "observation": {
+          "cat": null,
+          "error": "READ_TEST_FAILURE",
+          "events": [
+            "accounts",
+            "instruments"
+          ],
+          "immutable": true,
+          "writes": 0,
+          "labels": []
+        }
+      },
+      {
+        "case": "interleaved-read-projection",
+        "observation": [
+          "accounts",
+          "account-name",
+          "instruments",
+          "symbol",
+          "instrument-name",
+          "cashAccounts"
+        ]
+      }
+    ],
+    "settings": [
+      {
+        "case": {
+          "query": " TEMA ",
+          "entries": [
+            {
+              "title": "Tema",
+              "category": "a"
+            },
+            {
+              "title": "Tema",
+              "category": "a",
+              "selector": "#later"
+            },
+            {
+              "title": "Tema B",
+              "category": "b",
+              "selector": "#b"
+            },
+            {
+              "title": "Tema C",
+              "category": "a",
+              "selector": "#c"
+            },
+            {
+              "title": "tema",
+              "category": "a"
+            }
+          ],
+          "paths": {
+            "a": "Interface",
+            "b": "Tela"
+          }
+        },
+        "observation": {
+          "labels": [
+            [
+              "Tema B",
+              "Tela",
+              "0"
+            ],
+            [
+              "Tema C",
+              "Interface",
+              "1"
+            ],
+            [
+              "Tema",
+              "Interface",
+              "2"
+            ],
+            [
+              "tema",
+              "Interface",
+              "3"
+            ]
+          ],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "b"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "click",
+              "b",
+              false,
+              "#b"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#c"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ]
+          ],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "AÇÃO",
+          "entries": [
+            {
+              "title": "Ação",
+              "category": "a"
+            },
+            {
+              "title": "Acao",
+              "category": "a"
+            }
+          ],
+          "paths": {
+            "a": "Tela"
+          }
+        },
+        "observation": {
+          "labels": [
+            [
+              "Ação",
+              "Tela",
+              "0"
+            ]
+          ],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ]
+          ],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "tela",
+          "entries": [
+            {
+              "title": "Outro",
+              "category": "a"
+            }
+          ],
+          "paths": {
+            "a": "Tela"
+          }
+        },
+        "observation": {
+          "labels": [
+            [
+              "Outro",
+              "Tela",
+              "0"
+            ]
+          ],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ]
+          ],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "armazenamento",
+          "entries": [
+            {
+              "title": "armazenamento",
+              "category": "a"
+            },
+            {
+              "title": "armazenamento",
+              "category": "b"
+            }
+          ],
+          "paths": {
+            "a": "Sobre",
+            "b": "Dados › Armazenamento"
+          }
+        },
+        "observation": {
+          "labels": [
+            [
+              "armazenamento",
+              "Sobre",
+              "0"
+            ],
+            [
+              "armazenamento",
+              "Dados › Armazenamento",
+              "1"
+            ]
+          ],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "b"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "b",
+              false,
+              "__undefined__"
+            ]
+          ],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "none",
+          "entries": [
+            {
+              "title": "Tema",
+              "category": "a"
+            },
+            {
+              "title": "Tema",
+              "category": "a",
+              "selector": "#later"
+            },
+            {
+              "title": "Tema B",
+              "category": "b",
+              "selector": "#b"
+            },
+            {
+              "title": "Tema C",
+              "category": "a",
+              "selector": "#c"
+            },
+            {
+              "title": "tema",
+              "category": "a"
+            }
+          ],
+          "paths": {}
+        },
+        "observation": {
+          "labels": [],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "b"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ]
+          ],
+          "html": "<p class=\"settings-no-results\">Nenhuma configuração ou ajuda encontrada.</p>",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": " ",
+          "entries": [
+            {
+              "title": "Tema",
+              "category": "a"
+            },
+            {
+              "title": "Tema",
+              "category": "a",
+              "selector": "#later"
+            },
+            {
+              "title": "Tema B",
+              "category": "b",
+              "selector": "#b"
+            },
+            {
+              "title": "Tema C",
+              "category": "a",
+              "selector": "#c"
+            },
+            {
+              "title": "tema",
+              "category": "a"
+            }
+          ],
+          "paths": {}
+        },
+        "observation": {
+          "labels": [],
+          "events": [],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "tema",
+          "root": false,
+          "entries": [
+            {
+              "title": "Tema",
+              "category": "a"
+            },
+            {
+              "title": "Tema",
+              "category": "a",
+              "selector": "#later"
+            },
+            {
+              "title": "Tema B",
+              "category": "b",
+              "selector": "#b"
+            },
+            {
+              "title": "Tema C",
+              "category": "a",
+              "selector": "#c"
+            },
+            {
+              "title": "tema",
+              "category": "a"
+            }
+          ],
+          "paths": {}
+        },
+        "observation": {
+          "labels": [],
+          "events": [],
+          "html": null,
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "img",
+          "entries": [
+            {
+              "title": "<img src=x onerror=x>&",
+              "category": "a",
+              "selector": "#safe"
+            }
+          ],
+          "paths": {
+            "a": "<b>Path</b>"
+          }
+        },
+        "observation": {
+          "labels": [
+            [
+              "<img src=x onerror=x>&",
+              "<b>Path</b>",
+              "0"
+            ]
+          ],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#safe"
+            ]
+          ],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": "Item",
+          "entries": [
+            {
+              "title": "Item 00",
+              "category": "a"
+            },
+            {
+              "title": "Item 01",
+              "category": "a"
+            },
+            {
+              "title": "Item 02",
+              "category": "a"
+            },
+            {
+              "title": "Item 03",
+              "category": "a"
+            },
+            {
+              "title": "Item 04",
+              "category": "a"
+            },
+            {
+              "title": "Item 05",
+              "category": "a"
+            },
+            {
+              "title": "Item 06",
+              "category": "a"
+            },
+            {
+              "title": "Item 07",
+              "category": "a"
+            },
+            {
+              "title": "Item 08",
+              "category": "a"
+            },
+            {
+              "title": "Item 09",
+              "category": "a"
+            },
+            {
+              "title": "Item 10",
+              "category": "a",
+              "selector": "#i10"
+            },
+            {
+              "title": "Item 11",
+              "category": "a",
+              "selector": "#i11"
+            },
+            {
+              "title": "Item 12",
+              "category": "a",
+              "selector": "#i12"
+            },
+            {
+              "title": "Item 13",
+              "category": "a",
+              "selector": "#i13"
+            },
+            {
+              "title": "Item 14",
+              "category": "a",
+              "selector": "#i14"
+            },
+            {
+              "title": "Item 15",
+              "category": "a",
+              "selector": "#i15"
+            },
+            {
+              "title": "Item 16",
+              "category": "a",
+              "selector": "#i16"
+            },
+            {
+              "title": "Item 17",
+              "category": "a",
+              "selector": "#i17"
+            },
+            {
+              "title": "Item 18",
+              "category": "a",
+              "selector": "#i18"
+            },
+            {
+              "title": "Item 19",
+              "category": "a",
+              "selector": "#i19"
+            },
+            {
+              "title": "Item 20",
+              "category": "a",
+              "selector": "#i20"
+            }
+          ],
+          "paths": {
+            "a": "Tela"
+          }
+        },
+        "observation": {
+          "labels": [
+            [
+              "Item 10",
+              "Tela",
+              "0"
+            ],
+            [
+              "Item 11",
+              "Tela",
+              "1"
+            ],
+            [
+              "Item 12",
+              "Tela",
+              "2"
+            ],
+            [
+              "Item 13",
+              "Tela",
+              "3"
+            ],
+            [
+              "Item 14",
+              "Tela",
+              "4"
+            ],
+            [
+              "Item 15",
+              "Tela",
+              "5"
+            ],
+            [
+              "Item 16",
+              "Tela",
+              "6"
+            ],
+            [
+              "Item 17",
+              "Tela",
+              "7"
+            ],
+            [
+              "Item 18",
+              "Tela",
+              "8"
+            ],
+            [
+              "Item 19",
+              "Tela",
+              "9"
+            ],
+            [
+              "Item 20",
+              "Tela",
+              "10"
+            ],
+            [
+              "Item 00",
+              "Tela",
+              "11"
+            ],
+            [
+              "Item 01",
+              "Tela",
+              "12"
+            ],
+            [
+              "Item 02",
+              "Tela",
+              "13"
+            ],
+            [
+              "Item 03",
+              "Tela",
+              "14"
+            ],
+            [
+              "Item 04",
+              "Tela",
+              "15"
+            ],
+            [
+              "Item 05",
+              "Tela",
+              "16"
+            ],
+            [
+              "Item 06",
+              "Tela",
+              "17"
+            ]
+          ],
+          "events": [
+            [
+              "index"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "path",
+              "a"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i10"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i11"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i12"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i13"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i14"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i15"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i16"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i17"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i18"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i19"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "#i20"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ],
+            [
+              "click",
+              "a",
+              false,
+              "__undefined__"
+            ]
+          ],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      },
+      {
+        "case": {
+          "query": " ",
+          "entries": [
+            {
+              "title": "Item 00",
+              "category": "a"
+            },
+            {
+              "title": "Item 01",
+              "category": "a"
+            },
+            {
+              "title": "Item 02",
+              "category": "a"
+            },
+            {
+              "title": "Item 03",
+              "category": "a"
+            },
+            {
+              "title": "Item 04",
+              "category": "a"
+            },
+            {
+              "title": "Item 05",
+              "category": "a"
+            },
+            {
+              "title": "Item 06",
+              "category": "a"
+            },
+            {
+              "title": "Item 07",
+              "category": "a"
+            },
+            {
+              "title": "Item 08",
+              "category": "a"
+            },
+            {
+              "title": "Item 09",
+              "category": "a"
+            },
+            {
+              "title": "Item 10",
+              "category": "a",
+              "selector": "#i10"
+            },
+            {
+              "title": "Item 11",
+              "category": "a",
+              "selector": "#i11"
+            },
+            {
+              "title": "Item 12",
+              "category": "a",
+              "selector": "#i12"
+            },
+            {
+              "title": "Item 13",
+              "category": "a",
+              "selector": "#i13"
+            },
+            {
+              "title": "Item 14",
+              "category": "a",
+              "selector": "#i14"
+            },
+            {
+              "title": "Item 15",
+              "category": "a",
+              "selector": "#i15"
+            },
+            {
+              "title": "Item 16",
+              "category": "a",
+              "selector": "#i16"
+            },
+            {
+              "title": "Item 17",
+              "category": "a",
+              "selector": "#i17"
+            },
+            {
+              "title": "Item 18",
+              "category": "a",
+              "selector": "#i18"
+            },
+            {
+              "title": "Item 19",
+              "category": "a",
+              "selector": "#i19"
+            },
+            {
+              "title": "Item 20",
+              "category": "a",
+              "selector": "#i20"
+            }
+          ],
+          "paths": {
+            "a": "Tela"
+          },
+          "keepRoot": true
+        },
+        "observation": {
+          "labels": [],
+          "events": [],
+          "html": "",
+          "immutable": true,
+          "images": 0,
+          "writes": 0,
+          "errors": []
+        }
+      }
+    ],
+    "fx": [
+      {
+        "case": "empty query model renders without raw financial read",
+        "observation": {
+          "rendered": true,
+          "text": "STOIKUS · JP WEALTHPlanejamento patrimonialGerar PDFStoikus ▾Adicionar nova contaEditar conta selecionadaReiniciar…Histórico de reiníciosEntender os prazos de rendaPreencher meses da contaRegistrar rentabilidadeRegistrar aporteRegistrar saqueCorrigir saqueInformar custo pendenteCorrigir aporte / informar custoGerar PDFComece aquiConsolidadoPreenchimento mensalConta Todas as contasUSD/BRL indisponível · valores em USD preservados Atualizar câmbioComece aquiPlaneje a evolução do seu patrimônio em dólares ao longo de 10 anos, combinando capital inicial, aportes mensais e o perfil de risco escolhido.Configure uma vez. Depois, registre os resultados de cada mês e acompanhe sua evolução.Preencher o formulário1 · Monte seu planoEscolha mês e ano iniciais. Informe capital inicial, aporte mensal, perfil de risco e renda desejada. A previsão patrimonial é calculada automaticamente.2 · Registre pelos botõesEm Preenchimento mensal, selecione a conta. Registre o resultado total em dólares, os aportes e os saques pelos respectivos botões. Aguarde a confirmação e marque Finalizado = Sim após conferir.3 · Compare e acompanheConsolidado soma as contas ou mostra uma conta selecionada. Referência mantém o plano do formulário de cada conta para comparar o planejado e o realizado.ENTENDA O BÁSICOAporte: dinheiro que você adiciona; informe dólares e reais pagos.Saque: dinheiro que você retira; reais recebidos são opcionais.Resultado: lucro ou prejuízo do mês, sem incluir aportes e saques.Juros compostos: os resultados reinvestidos também passam a render.Os valores do plano são em dólares. Projeções são simulações, sem garantia de retorno. Escolha o perfil considerando sua capacidade de suportar perdas.Nova conta: Adicionar nova conta no Consolidado. Projeções: Stoikus → Editar conta selecionada. Lançamentos: botões de Preenchimento mensal. PDF: Gerar PDF.iPara limpar uma conta ou preparar uma nova configuração, use Stoikus → Reiniciar. O comando exige confirmação e guarda o histórico dentro deste planejamento.",
+          "commands": 0
+        }
+      },
+      {
+        "case": "start",
+        "observation": {
+          "accepted": true,
+          "view": "start",
+          "commands": 0
+        }
+      },
+      {
+        "case": "consolidated",
+        "observation": {
+          "accepted": true,
+          "view": "consolidated",
+          "commands": 0
+        }
+      },
+      {
+        "case": "monthly",
+        "observation": {
+          "accepted": true,
+          "view": "monthly",
+          "commands": 0
+        }
+      },
+      {
+        "case": "reference",
+        "observation": {
+          "accepted": true,
+          "view": "consolidated",
+          "commands": 0
+        }
+      },
+      {
+        "case": "accounts",
+        "observation": {
+          "accepted": true,
+          "view": "consolidated",
+          "commands": 0
+        }
+      },
+      {
+        "case": "unknown view refuses without data access",
+        "observation": {
+          "accepted": false,
+          "same": true,
+          "reads": 0,
+          "commands": 0
+        }
+      },
+      {
+        "case": "hidden render preserves DOM and avoids reads",
+        "observation": {
+          "rendered": false,
+          "same": true,
+          "reads": 0,
+          "commands": 0
+        }
+      },
+      {
+        "case": "missing root avoids reads and writes",
+        "observation": {
+          "rendered": false,
+          "reads": 0,
+          "commands": 0
+        }
+      }
+    ],
+    "pf-live": [
+      {
+        "case": [
+          "fi",
+          "1,23"
+        ],
+        "observation": {
+          "value": 123,
+          "saved": 123,
+          "sameId": true,
+          "count": 1,
+          "saves": 1,
+          "renders": 1,
+          "alerts": [],
+          "display": "1,23",
+          "focus": {
+            "tag": "INPUT",
+            "id": "",
+            "field": "receivedAmount"
+          }
+        }
+      },
+      {
+        "case": [
+          "fi",
+          "2,34"
+        ],
+        "observation": {
+          "value": 234,
+          "saved": 234,
+          "sameId": true,
+          "count": 1,
+          "saves": 1,
+          "renders": 1,
+          "alerts": [],
+          "display": "2,34",
+          "focus": {
+            "tag": "INPUT",
+            "id": "",
+            "field": "receivedAmount"
+          }
+        }
+      },
+      {
+        "case": [
+          "fi",
+          "inválido"
+        ],
+        "observation": {
+          "value": 234,
+          "saved": 234,
+          "sameId": true,
+          "count": 1,
+          "saves": 0,
+          "renders": 0,
+          "alerts": [
+            "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero."
+          ],
+          "display": "inválido",
+          "focus": {
+            "tag": "INPUT",
+            "id": "",
+            "field": "receivedAmount"
+          }
+        }
+      },
+      {
+        "case": [
+          "fi",
+          "domain-refusal"
+        ],
+        "observation": {
+          "value": "Receita sintética",
+          "saved": "Receita sintética",
+          "display": "",
+          "saves": 0,
+          "renders": 0,
+          "alerts": [
+            "⛔ descrição obrigatória"
+          ]
+        }
+      },
+      {
+        "case": [
+          "fe",
+          "1,23"
+        ],
+        "observation": {
+          "value": 123,
+          "saved": 123,
+          "sameId": true,
+          "count": 1,
+          "saves": 1,
+          "renders": 1,
+          "alerts": [],
+          "display": "1,23",
+          "focus": {
+            "tag": "INPUT",
+            "id": "",
+            "field": "expectedAmount"
+          }
+        }
+      },
+      {
+        "case": [
+          "fe",
+          "2,34"
+        ],
+        "observation": {
+          "value": 234,
+          "saved": 234,
+          "sameId": true,
+          "count": 1,
+          "saves": 1,
+          "renders": 1,
+          "alerts": [],
+          "display": "2,34",
+          "focus": {
+            "tag": "INPUT",
+            "id": "",
+            "field": "expectedAmount"
+          }
+        }
+      },
+      {
+        "case": [
+          "fe",
+          "inválido"
+        ],
+        "observation": {
+          "value": 234,
+          "saved": 234,
+          "sameId": true,
+          "count": 1,
+          "saves": 0,
+          "renders": 0,
+          "alerts": [
+            "⛔ Valor inválido — ponto ou vírgula decimal, sem separador ambíguo; em branco não é zero."
+          ],
+          "display": "inválido",
+          "focus": {
+            "tag": "INPUT",
+            "id": "",
+            "field": "expectedAmount"
+          }
+        }
+      },
+      {
+        "case": [
+          "fe",
+          "domain-refusal"
+        ],
+        "observation": {
+          "value": "Despesa sintética",
+          "saved": "Despesa sintética",
+          "display": "",
+          "saves": 0,
+          "renders": 0,
+          "alerts": [
+            "⛔ nome da despesa obrigatório"
+          ]
+        }
+      }
+    ]
+  },
+  "passed": true,
+  "browser": "148.0.7778.96"
+}

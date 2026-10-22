@@ -97,20 +97,20 @@ def main():
                 const before=localStorage.getItem(LSKEY),all=invalid.every(value=>!JPWWorkspaceDrafts.inspect({...base,text:JSON.stringify(value)}).compatible);
                 return {ok:all&&localStorage.getItem(LSKEY)===before};
             }''')
-            check('Planning fields reopen at new epoch without save',r'''()=>{
-                const created=JPWFx.state.fxPlanCreate({name:'Synthetic plan',assumptions:{startMonth:'2026-01',horizonMonths:12,initialBalanceUsd:1000,defaultMonthlyReturn:0.01,projectedFxRate:5}});
-                if(!created.ok)return {ok:false,created};renderFxPlanning();
-                const group='planning',identity=[jpWealthPersistenceEpoch(),S.fxPlanning.plan.id,group,null];
-                fxpInputDrafts.set(JSON.stringify(identity),{group,fields:{fxpEditRate:'2.5'}});
-                const item=jpwWorkspaceDrafts().find(d=>d.provider==='planning'),before=localStorage.getItem(LSKEY);
-                fxpInputDrafts.clear();const restored=JPWWorkspaceDrafts.reopen(item);
-                const field=document.getElementById('fxpEditRate');
-                const ok=restored.ok&&fxpInputDrafts.size===1&&field?.value==='2.5'&&localStorage.getItem(LSKEY)===before;
-                fxpInputDrafts.clear();return {ok,restored,field:field?.value};
+            check('Planning imported fields remain readable and safely refuse automatic replay',r'''()=>{
+                const api=JPWPlanning,created=api.commands.execute('createAccount',{name:'Synthetic plan',startMonth:'2026-01',initialUsd:1000,profileId:'base',monthlyContributionUsd:10,goals:{adequate:null,ideal:{value:30,currency:'USD'}}},api.queries.token());
+                if(!created.ok)return {ok:false,created};JPWNavigation.navigate('planning');
+                const create=[...document.querySelectorAll('#planning button')].find(b=>b.textContent==='Adicionar conta');
+                api.ui.selectView('accounts');document.querySelector('#planning [data-pl-action="create"]').click();
+                const input=document.querySelector('#planning [name="name"]');input.value='Unsaved synthetic planning';input.dispatchEvent(new Event('input',{bubbles:true}));
+                const item=jpwWorkspaceDrafts().find(d=>d.provider==='patrimonial-planning'),before=localStorage.getItem(LSKEY),fields=JSON.parse(item.text).fields;
+                const inspect=JPWWorkspaceDrafts.inspect(item),restored=JPWWorkspaceDrafts.reopen(item);
+                const ok=!inspect.compatible&&!restored.ok&&fields.name==='Unsaved synthetic planning'&&item.context.formVersion===1&&localStorage.getItem(LSKEY)===before;
+                api.ui.discardDrafts();return {ok,inspect,restored};
             }''')
             check('Forged draft selectors and malformed identities refuse reopening',r'''()=>{
                 const pf={provider:'personal-finance-field',version:1,label:'Synthetic',text:'2',baseReference:'null',context:{month:'2026-10',collection:'incomes',id:S.personalFinance.months['2026-10'].incomes[0].id,field:'doesNotExist',selector:'#pMDD'}};
-                const planning={provider:'planning',version:1,label:'Synthetic',baseReference:JSON.stringify(S.fxPlanning),text:JSON.stringify({inputs:[{identity:{}}],months:[],auxiliary:[]}),context:{}};
+                const planning={provider:'patrimonial-planning',version:1,label:'Synthetic',baseReference:JSON.stringify(S.patrimonialPlanning),text:JSON.stringify({formVersion:1,fields:{unknown:'malformed'}}),context:{}};
                 return {ok:!JPWWorkspaceDrafts.inspect(pf).compatible&&!JPWWorkspaceDrafts.inspect(planning).compatible};
             }''')
             check('Widget migration preserves old key on refused write',r'''()=>{

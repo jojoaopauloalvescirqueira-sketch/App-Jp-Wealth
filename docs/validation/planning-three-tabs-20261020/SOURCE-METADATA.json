@@ -1,0 +1,55 @@
+{
+  "spreadsheet_id": "1Wo1Qwvfd7okSClnCwKateirerP77Z0fWGHmg51wG2EA",
+  "read_at_utc": "2026-10-21 00:49:53 UTC",
+  "visible_sheets": [
+    {
+      "sheetId": 412953685,
+      "title": "Comece aqui",
+      "index": 8,
+      "sheetType": "GRID",
+      "gridProperties": {
+        "rowCount": 40,
+        "columnCount": 12,
+        "hideGridlines": true
+      }
+    },
+    {
+      "sheetId": 1976101601,
+      "title": "Consolidado",
+      "index": 9,
+      "sheetType": "GRID",
+      "gridProperties": {
+        "rowCount": 270,
+        "columnCount": 23,
+        "hideGridlines": true
+      }
+    },
+    {
+      "sheetId": 1335698432,
+      "title": "Preenchimento mensal",
+      "index": 18,
+      "sheetType": "GRID",
+      "gridProperties": {
+        "rowCount": 1001,
+        "columnCount": 34,
+        "frozenRowCount": 4,
+        "hideGridlines": true,
+        "rowGroupControlAfter": true,
+        "columnGroupControlAfter": true
+      }
+    }
+  ],
+  "internal_reference": {
+    "sheetId": 1976101612,
+    "title": "Referência",
+    "index": 19,
+    "sheetType": "GRID",
+    "hidden": true,
+    "gridProperties": {
+      "rowCount": 140,
+      "columnCount": 12,
+      "hideGridlines": true
+    }
+  },
+  "limits": "Native metadata read only. Does not execute Apps Script or authenticate its deployed version. No values or financial records imported."
+}

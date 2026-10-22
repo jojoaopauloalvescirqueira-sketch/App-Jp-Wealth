@@ -1,0 +1,46 @@
+{
+  "baseline_build": "2ddbac03d67141d0",
+  "candidate_build": "e08c12101146ae7b",
+  "viewport_css_px": 1440,
+  "table_width_css_px": 977.625,
+  "rows": {
+    "2026-08": {
+      "before_css_px": 106.5,
+      "after_css_px": 53
+    },
+    "2026-09": {
+      "before_css_px": 106.5,
+      "after_css_px": 53
+    },
+    "2026-10": {
+      "before_css_px": 106.5,
+      "after_css_px": 53
+    },
+    "2026-11": {
+      "before_css_px": 132.5,
+      "after_css_px": 53
+    },
+    "2026-12": {
+      "before_css_px": 132.5,
+      "after_css_px": 53
+    },
+    "2027-01": {
+      "before_css_px": 132.5,
+      "after_css_px": 53
+    },
+    "2027-02": {
+      "before_css_px": 132.5,
+      "after_css_px": 53
+    },
+    "2027-03": {
+      "before_css_px": 132.5,
+      "after_css_px": 53
+    }
+  },
+  "financial_writes_during_after_captures": 0,
+  "sources": {
+    "before_sha256": "7fb07c7cba1c8250b66588091d763f89dc44e7a08c3255ddc032e5a9bedfe755",
+    "after_sha256": "4b0620af6774264bce33bab29b1b5ebb75bf109e06816da69aba99bbe7e1338c"
+  },
+  "limits": "Controlled synthetic measurements, usual values. Autoheight remains for large values/zoom/mobile. Not human visual acceptance."
+}

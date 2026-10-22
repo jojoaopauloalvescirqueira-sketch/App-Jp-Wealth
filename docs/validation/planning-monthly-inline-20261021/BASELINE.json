@@ -1,0 +1,11 @@
+{
+  "build": "2ddbac03d67141d0",
+  "branch": "codex/planejamento-patrimonial-20261020",
+  "head": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+  "files": 1921,
+  "links": 8,
+  "archive_sha256": "445c7b652ffd8e2db5f9fa6a0babc65edaf814b21e049922d63da5ea589679d8",
+  "original_dirty_entries": 122,
+  "scope": "Authorized reuse; archive verified file hashes andlinktargets before edits.",
+  "source": "task-private baseline.json andcandidate-2dd-before.tar.gz"
+}

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "tools/planning_state_test.js"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "env_override": {
+    "JPW_PLANNING_STATE_SOURCE": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/task1/02-state-wrong-percent.js"
+  },
+  "start": "2026-10-22T01:23:25.084215+00:00",
+  "end": "2026-10-22T01:23:27.034080+00:00",
+  "exit": 1,
+  "classification": "PRODUCT_FAIL",
+  "mutation": "PERCENT divides points by 1000 instead of 100 in a separate ignored source copy",
+  "source_hashes": {
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/task1/02-state-wrong-percent.js": "041f7931d7bc5769959ad3ab15d58b9ff1fc5be64677432cc0b170b6971995d9",
+    "tools/planning_monthly_result_input_test.js": "58bbaa3d84c66e2cb2deecb386d373a89305f3125e0c00aa864748f6fd0a0273",
+    "tools/planning_state_test.js": "237aba7f24068fcf7cd159cd0895e3adda6d2ffe18dfeea1f3cc8218a6878de3"
+  },
+  "stdout": "counterproof.stdout.log",
+  "stderr": "counterproof.stderr.log"
+}

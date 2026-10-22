@@ -1,0 +1,35 @@
+--- a/tools/planning_ui_test.py
++++ b/tools/planning_ui_test.py
+@@ -152,6 +152,19 @@
+         assert_fixture_requests(ctx)
+     finally:ctx.close()
+ 
++def current_month_reading_matches(page,month,amount_text,cost_text):
++    """Read the same monthly values through the approved principal/detail layout."""
++    trigger=page.locator('#planning [data-pl-select-month="'+month+'"]')
++    if trigger.get_attribute('aria-expanded')!='true':trigger.click()
++    details=page.locator('#planning [data-pl-month-details="'+month+'"]')
++    contribution=page.locator('#planning [data-pl-grid-month="'+month+'"] [data-pl-month-value=contribution], #planning [data-pl-month-details="'+month+'"] [data-pl-month-value=contribution]')
++    cost_label=details.get_by_text('Situação do custo',exact=True)
++    assert details.is_visible() and contribution.count()==1 and contribution.is_visible(),'one visible current-month contribution remains reachable'
++    assert cost_label.count()==1,'one matching current-month cost situation label remains reachable'
++    cost=cost_label.locator('..').locator(':scope > dd')
++    assert cost.count()==1 and cost.is_visible(),'matching current-month cost situation value remains reachable'
++    return amount_text in contribution.inner_text() and cost_text in cost.inner_text()
++
+ def current_month_journey(browser,url):
+     ctx=browser.new_context(viewport={'width':1440,'height':1000},service_workers='block')
+     ctx.add_init_script('window.__onbShown=true;');install_bootstrap(ctx,{'USDBRL':5})
+@@ -166,10 +179,10 @@
+         open_flow(page,'Registrar rentabilidade');page.locator('#planning [name=usd]').fill('30');confirm_flow(page);page.get_by_role('dialog').wait_for(state='hidden')
+     create('Atual previsto e registrado')
+     reading=page.locator('#planning [data-pl-grid-month="'+current+'"]')
+-    check('100,00' in reading.locator('td').nth(8).inner_text() and 'Aporte não confirmado' in reading.inner_text(),'current month qualifies its expected USD100 contribution')
++    check(current_month_reading_matches(page,current,'100,00','Aporte não confirmado'),'current month qualifies its expected USD100 contribution')
+     check('Em andamento' in reading.inner_text() and reading.locator('[data-pl-finalized-month]').input_value()=='Não','current unclosed balance remains explicitly unfinished')
+     open_flow(page,'Registrar aporte');page.locator('#planning [name=usd]').fill('20');flow_field(page,'brl','100');confirm_flow(page);page.get_by_role('dialog').wait_for(state='hidden')
+-    check('20,00' in reading.locator('td').nth(8).inner_text() and '100% do custo informado' in reading.inner_text(),'actual USD20 replaces the expected contribution and has confirmed acquisition cost')
++    check(current_month_reading_matches(page,current,'20,00','100% do custo informado'),'actual USD20 replaces the expected contribution and has confirmed acquisition cost')
+     result();page.get_by_role('button',name='Finalizado = Sim',exact=True).click()
+     check('1.050,00' in page.locator('#planning dialog .pl-definition').inner_text(),'finalization preview with USD20 ledger shows effective USD1050')
+     page.locator('#planning [name=confirmFlows]').check();page.get_by_role('button',name='Confirmar fechamento',exact=True).click();page.get_by_role('dialog').wait_for(state='hidden')

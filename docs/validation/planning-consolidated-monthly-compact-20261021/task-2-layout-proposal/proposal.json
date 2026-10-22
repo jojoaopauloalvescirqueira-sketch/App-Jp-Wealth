@@ -1,0 +1,7 @@
+{
+  "original_sha256": "8ab2189cfa5f582a6661805da148d159f7d477cbac3fedfe8b8f71238a537fbe",
+  "candidate_sha256": "23d26943d3618ea1fce1e9c48259b33e6cff351dab0d157428b63d8d23f70c0e",
+  "versioned_writes": false,
+  "one_expression_only": true,
+  "inverse_replacement_exact_original": true
+}

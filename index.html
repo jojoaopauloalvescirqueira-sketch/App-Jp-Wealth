@@ -229,7 +229,6 @@ SOFTWARE.
         <p class="forex-nav-group" data-forex-nav-group="manage">Administrar</p>
         <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Contas e Períodos</span><span class="nav-sub-item-desc">Cadastro e contexto operacional</span></button>
         <button type="button" data-nav-item data-nav-child="forex-accounting"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Fechamentos e apuração do período</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento patrimonial</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
@@ -242,25 +241,6 @@ SOFTWARE.
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
             <span class="nav-sub-item-title">Motor de Lote</span>
             <span class="nav-sub-item-desc">Consultar na Operação</span>
-          </button>
-        </div>
-        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
-             data-nav-context="forex-planning" role="group" aria-label="Planejamento" hidden inert>
-          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="overview">
-            <span class="nav-sub-item-title">Visão Geral</span>
-            <span class="nav-sub-item-desc">Resumo do plano vigente</span>
-          </button>
-          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="planning">
-            <span class="nav-sub-item-title">Planejamento</span>
-            <span class="nav-sub-item-desc">Premissas e projeções</span>
-          </button>
-          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="actuals">
-            <span class="nav-sub-item-title">Realizado</span>
-            <span class="nav-sub-item-desc">Fechamentos e aportes</span>
-          </button>
-          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="table">
-            <span class="nav-sub-item-title">Tabela mensal</span>
-            <span class="nav-sub-item-desc">Baseline, vigente e realizado</span>
           </button>
         </div>
       </div>
@@ -361,14 +341,15 @@ SOFTWARE.
   <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-search"/></svg>
     <span class="n">02</span><span class="lbl">Research</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
+  <button class="tab" data-route="planning" data-primary="planning" title="Planejamento"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chart-no-axes-combined"/></svg><span class="n">03</span><span class="lbl">Planejamento</span></button>
   <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-consolidated" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chart-no-axes-combined"/></svg>
-    <span class="n">03</span><span class="lbl">Forex</span></button>
+    <span class="n">04</span><span class="lbl">Forex</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-house"/></svg>
-    <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
+    <span class="n">05</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" hidden data-module-frozen="true" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
-  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-sliders-horizontal"/></svg><span class="n">06</span><span class="lbl">Ferramentas e Serviços</span></button>
+  <button class="tab" hidden data-module-frozen="true" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">06</span><span class="lbl">Alladin</span></button>
+  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-sliders-horizontal"/></svg><span class="n">07</span><span class="lbl">Ferramentas e Serviços</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="tools" aria-controls="toolsNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
@@ -1174,15 +1155,8 @@ SOFTWARE.
   <section class="screen" id="fxreserves"><div id="forexReservesPanel" class="card fx-engine-workspace"></div></section>
 
   <!-- ================= 07B PLANEJAMENTO FX ================= -->
-  <!-- Tela principal própria (decisão do gestor, 2026-08-11). O card não participa
-       da personalização de layout nesta fase (registro em 13-dashboard-layout.js é
-       evolução futura). Conteúdo renderizado por 30-accounting/05-fx-planning/05-fx-ui.js. -->
-  <section class="screen" id="fxplan">
-    <div class="card" id="fxPlanningCard">
-      <h2>Planejamento patrimonial <span class="art">planejado × realizado × normativo · premissas do operador — não é promessa de retorno</span></h2>
-      <div id="fxPlanningRoot"></div>
-    </div>
-  </section>
+  <!-- Planejamento independente: montagem sob demanda em 30-accounting/06-planning. -->
+  <section class="screen" id="planning" aria-label="Planejamento" data-module-work-owner="planning"></section>
 
   <!-- ================= 06 FINANÇAS PESSOAIS =================
        Cinco workspaces, filhos DIRETOS da section (padrão #exec:
@@ -2553,11 +2527,6 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
 <script src="src/js/40-app/18-galton-board/05-renderer.js"></script>
 <script src="src/js/40-app/18-galton-board/06-controller.js"></script>
 <script src="src/js/10-domain/08-usd-brl-quote.js"></script>
-<script src="src/js/30-accounting/05-fx-planning/01-fx-model.js"></script>
-<script src="src/js/30-accounting/05-fx-planning/02-fx-engine.js"></script>
-<script src="src/js/30-accounting/05-fx-planning/03-fx-state.js"></script>
-<script src="src/js/30-accounting/05-fx-planning/04-fx-charts.js"></script>
-<script src="src/js/30-accounting/05-fx-planning/05-fx-ui.js"></script>
 <script src="src/js/20-ui/13-exec-views.js"></script>
 <script src="src/js/10-domain/09-nocoda-geometry.js"></script>
 <script src="src/js/20-ui/14-nocoda-studies.js"></script>
@@ -2579,7 +2548,7 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
 <dialog id="notificationCenter" aria-labelledby="notificationTitle" aria-describedby="notificationPrivacy">
   <div class="notification-heading"><div><p class="notification-eyebrow">JP WEALTH</p><h2 id="notificationTitle">Notificações</h2></div><button type="button" id="notificationClose" aria-label="Fechar notificações">✕</button></div>
   <p id="notificationSummary" role="status" aria-live="polite"></p>
-  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label><button type="button" id="notificationReadAll">Marcar todas como lidas</button></div>
+  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="planning">Planejamento</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label><button type="button" id="notificationReadAll">Marcar todas como lidas</button></div>
   <div class="notification-scroll"><p id="notificationEmpty" hidden>Nenhuma notificação nesta área.</p><ul id="notificationList"></ul></div>
   <p id="notificationPrivacy">Avisos ativos e mensagens desta sessão. Ler não resolve a condição. O histórico é local, temporário e não permanece após recarregar; não há alertas com o aplicativo fechado.</p>
 </dialog>
@@ -2618,5 +2587,8 @@ Write-Host &#x27;PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora
 <script src="src/js/00-core/09-learning-progress.js"></script>
 <script src="src/js/40-app/27-learning-view.js"></script>
 <script src="src/js/40-app/28-learning-guide.js"></script>
+<script src="src/js/30-accounting/06-planning/01-engine.js"></script>
+<script src="src/js/30-accounting/06-planning/02-state.js"></script>
+<script src="src/js/30-accounting/06-planning/03-ui.js"></script>
 </body>
 </html>

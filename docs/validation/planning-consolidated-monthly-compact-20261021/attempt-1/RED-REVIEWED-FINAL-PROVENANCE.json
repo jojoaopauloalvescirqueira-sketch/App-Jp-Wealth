@@ -1,0 +1,28 @@
+{
+  "started_at": "2026-10-21T22:57:44.571308+00:00",
+  "archive_sha256": "0102420b981c611b8f228b0a0ea02d052f08545a418e79d42a66dec748c4e174",
+  "served_baseline_overrides": {
+    "src/js/30-accounting/06-planning/03-ui.js": {
+      "sha256": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664",
+      "origin": "verified baseline recovery archive"
+    },
+    "src/styles/app.css": {
+      "sha256": "1f3229bcfa93d903f6a10535d425cfee666d2277412ee246d71a50cc79ec3af2",
+      "origin": "verified baseline recovery archive"
+    }
+  },
+  "live_presentation_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+    "src/styles/app.css": "94898fde8f27e1c530d23ff015af5f487c6fe03b490d24aca033687ba92b024c"
+  },
+  "test_sha256": {
+    "tools/ui_visual_quality_test.py": "08a66550b75e8d812340749d888a6260f5f9b82f47123bb7b56c0b6aa76fd847",
+    "tools/planning_compact_table_test.py": "9ab355a32085d4a3b78c9e6e8c46b8b7435fb26abbbe0f4606cc090b29fb5a83"
+  },
+  "limits": [
+    "Counterfactual presentation-only baseline serving; source_sha256 in raw report refers to stable current disk, not overridden HTTP bytes.",
+    "Original actual RED attempts remain preserved."
+  ],
+  "actual_exit_code": 1,
+  "finished_at": "2026-10-21T22:57:50.923567+00:00"
+}

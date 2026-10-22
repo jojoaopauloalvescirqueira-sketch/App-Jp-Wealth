@@ -29,7 +29,7 @@ SURFACES = [
     ('dashboard', 'dashboard', None), ('forex', 'forex-overview', None),
     ('preparation', 'forex-preparation', None), ('account', 'forex-account', None),
     ('operation', 'forex-operation', None), ('reconciliation', 'forex-reconciliation', None),
-    ('planning', 'forex-planning', None), ('pf', 'personal-finance', None),
+    ('planning', 'planning', None), ('pf', 'personal-finance', None),
     ('pf-budget', 'personal-finance', ['finpes', 'mensal']),
     ('pf-debts', 'personal-finance', ['finpes', 'dividas']),
     ('pf-comparison', 'personal-finance', ['finpes', 'comparativo']),
@@ -81,6 +81,7 @@ MEASURE = r"""() => {
 def run(args):
     args.output.mkdir(parents=True, exist_ok=True)
     identity_files=['index.html','src/styles/app.css','src/js/40-app/09-settings-modal.js',
+                    'src/js/30-accounting/06-planning/03-ui.js',
                     'src/js/manifest.json','build-id.js','tools/visual_proportion_test.py',
                     'tools/design_experience_test.py','tools/apple_experience_test.py']
     inputs_before={f:hashlib.sha256((args.root/f).read_bytes()).hexdigest() for f in identity_files}
@@ -124,6 +125,13 @@ def run(args):
                                 page.locator('#forexChecklistClose').click()
                             page.evaluate('closeModal();closeSettingsModal()')
                             check(key+' route accessible',page.evaluate('(r)=>JPWNavigation.navigate(r)',route))
+                            if name=='planning':
+                                for target in ('planning','forex-planning','fxplan'):
+                                    check(key+' '+target+' accessible',page.evaluate('(r)=>JPWNavigation.navigate(r)',target))
+                                    current=page.evaluate('JPWNavigation.current()')
+                                    check(key+' '+target+' independent owner',
+                                          (current['primary'],current['canonical'],current['screen'],current['child'])==('planning','planning','planning',None)
+                                          and current['localView']=={'surface':'planning','view':'start'},current)
                             if isinstance(local,list):check(key+' local accessible',page.evaluate('([s,v])=>JPWNavigation.navigateLocal(s,v)',local))
                             if name=='pf-budget' and page.locator('#modalOverlay').is_visible():
                                 if args.screenshots:page.screenshot(path=str(args.output/f'{key}-previous-month-dialog.png'),animations='disabled')

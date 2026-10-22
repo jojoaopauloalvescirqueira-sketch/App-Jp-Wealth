@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-22T03:57:29.295575+00:00",
+  "candidate_build": "e08c12101146ae7b",
+  "source_pdf_sha256": "266c0119ea73ad433d52d3bc434b5cd807b0a0d50fca4c77fa96e66560b8de60",
+  "pages": 2,
+  "page_sizes": [
+    {
+      "width": 842.88,
+      "height": 595.91998
+    },
+    {
+      "width": 842.88,
+      "height": 595.91998
+    }
+  ],
+  "page_text_lines": [
+    21,
+    2
+  ],
+  "renders": {
+    "page-1.png": "ea4c2bb0c8e4d41857d16e34ef494204976391a8f873a2d7482b888945248a6a",
+    "page-2.png": "4d41901c3cca9c83a7775fc95efd9cd2b3f9fed51dafca39b604d1cff41364e0"
+  },
+  "pdfinfo_actual_exit": 0,
+  "render_actual_exit": 0,
+  "visual_review": "CONTENT_READABLE_WITH_INHERITED_PAGINATION_LIMITATION",
+  "scope": "Read-only inspection of app test report; baselinepagination limitation is not silentlyclosed or redesigned.",
+  "finding": "Both rendered pages reviewed; readable amounts/text/chart. Inherited page2 contains only2 footer lines; print function untouched. No polished-PDF or human acceptance claim."
+}
