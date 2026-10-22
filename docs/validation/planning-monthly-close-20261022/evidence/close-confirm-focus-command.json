@@ -1,0 +1,15 @@
+{
+  "command": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/planning_monthly_close_test.py",
+    "--only",
+    "closure-missing-result-recovery",
+    "--out",
+    ".superpowers/sdd/2026-10-22-planning-monthly-close/close-confirm-focus"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T13:34:07.685515+00:00",
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/close-confirm-focus.log",
+  "finished_at": "2026-10-22T13:34:13.377404+00:00",
+  "exit_code": 0
+}

@@ -1,0 +1,9 @@
+{
+  "classification": "RELEASE_INPUT_DRIFT",
+  "tested_build": "d93561c064cf5f40",
+  "regenerated_build": "a19161f7a3388b15",
+  "cause": "Root changed README.md and CHANGELOG.md after FULL; these are PROJECT_DOCUMENTS/FINGERPRINT_FIXED_INPUTS. Guard detected10 generated differences.",
+  "product_js_css_unchanged": true,
+  "resolution": "Freeze project documents first, capture all official fingerprint inputs and rerun complete gate on final generated candidate.",
+  "supersedes_current_package_approval": true
+}

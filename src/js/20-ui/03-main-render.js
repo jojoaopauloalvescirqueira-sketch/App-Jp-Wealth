@@ -316,6 +316,7 @@ function renderPresentation(options={}){
   if(dashVisible&&window.JPWDashMacro) window.JPWDashMacro.schedule();
   if(visible('exec')&&window.execGetView?.()==='panel'&&window.JPWForex?.executionBoardUI)JPWForex.executionBoardUI.render({reuseOnNavigation:options.navigation===true});
   if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
+  if(visible('planning'))window.JPWPlanning?.ui?.render();
 }
 
 // Navigation paints the accepted surface without invalidating financial sources.

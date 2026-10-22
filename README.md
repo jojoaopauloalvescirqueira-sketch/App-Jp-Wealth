@@ -1,4 +1,63 @@
+# Planejamento — fechamento guiado e revisão de uso —22/10/2026
+
+Contrato aprovado: resolver resultado pendente na própria janela, revisar novamente dados alterados, conferir fluxos e finalizar explicitamente. Resultado e fechamento são gravações distintas; zero não é presumido. Meses anteriores pendentes têm orientação recuperável. Dados, fórmulas, histórico e backup preservados.
+
+[Plano](docs/superpowers/plans/2026-10-22-planning-monthly-close.md) · [Contrato](docs/architecture/PLANNING.md) · [Execução, testes e limites](docs/validation/planning-monthly-close-20261022/README.md). Resultado somente nos recibos próprios do novo candidato; validações anteriores são históricas. Aceite humano separado. Sem Git/publicação.
+
+## Fotografia anterior preservada
+
+# Planejamento — edição mensal no próprio mês
+
+Contrato aprovado em21/10/2026: tabela mais compacta, edição contextual com Salvar/Cancelar, resultado em percentual ouUS$, revisão antes dos fatos confirmados e lançamentos individuais preservados. Destaque do passado e filtro Atual em diante são preferências locais; não alteram registros. Ano inclui Todos. Consolidado, formulário e Stoikus permanecem.
+
+[Plano](docs/superpowers/plans/2026-10-21-planning-monthly-inline.md), [contrato](docs/architecture/PLANNING.md) e [recibos próprios](docs/validation/planning-monthly-inline-20261021/README.md). A validação atual depende dos novos recibos;96/96 e206/206 anteriores são históricos. Aceite visual humano separado. Sem commit, merge, push ou publicação.
+
+## Fotografia anterior preservada
+
+# Planejamento — Consolidado organizado e tabela compacta
+
+Plano aprovado em21/10/2026: agrupar indicadores, sinalizar ano/mês atuais e apresentar sete/três colunas com detalhes completos por mês. Reutiliza a branch e o candidato anteriora971, preservando finanças e confirmações. [Contrato](docs/architecture/PLANNING.md), [plano](docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md) e [resultados próprios](docs/validation/planning-consolidated-monthly-compact-20261021/README.md). Resultado final somente no recibo próprio com identidade/execução reais; o96/96 anterior permanece histórico. Aceite visual humano e Git/publicação separados.
+
+## Fotografia anterior preservada
+
+## Planejamento — organização dos controles
+
+Stoikus apresenta ações agrupadas verticalmente, com navegação por teclado. O formulário usa controles e ícones alinhados por critérios internos, preservando perguntas, cálculos e confirmação antes da gravação. A [regra visual do projeto](docs/governance/UI-VISUAL-QUALITY.md) tem cobertura automatizada inicial em Planejamento; outras áreas aguardam casos próprios.
+
+[Plano aprovado](docs/superpowers/plans/2026-10-21-planning-controls-visual-quality.md) e [provas, execução e limites](docs/validation/planning-controls-visual-quality-20261021/README.md). O recibo final do novo pacote determina seu resultado; os95 checks anteriores continuam históricos e obrigatórios. Aceite humano separado; sem Git ou publicação.
+
+### Fotografia anterior preservada
+
+## Planejamento — posições e proporções
+
+O contrato visual passa a exigir janelas centralizadas, margens de segurança, controles alinhados e fechar acessível. A previsão acompanha os campos quando há largura e altura; nos demais tamanhos, Ver sua previsão mantém o acesso direto. Perfis e Parada conservam suas perguntas e cálculos, com legenda legível e a data utilizada no rodapé.
+
+[Contrato](docs/architecture/PLANNING.md), [plano aprovado](docs/superpowers/plans/2026-10-21-planning-proportions.md) e [execução, resultados e limites](docs/validation/planning-proportions-20261021/README.md). A identidade do pacote e o resultado da execução completa ficam nos recibos próprios; sua ausência ou resultado nãoPASS mantém a validação pendente. Sem alteração financeira, migração, commit, merge, push ou publicação.
+
+### Fotografia anterior preservada
+
+## Planejamento — experiência atual com três abas
+
+Somente **Comece aqui, Consolidado e Preenchimento mensal**, com menu Stoikus operacional separado. Preencher o formulário abre criação, edição ou escolha explícita da conta; os marcos do custo de vida atual e da renda dos sonhos são apresentados durante a simulação, antes da confirmação. Referência permanece interna aos comparativos e os blocos históricos ocultos deixam a apresentação.
+
+A ordem padrão editável coloca Planejamento após Research. Notas com Mostrar ativo fica disponível em todas as áreas e é ocultada temporariamente em modais. Motores, registros, histórico, preferências e backup preservados. [Contrato](docs/architecture/PLANNING.md) e [resultados e limites](docs/validation/planning-three-tabs-20261020/README.md). Sem migração automática, commit, merge, push ou publicação.
+
+### Fotografia anterior preservada — candidato443c
+
+## Planejamento — dinâmica da planilha
+
+O menu independente segue **Comece aqui → formulário → revisão → confirmação**, com **Consolidado, Preenchimento mensal e Referência**. Reproduz perguntas, perfis, previsões, seletores, registros mensais e ações dos scripts de referência.
+
+[Estado da entrega, resultados e limites](docs/validation/planning-20261020/parity/README.md). Câmbio diário do site e persistência independente são as decisões aprovadas; execução Google autenticada e aceite humano têm provas próprias. Sem migração automática ou operações Git/publicação nesta implementação.
+
+### Fotografia anterior preservada
+
 # JP Wealth — consolidação em validação
+
+## Planejamento independente — candidato local de 20/10/2026
+
+O novo menu **Planejamento** reúne Consolidado, Mensal, Referência e Contas, com cálculos e fluxos da planilha aprovada e câmbio diário do site. Sem sincronização Sheets ou migração automática; o plano anterior continua preservado para exportação. [Uso, dados e limites](docs/architecture/PLANNING.md). Candidato implementado; FULL 88/88 e 110 verificações de UI PASS. [Resultados e limites](docs/validation/planning-20261020/README.md). Aceite humano pendente; sem commit, merge, push ou publicação.
+
 
 A integração atual reúne site, correção F01 e instalador beta para Stoikus1.23.0/R5. [Escopo, testes e limites](docs/work/CHG-JPW-CONSOLIDACAO-INTEGRAL-20261018.md). O instalador permanece privado até provas próprias. Os cabeçalhos abaixo preservam as entregas anteriores e seus respectivos estados; não aprovam o conjunto.
 

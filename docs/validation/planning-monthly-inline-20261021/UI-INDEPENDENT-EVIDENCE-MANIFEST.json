@@ -1,0 +1,8 @@
+{
+  "scope": "Independent Task2 final checkpoint; FULL96 still running separately",
+  "artifacts_sha256": {
+    "UI-INDEPENDENT-REVIEW.md": "4aa043929a540638df66598c8cfb8cf3d85c90e7542b347074c42576c9d6a757",
+    "UI-INDEPENDENT-DEFAULT-AND-REGISTRY.json": "897bc562fcb78e64e2473a75bdca360b8b2520912eb6338562787ce17cf8e9db",
+    "UI-INDEPENDENT-FINAL-CHECKPOINT.json": "3f03c49f167d055c9caedcc410b4fba3d92845f2696c49faea662a615cf0fac2"
+  }
+}

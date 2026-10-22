@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-22T15:12:16.470033+00:00",
+  "build": "7430aeaf0109dcbe",
+  "url": "http://127.0.0.1:8000/index.html?v=7430aeaf0109dcbe",
+  "files": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+      "byte_identical": true,
+      "frozen_binding": true
+    },
+    {
+      "path": "build-id.js",
+      "status": 200,
+      "sha256": "5e673721d02aeb36a9865608196b15953411537659d0553164388e7fa7a0e12a",
+      "byte_identical": true,
+      "frozen_binding": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "status": 200,
+      "sha256": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+      "byte_identical": true,
+      "frozen_binding": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/02-state.js",
+      "status": 200,
+      "sha256": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+      "byte_identical": true,
+      "frozen_binding": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "status": 200,
+      "sha256": "83153a086b9a9f31906bd1bd4f5a5ce1d45883f36abacce5cd54f059df054496",
+      "byte_identical": true,
+      "frozen_binding": true
+    }
+  ],
+  "operator_browser_storage": "NOT_ACCESSED"
+}

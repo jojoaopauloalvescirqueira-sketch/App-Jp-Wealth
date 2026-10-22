@@ -32,7 +32,7 @@ def journey(page,out,label):
             page.context.route(quote_url,lambda route:route.fulfill(status=200,
                 content_type='application/json',body='{"status":"UNAVAILABLE_SYNTHETIC"}'))
     before=actual(page)
-    for target in ['forex-overview','forex-reserves','forex-operation','forex-reconciliation','forex-planning','dashboard','forex-overview']*2:goto(page,target)
+    for target in ['forex-overview','forex-reserves','forex-operation','forex-reconciliation','planning','forex-planning','fxplan','dashboard','forex-overview']*2:goto(page,target)
     assert actual(page)==before,'navigation changed operational state'
     assert page.evaluate('JPWForex.state.read().account') is None
     assert 'Não calculável' in page.locator('#forexV11Overview').inner_text()
@@ -56,6 +56,16 @@ def journey(page,out,label):
     assert form.locator('[role=status]').inner_text()=='Registro confirmado.'
     model=page.evaluate('JPWForex.state.read()');assert model['account']['si']==10000 and model['metrics']['drawdown']['value']==3 and model['accountPhase']['value']==2,model
     assert model['executionEligibility']['status']=='BLOCKED'
+    # Planning is an independent primary module. An observed Forex account does
+    # not become a patrimonial account, and aliases cannot change its scope.
+    before_planning=actual(page);operational=page.evaluate('JPWForex.state.operationalSelection()')
+    for target in ['planning','forex-planning','fxplan']:
+        goto(page,target)
+        current=page.evaluate('JPWNavigation.current()')
+        assert (current['primary'],current['canonical'],current['screen'],current['child'])==('planning','planning','planning',None),current
+        assert page.evaluate("JPWPlanning.ui.getView()==='start'&&JPWPlanning.queries.snapshot().accounts.length===0")
+        assert page.evaluate('JPWForex.state.operationalSelection()')==operational
+        assert actual(page)==before_planning, 'Planning navigation linked or changed operational facts'
     page.evaluate('closeSettingsModal()');goto(page,'forex-operation')
     assert page.evaluate("JPWForex.executionBoardUI.openTool('rootn')")
     page.locator('#ebInstrumentSelect').select_option('EURUSD')

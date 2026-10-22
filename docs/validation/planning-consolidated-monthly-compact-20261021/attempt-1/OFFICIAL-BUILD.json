@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "tools/rebuild_monolith.py",
+    "--refresh-manifest"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-21T23:02:54.245298+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/official-build-final.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-21T23:02:55.794438+00:00",
+  "log_sha256": "444e0fe7a529fbb7e53ffff3df3a4135633ed8d2be9c854ea9a93387130831f4"
+}

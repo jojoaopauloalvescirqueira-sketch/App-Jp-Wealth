@@ -1,0 +1,16 @@
+{
+  "README.md": "16de9083d4c14dedebfeaf8990054015e59886363b860e42a3b428de6ab43ae3",
+  "CHANGELOG.md": "2fdba5571650beff794fb1881209dd6c007a8cc7a98e1da6bd9dc7fec06f8ce7",
+  "SESSION_HANDOFF.md": "75e85e591949a6391044697ee925a9987637f9d0def1aa97f9b48d8c5065c095",
+  "docs/governance/CURRENT-STATE.md": "287bf03ae986ff780c4906160b9b3df35f6d30afd0f4d1a8533fd6003c7f7fe0",
+  "docs/work/ACTIVE-TASK.md": "a762118be76aa36fbae72b5dcc03dc55a55cd815c6b391beb68f1ede076b15c0",
+  "docs/architecture/PLANNING.md": "9bf90b197324ce6f0920d6a508c1b53561a0ea24ec063b3aed2778d2b3830834",
+  "AGENTS.md": "061c420ac3bfb5d0e9f7357e1c246d1f9e11b7eba7f4a8de4b061f089dd25865",
+  "docs/governance/UI-VISUAL-QUALITY.md": "13da3722e323d5770bba7915d6cba558317d0819285084ddc4bb12a4ba7b1393",
+  "docs/superpowers/plans/2026-10-21-planning-controls-visual-quality.md": "e060a204d40bc50d51faac66868f2503c5fc60750840aeb22c8f3a392a6fc3a1",
+  "docs/work/CHG-JPW-UI-VISUAL-RULE-20261021.md": "9635b66c0fec4630dc62b60cf17756600bd5f7a863d6c0b7e0bb2e8fb3e831e9",
+  "docs/work/CHG-JPW-UI-VISUAL-GATE-20261021.md": "fed2988294eef988f498e59c55fd25f905e914241680b98c5d5c891f828c32d2",
+  "docs/work/CHG-JPW-PLANNING-CONTROLS-20261021.md": "2ec221502d2e4c1bb3ab45886d54d4fbb441940466b631877860067d472a8781",
+  "tools/regression-memory.json": "b87931b5538799bfdb7e06169c60199c8eace887ab44e0e9b10df65e316767f8",
+  ".superpowers/sdd/planning-controls-visual-quality-20261021/release_protocol.py": "b5ec5bb433bb9d64ec42eaa48a6f3cfc365b6bbce97d71dc62a1209d11f367cb"
+}

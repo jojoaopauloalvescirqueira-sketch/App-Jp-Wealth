@@ -1,0 +1,2458 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/green-8",
+  "started_at": "2026-10-22T02:11:19.853194+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "eb40224556cd804e5db39a42886b0cdf8513b64d72d41e8932aa5ee687ac31a4",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605"
+  },
+  "cases": [
+    {
+      "id": "inline-ordinary-row-density",
+      "classification": "PASS",
+      "criteria": "inline-ordinary-row-density",
+      "started_at": "2026-10-22T02:11:21.208352+00:00",
+      "evidence": {
+        "observed": [
+          {
+            "month": "2026-08",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2026-09",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2026-10",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2027-01",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44
+            ]
+          }
+        ],
+        "real_delegate_calls": {
+          "writer_calls": [],
+          "command_calls": []
+        },
+        "financial_unchanged": true
+      },
+      "finished_at": "2026-10-22T02:11:21.239813+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-cell-activation",
+      "classification": "PASS",
+      "criteria": "inline-cell-activation",
+      "started_at": "2026-10-22T02:11:22.108262+00:00",
+      "evidence": {
+        "observed": {
+          "empty_fact": true,
+          "outside_preserved": true,
+          "escape_cancelled": true
+        },
+        "real_delegate_calls": {
+          "writer_calls": [],
+          "command_calls": []
+        },
+        "financial_unchanged": true
+      },
+      "finished_at": "2026-10-22T02:11:22.248542+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-temporal-filters",
+      "classification": "PASS",
+      "criteria": "inline-temporal-filters",
+      "started_at": "2026-10-22T02:11:23.116512+00:00",
+      "evidence": {
+        "observed": {
+          "visible": [
+            "2026-10",
+            "2026-11",
+            "2026-12"
+          ]
+        },
+        "real_delegate_calls": {
+          "writer_calls": [],
+          "command_calls": []
+        },
+        "financial_unchanged": true
+      },
+      "finished_at": "2026-10-22T02:11:23.195959+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-result-real-writer",
+      "classification": "PASS",
+      "criteria": "inline-result-real-writer",
+      "started_at": "2026-10-22T02:11:24.066538+00:00",
+      "evidence": {
+        "usd": 31.95,
+        "actual_writer_calls": 1,
+        "persisted": true
+      },
+      "finished_at": "2026-10-22T02:11:24.523556+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-future-explicit-save",
+      "classification": "PASS",
+      "criteria": "inline-future-explicit-save",
+      "started_at": "2026-10-22T02:11:25.399925+00:00",
+      "evidence": {
+        "companion_blank_zero_null_preserved": true,
+        "real_writes": 5,
+        "far_future_focus": {
+          "active": true,
+          "rect": {
+            "x": 950.71875,
+            "y": 609.71875,
+            "width": 122.859375,
+            "height": 44,
+            "top": 609.71875,
+            "right": 1073.578125,
+            "bottom": 653.71875,
+            "left": 950.71875
+          },
+          "pane": {
+            "x": 357.1875,
+            "y": 15.328125,
+            "width": 977.625,
+            "height": 650,
+            "top": 15.328125,
+            "right": 1334.8125,
+            "bottom": 665.328125,
+            "left": 357.1875
+          },
+          "viewport": [
+            1440,
+            1000
+          ],
+          "hit": true
+        }
+      },
+      "finished_at": "2026-10-22T02:11:26.696373+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-individual-flow-ids",
+      "classification": "PASS",
+      "criteria": "inline-individual-flow-ids",
+      "started_at": "2026-10-22T02:11:27.574847+00:00",
+      "evidence": {
+        "individual_ids_preserved": true,
+        "history_preserved": true,
+        "optional_withdrawal_brl": true
+      },
+      "finished_at": "2026-10-22T02:11:28.784322+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-dirty-context-guards",
+      "classification": "PASS",
+      "criteria": "inline-dirty-context-guards",
+      "started_at": "2026-10-22T02:11:29.649859+00:00",
+      "evidence": {
+        "guarded_contexts": 8,
+        "discard_explicit": true
+      },
+      "finished_at": "2026-10-22T02:11:30.711454+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-stale-context-conflict",
+      "classification": "PASS",
+      "criteria": "inline-stale-context-conflict",
+      "started_at": "2026-10-22T02:11:31.608215+00:00",
+      "evidence": {
+        "stale_refused_twice": true,
+        "explicit_reopen_required": true
+      },
+      "finished_at": "2026-10-22T02:11:32.154198+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-refused-unknown",
+      "classification": "PASS",
+      "criteria": "inline-refused-unknown",
+      "started_at": "2026-10-22T02:11:33.016509+00:00",
+      "evidence": {
+        "refused_draft_retained": true,
+        "unknown_retry_blocked": true,
+        "financial_unchanged": true,
+        "boundary_injection": true
+      },
+      "finished_at": "2026-10-22T02:11:33.465854+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-closed-reconfirmation",
+      "classification": "PASS",
+      "criteria": "inline-closed-reconfirmation",
+      "started_at": "2026-10-22T02:11:34.334736+00:00",
+      "evidence": {
+        "ack_required": true,
+        "previous_preserved": true,
+        "existing_reopen": true
+      },
+      "finished_at": "2026-10-22T02:11:34.705566+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-preferences-isolation",
+      "classification": "PASS",
+      "criteria": "inline-preferences-isolation",
+      "started_at": "2026-10-22T02:11:35.566601+00:00",
+      "evidence": {
+        "exact_envelope": {
+          "version": 1,
+          "highlightPast": false,
+          "fromCurrent": true
+        },
+        "outside_finance_backup": true,
+        "reactivation_read": true
+      },
+      "finished_at": "2026-10-22T02:11:35.908385+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-preference-failure-incompatible",
+      "classification": "PASS",
+      "criteria": "inline-preference-failure-incompatible",
+      "started_at": "2026-10-22T02:11:36.799803+00:00",
+      "evidence": {
+        "incompatible_preserved": true,
+        "quota_temporary_working": true
+      },
+      "finished_at": "2026-10-22T02:11:37.212442+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-resize-focus-cursor",
+      "classification": "PASS",
+      "criteria": "inline-resize-focus-cursor",
+      "started_at": "2026-10-22T02:11:38.116553+00:00",
+      "evidence": {
+        "same": true,
+        "connected": true,
+        "value": "12,",
+        "selection": [
+          1,
+          2
+        ],
+        "editors": 1
+      },
+      "finished_at": "2026-10-22T02:11:38.578271+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-reset-lifecycle",
+      "classification": "PASS",
+      "criteria": "inline-reset-lifecycle",
+      "started_at": "2026-10-22T02:11:39.474924+00:00",
+      "evidence": {
+        "reset_invalidates_editor_review_guard": true
+      },
+      "finished_at": "2026-10-22T02:11:39.862390+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-review-input-opening",
+      "classification": "PASS",
+      "criteria": "inline-review-input-opening",
+      "started_at": "2026-10-22T02:11:40.733253+00:00",
+      "evidence": [
+        {
+          "viewport": [
+            1440,
+            1000
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 388.1875,
+              "y": 979.21875,
+              "width": 915.625,
+              "height": 21,
+              "top": 979.21875,
+              "right": 1303.8125,
+              "bottom": 1000.21875,
+              "left": 388.1875
+            },
+            "pane": {
+              "x": 357.1875,
+              "y": 426.828125,
+              "width": 977.625,
+              "height": 650,
+              "top": 426.828125,
+              "right": 1334.8125,
+              "bottom": 1076.828125,
+              "left": 357.1875
+            },
+            "viewport": [
+              1440,
+              1000
+            ],
+            "hit": true
+          }
+        },
+        {
+          "viewport": [
+            390,
+            844
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 77,
+              "y": 822.5,
+              "width": 236,
+              "height": 21,
+              "top": 822.5,
+              "right": 313,
+              "bottom": 843.5,
+              "left": 77
+            },
+            "pane": {
+              "x": 46,
+              "y": 295.59375,
+              "width": 298,
+              "height": 560,
+              "top": 295.59375,
+              "right": 344,
+              "bottom": 855.59375,
+              "left": 46
+            },
+            "viewport": [
+              390,
+              844
+            ],
+            "hit": true
+          }
+        },
+        {
+          "viewport": [
+            1440,
+            480
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 388.1875,
+              "y": 329.21875,
+              "width": 915.625,
+              "height": 21,
+              "top": 329.21875,
+              "right": 1303.8125,
+              "bottom": 350.21875,
+              "left": 388.1875
+            },
+            "pane": {
+              "x": 357.1875,
+              "y": -77.171875,
+              "width": 977.625,
+              "height": 650,
+              "top": -77.171875,
+              "right": 1334.8125,
+              "bottom": 572.828125,
+              "left": 357.1875
+            },
+            "viewport": [
+              1440,
+              480
+            ],
+            "hit": true
+          }
+        }
+      ],
+      "finished_at": "2026-10-22T02:11:41.432044+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-modal-escape-ownership",
+      "classification": "PASS",
+      "criteria": "inline-modal-escape-ownership",
+      "started_at": "2026-10-22T02:11:42.324914+00:00",
+      "evidence": {
+        "top_modal_owns_escape": true,
+        "guard_cancel_retains": true
+      },
+      "finished_at": "2026-10-22T02:11:42.698826+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-missing-record-fail-closed",
+      "classification": "PASS",
+      "criteria": "inline-missing-record-fail-closed",
+      "started_at": "2026-10-22T02:11:43.583193+00:00",
+      "evidence": {
+        "unknown_id_refused": true
+      },
+      "finished_at": "2026-10-22T02:11:43.644595+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-context-removed-before-save",
+      "classification": "PASS",
+      "criteria": "inline-context-removed-before-save",
+      "started_at": "2026-10-22T02:11:44.533235+00:00",
+      "evidence": {
+        "removed_account_refused_draft_retained": true
+      },
+      "finished_at": "2026-10-22T02:11:44.690759+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-month-turnover",
+      "classification": "PASS",
+      "criteria": "inline-month-turnover",
+      "started_at": "2026-10-22T02:11:45.566536+00:00",
+      "evidence": {
+        "new_month": "2026-11",
+        "calendar_only_no_closure_write": true
+      },
+      "finished_at": "2026-10-22T02:11:45.738957+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-stoikus-context-guard",
+      "classification": "PASS",
+      "criteria": "inline-stoikus-context-guard",
+      "started_at": "2026-10-22T02:11:46.608207+00:00",
+      "evidence": {
+        "continue_preserves_account": true,
+        "discard_resumes_entire_navigation": true
+      },
+      "finished_at": "2026-10-22T02:11:47.728229+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-future-context-companion",
+      "classification": "PASS",
+      "criteria": "inline-future-context-companion",
+      "started_at": "2026-10-22T02:11:48.591512+00:00",
+      "evidence": {
+        "before": {
+          "rate": null,
+          "contributionUsd": ""
+        },
+        "after": {
+          "rate": null,
+          "contributionUsd": 17
+        },
+        "guarded": true,
+        "actual_writer_count": 1
+      },
+      "finished_at": "2026-10-22T02:11:49.297012+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-menu-escape-ownership",
+      "classification": "PASS",
+      "criteria": "inline-menu-escape-ownership",
+      "started_at": "2026-10-22T02:11:50.183270+00:00",
+      "evidence": {
+        "menu_escape_retains_draft": true,
+        "editor_escape_still_cancels": true
+      },
+      "finished_at": "2026-10-22T02:11:50.344893+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-empty-filter-recovery",
+      "classification": "PASS",
+      "criteria": "inline-empty-filter-recovery",
+      "started_at": "2026-10-22T02:11:51.218118+00:00",
+      "evidence": {
+        "empty_recovery": true,
+        "full_cycle_subtotals": true
+      },
+      "finished_at": "2026-10-22T02:11:51.599909+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-editor-action-targets",
+      "classification": "PASS",
+      "criteria": "inline-editor-action-targets",
+      "started_at": "2026-10-22T02:11:52.483229+00:00",
+      "evidence": [
+        {
+          "viewport": 1440,
+          "kind": "result",
+          "actions": [
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 453.578125,
+                "top": 902.21875,
+                "bottom": 946.21875,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 914.765625,
+                "bottom": 931.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 441.578125,
+                  "top": 914.765625,
+                  "bottom": 931.765625,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 461.578125,
+                "right": 544.828125,
+                "top": 902.21875,
+                "bottom": 946.21875,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 914.765625,
+                "bottom": 931.765625
+              },
+              "textRects": [
+                {
+                  "left": 473.578125,
+                  "right": 532.828125,
+                  "top": 914.765625,
+                  "bottom": 931.765625,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 534.953125,
+                "top": 1084.21875,
+                "bottom": 1128.21875,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1096.765625,
+                "bottom": 1113.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 522.953125,
+                  "top": 1096.765625,
+                  "bottom": 1113.765625,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 868.1875,
+              "right": 1040.09375,
+              "top": 296.828125,
+              "bottom": 340.828125,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 892.1875,
+              "right": 1040.09375,
+              "top": 310.828125,
+              "bottom": 325.828125
+            },
+            "textRects": [
+              {
+                "left": 892.1875,
+                "right": 1040.09375,
+                "top": 310.828125,
+                "bottom": 325.828125,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 0.0
+          }
+        },
+        {
+          "viewport": 1440,
+          "kind": "rate",
+          "actions": [
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 453.578125,
+                "top": 939.21875,
+                "bottom": 983.21875,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 951.765625,
+                "bottom": 968.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 441.578125,
+                  "top": 951.765625,
+                  "bottom": 968.765625,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 461.578125,
+                "right": 544.828125,
+                "top": 939.21875,
+                "bottom": 983.21875,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 951.765625,
+                "bottom": 968.765625
+              },
+              "textRects": [
+                {
+                  "left": 473.578125,
+                  "right": 532.828125,
+                  "top": 951.765625,
+                  "bottom": 968.765625,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 868.1875,
+              "right": 1040.09375,
+              "top": 280.828125,
+              "bottom": 324.828125,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 892.1875,
+              "right": 1040.09375,
+              "top": 294.828125,
+              "bottom": 309.828125
+            },
+            "textRects": [
+              {
+                "left": 892.1875,
+                "right": 1040.09375,
+                "top": 294.828125,
+                "bottom": 309.828125,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 0.0
+          }
+        },
+        {
+          "viewport": 1440,
+          "kind": "contribution",
+          "actions": [
+            {
+              "outer": {
+                "left": 690.890625,
+                "right": 868.203125,
+                "top": 824.21875,
+                "bottom": 868.21875,
+                "width": 177.3125,
+                "height": 44
+              },
+              "text": {
+                "left": 702.890625,
+                "right": 856.203125,
+                "top": 836.765625,
+                "bottom": 853.765625
+              },
+              "textRects": [
+                {
+                  "left": 702.890625,
+                  "right": 856.203125,
+                  "top": 836.765625,
+                  "bottom": 853.765625,
+                  "width": 153.3125,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Editar este lançamento",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 453.578125,
+                "top": 888.21875,
+                "bottom": 932.21875,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 900.765625,
+                "bottom": 917.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 441.578125,
+                  "top": 900.765625,
+                  "bottom": 917.765625,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 461.578125,
+                "right": 544.828125,
+                "top": 888.21875,
+                "bottom": 932.21875,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 900.765625,
+                "bottom": 917.765625
+              },
+              "textRects": [
+                {
+                  "left": 473.578125,
+                  "right": 532.828125,
+                  "top": 900.765625,
+                  "bottom": 917.765625,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 534.953125,
+                "top": 1131.21875,
+                "bottom": 1175.21875,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1143.765625,
+                "bottom": 1160.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 522.953125,
+                  "top": 1143.765625,
+                  "bottom": 1160.765625,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 868.1875,
+              "right": 1040.09375,
+              "top": 280.828125,
+              "bottom": 324.828125,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 892.1875,
+              "right": 1040.09375,
+              "top": 294.828125,
+              "bottom": 309.828125
+            },
+            "textRects": [
+              {
+                "left": 892.1875,
+                "right": 1040.09375,
+                "top": 294.828125,
+                "bottom": 309.828125,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 0.0
+          }
+        },
+        {
+          "viewport": 1440,
+          "kind": "withdrawal",
+          "actions": [
+            {
+              "outer": {
+                "left": 672.453125,
+                "right": 849.765625,
+                "top": 824.21875,
+                "bottom": 868.21875,
+                "width": 177.3125,
+                "height": 44
+              },
+              "text": {
+                "left": 684.453125,
+                "right": 837.765625,
+                "top": 836.765625,
+                "bottom": 853.765625
+              },
+              "textRects": [
+                {
+                  "left": 684.453125,
+                  "right": 837.765625,
+                  "top": 836.765625,
+                  "bottom": 853.765625,
+                  "width": 153.3125,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Editar este lançamento",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 453.578125,
+                "top": 888.21875,
+                "bottom": 932.21875,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 900.765625,
+                "bottom": 917.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 441.578125,
+                  "top": 900.765625,
+                  "bottom": 917.765625,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 461.578125,
+                "right": 544.828125,
+                "top": 888.21875,
+                "bottom": 932.21875,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 900.765625,
+                "bottom": 917.765625
+              },
+              "textRects": [
+                {
+                  "left": 473.578125,
+                  "right": 532.828125,
+                  "top": 900.765625,
+                  "bottom": 917.765625,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 388.1875,
+                "right": 534.953125,
+                "top": 1131.21875,
+                "bottom": 1175.21875,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1143.765625,
+                "bottom": 1160.765625
+              },
+              "textRects": [
+                {
+                  "left": 400.1875,
+                  "right": 522.953125,
+                  "top": 1143.765625,
+                  "bottom": 1160.765625,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 868.1875,
+              "right": 1040.09375,
+              "top": 280.828125,
+              "bottom": 324.828125,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 892.1875,
+              "right": 1040.09375,
+              "top": 294.828125,
+              "bottom": 309.828125
+            },
+            "textRects": [
+              {
+                "left": 892.1875,
+                "right": 1040.09375,
+                "top": 294.828125,
+                "bottom": 309.828125,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 0.0
+          }
+        },
+        {
+          "viewport": 390,
+          "kind": "result",
+          "actions": [
+            {
+              "outer": {
+                "left": 77,
+                "right": 142.390625,
+                "top": 745.5,
+                "bottom": 789.5,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 130.390625,
+                "top": 758.046875,
+                "bottom": 775.046875
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 130.390625,
+                  "top": 758.046875,
+                  "bottom": 775.046875,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 150.390625,
+                "right": 233.640625,
+                "top": 745.5,
+                "bottom": 789.5,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 162.390625,
+                "right": 221.640625,
+                "top": 758.046875,
+                "bottom": 775.046875
+              },
+              "textRects": [
+                {
+                  "left": 162.390625,
+                  "right": 221.640625,
+                  "top": 758.046875,
+                  "bottom": 775.046875,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 77,
+                "right": 223.765625,
+                "top": 951.5,
+                "bottom": 995.5,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 211.765625,
+                "top": 964.046875,
+                "bottom": 981.046875
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 211.765625,
+                  "top": 964.046875,
+                  "bottom": 981.046875,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 46,
+              "right": 217.90625,
+              "top": -42.40625,
+              "bottom": 1.59375,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 70,
+              "right": 217.90625,
+              "top": -28.40625,
+              "bottom": -13.40625
+            },
+            "textRects": [
+              {
+                "left": 70,
+                "right": 217.90625,
+                "top": -28.40625,
+                "bottom": -13.40625,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 56.0
+          }
+        },
+        {
+          "viewport": 390,
+          "kind": "rate",
+          "actions": [
+            {
+              "outer": {
+                "left": 77,
+                "right": 142.390625,
+                "top": 782.6875,
+                "bottom": 826.6875,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 130.390625,
+                "top": 795.234375,
+                "bottom": 812.234375
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 130.390625,
+                  "top": 795.234375,
+                  "bottom": 812.234375,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 150.390625,
+                "right": 233.640625,
+                "top": 782.6875,
+                "bottom": 826.6875,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 162.390625,
+                "right": 221.640625,
+                "top": 795.234375,
+                "bottom": 812.234375
+              },
+              "textRects": [
+                {
+                  "left": 162.390625,
+                  "right": 221.640625,
+                  "top": 795.234375,
+                  "bottom": 812.234375,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 46,
+              "right": 217.90625,
+              "top": -42.40625,
+              "bottom": 1.59375,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 70,
+              "right": 217.90625,
+              "top": -28.40625,
+              "bottom": -13.40625
+            },
+            "textRects": [
+              {
+                "left": 70,
+                "right": 217.90625,
+                "top": -28.40625,
+                "bottom": -13.40625,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 56.0
+          }
+        },
+        {
+          "viewport": 390,
+          "kind": "contribution",
+          "actions": [
+            {
+              "outer": {
+                "left": 97,
+                "right": 274.3125,
+                "top": 682.3125,
+                "bottom": 726.3125,
+                "width": 177.3125,
+                "height": 44
+              },
+              "text": {
+                "left": 109,
+                "right": 262.3125,
+                "top": 694.859375,
+                "bottom": 711.859375
+              },
+              "textRects": [
+                {
+                  "left": 109,
+                  "right": 262.3125,
+                  "top": 694.859375,
+                  "bottom": 711.859375,
+                  "width": 153.3125,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Editar este lançamento",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 77,
+                "right": 142.390625,
+                "top": 746.3125,
+                "bottom": 790.3125,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 130.390625,
+                "top": 758.859375,
+                "bottom": 775.859375
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 130.390625,
+                  "top": 758.859375,
+                  "bottom": 775.859375,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 150.390625,
+                "right": 233.640625,
+                "top": 746.3125,
+                "bottom": 790.3125,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 162.390625,
+                "right": 221.640625,
+                "top": 758.859375,
+                "bottom": 775.859375
+              },
+              "textRects": [
+                {
+                  "left": 162.390625,
+                  "right": 221.640625,
+                  "top": 758.859375,
+                  "bottom": 775.859375,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 77,
+                "right": 223.765625,
+                "top": 1070.3125,
+                "bottom": 1114.3125,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 211.765625,
+                "top": 1082.859375,
+                "bottom": 1099.859375
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 211.765625,
+                  "top": 1082.859375,
+                  "bottom": 1099.859375,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 46,
+              "right": 217.90625,
+              "top": -57.40625,
+              "bottom": -13.40625,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 70,
+              "right": 217.90625,
+              "top": -43.40625,
+              "bottom": -28.40625
+            },
+            "textRects": [
+              {
+                "left": 70,
+                "right": 217.90625,
+                "top": -43.40625,
+                "bottom": -28.40625,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 56.0
+          }
+        },
+        {
+          "viewport": 390,
+          "kind": "withdrawal",
+          "actions": [
+            {
+              "outer": {
+                "left": 97,
+                "right": 274.3125,
+                "top": 682.3125,
+                "bottom": 726.3125,
+                "width": 177.3125,
+                "height": 44
+              },
+              "text": {
+                "left": 109,
+                "right": 262.3125,
+                "top": 694.859375,
+                "bottom": 711.859375
+              },
+              "textRects": [
+                {
+                  "left": 109,
+                  "right": 262.3125,
+                  "top": 694.859375,
+                  "bottom": 711.859375,
+                  "width": 153.3125,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Editar este lançamento",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 77,
+                "right": 142.390625,
+                "top": 746.3125,
+                "bottom": 790.3125,
+                "width": 65.390625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 130.390625,
+                "top": 758.859375,
+                "bottom": 775.859375
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 130.390625,
+                  "top": 758.859375,
+                  "bottom": 775.859375,
+                  "width": 41.390625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Salvar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 150.390625,
+                "right": 233.640625,
+                "top": 746.3125,
+                "bottom": 790.3125,
+                "width": 83.25,
+                "height": 44
+              },
+              "text": {
+                "left": 162.390625,
+                "right": 221.640625,
+                "top": 758.859375,
+                "bottom": 775.859375
+              },
+              "textRects": [
+                {
+                  "left": 162.390625,
+                  "right": 221.640625,
+                  "top": 758.859375,
+                  "bottom": 775.859375,
+                  "width": 59.25,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Cancelar",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            },
+            {
+              "outer": {
+                "left": 77,
+                "right": 223.765625,
+                "top": 1070.3125,
+                "bottom": 1114.3125,
+                "width": 146.765625,
+                "height": 44
+              },
+              "text": {
+                "left": 89,
+                "right": 211.765625,
+                "top": 1082.859375,
+                "bottom": 1099.859375
+              },
+              "textRects": [
+                {
+                  "left": 89,
+                  "right": 211.765625,
+                  "top": 1082.859375,
+                  "bottom": 1099.859375,
+                  "width": 122.765625,
+                  "height": 17
+                }
+              ],
+              "ink": null,
+              "svg": 0,
+              "label": "Confirmar registro",
+              "textAlign": "center",
+              "declaredLeftInset": 12,
+              "delta": {
+                "x": 0.0,
+                "y": -0.953125
+              }
+            }
+          ],
+          "highlight": {
+            "outer": {
+              "left": 46,
+              "right": 217.90625,
+              "top": -57.40625,
+              "bottom": -13.40625,
+              "width": 171.90625,
+              "height": 44
+            },
+            "text": {
+              "left": 70,
+              "right": 217.90625,
+              "top": -43.40625,
+              "bottom": -28.40625
+            },
+            "textRects": [
+              {
+                "left": 70,
+                "right": 217.90625,
+                "top": -43.40625,
+                "bottom": -28.40625,
+                "width": 147.90625,
+                "height": 15
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Destacar meses passados",
+            "textAlign": "start",
+            "declaredLeftInset": 0,
+            "period_center_delta": 56.0
+          }
+        }
+      ],
+      "finished_at": "2026-10-22T02:11:54.334898+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-row-height",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:11:55.191493+00:00",
+      "evidence": {
+        "positive": [
+          {
+            "month": "2026-08",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2026-09",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2026-10",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2027-01",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44
+            ]
+          }
+        ],
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "('ordinary read rows must be <=64CSSpx', [{'month': '2026-08', 'height': 129, 'controls': [44, 44, 44, 44, 44]}, {'month': '2026-09', 'height': 129, 'controls': [44, 44, 44, 44, 44]}, {'month': '2026-10', 'height': 129, 'controls': [44, 44, 44, 44, 44]}, {'month': '2027-01', 'height': 129, 'controls': [44, 44, 44, 44]}])"
+        },
+        "restored": [
+          {
+            "month": "2026-08",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2026-09",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2026-10",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "month": "2027-01",
+            "height": 53,
+            "controls": [
+              44,
+              44,
+              44,
+              44
+            ]
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T02:11:55.248067+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-duplicate-editor",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:11:56.174870+00:00",
+      "evidence": {
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "one unique active editor"
+        }
+      },
+      "finished_at": "2026-10-22T02:11:56.286606+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-false-green",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:11:57.249060+00:00",
+      "evidence": {
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "('past temporal green including pending', {'month': '2026-09', 'height': 53, 'visible': True, 'color': [255, 255, 255], 'text': 'set. de 2026Pendente', 'highlight': True, 'current': False})"
+        },
+        "restored": {
+          "months": 120,
+          "ordinary_heights": [
+            53,
+            53,
+            53,
+            53
+          ],
+          "useful_width": 978,
+          "temporal_green": true,
+          "bound_model_values": {
+            "months": 120,
+            "checked_fields": 1920,
+            "errors": []
+          }
+        }
+      },
+      "finished_at": "2026-10-22T02:11:57.919961+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-typing-write",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:11:59.860823+00:00",
+      "evidence": {
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "('unconfirmed interaction called writer/command', {'writer_calls': [{'component': 'patrimonialPlanning'}], 'command_calls': ['recordResult']})"
+        },
+        "actual_write_mutation": true
+      },
+      "finished_at": "2026-10-22T02:12:00.042295+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-preference-finance-backup",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:12:01.310326+00:00",
+      "evidence": {
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "preference must stay outside financial S and backup"
+        },
+        "state_contamination_detected": true,
+        "actual_backup_contamination_rejected": {
+          "rejected": true,
+          "measurement_failure": "preference excluded from actual serialized full backup"
+        },
+        "restored": {
+          "actual_serialized_backup_checked": true
+        }
+      },
+      "finished_at": "2026-10-22T02:12:01.582337+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-wrong-usd",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:12:02.677422+00:00",
+      "evidence": {
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "3 points on 1065 opening previews31.95USD"
+        },
+        "query_conversion_mutation": true
+      },
+      "finished_at": "2026-10-22T02:12:02.895955+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-matrix-cell-value",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:12:03.975277+00:00",
+      "evidence": {
+        "positive": {
+          "months": 120,
+          "checked_fields": 1920,
+          "errors": []
+        },
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "('each displayed/bound field must match its own month read model', [{'month': '2026-10', 'key': 'resultUsd', 'expected': 'US$\\xa031,95', 'actual': 'US$ 999.999,00'}])"
+        },
+        "restored": {
+          "months": 120,
+          "checked_fields": 1920,
+          "errors": []
+        }
+      },
+      "finished_at": "2026-10-22T02:12:04.921398+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-action-target-size",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:12:06.126142+00:00",
+      "evidence": {
+        "positive": [
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 453.578125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 65.390625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 441.578125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 41.390625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Salvar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 461.578125,
+              "right": 544.828125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 83.25,
+              "height": 44
+            },
+            "text": {
+              "left": 473.578125,
+              "right": 532.828125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 59.25,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Cancelar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 534.953125,
+              "top": 1084.21875,
+              "bottom": 1128.21875,
+              "width": 146.765625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 522.953125,
+              "top": 1096.765625,
+              "bottom": 1113.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1096.765625,
+                "bottom": 1113.765625,
+                "width": 122.765625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Confirmar registro",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          }
+        ],
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "('inline action target must be44x44CSSpx', 'Salvar', {'x': 388.1875, 'y': 902.21875, 'width': 44, 'height': 30})"
+        },
+        "restored": [
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 453.578125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 65.390625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 441.578125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 41.390625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Salvar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 461.578125,
+              "right": 544.828125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 83.25,
+              "height": 44
+            },
+            "text": {
+              "left": 473.578125,
+              "right": 532.828125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 59.25,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Cancelar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 534.953125,
+              "top": 1084.21875,
+              "bottom": 1128.21875,
+              "width": 146.765625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 522.953125,
+              "top": 1096.765625,
+              "bottom": 1113.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1096.765625,
+                "bottom": 1113.765625,
+                "width": 122.765625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Confirmar registro",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T02:12:06.470474+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-counterproof-action-inner-center",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation",
+      "started_at": "2026-10-22T02:12:07.424898+00:00",
+      "evidence": {
+        "positive": [
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 453.578125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 65.390625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 441.578125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 41.390625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Salvar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 461.578125,
+              "right": 544.828125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 83.25,
+              "height": 44
+            },
+            "text": {
+              "left": 473.578125,
+              "right": 532.828125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 59.25,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Cancelar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 534.953125,
+              "top": 1084.21875,
+              "bottom": 1128.21875,
+              "width": 146.765625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 522.953125,
+              "top": 1096.765625,
+              "bottom": 1113.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1096.765625,
+                "bottom": 1113.765625,
+                "width": 122.765625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Confirmar registro",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          }
+        ],
+        "rejected": {
+          "rejected": true,
+          "measurement_failure": "('inner content center exceeds2CSSpx', {'outer': {'left': 388.1875, 'right': 453.578125, 'top': 902.21875, 'bottom': 946.21875, 'width': 65.390625, 'height': 44}, 'text': {'left': 408.1875, 'right': 449.578125, 'top': 914.765625, 'bottom': 931.765625}, 'textRects': [{'left': 408.1875, 'right': 449.578125, 'top': 914.765625, 'bottom': 931.765625, 'width': 41.390625, 'height': 17}], 'ink': None, 'svg': 0, 'label': 'Salvar', 'textAlign': 'center', 'declaredLeftInset': 12, 'delta': {'x': 8.0, 'y': -0.953125}})"
+        },
+        "restored": [
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 453.578125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 65.390625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 441.578125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 441.578125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 41.390625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Salvar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 461.578125,
+              "right": 544.828125,
+              "top": 902.21875,
+              "bottom": 946.21875,
+              "width": 83.25,
+              "height": 44
+            },
+            "text": {
+              "left": 473.578125,
+              "right": 532.828125,
+              "top": 914.765625,
+              "bottom": 931.765625
+            },
+            "textRects": [
+              {
+                "left": 473.578125,
+                "right": 532.828125,
+                "top": 914.765625,
+                "bottom": 931.765625,
+                "width": 59.25,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Cancelar",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          },
+          {
+            "outer": {
+              "left": 388.1875,
+              "right": 534.953125,
+              "top": 1084.21875,
+              "bottom": 1128.21875,
+              "width": 146.765625,
+              "height": 44
+            },
+            "text": {
+              "left": 400.1875,
+              "right": 522.953125,
+              "top": 1096.765625,
+              "bottom": 1113.765625
+            },
+            "textRects": [
+              {
+                "left": 400.1875,
+                "right": 522.953125,
+                "top": 1096.765625,
+                "bottom": 1113.765625,
+                "width": 122.765625,
+                "height": 17
+              }
+            ],
+            "ink": null,
+            "svg": 0,
+            "label": "Confirmar registro",
+            "textAlign": "center",
+            "declaredLeftInset": 12,
+            "delta": {
+              "x": 0.0,
+              "y": -0.953125
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T02:12:07.784498+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-ordinary-row-density",
+    "inline-cell-activation",
+    "inline-temporal-filters",
+    "inline-result-real-writer",
+    "inline-future-explicit-save",
+    "inline-individual-flow-ids",
+    "inline-dirty-context-guards",
+    "inline-stale-context-conflict",
+    "inline-refused-unknown",
+    "inline-closed-reconfirmation",
+    "inline-preferences-isolation",
+    "inline-preference-failure-incompatible",
+    "inline-resize-focus-cursor",
+    "inline-reset-lifecycle",
+    "inline-review-input-opening",
+    "inline-modal-escape-ownership",
+    "inline-missing-record-fail-closed",
+    "inline-context-removed-before-save",
+    "inline-month-turnover",
+    "inline-stoikus-context-guard",
+    "inline-future-context-companion",
+    "inline-menu-escape-ownership",
+    "inline-empty-filter-recovery",
+    "inline-editor-action-targets",
+    "inline-counterproof-row-height",
+    "inline-counterproof-duplicate-editor",
+    "inline-counterproof-false-green",
+    "inline-counterproof-typing-write",
+    "inline-counterproof-preference-finance-backup",
+    "inline-counterproof-wrong-usd",
+    "inline-counterproof-matrix-cell-value",
+    "inline-counterproof-action-target-size",
+    "inline-counterproof-action-inner-center"
+  ],
+  "only": null,
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 33,
+    "required": 33,
+    "unique": true
+  },
+  "classification": "PASS",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T02:12:07.985919+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "candidate": "7e8cc9b03b5dca40",
+  "classification": "TEST_HARNESS_FAIL",
+  "product_defect_demonstrated": false,
+  "classification_reason": "Original three-tabs stale-choice obsolete interaction retained; separate explicit recovery probe PASS",
+  "executions": {
+    "parity_all": "PASS",
+    "three_tabs_original": "TEST_HARNESS_FAIL",
+    "three_tabs_original_runner_label": "PRODUCT_FAIL",
+    "proportions_regressions": "PASS",
+    "broad_ui": "PASS",
+    "practical_first_probe": "TEST_HARNESS_FAIL",
+    "practical_corrected": "PASS",
+    "explicit_stale_recovery": "PASS"
+  },
+  "files": {
+    "parity.log": "65a5a66ae2146ccc4da1ef3b1b3544f96ab8bee36d9666dfae8a2a40e2dd07c3",
+    "three-tabs.log": "d67fa9528dccf05976a023fb058eb42e8bdafd5afd8032d34ccbb159eb0804ba",
+    "three-tabs.json": "84bac2053db016fbdf572cab8d4e99af78a19594bb80c54d4efb7ee8f304f4d6",
+    "proportions-regressions.log": "8f8fd8b1a611175758e7d46b69cfcc8c190206e1e05a8c54b7d307055a771343",
+    "broad-ui.log": "2a056879bfceddbf675a07df5a7c80f0f2cc572f9711993ad077471ee441113a",
+    "focal-commands.json": "f0eb75c0f8b18ebd69b1dfc72deee72592ab72ed4768dd2c682d2299e5adc8aa",
+    "broad-command.json": "e11d1f2fa71aee2820f8095a8a17e995bc685a8510f245b18e3e8e05482f1316",
+    "practical.log": "f52438cee15485fd0e6d97f75a6fe649c5286d2352b503f3e7529fb44c6dc53a",
+    "practical-2.log": "de1db8a638401b6f8d05c9473ae06b2fd9439d9df0530c2fc8428b2f883f42d4",
+    "practical-receipt.json": "67886d072636899f537c9ea1a8b7453e6ce84b151bd7694dc3608cebf7b12205",
+    "stale.log": "e9305d2fb40831f9bd3bd8dc49436f5f72e04ec14362ec816aa9eed3af64f7c9",
+    "stale-receipt.json": "48a9a4d6f557594a64776ea0d7aa4495aecbca9ebedb606b97d72931736f2fe3",
+    "practical_probe.py": "f503e23485726c3da9ebb6e5aec62ad33fc8ca24634417cdded071fbca3bedef",
+    "stale_probe.py": "62a4c13f26a95d9a2bf454a7ac6bcb6fa53d2194c08f9a4f7ad05c028b2b8834",
+    "USAGE-REVIEW.md": "e94a8c0554b8772ecb7eeef96a479d8f3a44fcfdc77c028d2315e7e88e0cdae8",
+    "probe-commands.json": "2734f73807a623bdc45c1be3bf4d957fcde067689afa9331b020b6e9d5280ef5"
+  }
+}

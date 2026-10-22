@@ -1,0 +1,52 @@
+{
+  "scope": "Read-only diagnostic; no source, test, timer, financial, Git or dependency edits",
+  "phase": "waiting for completed FULL2 raw output",
+  "prior_full": {
+    "started_at": "2026-10-21T16:46:44-03:00",
+    "finished_at": "2026-10-21T17:19:19-03:00",
+    "alladin": {
+      "name": "alladin-foundation",
+      "command": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3 tools/alladin_foundation_test.py",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 25.275,
+      "output_tail": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:89: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(directory)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:89: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(directory)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:769: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(tmp)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:882: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(tmp)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:1024: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(tmp)\nalladin_foundation_test PASS (A-J + M,P,Q,R,F2,S,T,U,V,V2,W,W2,X,X2: cadeia v1->v6, round-trip completo, fail-closed, rollback pre-Alladin/C1 e mixed-build do S1 sobre v4, carimbos v3->v4, v4->v6 e v5->v6 preservando ledger povoado byte a byte, mixed-build v4<-v5 (FEE) e v5<-v6 (ADJUSTMENT) fechando escrita sem confundir dado futuro com corrupcao, reload, falha parcial, XSS/privacidade, backup)\n"
+    }
+  },
+  "identity": {
+    "tools/alladin_foundation_test.py": {
+      "current": "0a1c18ae2d2a0033d4f7aad6f205a7c7b3b95a2d805f72677f5be42f3221528a",
+      "frozen": "0a1c18ae2d2a0033d4f7aad6f205a7c7b3b95a2d805f72677f5be42f3221528a"
+    },
+    "tools/quality_gate.py": {
+      "current": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a",
+      "frozen": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a"
+    },
+    "src/js/10-domain/13-alladin.js": {
+      "current": "e03629ebb1028b4ab1a4e6a0d27b737b0f5feb20ebf43cdf8368da99ceb0d9ad",
+      "frozen": "e03629ebb1028b4ab1a4e6a0d27b737b0f5feb20ebf43cdf8368da99ceb0d9ad"
+    },
+    "src/js/20-ui/24-alladin-views.js": {
+      "current": "74da048037848e4ecd3183b9a441f7c18efb52d4d6e021bcb8cc665ba6c9a2b3",
+      "frozen": "74da048037848e4ecd3183b9a441f7c18efb52d4d6e021bcb8cc665ba6c9a2b3"
+    }
+  },
+  "observed_current_console": {
+    "result": "PRODUCT_FAIL",
+    "duration_seconds": 25.769,
+    "assertion": "Unavailable until aggregate runner finishes; no own test artifact"
+  },
+  "runner_behavior": {
+    "child_output": "subprocess.run captures stdout/stderr; no per-check streaming",
+    "classification": "exit1 without explicit marker defaults PRODUCT_FAIL",
+    "artifact": "writes aggregate payload only after all checks"
+  },
+  "history": {
+    "source": "tools/regression-memory.json entry W2",
+    "state": "open_incident",
+    "old_symptom": "30000ms timeout reloading historical AlladinV4",
+    "old_cause": "Not established; subsequent focal diagnostics passed without correction",
+    "current_relevance": "Not established; current duration alone cannot connect failures"
+  },
+  "focal": "NOT_RUN pending exact current assertion; avoid competing browser work during FULL"
+}

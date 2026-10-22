@@ -13,7 +13,7 @@ from notes_launcher_test import launch_options
 from dashboard_forex_relocation_test import PREF, IDS, MOVED, KEY, swap
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED=["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-planning", "forex-reserves"]
+EXPECTED=["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-reserves"]
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,default=ROOT);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--entry-only',action='store_true');args=ap.parse_args()
@@ -42,7 +42,7 @@ def main():
             }''')
             page.evaluate('render();window.__journeyBefore=JSON.stringify(S);window.__journeyRaw=localStorage.getItem(LSKEY);window.__checkNode=document.querySelector("#checkWidgetGrid");window.__overviewNode=document.querySelector("#execOverview");')
             def go(target):require(page.evaluate('(t)=>JPWNavigation.navigate(t)',target));page.wait_for_timeout(60)
-            test('seven destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
+            test('six Forex destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
             page.locator('#execNavTrigger').click()
             assert page.evaluate("JPWNavigation.current().canonical==='dashboard'"), 'Parent exploration navigated'
             page.locator('#execNavSubmenu [data-nav-child="forex-consolidated"]').click()

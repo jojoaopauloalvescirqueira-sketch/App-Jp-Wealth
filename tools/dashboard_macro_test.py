@@ -30,6 +30,7 @@ os.chdir(ROOT)
 
 CARDS = [
     ("forex", "forex-consolidated", "fxconsolidated"),
+    ("planning", "planning", "planning"),
     ("personal-finance", "personal-finance", "finpes"),
     ("research", "research-forex", "research"),
     ("alladin", "alladin", "alladin"),
@@ -101,7 +102,7 @@ def boot(browser, url, viewport=None, *, service_workers="allow", prepare_contex
     page.goto(url, wait_until="load")
     page.wait_for_function(
         "() => window.JPWDashMacro && window.JPWNavigation "
-        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(2 + int(alladin_active) + int(personal_finance_active))
+        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(3 + int(alladin_active) + int(personal_finance_active))
     )
     return context, page, observed
 
@@ -310,7 +311,7 @@ def assert_isolamento_de_falha(page):
       window.JPWDashMacro.render();
       return out;
     }""")
-    assert r["total"] == 4, f"uma falha derrubou a grade: {r}"
+    assert r["total"] == 5, f"uma falha derrubou a grade: {r}"
     assert r["forexOk"], f"falha do Alladin contaminou o Forex: {r}"
     assert r["alladinDegradado"], f"falha deveria virar estado rotulado: {r}"
 
@@ -342,7 +343,7 @@ def assert_marca_estando_no_dashboard(page):
         assert depois["screen"] == "dash", f"[{rotulo}] saiu do dashboard: {depois}"
         assert depois["ativos"] == ["dash"], f"[{rotulo}] mais de uma tela ativa: {depois}"
         assert depois["canonical"] == "dashboard", f"[{rotulo}] rota canonica: {depois}"
-        assert depois["macro"] == 4, f"[{rotulo}] a visao macro se perdeu: {depois}"
+        assert depois["macro"] == 5, f"[{rotulo}] a visao macro se perdeu: {depois}"
         assert storage_snapshot(page) == antes_storage, f"[{rotulo}] escreveu em storage"
 
 
@@ -386,7 +387,7 @@ def assert_superficies_dashboard(page, rotulo):
     def inside(child, parent):
         return child['x'] >= parent['x']-1 and child['right'] <= parent['right']+1 and child['y'] >= parent['y']-1 and child['bottom'] <= parent['bottom']+1
     assert r['overflow'] <= 1, f'[{rotulo}] overflow horizontal da página: {r["overflow"]}'
-    expected=page.evaluate("['forex','personal-finance','research','alladin'].filter(id=>JPWModuleAvailability.canAccess(id))")
+    expected=page.evaluate("['forex','planning','personal-finance','research','alladin'].filter(id=>JPWModuleAvailability.canAccess(id))")
     assert [card['id'] for card in r['cards']] == expected, f'[{rotulo}] painéis divergem da disponibilidade: {r["cards"]}, {expected}'
     previous = None
     for card in r['cards']:
@@ -606,21 +607,25 @@ def assert_resumos_preenchidos(browser,url):
         }""")
         assert all(r.values()),r
         r=page.evaluate("""() => {
-          const st=JPWFx.state;
-          const created=st.fxPlanCreate({name:'Plano de teste',assumptions:{startMonth:'2026-01',horizonMonths:24,initialBalanceUsd:1000,defaultMonthlyReturn:0.01,projectedFxRate:5.4}});
-          const closed=st.fxPlanRecordActual('2026-01',{inputType:'rate',returnRate:0.02,contributionsConfirmed:true});
-          const expected=st.fxOverviewLive();
+          const api=JPWPlanning;
+          const created=api.commands.execute('createAccount',{name:'Plano de teste',startMonth:'2026-01',initialUsd:1000,profileId:'base',monthlyContributionUsd:0,goals:{adequate:null,ideal:{value:300,currency:'USD'}}},api.queries.token());
+          const id=created.accountId;
+          const result=api.commands.execute('recordResult',{accountId:id,month:'2026-01',usd:20},api.queries.token(id));
+          const closed=api.commands.execute('finalizeMonth',{accountId:id,month:'2026-01',confirmFlows:true},api.queries.token(id));
+          const expected=api.queries.view({accountId:id});
           const before=JSON.stringify(S);
           JPWDashMacro.render();
           const text=document.querySelector('[data-dm-card=forex]').textContent;
-          const valid=created.ok&&closed.ok&&text.includes('Selecione a conta operacional')&&
-            !text.includes(fmtMoney2(expected.realizedProfitUsd))&&!text.includes(fmtMoney2(expected.deviationUsd));
+          const independent=document.querySelector('[data-dm-card=planning]').textContent;
+          const valid=created.ok&&result.ok&&closed.ok&&text.includes('Selecione a conta operacional')&&
+            !text.includes(fmtMoney2(expected.confirmed.balanceUsd))&&independent.includes(fmtMoney2(expected.confirmed.balanceUsd));
           const stable=before===JSON.stringify(S);
-          const old=S.fxPlanning.plan.current;delete S.fxPlanning.plan.current;
+          const old=S.patrimonialPlanning.schemaVersion;S.patrimonialPlanning.schemaVersion=99;
           const corrupt=JSON.stringify(S);
           JPWDashMacro.render();
-          const refused=document.querySelector('[data-dm-card=forex]').textContent.includes('Selecione a conta operacional')&&corrupt===JSON.stringify(S);
-          S.fxPlanning.plan.current=old;
+          const refused=document.querySelector('[data-dm-card=forex]').textContent.includes('Selecione a conta operacional')&&
+            document.querySelector('[data-dm-card=planning]').textContent.includes('incompatível')&&corrupt===JSON.stringify(S);
+          S.patrimonialPlanning.schemaVersion=old;
           return {valid,stable,refused};
         }""")
         assert all(r.values()),r
@@ -647,11 +652,11 @@ def assert_frozen_projection(browser,url):
         page.locator('#dmTools').evaluate('el=>el.open=true')
         assert page.locator('[data-dm-card="alladin"],.cp-panorama-index [href="#dm-title-alladin"],'
                             '[data-dm-card="personal-finance"],.cp-panorama-index [href="#dm-title-personal-finance"]').count()==0
-        for module in ['forex','personal-finance','research','alladin']:
+        for module in ['forex','planning','personal-finance','research','alladin']:
             page.evaluate("id=>JPWModuleAvailability.setState(id,'frozen')",module)
             page.evaluate("JPWNavigation.navigate('dashboard')")
             result=page.evaluate("""module=>{
-              const names=['dmForexHTML','dmFinpesHTML','dmResearchHTML','dmAlladinHTML'];
+              const names=['dmForexHTML','dmPlanningHTML','dmFinpesHTML','dmResearchHTML','dmAlladinHTML'];
               const originals=names.map(name=>window[name]),calls=Object.fromEntries(names.map(name=>[name,0]));
               const govOriginal=getOnboardingCompletionState;let govCalls=0;
               names.forEach(name=>window[name]=(...args)=>{calls[name]++;return originals[names.indexOf(name)](...args);});
@@ -669,7 +674,7 @@ def assert_frozen_projection(browser,url):
                   health:['jpwSsPersist','jpwSsBackup','jpwSsQuotes'].every(id=>!document.getElementById(id).hidden)};
               }finally{names.forEach((name,index)=>window[name]=originals[index]);getOnboardingCompletionState=govOriginal;}
             }""",module)
-            reader={'forex':'dmForexHTML','personal-finance':'dmFinpesHTML','research':'dmResearchHTML','alladin':'dmAlladinHTML'}[module]
+            reader={'forex':'dmForexHTML','planning':'dmPlanningHTML','personal-finance':'dmFinpesHTML','research':'dmResearchHTML','alladin':'dmAlladinHTML'}[module]
             assert result['calls'][reader]==0,result
             assert module not in result['cards'] and '#dm-title-'+module not in result['links'],result
             assert result['stateStable'] and result['storageStable'] and result['health'],result
@@ -688,7 +693,7 @@ def assert_frozen_projection(browser,url):
         assert page.evaluate("JPWNavigation.current().primary")=='dashboard'
         remote=context.new_page()
         remote.goto(url.rsplit('/',1)[0]+'/build-id.js')
-        remote.evaluate("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{forex:'active','personal-finance':'frozen',research:'frozen',alladin:'frozen'}}))")
+        remote.evaluate("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{forex:'active',planning:'frozen','personal-finance':'frozen',research:'frozen',alladin:'frozen'}}))")
         page.wait_for_function("JPWModuleAvailability.canAccess('forex')&&document.querySelector('[data-dm-card=\"forex\"]')")
         assert page.locator('.cp-panorama-index a').count()==1
         assert page.locator('#jpwSsGov').is_visible()
@@ -736,7 +741,7 @@ def main():
             browser.close()
     finally:
         server.shutdown()
-    print("DASHBOARD MACRO TEST PASS — quatro cards, layout isolado, semantica fail-closed, CA-12 e responsividade")
+    print("DASHBOARD MACRO TEST PASS — cinco cards, layout isolado, semantica fail-closed, CA-12 e responsividade")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,19 @@
+{
+  "command": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/full2.json"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T13:45:02.776309+00:00",
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/full2.log",
+  "freeze_sha256": "c1cdd4c83532bc920d529b1d606ce155aeff1e3fb0160ec82c60487b5a976ab8",
+  "frozen_before": true,
+  "finished_at": "2026-10-22T14:31:46.978988+00:00",
+  "exit_code": 1,
+  "frozen_after": true,
+  "post_verify_output": "PASS frozen identities stable 7e8cc9b03b5dca40\n"
+}

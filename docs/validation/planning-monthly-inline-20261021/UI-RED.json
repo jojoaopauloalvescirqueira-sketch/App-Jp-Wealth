@@ -1,0 +1,56 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/red",
+  "started_at": "2026-10-22T01:34:22.244358+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+    "tools/planning_monthly_inline_test.py": "48b98bdccbf65397c5dfe4fc66b9c5c685080a2850d37cb814e165d4e0d8edde"
+  },
+  "cases": [
+    {
+      "id": "inline-ordinary-row-density",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-ordinary-row-density",
+      "started_at": "2026-10-22T01:34:24.856005+00:00",
+      "error": "('ordinary read rows must be <=64CSSpx', [{'month': '2026-08', 'height': 106.5, 'controls': [46, 44]}, {'month': '2026-09', 'height': 106.5, 'controls': [46, 44]}, {'month': '2026-10', 'height': 106.5, 'controls': [46, 44]}, {'month': '2027-01', 'height': 132.5, 'controls': [46, 44]}])",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 705, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 74, in <lambda>\n    harness.record(report, case_id, lambda: compact.guard(page, harness, lambda: action(page, fixture)), page)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_compact_table_test.py\", line 79, in guard\n    result = action()\n             ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 74, in <lambda>\n    harness.record(report, case_id, lambda: compact.guard(page, harness, lambda: action(page, fixture)), page)\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 31, in density\n    assert all(0 < r['height'] <= 64 for r in ordinary), ('ordinary read rows must be <=64CSSpx', ordinary)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('ordinary read rows must be <=64CSSpx', [{'month': '2026-08', 'height': 106.5, 'controls': [46, 44]}, {'month': '2026-09', 'height': 106.5, 'controls': [46, 44]}, {'month': '2026-10', 'height': 106.5, 'controls': [46, 44]}, {'month': '2027-01', 'height': 132.5, 'controls': [46, 44]}])\n",
+      "finished_at": "2026-10-22T01:34:24.885346+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-cell-activation",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-cell-activation",
+      "started_at": "2026-10-22T01:34:25.847688+00:00",
+      "error": "one accessible result cell activates editor",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 705, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 74, in <lambda>\n    harness.record(report, case_id, lambda: compact.guard(page, harness, lambda: action(page, fixture)), page)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_compact_table_test.py\", line 79, in guard\n    result = action()\n             ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 74, in <lambda>\n    harness.record(report, case_id, lambda: compact.guard(page, harness, lambda: action(page, fixture)), page)\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 39, in activation\n    assert cell.count() == 1, 'one accessible result cell activates editor'\n           ^^^^^^^^^^^^^^^^^\nAssertionError: one accessible result cell activates editor\n",
+      "finished_at": "2026-10-22T01:34:25.867091+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-temporal-filters",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-temporal-filters",
+      "started_at": "2026-10-22T01:34:26.805976+00:00",
+      "error": "Year Todos is the initial selection",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 705, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 74, in <lambda>\n    harness.record(report, case_id, lambda: compact.guard(page, harness, lambda: action(page, fixture)), page)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_compact_table_test.py\", line 79, in guard\n    result = action()\n             ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 74, in <lambda>\n    harness.record(report, case_id, lambda: compact.guard(page, harness, lambda: action(page, fixture)), page)\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 55, in filters\n    assert year.input_value() == '', 'Year Todos is the initial selection'\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Year Todos is the initial selection\n",
+      "finished_at": "2026-10-22T01:34:26.825720+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-ordinary-row-density",
+    "inline-cell-activation",
+    "inline-temporal-filters"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 3,
+    "required": 3,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T01:34:27.393402+00:00"
+}

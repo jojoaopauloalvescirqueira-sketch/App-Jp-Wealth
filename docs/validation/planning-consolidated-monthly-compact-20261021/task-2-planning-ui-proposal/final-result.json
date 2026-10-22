@@ -1,0 +1,23 @@
+{
+  "classification": "PASS",
+  "exit": 0,
+  "time": "2026-10-21T23:24:48.477933+00:00",
+  "source_unchanged": true,
+  "changed_source_paths": [],
+  "original_test_unchanged": true,
+  "original_test_sha256": "4398063623657d5156c2c66ecea1eb952f286b92f0de0358bd7ca96815c0af12",
+  "candidate_sha256": "dc4525759aebbb2b585eb58ce7466a7a030637032159d83b8ac3033f9b516ec5",
+  "pass_lines": 136,
+  "counterproofs": [
+    {
+      "id": "wrong-current-contribution",
+      "classification": "PASS",
+      "rejection": "wrong contribution amount rejected by same matcher"
+    },
+    {
+      "id": "missing-current-cost-status",
+      "classification": "PASS",
+      "rejection": "matching current-month cost situation value remains reachable"
+    }
+  ]
+}

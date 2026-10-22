@@ -173,3 +173,46 @@ window.JPWMarket.usdBrl={
 // Rede voltou: revalida se a consulta envelheceu. Sem polling — a cadência vem
 // da entrada na tela, da volta à visibilidade, do TTL e do botão manual.
 window.addEventListener('online',function(){ usdBrlRefresh(false); });
+
+// Historical monthly presentation: last available reference on/before month end.
+// Independent technical cache; never substitutes today's quote for the past.
+(function(api){
+  const KEY='jpwealth.market.usdbrl.monthly.v1',pending=new Map(),memory=new Map();
+  const source='Frankfurter · BCE · referência histórica USD/BRL';
+  const unavailable=reason=>({rate:null,referenceDate:null,fetchedAt:null,source,status:'unavailable',reason});
+  function valid(month,q){return q&&Number.isFinite(q.rate)&&q.rate>0&&typeof q.referenceDate==='string'&&
+    /^\d{4}-\d{2}-\d{2}$/.test(q.referenceDate)&&q.referenceDate.slice(0,7)===month&&Number.isFinite(q.fetchedAt)&&q.fetchedAt>0&&q.source===source;}
+  function read(month){
+    if(memory.has(month))return {...memory.get(month)};
+    try{const q=JSON.parse(localStorage.getItem(KEY)||'{}')[month];if(valid(month,q)){memory.set(month,q);return {...q};}}catch(_){}
+    return null;
+  }
+  function save(month,q){memory.set(month,q);try{const parsed=JSON.parse(localStorage.getItem(KEY)||'{}');const all=parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{};all[month]=q;localStorage.setItem(KEY,JSON.stringify(all));}catch(_){}}
+  api.getHistorical=month=>read(month);
+  api.historical=function(month,{signal}={}){
+    const now=new Date(),current=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    if(typeof month!=='string'||!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)||month>=current)return Promise.resolve(unavailable('invalid-or-not-past'));
+    if(signal?.aborted)return Promise.resolve(unavailable('cancelled'));
+    let work=Promise.resolve(read(month));
+    if(!read(month)){
+      if(!pending.has(month)){
+        const [y,m]=month.split('-').map(Number),end=new Date(Date.UTC(y,m,0)).toISOString().slice(0,10),ctrl=new AbortController();
+        const timer=setTimeout(()=>ctrl.abort(),USDBRL_TIMEOUT_MS);
+        const request=fetch(USDBRL_ENDPOINT+'?date='+end+'&providers=ecb',{signal:ctrl.signal,cache:'no-store'})
+          .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+          .then(payload=>{const clean=usdBrlSanitize(payload);const q=clean&&{...clean,fetchedAt:Date.now(),source,status:'historical'};
+            if(!valid(month,q)||q.referenceDate>end)return unavailable('date-or-pair-mismatch');save(month,q);return q;})
+          .catch(()=>unavailable('network-or-invalid')).finally(()=>{clearTimeout(timer);pending.delete(month);});
+        pending.set(month,request);
+      }
+      work=pending.get(month);
+    }
+    // A consumer can leave without cancelling a shared reference request.
+    if(!signal)return work.then(q=>({...q}));
+    return new Promise(resolve=>{
+      const abort=()=>{signal.removeEventListener('abort',abort);resolve(unavailable('cancelled'));};
+      signal.addEventListener('abort',abort,{once:true});
+      work.then(q=>{signal.removeEventListener('abort',abort);resolve(signal.aborted?unavailable('cancelled'):{...q});});
+    });
+  };
+})(window.JPWMarket.usdBrl);

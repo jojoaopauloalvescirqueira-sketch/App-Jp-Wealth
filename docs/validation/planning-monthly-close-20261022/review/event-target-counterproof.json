@@ -1,0 +1,27 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+    "tools/planning_monthly_close_test.py": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405"
+  },
+  "cases": [
+    {
+      "id": "direct-submit-event-target-counterproof",
+      "status": "PASS",
+      "details": {
+        "dialog_dispatch_reaches_form": 0,
+        "form_dispatch_reaches_form": 1
+      }
+    }
+  ],
+  "after": {
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+    "tools/planning_monthly_close_test.py": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405"
+  },
+  "stable": true
+}

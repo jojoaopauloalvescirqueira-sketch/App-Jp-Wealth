@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const policy=window.JPWModuleAvailability;
-  const names={research:'Research',forex:'Forex','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
+  const names={research:'Research',forex:'Forex',planning:'Planejamento','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
   let previous={},notice=null;
   const el=id=>document.getElementById(id);
   function status(text){const target=el('moduleAvailabilityStatus');if(target)target.textContent=text;}

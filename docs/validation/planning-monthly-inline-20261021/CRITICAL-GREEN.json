@@ -1,0 +1,89 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/critical-green",
+  "started_at": "2026-10-22T01:53:43.705527+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "8ac5ec798dc36bb3edf72103e8be104d5654fe09100160dc8169a84898962946",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "c2cd08c5b92056857213122642a334b6b84142f43595e10cdc36b0c6d866d9f1",
+    "tools/planning_monthly_inline_test.py": "a3f4246aa1b6d0e2c6c8191855132fabf2087b499424cf125981725ac4cee521"
+  },
+  "cases": [
+    {
+      "id": "inline-dirty-context-guards",
+      "classification": "PASS",
+      "criteria": "inline-dirty-context-guards",
+      "started_at": "2026-10-22T01:53:45.159767+00:00",
+      "evidence": {
+        "guarded_contexts": 8,
+        "discard_explicit": true
+      },
+      "finished_at": "2026-10-22T01:53:46.204218+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-stoikus-context-guard",
+      "classification": "PASS",
+      "criteria": "inline-stoikus-context-guard",
+      "started_at": "2026-10-22T01:53:47.076391+00:00",
+      "evidence": {
+        "continue_preserves_account": true,
+        "discard_resumes_entire_navigation": true
+      },
+      "finished_at": "2026-10-22T01:53:48.157819+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-future-context-companion",
+      "classification": "PASS",
+      "criteria": "inline-future-context-companion",
+      "started_at": "2026-10-22T01:53:49.042959+00:00",
+      "evidence": {
+        "before": {
+          "rate": null,
+          "contributionUsd": ""
+        },
+        "after": {
+          "rate": null,
+          "contributionUsd": 17
+        },
+        "guarded": true,
+        "actual_writer_count": 1
+      },
+      "finished_at": "2026-10-22T01:53:49.742374+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "inline-menu-escape-ownership",
+      "classification": "PASS",
+      "criteria": "inline-menu-escape-ownership",
+      "started_at": "2026-10-22T01:53:50.609756+00:00",
+      "evidence": {
+        "menu_escape_retains_draft": true,
+        "editor_escape_still_cancels": true
+      },
+      "finished_at": "2026-10-22T01:53:50.766497+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-stoikus-context-guard",
+    "inline-future-context-companion",
+    "inline-menu-escape-ownership",
+    "inline-dirty-context-guards"
+  ],
+  "only": [
+    "inline-stoikus-context-guard",
+    "inline-future-context-companion",
+    "inline-menu-escape-ownership",
+    "inline-dirty-context-guards"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 4,
+    "required": 4,
+    "unique": true
+  },
+  "classification": "PASS",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T01:53:51.204554+00:00"
+}

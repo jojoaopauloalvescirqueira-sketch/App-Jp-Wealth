@@ -1,0 +1,40 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "scope": "Disposable synthetic actual site DOM; no owner browser or Google service",
+  "chosenBadge": "Ao salvar: aportes até set. de 2026.",
+  "invalidatedBadge": "Premissas alteradas. Reabra a simulação para revisar a data.",
+  "draftAfterInvalidation": [
+    {
+      "provider": "patrimonial-planning",
+      "version": 1,
+      "label": "Planejamento — Comece aqui — create — nova conta",
+      "context": {
+        "accountId": null,
+        "planId": null,
+        "action": "create",
+        "key": "create:new::",
+        "formVersion": 1
+      },
+      "baseReference": "{\"accountId\":null,\"planId\":null,\"revision\":0,\"planRevision\":null}",
+      "text": "{\"formVersion\":1,\"fields\":{\"name\":\"\",\"broker\":\"\",\"login\":\"\",\"server\":\"\",\"startYear\":\"2026\",\"startMonthNumber\":\"10\",\"newPlan\":false,\"initialUsd\":\"2000\",\"profileId\":\"base\",\"monthlyContributionUsd\":\"100\",\"adequateValue\":\"\",\"adequateCurrency\":\"BRL\",\"idealValue\":\"300\",\"idealCurrency\":\"USD\",\"replaceFuture\":false,\"adequateQuoteSnapshot\":\"{\\\"rate\\\":5,\\\"referenceDate\\\":\\\"2026-09-10\\\",\\\"fetchedAt\\\":1792523752501,\\\"source\\\":\\\"Frankfurter · taxas de referência do BCE\\\"}\",\"idealQuoteSnapshot\":\"{\\\"rate\\\":5,\\\"referenceDate\\\":\\\"2026-09-10\\\",\\\"fetchedAt\\\":1792523752501,\\\"source\\\":\\\"Frankfurter · taxas de referência do BCE\\\"}\",\"adequateRefreshIntent\":false,\"idealRefreshIntent\":false}}"
+    }
+  ],
+  "reopenedReview": "Conta de investimento\nPeríodo: outubro/2026 a setembro/2036\nSaldo inicial: US$ 2.000,00\nPerfil: Perfil Base · 3% ao mês · 42,58% ao ano composto · MDD 20%\nNOVA CONTA: os dados das outras contas serão preservados. Todos os meses desta conta começam sem confirmação.\nReferência inicial: capital, taxa e aporte fixo preservados. Alterações nas projeções mensais não mudam os cálculos de comparação. Somente iniciar outro plano cria outra referência.\nCusto mensal atual: Não informado\nRenda mensal desejada: US$ 300,00\nPatrimônio estimado automaticamente: US$ 10.000,00\nPrazo estimado: 2 anos e 8 meses · mai/2029\nEstimativas desde o início do plano, sem garantia. Sem inflação, taxas, impostos ou retiradas.\nAo confirmar, o Consolidado, os lançamentos mensais e a Referência serão liberados.",
+  "prematureAccounts": 0,
+  "savedStopAfter": null,
+  "savedFutureContribution": null,
+  "after": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "candidateStable": true
+}

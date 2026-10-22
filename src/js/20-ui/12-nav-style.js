@@ -278,7 +278,7 @@ function initNavLayoutChoice(){
 // do envelope de widgets, incluída no workspace do Backup Completo. A lista usa
 // identidades, nunca rótulos ou rotas novas.
 const NAV_ORDER_KEY='jpw_nav_order';
-const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','forex','personal-finance','alladin','tools']);
+const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','planning','forex','personal-finance','alladin','tools']);
 const navOrderState={confirmed:[],draft:[],raw:null,editing:false,blocked:null,note:'',restoreRequested:false};
 jpwWorkspaceDraftProviders.set('navigation-order',(reset=false)=>{
   if(reset){navOrderState.editing=false;return [];}
@@ -306,8 +306,14 @@ function navOrderRead(){
   catch(e){return {raw:null,order:[...NAV_ORDER_DEFAULT],blocked:'read',note:'Não foi possível ler a ordem salva. O padrão é exibido sem alterar a preferência; recarregue para tentar a leitura novamente.'};}
   let order=null;
   if(raw!==null){try{order=JSON.parse(raw);}catch(e){}}
-  // Preserve an existing five-module order in memory; never rewrite on read.
-  if(Array.isArray(order)&&order.length===5&&new Set(order).size===5&&order.every(id=>NAV_ORDER_DEFAULT.includes(id)&&id!=='tools')) order=[...order,'tools'];
+  // Project old orders in memory; preserve their raw backup/preference until explicit Save.
+  const oldIds=NAV_ORDER_DEFAULT.filter(id=>id!=='planning');
+  if(Array.isArray(order)&&order.length===5&&new Set(order).size===5&&order.every(id=>oldIds.includes(id)&&id!=='tools'))order=[...order,'tools'];
+  if(Array.isArray(order)&&order.length===6&&new Set(order).size===6&&order.every(id=>oldIds.includes(id))){
+    order=[...order];order.splice(order.indexOf('research')+1,0,'planning');
+  }
+  const oldDefault=['dashboard','research','forex','planning','personal-finance','alladin','tools'];
+  if(Array.isArray(order)&&order.length===oldDefault.length&&order.every((id,index)=>id===oldDefault[index]))order=[...NAV_ORDER_DEFAULT];
   const valid=navOrderValid(order);
   return {raw,order:valid?order:[...NAV_ORDER_DEFAULT],blocked:null,
     note:raw!==null&&!valid?'Ordem salva não reconhecida. O padrão é exibido; a preferência original permanece intacta até você salvar uma nova ordem.':''};
@@ -369,6 +375,9 @@ function renderNavOrderEditor(message){
 function beginNavOrderPreview(){
   if(navOrderState.editing||navOrderState.blocked==='unknown')return;
   const read=navOrderRead();
+  // A própria gravação confirmada permanece editável nesta sessão, inclusive
+  // quando seus IDs coincidem com a antiga ordem padrão projetada no boot.
+  if(!read.blocked&&read.raw===navOrderState.raw&&navOrderValid(navOrderState.confirmed))read.order=[...navOrderState.confirmed];
   Object.assign(navOrderState,{confirmed:[...read.order],draft:[...read.order],raw:read.raw,
     blocked:read.blocked,note:read.note,editing:true,restoreRequested:false});
   applyNavOrder(read.order);renderNavOrderEditor();

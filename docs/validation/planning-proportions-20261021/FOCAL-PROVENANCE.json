@@ -1,0 +1,86 @@
+{
+  "phase": "Focais e capturas antes da reconstrução final; UI/CSS identificados por hash, não pelo build-id anterior ainda presente. Resultado FULL somente no recibo próprio.",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "232221bb6f26495b2c45fc88996783936189d207458036a114de7b87b15414f3",
+    "src/styles/app.css": "482dfd3055edd884a19ef24edf2ac216fd1bf5648b4b152ddc225eab69e7bfd8",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "tools/planning_proportions_test.py": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a"
+  },
+  "copies": {
+    "before-dialog-center.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-red-five/bug-dialog-center.png",
+      "sha256": "7910ecf7160209463016293976b5102ec26b810a5d3d2a74990e3616cc6c7212"
+    },
+    "before-money-bases.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-red-five/bug-money-bases.png",
+      "sha256": "0f98d4bd2ea46bac1d14c4c482035fa7359032c7341e6b04820ef104e769cbd6"
+    },
+    "before-mobile-header.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-red-five/bug-mobile-header.png",
+      "sha256": "c9fe5be350ca25d63fcfb90829b6eae57a6448d735752de8b93740aa9ce5fc77"
+    },
+    "before-pending-copy.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-red-five/bug-pending-copy.png",
+      "sha256": "2dc9c885d0ab897476ea4f7783ff03a5234a4fd66df8e6d8b5c8d884a84e535f"
+    },
+    "before-stop-legend.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-red-five/bug-stop-legend.png",
+      "sha256": "8bbbcf861195e53218e745168d3a6f61f70629d398720040d567b6c3ab5d6425"
+    },
+    "after-dialog-center.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-green-r4/bug-dialog-center.png",
+      "sha256": "755852fdf48ef108f06316c3ae83165cf003c78bddf12b3422e7f979cf7715a7"
+    },
+    "after-money-bases.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-green-r4/bug-money-bases.png",
+      "sha256": "755852fdf48ef108f06316c3ae83165cf003c78bddf12b3422e7f979cf7715a7"
+    },
+    "after-mobile-header.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-green-r4/bug-mobile-header.png",
+      "sha256": "5b9638cd7ed702cf8eb6a0e4f10f5d17da15d5be385d6605a648089e383bbc55"
+    },
+    "after-pending-copy.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-green-r4/bug-pending-copy.png",
+      "sha256": "f7dbe7b06892e00f0ebfcf9e7464cab3a74b3749d097da16e87e7d41aa5836b3"
+    },
+    "after-stop-legend.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-green-r4/bug-stop-legend.png",
+      "sha256": "66429c1d38ae7f65c28d4eeeed8e475946a3b6f7ca866cbc8c336dc34f5f2ae8"
+    },
+    "reference-form.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/gauntlet/sample-a.png",
+      "sha256": "a5a3c8f0962e9b02071521031203c1007560c4fabc59fdd1ab43b6bfac00a6be"
+    },
+    "form-desktop.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/gauntlet/sample-b.png",
+      "sha256": "bced04f1c8cbb61817dd8e8b32f5c649b02b838c808f196ae0802a89ae109c25"
+    },
+    "profiles-mobile.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/gauntlet/mobile-profiles.png",
+      "sha256": "7bab0b199c01f8e3ac04c57ae730dbd8a329dff3f3d3c3695b075edc918a96fb"
+    },
+    "stop-mobile.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/gauntlet/mobile-stop.png",
+      "sha256": "c018f0b9e10d58d86ff9aed353c295b1a53aea88a70afac52961d3a501bea926"
+    },
+    "forecast-mobile.png": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/gauntlet/mobile-forecast.png",
+      "sha256": "d295b3265da6ac9d56cee48d8f1aa783fdfc0cfc313944475c2b1368863c528c"
+    },
+    "FOCAL-RED-ORIGINAL.json": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-red-five/proporcoes-results.json",
+      "sha256": "694abe3c67ea51a3730caed72773ab6d8d5241f94a298d37c10e557af4ef01ed"
+    },
+    "FOCAL-RED-COUNTERPROOF.json": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-final-counterproof-r2/proporcoes-results.json",
+      "sha256": "ce5fb243fffc8bc5025da2fc4565d7d5c999cdddeb353336f25146d39ca9111e"
+    },
+    "FOCAL-GREEN.json": {
+      "source": ".superpowers/sdd/planning-proportions-20261021/task1-green-r4/proporcoes-results.json",
+      "sha256": "cd04e1880480c8bbee0fdf2608f8dab6fd7c5a16138d3b268862cfa3bd656c2f"
+    }
+  },
+  "reference": "HTML original verificado com callbacks sintéticos, não sessão Google autenticada.",
+  "gauntlet": "Comparação independente A/B de organização e dois marcos; página/modal reconhecíveis, sem cegamento completo nem teste humano."
+}

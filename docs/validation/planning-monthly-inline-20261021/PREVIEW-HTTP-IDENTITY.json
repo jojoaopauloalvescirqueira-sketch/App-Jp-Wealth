@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-22T02:50:20.720602+00:00",
+  "candidate_build": "6ca8a3b8971e249a",
+  "url": "http://127.0.0.1:8000/index.html?v=6ca8a3b8971e249a",
+  "checks": [
+    {
+      "path": "index.html",
+      "sha256": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+      "http_equals_local": true
+    },
+    {
+      "path": "build-id.js",
+      "sha256": "fa3264f3d701ccad2af919199bec1c940840d42f1ec3da3a84a7aa5af111922e",
+      "http_equals_local": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "sha256": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+      "http_equals_local": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/02-state.js",
+      "sha256": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+      "http_equals_local": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "sha256": "eb40224556cd804e5db39a42886b0cdf8513b64d72d41e8932aa5ee687ac31a4",
+      "http_equals_local": true
+    }
+  ],
+  "limit": "Direct HTTP bytes only; previously open browser tabs may remain controlled by an older service worker until closed."
+}

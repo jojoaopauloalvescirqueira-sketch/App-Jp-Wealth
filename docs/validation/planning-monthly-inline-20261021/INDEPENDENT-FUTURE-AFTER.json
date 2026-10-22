@@ -1,0 +1,30 @@
+[
+  {
+    "case": "future-companion-drift",
+    "guard": 1,
+    "before": {
+      "rate": null,
+      "contributionUsd": ""
+    },
+    "after": {
+      "rate": null,
+      "contributionUsd": 17
+    },
+    "persisted": {
+      "rate": null,
+      "contributionUsd": 17
+    },
+    "expected_after": {
+      "rate": null,
+      "contributionUsd": 17
+    },
+    "classification": "PASS"
+  },
+  {
+    "case": "escape-menu",
+    "editor": 1,
+    "menu_visible": false,
+    "pending": true,
+    "classification": "PASS"
+  }
+]

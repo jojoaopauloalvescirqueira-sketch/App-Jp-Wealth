@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "reconstructed_build": "d93561c064cf5f40",
+  "method": "Reverse the documented final-record edits using the preserved pre-release files; recompute official327-path fingerprint with these2bytes and unchanged325inputs. No product source restored or altered.",
+  "files": {
+    "README.md": "aeedb4ac51b0da22e841965c42619ea6f331197d954eb678b7b77ba7ed115d41",
+    "CHANGELOG.md": "76a7d3323e86439f462d8978883ea875da891f2524c21c79a88232f252ef9a6a"
+  }
+}

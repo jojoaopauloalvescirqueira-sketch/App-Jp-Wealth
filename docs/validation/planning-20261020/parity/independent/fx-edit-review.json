@@ -1,0 +1,54 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "scope": "Original browser source harness vs real site DOM, synthetic saved BRL goals; no Google service or owner data",
+  "siteBeforeExplicitRefresh": {
+    "usd": "US$ 2.000,00 / mês na simulação",
+    "quote": "US$ 1 = R$ 5 · Frankfurter · taxas de referência do BCE · Referência 2026-10-20 · Consulta em 20/10/2026, 16:15:50. Cotação indicativa, última disponível. Conversão fixa após salvar."
+  },
+  "originalAfterExplicitRefresh": {
+    "usd": "US$ 1.000,00 / mês na simulação",
+    "quote": "US$ 1 = R$ 10 · Consulta em 20/10/2026, 09:00:00. Cotação indicativa, última disponível. Conversão fixa após salvar."
+  },
+  "siteAfterExplicitRefresh": {
+    "usd": "US$ 1.000,00 / mês na simulação",
+    "quote": "US$ 1 = R$ 10 · Frankfurter · taxas de referência do BCE · Referência 2026-10-20 · Consulta em 20/10/2026, 16:15:51. Cotação indicativa, última disponível. Conversão fixa após salvar."
+  },
+  "sourceReview": "Synthetic saved BRL\nPeríodo: outubro/2026 a setembro/2036\nSaldo inicial: US$ 1.000,00\nPerfil: Perfil Base · 3,00% ao mês · 42,58% ao ano composto · MDD 20,00%\nAtualização: manter os aportes e as rentabilidades de todos os meses.\nReferência inicial: capital, taxa e aporte fixo preservados. Alterações nas projeções mensais não mudam os cálculos de comparação. Somente iniciar outro plano cria outra referência.\nCusto mensal atual: US$ 1.000,00\nRenda mensal desejada: R$ 10.000,00 → US$ 1.000,00\nPatrimônio estimado automaticamente: US$ 33.333,34\nPrazo estimado: 6 anos e 2 meses · nov/2032\nEstimativas desde o início do plano, sem garantia. Sem inflação, taxas, impostos ou retiradas.\nAs alterações ficarão disponíveis no Consolidado.",
+  "siteReview": "Synthetic saved BRL\nPeríodo: outubro/2026 a setembro/2036\nSaldo inicial: US$ 1.000,00\nPerfil: Perfil Base · 3% ao mês · 42,58% ao ano composto · MDD 20%\nAtualização: manter os aportes e as rentabilidades de todos os meses.\nReferência inicial: capital, taxa e aporte fixo preservados. Alterações nas projeções mensais não mudam os cálculos de comparação. Somente iniciar outro plano cria outra referência.\nCusto mensal atual: US$ 1.000,00\nRenda mensal desejada: R$ 10.000,00 → US$ 1.000,00\nPatrimônio estimado automaticamente: US$ 33.333,34\nPrazo estimado: 6 anos e 2 meses · nov/2032\nEstimativas desde o início do plano, sem garantia. Sem inflação, taxas, impostos ou retiradas.\nAo confirmar, o Consolidado, os lançamentos mensais e a Referência serão liberados.",
+  "siteSavedGoal": {
+    "value": 10000,
+    "currency": "BRL",
+    "usd": 1000,
+    "quote": {
+      "rate": 10,
+      "referenceDate": "2026-10-20",
+      "fetchedAt": "2026-10-20T19:15:51.125Z",
+      "source": "Frankfurter · taxas de referência do BCE"
+    }
+  },
+  "otherGoalUnchanged": {
+    "value": 5000,
+    "currency": "BRL",
+    "usd": 1000,
+    "quote": {
+      "rate": 5,
+      "referenceDate": "2026-10-20",
+      "fetchedAt": "2026-10-20T19:15:50.747Z",
+      "source": "Frankfurter · taxas de referência do BCE"
+    }
+  },
+  "after": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "candidateStable": true
+}

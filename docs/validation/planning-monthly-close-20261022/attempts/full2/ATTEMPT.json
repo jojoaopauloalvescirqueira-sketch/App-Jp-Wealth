@@ -1,0 +1,20 @@
+{
+  "classification": "FAILED_FULL_PRESERVED",
+  "build": "7e8cc9b03b5dca40",
+  "summary": {
+    "PASS": 95,
+    "PRODUCT_FAIL": 1,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "reason": "Static quote security scan matched authorization in newly added explanatory source comment; no credential shown. Test and guard remain unchanged. Comment-only wording correction followed by official rebuild and fresh FULL required.",
+  "created_at": "2026-10-22T14:33:23.756971+00:00",
+  "files": {
+    "full2-command.json": "7ad7024bbd225c93a6882038635e01f0073b87ed0d6c6047d54dd4ae981d312a",
+    "full2.log": "2fda7a464a0dcee5429ad09fa6948201280ca707f7fe3294a4fcc20359402e03",
+    "freeze.json": "c1cdd4c83532bc920d529b1d606ce155aeff1e3fb0160ec82c60487b5a976ab8",
+    "full2.json": "35c316a0dac04f0cf8d0b753ab613d6f4ce7e19f27ac3a99281b42b0228e7d52"
+  }
+}

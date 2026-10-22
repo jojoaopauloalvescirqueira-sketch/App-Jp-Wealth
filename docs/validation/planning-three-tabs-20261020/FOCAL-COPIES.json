@@ -1,0 +1,59 @@
+{
+  "files": [
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/TASK1-REVIEW.md",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/task1-independent-review.md",
+      "sha256": "229d40e7669d354013b68f55114d1245b61ed77118f744a3acef0372e54244e6",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/TASK1-REREVIEW.md",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/task1-independent-rereview.md",
+      "sha256": "d62932dc46ed641100a8757137ea02360f7ffc34242b9378b676a5fd5e3279a2",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/TASK2-REVIEW.md",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/task2-independent-review.md",
+      "sha256": "966b8652d7c4b4f315a5ec6d820a61c5c18c8d0b5fe988c28e7cc2f57060a25e",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/TASK1-FOCAL.json",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/task1-green-final.json",
+      "sha256": "174d7a1f018770575a8217059187481667821745912dfacc8cfddf8f3d290d1f",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/TASK1-FIX-FOCAL.json",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/task1-fix-r1-green-all.json",
+      "sha256": "b8b1ec6163bcd623dcc343c394b98dfa6f4727ee666ee62a76d5b5ce148102fc",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/NOTES-LAUNCHER-FOCAL.json",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/notes-launcher-both-focal.json",
+      "sha256": "7c92213095f67db3591e832621e969f4e422e3a41730efb2eee3f395f9b71da1",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/PRESENTATION-FOCAL.json",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/presentation-focal.json",
+      "sha256": "8326f7d73f2ceb640907a8ccc07b20d3fcded56c399f333be882b47a041d7206",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/NAV-ORDER-FOCAL.json",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/nav-green-r4/results.json",
+      "sha256": "ee9014b46e5b1c704d9e0e20b4bb441eff9e849e2a3e4e4aacf0fd00377e5675",
+      "same_bytes": true
+    },
+    {
+      "path": "docs/validation/planning-three-tabs-20261020/NAV-LOCAL-FOCAL.json",
+      "original": ".superpowers/sdd/planning-three-tabs-20261020/nav-local-green.json",
+      "sha256": "1cd4abd20bdec6e60738fdcfdb52fb38b304c6073412492214d8b0bc80eab436",
+      "same_bytes": true
+    }
+  ],
+  "limits": "Independent and focal source executions preserve original identities; FULL has a separate current artifact. Ignored originals are not guaranteed in a fresh clone. No human acceptance inferred."
+}

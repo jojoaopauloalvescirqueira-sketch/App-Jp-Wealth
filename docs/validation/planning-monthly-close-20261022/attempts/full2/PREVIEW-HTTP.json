@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-22T13:38:06.533808+00:00",
+  "build": "7e8cc9b03b5dca40",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+      "byte_identical": true
+    },
+    {
+      "path": "build-id.js",
+      "sha256": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+      "byte_identical": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "sha256": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+      "byte_identical": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/02-state.js",
+      "sha256": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+      "byte_identical": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "sha256": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+      "byte_identical": true
+    }
+  ]
+}

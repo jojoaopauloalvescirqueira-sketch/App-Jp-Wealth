@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-22T02:19:57.542959+00:00",
+  "candidate_build": "6ca8a3b8971e249a",
+  "source_pdf_sha256": "3695a8584819c95c62fde4945e65dfde12c853cba75a919c4c0ac01167f7d22e",
+  "pages": 2,
+  "page_sizes": [
+    {
+      "width": 842.88,
+      "height": 595.91998
+    },
+    {
+      "width": 842.88,
+      "height": 595.91998
+    }
+  ],
+  "page_text_lines": [
+    21,
+    2
+  ],
+  "renders": {
+    "page-1.png": "40e6981a088f97ee1d67f2e5c4cc356265003ecb73b0e850ba2621573147ce40",
+    "page-2.png": "4d41901c3cca9c83a7775fc95efd9cd2b3f9fed51dafca39b604d1cff41364e0"
+  },
+  "pdfinfo_actual_exit": 0,
+  "render_actual_exit": 0,
+  "visual_review": "CONTENT_READABLE_WITH_INHERITED_PAGINATION_LIMITATION",
+  "scope": "Read-only inspection of app test report; baselinepagination limitation is not silentlyclosed or redesigned.",
+  "visual_observation": "Both current pages inspected as PNG: text/numbers/chart legible, no new overlap/cut found; page2 has only twofooterlines and largeemptyarea. This inheritedpagination limitation remains open, not an approved visualPDF redesign.",
+  "prior_pdf_observation": {
+    "pages": 2,
+    "text_lines": [
+      21,
+      2
+    ]
+  },
+  "print_function_byte_identical": true,
+  "print_function_sha256": "ef99a1ca487d976bf6dcb7b77ec5afe4e4383ea7cb41226535a1391c4bd102c7",
+  "read_only_runtime": {
+    "python": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "pypdf": "6.10.0"
+  }
+}

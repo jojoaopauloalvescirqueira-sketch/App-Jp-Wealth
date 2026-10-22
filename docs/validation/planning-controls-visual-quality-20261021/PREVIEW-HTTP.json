@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-21T21:48:32.708222+00:00",
+  "preview": "http://127.0.0.1:8000/index.html?v=a9713063cd241820",
+  "build": "a9713063cd241820",
+  "result": "PASS",
+  "files": [
+    {
+      "path": "index.html",
+      "byte_identical": true,
+      "sha256": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be"
+    },
+    {
+      "path": "build-id.js",
+      "byte_identical": true,
+      "sha256": "50f58113e4d7a8f8045bfa82e26fcdfb6042fdfa0d6295107843eae79b953af0"
+    },
+    {
+      "path": "src/styles/app.css",
+      "byte_identical": true,
+      "sha256": "1f3229bcfa93d903f6a10535d425cfee666d2277412ee246d71a50cc79ec3af2"
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "byte_identical": true,
+      "sha256": "8631ce88f133740f18b05ce6425b9413b93763d45ef48babd5df33de0e6c6664"
+    },
+    {
+      "path": "src/js/manifest.json",
+      "byte_identical": true,
+      "sha256": "519c7824f8f1ab7dd4e19178311068328ffab3ce907d196dfcfccbb6da3979e9"
+    }
+  ],
+  "limits": [
+    "Byte match of HTTP responses does not establish owner browser cache/SW activation or human acceptance."
+  ]
+}

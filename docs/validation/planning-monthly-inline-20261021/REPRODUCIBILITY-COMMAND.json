@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "tools/build_reproducibility_test.py"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T02:19:55.674233+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/reproducibility-final.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T02:20:33.284550+00:00",
+  "log_sha256": "b0848a61b2bbe5ef68ddd07710c1b4a028234c56838170114a96dd2e897dff90"
+}

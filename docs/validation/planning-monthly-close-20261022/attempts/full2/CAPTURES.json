@@ -1,0 +1,38 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3"
+  },
+  "started_at": "2026-10-22T13:40:52.463613+00:00",
+  "states": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "touch": false,
+      "result_saved": 12.5,
+      "closure_before_confirmation": null,
+      "writer_calls_before_closure": 1,
+      "closure_confirmed": true,
+      "writer_calls_after_closure": 2
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "result_saved": 12.5,
+      "closure_before_confirmation": null,
+      "writer_calls_before_closure": 1,
+      "closure_confirmed": true,
+      "writer_calls_after_closure": 2
+    }
+  ],
+  "after": {
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3"
+  },
+  "finished_at": "2026-10-22T13:40:56.687510+00:00"
+}

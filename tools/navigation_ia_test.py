@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """NAV-01..NAV-03 — contrato da navegacao semantica.
 
-Prova que a API publica expoe somente as seis rotas canonicas, enquanto a
+Prova que a API publica expoe somente as sete rotas canonicas, enquanto a
 fachada legada continua resolvendo destinos fisicos sem promovê-los ao contrato
 canônico. Navegação é UI pura: não grava storage, não salva estado financeiro e
 a navegacao nao le nem altera o dominio patrimonial do Alladin.
@@ -24,6 +24,7 @@ os.chdir(ROOT)
 CANONICAL = [
     ("dashboard", "dash", "dashboard", None),
     ("forex-consolidated", "fxconsolidated", "forex", None),
+    ("planning", "planning", "planning", "start"),
     ("personal-finance", "finpes", "personal-finance", "overview"),
     ("research-forex", "research", "research", "nocoda"),
     ("alladin", "alladin", "alladin", None),
@@ -35,7 +36,6 @@ FOREX_CHILDREN = [
     ("forex-operation", "exec", "panel"),
     ("forex-history", "exec", "history"),
     ("forex-accounting", "exec", "accounting"),
-    ("forex-planning", "fxplan", "table"),
     ("forex-reserves", "fxreserves", None),
 ]
 
@@ -45,16 +45,17 @@ RESEARCH_CHILDREN = [
     ("research-stocks-global", "research", "stocks-global"),
     ("research-reits", "research", "reits"),
 ]
-LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
+LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "forex-planning", "finpes",
           "motor", "history", "check", "tool-check", "ecal", "nocoda",
           "pivots", "params", "config"]
 PRIMARY = [
     ("01", "Dashboard", "dashboard", "dashboard"),
     ("02", "Research", "research-forex", "research"),
-    ("03", "Forex", "forex-consolidated", "forex"),
-    ("04", "Finanças Pessoais", "personal-finance", "personal-finance"),
-    ("05", "Alladin", "alladin", "alladin"),
-    ("06", "Ferramentas e Serviços", "tools-calendar", "tools"),
+    ("03", "Planejamento", "planning", "planning"),
+    ("04", "Forex", "forex-consolidated", "forex"),
+    ("05", "Finanças Pessoais", "personal-finance", "personal-finance"),
+    ("06", "Alladin", "alladin", "alladin"),
+    ("07", "Ferramentas e Serviços", "tools-calendar", "tools"),
 ]
 
 
@@ -113,7 +114,7 @@ def boot(browser, url, viewport=None):
     page.goto(url, wait_until="load")
     page.wait_for_function("""() => window.JPWNavigation
       && typeof window.JPWNavigation.navigate === 'function'
-      && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWFx?.ui
+      && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWPlanning?.ui
       && window.JPWResearch?.ui""")
     page.evaluate("() => { window.alert=()=>{}; window.__navStorageOps=[]; closeModal(); }")
     return context, page, observed
@@ -185,7 +186,8 @@ def assert_primary_dom(page):
     assert page.locator("#nav > [data-nav-expand]").evaluate_all(
         "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes", "tools"]
     assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
-    assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 3
+    assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 2
+    assert page.locator("#navSubShell [data-nav-child='forex-planning'], #navLocalSlot [data-nav-context='forex-planning']").count() == 0
     assert page.locator("#navLocalSlot [data-nav-context='forex-management-accounts'] [data-nav-local-view]").evaluate_all(
         "els => els.map(el => el.dataset.navLocalView)") == ["accounts", "motor"]
     # ALD-05-S1: SUBSTITUICAO DE CONTRATO, nao remocao de cobertura.
@@ -311,6 +313,8 @@ def assert_canonical_navigation(page):
             assert page.evaluate("() => window.JPWResearch.ui.getView()") == local_view
         if screen == "tools":
             assert page.evaluate("() => window.JPWTools.ui.getView()") == local_view
+        if screen == "planning":
+            assert page.evaluate("() => window.JPWPlanning.ui.getView()") == local_view
 
     page.evaluate("() => window.JPWExec.ui.selectView('motor')")
     page.click('#nav > .tab[data-route="forex-consolidated"]')
@@ -330,24 +334,19 @@ def assert_forex_children_and_compatibility(page):
         # uma visão local diferente ter sido escolhida.
         if route == "forex-operation":
             page.evaluate("() => JPWExec.ui.selectView('motor')")
-        if route == "forex-planning":
-            page.evaluate("() => JPWFx.ui.selectView('actuals')")
         assert page.evaluate("route => JPWNavigation.navigate(route)", route) is True
         state = active_state(page)
         assert state["screen"] == screen and state["primary"] == "forex", (route, state)
         assert state["current"]["canonical"] == route, (route, state)
         assert state["current"]["child"] == route, (route, state)
         if local_view:
-            surface = "fxplan" if screen == "fxplan" else "exec"
-            actual = page.evaluate("surface => surface === 'fxplan' ? JPWFx.ui.getView() : JPWExec.ui.getView()", surface)
+            actual = page.evaluate("() => JPWExec.ui.getView()")
             assert actual == local_view, (route, actual)
 
     # NAV2-C/E/G: compatibilidade preserva owner e informa o filho canônico.
-    page.evaluate("() => JPWFx.ui.selectView('table')")
     aliases = [
         ("motor", "exec", "forex-operation", "panel"),
         ("history", "exec", "forex-history", "history"),
-        ("fxplan", "fxplan", "forex-planning", "table"),
     ]
     for target, screen, child, view in aliases:
         assert page.evaluate("target => JPWNavigation.navigate(target)", target) is True
@@ -359,6 +358,28 @@ def assert_forex_children_and_compatibility(page):
         if target == "motor":
             assert page.locator("#ebToolMotor").is_visible()
             assert page.locator("#motorWidgetGrid").is_hidden()
+
+    # CHG-JPW-PLANNING-20261020: Planejamento tem owner próprio; aliases
+    # redefinem o default e os pares legados mantêm sua intenção local aprovada.
+    for target in ("planning", "forex-planning", "fxplan"):
+        page.evaluate("() => JPWPlanning.ui.selectView('monthly')")
+        assert page.evaluate("target => JPWNavigation.navigate(target)", target) is True
+        state = active_state(page)
+        assert state["activeScreens"] == ["planning"] and state["primary"] == "planning", (target, state)
+        assert state["current"]["canonical"] == "planning" and state["current"]["child"] is None, state
+        assert state["current"]["localView"] == {"surface": "planning", "view": "start"}, state
+        assert page.evaluate("JPWPlanning.ui.getView()") == "start"
+    for old, current in (("overview", "consolidated"), ("planning", "start"),
+                         ("actuals", "monthly"), ("table", "monthly"),
+                         ("reference", "consolidated"), ("accounts", "consolidated")):
+        assert page.evaluate("view => JPWNavigation.navigateLocal('fxplan', view)", old) is True
+        state = active_state(page)
+        assert state["activeScreens"] == ["planning"] and state["primary"] == "planning", (old, state)
+        assert state["current"]["canonical"] == "planning" and state["current"]["child"] is None, state
+        assert state["current"]["localView"] == {"surface": "planning", "view": current}, state
+        assert page.evaluate("JPWPlanning.ui.getView()") == current
+    assert page.locator("#planning [data-pl-view]").evaluate_all(
+        "els => els.map(el => el.dataset.plView)") == ["start", "consolidated", "monthly"]
 
     # NAV2-H: `check` abre a superfície de Preparação, nunca Settings.
     assert page.evaluate("() => JPWNavigation.navigate('check')") is True
@@ -481,7 +502,7 @@ def assert_keyboard_and_mobile(browser, url, desktop_page):
         assert page.evaluate("() => appSidebar.contains(document.activeElement)")
         sizes = page.evaluate("""() => [...document.querySelectorAll('#nav > .tab[data-route]')]
           .map(el => el.getBoundingClientRect().height)""")
-        assert len(sizes) == 6 and min(sizes) >= 44, sizes
+        assert len(sizes) == 7 and min(sizes) >= 44, sizes
         page.click('#nav > .tab[data-route="alladin"]')
         state = active_state(page)
         assert state["screen"] == "alladin" and state["primary"] == "alladin", state

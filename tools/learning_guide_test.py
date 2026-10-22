@@ -31,7 +31,9 @@ MAIN_KEY = 'jpwealth_v9_state'
 PORTABLE = 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
 MODULES = ['src/js/40-app/26-learning-catalog.js', 'src/js/00-core/09-learning-progress.js',
            'src/js/40-app/27-learning-view.js', 'src/js/40-app/28-learning-guide.js']
-SOURCES = MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
+PLANNING_MODULES = [f'src/js/30-accounting/06-planning/{name}.js' for name in ('01-engine','02-state','03-ui')]
+RETIRED_PLANNING_MODULES = [f'src/js/30-accounting/05-fx-planning/{name}.js' for name in ('01-fx-model','02-fx-engine','03-fx-state','04-fx-charts','05-fx-ui')]
+SOURCES = MODULES + PLANNING_MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
     'src/js/40-app/06-boot.js', 'src/js/40-app/07-finalize-session.js',
     'src/js/40-app/09-settings-modal.js', 'src/js/00-core/04-persistence.js',
     'src/js/00-core/07-workspace-backup.js', 'src/js/20-ui/18-finpes-budget.js',
@@ -673,7 +675,13 @@ MARKET_HOURS_MODULES = [f'src/js/40-app/31-market-hours/{name}.js' for name in
     ('01-sessions','02-assets','03-view','04-controller')]
 
 def assert_startup_scripts(root,scripts,expected):
-    assert scripts==expected and scripts[-4:]==MODULES,{'scripts':scripts,'manifest':expected}
+    assert scripts==expected,{'scripts':scripts,'manifest':expected}
+    planning_present=any(path in expected for path in PLANNING_MODULES)
+    if planning_present:
+        assert expected[-3:]==PLANNING_MODULES and all(expected.count(path)==1 for path in PLANNING_MODULES),'Planning must be one ordered block after the guide'
+        assert not any(path in expected for path in RETIRED_PLANNING_MODULES),'Retired planning scripts must not be loaded'
+        expected=expected[:-3]
+    assert expected[-4:]==MODULES,'The four guide scripts must preserve their order'
     if any(path in expected for path in MARKET_HOURS_MODULES):
         assert all(expected.count(path)==1 for path in MARKET_HOURS_MODULES),expected
         assert DOWNLOAD_LOADER in expected,'Market hours must follow the download loader'
@@ -695,13 +703,20 @@ def assert_startup_scripts(root,scripts,expected):
         assert expected[start:start+5]==TIME_TWINS_MODULES,expected
         assert start+5==expected.index(CAPITAL_CURRENTS_MODULES[0] if capital_present else DOWNLOAD_LOADER),'Time Twins must precede the next isolated game or the download loader'
     original=[path for path in expected if path!=DOWNLOAD_LOADER and path not in TIME_TWINS_MODULES and path not in CAPITAL_CURRENTS_MODULES]
+    if planning_present:
+        # Only the five explicitly retired identities are replaced. Reconstruct
+        # their original slot for the unchanged106-path hash: every other legacy
+        # identity and relative position remains protected by the same oracle.
+        assert len(original)==101,original
+        old_slot=original.index('src/js/10-domain/08-usd-brl-quote.js')+1
+        original=original[:old_slot]+RETIRED_PLANNING_MODULES+original[old_slot:]
     assert len(original)==106 and hashlib.sha256('\n'.join(original).encode()).hexdigest()==ORIGINAL_SCRIPT_PATHS_SHA256,{'original':original}
     if DOWNLOAD_LOADER in expected:
-        assert len(expected)==(118 if capital_present else 112 if twins_present else 107) and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
+        assert len(expected)==(118 if capital_present else 112 if twins_present else 107)-(5 if planning_present else 0) and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
         assert (Path(root)/DOWNLOAD_LOADER).is_file(),'Declared download loader source is missing'
         assert expected.index(DOWNLOAD_LOADER)+1==expected.index(DOWNLOAD_CONSUMER),'Download loader must immediately precede tools-services'
     else:
-        assert not twins_present and len(expected)==106,expected
+        assert not twins_present and len(expected)==106-(5 if planning_present else 0),expected
 
 def startup_surface(page,row):
     assert page.evaluate("!!(JPWLearningGuide&&JPWLearningProgress&&JPWLearningCatalog&&JPWLearningView)")
@@ -726,6 +741,8 @@ def offline(page,row):
     paths=page.evaluate("""async()=>{const names=await caches.keys(),all=[];
       for(const n of names){const c=await caches.open(n);all.push(...(await c.keys()).map(r=>new URL(r.url).pathname));}return all;}""")
     assert all('/'+asset in paths for asset in MODULES),paths
+    if page.evaluate('!!window.JPWPlanning'):
+        assert all('/'+asset in paths for asset in PLANNING_MODULES),'The independent Planning scripts must also be precached'
     page.context.set_offline(True);page.reload();page.wait_for_function('window.JPWLearningGuide && window.JPWLearningCatalog')
     startup_surface(page,row);row['actualPrecachedGuideModules']=MODULES
 

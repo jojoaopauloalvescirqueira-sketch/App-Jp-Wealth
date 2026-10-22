@@ -1,0 +1,52 @@
+{
+  "sources": {
+    "src/js/30-accounting/06-planning/03-ui.js": "4c35c87428863267e85142521c7e49a1ec6a85430ff4a5ddc7cf5c060c50396a",
+    "src/styles/app.css": "238843772b9e60a68147b18fa69cb29ca5dab165bf502814f29abd5cdc568ad7",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "tools/planning_three_tabs_test.py": "1ab8d79f3b2dd2799931b4038aef57aa154c2dd7692a95f9ab6e8b5750d4bccd"
+  },
+  "cases": [
+    {
+      "case": "tabs",
+      "status": "PASS"
+    },
+    {
+      "case": "public",
+      "status": "PASS"
+    },
+    {
+      "case": "account-details-copy",
+      "status": "PASS"
+    },
+    {
+      "case": "monthly-scope",
+      "status": "PASS"
+    },
+    {
+      "case": "choice",
+      "status": "PASS"
+    },
+    {
+      "case": "choice-save",
+      "status": "PASS"
+    },
+    {
+      "case": "stale-choice",
+      "status": "PASS"
+    },
+    {
+      "case": "pending-quote",
+      "status": "PASS"
+    },
+    {
+      "case": "forecast",
+      "status": "PASS"
+    },
+    {
+      "case": "single",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,52 @@
+{
+  "before": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be"
+  },
+  "cases": [
+    {
+      "id": "stale-draft-block",
+      "expected": "Stale draft cannot overwrite changed account; retains fields and original reference",
+      "observed": {
+        "submit_disabled": true,
+        "draft_name": "Rascunho antigo",
+        "original_reference_preserved": true
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "explicit-review-refresh",
+      "expected": "Explicit refresh preserves fields and performs no financial write",
+      "observed": {
+        "submit_enabled": true,
+        "unchanged": true
+      },
+      "classification": "PASS"
+    },
+    {
+      "id": "explicit-reviewed-save",
+      "expected": "Two deliberate review/confirm steps save only intended second account",
+      "observed": {
+        "saved_name": "Rascunho antigo",
+        "first_account_byte_exact": true
+      },
+      "classification": "PASS"
+    }
+  ],
+  "started": 1792676182.8715992,
+  "classification": "PASS",
+  "after": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "build-id.js": "c8b202fe0a887b502014884cfb705c47511f1cc203b3d6c5501615336a4abce3",
+    "index.html": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be"
+  },
+  "finished": 1792676185.536789,
+  "unchanged": true
+}

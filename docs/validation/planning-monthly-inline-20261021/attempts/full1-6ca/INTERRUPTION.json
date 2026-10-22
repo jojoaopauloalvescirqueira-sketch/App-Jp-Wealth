@@ -1,0 +1,19 @@
+{
+  "result": "INTERRUPTED_INCOMPLETE",
+  "wrapper_actual_exit_code": 1,
+  "runner_and_active_child_termination_requested": "SIGTERM",
+  "raw_full_artifact_exists": false,
+  "reason": "Independent P2 month identity mismatch; no PASS inferred from partial checks",
+  "artifacts_sha256": {
+    "freeze.json": "c186dd4ca400fedf9777b2e5154b82f13ec100a75e03927f13f5709ffb212add",
+    "full-final-command.json": "614adcc22c1ac4759f5143a6688a37519ed1fa2d1ae9918c1a2f37dbb65742c9",
+    "full-final.log": "ac99ba236b2dfaf149d2f9f632b50e5056d74949e65b0b9a465ee1ee5ca8e8ed",
+    "full-attempt-1-stop.json": "897b88a4e1b766148f699e30ee4f57d18258214c08446a4ac1eca4c4c0ce88a8",
+    "FINGERPRINT-INPUTS.json": "8af367edcdaae0a025f27af7fc0be2e012885a81b761c6c1c8376705294f3b6a",
+    "RUNTIME-INPUTS.json": "b5d357f8ccb070f31b015ac8156a5f18d0935c262a2dda3dd6ee8e79c7b28a9d",
+    "TESTS-INPUTS.json": "0085b8e01d906045525eaf95bde224663c9e83315894e68fec2bbede549cbc5b",
+    "RUNNER-INPUTS.json": "be20ef4b1212f8bb1d4bd0879924d21bcf9b8ab4379b6c978e65a330bb38dcf4",
+    "CONTROL-INPUTS.json": "58ac499837abc04f3994f90fb008b5190fee3da224222ce13e6e93313d9b2884",
+    "SCOPE.json": "74a0f2dade32ac2a4a049439a0586e15848b7f953c238e7082d28c22a649dd34"
+  }
+}

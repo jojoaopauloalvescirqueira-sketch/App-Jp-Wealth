@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-21T21:50:07.517753+00:00",
+  "candidate_build": "a9713063cd241820",
+  "implementation": "IMPLEMENTED_LOCAL",
+  "full_current_execution": "PASS_96_OF_96",
+  "visual_current_execution": "PASS_98_OF_98",
+  "independent_review": "PASS_BOUNDED_IMPLEMENTATION_AND_CURRENT_EXECUTION",
+  "independent_review_sha256": "659ddb93e77e14b1da3de1de5499027ceed5c38421f62288baad8ce087f00aae",
+  "frozen_identity": "VERIFIED_UNCHANGED",
+  "earlier_failed_attempts_preserved": true,
+  "historical_case_f_load_incident": "OPEN_CAUSE_UNESTABLISHED",
+  "human_visual_acceptance": "PENDING",
+  "human_N3_acceptance": "PENDING",
+  "git_or_publication_actions": "NONE",
+  "preview": "http://127.0.0.1:8000/index.html?v=a9713063cd241820",
+  "limits": [
+    "Finite current execution, no blanket stability claim or retroactive prior-suite approval.",
+    "Initial visual automation coverage is Planning; other surfaces remain pending their own cases."
+  ]
+}

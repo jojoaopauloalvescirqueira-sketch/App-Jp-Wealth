@@ -1,0 +1,7 @@
+{
+  "time": "2026-10-22T13:42:20.107200+00:00",
+  "reason": "Independent TEST_HARNESS_FAIL: stale_choice direct submit targeted dialog instead of nested form; no product defect. Preserve attempt, correct stimulus, fresh freeze/FULL required.",
+  "quality_gate_pid": 77021,
+  "terminated_descendants": 9,
+  "raw_full_exists": false
+}

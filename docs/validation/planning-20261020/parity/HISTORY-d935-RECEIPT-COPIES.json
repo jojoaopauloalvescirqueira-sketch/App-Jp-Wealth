@@ -1,0 +1,83 @@
+{
+  "note": "Cópias autênticas; o relatório conserva caminhos relativos do diretório ignorado de origem. Harnesses independentes e snapshots externos completos permanecem nessa área local. Testes permanentes tools/planning* são o contrato reproduzível do produto.",
+  "files": [
+    {
+      "path": "INDEPENDENT-REVIEW.md",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/REPORT.md",
+      "sha256": "475b9e2f39e92e3e24173c16222fa6176b01273c9b1fa58ae0d87b5b3bfa7e2c",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/form-source-compare.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/form-source-compare.json",
+      "sha256": "6e27c29ae9af41fc9a7cf8b8395066fdb273d3cf1f00ee18b5bac0dd974a8ebb",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/fx-edit-review.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/fx-edit-review.json",
+      "sha256": "19d427b3af332ce8f5b2692fbd2ab4b63b57a54aacdd9fb5196f6d4675440232",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/stop-draft-review.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/stop-draft-review.json",
+      "sha256": "0e76a62e4b3d8c36ed1e909325b9eababa3bc613939d1eb590426dfef266c31d",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/state-browser-review.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/state-browser-review.json",
+      "sha256": "2f3cd97db67f7e93d732a0b01c5604ed01210ea0aba0a1c5aaed0771ffad068f",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/startup-probe.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/startup-probe.json",
+      "sha256": "15a8338fcafe7bbec4c01e0b5fa759635a94ea88973f4cf83a8a8f5f9e35bade",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/transient-startup-failure.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/transient-startup-failure.json",
+      "sha256": "05d3caa264d42f131796fdebc0dffa7ddb0e54227c17e81a15e14c3d77f47516",
+      "same_bytes": true
+    },
+    {
+      "path": "LAYOUT-RESULT.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/layout/layout-results.json",
+      "sha256": "8751c1357fae40f1e4dc19e17a9dad4f7f299448336767331dca4338df4799a7",
+      "same_bytes": true
+    },
+    {
+      "path": "EARLY-FULL-ATTEMPT.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/full-interrupted-before-tab-refinement.json",
+      "sha256": "8889b2dfe2c4c0a8e16f6158df5756f839e63fae6cad51456e0649edb2848563",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/tabs-review.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/r4/tabs-review.json",
+      "sha256": "3bb38d1a040acc451954fdd9b049174c6e36684e3bf5972646f2fab7d19a4d1f",
+      "same_bytes": true
+    },
+    {
+      "path": "independent/tabs-fixture-first-failure.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/critic/r4/fixture-failure.json",
+      "sha256": "347e242d8eb6ae95c728c847802ac889dfd2c66960d8d33adc331cd51c0978e6",
+      "same_bytes": true
+    },
+    {
+      "path": "PRESENTATION-RESULT.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/presentation-final.json",
+      "sha256": "712d85e075cd4e5c175eb958f7430a237acfa08858fa12cc4da3ce056f3ce2f8",
+      "same_bytes": true
+    },
+    {
+      "path": "SCOPE-REVIEW.json",
+      "original_path": ".superpowers/sdd/planning-parity-20261020/scope-review.json",
+      "sha256": "dae21821a192fe9e61b99a9a49f55f01de46629326a546a3a26d9e3b732c483d",
+      "same_bytes": true
+    }
+  ]
+}

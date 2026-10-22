@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "command": "node tools/planning_parity_engine_test.js --source-oracle",
+  "checks": 24,
+  "permanent_checks": 17,
+  "original_Prazos_function_comparisons": 7,
+  "engine_sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+  "log": ".superpowers/sdd/planning-parity-20261020/parity-engine-current.log",
+  "log_sha256": "df82169644a67586ea717e2b317e009c8ec92a411697262b7072a442d9abd161",
+  "note": "Executado com o engine d698bf88 preservado nas reconstruções8fc,7f44,99c61 e d935; esses casos são puros e não consomem CSS/UI. A fonte externa é somente referência e não é exigida pelo FULL normal.",
+  "limits": [
+    "No Google APIs executed",
+    "No owner financial data",
+    "No current Apps Script manifest/triggers certification"
+  ]
+}

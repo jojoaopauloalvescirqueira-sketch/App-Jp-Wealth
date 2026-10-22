@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+"""One-selector proposal exercised through the unchanged real dialog_checks.
+
+This ignored probe does not edit versioned source or replace chart assertions.
+"""
+from pathlib import Path
+from functools import partial
+from hashlib import sha256
+import json
+import sys
+import threading
+import traceback
+import types
+
+ROOT = Path(__file__).resolve().parents[4]
+AREA = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / 'tools'))
+import planning_parity_layout_test as original
+
+
+def main():
+    source_path = ROOT / 'tools/planning_parity_layout_test.py'
+    source = source_path.read_text()
+    needle = "plot_sizes = profile.locator('svg').evaluate_all("
+    assert source.count(needle) == 1, 'original test no longer matches reviewed proposal'
+    proposed = source.replace(needle, "plot_sizes = profile.locator('svg.pl-native-chart').evaluate_all(")
+    assert proposed == (AREA / 'planning_parity_layout_test.proposed.py').read_text()
+    candidate = types.ModuleType('layout_compat_candidate')
+    candidate.__file__ = str(source_path)
+    exec(compile(proposed, str(source_path), 'exec'), candidate.__dict__)
+    report = {
+        'classification': 'NOT_RUN',
+        'authority': 'Prepare ignored proposal/counterproof only; versioned edit awaits root authorization',
+        'original_test_sha256': sha256(source.encode()).hexdigest(),
+        'proposal_sha256': sha256(proposed.encode()).hexdigest(),
+        'probe_sha256': sha256(Path(__file__).read_bytes()).hexdigest(),
+        'source_sha256': original.hashes(), 'cases': [],
+    }
+    server = original.BrowserFixtureServer(('127.0.0.1', 0), partial(original.Quiet, directory=str(ROOT)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        with original.sync_playwright() as pw:
+            browser = pw.chromium.launch(**original.launch_options())
+            report['browser'] = browser.version
+            for name, implementation, mutation, expect_rejection in [
+                ('original-red-six-svg-includes-close', original, 'observe', True),
+                ('candidate-positive-five-real-charts-and-close', candidate, 'observe', False),
+                ('candidate-negative-real-chart-removed', candidate, 'remove', True),
+                ('candidate-negative-real-chart-collapsed', candidate, 'collapse', True),
+            ]:
+                case = {'id': name, 'classification': 'NOT_RUN', 'mutation': mutation}
+                report['cases'].append(case)
+                context = browser.new_context(viewport={'width': 1440, 'height': 1000},
+                                              service_workers='block', reduced_motion='reduce')
+                try:
+                    errors = []
+                    page = original.setup(context, f'http://127.0.0.1:{server.server_port}/index.html', errors)
+                    before = original.financial(page)
+                    page.evaluate(r'''mutation=>{
+                      window.__layoutCompat={applied:false};
+                      const capture=()=>{
+                        const d=document.querySelector('#pl-native-profileDialog');
+                        if(!d?.open||window.__layoutCompat.applied)return;
+                        const charts=[...d.querySelectorAll('svg.pl-native-chart')];
+                        if(charts.length!==5)return;
+                        const measure=()=>[...d.querySelectorAll('svg')].map(el=>({
+                          classes:el.getAttribute('class'),close:!!el.closest('.risk-close'),
+                          width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}));
+                        window.__layoutCompat={applied:true,before:measure()};
+                        if(mutation==='remove')charts[0].remove();
+                        if(mutation==='collapse'){
+                          charts[0].style.setProperty('width','0px','important');
+                          charts[0].style.setProperty('height','0px','important');
+                        }
+                        window.__layoutCompat.after=measure();
+                      };
+                      new MutationObserver(capture).observe(document.documentElement,
+                        {childList:true,subtree:true,attributes:true,attributeFilter:['open']});
+                    }''', mutation)
+                    evidence = {}
+                    rejection = None
+                    try:
+                        implementation.dialog_checks(page, evidence)
+                    except AssertionError as error:
+                        rejection = str(error)
+                    observed = page.evaluate('window.__layoutCompat')
+                    assert observed['applied'], 'probe did not reach actual profile charts'
+                    assert len(observed['before']) == 6 and sum(bool(svg['close']) for svg in observed['before']) == 1, ('approved close SVG not present beside five charts', observed)
+                    assert bool(rejection) == expect_rejection, ('unexpected oracle outcome', rejection, expect_rejection)
+                    if rejection:
+                        assert 'profile/recovery chart geometry' in rejection, ('unrelated failure', rejection)
+                    if mutation == 'remove':
+                        assert len(observed['after']) == 5, ('real chart was not removed', observed)
+                    if mutation == 'collapse':
+                        assert any(not svg['close'] and svg['width'] == 0 and svg['height'] == 0 for svg in observed['after']), ('real chart was not collapsed', observed)
+                    if not expect_rejection:
+                        assert len(evidence['dialog']['plots']) == 5
+                    assert original.financial(page) == before, 'compatibility inspection wrote financial state'
+                    assert not errors, errors
+                    original.assert_fixture_requests(context)
+                    case.update(classification='PASS', rejection=rejection, observed=observed, unchanged_existing_function_evidence=evidence)
+                except Exception as error:
+                    case.update(classification='TEST_HARNESS_FAIL', error=str(error), trace=traceback.format_exc())
+                finally:
+                    context.close()
+                print(case['classification'] + ' ' + name, flush=True)
+            browser.close()
+        assert len(report['cases']) == 4
+        assert source_path.read_text() == source, 'versioned test changed during proposal proof'
+        assert original.hashes() == report['source_sha256'], 'product source changed during proposal proof'
+        report['versioned_test_unchanged'] = True
+        report['source_unchanged'] = True
+        report['classification'] = 'PASS' if all(case['classification'] == 'PASS' for case in report['cases']) else 'TEST_HARNESS_FAIL'
+    except Exception as error:
+        report.update(classification='TEST_HARNESS_FAIL', error=str(error), trace=traceback.format_exc())
+    finally:
+        server.shutdown()
+        (AREA / 'counterproof-results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+    print(report['classification'] + ' cases=' + str(len(report['cases'])))
+    return 0 if report['classification'] == 'PASS' else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

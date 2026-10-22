@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/planning_proportions_test.py",
+    "--out",
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/final4-real-proportions"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T03:04:40.162214+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/final4-real-proportions.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T03:05:05.916117+00:00",
+  "log_sha256": "e06a24c38ffbba287b05ff5b3b242f82d0f6e03425f33a2672967648cc393792"
+}

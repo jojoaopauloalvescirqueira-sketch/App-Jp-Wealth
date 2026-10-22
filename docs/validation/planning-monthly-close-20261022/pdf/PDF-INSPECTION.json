@@ -1,0 +1,32 @@
+{
+  "build": "7430aeaf0109dcbe",
+  "source": "tools/.artifacts/planning-ui/ui-report.pdf",
+  "execution_receipt": ".superpowers/sdd/2026-10-22-planning-monthly-close/full3-command.json",
+  "source_mtime_utc": "2026-10-22T14:50:01.484571+00:00",
+  "sha256": "3d051b5fe634c91b3d830be180d2235d9ef686a903242bc924d0cc01a6b0d88b",
+  "pages": 2,
+  "page_text": [
+    "Planejamento\nSTOIKUS / RELATÓRIO PATRIMONIAL\nPlanejamento patrimonial\nTodas as contas\nFechamento confirmado · jan. de 2026 · Emissão: 22/10/2026, 11:50:01\nPATRIMÔNIO CONFIRMADO\nUS$ 125,00\nSaldo no último fechamento\nAPORTES CONFIRMADOS\nUS$ 20,00\nAcumulados até o mesmo fechamento\nRESULTADO CONFIRMADO\nUS$ 5,00\nGanhos e perdas, sem aportes\nProjeção · dez. de 2035US$ 20.231,16\nCapital inicial cadastrado: US$ 100,00 · valor cadastral, não confirmado.\nEVOLUÇÃO DO PATRIMÔNIO\nPlano completo\nUS$ 20.231,16\nProjeção estimada, sem garantia.\nMétodo: entradas mensais manuais. O retorno incide sobre o saldo de abertura; o aporte rende a partir do mês seguinte.",
+    "Valores nominais em USD. Rentabilidade vazia usa 0% provisório e mantém o mês pendente. Somente a sequência sem lacunas é confirmada.\nStoikus by JP Wealth · Planejamento patrimonial com aportes · Documento de acompanhamento e simulação."
+  ],
+  "render_command": [
+    "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override/pdftoppm",
+    "-png",
+    "-scale-to",
+    "1000",
+    "docs/validation/planning-monthly-close-20261022/pdf/planning-synthetic.pdf",
+    "docs/validation/planning-monthly-close-20261022/pdf/page"
+  ],
+  "render_exit": 0,
+  "pagination_limit": "Inherited footer-only page2; unchanged PDF renderer.",
+  "visual_review": {
+    "pages_inspected": [
+      1,
+      2
+    ],
+    "method": "Poppler renders viewed directly in current task",
+    "result": "CONTENT_READABLE_WITH_INHERITED_PAGINATION_DEBT",
+    "limitation": "Page2 has two inherited footer lines; renderer unchanged, outside closure correction."
+  },
+  "created_at": "2026-10-22T14:52:08.394921+00:00"
+}

@@ -12,7 +12,7 @@ from forex_visual_risk_test import risk_seed,financial
 from browser_bootstrap_fixture import install_bootstrap
 from notes_launcher_test import launch_options,settle
 ROOT=Path(__file__).resolve().parents[1]
-ROUTES=['forex-consolidated','forex-history','forex-operation','forex-management-accounts','forex-accounting','forex-planning','forex-reserves']
+ROUTES=['forex-consolidated','forex-history','forex-operation','forex-management-accounts','forex-accounting','forex-reserves']
 def go(p,route):
  p.evaluate('r=>JPWNavigation.navigate(r)',route);settle(p)
 def geometry(p):
@@ -21,8 +21,14 @@ def geometry(p):
   notes:!!document.querySelector('#headerNotesBtn')?.getClientRects().length})""")
 def safe(p):
  d=geometry(p);assert d['scroll']<=d['width']+1,d
- assert not d['notes'],'Floating Notes must not cover Forex'
+ assert d['notes'],'Global Notes must remain available in Forex when Mostrar is enabled'
  assert p.locator('#forexNotesToggle').is_visible()
+ return d
+def planning_safe(p):
+ d=geometry(p);assert d['scroll']<=d['width']+1,d
+ current=p.evaluate('JPWNavigation.current()')
+ assert (current['primary'],current['canonical'],current['screen'],current['child'])==('planning','planning','planning',None),current
+ assert not p.locator('#forexNotesToggle').is_visible(),'Forex Notes must remain owned by Forex'
  return d
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--native-zoom',action='store_true');ap.add_argument('--cases');a=ap.parse_args();a.out.mkdir(parents=True,exist_ok=True)
@@ -70,7 +76,7 @@ def main():
     p.locator('#forexNotesToggle').click();settle(p)
     assert p.locator('#mvpNotesOverlay').is_visible();p.locator('#mvpNotesCloseBtn').click();settle(p)
     assert p.evaluate("document.activeElement.id")=='forexNotesToggle'
-    assert not p.locator('#headerNotesBtn').is_visible()
+    assert p.locator('#headerNotesBtn').is_visible(),'Global Notes returns after closing the Forex shortcut drawer'
     p.locator('[data-eb-cancel-row="0:0"]').click();settle(p)
     return {'financialUnchanged':True,'sameEditor':True}
    check('tools-and-notes',tools)
@@ -94,6 +100,16 @@ def main():
     assert financial(p)==before
     return {'operationalPreserved':True,'options':opts}
    check('history-query',history)
+   def planning_independence():
+    before=financial(p);document=p.evaluate('JSON.stringify(S)');operational=p.evaluate('JPWForex.state.operationalSelection()')
+    for route in ['planning','forex-planning','fxplan']:
+     go(p,route);planning_safe(p)
+     assert p.evaluate("JPWPlanning.ui.getView()==='start'&&JPWPlanning.queries.snapshot().accounts.length===0")
+    assert p.evaluate("JPWNavigation.children('forex').map(r=>r.id)")==['forex-consolidated','forex-management-accounts','forex-operation','forex-history','forex-accounting','forex-reserves']
+    assert financial(p)==before and p.evaluate('JSON.stringify(S)')==document
+    assert p.evaluate('JPWForex.state.operationalSelection()')==operational
+    return {'owner':'planning','aliases':['forex-planning','fxplan'],'operationalUnchanged':True,'noAutomaticAccountImport':True}
+   check('planning-independent',planning_independence)
    def cross_area_keyboard():
     p.set_viewport_size({'width':390,'height':844});p.evaluate("mountNavigationLayout('topbar')");settle(p)
     before=financial(p);results=[]
@@ -123,6 +139,10 @@ def main():
         if route=='forex-consolidated':
          assert all(t['x']>=-1 and t['right']<=width+1 for t in g['tabs']),g
         rows.append({'layout':layout,'width':width,'theme':theme,'route':route,**g})
+       # CHG-JPW-PLANNING-20261020: preserve the seventh destination's full
+       # geometry matrix with its independent owner and presentation contract.
+       go(p,'planning');g=planning_safe(p)
+       rows.append({'layout':layout,'width':width,'theme':theme,'route':'planning',**g})
        go(p,'forex-consolidated')
        if width in [320,390]:
         p.locator('#forexAreasToggle').click();settle(p)
@@ -146,6 +166,7 @@ def main():
      ratio=p.evaluate('({ratio:outerWidth/innerWidth,zoom:getComputedStyle(document.documentElement).zoom})')
      assert abs(ratio['ratio']-2)<.01 and ratio['zoom']=='1',ratio
      for route in ROUTES:go(p,route);safe(p)
+     go(p,'planning');planning_safe(p)
      p.screenshot(path=str(a.out/'native-200.png'))
      return ratio
     check('native-200',native);c.close()

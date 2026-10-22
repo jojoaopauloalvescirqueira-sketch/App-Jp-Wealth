@@ -21,9 +21,10 @@ from contextual_sidebar_test import LAYOUT_KEY, LAYOUT_RAW, UNKNOWN_KEY, UNKNOWN
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY = 'jpw_nav_order'
-DEFAULT = ['dashboard', 'research', 'forex', 'personal-finance', 'alladin', 'tools']
+DEFAULT = ['dashboard', 'research', 'planning', 'forex', 'personal-finance', 'alladin', 'tools']
+OLD_DEFAULT = ['dashboard', 'research', 'forex', 'planning', 'personal-finance', 'alladin', 'tools']
 LEGACY = ['dashboard', 'forex', 'personal-finance', 'research', 'alladin']
-LEGACY_PROJECTED = LEGACY + ['tools']
+LEGACY_PROJECTED = ['dashboard','forex','personal-finance','research','planning','alladin','tools']
 PROTECTED = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
              'jpw_nav': 'pill', 'jpw_rail': 'expanded', 'jpw_fs': '1', 'jpw_expl': 'off'}
 
@@ -36,12 +37,12 @@ def checkpoint(page):
     page.evaluate("() => {window.__a10S=JSON.stringify(S);window.__a10SaveCount=0;const original=save;save=function(...args){window.__a10SaveCount++;return original.apply(this,args);};}")
 
 
-def boot(browser, url, raw=None, width=1440, mode='sidebar', theme='dark', read_failure=False):
+def boot(browser, url, raw=None, width=1440, mode='sidebar', theme='dark', read_failure=False, frozen_modules=()):
     context = browser.new_context(viewport={'width': width, 'height': 1000 if width > 900 else 844},
                                   service_workers='block', has_touch=width <= 900)
-    # A permutação operacional dos seis módulos usa Alladin e PF explicitamente ativos.
+    # Os sete menus incluem Planejamento independente; Alladin/PF ficam ativos na fixture.
     seed = {**PROTECTED, 'jpw_nav_layout': mode,
-            'jpw_module_availability_v1': json.dumps({'schemaVersion': 1, 'modules': {'alladin': 'active', 'personal-finance': 'active'}})}
+            'jpw_module_availability_v1': json.dumps({'schemaVersion': 1, 'modules': {'alladin': 'active', 'personal-finance': 'active', **{name: 'frozen' for name in frozen_modules}}})}
     if raw is not None:
         seed[KEY] = raw
     context.add_init_script('''(() => {
@@ -163,6 +164,66 @@ def run(args):
                 browser.close()
                 return 1
 
+            def html_fallback_order():
+                context = browser.new_context(java_script_enabled=False, service_workers='block')
+                page = context.new_page()
+                page.goto(url, wait_until='load')
+                assert order(page) == DEFAULT, order(page)
+                assert page.locator('#nav > .tab[data-primary] .n').all_text_contents() == ['01','02','03','04','05','06','07']
+                context.close()
+            check('static HTML fallback follows the same seven primary positions', html_fallback_order)
+
+            def legacy_projection_and_custom_preference():
+                # Catch inserting after Forex, resetting custom7, or writing on read.
+                cases = [
+                    ('legacy-five', LEGACY, LEGACY_PROJECTED),
+                    ('legacy-six', ['tools', 'alladin', 'dashboard', 'forex', 'research', 'personal-finance'],
+                     ['tools', 'alladin', 'dashboard', 'forex', 'research', 'planning', 'personal-finance']),
+                    ('old-default-seven', OLD_DEFAULT, DEFAULT),
+                    ('custom-seven', ['tools', 'alladin', 'dashboard', 'planning', 'forex', 'research', 'personal-finance'],
+                     ['tools', 'alladin', 'dashboard', 'planning', 'forex', 'research', 'personal-finance']),
+                ]
+                for name, saved, expected in cases:
+                    raw = json.dumps(saved, separators=(',', ':'))
+                    context, page, errors = boot(browser, url, raw)
+                    assert order(page) == expected, (name, order(page), expected)
+                    assert stored(page) == raw, name
+                    assert page.evaluate("window.__a10Writes.filter(x=>x.key==='jpw_nav_order').length") == 0, name
+                    editor(page)
+                    assert order(page) == expected and stored(page) == raw, name
+                    assert page.locator('#navOrderSave').is_disabled(), name
+                    move(page, 'tools', 'up' if expected.index('tools') else 'down', keyboard=True)
+                    custom = order(page)
+                    assert custom != expected and stored(page) == raw, name
+                    page.locator('#navOrderSave').click()
+                    assert json.loads(stored(page)) == custom, name
+                    pristine(page)
+                    page.reload();wait_bootstrap(page);checkpoint(page);settle(page)
+                    assert order(page) == custom and json.loads(stored(page)) == custom, name
+                    pristine(page)
+                    finish(context, errors)
+                return [case[0] for case in cases]
+            check('legacy five/six/old canonical seven project without writes; custom seven and new Save survive reload', legacy_projection_and_custom_preference)
+
+            def canonical_collision_during_current_session():
+                context, page, errors = boot(browser, url)
+                editor(page);move(page, 'planning', 'down')
+                assert order(page) == OLD_DEFAULT
+                page.locator('#navOrderSave').click()
+                assert json.loads(stored(page)) == OLD_DEFAULT
+                page.evaluate('closeSettingsModal()');editor(page)
+                assert order(page) == OLD_DEFAULT, 'own Save was immediately reprojected during the same session'
+                move(page, 'tools', 'up')
+                assert order(page) == ['dashboard','research','forex','planning','personal-finance','tools','alladin']
+                page.locator('#navOrderCancel').click()
+                assert order(page) == OLD_DEFAULT
+                pristine(page)
+                page.reload();wait_bootstrap(page);checkpoint(page);settle(page)
+                # With no new key/schema, identical old canonical raw is projected on a new session.
+                assert order(page) == DEFAULT and json.loads(stored(page)) == OLD_DEFAULT
+                finish(context, errors)
+            check('explicit old canonical Save stays editable in current session; documented fresh-session projection', canonical_collision_during_current_session)
+
             def defaults_and_permutations():
                 context, page, errors = boot(browser, url)
                 assert order(page) == DEFAULT and stored(page) is None
@@ -183,16 +244,16 @@ def run(args):
                     const actual=[...document.querySelectorAll('#nav > .tab[data-primary]')].map(el=>el.dataset.primary);
                     if(JSON.stringify(actual)!==JSON.stringify(desired))throw new Error('Wrong preview '+desired);
                     const numbers=[...document.querySelectorAll('#nav > .tab[data-primary] .n')].map(el=>el.textContent);
-                    if(JSON.stringify(numbers)!==JSON.stringify(['01','02','03','04','05','06']))throw new Error('Wrong visible positions');
+                    if(JSON.stringify(numbers)!==JSON.stringify(['01','02','03','04','05','06','07']))throw new Error('Wrong visible positions');
                     document.getElementById('navOrderSave').click();
                     const raw=window.__a10Get('jpw_nav_order');
-                    if(raw===null&&JSON.stringify(desired)===JSON.stringify(['dashboard','research','forex','personal-finance','alladin','tools'])){}
+                    if(raw===null&&JSON.stringify(desired)===JSON.stringify(['dashboard','research','planning','forex','personal-finance','alladin','tools'])){}
                     else if(JSON.stringify(JSON.parse(raw))!==JSON.stringify(desired))throw new Error('Wrong saved order '+desired);
                     observed.push({desired,actual,stored:raw});
                   }
                   return observed;
                 }''', permutations)
-                assert len(examined) == 720
+                assert len(examined) == 5040
                 assert page.evaluate('JSON.stringify(JPWNavigation.current())') == before
                 pristine(page)
                 saved = stored(page)
@@ -202,7 +263,7 @@ def run(args):
                 assert page.evaluate("window.__a10Writes.filter(x=>x.key==='jpw_nav_order').length") == 0, 'reload rewrote order'
                 finish(context, errors)
                 return {'permutations': examined}
-            check('default, 720 permutations through DOM controls, same current and reload', defaults_and_permutations)
+            check('default, 5040 permutations through DOM controls, same current and reload', defaults_and_permutations)
 
             def cancel_restore_and_failure():
                 original = json.dumps(LEGACY, separators=(',', ':'))
@@ -309,9 +370,9 @@ def run(args):
 
             def modes_and_routes():
                 details = []
-                desired = ['tools', 'alladin', 'personal-finance', 'forex', 'research', 'dashboard']
+                desired = ['tools', 'alladin', 'personal-finance', 'planning', 'forex', 'research', 'dashboard']
                 for width in [1440, 390]:
-                    for mode in ['sidebar', 'topbar', 'submenu']:
+                    for mode in ['sidebar', 'topbar', 'glass', 'submenu']:
                         for theme in ['light', 'dark']:
                             context, page, errors = boot(browser, url, json.dumps(desired), width, mode, theme)
                             editor(page)
@@ -329,17 +390,17 @@ def run(args):
                             page.evaluate('closeSettingsModal()');settle(page)
                             expected = order(page)
                             destinations = {'dashboard': 'dashboard', 'research': 'research-forex',
-                                            'forex': 'forex-consolidated', 'personal-finance': 'personal-finance', 'alladin': 'alladin',
+                                            'forex': 'forex-consolidated', 'planning': 'planning', 'personal-finance': 'personal-finance', 'alladin': 'alladin',
                                             'tools': 'tools-calendar'}
                             for module in expected:
-                                if width <= 900:
+                                if width <= 900 and page.get_attribute('html', 'data-shell-menu') != 'open':
                                     page.locator('[data-shell-menu-toggle]').click()
                                 if mode == 'submenu':
                                     while page.get_attribute('html', 'data-submenu-level') != '1':
                                         page.locator('#submenuNavBack').click()
                                 route_before=page.evaluate('JPWNavigation.current()')
                                 page.locator(f'#nav > [data-primary="{module}"]').click()
-                                if mode in {'submenu','sidebar'} and module not in {'dashboard', 'alladin'}:
+                                if mode in {'submenu','sidebar'} and module not in {'dashboard', 'planning', 'alladin'}:
                                     assert page.evaluate('JPWNavigation.current()') == route_before, 'Parent disclosure navigated before child selection'
                                     if mode=='sidebar':
                                         child=destinations[module]
@@ -356,6 +417,7 @@ def run(args):
                                         page.locator('[data-nav-sub-view="overview"]').click()
                                     else:
                                         page.locator('[data-nav-child="tools-calendar"]').click()
+                                settle(page)
                                 assert page.evaluate('JPWNavigation.current().primary') == module
                                 assert page.evaluate('JPWNavigation.current().canonical') == destinations[module]
                                 assert page.locator('#nav > .tab.active').get_attribute('data-primary') == module
@@ -364,7 +426,38 @@ def run(args):
                             details.append({'width': width, 'mode': mode, 'theme': theme, 'order': expected})
                             finish(context, errors)
                 return details
-            check('side/topbar/submenu/mobile, themes, touch, focus, overflow and real navigation targets', modes_and_routes)
+            check('sidebar/topbar/glass/submenu/mobile, themes, touch, focus, overflow and real navigation targets', modes_and_routes)
+            def frozen_forex_and_node_identity():
+                details = []
+                for mode in ['sidebar', 'topbar', 'glass', 'submenu']:
+                    context, page, errors = boot(browser, url, mode=mode, frozen_modules=('forex',))
+                    assert page.locator('#nav > [data-primary="forex"]').is_hidden()
+                    assert page.locator('#nav > [data-primary="planning"]').is_visible()
+                    # Reordering must move the live nodes, keeping listeners, focus and paired expanders.
+                    result = page.evaluate("""() => {
+                      const nodes=[...document.querySelectorAll('#nav > .tab[data-primary],#nav > [data-nav-expand]')];
+                      const planning=document.querySelector('#nav > [data-primary="planning"]');
+                      let clicks=0;planning.addEventListener('click',()=>clicks++);
+                      planning.focus();
+                      applyNavOrder(['tools','planning','alladin','personal-finance','forex','research','dashboard']);
+                      const focusPreserved=document.activeElement===planning;
+                      const nodesPreserved=nodes.every(el=>document.getElementById('nav').contains(el));
+                      const expandersPaired=[...document.querySelectorAll('#nav > [data-nav-expand]')].every(el=>
+                        el.previousElementSibling?.dataset.navSurface===el.dataset.navExpand);
+                      planning.click();
+                      return {focusPreserved,nodesPreserved,expandersPaired,clicks,primary:JPWNavigation.current().primary};
+                    }""")
+                    assert result == {'focusPreserved': True, 'nodesPreserved': True, 'expandersPaired': True, 'clicks': 1, 'primary': 'planning'}, (mode, result)
+                    for alias in ['planning', 'forex-planning', 'fxplan']:
+                        assert page.evaluate('target=>JPWNavigation.navigate(target)', alias) is True
+                        assert page.evaluate('JPWNavigation.current().primary') == 'planning'
+                        assert page.locator('#nav > .tab.active').get_attribute('data-primary') == 'planning'
+                    assert page.evaluate("window.__a10Writes.filter(x=>x.key==='jpw_nav_order').length") == 0
+                    pristine(page)
+                    details.append({'mode': mode, 'forex_frozen': True, **result})
+                    finish(context, errors)
+                return details
+            check('Planning and aliases with Forex frozen; live nodes, listeners, focus and expanders in four layouts', frozen_forex_and_node_identity)
             browser.close()
     except Exception:
         report['exception'] = traceback.format_exc()

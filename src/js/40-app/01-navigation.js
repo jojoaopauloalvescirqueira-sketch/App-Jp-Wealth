@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
-// O contrato público global tem seis rotas canônicas. Forex expõe
-// sete filhos, Research quatro e Ferramentas seis; owner semântico, filho, section física e visão
+// O contrato público global tem sete rotas canônicas. Forex expõe
+// seis filhos, Research quatro e Ferramentas seis; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -10,7 +10,6 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-history',label:'Histórico de operações',primary:'forex',child:'forex-history',screen:'exec',localView:Object.freeze({surface:'exec',view:'history'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-accounting',label:'Contabilidade',primary:'forex',child:'forex-accounting',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounting'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-planning',label:'Planejamento patrimonial',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'table'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])})
 ]);
 
@@ -33,6 +32,7 @@ const NAV_TOOLS_CHILDREN=Object.freeze([
 const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'dashboard',primary:'dashboard',screen:'dash',localView:null,aliases:Object.freeze(['dash'])}),
   NAV_FOREX_CHILDREN[0],
+  Object.freeze({id:'planning',primary:'planning',screen:'planning',localView:Object.freeze({surface:'planning',view:'start'}),aliases:Object.freeze(['forex-planning','fxplan'])}),
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
   NAV_RESEARCH_CHILDREN[0],
   Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])}),
@@ -46,7 +46,6 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   'forex-account':Object.freeze({canonical:'forex-management-accounts',child:'forex-management-accounts',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
   contab:Object.freeze({canonical:'forex-accounting',child:'forex-accounting',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
   'forex-reconciliation':Object.freeze({canonical:'forex-accounting',child:'forex-accounting',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
-  fxplan:Object.freeze({canonical:'forex-planning',child:'forex-planning',screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
   motor:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'motor'}),
   history:Object.freeze({canonical:'forex-history',child:'forex-history',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
   // Nomes antigos preservam a intenção, sem destinos duplicados no menu.
@@ -73,7 +72,7 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
 const NAV_LOCAL_SURFACES=Object.freeze({
   exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','accounting','accounts','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
-  fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
+  planning:Object.freeze({screen:'planning',primary:'planning',views:Object.freeze(['start','consolidated','monthly']),resolve:()=>window.JPWPlanning&&window.JPWPlanning.ui}),
   research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['nocoda','pivots','stocks-br','stocks-global','reits','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui}),
   tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','market-hours','nocuda','leverage','normative','minigames','galton','time-twins','capital-currents']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
 });
@@ -195,6 +194,7 @@ function navApply(plan,target){
     navLastResult={accepted:false,reason:plan.accepted?'unavailable-target':plan.reason};
     return false;
   }
+  if(navCurrent.primary==='planning'&&window.JPWPlanning?.ui?.guardNavigation&&!JPWPlanning.ui.guardNavigation(plan,()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-planning-draft'};return false;}
   if(plan.action==='settings'){
     const opener=typeof target==='string'
       ?(document.activeElement instanceof HTMLElement?document.activeElement:undefined):target;
@@ -209,6 +209,7 @@ function navApply(plan,target){
   }
   if(window.JPWForex?.executionBoardUI&&!JPWForex.executionBoardUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-operation-draft'};return false;}
   if(window.JPWForex?.accountsUI?.guardNavigation&&!JPWForex.accountsUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-account-draft'};return false;}
+  if(navCurrent.primary==='planning'&&plan.primary!=='planning')window.JPWPlanning?.ui?.deactivate();
   if(navCurrent.primary==='tools'&&plan.primary!=='tools') window.JPWNormativeReader?.leave();
   document.querySelectorAll('#appMain > .screen').forEach(screen=>screen.classList.remove('active'));
   document.getElementById(plan.screen).classList.add('active');
@@ -256,8 +257,8 @@ function navLocalPlan(surfaceId,view,descriptor){
     else if(view==='accounts') canonical='forex-management-accounts';
     else if(view==='history') canonical='forex-history';
     else if(view==='accounting') canonical='forex-accounting';
-  }else if(surfaceId==='fxplan'){
-    canonical='forex-planning';
+  }else if(surfaceId==='planning'){
+    canonical='planning';
   }else if(surfaceId==='finpes'){
     if(view==='overview') canonical='personal-finance';
   }else if(surfaceId==='research'){
@@ -274,6 +275,8 @@ function navLocalPlan(surfaceId,view,descriptor){
 }
 
 function navNavigateLocal(surfaceId,view){
+  if(surfaceId==='planning'&&(view==='reference'||view==='accounts'))view='consolidated';
+  if(surfaceId==='fxplan')return navNavigateLocal('planning',({overview:'consolidated',planning:'start',actuals:'monthly',table:'monthly'})[view]||view);
   if(surfaceId==='research'&&view==='calendar') return navNavigate('tools-calendar');
   if(surfaceId==='research'&&(view==='probability-lab'||view==='galton-board'||view==='research-probability-lab')) return navNavigate('probability-lab');
   const descriptor=NAV_LOCAL_SURFACES[surfaceId];

@@ -2,7 +2,7 @@
 """Navegacao de Financas Pessoais (PF-01, Bloco F).
 
 Prova o checklist minimo do NAVIGATION-HIERARCHY.md para o modulo novo:
-primário semântico personal-finance (posição visual default 04 em A10), submenu com cinco destinos (Inventario nao pertence a este
+primário semântico personal-finance (posição visual default 05 em A10), submenu com cinco destinos (Inventario nao pertence a este
 dominio — ver run_fronteira_do_dominio), superficie JPWFin.ui, troca por
 hidden+inert com nos MONTADOS, destino inicial, e a doutrina que aqui e tambem
 fronteira de dominio: NAVEGAR JAMAIS ESCREVE NO ESTADO — abrir o modulo ou
@@ -107,7 +107,7 @@ def run_estrutura(page, falhas):
     if (not r["temTab"] or r["dataRoute"] != "personal-finance"
             or r["dataPrimary"] != "personal-finance" or r["dataNavSurface"] != "finpes"):
         falhas.append(f"primário semântico personal-finance ausente ou mal ligado: {r}")
-    if r["numero"] != "04" or r["rotulo"] != "Finanças Pessoais":
+    if r["numero"] != "05" or r["rotulo"] != "Finanças Pessoais":
         falhas.append(f"rotulo/numero errados: {r['numero']} {r['rotulo']}")
     if r["itens"] != VIEWS:
         falhas.append(f"submenu deveria ter exatamente {VIEWS}; veio {r['itens']}")
@@ -302,7 +302,7 @@ def main():
         for f in falhas:
             print("  - " + f)
         return 1
-    print("FINPES NAVIGATION TEST PASS — personal-finance, posição visual default 04, cinco destinos, fronteira do dominio, hidden/inert, navegacao sem escrita, sentinela visual")
+    print("FINPES NAVIGATION TEST PASS — personal-finance, posição visual default 05, cinco destinos, fronteira do dominio, hidden/inert, navegacao sem escrita, sentinela visual")
     return 0
 
 

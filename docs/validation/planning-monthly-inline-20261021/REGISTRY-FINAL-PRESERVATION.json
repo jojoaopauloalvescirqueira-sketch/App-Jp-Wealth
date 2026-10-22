@@ -1,0 +1,9 @@
+{
+  "old_count": 53,
+  "new_count": 60,
+  "old_entries_exactly_equal": true,
+  "before_sha256": "dcd2a8a68510c82802df8e5b72070314ebc2a5d0d2efbf437e5d00be5b2368e7",
+  "current_sha256": "436df9f9618e960e3365caeeabb785a027d4bf39b2506ec450cf2529908eb7a0",
+  "metadata_fix": "7ownnewentries required last_verified.build; unchangedintegrationtest caught missingfield, final33/68 actualPASS on6ca before recording build. No oldentry/test/schema/gate changed.",
+  "build": "6ca8a3b8971e249a"
+}

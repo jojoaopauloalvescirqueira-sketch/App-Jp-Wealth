@@ -1,0 +1,2056 @@
+{
+  "started_at": "2026-10-22T13:33:01.002590+00:00",
+  "out": ".superpowers/sdd/2026-10-22-planning-monthly-close/close-postbuild",
+  "only": null,
+  "required_case_ids": [
+    "closure-missing-result-recovery",
+    "closure-cancelled-review-conflict",
+    "closure-result-save-cancel",
+    "closure-previous-pending-navigation",
+    "closure-result-units-validation",
+    "closure-review-changed-data",
+    "closure-writer-refusal-unknown",
+    "closure-shared-flow-draft-refresh",
+    "closure-zero-opening-usd",
+    "closure-draft-backup-retention",
+    "closure-invalidated-context-no-refresh",
+    "closure-counterproof-missing-recovery",
+    "closure-counterproof-positive-loss",
+    "closure-counterproof-restored-consent",
+    "closure-matrix-sidebar-light-390",
+    "closure-matrix-sidebar-light-1440",
+    "closure-matrix-sidebar-dark-390",
+    "closure-matrix-sidebar-dark-1440",
+    "closure-matrix-topbar-light-390",
+    "closure-matrix-topbar-light-1440",
+    "closure-matrix-topbar-dark-390",
+    "closure-matrix-topbar-dark-1440",
+    "closure-matrix-glass-light-390",
+    "closure-matrix-glass-light-1440",
+    "closure-matrix-glass-dark-390",
+    "closure-matrix-glass-dark-1440",
+    "closure-matrix-submenu-light-390",
+    "closure-matrix-submenu-light-1440",
+    "closure-matrix-submenu-dark-390",
+    "closure-matrix-submenu-dark-1440",
+    "closure-native200-sidebar-light",
+    "closure-native200-sidebar-dark",
+    "closure-native200-topbar-light",
+    "closure-native200-topbar-dark",
+    "closure-native200-glass-light",
+    "closure-native200-glass-dark",
+    "closure-native200-submenu-light",
+    "closure-native200-submenu-dark"
+  ],
+  "cases": [
+    {
+      "id": "closure-missing-result-recovery",
+      "classification": "PASS",
+      "criteria": "closure-missing-result-recovery",
+      "started_at": "2026-10-22T13:33:04.361495+00:00",
+      "evidence": {
+        "confirmed": true,
+        "commands": [
+          "recordResult",
+          "finalizeMonth"
+        ],
+        "effective_usd": 1000
+      },
+      "finished_at": "2026-10-22T13:33:04.992738+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-cancelled-review-conflict",
+      "classification": "PASS",
+      "criteria": "closure-cancelled-review-conflict",
+      "started_at": "2026-10-22T13:33:06.004606+00:00",
+      "evidence": {
+        "stale_recovered_explicitly": true,
+        "one_close_write": true
+      },
+      "finished_at": "2026-10-22T13:33:07.321271+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-result-save-cancel",
+      "classification": "PASS",
+      "criteria": "closure-result-save-cancel",
+      "started_at": "2026-10-22T13:33:08.311040+00:00",
+      "evidence": {
+        "saved_result": -25,
+        "month_open": true,
+        "notice": "o resultado foi registrado; o mês continua aberto."
+      },
+      "finished_at": "2026-10-22T13:33:08.908293+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-previous-pending-navigation",
+      "classification": "PASS",
+      "criteria": "closure-previous-pending-navigation",
+      "started_at": "2026-10-22T13:33:09.836079+00:00",
+      "evidence": {
+        "target": "2026-06",
+        "first_pending": "2026-04",
+        "no_writes": true
+      },
+      "finished_at": "2026-10-22T13:33:10.406446+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-result-units-validation",
+      "classification": "PASS",
+      "criteria": "closure-result-units-validation",
+      "started_at": "2026-10-22T13:33:11.358063+00:00",
+      "evidence": {
+        "percent_rounded": 33.33,
+        "negative_percent": -12.5,
+        "empty_invalid": true
+      },
+      "finished_at": "2026-10-22T13:33:11.885195+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-review-changed-data",
+      "classification": "PASS",
+      "criteria": "closure-review-changed-data",
+      "started_at": "2026-10-22T13:33:12.868750+00:00",
+      "evidence": {
+        "external_revision_requires_review": true,
+        "updated_close": 1030
+      },
+      "finished_at": "2026-10-22T13:33:13.577349+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-writer-refusal-unknown",
+      "classification": "PASS",
+      "criteria": "closure-writer-refusal-unknown",
+      "started_at": "2026-10-22T13:33:14.506649+00:00",
+      "evidence": {
+        "refused_preserved": true,
+        "unknown_locked": true
+      },
+      "finished_at": "2026-10-22T13:33:15.030844+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-shared-flow-draft-refresh",
+      "classification": "PASS",
+      "criteria": "closure-shared-flow-draft-refresh",
+      "started_at": "2026-10-22T13:33:15.974718+00:00",
+      "evidence": {
+        "shared_flow_preserves_value": 5,
+        "explicit_review": true
+      },
+      "finished_at": "2026-10-22T13:33:16.679070+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-zero-opening-usd",
+      "classification": "PASS",
+      "criteria": "closure-zero-opening-usd",
+      "started_at": "2026-10-22T13:33:17.661533+00:00",
+      "evidence": {
+        "zero_opening_usd_closes": true
+      },
+      "finished_at": "2026-10-22T13:33:18.896340+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-draft-backup-retention",
+      "classification": "PASS",
+      "criteria": "closure-draft-backup-retention",
+      "started_at": "2026-10-22T13:33:19.971063+00:00",
+      "evidence": {
+        "backup_value": "-12.50",
+        "backup_unit": "USD",
+        "read_only_import": true
+      },
+      "finished_at": "2026-10-22T13:33:20.548377+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-invalidated-context-no-refresh",
+      "classification": "PASS",
+      "criteria": "closure-invalidated-context-no-refresh",
+      "started_at": "2026-10-22T13:33:21.534738+00:00",
+      "evidence": [
+        {
+          "mode": "replaced-plan",
+          "retained_value": "17",
+          "writes": 0
+        },
+        {
+          "mode": "replaced-root",
+          "retained_value": "17",
+          "writes": 0
+        },
+        {
+          "mode": "archived-account",
+          "retained_value": "17",
+          "writes": 0
+        }
+      ],
+      "finished_at": "2026-10-22T13:33:25.558633+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-counterproof-missing-recovery",
+      "classification": "PASS",
+      "criteria": "closure-counterproof-missing-recovery",
+      "started_at": "2026-10-22T13:33:26.635064+00:00",
+      "evidence": {
+        "positive": true,
+        "representative_violation_rejected": {
+          "rejected": true,
+          "measurement_failure": "blocked closure must offer result entry in the same dialog"
+        }
+      },
+      "finished_at": "2026-10-22T13:33:26.703640+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-counterproof-positive-loss",
+      "classification": "PASS",
+      "criteria": "closure-counterproof-positive-loss",
+      "started_at": "2026-10-22T13:33:27.779540+00:00",
+      "evidence": {
+        "positive": {
+          "expected_usd": -12.5,
+          "formatted": "-US$ 12,50"
+        },
+        "representative_violation_rejected": {
+          "rejected": true,
+          "measurement_failure": "('signed rounded actual USD must be represented exactly', '-US$\\xa012,50', 'US$\\xa012,50')"
+        }
+      },
+      "finished_at": "2026-10-22T13:33:27.898145+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-counterproof-restored-consent",
+      "classification": "PASS",
+      "criteria": "closure-counterproof-restored-consent",
+      "started_at": "2026-10-22T13:33:28.965333+00:00",
+      "evidence": {
+        "positive": {
+          "unchecked": true
+        },
+        "representative_violation_rejected": {
+          "rejected": true,
+          "measurement_failure": "fresh closure requires new explicit flow consent"
+        }
+      },
+      "finished_at": "2026-10-22T13:33:29.283120+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-sidebar-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-light-390",
+      "started_at": "2026-10-22T13:33:30.185341+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:30.678843+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-sidebar-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-light-1440",
+      "started_at": "2026-10-22T13:33:30.714834+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:31.221402+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-sidebar-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-dark-390",
+      "started_at": "2026-10-22T13:33:31.326371+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:31.869341+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-sidebar-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-dark-1440",
+      "started_at": "2026-10-22T13:33:31.902251+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:32.401136+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-topbar-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-light-390",
+      "started_at": "2026-10-22T13:33:32.521184+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:32.972994+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-topbar-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-light-1440",
+      "started_at": "2026-10-22T13:33:33.057924+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:33.498304+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-topbar-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-dark-390",
+      "started_at": "2026-10-22T13:33:33.577475+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:34.068390+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-topbar-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-dark-1440",
+      "started_at": "2026-10-22T13:33:34.155825+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:34.585994+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-glass-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-light-390",
+      "started_at": "2026-10-22T13:33:34.748125+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:35.217087+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-glass-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-light-1440",
+      "started_at": "2026-10-22T13:33:35.311267+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:35.814265+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-glass-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-dark-390",
+      "started_at": "2026-10-22T13:33:35.893094+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:36.381120+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-glass-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-dark-1440",
+      "started_at": "2026-10-22T13:33:36.414312+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:36.939243+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-submenu-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-light-390",
+      "started_at": "2026-10-22T13:33:37.064558+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:37.559734+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-submenu-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-light-1440",
+      "started_at": "2026-10-22T13:33:37.654367+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:38.131668+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-submenu-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-dark-390",
+      "started_at": "2026-10-22T13:33:38.275117+00:00",
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 366,
+          "height": 820,
+          "top": 12,
+          "right": 378,
+          "bottom": 832,
+          "left": 12
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "roundedInner": [
+          390,
+          844
+        ],
+        "widths": [
+          364,
+          364
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 49,
+              "y": 415.65625,
+              "width": 292,
+              "height": 44,
+              "top": 415.65625,
+              "right": 341,
+              "bottom": 459.65625,
+              "left": 49
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 49,
+              "y": 508.046875,
+              "width": 292,
+              "height": 44,
+              "top": 508.046875,
+              "right": 341,
+              "bottom": 552.046875,
+              "left": 49
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 32,
+              "y": 759.46875,
+              "width": 18,
+              "height": 18,
+              "top": 759.46875,
+              "right": 50,
+              "bottom": 777.46875,
+              "left": 32
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:38.796181+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-matrix-submenu-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-dark-1440",
+      "started_at": "2026-10-22T13:33:38.828751+00:00",
+      "evidence": {
+        "rect": {
+          "x": 360,
+          "y": 164.28125,
+          "width": 720,
+          "height": 671.4375,
+          "top": 164.28125,
+          "right": 1080,
+          "bottom": 835.71875,
+          "left": 360
+        },
+        "viewport": [
+          1440,
+          1000
+        ],
+        "roundedInner": [
+          1440,
+          1000
+        ],
+        "widths": [
+          718,
+          718
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 404,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 714,
+              "bottom": 529.4375,
+              "left": 404
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 726,
+              "y": 485.4375,
+              "width": 310,
+              "height": 44,
+              "top": 485.4375,
+              "right": 1036,
+              "bottom": 529.4375,
+              "left": 726
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 387,
+              "y": 672.71875,
+              "width": 18,
+              "height": 18,
+              "top": 672.71875,
+              "right": 405,
+              "bottom": 690.71875,
+              "left": 387
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:39.497519+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-sidebar-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-sidebar-light",
+      "started_at": "2026-10-22T13:33:41.870143+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:42.615343+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-sidebar-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-sidebar-dark",
+      "started_at": "2026-10-22T13:33:42.622342+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:43.270169+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-topbar-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-topbar-light",
+      "started_at": "2026-10-22T13:33:43.309196+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:43.864810+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-topbar-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-topbar-dark",
+      "started_at": "2026-10-22T13:33:43.872501+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:44.419263+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-glass-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-glass-light",
+      "started_at": "2026-10-22T13:33:44.450534+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:44.997932+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-glass-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-glass-dark",
+      "started_at": "2026-10-22T13:33:45.002587+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:45.531559+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-submenu-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-submenu-light",
+      "started_at": "2026-10-22T13:33:45.565923+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:46.144166+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "closure-native200-submenu-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-submenu-dark",
+      "started_at": "2026-10-22T13:33:46.150988+00:00",
+      "native_zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1"
+      },
+      "evidence": {
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 688.5,
+          "height": 432.5,
+          "top": 12,
+          "right": 700.5,
+          "bottom": 444.5,
+          "left": 12
+        },
+        "viewport": [
+          712.5,
+          456.5
+        ],
+        "roundedInner": [
+          720,
+          456
+        ],
+        "widths": [
+          687,
+          687
+        ],
+        "fields": [
+          {
+            "name": "closureResultUnit",
+            "rect": {
+              "x": 56,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 346.5,
+              "bottom": 368.4453125,
+              "left": 56
+            }
+          },
+          {
+            "name": "closureResultValue",
+            "rect": {
+              "x": 358.5,
+              "y": 324.4453125,
+              "width": 290.5,
+              "height": 44,
+              "top": 324.4453125,
+              "right": 649,
+              "bottom": 368.4453125,
+              "left": 358.5
+            }
+          },
+          {
+            "name": "confirmFlows",
+            "rect": {
+              "x": 39,
+              "y": 511.7421875,
+              "width": 18,
+              "height": 18,
+              "top": 511.7421875,
+              "right": 57,
+              "bottom": 529.7421875,
+              "left": 39
+            }
+          }
+        ]
+      },
+      "finished_at": "2026-10-22T13:33:46.731818+00:00",
+      "page_errors": []
+    }
+  ],
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "src/js/30-accounting/06-planning/03-ui.js": "d2d40067e1ed533b881af93c8b986687a1a344f4ef5a6e1dfcde897e75f76016",
+    "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "tools/planning_monthly_close_test.py": "8178423f08003c6df882ddf2203c6481f9f5feaf33eba3aa6e708ba75a7c36e1"
+  },
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 38,
+    "required": 38,
+    "unique": true
+  },
+  "classification": "PASS",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T13:33:47.302312+00:00"
+}

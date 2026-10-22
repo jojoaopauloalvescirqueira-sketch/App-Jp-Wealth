@@ -1,0 +1,36 @@
+{
+  "build": "2ddbac03d67141d0",
+  "first_attempt_preserved": "attempt-1/FULL-RESULT.json",
+  "final_full_pass": 96,
+  "final_visual_pass": 206,
+  "legacy_visual_cases_preserved": 98,
+  "added_visual_cases": 108,
+  "process": {
+    "command": [
+      "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+      "tools/quality_gate.py",
+      "--tier",
+      "full",
+      "--artifact",
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/full-final.json"
+    ],
+    "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+    "started_at": "2026-10-21T23:50:58.036387+00:00",
+    "freeze_sha256_at_start": "a1a2ebdbe1124b3656b9de7728e1a31f515de58c32e15254d696d3d03dbc702b",
+    "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/full-final.log",
+    "actual_exit_code": 0,
+    "finished_at": "2026-10-22T00:28:35.998644+00:00",
+    "log_sha256": "5b52215f97e0528f3fd128e95daa4dd8fe8b4a5ad00c3fdb1750465097c9c798",
+    "artifact_sha256": "1ce432b37a21c51d286dd1d1e66fe9f4cc843aa9897f87999166de17edb6e347"
+  },
+  "raw_sha256": "1ce432b37a21c51d286dd1d1e66fe9f4cc843aa9897f87999166de17edb6e347",
+  "visual_sha256": "33a0f9dea33be110192e5061002197b1ceda39b88ceab64c9e4318a4243f228a",
+  "human_acceptance": "PENDING",
+  "git_actions": [],
+  "independent_audit": {
+    "classification": "PASS",
+    "path": "FINAL-INDEPENDENT-AUDIT.md",
+    "sha256": "d4519a85125c072888187055a0cd041241b6cff49f58df00c2567fbe1361b692",
+    "scope": "Technical source/archive/receipt review; separate human visual/N3 acceptance pending."
+  }
+}

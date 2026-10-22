@@ -1,0 +1,14 @@
+{
+  "candidate_build": "004d0c6286d5a3d4",
+  "classification": "PASS",
+  "coverage": {
+    "executed": 240,
+    "required": 240,
+    "unique": true
+  },
+  "source_unchanged": true,
+  "raw_sha256": "3c2435c627d2e249c338d668226843229168bb6d6b4df3841434415f65b1fddd",
+  "finite_scope": "Completed UI check inside ongoing FULL; remaining FULL checks pending. Visual cases match required identity set, not declared order; unchanged96FULL retains exact ordered identity requirement.",
+  "case_count": 240,
+  "required_case_ids": 240
+}

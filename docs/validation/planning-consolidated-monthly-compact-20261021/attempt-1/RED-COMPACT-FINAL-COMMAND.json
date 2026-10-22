@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    "tools/planning_compact_table_test.py",
+    "--out",
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/RED-compact-final-v3"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "JP_WEALTH_CHROMIUM": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+  },
+  "started_at": "2026-10-21T22:44:48.847332+00:00",
+  "finished_at": "2026-10-21T22:44:59.340030+00:00",
+  "exit_code": 1,
+  "stdout": "PRODUCT_FAIL compact-summary-groups\nPRODUCT_FAIL compact-current-calendar-year\nPRODUCT_FAIL compact-wide-seven-columns\nPRODUCT_FAIL compact-narrow-three-columns\nPRODUCT_FAIL compact-month-details-complete\nPRODUCT_FAIL compact-calendar-vs-finalization\nPRODUCT_FAIL compact-controls-draft-focus\nPRODUCT_FAIL compact-scenario-values\nPRODUCT_FAIL cases=8\n",
+  "stderr": ""
+}

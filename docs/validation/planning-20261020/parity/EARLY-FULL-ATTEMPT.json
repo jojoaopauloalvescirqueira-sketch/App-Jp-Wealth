@@ -1,0 +1,89 @@
+{
+  "status": "MANUALLY_INTERRUPTED",
+  "reason": "navigation-ia retained the retired four-tab expectation; reproduced independently on unchanged99c61. Root stopped this early run before correcting the expectation and mobile label reading. No complete FULL receipt was emitted; partial results are not final-candidate approval.",
+  "partial_checks": [
+    [
+      "PASS",
+      "preflight",
+      "0.326s"
+    ],
+    [
+      "PASS",
+      "structure",
+      "4.818s"
+    ],
+    [
+      "PASS",
+      "diff-check",
+      "0.335s"
+    ],
+    [
+      "PASS",
+      "preflight-context",
+      "1.412s"
+    ],
+    [
+      "PRODUCT_FAIL",
+      "navigation-ia",
+      "3.302s"
+    ],
+    [
+      "PASS",
+      "dashboard-macro",
+      "32.354s"
+    ],
+    [
+      "PASS",
+      "research-navigation",
+      "8.961s"
+    ],
+    [
+      "PASS",
+      "smoke",
+      "9.125s"
+    ],
+    [
+      "PASS",
+      "settings",
+      "19.566s"
+    ],
+    [
+      "PASS",
+      "brand-identity-contract",
+      "2.831s"
+    ],
+    [
+      "PASS",
+      "brand-identity-browser",
+      "1.41s"
+    ],
+    [
+      "PASS",
+      "statute-documentary",
+      "9.253s"
+    ],
+    [
+      "PASS",
+      "galton-board",
+      "7.318s"
+    ]
+  ],
+  "reproduced_failure": "navigation-ia-red.log",
+  "old_tabs": [
+    "consolidated",
+    "monthly",
+    "reference",
+    "accounts"
+  ],
+  "current_human_spec_tabs": [
+    "start",
+    "consolidated",
+    "monthly",
+    "reference"
+  ],
+  "build": "99c61f6fd77ec332",
+  "input_freezes": [
+    "runtime-final-freeze.json",
+    "tests-final-freeze.json"
+  ]
+}

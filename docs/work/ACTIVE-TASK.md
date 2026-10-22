@@ -1,3 +1,60 @@
+# Planejamento — fechamento guiado e revisão de uso —22/10/2026
+
+Contrato aprovado: resolver resultado pendente na própria janela, revisar novamente dados alterados, conferir fluxos e finalizar explicitamente. Resultado e fechamento são gravações distintas; zero não é presumido. Meses anteriores pendentes têm orientação recuperável. Dados, fórmulas, histórico e backup preservados.
+
+[Plano](../superpowers/plans/2026-10-22-planning-monthly-close.md) · [Contrato](../architecture/PLANNING.md) · [Execução, testes e limites](../validation/planning-monthly-close-20261022/README.md). Resultado somente nos recibos próprios do novo candidato; validações anteriores são históricas. Aceite humano separado. Sem Git/publicação.
+
+## Fotografia anterior preservada
+
+# Tarefa atual — Preenchimento mensal compacto e editável — 21/10/2026
+
+Implementação do [plano humano aprovado](../superpowers/plans/2026-10-21-planning-monthly-inline.md), reutilizando candidato2ddbac03d67141d0/branchcodex/planejamento-patrimonial-20261020 e122pendências autorizadas, baseea15afc9c6a9c30cc69c5b98a8b85c85211ffb34. Contratos separados [produto](CHG-JPW-PLANNING-INLINE-PRODUCT-20261021.md)/[testes](CHG-JPW-PLANNING-INLINE-TESTS-20261021.md).
+
+Escopo: linhas compactas, edição contextual explícita, prévia percentual/USD somente leitura, histórico temporal e duas preferências isoladas. Preservar fórmulas/escritores/backup, Consolidado/formulário/Stoikus e demais alterações. [Execução atual e limites](../validation/planning-monthly-inline-20261021/README.md). Sem resultado atual por herança; novo FULL96obrigatório. Sem Git/publicação, configuração de memória ou aceite humano presumido.
+
+## Fotografia anterior preservada
+
+# Tarefa atual — Planejamento: Consolidado e tabela compacta
+
+Implementar o [plano aprovado](../superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md) na branch atual, sem perder basea971 e117pendências. [ProdutoN1/A2](CHG-JPW-PLANNING-COMPACT-20261021.md): agrupamentos/ano verde/grade7ou3colunas/detalhes/estados explícitos. [JuizN3/A4](CHG-JPW-PLANNING-COMPACT-TESTS-20261021.md): novas regressões/contraprovas e adaptação delimitada do contrato18colunas, preservando96checks/98casos anteriores. [Resultados e limites](../validation/planning-consolidated-monthly-compact-20261021/README.md). Sem nova dependência, finanças, migração, AI Memory, Git ou publicação. Encerramento técnico depende de FULL atual/revisão e identidade estável; aceite humano separado.
+
+## Fotografia anterior preservada
+
+# Tarefa atual — Planejamento: controles e qualidade visual
+
+Executar plano humano aprovado na branch codex/planejamento-patrimonial-20261020, preservando candidato0dc e alterações anteriores. Produto: menu13ações agrupadas e alinhamento interno. Control plane em trilha própria: regra visual N3/A4, medição2px, casos/contraprovas e check adicional standard/full, preservando95anteriores. [Contratos](CHG-JPW-PLANNING-CONTROLS-20261021.md), [regra](CHG-JPW-UI-VISUAL-RULE-20261021.md), [gate](CHG-JPW-UI-VISUAL-GATE-20261021.md) e [resultados](../validation/planning-controls-visual-quality-20261021/README.md). Sem dependências novas, AI Memory, finanças, commit, merge, push ou publicação. Encerramento técnico depende de recibo FULL atual e revisão independente; aceite visual humano separado.
+
+## Fotografia anterior preservada
+
+# Planejamento — posições e proporções implementadas
+
+[Plano](../superpowers/plans/2026-10-21-planning-proportions.md), [CHG](CHG-JPW-PLANNING-PROPORTIONS-20261021.md) e [relatório](../validation/planning-proportions-20261021/README.md). Fontes de apresentação e regressões implementadas na branch existente codex/planejamento-patrimonial-20261020, HEAD ea15afc. Cinco RED antes do produto;94casos focais PASS. Preservados motores/state e candidato anterior09d53. A aprovação do pacote depende exclusivamente do FULL-RESULT atual com exit observado e identidade congelada; ausência/nãoPASS mantém o gate pendente. Próxima avaliação humana não é substituída pelos testes. Sem dados reais, migração, Git ou publicação.
+
+## Fotografia anterior preservada
+
+# Em execução — três abas e formulário da planilha atual — 20/10/2026
+
+Contrato humano aprovado: [CHG](CHG-JPW-PLANNING-THREE-TABS-20261020.md); [plano](../superpowers/plans/2026-10-20-planning-three-tabs.md). Branch codex/planejamento-patrimonial-20261020, HEAD ea15afc; candidato anterior443c verificado e preservado. Novo delta N1 de apresentação/navegação/Notas: sem alterações no motor ou escritor, sem dados reais/migração/Git/publicação. Testes novos e FULL do pacote final ainda NOT_RUN neste registro.
+
+## Fotografia anterior preservada da tarefa
+
+# Planejamento — pacote final para avaliação — 20/10/2026
+
+Base `ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34`; branch autorizada `codex/planejamento-patrimonial-20261020`. Build `443c1a59f2c1f46d`, sem commit, merge, push ou publicação.
+
+Comece aqui, formulário/revisão e quatro abas implementados. FULL91/91 PASS em nova execução;327 inputs oficiais ordenados, inventário separado de397 caminhos de runtime/recursos,257 testes e runner estáveis. Matriz desta execução24/8/576. O FULLd935 permanece histórico; a deriva pós-FULL causada pela atualização dos documentos da raiz foi registrada, corrigida por freeze/reconstrução e seguida de novo FULL. [Relatório](../validation/planning-20261020/parity/README.md). Google autenticado, permissões/triggers, Safari, leitor de tela, toque físico, compreensão e aceite humano permanecem NOT_RUN. Fontes Apps Script analisadas e execução Google são provas distintas. Preservar dados, arquivos anteriores e incidentes históricos; sem Git/publicação.
+
+
+---
+
+# Fotografia anterior — candidato para aceite — Planejamento independente — 20/10/2026
+
+Plano e branch autorizados pelo proprietário. Base ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34, branch codex/planejamento-patrimonial-20261020, checkout completo CloudDocs/SOFTWARES & EAS/JP Wealth OS. N3/A4 delimitado ao plano de simulação e N2 de persistência, sem norma operacional alterada. Trabalho anterior preservado. Contrato: CHG-JPW-PLANNING-20261020.md; interfaces/plano: ../superpowers/plans/2026-10-20-planning.md. Baseline recuperável .superpowers/sdd/planning-20261020/. Build ff0f078f70b9fb97 implementado; FULL 88/88 e 110 UI PASS. Registros e ressalvas em ../validation/planning-20261020/README.md. Aceite manual do proprietário pendente; comparação nativa completa Sheets não executada. Sem commit, merge, push ou publicação.
+
+---
+
+## Integração preservada da main — Stoikus C5/D1 (PR #44)
+
 > **Fase posterior — integração C5/D1 autorizada em 21/10/2026:** o proprietário autorizou commit, push e merge e, separadamente, o [lote de distribuição D1](CHG-STOIKUS-C5-D1-DISTRIBUTION-20261021.md), aplicado pelos hashes aprovados e reproduzido pelos geradores oficiais. Os 119 inputs executáveis/recursos C5 e os 15 ZIPs históricos foram preservados; os downloads novos têm nomes próprios. A suíte `leverage_suite.py --scope all` desta fase registrou **62 PASS, zero falhas**, com inputs estáveis. A autorização Git não dispensa o FULL e os checks do PR: seus resultados e as operações efetivas devem ser conferidos nos recibos `stoikus-painel-personalizavel-20261021/git-integration-20261021/authorized-D1/` e no histórico Git; esta nota não os antecipa. O Planejamento da primária permanece fora do escopo. Compilação, execução/instalação MT5 e aceite humano nativo continuam **NOT_RUN**; nenhum EX5 foi gerado. Não houve alteração do instalador nem publicação no GPT Sites. **Todo o conteúdo abaixo é a fotografia anterior à fase D1 e deve ser lido como histórico, inclusive seus resultados vermelhos e limites Git então vigentes.**
 
 > **Candidato local — 21/10/2026:** [painel personalizável do Stoikus](CHG-STOIKUS-PAINEL-PERSONALIZAVEL-20261021.md), branch `codex/stoikus-painel-personalizavel-20261021`, base `ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34`. C5 preserva cálculo 1.9.0 e permite seleção/ordem das sete métricas, Aplicar/Cancelar e acessos Conta–NoCuda. Os lotes de validação, ajuste de composição e kit nativo foram aplicados após seus aceites específicos e revisão independente. Rodada pós-lote com arquivos congelados: MT5-all: 58 PASS, 3 PRODUCT_FAIL; FULL: 73 PASS, 4 PRODUCT_FAIL, 4 ENVIRONMENT_ERROR. Seis focais separados passaram após informar navegador/Node ao processo; não substituem nem reclassificam o FULL bruto, que registrou essas ocorrências de ambiente. As 55 verificações host passaram; falhas de distribuição permanecem brutas e bloqueiam aprovação integral. Build `406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161`. O proprietário decidiu encerrar sem ensaio MT5 e verificar manualmente: compilação, instalação C5, execução nativa e aceite permanecem **NOT_RUN**; nenhum EX5 novo foi gerado, e Windows x64 está sem ambiente. Inventário instalado é parcial, com duas entradas Conta e duas NoCuda observadas; identidade exata e propriedade dos objetos não comprovadas, sem remoção de resíduos. A prévia é um modelo parcial (transparência 0–90/passo 5 versus MQL 0–100/passo 10), não prova de paridade nativa. Site, instalador, Planejamento e pacotes públicos não foram alterados. Sem commit/push/merge/publicação nesta tarefa. Guia e recibos privados: `stoikus-painel-personalizavel-20261021/PARA-TESTAR-MANUALMENTE.md` e `post-native-batch-validation-C5/`. O conteúdo abaixo é a fotografia histórica da integração precedente.

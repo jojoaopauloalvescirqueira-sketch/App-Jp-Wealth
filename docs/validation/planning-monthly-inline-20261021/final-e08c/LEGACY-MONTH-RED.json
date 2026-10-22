@@ -1,0 +1,37 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/flow-month-selector-red",
+  "started_at": "2026-10-22T03:45:43.999691+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "1e293bdb463d9bc1c3e8ce5fd0be858c0ab362876dc6b05fe8fdf63b325199a7",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "f8a3077565c70da8b5e826e55d42812714cd2d0f7a6fce93324d3d45ffb5931e"
+  },
+  "cases": [
+    {
+      "id": "inline-month-context-identity",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-month-context-identity",
+      "started_at": "2026-10-22T03:45:45.458901+00:00",
+      "error": "flow month step synchronizes visible month before cancellation",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 661, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 628, in month_context_identity\n    flow_paths=flow_month_context_paths(page,fixture,harness)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 563, in flow_month_context_paths\n    assert page.locator('[data-pl-month]').input_value()==month,'flow month step synchronizes visible month before cancellation'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: flow month step synchronizes visible month before cancellation\n",
+      "finished_at": "2026-10-22T03:45:45.707625+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-month-context-identity"
+  ],
+  "only": [
+    "inline-month-context-identity"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T03:45:46.044860+00:00"
+}

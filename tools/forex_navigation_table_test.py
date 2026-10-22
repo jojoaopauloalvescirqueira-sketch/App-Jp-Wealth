@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Forex table navigation: seven destinations, one History, isolated workspaces.
+"""Forex table navigation: six destinations, one History, isolated workspaces.
 Synthetic fresh browser contexts; no financial fixture or external network.
 """
 from functools import partial
@@ -14,9 +14,9 @@ from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_
 
 ROOT = Path(__file__).resolve().parents[1]
 CHILDREN = ['forex-consolidated', 'forex-management-accounts', 'forex-operation', 'forex-history',
-            'forex-accounting', 'forex-planning', 'forex-reserves']
+            'forex-accounting', 'forex-reserves']
 LABELS = ['Desempenho', 'Histórico de operações', 'Operação', 'Contas e Períodos',
-          'Contabilidade', 'Planejamento patrimonial', 'Reservas']
+          'Contabilidade', 'Reservas']
 VIEWS = [('forex-operation', 'panel', 'executionBoard'),
          ('forex-history', 'history', 'execHistory'),
          ('forex-accounting', 'accounting', 'contab'),
@@ -41,7 +41,7 @@ def main():
                 page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page)
                 assert page.evaluate("JPWNavigation.children('forex').map(r=>r.id)") == CHILDREN
                 assert page.locator('#execNavSubmenu [data-nav-child] .nav-sub-item-title').all_text_contents() == LABELS
-                assert page.locator('#execNavSubmenu [data-nav-child]').count() == 7
+                assert page.locator('#execNavSubmenu [data-nav-child]').count() == 6
                 assert page.evaluate("execHistory.parentElement.id==='exec'&&!contab.contains(execHistory)")
                 page.evaluate("""() => {
                   window.__navBefore=JSON.stringify(S); window.__navRaw=JSON.stringify({...localStorage});

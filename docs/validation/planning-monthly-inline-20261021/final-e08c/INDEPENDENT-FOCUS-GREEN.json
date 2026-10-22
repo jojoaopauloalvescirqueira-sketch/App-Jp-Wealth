@@ -1,0 +1,162 @@
+{
+  "source_sha256": "50d5012858b3a3b95add0eefb407f94b790147b9530e9b20fb1973dfbfec201d",
+  "cases": [
+    {
+      "kind": "result",
+      "close": "Cancel",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BUTTON",
+        "action": "result",
+        "monthSelect": false
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "result",
+      "close": "Escape",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BUTTON",
+        "action": "result",
+        "monthSelect": false
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "contribution",
+      "close": "Cancel",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BUTTON",
+        "action": "contribution",
+        "monthSelect": false
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "contribution",
+      "close": "Escape",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BUTTON",
+        "action": "contribution",
+        "monthSelect": false
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "withdrawal",
+      "close": "Cancel",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BUTTON",
+        "action": "withdrawal",
+        "monthSelect": false
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "withdrawal",
+      "close": "Escape",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BUTTON",
+        "action": "withdrawal",
+        "monthSelect": false
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "contribution",
+      "close": "Cancel",
+      "closed_month_fallback": true,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "SELECT",
+        "action": null,
+        "monthSelect": true
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "contribution",
+      "close": "Escape",
+      "closed_month_fallback": true,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "SELECT",
+        "action": null,
+        "monthSelect": true
+      },
+      "commands": [],
+      "writes": 0,
+      "financial_unchanged": true
+    },
+    {
+      "kind": "result",
+      "close": "Confirm",
+      "closed_month_fallback": false,
+      "baseline": false,
+      "actual_baseline_responses": [],
+      "active": {
+        "tag": "BODY",
+        "action": null,
+        "monthSelect": false
+      },
+      "commands": [
+        "recordResult"
+      ],
+      "writes": 1,
+      "financial_unchanged": false
+    },
+    {
+      "kind": "result",
+      "close": "Confirm",
+      "closed_month_fallback": false,
+      "baseline": true,
+      "actual_baseline_responses": [
+        "http://127.0.0.1:51955/src/js/30-accounting/06-planning/03-ui.js"
+      ],
+      "active": {
+        "tag": "BODY",
+        "action": null,
+        "monthSelect": false
+      },
+      "commands": [
+        "recordResult"
+      ],
+      "writes": 1,
+      "financial_unchanged": false
+    }
+  ],
+  "scope": "Current Cancel/Escape semantic opener and closed-month fallback verified; legacy real confirmation focus separately compared with actual baseline."
+}

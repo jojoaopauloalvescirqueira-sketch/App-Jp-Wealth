@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-10-22T00:29:11.452289+00:00",
+  "receipts": [
+    {
+      "check": "status",
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "returncode": 0,
+      "path": ".superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/final-git-status.txt",
+      "sha256": "b418bc22320071869301785e127c1145d9fe1a99bfc0045ffde6fd4c6f3f1c44"
+    },
+    {
+      "check": "stat",
+      "command": [
+        "git",
+        "diff",
+        "--stat"
+      ],
+      "returncode": 0,
+      "path": ".superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/final-git-stat.txt",
+      "sha256": "9ca94c35bd372614a973ee044b45c6a5bb05ae3c3180a676f8967ef96b0e848f"
+    },
+    {
+      "check": "check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "path": ".superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/final-git-check.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "names",
+      "command": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "returncode": 0,
+      "path": ".superpowers/sdd/2026-10-21-planning-consolidated-monthly-compact/final-git-names.txt",
+      "sha256": "d08a1e3cf7a328c061f56daecbdd3f2acd0787ff4760ae72f1bace2b002261c5"
+    }
+  ],
+  "mutating_git_actions": []
+}

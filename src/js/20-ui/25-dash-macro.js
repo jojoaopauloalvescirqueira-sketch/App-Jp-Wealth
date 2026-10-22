@@ -48,6 +48,7 @@ function dmRow(nome, valorHTML){
 function dmAux(texto){ return '<span class="dm-aux">'+esc(texto)+'</span>'; }
 const DM_AREAS = {
   forex: ['01', 'Risco e operação'],
+  planning: ['05', 'Planejamento patrimonial'],
   'personal-finance': ['02', 'Orçamento e crédito'],
   research: ['03', 'Estudos e agenda'],
   alladin: ['04', 'Contas e patrimônio']
@@ -72,7 +73,7 @@ function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
   if(dmFrozenRoute(rota)) return '';
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
-    + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+id+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
+    + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+(id==='planning'?'forex':id)+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
     + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+'</button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '</article>';
@@ -129,33 +130,27 @@ function dmForexHTML(c){
     ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtForexMoney(last.saldo,{currency:unit})+'</b>')
       + dmRow('Resultado do dia', '<b>'+fmtForexMoney(last.resultado,{currency:unit})+'</b>')
     : dmNote('Nenhum fechamento registrado neste período.'));
-  corpo += dmSection('Planejamento independente', dmNote('O plano atual é global; seus valores não compõem os totais desta conta.')+dmSafe(dmPlanningHTML).html);
   corpo += '</div>';
   corpo += dmLinks(dmLink('Contas', 'forex-account')+dmLink('Checklist pré-trade', 'check')
-    +dmLink('Contabilidade', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
+    +dmLink('Contabilidade', 'forex-reconciliation'));
   return {html: corpo, tom};
 }
 
-// A ponte de estado do Planejamento normaliza S; esta projeção usa o motor
-// puro e recusa formas incompletas, sem reparar nem gravar a base ao consultar.
+// Read-only summary of the independent planning domain. A projection is not a balance.
 function dmPlanningHTML(){
-  const state=S.fxPlanning;
-  if(!state || state.schemaVersion!==1) return {html:dmNote('Planejamento indisponível nesta versão da base.')};
-  const raw=state.plan;
-  if(!raw) return {html:dmNote('Planejamento ainda não aprovado.')};
-  const model=window.JPWFx.model;
-  if(!raw.baseline || !raw.current || !raw.actuals || !Array.isArray(raw.contributions)
-    || model.fxValidateAssumptions(raw.baseline).length || model.fxValidateAssumptions(raw.current).length)
-    return {html:dmNote('Planejamento indisponível — revise os dados no módulo.')};
-  const plan=window.JPWFx.state.fxOverviewLive();
-  if(!plan)return {html:dmNote('Planejamento indisponível — preserve a base e confira os motivos no módulo.')};
-  const reviewing=Object.values(raw.actuals).some(rec=>['REOPENED','REVIEW_REQUIRED'].includes(rec.closureStatus));
-  const value=v=>Number.isFinite(v)?fmtMoney2(v):'Indisponível · base em revisão';
-  return {html:plan.lastClosedMonth
-    ? dmRow('Resultado realizado', '<b>'+value(plan.realizedProfitUsd)+'</b>')
-      +dmRow('Desvio vs baseline', '<b>'+value(plan.deviationUsd)+'</b>')
-      +dmNote('Até '+pfMonthLabel(plan.lastClosedMonth)+' · valores em USD'+(reviewing?' · realizados posteriores exigem reconferência.':''))
-    : dmNote(reviewing?'Realizado em revisão · reconfira os meses cronologicamente no Planejamento.':'Plano aprovado · aguardando o primeiro fechamento mensal.')};
+  const api=window.JPWPlanning?.queries;
+  if(!api)return {html:dmNote('Planejamento está carregando.')};
+  const envelope=api.snapshot();
+  if(envelope.schemaVersion!==1)return {html:dmNote('Base de planejamento incompatível; preserve o backup e confira o módulo.')};
+  const active=(envelope.accounts||[]).filter(a=>a.active!==false);
+  if(!active.length)return {html:dmNote('Comece cadastrando uma conta e suas premissas. O planejamento anterior permanece disponível para exportação identificada.')};
+  const model=api.view(),confirmed=model.confirmed||{};
+  const money=v=>Number.isFinite(v)?fmtMoney2(v):'Aguardando confirmação';
+  return {html:dmRow('Contas em planejamento',String(active.length))+
+    dmRow('Patrimônio confirmado (USD)','<b>'+esc(money(confirmed.balanceUsd))+'</b>')+
+    dmRow('Resultado confirmado (USD)',esc(money(confirmed.resultUsd)))+
+    dmNote(model.confirmedThrough?'Até '+pfMonthLabel(model.confirmedThrough):'Projeções futuras e registros pendentes não integram o patrimônio confirmado.')+
+    dmLinks(dmLink('Preenchimento mensal','planning','planning','monthly')+dmLink('Contas','planning','planning','accounts'))};
 }
 
 // ---- FINANÇAS PESSOAIS ------------------------------------------------------
@@ -364,6 +359,7 @@ function dmSafe(fn, fallbackTom){
 // Disponibilidade não cria zero fictício nem soma dados de módulos congelados.
 const DM_MODULES=[
   {id:'forex',label:'Forex',route:'forex-consolidated',cta:'Abrir Forex',read:()=>dmForexHTML(compute())},
+  {id:'planning',label:'Planejamento',route:'planning',cta:'Abrir Planejamento',read:()=>dmPlanningHTML()},
   {id:'personal-finance',label:'Finanças Pessoais',route:'personal-finance',cta:'Abrir Finanças Pessoais',read:()=>dmFinpesHTML()},
   {id:'research',label:'Research',route:'research-forex',cta:'Abrir Research',read:()=>dmResearchHTML()},
   {id:'alladin',label:'Alladin',route:'alladin',cta:'Abrir Alladin',read:()=>dmAlladinHTML()}

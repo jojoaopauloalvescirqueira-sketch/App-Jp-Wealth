@@ -1,0 +1,62 @@
+{
+  "compact_matrix_count": 80,
+  "every_compact_matrix_has120_times16_fields_and_no_errors": true,
+  "native200_case_count": 16,
+  "boundaries": [
+    "compact-boundary-899",
+    "compact-boundary-900",
+    "compact-boundary-901"
+  ],
+  "command_receipt_log_hashes": {
+    "final-real-planning-parity": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "final-real-three-tabs": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "final-real-proportions": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "final-real-parity-layout": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "final-real-planning-ui": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "final-real-distribution": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "final-real-finalize": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "inline-final-33": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "state-final-68": {
+      "exit": 0,
+      "log_sha_matches": true
+    },
+    "engineering-reconciliation": {
+      "exit": 1,
+      "log_sha_matches": true
+    },
+    "engineering-reconciliation-green": {
+      "exit": 0,
+      "log_sha_matches": true
+    }
+  },
+  "integration_validator_byte_identical_to_tar": true,
+  "recomputed_official_build": "6ca8a3b8971e249a",
+  "registered_official_build": "6ca8a3b8971e249a",
+  "registry_is_official_fingerprint_input": false,
+  "registry_is_visual_source_input": false,
+  "registry_sha256": "436df9f9618e960e3365caeeabb785a027d4bf39b2506ec450cf2529908eb7a0"
+}

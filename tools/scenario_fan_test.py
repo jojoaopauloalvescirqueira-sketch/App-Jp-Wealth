@@ -7,36 +7,13 @@ bootstrap fixture. Screenshots never contain a personal account or workbook.
 import argparse
 import hashlib
 import json
+import os
 import traceback
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from fx_planning_test import ROOT, serve, prepare_page
 
-PATHS = ['src/js/20-ui/08-scenario-fan.js', 'src/styles/app.css',
-         'src/js/30-accounting/05-fx-planning/04-fx-charts.js',
-         'src/js/30-accounting/05-fx-planning/05-fx-ui.js']
-
-SEED = r'''() => {
-  S.fxPlanning={schemaVersion:1,plan:null,auditLog:[]};
-  const state=JPWFx.state;
-  const made=state.fxPlanCreate({name:'Demonstração sintética — trajetórias',assumptions:{
-    startMonth:'2026-01',horizonMonths:24,initialBalanceUsd:1000,
-    defaultMonthlyReturn:.01,projectedFxRate:5,
-    recurringContributions:{personalUsd:20,propUsd:10}}});
-  if(!made.ok)throw Error(JSON.stringify(made));
-  for(const month of ['2026-01','2026-02','2026-03']){
-    const r=state.fxPlanFinalizeMonth(month,{inputType:'rate',returnRate:.008,valuationFxRate:5,contributionsConfirmed:true});
-    if(!r.ok)throw Error(JSON.stringify(r));
-  }
-  const ids=[];
-  for(const [name,rate,deposit] of [['Hipótese A · depósitos maiores',.012,45],['Hipótese B · rentabilidade menor',.005,20],['Hipótese C · não selecionada',0,10]]){
-    const r=state.fxScenarioSave({name});if(!r.ok)throw Error(JSON.stringify(r));ids.push(r.id);
-    const revised=state.fxPlanReviseFromMonth('2026-04',{rate,personalUsd:deposit,propUsd:10},'Premissas fictícias para prova de apresentação',r.id);
-    if(!revised.ok)throw Error(JSON.stringify(revised));
-  }
-  JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('overview');
-  return ids;
-}'''
+PATHS = ['src/js/20-ui/08-scenario-fan.js', 'src/styles/app.css']
 
 CORE = r'''() => {
   const before=JSON.stringify(S), disk=JSON.stringify(localStorage), results=[];
@@ -79,81 +56,43 @@ CORE = r'''() => {
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--artifacts',type=Path,default=ROOT/'tools/.artifacts/scenario-fan');args=parser.parse_args();args.artifacts.mkdir(parents=True,exist_ok=True)
-    source={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in PATHS}; results=[]; server,url=serve()
-    def case(name,fn):
-        try:
-            detail=fn();results.append({'name':name,'status':'PASS','detail':detail})
-        except Exception:
-            results.append({'name':name,'status':'PRODUCT_FAIL','detail':traceback.format_exc()})
+    source={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in PATHS};results=[];server,url=serve()
     try:
         with sync_playwright() as pw:
-            browser=pw.chromium.launch();context,page,observed=prepare_page(browser,url)
-            results.extend(page.evaluate(CORE));ids=page.evaluate(SEED)
-            def adapters():
-                return page.evaluate('''ids=>{
-                  const p=JPWFx.state.fxActivePlan(),ov=JPWFx.engine.fxOverview(p),c=JPWFx.charts;
-                  const before=JSON.stringify(p),model=c.fxScenarioFanModel(p,ov,'usd',{scenarioIds:ids,baseline:true});
-                  if(model.series.filter(s=>s.kind==='scenario').length!==2)throw Error('more than two');
-                  for(const s of model.series){
-                    const rows=s.kind==='scenario'?JPWFx.engine.fxScenarioTimeline(p,p.scenarios.find(x=>x.id===s.id)):s.kind==='baseline'?ov.baseline:ov.forecast;
-                    for(const pt of s.points){if(pt.value!==null){const row=rows.find(r=>r.month===pt.month);if(!row||pt.value!==row.close)throw Error(s.id+' value mismatch '+pt.month);}}
-                  }
-                  const brl=c.fxScenarioFanModel(p,ov,'brl',{scenarioIds:ids.slice(0,2)});
-                  for(const s of brl.series){if(s.kind==='actual')continue;const scenario=p.scenarios.find(x=>x.id===s.id);const rate=scenario?scenario.assumptions.projectedFxRate:p.current.projectedFxRate;
-                    const usd=model.series.find(x=>x.id===s.id);for(const pt of s.points){if(pt.value!==null){const row=usd.points.find(x=>x.month===pt.month);if(Math.abs(pt.value-row.value*(pt.state==='FINALIZED'?5:rate))>1e-8)throw Error('FX context '+s.id);}}
-                  }
-                  if(JSON.stringify(p)!==before)throw Error('mutated plan');return {months:model.months.length,series:model.series.map(s=>s.name)};
-                }''',ids)
-            case('Adapter corresponde aos produtores reais, em USD e BRL, sem mutação',adapters)
-            def compare():
-                page.locator('#fxpChartCompare').evaluate('(el)=>el.open=true') if page.locator('#fxpChartCompare').count() else page.locator('[data-fxp-compare-scenario]').first.evaluate('(el)=>el.closest("details").open=true')
-                before=page.evaluate('({state:JSON.stringify(S),disk:JSON.stringify(localStorage)})')
-                for item in ids[:2]:page.locator('[data-fxp-compare-scenario][value="'+item+'"]').check()
-                assert page.locator('[data-fxp-compare-scenario][value="'+ids[2]+'"]').is_disabled()
-                assert page.locator('[data-fxp-compare-scenario]:checked').count()==2
-                assert page.locator('#fxpMainChart [data-fan-band]').count()>0
-                assert before==page.evaluate('({state:JSON.stringify(S),disk:JSON.stringify(localStorage)})')
-            case('Selecionar duas hipóteses limita a terceira e não grava',compare)
-            def keyboard():
-                plot=page.locator('#fxpMainChart svg');plot.focus();plot.press('End');assert page.locator('#fxpMainChart select').input_value()=='2027-12';plot.press('Home');assert page.locator('#fxpMainChart select').input_value()=='2026-01'
-            case('Consulta do gráfico acessível por teclado',keyboard)
-            def draft():
-                page.locator('#fxpMainChart select[aria-label="Mês da consulta"]').select_option('2026-06')
-                page.evaluate("JPWFx.ui.selectView('table')")
-                assert page.locator('#fxpMainChart select[aria-label="Mês da consulta"]').input_value()=='2026-06'
-                field=page.locator('#fxpMonth-2026-04-rate');field.fill('2,75');field.evaluate('(el)=>el.setSelectionRange(1,3)')
-                before=page.evaluate('({state:JSON.stringify(S),disk:JSON.stringify(localStorage)})');node=field.element_handle()
-                page.locator('[data-fxp-compare-scenario]').first.evaluate('(el)=>el.closest("details").open=true')
-                page.locator('[data-fxp-compare-baseline]').check()
-                assert node.evaluate('(el)=>el===document.querySelector("#fxpMonth-2026-04-rate")')
-                assert field.input_value()=='2,75';assert before==page.evaluate('({state:JSON.stringify(S),disk:JSON.stringify(localStorage)})')
-                page.evaluate("JPWFx.ui.selectView('overview');JPWFx.ui.selectView('table')")
-                assert page.locator('#fxpMainChart select[aria-label="Mês da consulta"]').input_value()=='2026-06'
-                assert page.locator('[data-fxp-compare-scenario]:checked').count()==2
-                assert page.locator('#fxpMonth-2026-04-rate').input_value()=='2,75'
-            case('Comparação, baseline e navegação preservam campo e rascunho mensal',draft)
-            def matrix():
-                page.evaluate("JPWFx.ui.selectView('overview')")
-                measurements=[]
-                for layout in ['sidebar','topbar','glass','submenu']:
-                    page.evaluate('(layout)=>mountNavigationLayout(layout)',layout)
-                    for width in [320,390,768,1024,1440]:
-                        page.set_viewport_size({'width':width,'height':1000})
-                        for theme in ['light','dark']:
-                            page.evaluate('(theme)=>{document.documentElement.dataset.theme=theme;document.body.dataset.theme=theme;}',theme)
-                            page.locator('#fxpMainChart').scroll_into_view_if_needed();page.wait_for_timeout(100)
-                            item=page.evaluate('''()=>({pageWidth:innerWidth,scroll:document.documentElement.scrollWidth,plot:document.querySelector('#fxpMainChart svg')?.getBoundingClientRect().height,font:getComputedStyle(document.querySelector('#fxpMainChart .sf-endpoint strong')).fontSize})''')
-                            assert item['scroll']<=width+1,item;assert item['plot']>=239,item;assert float(item['font'][:-2])>=12,item
-                            if layout=='sidebar':page.locator('#fxpMainChart').screenshot(path=str(args.artifacts/f'fan-{width}-{theme}.png'))
-                            measurements.append({'layout':layout,'width':width,'theme':theme,**item})
-                return measurements
-            case('Responsividade em quatro layouts, cinco larguras e dois temas',matrix)
+            options={'headless':True}
+            if os.environ.get('JP_WEALTH_CHROMIUM'):options['executable_path']=os.environ['JP_WEALTH_CHROMIUM']
+            browser=pw.chromium.launch(**options);context,page,observed=prepare_page(browser,url)
+            results.extend(page.evaluate(CORE))
+            # Generic component remains independently tested. The retired
+            # planning adapter and named-scenario UI are no longer its consumer.
+            layout=page.evaluate(MATRIX)
+            results.extend(layout)
             if observed['pageerror']:results.append({'name':'Erros do navegador','status':'PRODUCT_FAIL','detail':observed['pageerror']})
             context.close();browser.close()
     finally:server.shutdown()
-    after={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in PATHS};receipt={'sourceHashes':source,'sourceHashesAfter':after,'results':results,'status':'PASS' if source==after and all(x['status']=='PASS' for x in results) else 'PRODUCT_FAIL'}
+    after={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in PATHS}
+    receipt={'scope':'generic shared scenario-fan component; retired planning adapter explicitly removed','sourceHashes':source,'sourceHashesAfter':after,'results':results,'status':'PASS' if source==after and results and all(x['status']=='PASS' for x in results) else 'PRODUCT_FAIL'}
     (args.artifacts/'receipt.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
-    for row in results:print('['+row['status']+'] '+row['name']+(' '+str(row['detail']) if row['status']!='PASS' else ''))
+    for row in results:print('['+row['status']+'] '+row['name']+(' '+str(row.get('detail')) if row['status']!='PASS' else ''))
     raise SystemExit(0 if receipt['status']=='PASS' else 1)
 
+MATRIX=r'''() => {
+ const before={state:JSON.stringify(S),disk:JSON.stringify(localStorage)},box=document.createElement('div');document.body.append(box);
+ box.style.cssText='width:100%;max-width:900px;';
+ const model={identity:'generic-component',revision:'test',unit:'USD',title:'Synthetic shared component',months:['2026-01','2026-02'],projectionStartMonth:'2026-01',series:[{id:'plan',kind:'plan',name:'PLAN',points:[{month:'2026-01',value:0},{month:'2026-02',value:1234567890.12}]}]};
+ const handle=JPWScenarioFan.render(box,model),plot=box.querySelector('svg');plot.focus();plot.dispatchEvent(new KeyboardEvent('keydown',{key:'End',bubbles:true}));
+ const end=box.querySelector('select').value;plot.dispatchEvent(new KeyboardEvent('keydown',{key:'Home',bubbles:true}));
+ const keyboard=end==='2026-02'&&box.querySelector('select').value==='2026-01';
+ const results=[{name:'Generic component keyboard Home/End preserves exact month',status:keyboard?'PASS':'PRODUCT_FAIL'}];
+ for(const theme of ['light','dark']){
+  document.documentElement.dataset.theme=theme;document.body.dataset.theme=theme;
+  for(const width of [320,390,768,1024,1440]){
+   box.style.width=width+'px';
+   const values=[...box.querySelectorAll('.sf-endpoint strong')].map(el=>({font:parseFloat(getComputedStyle(el).fontSize),width:el.clientWidth,scroll:el.scrollWidth}));
+   results.push({name:'Shared component finite accessible values '+theme+' '+width,status:values.length>0&&values.every(v=>v.font>=12&&v.scroll<=v.width+1)&&!/(NaN|Infinity)/.test(plot.outerHTML)?'PASS':'PRODUCT_FAIL',detail:values});
+  }
+ }
+ handle.destroy();box.remove();results.push({name:'Component keyboard/size/theme probes do not write',status:before.state===JSON.stringify(S)&&before.disk===JSON.stringify(localStorage)?'PASS':'PRODUCT_FAIL'});
+ return results;
+}'''
 if __name__=='__main__':main()

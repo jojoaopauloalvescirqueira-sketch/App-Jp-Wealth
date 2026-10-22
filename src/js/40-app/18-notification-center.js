@@ -5,7 +5,7 @@
 (function initNotificationCenter(){
   if(window.JPWNotifications) return;
   const el=id=>document.getElementById(id);
-  const names={system:'Sistema',forex:'Forex',pf:'Finanças Pessoais',alladin:'Alladin',research:'Research',notes:'Notas'};
+  const names={system:'Sistema',forex:'Forex',planning:'Planejamento',pf:'Finanças Pessoais',alladin:'Alladin',research:'Research',notes:'Notas'};
   const rank={critical:0,warning:1,info:2};
   const live=new Map(), history=[], seen=new Map();
   const caches=new Map(), dirty=new Set();
@@ -19,7 +19,7 @@
     if(node?.closest('#settingsModal,#settingsOverlay')) return 'system';
     if(node?.closest('#alladinModalBox')) return 'alladin';
     const primary=node?.closest('.screen')?.id;
-    return primary==='finpes'?'pf':primary==='alladin'?'alladin':primary==='research'?'research':
+    return primary==='planning'?'planning':primary==='finpes'?'pf':primary==='alladin'?'alladin':primary==='research'?'research':
       ['exec','op','contab','fxplan','contas','check','onboarding'].includes(primary)?'forex':'system';
   };
   function currentArea(){
@@ -110,7 +110,7 @@
       const q=JPWMarket.usdBrl.get();
       if(q.status==='unavailable'||q.status==='stale') add(next,'forex:usdbrl','forex','warning','Referência USD/BRL',
         q.status==='unavailable'?'Cotação indisponível. Confira o Planejamento.':'A referência está desatualizada. Confira as datas no Planejamento.',
-        'forex-planning',q.status);
+        'planning',q.status);
     }
   }
   function collectPersonalFinance(next){
@@ -176,7 +176,7 @@
     ['#mvpNotesNewError','notes','Notas','notes'],
     ['#mvpNotesCopyLive,#mvpNotesExportLive','notes','Cópia e exportação de Notas','notes','info'],
     ['#fxFetchStatus.err,#fxFetchStatus.warn','forex','Cotações','forex-preparation'],
-    ['#fxpCreateErr,#fxpPlanningErr,#fxpActErr,#fxpCErr','forex','Planejamento','forex-planning'],
+    ['[data-pl-error]','planning','Planejamento','planning'],
     ['#alladinModalBox .session-error,#alladinModalBox .session-warning','alladin','Formulário Alladin',null],
     ['#fbAllocExceeds','pf','Destinações do mês','pf-monthly'],
     ['#dgStorageCard .dg-status-warn,#dgActNote','system','Pasta de exportação','backup'],

@@ -1,0 +1,600 @@
+{
+  "scope": "R4 CSS and tab controls only, fresh synthetic browser contexts; no financial harness rerun",
+  "before": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef",
+    "src/styles/app.css": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25"
+  },
+  "baselineSha256": "152b9dbc0ee67b21f2a6d398966adb009edbabf8eefca4c84e5804968809b582",
+  "protectedUnchanged": true,
+  "build": "d93561c064cf5f40",
+  "cases": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "tabs": [
+        {
+          "label": "Comece aqui",
+          "box": {
+            "left": 331.1875,
+            "right": 453.28125,
+            "top": 270,
+            "bottom": 314,
+            "width": 122.09375,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Comece",
+              "rects": [
+                {
+                  "left": 351.1875,
+                  "right": 402.921875,
+                  "top": 283.578125,
+                  "bottom": 299.578125
+                }
+              ]
+            },
+            {
+              "word": "aqui",
+              "rects": [
+                {
+                  "left": 406.28125,
+                  "right": 433.28125,
+                  "top": 283.578125,
+                  "bottom": 299.578125
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Consolidado",
+          "box": {
+            "left": 456.28125,
+            "right": 571.828125,
+            "top": 270,
+            "bottom": 314,
+            "width": 115.546875,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Consolidado",
+              "rects": [
+                {
+                  "left": 476.28125,
+                  "right": 551.828125,
+                  "top": 283.578125,
+                  "bottom": 299.578125
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Preenchimento mensal",
+          "box": {
+            "left": 574.828125,
+            "right": 752.78125,
+            "top": 270,
+            "bottom": 314,
+            "width": 177.953125,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Preenchimento",
+              "rects": [
+                {
+                  "left": 594.828125,
+                  "right": 686.078125,
+                  "top": 283.578125,
+                  "bottom": 299.578125
+                }
+              ]
+            },
+            {
+              "word": "mensal",
+              "rects": [
+                {
+                  "left": 689.640625,
+                  "right": 732.78125,
+                  "top": 283.578125,
+                  "bottom": 299.578125
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Referência",
+          "box": {
+            "left": 755.78125,
+            "right": 860.03125,
+            "top": 270,
+            "bottom": 314,
+            "width": 104.25,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Referência",
+              "rects": [
+                {
+                  "left": 775.78125,
+                  "right": 840.03125,
+                  "top": 283.578125,
+                  "bottom": 299.578125
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "activatedWords": [
+        {
+          "view": "start",
+          "words": [
+            {
+              "word": "Comece",
+              "rects": 1
+            },
+            {
+              "word": "aqui",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "consolidated",
+          "words": [
+            {
+              "word": "Consolidado",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "monthly",
+          "words": [
+            {
+              "word": "Preenchimento",
+              "rects": 1
+            },
+            {
+              "word": "mensal",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "reference",
+          "words": [
+            {
+              "word": "Referência",
+              "rects": 1
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "classification": "PASS"
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "tabs": [
+        {
+          "label": "Comece aqui",
+          "box": {
+            "left": 36,
+            "right": 194.5,
+            "top": 359.375,
+            "bottom": 403.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Comece",
+              "rects": [
+                {
+                  "left": 76.96875,
+                  "right": 125.140625,
+                  "top": 373.671875,
+                  "bottom": 388.671875
+                }
+              ]
+            },
+            {
+              "word": "aqui",
+              "rects": [
+                {
+                  "left": 128.3125,
+                  "right": 153.515625,
+                  "top": 373.671875,
+                  "bottom": 388.671875
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Consolidado",
+          "box": {
+            "left": 195.5,
+            "right": 354,
+            "top": 359.375,
+            "bottom": 403.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Consolidado",
+              "rects": [
+                {
+                  "left": 239.484375,
+                  "right": 310,
+                  "top": 373.671875,
+                  "bottom": 388.671875
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Preenchimento mensal",
+          "box": {
+            "left": 36,
+            "right": 194.5,
+            "top": 404.375,
+            "bottom": 448.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Preenchimento",
+              "rects": [
+                {
+                  "left": 50.875,
+                  "right": 136.015625,
+                  "top": 418.671875,
+                  "bottom": 433.671875
+                }
+              ]
+            },
+            {
+              "word": "mensal",
+              "rects": [
+                {
+                  "left": 139.375,
+                  "right": 179.625,
+                  "top": 418.671875,
+                  "bottom": 433.671875
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Referência",
+          "box": {
+            "left": 195.5,
+            "right": 354,
+            "top": 404.375,
+            "bottom": 448.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Referência",
+              "rects": [
+                {
+                  "left": 244.734375,
+                  "right": 304.75,
+                  "top": 418.671875,
+                  "bottom": 433.671875
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "activatedWords": [
+        {
+          "view": "start",
+          "words": [
+            {
+              "word": "Comece",
+              "rects": 1
+            },
+            {
+              "word": "aqui",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "consolidated",
+          "words": [
+            {
+              "word": "Consolidado",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "monthly",
+          "words": [
+            {
+              "word": "Preenchimento",
+              "rects": 1
+            },
+            {
+              "word": "mensal",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "reference",
+          "words": [
+            {
+              "word": "Referência",
+              "rects": 1
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "classification": "PASS"
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "tabs": [
+        {
+          "label": "Comece aqui",
+          "box": {
+            "left": 36,
+            "right": 194.5,
+            "top": 359.375,
+            "bottom": 403.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Comece",
+              "rects": [
+                {
+                  "left": 76.96875,
+                  "right": 125.140625,
+                  "top": 373.671875,
+                  "bottom": 388.671875
+                }
+              ]
+            },
+            {
+              "word": "aqui",
+              "rects": [
+                {
+                  "left": 128.3125,
+                  "right": 153.515625,
+                  "top": 373.671875,
+                  "bottom": 388.671875
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Consolidado",
+          "box": {
+            "left": 195.5,
+            "right": 354,
+            "top": 359.375,
+            "bottom": 403.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Consolidado",
+              "rects": [
+                {
+                  "left": 239.484375,
+                  "right": 310,
+                  "top": 373.671875,
+                  "bottom": 388.671875
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Preenchimento mensal",
+          "box": {
+            "left": 36,
+            "right": 194.5,
+            "top": 404.375,
+            "bottom": 448.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Preenchimento",
+              "rects": [
+                {
+                  "left": 50.875,
+                  "right": 136.015625,
+                  "top": 418.671875,
+                  "bottom": 433.671875
+                }
+              ]
+            },
+            {
+              "word": "mensal",
+              "rects": [
+                {
+                  "left": 139.375,
+                  "right": 179.625,
+                  "top": 418.671875,
+                  "bottom": 433.671875
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Referência",
+          "box": {
+            "left": 195.5,
+            "right": 354,
+            "top": 404.375,
+            "bottom": 448.375,
+            "width": 158.5,
+            "height": 44
+          },
+          "style": {
+            "wordBreak": "normal",
+            "overflowWrap": "normal",
+            "whiteSpace": "normal"
+          },
+          "words": [
+            {
+              "word": "Referência",
+              "rects": [
+                {
+                  "left": 244.734375,
+                  "right": 304.75,
+                  "top": 418.671875,
+                  "bottom": 433.671875
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "activatedWords": [
+        {
+          "view": "start",
+          "words": [
+            {
+              "word": "Comece",
+              "rects": 1
+            },
+            {
+              "word": "aqui",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "consolidated",
+          "words": [
+            {
+              "word": "Consolidado",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "monthly",
+          "words": [
+            {
+              "word": "Preenchimento",
+              "rects": 1
+            },
+            {
+              "word": "mensal",
+              "rects": 1
+            }
+          ]
+        },
+        {
+          "view": "reference",
+          "words": [
+            {
+              "word": "Referência",
+              "rects": 1
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "classification": "PASS"
+    }
+  ],
+  "cssDiff": "--- app.css@152b9dbc\n+++ app.css@66472afa\n@@ -11135,7 +11135,8 @@\n \n /* Source-faithful Planning tabs and view selector fit the 390px surface. */\n @media(max-width:700px){\n- #planning .pl-tabs button{min-width:0;overflow-wrap:anywhere}\n+ #planning .pl-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}\n+ #planning .pl-tabs button{min-width:0;overflow-wrap:normal}\n  #planning .pl-native-summary-table .pl-section-title label,#planning .pl-chart-toolbar label{max-width:100%;flex-wrap:wrap}\n  #planning .pl-metrics>.pl-metric{min-width:min(100%,180px)}\n }\n",
+  "after": {
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef",
+    "src/styles/app.css": "66472afaa93c579abef8acf24c818ada79d78b541debda74b4ffd09bb94acf25"
+  },
+  "candidateStable": true
+}

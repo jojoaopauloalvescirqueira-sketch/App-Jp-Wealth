@@ -1,0 +1,56 @@
+{
+  "result": "PASS",
+  "files": [
+    {
+      "name": "ApresentacaoConsolidado.gs",
+      "expected": "d61f709b72a6c3564417bf13b4c6e4af761cfc23bcd1640adcdcf9c4a0b3cfc0",
+      "actual": "d61f709b72a6c3564417bf13b4c6e4af761cfc23bcd1640adcdcf9c4a0b3cfc0"
+    },
+    {
+      "name": "Code.gs",
+      "expected": "b332d0af99678cb96aea60f0cfb693cc27ca83b903c7d6c7d1c79bcce56cc57b",
+      "actual": "b332d0af99678cb96aea60f0cfb693cc27ca83b903c7d6c7d1c79bcce56cc57b"
+    },
+    {
+      "name": "Formulario.gs",
+      "expected": "1ab2401baced1d6a8534dfa2164ce6d905cb52fd2ccdd3268b9910d9650bce94",
+      "actual": "1ab2401baced1d6a8534dfa2164ce6d905cb52fd2ccdd3268b9910d9650bce94"
+    },
+    {
+      "name": "GraficoReal.gs",
+      "expected": "33e9ef1cc24e27c2648d8d3788e486051586fcdc95aaa1f69f86765e4a82bd7c",
+      "actual": "33e9ef1cc24e27c2648d8d3788e486051586fcdc95aaa1f69f86765e4a82bd7c"
+    },
+    {
+      "name": "ParadaAportes.gs",
+      "expected": "3b4962446a2dccd9371cb60331b824fe43113f81d105667bc639fa282c48949a",
+      "actual": "3b4962446a2dccd9371cb60331b824fe43113f81d105667bc639fa282c48949a"
+    },
+    {
+      "name": "Prazos.gs",
+      "expected": "5188c9b07f2e03a6609e3b13c6bac46874a5b205876ec74f4e2311c995c7c62c",
+      "actual": "5188c9b07f2e03a6609e3b13c6bac46874a5b205876ec74f4e2311c995c7c62c"
+    },
+    {
+      "name": "Projecoes.gs",
+      "expected": "f2ce7d2fe5b177ad594952fcd8fd2fd0842ff175b059453ebecf7c712be1781e",
+      "actual": "f2ce7d2fe5b177ad594952fcd8fd2fd0842ff175b059453ebecf7c712be1781e"
+    },
+    {
+      "name": "RegistrosProtegidos.gs",
+      "expected": "55f27f73a0d701305a60dd0430f64cb86a77a325b5567a3af79d237584672d96",
+      "actual": "55f27f73a0d701305a60dd0430f64cb86a77a325b5567a3af79d237584672d96"
+    },
+    {
+      "name": "Reinicio.gs",
+      "expected": "777fa5f2befa0fb0d59cce94c90c77dc1d78eecfab94870c6b549e9d3bc15e1e",
+      "actual": "777fa5f2befa0fb0d59cce94c90c77dc1d78eecfab94870c6b549e9d3bc15e1e"
+    },
+    {
+      "name": "Saques.gs",
+      "expected": "606eded27973e84fc9e3b8b8b36cf29b868a7a4c4ae3ed630804f177f98bd389",
+      "actual": "606eded27973e84fc9e3b8b8b36cf29b868a7a4c4ae3ed630804f177f98bd389"
+    }
+  ],
+  "limitation": "Hash dos snapshots locais não certifica conteúdo vivo, manifest ou triggers instalados no Google."
+}

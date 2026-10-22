@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3",
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/after_snapshot_final.py"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T02:14:24.726810+00:00",
+  "freeze_sha256_at_start": null,
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/capture-final.log",
+  "actual_exit_code": 0,
+  "finished_at": "2026-10-22T02:14:28.246134+00:00",
+  "log_sha256": "2d05417350a5f1e832d9ba65ad36af7e52add6ce0464cd8ca4078b9fc8574915"
+}

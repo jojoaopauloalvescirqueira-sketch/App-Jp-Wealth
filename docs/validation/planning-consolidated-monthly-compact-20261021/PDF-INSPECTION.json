@@ -1,0 +1,31 @@
+{
+  "inspection": "COMPLETED_READ_ONLY",
+  "candidate_build": "2ddbac03d67141d0",
+  "source": "tools/.artifacts/planning-ui/ui-report.pdf",
+  "source_modified_at": "2026-10-22T00:03:42.138694+00:00",
+  "sha256": "eb3613e07ee7f1ca8807eb41fa1f1948be19328e6bc794bc92d97ed696e37f8a",
+  "pages": 2,
+  "page_size": "A4 landscape",
+  "synthetic_only": true,
+  "rendered_pages_viewed": [
+    {
+      "path": "docs/validation/planning-consolidated-monthly-compact-20261021/captures/pdf-page-1.png",
+      "sha256": "73174f886f6735a2369884da7b3c7b8ba6d84b2f0c3ec34df97ca61d8f95d075"
+    },
+    {
+      "path": "docs/validation/planning-consolidated-monthly-compact-20261021/captures/pdf-page-2.png",
+      "sha256": "1efb2f408169e4679c4eb3abb0eb0b02d0fdb1e70346fc2a9f6716875ed5de0e"
+    }
+  ],
+  "observations": [
+    "Conteúdo principal legível nas duas páginas, sem corte ou sobreposição observados.",
+    "A segunda página contém somente continuação de duas linhas do rodapé; paginação não é declarada perfeita.",
+    "Bloco de impressão e CSS de impressão preservados byte a byte frente à apresentação anterior, segundo revisão independente; sem reprodução PDF do baseline, não se afirma comprovação experimental de causa preexistente."
+  ],
+  "limits": [
+    "Inspeção do agente, não aceite visual humano.",
+    "PDF sintético gerado pelo teste de UI; não contém dados do proprietário.",
+    "Fonte preservada não substitui uma futura revisão de paginação, fora do redesenho da tabela mensal."
+  ],
+  "gate_attempt": "Second FULL, planning-ui PASS24.233s; whole96still pending at inspection"
+}

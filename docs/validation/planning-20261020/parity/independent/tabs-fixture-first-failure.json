@@ -1,0 +1,7 @@
+{
+  "classification": "TEST_HARNESS_FAIL",
+  "attempt": "First independent R4 tab harness, before adding an explicit initialized synthetic plan fixture",
+  "observed": "Consolidado had no visible DOM Range rectangles at desktop 1440 because the initial unconfigured state had no plan",
+  "assertion": "len(word.rects)==1 failed with rects=[]",
+  "handling": "The harness was corrected to create one synthetic plan through the confirmed command API before tab geometry and interaction checks. The complete-word assertion was retained. Product source was unchanged. This failed setup attempt is not promoted to PASS or treated as a CSS defect."
+}

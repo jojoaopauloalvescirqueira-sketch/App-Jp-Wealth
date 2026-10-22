@@ -1,0 +1,41 @@
+{
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "1e293bdb463d9bc1c3e8ce5fd0be858c0ab362876dc6b05fe8fdf63b325199a7",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "tools/planning_monthly_inline_test.py": "bc9f8033809299166db63cfd00b109b6de48ad8632d52441aeeda2b4d85fea95"
+  },
+  "cases": [
+    {
+      "disposition": "cancel",
+      "identity": {
+        "selected_month": "2026-09",
+        "upper_action_key": "finalize:planning_account_18cf1b4d-46c4-4c12-b36f-2b75d452d072:2026-09:",
+        "visible_label": "set. de 2026"
+      },
+      "writes": 0,
+      "PASS": true
+    },
+    {
+      "disposition": "Escape",
+      "identity": {
+        "selected_month": "2026-09",
+        "upper_action_key": "finalize:planning_account_99efebb3-3f4d-40a6-8227-af908acff751:2026-09:",
+        "visible_label": "set. de 2026"
+      },
+      "writes": 0,
+      "PASS": true
+    },
+    {
+      "disposition": "save",
+      "identity": {
+        "selected_month": "2026-09",
+        "upper_action_key": "finalize:planning_account_fb264ae4-5eed-4c64-ae96-b89b1706f0c8:2026-09:",
+        "visible_label": "set. de 2026"
+      },
+      "writes": 1,
+      "PASS": true
+    }
+  ],
+  "source_unchanged": true,
+  "classification": "PASS"
+}

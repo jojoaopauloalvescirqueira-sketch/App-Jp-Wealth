@@ -1,0 +1,51 @@
+{
+  "command": "Existing tools/time_twins_browser_test.py run(), import wrapper only sets ARTIFACTS destination; no test filtering, edits, retries or timeout changes",
+  "started_at": "2026-10-21T16:52:40.945112+00:00",
+  "finished_at": "2026-10-21T16:53:21.252875+00:00",
+  "duration_seconds": 40.307,
+  "exit_code": 0,
+  "classification": "PASS",
+  "test_sha256_before": "32168849f9721083bb396c6af63b1f812accddbc79b43ccf7a1250ea79f9ad42",
+  "test_sha256_after": "32168849f9721083bb396c6af63b1f812accddbc79b43ccf7a1250ea79f9ad42",
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1.log",
+  "artifact_directory": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1",
+  "suite_result": {
+    "suite": "time_twins_browser_standalone",
+    "passed": 33,
+    "failed": 0,
+    "failures": []
+  },
+  "test_invocation_changes": [
+    "module.ARTIFACTS redirected to authorized triage directory only"
+  ],
+  "interpretation": "The exact unfiltered standalone suite passed once. This does not erase or reclassify the original failed FULL command, establish flakiness, or prove the historical root cause.",
+  "screenshots": [
+    {
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1/task-2-desktop-light.png",
+      "scope": "Existing suite screenshots from successful focal execution, not the original failure or WFR-02 failing stage"
+    },
+    {
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1/task-2-refinement-entry-desktop.png",
+      "scope": "Existing suite screenshots from successful focal execution, not the original failure or WFR-02 failing stage"
+    },
+    {
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1/task-2-desktop-dark.png",
+      "scope": "Existing suite screenshots from successful focal execution, not the original failure or WFR-02 failing stage"
+    },
+    {
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1/task-2-refinement-entry-mobile.png",
+      "scope": "Existing suite screenshots from successful focal execution, not the original failure or WFR-02 failing stage"
+    },
+    {
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/planning-proportions-20261021/twins-triage/standalone-1/task-2-mobile.png",
+      "scope": "Existing suite screenshots from successful focal execution, not the original failure or WFR-02 failing stage"
+    }
+  ],
+  "log_sha256": "a1010642671ff02957c281ee9348c63902c07cc429b5e564c8bd8517be38372c",
+  "wrapper_bytecode_output": {
+    "created_by_this_wrapper_at": "2026-10-21T16:52:40Z",
+    "relocated_from": "tools/__pycache__/time_twins_browser_test.cpython-312.pyc",
+    "retained_at": ".superpowers/sdd/planning-proportions-20261021/twins-triage/time_twins_browser_test.cpython-312.pyc",
+    "sha256": "e41799fe98ea343a159e053a4b8722b05b46936c45bbbe4c1280b664f80a561b"
+  }
+}

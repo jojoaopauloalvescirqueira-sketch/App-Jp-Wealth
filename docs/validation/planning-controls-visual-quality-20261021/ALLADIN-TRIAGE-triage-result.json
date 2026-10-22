@@ -1,0 +1,67 @@
+{
+  "result": "PRODUCT_FAIL",
+  "causal_diagnosis": "Historical build initial navigation load wait timed out; underlying cause unestablished, not reproduced",
+  "full_attempt": {
+    "started_at": "2026-10-21T17:23:05-03:00",
+    "finished_at": "2026-10-21T18:16:48-03:00",
+    "check": {
+      "name": "alladin-foundation",
+      "command": "/private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3 tools/alladin_foundation_test.py",
+      "result": "PRODUCT_FAIL",
+      "returncode": 1,
+      "duration_seconds": 25.769,
+      "output_tail": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:89: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(directory)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:89: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(directory)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:769: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(tmp)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:882: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(tmp)\n/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/alladin_foundation_test.py:1024: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n  tf.extractall(tmp)\nalladin_foundation_test FALHOU\n - F: excecao na sonda — Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:65066/index.html\", waiting until \"load\"\n\n"
+    }
+  },
+  "targeted_original_f": {
+    "scope": "Exact original caso_f AST function; observers only, all original boot/timeout/assertions preserved",
+    "source_sha256": "0a1c18ae2d2a0033d4f7aad6f205a7c7b3b95a2d805f72677f5be42f3221528a",
+    "historical_build": "fc2973134cc72f9e17a747f9299f3979461d8bc8",
+    "failures": [],
+    "not_run": [],
+    "original_lines": [
+      289,
+      330
+    ],
+    "result": "PASS",
+    "duration_seconds": 2.023
+  },
+  "targeted_network": {
+    "requests": 176,
+    "responses": 176,
+    "finished": 176,
+    "failed": 0,
+    "pageerrors": 0,
+    "loads": 2,
+    "request_types": {
+      "document": 2,
+      "stylesheet": 2,
+      "script": 150,
+      "image": 4,
+      "fetch": 18
+    },
+    "external": "Only mocked fetches; no external script/stylesheet/document observed in diagnostic"
+  },
+  "unchanged_full_focal": {
+    "command": "JP_WEALTH_CHROMIUM=<existing Chromium1223> PLAYWRIGHT_NODEJS_PATH=<existing bundled Node> /private/tmp/jpw-pf-default-frozen-runtime-20261017/bin/python3 tools/alladin_foundation_test.py",
+    "actual_exit_code": 0,
+    "result": "PASS",
+    "log": "foundation-focal.log",
+    "final_line": "alladin_foundation_test PASS (A-J + M,P,Q,R,F2,S,T,U,V,V2,W,W2,X,X2: cadeia v1->v6, round-trip completo, fail-closed, rollback pre-Alladin/C1 e mixed-build do S1 sobre v4, carimbos v3->v4, v4->v6 e v5->v6 preservando ledger povoado byte a byte, mixed-build v4<-v5 (FEE) e v5<-v6 (ADJUSTMENT) fechando escrita sem confundir dado futuro com corrupcao, reload, falha parcial, XSS/privacidade, backup)",
+    "timing": {
+      "measurement": "Filesystem log creation to last write, not exact process elapsed time",
+      "log_created_at": "2026-10-21T18:18:10.386099-03:00",
+      "log_last_write_at": "2026-10-21T18:18:37.758597-03:00",
+      "log_write_span_seconds": 27.372,
+      "exact_process_duration_seconds": null
+    }
+  },
+  "frozen_source_mismatches": [],
+  "limits": [
+    "No first-failure trace exists beyond runner output; cannot identify the stuck request or lower-layer cause retrospectively.",
+    "Targeted and focal PASS do not erase failed FULL or substitute a final passing FULL.",
+    "No demonstrated connection to historical W2 reload incident; current F is initial goto of different historical build.",
+    "No source/test/timeout/financial/Git/dependency edits.",
+    "No counterproof is claimed because no causal hypothesis was confirmed."
+  ]
+}

@@ -1,3 +1,31 @@
+# Planejamento independente — 20/10/2026
+
+O candidato atual substitui o planejamento FX por menu principal independente. Contrato vigente: [PLANNING](PLANNING.md). As fotografias abaixo descrevem a implementação anterior, retirada da distribuição ativa; os dados `S.fxPlanning` continuam preservados e exportáveis, sem conversão automática.
+
+## Fluxo atual
+
+As abas são **Comece aqui**, **Consolidado**, **Preenchimento mensal** e **Referência**. No primeiro acesso, sem conta ativa, somente Comece aqui aparece. **Preencher o formulário** abre a sequência de configuração baseada no formulário nativo: ano e mês iniciais, capital inicial em USD, aporte mensal em USD, perfil de risco, custo mensal atual opcional, renda mensal desejada e identificação opcional da conta. A revisão antecede a confirmação; voltar permite corrigir respostas. A liberação do plano depende da gravação confirmada.
+
+Consolidado reúne as contas ou consulta uma conta, com controles próprios de ano da projeção, período do gráfico e modo da tabela. Esses controles não modificam lançamentos. Preenchimento mensal e Referência têm seletores individuais. Referência conserva a projeção inicial; alterar premissas futuras não a substitui.
+
+## Grade mensal atual
+
+Cada plano individual cobre 120 meses consecutivos. A grade reproduz as **18 colunas financeiras D:U** da planilha: Fase, Mês, Saldo inicial (US$), Resultado (%), Situação, Resultado (US$), Resultado (R$), Câmbio (R$/US$), Saque (US$), Aporte (US$), Patrimônio (US$), Patrimônio (R$), Finalizado, Pago no mês (R$), Preço médio (R$/US$), Última cotação (R$/US$), Variação cambial (%) e Custo informado / situação. Na origem, A:C comportam o seletor de conta mesclado; não correspondem a três colunas financeiras adicionais.
+
+A cada bloco de 12 meses do plano, uma linha de fechamento mostra saldo inicial, somas dos resultados e fluxos e patrimônio final do bloco, com as conversões correspondentes. O agrupamento acompanha a fase desde o mês inicial, podendo atravessar dois anos civis. Usa **12 MESES** nesses blocos e **FECHAMENTO** quando o bloco coincide com janeiro a dezembro; não substitui o resumo anual do Consolidado. O percentual de resultado do rodapé permanece vazio.
+
+**Registrar rentabilidade**, **Registrar aporte** e **Registrar saque** conduzem pelas perguntas de mês e valores até a revisão e a confirmação explícita. Rentabilidade registra o resultado total mensal em USD, inclusive negativo ou zero; não inclui aportes e saques. Seu percentual deriva do saldo inicial do mês. Aportes e saques ocorrem no fim do mês e afetam os rendimentos seguintes. Corrigir o resultado substitui seu total anterior, preservando o histórico; corrigir fatos reabre os fechamentos dependentes para nova conferência.
+
+As células azuis de taxa e aporte alteram somente a projeção futura pelos escritores existentes. Taxa vazia usa 0% provisório e conserva a situação pendente; zero explícito é uma premissa distinta. Aporte futuro vazio permanece vazio no registro e na exibição, calculando zero; não equivale visualmente a preencher zero e não cria lançamento. Aportes previstos não confirmados expiram ao fim do mês. **Finalizado = Sim** exige resultado registrado, conferência explícita dos fluxos e continuidade dos fechamentos anteriores; meses futuros não são finalizados.
+
+## Confirmação, reinício e rascunhos
+
+Formulários e consultas de prévia não gravam fatos. Fechar ou cancelar conserva respostas como rascunho da sessão; uma ação recusada não produz mensagem de sucesso nem descarta o rascunho. O Backup Completo pode preservar esses campos como material de trabalho, separado dos lançamentos. Rascunhos importados ficam disponíveis para leitura e cópia, exigindo conferência manual antes de qualquer nova confirmação.
+
+**Reiniciar** apresenta alcance, contas e quantidades afetadas, com ciência e frase de confirmação. O reinício de uma conta arquiva seu plano completo, reaplica as premissas atuais em um novo plano e preserva a referência financeira; a comparação de renda passa a usar os objetivos vigentes no reinício. Reiniciar todas arquiva os planos ativos e deixa a configuração pendente em Comece aqui. Somente a confirmação de um novo formulário reativa a identidade reservada. O comando confirmado é aplicado pelo escritor do documento como um único candidato; cancelar antes da confirmação não modifica os registros. **Iniciar outro plano** permanece uma ação distinta de criação de nova referência, com arquivamento do plano anterior e as verificações de fatos registrados.
+
+## Registro histórico preservado
+
 # Planejamento Patrimonial — edição mensal
 
 Candidate local de 06/10/2026. [Contrato da mudança](../work/CHG-JPW-PLANNING-MONTHLY-20261006.md).

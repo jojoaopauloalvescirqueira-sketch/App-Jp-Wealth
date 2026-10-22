@@ -1,0 +1,19 @@
+{
+  "command": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/full3.json"
+  ],
+  "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "started_at": "2026-10-22T14:34:14.454637+00:00",
+  "log": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/full3.log",
+  "freeze_sha256": "e44b3241a8b5a44b54e630b93611f4281e242102a3dd65c8c119c17616d70f2f",
+  "frozen_before": true,
+  "finished_at": "2026-10-22T15:14:42.743477+00:00",
+  "exit_code": 0,
+  "frozen_after": false,
+  "post_verify_output": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/release_protocol.py\", line 70, in <module>\n    elif sys.argv[1]=='verify':f=verify();print('PASS frozen identities stable',f['build'])\n                                 ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/release_protocol.py\", line 61, in verify\n    assert links()==f['links'],'Symlink inventory drift'\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: Symlink inventory drift\n"
+}

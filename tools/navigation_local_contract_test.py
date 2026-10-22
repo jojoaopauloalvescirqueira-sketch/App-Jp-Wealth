@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """NAV-REF-01: characterize the existing local navigation API, without app boot.
 
-Explicit expectations apply to both baseline and candidate. The entire source is
+Explicit expectations describe CHG-JPW-PLANNING-THREE-TABS-20261020, including aliases to Consolidado.
+The entire source is
 loaded into Chromium with real minimal DOM and synthetic UI surfaces. A spy calls
 the original navApply; no projection helper is exposed or invoked by this test.
 Real renderers, focus and layout preferences need the existing integration tests.
@@ -25,10 +26,17 @@ CASES = [
     ("exec", "motor", "forex-operation", "forex", "forex-operation"),
     ("exec", "accounting", "forex-accounting", "forex", "forex-accounting"),
     ("exec", "history", "forex-history", "forex", "forex-history"),
-    ("fxplan", "overview", "forex-planning", "forex", "forex-planning"),
-    ("fxplan", "planning", "forex-planning", "forex", "forex-planning"),
-    ("fxplan", "actuals", "forex-planning", "forex", "forex-planning"),
-    ("fxplan", "table", "forex-planning", "forex", "forex-planning"),
+    ("fxplan", "overview", "planning", "planning", None),
+    ("fxplan", "planning", "planning", "planning", None),
+    ("fxplan", "actuals", "planning", "planning", None),
+    ("fxplan", "table", "planning", "planning", None),
+    ("fxplan", "reference", "planning", "planning", None),
+    ("fxplan", "accounts", "planning", "planning", None),
+    ("planning", "consolidated", "planning", "planning", None),
+    ("planning", "monthly", "planning", "planning", None),
+    ("planning", "reference", "planning", "planning", None),
+    ("planning", "accounts", "planning", "planning", None),
+    ("planning", "start", "planning", "planning", None),
     ("finpes", "overview", "personal-finance", "personal-finance", None),
     ("finpes", "mensal", None, "personal-finance", None),
     ("finpes", "dividas", None, "personal-finance", None),
@@ -48,6 +56,10 @@ CASES = [
     ("research", "others", "research-others", "research", "research-others"),
 ]
 
+LEGACY_PLANNING_VIEWS = {"overview": "consolidated", "planning": "start",
+                         "actuals": "monthly", "table": "monthly",
+                         "reference": "consolidated", "accounts": "consolidated"}
+
 PRELUDE = r"""
 window.__navTest={events:[],reads:0,denied:[],fault:null};
 function copy(value){return JSON.parse(JSON.stringify(value));}
@@ -56,9 +68,9 @@ function snapshot(){return {current:JPWNavigation.current(),
   screens:[...document.querySelectorAll('#appMain > .screen.active')].map(e=>e.id),
   primary:[...document.querySelectorAll('#nav > .tab.active')].map(e=>e.dataset.primary),
   aria:[...document.querySelectorAll('#nav > .tab[aria-current="page"]')].map(e=>e.dataset.primary)};}
-for(const [id,name] of Object.entries({exec:'JPWExec',finpes:'JPWFin',fxplan:'JPWFx',research:'JPWResearch',tools:'JPWTools'})){
+for(const [id,name] of Object.entries({exec:'JPWExec',finpes:'JPWFin',planning:'JPWPlanning',research:'JPWResearch',tools:'JPWTools'})){
   const ui={selectView(view){event('select',{surface:id,view,...snapshot()});},
-    getView(){event('getView');return 'overview';}};
+    getView(){event('getView');return 'overview';},deactivate(){}};
   window[name]={get ui(){
     __navTest.reads++; event('resolve',{surface:id});
     if(__navTest.fault==='absent-ui'||(__navTest.fault==='late-ui'&&__navTest.reads===2))return null;
@@ -81,6 +93,7 @@ Object.defineProperty(window,'S',{get(){return forbidden('S');},set(){forbidden(
 Object.defineProperty(window,'localStorage',{get(){return forbidden('localStorage');}});
 Object.defineProperty(window,'sessionStorage',{get(){return forbidden('sessionStorage');}});
 window.save=()=>forbidden('save');
+Object.defineProperty(window,'JPWFx',{get(){return forbidden('JPWFx');}});
 """
 
 SPY = r"""
@@ -104,6 +117,10 @@ window.__exercise=(surface,view)=>{
 
 def plan_for(case):
     surface, view, canonical, primary, child = case
+    if surface == "fxplan":
+        surface, view = "planning", LEGACY_PLANNING_VIEWS[view]
+    if surface == "planning" and view in ("reference", "accounts"):
+        view = "consolidated"
     if surface == "exec" and view == "overview":
         return dict(accepted=True,requested="exec:overview",source="local",canonical=canonical,primary=primary,child=child,screen="fxconsolidated",localView=None,action="context")
     if surface == "exec" and view == "motor":
@@ -116,6 +133,7 @@ def plan_for(case):
 
 def check_success(result, case):
     plan = plan_for(case)
+    applied_surface = plan["localView"]["surface"] if plan["localView"] else plan["screen"]
     current = {k: v for k, v in plan.items() if k not in ("accepted", "action")}
     events = result["events"]
     assert result["accepted"] is True, result
@@ -132,23 +150,29 @@ def check_success(result, case):
         assert result["reads"] == 1 and result["denied"] == []
         assert result["lastAfter"] == dict(accepted=True,reason=None)
         return
-    assert [e["kind"] for e in events] == [
+    leaves_planning = result["before"]["current"]["primary"] == "planning" and plan["primary"] != "planning"
+    kinds = [
         "resolve", "apply", "resolve", "resolve", "select", "pill",
-        "scroll", "reminder", "sub"] + (["tool"] if case[:2] == ("exec","motor") else []) + ["active"], events
-    assert events[1] == dict(kind="apply", plan=plan, target=case[0],
+        "scroll", "reminder", "sub"] + (["tool"] if case[:2] == ("exec","motor") else []) + ["active"]
+    if leaves_planning:
+        kinds.insert(3, "resolve")  # Access to Planning UI for deactivate().
+        assert events[3] == dict(kind="resolve", surface="planning"), events[3]
+    assert [e["kind"] for e in events] == kinds, events
+    assert events[1] == dict(kind="apply", plan=plan, target=applied_surface,
                              last=dict(accepted=False, reason="not-applied")), events[1]
-    assert result["reads"] == 3
-    assert events[4] == dict(kind="select", surface=case[0], view=plan["localView"]["view"],
-                             current=result["before"]["current"], screens=[case[0]],
-                             primary=[case[3]], aria=[case[3]]), events[4]
-    assert events[5] == dict(kind="pill", current=current)
-    assert events[6] == dict(kind="scroll", options=dict(top=0, behavior="smooth"))
-    assert events[7] == dict(kind="reminder", screen=case[0])
-    assert events[8] == dict(kind="sub", current=current)
+    shift = int(leaves_planning)
+    assert result["reads"] == 3 + shift
+    assert events[4 + shift] == dict(kind="select", surface=applied_surface, view=plan["localView"]["view"],
+                             current=result["before"]["current"], screens=[plan["screen"]],
+                             primary=[case[3]], aria=[case[3]]), events[4 + shift]
+    assert events[5 + shift] == dict(kind="pill", current=current)
+    assert events[6 + shift] == dict(kind="scroll", options=dict(top=0, behavior="smooth"))
+    assert events[7 + shift] == dict(kind="reminder", screen=plan["screen"])
+    assert events[8 + shift] == dict(kind="sub", current=current)
     if case[:2] == ("exec","motor"):
-        assert events[9] == dict(kind="tool",name="motor")
+        assert events[9 + shift] == dict(kind="tool",name="motor")
     assert events[-1] == dict(kind="active", current=current)
-    assert result["after"] == dict(current=current, screens=[case[0]],
+    assert result["after"] == dict(current=current, screens=[plan["screen"]],
                                     primary=[case[3]], aria=[case[3]])
     assert result["lastAfter"] == dict(accepted=True, reason=None)
     assert result["denied"] == []
@@ -177,9 +201,9 @@ def main():
             page.on("console", lambda message: failures.append(f"console: {message.text}")
                     if message.type == "error" else None)
             tabs = "".join(f'<button class="tab" data-primary="{p}" data-route="{p}">{p}</button>'
-                           for p in ("dashboard", "forex", "personal-finance", "research", "alladin", "tools"))
+                           for p in ("dashboard", "research", "forex", "planning", "personal-finance", "alladin", "tools"))
             screens = "".join(f'<section class="screen{a}" id="{s}"><h1>{s}</h1></section>'
-                              for s, a in [("dash", " active"), ("exec", ""), ("fxplan", ""),
+                              for s, a in [("dash", " active"), ("exec", ""), ("planning", ""),
                                            ("finpes", ""), ("research", ""), ("contab", ""),
                                            ("alladin", ""), ("check", ""), ("contas", ""), ("fxconsolidated", ""), ("tools", "")])
             page.set_content(f'<nav id="nav">{tabs}</nav><main id="appMain">{screens}</main>')
@@ -247,7 +271,8 @@ def main():
 
         negatives = [("unknown", "overview"), ("alladin", "overview"), (None, "overview"),
                      ("exec", "unknown"), ("exec", None), ("exec", ""), ("exec", 0),
-                     ("exec", "@current"), ("finpes", "panel"), ("research", "overview"), ("tools", "pivots")]
+                     ("exec", "@current"), ("finpes", "panel"), ("research", "overview"), ("tools", "pivots"),
+                     ("planning", "overview"), ("planning", None), ("fxplan", "unknown")]
         for surface, view in negatives:
             def negative(surface=surface, view=view):
                 p = new_page()
@@ -260,7 +285,7 @@ def main():
                     assert result["after"] == result["before"]
                     assert result["lastAfter"] == result["lastBefore"]
                     assert [e["kind"] for e in result["events"]] == (
-                        ["resolve"] if surface in ("exec", "finpes", "fxplan", "research", "tools") else [])
+                        ["resolve"] if surface in ("exec", "finpes", "fxplan", "planning", "research", "tools") else [])
                     assert not result["denied"]
                 finally:
                     p.close()

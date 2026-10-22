@@ -1,0 +1,22 @@
+{
+  "classification": "BASELINE_LIMITATION",
+  "test": "tools/agent_instruction_structure_test.py (default historical-inline mode)",
+  "current_failures": [
+    "CHG/CTX root mismatch",
+    "CURRENT-STATE requires one full Source revision"
+  ],
+  "baseline_build": "09d53f0be43dce10",
+  "baseline_inline_change_id": "CHG-JPW-CONSOLIDACAO-INTEGRAL-CONTEXT-20261018",
+  "baseline_inline_root": "/private/tmp/jpw-stoikus-installer-20261014",
+  "baseline_source_revisions": [
+    "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+    "bf0b1e8a882c9cdf880129f68f7c111e06e6f0c4"
+  ],
+  "current_same_historical_revisions": true,
+  "current_scope": "Presentation contract is approved in dedicated CHG; historical inline source and both Source revisions preserved verbatim. No instruction/authority mutation.",
+  "action": "Preserve and report default-mode structural limitation, already present in baseline. No change to test or historical authority. Extra check is outside FULL95.",
+  "additional_checks": {
+    "planning-distribution-postbuild": "PASS exit0, modular file / portable / HTTP / PWA offline",
+    "jp-engineering-integration": "PASS exit0,39 factual regression entries"
+  }
+}

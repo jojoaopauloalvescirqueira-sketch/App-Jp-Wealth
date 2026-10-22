@@ -1,0 +1,198 @@
+{
+  "candidate_build": "004d0c6286d5a3d4",
+  "checked_at": "2026-10-22T03:04:02.805398+00:00",
+  "presentation_sources": {
+    "src/js/30-accounting/06-planning/03-ui.js": "1e293bdb463d9bc1c3e8ce5fd0be858c0ab362876dc6b05fe8fdf63b325199a7",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37"
+  },
+  "cases": [
+    {
+      "observed": {
+        "width": 977.625,
+        "rows": [
+          {
+            "month": "2026-08",
+            "height": 53,
+            "state": "✓ Finalizado",
+            "bg": "rgb(246, 247, 249)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-09",
+            "height": 53,
+            "state": "Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-10",
+            "height": 53,
+            "state": "Em andamento",
+            "bg": "rgba(0, 104, 214, 0.08)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-11",
+            "height": 53,
+            "state": "Projetado · Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-12",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-01",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-02",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-03",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          }
+        ],
+        "repeatedLabels": 0,
+        "viewport": 1440,
+        "fixture": {
+          "id": "planning_account_44766f09-d1ff-42b7-b563-4331e1665d33",
+          "closed": "planning_account_d387f242-2f04-4a7d-8d17-258ac5ab30ce",
+          "large": "planning_account_a51ec61c-33b2-4c72-88a3-92ee238ae726",
+          "future": "planning_account_ec2a97f4-bfe6-4e50-ae04-e9eefb3c458b",
+          "start": "2026-08",
+          "pending": "2026-09",
+          "today": "2026-10",
+          "blank": "2026-11",
+          "zero": "2026-12",
+          "negative": "2027-01"
+        }
+      },
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      },
+      "financial_unchanged": true,
+      "editor_review": {
+        "observed": {
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "editors": 1,
+          "financial_confirmation_not_activated": true
+        },
+        "real_delegate_calls": {
+          "writer_calls": [],
+          "command_calls": []
+        },
+        "financial_unchanged": true
+      }
+    },
+    {
+      "observed": {
+        "width": 298,
+        "rows": [
+          {
+            "month": "2026-08",
+            "height": 67.328125,
+            "state": "✓ Finalizado",
+            "bg": "rgb(246, 247, 249)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-09",
+            "height": 53,
+            "state": "Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-10",
+            "height": 61.1875,
+            "state": "Em andamento",
+            "bg": "rgba(0, 104, 214, 0.08)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-11",
+            "height": 61.1875,
+            "state": "Projetado · Pendente",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2026-12",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-01",
+            "height": 67.328125,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-02",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          },
+          {
+            "month": "2027-03",
+            "height": 53,
+            "state": "Projetado",
+            "bg": "rgba(0, 0, 0, 0)",
+            "editableFields": 0
+          }
+        ],
+        "repeatedLabels": 0,
+        "viewport": 390,
+        "fixture": {
+          "id": "planning_account_b8b773a7-cf66-445a-ac68-e3617ae48f27",
+          "closed": "planning_account_483c9543-97f2-4e95-ab8e-488019ab06d0",
+          "large": "planning_account_dcd535ad-c242-483e-9e7b-70f37f36f55c",
+          "future": "planning_account_841c5142-9ab6-4aa0-82e6-c7711fd9b925",
+          "start": "2026-08",
+          "pending": "2026-09",
+          "today": "2026-10",
+          "blank": "2026-11",
+          "zero": "2026-12",
+          "negative": "2027-01"
+        }
+      },
+      "real_delegate_calls": {
+        "writer_calls": [],
+        "command_calls": []
+      },
+      "financial_unchanged": true,
+      "editor_review": {
+        "observed": {
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "editors": 1,
+          "financial_confirmation_not_activated": true
+        },
+        "real_delegate_calls": {
+          "writer_calls": [],
+          "command_calls": []
+        },
+        "financial_unchanged": true
+      }
+    }
+  ]
+}

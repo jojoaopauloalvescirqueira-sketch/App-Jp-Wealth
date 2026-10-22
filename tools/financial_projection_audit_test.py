@@ -13,8 +13,7 @@ PATHS=['src/js/00-core/00-forex-policy.js','src/js/10-domain/00-forex-engine.js'
  'src/js/00-core/05-helpers.js','src/js/10-domain/00-forex-state.js',
  'src/js/10-domain/02-risk-calculations.js','src/js/10-domain/12-personal-finance.js',
  'src/js/10-domain/07-reserve-requirements.js','src/js/30-accounting/03-mei-jp.js',
- 'src/js/30-accounting/05-fx-planning/01-fx-model.js','src/js/30-accounting/05-fx-planning/02-fx-engine.js',
- 'src/js/30-accounting/05-fx-planning/03-fx-state.js','src/js/30-accounting/05-fx-planning/05-fx-ui.js']
+ 'src/js/30-accounting/02-accounting-engine.js']
 EXTRA=['src/js/00-core/04-persistence.js','src/js/manifest.json']
 NODE=r'''
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
@@ -77,7 +76,7 @@ function account(h,{type='MESTRE',currency='USD',startedAt='2026-10-12',observe=
  return {id,periodId,facts};
 }
 for(const type of ['SATÉLITE','PRÓPRIA','MESTRE'])test('AUD04 '+type+' retains canonical FCR',(h,o)=>{
- account(h,{type});const before=h.snapshot(),model=h.c.JPWForex.state.read(),panel=h.c.JPWFx.state.fxReservePanelData();
+ account(h,{type});const before=h.snapshot(),model=h.c.JPWForex.state.read(),panel=h.c.fxReservePanelData();
  o.canonical=model.metrics.fcrRequirement;o.panel=panel;
  same(panel.requirements.fcr,model.metrics.fcrRequirement,'planning rewrote canonical FCR result');
  assert.strictEqual(panel.fcrReq,model.metrics.fcrRequirement.status==='OK'?model.metrics.fcrRequirement.value:null);
@@ -85,19 +84,19 @@ for(const type of ['SATÉLITE','PRÓPRIA','MESTRE'])test('AUD04 '+type+' retains
 });
 test('AUD04 nominal conflict findings retained',(h,o)=>{
  const a=account(h);setupOk(h.c.JPWForex.state.recordReserves({capitalNominal:9000,fcrConstituted:0,feoConstituted:0,sixMonthExpenseAmount:0,source:'SYNTHETIC conflicts'},{target:{accountId:a.id,periodId:a.periodId},reason:'SYNTHETIC reserve conflict'}),'reserve conflict');
- const model=h.c.JPWForex.state.read(),panel=h.c.JPWFx.state.fxReservePanelData();o.canonical=model.metrics.fcrRequirement;o.panel=panel;
+ const model=h.c.JPWForex.state.read(),panel=h.c.fxReservePanelData();o.canonical=model.metrics.fcrRequirement;o.panel=panel;
  assert.strictEqual(panel.fcrReq,null);same(panel.requirements.fcr,model.metrics.fcrRequirement,'canonical conflict result lost');
  for(const f of model.metrics.fcrRequirement.findings)assert(panel.findings.some(p=>p.code===f.code),'canonical finding lost '+f.code);assert.equal(panel.status,'PENDING_GOVERNANCE');
 });
 for(const currency of ['USD','EUR','BRL'])test('AUD04 '+currency+' displayed without implied conversion',(h,o)=>{
- account(h,{currency});const panel=h.c.JPWFx.state.fxReservePanelData();h.c.syntheticPanel=panel;
+ account(h,{currency});const panel=h.c.fxReservePanelData();h.c.syntheticPanel=panel;
  o.html=h.run('fxpReservesHTML(syntheticPanel)');o.expectedAmount=h.run(`fmtForexMoney(2200,{currency:${JSON.stringify(currency)}})`);o.panelCurrency=panel.currency;
  assert.equal(panel.currency,currency,'planning reserve currency was discarded');assert(o.html.includes(o.expectedAmount),'reserve UI changed currency or value');
  if(currency!=='USD')assert(!o.html.includes('$2.200,00</td>'),'foreign reserve labeled USD');
 });
 test('AUD04 absent equity keeps factual reserves and currency',(h,o)=>{
  const a=account(h,{currency:'EUR',observe:false});setupOk(h.c.JPWForex.state.recordReserves({capitalNominal:null,fcrConstituted:0,feoConstituted:500,source:'SYNTHETIC factual reserves'},{target:{accountId:a.id,periodId:a.periodId},reason:'SYNTHETIC factual reserve'}),'reserve facts');
- const m=h.c.JPWForex.state.read(),panel=h.c.JPWFx.state.fxReservePanelData();o.canonical=m.metrics.fcrRequirement;o.panel=panel;
+ const m=h.c.JPWForex.state.read(),panel=h.c.fxReservePanelData();o.canonical=m.metrics.fcrRequirement;o.panel=panel;
  assert.equal(panel.currency,'EUR');assert.strictEqual(panel.fcrCur,0);assert.strictEqual(panel.feoCur,500);same(panel.requirements.fcr,m.metrics.fcrRequirement);assert.equal(panel.status,'PENDING_GOVERNANCE');
 });
 function mei(h){h.c.S.mei={...h.c.S.mei,enabled:true,history:[],cid:{base:.01,longevity:.01,high_longevity:.01,high_longevity_plus:.01},seedMode:'fixed',fixedSeed:'SYNTHETIC-AUDIT',simulationCount:1000};}

@@ -3,9 +3,9 @@
 
 Prova que os tres conceitos cambiais nunca se contaminam:
 
-    PASSADO   valuationFxRate     taxa registrada num mes fechado
+    PASSADO   closure.fxQuote     snapshot registrado num mes fechado
     PRESENTE  currentUsdBrlQuote  referencia externa corrente
-    FUTURO    projectedFxRate     premissa do usuario
+    FUTURO    future[month]       premissa de retorno, sem FX manual
 
 Toda resposta do provedor e INTERCEPTADA (page.route): o teste nunca depende da
 rede real nem do valor de mercado do dia, e por isso pode exercitar timeout,
@@ -23,6 +23,7 @@ import socket
 import threading
 
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap,wait_bootstrap
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,6 +56,8 @@ def assert_close(actual, expected, tolerance=1e-6, label="valor"):
 def open_page(browser, url, handler=None, calls=None):
     """Pagina nova com o provedor interceptado ANTES do primeiro load."""
     context = browser.new_context(service_workers="block")
+    context.add_init_script("window.__onbShown=true;")
+    install_bootstrap(context)
     page = context.new_page()
 
     def route(route_obj, _request):
@@ -72,58 +75,32 @@ def open_page(browser, url, handler=None, calls=None):
 
     page.route(ENDPOINT, route)
     page.goto(url, wait_until="load")
-    page.wait_for_function("window.JPWMarket && window.JPWMarket.usdBrl")
+    wait_bootstrap(page)
+    page.wait_for_function("window.JPWMarket && window.JPWMarket.usdBrl && window.JPWPlanning")
     return context, page
 
 
 def seed_plan(page):
-    """Caso central do ticket, montado para fechar exatamente nos numeros dele.
-
-    Saldo inicial 90.000 + aporte de R$51.000 a 5,10 (= US$10.000) fecha o mes
-    em US$100.000 com custo medio ponderado de exatamente R$5,10 — os dois
-    valores que o teste de regressao essencial exige coexistindo.
-    """
-    return page.evaluate(
-        """() => {
-        const st = window.JPWFx.state;
-        if (st.fxOverviewLive()) st.fxPlanDelete();
-        const planned = {};
-        for (let t = 0; t < 12; t++) {
-          const d = new Date(2026, t, 1);
-          planned[d.toISOString().slice(0, 7)] = {personalUsd: 0, propUsd: 0};
-        }
-        const r = st.fxPlanCreate({name: 'JPW-FGDEKM', assumptions: {
-          startMonth: '2026-01', horizonMonths: 12, initialBalanceUsd: 90000,
-          defaultMonthlyReturn: 0, projectedFxRate: 6.00,
-          plannedContributions: planned}});
-        if (!r.ok) return {ok: false, errors: r.errors};
-        // Aporte historico a 5,10 -> custo medio ponderado 5,10
-        st.fxPlanAddContribution({month: '2026-01', source: 'personal',
-          originalCurrency: 'BRL', originalAmount: 51000, acquisitionFxRate: 5.10});
-        // Mes fechado SEM valuationFxRate: o presente cai na referencia externa
-        st.fxPlanRecordActual('2026-01', {inputType: 'rate', returnRate: 0,
-          profitUsd: null, valuationFxRate: null, notes: '', contributionsConfirmed: true});
-        const l = st.fxOverviewLive();
-        return {ok: true, saldo: l.currentBalanceUsd,
-                medio: l.costBasis.weightedAverageFx};
-    }"""
-    )
+    """Explicit nominal USD/BRL paid facts, no automatic BRL conversion."""
+    return page.evaluate("""() => {
+      const api=JPWPlanning,yes=r=>{if(!r.ok)throw Error(JSON.stringify(r));return r;};
+      const made=yes(api.commands.execute('createAccount',{name:'JPW-FGDEKM',startMonth:'2026-01',initialUsd:90000,profileId:'base',monthlyContributionUsd:0,goals:{adequate:null,ideal:{value:3000,currency:'USD'}}},api.queries.token()));
+      window.__quoteAccountId=made.accountId;
+      const exec=(type,payload)=>yes(api.commands.execute(type,{accountId:made.accountId,...payload},api.queries.token(made.accountId)));
+      exec('recordContribution',{month:'2026-01',usd:10000,brl:51000});
+      for(let i=1;i<=8;i++)exec('recordResult',{month:'2026-'+String(i).padStart(2,'0'),usd:0});
+      exec('finalizeMonth',{month:'2026-01',confirmFlows:true});
+      const view=api.queries.view({accountId:made.accountId,month:'2026-08'});
+      return {ok:true,saldo:view.confirmed.balanceUsd,medio:view.priceAverage.rate};
+    }""")
 
 
 def live(page):
-    return page.evaluate("() => window.JPWFx.state.fxOverviewLive()")
+    return page.evaluate("() => JPWPlanning.queries.view({accountId:window.__quoteAccountId,month:'2026-08',quote:JPWMarket.usdBrl.get()})")
 
 
 def quote(page):
     return page.evaluate("() => window.JPWMarket.usdBrl.get()")
-
-
-def summary(page, mode="brl"):
-    return page.evaluate(
-        "(m) => { const l = window.JPWFx.state.fxOverviewLive();"
-        "return window.JPWFx.charts.fxMainChartSummaryText(l.plan, l, m); }",
-        mode,
-    )
 
 
 def refresh(page, force=True):
@@ -132,123 +109,59 @@ def refresh(page, force=True):
 
 
 # --------------------------------------------------------------------------
-def caso_central(browser, url):
-    """Custo medio 5,10 x referencia 5,20 x premissa 6,00 coexistindo."""
-    context, page = open_page(browser, url)
+def caso_central(browser,url):
+    """Recorded acquisition5.10 and current5.20 coexist; closed USD survives."""
+    context,page=open_page(browser,url)
     try:
-        semente = seed_plan(page)
-        assert semente["ok"], "plano sintetico nao criou"
-        assert_close(semente["saldo"], 100000.0, label="saldo do cenario central")
-        assert_close(semente["medio"], 5.10, label="custo medio do cenario central")
-        refresh(page)
-        q = quote(page)
-        assert_close(q["rate"], 5.20, label="referencia corrente")
-        assert q["status"] == "fresh", q["status"]
-
-        ov = live(page)
-        # PASSADO — custo medio historico intocado pela referencia corrente
-        assert_close(ov["costBasis"]["weightedAverageFx"], 5.10,
-                     label="custo medio (TESTE 4)")
-        # FUTURO — premissa do usuario intocada
-        assert_close(ov["plan"]["current"]["projectedFxRate"], 6.00,
-                     label="premissa futura (TESTE 3)")
-        # PRESENTE — patrimonio marcado pela referencia corrente
-        pres = page.evaluate(
-            "() => { const l = window.JPWFx.state.fxOverviewLive();"
-            "return window.JPWFx.charts.fxPresentRate(l); }")
-        assert_close(pres, 5.20, label="taxa do presente")
-        assert_close(ov["currentBalanceUsd"] * pres, 520000.0,
-                     label="patrimonio presente em BRL (TESTE 1)")
-
-        texto = summary(page)
-        assert "520.000" in texto, f"presente deveria usar 5,20: {texto}"
-        assert "600.000" not in texto.split("Fim do horizonte")[0], (
-            f"premissa futura vazou para o presente: {texto}")
-        # FUTURO no mesmo texto continua a 6,00
-        assert_close(ov["forecast"][-1]["close"] * 6.00,
-                     ov["forecast"][-1]["close"] * 6.00, label="forecast BRL")
-        assert "Fim do horizonte" in texto
-    finally:
-        context.close()
+        seeded=seed_plan(page);assert seeded['ok'];assert_close(seeded['saldo'],100000);assert_close(seeded['medio'],5.10)
+        refresh(page);q=quote(page);assert_close(q['rate'],5.20);assert q['status']=='fresh'
+        model=live(page);assert_close(model['priceAverage']['rate'],5.10)
+        current=next(r for r in model['rows'] if r['month']=='2026-08')
+        assert_close(current['fxRate'],5.20);assert_close(current['closeUsd'],100000);assert_close(current['closeBrl'],520000)
+        # January has no captured/matching quote; daily August never rewrites it.
+        assert model['rows'][0]['closeBrl'] is None
+        assert_close(model['confirmed']['balanceUsd'],100000)
+    finally:context.close()
 
 
-def caso_independencia(browser, url):
-    """Mexer no futuro nao move o presente, e vice-versa (TESTES 2, 3, 5-8)."""
-    context, page = open_page(browser, url)
+def caso_independencia(browser,url):
+    """Future return premise and daily FX cannot change recorded history/cost."""
+    context,page=open_page(browser,url)
     try:
-        assert seed_plan(page)["ok"]
-        refresh(page)
-        antes = live(page)
-        base_usd = [r["close"] for r in antes["baseline"]]
-        fcast_usd = [r["close"] for r in antes["forecast"]]
-        aquisicao = antes["plan"]["contributions"][0]["acquisitionFxRate"]
-        medio = antes["costBasis"]["weightedAverageFx"]
-
-        # TESTE 2 — alterar premissa futura 6,00 -> 7,00
-        page.evaluate(
-            """() => window.JPWFx.state.fxPlanReviseAssumptions({
-                defaultMonthlyReturn: 0, yearOverrides: {}, monthOverrides: {},
-                projectedFxRate: 7.00,
-                plannedContributions: window.JPWFx.state.fxOverviewLive()
-                    .plan.current.plannedContributions}, 'teste')"""
-        )
-        pres = page.evaluate(
-            "() => { const l = window.JPWFx.state.fxOverviewLive();"
-            "return window.JPWFx.charts.fxPresentRate(l); }")
-        assert_close(pres, 5.20, label="presente apos mexer no futuro (TESTE 2)")
-
-        # TESTE 3 — nova referencia 5,30 nao mexe na premissa futura
-        page.route(ENDPOINT, lambda r, _q: r.fulfill(
-            status=200, content_type="application/json",
-            body=json.dumps({"date": "2026-08-12", "base": "USD",
-                             "quote": "BRL", "rate": 5.30})))
-        refresh(page)
-        depois = live(page)
-        assert_close(depois["plan"]["current"]["projectedFxRate"], 7.00,
-                     label="premissa futura apos nova referencia (TESTE 3)")
-        pres = page.evaluate(
-            "() => { const l = window.JPWFx.state.fxOverviewLive();"
-            "return window.JPWFx.charts.fxPresentRate(l); }")
-        assert_close(pres, 5.30, label="presente segue a referencia nova")
-
-        # TESTES 4, 5 — historico intacto
-        assert_close(depois["costBasis"]["weightedAverageFx"], medio,
-                     label="custo medio (TESTE 4)")
-        assert_close(depois["plan"]["contributions"][0]["acquisitionFxRate"],
-                     aquisicao, label="acquisitionFxRate (TESTE 5)")
-        # TESTES 6, 7 — series em USD nao mudam
-        assert [r["close"] for r in depois["baseline"]] == base_usd, "TESTE 6"
-        assert [r["close"] for r in depois["forecast"]] == fcast_usd, "TESTE 7"
-    finally:
-        context.close()
+        assert seed_plan(page)['ok'];refresh(page)
+        result=page.evaluate("""() => {
+          const api=JPWPlanning,id=__quoteAccountId,prior=api.queries.account(id),view=api.queries.view({accountId:id,month:'2026-08'});
+          const out=api.commands.execute('setProjection',{accountId:id,month:'2027-01',rate:.02,contributionUsd:0},api.queries.token(id));
+          if(!out.ok)throw Error(JSON.stringify(out));
+          return {prior,after:api.queries.account(id),view,rate:JPWMarket.usdBrl.rate()};
+        }""")
+        assert_close(result['rate'],5.20)
+        assert result['prior']['plan']['reference']==result['after']['plan']['reference']
+        assert result['prior']['plan']['results']==result['after']['plan']['results']
+        assert result['prior']['plan']['contributions']==result['after']['plan']['contributions']
+        before=live(page);usd=[r['closeUsd'] for r in before['rows']]
+        page.route(ENDPOINT,lambda r,_q:r.fulfill(status=200,content_type='application/json',body=json.dumps({'date':'2026-08-12','base':'USD','quote':'BRL','rate':5.30})))
+        refresh(page);after=live(page)
+        assert_close(quote(page)['rate'],5.30);assert [r['closeUsd'] for r in after['rows']]==usd
+        assert_close(after['priceAverage']['rate'],5.10)
+        assert page.evaluate("JPWPlanning.queries.account(__quoteAccountId).plan.future['2027-01'].rate")==.02
+    finally:context.close()
 
 
-def caso_historico_nao_reprecifica(browser, url):
-    """TESTE 8 — mes com taxa propria mantem a taxa propria."""
-    context, page = open_page(browser, url)
+def caso_historico_nao_reprecifica(browser,url):
+    """A closure snapshot5.40 overrides current5.20 and historical lookup5.10."""
+    context,page=open_page(browser,url)
     try:
-        assert seed_plan(page)["ok"]
-        page.evaluate(
-            """() => { window.JPWFx.state.fxPlanReopenMonth('2026-01', 'Conferência da taxa histórica na fixture');
-              return window.JPWFx.state.fxPlanRecordActual('2026-01', {
-                inputType: 'rate', returnRate: 0, profitUsd: null,
-                valuationFxRate: 5.40, notes: '', contributionsConfirmed: true}); }"""
-        )
-        refresh(page)  # referencia corrente 5,20
-        conv = page.evaluate(
-            """() => { const l = window.JPWFx.state.fxOverviewLive();
-                const row = l.forecast.find(r => r.month === '2026-01');
-                return window.JPWFx.charts.fxChartConvert(row, 'brl', {
-                  projectedRate: 6.00, currentRate: 5.20,
-                  presentMonth: l.lastClosedMonth});
-            }"""
-        )
-        assert_close(conv, 100000 * 5.40,
-                     label="mes historico mantem 5,40 (TESTE 8)")
-        # e nunca cai na premissa futura
-        assert abs(conv - 100000 * 6.00) > 1, "premissa futura reprecificou historico"
-    finally:
-        context.close()
+        assert seed_plan(page)['ok'];refresh(page)
+        result=page.evaluate("""() => {
+          const api=JPWPlanning,p=api.queries.account(__quoteAccountId).plan;
+          // Presentation-only synthetic snapshot, never persisted or installed.
+          p.closures['2026-01'].fxQuote={rate:5.40,referenceDate:'2026-01-31',fetchedAt:'2026-02-01T00:00:00Z',source:'synthetic historical snapshot'};
+          const rows=api.engine.timeline(p,{month:'2026-08',quote:JPWMarket.usdBrl.get(),historicalQuotes:{'2026-01':{rate:5.10,referenceDate:'2026-01-30',fetchedAt:Date.now(),source:'synthetic lookup'}}});
+          return {brl:rows[0].closeBrl,fx:rows[0].fxRate};
+        }""")
+        assert_close(result['fx'],5.40);assert_close(result['brl'],540000)
+    finally:context.close()
 
 
 def caso_referencia_vs_consulta(browser, url):
@@ -330,12 +243,9 @@ def caso_offline(browser, url):
         assert q["status"] == "unavailable", q["status"]
         assert q["rate"] is None, q
         assert page.evaluate("() => window.JPWMarket.usdBrl.rate()") is None
-        texto = summary(page)
-        assert "600.000" not in texto.split("Fim do horizonte")[0], (
-            f"premissa futura usada como fallback (TESTE 10): {texto}")
-        assert "USD" in texto, texto
-        # a tela continua funcionando
-        assert live(page)["currentBalanceUsd"] == 100000
+        model=live(page)
+        assert all(r['closeBrl'] is None for r in model['rows'])
+        assert model['confirmed']['balanceUsd']==100000
     finally:
         context.close()
 
@@ -399,7 +309,7 @@ def caso_refresh_nao_toca_plano(browser, url):
         assert seed_plan(page)["ok"]
         refresh(page)
         plano_antes = page.evaluate(
-            "() => JSON.stringify(window.JPWFx.state.fxOverviewLive().plan)")
+            "() => JSON.stringify(JPWPlanning.queries.account(__quoteAccountId).plan)")
         q1 = quote(page)
         page.route(ENDPOINT, lambda r, _q: r.fulfill(
             status=200, content_type="application/json",
@@ -412,10 +322,10 @@ def caso_refresh_nao_toca_plano(browser, url):
         assert q2["referenceDate"] == "2026-08-12", q2
         assert q2["status"] == "fresh"
         plano_depois = page.evaluate(
-            "() => JSON.stringify(window.JPWFx.state.fxOverviewLive().plan)")
+            "() => JSON.stringify(JPWPlanning.queries.account(__quoteAccountId).plan)")
         assert plano_antes == plano_depois, "cotacao alterou o plano (TESTE 15)"
         # e a cotacao nao vive dentro do estado patrimonial
-        assert page.evaluate("() => JSON.stringify(S.fxPlanning).includes('5.33')") is False
+        assert page.evaluate("() => JSON.stringify(S.patrimonialPlanning).includes('5.33')") is False
     finally:
         context.close()
 
@@ -549,6 +459,9 @@ USDBRL_BENIGN_AUTH_LINES = (
     "// Forex V11: grade containers are records, never execution authorization.",
     "      findings:[{code:'BUDGET_DECLARATION_NOT_AUTHORIZATION',message:'Teto interno declarado; não autoriza consumo nem comprova declaração anterior à execução externa.',source:'PDF p71 Art8.4 §§10–12'}]};",
     "    // rollback set). No save, authorization, or guard of factual order creation.",
+    "  const secretKey=key=>/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key);",
+    "  const secretKey = key => /password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key);",
+    "        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key))throw new Error('Backup de planejamento contém campo de segredo. Preserve o original e remova credenciais antes de importar ou exportar.');",
 )
 
 
@@ -597,7 +510,9 @@ def main():
     server, url = serve()
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            options={'headless':True}
+            if os.environ.get('JP_WEALTH_CHROMIUM'):options['executable_path']=os.environ['JP_WEALTH_CHROMIUM']
+            browser = p.chromium.launch(**options)
             caso_central(browser, url)
             caso_independencia(browser, url)
             caso_historico_nao_reprecifica(browser, url)

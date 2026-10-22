@@ -1,0 +1,21 @@
+{
+  "result": "INTERRUPTED_INCOMPLETE",
+  "wrapper_actual_exit_code": 1,
+  "runner_subtree_termination_requested": "SIGTERM",
+  "raw_full_artifact_exists": false,
+  "completed_pass_checks": 62,
+  "failure_lines": 0,
+  "reason": "Confirmed inherited P2 Finalizado display/context after cancelled modal; presentation fix selected. No full approval inferred. Default240 independently completedPASS under004d remains finite historical proof.",
+  "artifacts_sha256": {
+    "freeze.json": "f7656b40d6367830a0d64b6826b1e91dafc96f60fbce7f7d0ff97d109d07e668",
+    "full-final-command.json": "7209defc0b36dab354b1e59552bf4428b70b9a298e958a3c0315896ee7a7ba4b",
+    "full-final.log": "077b26b18f19ffc98112c1452cf843c6849e18763540c1ce38dddb3ef980a96e",
+    "full-attempt-2-stop.json": "575338980af5c56554193c317b0213507c5a4712069d1afc28fc0b92812f6188",
+    "FINGERPRINT-INPUTS.json": "bbb61c818161e940b3385c6a6e0252b295a722cce77e9b293c79411c22862cd5",
+    "RUNTIME-INPUTS.json": "554359f5b7e4a2c7511371a107c0397436d58a194ce3b46d2170005316d2c81d",
+    "TESTS-INPUTS.json": "0223ef88dd66f911f966c548308587a7093182f110cc568b1d7c7ba14d0f955e",
+    "RUNNER-INPUTS.json": "be20ef4b1212f8bb1d4bd0879924d21bcf9b8ab4379b6c978e65a330bb38dcf4",
+    "CONTROL-INPUTS.json": "4cf9dd5ce27ed9224f5d98a9dfc457b54b1d496de8b1e96b8e07bf2f16aeb309",
+    "SCOPE.json": "979db3197ae4ca31fd4935cc2f4ca7426f6002f9617fe275956dd04d366b19de"
+  }
+}

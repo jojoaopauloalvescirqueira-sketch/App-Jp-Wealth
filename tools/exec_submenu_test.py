@@ -28,12 +28,11 @@ from notes_launcher_test import launch_options
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-history", "forex-operation", "forex-management-accounts", "forex-accounting", "forex-planning", "forex-reserves"]
-EXPECTED_LABELS = ["Desempenho", "Histórico de operações", "Operação", "Contas e Períodos", "Contabilidade", "Planejamento patrimonial", "Reservas"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-history", "forex-operation", "forex-management-accounts", "forex-accounting", "forex-reserves"]
+EXPECTED_LABELS = ["Desempenho", "Histórico de operações", "Operação", "Contas e Períodos", "Contabilidade", "Reservas"]
 EXPECTED_VIEWS = ["panel", "accounting", "history", "accounts", "motor"]
 EXPECTED_CONTEXT = {
     "forex-management-accounts": ["accounts", "motor"],
-    "forex-planning": ["overview", "planning", "actuals", "table"],
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
@@ -68,7 +67,7 @@ def serve():
 def prepare_page(browser, url, viewport=None):
     context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900})
     context.add_init_script("window.__onbShown=true;")
-    # A passagem pelos seis módulos exige Alladin e PF explicitamente ativos.
+    # A passagem pelos sete módulos exige Alladin e PF explicitamente ativos.
     context.add_init_script("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active','personal-finance':'active'}}));")
     page = context.new_page()
     observed = {"pageerror": [], "console": []}
@@ -671,11 +670,11 @@ def run_motor_migration(page):
 
 
 def run_no_regression(page):
-    """As seis rotas globais ativam seus destinos físicos declarados."""
+    """As sete rotas globais ativam seus destinos físicos declarados."""
     routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
     # A10 changes only the default visual order; exact route/activation checks remain.
-    expected = {"dashboard": "dash", "research-forex": "research", "forex-consolidated": "fxconsolidated",
-                "personal-finance": "finpes", "alladin": "alladin", "tools-calendar": "tools"}
+    expected = {"dashboard": "dash", "research-forex": "research", "planning": "planning",
+                "forex-consolidated": "fxconsolidated", "personal-finance": "finpes", "alladin": "alladin", "tools-calendar": "tools"}
     assert routes == list(expected), f"rotas globais mudaram: {routes}"
     for route, screen in expected.items():
         parent=page.locator(f'#nav .tab[data-route="{route}"]')

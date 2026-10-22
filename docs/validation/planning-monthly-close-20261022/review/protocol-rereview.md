@@ -1,0 +1,9 @@
+# Protocol rereview before FULL
+
+Read revised release_protocol.py/run_logged.py in full and executed scope command: PASS, 2088 regular baseline files unchanged, 61 old regression objects preserved, query-external state bytes and96 runner bytes preserved. Independently compared eight archive entries to baseline SHA256: all match. Details and current identities in preservation-rereview.json; runtime278 visual IDs/96 runner checks.
+
+Previously identified command/cwd/freeze/time/source identity gaps now have explicit checks. Wrapper performs real before/after verification and refuses replacing an existing command receipt. Baseline symlinks are validated and frozen; archive hash joins frozen controls. Main/required_ids now require ordered structural preservation; all old other functions are exact AST. Product state/UI match the independently probed versions. CSS9ea40bc9… adds local closure styles and a finalize-dialog containing-block percentage width/center rule; no tolerance or margin oracle weakening found in this reread.
+
+One small remaining identity gap: freeze captures current branch/HEAD but does not first require equality to baseline.json branch/HEAD. Verify checks drift from freeze only. Root should assert baseline equality or record explicit live baseline comparison before freeze. Ordered AST subsequence guarantees syntactic inclusion, not semantic non-weakening (an inserted return or added Boolean operand could alter behavior); manual review of actual additive entry delta remains part of evidence and was performed in earlier candidate review. Do not promote the helper into a universal semantic verifier.
+
+Adequate to proceed toward actual FULL once baseline identity is explicitly checked. FULL receipt branch itself is not yet executed and is not declared PASS. No new product defect or self-approved waiver found. Final immutable receipts and human acceptance remain separate gates.

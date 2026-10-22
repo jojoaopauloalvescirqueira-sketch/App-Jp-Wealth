@@ -12,10 +12,10 @@ const sidebarUI = { route:null, pinned:null, preview:null, overlay:false, overla
   suppressed:null, target:null, pointer:null, paintedAt:null, mobile:null, pointerDown:false,
   hoverTimer:null, leaveTimer:null, closeTimer:null };
 const SIDEBAR_TIMING=Object.freeze({open:400,leave:300,motion:180});
-const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','forex-planning','research-forex']);
+const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','research-forex']);
 const SUBMENU_TITLES=Object.freeze({
   exec:'Forex',finpes:'Finanças Pessoais',research:'Research',tools:'Ferramentas e Serviços',
-  'forex-management-accounts':'Contas e Períodos','forex-planning':'Planejamento patrimonial','research-forex':'Forex'
+  'forex-management-accounts':'Contas e Períodos','research-forex':'Forex'
 });
 const NAV_SUBMENU_SURFACES = {
   exec:()=>window.JPWExec&&window.JPWExec.ui,
@@ -453,7 +453,7 @@ function syncForexAdvisory(){
   const slot=document.getElementById('forexAdvisorySlot');
   if(!slot||!window.JPWNavigation)return;
   const current=window.JPWNavigation.current();
-  const active=current.primary==='forex'&&current.screen!=='fxplan';
+  const active=current.primary==='forex';
   slot.hidden=!active;
   const banner=document.getElementById('dgBackupBanner');
   if(!banner)return;
@@ -497,7 +497,7 @@ function syncForexContext(){
   const row=document.getElementById('gdContextRow');
   if(!row||!window.JPWNavigation)return;
   const current=window.JPWNavigation.current();
-  const active=current.primary==='forex'&&current.screen!=='fxplan';
+  const active=current.primary==='forex';
   row.hidden=!active;row.inert=!active;
   if(active&&typeof renderHeaderReadout==='function')renderHeaderReadout();
 }

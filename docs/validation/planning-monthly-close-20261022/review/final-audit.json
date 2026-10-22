@@ -1,0 +1,68 @@
+{
+  "build": "7430aeaf0109dcbe",
+  "product_evidence": "PASS within inspected implementation and executed tests; no universal readiness claim",
+  "frozen_full_acceptance": "BLOCKED",
+  "unresolved_criterion": "Fresh frozen FULL over the complete declared workspace did not pass post-run identity verification",
+  "raw_full": {
+    "checks": 96,
+    "PASS": 96,
+    "gate_exit": 0,
+    "sha256": "df6043ea152e1b875ff4a04e32e280ad2accfbdbe4fd93a6d85439744db8ed72"
+  },
+  "wrapper": {
+    "exit": 1,
+    "frozen_before": true,
+    "frozen_after": false,
+    "command_sha256": "5d41b1ce6560c27b855b873ac2dd9f5adf285ac2249f9b55317474a6db609809"
+  },
+  "visual": {
+    "PASS": 278,
+    "old240_preserved": true,
+    "recorded_source_hashes_match_original_freeze": true,
+    "source_count": 151,
+    "current_source_drift": [
+      "AGENTS.md"
+    ],
+    "sha256": "ce36c685b6a1d0546fd7be6be143e0c0351750f8a184029ef4c9f4d55f43106d"
+  },
+  "identity": {
+    "frozen_regular_inputs": 2114,
+    "unchanged_regular_inputs": 2113,
+    "changed_regular_inputs": {
+      "AGENTS.md": {
+        "frozen": "061c420ac3bfb5d0e9f7357e1c246d1f9e11b7eba7f4a8de4b061f089dd25865",
+        "current": "7a9b8d08e1bca6adc1c366a1872215bf3671aa9f9804cc702cfc94618063225e"
+      }
+    },
+    "private_controls_unchanged": 5,
+    "old_links_unchanged": 8,
+    "external_links": {
+      ".claude/skills/agentic-evolution-governance": "../../skills/agentic-evolution-governance",
+      ".claude/skills/jpw-browser-verification": "../../skills/jpw-browser-verification",
+      ".claude/skills/jpw-change-control": "../../skills/jpw-change-control",
+      ".claude/skills/jpw-data-safety": "../../skills/jpw-data-safety",
+      ".claude/skills/jpw-normative-audit": "../../skills/jpw-normative-audit",
+      ".claude/skills/jpw-post-change-audit": "../../skills/jpw-post-change-audit",
+      ".claude/skills/jpw-preflight": "../../skills/jpw-preflight",
+      ".claude/skills/jpw-security-audit": "../../skills/jpw-security-audit",
+      ".claude/skills/jpw-test-triage": "../../skills/jpw-test-triage",
+      ".claude/skills/repository-architecture": "../../skills/repository-architecture"
+    },
+    "branch": "codex/planejamento-patrimonial-20261020",
+    "head": "ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34",
+    "freeze_sha256": "e44b3241a8b5a44b54e630b93611f4281e242102a3dd65c8c119c17616d70f2f"
+  },
+  "external_origin": "Human confirmation relayed by root: Sim, outra sessão fez esses ajustes",
+  "limits": [
+    "No acceptance of external control-plane changes",
+    "Human visual acceptance pending",
+    "Known inherited PDF/footer and historical Alladin issue remain outside closure correction",
+    "No universal legacy focus or no-bugs claim",
+    "No Git/publication authority or action"
+  ],
+  "historical_attempts": {
+    "FULL1": "Interrupted after identified invalid test stimulus; retained TEST_HARNESS_FAIL evidence",
+    "FULL2": "95 PASS / 1 PRODUCT_FAIL keyword scan; retained raw failure; subsequent comment-only fix",
+    "FULL3": "96 raw PASS; frozen full acceptance BLOCKED"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "src/js/30-accounting/06-planning/01-engine.js": true,
+    "src/js/30-accounting/06-planning/02-state.js": true,
+    "navigation_only_guard_hook": true,
+    "finalize_only_aux_key": true,
+    "css_before_exact_prefix": true,
+    "existing_dialog_command_submit_exact": true
+  },
+  "current_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "eb40224556cd804e5db39a42886b0cdf8513b64d72d41e8932aa5ee687ac31a4",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "src/js/40-app/01-navigation.js": "837f06cfabb8adbacfb1f0196d0d27c1f459e044ea8e65305deadba7d97d953d",
+    "src/js/40-app/07-finalize-session.js": "3c64c799468706964419158b56e46337115fe9a424615ecbf5328c2c5e1ee041",
+    "tools/ui_visual_quality_test.py": "63b98915534bb9081c00645291b72a63d2abe5e9b16f16478befe2a76b3321b5",
+    "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+    "tools/planning_ui_test.py": "495962feeb5122e9f668d671492a169c2333844555edd336e04c94ed153da894",
+    "tools/planning_monthly_inline_test.py": "7dc6987ff8e98eac90342169f70050125500ce987a1250614d909cb87e0a7605",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719"
+  }
+}

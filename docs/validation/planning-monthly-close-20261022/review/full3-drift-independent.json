@@ -1,0 +1,51 @@
+{
+  "regular_drift": {
+    "AGENTS.md": {
+      "frozen": "061c420ac3bfb5d0e9f7357e1c246d1f9e11b7eba7f4a8de4b061f089dd25865",
+      "current": "7a9b8d08e1bca6adc1c366a1872215bf3671aa9f9804cc702cfc94618063225e"
+    }
+  },
+  "agents_mtime_utc": "2026-10-22T15:08:08.925229+00:00",
+  "new_links": {
+    ".claude/skills/repository-architecture": {
+      "target": "../../skills/repository-architecture",
+      "mtime_utc": "2026-10-22T15:10:09.033587+00:00"
+    },
+    ".claude/skills/jpw-data-safety": {
+      "target": "../../skills/jpw-data-safety",
+      "mtime_utc": "2026-10-22T15:10:08.998103+00:00"
+    },
+    ".claude/skills/jpw-security-audit": {
+      "target": "../../skills/jpw-security-audit",
+      "mtime_utc": "2026-10-22T15:10:09.023979+00:00"
+    },
+    ".claude/skills/jpw-change-control": {
+      "target": "../../skills/jpw-change-control",
+      "mtime_utc": "2026-10-22T15:10:08.988402+00:00"
+    },
+    ".claude/skills/jpw-preflight": {
+      "target": "../../skills/jpw-preflight",
+      "mtime_utc": "2026-10-22T15:10:09.017463+00:00"
+    },
+    ".claude/skills/jpw-test-triage": {
+      "target": "../../skills/jpw-test-triage",
+      "mtime_utc": "2026-10-22T15:10:09.029105+00:00"
+    },
+    ".claude/skills/jpw-browser-verification": {
+      "target": "../../skills/jpw-browser-verification",
+      "mtime_utc": "2026-10-22T15:10:08.983670+00:00"
+    },
+    ".claude/skills/jpw-normative-audit": {
+      "target": "../../skills/jpw-normative-audit",
+      "mtime_utc": "2026-10-22T15:10:09.008448+00:00"
+    },
+    ".claude/skills/agentic-evolution-governance": {
+      "target": "../../skills/agentic-evolution-governance",
+      "mtime_utc": "2026-10-22T15:10:08.976142+00:00"
+    },
+    ".claude/skills/jpw-post-change-audit": {
+      "target": "../../skills/jpw-post-change-audit",
+      "mtime_utc": "2026-10-22T15:10:09.013189+00:00"
+    }
+  }
+}

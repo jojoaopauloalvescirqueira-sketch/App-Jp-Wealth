@@ -1,0 +1,28 @@
+{
+  "build": "7430aeaf0109dcbe",
+  "freeze_sha256": "e44b3241a8b5a44b54e630b93611f4281e242102a3dd65c8c119c17616d70f2f",
+  "checks": {
+    "same_input_paths": true,
+    "same_links": true,
+    "all_current_inputs_match": true,
+    "all_current_links_match": true,
+    "all_controls_match": true,
+    "runner_ids_preserved": true,
+    "visual_ids_preserved": true
+  },
+  "changed_regular_inputs_since_FULL2": [
+    "build-id.js",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "src/js/30-accounting/06-planning/03-ui.js",
+    "src/js/manifest.json",
+    "src/vendor/downloads/leverage-daily-source-payload.js",
+    "src/vendor/downloads/leverage-native-kit-payload.js",
+    "src/vendor/downloads/leverage-native-pin-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.json",
+    "src/vendor/downloads/leverage-source-payload.js",
+    "src/vendor/downloads/nocuda-payload.js",
+    "src/vendor/market-hours/runtime-payload.js"
+  ],
+  "scope": "FULL3 pending; identity review only"
+}

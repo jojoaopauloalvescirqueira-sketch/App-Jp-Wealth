@@ -22,7 +22,7 @@ UNKNOWN_KEY = "synthetic.sidebar.unknown"
 UNKNOWN_RAW = '{ "keep" : [1, "opaque", false], "empty": null }\n'
 LAYOUT_RAW = json.dumps(PREF, ensure_ascii=False, indent=1)
 ROUTES = ["dashboard", "forex-overview", "forex-preparation", "forex-account",
-          "forex-operation", "forex-reconciliation", "forex-planning",
+          "forex-operation", "forex-reconciliation", "planning", "forex-planning", "fxplan",
           "personal-finance", "research-forex", "research-stocks-br",
           "research-stocks-global", "research-reits", "research-probability-lab", "research-others", "alladin", "tools-calendar", "tools-nocuda", "tools-minigames"]
 
@@ -32,7 +32,7 @@ def settle(page):
 
 
 def boot(browser, url, preferences=None, width=1440, read_failure=False):
-    # O contrato destes cenários é a navegação dos seis módulos explicitamente ativos.
+    # O contrato destes cenários é a navegação dos sete módulos explicitamente ativos.
     seed = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
             "jpw_module_availability_v1": json.dumps({"schemaVersion": 1, "modules": {"alladin": "active", "personal-finance": "active"}})}
     seed.update(preferences or {})
@@ -91,7 +91,7 @@ def boot(browser, url, preferences=None, width=1440, read_failure=False):
                if route.request.url.startswith(origin + "/")
                else route.fulfill(status=200, content_type="application/json", body="{}"))
     page.goto(url, wait_until="load")
-    page.wait_for_function("window.JPWNavigation && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWResearch?.ui && window.JPWAlladinUI && typeof compute==='function'")
+    page.wait_for_function("window.JPWNavigation && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWPlanning?.ui && window.JPWResearch?.ui && window.JPWAlladinUI && typeof compute==='function'")
     settle(page)
     page.evaluate("() => {window.alert=()=>{}; closeModal();}")
     return context, page, observed
@@ -344,7 +344,7 @@ def run_lifecycle(browser, url, evidence, baseline_url):
         initial_raw = raw_storage(page)
         bindings = binding_snapshot(page)
         for _ in range(4):
-            for route in ["motor", "pivots", "personal-finance", "alladin", "dashboard", "forex-operation"]:
+            for route in ["motor", "pivots", "planning", "forex-planning", "fxplan", "personal-finance", "alladin", "dashboard", "forex-operation"]:
                 go(page, route)
         assert binding_snapshot(page) == bindings, "repeated entry accumulated stable shell listeners"
         assert page.evaluate("JSON.stringify(S)") == initial_state
@@ -357,16 +357,21 @@ def run_lifecycle(browser, url, evidence, baseline_url):
           return ids.filter((id,index)=>ids.indexOf(id)!==index)}""") == []
         assert page.locator("#gdDashMain > [data-layout-card]").count() == 2
         assert page.locator("#fxOverviewWidgets > [data-layout-card]").count() == 4
-        expected_contexts = { "forex-planning": "forex-planning",
-                             "pivots": "research-forex"}
+        expected_contexts = {"pivots": "research-forex"}
         for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Desempenho"]),
                              ("forex-operation", ["Forex", "Operação"]),
-                             ("forex-reconciliation", ["Forex", "Contabilidade"]), ("forex-planning", ["Forex", "Planejamento"]),
+                             ("forex-reconciliation", ["Forex", "Contabilidade"]), ("planning", ["Planejamento"]),
+                             ("forex-planning", ["Planejamento"]), ("fxplan", ["Planejamento"]),
                              ("motor", ["Forex", "Operação"]), ("research-stocks-br", ["Research", "Ações"]),
                              ("pivots", ["Research", "Forex", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:
             go(page, route)
             location = page.locator("#shellLocation").inner_text()
             assert all(word in location for word in words), (route, words, location)
+            if route in {"planning", "forex-planning", "fxplan"}:
+                current = page.evaluate("JPWNavigation.current()")
+                assert (current["primary"], current["canonical"], current["screen"], current["child"]) == ("planning", "planning", "planning", None), current
+                assert current["localView"] == {"surface": "planning", "view": "start"}, current
+                assert "Forex" not in location, (route, location)
             visible_contexts = page.locator('#navLocalSlot [data-nav-context]').evaluate_all("""els=>els
               .filter(el=>el.getBoundingClientRect().width>0 && el.getBoundingClientRect().height>0)
               .map(el=>el.dataset.navContext)""")

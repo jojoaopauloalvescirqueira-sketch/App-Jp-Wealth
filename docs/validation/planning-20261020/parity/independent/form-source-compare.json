@@ -1,0 +1,218 @@
+{
+  "scope": "Original HTML source browser harness compared with real site DOM; Google authentication, Apps Script execution, source FX retrieval and source persistence NOT_RUN. Synthetic callbacks only.",
+  "nativeLiteralSha256": "cc79e59df3814f6e4d1cb91ea82c4e934fecef96a63fbe2557dc7decb2a31d4a",
+  "before": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "cases": [
+    {
+      "name": "Current-cost prediction with ideal income still blank",
+      "original": {
+        "lifeSummary": {
+          "visible": true,
+          "hidden": false,
+          "text": "Para viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês."
+        },
+        "dreamSummary": {
+          "visible": false,
+          "hidden": true,
+          "text": "Preencha o valor e aguarde uma cotação válida para simular."
+        },
+        "assetForecast": {
+          "visible": false,
+          "hidden": true,
+          "text": "Patrimônio estimado para a renda desejada——"
+        },
+        "metaPrevista": {
+          "visible": false,
+          "hidden": false,
+          "text": "—"
+        },
+        "dataPrevista": {
+          "visible": false,
+          "hidden": true,
+          "text": "—"
+        },
+        "costUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 150,00 / mês na simulação"
+        },
+        "sonhoUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": ""
+        },
+        "forecastArea": {
+          "visible": true,
+          "hidden": false,
+          "text": "Sua previsão\ni\nPara viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês.\nPrazo desde o início do plano · Estimativa, sem garantia."
+        }
+      },
+      "site": {
+        "lifeSummary": {
+          "visible": true,
+          "hidden": false,
+          "text": "Para viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês.\nPrazo desde o início do plano · Reinvestimento dos resultados · Estimativa, sem garantia."
+        },
+        "dreamSummary": {
+          "visible": false,
+          "hidden": true,
+          "text": ""
+        },
+        "assetForecast": {
+          "visible": false,
+          "hidden": true,
+          "text": "Patrimônio estimado para a renda desejada——"
+        },
+        "metaPrevista": {
+          "visible": false,
+          "hidden": false,
+          "text": "—"
+        },
+        "dataPrevista": {
+          "visible": false,
+          "hidden": true,
+          "text": "—"
+        },
+        "costUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 150,00 / mês na simulação"
+        },
+        "sonhoUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": ""
+        },
+        "forecastArea": {
+          "visible": true,
+          "hidden": false,
+          "text": "Sua previsão\ni\nPara viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês.\nPrazo desde o início do plano · Reinvestimento dos resultados · Estimativa, sem garantia.\nPrazo desde o início do plano · Estimativa, sem garantia."
+        }
+      }
+    },
+    {
+      "name": "Both goals independent predictions",
+      "original": {
+        "lifeSummary": {
+          "visible": true,
+          "hidden": false,
+          "text": "Para viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês."
+        },
+        "dreamSummary": {
+          "visible": true,
+          "hidden": false,
+          "text": "Para viver de trade no padrão de vida dos seus sonhos, o prazo estimado com o aporte informado é:\n3 anos e 4 meses\nCobertura mensal projetada em jan/2030 · US$ 300,00 / mês."
+        },
+        "assetForecast": {
+          "visible": true,
+          "hidden": false,
+          "text": "Patrimônio estimado para a renda desejada\nUS$ 10.000,00"
+        },
+        "metaPrevista": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 10.000,00"
+        },
+        "dataPrevista": {
+          "visible": false,
+          "hidden": true,
+          "text": "jan/2030"
+        },
+        "costUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 150,00 / mês na simulação"
+        },
+        "sonhoUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 300,00 / mês na simulação"
+        },
+        "forecastArea": {
+          "visible": true,
+          "hidden": false,
+          "text": "Sua previsão\ni\nPara viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês.\nPara viver de trade no padrão de vida dos seus sonhos, o prazo estimado com o aporte informado é:\n3 anos e 4 meses\nCobertura mensal projetada em jan/2030 · US$ 300,00 / mês.\nPatrimônio estimado para a renda desejada\nUS$ 10.000,00\nPrazo desde o início do plano · Estimativa, sem garantia."
+        }
+      },
+      "site": {
+        "lifeSummary": {
+          "visible": true,
+          "hidden": false,
+          "text": "Para viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês.\nPrazo desde o início do plano · Reinvestimento dos resultados · Estimativa, sem garantia."
+        },
+        "dreamSummary": {
+          "visible": true,
+          "hidden": false,
+          "text": "Para viver de trade no padrão de vida dos seus sonhos, o prazo estimado com o aporte informado é:\n3 anos e 4 meses\nCobertura mensal projetada em jan/2030 · US$ 300,00 / mês.\nPrazo desde o início do plano · Reinvestimento dos resultados · Estimativa, sem garantia."
+        },
+        "assetForecast": {
+          "visible": true,
+          "hidden": false,
+          "text": "Patrimônio estimado para a renda desejada\nUS$ 10.000,00"
+        },
+        "metaPrevista": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 10.000,00"
+        },
+        "dataPrevista": {
+          "visible": false,
+          "hidden": true,
+          "text": "—"
+        },
+        "costUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 150,00 / mês na simulação"
+        },
+        "sonhoUsd": {
+          "visible": true,
+          "hidden": false,
+          "text": "US$ 300,00 / mês na simulação"
+        },
+        "forecastArea": {
+          "visible": true,
+          "hidden": false,
+          "text": "Sua previsão\ni\nPara viver de trade mantendo seu padrão atual, o prazo estimado com o aporte informado é:\n2 anos\nCobertura mensal projetada em set/2028 · US$ 150,00 / mês.\nPrazo desde o início do plano · Reinvestimento dos resultados · Estimativa, sem garantia.\nPara viver de trade no padrão de vida dos seus sonhos, o prazo estimado com o aporte informado é:\n3 anos e 4 meses\nCobertura mensal projetada em jan/2030 · US$ 300,00 / mês.\nPrazo desde o início do plano · Reinvestimento dos resultados · Estimativa, sem garantia.\nPatrimônio estimado para a renda desejada\nUS$ 10.000,00\nPrazo desde o início do plano · Estimativa, sem garantia."
+        }
+      }
+    },
+    {
+      "name": "Review copy",
+      "original": "Conta de investimento\nPeríodo: outubro/2026 a setembro/2036\nSaldo inicial: US$ 1.000,00\nPerfil: Perfil Base · 3,00% ao mês · 42,58% ao ano composto · MDD 20,00%\nNOVO PLANO: os dados atuais serão arquivados. Todos os meses serão reiniciados.\nReferência inicial: capital, taxa e aporte fixo preservados. Alterações nas projeções mensais não mudam os cálculos de comparação. Somente iniciar outro plano cria outra referência.\nCusto mensal atual: US$ 150,00\nRenda mensal desejada: US$ 300,00\nPatrimônio estimado automaticamente: US$ 10.000,00\nPrazo estimado: 3 anos e 4 meses · jan/2030\nEstimativas desde o início do plano, sem garantia. Sem inflação, taxas, impostos ou retiradas.\nAo confirmar, o Consolidado, os lançamentos mensais e a Referência serão liberados.",
+      "site": "Conta de investimento\nPeríodo: outubro/2026 a setembro/2036\nSaldo inicial: US$ 1.000,00\nPerfil: Perfil Base · 3% ao mês · 42,58% ao ano composto · MDD 20%\nNOVA CONTA: os dados das outras contas serão preservados. Todos os meses desta conta começam sem confirmação.\nReferência inicial: capital, taxa e aporte fixo preservados. Alterações nas projeções mensais não mudam os cálculos de comparação. Somente iniciar outro plano cria outra referência.\nCusto mensal atual: US$ 150,00\nRenda mensal desejada: US$ 300,00\nPatrimônio estimado automaticamente: US$ 10.000,00\nPrazo estimado: 3 anos e 4 meses · jan/2030\nEstimativas desde o início do plano, sem garantia. Sem inflação, taxas, impostos ou retiradas.\nAo confirmar, o Consolidado, os lançamentos mensais e a Referência serão liberados.",
+      "sourceSaveCalls": 0,
+      "siteAccounts": 0
+    },
+    {
+      "name": "Back preserves answers",
+      "original": "300",
+      "site": "300"
+    },
+    {
+      "name": "Success after final confirm",
+      "original": "STOIKUS · JP WEALTH\nPlano liberado\n\nSynthetic save callback; no Google service called\n\nIr para o Consolidado",
+      "site": "Plano liberado\n\nO Consolidado, os lançamentos mensais e a Referência estão disponíveis. Todos os meses do novo plano começam sem confirmação.\n\nIr para o Consolidado",
+      "sourceSaveCalls": 1,
+      "siteAccounts": 1
+    }
+  ],
+  "errors": {
+    "source": [],
+    "site": []
+  },
+  "after": {
+    "src/js/30-accounting/06-planning/03-ui.js": "cf9542886f403e6bc6e5285cb066a2163bd3f1dc197f9bc5c3d2d6e081e82efa",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "138b90185a9abaaef50f5cc83d86362592d5a8319ff471094a17f7ec223948f3",
+    "src/styles/app.css": "54067c089da590f8277f295b96e1ff5868ca96feaf6606414df3125ed01d3554",
+    "src/js/40-app/01-navigation.js": "916bd1b5817b9859301c9972bde8def6823341d60608df0b76ce24f0f32e48ef"
+  },
+  "candidateStable": true
+}

@@ -451,6 +451,17 @@ function dgBackupInspect(raw){
   return {kind:envelope?'LEGACY_FULL_ENVELOPE':'LEGACY_FULL_STATE',legacy:true,sections:Object.keys(state).sort(),missing};
 }
 function dgBackupValidateTypedContainers(state){
+  // The optional planning family must not smuggle credentials through import/export.
+  // Future versions/unknown nonsecret fields remain recoverable without rewriting.
+  if(state.patrimonialPlanning&&typeof state.patrimonialPlanning==='object'){
+    const pending=[state.patrimonialPlanning],seen=new Set();
+    while(pending.length){const value=pending.pop();if(!value||typeof value!=='object'||seen.has(value))continue;seen.add(value);
+      for(const key of Object.keys(value)){
+        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key))throw new Error('Backup de planejamento contém campo de segredo. Preserve o original e remova credenciais antes de importar ou exportar.');
+        if(value[key]&&typeof value[key]==='object')pending.push(value[key]);
+      }
+    }
+  }
   jpwValidateChecklist(state);
   for(const [key,definition] of Object.entries(DEFAULTS)){
     if(!Object.prototype.hasOwnProperty.call(state,key))continue;
@@ -676,7 +687,7 @@ function normalizeImportedState(raw){
   // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
   // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
   // por isso o null e testado a parte (ALD-03-H0 · D-2).
-  for(const key of ['alladin','personalFinance','fxPlanning','nocoda','pivotStudies','mvpNotes','dataGovernance','fxConsolidated','operationHistory']){
+  for(const key of ['alladin','personalFinance','fxPlanning','patrimonialPlanning','nocoda','pivotStudies','mvpNotes','dataGovernance','fxConsolidated','operationHistory']){
     if(Object.prototype.hasOwnProperty.call(candidate,key) &&
        (candidate[key]===null || typeof candidate[key]!=='object' || Array.isArray(candidate[key])))
       throw new Error('Backup com '+key+' inválido: esperava objeto.');
@@ -736,7 +747,7 @@ function importFullBackupFile(file){
       catch(error){alert('Não foi possível conferir a disponibilidade atual. Nada foi importado.');return;}
       const previousAvailability=window.JPWModuleAvailability.inspect(availabilityBefore);
       const nextAvailability=window.JPWModuleAvailability.inspect(availabilityPreferences[availabilityKey]);
-      const names={research:'Research',forex:'Forex','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
+      const names={research:'Research',forex:'Forex',planning:'Planejamento','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
       const label=value=>value==='frozen'?'Congelado':'Ativo';
       const changes=Object.keys(names).filter(id=>!previousAvailability.valid||previousAvailability.states[id]!==nextAvailability.states[id]);
       availabilityMessage=changes.length?'\n\nDisponibilidade após restaurar:\n'+changes.map(id=>names[id]+': '+(previousAvailability.valid?label(previousAvailability.states[id]):'configuração incompatível')+' → '+label(nextAvailability.states[id])).join('\n')+'\nIsso pode descongelar acessos. Não autoriza desenvolvimento.':'';

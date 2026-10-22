@@ -1,0 +1,3027 @@
+{
+  "scope": "Exact original caso_f AST function; observers only, all original boot/timeout/assertions preserved",
+  "source_sha256": "0a1c18ae2d2a0033d4f7aad6f205a7c7b3b95a2d805f72677f5be42f3221528a",
+  "historical_build": "fc2973134cc72f9e17a747f9299f3979461d8bc8",
+  "events": [
+    {
+      "seconds": 1.073,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/index.html",
+      "type": "document"
+    },
+    {
+      "seconds": 1.085,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/index.html",
+      "status": 200
+    },
+    {
+      "seconds": 1.094,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/styles/app.css",
+      "type": "stylesheet"
+    },
+    {
+      "seconds": 1.095,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/build-id.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.096,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/01-risk-profiles.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.096,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/02-platforms.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.098,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/index.html"
+    },
+    {
+      "seconds": 1.099,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/styles/app.css",
+      "status": 200
+    },
+    {
+      "seconds": 1.103,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/styles/app.css"
+    },
+    {
+      "seconds": 1.103,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/build-id.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.103,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/build-id.js"
+    },
+    {
+      "seconds": 1.104,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/01-risk-profiles.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.104,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/01-risk-profiles.js"
+    },
+    {
+      "seconds": 1.104,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/02-platforms.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.104,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/02-platforms.js"
+    },
+    {
+      "seconds": 1.104,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/03-default-state.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.105,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/04-persistence.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.112,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/05-helpers.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.113,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/06-storage-fs.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.114,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/01-risk-instruments.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.115,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/02-risk-calculations.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.117,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/01-header-readout.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.117,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/02-sidebar.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.118,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/03-main-render.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.119,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/04-operational-clearance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.119,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/05-execution-clearance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.122,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/03-phase-transitions.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.124,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/04-stop-statistics.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.126,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/06-chart-terminal-chrome.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.127,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/07-chart-crosshair-tooltip.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.129,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/08-input-bindings.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.13,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/01-daily-ledger.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.131,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/05-brokers-prop-firms.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.132,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/02-accounting-engine.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.133,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/03-mei-jp.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.134,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/04-patrimonial-simulation.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.137,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/01-navigation.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.137,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/02-reset.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.138,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/03-theme.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.139,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/09-contextual-help.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.14,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/10-font-scale.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.141,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/06-quarantine.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.142,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/11-phase-posture.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.143,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/12-nav-style.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.145,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/04-onboarding.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.145,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/05-wipe-all.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.147,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-app-icons.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.148,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/07-finalize-session.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.15,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-boot.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.154,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/08-educational-content.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.154,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/09-settings-modal.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.155,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/10-dashboard-immersive.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.156,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/11-operational-shell.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.157,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/12-global-dashboard.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.159,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/13-dashboard-layout.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.16,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/14-mvp-notes.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.162,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/15-ff-news.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.163,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/16-storage-governance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.165,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/17-economic-calendar.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.167,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/vendor/planck/planck-1.5.0.min.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.168,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/01-config.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.168,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/02-rng.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.169,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/03-statistics.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.171,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/04-physics.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.172,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/05-renderer.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.174,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/06-controller.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.174,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/07-reserve-requirements.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.175,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/08-usd-brl-quote.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.177,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/01-fx-model.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.178,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.179,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/03-fx-state.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.179,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.182,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.185,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/13-exec-views.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.186,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/09-nocoda-geometry.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.187,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/14-nocoda-studies.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.188,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/10-pivot-studies.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.189,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/15-pivot-studies.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.19,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/11-operation-lifecycle.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.191,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/16-operation-history.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.192,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/12-personal-finance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.193,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/17-finpes-views.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.194,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/18-finpes-budget.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.195,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/19-finpes-debts.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.197,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/20-finpes-comparison.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.2,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/21-finpes-scenarios.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.201,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/22-finpes-overview.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.204,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/assets/jp-wealth-logo.png",
+      "type": "image"
+    },
+    {
+      "seconds": 1.207,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/03-default-state.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.207,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/03-default-state.js"
+    },
+    {
+      "seconds": 1.207,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/04-persistence.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.207,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/04-persistence.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/05-helpers.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/05-helpers.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/06-storage-fs.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/06-storage-fs.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/01-risk-instruments.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/01-risk-instruments.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/01-header-readout.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/01-header-readout.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/02-risk-calculations.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/02-risk-calculations.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/02-sidebar.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/02-sidebar.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/03-main-render.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/03-main-render.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/04-operational-clearance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/04-operational-clearance.js"
+    },
+    {
+      "seconds": 1.208,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/05-execution-clearance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.208,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/05-execution-clearance.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/03-phase-transitions.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/03-phase-transitions.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/04-stop-statistics.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/04-stop-statistics.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/06-chart-terminal-chrome.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/06-chart-terminal-chrome.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/07-chart-crosshair-tooltip.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/07-chart-crosshair-tooltip.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/08-input-bindings.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/08-input-bindings.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/01-daily-ledger.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/01-daily-ledger.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/05-brokers-prop-firms.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/05-brokers-prop-firms.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/02-accounting-engine.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/02-accounting-engine.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/03-mei-jp.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.209,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/03-mei-jp.js"
+    },
+    {
+      "seconds": 1.209,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/04-patrimonial-simulation.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/04-patrimonial-simulation.js"
+    },
+    {
+      "seconds": 1.21,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/01-navigation.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/01-navigation.js"
+    },
+    {
+      "seconds": 1.21,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/02-reset.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/02-reset.js"
+    },
+    {
+      "seconds": 1.21,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/03-theme.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/03-theme.js"
+    },
+    {
+      "seconds": 1.21,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/09-contextual-help.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/09-contextual-help.js"
+    },
+    {
+      "seconds": 1.21,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/10-font-scale.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/10-font-scale.js"
+    },
+    {
+      "seconds": 1.21,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/06-quarantine.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.21,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/06-quarantine.js"
+    },
+    {
+      "seconds": 1.211,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/11-phase-posture.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.211,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/11-phase-posture.js"
+    },
+    {
+      "seconds": 1.211,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/12-nav-style.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.211,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/12-nav-style.js"
+    },
+    {
+      "seconds": 1.211,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/05-wipe-all.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.211,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/05-wipe-all.js"
+    },
+    {
+      "seconds": 1.211,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/04-onboarding.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.211,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/04-onboarding.js"
+    },
+    {
+      "seconds": 1.211,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-app-icons.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.213,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-app-icons.js"
+    },
+    {
+      "seconds": 1.213,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/07-finalize-session.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.213,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/07-finalize-session.js"
+    },
+    {
+      "seconds": 1.213,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-boot.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.214,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-boot.js"
+    },
+    {
+      "seconds": 1.214,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/08-educational-content.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.214,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/08-educational-content.js"
+    },
+    {
+      "seconds": 1.214,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/09-settings-modal.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.214,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/09-settings-modal.js"
+    },
+    {
+      "seconds": 1.215,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/10-dashboard-immersive.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.217,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/10-dashboard-immersive.js"
+    },
+    {
+      "seconds": 1.219,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/assets/jp-wealth-logo.png",
+      "status": 200
+    },
+    {
+      "seconds": 1.219,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/assets/jp-wealth-logo.png"
+    },
+    {
+      "seconds": 1.219,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/11-operational-shell.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.219,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/11-operational-shell.js"
+    },
+    {
+      "seconds": 1.219,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/12-global-dashboard.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.219,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/12-global-dashboard.js"
+    },
+    {
+      "seconds": 1.219,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/13-dashboard-layout.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.219,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/13-dashboard-layout.js"
+    },
+    {
+      "seconds": 1.286,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/EUR/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.287,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/GBP/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.288,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.289,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/NZD/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.29,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/JPY",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.29,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CHF",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.291,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CAD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.292,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/CAD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.292,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/assets/pwa-icon-primary.png?v=20260806",
+      "type": "image"
+    },
+    {
+      "seconds": 1.293,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/15-ff-news.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.293,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/15-ff-news.js"
+    },
+    {
+      "seconds": 1.293,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/14-mvp-notes.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.293,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/14-mvp-notes.js"
+    },
+    {
+      "seconds": 1.293,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/16-storage-governance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.293,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/16-storage-governance.js"
+    },
+    {
+      "seconds": 1.293,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/17-economic-calendar.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.293,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/17-economic-calendar.js"
+    },
+    {
+      "seconds": 1.294,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/01-config.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.294,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/01-config.js"
+    },
+    {
+      "seconds": 1.294,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/02-rng.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.294,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/02-rng.js"
+    },
+    {
+      "seconds": 1.294,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/03-statistics.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.294,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/03-statistics.js"
+    },
+    {
+      "seconds": 1.294,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/04-physics.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.294,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/04-physics.js"
+    },
+    {
+      "seconds": 1.294,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/vendor/planck/planck-1.5.0.min.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.295,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/vendor/planck/planck-1.5.0.min.js"
+    },
+    {
+      "seconds": 1.295,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/05-renderer.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.295,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/05-renderer.js"
+    },
+    {
+      "seconds": 1.295,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/06-controller.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.295,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/06-controller.js"
+    },
+    {
+      "seconds": 1.295,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/07-reserve-requirements.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.295,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/07-reserve-requirements.js"
+    },
+    {
+      "seconds": 1.295,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/08-usd-brl-quote.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.295,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/08-usd-brl-quote.js"
+    },
+    {
+      "seconds": 1.296,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/01-fx-model.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.296,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/01-fx-model.js"
+    },
+    {
+      "seconds": 1.296,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.296,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/02-fx-engine.js"
+    },
+    {
+      "seconds": 1.296,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/03-fx-state.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.296,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/03-fx-state.js"
+    },
+    {
+      "seconds": 1.296,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.296,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/04-fx-charts.js"
+    },
+    {
+      "seconds": 1.296,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/05-fx-ui.js"
+    },
+    {
+      "seconds": 1.297,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/13-exec-views.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/13-exec-views.js"
+    },
+    {
+      "seconds": 1.297,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/09-nocoda-geometry.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/09-nocoda-geometry.js"
+    },
+    {
+      "seconds": 1.297,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/14-nocoda-studies.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/14-nocoda-studies.js"
+    },
+    {
+      "seconds": 1.297,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/10-pivot-studies.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/10-pivot-studies.js"
+    },
+    {
+      "seconds": 1.297,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/15-pivot-studies.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/15-pivot-studies.js"
+    },
+    {
+      "seconds": 1.297,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/11-operation-lifecycle.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.297,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/11-operation-lifecycle.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/16-operation-history.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/16-operation-history.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/12-personal-finance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/12-personal-finance.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/17-finpes-views.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/17-finpes-views.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/18-finpes-budget.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/18-finpes-budget.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/19-finpes-debts.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/19-finpes-debts.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/20-finpes-comparison.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/20-finpes-comparison.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/21-finpes-scenarios.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/21-finpes-scenarios.js"
+    },
+    {
+      "seconds": 1.298,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/22-finpes-overview.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.298,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/22-finpes-overview.js"
+    },
+    {
+      "seconds": 1.299,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/assets/pwa-icon-primary.png?v=20260806",
+      "status": 200
+    },
+    {
+      "seconds": 1.299,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/assets/pwa-icon-primary.png?v=20260806"
+    },
+    {
+      "seconds": 1.308,
+      "event": "request",
+      "url": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.309,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/EUR/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.309,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/GBP/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.309,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.309,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/NZD/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.309,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/JPY",
+      "status": 200
+    },
+    {
+      "seconds": 1.309,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CHF",
+      "status": 200
+    },
+    {
+      "seconds": 1.31,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CAD",
+      "status": 200
+    },
+    {
+      "seconds": 1.31,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/CAD",
+      "status": 200
+    },
+    {
+      "seconds": 1.319,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/EUR/USD"
+    },
+    {
+      "seconds": 1.319,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/GBP/USD"
+    },
+    {
+      "seconds": 1.319,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/USD"
+    },
+    {
+      "seconds": 1.319,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/NZD/USD"
+    },
+    {
+      "seconds": 1.319,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/JPY"
+    },
+    {
+      "seconds": 1.32,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CHF"
+    },
+    {
+      "seconds": 1.32,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CAD"
+    },
+    {
+      "seconds": 1.32,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/CAD"
+    },
+    {
+      "seconds": 1.32,
+      "event": "response",
+      "url": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json",
+      "status": 200
+    },
+    {
+      "seconds": 1.321,
+      "event": "domcontentloaded",
+      "url": "http://127.0.0.1:59795/index.html"
+    },
+    {
+      "seconds": 1.322,
+      "event": "load",
+      "url": "http://127.0.0.1:59795/index.html"
+    },
+    {
+      "seconds": 1.329,
+      "event": "finished",
+      "url": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json"
+    },
+    {
+      "seconds": 1.343,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/index.html",
+      "type": "document"
+    },
+    {
+      "seconds": 1.345,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/index.html",
+      "status": 200
+    },
+    {
+      "seconds": 1.35,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/styles/app.css",
+      "type": "stylesheet"
+    },
+    {
+      "seconds": 1.351,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/build-id.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.351,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/01-risk-profiles.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.352,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/02-platforms.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.353,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/index.html"
+    },
+    {
+      "seconds": 1.355,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/01-risk-profiles.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.356,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/01-risk-profiles.js"
+    },
+    {
+      "seconds": 1.356,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/build-id.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.356,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/build-id.js"
+    },
+    {
+      "seconds": 1.356,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/03-default-state.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.357,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/styles/app.css",
+      "status": 200
+    },
+    {
+      "seconds": 1.359,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/styles/app.css"
+    },
+    {
+      "seconds": 1.359,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/02-platforms.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.36,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/02-platforms.js"
+    },
+    {
+      "seconds": 1.36,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/03-default-state.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.36,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/03-default-state.js"
+    },
+    {
+      "seconds": 1.361,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/04-persistence.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.362,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/05-helpers.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.363,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/00-core/06-storage-fs.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.364,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/01-risk-instruments.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.364,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/02-risk-calculations.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.366,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/01-header-readout.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.368,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/02-sidebar.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.37,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/03-main-render.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.371,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/04-operational-clearance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.372,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/05-execution-clearance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.373,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/03-phase-transitions.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.374,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/04-stop-statistics.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.375,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/06-chart-terminal-chrome.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.376,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/07-chart-crosshair-tooltip.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.377,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/08-input-bindings.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.378,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/01-daily-ledger.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.38,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/05-brokers-prop-firms.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.38,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/02-accounting-engine.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.381,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/03-mei-jp.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.382,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/04-patrimonial-simulation.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.383,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/01-navigation.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.384,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/02-reset.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.385,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/03-theme.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.386,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/09-contextual-help.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.388,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/10-font-scale.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.389,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/06-quarantine.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.39,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/11-phase-posture.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.391,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/12-nav-style.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.392,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/04-onboarding.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.393,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/05-wipe-all.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.394,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-app-icons.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.395,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/07-finalize-session.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.396,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-boot.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.397,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/08-educational-content.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.398,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/09-settings-modal.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.399,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/10-dashboard-immersive.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.4,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/11-operational-shell.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.402,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/12-global-dashboard.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.403,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/13-dashboard-layout.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.403,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/14-mvp-notes.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.404,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/15-ff-news.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.405,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/16-storage-governance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.407,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/17-economic-calendar.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.408,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/vendor/planck/planck-1.5.0.min.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.409,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/01-config.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.41,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/02-rng.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.411,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/03-statistics.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.412,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/04-physics.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.413,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/05-renderer.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.414,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/06-controller.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.416,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/07-reserve-requirements.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.416,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/08-usd-brl-quote.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.417,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/01-fx-model.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.418,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.419,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/03-fx-state.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.42,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.421,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.423,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/13-exec-views.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.424,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/09-nocoda-geometry.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.425,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/14-nocoda-studies.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.426,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/10-pivot-studies.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.428,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/15-pivot-studies.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.429,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/11-operation-lifecycle.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.43,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/16-operation-history.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.431,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/12-personal-finance.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.433,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/17-finpes-views.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.434,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/18-finpes-budget.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.436,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/19-finpes-debts.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.437,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/20-finpes-comparison.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.438,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/21-finpes-scenarios.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.44,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/22-finpes-overview.js",
+      "type": "script"
+    },
+    {
+      "seconds": 1.441,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/assets/jp-wealth-logo.png",
+      "type": "image"
+    },
+    {
+      "seconds": 1.443,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/04-persistence.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.443,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/04-persistence.js"
+    },
+    {
+      "seconds": 1.444,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/06-storage-fs.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.444,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/06-storage-fs.js"
+    },
+    {
+      "seconds": 1.444,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/01-risk-instruments.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.444,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/01-risk-instruments.js"
+    },
+    {
+      "seconds": 1.444,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/00-core/05-helpers.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.445,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/00-core/05-helpers.js"
+    },
+    {
+      "seconds": 1.445,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/01-header-readout.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.445,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/01-header-readout.js"
+    },
+    {
+      "seconds": 1.445,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/02-risk-calculations.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.445,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/02-risk-calculations.js"
+    },
+    {
+      "seconds": 1.445,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/02-sidebar.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.445,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/02-sidebar.js"
+    },
+    {
+      "seconds": 1.445,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/03-main-render.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.445,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/03-main-render.js"
+    },
+    {
+      "seconds": 1.445,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/04-operational-clearance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.445,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/04-operational-clearance.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/05-execution-clearance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/05-execution-clearance.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/03-phase-transitions.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/03-phase-transitions.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/04-stop-statistics.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/04-stop-statistics.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/06-chart-terminal-chrome.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/06-chart-terminal-chrome.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/07-chart-crosshair-tooltip.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/07-chart-crosshair-tooltip.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/08-input-bindings.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/08-input-bindings.js"
+    },
+    {
+      "seconds": 1.446,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/01-daily-ledger.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.446,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/01-daily-ledger.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/05-brokers-prop-firms.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/05-brokers-prop-firms.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/02-accounting-engine.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/02-accounting-engine.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/03-mei-jp.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/03-mei-jp.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/04-patrimonial-simulation.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/04-patrimonial-simulation.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/01-navigation.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/01-navigation.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/03-theme.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/03-theme.js"
+    },
+    {
+      "seconds": 1.447,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/02-reset.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.447,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/02-reset.js"
+    },
+    {
+      "seconds": 1.448,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/09-contextual-help.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.448,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/09-contextual-help.js"
+    },
+    {
+      "seconds": 1.448,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/10-font-scale.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.448,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/10-font-scale.js"
+    },
+    {
+      "seconds": 1.448,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/06-quarantine.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.448,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/06-quarantine.js"
+    },
+    {
+      "seconds": 1.448,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/11-phase-posture.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.448,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/11-phase-posture.js"
+    },
+    {
+      "seconds": 1.448,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/12-nav-style.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.448,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/12-nav-style.js"
+    },
+    {
+      "seconds": 1.448,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/05-wipe-all.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.448,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/05-wipe-all.js"
+    },
+    {
+      "seconds": 1.449,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/04-onboarding.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.449,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/04-onboarding.js"
+    },
+    {
+      "seconds": 1.449,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-app-icons.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.449,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-app-icons.js"
+    },
+    {
+      "seconds": 1.449,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/07-finalize-session.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.449,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/07-finalize-session.js"
+    },
+    {
+      "seconds": 1.449,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-boot.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.449,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/06-boot.js"
+    },
+    {
+      "seconds": 1.45,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/EUR/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.451,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/GBP/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.451,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.452,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/NZD/USD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.453,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/JPY",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.454,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CHF",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.454,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CAD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.455,
+      "event": "request",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/CAD",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.456,
+      "event": "request",
+      "url": "http://127.0.0.1:59795/assets/pwa-icon-primary.png?v=20260806",
+      "type": "image"
+    },
+    {
+      "seconds": 1.456,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/08-educational-content.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.457,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/08-educational-content.js"
+    },
+    {
+      "seconds": 1.457,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/09-settings-modal.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.457,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/09-settings-modal.js"
+    },
+    {
+      "seconds": 1.457,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/10-dashboard-immersive.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.457,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/10-dashboard-immersive.js"
+    },
+    {
+      "seconds": 1.457,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/11-operational-shell.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.458,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/11-operational-shell.js"
+    },
+    {
+      "seconds": 1.458,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/12-global-dashboard.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.458,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/12-global-dashboard.js"
+    },
+    {
+      "seconds": 1.458,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/13-dashboard-layout.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.458,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/13-dashboard-layout.js"
+    },
+    {
+      "seconds": 1.458,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/14-mvp-notes.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.458,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/14-mvp-notes.js"
+    },
+    {
+      "seconds": 1.458,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/15-ff-news.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.458,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/15-ff-news.js"
+    },
+    {
+      "seconds": 1.459,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/16-storage-governance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.459,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/16-storage-governance.js"
+    },
+    {
+      "seconds": 1.459,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/17-economic-calendar.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.459,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/17-economic-calendar.js"
+    },
+    {
+      "seconds": 1.459,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/01-config.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.459,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/01-config.js"
+    },
+    {
+      "seconds": 1.459,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/02-rng.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.459,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/02-rng.js"
+    },
+    {
+      "seconds": 1.459,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/vendor/planck/planck-1.5.0.min.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.459,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/vendor/planck/planck-1.5.0.min.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/03-statistics.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/03-statistics.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/04-physics.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/04-physics.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/05-renderer.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/05-renderer.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/06-controller.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/40-app/18-galton-board/06-controller.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/07-reserve-requirements.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/07-reserve-requirements.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/08-usd-brl-quote.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/08-usd-brl-quote.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/01-fx-model.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/01-fx-model.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.46,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/02-fx-engine.js"
+    },
+    {
+      "seconds": 1.46,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/03-fx-state.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.461,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/03-fx-state.js"
+    },
+    {
+      "seconds": 1.461,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.461,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/04-fx-charts.js"
+    },
+    {
+      "seconds": 1.461,
+      "event": "request",
+      "url": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json",
+      "type": "fetch"
+    },
+    {
+      "seconds": 1.461,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.462,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/30-accounting/05-fx-planning/05-fx-ui.js"
+    },
+    {
+      "seconds": 1.462,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/09-nocoda-geometry.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.462,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/09-nocoda-geometry.js"
+    },
+    {
+      "seconds": 1.462,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/13-exec-views.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.462,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/13-exec-views.js"
+    },
+    {
+      "seconds": 1.462,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/14-nocoda-studies.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.462,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/14-nocoda-studies.js"
+    },
+    {
+      "seconds": 1.462,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/10-pivot-studies.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.462,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/10-pivot-studies.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/15-pivot-studies.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/15-pivot-studies.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/11-operation-lifecycle.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/11-operation-lifecycle.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/16-operation-history.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/16-operation-history.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/12-personal-finance.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/10-domain/12-personal-finance.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/17-finpes-views.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/17-finpes-views.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/18-finpes-budget.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/18-finpes-budget.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/19-finpes-debts.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/19-finpes-debts.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/20-finpes-comparison.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/20-finpes-comparison.js"
+    },
+    {
+      "seconds": 1.463,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/21-finpes-scenarios.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.463,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/21-finpes-scenarios.js"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/22-finpes-overview.js",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/src/js/20-ui/22-finpes-overview.js"
+    },
+    {
+      "seconds": 1.464,
+      "event": "domcontentloaded",
+      "url": "http://127.0.0.1:59795/index.html"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/assets/jp-wealth-logo.png",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/assets/jp-wealth-logo.png"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/EUR/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/EUR/USD"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/GBP/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/GBP/USD"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/USD"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/NZD/USD",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/NZD/USD"
+    },
+    {
+      "seconds": 1.464,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/JPY",
+      "status": 200
+    },
+    {
+      "seconds": 1.464,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/JPY"
+    },
+    {
+      "seconds": 1.465,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CHF",
+      "status": 200
+    },
+    {
+      "seconds": 1.465,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CHF"
+    },
+    {
+      "seconds": 1.465,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CAD",
+      "status": 200
+    },
+    {
+      "seconds": 1.465,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/USD/CAD"
+    },
+    {
+      "seconds": 1.465,
+      "event": "response",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/CAD",
+      "status": 200
+    },
+    {
+      "seconds": 1.465,
+      "event": "finished",
+      "url": "https://api.frankfurter.dev/v2/rate/AUD/CAD"
+    },
+    {
+      "seconds": 1.465,
+      "event": "response",
+      "url": "http://127.0.0.1:59795/assets/pwa-icon-primary.png?v=20260806",
+      "status": 200
+    },
+    {
+      "seconds": 1.465,
+      "event": "finished",
+      "url": "http://127.0.0.1:59795/assets/pwa-icon-primary.png?v=20260806"
+    },
+    {
+      "seconds": 1.465,
+      "event": "load",
+      "url": "http://127.0.0.1:59795/index.html"
+    },
+    {
+      "seconds": 1.465,
+      "event": "response",
+      "url": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json",
+      "status": 200
+    },
+    {
+      "seconds": 1.466,
+      "event": "finished",
+      "url": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json"
+    }
+  ],
+  "failures": [],
+  "not_run": [],
+  "original_lines": [
+    289,
+    330
+  ],
+  "result": "PASS",
+  "duration_seconds": 2.023
+}

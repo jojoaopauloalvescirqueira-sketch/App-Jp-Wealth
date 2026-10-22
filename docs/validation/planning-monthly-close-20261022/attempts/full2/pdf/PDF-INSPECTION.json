@@ -1,0 +1,21 @@
+{
+  "build": "7e8cc9b03b5dca40",
+  "source": "tools/.artifacts/planning-ui/ui-report.pdf",
+  "execution_receipt": ".superpowers/sdd/2026-10-22-planning-monthly-close/exploration/broad-command.json",
+  "sha256": "3e8e49496e9608cb5024204e5248ec69c2d9d4d83d2956c366f9c283bdce0bb1",
+  "pages": 2,
+  "page_text": [
+    "Planejamento\nSTOIKUS / RELATÓRIO PATRIMONIAL\nPlanejamento patrimonial\nTodas as contas\nFechamento confirmado · jan. de 2026 · Emissão: 22/10/2026, 01:06:54\nPATRIMÔNIO CONFIRMADO\nUS$ 125,00\nSaldo no último fechamento\nAPORTES CONFIRMADOS\nUS$ 20,00\nAcumulados até o mesmo fechamento\nRESULTADO CONFIRMADO\nUS$ 5,00\nGanhos e perdas, sem aportes\nProjeção · dez. de 2035US$ 20.231,16\nCapital inicial cadastrado: US$ 100,00 · valor cadastral, não confirmado.\nEVOLUÇÃO DO PATRIMÔNIO\nPlano completo\nUS$ 20.231,16\nProjeção estimada, sem garantia.\nMétodo: entradas mensais manuais. O retorno incide sobre o saldo de abertura; o aporte rende a partir do mês seguinte.",
+    "Valores nominais em USD. Rentabilidade vazia usa 0% provisório e mantém o mês pendente. Somente a sequência sem lacunas é confirmada.\nStoikus by JP Wealth · Planejamento patrimonial com aportes · Documento de acompanhamento e simulação."
+  ],
+  "pagination_limit": "Inherited PDF footer-only second page remains distinct from closure fix; inspect render separately.",
+  "visual_review": {
+    "pages_inspected": [
+      1,
+      2
+    ],
+    "method": "Poppler1000px renders viewed directly",
+    "result": "CONTENT_READABLE_WITH_INHERITED_PAGINATION_DEBT",
+    "limitation": "Page2 contains only the two footer lines, unchanged print renderer; not corrected by this closure task."
+  }
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/exploration/practical_probe.py"
+    ],
+    "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+    "env": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "JP_WEALTH_CHROMIUM": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    },
+    "started": 1792676154.455143,
+    "finished": 1792676160.6238348,
+    "classification": "PASS",
+    "receipt": "practical-receipt.json",
+    "log": "practical-2.log",
+    "note": "Script records classification; subprocess exit alone is not verdict"
+  },
+  {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-planning-monthly-close/exploration/stale_probe.py"
+    ],
+    "cwd": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+    "env": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "JP_WEALTH_CHROMIUM": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    },
+    "started": 1792676182.8715992,
+    "finished": 1792676185.536789,
+    "classification": "PASS",
+    "receipt": "stale-receipt.json",
+    "log": "stale.log",
+    "note": "Script records classification; subprocess exit alone is not verdict"
+  }
+]

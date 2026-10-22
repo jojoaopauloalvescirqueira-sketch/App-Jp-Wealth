@@ -1,0 +1,37 @@
+{
+  "out": ".superpowers/sdd/2026-10-21-planning-monthly-inline/task2/month-context-red",
+  "started_at": "2026-10-22T02:53:52.830514+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "eb40224556cd804e5db39a42886b0cdf8513b64d72d41e8932aa5ee687ac31a4",
+    "src/js/30-accounting/06-planning/02-state.js": "989fa97a83cc3ddcfee4750074dd1416a967648a22463dd17316a59e96a84719",
+    "src/styles/app.css": "34c61945e8df90942914cf2afd3195f2395523bda5e772f7203e125fb407ee37",
+    "tools/planning_monthly_inline_test.py": "bc91b41bf55edb5df68a2b76abdd4bb02099aeaa0314f4414509008a7f21d543"
+  },
+  "cases": [
+    {
+      "id": "inline-month-context-identity",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-month-context-identity",
+      "started_at": "2026-10-22T02:53:55.063541+00:00",
+      "error": "('visible month must match active month', '2026-09', '2026-10')",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 709, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 582, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 558, in month_context_identity\n    observed.append(month_identity_oracle(page,fixture['pending']));harness.no_writes(page);assert financial(page)==before\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_monthly_inline_test.py\", line 543, in month_identity_oracle\n    selector=page.locator('[data-pl-month]');assert selector.input_value()==expected,('visible month must match active month',expected,selector.input_value())\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('visible month must match active month', '2026-09', '2026-10')\n",
+      "finished_at": "2026-10-22T02:53:55.186289+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-month-context-identity"
+  ],
+  "only": [
+    "inline-month-context-identity"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-10-22T02:53:55.622814+00:00"
+}

@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-22T00:28:29.062385+00:00",
+  "preview": "http://127.0.0.1:8000/index.html?v=2ddbac03d67141d0",
+  "candidate_build": "2ddbac03d67141d0",
+  "classification": "PASS",
+  "files": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "aa5d2815f96cf69af53430d948fb839d2c088a141b6ef13af3c5e1b1eadd57be",
+      "matches_current_disk": true
+    },
+    {
+      "path": "build-id.js",
+      "status": 200,
+      "sha256": "bd186c35cb43a19c5d7126486a8422d02eb4a11a50d8d6c509374ba690b3815f",
+      "matches_current_disk": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "status": 200,
+      "sha256": "697d62a9211d586970b5bde0fc0eabf6b026ee519aa9e153bd7108914a41e40f",
+      "matches_current_disk": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "status": 200,
+      "sha256": "7405635f20dfc9fd49f3ec65d0b2b0a91c5d5244ad9ed220a748e7a7dde3c23b",
+      "matches_current_disk": true
+    },
+    {
+      "path": "sw.js",
+      "status": 200,
+      "sha256": "b02ed52c5d0f70bae17a98cafb75c205e2a55adafec6e46dc67a8f05b9875036",
+      "matches_current_disk": true
+    }
+  ],
+  "limits": [
+    "HTTP bytes confirmed, not owner-browser cache or human visual acceptance.",
+    "No owner data/profile/cache modified."
+  ]
+}

@@ -1,0 +1,97 @@
+[
+  {
+    "case": "measure-targets",
+    "target_measurements": [
+      [
+        {
+          "text": "<input type=\"checkbox\" data-pl-highlight-past=\"\" checked=\"\">",
+          "width": 18,
+          "height": 18,
+          "label": {
+            "width": 147.90625,
+            "height": 44
+          },
+          "css": {
+            "minHeight": "18px",
+            "padding": "0px"
+          }
+        },
+        {
+          "text": "Salvar",
+          "width": 38.8125,
+          "height": 30,
+          "label": null,
+          "css": {
+            "minHeight": "30px",
+            "padding": "4px 0px"
+          }
+        },
+        {
+          "text": "Cancelar",
+          "width": 55.53125,
+          "height": 30,
+          "label": null,
+          "css": {
+            "minHeight": "30px",
+            "padding": "4px 0px"
+          }
+        },
+        {
+          "text": "Confirmar registro",
+          "width": 115.140625,
+          "height": 30,
+          "label": null,
+          "css": {
+            "minHeight": "30px",
+            "padding": "4px 0px"
+          }
+        }
+      ],
+      [
+        {
+          "text": "<input type=\"checkbox\" data-pl-highlight-past=\"\" checked=\"\">",
+          "width": 18,
+          "height": 18,
+          "label": {
+            "width": 147.90625,
+            "height": 44
+          },
+          "css": {
+            "minHeight": "18px",
+            "padding": "0px"
+          }
+        },
+        {
+          "text": "Salvar",
+          "width": 38.8125,
+          "height": 30,
+          "label": null,
+          "css": {
+            "minHeight": "30px",
+            "padding": "4px 0px"
+          }
+        },
+        {
+          "text": "Cancelar",
+          "width": 55.53125,
+          "height": 30,
+          "label": null,
+          "css": {
+            "minHeight": "30px",
+            "padding": "4px 0px"
+          }
+        },
+        {
+          "text": "Confirmar registro",
+          "width": 115.140625,
+          "height": 30,
+          "label": null,
+          "css": {
+            "minHeight": "30px",
+            "padding": "4px 0px"
+          }
+        }
+      ]
+    ]
+  }
+]

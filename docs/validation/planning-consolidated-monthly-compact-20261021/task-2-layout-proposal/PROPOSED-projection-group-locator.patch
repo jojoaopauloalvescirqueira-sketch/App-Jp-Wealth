@@ -1,0 +1,11 @@
+--- a/tools/planning_parity_layout_test.py
++++ b/tools/planning_parity_layout_test.py
+@@ -200,7 +200,7 @@
+         for theme in THEMES:
+             page.evaluate('layout=>mountNavigationLayout(layout)', layout)
+             page.evaluate('theme=>{document.documentElement.dataset.theme=theme;document.body.dataset.theme=theme}', theme)
+-            geometry = page.locator('#planning .pl-metrics').evaluate('''el => {
++            geometry = page.locator('#planning [data-pl-summary-group=projection] .pl-metrics').evaluate('''el => {
+               const shell=el.closest('.pl-shell'),value=el.querySelector('.pl-metric:last-child strong'),
+                 r=value.getBoundingClientRect(),style=getComputedStyle(value);
+               return {shellClient:shell.clientWidth,shellScroll:shell.scrollWidth,

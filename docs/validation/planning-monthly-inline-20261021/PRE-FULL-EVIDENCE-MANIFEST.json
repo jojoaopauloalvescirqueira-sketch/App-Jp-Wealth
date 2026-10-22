@@ -1,0 +1,146 @@
+{
+  "candidate_build": "6ca8a3b8971e249a",
+  "files": {
+    "QUERY-BUILDER.md": {
+      "source": "task-1-report.md",
+      "sha256": "9c4a9343f9fb84c9fb895bdb1cc1375e579663ab512eb2410b7071fa50fab621"
+    },
+    "QUERY-INDEPENDENT-REVIEW.md": {
+      "source": "task-1-independent-review.md",
+      "sha256": "fe14d83de33360b0d780653b5e1090a9e5a26682c9c8f06c70b4c9230bf468cf"
+    },
+    "PROTOCOL-INDEPENDENT-REVIEW.md": {
+      "source": "task-3-protocol-independent-review.md",
+      "sha256": "a070c53052c45918ce7e21af60a3a9b4e4c221311a5fb48c79b55cc82a05f4a7"
+    },
+    "QUERY-RED-COMMAND.json": {
+      "source": "task1/red.receipt.json",
+      "sha256": "400ffcf12d913cc5389c483d8e0c07acddb6667245e18a3084ff46066704e8a8"
+    },
+    "QUERY-RED.stdout.log": {
+      "source": "task1/red.stdout.log",
+      "sha256": "46165e6e9e9d1110e12ddb01cef91fc2184c82c2dfc8763493bdc40a9c41a37d"
+    },
+    "QUERY-RED.stderr.log": {
+      "source": "task1/red.stderr.log",
+      "sha256": "8bd397f06ffe229f5897ef394d3ce5b2c15f0d528526eb9a58e46da5ae951c0c"
+    },
+    "QUERY-GREEN-COMMAND.json": {
+      "source": "task1/state-green.receipt.json",
+      "sha256": "c7775c29e9b007c273e2f4ea743587def4b35b5bb72eb8ba9fc3c686b0552753"
+    },
+    "QUERY-GREEN.stdout.log": {
+      "source": "task1/state-green.stdout.log",
+      "sha256": "4996eef5bec935caa66b33907289f65fbaeae46bae55058ae905b3ed64e13563"
+    },
+    "QUERY-GREEN.stderr.log": {
+      "source": "task1/state-green.stderr.log",
+      "sha256": "1198cf39c6bc19c8082c0533507f7486a44418ad177a4595d93c7d2d4c17ff35"
+    },
+    "QUERY-COUNTERPROOF-COMMAND.json": {
+      "source": "task1/counterproof.receipt.json",
+      "sha256": "31ca5664651cd1f53497656942c5973dfa1edd054d74c01af59a31388840f670"
+    },
+    "QUERY-COUNTERPROOF.stdout.log": {
+      "source": "task1/counterproof.stdout.log",
+      "sha256": "7709a38014ee3d52a119833cb93ea8cf7f47060e9262a382ab5701d50b62087e"
+    },
+    "QUERY-COUNTERPROOF.stderr.log": {
+      "source": "task1/counterproof.stderr.log",
+      "sha256": "aedb26f4cf9f469cec7e095d795c51d5230ba1aa6aba093421b1870e9a424fb2"
+    },
+    "QUERY-PRESERVATION.json": {
+      "source": "task1/preservation.json",
+      "sha256": "bbe45b2b9e89ecc91bf2e73a0ab972fd806bb44ead62655b77b94c2d070ce09e"
+    },
+    "UI-RED.json": {
+      "source": "task2/red/results.json",
+      "sha256": "4263c6a043a40bd25034126bd860ef03e5f67be8ed978eb7d1f007773bddc375"
+    },
+    "UI-FOCAL-RESULTS.json": {
+      "source": "task2/green-8/results.json",
+      "sha256": "ad9ea91d0de64eef9d82170b29be1156d158477bc5b8bf4e515ec3562e2653c0"
+    },
+    "UI-FOCAL-COMMAND.json": {
+      "source": "task2/green-8.receipt.json",
+      "sha256": "70617c7ff75152f51bda38b090174d228b0228acc9cfb6de43e4dc2b018d31f6"
+    },
+    "CRITICAL-RED.json": {
+      "source": "task2/critical-red/results.json",
+      "sha256": "3159791ad2e0801f944989f73d1c74ff0f6715df7e519d46c28e91d4b25abcf0"
+    },
+    "CRITICAL-GREEN.json": {
+      "source": "task2/critical-green/results.json",
+      "sha256": "dcba5f3894ffb0f5f30c2bed8b4c8becb29c677498a895d43e0ff932d1666ce2"
+    },
+    "INDEPENDENT-FUTURE-BEFORE.json": {
+      "source": "independent-task2/future-drift-results.json",
+      "sha256": "0a2f12995aeef0e3620d889abaaa7ea7f7bfc73e2ce7dadc86b09ad3e8482e93"
+    },
+    "INDEPENDENT-FUTURE-AFTER.json": {
+      "source": "independent-task2/green-original-probes-results.json",
+      "sha256": "0646ebc4d99624a5769c2b5bfda9b384b502ea16b4800a6552d9bfa08303bde6"
+    },
+    "INDEPENDENT-FINAL-PROBES.json": {
+      "source": "independent-task2/final-product-probes-results.json",
+      "sha256": "b049574086a90f12d3b2d911382e9d022e0465b177fedd702e7035abf7a43415"
+    },
+    "INDEPENDENT-TARGETS-BEFORE.json": {
+      "source": "independent-task2/target-measurements.json",
+      "sha256": "29e53ea30e1f237c8ff6680bd050790e205b8565fdc36c28cc615dd6217b2005"
+    },
+    "BUILD-COMMAND.json": {
+      "source": "rebuild-2-command.json",
+      "sha256": "1c70a5ff42c25c78bdbaa675fff5e76ec1ede234eef2940022f5929ad110d59e"
+    },
+    "BUILD.log": {
+      "source": "rebuild-2.log",
+      "sha256": "444e0fe7a529fbb7e53ffff3df3a4135633ed8d2be9c854ea9a93387130831f4"
+    },
+    "PREFLIGHT-BUILT-COMMAND.json": {
+      "source": "preflight-final-built-command.json",
+      "sha256": "3dd539aa09f7914761d7c1f5756fb2e771eb813dd281fd5500f83aa4fd0bae14"
+    },
+    "PREFLIGHT-BUILT.json": {
+      "source": "preflight-final-built.log",
+      "sha256": "cdd4df9f26250d7c6c5e941460ef1d277df95f39ba25a24e2fcd7e91895b8d4c"
+    },
+    "REGISTRY-PRESERVATION.json": {
+      "source": "regression-memory-preservation.json",
+      "sha256": "7be67be174df48509bf09455957b09ac3538d2e21ba3434cf6bb39f31d86047f"
+    },
+    "DOCUMENT-BODY-PRESERVATION.json": {
+      "source": "factual-heads-preservation.json",
+      "sha256": "92b9a1336655d7d094121cff12167e06e945a063074422acbdfb4b3330c84208"
+    },
+    "AFTER.json": {
+      "source": "after-final/AFTER.json",
+      "sha256": "1e6ce3d6ab23e117d26f3d62c6b4100db7ea956659d7c1eac0b315efd6e10bb8"
+    },
+    "CAPTURE-AFTER-COMMAND.json": {
+      "source": "capture-final-command.json",
+      "sha256": "e99c8ddec07377c60c04ef38d354320e317911f20a60adacb0e11a0fdc6598c3"
+    },
+    "CAPTURE-AFTER.log": {
+      "source": "capture-final.log",
+      "sha256": "2d05417350a5f1e832d9ba65ad36af7e52add6ce0464cd8ca4078b9fc8574915"
+    },
+    "captures/after-monthly-1440.png": {
+      "source": "after-final/after-monthly-1440.png",
+      "sha256": "6ec32864d1393dbd9cb5ed90f0d642259f7d25596b20a67f05fa4a34e934a14e"
+    },
+    "captures/after-monthly-390.png": {
+      "source": "after-final/after-monthly-390.png",
+      "sha256": "9cc405a431db67cbc1d95fa8721bc3dd166bbff58ac76fe7d291e57fc77f52fa"
+    },
+    "captures/after-editor-review-1440.png": {
+      "source": "after-final/after-editor-review-1440.png",
+      "sha256": "b55ed29d255f9613929607f1cab40d7dfba44b7a5f1546ca0479c2ea82531b88"
+    },
+    "captures/after-editor-review-390.png": {
+      "source": "after-final/after-editor-review-390.png",
+      "sha256": "8fde66581ee67f4e590d321612fd6391de1bc3f5949536738ee4538787c17d08"
+    }
+  },
+  "full": "NOT_RUN; only FULL-RESULT.json produced byfinalprotocol can establish this gate."
+}
