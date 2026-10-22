@@ -27,7 +27,8 @@ MANIFEST = json.loads((ROOT / 'downloads/jpw-alavancagem-atual/manifest.json').r
 SOURCE = MANIFEST['downloads']['source']
 DAILY = MANIFEST['downloads'].get('dailySource')
 INTERFACE = MANIFEST.get('interfaceRelease')
-ARTIFACT_NAMES = {'nativeKit': 'Kit_Windows_Stoikus_Janelas_R5.zip', 'nativePin': 'root-pin-R5.json', 'preview': 'Previa_Stoikus_Janelas_R5.html'}
+C5 = INTERFACE is not None and INTERFACE.get('revision') == 'C5'
+ARTIFACT_NAMES = ({'nativeKit':'Kit_Windows_Stoikus_Painel_C5_D1.zip','nativePin':'root-pin-Painel-C5-D1.json','preview':'Previa_Stoikus_Painel_C5.html'} if C5 else {'nativeKit': 'Kit_Windows_Stoikus_Janelas_R5.zip', 'nativePin': 'root-pin-R5.json', 'preview': 'Previa_Stoikus_Janelas_R5.html'})
 ARCHIVE = ROOT / SOURCE['path']
 COMPILED = MANIFEST['downloads']['compiled']
 # A missing native slice is a valid candidate state, never a path to old EX5.
@@ -186,6 +187,9 @@ EXPECTED = {MEMBER_RENAMES.get(name, name) for name in HISTORICAL_EXPECTED} | {"
 EXPECTED.add("MQL5/Include/JPWealth/JPW_Stoikus_Monitor_Log.mqh")
 EXPECTED.update('MQL5/Include/JPWealth/'+name for name in ('JPW_Stoikus_HUD.mqh','JPW_Stoikus_Visual.mqh','JPW_Stoikus_Window.mqh'))
 assert len(EXPECTED) == 139
+if C5:
+    EXPECTED |= {"MQL5/Include/JPWealth/JPW_Stoikus_"+name+".mqh" for name in ("PanelPrefs","PanelEditor","PanelBridge")}
+    assert len(EXPECTED) == 142
 EXPECTED_EX5 = {name[:-4] + ".ex5" for name in EXPECTED if name.endswith(".mq5")}
 assert len(EXPECTED_EX5) == 34
 EXPECTED_VERSION = "1.23.0"
@@ -199,18 +203,24 @@ def verify_manifest_contract(manifest):
     """Explicit release oracle. Source-only never proves native execution/publication."""
     assert manifest['version'] == EXPECTED_VERSION, 'candidate version differs from explicit 1.23.0 target'
     assert manifest['productName'] == 'Stoikus'
-    assert len(manifest['sourceFiles']) == len(set(manifest['sourceFiles'])) == 139
+    assert len(manifest['sourceFiles']) == len(set(manifest['sourceFiles'])) == (142 if C5 else 139)
     assert {Path(name).relative_to('mt5/jpw-alavancagem-atual').as_posix()
             for name in manifest['sourceFiles']} == EXPECTED, 'explicit source inventory differs'
     assert set(manifest['sourceHashes']) == EXPECTED, 'source hash inventory differs'
     assert all(re.fullmatch('[a-f0-9]{64}', digest) for digest in manifest['sourceHashes'].values())
     if manifest.get('interfaceRelease'):
         release = manifest['interfaceRelease']
-        assert release['revision'] == 'R5' and release['candidate'] == '1.23.0-interface'
-        assert release['archiveVariant'] == '' and release['state'] == 'SOURCE_ONLY_NATIVE_PENDING'
+        if C5:
+            assert release['revision']=='C5' and release['candidate']=='1.23.0-interface'
+            assert release['archiveVariant']=='painel-C5'
+            assert 'distribuição documental D1' in manifest['coverage']
+        else:
+            assert release['revision'] == 'R5' and release['candidate'] == '1.23.0-interface'
+            assert release['archiveVariant'] == ''
+        assert release['state'] == 'SOURCE_ONLY_NATIVE_PENDING'
         assert all(release[key] == 'NOT_RUN' for key in ('nativeCompilation', 'nativeRuntime', 'humanAcceptance', 'windowsX64'))
         assert set(release['artifacts']) == set(ARTIFACT_NAMES)
-        assert 'CANDIDATE 1.23.0' in manifest['coverage'] and 'janelas R5' in manifest['coverage'] and 'cálculo 1.9.0 preservado' in manifest['coverage']
+        assert 'CANDIDATE 1.23.0' in manifest['coverage'] and ('painel personalizável' if C5 else 'janelas R5') in manifest['coverage'] and 'cálculo 1.9.0 preservado' in manifest['coverage']
         for kind, filename in ARTIFACT_NAMES.items():
             entry = release['artifacts'][kind]
             assert entry['available'] is True and entry['filename'] == filename
@@ -227,9 +237,9 @@ def verify_manifest_contract(manifest):
     assert re.fullmatch('[a-f0-9]{64}',source['sha256']) and source['bytes'] > 0
     daily = manifest['downloads']['dailySource']
     assert daily['available'] is True and isinstance(daily['path'], str) and daily['path']
-    assert daily['filename'] == 'JPW_Stoikus_Uso_Fontes_v1.23.0.zip'
+    assert daily['filename'] == ('JPW_Stoikus_Uso_Fontes_v1.23.0_painel-C5.zip' if C5 else 'JPW_Stoikus_Uso_Fontes_v1.23.0.zip')
     if manifest.get('interfaceRelease'):
-        assert daily['sha256'] == '0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3'
+        assert daily['sha256'] == ('0d323ea010c21e043922a318252911262ea2dbf9b4b0217d67b0b9a1fe0242b5' if C5 else '0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3')
     assert daily['filename'] == Path(daily['path']).name
     assert re.fullmatch('[a-f0-9]{64}', daily['sha256']) and daily['bytes'] > 0
     compiled = manifest['downloads']['compiled']; native = manifest.get('nativeArtifact')
@@ -953,7 +963,7 @@ def verify_archive(raw):
     with ZipFile(BytesIO(raw)) as bundle:
         listed_names = bundle.namelist()
         names = set(listed_names)
-        assert len(listed_names) == len(names) == 139
+        assert len(listed_names) == len(names) == (142 if C5 else 139)
         assert EXPECTED == names, names
         assert names == {Path(path).relative_to('mt5/jpw-alavancagem-atual').as_posix()
                          for path in MANIFEST['sourceFiles']}, names
@@ -972,14 +982,21 @@ def verify_daily_archive(raw):
     }
     with ZipFile(BytesIO(raw)) as bundle:
         names = bundle.namelist()
-        assert len(names) == len(set(names)) == 86, 'daily archive inventory/duplicates'
+        assert len(names) == len(set(names)) == (89 if C5 else 86), 'daily archive inventory/duplicates'
         assert {name for name in names if name.endswith('.mq5')} == programs
         assert not any(name.endswith('.ex5') for name in names), 'daily sources claim executable bytes'
         guide = (ROOT/'mt5/jpw-alavancagem-atual/STOIKUS_USO_DIARIO.md').read_bytes()
         if INTERFACE:
             with ZipFile(ROOT / INTERFACE['artifacts']['nativeKit']['path']) as kit:
                 sealed = kit.read('JPW_Stoikus_Uso_Fontes_v1.23.0_interface.zip')
-            assert raw == sealed, 'daily sources differ from exact kit payload'
+            if C5:
+                with ZipFile(BytesIO(sealed)) as native:
+                    assert set(native.namelist())==set(names)
+                    for name in names:
+                        if name=='LEIA_PRIMEIRO.md': assert native.read(name).endswith(bundle.read(name))
+                        else: assert native.read(name)==bundle.read(name),name
+            else:
+                assert raw == sealed, 'daily sources differ from exact kit payload'
             assert bundle.read('LEIA_PRIMEIRO.md').endswith(guide), 'sealed introduction must preserve original daily guide'
         else:
             assert bundle.read('LEIA_PRIMEIRO.md') == guide

@@ -655,7 +655,7 @@
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
       "order": 109,
-      "sha256": "39470eb4b221ef1e5b6a72ea610243e964055e4b1dab5e19c7a7c7b964eb6b3b"
+      "sha256": "700f5fc8f9ec3f1f26f967026eee753250c7bbd5b7e4d6876a881258a40559a2"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",

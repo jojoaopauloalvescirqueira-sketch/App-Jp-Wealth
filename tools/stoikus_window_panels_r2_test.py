@@ -4,6 +4,14 @@ import jpw_stoikus_brand_test as replay
 from leverage_source import expanded_source
 ROOT=Path(__file__).resolve().parents[1]
 INC=ROOT/'mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth'
+def bridge_source(native_seams=False):
+ # Native API seams only; all protocol state/transitions come from production.
+ code='using ulong=unsigned long;\nbool MathIsValidNumber(double v){return std::isfinite(v);}double MathFloor(double v){return std::floor(v); }\n'
+ code+='ulong GetTickCount64(){return 100;}ulong GetMicrosecondCount(){return 100;}\n'
+ if native_seams:
+  code+='int StringLen(const string&s){return s.size();}bool EventChartCustom(int,int,long,double,const string&){return true;}\n'
+ return code+(INC/'JPW_Stoikus_PanelBridge.mqh').read_text()
+
 def run():
  replay.MAIN=(ROOT/'tools/stoikus_panels_fixture/review_r2.cpp').read_text()
  replay.verify_header_render('clang++',expanded_source(INC/'JPW_NoCuda_UI.mqh'))
@@ -22,6 +30,7 @@ def owner_transfer():
  source+=(ROOT/'tools/stoikus_panels_fixture/gesture.hpp').read_text()
  source+=(INC/'JPW_Stoikus_Window.mqh').read_text()
  source+=(ROOT/'tools/stoikus_panels_fixture/review_r2_owner.hpp').read_text()
+ source+=bridge_source(native_seams=True)
  source+=function('JPW_Alavancagem_Actions.mqh','bool JPWAccountWindowEvent(')
  actions=(INC/'JPW_Alavancagem_Actions.mqh').read_text()
  prefix=body_of(actions,'void JPWHandleChartEventBody(').split('   JPWAccount event_account;')[0]
@@ -96,13 +105,16 @@ string AccountInfoString(int){return "server";}
 void JPWNoCudaDrawUI(){}void JPWNoCudaReadJustification(){}void JPWNoCudaClearDaily(){}void JPWNoCudaPaint(){}
 void JPWNCFDraw(){draws++;}
 void JPWNCFAction(string action){action_calls++;if(action=="FC_CLOSE")g_ncf_ui.open=false;}
+bool JPWNCFContextCurrent(){return true;}
 '''
+ seams+=bridge_source()
  controller=(INC/'JPW_NoCuda_Fibo_Controller.mqh').read_text()
  route=body_of(controller,'bool JPWNCFHandleEvent(')
  start=route.index('   if(id==CHARTEVENT_MOUSE_MOVE) g_ncf_sync.mouse_down=')
  end=route.index('   if(id==CHARTEVENT_CHART_CHANGE)',start)
  seams+='bool JPWNCFHandleEvent(int id,const long &lparam,const double &dparam,const string &sparam){'+route[start:end]+'return true;}\n'
  indicator=(ROOT/'mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5').read_text()
+ seams+='void JPWNoCudaOpenFromPanel(){'+body_of(indicator,'void JPWNoCudaOpenFromPanel(')+'}\n'
  wrapper=body_of(indicator,'void OnChartEvent(')
  end=wrapper.index('   if(JPWNCFHandleEvent(id,lparam,dparam,sparam)) return;')+len('   if(JPWNCFHandleEvent(id,lparam,dparam,sparam)) return;')
  seams+='void OnChartEvent(int id,const long &lparam,const double &dparam,const string &sparam){'+wrapper[:end]+'}\n'

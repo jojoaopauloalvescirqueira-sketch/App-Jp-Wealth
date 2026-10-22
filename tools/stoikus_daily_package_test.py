@@ -16,7 +16,7 @@ import stat
 import zipfile
 
 from build_leverage_package import build, MANIFEST_PATH, PRODUCT, VERSION_HEADER
-from leverage_package_test import EXPECTED_MEMBERS, R5_WINDOW_HEADERS, R5_MEMBERS, assert_historical_archive, assert_historical_stoikus_archive, assert_historical_stoikus_1_22_1_archive
+from leverage_package_test import EXPECTED_MEMBERS, R5_WINDOW_HEADERS, R5_MEMBERS, C5_PANEL_HEADERS, C5_MEMBERS, assert_historical_archive, assert_historical_stoikus_archive, assert_historical_stoikus_1_22_1_archive
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE_ARCHIVE = 'downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.22.0.zip'
@@ -68,6 +68,8 @@ SDK_MEMBERS = EXPECTED_MEMBERS | {SCRIPT, GUIDE}
 assert len(SDK_MEMBERS) == 136
 R5_DAILY_MEMBERS = DAILY_MEMBERS | R5_WINDOW_HEADERS
 assert len(R5_DAILY_MEMBERS) == 86
+C5_DAILY_MEMBERS = R5_DAILY_MEMBERS | C5_PANEL_HEADERS
+assert len(C5_DAILY_MEMBERS) == 89
 
 
 def assert_historical_daily_archive(raw):
@@ -231,8 +233,8 @@ def controls():
 def candidate():
     manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
     assert manifest['version'] in ('1.22.3', '1.23.0')
-    sdk = R5_MEMBERS if manifest['version'] == '1.23.0' else SDK_MEMBERS
-    daily = R5_DAILY_MEMBERS if manifest['version'] == '1.23.0' else DAILY_MEMBERS
+    sdk = C5_MEMBERS if manifest.get('interfaceRelease', {}).get('revision') == 'C5' else (R5_MEMBERS if manifest['version'] == '1.23.0' else SDK_MEMBERS)
+    daily = C5_DAILY_MEMBERS if manifest.get('interfaceRelease', {}).get('revision') == 'C5' else (R5_DAILY_MEMBERS if manifest['version'] == '1.23.0' else DAILY_MEMBERS)
     assert set(manifest['sourceFiles']) == {PRODUCT + name for name in sdk}
     check_archive(ROOT, manifest, 'dailySource', daily)
     check_archive(ROOT, manifest, 'source', sdk)

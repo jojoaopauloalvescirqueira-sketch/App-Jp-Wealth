@@ -67,15 +67,19 @@ def runtime():
 JPWStoikusWindowGesture g_account_window_gesture;JPWPanelRect g_account_window_rect,g_details_rect;
 int g_details_control=36,g_details_pad=8,account_captures=0,account_destroys=0,account_redraws=0;
 bool g_jpw_focus_suspended=false;
-bool JPWUIOwns(const string owner){return central_owner==owner;}
-void JPWUIRelease(const string owner){if(central_owner==owner)central_owner="";}
 void JPWRaizSaveVisibleFields(){account_captures++;}void JPWRaizPanelDestroy(){account_destroys++;}
 void JPWInvalidateDialogContent(int=-1){}void JPWRenderRaizDetails(){account_redraws++;}
 '''
  boundary+=re.search(r'const int JPW_ACTION_MINIMIZE=\d+;',presentation).group(0)+'\n'
  for source,signature in [(presentation,'string JPWRaizUI(const string suffix)'),(presentation,'string JPWActionObject(const int action)'),(account,'void JPWAccountMinimize()'),(account,'bool JPWAccountWindowEvent(const int id,const long &lp,const double &dp,const string &sp)')]:
   boundary+=signature+'{'+body_of(source,signature)+'}\n'
- code=shim+(fixture/'native.hpp').read_text()+(INC/'JPW_Stoikus_Visual.mqh').read_text()+re.sub(r'#include <JPWealth/[^>]+>','',(INC/'JPW_Stoikus_HUD.mqh').read_text())+boundary+reservation+accept+wrapper+(fixture/'main.cpp').read_text()
+ from stoikus_window_host import production
+ panel=(INC/'JPW_Alavancagem_Panel.mqh').read_text()
+ ink=''
+ for signature in ('bool JPWPanelDarkBackground(const color background)','color JPWPanelInk(const color background)'):
+  ink+=signature+'{'+body_of(panel,signature)+'}\n'
+ ink=re.sub(r"C'(\d+),(\d+),(\d+)'",lambda m:str(int(m[1])|(int(m[2])<<8)|(int(m[3])<<16)),ink)
+ code=shim+"\n#define JPW_HUD_PANEL_NATIVE\n"+(fixture/'native.hpp').read_text()+(INC/'JPW_UI_Focus.mqh').read_text()+ink+production()+boundary+reservation+accept+wrapper+(fixture/'main.cpp').read_text()
  with tempfile.TemporaryDirectory(prefix='stoikus-runtime-') as t:
   cpp=Path(t)/'test.cpp';cpp.write_text(translate_arrays(code))
   subprocess.run(['clang++','-std=c++17','-Wall','-Wextra','-Wno-unused-const-variable',str(cpp),'-o',t+'/test'],check=True)

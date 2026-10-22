@@ -1191,9 +1191,9 @@ class NoCudaIntegration(unittest.TestCase):
             source = Path(temp) / "actions.cpp"
             binary = Path(temp) / "actions"
             focus=(UI.parent/"JPW_UI_Focus.mqh").read_text()
-            from stoikus_window_nocuda_host import manual_window,fibo_cancel
+            from stoikus_window_nocuda_host import manual_window,fibo_cancel,panel_bridge
             window=manual_window(ACTION_SHIM)+"bool g_fc_gesture=false,g_fc_mouse_down=false;\n"+fibo_cancel()
-            source.write_text(ACTION_SHIM.replace("OBJ_BUTTON=3", "OBJ_BUTTON=3,OBJ_EDIT=4").replace("OBJPROP_SELECTABLE=13;", "OBJPROP_SELECTABLE=13,OBJPROP_SELECTED=14;") + window + focus + production + ACTION_CASES,
+            source.write_text(ACTION_SHIM.replace("OBJ_BUTTON=3", "OBJ_BUTTON=3,OBJ_EDIT=4").replace("OBJPROP_SELECTABLE=13;", "OBJPROP_SELECTABLE=13,OBJPROP_SELECTED=14;") + window + focus + panel_bridge(self.indicator) + production + ACTION_CASES,
                               encoding="utf-8")
             compile_result = subprocess.run(
                 [compiler, "-std=c++17", "-Wall", "-Wextra", "-Werror",

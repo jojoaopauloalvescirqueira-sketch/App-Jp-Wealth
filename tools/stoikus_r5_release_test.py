@@ -34,10 +34,13 @@ class R5ReleaseTests(InterfacePackageTests):
     variant = ''
 
     def populate_sources(self):
-        for name in self.members:
-            target = self.root / PRODUCT / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(ROOT / PRODUCT / name, target)
+        # Historical R5 must use its immutable SDK, independent of current product edits.
+        import zipfile
+        archive = ROOT / OUTPUT / 'JPW_Stoikus_Fontes_v1.23.0.zip'
+        self.assertEqual(hashlib.sha256(archive.read_bytes()).hexdigest(), SDK_SHA256)
+        with zipfile.ZipFile(archive) as source:
+            self.assertEqual(set(source.namelist()), self.members)
+            source.extractall(self.root / PRODUCT)
 
     def test_exact_r5_sdk_and_daily_identity_without_suffix(self):
         result = build(self.root)
@@ -77,8 +80,8 @@ class R5ReleaseTests(InterfacePackageTests):
         self.rejected(changed, 'terminal promoted')
 
 
-def candidate():
-    manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
+def candidate(root=ROOT):
+    manifest = json.loads((root / MANIFEST_PATH).read_text())
     assert manifest['version'] == '1.23.0'
     assert_release_inventory(manifest)
     assert manifest['runtimeBuildId'] == BUILD_ID
@@ -92,14 +95,14 @@ def candidate():
     assert manifest['nativeArtifact'] is None
     assert not manifest['downloads']['compiled']['available']
     assert all(manifest['validation'][kind]['status'] == 'pending' for kind in ('compilation', 'terminal'))
-    assert hashlib.sha256(check_archive(ROOT, manifest, 'source', R5_MEMBERS)).hexdigest() == SDK_SHA256
-    assert hashlib.sha256(check_archive(ROOT, manifest, 'dailySource', R5_DAILY_MEMBERS)).hexdigest() == DAILY_SHA256
+    assert hashlib.sha256(check_archive(root, manifest, 'source', R5_MEMBERS)).hexdigest() == SDK_SHA256
+    assert hashlib.sha256(check_archive(root, manifest, 'dailySource', R5_DAILY_MEMBERS)).hexdigest() == DAILY_SHA256
     for kind, (filename, digest) in ASSETS.items():
         record = manifest['interfaceRelease']['artifacts'][kind]
-        raw = (ROOT / OUTPUT / filename).read_bytes()
+        raw = (root / OUTPUT / filename).read_bytes()
         assert record == dict(available=True, path=OUTPUT + filename, filename=filename, sha256=digest, bytes=len(raw))
         assert hashlib.sha256(raw).hexdigest() == digest
-    pin = json.loads((ROOT / OUTPUT / 'root-pin-R5.json').read_text())
+    pin = json.loads((root / OUTPUT / 'root-pin-R5.json').read_text())
     assert pin['source_zip_sha256'] == DAILY_SHA256
     assert pin['mql_source_fingerprint'] == FINGERPRINT
     assert pin['runtime_build_id'] == BUILD_ID
@@ -115,4 +118,15 @@ def controls():
 
 if __name__ == '__main__':
     controls()
-    candidate()
+    if json.loads((ROOT / MANIFEST_PATH).read_text()).get('interfaceRelease', {}).get('revision') == 'C5':
+        historical = R5ReleaseTests()
+        historical.setUp()
+        try:
+            build(historical.root)
+            candidate(historical.root)
+        finally:
+            historical.doCleanups()
+        from stoikus_c5_release_test import candidate as c5_candidate
+        c5_candidate()
+    else:
+        candidate()

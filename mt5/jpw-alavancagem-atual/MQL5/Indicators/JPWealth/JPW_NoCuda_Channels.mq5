@@ -6,6 +6,7 @@
 #property indicator_plots 0
 
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
+#include <JPWealth/JPW_Stoikus_PanelBridge.mqh>
 #include <JPWealth/JPW_NoCuda_Core.mqh>
 #include <JPWealth/JPW_NoCuda_Terminal.mqh>
 #include <JPWealth/JPW_NoCuda_Projection.mqh>
@@ -1207,6 +1208,7 @@ int OnInit()
        return(INIT_FAILED); }
    JPWNoCudaPaint(); JPWNoCudaDrawUI();
    g_nocuda_initialized=true;
+   JPWStoikusPanelAnnounce(false,g_nocuda_prefix);
    return(INIT_SUCCEEDED);
   }
 
@@ -1215,6 +1217,7 @@ void OnDeinit(const int reason)
    JPWStoikusWindowCancel(g_manual_gesture,g_manual_rect);
    g_nocuda_initialized=false;
    if(!g_nocuda_resources_admitted || g_nocuda_prefix=="") return;
+   JPWStoikusPanelDepart(false,g_nocuda_prefix);
    EventKillTimer();
    JPWNCFShutdown();
    if(g_nocuda_canvas_ready) g_nocuda_canvas.Destroy();
@@ -1275,6 +1278,10 @@ void OnTimer()
   {
    if(!g_nocuda_initialized || !g_nocuda_resources_admitted ||
       g_nocuda_prefix=="") return;
+   JPWStoikusPanelAnnounce(false,g_nocuda_prefix);
+   const bool shared=JPWStoikusPanelPeerReady(false);
+   const bool shared_changed=(shared!=g_nocuda_ui_shared_access);
+   g_nocuda_ui_shared_access=shared;
    const string current_feed=AccountInfoString(ACCOUNT_SERVER);
    if(_Symbol!=g_nocuda_symbol || current_feed!=g_nocuda_feed)
      {
@@ -1282,6 +1289,7 @@ void OnTimer()
       JPWNoCudaPaint(); JPWNoCudaDrawUI();
       return;
      }
+   if(shared_changed) { JPWNoCudaDrawUI(); ChartRedraw(0); }
    if(g_ncf_mode) { JPWNCFTimer(); return; }
    JPWNoCudaFlushChartClick();
    if((g_nocuda_daily.valid || g_nocuda_daily.no_session) && (g_nocuda_show_refs ||
@@ -1313,11 +1321,32 @@ void OnTimer()
      }
   }
 
+void JPWNoCudaOpenFromPanel()
+  {
+   if(!g_nocuda_initialized || !g_nocuda_resources_admitted || g_nocuda_prefix=="") return;
+   const string focus=JPWUIOwner();
+   if(focus!="" && focus!=g_nocuda_prefix) return;
+   if(!JPWNCFContextCurrent()) return;
+   if(g_nocuda_panel_open || (g_ncf_mode && g_ncf_ui.open)) return;
+   JPWNCFAction("FC_OPEN"); JPWNoCudaDrawUI(); ChartRedraw(0);
+  }
+
 void OnChartEvent(const int id,const long &lparam,const double &dparam,
                   const string &sparam)
   {
    if(!g_nocuda_initialized || !g_nocuda_resources_admitted ||
       g_nocuda_prefix=="") return;
+   bool open_requested=false;
+   if(JPWStoikusPanelReceive(id,lparam,dparam,sparam,false,g_nocuda_prefix,open_requested))
+     {
+      const bool shared=JPWStoikusPanelPeerReady(false);
+      if(shared!=g_nocuda_ui_shared_access)
+        { g_nocuda_ui_shared_access=shared;
+          if(_Symbol==g_nocuda_symbol && AccountInfoString(ACCOUNT_SERVER)==g_nocuda_feed)
+            { JPWNoCudaDrawUI(); ChartRedraw(0); } }
+      if(open_requested) JPWNoCudaOpenFromPanel();
+      return;
+     }
    // An active pointer gesture owns Escape before editor/panel shortcuts.
    // Preserve the visible draft and editor; never turn this cancellation into Close.
    if(id==CHARTEVENT_KEYDOWN && lparam==27 && g_fc_gesture)

@@ -38,31 +38,57 @@ def adapt(raw):
     return raw.decode('utf-8').replace('1.22.3', '1.23.0').replace('R4', 'R5').encode('utf-8')
 
 
-def prepare(source, preview, output):
+def prepare(source, preview, output, baseline_commit=BASELINE):
     source, preview, output = Path(source), Path(preview), Path(output).absolute()
     if output.exists() or output.is_symlink():
         raise FileExistsError('Existing output preserved; choose a fresh directory')
     if not output.parent.is_dir():
         raise FileNotFoundError('Output parent must already exist')
+    if not re.fullmatch(r'[0-9a-f]{40}', baseline_commit):
+        raise ValueError('Baseline commit must be an explicit 40-character lowercase Git SHA')
     original = {p.name: sha(p.read_bytes()) for p in source.iterdir() if p.is_file()}
     info = candidate.verify(source)
     preview_raw = preview.read_bytes()
     old = historical_templates()
     old_identity = json.loads(old['stoikus-1.22.3-interface.identity.json'])
-    preview_name = 'docs/preview/stoikus-window-controls/index.html'
+    # Freeze the actual preview source path; never alias a different revision.
+    preview_name = preview.resolve().relative_to(ROOT.resolve()).as_posix()
     source_hashes = {official.PRODUCT + name: value for name, value in info['sourceHashes'].items()}
     source_hashes[preview_name] = sha(preview_raw)
     interface_fingerprint = sha(json.dumps(source_hashes, sort_keys=True, separators=(',', ':')).encode())
-    payload = (source / info['downloads']['dailySource']['filename']).read_bytes()
-    with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-        daily_entries = len(archive.infolist())
+    original_payload = (source / info['downloads']['dailySource']['filename']).read_bytes()
+    with zipfile.ZipFile(io.BytesIO(original_payload)) as archive:
+        members = [(member.filename, archive.read(member)) for member in archive.infolist()]
+    original_guide = dict(members)['LEIA_PRIMEIRO.md']
+    preamble = (
+        '# Stoikus 1.23.0 — candidato privado de interface\n\n'
+        '**Candidato privado de interface:** este guia pertence ao **' + PAYLOAD + '**, '
+        'derivado documental exclusivo do kit **' + OUTER + '** e seu **root-pin-R5.json** externo. '
+        'Siga primeiro o **LEIA-PRIMEIRO.md** do kit selado para compilar em staging isolado. '
+        'Preserve o recibo, os fontes, logs e EX5 exatos para conferência. '
+        'Compilação, execução, Windows x64 e aceite humano permanecem **NOT_RUN**.\n\n'
+        'As instruções genéricas do guia original abaixo são preservadas como referência; '
+        'não autorizam cópia, instalação, abertura do terminal ou ensaio. '
+        'Qualquer ensaio posterior exige uma instalação demo com pasta de dados separada '
+        'e autorização própria; compilar não autoriza instalar.\n\n'
+        '---\n\n'
+    ).encode('utf-8')
+    intro = original_guide.decode('utf-8-sig').casefold()[:2500]
+    if all(token in intro for token in ('candidato privado de interface', PAYLOAD.casefold(), 'recibo', 'demo')):
+        preamble = b''  # Existing conforming private payloads retain their exact bytes.
+    payload = (official.make_archive([(name, preamble + raw if name == 'LEIA_PRIMEIRO.md' else raw)
+                                      for name, raw in members]) if preamble else original_payload)
+    daily_entries = len(members)
     freeze = {
         'schema': 'JPW_STOIKUS_INTERFACE_FREEZE_V1', 'candidate': '1.23.0-interface',
-        'product_version': '1.23.0', 'calculation_version': '1.9.0', 'baseline_commit': BASELINE,
+        'product_version': '1.23.0', 'calculation_version': '1.9.0', 'baseline_commit': baseline_commit,
         'runtime_build_id': info['runtimeBuildId'], 'mql_source_fingerprint': info['mqlSourceFingerprint'],
         'interface_fingerprint': interface_fingerprint,
         'source_hashes': source_hashes,
         'scope': 'DECLARED_SDK_SOURCES_AND_PREVIEW_BEFORE_DISTRIBUTION_SEAL',
+        'native_guide_derivation': {'source_zip_sha256': sha(original_payload),
+                                    'original_guide_sha256': sha(original_guide),
+                                    'native_guide_sha256': sha(preamble + original_guide)},
         'daily_entries': daily_entries, 'native_compilation': 'NOT_RUN',
         'native_execution': 'NOT_RUN', 'human_acceptance': 'NOT_RUN', 'windows_x64': 'NOT_RUN',
     }
@@ -149,7 +175,9 @@ def main():
     parser.add_argument('--candidate', type=Path, required=True)
     parser.add_argument('--preview', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--baseline-commit', default=BASELINE,
+                        help='40-character source baseline commit; historical default retained')
     args = parser.parse_args()
-    print(json.dumps(prepare(args.candidate, args.preview, args.output), indent=2))
+    print(json.dumps(prepare(args.candidate, args.preview, args.output, args.baseline_commit), indent=2))
 
 if __name__ == '__main__': main()
