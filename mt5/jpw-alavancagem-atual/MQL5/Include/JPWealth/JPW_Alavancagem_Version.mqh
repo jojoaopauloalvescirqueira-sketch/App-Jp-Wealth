@@ -9,5 +9,5 @@
 #define JPW_CALCULATION_VERSION "1.9.0"
 // Source identity. Exact artifacts remain linked by the external candidate
 // fingerprint; this label never certifies native compilation or EX5 identity.
-#define JPW_BUILD_ID "c1298741ec9673c2644cfaad83e6444b06a4ae7e0a5ec78f85f2c65d2781ea31"
+#define JPW_BUILD_ID "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161"
 #endif

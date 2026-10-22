@@ -859,6 +859,8 @@ void JPWNoCudaFiboUIDraw(const string prefix,const JPWNoCudaFiboView &v)
    const int cw=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS),ch=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS);
    if(!v.open)
      {
+      if(g_nocuda_ui_shared_access)
+        { JPWNoCudaFiboUIFinish(prefix); JPWUIDesignEndPass(); return; }
       const string full_label="NoCuda · Gráficos";
       string label=full_label;
       bool use_icon=true;

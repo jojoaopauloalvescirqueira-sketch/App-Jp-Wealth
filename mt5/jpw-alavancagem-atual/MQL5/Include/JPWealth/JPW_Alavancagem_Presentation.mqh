@@ -281,6 +281,7 @@ void JPWHUDUnavailable(const string reason)
 #include <JPWealth/JPW_Stoikus_HUD.mqh>
 #include <JPWealth/JPW_Stoikus_Window.mqh>
 const int JPW_ACTION_MINIMIZE=161;
+const int JPW_ACTION_PANEL_CUSTOMIZE=901;
 JPWStoikusWindowGesture g_account_window_gesture;
 JPWPanelRect g_account_window_rect;
 void JPWRenderHUDBody()
@@ -1652,8 +1653,10 @@ void JPWRenderCockpit()
             continue;
            }
          const string suffix="CARD_"+IntegerToString(i);
-         JPWRaizCreateLabel(suffix+"_TITLE",JPWFitText(JPWCockpitMetricTitle(i,metric.title)+" · Ver detalhes",card_inner,g_details_font),
+         JPWRaizCreateLabel(suffix+"_TITLE",JPWFitText(JPWCockpitMetricTitle(i,metric.title),card_inner-g_details_control,g_details_font),
             cx+card_inset,y+card_inset+MathMax(0,(g_details_control-(g_details_line-g_details_pad))/2));
+         JPWRaizCreateLabel(suffix+"_DETAILS","›",cx+card_width-card_inset-g_details_control,
+            y+card_inset+MathMax(0,(g_details_control-(g_details_line-g_details_pad))/2));
          JPWPresentationSetInteger(JPWRaizUI(suffix+"_TITLE"),OBJPROP_ZORDER,5);
          const int value_y=y+g_details_control+card_inset+g_details_pad/2;
          const int state_y=value_y+value_line;
@@ -1726,9 +1729,8 @@ void JPWRenderCockpit()
      }
    else if(g_raiz_tab==JPW_ROUTE_SETTINGS)
      {
-      string names[JPW_COCKPIT_METRIC_COUNT]={"Leverage","Floating P/L","Genesis SL","Raiz N 1W","Raiz N 2W","Stop risk","Flutuante compensado"};
       const int row_height=g_details_control+g_details_pad;
-      const int total=JPW_COCKPIT_METRIC_COUNT+2;
+      const int total=3;
       const int rows=(body_height/row_height>0 ? body_height/row_height : 1);
       const int pages=(total+rows-1)/rows;
       g_cockpit_page=JPWPanelClamp(g_cockpit_page,0,pages-1);
@@ -1737,16 +1739,16 @@ void JPWRenderCockpit()
          const int item=g_cockpit_page*rows+j;
          string caption="";
          int button_id=0;
-         if(item<JPW_COCKPIT_METRIC_COUNT)
-           { button_id=60+item; caption=(JPWCockpitVisible(g_cockpit_draft,item) ? "✓ " : "○ ")+names[item]; }
-         else if(item==JPW_COCKPIT_METRIC_COUNT)
+         if(item==0)
+           { button_id=JPW_ACTION_PANEL_CUSTOMIZE;caption="Painel do gráfico · informações e ordem"; }
+         else if(item==1)
            { button_id=30; caption="Canto: "+JPWCockpitCornerName(g_cockpit_draft.corner); }
          else
-           { button_id=31; caption="Densidade: "+(g_cockpit_draft.density==0 ? "Compacta" : "Normal"); }
+           { button_id=31; caption="Espaçamento: "+(g_cockpit_draft.density==0 ? "Compacto" : "Normal"); }
          JPWRaizCreateButton(button_id,caption,x,body_y+j*row_height,inner);
         }
       const string notice=(g_cockpit_pref_invalid ? g_cockpit_pref_notice :
-         "Prévia imediata no gráfico. Aplicar salva neste gráfico; Cancelar restaura.");
+         "Escolha informações e ordem em Personalizar. Canto e espaçamento: Aplicar salva; Cancelar descarta.");
       JPWRaizCreateLabel("FEEDBACK",notice,x,footer_y-2*g_details_line);
       JPWRaizCreateLabel("PAGE","Opções "+IntegerToString(g_cockpit_page+1)+"/"+
                           IntegerToString(pages),

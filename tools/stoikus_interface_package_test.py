@@ -224,6 +224,9 @@ class InterfacePackageTests(unittest.TestCase):
 def candidate():
     """Validate the generated public candidate without writing to its inputs."""
     manifest = json.loads((ROOT / MANIFEST_PATH).read_text())
+    if manifest.get("interfaceRelease", {}).get("revision") == "C5":
+        from stoikus_c5_release_test import candidate as c5_candidate
+        return c5_candidate()
     if manifest["version"] == "1.23.0":
         from stoikus_r5_release_test import candidate as r5_candidate
         return r5_candidate()

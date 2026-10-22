@@ -489,6 +489,8 @@ bool JPWNoCudaUICockpitHUD(const int cw,const int ch,JPWNoCudaUIRect &hud)
 bool g_nocuda_ui_hud_seen=false,g_nocuda_ui_hud_valid=false;
 JPWNoCudaUIRect g_nocuda_ui_hud_previous;
 string g_nocuda_ui_launcher_reason="";
+// Ephemeral bridge result, set by the indicator; never inferred from objects.
+bool g_nocuda_ui_shared_access=false;
 bool JPWNoCudaUILauncherReservationChanged()
   {
    JPWNoCudaUIRect hud;
@@ -606,6 +608,8 @@ void JPWNoCudaUIRender(const string prefix,const JPWNoCudaUIView &v)
    if(v.tab==2) minimum_body=MathMax(minimum_body,(candidate_inner>=JPWUIDesignPx(500) ? bh+JPWUIDesignPx(8) : 2*(bh+JPWUIDesignPx(8)))+line+JPWUIDesignPx(24));
    if(!v.open || cw<JPWUIDesignPx(300) || ch<JPWUIDesignPx(260) || candidate_available<minimum_body)
      {
+      if(g_nocuda_ui_shared_access)
+        { JPWNoCudaUIFinish(prefix); JPWUIDesignEndPass(); return; }
       const string full_launcher_text=(v.open ? "NoCuda · Gráficos · recolher" : "NoCuda · Gráficos");
       string launcher_text=full_launcher_text;
       bool use_icon=true;

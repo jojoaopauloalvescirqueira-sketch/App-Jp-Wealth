@@ -319,7 +319,8 @@ class DeliveryTest(unittest.TestCase):
         # Independent historical/current pins: the live R5 manifest cannot stand in for R4.
         from stoikus_interface_package_test import ASSETS as R4_PINS
         from stoikus_r5_release_test import ASSETS as R5_PINS
-        pins = R5_PINS if self.revision == 'R5' else R4_PINS
+        from stoikus_c5_release_test import ASSETS as C5_PINS
+        pins = C5_PINS if self.revision == 'C5' else (R5_PINS if self.revision == 'R5' else R4_PINS)
         approved = {}
         for key, (filename, digest) in pins.items():
             raw = (ROOT / (PREFIX + filename)).read_bytes()
@@ -610,4 +611,19 @@ if __name__ == '__main__':
                 'nativeKit': ('Kit_Windows_Stoikus_Janelas_R5.zip','application/zip',b'PK\x03\x04kit-fixture'),
                 'nativePin': ('root-pin-R5.json','application/json',b'{"native":"NOT_RUN"}\n'),
                 'preview': ('Previa_Stoikus_Janelas_R5.html','text/html',b'<!doctype html><p>Fictitious preview</p>')}
+    class ZC5DeliveryTest(DeliveryTest):
+        revision = 'C5'
+        def setUp(self):
+            super().setUp()
+            self.manifest['version'] = '1.23.0'
+            self.manifest['interfaceRelease'].update(revision='C5', candidate='1.23.0-interface', archiveVariant='painel-C5')
+            for key,(name,_mime,raw) in ARTIFACTS.items():
+                self.manifest['interfaceRelease']['artifacts'][key]=record(name,raw)
+        @classmethod
+        def setUpClass(cls):
+            global ARTIFACTS
+            ARTIFACTS = {
+                'nativeKit': ('Kit_Windows_Stoikus_Painel_C5_D1.zip','application/zip',b'PK\x03\x04kit-fixture'),
+                'nativePin': ('root-pin-Painel-C5-D1.json','application/json',b'{"native":"NOT_RUN"}\n'),
+                'preview': ('Previa_Stoikus_Painel_C5.html','text/html',b'<!doctype html><p>Fictitious preview</p>')}
     unittest.main(verbosity=2)

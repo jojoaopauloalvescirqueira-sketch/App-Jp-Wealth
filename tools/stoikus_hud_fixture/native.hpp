@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cstdio>
 #include <codecvt>
 #include <locale>
 using uchar=unsigned char; using ulong=unsigned long; using ENUM_OBJECT=int; using ushort=unsigned short;
@@ -39,10 +40,26 @@ string risk_scope="EURUSD · Compra"; string JPWRiskDisplayScope(){return risk_s
 int JPWCockpitPresentationIndex(int slot){const int order[7]={0,5,1,2,3,4,6};return order[slot];}
 void JPWHUDUnavailable(string){} void JPWRenderHUD();
 
+#ifndef JPW_HUD_PANEL_NATIVE
 string central_owner=""; string JPWUIOwner(){return central_owner;}
+#endif
 
 using JPWNoCudaUIRect=JPWPanelRect; long ChartID(){return 1;} string StringFormat(string,long){return g_panel_prefix+"HUD_BG";}
+#ifdef JPW_HUD_PANEL_NATIVE
+template<class... A>string StringFormat(const string&f,A...a){char b[256];std::snprintf(b,sizeof(b),f.c_str(),a...);return b;}
+#endif
 bool MathIsValidNumber(double n){return std::isfinite(n);} long MathAbs(long n){return std::abs(n);}
 void JPWUIDesignBeginPass(){} void JPWUIDesignEndPass(){}
 int generic_events=0;void JPWHandleChartEvent(int,const long&,const double&,const string&){generic_events++;}
 bool JPWGenetrixHandleCycleEvent(int,const long&,const string&){return false;}
+
+#ifdef JPW_HUD_PANEL_NATIVE
+#include <cstdio>
+constexpr int TERMINAL_KEYSTATE_SHIFT=1001;
+long TerminalInfoInteger(int){return 0;}
+double MathFloor(double v){return std::floor(v);}
+ulong GetMicrosecondCount(){return clock_ms*1000+1;}
+bool EventChartCustom(long,int,long,double,const string&){return true;}
+int StringSplit(const string&s,int d,std::vector<string>&v){v.clear();size_t start=0;for(size_t i=0;i<=s.size();i++)if(i==s.size()||s[i]==d){v.push_back(s.substr(start,i-start));start=i+1;}return v.size();}
+
+#endif

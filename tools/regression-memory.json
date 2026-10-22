@@ -2,7 +2,7 @@
   "schema": "jpwealth/regression-memory/v1",
   "scope_note": "Índice factual PARCIAL de bugs e pendências; não é norma, lista integral do legado, evidência de execução atual ou runtime de memória. Ler fontes/testes e revalidar bytes antes de agir. Memória global não alterada.",
   "authority": "Fontes e autorização vigentes prevalecem; registros não autorizam edição, fechamento ou Git.",
-  "coverage_note": "Índice parcial; focais de Bolsas são adicionais ao runnerfull atual. W2 e downloads estão no FULL. Outros testes legados também estão fora do runner; migração da cobertura fica pendente em escopo próprio. Nenhum gate foi alterado.",
+  "coverage_note": "Índice parcial; focais de Bolsas são adicionais ao runnerfull atual. W2 e downloads estão no FULL. Outros testes legados também estão fora do runner; migração da cobertura fica pendente em escopo próprio. Vínculos históricos permanecem como registrados; novas proteções Stoikus distinguem gate web, runner MT5 host proposto e ensaio nativo.",
   "entries": [
     {
       "id": "resize_focus",
@@ -717,6 +717,561 @@
         "scope": "CausalRED/GREEN6cases; core26/UI30/work/backup14/sidebar16/lifecyclePASS. CurrentFULL 81 PASS; expandedcontextual BASELINE_FAIL firstdialog-open refusal; historicalincidentsremainopen. Actualuserclient/humanacceptance unobserved.",
         "candidate_map_sha256": "dad790a4457e3997ba3037b13f9d9ac6e13f6b4d6754d198dac86f7f236d59cb",
         "full_receipt_sha256": "99cf8648cbe581e83c03f8746b93981d36566e1bb26e59d4379173250fa7b23c"
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_unknown_object",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Objeto desconhecido com nome igual ao prefixo era removido.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R2"
+      },
+      "stimulus": "Criar objeto com o prefixo exato e redesenhar.",
+      "expected": "Objeto desconhecido preservado.",
+      "cause": "Item vazio no inventário de sufixos.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R2",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R2-unknown-object-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_zorder",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Controle criado depois podia capturar clique acima do editor.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R3"
+      },
+      "stimulus": "Pintar métrica sob o botão Aplicar depois da pintura do editor.",
+      "expected": "Clique continua em Aplicar pelo z-order.",
+      "cause": "Hit-test dependia da ordem de criação.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R3",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R3-zorder-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_scope_targets",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Escopo completo podia sumir da dica e alvo conjunto era pequeno.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R4"
+      },
+      "stimulus": "Escopo de risco extenso e alvos primário/metadados nos quatro DPI.",
+      "expected": "Escopo integral na dica; alvo canônico contíguo com pelo menos36pixels lógicos.",
+      "cause": "Encurtamento compartilhado com dica e geometria sem reserva mínima.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R4",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R4-target-scope-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_template_controls",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Novos controles reconhecidos podiam sobreviver à restauração de template.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+        "section": "Plano humano painel personalizável; regressão R5"
+      },
+      "stimulus": "Restaurar controles de outro ChartID e um objeto manual desconhecido.",
+      "expected": "Retirar somente controles canônicos reconhecidos; preservar objeto desconhecido.",
+      "cause": "Inventário anterior não incluía novos controles.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R5",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R5-template-controls-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "9bae77fe6a57c88f2eed9e7a612d25e2a770423275a6b3ccca0faf09ad74d5ee",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_spacing",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Espaçamento Normal tinha perdido efeito.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R6"
+      },
+      "stimulus": "Alternar densidade0→1 em gráfico amplo.",
+      "expected": "Distância entre métricas aumenta; formatos antigos preservados.",
+      "cause": "Render novo usava gap fixo.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R6",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R6-density-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_transient_hint",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Aviso de valor extenso persistia após voltar a caber.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R7b"
+      },
+      "stimulus": "Cotação longa→curta, depois erro de salvamento persistente.",
+      "expected": "Aviso transitório desaparece; erro persistente continua.",
+      "cause": "Estado efêmero era gravado no aviso compartilhado.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R7b",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R7b-stale-hint-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_heading",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Posição automática inferior podia invadir cabeçalho.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R8"
+      },
+      "stimulus": "DPI200%, fonte16, cantos inferiores, offsets220/2000.",
+      "expected": "Reservar cabeçalho quando houver espaço; posição manual y0 continua válida.",
+      "cause": "Clamp automático permitia y0 para offset excessivo.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R8",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R8-heading-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_card_details",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Novo chevron da Conta não encaminhava aos detalhes.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh",
+        "section": "Plano humano painel personalizável; regressão R9b"
+      },
+      "stimulus": "Acionar seis regiões de cada um dos sete cartões.",
+      "expected": "Encaminhar ao índice canônico e à rota de detalhes.",
+      "cause": "Condição de clique não incluía CARD_i_DETAILS.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R9b",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R9b-card-access-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "9bae77fe6a57c88f2eed9e7a612d25e2a770423275a6b3ccca0faf09ad74d5ee",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_custom_panel_attach_guidance",
+      "state": "fixed_regression",
+      "summary": "Correção durante construção do candidato: Orientação de NoCuda ausente não explicava corretamente a anexação.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; regressão R10"
+      },
+      "stimulus": "Acionar NoCuda sem par carregado.",
+      "expected": "Explicar Navegador Ctrl+N e arrastar; Ctrl+I somente confere presença.",
+      "cause": "Tooltip confundia lista de indicadores com anexação.",
+      "protection": {
+        "path": "tools/stoikus_custom_panel_hud_test.py",
+        "case": "R10",
+        "command": "python3 tools/stoikus_custom_panel_hud_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_custom_panel_hud_test",
+          "registration": "REGISTERED_HUMAN_AUTHORIZED",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
+          "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-red.log",
+          "result": "PRODUCT_FAIL",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/hud/R10-nocuda-guidance-green.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Mesmo focal acumulado inclui todos os casos; host, não MT5."
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "availability": "private_external_receipt_not_guaranteed_in_clone",
+          "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
+        "source_sha256": "4f1d1821cafe2d5d389a30ad24bae14ba9ad32b6e2699449c6a44df7f3a64dc0",
+        "test_sha256": "7e0347c251d0993ef0da645b02cb9f048ffafa783245d54cff6c9949face41d0",
+        "scope": "Focal host acumulado; contexto/foco externo lido na revisão, não exercitado pelo bloco isolado dos cartões. Compilação MT5, ensaio nativo e aceite humano NOT_RUN; gates brutos permanecem separados."
+      }
+    },
+    {
+      "id": "stoikus_risk_scope_when_narrow",
+      "state": "fixed_regression",
+      "summary": "Risco numérico em gráfico estreito conservava somente grupo genérico visível.",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Stoikus_HUD.mqh",
+        "section": "Plano humano painel personalizável; correção C5 do escopo do risco"
+      },
+      "stimulus": "Grupo aceito com símbolo longo e Compra/Venda, risco125,50USD/1,25%saldo, gráfico250px.",
+      "expected": "Exibir o valor junto do escopo completo ou oferecer Detalhes/Ver sem o número; manter valor canônico e grupo integrais nos detalhes. N/A não vira zero.",
+      "cause": "O ajuste media somente o valor, sem propagar a abreviação dos metadados do grupo.",
+      "protection": {
+        "path": "tools/stoikus_risk_presentation_test.py",
+        "case": "Constrained scope uses orientation only; unchanged original assertion and full accepted scope/value tooltip check",
+        "command": "python3 tools/stoikus_risk_presentation_test.py",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        },
+        "mt5_host_suite": {
+          "planned_check_id": "stoikus_risk_presentation_test",
+          "registration": "REGISTERED_EXISTING_HOST",
+          "accumulated_execution": "PASS",
+          "accumulated_candidate_build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+          "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/final-validation-C5/mt5-all.json",
+          "accumulated_receipt_sha256": "d8fc9db14301face2e2fec2bd187bd87b7ef147ee2898b4f6708234e1460c4e8",
+          "scope_note": "Somente check risk PASS na suíte C5; três falhas de distribuição mantidas. Compilação e execução MT5 NOT_RUN."
+        }
+      },
+      "evidence": [
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.logs/stoikus_risk_presentation_test.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "43a4897ea51b4a1f2727124fb1202e4fff2187fc4d01a30a97a92522cb69d55c",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/validation-C5/stoikus_risk_presentation_test.log",
+          "result": "PASS",
+          "sha256": "f73a87354983f077e92589f02de304d42efac238f4266aaa0393f64655dd2124",
+          "availability": "private_external_receipt_not_guaranteed_in_clone"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-21",
+        "build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+        "source_sha256": "aa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481",
+        "test_sha256": "0943208451731f70a82006e83b3a0ee7ff333529aa65fa7a506a044552534f38",
+        "scope": "Mesmo teste de risco sem alteração:16checks/0falha e detalhes dos três valores/contexto. Host, não aprovação nativa ou financeira."
       }
     }
   ]

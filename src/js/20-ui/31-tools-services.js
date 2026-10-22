@@ -212,7 +212,11 @@
     const set=(name,value)=>document.querySelectorAll('[data-jpw-leverage-meta="'+name+'"]')
       .forEach(node=>{node.textContent=value;});
     const notice=(message,error)=>{const node=el('jpwLeverageDownloadStatus');node.textContent=message;node.dataset.state=error?'error':'ok';};
-    const artifactCatalog={R5:{
+    const artifactCatalog={C5:{
+      nativeKit:{filename:'Kit_Windows_Stoikus_Painel_C5_D1.zip',mime:'application/zip'},
+      nativePin:{filename:'root-pin-Painel-C5-D1.json',mime:'application/json'},
+      preview:{filename:'Previa_Stoikus_Painel_C5.html',mime:'text/html'}
+    },R5:{
       nativeKit:{filename:'Kit_Windows_Stoikus_Janelas_R5.zip',mime:'application/zip'},
       nativePin:{filename:'root-pin-R5.json',mime:'application/json'},
       preview:{filename:'Previa_Stoikus_Janelas_R5.html',mime:'text/html'}
@@ -225,6 +229,7 @@
     const kinds=['dailySource','source','compiled',...Object.keys(artifactTypes),'installer'];
     const release=manifest&&manifest.interfaceRelease;
     const validRelease=release&&((release.revision==='R4'&&release.candidate==='1.22.3-interface'&&release.archiveVariant==='interface'&&manifest.version==='1.22.3')||
+      (release.revision==='C5'&&release.candidate==='1.23.0-interface'&&release.archiveVariant==='painel-C5'&&manifest.version==='1.23.0')||
       (release.revision==='R5'&&release.candidate==='1.23.0-interface'&&release.archiveVariant===''&&manifest.version==='1.23.0'))&&release.state==='SOURCE_ONLY_NATIVE_PENDING'&&
       manifest.downloads?.compiled?.available===false&&
       ['nativeCompilation','nativeRuntime','humanAcceptance','windowsX64'].every(key=>release[key]==='NOT_RUN')&&release.artifacts&&

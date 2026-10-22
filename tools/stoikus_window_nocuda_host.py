@@ -62,3 +62,17 @@ def manual_signature_fixture(cases):
     end=' for(int width:{300,390,800,1440}) for(int height:{380,390,400,402,420,499,500,520,560,700})'
     assert cases.count(start)==1 and cases.count(end)==1
     return cases.replace(start,' ++checks;if(g_manual_width!=680){++failures;std::cerr<<"FAIL approved default manual logical width680\\n";}\n g_manual_width=960;\n'+start,1).replace(end,' g_manual_width=680;\n'+end,1)
+
+def panel_bridge(indicator):
+    """Real chart handshake and real entry callback; existing inactive Fibo boundary remains explicit."""
+    ui=(INC/'JPW_NoCuda_UI.mqh').read_text()
+    state=re.search(r'^bool g_nocuda_ui_shared_access=.*?;',ui,re.M)
+    assert state
+    code='#include <cmath>\nbool MathIsValidNumber(double n){return std::isfinite(n); }\ndouble MathFloor(double n){return std::floor(n); }\nulong GetMicrosecondCount(){return GetTickCount64()*1000+1; }\n'
+    code+=(INC/'JPW_Stoikus_PanelBridge.mqh').read_text()+state[0]+'\n'
+    # This legacy actions replay already substitutes inactive Fibo dispatch.
+    # Context/render/action semantics are independently exercised by the bridge
+    # and Fibo tests; this boundary must never be reported as their execution.
+    code+='bool JPWNCFContextCurrent(){return true;}\nvoid JPWNCFAction(const string&){ncf_dispatch_calls++;}\n'
+    code+='void JPWNoCudaOpenFromPanel(){'+body_of(indicator,'void JPWNoCudaOpenFromPanel()')+'}\n'
+    return code

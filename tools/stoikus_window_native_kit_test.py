@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 import unittest
+import shutil
+import hashlib
 from stoikus_window_package_test import CandidatePackageTests, digest_tree
 import build_stoikus_window_candidate as candidate
 import build_stoikus_window_native_kit as kit
@@ -15,9 +17,18 @@ class NativeKitTests(CandidatePackageTests):
     def setUp(self):
         super().setUp()
         guide = self.root / kit.official.DAILY_GUIDE
+        self.original_guide = guide.read_bytes()
         guide.write_text("Candidato privado de interface JPW_Stoikus_Uso_Fontes_v1.23.0_interface.zip; recibo e demo pendentes.\n\n" + guide.read_text())
         candidate.prepare(self.root, self.output)
-        self.preview = self.home / 'preview.html'
+        # Keep the historical preview-key oracle truthful inside a temporary root.
+        historical_root = kit.ROOT
+        archive_name, _ = kit.official.INTERFACE_ARTIFACTS['nativeKit']
+        shutil.copy2(historical_root / kit.official.OUTPUT / archive_name,
+                     self.root / kit.official.OUTPUT / archive_name)
+        kit.ROOT = self.root
+        self.addCleanup(setattr, kit, 'ROOT', historical_root)
+        self.preview = self.root / 'docs/preview/stoikus-window-controls/index.html'
+        self.preview.parent.mkdir(parents=True, exist_ok=True)
         self.preview.write_text('<html>fictional preview</html>')
         self.kit = self.home / 'kit'
 
@@ -121,6 +132,157 @@ class NativeKitTests(CandidatePackageTests):
             self.check_verifier(False)
             path.write_bytes(raw)
         self.check_verifier(True)
+
+
+    def test_explicit_baseline_valid_and_invalid_without_output(self):
+        baseline = 'ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34'
+        kit.prepare(self.output, self.preview, self.kit, baseline_commit=baseline)
+        freeze = json.loads((self.kit / kit.FREEZE).read_text())
+        identity = json.loads((self.kit / kit.IDENTITY).read_text())
+        self.assertEqual(freeze['baseline_commit'], baseline)
+        self.assertEqual(identity['origin']['baseline_commit'], baseline)
+        self.check_verifier(True)
+        for index, invalid in enumerate(('', baseline[:-1], baseline+'0', baseline.upper(), 'g'*40)):
+            with self.subTest(baseline=invalid):
+                output = self.home / ('invalid-baseline-'+str(index))
+                before = digest_tree(self.output)
+                with self.assertRaisesRegex(ValueError, 'Baseline commit'):
+                    kit.prepare(self.output, self.preview, output, baseline_commit=invalid)
+                self.assertFalse(output.exists())
+                self.assertEqual(digest_tree(self.output), before)
+
+    def test_freeze_records_actual_current_preview_path(self):
+        preview = self.root / 'docs/preview/stoikus-painel-personalizavel/index.html'
+        preview.parent.mkdir(parents=True)
+        preview.write_bytes(b'<html>current isolated preview</html>')
+        kit.prepare(self.output, preview, self.kit)
+        freeze = json.loads((self.kit / kit.FREEZE).read_text())
+        relative = preview.relative_to(self.root).as_posix()
+        expected = {kit.official.PRODUCT+key: value for key,value in candidate.verify(self.output)['sourceHashes'].items()}
+        expected[relative] = hashlib.sha256(preview.read_bytes()).hexdigest()
+        self.assertEqual(freeze['source_hashes'], expected)
+        self.assertNotIn('docs/preview/stoikus-window-controls/index.html', freeze['source_hashes'])
+        self.assertEqual(freeze['interface_fingerprint'], hashlib.sha256(json.dumps(expected,sort_keys=True,separators=(',',':')).encode()).hexdigest())
+        self.check_verifier(True)
+
+    def test_outside_root_preview_refused_without_output(self):
+        preview = self.home / 'outside-preview.html'
+        preview.write_bytes(b'<html>outside source root</html>')
+        before = digest_tree(self.output)
+        with self.assertRaises(ValueError):
+            kit.prepare(self.output, preview, self.kit)
+        self.assertFalse(self.kit.exists())
+        self.assertEqual(digest_tree(self.output), before)
+
+    def ordinary_candidate(self):
+        # The real failure used an ordinary daily guide, not the private prefix in setUp.
+        (self.root / kit.official.DAILY_GUIDE).write_bytes(self.original_guide)
+        output = self.home / 'ordinary-candidate'
+        candidate.prepare(self.root, output)
+        return output
+
+    def test_ordinary_guide_derivation_preserves_original_and_exact_closure(self):
+        source = self.ordinary_candidate()
+        before = digest_tree(source)
+        info = candidate.verify(source)
+        pin = kit.prepare(source, self.preview, self.kit)
+        with kit.zipfile.ZipFile(source / info['downloads']['dailySource']['filename']) as archive:
+            original = {name:archive.read(name) for name in archive.namelist()}
+        with kit.zipfile.ZipFile(self.kit / kit.PAYLOAD) as archive:
+            derived = {name:archive.read(name) for name in archive.namelist()}
+        self.assertEqual(set(original), set(derived))
+        self.assertEqual([name for name in original if original[name]!=derived[name]], ['LEIA_PRIMEIRO.md'])
+        guide = derived['LEIA_PRIMEIRO.md']
+        self.assertTrue(guide.endswith(original['LEIA_PRIMEIRO.md']))
+        prefix = guide[:-len(original['LEIA_PRIMEIRO.md'])].decode()
+        for text in ('Candidato privado de interface',kit.PAYLOAD,kit.OUTER,'root-pin-R5.json','recibo','demo','NOT_RUN'):
+            self.assertIn(text,prefix)
+        self.assertEqual(original['LEIA_PRIMEIRO.md'],self.original_guide)
+        self.assertNotEqual(pin['source_zip_sha256'],info['downloads']['dailySource']['sha256'])
+        programs = {name for name in derived if name.endswith('.mq5')}
+        self.assertEqual(programs,set(info['dailyPrograms']))
+        self.assertEqual(len(programs),4)
+        dependencies = {kit.official.PRODUCT+name:kit.official.local_dependencies(kit.official.PRODUCT+name,raw.decode())
+                        for name,raw in original.items() if name.endswith(('.mq5','.mqh'))}
+        closure = set(kit.official.DAILY_PROGRAMS)
+        pending = list(closure)
+        while pending:
+            for dependency in dependencies.get(pending.pop(),set()):
+                self.assertIn(dependency.removeprefix(kit.official.PRODUCT),derived)
+                if dependency not in closure:
+                    closure.add(dependency);pending.append(dependency)
+        self.assertEqual({name for name in derived if name.startswith('MQL5/')},
+                         {name.removeprefix(kit.official.PRODUCT) for name in closure})
+        for name,raw in derived.items():
+            if name.startswith('MQL5/'):
+                self.assertEqual(raw,original[name])
+                self.assertEqual(hashlib.sha256(raw).hexdigest(),info['sourceHashes'][name])
+        freeze = json.loads((self.kit / kit.FREEZE).read_text())
+        self.assertEqual(freeze['daily_entries'],len(derived))
+        self.assertEqual(freeze['native_guide_derivation'],{
+            'source_zip_sha256':info['downloads']['dailySource']['sha256'],
+            'original_guide_sha256':hashlib.sha256(original['LEIA_PRIMEIRO.md']).hexdigest(),
+            'native_guide_sha256':hashlib.sha256(guide).hexdigest()})
+        self.assertEqual(digest_tree(source),before)
+        self.check_verifier(True)
+
+    def rebind_ordinary_hashes(self, folder):
+        # Reach the unchanged semantic guards after normal entry/ZIP/pin rebinding.
+        identity = json.loads((folder / kit.IDENTITY).read_text())
+        pin = json.loads((folder / 'root-pin-R5.json').read_text())
+        raw = (folder / kit.PAYLOAD).read_bytes()
+        with kit.zipfile.ZipFile(folder / kit.PAYLOAD) as archive:
+            identity['entries']=[{'path':name,'bytes':len(archive.read(name)),
+                                 'sha256':hashlib.sha256(archive.read(name)).hexdigest()} for name in archive.namelist()]
+        by_name={row['path']:row['sha256'] for row in identity['entries']}
+        for row in identity['programs']:row['sha256']=by_name[row['path']]
+        identity['zip'].update(sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw))
+        runner=folder / 'Compile-Stoikus-UI.ps1'
+        runner.write_text(re.sub(r"(?m)^\$PinnedZipSha256='[a-f0-9]{64}'$", "$PinnedZipSha256='"+identity['zip']['sha256']+"'",runner.read_text()))
+        for row in identity['kit_files']:row['sha256']=hashlib.sha256((folder / row['name']).read_bytes()).hexdigest()
+        (folder / kit.IDENTITY).write_bytes(kit.encode(identity))
+        pin['source_zip_sha256']=identity['zip']['sha256']
+        pin['files_sha256']={name:hashlib.sha256((folder / name).read_bytes()).hexdigest() for name in pin['files_sha256']}
+        outer=kit.official.make_archive([(name,(folder / name).read_bytes()) for name in pin['files_sha256']])
+        (folder / kit.OUTER).write_bytes(outer)
+        pin.update(kit_package_sha256=hashlib.sha256(outer).hexdigest(),kit_package_bytes=len(outer))
+        (folder / 'root-pin-R5.json').write_bytes(kit.encode(pin))
+
+    def test_derived_kit_rejects_rebound_source_guide_and_unbound_pin(self):
+        source=self.ordinary_candidate()
+        info=candidate.verify(source)
+        kit.prepare(source,self.preview,self.kit)
+        with kit.zipfile.ZipFile(self.kit / kit.PAYLOAD) as archive:
+            original={name:archive.read(name) for name in archive.namelist()}
+        for label,expected in [('source','source freeze differs'),('guide','inner guide private-candidate/ZIP mismatch'),
+                               ('runner','runner pin PinnedFreezeSha256'),('root','pin runtime_build_id')]:
+            with self.subTest(mutation=label):
+                folder=self.home / ('rebound-'+label)
+                shutil.copytree(self.kit,folder)
+                if label in ('source','guide'):
+                    members=dict(original)
+                    if label=='source':members[info['dailyPrograms'][0]]+=b'\n// tamper\n'
+                    else:members['LEIA_PRIMEIRO.md']=self.original_guide
+                    (folder / kit.PAYLOAD).write_bytes(kit.official.make_archive(list(members.items())))
+                elif label=='runner':
+                    runner=folder / 'Compile-Stoikus-UI.ps1'
+                    text,count=re.subn(r"(?m)^\$PinnedFreezeSha256='[a-f0-9]{64}'$",'',runner.read_text())
+                    self.assertEqual(count,1);runner.write_text(text)
+                self.rebind_ordinary_hashes(folder)
+                if label=='root':
+                    p=folder / 'root-pin-R5.json';pin=json.loads(p.read_text());pin['runtime_build_id']='0'*64;p.write_bytes(kit.encode(pin))
+                result=subprocess.run([sys.executable,str(folder / 'verify_native_ui_kit.py')],capture_output=True,text=True)
+                self.assertNotEqual(result.returncode,0)
+                self.assertIn(expected,result.stdout+result.stderr)
+        self.check_verifier(True)
+
+    def test_invalid_candidate_refused_before_native_output(self):
+        info=candidate.verify(self.output)
+        path=self.output / info['downloads']['dailySource']['filename']
+        path.write_bytes(path.read_bytes()+b'tamper')
+        with self.assertRaisesRegex(ValueError,'Archive SHA256/bytes differ'):
+            self.build()
+        self.assertFalse(self.kit.exists())
 
 # Inherited packaging tests have their own setup assumptions; run only the kit cases.
 for _name in list(vars(CandidatePackageTests)):

@@ -45,21 +45,76 @@ INTERFACE_ARTIFACTS = {
     'preview': ('downloads/jpw-alavancagem-atual/Previa_Stoikus_Janelas_R5.html', 'text/html'),
 }
 INTERFACE_DAILY_SHA256 = '0bc6c856410b576ebf0412aa341056e8e02463c8f848fe34d2bd4e983ae5f7a3'
+# Independent release oracle: version alone cannot select between R5 and C5.
+# The historical R5 paths/MIME/daily digest above remain literal and unchanged.
+INTERFACE_CONTRACTS = {
+    ('1.23.0', 'R5'): {
+        'suffix': '', 'artifacts': INTERFACE_ARTIFACTS,
+        'daily_sha256': INTERFACE_DAILY_SHA256,
+        'hashes': {
+            'nativeKit': '5c32d1a5bf3ff2e2023c2c0e7b29c6425d1cc1bd5169f5fdf03f277d8fc9f8f4',
+            'nativePin': 'bb6ad986db99b3f9dca2437e83f9fd928f4df7830a9866da5d2b0b7bc731447a',
+            'preview': '90fd6a0d542ce9abb538d61f0b5b8e5470d364eae1dd47ceed4504f6b67cbfd7',
+        },
+    },
+    ('1.23.0', 'C5'): {
+        'suffix': '_painel-C5',
+        'artifacts': {
+            'nativeKit': ('downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Painel_C5_D1.zip', 'application/zip'),
+            'nativePin': ('downloads/jpw-alavancagem-atual/root-pin-Painel-C5-D1.json', 'application/json'),
+            'preview': ('downloads/jpw-alavancagem-atual/Previa_Stoikus_Painel_C5.html', 'text/html'),
+        },
+        'daily_sha256': '0d323ea010c21e043922a318252911262ea2dbf9b4b0217d67b0b9a1fe0242b5',
+        'hashes': {
+            'nativeKit': '92a05d3198fcae3dcbea2558f07cf13a20fbdddac63f1c8902e6dd4ac6b28983',
+            'nativePin': 'e0bf392d17e4a28efda316fdc13593101bbb25775be578e8b5f0abec8ef0101d',
+            'preview': '380cfe50b26dd6b438e9d5e374482406fe56b86e124e478fcafd05ebebb18afa',
+        },
+    },
+}
+
+
+def contrato_interface_esperado(leverage):
+    release = leverage.get('interfaceRelease')
+    assert isinstance(release, dict), 'contrato de interface deve ser objeto'
+    version, revision = leverage.get('version'), release.get('revision')
+    assert isinstance(version, str) and isinstance(revision, str), 'versao/revisao da interface invalidas'
+    pair = (version, revision)
+    assert pair in INTERFACE_CONTRACTS, 'par versao/revisao sem oraculo independente'
+    return INTERFACE_CONTRACTS[pair]
+
+
+def contraprovas_seletor_interface():
+    assert contrato_interface_esperado({'version':'1.23.0','interfaceRelease':{'revision':'R5'}})['suffix'] == ''
+    assert contrato_interface_esperado({'version':'1.23.0','interfaceRelease':{'revision':'C5'}})['suffix'] == '_painel-C5'
+    controls = [('1.22.3','C5'),('1.22.3','R5'),('1.23.0','R4'),('1.23.0','C6'),
+                ('1.24.0','C5'),('1.23.0',None),('1.23.0',[])]
+    for version, revision in controls:
+        try:
+            contrato_interface_esperado({'version':version,'interfaceRelease':{'revision':revision}})
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError('seletor aceitou versao/revisao inesperada')
+    return len(controls)
+
 
 
 def artefatos_interface_declarados(leverage, root=ROOT):
     if 'interfaceRelease' not in leverage:
         return {}
-    # Use the real package boundary: keys, exact R5 values, native pending,
+    # Use the real package boundary: keys, exact selected release, native pending,
     # safe files, approved hashes/lengths and sealed MQL identity are mandatory.
     spec = importlib.util.spec_from_file_location('jpw_repro_checked_interface', root / LEVERAGE_BUILDER)
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
-    assert builder.validate_interface_release(root, leverage) == ''
+    contract = contrato_interface_esperado(leverage)
+    assert builder.validate_interface_release(root, leverage) == contract['suffix'], 'sufixo difere do contrato exato'
     records = leverage['interfaceRelease']['artifacts']
-    assert set(records) == set(INTERFACE_ARTIFACTS), 'inventario de interface nao limitado aos tres inputs'
-    for kind, (relative, _mime) in INTERFACE_ARTIFACTS.items():
+    assert set(records) == set(contract['artifacts']), 'inventario de interface nao limitado aos tres inputs'
+    for kind, (relative, _mime) in contract['artifacts'].items():
         assert records[kind]['path'] == relative, ('input de interface inesperado', kind)
+        assert records[kind]['sha256'] == contract['hashes'][kind], ('pin independente da interface diverge', kind)
     return records
 # The official builder owns this explicit list. Parse its literal declaration so
 # fixtures include newly added/untracked inputs without executing a build here.
@@ -159,6 +214,7 @@ def fatos(destino: Path):
     }
 
 def main():
+    selector_controls = contraprovas_seletor_interface()
     arquivos = arquivos_do_candidato()
     with tempfile.TemporaryDirectory(prefix='jpw-repro-') as raiz:
         raiz = Path(raiz)
@@ -233,7 +289,7 @@ def main():
             assert hashlib.sha256(original).hexdigest() == item['sha256'], item['path']
         interface_records = artefatos_interface_declarados(leverage, limpo)
         if interface_records:
-            assert hashlib.sha256(a['leverage_daily']).hexdigest() == INTERFACE_DAILY_SHA256
+            assert hashlib.sha256(a['leverage_daily']).hexdigest() == contrato_interface_esperado(leverage)['daily_sha256']
         download_metadata = json.JSONDecoder().raw_decode(html.split('window.JPW_DOWNLOAD_MANIFEST = ',1)[1])[0]
         inert_payloads = [json.loads(raw) for raw in re.findall(r'<script type="application/json" id="jpw-download-payload-[^"]+">(.*?)</script>',html)]
         portable_files = {key.removeprefix('leverage/'): {'mime':download_metadata['resources'][key]['mime'],'base64':encoded} for payload in inert_payloads for key,encoded in payload['files'].items() if key.startswith('leverage/')}
@@ -244,7 +300,7 @@ def main():
             assert item['path'] in arquivos, ('input oficial da interface ausente do fixture', kind)
             assert len(original) == item['bytes'], kind
             assert hashlib.sha256(original).hexdigest() == item['sha256'], kind
-            assert portable_files[kind]['mime'] == INTERFACE_ARTIFACTS[kind][1], kind
+            assert portable_files[kind]['mime'] == contrato_interface_esperado(leverage)['artifacts'][kind][1], kind
             assert base64.b64decode(portable_files[kind]['base64'], validate=True) == original, kind
         for kind, item in leverage['downloads'].items():
             if item['available']:
@@ -263,7 +319,7 @@ def main():
         interface_controls = []
         if interface_records:
             # The old/default test above still requires a different build for a
-            # changed official source. R5 sealed bytes must instead fail closed.
+            # changed official source. Selected sealed bytes must instead fail closed.
             sealed_source = next(rel for rel in leverage['sourceFiles'] if rel.endswith('.mq5'))
             destino = raiz / 'interface-source-tampered'
             montar(destino, arquivos)
@@ -349,7 +405,22 @@ def main():
                                         'returncode': r.returncode, 'result': 'EXPECTED_REFUSAL'})
         else:
             assert a['leverage_compiled'] is None, 'fallback sem prova nativa deve permanecer sem ZIP compilado'
-        print(json.dumps({'native_declared_inputs': len(native['artifacts']) if native else 0,
+            # Source-only candidates must also reject an unproved EX5, without changing outputs.
+            destino = raiz / 'native-unproved-ex5'
+            montar(destino, arquivos)
+            source = next(rel for rel in leverage['sourceFiles'] if rel.endswith('.mq5'))
+            ex5 = destino / (source[:-4] + '.ex5')
+            ex5.write_bytes(b'unproved native binary fixture' * 64)
+            before = {rel:(destino/rel).read_bytes() for rel in (
+                'build-id.js','src/js/manifest.json',LEVERAGE_MANIFEST,
+                'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')}
+            erro = subprocess.run([sys.executable,'tools/rebuild_monolith.py'],cwd=destino,capture_output=True,text=True)
+            assert erro.returncode != 0 and '.ex5 encontrado sem evidencia nativa' in erro.stdout+erro.stderr, 'EX5 sem prova foi aceito'
+            assert all((destino/rel).read_bytes()==raw for rel,raw in before.items()), 'recusa de EX5 alterou outputs'
+            native_controls.append({'control':'unproved-ex5','path':source[:-4]+'.ex5','result':'EXPECTED_REFUSAL'})
+        print(json.dumps({'independent_release_selector_controls': selector_controls,
+                          'selected_interface_revision': leverage.get('interfaceRelease',{}).get('revision'),
+                          'native_declared_inputs': len(native['artifacts']) if native else 0,
                           'compiled_zip_deterministic': a['leverage_compiled'] == b['leverage_compiled'],
                           'compiled_fallback_preserved': native is not None or a['leverage_compiled'] is None,
                           'native_integrity_controls': native_controls,

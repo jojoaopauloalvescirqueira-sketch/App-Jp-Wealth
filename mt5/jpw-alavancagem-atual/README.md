@@ -1,3 +1,21 @@
+# Stoikus — painel personalizável C5 — distribuição documental D1
+
+Produto **C5 / 1.23.0**, cálculo **1.9.0**; distribuição documental **D1**, vinculada aos hashes do manifesto. SDK: **JPW_Stoikus_Fontes_v1.23.0_painel-C5.zip**; uso diário: **JPW_Stoikus_Uso_Fontes_v1.23.0_painel-C5.zip**. Esta revisão local reúne **Conta**, **NoCuda** e **Personalizar** no painel Stoikus quando os dois indicadores estão no gráfico. O instalador continua indisponível e os pacotes R5 históricos conservam suas próprias identidades. A presença destes fontes não comprova publicação nem validação nativa. [Contrato desta revisão](../../docs/work/CHG-STOIKUS-PAINEL-PERSONALIZAVEL-20261021.md) · [prévia com dados fictícios](../../docs/preview/stoikus-painel-personalizavel/index.html).
+
+Em **Personalizar**, escolha qualquer subconjunto das sete métricas e sua ordem. Uma configuração nova sugere alavancagem, risco dos stops e Raiz N de uma e duas semanas; configurações antigas mantêm a seleção antes exibida. Marcar, ocultar e usar **Subir/Descer** mostra uma prévia: **Aplicar** salva, **Cancelar** descarta e **Padrão** repõe a sugestão respeitando exclusões da preferência antiga. Mesmo sem métricas, os acessos continuam disponíveis. As escolhas pertencem ao gráfico; salvar e restaurar um template exige a ação do usuário e conferência no MT5.
+
+O fundo do painel admite transparência de **0% a 100%**, em passos de 10%, com prévia e confirmação em **Aplicar**. Textos e controles continuam opacos; as janelas de consulta mantêm fundo sólido. No editor, **Tab/Shift+Tab** percorrem controles, **Enter/Espaço** acionam e **Esc** cancela. Uma mudança de template durante um rascunho bloqueia Aplicar: use **Cancelar** e reabra para conferir a nova configuração. **−** recolhe o painel Stoikus; o acesso **Stoikus** o restaura. Minimizar Conta preserva seu rascunho em memória e não confirma ações.
+
+NoCuda sozinho mantém acesso próprio. Se faltar um componente, confira **Ctrl+I** e adicione o indicador correspondente; abrir painéis não inicia o Monitor. Para **N/A**, abra os detalhes da métrica e leia motivo e escopo; o aviso de disponibilidade leva a **Conta → Sistema**. Botões repetidos sem origem confirmada permanecem preservados: inventarie indicadores, objetos e versões no terminal antes de qualquer limpeza dirigida. [Guia de uso diário](STOIKUS_USO_DIARIO.md).
+
+Compilação MetaEditor, interação MT5, templates, instalação e aceite humano deste conjunto: **NOT_RUN**. A prévia e os ensaios de host não comprovam essas etapas. Fórmulas, IDs das sete métricas, dados, estudos e registros financeiros permanecem fora desta alteração visual.
+
+---
+
+## Histórico R5 — preservado em 21/10/2026
+
+O conteúdo abaixo descreve as revisões e os pacotes que identifica. Suas instruções Compacto/Completo, pins e evidências não definem o painel personalizável de 21/10/2026.
+
 # Stoikus 1.23.0 — janelas e resumo — candidato privado R5
 
 Produto **1.23.0**, MQL **1.230**, cálculo **1.9.0**. Esta entrega local aprimora alinhamento, proporções e manipulação da interface MT5 a partir da base 1.22.3. A assinatura **Stoikus by JP Wealth**, os recursos da marca e as regras financeiras estão preservados.

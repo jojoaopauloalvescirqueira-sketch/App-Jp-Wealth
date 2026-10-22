@@ -314,6 +314,7 @@ int OnInit()
    JPWRaizPanelDestroy();
    JPWCockpitLoadPrefs();
    JPWStoikusVisualLoad();
+   JPWStoikusPanelLoad();
    ChartSetInteger(0,CHART_EVENT_MOUSE_MOVE,true);
    JPWSignalClear();
    g_cockpit_template_recheck=(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)<0 &&
@@ -338,10 +339,12 @@ int OnInit()
       if(g_raiz_atr_handle!=INVALID_HANDLE) IndicatorRelease(g_raiz_atr_handle);
       JPWClearPanel(); return(INIT_FAILED);
      }
+   JPWStoikusPanelAnnounce(true,g_panel_prefix);
    return(INIT_SUCCEEDED);
   }
 void OnTimer()
   {
+   JPWStoikusPanelAnnounce(true,g_panel_prefix);
    // Templates may restore chart objects just after indicator initialization.
    // The bounded read never writes a template or overrides an active draft.
    if(g_cockpit_template_recheck>0 && !g_raiz_details_open)
@@ -382,6 +385,8 @@ int OnCalculate(const int rates_total,const int prev_calculated,const int begin,
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
+   bool panel_open=false;
+   if(JPWStoikusPanelReceive(id,lparam,dparam,sparam,true,g_panel_prefix,panel_open)) return;
    if(id==CHARTEVENT_KEYDOWN && lparam==27 && g_account_window_gesture.active)
      { JPWAccountWindowEvent(id,lparam,dparam,sparam); return; }
    // Escape releases only our active pointer gesture, even when keyboard focus
@@ -405,6 +410,8 @@ void OnDeinit(const int reason)
   {
    JPWPersonalUICancelPending();
    if(!g_panel_instance_admitted || g_panel_prefix=="") return;
+   JPWStoikusPanelDepart(true,g_panel_prefix);
+   JPWStoikusPanelEditorCancel();
    JPWStoikusWindowCancel(g_account_window_gesture,g_account_window_rect);
    JPWStoikusHUDCleanup();
    EventKillTimer();
