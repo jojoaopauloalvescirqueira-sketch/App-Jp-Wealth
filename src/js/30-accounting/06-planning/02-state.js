@@ -363,7 +363,9 @@
       catch(error){unknown=true;generation++;if(typeof markJPWealthPersistenceOutcomeUnknown==='function')markJPWealthPersistenceOutcomeUnknown('Planejamento: escritor interrompido.');return result('UNKNOWN',['Gravação indeterminada; preserve o rascunho e confira a recuperação.']);}
       if(written?.status==='CONFIRMED'){
         // The existing writer already compared the full serialized read-back.
-        adopt(candidate);return confirmed;
+        adopt(candidate);
+        try{root.JPWNotifications?.invalidate('planning');}catch(_error){}
+        return confirmed;
       }
       generation++;
       if(written?.status==='REFUSED')return result(written.reason==='CONFLICT'?'CONFLICT':'REFUSED',['Gravação recusada; nenhum registro foi confirmado. Preserve e revise o rascunho.']);
@@ -446,7 +448,72 @@
     if(options.accountId){const account=accountById(value,options.accountId);return account?engine.account(clone(account),calculation):{status:'NOT_FOUND',issues:['Conta de planejamento não encontrada.'],rows:[]};}
     return engine.portfolio(clone(value),calculation);
   }
-  planning.queries={previewAccount,previewFlow,previewResultInput,previewReset,previewFinalizeMonth,snapshot:()=>clone(envelope()),view,sheetView:options=>engine.sheetView(clone(envelope()),{month:currentMonth(),quote:publicQuote(),...(options||{})}),account:id=>clone(accountById(envelope(),id)),token,
+  function pendingActions({month=currentMonth()}={}){
+    // Availability here concerns the factual notification projection only.
+    // validateEnvelope also calculates120-month trajectories; this consultation
+    // checks only the identities/maps/flags it reads and never certifies balances.
+    const unavailable=message=>({available:false,accounts:[],issues:[message]});
+    const value=envelope(),accounts=[],accountIds=new Set(),planIds=new Set();
+    if(!engine||typeof engine.monthKey!=='function'||typeof engine.addMonths!=='function'||engine.monthKey(month)!==month)
+      return unavailable('Referência mensal indisponível para consultar as pendências.');
+    const revision=v=>Number.isSafeInteger(v)&&v>=0;
+    if(!object(value)||value.schemaVersion!==1||!revision(value.revision)||
+      !['accounts','archive','audit','operations'].every(key=>Array.isArray(value[key])))
+      return unavailable('Dados de planejamento incompatíveis; preserve a base e confira a recuperação.');
+    for(const account of value.accounts){
+      if(!object(account)||!text(account.id)||accountIds.has(account.id)||typeof account.name!=='string'||
+        !account.name.trim()||typeof account.active!=='boolean'||!object(account.plan)||
+        !text(account.plan.id)||planIds.has(account.plan.id))
+        return unavailable('Identidades das contas ou dos planos precisam de revisão.');
+      accountIds.add(account.id);planIds.add(account.plan.id);
+      if(account.active!==true)continue;
+      const plan=account.plan;
+      if(engine.monthKey(plan.startMonth)!==plan.startMonth||!revision(plan.revision)||
+        !object(plan.results)||!object(plan.closures)||!Array.isArray(plan.contributions)||!Array.isArray(plan.withdrawals))
+        return unavailable('Registros mensais de planejamento indisponíveis para consulta.');
+      const end=engine.addMonths(plan.startMonth,119);
+      const inRange=m=>engine.monthKey(m)===m&&m>=plan.startMonth&&m<=end;
+      const months=new Set(),invalidated=new Set();
+      for(const [key,result] of Object.entries(plan.results)){
+        if(!inRange(key)||!object(result)||!finite(result.usd)||!revision(result.revision))
+          return unavailable('Há um resultado mensal incompatível; confira os registros de origem.');
+        if(key<month)months.add(key); // An explicit zero is a recorded fact.
+      }
+      for(const flows of [plan.contributions,plan.withdrawals]){
+        const ids=new Set();
+        for(const flow of flows){
+          if(!object(flow)||!text(flow.id)||ids.has(flow.id)||!inRange(flow.month)||
+            !finite(flow.usd)||flow.usd<0||!revision(flow.revision))
+            return unavailable('Há lançamentos mensais incompatíveis ou duplicados; confira a origem.');
+          ids.add(flow.id);
+          // A corrected zero annuls the current flow, regardless of its history.
+          if(flow.month<month&&flow.usd>0)months.add(flow.month);
+        }
+      }
+      for(const [key,closure] of Object.entries(plan.closures)){
+        if(!inRange(key)||!object(closure)||typeof closure.confirmed!=='boolean'||
+          typeof closure.confirmFlows!=='boolean'||!revision(closure.revision))
+          return unavailable('Há um fechamento mensal incompatível; confira a origem.');
+        if(closure.confirmed===true&&(!closure.confirmFlows||!own(plan.results,key)))
+          return unavailable('Um fechamento informado não possui os fatos e a conferência correspondentes.');
+        if(closure.confirmed===false&&closure.previous?.confirmed===true&&key<month){months.add(key);invalidated.add(key);}
+      }
+      let firstOpen=null;
+      const last=Array.from(months).sort().at(-1);
+      if(last)for(let key=plan.startMonth;key<=last;key=engine.addMonths(key,1)){
+        if(plan.closures[key]?.confirmed!==true){if(firstOpen===null)firstOpen=key;}
+        else if(firstOpen!==null)return unavailable('A sequência dos fechamentos precisa de reconferência na origem.');
+      }
+      const pending=Array.from(months).sort().filter(key=>plan.closures[key]?.confirmed!==true).map(key=>({month:key,
+        codes:['UNCONFIRMED_MONTH',...(!own(plan.results,key)?['MISSING_RESULT']:[]),...(invalidated.has(key)?['CLOSURE_INVALIDATED']:[])]}));
+      if(!pending.length)continue;
+      const dependencyMonth=firstOpen&&firstOpen<pending[0].month?firstOpen:null;
+      accounts.push({accountId:account.id,planId:plan.id,name:account.name,months:pending,count:pending.length,
+        firstMonth:dependencyMonth||pending[0].month,dependencyMonth});
+    }
+    return {available:true,accounts,issues:[]};
+  }
+  planning.queries={previewAccount,previewFlow,previewResultInput,previewReset,previewFinalizeMonth,pendingActions,snapshot:()=>clone(envelope()),view,sheetView:options=>engine.sheetView(clone(envelope()),{month:currentMonth(),quote:publicQuote(),...(options||{})}),account:id=>clone(accountById(envelope(),id)),token,
     history:id=>{const value=envelope(),account=accountById(value,id);return {planId:account?.plan?.id||null,history:clone(account?.plan?.history||[]),archive:clone(Array.isArray(value?.archive)?value.archive.filter(item=>item.accountId===id):[])};},
     legacy:()=>({schemaVersion:1,source:'S.fxPlanning',exportOnly:true,value:sanitizeLegacy(state()?.fxPlanning??null)})};
   planning.commands={execute,resetContext};

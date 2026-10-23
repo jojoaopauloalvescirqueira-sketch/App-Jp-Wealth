@@ -1,0 +1,32 @@
+{
+  "before_sha256": "bd2f53a8921c77ba91fe0eb8e20c75f83e1c407bfd40d4a07eb8465a445696d1",
+  "after_sha256": "603586aa2cecc4f8596e1eb628c2ecfad8ba8effb3f3f0f8d8b582f7c061c911",
+  "exact_reverse_patch_restores_before": true,
+  "failure_evidence_calls_only_except_handlers": [
+    665,
+    696,
+    720
+  ],
+  "positive_paths_criteria_events_timeouts_unchanged": true,
+  "closed_page_capture_preserves_failure": {
+    "gesture_trace": [],
+    "diagnostics": {
+      "case": "synthetic/closed/page",
+      "browser_observed": {
+        "pageerror": [
+          "synthetic original browser error"
+        ],
+        "console": [
+          "synthetic original console error"
+        ]
+      },
+      "capture_errors": {
+        "gesture_trace": "synthetic page closed",
+        "dom": "synthetic page closed",
+        "screenshot": "synthetic screenshot unavailable",
+        "html": "synthetic HTML unavailable"
+      }
+    }
+  },
+  "no_browser_work_on_positive_path": true
+}

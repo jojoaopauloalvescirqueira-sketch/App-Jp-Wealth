@@ -1,0 +1,6 @@
+{
+  "case": "notification-long-context-wrap",
+  "classification": "PRODUCT_FAIL",
+  "source_sha256": "f8e177442feb5604b4976ede1fbd052a022b56fff8ac55ad6a0fb28a959fd6e4",
+  "error": "('notification contents overflow', {'client': 282, 'scroll': 1035})"
+}

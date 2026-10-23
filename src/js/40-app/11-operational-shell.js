@@ -330,7 +330,7 @@ function shellRestoreHeaderFocus(opener,isCurrent=()=>true){
     if(!isCurrent() || document.querySelector('#modalOverlay.show,#settingsOverlay.show,#mvpNotesOverlay.show,dialog[open]') ||
       (shellUI.open && shellCompact() && !shellGlass()))return;
     let target=shellFocusAvailable(opener)?opener:null;
-    if(!target && ['headerConfigBtn','headerProfileBtn','headerNotificationsBtn','finalizeSessionBtn'].includes(opener?.id)){
+    if(!target && ['headerCalendarBtn','headerConfigBtn','headerProfileBtn','headerNotificationsBtn','finalizeSessionBtn'].includes(opener?.id)){
       const toggle=shellEl('[data-shell-menu-toggle]');
       target=shellCompact() && shellFocusAvailable(toggle)?toggle:document.getElementById('brandHomeBtn');
     }

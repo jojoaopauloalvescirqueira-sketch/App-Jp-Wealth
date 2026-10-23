@@ -1,0 +1,237 @@
+{
+  "took": 6,
+  "breakdown": {
+    "total": 16,
+    "confirmed": 16,
+    "published": 67,
+    "cancelled": 1
+  },
+  "releases": [
+    {
+      "uri": "/releases/greenhousegasemissionsukprovisionalestimates2025",
+      "date_changes": null,
+      "description": {
+        "title": "Greenhouse gas emissions, UK: provisional estimates, 2025",
+        "summary": "Measuring the contribution of the environment to the economy, the impact of economic activity on the environment, and society’s response to environmental issues.",
+        "release_date": "2026-10-28T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending16october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Deaths registered weekly in England and Wales, provisional: week ending 16 October 2026",
+        "summary": "Provisional number of deaths registered in England and Wales in the latest weeks.",
+        "release_date": "2026-10-28T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/economicactivityandsocialchangeintheukrealtimeindicators29october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Economic activity and social change in the UK, real-time indicators: 29 October 2026",
+        "summary": "Early experimental data and analysis on economic activity and social change in the UK. These real-time indicators are created using rapid response surveys, novel data sources and experimental methods.",
+        "release_date": "2026-10-29T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/businessdemographyquarterlyukjulytoseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Business demography, quarterly, UK: July to September 2026",
+        "summary": "Official statistics in development on business births and deaths from the Inter-Departmental Business Register with high-level breakdowns by industry and region.",
+        "release_date": "2026-10-29T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uknationalaccountsthebluebook2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK National Accounts, The Blue Book: 2026",
+        "summary": "National accounts statistics including national and sector accounts, industrial analyses and environmental accounts.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/grossfixedcapitalformationdeflatorcatalogue",
+      "date_changes": null,
+      "description": {
+        "title": "Gross Fixed Capital Formation Deflator Catalogue",
+        "summary": "This catalogue provides an overview of the deflators used within Gross Fixed Capital Formation (GFCF).",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/cpatocoicopconverterforhouseholdfinalconsumptionexpenditure",
+      "date_changes": null,
+      "description": {
+        "title": "CPA to COICOP converter for household final consumption expenditure",
+        "summary": "The CPA to COCIOP converter is designed to enable users to shift between domestic household consumption data classified on a Classification of Products by Activity 2008 (CPA) to a Classification of Individual Consumption according to Purpose 1999 (COICOP) and vice versa. ",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/inputoutputsupplyandusetables2026edition",
+      "date_changes": null,
+      "description": {
+        "title": "Input-output supply and use tables: 2026 edition",
+        "summary": "Estimates of industry inputs and outputs, product supply and demand, and gross value added (GVA) for the UK. Supply and use tables for 1997 to 2024 are consistent with the UK National Accounts in Blue Book 2026.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/gdprevisionsinbluebook2026",
+      "date_changes": null,
+      "description": {
+        "title": "GDP revisions in Blue Book: 2026",
+        "summary": "Gross domestic product (GDP) revisions in annual and quarterly national accounts rounds, focusing on revisions in Blue Book 2026.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/annualgrossfixedcapitalformationbyindustryandassetoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "Annual gross fixed capital formation by industry and asset: October 2026",
+        "summary": "Annual estimates of gross fixed capital formation (investment) by industry and asset, in current prices and chained volume measures, consistent with the UK National Accounts.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/supplyandusetablesdatasourcescatalogue2026",
+      "date_changes": null,
+      "description": {
+        "title": " Supply and use tables data sources catalogue: 2026",
+        "summary": "A list of the data sources used to compile the supply and use tables. This also includes how this data is sourced, the area of National Accounts that use it and the transaction it feeds into.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/ukbalanceofpaymentsthepinkbook2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK Balance of Payments, The Pink Book: 2026",
+        "summary": "An annual review of cross-border transactions on the UK’s balance of payments, including the current account, financial account, and the international investment stock position.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/supplyanduseofproductsandindustrygvaukexperimental2024",
+      "date_changes": null,
+      "description": {
+        "title": "Supply and Use of products and industry GVA, UK: 2026",
+        "summary": "UK economic timeseries data of important components of supply and use by product or by industry, including output, consumption, gross value added (GVA), imports and exports.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/quarterlybirthsinenglandandwalesprovisional",
+      "date_changes": null,
+      "description": {
+        "title": "Quarterly births in England and Wales, provisional: January to June 2026",
+        "summary": "Quarterly live births, stillbirths, maternities and stillbirth rates by gestational age, age of mother, ethnicity, and area deprivation, for England and Wales.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/quarterlyneonataldeathsinenglandandwalesprovisionaljanuary2019tomarch2026",
+      "date_changes": null,
+      "description": {
+        "title": "Quarterly neonatal deaths in England and Wales, provisional: January 2019 to March 2026",
+        "summary": "Quarterly neonatal deaths and mortality rates by gestational age, age of mother, ethnicity, and area deprivation, for England and Wales.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October to November 2026"
+      }
+    },
+    {
+      "uri": "/releases/inputoutputsupplyandusetablessummarytables2026",
+      "date_changes": null,
+      "description": {
+        "title": "Input-output supply and use tables – summary tables: 2026",
+        "summary": "Estimates of industry inputs and outputs, product supply and demand, and gross value added (GVA) for the UK. Supply and use tables for 1997 to 2024.",
+        "release_date": "2026-10-30T09:30:00.000Z",
+        "published": false,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    }
+  ]
+}

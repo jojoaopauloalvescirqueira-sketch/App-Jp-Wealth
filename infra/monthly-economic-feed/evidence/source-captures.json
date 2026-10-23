@@ -1,0 +1,195 @@
+[
+  {
+    "id": "ons-published",
+    "sourceUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false",
+    "resolvedUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false",
+    "capturedAt": "2026-10-23T15:47:12Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "7158b6f34321b3c807685e4655dcc7f7461f128d09e75d83f7bbc2f7fc428c52",
+    "evidenceFile": "ons-published.json",
+    "evidenceSha256": "5594b13643d1eb18b8b5074df76acb18dbd458876ccaaec31e4064703e5c4c79"
+  },
+  {
+    "id": "ons-upcoming",
+    "sourceUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-upcoming",
+    "resolvedUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-upcoming",
+    "capturedAt": "2026-10-23T15:47:12Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "51ed9de9698b2e9da41fda8e93cd016cac316af2c6f1ff2b8ed03d72a47c22c8",
+    "evidenceFile": "ons-upcoming.json",
+    "evidenceSha256": "5a69eac60936b69e1cdccb9fc282a3178f914564950d41de0b84106212d286e8"
+  },
+  {
+    "id": "ons-cancelled",
+    "sourceUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-cancelled",
+    "resolvedUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-cancelled",
+    "capturedAt": "2026-10-23T15:47:12Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "53e2a0eff314fa7a7dda74e9f3504c04b08177daf19291ede763587858e8b486",
+    "evidenceFile": "ons-cancelled.json",
+    "evidenceSha256": "2d937f49a6dce40e2545b1ce0cab60acfc3c1f048b4bcb57be58e4702bffa97e"
+  },
+  {
+    "id": "sbj-cpi",
+    "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+    "resolvedUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+    "capturedAt": "2026-10-23T15:47:12Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "09bad0238470a50763a480c56910d642496902956682268e3122ffd3537d1262",
+    "evidenceFile": "sbj-cpi.txt",
+    "evidenceSha256": "c3c46e45a2d909e4e8d3985769ed2e113de7e5a63d36effafe8144efe06fba3e"
+  },
+  {
+    "id": "sbj-labour",
+    "sourceUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+    "resolvedUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+    "capturedAt": "2026-10-23T15:47:12Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "9fd400024e593ccd6f0838ca0e175d6ea45d2225f8ff8556b69f406d90f85bbf",
+    "evidenceFile": "sbj-labour.txt",
+    "evidenceSha256": "89d52126dc79d794ee4a5201b10732004679565fa93dd91c9299fa99ea4ecba6"
+  },
+  {
+    "id": "sbj-savings",
+    "sourceUrl": "https://www.stat.go.jp/english/data/sav/2.html",
+    "resolvedUrl": "https://www.stat.go.jp/english/data/sav/2.html",
+    "capturedAt": "2026-10-23T15:47:13Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "15802aa43a6189c3b0cdb4ce923e8c0448f3f8f06dd6d59f20d21d131e1e744b",
+    "evidenceFile": "sbj-savings.txt",
+    "evidenceSha256": "97350be8d1dd7ee01f03f585de81473c3b39b869f95f1256307ae28bec0e2c16"
+  },
+  {
+    "id": "sbj-business",
+    "sourceUrl": "https://www.stat.go.jp/english/data/kkj/schedule.html",
+    "resolvedUrl": "https://www.stat.go.jp/english/data/kkj/schedule.html",
+    "capturedAt": "2026-10-23T15:47:13Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "ffcc0f23a9d27c764a06ab095402058e81e28585b035be795c6ed3179c5dc3c7",
+    "evidenceFile": "sbj-business.txt",
+    "evidenceSha256": "d2e175cf877c634b675425718bf00fc821315dee8595efc1ba23438d78fdf9f3"
+  },
+  {
+    "id": "sbj-population",
+    "sourceUrl": "https://www.stat.go.jp/english/data/jinsui/3.htm",
+    "resolvedUrl": "https://www.stat.go.jp/english/data/jinsui/3.htm",
+    "capturedAt": "2026-10-23T15:47:13Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "452e9701bb26a411e32760fe42cf96bf0ca128374431dfa17aad542b7933e5d5",
+    "evidenceFile": "sbj-population.txt",
+    "evidenceSha256": "c5b0a676c3d5938fd7e6d1265da51c48ac25c194ab5ec5bd934ed38d82244df1"
+  },
+  {
+    "id": "sbj-license",
+    "sourceUrl": "https://www.stat.go.jp/english/info/riyou.html",
+    "resolvedUrl": "https://www.stat.go.jp/english/info/riyou.html",
+    "capturedAt": "2026-10-23T15:47:13Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "0f3041962a0ca20fe272d25e7195cfbab00f72919538fbc2013dcd0fd2fff813",
+    "evidenceFile": "sbj-license.txt",
+    "evidenceSha256": "ff8654f0dff2fb6e4adc35df82894c910eddcb5334ae72e5bc089755075724c9"
+  },
+  {
+    "id": "statsnz-cpi",
+    "sourceUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+    "resolvedUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+    "capturedAt": "2026-10-23T15:47:14Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "2b84722b435791da20453021c18fc2e0d3a1db5ab0d2e29e7f49f1aefd26132a",
+    "evidenceFile": "statsnz-cpi.txt",
+    "evidenceSha256": "73a56b049ce750c45e75cf2a6f58bb7c0ea446184796088fc358b8c93a647fcd"
+  },
+  {
+    "id": "statsnz-spi",
+    "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+    "resolvedUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+    "capturedAt": "2026-10-23T15:47:15Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "26f8412537ec628d71080cad17179e443f78ef43896bf82c2a921956f0d5db08",
+    "evidenceFile": "statsnz-spi.txt",
+    "evidenceSha256": "3ccb33ad76522dd339e57e2bd92e014817e7c9559d21e9ae448b5b1f81e35427"
+  },
+  {
+    "id": "statsnz-license",
+    "sourceUrl": "https://www.stats.govt.nz/about-us/copyright/",
+    "resolvedUrl": "https://www.stats.govt.nz/about-us/copyright/",
+    "capturedAt": "2026-10-23T15:47:15Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "564310f4630694871c9630bacd3a621fda62f84119e15b18b0e9457780b7ace2",
+    "evidenceFile": "statsnz-license.txt",
+    "evidenceSha256": "4148346b16c4c920b670e68558a4de34957028296ac6a602652140d32bd3b7b3"
+  },
+  {
+    "id": "ons-license",
+    "sourceUrl": "https://www.ons.gov.uk/help/terms-conditions",
+    "resolvedUrl": "https://www.ons.gov.uk/help/terms-conditions",
+    "capturedAt": "2026-10-23T15:47:13Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "e4edc5e22fe599d20602ffc29d16477fd4bb45453a8cad17d5bbf07607478f4c",
+    "evidenceFile": "ons-license.txt",
+    "evidenceSha256": "51a60977ec43b09350e73af6583cd76e7e475f3dbc82c5ce1d35cfbb117a56fb"
+  },
+  {
+    "id": "bea-license",
+    "sourceUrl": "https://www.bea.gov/help/faq/147",
+    "resolvedUrl": "https://www.bea.gov/help/faq/147",
+    "capturedAt": "2026-10-23T15:47:14Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "23118389b7d672fef50aa5caeb20e55f97a595c8b5604a2f8829d05bb0b9abf5",
+    "evidenceFile": "bea-license.txt",
+    "evidenceSha256": "aad0c8fddda51cc11eb1c977be36a98593cbf6a61e3f7ee5c24ff705c73e5000"
+  },
+  {
+    "id": "sbj-family",
+    "sourceUrl": "https://www.stat.go.jp/english/data/kakei/1562.html",
+    "capturedAt": "2026-10-23T15:48:01Z",
+    "method": "explicit-documentary-GET",
+    "rawSha256": "d3a1308d6254d76d25b8202173009f1e874b7a2ee5cfabfe44481de4a84df0c7",
+    "evidenceFile": "sbj-family.txt",
+    "evidenceSha256": "5f9bde17dfef70afa0d1680cf148018f310b6be9d5a4734142c00bd052f26a20",
+    "responseCharset": "iso-8859-1"
+  },
+  {
+    "id": "statsnz-license-rendered",
+    "sourceUrl": "https://www.stats.govt.nz/about-us/copyright/",
+    "resolvedUrl": "https://www.stats.govt.nz/about-us/copyright/",
+    "capturedAt": "2026-10-23T15:51:08Z",
+    "method": "explicit-public-browser-DOM-read",
+    "evidenceFile": "statsnz-license-rendered.txt",
+    "evidenceSha256": "c090252ce8bf775305a5fd6a024a2eecf5c5513256ccd0d9cdbc5478868b782c",
+    "extractedBeforeWhitespaceNormalizationSha256": "06218682f267a7a9c21e5356c64c0f891a3a82219fc82329742dfdb7cc4cc307",
+    "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+  },
+  {
+    "id": "statsnz-cpi-rendered",
+    "sourceUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+    "resolvedUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+    "capturedAt": "2026-10-23T15:51:12Z",
+    "method": "explicit-public-browser-DOM-read",
+    "evidenceFile": "statsnz-cpi-rendered.txt",
+    "evidenceSha256": "cb163c762abb6258ae36af24801896ec1d3e94871e6c31da4bbddb8001479cc4",
+    "extractedBeforeWhitespaceNormalizationSha256": "31a1afeaa2c375b54ccf530cff991df4c0b3917c0d6bd2d437093598bc16bb98",
+    "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+  },
+  {
+    "id": "statsnz-spi-rendered",
+    "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+    "resolvedUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+    "capturedAt": "2026-10-23T15:51:14Z",
+    "method": "explicit-public-browser-DOM-read",
+    "evidenceFile": "statsnz-spi-rendered.txt",
+    "evidenceSha256": "bd4e5e899d41585f7108a4440e04701469358771c53e71862ff1f5988e2cc3a9",
+    "extractedBeforeWhitespaceNormalizationSha256": "ced074e68d25db64915ca413bd1ccdab1c366e64e5d7afaab83f6a5990776895",
+    "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+  },
+  {
+    "id": "statsnz-calendar-rendered",
+    "sourceUrl": "https://www.stats.govt.nz/release-calendar/",
+    "capturedAt": "2026-10-23T15:52:12Z",
+    "method": "explicit-public-browser-DOM-read",
+    "evidenceFile": "statsnz-calendar-rendered.txt",
+    "evidenceSha256": "7e5be4f49c068f6aec45ca168603746177afd66aeeb01096876a09a1dacd76ae",
+    "extractedBeforeWhitespaceNormalizationSha256": "5e777bcbeb608d3765c936e5c10d51a442aebc60db9b0f328dd896185b6d6de0",
+    "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+  }
+]

@@ -687,7 +687,7 @@ function normalizeImportedState(raw){
   // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
   // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
   // por isso o null e testado a parte (ALD-03-H0 · D-2).
-  for(const key of ['alladin','personalFinance','fxPlanning','patrimonialPlanning','nocoda','pivotStudies','mvpNotes','dataGovernance','fxConsolidated','operationHistory']){
+  for(const key of ['alladin','personalFinance','fxPlanning','patrimonialPlanning','personalAgenda','nocoda','pivotStudies','mvpNotes','dataGovernance','fxConsolidated','operationHistory']){
     if(Object.prototype.hasOwnProperty.call(candidate,key) &&
        (candidate[key]===null || typeof candidate[key]!=='object' || Array.isArray(candidate[key])))
       throw new Error('Backup com '+key+' inválido: esperava objeto.');

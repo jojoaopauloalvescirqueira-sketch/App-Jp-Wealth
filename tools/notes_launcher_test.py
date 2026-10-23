@@ -207,7 +207,7 @@ def structure(page):
     assert page.locator('#mvpNotesLauncher #headerNotesBtn').count() == 1
     assert page.locator('#headerNotesBtn').count() == 1
     assert page.locator('#headerActions #headerNotesBtn').count() == 0
-    assert page.locator('#headerActions .header-action').count() == 4
+    assert page.locator('#headerActions .header-action').count() == 5
     expect(page.locator('#headerNotesBtn')).to_have_attribute('title', 'Notas')
     assert (page.locator('#headerNotesBtn').get_attribute('aria-label') or '').startswith('Abrir notas')
     assert page.locator('#headerNotesBtn svg[aria-hidden="true"]').count() == 1
@@ -299,6 +299,50 @@ class GestureInterrupted(Exception):
 def failure_result(error):
     return ('ENVIRONMENT_ERROR' if isinstance(error, GestureInterrupted) else
             'PRODUCT_FAIL' if isinstance(error, AssertionError) else 'TEST_HARNESS_FAIL')
+
+
+def failure_evidence(page, observed, output, label):
+    """Collect only after failure; a diagnostic error cannot replace its cause."""
+    evidence = {'gesture_trace': [], 'diagnostics': {'case': label}}
+    diagnostics = evidence['diagnostics']
+    errors = {}
+
+    def collect(name, callback):
+        try:
+            diagnostics[name] = callback()
+        except Exception as error:
+            errors[name] = str(error)
+
+    collect('gesture_trace', lambda: page.evaluate('window.__launcherGestureTrace||[]'))
+    evidence['gesture_trace'] = diagnostics.pop('gesture_trace', [])
+    collect('browser_observed', lambda: observed)
+    collect('dom', lambda: page.evaluate("""() => {
+      const attributes=e=>Object.fromEntries([...e.attributes].map(a=>[a.name,a.value]));
+      const box=e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {
+        tag:e.tagName,id:e.id,attributes:attributes(e),rect:r.toJSON(),display:s.display,
+        visibility:s.visibility,opacity:s.opacity,position:s.position,overflow:s.overflow,
+        inert:e.inert,hidden:e.hidden}};
+      const ancestors=e=>{const result=[];for(;e;e=e.parentElement)result.push(box(e));return result};
+      const v=visualViewport;
+      return {url:location.href,time:performance.now(),html:attributes(document.documentElement),
+        body:attributes(document.body),viewport:{innerWidth,innerHeight,outerWidth,outerHeight,
+          scrollX,scrollY,dpr:devicePixelRatio,visual:v?{width:v.width,height:v.height,
+            scale:v.scale,left:v.offsetLeft,top:v.offsetTop}:null},
+        media:{mobile:matchMedia('(max-width:900px)').matches,
+          glassCompact:matchMedia('(max-width:1179px)').matches},
+        navigation:window.JPWNavigation?.current(),active:box(document.activeElement),
+        toggles:[...document.querySelectorAll('[data-shell-menu-toggle]')].map(ancestors),
+        overlays:[...document.querySelectorAll('dialog[open],.overlay.show')].map(box),
+        shell:typeof shellUI==='undefined'?null:{open:shellUI.open,overflow:shellUI.overflow}};
+    }"""))
+    stem = output.stem + '-' + ''.join(c if c.isalnum() or c == '-' else '_' for c in label)
+    screenshot = output.with_name(stem + '-failure.png')
+    html = output.with_name(stem + '-failure.html')
+    collect('screenshot', lambda: (page.screenshot(path=str(screenshot), full_page=False), str(screenshot))[1])
+    collect('html', lambda: (html.write_text(page.content(), encoding='utf-8'), str(html))[1])
+    if errors:
+        diagnostics['capture_errors'] = errors
+    return evidence
 
 
 def gesture_trace_start(page):
@@ -617,7 +661,8 @@ def run(args):
                     report['checks'].append({'name': artifact + '/visibility-reload-schema', 'result': 'PASS'})
                 except Exception as error:
                     result = 'BASELINE_FAIL' if args.baseline and 'floating host absent' in str(error) else failure_result(error)
-                    report['checks'].append({'name': label, 'result': result, 'detail': str(error), 'gesture_trace': page.evaluate('window.__launcherGestureTrace||[]')})
+                    report['checks'].append({'name': label, 'result': result, 'detail': str(error),
+                        **failure_evidence(page, observed, args.out, label)})
                     failed = True
                 finally:
                     context.close()
@@ -647,7 +692,8 @@ def run(args):
                         assert_clean(context, observed)
                         report['checks'].append({'name': label, 'result': 'PASS', 'icon_contrast': contrast})
                     except Exception as error:
-                        report['checks'].append({'name': label, 'result': failure_result(error), 'detail': str(error), 'gesture_trace': page.evaluate('window.__launcherGestureTrace||[]')})
+                        report['checks'].append({'name': label, 'result': failure_result(error), 'detail': str(error),
+                            **failure_evidence(page, observed, args.out, label)})
                         failed = True
                     finally:
                         context.close()
@@ -670,7 +716,8 @@ def run(args):
                         assert_clean(context, observed)
                         report['checks'].append({'name': 'native-200/' + theme, 'result': 'PASS', 'interruption_trace':trace})
                     except Exception as error:
-                        report['checks'].append({'name': 'native-200/' + theme, 'result': failure_result(error), 'detail': str(error), 'gesture_trace': page.evaluate('window.__launcherGestureTrace||[]')})
+                        report['checks'].append({'name': 'native-200/' + theme, 'result': failure_result(error), 'detail': str(error),
+                            **failure_evidence(page, observed, args.out, 'native-200/' + theme)})
                         failed = True
                     finally:
                         context.close()

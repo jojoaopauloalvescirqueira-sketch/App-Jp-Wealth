@@ -5,7 +5,7 @@ const JPW_WORKSPACE_KEYS=Object.freeze([
   'jpwealth.ui.widgetLayouts.v6','jpwealth.ui.widgetLayouts.v5','jpwealth.ui.widgetLayouts.v4',
   'jpwealth.ui.widgetLayouts.v3','jpwealth.ui.widgetLayout.v2',
   'jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_galton_preferences_v1',
-  'jpwealth.ui.ffNews.sourceUrl'
+  'jpwealth.ui.ffNews.sourceUrl','jpwealth_calendar_view_v1'
 ]);
 const jpwWorkspaceEdited=new Map();
 let jpwWorkspaceRestoring=false;
@@ -79,6 +79,14 @@ function jpwWorkspaceValidate(value){
   for(const [key,raw] of Object.entries(value.preferences)){
     if(!JPW_WORKSPACE_KEYS.includes(key)||!(raw===null||typeof raw==='string')||(raw&&raw.length>2000000))throw new Error('Preferência de retomada inválida.');
     if(raw===null)continue;
+    if(key==='jpwealth_calendar_view_v1'){
+      const preference=JSON.parse(raw);
+      const enums={currencies:['USD','GBP','JPY','NZD','CHF'],impacts:['high','medium','low','unclassified'],contents:['economic','personal','app']};
+      if(!jpwWorkspaceObject(preference)||preference.schemaVersion!==1||Object.keys(preference).some(field=>!['schemaVersion',...Object.keys(enums)].includes(field))||
+        Object.entries(enums).some(([field,allowed])=>!Array.isArray(preference[field])||preference[field].length>allowed.length||new Set(preference[field]).size!==preference[field].length||preference[field].some(value=>!allowed.includes(value))))
+        throw new Error('Preferência do calendário inválida.');
+      continue;
+    }
     if(key==='jpwealth.ui.ffNews.sourceUrl'){
       if(raw.length>2048)throw new Error('Endereço de notícias muito longo.');
       const url=new URL(raw);if(!['https:','http:'].includes(url.protocol)||url.username||url.password)throw new Error('Endereço de notícias inválido ou com credenciais.');
@@ -198,7 +206,7 @@ function jpwWorkspaceResume(){
 function jpwWorkspaceCaptureField(event){
   const el=event.target;
   if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement||el instanceof HTMLSelectElement)||el.closest('#workspaceDraftDialog'))return;
-  if(el.closest('#settingsProfileForm,#mvpNotesDrawer,#ebObservationForm')||el.matches('[data-fi-campo],[data-fe-campo],[data-fa-campo],#nocudaPayload,[data-f],[data-eb-reason]')||el.hasAttribute('data-eb-field'))return;
+  if(el.closest('#settingsProfileForm,#mvpNotesDrawer,#ebObservationForm,.calendar-form')||el.matches('[data-fi-campo],[data-fe-campo],[data-fa-campo],#nocudaPayload,[data-f],[data-eb-reason]')||el.hasAttribute('data-eb-field'))return;
   const identity=[el.id,el.name,el.autocomplete,el.type,...Object.keys(el.dataset)].join(' ');
   if(/password|senha|secret|token|credential|pin|file|hidden|search|filter|session/i.test(identity))return;
   const label=(el.labels?.[0]?.textContent||el.getAttribute('aria-label')||el.id||el.name||Object.entries(el.dataset).map(([k,v])=>k+':'+v).join(' ')).trim().slice(0,300);

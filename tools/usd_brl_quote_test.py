@@ -462,6 +462,7 @@ USDBRL_BENIGN_AUTH_LINES = (
     "  const secretKey=key=>/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key);",
     "  const secretKey = key => /password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key);",
     "        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key))throw new Error('Backup de planejamento contém campo de segredo. Preserve o original e remova credenciais antes de importar ou exportar.');",
+    "    for(const key of Object.keys(value))if(['__proto__','prototype','constructor'].includes(key)||/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||!safeTree(value[key],seen))return false;",
 )
 
 
@@ -485,6 +486,21 @@ def caso_seguranca(browser, url):
     """TESTE 16 — nenhuma credencial no bundle, no HTML ou no armazenamento."""
     suspeitos = ("api_key", "apikey", "api-key", "access_token",
                  "authorization", "bearer ", "x-api-key", "client_secret")
+    # An exact, unique secret-rejection expression is not a credential. Its
+    # exception must never hide added values, altered lines or duplicates.
+    benign = USDBRL_BENIGN_AUTH_LINES[-1]
+    assert 'authorization' not in usd_brl_static_credential_text(benign + '\n', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+    for term in suspeitos:
+        candidate = benign + '\nconst syntheticProbe = ' + json.dumps(term + ' SYNTHETIC-NOT-A-CREDENTIAL') + ';\n'
+        assert term in usd_brl_static_credential_text(candidate, 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'), 'exact exception masked an added credential marker'
+    changed = benign.replace('return false;', 'return true;')
+    assert 'authorization' in usd_brl_static_credential_text(changed, 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'), 'changed guard accepted as benign'
+    try:
+        usd_brl_static_credential_text(benign + '\n' + benign + '\n', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError('duplicate benign-looking lines must be rejected')
     for nome in ("index.html", "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
                  "src/js/10-domain/08-usd-brl-quote.js", "sw.js"):
         texto = usd_brl_static_credential_text((ROOT / nome).read_text(encoding="utf-8"), nome)

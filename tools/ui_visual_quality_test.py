@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runtime visual contract for Planning; other modules remain NOT_RUN.
+"""Runtime visual contract for Planning and actionable Notifications; other modules remain NOT_RUN.
 
 The approved plan supplies the independent oracles, not the current CSS.
 Fresh synthetic contexts reuse the existing bootstrap and Planning journeys.
@@ -27,6 +27,8 @@ import planning_proportions_test as planning
 import planning_compact_table_test as compact
 import planning_monthly_inline_test as inline
 import planning_monthly_close_test as closure
+import notification_visual_quality_test as notification_visual
+import calendar_visual_quality_test as calendar_visual
 from planning_parity_layout_test import financial
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -52,6 +54,11 @@ SOURCE_FILES = sorted(set(planning.SOURCES + [
     'docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md',
     'tools/planning_compact_table_test.py', 'tools/planning_monthly_inline_test.py',
     'tools/planning_monthly_close_test.py',
+    'tools/notification_visual_quality_test.py','tools/notification_center_test.py',
+    'src/js/40-app/18-notification-center.js',
+    'tools/calendar_visual_quality_test.py','tools/calendar_agenda_test.py',
+    'src/js/40-app/19-calendar-agenda.js','src/js/40-app/16-monthly-economic-data.js',
+    'src/js/10-domain/19-personal-agenda.js',
 ]))
 
 # Reusable inner-content measurement, including text nodes and transformed SVG
@@ -594,6 +601,10 @@ def native_zoom(pw, url, report, legacy=True):
 
 
 def required_ids(selection):
+    if selection == 'calendar-regressions':
+        return calendar_visual.required_ids()
+    if selection == 'notification-regressions':
+        return notification_visual.required_ids()
     if selection == 'closure-regressions':
         return closure.required_ids('regressions')
     if selection in ['compact-regressions', 'compact']:
@@ -611,6 +622,8 @@ def required_ids(selection):
         ids += compact.required_ids('all')
         ids += inline.required_ids('all')
         ids += closure.required_ids('all')
+        ids += notification_visual.required_ids()
+        ids += calendar_visual.required_ids()
     return ids
 
 
@@ -651,13 +664,16 @@ def matrix_counterproof():
 
 
 def tier_entries(tree, tier):
-    assignments = {node.targets[0].id: node.value for node in tree.body
-                   if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)}
+    assignments = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            assignments.setdefault(node.targets[0].id, []).append(node.value)
 
     def expand(node, seen):
         if isinstance(node, ast.Name):
             assert node.id not in seen and node.id in assignments, ('unresolved/cyclic tier', node.id)
-            return expand(assignments[node.id], seen | {node.id})
+            assert len(assignments[node.id]) == 1, ('duplicate tier declaration', node.id)
+            return expand(assignments[node.id][0], seen | {node.id})
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             return expand(node.left, seen) + expand(node.right, seen)
         assert isinstance(node, (ast.Tuple, ast.List)), ('unsupported tier expression', ast.dump(node))
@@ -666,11 +682,57 @@ def tier_entries(tree, tier):
     return expand(ast.Name(id=tier), set())
 
 
+# Frozen declarations: the96 historical identities/commands come from approved
+# baseline d517be0748f886085b3029c809bd68046e5c0f77, independently compared
+# against the calendar candidate. Fingerprints cover normalized AST entries,
+# never values computed from the source being validated at runtime.
+HISTORICAL_GATE_IDS = tuple("""
+preflight structure diff-check preflight-context ui-visual-quality navigation-ia dashboard-macro
+research-navigation smoke settings brand-identity-contract brand-identity-browser statute-documentary
+galton-board planning-engine planning-parity-engine planning-state planning-navigation planning-quote
+planning-boundaries planning-ui planning-parity-ui planning-reserve-compat exec-submenu nocoda
+pivot-studies order-guards operation-identity operation-finalize operation-history operation-wiring
+phases-visibility exec-three-column finpes-foundation finpes-finalize-preservation
+finpes-backup-roundtrip finpes-navigation finpes-budget finpes-debt-credit finpes-comparison
+finpes-scenarios finpes-overview usd-brl-quote alladin-unit alladin-ledger alladin-position
+alladin-foundation alladin-finalize-preservation session-epoch-protocol session-write-serialization
+alladin-ui-readonly alladin-ui-crud alladin-ui-ledger alladin-ui-tx-write alladin-ui-tx-reverse
+planning-distribution planning-three-tabs planning-proportions planning-parity-layout
+session-finalization storage-governance persistence-failure persistence-recovery investor-password
+import-xss state-integrity async-generation build-reproducibility service-worker-upgrade mvp-notes
+notes-launcher notes-global-launcher notification-center notification-efficiency consolidated-efficiency
+consolidated-model consolidated-storage consolidated-ui forex-professional-panel execution-efficiency
+execution-table execution-workbook execution-proportions forex-context forex-navigation-journey
+learning-guide nocuda-tools stoikus-downloads download-assets-unit download-assets-browser
+capital-currents-unit capital-currents-progress capital-currents-browser time-twins-unit
+time-twins-browser minigames
+""".split())
+CALENDAR_GATE_IDS = ('personal-agenda', 'monthly-economic-feed', 'calendar-agenda',
+                     'calendar-recovery', 'calendar-distribution', 'ff-news-cache')
+GATE_CATALOG = {
+    'STANDARD': {
+        'historical_count': 55, 'calendar_count': 4,
+        'historical_ast_sha256': 'dec6559f92a890524f149680b953b2f777fde61d820fe96b27251b1e0f68f767',
+        'calendar_ast_sha256': '5721964a401d84d682a2d7ef30ac04a768df2730b25883c704c238aa6ecf7e00',
+    },
+    'FULL': {
+        'historical_count': 96, 'calendar_count': 6,
+        'historical_ast_sha256': '43c6cec6702b768a4229f828c5d20edf138f16b99f25563d343d684415190cd9',
+        'calendar_ast_sha256': 'b9048ab67f72eac35122f39080c17910ba0ffdac0c1125bbc4d9bf16c733af4d',
+    },
+}
+
+
+def gate_entries_fingerprint(entries):
+    return sha256('\n'.join(ast.dump(entry) for entry in entries).encode()).hexdigest()
+
+
 def validate_gate_source(source):
     """Parse declarations only; importing the runner could execute its CLI."""
     tree = ast.parse(source)
     tiers = {tier: tier_entries(tree, tier) for tier in ['STANDARD', 'FULL']}
     expected = ast.parse("[sys.executable, 'tools/ui_visual_quality_test.py', '--out', full_evidence('ui-visual-quality')]", mode='eval').body
+    assert len(HISTORICAL_GATE_IDS) == 96 and len(CALENDAR_GATE_IDS) == 6, 'frozen96+6 catalog required'
     result = {}
     for tier, entries in tiers.items():
         assert all(isinstance(entry, ast.Tuple) and len(entry.elts) == 2 and isinstance(entry.elts[0], ast.Constant) and isinstance(entry.elts[0].value, str) for entry in entries), ('invalid gate entry', tier)
@@ -679,8 +741,23 @@ def validate_gate_source(source):
         selected = [entry for entry in entries if entry.elts[0].value == 'ui-visual-quality']
         assert len(selected) == 1, ('visual check must run exactly once', tier, len(selected))
         assert ast.dump(selected[0].elts[1]) == ast.dump(expected), ('visual gate must invoke default complete CLI and unique output', tier)
-        result[tier] = {'entries': len(ids), 'visual_entries': len(selected)}
-    assert len(tiers['FULL']) == 96, ('95 existing checks plus visual check required', len(tiers['FULL']))
+        catalog = GATE_CATALOG[tier]
+        historical = [entry for entry in entries if entry.elts[0].value in HISTORICAL_GATE_IDS]
+        calendar = [entry for entry in entries if entry.elts[0].value not in HISTORICAL_GATE_IDS]
+        assert tuple(entry.elts[0].value for entry in historical) == HISTORICAL_GATE_IDS[:catalog['historical_count']], ('historical gate identities/order changed', tier)
+        assert tuple(entry.elts[0].value for entry in calendar) == CALENDAR_GATE_IDS[:catalog['calendar_count']], ('approved calendar identities/order missing or substituted', tier)
+        standard_count = GATE_CATALOG['STANDARD']['historical_count']
+        expected_ids = HISTORICAL_GATE_IDS[:4] + CALENDAR_GATE_IDS[:4] + HISTORICAL_GATE_IDS[4:standard_count]
+        if tier == 'FULL':
+            expected_ids += CALENDAR_GATE_IDS[4:] + HISTORICAL_GATE_IDS[standard_count:]
+        assert tuple(ids) == expected_ids, ('approved gate sequence changed; preflight and tier boundaries must be preserved', tier)
+        assert gate_entries_fingerprint(historical) == catalog['historical_ast_sha256'], ('historical gate command declarations changed', tier)
+        assert gate_entries_fingerprint(calendar) == catalog['calendar_ast_sha256'], ('approved calendar gate command declarations changed', tier)
+        result[tier] = {'entries': len(ids), 'visual_entries': len(selected),
+                        'historical_entries': len(historical), 'calendar_entries': [entry.elts[0].value for entry in calendar],
+                        'historical_ast_sha256': gate_entries_fingerprint(historical),
+                        'calendar_ast_sha256': gate_entries_fingerprint(calendar)}
+    assert len(tiers['FULL']) == 102, ('96 preserved historical checks plus6 calendar checks required', len(tiers['FULL']))
     return result
 
 
@@ -688,21 +765,55 @@ def gate_counterproof():
     source = (ROOT / 'tools/quality_gate.py').read_text()
     valid = validate_gate_source(source)
 
-    class RemoveVisual(ast.NodeTransformer):
-        def visit_Tuple(self, node):
-            if node.elts and isinstance(node.elts[0], ast.Constant) and node.elts[0].value == 'ui-visual-quality':
-                return None
-            return self.generic_visit(node)
+    def without(identities):
+        class RemoveEntries(ast.NodeTransformer):
+            def visit_Tuple(self, node):
+                if len(node.elts) == 2 and isinstance(node.elts[0], ast.Constant) and node.elts[0].value in identities:
+                    return None
+                return self.generic_visit(node)
+        tree = RemoveEntries().visit(ast.parse(source))
+        assert all(entry.elts[0].value not in identities for entry in tier_entries(tree, 'FULL')), 'negative fixture failed to remove requested identities'
+        return ast.unparse(tree)
 
-    removed = RemoveVisual().visit(ast.parse(source))
-    remaining = tier_entries(removed, 'FULL')
-    assert len(remaining) == 95, 'negative fixture must retain all95 other entries'
-    focal = ast.parse(source)
-    entry = next(item for item in tier_entries(focal, 'STANDARD') if item.elts[0].value == 'ui-visual-quality')
-    entry.elts[1].elts.extend([ast.Constant(value='--case'), ast.Constant(value='regressions')])
+    def replace(identity, *, replacement_id=None, command=None, append_args=None):
+        tree = ast.parse(source)
+        entry = next(item for item in tier_entries(tree, 'FULL') if item.elts[0].value == identity)
+        if replacement_id is not None:
+            entry.elts[0] = ast.Constant(value=replacement_id)
+        if command is not None:
+            entry.elts[1] = ast.parse(command, mode='eval').body
+        if append_args:
+            entry.elts[1].elts.extend(ast.Constant(value=value) for value in append_args)
+        assert len(tier_entries(tree, 'FULL')) == 102, 'replacement counterproof must preserve102 entries'
+        return ast.unparse(tree)
+
+    removed_visual = without({'ui-visual-quality'})
+    remaining = tier_entries(ast.parse(removed_visual), 'FULL')
+    assert len(remaining) == 101 and sum(entry.elts[0].value in HISTORICAL_GATE_IDS for entry in remaining) == 95, 'visual-removal fixture must preserve95 historical and6 calendar entries'
+    subset = ast.parse(source)
+    full_assignment = next(node for node in subset.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'FULL' for target in node.targets))
+    full_assignment.value = ast.Name(id='STANDARD', ctx=ast.Load())
+    duplicate = ast.parse(source)
+    standard_assignment = next(node for node in duplicate.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'STANDARD' for target in node.targets))
+    duplicate.body.append(ast.parse('STANDARD = ' + ast.unparse(standard_assignment.value)).body[0])
+    reordered = ast.parse(source)
+    standard_assignment = next(node for node in reordered.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'STANDARD' for target in node.targets))
+    standard_entries = tier_entries(reordered, 'STANDARD')
+    standard_assignment.value = ast.Tuple(elts=([entry for entry in standard_entries if entry.elts[0].value in CALENDAR_GATE_IDS]
+                                               + [entry for entry in standard_entries if entry.elts[0].value in HISTORICAL_GATE_IDS]), ctx=ast.Load())
     return {'positive': valid,
-            'removed_new_entry_other95_preserved': rejected(lambda: validate_gate_source(ast.unparse(removed))),
-            'focal_instead_of_default': rejected(lambda: validate_gate_source(ast.unparse(focal)))}
+            'removed_visual_other101_preserved': rejected(lambda: validate_gate_source(removed_visual)),
+            'focal_instead_of_default': rejected(lambda: validate_gate_source(replace('ui-visual-quality', append_args=['--case', 'regressions']))),
+            'each_calendar_check_omitted': {identity: rejected(lambda identity=identity: validate_gate_source(without({identity}))) for identity in CALENDAR_GATE_IDS},
+            'historical96_without_calendar': rejected(lambda: validate_gate_source(without(set(CALENDAR_GATE_IDS)))),
+            'standard_subset_as_full': rejected(lambda: validate_gate_source(ast.unparse(subset))),
+            'historical_check_omitted': rejected(lambda: validate_gate_source(without({'minigames'}))),
+            'historical_identity_substituted_same102': rejected(lambda: validate_gate_source(replace('preflight', replacement_id='SYN-unknown-historical'))),
+            'calendar_identity_substituted_same102': rejected(lambda: validate_gate_source(replace('calendar-agenda', replacement_id='SYN-unknown-calendar'))),
+            'historical_command_substituted_same102': rejected(lambda: validate_gate_source(replace('preflight', command="['true']"))),
+            'calendar_focal_instead_of_complete': rejected(lambda: validate_gate_source(replace('calendar-agenda', append_args=['--case', 'ui']))),
+            'calendar_checks_before_preflight': rejected(lambda: validate_gate_source(ast.unparse(reordered))),
+            'duplicate_tier_declaration': rejected(lambda: validate_gate_source(ast.unparse(duplicate)))}
 
 
 def record(report, case_id, action, page=None, criteria=None, **metadata):
@@ -755,7 +866,7 @@ def regressions(browser, url, report):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=['all', 'regressions', 'compact-regressions', 'compact', 'inline-regressions', 'closure-regressions'], default='all')
+    parser.add_argument('--case', choices=['all', 'regressions', 'compact-regressions', 'compact', 'inline-regressions', 'closure-regressions', 'notification-regressions', 'calendar-regressions'], default='all')
     parser.add_argument('--out', type=Path, default=ROOT / 'tools/.artifacts' / ('ui-visual-quality-' + datetime.now().strftime('%Y%m%dT%H%M%S%f')))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
@@ -796,7 +907,15 @@ def main():
                 compact.counterproofs(browser, url, report, __import__(__name__))
                 compact.matrix(browser, url, report, __import__(__name__))
                 compact.touch(browser, url, report, __import__(__name__))
+            if args.case in ['all','notification-regressions']:
+                notification_visual.matrix(browser,url,report,__import__(__name__))
+            if args.case in ['all','calendar-regressions']:
+                calendar_visual.matrix(browser,url,report,__import__(__name__))
             browser.close()
+            if args.case in ['all','notification-regressions']:
+                notification_visual.native_zoom(pw,url,report,__import__(__name__))
+            if args.case in ['all','calendar-regressions']:
+                calendar_visual.native_zoom(pw,url,report,__import__(__name__))
             if args.case in ['all', 'compact']:
                 native_zoom(pw, url, report, legacy=args.case == 'all')
             if args.case == 'all':

@@ -1,0 +1,357 @@
+{
+  "before": {
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "src/js/10-domain/18-execution-board-model.js": "fa98b0b3f360a1ae2b036ef740fe82c940be4a763f32a81b8f3bb1f8d0192129",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/40-app/07-finalize-session.js": "8aa17fafd9c869bcb1f23bff07523677aba51cc90244d5535c3831274127980d",
+    "src/styles/app.css": "60787e51e673bf73b1c995706a4cd6965873c314a9c059a89f607d9b366650d5",
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "tools/notification_center_test.py": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+    "tools/notification_efficiency_test.py": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d",
+    "tools/planning_state_test.js": "27091a67144da2e2c84d8d095de3aa931a69aa3c1184512d450d1a55a90dad68",
+    "tools/ui_visual_quality_test.py": "3acd6068914f4d38f969d9dcf0d218950b7e6fb2f9e87417ebedcd364fc47709",
+    "tools/notification_visual_quality_test.py": "9834b8105abbd8cc7c6155b72dcbbc85ccf2cdcd9d89b8a93392a12a59152f0a"
+  },
+  "after": {
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "src/js/10-domain/18-execution-board-model.js": "fa98b0b3f360a1ae2b036ef740fe82c940be4a763f32a81b8f3bb1f8d0192129",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/40-app/07-finalize-session.js": "8aa17fafd9c869bcb1f23bff07523677aba51cc90244d5535c3831274127980d",
+    "src/styles/app.css": "60787e51e673bf73b1c995706a4cd6965873c314a9c059a89f607d9b366650d5",
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "tools/notification_center_test.py": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+    "tools/notification_efficiency_test.py": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d",
+    "tools/planning_state_test.js": "27091a67144da2e2c84d8d095de3aa931a69aa3c1184512d450d1a55a90dad68",
+    "tools/ui_visual_quality_test.py": "3acd6068914f4d38f969d9dcf0d218950b7e6fb2f9e87417ebedcd364fc47709",
+    "tools/notification_visual_quality_test.py": "9834b8105abbd8cc7c6155b72dcbbc85ccf2cdcd9d89b8a93392a12a59152f0a"
+  },
+  "results": [
+    {
+      "case": "empty-period-facts",
+      "result": "PASS",
+      "evidence": {
+        "ids": [
+          "forex:context:SYN_NOTIFY_A:SYN_NOTIFY_A_SEP",
+          "forex:order-review:SYN_NOTIFY_A:SYN_NOTIFY_A_SEP",
+          "forex:context:SYN_NOTIFY_B:SYN_NOTIFY_B_SEP",
+          "forex:order-review:SYN_NOTIFY_B:SYN_NOTIFY_B_SEP",
+          "forex:quotes:SYN_NOTIFY_A:SYN_NOTIFY_A_SEP",
+          "forex:quotes:SYN_NOTIFY_B:SYN_NOTIFY_B_SEP"
+        ],
+        "empty_periods_excluded": true,
+        "real_facts_retained": true
+      }
+    },
+    {
+      "case": "effective-price-source",
+      "result": "PASS",
+      "evidence": {
+        "fresh_effective_suppressed": true,
+        "old_effective_retained": "Forex · SYN Conta A · 2026-09-14 · USDConfira as referências das ordens1 instrumento(s) de ordens ativas têm referências que precisam de revisão.Revisar referênciasEntender este avisoEURUSD · 14 dias atrás · SYN fresh price",
+        "contextual_cta": true,
+        "readonly_writes": 0,
+        "extra_requests": 0,
+        "firstProjection": [
+          {
+            "id": "EURUSD",
+            "name": "EURUSD",
+            "price": {
+              "value": 1.1,
+              "source": "SYN fresh price",
+              "observedAt": "2026-09-14T12:00:00.000Z",
+              "sourceKind": "MANUAL",
+              "kind": "MANUAL"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "case": "long-context-320",
+      "result": "PASS",
+      "evidence": {
+        "bounds": [
+          {
+            "left": 35,
+            "right": 281,
+            "text": [
+              {
+                "left": 35,
+                "right": 82.234375
+              },
+              {
+                "left": 35,
+                "right": 278.171875
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 173.296875
+              }
+            ]
+          },
+          {
+            "left": 35,
+            "right": 281,
+            "text": [
+              {
+                "left": 35,
+                "right": 82.234375
+              },
+              {
+                "left": 35,
+                "right": 278.171875
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 173.296875
+              }
+            ]
+          },
+          {
+            "left": 35,
+            "right": 281,
+            "text": [
+              {
+                "left": 35,
+                "right": 274.390625
+              },
+              {
+                "left": 35,
+                "right": 72.890625
+              }
+            ]
+          },
+          {
+            "left": 35,
+            "right": 281,
+            "text": [
+              {
+                "left": 35,
+                "right": 274.390625
+              },
+              {
+                "left": 35,
+                "right": 72.890625
+              }
+            ]
+          },
+          {
+            "left": 35,
+            "right": 281,
+            "text": [
+              {
+                "left": 35,
+                "right": 82.234375
+              },
+              {
+                "left": 35,
+                "right": 278.171875
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 278.984375
+              },
+              {
+                "left": 35,
+                "right": 173.296875
+              }
+            ]
+          },
+          {
+            "left": 35,
+            "right": 281,
+            "text": [
+              {
+                "left": 35,
+                "right": 274.390625
+              },
+              {
+                "left": 35,
+                "right": 72.890625
+              }
+            ]
+          }
+        ],
+        "client": 282,
+        "scroll": 282
+      }
+    },
+    {
+      "case": "stale-guard-cause",
+      "result": "PASS",
+      "evidence": {
+        "change": "cause",
+        "source_screen_retained": true,
+        "selection_retained": true,
+        "after": {
+          "nav": {
+            "canonical": "planning",
+            "requested": "planning:monthly",
+            "source": "local",
+            "primary": "planning",
+            "child": null,
+            "screen": "planning",
+            "localView": {
+              "surface": "planning",
+              "view": "monthly"
+            }
+          },
+          "selection": {
+            "accountId": null,
+            "periodId": null,
+            "reason": "SELECTION_REQUIRED",
+            "requiresSelection": true,
+            "accounts": [
+              {
+                "accountId": "SYN_NOTIFY_A",
+                "name": "SYN Conta A",
+                "type": "PRÓPRIA",
+                "currency": "USD"
+              },
+              {
+                "accountId": "SYN_NOTIFY_B",
+                "name": "SYN Conta B",
+                "type": "PRÓPRIA",
+                "currency": "EUR"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "stale-guard-root",
+      "result": "PASS",
+      "evidence": {
+        "change": "root",
+        "source_screen_retained": true,
+        "selection_retained": true,
+        "after": {
+          "nav": {
+            "canonical": "planning",
+            "requested": "planning:monthly",
+            "source": "local",
+            "primary": "planning",
+            "child": null,
+            "screen": "planning",
+            "localView": {
+              "surface": "planning",
+              "view": "monthly"
+            }
+          },
+          "selection": {
+            "accountId": null,
+            "periodId": null,
+            "reason": "SELECTION_REQUIRED",
+            "requiresSelection": true,
+            "accounts": [
+              {
+                "accountId": "SYN_NOTIFY_A",
+                "name": "SYN Conta A",
+                "type": "PRÓPRIA",
+                "currency": "USD"
+              },
+              {
+                "accountId": "SYN_NOTIFY_B",
+                "name": "SYN Conta B",
+                "type": "PRÓPRIA",
+                "currency": "EUR"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case": "stale-guard-freeze",
+      "result": "PASS",
+      "evidence": {
+        "change": "freeze",
+        "source_screen_retained": true,
+        "selection_retained": true,
+        "after": {
+          "nav": {
+            "canonical": "planning",
+            "requested": "planning:monthly",
+            "source": "local",
+            "primary": "planning",
+            "child": null,
+            "screen": "planning",
+            "localView": {
+              "surface": "planning",
+              "view": "monthly"
+            }
+          },
+          "selection": {
+            "accountId": null,
+            "periodId": null,
+            "reason": "SELECTION_REQUIRED",
+            "requiresSelection": true,
+            "accounts": [
+              {
+                "accountId": "SYN_NOTIFY_A",
+                "name": "SYN Conta A",
+                "type": "PRÓPRIA",
+                "currency": "USD"
+              },
+              {
+                "accountId": "SYN_NOTIFY_B",
+                "name": "SYN Conta B",
+                "type": "PRÓPRIA",
+                "currency": "EUR"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "syntheticOnly": true,
+  "scope": "Four reported fixes only; focused verification, not FULL or human acceptance"
+}

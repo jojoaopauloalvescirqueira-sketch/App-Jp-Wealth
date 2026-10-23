@@ -1,0 +1,35 @@
+## codex/notificacoes-acoes-20261022
+ M build-id.js
+ M dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html
+ M docs/architecture/NOTIFICATION-CENTER.md
+ M docs/architecture/PLANNING.md
+ M docs/work/ACTIVE-TASK.md
+ M index.html
+ M src/js/10-domain/18-execution-board-model.js
+ M src/js/30-accounting/06-planning/02-state.js
+ M src/js/30-accounting/06-planning/03-ui.js
+ M src/js/40-app/07-finalize-session.js
+ M src/js/40-app/18-notification-center.js
+ M src/js/manifest.json
+ M src/styles/app.css
+ M src/vendor/downloads/leverage-daily-source-payload.js
+ M src/vendor/downloads/leverage-native-kit-payload.js
+ M src/vendor/downloads/leverage-native-pin-payload.js
+ M src/vendor/downloads/leverage-preview-payload.js
+ M src/vendor/downloads/leverage-preview-payload.json
+ M src/vendor/downloads/leverage-source-payload.js
+ M src/vendor/downloads/nocuda-payload.js
+ M src/vendor/market-hours/runtime-payload.js
+ M tools/module_availability_test.py
+ M tools/notification_center_test.py
+ M tools/notification_efficiency_test.py
+ M tools/planning_state_test.js
+ M tools/planning_ui_test.py
+ M tools/regression-memory.json
+ M tools/ui_visual_quality_test.py
+?? docs/superpowers/plans/2026-10-22-notification-actions.md
+?? docs/validation/notification-actions-20261022/
+?? docs/work/BRIEF-NOTIFICATION-ACTIONS-20261022.md
+?? docs/work/CHG-JPW-NOTIFICATION-ACTIONS-PRODUCT-20261022.md
+?? docs/work/CHG-JPW-NOTIFICATION-ACTIONS-TESTS-20261022.md
+?? tools/notification_visual_quality_test.py

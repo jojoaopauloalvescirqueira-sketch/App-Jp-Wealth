@@ -1,0 +1,95 @@
+# Inventário do delta autorizado
+
+Base preservada: d517be0 mais pendências iniciais; 41 arquivos existentes modificados, 44 novos (sem contar esta pasta de recibos), 0 removidos. Comparação pelo manifesto inicial recuperável; o diff Git contra HEAD inclui trabalho anterior.
+
+| Arquivo | Tipo |
+|---|---|
+| `CHANGELOG.md` | modificado |
+| `SESSION_HANDOFF.md` | modificado |
+| `build-id.js` | modificado |
+| `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html` | modificado |
+| `docs/architecture/STATE-SCHEMA.md` | modificado |
+| `docs/governance/CURRENT-STATE.md` | modificado |
+| `docs/work/ACTIVE-TASK.md` | modificado |
+| `index.html` | modificado |
+| `src/js/00-core/07-workspace-backup.js` | modificado |
+| `src/js/20-ui/31-tools-services.js` | modificado |
+| `src/js/30-accounting/01-daily-ledger.js` | modificado |
+| `src/js/40-app/06-boot.js` | modificado |
+| `src/js/40-app/07-finalize-session.js` | modificado |
+| `src/js/40-app/11-operational-shell.js` | modificado |
+| `src/js/40-app/17-economic-calendar.js` | modificado |
+| `src/js/40-app/26-learning-catalog.js` | modificado |
+| `src/js/manifest.json` | modificado |
+| `src/styles/app.css` | modificado |
+| `src/vendor/downloads/leverage-daily-source-payload.js` | modificado |
+| `src/vendor/downloads/leverage-native-kit-payload.js` | modificado |
+| `src/vendor/downloads/leverage-native-pin-payload.js` | modificado |
+| `src/vendor/downloads/leverage-preview-payload.js` | modificado |
+| `src/vendor/downloads/leverage-preview-payload.json` | modificado |
+| `src/vendor/downloads/leverage-source-payload.js` | modificado |
+| `src/vendor/downloads/nocuda-payload.js` | modificado |
+| `src/vendor/market-hours/runtime-payload.js` | modificado |
+| `sw.js` | modificado |
+| `tools/apple_experience_test.py` | modificado |
+| `tools/exec_submenu_test.py` | modificado |
+| `tools/ff_news_cache_test.py` | modificado |
+| `tools/finalize_session_test.py` | modificado |
+| `tools/header_profile_test.py` | modificado |
+| `tools/learning_guide_test.py` | modificado |
+| `tools/nocuda_tools_test.py` | modificado |
+| `tools/notes_launcher_test.py` | modificado |
+| `tools/quality_gate.py` | modificado |
+| `tools/regression-memory.json` | modificado |
+| `tools/research_navigation_test.py` | modificado |
+| `tools/smoke_test.py` | modificado |
+| `tools/ui_visual_quality_test.py` | modificado |
+| `tools/usd_brl_quote_test.py` | modificado |
+| `docs/architecture/CALENDAR-AGENDA.md` | novo |
+| `docs/superpowers/plans/2026-10-23-calendar-agenda.md` | novo |
+| `docs/work/BRIEF-CALENDAR-AGENDA-20261023.md` | novo |
+| `docs/work/CHG-JPW-CALENDAR-AGENDA-PRODUCT-20261023.md` | novo |
+| `docs/work/CHG-JPW-CALENDAR-AGENDA-TESTS-20261023.md` | novo |
+| `docs/work/CTX-JPW-CALENDAR-AGENDA-20261023.md` | novo |
+| `infra/monthly-economic-feed/.gitattributes` | novo |
+| `infra/monthly-economic-feed/README.md` | novo |
+| `infra/monthly-economic-feed/SOURCES-LICENSES.md` | novo |
+| `infra/monthly-economic-feed/build_package.py` | novo |
+| `infra/monthly-economic-feed/collect_feed.py` | novo |
+| `infra/monthly-economic-feed/data/bea-2026-10.json` | novo |
+| `infra/monthly-economic-feed/data/curation-2026-10.json` | novo |
+| `infra/monthly-economic-feed/data/monthly-economic-2026-10.json` | novo |
+| `infra/monthly-economic-feed/evidence/bea-license.txt` | novo |
+| `infra/monthly-economic-feed/evidence/bea-schedule.ics` | novo |
+| `infra/monthly-economic-feed/evidence/ons-cancelled.json` | novo |
+| `infra/monthly-economic-feed/evidence/ons-license.txt` | novo |
+| `infra/monthly-economic-feed/evidence/ons-published.json` | novo |
+| `infra/monthly-economic-feed/evidence/ons-upcoming.json` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-business.txt` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-cpi.txt` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-family.txt` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-labour.txt` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-license.txt` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-population.txt` | novo |
+| `infra/monthly-economic-feed/evidence/sbj-savings.txt` | novo |
+| `infra/monthly-economic-feed/evidence/source-captures.json` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-calendar-rendered.txt` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-cpi-rendered.txt` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-cpi.txt` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-license-rendered.txt` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-license.txt` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-spi-rendered.txt` | novo |
+| `infra/monthly-economic-feed/evidence/statsnz-spi.txt` | novo |
+| `src/js/10-domain/19-personal-agenda.js` | novo |
+| `src/js/40-app/16-monthly-economic-data.js` | novo |
+| `src/js/40-app/19-calendar-agenda.js` | novo |
+| `tools/calendar_agenda_test.py` | novo |
+| `tools/calendar_distribution_test.py` | novo |
+| `tools/calendar_recovery_test.py` | novo |
+| `tools/calendar_visual_quality_test.py` | novo |
+| `tools/monthly_economic_feed_test.py` | novo |
+| `tools/personal_agenda_test.js` | novo |
+
+Nenhuma remoção autorizada ou realizada. Fontes de Planejamento, Notificações, motor/política Forex, escritor canônico e AGENTS serão conferidas novamente contra a baseline. O CSS compartilhado limita-se à integração visual do calendário e seu cabeçalho. Testes e gates têm CHG próprio e revisão independente.
+
+Rollback delimitado: comparar manifesto inicial e tar/patch recuperáveis em `/private/tmp/jpw-calendar-agenda-20261023/baseline/`; restaurar somente o delta desta tarefa, sem apagar trabalho anterior, e reconstruir oficialmente. Nenhum rollback executado.

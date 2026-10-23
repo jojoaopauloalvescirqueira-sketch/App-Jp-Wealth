@@ -1,0 +1,14 @@
+{
+  "official_returncode": 0,
+  "started_at": "2026-10-22T17:32:19.747517-03:00",
+  "finished_at": "2026-10-22T18:07:50.727861-03:00",
+  "inventory_count_before": 2255,
+  "inventory_count_after": 2255,
+  "changed_inputs": [],
+  "head_unchanged": true,
+  "branch_unchanged": true,
+  "harness_unchanged": true,
+  "same_inputs": true,
+  "official_raw_sha256": "31c42a401765d9efa8463443a1c751a8ee593b756ae69638706b445d18b3da08",
+  "scope": "recording only; raw results are in full-raw.json; human acceptance remains separate"
+}

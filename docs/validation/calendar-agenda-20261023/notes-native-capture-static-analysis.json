@@ -1,0 +1,146 @@
+{
+  "task": "FULL6 Notes native pointer-capture interruption, read-only static triage",
+  "raw_receipt": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261023T165324135488/notes-launcher.json",
+  "raw_sha256": "6db1ee11cf542a0e198983817aa35540caf6de275217aad53e9c9777e5aa900e",
+  "classification_kept": "ENVIRONMENT_ERROR",
+  "source_unchanged": true,
+  "observation": {
+    "case": "native-200/dark",
+    "gesture": "final subthreshold 2px click of movement(), after prior drag and explicit Escape/pointercancel/lostcapture cancellation trials",
+    "events": [
+      {
+        "type": "pointerdown",
+        "time": 2170.6999999284744,
+        "target": "headerNotesBtn",
+        "launcherTarget": true,
+        "x": 484.82421875,
+        "y": 283.671875,
+        "pointerId": 1,
+        "dragActive": false,
+        "focus": true,
+        "hit": "headerNotesBtn",
+        "capture": false,
+        "geometry": {
+          "x": 456.82421875,
+          "y": 255.671875,
+          "width": 56,
+          "height": 56,
+          "top": 255.671875,
+          "right": 512.82421875,
+          "bottom": 311.671875,
+          "left": 456.82421875
+        },
+        "viewport": {
+          "w": 720,
+          "h": 456,
+          "dpr": 4
+        }
+      },
+      {
+        "type": "lostpointercapture",
+        "time": 2188.5999999046326,
+        "target": "headerNotesBtn",
+        "launcherTarget": true,
+        "x": 476,
+        "y": 280.5,
+        "pointerId": 1,
+        "dragActive": true,
+        "focus": true,
+        "hit": "headerNotesBtn",
+        "capture": false,
+        "geometry": {
+          "x": 456.82421875,
+          "y": 255.671875,
+          "width": 56,
+          "height": 56,
+          "top": 255.671875,
+          "right": 512.82421875,
+          "bottom": 311.671875,
+          "left": 456.82421875
+        },
+        "viewport": {
+          "w": 720,
+          "h": 456,
+          "dpr": 4
+        }
+      },
+      {
+        "type": "pointerup",
+        "time": 2308,
+        "target": "headerNotesBtn",
+        "launcherTarget": true,
+        "x": 486.82421875,
+        "y": 285.671875,
+        "pointerId": 1,
+        "dragActive": false,
+        "focus": true,
+        "hit": "headerNotesBtn",
+        "capture": false,
+        "geometry": {
+          "x": 456.82421875,
+          "y": 255.671875,
+          "width": 56,
+          "height": 56,
+          "top": 255.671875,
+          "right": 512.82421875,
+          "bottom": 311.671875,
+          "left": 456.82421875
+        },
+        "viewport": {
+          "w": 720,
+          "h": 456,
+          "dpr": 4
+        }
+      },
+      {
+        "type": "click",
+        "time": 2308,
+        "target": "headerNotesBtn",
+        "launcherTarget": true,
+        "x": 486,
+        "y": 285,
+        "pointerId": 1,
+        "dragActive": false,
+        "focus": true,
+        "hit": "headerNotesBtn",
+        "capture": false,
+        "geometry": {
+          "x": 456.82421875,
+          "y": 255.671875,
+          "width": 56,
+          "height": 56,
+          "top": 255.671875,
+          "right": 512.82421875,
+          "bottom": 311.671875,
+          "left": 456.82421875
+        },
+        "viewport": {
+          "w": 720,
+          "h": 456,
+          "dpr": 4
+        }
+      }
+    ],
+    "no_observed_resize_scroll_blur": true,
+    "lost_capture_had_active_drag": true,
+    "no_console_or_page_errors": true,
+    "native_css_width": 720,
+    "layout": "sidebar"
+  },
+  "source_reasoning": [
+    "mvpNotesFinishLauncherDrag sets launcherDrag=null before releasePointerCapture; ordinary explicit cancellation through this function should therefore appear dragActive=false at a later lostpointercapture capture listener.",
+    "Observed lostpointercapture arrived with dragActive=true, without recorded resize/scroll/blur and unchanged button rectangle. That demonstrates a capture interruption but does not establish whether browser/OS or DOM/product caused it.",
+    "New max600 header reflow does not match native innerWidth720, and Glass-only collapse does not match Sidebar. Launcher at y255 is below header bottom64; no header occlusion is shown.",
+    "Other product releasePointerCapture references operate on their own handles; no confirmed additional release of headerNotesBtn found."
+  ],
+  "cause": "UNDETERMINED; do not change product or weaken criterion from this trace alone.",
+  "next_probe": {
+    "path": "/private/tmp/jpw-calendar-agenda-20261023/notes-native-capture-triage.py",
+    "executed": false,
+    "scenario_seed": "Fresh persistent Chromium profile, default_zoom_level log(2)/log(1.2), window1440x1000, synthetic S.mvpNotes.showHeaderIcon=true and default position; original movement() action sequence unchanged.",
+    "record": "trusted got/lost/move events, set/release capture stack, Finish stack, host/button mutations, focus and viewport",
+    "caveat": "Recorder adds timing overhead; PASS cannot prove original cause external or resolved."
+  },
+  "this_task_product_edits": 0,
+  "this_task_test_edits": 0
+}

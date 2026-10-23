@@ -1,0 +1,274 @@
+{
+  "task": "Read-only Notes launcher mobile header triage",
+  "original_failure": {
+    "result": "TEST_HARNESS_FAIL",
+    "item": {
+      "name": "index.html/390/light",
+      "result": "TEST_HARNESS_FAIL",
+      "detail": "Locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-shell-menu-toggle]\")\n    - locator resolved to <button type=\"button\" aria-expanded=\"false\" class=\"shell-menu-btn\" data-shell-menu-toggle=\"\" aria-controls=\"appSidebar\" aria-label=\"Abrir menu de telas\">\u2026</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n",
+      "gesture_trace": []
+    },
+    "source_unchanged": true,
+    "timestamps": [
+      "2026-10-23T19:27:55.696368+00:00",
+      "2026-10-23T19:29:09.755578+00:00"
+    ]
+  },
+  "instrumented_repeat": {
+    "result": "PASS",
+    "checks": 19,
+    "source_unchanged": true,
+    "same_original_test_sha256": true,
+    "same_source_sha256": true,
+    "flags": "both artifacts, native zoom200; same original suite.run with wrapper around touch_move only, before/after JSON/HTML/screenshot reads; no assertions removed or changed.",
+    "limitation": "Read-only diagnostics add timing overhead; repeat PASS does not prove original failure external or fixed."
+  },
+  "observations": [
+    {
+      "file": "/private/tmp/jpw-calendar-agenda-20261023/notes-header-triage/after-1-390.json",
+      "html": {
+        "lang": "pt-BR",
+        "data-theme": "light",
+        "data-ui-version": "tesla-inspired",
+        "data-shell": "global-dashboard",
+        "data-custom-layout": "enabled",
+        "data-navigation": "sidebar",
+        "data-experience": "completion",
+        "data-brand-choice": "primary",
+        "data-rail": "expanded",
+        "data-submenu-rail": "expanded",
+        "data-nav-style": "classic",
+        "data-route-screen": "dash",
+        "data-active-screen": "",
+        "data-active-primary": "dashboard",
+        "style": "--nav-glass-tint: 0.6; --nav-glass-alpha: 0.672; --nav-glass-blur: 21.20px; --nav-glass-saturation: 1.208; --nav-glass-reflection: 0.340; --nav-glass-contrast: 1.100;"
+      },
+      "viewport": {
+        "innerWidth": 390,
+        "innerHeight": 900,
+        "outerWidth": 390,
+        "outerHeight": 900,
+        "scrollX": 0,
+        "scrollY": 0,
+        "visual": {
+          "width": 390,
+          "height": 900,
+          "scale": 1,
+          "left": 0,
+          "top": 0
+        }
+      },
+      "toggles": [
+        {
+          "rect": {
+            "x": 20,
+            "y": 54,
+            "width": 56.65625,
+            "height": 48,
+            "top": 54,
+            "right": 76.65625,
+            "bottom": 102,
+            "left": 20
+          },
+          "display": "flex",
+          "visibility": "visible",
+          "inert": false,
+          "hidden": false,
+          "parent_ids": [
+            "",
+            "headerActions",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "modal": []
+    },
+    {
+      "file": "/private/tmp/jpw-calendar-agenda-20261023/notes-header-triage/after-2-320.json",
+      "html": {
+        "lang": "pt-BR",
+        "data-theme": "dark",
+        "data-ui-version": "tesla-inspired",
+        "data-shell": "global-dashboard",
+        "data-custom-layout": "enabled",
+        "data-navigation": "sidebar",
+        "data-experience": "completion",
+        "data-brand-choice": "primary",
+        "data-rail": "expanded",
+        "data-submenu-rail": "expanded",
+        "data-nav-style": "classic",
+        "data-route-screen": "dash",
+        "data-active-screen": "",
+        "data-active-primary": "dashboard",
+        "style": "--nav-glass-tint: 0.6; --nav-glass-alpha: 0.672; --nav-glass-blur: 21.20px; --nav-glass-saturation: 1.208; --nav-glass-reflection: 0.340; --nav-glass-contrast: 1.100;"
+      },
+      "viewport": {
+        "innerWidth": 320,
+        "innerHeight": 900,
+        "outerWidth": 320,
+        "outerHeight": 900,
+        "scrollX": 0,
+        "scrollY": 0,
+        "visual": {
+          "width": 320,
+          "height": 900,
+          "scale": 1,
+          "left": 0,
+          "top": 0
+        }
+      },
+      "toggles": [
+        {
+          "rect": {
+            "x": 20,
+            "y": 54,
+            "width": 45,
+            "height": 48,
+            "top": 54,
+            "right": 65,
+            "bottom": 102,
+            "left": 20
+          },
+          "display": "flex",
+          "visibility": "visible",
+          "inert": false,
+          "hidden": false,
+          "parent_ids": [
+            "",
+            "headerActions",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "modal": []
+    },
+    {
+      "file": "/private/tmp/jpw-calendar-agenda-20261023/notes-header-triage/after-3-390.json",
+      "html": {
+        "lang": "pt-BR",
+        "data-theme": "light",
+        "data-ui-version": "tesla-inspired",
+        "data-shell": "global-dashboard",
+        "data-custom-layout": "enabled",
+        "data-navigation": "sidebar",
+        "data-experience": "completion",
+        "data-brand-choice": "primary",
+        "data-rail": "expanded",
+        "data-submenu-rail": "expanded",
+        "data-nav-style": "classic",
+        "data-route-screen": "dash",
+        "data-active-screen": "",
+        "data-active-primary": "dashboard",
+        "style": "--nav-glass-tint: 0.6; --nav-glass-alpha: 0.672; --nav-glass-blur: 21.20px; --nav-glass-saturation: 1.208; --nav-glass-reflection: 0.340; --nav-glass-contrast: 1.100;"
+      },
+      "viewport": {
+        "innerWidth": 390,
+        "innerHeight": 900,
+        "outerWidth": 390,
+        "outerHeight": 900,
+        "scrollX": 0,
+        "scrollY": 0,
+        "visual": {
+          "width": 390,
+          "height": 900,
+          "scale": 1,
+          "left": 0,
+          "top": 0
+        }
+      },
+      "toggles": [
+        {
+          "rect": {
+            "x": 20,
+            "y": 54,
+            "width": 56.65625,
+            "height": 48,
+            "top": 54,
+            "right": 76.65625,
+            "bottom": 102,
+            "left": 20
+          },
+          "display": "flex",
+          "visibility": "visible",
+          "inert": false,
+          "hidden": false,
+          "parent_ids": [
+            "",
+            "headerActions",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "modal": []
+    },
+    {
+      "file": "/private/tmp/jpw-calendar-agenda-20261023/notes-header-triage/after-4-320.json",
+      "html": {
+        "lang": "pt-BR",
+        "data-theme": "dark",
+        "data-ui-version": "tesla-inspired",
+        "data-shell": "global-dashboard",
+        "data-custom-layout": "enabled",
+        "data-navigation": "sidebar",
+        "data-experience": "completion",
+        "data-brand-choice": "primary",
+        "data-rail": "expanded",
+        "data-submenu-rail": "expanded",
+        "data-nav-style": "classic",
+        "data-route-screen": "dash",
+        "data-active-screen": "",
+        "data-active-primary": "dashboard",
+        "style": "--nav-glass-tint: 0.6; --nav-glass-alpha: 0.672; --nav-glass-blur: 21.20px; --nav-glass-saturation: 1.208; --nav-glass-reflection: 0.340; --nav-glass-contrast: 1.100;"
+      },
+      "viewport": {
+        "innerWidth": 320,
+        "innerHeight": 900,
+        "outerWidth": 320,
+        "outerHeight": 900,
+        "scrollX": 0,
+        "scrollY": 0,
+        "visual": {
+          "width": 320,
+          "height": 900,
+          "scale": 1,
+          "left": 0,
+          "top": 0
+        }
+      },
+      "toggles": [
+        {
+          "rect": {
+            "x": 20,
+            "y": 54,
+            "width": 45,
+            "height": 48,
+            "top": 54,
+            "right": 65,
+            "bottom": 102,
+            "left": 20
+          },
+          "display": "flex",
+          "visibility": "visible",
+          "inert": false,
+          "hidden": false,
+          "parent_ids": [
+            "",
+            "headerActions",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "modal": []
+    }
+  ],
+  "source_test_edits": 0,
+  "cause": "UNDETERMINED: isolated original failure not reproduced with diagnostics. No product fix justified by evidence."
+}

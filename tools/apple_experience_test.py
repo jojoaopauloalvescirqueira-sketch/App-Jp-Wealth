@@ -128,7 +128,7 @@ def completion_checks(page, check, prefix):
  check(prefix+' dashboard headers and data fit their chapter',page.evaluate("""() => [...document.querySelectorAll('.dm-card')].every(e=>{const b=e.getBoundingClientRect(),h=e.querySelector('.dm-card-head').getBoundingClientRect(),d=e.querySelector('.dm-body').getBoundingClientRect();return h.width>80&&d.width>b.width*.5&&h.left>=b.left-1&&h.right<=b.right+1&&h.top>=b.top-1&&h.bottom<=b.bottom+1})"""))
  check(prefix+' dashboard symbols stay compact',page.evaluate("() => [...document.querySelectorAll('.cp-area-mark')].every(e=>e.getBoundingClientRect().width<=28)"))
  check(prefix+' original symbols resolve',page.evaluate("() => [...document.querySelectorAll('.cp-area-mark use,#gdNewsMoreBtn use,#gdNewsRefreshBtn use')].every(e=>!!document.querySelector(e.getAttribute('href')))"))
- for route,selector in [('forex-overview','#fxOverviewWidgets .jp-btn-primary'),('alladin','#alladin [data-ald-new="instrument"]'),('ecal','#execEcal .ecal-filters button.on')]:
+ for route,selector in [('forex-overview','#fxOverviewWidgets .jp-btn-primary'),('alladin','#alladin [data-ald-new="instrument"]'),('ecal','#execEcal .calendar-grid [aria-selected="true"]')]:
   page.evaluate('(r)=>JPWNavigation.navigate(r)',route)
   contrast=page.evaluate(CONTRAST,selector)
   check(prefix+' primary or selected action contrast '+route,contrast is not None and contrast['ratio']>=4.5,contrast)
@@ -189,7 +189,7 @@ def run(a):
       button=page.locator('#'+id)
       check(prefix+' compact named action '+id,button.locator('.header-action-label').count()==0 and button.get_attribute('title')==label and label.casefold() in (button.get_attribute('aria-label') or '').casefold())
       check(prefix+' icon and touch target '+id,button.evaluate("e=>{const r=e.getBoundingClientRect(),s=e.querySelector('svg[aria-hidden=\"true\"]')?.getBoundingClientRect();return !!s&&r.width===44&&r.height===44&&s.width>=19&&s.width<=21}"))
-     check(prefix+' notes leaves header',page.locator('#headerActions #headerNotesBtn').count()==0 and page.locator('#headerActions .header-action').count()==4)
+     check(prefix+' notes leaves header',page.locator('#headerActions #headerNotesBtn').count()==0 and page.locator('#headerActions .header-action').count()==5)
      notes=page.locator('body > #mvpNotesLauncher #headerNotesBtn')
      check(prefix+' floating notes remains named',notes.count()==1 and notes.get_attribute('title')=='Notas' and (notes.get_attribute('aria-label') or '').startswith('Abrir notas'))
      check(prefix+' floating notes icon and touch target',notes.evaluate("e=>{const r=e.getBoundingClientRect();return !!e.querySelector('svg[aria-hidden=\"true\"]')&&r.width>=44&&r.height>=44}"))

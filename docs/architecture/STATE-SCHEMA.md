@@ -176,3 +176,8 @@ Dois campos opcionais descrevem a continuidade após reinícios, sem mudança de
 O candidato só é adotado em memória após confirmação e releitura pelo escritor existente. Tokens de conta, plano, revisões e contexto impedem aplicar rascunhos sobre bases alteradas; resultado indeterminado não autoriza repetição automática. Versão incompatível bloqueia comandos e preserva dados. Os rascunhos de formulário permanecem em memória durante a sessão quando a janela é fechada ou uma ação é recusada; o Backup Completo os transporta separadamente como material de trabalho, sem convertê-los em fatos. Rascunhos importados exigem leitura, cópia e conferência manual.
 
 `fxPlanning` permanece como legado somente exportável; nenhum campo é convertido. O formato de Backup Completo continua contendo o documento integral. Contratos detalhados: [PLANNING](PLANNING.md) e [edição mensal vigente](PLANNING-MONTHLY.md).
+
+
+## Agenda pessoal opcional —23/10/2026
+
+O plano humano Calendário e Agenda autoriza S.personalAgenda opcional; a regra histórica genérica de acrescentar toda chave a DEFAULTS não se aplica a este agregado, assim como ao Planejamento opcional. Ausência permanece virtual e não escreve. Envelope schemaVersion1/revision/items; esquema futuro e extensões preservados, comandos recusados se incompatível. Writer confirmado, sem alteração de fórmulas/migração financeira. Backup transporta objeto integral e importação recusa contêiner escalar antes da adoção. [Contrato e provas](CALENDAR-AGENDA.md).

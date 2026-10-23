@@ -1,0 +1,108 @@
+{
+  "at_utc": "2026-10-22T20:31:14.696619+00:00",
+  "candidate_build": "8b0b231a1b0c41b7",
+  "scope": "Supplemental notification interaction in four distributions; synthetic contexts only",
+  "source_before": {
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "build-id.js": "6310b6b652cb34e5ad879af0654483492a9d138884e9e98bc703fc10a99196f9",
+    "sw.js": "ad41f4b4479204e8197971ce32b831ab65856885b63bc724272e117cd4f85d0b",
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/18-execution-board-model.js": "fa98b0b3f360a1ae2b036ef740fe82c940be4a763f32a81b8f3bb1f8d0192129",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "619d874480daea413e64825ba9ec0b329122c886b54c82a775d1127313017685"
+  },
+  "source_after": {
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "build-id.js": "6310b6b652cb34e5ad879af0654483492a9d138884e9e98bc703fc10a99196f9",
+    "sw.js": "ad41f4b4479204e8197971ce32b831ab65856885b63bc724272e117cd4f85d0b",
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/18-execution-board-model.js": "fa98b0b3f360a1ae2b036ef740fe82c940be4a763f32a81b8f3bb1f8d0192129",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "619d874480daea413e64825ba9ec0b329122c886b54c82a775d1127313017685"
+  },
+  "source_unchanged": true,
+  "results": [
+    {
+      "mode": "http",
+      "result": "PASS",
+      "evidence": {
+        "active_causes": 2,
+        "planning_causes": 2,
+        "disclosure_preserved_after_refresh": true,
+        "consult_does_not_resolve": true,
+        "filter_preserved_context": true,
+        "explicit_account_and_prior_month": true,
+        "financial_and_browser_storage_unchanged": true,
+        "extra_requests": [],
+        "page_errors": [],
+        "offline": false,
+        "observed_build": null,
+        "declared_build": null,
+        "url_scheme": "http"
+      }
+    },
+    {
+      "mode": "modular-file",
+      "result": "PASS",
+      "evidence": {
+        "active_causes": 2,
+        "planning_causes": 2,
+        "disclosure_preserved_after_refresh": true,
+        "consult_does_not_resolve": true,
+        "filter_preserved_context": true,
+        "explicit_account_and_prior_month": true,
+        "financial_and_browser_storage_unchanged": true,
+        "extra_requests": [],
+        "page_errors": [],
+        "offline": false,
+        "observed_build": null,
+        "declared_build": null,
+        "url_scheme": "file"
+      }
+    },
+    {
+      "mode": "portable-file",
+      "result": "PASS",
+      "evidence": {
+        "active_causes": 2,
+        "planning_causes": 2,
+        "disclosure_preserved_after_refresh": true,
+        "consult_does_not_resolve": true,
+        "filter_preserved_context": true,
+        "explicit_account_and_prior_month": true,
+        "financial_and_browser_storage_unchanged": true,
+        "extra_requests": [],
+        "page_errors": [],
+        "offline": false,
+        "observed_build": null,
+        "declared_build": null,
+        "url_scheme": "file"
+      }
+    },
+    {
+      "mode": "pwa-offline",
+      "result": "PASS",
+      "evidence": {
+        "active_causes": 2,
+        "planning_causes": 2,
+        "disclosure_preserved_after_refresh": true,
+        "consult_does_not_resolve": true,
+        "filter_preserved_context": true,
+        "explicit_account_and_prior_month": true,
+        "financial_and_browser_storage_unchanged": true,
+        "extra_requests": [],
+        "page_errors": [],
+        "offline": true,
+        "observed_build": null,
+        "declared_build": null,
+        "url_scheme": "http"
+      }
+    }
+  ],
+  "limits": [
+    "Does not rerun all 30 notification or 20 efficiency cases in every distribution.",
+    "Does not replace the required FULL gate or demonstrate human understanding/accessibility acceptance."
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "task": "Shared header occlusion triage; read-only product and test sources",
+  "original_product_build": "5c6a4e7af7a747a3",
+  "original_css_sha256": "3fe705621b416526c59ab901c228d22ddaf45751bebd0b5a35b7e91950ad636b",
+  "original_calendar_js_sha256": "96abcfb9494912a3592dff787ae07730fa44ac2f8f47320e66f5522d61a6a200",
+  "unchanged_tests": {
+    "tools/capital_currents_browser_test.py": "64b03af9ed1e5a783efe92e103974dd2d9885d03010b9f81fb4ea7f9819d724b",
+    "tools/time_twins_browser_test.py": "32168849f9721083bb396c6af63b1f812accddbc79b43ccf7a1250ea79f9ad42"
+  },
+  "cause": "ID mobile #headerActions display:grid defeats compact Glass .header-actions display:none while menu closed. Responsive wrapping increases sticky header height and obstructs game controls/arrival content.",
+  "minimal_css": "@media(max-width:1179px){html[data-navigation=\"glass\"][data-shell=\"global-dashboard\"]:not([data-shell-menu=\"open\"]) #headerActions{display:none}}",
+  "css_proof": {
+    "red_header_css_zoom2_physical_height": 404,
+    "green_injected_header_physical_height": 120,
+    "red_PLAY_hitpoints": "3/6",
+    "green_PLAY_hitpoints": "6/6",
+    "overflow_px": 0,
+    "capital_immutable_matrix_presentations": 48,
+    "twins_immutable_matrix_presentations": 32,
+    "both_matrices": "PASS",
+    "limits": "Twins matrix used identical CSS injection while root applied equivalent source CSS; injection evidence, not a frozen rebuilt candidate receipt."
+  },
+  "focus_cause": "When calendar opens from compact Glass menu, delegated shell handler closes menu; closing dialog tries focusing the now hidden calendar button.",
+  "focus_candidate": "if(restore&&opener?.isConnected){if(typeof shellRestoreHeaderFocus==='function')shellRestoreHeaderFocus(opener);else opener.focus({preventScroll:true});}",
+  "focus_red": "BODY after Escape with CSS candidate",
+  "focus_green_injected": {
+    "cases": 10,
+    "result": "PASS",
+    "coverage": "Glass390 CSSzoom1 Escape/close/backdrop; Glass390 CSSzoom2 Escape; sidebar390 and topbar1440 all3 close methods."
+  },
+  "separate_exploratory_limitation": {
+    "context": "390 CSS px viewport with root style.zoom=2; visualViewport scale1",
+    "observation": "Calendar CSS viewport units create732x1608 physical box; close outside viewport. Grid7x44 CSS minimum308 cannot fit195 CSS effective width.",
+    "classification": "Exploratory CSS zoom compound case, not equivalent to required native browser200 tested at outer1440/inner720. No product change proposed or made here; root explicitly keeps native200 verification authoritative.",
+    "evidence": "header-occlusion-focus-geometry.log/png"
+  },
+  "receipts": [
+    "header-occlusion-probe.json",
+    "header-occlusion-calendar-focus.json",
+    "header-occlusion-focus-GREEN.json",
+    "header-occlusion-matrix-injected/result.json",
+    "header-occlusion-twins-matrix-injected/integrated-result.json"
+  ],
+  "this_agent_product_edits": 0,
+  "this_agent_test_edits": 0
+}

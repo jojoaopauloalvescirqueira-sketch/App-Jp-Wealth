@@ -1,3 +1,38 @@
+# Notificações — central de ações relevantes —22/10/2026
+
+Fonte: plano humano aprovado [Notificações — ações relevantes](../superpowers/plans/2026-10-22-notification-actions.md). Produto N1 e verificadores em contratos separados: CHG-JPW-NOTIFICATION-ACTIONS-PRODUCT/TESTS-20261022. O escopo presente substitui deliberadamente a semântica histórica de mensagens/não lidas; os inventários abaixo conservam o passado e não definem o comportamento atual.
+
+## Propósito e contagem
+
+O sino responde ao que exige atenção e como resolver. O badge conta itens de causas ativas após agrupamento; não conta leitura, agenda, sucesso, histórico genérico, validações comuns ou rascunhos normais. Não há Marcar como lida. Consultar/filtrar/expandir ou abrir destino não resolve a causa. A ausência de itens diz somente Nenhuma ação pendente identificada, sem certificar segurança ou execução financeira.
+
+## Catálogo e pertinência
+
+- Sistema: UNKNOWN, falha de armazenamento, conflito, recuperação e bloqueio existentes; backup segue dgBackupStatus sem novos prazos. Ação específica de recuperação, sem writer no sino.
+- Forex: fatos e códigos canônicos de revisão/stop, conciliação, LEVERAGE_EXCEEDED e encerramento compulsório, por conta/período. getOperationalClearance permanece BLOCKED no módulo; seus motivos permanentes P14/P17/P18 não se transformam em tarefa global. Sem cálculo ou homologação na central. `JPWForex.executionBoard.priceReferences({accountId,periodId,instrumentIds})` projeta a mesma escolha de preço da Board (observação manual → diária → cadastro), sem construir linhas/história. A idade usa observedAt local ou a data de referência efetivamente usada; nenhum cadastro antigo substitui observação atual. Referências antigas só entram quando vinculadas a instrumentos de ordens ativas; não há alerta diárioUSD/BRL global ou novo fetch.
+- Planejamento: pendingActions consulta fatos vigentes, resultados próprios incluindo0, fechamentos invalidados e dependências; conta ativa/plano atual, somente passado. Uma ação por conta/plano; contagem de meses reais no corpo e anterior bloqueante explicitado separadamente. Projeções, futuros, fluxos anulados e contas arquivadas não geram cobrança.
+- PF: pendências e crédito derivados existentes somente quando ativo. Incompatibilidade persiste como Sistema.
+- Alladin: leitores de integridade de ledger/posições/saldos conservados, inclusive congelado; incompatibilidade é Sistema. A central não calcula saldos.
+- Feedback local, calendário, perfil/Notas normais e mensagens alert/showSessionNotice ficam na origem. As funções nativas não são interceptadas pela central.
+
+Módulo congelado suprime cobranças operacionais antes da contagem. Integridade/preservação permanecem em Sistema, com identificação do módulo e acesso à recuperação sem reativação.
+
+## Interface e ciclo
+
+Prioritárias e Pendências usam gravidades existentes e ordenação estável por área/contexto/id. Cada item contém resumo curto, contexto e CTA específico. Entender este aviso preserva o diagnóstico integral por expansão; nenhuma informação importante é truncada. Texto externo é textContent. Filtros não alteram badge global. Atualizações preservam nós, expansão, foco e rolagem.
+
+Identidade é causa/conta/plano/período. Sem inbox, preferências ou histórico persistido: a recarga reconstrói as condições. Ler fontes não normaliza S, salva, pede permissão ou faz rede. refresh/invalidate mantêm seus contratos e caches separados; calendar/local continuam IDs aceitos de compatibilidade, com coleta vazia. planning é nova fonte; sua invalidação ocorre após adoção confirmada com erro do observador isolado.
+
+Falha de uma consulta substitui seus itens por uma única ação Não foi possível verificar; o último diagnóstico permanece marcado informação não atual no detalhe, sem dupla contagem. Falta de diagnóstico não vira resultado saudável. Recuperação reconsulta explicitamente. Mudança de geração descarta conteúdo anterior. Meia-noite local/retorno à aplicação reavaliam referência temporal; pagehide e disposeForSession cancelam o relógio e intenções antigos.
+
+Ação contextual passa por guards e revalidação de conta/plano/período/geração antes do efeito. Cancelamento ou destino alterado não escolhe outra conta nem descarta rascunho. openMonthlyContext ajusta filtros apenas em memória para expor o mês solicitado e informa isso; não altera preferências salvas nem fatos.
+
+## Verificação e limites
+
+Regressões nas entradas notification-center, notification-efficiency, planning-state e ui-visual-quality existentes; disponibilidade focal conserva guards. Casos anteriores de leitura/agenda/histórico/congelamento são substituídos somente pelo contrato aprovado e com contraprovas, mantendo o histórico dos recibos. Dados sintéticos, ausência de writes/fetch extra, quatro layouts/temas/mobile/zoom200 e distribuições recebem provas próprias. Resultados do candidato em [validação](../validation/notification-actions-20261022/README.md); texto de contrato não antecipa PASS ou aceite humano.
+
+## Histórico anterior preservado
+
 # Central de notificações — NOTIFICATIONS-CENTER-01
 
 ## MiniGames — atualização local 2026-10-14

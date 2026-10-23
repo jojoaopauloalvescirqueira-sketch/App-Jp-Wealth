@@ -1,0 +1,8 @@
+{
+  "result": "NOT_RUN",
+  "reason": "FULL interrupted before completion to correct protection.command metadata to actual visual verifier entrypoint; product and oracles unchanged; retain raw partial log, no full PASS claim",
+  "pids": [
+    26754,
+    27038
+  ]
+}

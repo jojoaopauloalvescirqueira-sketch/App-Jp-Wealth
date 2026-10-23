@@ -1,0 +1,109 @@
+{
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "startedUTC": "2026-10-23T17:33:23.989216+00:00",
+  "inputs_before": {
+    "src/js/40-app/26-learning-catalog.js": "c5bc330c074e61d04a64a07627a9bdbfd9cf0f8b5f6284bc2d1589a22516a62a",
+    "src/js/00-core/09-learning-progress.js": "86396ca40e0fc1941c476e2b4645dac96618e11133941fd85f6a25927c0a2db2",
+    "src/js/40-app/27-learning-view.js": "6fbddab78dc3cbb402d6c41d699a4491e665a4d5a60293511a7f11060b75e729",
+    "src/js/40-app/28-learning-guide.js": "7ab6d853405f9bb8b6e54984f8f1d817d2856e6c2c88afa7fba68b32b2cd93e7",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/19-calendar-agenda.js": "96abcfb9494912a3592dff787ae07730fa44ac2f8f47320e66f5522d61a6a200",
+    "src/styles/app.css": "3fe705621b416526c59ab901c228d22ddaf45751bebd0b5a35b7e91950ad636b",
+    "src/js/40-app/01-navigation.js": "837f06cfabb8adbacfb1f0196d0d27c1f459e044ea8e65305deadba7d97d953d",
+    "src/js/40-app/06-boot.js": "0926a792698573810d19bbcb80f35300c8c6e2cf86b3323d3c5cafc2a44b116d",
+    "src/js/40-app/07-finalize-session.js": "5e30ec5fefb0c2ced68aaf842f2cffd71005573a551fd0cb1709791977c0e789",
+    "src/js/40-app/09-settings-modal.js": "46d0e44b729295cf1d44a4e2999bbe47d180baa8a0519d42e96c55192a04acae",
+    "src/js/00-core/04-persistence.js": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/manifest.json": "d699367c22bba262c51d8b0defa0a8d9f6fc2f247a54fef1ac8f4a10779bd23b",
+    "index.html": "4578781cf45066b3cf9c368a6ac719ede11d3e01d3157f16cf591fffdefdd8d0",
+    "sw.js": "7e7fdadc0ce853d3c5f83775efbf9a1ded46dbaf80cb418f0df1f32e5b05e820",
+    "build-id.js": "08b6b29987528496ceb1cf915870c8835084b6dc157429a8c08da1905db013c8",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "4fa81262177482c291a7f711a3ec93881f780f944f0f6d94042147613bd5398e"
+  },
+  "test_sha256": "4a94b16dba95538f67ab575557228a7fb97f60c939c4fae111e4b37d7fa70517",
+  "cases": [
+    {
+      "name": "startup-source-manifest",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "5c6a4e7af7a747a3",
+      "classicScriptCount": 123,
+      "sourceJSCount": 121,
+      "startupCounterproofsRejected": [
+        "calendar-collective-omission",
+        "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+        "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+        "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+        "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+        "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+        "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+        "legacy-omission",
+        "legacy-duplicate",
+        "legacy-order"
+      ],
+      "startupFacade": true
+    }
+  ],
+  "registeredCaseCount": 52,
+  "baselineFocusRoot": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/source-baseline",
+  "limits": [
+    "Disposable synthetic contexts only; no operator profile or production account.",
+    "Headless viewport/reflow and CDP page scale are measured separately from native browser zoom.",
+    "Physical touch, screen reader and real mobile keyboard NOT_RUN."
+  ],
+  "runtime": {
+    "launch": {
+      "headless": true,
+      "executable_path": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    },
+    "python": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "browserVersion": "148.0.7778.96"
+  },
+  "inputs_after": {
+    "src/js/40-app/26-learning-catalog.js": "c5bc330c074e61d04a64a07627a9bdbfd9cf0f8b5f6284bc2d1589a22516a62a",
+    "src/js/00-core/09-learning-progress.js": "86396ca40e0fc1941c476e2b4645dac96618e11133941fd85f6a25927c0a2db2",
+    "src/js/40-app/27-learning-view.js": "6fbddab78dc3cbb402d6c41d699a4491e665a4d5a60293511a7f11060b75e729",
+    "src/js/40-app/28-learning-guide.js": "7ab6d853405f9bb8b6e54984f8f1d817d2856e6c2c88afa7fba68b32b2cd93e7",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/19-calendar-agenda.js": "96abcfb9494912a3592dff787ae07730fa44ac2f8f47320e66f5522d61a6a200",
+    "src/styles/app.css": "3fe705621b416526c59ab901c228d22ddaf45751bebd0b5a35b7e91950ad636b",
+    "src/js/40-app/01-navigation.js": "837f06cfabb8adbacfb1f0196d0d27c1f459e044ea8e65305deadba7d97d953d",
+    "src/js/40-app/06-boot.js": "0926a792698573810d19bbcb80f35300c8c6e2cf86b3323d3c5cafc2a44b116d",
+    "src/js/40-app/07-finalize-session.js": "5e30ec5fefb0c2ced68aaf842f2cffd71005573a551fd0cb1709791977c0e789",
+    "src/js/40-app/09-settings-modal.js": "46d0e44b729295cf1d44a4e2999bbe47d180baa8a0519d42e96c55192a04acae",
+    "src/js/00-core/04-persistence.js": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/manifest.json": "d699367c22bba262c51d8b0defa0a8d9f6fc2f247a54fef1ac8f4a10779bd23b",
+    "index.html": "4578781cf45066b3cf9c368a6ac719ede11d3e01d3157f16cf591fffdefdd8d0",
+    "sw.js": "7e7fdadc0ce853d3c5f83775efbf9a1ded46dbaf80cb418f0df1f32e5b05e820",
+    "build-id.js": "08b6b29987528496ceb1cf915870c8835084b6dc157429a8c08da1905db013c8",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "4fa81262177482c291a7f711a3ec93881f780f944f0f6d94042147613bd5398e"
+  },
+  "source_unchanged": true,
+  "durationSeconds": 4.535224542021751,
+  "counts": {
+    "PASS": 1,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "NOT_RUN": 0
+  }
+}

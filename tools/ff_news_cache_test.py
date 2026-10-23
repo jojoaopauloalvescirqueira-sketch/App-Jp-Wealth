@@ -2,7 +2,7 @@
 """Calendar cache failure/retry in a synthetic real-browser profile.
 
 Same oracle for --root baseline and candidate. No live feed; source scripts and
-all four real DOM consumers run with only the technical cache key faulted.
+the three remaining weekly DOM consumers run with only the technical cache key faulted.
 """
 import argparse
 import hashlib
@@ -50,7 +50,7 @@ SETUP = """() => {
 }"""
 
 SNAPSHOT = """() => {
-  ffNewsRenderAll(); ecalRenderWorkspace(); dashMacroRender();
+  ffNewsRenderAll(); dashMacroRender();
   const text=selector=>document.querySelector(selector)?.textContent||'';
   const emptyText=selector=>{const el=document.querySelector(selector);return el && !el.hidden && getComputedStyle(el).display!=='none' ? el.textContent : '';};
   const c=__cacheTest;
@@ -59,12 +59,11 @@ SNAPSHOT = """() => {
     source:c.get.call(localStorage,'jpwealth.ui.ffNews.sourceUrl'),ops:c.ops.slice(),
     widget:text('#gdNewsStatus'),widgetEvents:text('#gdNewsList'),
     modal:text('#ecalFreshness')+' '+emptyText('#ecalEmpty'),
-    modalEvents:text('#ecalBody'),workspace:text('#execEcal [data-ecal-role="freshness"]')+' '+emptyText('#execEcal [data-ecal-role="empty"]'),
-    workspaceEvents:text('#execEcal [data-ecal-role="body"]'),dashboard:text('[data-dm-card="research"]'),
-    emptyNodes:['#ecalEmpty','#execEcal [data-ecal-role="empty"]'].map(selector=>{
+    modalEvents:text('#ecalBody'),monthly:document.querySelector('#execEcal')?.innerHTML||'',dashboard:text('[data-dm-card="research"]'),
+    emptyNodes:['#ecalEmpty'].map(selector=>{
       const el=document.querySelector(selector);return {selector,hidden:el.hidden,display:getComputedStyle(el).display,text:el.textContent};}),
     dataAvailable:ecalEvents()!==null,
-    filters:[ecalState.filter,ecalWsState.filter]};
+    filters:[ecalState.filter]};
 }"""
 
 
@@ -83,7 +82,7 @@ def main():
         result['checks'].append({'name':name,'status':'PASS' if passed else 'PRODUCT_FAIL','detail':detail})
 
     def warnings(label,snap,kind):
-        for area in ['widget','modal','workspace','dashboard']:
+        for area in ['widget','modal','dashboard']:
             text=snap[area].lower()
             check(label+' '+area+' storage warning','armazenamento' in text and kind in text,snap[area])
 
@@ -110,7 +109,7 @@ def main():
                             mode['payload']=page.evaluate(SETUP)
                             page.evaluate('(theme)=>document.documentElement.setAttribute("data-theme",theme)',theme)
                             page.locator('#ecalFilters [data-ecal-cur="USD"]').click()
-                            page.evaluate("() => ecalWsSetFilter('EUR')")
+                            page.evaluate("() => JPWCalendar.mountWorkspace()")
                             before=page.evaluate(SNAPSHOT); mode['calls']=0
                             if case=='quota-empty':
                                 page.evaluate('() => __cacheTest.remove.call(localStorage,__cacheTest.key)')
@@ -135,9 +134,9 @@ def main():
                             if case.startswith('quota'):
                                 warnings(label,after,'não atualizado')
                                 check(label+' preserved rejected cache',after['raw']==(None if case=='quota-empty' else before['raw']),after['raw'])
-                                check(label+' no new payload in views',all('NOVO' not in after[x] for x in ['widgetEvents','modalEvents','workspaceEvents','dashboard']))
+                                check(label+' no new payload in views',all('NOVO' not in after[x] for x in ['widgetEvents','modalEvents','dashboard']))
                                 check(label+' prior payload remains visible' if case=='quota-old' else label+' absence not fabricated',
-                                  all('ANTIGO' in after[x] for x in ['widgetEvents','modalEvents','workspaceEvents','dashboard']) if case=='quota-old' else not after['dataAvailable'])
+                                  all('ANTIGO' in after[x] for x in ['widgetEvents','modalEvents','dashboard']) if case=='quota-old' else not after['dataAvailable'])
                             elif case=='read-denied':
                                 warnings(label,after,'ler')
                                 check(label+' protected bytes after denied read',after['raw']==before['raw'])
@@ -147,10 +146,11 @@ def main():
                                 check(label+' unavailable distinct from empty',not after['dataAvailable'] and 'Sem dados' in after['modal'] and 'dados ainda não carregados' in after['dashboard'])
                             elif case.startswith('http'):
                                 check(label+' old bytes survive provider failure',after['raw']==before['raw'])
-                                check(label+' provider failure shown in all consumers',all('Sem conexão' in after[key] for key in ['widget','modal','workspace','dashboard']),{key:after[key] for key in ['widget','modal','workspace','dashboard']})
+                                check(label+' provider failure shown in all consumers',all('Sem conexão' in after[key] for key in ['widget','modal','dashboard']),{key:after[key] for key in ['widget','modal','dashboard']})
                             else:
                                 check(label+' duplicate inflight calls coalesced',mode['calls']==1,mode['calls'])
-                            check(label+' filter state preserved',after['filters']==['USD','EUR'],after['filters'])
+                            check(label+' filter state preserved',after['filters']==['USD'],after['filters'])
+                            check(label+' FF does not mutate monthly workspace',after['monthly']==before['monthly'])
                             check(label+' financial and unrelated state preserved',all(after[x]==before[x] for x in ['state','main','unrelated','source']))
                             check(label+' writes limited to cache',all(x[1]=='jpwealth.ui.ffNews.v1' for x in after['ops']),after['ops'])
                             if case=='quota-old':
@@ -168,7 +168,7 @@ def main():
                             page.wait_for_function('() => !ffNewsInFlight')
                             recovered=page.evaluate(SNAPSHOT)
                             check(label+' retry stores new payload',json.loads(recovered['raw'])['payload']==mode['payload'])
-                            check(label+' retry all consumers recover',all('armazenamento' not in recovered[x].lower() for x in ['widget','modal','workspace','dashboard']) and all('NOVO' in recovered[x] for x in ['widgetEvents','modalEvents','workspaceEvents','dashboard']))
+                            check(label+' retry all consumers recover',all('armazenamento' not in recovered[x].lower() for x in ['widget','modal','dashboard']) and all('NOVO' in recovered[x] for x in ['widgetEvents','modalEvents','dashboard']))
                             check(label+' retry protects financial state',all(recovered[x]==before[x] for x in ['state','main','unrelated','source']))
                             check(label+' no browser exceptions',not errors,errors)
                             bootstrap.assert_fixture_requests(context)

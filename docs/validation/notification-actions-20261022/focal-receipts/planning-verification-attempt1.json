@@ -1,0 +1,75 @@
+{
+  "green": {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "tools/planning_state_test.js"
+    ],
+    "exit_code": 0,
+    "at": "2026-10-22T20:04:49.274398+00:00",
+    "summary": "{\"suite\":\"planning_state\",\"tests\":87,\"passed\":87,\"failed\":0}",
+    "failed_cases": []
+  },
+  "planning-counterproof-current": {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "tools/planning_state_test.js"
+    ],
+    "exit_code": 1,
+    "at": "2026-10-22T20:04:51.407740+00:00",
+    "summary": "{\"suite\":\"planning_state\",\"tests\":87,\"passed\":86,\"failed\":1}",
+    "failed_cases": [
+      "FAIL PLNOTICE-Q03 nonzero current flows count once while annulled flows current and future facts do not"
+    ]
+  },
+  "planning-counterproof-annulled": {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "tools/planning_state_test.js"
+    ],
+    "exit_code": 1,
+    "at": "2026-10-22T20:04:53.650516+00:00",
+    "summary": "{\"suite\":\"planning_state\",\"tests\":87,\"passed\":86,\"failed\":1}",
+    "failed_cases": [
+      "FAIL PLNOTICE-Q03 nonzero current flows count once while annulled flows current and future facts do not"
+    ]
+  },
+  "planning-counterproof-stale": {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "tools/planning_state_test.js"
+    ],
+    "exit_code": 0,
+    "at": "2026-10-22T20:04:55.830108+00:00",
+    "summary": "PASS PLNOTICE-CTX01 invalid target and frozen module never navigate or write",
+    "failed_cases": []
+  },
+  "baseline-red-expanded": {
+    "command": [
+      "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "tools/planning_state_test.js"
+    ],
+    "exit_code": 1,
+    "at": "2026-10-22T20:04:58.099524+00:00",
+    "summary": "{\"suite\":\"planning_state\",\"tests\":87,\"passed\":74,\"failed\":13}",
+    "failed_cases": [
+      "FAIL PLNOTICE-Q01 absent and retroactive empty plans produce no fabricated tasks",
+      "FAIL PLNOTICE-Q02 explicit zero is a past fact and earlier empty months are a dependency not extra tasks",
+      "FAIL PLNOTICE-Q03 nonzero current flows count once while annulled flows current and future facts do not",
+      "FAIL PLNOTICE-Q04 confirmed months disappear and invalidated closures remain factual",
+      "FAIL PLNOTICE-Q05 inactive accounts and false closures without a confirmed predecessor are excluded",
+      "FAIL PLNOTICE-Q06 incompatible shape malformed identity and duplicate flows are unavailable not healthy empty",
+      "FAIL PLNOTICE-Q07 no timeline quote storage network or writes and returned values are detached",
+      "FAIL PLNOTICE-Q08 only confirmed adoption invalidates planning and observer failure cannot change writer result",
+      "FAIL PLNOTICE-Q09 accounts remain independent and unknown fields are preserved without a shared closure",
+      "FAIL PLNOTICE-CTX01 invalid target and frozen module never navigate or write",
+      "FAIL PLNOTICE-CTX02 changed planning identity after consent prevents contextual navigation",
+      "FAIL PLNOTICE-CTX03 cancellation of existing guard resolves false without choosing a context",
+      "FAIL PLNOTICE-CTX04 availability and epoch are checked again after consent and another dialog is respected"
+    ]
+  },
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "tools/planning_state_test.js": "3f292d3e4c3baa5b5f59411c89efe2c4326b8ef7af56ba86d259816b91a93e8c"
+  }
+}

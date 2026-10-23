@@ -1,0 +1,49 @@
+PASS AGENDA-01 optional aggregate reads are pure and defensive
+PASS AGENDA-02 explicit create/update/completion/removal confirm one candidate each
+PASS AGENDA-03 previews validate fields without changing data or calling writer
+PASS AGENDA-04 civil tasks stay dates and timed appointments preserve IANA instants
+PASS AGENDA-05 DST spring gap is refused with field-specific error
+PASS AGENDA-06 DST fold requires exact explicit choice and stores chosen instant
+PASS AGENDA-07 end fold, half-hour DST and leap dates are independently resolved
+PASS AGENDA-08 range includes overnight appointments and excludes unrelated civil dates
+PASS AGENDA-09 quota/no-op writer preserves old RAM and disk and invalidates attempted token
+PASS AGENDA-10 uncertain readback keeps old RAM, blocks retry and preserves physical candidate
+PASS AGENDA-11 concurrent disk, stale item and foreign tokens never overwrite
+PASS AGENDA-12 adjacent unconfirmed financial RAM is never confirmed by agenda
+PASS AGENDA-13 incompatible/future aggregate remains opaque and blocks mutation
+PASS AGENDA-14 compatible unknown fields survive item edits and root roundtrip
+PASS AGENDA-15 session/root replacement invalidates prepared commands without invalidating ordinary reads
+PASS AGENDA-16 recovery, workspace and finalization gates refuse before writing
+PASS AGENDA-17 control and secret keys cannot enter explicit commands
+PASS AGENDA-18 all-day appointments are civil and completing them is refused
+PASS AGENDA-19 timed range uses viewing zone and midnight end is exclusive
+FAIL AGENDA-20 no-op completion still checks current durable document
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'CONFIRMED'
+- 'CONFLICT'
+       ^
+
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:157:10)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:164:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-21 invalid range inputs return errors and numeric offsets are not IANA zones
+TypeError: Cannot read properties of null (reading 'timeZone')
+    at Object.range (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/src/js/10-domain/19-personal-agenda.js:148:24)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:160:59)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:164:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+{"total":21,"passed":19,"failed":2}

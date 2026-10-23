@@ -28,36 +28,56 @@ def notification_and_suspended_work(browser,url):
     ctx,q,errors=boot(browser,url)
     try:
         seed_review_contexts(q)
-        q.evaluate("JPWModuleAvailability.setState('forex','frozen');JPWNotifications.refresh();JPWNotifications.open()")
-        before=q.evaluate('JSON.stringify({state:S,selection:JPWForex.state.operationalSelection(),storage:Object.entries(localStorage).sort()})')
-        action=q.locator('[data-notification-go="'+REVIEW_CONTEXTS[0]['notification_id']+'"]')
-        row=q.locator('[data-notification-id="'+REVIEW_CONTEXTS[0]['notification_id']+'"]')
-        unread=row.get_attribute('data-unread')
-        action.click()
-        assert q.locator('#moduleUnavailableDialog').evaluate('el=>el.open')
+        def freeze_then_activate_stale_action():
+            # Deliberate replacement: operational reminders disappear when
+            # frozen. A click already dispatched before the scheduled collector
+            # runs must still be denied before account/period/route effects.
+            return q.evaluate("""id=>{
+              JPWModuleAvailability.setState('forex','active');
+              JPWNotifications.refresh();JPWNotifications.open();
+              const action=document.querySelector('[data-notification-go="'+id+'"]');
+              if(!action)throw Error('Expected active review action before freeze');
+              JPWModuleAvailability.setState('forex','frozen');
+              const before=JSON.stringify({state:S,selection:JPWForex.state.operationalSelection(),storage:Object.entries(localStorage).sort()});
+              action.click();return before;
+            }""",REVIEW_CONTEXTS[0]['notification_id'])
+        before=freeze_then_activate_stale_action()
+        assert not q.evaluate("document.getElementById('moduleUnavailableDialog')?.open===true"), 'Stale notification may not initiate a new action'
         assert q.locator('#notificationCenter').evaluate('el=>el.open')
-        assert row.get_attribute('data-unread')==unread
         assert q.evaluate('JSON.stringify({state:S,selection:JPWForex.state.operationalSelection(),storage:Object.entries(localStorage).sort()})')==before
+        # The unavailable-module decisions retain their own original UI. Invoke
+        # that real UI explicitly because frozen operational notifications no
+        # longer exist as entry points to it.
+        q.evaluate("JPWModuleAvailabilityUI.deny('forex',document.getElementById('notificationClose'))")
         q.locator('[data-availability-stay]').click()
         assert q.locator('#notificationCenter').evaluate('el=>el.open')
-        q.wait_for_function('id=>document.activeElement.dataset.notificationGo===id',arg=REVIEW_CONTEXTS[0]['notification_id'])
-        passed.append('scoped Forex notification: frozen before account/period/read/close; stay restores focus')
+        q.evaluate('JPWNotifications.refresh()')
+        assert q.locator('[data-notification-id^="forex:"]').count()==0, 'Frozen operational reminders must be suppressed'
+        assert q.evaluate("document.getElementById('notificationCenter').contains(document.activeElement)")
+        passed.append('stale scoped Forex click: frozen guard prevents account/period/data effects; current operational reminders suppressed')
 
-        action.click();q.locator('[data-availability-manage]').click()
+        before=freeze_then_activate_stale_action()
+        q.evaluate("JPWModuleAvailabilityUI.deny('forex',document.getElementById('notificationClose'))")
+        q.locator('[data-availability-manage]').click()
         assert not q.locator('#notificationCenter').evaluate('el=>el.open')
         assert not q.locator('#moduleUnavailableDialog').evaluate('el=>el.open')
         assert q.locator('#moduleAvailabilityCard').is_visible()
         q.locator('[data-module-toggle="forex"]').click(trial=True)
         q.locator('#settingsCloseBtn').click()
-        q.evaluate('JPWNotifications.open()')
-        q.locator('[data-notification-go="'+REVIEW_CONTEXTS[0]['notification_id']+'"]').click()
+        before=freeze_then_activate_stale_action()
+        q.evaluate("JPWModuleAvailabilityUI.deny('forex',document.getElementById('notificationClose'))")
         q.locator('[data-availability-dashboard]').click()
         assert not q.locator('#notificationCenter').evaluate('el=>el.open')
+        assert not q.locator('#moduleUnavailableDialog').evaluate('el=>el.open')
         assert q.evaluate('JPWNavigation.current().primary')=='dashboard'
         q.wait_for_function("document.getElementById('dash').contains(document.activeElement)")
         assert q.evaluate('JSON.stringify({state:S,selection:JPWForex.state.operationalSelection(),storage:Object.entries(localStorage).sort()})')==before
+        q.evaluate('S.alladin.schemaVersion=999;JPWNotifications.refresh();JPWNotifications.open()')
+        integrity=q.locator('[data-notification-id="alladin:compatibility"]')
+        assert integrity.is_visible() and integrity.get_attribute('data-area')=='system', 'Frozen data-integrity issues remain System actions'
+        assert q.locator('[data-notification-id^="forex:"]').count()==0
         assert not errors,errors
-        passed.append('denial explicit manage/home: no residual modal blocks Settings or content focus')
+        passed.append('explicit manage/home preserve data; frozen integrity remains in System without operational reminders')
     finally:ctx.close()
 
     ctx,q,errors=boot(browser,url,'glass',390)

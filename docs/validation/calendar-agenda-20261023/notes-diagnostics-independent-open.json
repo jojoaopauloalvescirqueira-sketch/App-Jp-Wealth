@@ -1,0 +1,298 @@
+{
+  "result": "PASS",
+  "before_sha256": "bd2f53a8921c77ba91fe0eb8e20c75f83e1c407bfd40d4a07eb8465a445696d1",
+  "after_sha256": "603586aa2cecc4f8596e1eb628c2ecfad8ba8effb3f3f0f8d8b582f7c061c911",
+  "normalized_ast_exact_prior": true,
+  "failure_evidence_calls_only_except_handlers": [
+    665,
+    696,
+    720
+  ],
+  "open_page": {
+    "gesture_trace": [
+      {
+        "type": "touchend",
+        "target": "notes"
+      }
+    ],
+    "diagnostics": {
+      "case": "synthetic/open/page",
+      "browser_observed": {
+        "pageerror": [
+          "synthetic original page error"
+        ],
+        "console": [
+          "synthetic original console error"
+        ]
+      },
+      "dom": {
+        "url": "about:blank",
+        "time": 192.89999997615814,
+        "html": {
+          "data-navigation": "glass",
+          "data-shell": "global-dashboard",
+          "data-shell-menu": "open"
+        },
+        "body": {
+          "data-test": "diagnostics"
+        },
+        "viewport": {
+          "innerWidth": 390,
+          "innerHeight": 844,
+          "outerWidth": 500,
+          "outerHeight": 844,
+          "scrollX": 0,
+          "scrollY": 0,
+          "dpr": 1,
+          "visual": {
+            "width": 390,
+            "height": 844,
+            "scale": 1,
+            "left": 0,
+            "top": 0
+          }
+        },
+        "media": {
+          "mobile": true,
+          "glassCompact": true
+        },
+        "navigation": {
+          "module": "planning",
+          "view": "monthly"
+        },
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "attributes": {
+            "data-test": "diagnostics"
+          },
+          "rect": {
+            "x": 8,
+            "y": 8,
+            "width": 374,
+            "height": 44,
+            "top": 8,
+            "right": 382,
+            "bottom": 52,
+            "left": 8
+          },
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "position": "static",
+          "overflow": "visible",
+          "inert": false,
+          "hidden": false
+        },
+        "toggles": [
+          [
+            {
+              "tag": "BUTTON",
+              "id": "toggle",
+              "attributes": {
+                "id": "toggle",
+                "data-shell-menu-toggle": "",
+                "aria-expanded": "true"
+              },
+              "rect": {
+                "x": 8,
+                "y": 8,
+                "width": 44,
+                "height": 44,
+                "top": 8,
+                "right": 52,
+                "bottom": 52,
+                "left": 8
+              },
+              "display": "inline-block",
+              "visibility": "visible",
+              "opacity": "1",
+              "position": "static",
+              "overflow": "visible",
+              "inert": false,
+              "hidden": false
+            },
+            {
+              "tag": "NAV",
+              "id": "middle",
+              "attributes": {
+                "id": "middle"
+              },
+              "rect": {
+                "x": 8,
+                "y": 8,
+                "width": 374,
+                "height": 44,
+                "top": 8,
+                "right": 382,
+                "bottom": 52,
+                "left": 8
+              },
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "position": "static",
+              "overflow": "visible",
+              "inert": false,
+              "hidden": false
+            },
+            {
+              "tag": "HEADER",
+              "id": "ancestor",
+              "attributes": {
+                "id": "ancestor"
+              },
+              "rect": {
+                "x": 8,
+                "y": 8,
+                "width": 374,
+                "height": 44,
+                "top": 8,
+                "right": 382,
+                "bottom": 52,
+                "left": 8
+              },
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "position": "relative",
+              "overflow": "hidden",
+              "inert": false,
+              "hidden": false
+            },
+            {
+              "tag": "BODY",
+              "id": "",
+              "attributes": {
+                "data-test": "diagnostics"
+              },
+              "rect": {
+                "x": 8,
+                "y": 8,
+                "width": 374,
+                "height": 44,
+                "top": 8,
+                "right": 382,
+                "bottom": 52,
+                "left": 8
+              },
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "position": "static",
+              "overflow": "visible",
+              "inert": false,
+              "hidden": false
+            },
+            {
+              "tag": "HTML",
+              "id": "",
+              "attributes": {
+                "data-navigation": "glass",
+                "data-shell": "global-dashboard",
+                "data-shell-menu": "open"
+              },
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 390,
+                "height": 60,
+                "top": 0,
+                "right": 390,
+                "bottom": 60,
+                "left": 0
+              },
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1",
+              "position": "static",
+              "overflow": "visible",
+              "inert": false,
+              "hidden": false
+            }
+          ]
+        ],
+        "overlays": [
+          {
+            "tag": "DIALOG",
+            "id": "dialog",
+            "attributes": {
+              "open": "",
+              "id": "dialog"
+            },
+            "rect": {
+              "x": 155.109375,
+              "y": 52,
+              "width": 79.78125,
+              "height": 56,
+              "top": 52,
+              "right": 234.890625,
+              "bottom": 108,
+              "left": 155.109375
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "position": "absolute",
+            "overflow": "visible",
+            "inert": false,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "overlay",
+            "attributes": {
+              "class": "overlay show",
+              "id": "overlay"
+            },
+            "rect": {
+              "x": 20,
+              "y": 100,
+              "width": 350,
+              "height": 344,
+              "top": 100,
+              "right": 370,
+              "bottom": 444,
+              "left": 20
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1",
+            "position": "fixed",
+            "overflow": "visible",
+            "inert": false,
+            "hidden": false
+          }
+        ],
+        "shell": {
+          "open": true,
+          "overflow": "hidden"
+        }
+      },
+      "screenshot": "/private/tmp/jpw-calendar-agenda-20261023/notes-diagnostics-independent-open-synthetic_open_page-failure.png",
+      "html": "/private/tmp/jpw-calendar-agenda-20261023/notes-diagnostics-independent-open-synthetic_open_page-failure.html"
+    }
+  },
+  "closed_page": {
+    "gesture_trace": [],
+    "diagnostics": {
+      "case": "synthetic/closed/page",
+      "browser_observed": {
+        "pageerror": [
+          "synthetic original page error"
+        ],
+        "console": [
+          "synthetic original console error"
+        ]
+      },
+      "capture_errors": {
+        "gesture_trace": "Page.evaluate: Target page, context or browser has been closed",
+        "dom": "Page.evaluate: Target page, context or browser has been closed",
+        "screenshot": "Page.screenshot: Target page, context or browser has been closed",
+        "html": "Page.content: Target page, context or browser has been closed"
+      }
+    }
+  },
+  "product_or_test_sources_written": false,
+  "original_full5_failure_remains_unresolved": true
+}

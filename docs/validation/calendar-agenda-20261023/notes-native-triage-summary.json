@@ -1,0 +1,76 @@
+{
+  "result": "PASS",
+  "checks": 19,
+  "source_unchanged": true,
+  "test_sha256": "603586aa2cecc4f8596e1eb628c2ecfad8ba8effb3f3f0f8d8b582f7c061c911",
+  "event_count": 259,
+  "counters": {
+    "installed": 1,
+    "pointermove-capture": 54,
+    "pointerdown-capture": 6,
+    "setPointerCapture-before": 6,
+    "setPointerCapture-after": 6,
+    "focusin-capture": 3,
+    "gotpointercapture-capture": 6,
+    "attribute-mutation": 116,
+    "pointerup-capture": 3,
+    "finish-before": 8,
+    "releasePointerCapture-before": 6,
+    "releasePointerCapture-after": 6,
+    "finish-after": 8,
+    "lostpointercapture-capture": 6,
+    "click-capture": 3,
+    "keydown-capture": 9,
+    "keyup-capture": 9,
+    "pointercancel-capture": 1,
+    "focusout-capture": 2
+  },
+  "lost_events": [
+    {
+      "time": 1260.3999999761581,
+      "active_drag": false,
+      "preceding_release_time": 1259.1000000238419,
+      "preceding_release_stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1096:93)"
+    },
+    {
+      "time": 1465.6000000238419,
+      "active_drag": false,
+      "preceding_release_time": 1461.8999999761581,
+      "preceding_release_stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1101:80)"
+    },
+    {
+      "time": 1682.7000000476837,
+      "active_drag": false,
+      "preceding_release_time": 1679.8999999761581,
+      "preceding_release_stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1098:54)\n    at InjectedScript.dispatchEvent (<anonymous>:7452:10)\n    at eval (eval at eval (:6609:24), <anonymous>:2:26)\n    at eval (eval at evaluate (:302:30), <anonymous>:9:55)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "time": 1868.5,
+      "active_drag": true,
+      "preceding_release_time": 1860.3999999761581,
+      "preceding_release_stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at eval (eval at evaluate (:302:30), <anonymous>:1:6)\n    at UtilityScript.evaluate (<anonymous>:309:18)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "time": 2080.600000023842,
+      "active_drag": false,
+      "preceding_release_time": 2076.899999976158,
+      "preceding_release_stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1101:80)"
+    },
+    {
+      "time": 2259.899999976158,
+      "active_drag": false,
+      "preceding_release_time": 2258.3000000715256,
+      "preceding_release_stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1096:93)"
+    }
+  ],
+  "unexpected_capture_loss_reproduced": false,
+  "all_lost_events_preceded_by_explicit_release": true,
+  "no_child_removal_in_trace": true,
+  "original_FULL6_status_unchanged": "101 PASS / 1 ENVIRONMENT_ERROR",
+  "cause": "UNDETERMINED; a passing instrumented repeat does not resolve original failure or establish an external cause.",
+  "limits": [
+    "Original19check suite retained; recorder wraps browser functions only in disposable native200 context.",
+    "Timing overhead may suppress intermittent event ordering.",
+    "No product/test source changes; no additional full runs requested."
+  ]
+}

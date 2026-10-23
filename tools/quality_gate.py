@@ -29,6 +29,10 @@ FAST = (
     ("preflight-context", [sys.executable, "tools/preflight_context_test.py"]),
 )
 STANDARD = FAST + (
+    ("personal-agenda", [os.environ.get("JPW_NODE", "node"), "tools/personal_agenda_test.js"]),
+    ("monthly-economic-feed", [sys.executable, "tools/monthly_economic_feed_test.py"]),
+    ("calendar-agenda", [sys.executable, "tools/calendar_agenda_test.py", "--artifact", full_evidence("calendar-agenda.json")]),
+    ("calendar-recovery", [sys.executable, "tools/calendar_recovery_test.py", "--receipt", full_evidence("calendar-recovery.json")]),
     ("ui-visual-quality", [sys.executable, "tools/ui_visual_quality_test.py", "--out", full_evidence("ui-visual-quality")]),
     ("navigation-ia", [sys.executable, "tools/navigation_ia_test.py"]),
     ("dashboard-macro", [sys.executable, "tools/dashboard_macro_test.py"]),
@@ -82,6 +86,8 @@ STANDARD = FAST + (
     ("alladin-ui-tx-reverse", [sys.executable, "tools/alladin_ui_tx_reverse_test.py"]),
 )
 FULL = STANDARD + (
+    ("calendar-distribution", [sys.executable, "tools/calendar_distribution_test.py", "--receipt", full_evidence("calendar-distribution.json")]),
+    ("ff-news-cache", [sys.executable, "tools/ff_news_cache_test.py", "--artifact", full_evidence("ff-news-cache.json")]),
     ("planning-distribution", [sys.executable, "tools/planning_distribution_test.py"]),
     ("planning-three-tabs", [sys.executable, "tools/planning_three_tabs_test.py", "--receipt", full_evidence('planning-three-tabs.json')]),
     ("planning-proportions", [sys.executable, "tools/planning_proportions_test.py", "--out", full_evidence('planning-proportions')]),

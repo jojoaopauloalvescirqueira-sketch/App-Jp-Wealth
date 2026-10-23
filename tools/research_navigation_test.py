@@ -310,15 +310,17 @@ def assert_shell_and_accessibility(page, viewport, theme):
 
 
 def assert_calendar_refresh_guidance(page):
-    # A mesma agenda atende workspace/modal; sua orientação deve alcançar o
-    # único botão real de atualização, sem criar outra consulta ou dado em S.
+    # FF weekly keeps its refresh path; Tools monthly must remain independent.
+    # Both paths remain readonly and navigation cannot multiply FF requests.
     page.wait_for_function("() => !ffNewsInFlight")
     page.evaluate("() => { localStorage.removeItem(FF_NEWS_CACHE_KEY); JPWNavigation.navigate('ecal'); }")
     before = page.evaluate("JSON.stringify(S)")
     expected = "Forex → Consolidado FX → Ver contexto completo"
-    workspace = page.locator('#execEcal [data-ecal-role="empty"]')
+    page.wait_for_selector('#execEcal .calendar-grid [data-calendar-date]')
+    workspace=page.locator('#execEcal')
     assert workspace.is_visible()
-    assert expected in workspace.inner_text(), workspace.inner_text()
+    assert 'JPWCalendar' in page.evaluate("typeof JPWCalendar==='object'?'JPWCalendar':''")
+    monthly=workspace.inner_html()
     page.evaluate("() => JPWEcal.open()")
     overlay = page.locator('#ecalOverlay [data-ecal-role="empty"]')
     assert overlay.is_visible() and expected in overlay.inner_text(), overlay.inner_text()
@@ -342,7 +344,10 @@ def assert_calendar_refresh_guidance(page):
     assert len(calls)==1, calls
     for _ in range(3):
         page.evaluate("() => JPWNavigation.navigate('ecal')")
-        assert 'Synthetic calendar event' in page.locator('#execEcal').inner_text()
+        assert 'Synthetic calendar event' not in page.locator('#execEcal').inner_text()
+        page.evaluate('JPWEcal.open()')
+        assert 'Synthetic calendar event' in page.locator('#ecalOverlay').inner_text()
+        page.evaluate('JPWEcal.close()')
         page.evaluate("() => JPWNavigation.navigate('dashboard')")
         page.evaluate("() => JPWNavigation.navigate('forex-overview')")
     assert len(calls)==1, 'navegação duplicou consulta'

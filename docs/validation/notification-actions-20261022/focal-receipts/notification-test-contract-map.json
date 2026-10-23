@@ -1,0 +1,222 @@
+{
+  "scope": "CHG-JPW-NOTIFICATION-ACTIONS-TESTS-20261022",
+  "authority": "human approved actionable-notifications plan; no authority granted by this receipt",
+  "old_center_case_ids_preserved": 17,
+  "current_center_cases": 30,
+  "old_efficiency_cases_preserved": 18,
+  "current_efficiency_cases": 20,
+  "deliberate_contract_replacements": {
+    "all-areas-filter-dedupe-readonly": "Keep dedupe, per-area contextual causes, zero writes/network. Deliberately replace unread controls, permanent clearance and ordinary drafts/activity with active actionable causes; integrity is System.",
+    "contextual-review-navigation": "Same contextual account/period selection and no confirmed-data writes; retained.",
+    "resolution-navigation": "Consulting retains pending condition; only producer resolution removes it. Read-button interaction removed.",
+    "calendar-time-threshold-rollover": "Agenda events, 15-minute threshold and date rollover remain in agenda; none enter bell.",
+    "calendar-cache-xss": "Agenda cache errors excluded from bell. XSS oracle retained against actual actionable account-name text instead of excluded agenda title.",
+    "native-events-confirm-exclusion": "Native alert and confirm behavior preserved; both excluded from activity inbox.",
+    "event-area-provenance": "Native PF refusal and Alladin session messages remain local; no inference from screen or activity promotion.",
+    "detailed-completion-focus": "Permanent normative limitation excluded; source onboarding critical status and normative block preserved.",
+    "alladin-balance-quality": "Ledger alone still cannot certify balances; changed refusal updates full diagnosis; integrity remains System when frozen.",
+    "unknown-persistence-gate": "Same UNKNOWN and save rejection oracle; compact explanatory text inspected via explicit details expansion instead of read controls.",
+    "backup-status-consistency": "Same canonical due/unknown/current/invalid/future-date behavior; full original canonical reason accessible in details instead of forced long title.",
+    "replacement-finalization-cleanup": "Full durable-document, unknown-sentinel and transient-cleanup oracle retained. Unclassified activity excluded rather than carrying session history.",
+    "keyboard-geometry-*": "Legacy1440/390 light/dark IDs retained;320 variants added."
+  },
+  "new_center_cases": [
+    "actionable-only-unresolved-count",
+    "source-failure-recovery",
+    "replacement-diagnosis-generation",
+    "actionable-counterproofs",
+    "frozen-operational-integrity",
+    "planning-context-dirty-guard",
+    "planning-touch-context",
+    "keyboard-geometry-320-light",
+    "keyboard-geometry-320-dark",
+    "forex-empty-context-no-action",
+    "forex-guard-generation-before-navigation",
+    "planning-local-month-boundary",
+    "forex-price-reference-provenance"
+  ],
+  "new_efficiency_cases": [
+    "planning-source-coalescing",
+    "committed-planning-hook-only"
+  ],
+  "module_availability_scope": "Only notification_and_suspended_work: suppress frozen operational reminders; a stale dispatched click cannot change context/data; retain original unavailable-module decisions through the real availability UI, plus frozen integrity in System. Remaining module tests unchanged.",
+  "counterproofs": [
+    "hide unresolved actions by setting badge0/hidden",
+    "duplicate a cause",
+    "promote excluded agenda into badge/list"
+  ],
+  "attempts": [
+    {
+      "file": "notification-red.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "meaning": "Old product still offers reading controls that conceal unresolved actions."
+    },
+    {
+      "file": "notification-first-green-attempt.json",
+      "raw_exit": 1,
+      "raw_counts": {
+        "PASS": 22,
+        "PRODUCT_FAIL": 4
+      },
+      "qualification": "Exploratory; tests were refined during run. Do not use as stable final fingerprint or relabel raw failures.",
+      "assessed_causes": [
+        "Missing previous full diagnostic: confirmed product defect; separate corrected-stimulus RED receipt follows.",
+        "Touch quote-provider cache not settled before write observation: test setup needed explicit fixture-backed provider settling.",
+        "UNKNOWN diagnostic deliberately moves to disclosure; test must open it.",
+        "Backup compact title intentionally changes; full canonical cause still required in details."
+      ]
+    },
+    {
+      "file": "notification-diagnosis-red.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "meaning": "Positive source setup exposes the previous month; failed-source summary loses that full diagnosis."
+    },
+    {
+      "file": "notification-efficiency-first-attempt.json",
+      "raw_exit": 1,
+      "raw_counts": {
+        "PASS": 16,
+        "PRODUCT_FAIL": 2
+      },
+      "assessed_cause": "PF now frozen by default and deliberately skips operational collectors. Explicitly activate PF in those two reader-count fixtures, retaining same one-call assertions."
+    },
+    {
+      "file": "module-availability-notification-focal.json",
+      "raw_exit": 1,
+      "raw_result": "TEST_HARNESS_FAIL",
+      "meaning": "Absence assertion waited for a lazily created dialog that correctly did not exist; replace locator wait with optional document query, same absence oracle."
+    },
+    {
+      "file": "notification-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 26
+      },
+      "scope": "HTTP modular current app; distribution not yet rebuilt by this agent."
+    },
+    {
+      "file": "notification-efficiency-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 20
+      },
+      "scope": "HTTP modular current app; distribution not yet rebuilt by this agent."
+    },
+    {
+      "file": "module-availability-notification-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 3
+      },
+      "scope": "Changed notification scope and existing remote Research suspension in isolated real UI."
+    },
+    {
+      "file": "notification-empty-forex-red.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "meaning": "Four unused contexts with no order/reserve facts emitted four reconciliation tasks; domain incomputability alone is not a concrete actionable fact."
+    },
+    {
+      "file": "notification-final-modular-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 27
+      },
+      "scope": "After empty-context fix, before later independent review guard/quote findings."
+    },
+    {
+      "file": "notification-guard-red.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "meaning": "Root identity changed during real Planning inline discard consent; old CTA navigated before revalidating."
+    },
+    {
+      "file": "notification-clock-first-attempt.json",
+      "raw_exit": 1,
+      "raw_result": "TEST_HARNESS_FAIL",
+      "meaning": "Test module could not load: malformed quoting in a new selector; no product test ran."
+    },
+    {
+      "file": "notification-clock-green.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "assessed_cause": "Harness installer returned the newly assigned writer function; Playwright invoked that returned function with no arguments. The single writer call occurred in UtilityScript, not the midnight callback; state/document/storage unchanged. Raw report preserved."
+    },
+    {
+      "file": "notification-clock-diagnosis.json",
+      "raw_exit": 1,
+      "raw_result": "TEST_HARNESS_FAIL",
+      "meaning": "Malformed newline escape in diagnostic probe. No product midnight oracle established by this attempt."
+    },
+    {
+      "file": "notification-clock-writer-diagnosis.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "assessed_cause": "Probe captured direct UtilityScript invocation with componentnull, confirming the installer harness error. Raw report preserved."
+    },
+    {
+      "file": "notification-clock-guard-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 2
+      },
+      "scope": "Actual 00h America/Sao_Paulo timer with controlled scheduler, no manual refresh after boundary; zero financial/cache writes. Guard checks root before navigation."
+    },
+    {
+      "file": "notification-price-provenance-red.json",
+      "raw_exit": 1,
+      "raw_result": "TEST_HARNESS_FAIL",
+      "meaning": "Synthetic accountB is EUR; original fixture incorrectly submitted USD observation."
+    },
+    {
+      "file": "notification-price-provenance-red2.json",
+      "raw_exit": 1,
+      "raw_result": "TEST_HARNESS_FAIL",
+      "meaning": "Synthetic EUR observation must include its USD conversion; canonical contract correctly refused the incomplete fixture."
+    },
+    {
+      "file": "notification-price-provenance-red3.json",
+      "raw_exit": 1,
+      "raw_result": "PRODUCT_FAIL",
+      "meaning": "With all synthetic commands confirmed, fresh canonical manual price still inherits the stale legacy-catalogue date."
+    },
+    {
+      "file": "notification-final30-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 30
+      },
+      "scope": "Final HTTP modular source before official builder/full gate; no distribution or human acceptance claimed."
+    },
+    {
+      "file": "notification-final20-efficiency-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 20
+      },
+      "scope": "Final HTTP modular source before official builder/full gate; no distribution or human acceptance claimed."
+    },
+    {
+      "file": "module-availability-notification-final-green.json",
+      "raw_exit": 0,
+      "raw_counts": {
+        "PASS": 3
+      },
+      "scope": "Final HTTP modular source before official builder/full gate; no distribution or human acceptance claimed."
+    }
+  ],
+  "test_sha256": {
+    "tools/notification_center_test.py": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+    "tools/notification_efficiency_test.py": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d",
+    "tools/module_availability_test.py": "54cac6f979921a4bb8c35c69d54cc96838c10c8729be869b044958b3f5334a14"
+  },
+  "not_claimed": [
+    "full gate",
+    "final distribution",
+    "human acceptance",
+    "no universal bugs",
+    "commit/merge/push/publication"
+  ]
+}

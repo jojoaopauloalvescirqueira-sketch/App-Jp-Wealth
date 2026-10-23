@@ -1,0 +1,324 @@
+FAIL AGENDA-01 optional aggregate reads are pure and defensive
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:40:41)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-02 explicit create/update/completion/removal confirm one candidate each
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:48:32)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-03 previews validate fields without changing data or calling writer
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:60:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-04 civil tasks stay dates and timed appointments preserve IANA instants
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:67:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-05 DST spring gap is refused with field-specific error
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:73:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-06 DST fold requires exact explicit choice and stores chosen instant
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:77:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-07 end fold, half-hour DST and leap dates are independently resolved
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:84:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-08 range includes overnight appointments and excludes unrelated civil dates
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:89:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-09 quota/no-op writer preserves old RAM and disk and invalidates attempted token
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:96:27)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-10 uncertain readback keeps old RAM, blocks retry and preserves physical candidate
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:102:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-11 concurrent disk, stale item and foreign tokens never overwrite
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:107:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-12 adjacent unconfirmed financial RAM is never confirmed by agenda
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:114:89)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-13 incompatible/future aggregate remains opaque and blocks mutation
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:120:43)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-14 compatible unknown fields survive item edits and root roundtrip
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:125:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-15 session/root replacement invalidates prepared commands without invalidating ordinary reads
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:130:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-16 recovery, workspace and finalization gates refuse before writing
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:136:27)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-17 control and secret keys cannot enter explicit commands
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:140:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-18 all-day appointments are civil and completing them is refused
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:145:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+FAIL AGENDA-19 timed range uses viewing zone and midnight end is exclusive
+AssertionError [ERR_ASSERTION]: personal agenda exposes the authorized query/command API
++ actual - expected
+
++ 'undefined'
+- 'function'
+
+    at apiOf (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:34:26)
+    at Object.run (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:149:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/personal_agenda_test.js:156:35)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+{"total":19,"passed":0,"failed":19}

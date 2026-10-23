@@ -1,0 +1,30 @@
+{
+  "scope": "fresh synthetic browser only; no product edits",
+  "source_sha256": {
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "src/styles/app.css": "60787e51e673bf73b1c995706a4cd6965873c314a9c059a89f607d9b366650d5",
+    "build-id.js": "6310b6b652cb34e5ad879af0654483492a9d138884e9e98bc703fc10a99196f9"
+  },
+  "results": [
+    {
+      "case": "calendar-launcher-1440",
+      "result": "PRODUCT_FAIL",
+      "evidence": {
+        "expected": "calendar control immediately before notification bell",
+        "calendar_controls": 0,
+        "bell_controls": 1,
+        "ready": true
+      }
+    },
+    {
+      "case": "calendar-launcher-320",
+      "result": "PRODUCT_FAIL",
+      "evidence": {
+        "expected": "calendar control immediately before notification bell",
+        "calendar_controls": 0,
+        "bell_controls": 1,
+        "ready": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,960 @@
+{
+  "took": 10,
+  "breakdown": {
+    "total": 67,
+    "confirmed": 16,
+    "published": 67,
+    "cancelled": 1
+  },
+  "releases": [
+    {
+      "uri": "/releases/populationestimatesfortheukenglandwalesscotlandandnorthernirelandmid2025",
+      "date_changes": null,
+      "description": {
+        "title": "Population estimates for the UK, England, Wales, Scotland and Northern Ireland: mid-2025",
+        "summary": "National and subnational mid-year population estimates for the UK and its constituent countries by administrative area, age, and sex.",
+        "release_date": "2026-10-01T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/childrenlivinginlongtermworklesshouseholdsintheuk2025",
+      "date_changes": null,
+      "description": {
+        "title": "Children living in long-term workless households in the UK: 2025",
+        "summary": "Annual UK estimates of the number of children living in households where all adults have not worked for at least 12 months.",
+        "release_date": "2026-10-01T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/deathsofhomelesspeopleinenglandandwales2025registrations",
+      "date_changes": null,
+      "description": {
+        "title": "Deaths of people experiencing homelessness in England and Wales: 2013 to 2025 registrations",
+        "summary": "The number of deaths of people experiencing homelessness in England and Wales. These are official statistics in development.",
+        "release_date": "2026-10-01T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/economicactivityandsocialchangeintheukrealtimeindicators1october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Economic activity and social change in the UK, real-time indicators: 1 October 2026",
+        "summary": "Early experimental data and analysis on economic activity and social change in the UK. These real-time indicators are created using rapid response surveys, novel data sources and experimental methods.",
+        "release_date": "2026-10-01T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/unexplaineddeathsininfancyenglandandwales2024",
+      "date_changes": null,
+      "description": {
+        "title": "Unexplained deaths in infancy, England and Wales: 2024",
+        "summary": "Annual data on sudden infant deaths in England and Wales and infant deaths for which the cause remained unascertained after a full investigation.",
+        "release_date": "2026-10-01T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/fundedoccupationalpensionschemesintheukoctober2025tomarch2026",
+      "date_changes": null,
+      "description": {
+        "title": "Funded occupational pension schemes in the UK: October 2025 to March 2026",
+        "summary": "Financial Survey of Pension Schemes (FSPS) estimates including membership, income and expenditure, assets, and liabilities of pension schemes.",
+        "release_date": "2026-10-01T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/averagehouseholdincomeukfinancialyearending2025",
+      "date_changes": null,
+      "description": {
+        "title": "Average household income, UK: financial year ending 2025",
+        "summary": "Estimates of average household income in the UK, with analysis of how these measures have changed over time, accounting for inflation and household composition.",
+        "release_date": "2026-10-02T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/referencetablescomponentapproachtolabourproductivityuk1997to2024",
+      "date_changes": null,
+      "description": {
+        "title": "Reference tables: component approach to labour productivity, UK: 1997 to 2024",
+        "summary": "These reference tables provide the absolute values underpinning the Component approach to labour productivity, UK: 1997 to 2024 release published on 17 September. They include estimates of labour productivity in both chained volume measures and current prices, consistent with Blue Book 2026 Quarterly National Accounts data. The tables also contain the component approach labour inputs used in productivity calculations, including jobs, workers and total hours worked, alongside contributions showing how changes in individual labour components have contributed to movements in average actual hours worked per job relative to their 2008 average.",
+        "release_date": "2026-10-06T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/adultsmokinghabitsintheuk2025",
+      "date_changes": null,
+      "description": {
+        "title": "Adult smoking habits in the UK: 2025",
+        "summary": "Cigarette smoking habits among adults in the UK, including how many people smoke, differences between population groups, changes over time and use of e-cigarettes.",
+        "release_date": "2026-10-06T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending25september2026",
+      "date_changes": null,
+      "description": {
+        "title": "Deaths registered weekly in England and Wales, provisional: week ending 25 September 2026",
+        "summary": "Provisional number of deaths registered in England and Wales in the latest weeks.",
+        "release_date": "2026-10-07T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/experiencesofnhshealthcareservicesinengland8october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Experiences of NHS healthcare services in England: 8 October 2026",
+        "summary": "Patient experiences of accessing healthcare from the ONS Health Insight Survey, funded by NHS England. These are official statistics in development.",
+        "release_date": "2026-10-08T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/businessinsightsandimpactontheukeconomy8october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Business insights and impact on the UK economy: 8 October 2026",
+        "summary": "The impact of challenges facing the economy and other events on UK businesses, including financial performance, workforce, trade and business resilience.",
+        "release_date": "2026-10-08T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/economicactivityandsocialchangeintheukrealtimeindicators8october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Economic activity and social change in the UK, real-time indicators: 8 October 2026",
+        "summary": "Early experimental data and analysis on economic activity and social change in the UK. These real-time indicators are created using rapid response surveys, novel data sources and experimental methods.",
+        "release_date": "2026-10-08T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uktradedevelopmentplanupdateoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK trade development plan update: October 2026",
+        "summary": "An update on our improvements to UK trade statistics since the UK Trade Development Plan was published in 2022, as well as ongoing and future development work. ",
+        "release_date": "2026-10-09T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/theimpactofelectivewaitingtimesonbenefitsreceiptenglandapril2014toapril2024",
+      "date_changes": null,
+      "description": {
+        "title": "The impact of elective waiting times on benefits receipt, England: April 2014 to April 2024",
+        "summary": "Analysis investigating the impact of elective inpatient and outpatient treatments and waiting times on benefits receipt in England.",
+        "release_date": "2026-10-12T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/suicidesinenglandandwales1981to2025",
+      "date_changes": null,
+      "description": {
+        "title": "Suicides in England and Wales: 1981 to 2025",
+        "summary": "Suicide death registrations by sex, age, area of usual residence of the deceased, and suicide method, and suicide occurrences, in England and Wales.",
+        "release_date": "2026-10-13T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/trendsinukindustryconcentration2007to2025",
+      "date_changes": null,
+      "description": {
+        "title": "Trends in UK industry concentration: 2007 to 2025",
+        "summary": "Turnover concentration in UK industries, showing how concentration changed from 2007 to 2025. These are official statistics in development.",
+        "release_date": "2026-10-13T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/ukarmedforcesveteransenglandandwales2024and2025",
+      "date_changes": null,
+      "description": {
+        "title": "UK armed forces veterans, England and Wales: 2024 and 2025",
+        "summary": "Statistics on UK armed forces veterans resident in England and Wales. These are official statistics in development.",
+        "release_date": "2026-10-13T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending2october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Deaths registered weekly in England and Wales, provisional: week ending 2 October 2026",
+        "summary": "Provisional number of deaths registered in England and Wales in the latest weeks.",
+        "release_date": "2026-10-14T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/onssurveysandeconomicstatisticsimprovementplanquarterlyprogressupdateoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "ONS surveys and economic statistics improvement plan, quarterly progress update: October 2026",
+        "summary": "Progress across the ONS against our recovery plans for improving our economic statistics and surveys, between July and September 2026.\n###Publications\n\n[ONS surveys and economic statistics improvement plan, quarterly progress update: October 2026](https://www.ons.gov.uk/aboutus/ourstrategyandplans/onsimprovementplans/onssurveyimprovementandenhancement/onssurveysandeconomicstatisticsimprovementplanquarterlyprogressupdateoctober2026)",
+        "release_date": "2026-10-14T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/constructionoutputingreatbritainaugust2026",
+      "date_changes": null,
+      "description": {
+        "title": "Construction output in Great Britain: August 2026",
+        "summary": "Short-term measures of output by the construction industry in August 2026.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/indexofproductionukaugust2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "Index of Production, UK: August 2026 time series",
+        "summary": "Movements in the volume of production for the UK production industries: manufacturing, mining and quarrying, energy supply, and water and waste management. Figures are seasonally adjusted.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/grossvalueaddedindustryweightstimeseriesdatasetconsistentwithbluebook2026",
+      "date_changes": null,
+      "description": {
+        "title": "Gross Value Added industry weights time series dataset, consistent with Blue Book 2026",
+        "summary": "Update to the annual industry weights used within the output approach of GDP, consistent with Blue Book 2026 estimates published in the Quarterly National Accounts, on 30 September 2026.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/gdpmonthlyestimateukaugust2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "GDP monthly estimate, UK: August 2026 time series",
+        "summary": "Time series data as part of the monthly GDP publication.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/indexofservicesukaugust2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "Index of Services, UK: August 2026 time series",
+        "summary": "Monthly movements in  gross value added for the service industries which overall account for around 79% of UK Gross Domestic Product (GDP).",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uktradeaugust2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "UK Trade: August 2026 Time Series",
+        "summary": "Total value of UK exports and imports of goods and services in current prices, chained volume measures and implied deflators.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uktradeaugust2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK Trade: August 2026",
+        "summary": "Total value of UK exports and imports of goods and services in current prices, chained volume measures and implied deflators.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/indexofservicesukaugust2026",
+      "date_changes": null,
+      "description": {
+        "title": "Index of Services, UK: August 2026",
+        "summary": "Movements in the volume of output for the UK services industries. Figures are seasonally adjusted.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/gdpmonthlyestimateukaugust2026",
+      "date_changes": null,
+      "description": {
+        "title": "GDP monthly estimate, UK: August 2026",
+        "summary": "Gross domestic product (GDP) measures the value of goods and services produced in the UK. It estimates the size of and growth in the economy.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/indexofproductionukaugust2026",
+      "date_changes": null,
+      "description": {
+        "title": "Index of Production, UK: August 2026",
+        "summary": "Movements in the volume of production for the UK production industries: manufacturing, mining and quarrying, energy supply, and water and waste management. Figures are seasonally adjusted.",
+        "release_date": "2026-10-15T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/economicactivityandsocialchangeintheukrealtimeindicators15october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Economic activity and social change in the UK, real-time indicators: 15 October 2026",
+        "summary": "Early experimental data and analysis on economic activity and social change in the UK. These real-time indicators are created using rapid response surveys, novel data sources and experimental methods.",
+        "release_date": "2026-10-15T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/traveltrends2025",
+      "date_changes": null,
+      "description": {
+        "title": "Travel trends: 2025",
+        "summary": "Annual estimates for overseas travel and tourism, including visits, spending, number of nights, and purpose of visit. These are official statistics in development. ",
+        "release_date": "2026-10-16T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October to November 2026"
+      }
+    },
+    {
+      "uri": "/releases/deathsregisteredmonthlyinenglandandwalesseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Deaths registered monthly in England and Wales: September 2026",
+        "summary": "Number of deaths registered each month by area of usual residence for England and Wales, by region, county, health authorities, local and unitary authority, and London borough.",
+        "release_date": "2026-10-16T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/improvingourtravelandtourismstatisticsjuly2026update",
+      "date_changes": null,
+      "description": {
+        "title": "Improving our travel and tourism statistics: October 2026 update",
+        "summary": "An article outlining our progress towards planned improvements to our travel and tourism statistics, including official statistics in development.",
+        "release_date": "2026-10-16T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October to November 2026"
+      }
+    },
+    {
+      "uri": "/releases/publicopinionsandsocialtrendsgreatbritainseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Public opinions and social trends, Great Britain: attitudes to climate change and environmental issues, September 2026",
+        "summary": "Social insights on daily life and events, including public attitudes towards climate change and the environment, from the Opinions and Lifestyle Survey (OPN).",
+        "release_date": "2026-10-16T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/quarterlysuicidedeathregistrationsinengland2001to2025registrationsandquarter1jantomartoquarter2aprtojune2026provisionaldata",
+      "date_changes": null,
+      "description": {
+        "title": "Quarterly suicide death registrations in England: 2001 to 2025 registrations and Quarter 1 (Jan to Mar) to Quarter 2 (Apr to June) 2026 provisional data",
+        "summary": "Provisional rate and number of suicide deaths registered in England per quarter. Includes 2001 to 2025 registrations and provisional data for Quarter 1 (Jan to Mar)   to Quarter 2 (Apr to June) 2026. These are official statistics in development.",
+        "release_date": "2026-10-19T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/labourmarketintheregionsoftheukoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "Labour market in the regions of the UK: October 2026",
+        "summary": "Regional, local authority, and parliamentary constituency breakdowns of changes in UK employment, unemployment, and economic inactivity, and other related statistics. These are official statistics in development.",
+        "release_date": "2026-10-20T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/earningsandemploymentfrompayasyouearnrealtimeinformationukoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "Earnings and employment from Pay As You Earn Real Time Information, UK: October 2026",
+        "summary": "Monthly estimates of payrolled employees and their pay from HM Revenue and Customs’ (HMRC’s) Pay As You Earn (PAYE) Real Time Information (RTI) data. This is a joint release between HMRC and the Office for National Statistics (ONS). ",
+        "release_date": "2026-10-20T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/labourforcesurveyqualityupdateoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "Labour Force Survey quality update: October 2026",
+        "summary": "Assessment of Labour Force Survey data quality, including the impact of recent changes on the statistics, response levels and rates, and respondent characteristics.",
+        "release_date": "2026-10-20T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uklabourmarketoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK Labour Market: October 2026",
+        "summary": "Estimates of employment, unemployment, inactivity, average weekly earnings, vacancies and other labour market related statistics for the UK.",
+        "release_date": "2026-10-20T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/labourmarketstatisticstimeseriesoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "Labour market statistics time series: October 2026",
+        "summary": "Large dataset which contains labour market statistics data time series.",
+        "release_date": "2026-10-20T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/producerpriceinflationukseptember2026includingservicesjulytoseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Producer price inflation, UK: September 2026 including services, July to September 2026",
+        "summary": "Changes in the prices of goods bought and sold by UK manufacturers including price indices of materials and fuels purchased (input prices) and factory gate prices (output prices). Also including quarterly estimates monitoring the changes in received prices for selected services provided by UK businesses.",
+        "release_date": "2026-10-21T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/publicsectorfinancesukseptember2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "Public sector finances, UK: September 2026 time series",
+        "summary": "The time series datasets consistent with the Public sector finances, UK: September 2026 bulletin.",
+        "release_date": "2026-10-21T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/consumerpriceinflationukseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Consumer price inflation, UK: September 2026",
+        "summary": "Price indices percentage changes and weights for the different measures of consumer price inflation.",
+        "release_date": "2026-10-21T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/publicsectorfinancesukseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Public sector finances, UK: September 2026",
+        "summary": "A presentational framework for the headline measures of Public Sector Finance Statistics (net borrowing net cash requirement and net debt) is explained in this release. This includes the reasons for changes in net borrowing (deficit) and debt.",
+        "release_date": "2026-10-21T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/producerpriceinflationukseptember2026includingservicesjulytoseptember2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "Producer price inflation, UK: September 2026, including services, July to September 2026 time series",
+        "summary": "The time series datasets connected to the Producer price inflation, UK: September 2026 including services, July to September 2026 bulletin. ",
+        "release_date": "2026-10-21T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/consumerpriceinflationukseptember2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "Consumer price inflation, UK: September 2026 time series",
+        "summary": "Comprehensive database of time series covering measures of inflation data for the UK including CPIH, CPI and RPI.",
+        "release_date": "2026-10-21T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending9october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Deaths registered weekly in England and Wales, provisional: week ending 9 October 2026",
+        "summary": "Provisional number of deaths registered in England and Wales in the latest weeks.",
+        "release_date": "2026-10-21T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/contributionstothe12monthrateofcpihbyimportintensityseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Contributions to the 12-month rate of CPI(H) by import intensity: September 2026",
+        "summary": "A longer time series of contributions to the Consumer Prices Index including owner occupiers' housing costs (CPIH) and Consumer Prices Index (CPI), UK, monthly.",
+        "release_date": "2026-10-21T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/privaterentandhousepricesukoctober2026",
+      "date_changes": null,
+      "description": {
+        "title": "Private rent and house prices, UK: October 2026",
+        "summary": "The Price Index of Private Rents (PIPR) measures private rent inflation for new and existing tenancies. The UK House Price Index measures house price inflation.",
+        "release_date": "2026-10-21T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/offencesinvolvingtheuseofweaponsdatatablesyearendingmarch2026",
+      "date_changes": null,
+      "description": {
+        "title": "Offences involving the use of weapons data tables: year ending March 2026",
+        "summary": "Data tables relating to offences involving weapons as recorded by police and hospital episode statistics.",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/thenatureofviolentcrimeappendixtablesyearendingmarch2026",
+      "date_changes": null,
+      "description": {
+        "title": "The nature of violent crime appendix tables: year ending March 2026",
+        "summary": "Data from the Crime Survey for England and Wales (CSEW) on violence with and without injury, and harassment, and police recorded crime on violence against the person and sexual offences.",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/timeuseintheuk",
+      "date_changes": null,
+      "description": {
+        "title": "Time use in the UK: 2025 and 2026",
+        "summary": "Average daily time spent by adults on activities including paid work, unpaid household work, unpaid care, travel and entertainment. These are official statistics in development. The release contains two datasets: Wave 9 (2025) and Wave 10 (2026).\n",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October to November 2026"
+      }
+    },
+    {
+      "uri": "/releases/fraudandcomputermisuseinenglandandwalesappendixtablesyearendingmarch2026",
+      "date_changes": null,
+      "description": {
+        "title": "Fraud and computer misuse in England and Wales appendix tables: year ending March 2026",
+        "summary": "Annual data from the Crime Survey for England and Wales (CSEW) including demographic and offence type breakdowns and time series data.",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/employeeearningsintheuk2026",
+      "date_changes": null,
+      "description": {
+        "title": "Employee earnings in the UK: 2026",
+        "summary": "Measures of employee earnings, using data from the Annual Survey for Hours and Earnings (ASHE).\n\nThis release consists of 3 bulletins:\n\n####Employee earnings in the UK: 2026\n\nMeasures of employee earnings, using data from the Annual Survey for Hours and Earnings (ASHE).\n\n####Low and high pay in the UK: 2026\n\nThe distribution of hourly earnings of high-paid and low-paid jobs and jobs paid below the National Minimum Wage, using data from the Annual Survey for Hours and Earnings (ASHE).\n\n####Gender pay gap in the UK: 2026\n\nDifferences in pay between women and men, using data from the Annual Survey for Hours and Earnings (ASHE).",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/crimeinenglandandwalesyearendingjune2026",
+      "date_changes": null,
+      "description": {
+        "title": "Crime in England and Wales: year ending June 2026",
+        "summary": "Crime against households and people aged 16 years and over, using data from police recorded crime and the Crime Survey for England and Wales (CSEW).",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/propertycrimetablesenglandandwalesyearendingmarch2026",
+      "date_changes": null,
+      "description": {
+        "title": "Property crime tables, England and Wales: year ending March 2026",
+        "summary": "Annual data from the Crime Survey for England and Wales (CSEW) and metal theft offences recorded by the police, including demographic and offence type breakdowns and time series data.",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/businessinsightsandimpactontheukeconomy22october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Business insights and impact on the UK economy: 22 October 2026",
+        "summary": "The impact of challenges facing the economy and other events on UK businesses, including financial performance, workforce, trade and business resilience.",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/economicactivityandsocialchangeintheukrealtimeindicators22october2026",
+      "date_changes": null,
+      "description": {
+        "title": "Economic activity and social change in the UK, real-time indicators: 22 October 2026",
+        "summary": "Early experimental data and analysis on economic activity and social change in the UK. These real-time indicators are created using rapid response surveys, novel data sources and experimental methods.",
+        "release_date": "2026-10-22T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/retailsalesgreatbritainseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Retail sales, Great Britain: September 2026",
+        "summary": "A first estimate of retail sales in volume and value terms, seasonally and non-seasonally adjusted.",
+        "release_date": "2026-10-23T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/retailsalesgreatbritainseptember2026timeseries",
+      "date_changes": null,
+      "description": {
+        "title": "Retail sales, Great Britain: September 2026 time series",
+        "summary": "A first estimate of retail sales in volume and value terms, seasonally and non-seasonally adjusted.",
+        "release_date": "2026-10-23T06:00:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/estimatesoftheveryoldincludingcentenariansuk2002to2025",
+      "date_changes": null,
+      "description": {
+        "title": "Estimates of the very old, including centenarians, UK: 2002 to 2025",
+        "summary": "Annual mid-year population estimates of people aged 90 years and over by sex and single year of age to 105 years and over, and comparisons between UK countries.",
+        "release_date": "2026-10-23T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false,
+        "provisional_date": "October 2026"
+      }
+    },
+    {
+      "uri": "/releases/indicatorsofhousebuildingukpermanentdwellingsstartedandcompletedbycountryq22026",
+      "date_changes": null,
+      "description": {
+        "title": "Indicators of house building, UK: permanent dwellings started and completed by country: Q2 2026",
+        "summary": "Starts and completions of new build dwellings in the UK, on a quarterly and annual basis, time series data.",
+        "release_date": "2026-10-23T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uktradeinservicesbypartnercountryapriltojune2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK trade in services by partner country: April to June 2026",
+        "summary": "Trade in services data, including a breakdown of exports and imports by country and geographical region, EU and non-EU. Official statistics in development.",
+        "release_date": "2026-10-23T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/constructionstatisticsgreatbritain2025",
+      "date_changes": null,
+      "description": {
+        "title": "Construction statistics, Great Britain: 2025",
+        "summary": "Statistics on the construction industry, including value of output, new orders by sector, number of firms and total employment, insolvencies and construction Output Price Indices.",
+        "release_date": "2026-10-23T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/labourdemandvolumesbystandardoccupationclassificationsoc2020ukjanuary2017toseptember2026",
+      "date_changes": null,
+      "description": {
+        "title": "Labour demand volumes by Standard Occupation Classification (SOC 2020), UK: January 2017 to September 2026",
+        "summary": "These tables contain the number of online job adverts split by different geographies and occupation (SOC 2020).",
+        "release_date": "2026-10-23T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    },
+    {
+      "uri": "/releases/uktradequarterlygoodsandservicesapriltojune2026",
+      "date_changes": null,
+      "description": {
+        "title": "UK trade, quarterly goods and services: April to June 2026",
+        "summary": "Quarterly estimates of total trade, trade in goods, and trade in services by country.",
+        "release_date": "2026-10-23T08:30:00.000Z",
+        "published": true,
+        "cancelled": false,
+        "finalised": true,
+        "postponed": false,
+        "census": false
+      }
+    }
+  ]
+}

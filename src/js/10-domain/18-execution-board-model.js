@@ -38,6 +38,20 @@
     const diagnostics=fx.state.executionDiagnostics?.({...scope,instrumentId});
     return {id:instrumentId,name:ins.name,banned:!!ins.banned,unlocked:!!ins.unlocked,restriction:ins.banReason||null,price,contract:clone(contract),conversion:clone(conversion),atr:clone(observation?.atr||null),observation:clone(observation),dailyReference:clone(daily),diagnostics:diagnostics?.status==='OK'?clone(diagnostics.value):null};
   }
+  // Small readonly projection of the same effective price used by the Board.
+  // It avoids constructing rows, operation history or financial aggregates.
+  function priceReferences({accountId,periodId,instrumentIds=[]}={}){
+    const scope={accountId,periodId};
+    if(!fx.state.supported()||!text(accountId)||!text(periodId)||!Array.isArray(instrumentIds)||
+      fx.state.accountContext(scope)?.status!=='OK')throw new Error('Contexto das referências indisponível.');
+    const context=fx.state.recordContext(scope),account=context?.accountInputs||null;
+    const wanted=[...new Set(instrumentIds.map(value=>root.instrumentId(value)))];
+    return wanted.map(id=>{
+      const ins=(S.instruments||[]).find(item=>root.instrumentId(item.name)===id);
+      const item=ins?prepareInstrument(ins,account,scope):null;
+      return {id,name:item?.name||id,price:item?clone(item.price):null};
+    });
+  }
   function resolveConversions(instruments,account){
     const graph=new Map(),currencies=new Set(['USD','BRL','EUR','GBP','JPY','CHF','CAD','AUD','NZD']);
     const pair=i=>{const quote=typeof QUOTE_CCY==='object'?QUOTE_CCY[i.name]:null;return {base:currencies.has(i.name.slice(0,3))?i.name.slice(0,3):i.id,quote};};
@@ -372,5 +386,5 @@
       selection:{accountId,periodId,operationId:scope.operationId,accountIndex,reason,requiresSelection:!accountId,requiresObservation:!account,lockedToOperation:false,accounts},
       rows:allRows,phases:clone(phases),instruments:resolveConversions((source.instruments||[]).map(i=>prepareInstrument(i,account,scope)),account||{currency:contextPeriod?.currency||null}),normative,findings,supported:fx.state.supported()});
   }
-  fx.executionBoard=Object.freeze({read,project,operationRecords,closedNetResult,instrumentInputs,previewOrder:orderGeometry});
+  fx.executionBoard=Object.freeze({read,project,operationRecords,closedNetResult,instrumentInputs,priceReferences,previewOrder:orderGeometry});
 })(globalThis);

@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "scope": "Coverage audit and supplemental four-mode interaction only; not an aggregate FULL verdict",
+  "candidate_build": "8b0b231a1b0c41b7",
+  "source_hashes_match_freeze": true,
+  "source_unchanged_during_probe": true,
+  "files": {
+    "COVERAGE.md": "59cfebb4a43c5ee1d5442a72a950066082d998a4694876c7fa85ed8c9d85e613",
+    "wiring-and-freeze.json": "f19f0aec630ae387973ce8cf20b50e3741476e63016ad1ea158bb66c18ef728b",
+    "distribution-results.json": "db4e2afd16df86fe0e3e86f75f7c9b538098d47fb58d79c2fc1dac41c809b603",
+    "distribution_probe.py": "9decf26f587ea382f8f2c4516712b4668898141141e5fe68c06c796109476ac6"
+  }
+}

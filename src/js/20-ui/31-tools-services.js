@@ -113,6 +113,7 @@
   }
   function selectView(next){
     if(!['calendar','market-hours','nocuda','leverage','normative','minigames','galton','time-twins','capital-currents'].includes(next))return;
+    if(view==='calendar'&&next!=='calendar')window.JPWCalendar?.deactivateWorkspace?.();
     if(view==='market-hours'&&next!=='market-hours')window.JPWMarketHours?.deactivate();
     if(view==='capital-currents'&&next!=='capital-currents')window.JPWCapitalCurrents?.deactivate(el('toolsCapitalCurrentsSlot'));
     if(view==='time-twins'&&next!=='time-twins')window.JPWTimeTwins?.deactivate(el('toolsTimeTwinsSlot'));
@@ -122,7 +123,7 @@
     document.querySelectorAll('#tools [data-tools-view]').forEach(node=>{
       node.hidden=node.dataset.toolsView!==next;node.inert=node.hidden;
     });
-    if(next==='calendar'&&window.JPWEcalUI)window.JPWEcalUI.render();
+    if(next==='calendar')window.JPWCalendar?.mountWorkspace();
     if(next==='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.enter();
   }
   function status(message,bad){el('nocudaStatus').textContent=message;el('nocudaStatus').dataset.state=bad?'error':'ok';}

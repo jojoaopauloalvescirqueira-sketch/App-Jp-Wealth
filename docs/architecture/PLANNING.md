@@ -111,3 +111,12 @@ A apresentação usa somente estilos locais: todas as janelas centralizadas (tol
 Moeda/valor têm controles alinhados mesmo com rótulo quebrado; opcional permanece no rótulo sem linha artificial. Fechar44px com título completo, cabeçalho/ações acessíveis durante rolagem. Estados incompletos explicam a falta uma vez; resultado numérico recebe o destaque. A legenda da Parada representa as linhas reais, e o rodapé identifica a data calculada/selecionada. Nenhuma dessas atualizações altera perguntas, cálculos, dados, seleção, rascunhos ou confirmação.
 
 Provas: regressões permanentes de proporções, matriz de temas/layouts/resize/zoom, crítica independente e FULL do pacote final, com limites e estado em ../validation/planning-proportions-20261021/README.md.
+
+
+## Consulta de ações e entrada contextual —22/10/2026
+
+`JPWPlanning.queries.pendingActions({month}={})` retorna disponibilidade, contas/planos, meses/códigos, quantidade, primeiro mês e dependência anterior. Faz uma checagem estrutural apenas dos campos que lê: não chama validateEnvelope/timeline, não certifica saldos ou homologação geral, não usa cotação e não escreve. Incompatibilidade não se torna lista vazia saudável. Somente fatos vigentes do passado (resultado explícito inclusive0, fluxos positivos atuais e fechamento invalidado) de contas ativas entram; contas arquivadas, projeções e lançamentos atualmente anulados ficam fora. O primeiro anterior sem fechamento pode ser dependência sem fato próprio.
+
+`JPWPlanning.ui.openMonthlyContext({accountId,planId,month})` retorna Promise<boolean>. Respeita edições e diálogos existentes, revalida token/identidade/disponibilidade depois do consentimento e só então seleciona conta/mês. Ajusta filtros em memória com explicação, preserva preferências salvas e foca o mês. Alteração do contexto exige novo clique; nenhum fluxo grava automaticamente. A invalidação opcional da fonte planning ocorre apenas depois da adoção confirmada do escritor existente, com falhas do observador isoladas.
+
+Contrato da central e limites em [NOTIFICATION-CENTER](NOTIFICATION-CENTER.md).

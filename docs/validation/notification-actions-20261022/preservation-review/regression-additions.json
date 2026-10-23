@@ -1,0 +1,274 @@
+[
+  {
+    "id": "notification-actions-20261022-active-count",
+    "state": "fixed_regression",
+    "summary": "Contagem reflete ações ativas, sem lidas ou agenda.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível actionable-only-unresolved-count; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Contagem reflete ações ativas, sem lidas ou agenda.",
+    "cause": "Ler/marcar lida antes escondia condições persistentes.",
+    "protection": {
+      "path": "tools/notification_center_test.py",
+      "case": "actionable-only-unresolved-count",
+      "command": "python3 tools/notification_center_test.py",
+      "full_gate": {
+        "included": true,
+        "check_id": "notification-center"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-previous-diagnosis",
+    "state": "fixed_regression",
+    "summary": "Falha da fonte conserva diagnóstico não atual sem dupla contagem.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível replacement-diagnosis-generation; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Falha da fonte conserva diagnóstico não atual sem dupla contagem.",
+    "cause": "Resumo de falha perdia detalhes e proveniência do mês anterior.",
+    "protection": {
+      "path": "tools/notification_center_test.py",
+      "case": "replacement-diagnosis-generation",
+      "command": "python3 tools/notification_center_test.py",
+      "full_gate": {
+        "included": true,
+        "check_id": "notification-center"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-empty-forex",
+    "state": "fixed_regression",
+    "summary": "Períodos Forex sem fatos não geram tarefa de conciliação.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível forex-empty-context-no-action; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Períodos Forex sem fatos não geram tarefa de conciliação.",
+    "cause": "Finding canônico de observação ausente era promovido sem conferir presença de fato.",
+    "protection": {
+      "path": "tools/notification_center_test.py",
+      "case": "forex-empty-context-no-action",
+      "command": "python3 tools/notification_center_test.py",
+      "full_gate": {
+        "included": true,
+        "check_id": "notification-center"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-stale-guard",
+    "state": "fixed_regression",
+    "summary": "Alteração durante consentimento impede navegação e seleção do alvo antigo.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível forex-guard-generation-before-navigation; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Alteração durante consentimento impede navegação e seleção do alvo antigo.",
+    "cause": "A validade era conferida só depois da navegação aceita pelo roteador.",
+    "protection": {
+      "path": "tools/notification_center_test.py",
+      "case": "forex-guard-generation-before-navigation",
+      "command": "python3 tools/notification_center_test.py",
+      "full_gate": {
+        "included": true,
+        "check_id": "notification-center"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-reference-provenance",
+    "state": "fixed_regression",
+    "summary": "Aviso considera a referência efetivamente usada pela Board.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível forex-price-reference-provenance; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Aviso considera a referência efetivamente usada pela Board.",
+    "cause": "Idade do cadastro legado sobrescrevia a observação manual ou referência diária vigente.",
+    "protection": {
+      "path": "tools/notification_center_test.py",
+      "case": "forex-price-reference-provenance",
+      "command": "python3 tools/notification_center_test.py",
+      "full_gate": {
+        "included": true,
+        "check_id": "notification-center"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-local-month-boundary",
+    "state": "fixed_regression",
+    "summary": "Virada local atualiza pendências sem gravação financeira.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível planning-local-month-boundary; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Virada local atualiza pendências sem gravação financeira.",
+    "cause": "Nova regra de pertinência temporal exige atualização na meia-noite local e retomada.",
+    "protection": {
+      "path": "tools/notification_center_test.py",
+      "case": "planning-local-month-boundary",
+      "command": "python3 tools/notification_center_test.py",
+      "full_gate": {
+        "included": true,
+        "check_id": "notification-center"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-long-context",
+    "state": "fixed_regression",
+    "summary": "Nome sem espaços cabe na área interna da central em320px.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível notification-long-context-wrap; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Nome sem espaços cabe na área interna da central em320px.",
+    "cause": "Texto de contexto sem wrap vazava do scroll interno apesar da caixa externa caber.",
+    "protection": {
+      "path": "tools/notification_visual_quality_test.py",
+      "case": "notification-long-context-wrap",
+      "command": "python3 tools/ui_visual_quality_test.py --case notification-regressions",
+      "full_gate": {
+        "included": true,
+        "check_id": "ui-visual-quality"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "9834b8105abbd8cc7c6155b72dcbbc85ccf2cdcd9d89b8a93392a12a59152f0a",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  },
+  {
+    "id": "notification-actions-20261022-planning-factual-query",
+    "state": "fixed_regression",
+    "summary": "Consulta Planning distingue ausência, zero, anulados e dependência sem calcular120projeções.",
+    "source": {
+      "path": "docs/architecture/NOTIFICATION-CENTER.md",
+      "section": "Contrato atual de22/10/2026: catálogo, pertinência, interface e ciclo"
+    },
+    "stimulus": "Cenário sintético reproduzível PLNOTICE-Q02; referência RED/contraprova na campanha de22/10/2026.",
+    "expected": "Consulta Planning distingue ausência, zero, anulados e dependência sem calcular120projeções.",
+    "cause": "Não existia projeção factual de ações; pending genérico incluía projeções.",
+    "protection": {
+      "path": "tools/planning_state_test.js",
+      "case": "PLNOTICE-Q02",
+      "command": "node tools/planning_state_test.js",
+      "full_gate": {
+        "included": true,
+        "check_id": "planning-state"
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/validation/notification-actions-20261022/README.md",
+        "result": "NOT_RUN",
+        "note": "Focais atuais registrados em recibos da campanha; versão final e FULL recebem evidência própria. Não substitui incidentes históricos."
+      }
+    ],
+    "last_verified": {
+      "date": "2026-10-22",
+      "build": "SOURCE_ONLY; final frozen distribution pending",
+      "test_sha256": "27091a67144da2e2c84d8d095de3aa931a69aa3c1184512d450d1a55a90dad68",
+      "scope": "Source focal and counterproof; NOT final full or human acceptance"
+    }
+  }
+]

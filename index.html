@@ -197,6 +197,10 @@ SOFTWARE.
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas"><span class="shell-menu-glyph" aria-hidden="true"><i></i><i></i></span><span class="shell-menu-label">Menu</span></button>
+    <button type="button" class="header-action" id="headerCalendarBtn" title="Calendário e Agenda" aria-label="Abrir Calendário e Agenda" aria-controls="calendarDialog" aria-haspopup="dialog" aria-expanded="false">
+      <!-- Calendar glyph authored for JP Wealth using the existing shell stroke style. -->
+      <svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 11h18M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h.01"/></svg>
+    </button>
     <button type="button" class="header-action notification-trigger" id="headerNotificationsBtn" title="Notificações" aria-label="Notificações" aria-controls="notificationCenter" aria-haspopup="dialog" aria-expanded="false">
       <span class="notification-symbol"><svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-bell"/></svg><span id="notificationBadge" aria-hidden="true" hidden></span></span>
     </button>
@@ -1217,26 +1221,7 @@ SOFTWARE.
   </section>
 
   <section class="screen" id="tools" aria-label="Ferramentas e Serviços">
-    <div class="tools-view" id="execEcal" data-tools-view="calendar" role="region" aria-label="Calendário Econômico">
-      <div class="card ecal-ws">
-        <div class="ecal-ws-head">
-          <span class="cp-kicker">AGENDA · SEMANA CORRENTE</span><h2>Calendário Econômico</h2>
-          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span><p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
-        </div>
-        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
-          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
-          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
-          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
-          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
-          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
-        </div>
-        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
-        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
-        <p class="ecal-ws-foot">
-          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
-        </p>
-      </div>
-    </div>
+    <div class="tools-view" id="execEcal" data-tools-view="calendar" role="region" aria-label="Calendário e Agenda"></div>
     <div class="tools-view nocuda-tool" id="nocudaTool" data-tools-view="nocuda" hidden inert>
       <div class="nocuda-heading"><span class="cp-kicker">FERRAMENTAS E SERVIÇOS</span><h1 data-route-focus>Nocuda Tool</h1><p>Indicadores para TradingView e MetaTrader 5, com transferência dos parâmetros do canal.</p></div>
       <div class="nocuda-downloads">
@@ -2470,6 +2455,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
 <script src="src/js/00-core/02-platforms.js"></script>
 <script src="src/js/00-core/03-default-state.js"></script>
 <script src="src/js/00-core/04-persistence.js"></script>
+<script src="src/js/10-domain/19-personal-agenda.js"></script>
 <script src="src/js/00-core/08-module-availability.js"></script>
 <script src="src/js/00-core/07-workspace-backup.js"></script>
 <script src="src/js/00-core/05-helpers.js"></script>
@@ -2517,6 +2503,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
 <script src="src/js/40-app/13-dashboard-layout.js"></script>
 <script src="src/js/40-app/14-mvp-notes.js"></script>
 <script src="src/js/40-app/15-ff-news.js"></script>
+<script src="src/js/40-app/16-monthly-economic-data.js"></script>
 <script src="src/js/40-app/16-storage-governance.js"></script>
 <script src="src/js/40-app/17-economic-calendar.js"></script>
 <script src="src/vendor/planck/planck-1.5.0.min.js"></script>
@@ -2546,13 +2533,14 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
 <script src="src/js/20-ui/24-alladin-views.js"></script>
 <script src="src/js/20-ui/25-dash-macro.js"></script>
 <dialog id="notificationCenter" aria-labelledby="notificationTitle" aria-describedby="notificationPrivacy">
-  <div class="notification-heading"><div><p class="notification-eyebrow">JP WEALTH</p><h2 id="notificationTitle">Notificações</h2></div><button type="button" id="notificationClose" aria-label="Fechar notificações">✕</button></div>
+  <div class="notification-heading"><div><p class="notification-eyebrow">JP WEALTH</p><h2 id="notificationTitle">Notificações</h2></div><button type="button" id="notificationClose" aria-label="Fechar notificações"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
   <p id="notificationSummary" role="status" aria-live="polite"></p>
-  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="planning">Planejamento</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label><button type="button" id="notificationReadAll">Marcar todas como lidas</button></div>
-  <div class="notification-scroll"><p id="notificationEmpty" hidden>Nenhuma notificação nesta área.</p><ul id="notificationList"></ul></div>
-  <p id="notificationPrivacy">Avisos ativos e mensagens desta sessão. Ler não resolve a condição. O histórico é local, temporário e não permanece após recarregar; não há alertas com o aplicativo fechado.</p>
+  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="planning">Planejamento</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label></div>
+  <div class="notification-scroll"><p id="notificationEmpty" hidden>Nenhuma ação pendente identificada nesta área.</p><ul id="notificationList"></ul></div>
+  <p id="notificationPrivacy">A contagem acompanha pendências ativas. Consultar um aviso não resolve sua causa. Sem alertas com o aplicativo fechado.</p>
 </dialog>
 <script src="src/js/40-app/18-notification-center.js"></script>
+<script src="src/js/40-app/19-calendar-agenda.js"></script>
 <script src="src/js/20-ui/26-forex-engine-views.js"></script>
 <script src="src/js/10-domain/17-fx-consolidated-model.js"></script>
 <script src="src/js/40-app/24-fx-consolidated-import.js"></script>

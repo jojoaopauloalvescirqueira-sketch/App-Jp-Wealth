@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "scope": "official calendar integration must run before browser disposal",
+  "calls": [
+    [
+      "browser.close",
+      816
+    ],
+    [
+      "calendar_visual.matrix",
+      815
+    ]
+  ]
+}

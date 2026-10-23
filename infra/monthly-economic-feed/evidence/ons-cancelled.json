@@ -1,0 +1,25 @@
+{
+  "took": 5,
+  "breakdown": {
+    "total": 1,
+    "confirmed": 16,
+    "published": 67,
+    "cancelled": 1
+  },
+  "releases": [
+    {
+      "uri": "/releases/childhoodvulnerabilitytovictimisationinenglandandwalescombinedyearsendingmarch2023tomarch2025",
+      "date_changes": null,
+      "description": {
+        "title": "Childhood vulnerability to victimisation in England and Wales: combined years ending March 2023 to March 2025",
+        "summary": "Victimisation and negative behaviours of children aged 10 to 15 years living in a household with an adult who reported experiencing domestic abuse, substance misuse and mental ill-health (the so-called \"toxic trio\" factors) based on findings from the Crime Survey for England and Wales (CSEW).",
+        "release_date": "2026-10-29T09:30:00.000Z",
+        "published": false,
+        "cancelled": true,
+        "finalised": false,
+        "postponed": false,
+        "census": false
+      }
+    }
+  ]
+}

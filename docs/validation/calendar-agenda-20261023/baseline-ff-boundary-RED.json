@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {
+      "case": "ff-does-not-render-monthly",
+      "result": "PRODUCT_FAIL",
+      "calls": 1
+    },
+    {
+      "case": "weekly-does-not-stack-over-monthly",
+      "result": "PRODUCT_FAIL",
+      "weekly_open_under_native": true
+    }
+  ]
+}

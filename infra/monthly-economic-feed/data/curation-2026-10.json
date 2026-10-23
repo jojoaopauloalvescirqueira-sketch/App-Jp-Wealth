@@ -1,0 +1,388 @@
+{
+  "reviewMethod": "AI-assisted documentary curation of official source schedules; not human acceptance",
+  "ons": {
+    "selectedUris": [
+      "/releases/economicactivityandsocialchangeintheukrealtimeindicators1october2026",
+      "/releases/fundedoccupationalpensionschemesintheukoctober2025tomarch2026",
+      "/releases/averagehouseholdincomeukfinancialyearending2025",
+      "/releases/businessinsightsandimpactontheukeconomy8october2026",
+      "/releases/economicactivityandsocialchangeintheukrealtimeindicators8october2026",
+      "/releases/trendsinukindustryconcentration2007to2025",
+      "/releases/constructionoutputingreatbritainaugust2026",
+      "/releases/uktradeaugust2026",
+      "/releases/indexofservicesukaugust2026",
+      "/releases/gdpmonthlyestimateukaugust2026",
+      "/releases/indexofproductionukaugust2026",
+      "/releases/economicactivityandsocialchangeintheukrealtimeindicators15october2026",
+      "/releases/labourmarketintheregionsoftheukoctober2026",
+      "/releases/earningsandemploymentfrompayasyouearnrealtimeinformationukoctober2026",
+      "/releases/uklabourmarketoctober2026",
+      "/releases/producerpriceinflationukseptember2026includingservicesjulytoseptember2026",
+      "/releases/consumerpriceinflationukseptember2026",
+      "/releases/publicsectorfinancesukseptember2026",
+      "/releases/privaterentandhousepricesukoctober2026",
+      "/releases/employeeearningsintheuk2026",
+      "/releases/businessinsightsandimpactontheukeconomy22october2026",
+      "/releases/economicactivityandsocialchangeintheukrealtimeindicators22october2026",
+      "/releases/retailsalesgreatbritainseptember2026",
+      "/releases/indicatorsofhousebuildingukpermanentdwellingsstartedandcompletedbycountryq22026",
+      "/releases/uktradeinservicesbypartnercountryapriltojune2026",
+      "/releases/constructionstatisticsgreatbritain2025",
+      "/releases/labourdemandvolumesbystandardoccupationclassificationsoc2020ukjanuary2017toseptember2026",
+      "/releases/uktradequarterlygoodsandservicesapriltojune2026",
+      "/releases/economicactivityandsocialchangeintheukrealtimeindicators29october2026",
+      "/releases/businessdemographyquarterlyukjulytoseptember2026",
+      "/releases/uknationalaccountsthebluebook2026",
+      "/releases/inputoutputsupplyandusetables2026edition",
+      "/releases/gdprevisionsinbluebook2026",
+      "/releases/annualgrossfixedcapitalformationbyindustryandassetoctober2026",
+      "/releases/ukbalanceofpaymentsthepinkbook2026",
+      "/releases/supplyanduseofproductsandindustrygvaukexperimental2024",
+      "/releases/inputoutputsupplyandusetablessummarytables2026"
+    ],
+    "excluded": [
+      {
+        "uri": "/releases/populationestimatesfortheukenglandwalesscotlandandnorthernirelandmid2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/childrenlivinginlongtermworklesshouseholdsintheuk2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/deathsofhomelesspeopleinenglandandwales2025registrations",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/unexplaineddeathsininfancyenglandandwales2024",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/referencetablescomponentapproachtolabourproductivityuk1997to2024",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/adultsmokinghabitsintheuk2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending25september2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/experiencesofnhshealthcareservicesinengland8october2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/uktradedevelopmentplanupdateoctober2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/theimpactofelectivewaitingtimesonbenefitsreceiptenglandapril2014toapril2024",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/suicidesinenglandandwales1981to2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/ukarmedforcesveteransenglandandwales2024and2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending2october2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/onssurveysandeconomicstatisticsimprovementplanquarterlyprogressupdateoctober2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/indexofproductionukaugust2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/grossvalueaddedindustryweightstimeseriesdatasetconsistentwithbluebook2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/gdpmonthlyestimateukaugust2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/indexofservicesukaugust2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/uktradeaugust2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/traveltrends2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/deathsregisteredmonthlyinenglandandwalesseptember2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/improvingourtravelandtourismstatisticsjuly2026update",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/publicopinionsandsocialtrendsgreatbritainseptember2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/quarterlysuicidedeathregistrationsinengland2001to2025registrationsandquarter1jantomartoquarter2aprtojune2026provisionaldata",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/labourforcesurveyqualityupdateoctober2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/labourmarketstatisticstimeseriesoctober2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/publicsectorfinancesukseptember2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/producerpriceinflationukseptember2026includingservicesjulytoseptember2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/consumerpriceinflationukseptember2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending9october2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/contributionstothe12monthrateofcpihbyimportintensityseptember2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/offencesinvolvingtheuseofweaponsdatatablesyearendingmarch2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/thenatureofviolentcrimeappendixtablesyearendingmarch2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/timeuseintheuk",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/fraudandcomputermisuseinenglandandwalesappendixtablesyearendingmarch2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/crimeinenglandandwalesyearendingjune2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/propertycrimetablesenglandandwalesyearendingmarch2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/retailsalesgreatbritainseptember2026timeseries",
+        "reason": "Companion time series of same release"
+      },
+      {
+        "uri": "/releases/estimatesoftheveryoldincludingcentenariansuk2002to2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/greenhousegasemissionsukprovisionalestimates2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/deathsregisteredweeklyinenglandandwalesprovisionalweekending16october2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/grossfixedcapitalformationdeflatorcatalogue",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/cpatocoicopconverterforhouseholdfinalconsumptionexpenditure",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/supplyandusetablesdatasourcescatalogue2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/quarterlybirthsinenglandandwalesprovisional",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/quarterlyneonataldeathsinenglandandwalesprovisionaljanuary2019tomarch2026",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      },
+      {
+        "uri": "/releases/childhoodvulnerabilitytovictimisationinenglandandwalescombinedyearsendingmarch2023tomarch2025",
+        "reason": "Outside explicit JP Wealth economic release catalogue (social, health, methods or catalogue metadata)"
+      }
+    ],
+    "scope": "Only these explicitly listed economic releases; covers full source month across published/upcoming/cancelled queries"
+  },
+  "sbj": [
+    {
+      "id": "sbj:cpi-tokyo:2026-09",
+      "title": "Consumer Price Index, Tokyo preliminary — September 2026",
+      "date": "2026-10-02",
+      "impact": "high",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "sourceUid": "cpi-tokyo:2026-09",
+      "documentaryEvidence": "sbj-cpi"
+    },
+    {
+      "id": "sbj:cpi-japan:2026-09",
+      "title": "Consumer Price Index, Japan — September 2026",
+      "date": "2026-10-23",
+      "impact": "high",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "sourceUid": "cpi-japan:2026-09",
+      "documentaryEvidence": "sbj-cpi"
+    },
+    {
+      "id": "sbj:cpi-tokyo:2026-10",
+      "title": "Consumer Price Index, Tokyo preliminary — October 2026",
+      "date": "2026-10-30",
+      "impact": "high",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "sourceUid": "cpi-tokyo:2026-10",
+      "documentaryEvidence": "sbj-cpi"
+    },
+    {
+      "id": "sbj:labour-force:2026-08",
+      "title": "Labour Force Survey, basic tabulation — August 2026",
+      "date": "2026-10-02",
+      "impact": "medium",
+      "sourceUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+      "sourceUid": "labour-force:2026-08",
+      "documentaryEvidence": "sbj-labour"
+    },
+    {
+      "id": "sbj:labour-force:2026-09",
+      "title": "Labour Force Survey, basic tabulation — September and Q3 2026",
+      "date": "2026-10-30",
+      "impact": "medium",
+      "sourceUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+      "sourceUid": "labour-force:2026-09",
+      "documentaryEvidence": "sbj-labour"
+    },
+    {
+      "id": "sbj:family-expenditure:2026-08",
+      "title": "Family Income and Expenditure, two-or-more-person households — August 2026",
+      "date": "2026-10-09",
+      "impact": "medium",
+      "sourceUrl": "https://www.stat.go.jp/english/data/kakei/1562.html",
+      "sourceUid": "family-expenditure:2026-08",
+      "documentaryEvidence": "sbj-family"
+    },
+    {
+      "id": "sbj:savings-liabilities:2026-Q2",
+      "title": "Savings and Liabilities — Q2 2026",
+      "date": "2026-10-23",
+      "impact": "low",
+      "sourceUrl": "https://www.stat.go.jp/english/data/sav/2.html",
+      "sourceUid": "savings-liabilities:2026-Q2",
+      "documentaryEvidence": "sbj-savings"
+    },
+    {
+      "id": "sbj:business-structure:2025-third",
+      "title": "Annual Business Survey, third tabulation across industries (establishments) — 2025",
+      "date": "2026-10-28",
+      "impact": "low",
+      "sourceUrl": "https://www.stat.go.jp/english/data/kkj/schedule.html",
+      "sourceUid": "business-structure:2025-third",
+      "documentaryEvidence": "sbj-business"
+    },
+    {
+      "id": "sbj:population:2026-10",
+      "title": "Population Estimates, monthly report — October 2026",
+      "date": "2026-10-20",
+      "impact": "low",
+      "sourceUrl": "https://www.stat.go.jp/english/data/jinsui/3.htm",
+      "sourceUid": "population:2026-10",
+      "documentaryEvidence": "sbj-population"
+    }
+  ],
+  "statsnz": [
+    {
+      "id": "statsnz:cpi:2026-Q3",
+      "sourceUid": "cpi:2026-Q3",
+      "title": "Consumers price index: September 2026 quarter",
+      "date": "2026-10-22",
+      "at": "2026-10-21T21:45:00Z",
+      "precision": "instant",
+      "impact": "high",
+      "status": "published",
+      "documentaryEvidence": "statsnz-cpi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+      "reviewedAt": "2026-10-23T15:51:12Z",
+      "sourceTimeLabel": "10:45am",
+      "timeZoneBasis": "Publisher-local New Zealand release time; Pacific/Auckland"
+    },
+    {
+      "id": "statsnz:spi:2026-09",
+      "sourceUid": "spi:2026-09",
+      "title": "Selected price indexes: September 2026",
+      "date": "2026-10-16",
+      "at": "2026-10-15T21:45:00Z",
+      "precision": "instant",
+      "impact": "medium",
+      "status": "published",
+      "documentaryEvidence": "statsnz-spi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "reviewedAt": "2026-10-23T15:51:14Z",
+      "sourceTimeLabel": "10:45am",
+      "timeZoneBasis": "Publisher-local New Zealand release time; Pacific/Auckland"
+    },
+    {
+      "id": "statsnz:spi:2026-10",
+      "sourceUid": "spi:2026-10",
+      "title": "Selected price indexes: October 2026",
+      "date": "2026-11-17",
+      "at": null,
+      "precision": "date",
+      "impact": "medium",
+      "status": "scheduled",
+      "documentaryEvidence": "statsnz-spi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "reviewedAt": "2026-10-23T15:51:14Z",
+      "sourceTimeLabel": null,
+      "timeZoneBasis": "Date only; announcement gives no release time"
+    }
+  ],
+  "externalDocumentaryEvidence": [],
+  "licenseReviews": {
+    "statsnz": {
+      "evidence": "statsnz-license-rendered",
+      "basis": "Explicit CC BY 4.0 licence for Stats NZ-produced content; copying, distribution, adaptation permitted with attribution; no images/logos/third party content used",
+      "status": "verified"
+    },
+    "sbj": {
+      "evidence": "sbj-license",
+      "basis": "PDL1.0 permits commercial copying/public transmission/modification; source and modification attribution required",
+      "status": "verified"
+    },
+    "ons": {
+      "evidence": "ons-license",
+      "basis": "OGL for ONS-produced release metadata, excludes images/third-party content",
+      "status": "verified"
+    },
+    "bea": {
+      "evidence": "bea-license",
+      "basis": "Public domain unless otherwise stated; source schedule contains no overriding notice",
+      "status": "verified"
+    }
+  }
+}

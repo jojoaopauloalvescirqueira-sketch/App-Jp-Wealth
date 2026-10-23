@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-23T15:46:29Z",
+  "events": [
+    {
+      "id": "bea:e5470114-6282-4e32-894d-61734b5e353e",
+      "title": "U.S. International Trade in Goods and Services, August 2026",
+      "currency": "USD",
+      "impact": "medium",
+      "date": "2026-10-06",
+      "at": "2026-10-06T12:30:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "e5470114-6282-4e32-894d-61734b5e353e",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:300ed1bc-933c-4c2b-8f89-336010269bbd",
+      "title": "Services Supplied Through Affiliates, 2024",
+      "currency": "USD",
+      "impact": "low",
+      "date": "2026-10-06",
+      "at": "2026-10-06T14:00:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "300ed1bc-933c-4c2b-8f89-336010269bbd",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:aec00139-d1ff-483c-b6a3-d722bc2d2591",
+      "title": "Experimental Research and Development Economic Statistics, U.S. and States, 2024",
+      "currency": "USD",
+      "impact": "low",
+      "date": "2026-10-22",
+      "at": "2026-10-22T14:00:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20261022T133728Z",
+      "sourceUid": "aec00139-d1ff-483c-b6a3-d722bc2d2591",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:afcb09fd-b564-4125-88aa-a0b23b358a6f",
+      "title": "GDP (Advance Estimate), 3rd Quarter 2026",
+      "currency": "USD",
+      "impact": "high",
+      "date": "2026-10-29",
+      "at": "2026-10-29T12:30:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "afcb09fd-b564-4125-88aa-a0b23b358a6f",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:ff8bd8ad-bb92-43c5-8a30-7e7b5baa33c2",
+      "title": "Personal Income and Outlays, September 2026",
+      "currency": "USD",
+      "impact": "high",
+      "date": "2026-10-29",
+      "at": "2026-10-29T12:30:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "ff8bd8ad-bb92-43c5-8a30-7e7b5baa33c2",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    }
+  ],
+  "provenance": {
+    "sourceId": "bea",
+    "sourceUrl": "https://www.bea.gov/news/schedule/ics/online-calendar-subscription.ics",
+    "licenseUrl": "https://www.bea.gov/help/faq/147",
+    "capturedAt": "2026-10-23T15:46:29Z",
+    "normalizedAt": "2026-10-23T15:46:29Z",
+    "method": "explicit-official-GET",
+    "sha256": "81be5c35e43d4a5209536a542012ef406b66a20db7d4e065cf0f73f8d5e6a81d",
+    "fullSourceEventCount": 168,
+    "sourceRange": {
+      "from": "2025-01-07",
+      "to": "2027-12-22"
+    }
+  },
+  "coverage": [
+    {
+      "currency": "USD",
+      "sourceId": "bea",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "confirmed",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "reason": "Complete BEA source schedule for this month only; excludes BLS and Federal Reserve."
+    }
+  ]
+}

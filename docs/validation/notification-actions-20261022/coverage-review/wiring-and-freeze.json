@@ -1,0 +1,250 @@
+{
+  "gate_check_count": {
+    "standard": 55,
+    "full": 96
+  },
+  "wiring": {
+    "notification-center": {
+      "standard": false,
+      "full": true,
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/notification_center_test.py"
+      ]
+    },
+    "notification-efficiency": {
+      "standard": false,
+      "full": true,
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/notification_efficiency_test.py"
+      ]
+    },
+    "ui-visual-quality": {
+      "standard": true,
+      "full": true,
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/ui_visual_quality_test.py",
+        "--out",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261022T173536713284/ui-visual-quality"
+      ]
+    },
+    "planning-state": {
+      "standard": true,
+      "full": true,
+      "command": [
+        "node",
+        "tools/planning_state_test.js"
+      ]
+    },
+    "planning-distribution": {
+      "standard": false,
+      "full": true,
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/planning_distribution_test.py"
+      ]
+    },
+    "service-worker-upgrade": {
+      "standard": false,
+      "full": true,
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/service_worker_upgrade_test.py"
+      ]
+    },
+    "build-reproducibility": {
+      "standard": false,
+      "full": true,
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/build_reproducibility_test.py"
+      ]
+    },
+    "module-availability": {
+      "standard": false,
+      "full": false,
+      "command": null
+    }
+  },
+  "notification_visual_required_ids": [
+    "notification-sidebar-light-320x700",
+    "notification-sidebar-dark-320x700",
+    "notification-topbar-light-320x700",
+    "notification-topbar-dark-320x700",
+    "notification-glass-light-320x700",
+    "notification-glass-dark-320x700",
+    "notification-submenu-light-320x700",
+    "notification-submenu-dark-320x700",
+    "notification-sidebar-light-390x844",
+    "notification-sidebar-dark-390x844",
+    "notification-topbar-light-390x844",
+    "notification-topbar-dark-390x844",
+    "notification-glass-light-390x844",
+    "notification-glass-dark-390x844",
+    "notification-submenu-light-390x844",
+    "notification-submenu-dark-390x844",
+    "notification-sidebar-light-1440x900",
+    "notification-sidebar-dark-1440x900",
+    "notification-topbar-light-1440x900",
+    "notification-topbar-dark-1440x900",
+    "notification-glass-light-1440x900",
+    "notification-glass-dark-1440x900",
+    "notification-submenu-light-1440x900",
+    "notification-submenu-dark-1440x900",
+    "notification-sidebar-light-1440x480",
+    "notification-sidebar-dark-1440x480",
+    "notification-topbar-light-1440x480",
+    "notification-topbar-dark-1440x480",
+    "notification-glass-light-1440x480",
+    "notification-glass-dark-1440x480",
+    "notification-submenu-light-1440x480",
+    "notification-submenu-dark-1440x480",
+    "notification-native200-sidebar-light",
+    "notification-native200-sidebar-dark",
+    "notification-native200-topbar-light",
+    "notification-native200-topbar-dark",
+    "notification-native200-glass-light",
+    "notification-native200-glass-dark",
+    "notification-native200-submenu-light",
+    "notification-native200-submenu-dark",
+    "notification-counterproof-inner-svg",
+    "notification-counterproof-overflow",
+    "notification-long-context-wrap",
+    "notification-counterproof-scroll-contents"
+  ],
+  "shared_visual_all_required_count": 322,
+  "frozen_files": {
+    "tools/notification_center_test.py": {
+      "current_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "frozen_sha256": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+      "matches": true
+    },
+    "tools/notification_efficiency_test.py": {
+      "current_sha256": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d",
+      "frozen_sha256": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d",
+      "matches": true
+    },
+    "tools/module_availability_test.py": {
+      "current_sha256": "54cac6f979921a4bb8c35c69d54cc96838c10c8729be869b044958b3f5334a14",
+      "frozen_sha256": "54cac6f979921a4bb8c35c69d54cc96838c10c8729be869b044958b3f5334a14",
+      "matches": true
+    },
+    "tools/quality_gate.py": {
+      "current_sha256": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a",
+      "frozen_sha256": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a",
+      "matches": true
+    },
+    "tools/notification_visual_quality_test.py": {
+      "current_sha256": "9834b8105abbd8cc7c6155b72dcbbc85ccf2cdcd9d89b8a93392a12a59152f0a",
+      "frozen_sha256": "9834b8105abbd8cc7c6155b72dcbbc85ccf2cdcd9d89b8a93392a12a59152f0a",
+      "matches": true
+    },
+    "tools/ui_visual_quality_test.py": {
+      "current_sha256": "3acd6068914f4d38f969d9dcf0d218950b7e6fb2f9e87417ebedcd364fc47709",
+      "frozen_sha256": "3acd6068914f4d38f969d9dcf0d218950b7e6fb2f9e87417ebedcd364fc47709",
+      "matches": true
+    },
+    "tools/planning_state_test.js": {
+      "current_sha256": "27091a67144da2e2c84d8d095de3aa931a69aa3c1184512d450d1a55a90dad68",
+      "frozen_sha256": "27091a67144da2e2c84d8d095de3aa931a69aa3c1184512d450d1a55a90dad68",
+      "matches": true
+    }
+  },
+  "notes": [
+    "Static registration and required-ID enumeration, not execution of these suites.",
+    "Importing module_availability_test elsewhere does not invoke notification_and_suspended_work."
+  ],
+  "retained_focal_results": {
+    "notification-final30-green.json": {
+      "sha256": "1e4c4288b4404998aca9102444d577cbf78e9f9c8cb5905708aee6ac0ace0ca2",
+      "data": {
+        "cases": 30,
+        "counts": {
+          "PASS": 30
+        },
+        "case_ids": [
+          "bell-and-native-dialog",
+          "actionable-only-unresolved-count",
+          "source-failure-recovery",
+          "replacement-diagnosis-generation",
+          "actionable-counterproofs",
+          "frozen-operational-integrity",
+          "forex-empty-context-no-action",
+          "planning-context-dirty-guard",
+          "forex-guard-generation-before-navigation",
+          "planning-local-month-boundary",
+          "forex-price-reference-provenance",
+          "planning-touch-context",
+          "all-areas-filter-dedupe-readonly",
+          "contextual-review-navigation",
+          "resolution-navigation",
+          "calendar-time-threshold-rollover",
+          "calendar-cache-xss",
+          "native-events-confirm-exclusion",
+          "event-area-provenance",
+          "detailed-completion-focus",
+          "alladin-balance-quality",
+          "unknown-persistence-gate",
+          "backup-status-consistency",
+          "replacement-finalization-cleanup",
+          "keyboard-geometry-1440-light",
+          "keyboard-geometry-390-light",
+          "keyboard-geometry-320-light",
+          "keyboard-geometry-1440-dark",
+          "keyboard-geometry-390-dark",
+          "keyboard-geometry-320-dark"
+        ]
+      }
+    },
+    "notification-final20-efficiency-green.json": {
+      "sha256": "59fa5c1b8307bf01f257037190bca58275e9e77d6c91c754c5c8512d78152f4e",
+      "data": {
+        "cases": 20,
+        "counts": {
+          "PASS": 20
+        },
+        "case_ids": [
+          "local-input-no-financial-collectors",
+          "selective-source-coalescing",
+          "planning-source-coalescing",
+          "committed-planning-hook-only",
+          "full-refresh-drains-dirty",
+          "hidden-dom-zero-writes",
+          "immutable-catalog-mounted-once",
+          "hidden-critical-flags",
+          "committed-pf-hook-only",
+          "entry-reads-current-state",
+          "mounted-draft-focus",
+          "moved-clearance-current",
+          "facts-details-on-demand",
+          "budget-real-host",
+          "unavailable-calendar-destination",
+          "context-alias-single-paint",
+          "first-context-entry-expanded",
+          "settings-close-exposure",
+          "first-canonical-summary",
+          "settings-consolidated-inert"
+        ]
+      }
+    },
+    "module-availability-notification-final-green.json": {
+      "sha256": "a3bae494e0cbc919ea5a5e298f92d94ed399bfc0a62bc1c55929ecc023a94218",
+      "data": {
+        "result": "PASS",
+        "cases": [
+          "stale scoped Forex click: frozen guard prevents account/period/data effects; current operational reminders suppressed",
+          "explicit manage/home preserve data; frozen integrity remains in System without operational reminders",
+          "remote Research draft on mobile Glass: Editor stays accessible; home preserves node/value/recoverable work"
+        ]
+      }
+    }
+  },
+  "retained_visual_focal": {
+    "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-notification-actions/visual-second/ui-visual-quality-results.json",
+    "classification": "PASS",
+    "case_count": 42,
+    "source_unchanged": true
+  }
+}

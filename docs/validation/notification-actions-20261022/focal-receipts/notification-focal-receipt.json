@@ -1,0 +1,61 @@
+{
+  "checked_at_utc": "2026-10-22T20:23:52.362762+00:00",
+  "branch": "codex/notificacoes-acoes-20261022",
+  "scope": "Synthetic fresh browser contexts, fixture-backed economic resources; final HTTP modular source only. Official builder/full gate owned by root.",
+  "results": [
+    {
+      "file": "notification-final30-green.json",
+      "result": "PASS",
+      "cases": 30,
+      "exit_code": 0
+    },
+    {
+      "file": "notification-final20-efficiency-green.json",
+      "result": "PASS",
+      "cases": 20,
+      "exit_code": 0
+    },
+    {
+      "file": "module-availability-notification-final-green.json",
+      "result": "PASS",
+      "contexts": 3,
+      "exit_code": 0
+    }
+  ],
+  "observed_after_source_sha256": {
+    "tools/notification_center_test.py": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+    "tools/notification_efficiency_test.py": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d",
+    "tools/module_availability_test.py": "54cac6f979921a4bb8c35c69d54cc96838c10c8729be869b044958b3f5334a14",
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/18-execution-board-model.js": "fa98b0b3f360a1ae2b036ef740fe82c940be4a763f32a81b8f3bb1f8d0192129",
+    "src/styles/app.css": "60787e51e673bf73b1c995706a4cd6965873c314a9c059a89f607d9b366650d5",
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "build-id.js": "09c56eaf76a72c89d19aeeb2936c744fc226bfbe81ad29cef5d7be23749b61c1"
+  },
+  "receipts_sha256": {
+    "notification-final30-green.json": "1e4c4288b4404998aca9102444d577cbf78e9f9c8cb5905708aee6ac0ace0ca2",
+    "notification-final20-efficiency-green.json": "59fa5c1b8307bf01f257037190bca58275e9e77d6c91c754c5c8512d78152f4e",
+    "module-availability-notification-final-green.json": "a3bae494e0cbc919ea5a5e298f92d94ed399bfc0a62bc1c55929ecc023a94218",
+    "notification-test-contract-map.json": "04588c65bbea8cd5a197ba221fe3394652739e9d907f7b315e3c4d687ae754de"
+  },
+  "critical_tests": {
+    "new_actions_count": "never decreased by consultation",
+    "source_failure": "last diagnosis kept without double count or generation leak",
+    "planning": "explicit zero/current month/midnight Sao Paulo/previous dependency/multi-account/cancelled draft guard/touch",
+    "forex": "empty periods excluded; root identity revalidated before navigation; manual-vs-daily-vs-legacy price provenance; scoped CTA",
+    "readonly": "no financial/source storage writes from reading; requests0 in tested queries",
+    "counterproofs": [
+      "hidden unresolved badge",
+      "duplicate cause",
+      "promoted agenda"
+    ]
+  },
+  "not_run_by_this_agent": [
+    "quality_gate full",
+    "official build",
+    "portable/file/PWA final distribution",
+    "human visual acceptance"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "out": "/private/tmp/jpw-calendar-agenda-20261023/visual-today-selection-fix",
+  "cases": [
+    {
+      "id": "calendar-counterproof-today-selection",
+      "classification": "PASS",
+      "criteria": "same state-specific oracle accepts valid and rejects outline/selected-contrast/primary-contrast violations",
+      "started_at": "2026-10-23T16:17:52.299814+00:00",
+      "evidence": {
+        "valid_surface_accepted": true,
+        "deliberate_violation_rejected": "today-selection",
+        "rejections": [
+          "('Unselected today must retain its visible numeral outline', {'selected': [{'date': '2026-10-25', 'background': 'rgb(0, 104, 214)', 'outline': 'none', 'outlineWidth': 3, 'outlineColor': 'rgb(255, 255, 255)'}], 'today': [{'date': '2026-10-23', 'background': 'rgba(0, 0, 0, 0)', 'outline': 'none', 'outlineWidth': 3, 'outlineColor': 'rgb(24, 35, 51)'}]})",
+          "('Calendar selected/primary text contrast below4.5', '#calendarDialog .calendar-panel .calendar-grid [aria-selected=\"true\"] .calendar-day-number', {'ratio': 2.8311866485378396, 'fg': [255, 255, 255], 'bg': [64, 156, 255]})",
+          "('Calendar selected/primary text contrast below4.5', '#calendarDialog .calendar-panel .calendar-form .calendar-primary', {'ratio': 2.8311866485378396, 'fg': [255, 255, 255], 'bg': [64, 156, 255]})"
+        ]
+      },
+      "finished_at": "2026-10-23T16:17:53.688045+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "calendar-counterproof-today-selection"
+  ],
+  "source_hashes_before": {
+    "tools/calendar_visual_quality_test.py": "3dccb058cb70a57a9b0b0b30f5630517cde71e42898aa15274e08b9b31106ef1",
+    "tools/ui_visual_quality_test.py": "00028ed7e97f299ec885e2d6b3576361324e03c0d0871070cb84c7f3e7b7cc4a",
+    "src/styles/app.css": "089bbf4636841ec4c0a579389d5871eb8bafbe109d766f81a8db1c1a40f8e03f",
+    "src/js/40-app/19-calendar-agenda.js": "d82bc047ef57c100becbb6b257e75eb66b87b7418d191b784043344ce06ee604"
+  },
+  "source_hashes_after": {
+    "tools/calendar_visual_quality_test.py": "3dccb058cb70a57a9b0b0b30f5630517cde71e42898aa15274e08b9b31106ef1",
+    "tools/ui_visual_quality_test.py": "00028ed7e97f299ec885e2d6b3576361324e03c0d0871070cb84c7f3e7b7cc4a",
+    "src/styles/app.css": "089bbf4636841ec4c0a579389d5871eb8bafbe109d766f81a8db1c1a40f8e03f",
+    "src/js/40-app/19-calendar-agenda.js": "d82bc047ef57c100becbb6b257e75eb66b87b7418d191b784043344ce06ee604"
+  },
+  "classification": "PASS"
+}

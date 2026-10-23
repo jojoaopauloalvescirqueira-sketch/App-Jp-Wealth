@@ -207,6 +207,39 @@ def current_month_journey(browser,url):
     check(not errors,'isolated planning journey has no page errors: '+json.dumps(errors))
     assert_fixture_requests(ctx);ctx.close()
 
+def past_start_journey(browser,url):
+    """A plan started in the past explains unregistered months instead of a day-one delay."""
+    ctx=browser.new_context(viewport={'width':1440,'height':1000},service_workers='block')
+    ctx.add_init_script('window.__onbShown=true;');install_bootstrap(ctx,{'USDBRL':5})
+    page=ctx.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(url);wait_bootstrap(page);page.evaluate("navigateToScreen('planning')")
+    current,past=page.evaluate("(() => {const d=new Date(),k=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0');return [k(d),k(new Date(d.getFullYear(),d.getMonth()-9,1))]})()")
+    deadlines=lambda:page.locator('#planning .pl-native-deadlines').inner_text()
+    def create(name,start):
+        open_create(page)
+        for key,value in [('name',name),('startMonth',start),('initialUsd','1000'),('monthlyContributionUsd','100'),('idealValue','300')]:account_field(page,key,value)
+    create('Início no passado',past)
+    note=page.locator('#pl-native-pastStart')
+    check(note.is_visible() and '9 meses passados sem fechamento' in note.inner_text(),'form preview explains nine past months without closure')
+    before=page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')
+    review_account(page)
+    check('MESES PASSADOS: Há 9 meses passados sem fechamento' in page.locator('#planning [data-pl-preview]').inner_text(),'plan review repeats the past-months notice')
+    check(page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')==before,'past-months notice performs zero financial writes')
+    confirm_account(page);page.get_by_role('dialog').wait_for(state='hidden')
+    page.evaluate("JPWPlanning.ui.selectView('consolidated')")
+    check('Comparação após registrar 9 meses passados' in deadlines() and 'depois do plano' not in deadlines(),'Consolidado waits for past records instead of a day-one delay')
+    page.evaluate('''() => {const api=JPWPlanning,id=api.queries.snapshot().accounts.find(a=>a.active).id;
+      for(const row of api.queries.view({accountId:id}).rows.filter(r=>r.phase==='pending')){
+        for(const [type,payload] of [['recordResult',{accountId:id,month:row.month,usd:30}],['finalizeMonth',{accountId:id,month:row.month,confirmFlows:true}]]){
+          const r=api.commands.execute(type,payload,api.queries.token(id));if(!r.ok)throw Error(JSON.stringify(r));}}
+      api.ui.render(true);}''')
+    check('Comparação após registrar' not in deadlines() and 'do plano' in deadlines(),'closing every past month restores the plan comparison')
+    create('Início no mês atual',current)
+    check(page.locator('#pl-native-pastStart').is_hidden(),'counterproof: current-month start shows no past-months notice')
+    review_account(page)
+    check('MESES PASSADOS' not in page.locator('#planning [data-pl-preview]').inner_text(),'counterproof: current-month review has no past-months line')
+    check(not errors,'past-start journey has no page errors: '+json.dumps(errors))
+    assert_fixture_requests(ctx);ctx.close()
+
 def native_stop(page,current):
     before=page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')
     account=page.evaluate('JPWPlanning.queries.snapshot().accounts.find(a=>a.active)')
@@ -531,6 +564,6 @@ def main():
             check(page.locator('#planning [data-pl-incompatible]').is_visible(),'malformed future aggregate displays a blocking read state')
             check(page.locator('#planning [data-pl-action=create]:enabled').count()==0,'incompatible aggregate cannot offer a misleading create action')
             assert_fixture_requests(ctx)
-            ctx.close();current_month_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');contribution_stop_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');mobile_preview_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');browser.close()
+            ctx.close();current_month_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');past_start_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');contribution_stop_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');mobile_preview_journey(browser,f'http://127.0.0.1:{server.server_port}/index.html');browser.close()
     finally:server.shutdown()
 if __name__=='__main__':main()

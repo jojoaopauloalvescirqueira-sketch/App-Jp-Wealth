@@ -1,0 +1,168 @@
+test_12_ics_unfolds_and_uses_uid_instead_of_date_for_identity (__main__.CollectorContract) ... FAIL
+test_13_collector_refuses_missing_identity_and_invalid_timestamp (__main__.CollectorContract) ... FAIL
+test_14_invalid_input_never_overwrites_existing_output (__main__.CollectorContract) ... FAIL
+test_15_embedded_data_matches_canonical_package (__main__.CollectorContract) ... FAIL
+test_01_first_and_last_civil_day_are_inclusive (__main__.ModelContract) ... FAIL
+test_02_instant_moves_to_user_day_and_retains_source_date (__main__.ModelContract) ... FAIL
+test_03_date_only_never_shifts_with_user_zone (__main__.ModelContract) ... FAIL
+test_04_currency_and_impact_filters_do_not_change_coverage (__main__.ModelContract) ... FAIL
+test_05_explicit_empty_filter_means_empty_and_unknown_currency_remains_unknown (__main__.ModelContract) ... FAIL
+test_06_latest_revision_reschedules_same_identity_and_keeps_cancelled (__main__.ModelContract) ... FAIL
+test_07_unsafe_external_link_and_offsetless_instant_are_not_exposed (__main__.ModelContract) ... FAIL
+test_08_invalid_range_and_zone_refuse_without_io (__main__.ModelContract) ... FAIL
+test_09_returned_objects_cannot_mutate_embedded_data (__main__.ModelContract) ... FAIL
+test_10_missing_month_and_expired_review_are_not_confirmed (__main__.ModelContract) ... FAIL
+test_11_shipped_package_has_real_uid_and_honest_pending_currencies (__main__.ModelContract) ... FAIL
+
+======================================================================
+FAIL: test_12_ics_unfolds_and_uses_uid_instead_of_date_for_identity (__main__.CollectorContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 176, in test_12_ics_unfolds_and_uses_uid_instead_of_date_for_identity
+    mod=self.module()
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 170, in module
+    self.assertTrue(COLLECTOR.exists(),'Monthly BEA collector is not implemented')
+AssertionError: False is not true : Monthly BEA collector is not implemented
+
+======================================================================
+FAIL: test_13_collector_refuses_missing_identity_and_invalid_timestamp (__main__.CollectorContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 185, in test_13_collector_refuses_missing_identity_and_invalid_timestamp
+    mod=self.module()
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 170, in module
+    self.assertTrue(COLLECTOR.exists(),'Monthly BEA collector is not implemented')
+AssertionError: False is not true : Monthly BEA collector is not implemented
+
+======================================================================
+FAIL: test_14_invalid_input_never_overwrites_existing_output (__main__.CollectorContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 192, in test_14_invalid_input_never_overwrites_existing_output
+    self.module()
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 170, in module
+    self.assertTrue(COLLECTOR.exists(),'Monthly BEA collector is not implemented')
+AssertionError: False is not true : Monthly BEA collector is not implemented
+
+======================================================================
+FAIL: test_15_embedded_data_matches_canonical_package (__main__.CollectorContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 202, in test_15_embedded_data_matches_canonical_package
+    self.assertTrue(MODEL.exists(),'Monthly package is not embedded')
+AssertionError: False is not true : Monthly package is not embedded
+
+======================================================================
+FAIL: test_01_first_and_last_civil_day_are_inclusive (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 88, in test_01_first_and_last_civil_day_are_inclusive
+    self.assertEqual([e['id'] for e in self.call(data)['result']['events']], ['first', 'last'])
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_02_instant_moves_to_user_day_and_retains_source_date (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 91, in test_02_instant_moves_to_user_day_and_retains_source_date
+    result = self.call([event('boundary', '2026-10-01T00:30:00Z')], {
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_03_date_only_never_shifts_with_user_zone (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 97, in test_03_date_only_never_shifts_with_user_zone
+    result = self.call([event('civil', date='2026-10-01', precision='date')], {
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_04_currency_and_impact_filters_do_not_change_coverage (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 104, in test_04_currency_and_impact_filters_do_not_change_coverage
+    result = self.call(package=package, query={'from':'2026-10-01','to':'2026-10-31',
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_05_explicit_empty_filter_means_empty_and_unknown_currency_remains_unknown (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 111, in test_05_explicit_empty_filter_means_empty_and_unknown_currency_remains_unknown
+    self.assertEqual(self.call(package=package, query={'from':'2026-10-01','to':'2026-10-31',
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_06_latest_revision_reschedules_same_identity_and_keeps_cancelled (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 124, in test_06_latest_revision_reschedules_same_identity_and_keeps_cancelled
+    result = self.call([new,old,cancelled])['result']['events']
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_07_unsafe_external_link_and_offsetless_instant_are_not_exposed (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 131, in test_07_unsafe_external_link_and_offsetless_instant_are_not_exposed
+    result=self.call([unsafe,ambiguous,event('ok','2026-10-02T12:00:00Z')])['result']
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_08_invalid_range_and_zone_refuse_without_io (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 139, in test_08_invalid_range_and_zone_refuse_without_io
+    self.assertIn('error', self.call([], query))
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_09_returned_objects_cannot_mutate_embedded_data (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 142, in test_09_returned_objects_cannot_mutate_embedded_data
+    result=self.call([event('a','2026-10-02T12:00:00Z')],action='immutability')['result']
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_10_missing_month_and_expired_review_are_not_confirmed (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 148, in test_10_missing_month_and_expired_review_are_not_confirmed
+    self.assertEqual(self.call(package=package)['result']['coverage'][0]['status'],'stale')
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+======================================================================
+FAIL: test_11_shipped_package_has_real_uid_and_honest_pending_currencies (__main__.ModelContract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 154, in test_11_shipped_package_has_real_uid_and_honest_pending_currencies
+    result=self.call()['result']
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/monthly_economic_feed_test.py", line 72, in call
+    self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+AssertionError: False is not true : Monthly public economic model is not implemented
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.001s
+
+FAILED (failures=15)

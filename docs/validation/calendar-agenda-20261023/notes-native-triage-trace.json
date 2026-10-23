@@ -1,0 +1,8320 @@
+[
+  {
+    "type": "installed",
+    "time": 1103.1000000238419,
+    "viewport": {
+      "innerWidth": 720,
+      "innerHeight": 456,
+      "outerWidth": 1440,
+      "outerHeight": 1000,
+      "dpr": 4,
+      "visual": {
+        "width": 712.5,
+        "height": 456.5,
+        "scale": 1,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "geometry": {
+      "x": 636.95703125,
+      "y": 380.765625,
+      "width": 56,
+      "height": 56,
+      "top": 380.765625,
+      "right": 692.95703125,
+      "bottom": 436.765625,
+      "left": 636.95703125
+    },
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1116.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 664.95703125,
+    "y": 408.765625,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "pointerdown-capture",
+    "time": 1117.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 664.95703125,
+    "y": 408.765625,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "setPointerCapture-before",
+    "time": 1118.1000000238419,
+    "pointerId": 1,
+    "capture": false,
+    "stack": "Error\n    at Element.<computed> [as setPointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1085:9)",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": false,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "setPointerCapture-after",
+    "time": 1118.2000000476837,
+    "pointerId": 1,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": false,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "focusin-capture",
+    "time": 1118.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": null,
+    "trusted": true,
+    "capture": null,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": false,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "gotpointercapture-capture",
+    "time": 1119,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 664.95703125,
+    "y": 408.765625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": false,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1135.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 642.45703125,
+    "y": 393.140625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": false,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1135.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.9635036496350365,
+      "y": 0.9480033277870217
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1135.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 616.958px; top: 360.768px;",
+    "value": "left: 594.442px; top: 345.131px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.9635036496350365,
+      "y": 0.9480033277870217
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1135.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 594.442px; top: 360.768px;",
+    "value": "left: 594.442px; top: 345.131px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.9635036496350365,
+      "y": 0.9480033277870217
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1151,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 619.95703125,
+    "y": 377.515625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.9635036496350365,
+      "y": 0.9480033277870217
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1151.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.927007299270073,
+      "y": 0.8960066555740432
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1151.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 594.442px; top: 345.131px;",
+    "value": "left: 571.925px; top: 329.495px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.927007299270073,
+      "y": 0.8960066555740432
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1151.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 571.925px; top: 345.131px;",
+    "value": "left: 571.925px; top: 329.495px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.927007299270073,
+      "y": 0.8960066555740432
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1168.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 597.45703125,
+    "y": 361.890625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.927007299270073,
+      "y": 0.8960066555740432
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1168.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8905109489051095,
+      "y": 0.8440099833610649
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1168.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 571.925px; top: 329.495px;",
+    "value": "left: 549.408px; top: 313.858px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8905109489051095,
+      "y": 0.8440099833610649
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1168.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 549.408px; top: 329.495px;",
+    "value": "left: 549.408px; top: 313.858px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8905109489051095,
+      "y": 0.8440099833610649
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1185.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 574.95703125,
+    "y": 346.265625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8905109489051095,
+      "y": 0.8440099833610649
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1185.5,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8540145985401459,
+      "y": 0.7920133111480865
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1185.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 549.408px; top: 313.858px;",
+    "value": "left: 526.891px; top: 298.222px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8540145985401459,
+      "y": 0.7920133111480865
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1185.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 526.891px; top: 313.858px;",
+    "value": "left: 526.891px; top: 298.222px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8540145985401459,
+      "y": 0.7920133111480865
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1201.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 552.45703125,
+    "y": 330.640625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8540145985401459,
+      "y": 0.7920133111480865
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1202.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8175182481751825,
+      "y": 0.7400166389351082
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1202.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 526.891px; top: 298.222px;",
+    "value": "left: 504.375px; top: 282.585px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8175182481751825,
+      "y": 0.7400166389351082
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1202.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 504.375px; top: 298.222px;",
+    "value": "left: 504.375px; top: 282.585px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8175182481751825,
+      "y": 0.7400166389351082
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1217.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 529.95703125,
+    "y": 315.015625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.8175182481751825,
+      "y": 0.7400166389351082
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1218,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.781021897810219,
+      "y": 0.6880199667221298
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1218,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 504.375px; top: 282.585px;",
+    "value": "left: 481.858px; top: 266.948px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.781021897810219,
+      "y": 0.6880199667221298
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1218,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 481.858px; top: 282.585px;",
+    "value": "left: 481.858px; top: 266.948px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.781021897810219,
+      "y": 0.6880199667221298
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1234.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 507.45703125,
+    "y": 299.390625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.781021897810219,
+      "y": 0.6880199667221298
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1234.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.7445255474452555,
+      "y": 0.6360232945091514
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1234.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 481.858px; top: 266.948px;",
+    "value": "left: 459.341px; top: 251.312px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.7445255474452555,
+      "y": 0.6360232945091514
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1234.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 459.341px; top: 266.948px;",
+    "value": "left: 459.341px; top: 251.312px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.7445255474452555,
+      "y": 0.6360232945091514
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1251.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.95703125,
+    "y": 283.765625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.7445255474452555,
+      "y": 0.6360232945091514
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1252.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1252.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 459.341px; top: 251.312px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1252.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 251.312px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerup-capture",
+    "time": 1258.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.95703125,
+    "y": 283.765625,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 1259,
+    "cancel": false,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1096:93)",
+    "drag": {
+      "id": 1,
+      "x": 664.95703125,
+      "y": 408.765625,
+      "moved": true,
+      "origin": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-before",
+    "time": 1259.1000000238419,
+    "pointerId": 1,
+    "capture": true,
+    "stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1096:93)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-after",
+    "time": 1259.1000000238419,
+    "pointerId": 1,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 1259.5,
+    "cancel": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1259.5,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "lostpointercapture-capture",
+    "time": 1260.3999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.95703125,
+    "y": 283.765625,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "click-capture",
+    "time": 1260.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484,
+    "y": 283,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1325.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerdown-capture",
+    "time": 1326,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-before",
+    "time": 1326.2000000476837,
+    "pointerId": 1,
+    "capture": false,
+    "stack": "Error\n    at Element.<computed> [as setPointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1085:9)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-after",
+    "time": 1326.2000000476837,
+    "pointerId": 1,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "gotpointercapture-capture",
+    "time": 1335.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 479.19921875,
+    "y": 279.296875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1335.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 479.19921875,
+    "y": 279.296875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1335.7000000476837,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1335.7000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 235.675px;",
+    "value": "left: 431.195px; top: 231.297px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1335.7000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 431.195px; top: 235.675px;",
+    "value": "left: 431.195px; top: 231.297px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1351.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 473.57421875,
+    "y": 274.921875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1352.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1352.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 431.195px; top: 231.297px;",
+    "value": "left: 425.566px; top: 226.919px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1352.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 425.566px; top: 231.297px;",
+    "value": "left: 425.566px; top: 226.919px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1368.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 467.94921875,
+    "y": 270.546875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1368.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1368.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 425.566px; top: 226.919px;",
+    "value": "left: 419.937px; top: 222.54px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1368.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 419.937px; top: 226.919px;",
+    "value": "left: 419.937px; top: 222.54px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1385.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 462.32421875,
+    "y": 266.171875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1385.5,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1385.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 419.937px; top: 222.54px;",
+    "value": "left: 414.308px; top: 218.162px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1385.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 414.308px; top: 222.54px;",
+    "value": "left: 414.308px; top: 218.162px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1401,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 456.69921875,
+    "y": 261.796875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1401.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1401.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 414.308px; top: 218.162px;",
+    "value": "left: 408.679px; top: 213.784px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1401.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 408.679px; top: 218.162px;",
+    "value": "left: 408.679px; top: 213.784px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1417.6000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 451.07421875,
+    "y": 257.421875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1418,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1418,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 408.679px; top: 213.784px;",
+    "value": "left: 403.049px; top: 209.406px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1418.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 403.049px; top: 213.784px;",
+    "value": "left: 403.049px; top: 209.406px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1435.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 445.44921875,
+    "y": 253.046875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1435.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1435.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 403.049px; top: 209.406px;",
+    "value": "left: 397.42px; top: 205.027px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1435.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 397.42px; top: 209.406px;",
+    "value": "left: 397.42px; top: 205.027px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1451.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 439.82421875,
+    "y": 248.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1452.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1452.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 397.42px; top: 205.027px;",
+    "value": "left: 391.791px; top: 200.649px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1452.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 391.791px; top: 205.027px;",
+    "value": "left: 391.791px; top: 200.649px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 1460.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Escape",
+    "trusted": true,
+    "capture": null,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 1461.8999999761581,
+    "cancel": true,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1101:80)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "releasePointerCapture-before",
+    "time": 1461.8999999761581,
+    "pointerId": 1,
+    "capture": true,
+    "stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1101:80)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-after",
+    "time": 1461.8999999761581,
+    "pointerId": 1,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 1462.3000000715256,
+    "cancel": true,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1462.5,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1462.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 391.791px; top: 200.649px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1462.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 200.649px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 1464.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Escape",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "lostpointercapture-capture",
+    "time": 1465.6000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 439.82421875,
+    "y": 248.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1535.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerdown-capture",
+    "time": 1537.6000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-before",
+    "time": 1537.8999999761581,
+    "pointerId": 1,
+    "capture": false,
+    "stack": "Error\n    at Element.<computed> [as setPointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1085:9)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-after",
+    "time": 1537.8999999761581,
+    "pointerId": 1,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "gotpointercapture-capture",
+    "time": 1551.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 479.19921875,
+    "y": 279.296875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1551.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 479.19921875,
+    "y": 279.296875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1552.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1552.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 235.675px;",
+    "value": "left: 431.195px; top: 231.297px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1552.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 431.195px; top: 235.675px;",
+    "value": "left: 431.195px; top: 231.297px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1568.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 473.57421875,
+    "y": 274.921875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1568.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1568.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 431.195px; top: 231.297px;",
+    "value": "left: 425.566px; top: 226.919px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1568.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 425.566px; top: 231.297px;",
+    "value": "left: 425.566px; top: 226.919px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1585.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 467.94921875,
+    "y": 270.546875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1585.5,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1585.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 425.566px; top: 226.919px;",
+    "value": "left: 419.937px; top: 222.54px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1585.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 419.937px; top: 226.919px;",
+    "value": "left: 419.937px; top: 222.54px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1601.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 462.32421875,
+    "y": 266.171875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1602.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1602.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 419.937px; top: 222.54px;",
+    "value": "left: 414.308px; top: 218.162px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1602.2000000476837,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 414.308px; top: 222.54px;",
+    "value": "left: 414.308px; top: 218.162px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1618.6000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 456.69921875,
+    "y": 261.796875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1618.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1618.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 414.308px; top: 218.162px;",
+    "value": "left: 408.679px; top: 213.784px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1618.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 408.679px; top: 218.162px;",
+    "value": "left: 408.679px; top: 213.784px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1635.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 451.07421875,
+    "y": 257.421875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1635.5,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1635.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 408.679px; top: 213.784px;",
+    "value": "left: 403.049px; top: 209.406px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1635.5,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 403.049px; top: 213.784px;",
+    "value": "left: 403.049px; top: 209.406px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1651.6000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 445.44921875,
+    "y": 253.046875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1652,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1652,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 403.049px; top: 209.406px;",
+    "value": "left: 397.42px; top: 205.027px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1652,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 397.42px; top: 209.406px;",
+    "value": "left: 397.42px; top: 205.027px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1668.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 439.82421875,
+    "y": 248.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1668.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1668.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 397.42px; top: 205.027px;",
+    "value": "left: 391.791px; top: 200.649px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1668.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 391.791px; top: 205.027px;",
+    "value": "left: 391.791px; top: 200.649px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "pointercancel-capture",
+    "time": 1679.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 0,
+    "y": 0,
+    "key": null,
+    "trusted": false,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 1679.8000000715256,
+    "cancel": true,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1098:54)\n    at InjectedScript.dispatchEvent (<anonymous>:7452:10)\n    at eval (eval at eval (:6609:24), <anonymous>:2:26)\n    at eval (eval at evaluate (:302:30), <anonymous>:9:55)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "releasePointerCapture-before",
+    "time": 1679.8999999761581,
+    "pointerId": 1,
+    "capture": true,
+    "stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1098:54)\n    at InjectedScript.dispatchEvent (<anonymous>:7452:10)\n    at eval (eval at eval (:6609:24), <anonymous>:2:26)\n    at eval (eval at evaluate (:302:30), <anonymous>:9:55)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-after",
+    "time": 1679.8999999761581,
+    "pointerId": 1,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 1680.1000000238419,
+    "cancel": true,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1680.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1680.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 391.791px; top: 200.649px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1680.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 200.649px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "lostpointercapture-capture",
+    "time": 1682.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 439.82421875,
+    "y": 248.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1728.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerdown-capture",
+    "time": 1730,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-before",
+    "time": 1730.1000000238419,
+    "pointerId": 1,
+    "capture": false,
+    "stack": "Error\n    at Element.<computed> [as setPointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1085:9)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-after",
+    "time": 1730.1000000238419,
+    "pointerId": 1,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "gotpointercapture-capture",
+    "time": 1735.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 479.19921875,
+    "y": 279.296875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1735.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 479.19921875,
+    "y": 279.296875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1735.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1735.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 235.675px;",
+    "value": "left: 431.195px; top: 231.297px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1735.6000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 431.195px; top: 235.675px;",
+    "value": "left: 431.195px; top: 231.297px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1751.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 473.57421875,
+    "y": 274.921875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6989051094890512,
+      "y": 0.569467554076539
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1752.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1752.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 431.195px; top: 231.297px;",
+    "value": "left: 425.566px; top: 226.919px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1752.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 425.566px; top: 231.297px;",
+    "value": "left: 425.566px; top: 226.919px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1767.6000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 467.94921875,
+    "y": 270.546875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6897810218978102,
+      "y": 0.5549084858569051
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1768,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1768,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 425.566px; top: 226.919px;",
+    "value": "left: 419.937px; top: 222.54px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1768,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 419.937px; top: 226.919px;",
+    "value": "left: 419.937px; top: 222.54px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1785.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 462.32421875,
+    "y": 266.171875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6806569343065694,
+      "y": 0.5403494176372712
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1785.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1785.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 419.937px; top: 222.54px;",
+    "value": "left: 414.308px; top: 218.162px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1785.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 414.308px; top: 222.54px;",
+    "value": "left: 414.308px; top: 218.162px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1801.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 456.69921875,
+    "y": 261.796875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6715328467153285,
+      "y": 0.5257903494176372
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1802.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1802.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 414.308px; top: 218.162px;",
+    "value": "left: 408.679px; top: 213.784px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1802.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 408.679px; top: 218.162px;",
+    "value": "left: 408.679px; top: 213.784px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1818.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 451.07421875,
+    "y": 257.421875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6624087591240876,
+      "y": 0.5112312811980032
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1818.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1818.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 408.679px; top: 213.784px;",
+    "value": "left: 403.049px; top: 209.406px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1818.8999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 403.049px; top: 213.784px;",
+    "value": "left: 403.049px; top: 209.406px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1835.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 445.44921875,
+    "y": 253.046875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6532846715328468,
+      "y": 0.4966722129783693
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1835.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1835.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 403.049px; top: 209.406px;",
+    "value": "left: 397.42px; top: 205.027px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1835.3999999761581,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 397.42px; top: 209.406px;",
+    "value": "left: 397.42px; top: 205.027px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1851.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 439.82421875,
+    "y": 248.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6441605839416058,
+      "y": 0.48211314475873535
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1852.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button is-dragging",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1852.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 397.42px; top: 205.027px;",
+    "value": "left: 391.791px; top: 200.649px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1852.1000000238419,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 391.791px; top: 205.027px;",
+    "value": "left: 391.791px; top: 200.649px;",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "releasePointerCapture-before",
+    "time": 1860.3999999761581,
+    "pointerId": 1,
+    "capture": true,
+    "stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at eval (eval at evaluate (:302:30), <anonymous>:1:6)\n    at UtilityScript.evaluate (<anonymous>:309:18)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "releasePointerCapture-after",
+    "time": 1860.5,
+    "pointerId": 1,
+    "capture": false,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "lostpointercapture-capture",
+    "time": 1868.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 439.82421875,
+    "y": 248.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 1868.6000000238419,
+    "cancel": true,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1098:54)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": true,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.635036496350365,
+      "y": 0.4675540765391014
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 1868.8999999761581,
+    "cancel": true,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1869,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button is-dragging",
+    "value": "mvpn-launcher-button",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1869,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 391.791px; top: 200.649px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 1869,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 200.649px;",
+    "value": "left: 436.825px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1944.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerdown-capture",
+    "time": 1946.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-before",
+    "time": 1946.2000000476837,
+    "pointerId": 1,
+    "capture": false,
+    "stack": "Error\n    at Element.<computed> [as setPointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1085:9)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-after",
+    "time": 1946.2000000476837,
+    "pointerId": 1,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "gotpointercapture-capture",
+    "time": 1951.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1951.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1968.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 1985.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2001.8999999761581,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2018.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2035.1000000238419,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2051.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2068.600000023842,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2075.100000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Escape",
+    "trusted": true,
+    "capture": null,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 2076.8000000715256,
+    "cancel": true,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1101:80)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-before",
+    "time": 2076.899999976158,
+    "pointerId": 1,
+    "capture": true,
+    "stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLDocument.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1101:80)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-after",
+    "time": 2076.899999976158,
+    "pointerId": 1,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 2077,
+    "cancel": true,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2077.3000000715256,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button",
+    "value": "mvpn-launcher-button",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2079.100000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Escape",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "lostpointercapture-capture",
+    "time": 2080.600000023842,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerup-capture",
+    "time": 2080.899999976158,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "click-capture",
+    "time": 2080.899999976158,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484,
+    "y": 283,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2127.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerdown-capture",
+    "time": 2128,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 484.82421875,
+    "y": 283.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-before",
+    "time": 2128.3000000715256,
+    "pointerId": 1,
+    "capture": false,
+    "stack": "Error\n    at Element.<computed> [as setPointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1085:9)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "setPointerCapture-after",
+    "time": 2128.3000000715256,
+    "pointerId": 1,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "gotpointercapture-capture",
+    "time": 2135.100000023842,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 485.07421875,
+    "y": 283.921875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2135.100000023842,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 485.07421875,
+    "y": 283.921875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2151.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 485.32421875,
+    "y": 284.171875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2168.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 485.57421875,
+    "y": 284.421875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2185.100000023842,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 485.82421875,
+    "y": 284.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2201.7000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486.07421875,
+    "y": 284.921875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2218.5,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486.32421875,
+    "y": 285.171875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2235.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486.57421875,
+    "y": 285.421875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointermove-capture",
+    "time": 2252.399999976158,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486.82421875,
+    "y": 285.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "pointerup-capture",
+    "time": 2258,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486.82421875,
+    "y": 285.671875,
+    "key": null,
+    "trusted": true,
+    "capture": true,
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 2258.3000000715256,
+    "cancel": false,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1096:93)",
+    "drag": {
+      "id": 1,
+      "x": 484.82421875,
+      "y": 283.671875,
+      "moved": false,
+      "origin": {
+        "x": 0.708029197080292,
+        "y": 0.584026622296173
+      }
+    },
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-before",
+    "time": 2258.3000000715256,
+    "pointerId": 1,
+    "capture": true,
+    "stack": "Error\n    at Element.<computed> [as releasePointerCapture] (eval at evaluate (:302:30), <anonymous>:11:83)\n    at mvpNotesFinishLauncherDrag (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1015:41)\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:114)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1096:93)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "releasePointerCapture-after",
+    "time": 2258.3000000715256,
+    "pointerId": 1,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 2258.5,
+    "cancel": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2258.7000000476837,
+    "target": "headerNotesBtn",
+    "name": "class",
+    "old": "mvpn-launcher-button",
+    "value": "mvpn-launcher-button",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "lostpointercapture-capture",
+    "time": 2259.899999976158,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486.82421875,
+    "y": 285.671875,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "click-capture",
+    "time": 2259.899999976158,
+    "target": "headerNotesBtn",
+    "pointerId": 1,
+    "x": 486,
+    "y": 285,
+    "key": null,
+    "trusted": true,
+    "capture": false,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "focusout-capture",
+    "time": 2277.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": null,
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": true
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "focusin-capture",
+    "time": 2277.3000000715256,
+    "target": "mvpNotesCloseBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": null,
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": true
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "mvpNotesCloseBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 2278.5,
+    "cancel": true,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at mvpNotesSyncLauncher (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1062:66)\n    at MutationObserver.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1026:59)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": true
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "mvpNotesCloseBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 2278.600000023842,
+    "cancel": true,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": true
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "mvpNotesCloseBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2278.7000000476837,
+    "target": "mvpNotesLauncher",
+    "name": "inert",
+    "old": null,
+    "value": "",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": true,
+      "inert": true
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "mvpNotesCloseBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2278.7000000476837,
+    "target": "mvpNotesLauncher",
+    "name": "hidden",
+    "old": null,
+    "value": "",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": true,
+      "inert": true
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "mvpNotesCloseBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "focusout-capture",
+    "time": 2343.3000000715256,
+    "target": "mvpNotesCloseBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": null,
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "focusin-capture",
+    "time": 2343.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": null,
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2345.7000000476837,
+    "target": "mvpNotesLauncher",
+    "name": "inert",
+    "old": "",
+    "value": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2345.7000000476837,
+    "target": "mvpNotesLauncher",
+    "name": "hidden",
+    "old": "",
+    "value": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2367.5,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Alt",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2368.600000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "ArrowLeft",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.708029197080292,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2368.899999976158,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 436.825px; top: 235.675px;",
+    "value": "left: 412.807px; top: 235.675px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2371.100000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "ArrowLeft",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2372.2000000476837,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Alt",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2384.5,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Alt",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2385.600000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Shift",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2386.399999976158,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "ArrowUp",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.584026622296173
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2386.8000000715256,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 412.807px; top: 235.675px;",
+    "value": "left: 412.807px; top: 227.669px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2388.399999976158,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "ArrowUp",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2388.5,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Shift",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2388.600000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Alt",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2432.5,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Alt",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "keydown-capture",
+    "time": 2433.600000023842,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Home",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "finish-before",
+    "time": 2433.7000000476837,
+    "cancel": true,
+    "stack": "Error\n    at mvpNotesFinishLauncherDrag (eval at evaluate (:302:30), <anonymous>:16:83)\n    at mvpNotesResetLauncherPosition (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:970:3)\n    at HTMLButtonElement.<anonymous> (http://127.0.0.1:58131/src/js/40-app/14-mvp-notes.js:1106:51)",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "finish-after",
+    "time": 2433.7000000476837,
+    "cancel": true,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 0.6690997566909976,
+      "y": 0.5574043261231281
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2434,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 412.807px; top: 227.669px;",
+    "value": "left: 616.958px; top: 360.768px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "attribute-mutation",
+    "time": 2434,
+    "target": "headerNotesBtn",
+    "name": "style",
+    "old": "left: 616.958px; top: 227.669px;",
+    "value": "left: 616.958px; top: 360.768px;",
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2435.8000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Home",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "type": "keyup-capture",
+    "time": 2436.3000000715256,
+    "target": "headerNotesBtn",
+    "pointerId": null,
+    "x": null,
+    "y": null,
+    "key": "Alt",
+    "trusted": true,
+    "capture": null,
+    "drag": null,
+    "host": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "button": {
+      "connected": true,
+      "hidden": false,
+      "inert": false
+    },
+    "focus": true,
+    "active": "headerNotesBtn",
+    "position": {
+      "x": 1,
+      "y": 1
+    }
+  }
+]

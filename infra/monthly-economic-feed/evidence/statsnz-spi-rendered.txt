@@ -1,0 +1,508 @@
+Quick links
+Go to main content
+Go to search form
+STATISTICS
+Publications
+Insights
+- News
+- Information releases
+- Indicators
+- Reports
+- Infographics
+A–Z of information releases
+Release calendar
+Subscribe to information release notifications
+Subscribe to newsletters
+Statistics by topic
+Population
+Business
+Labour market
+Society
+Māori
+Economy
+Environment
+Statistics by place
+Auckland
+Tauranga
+Hamilton
+Wellington
+Christchurch
+Dunedin
+Methods, standards, and research
+Standards and classifications
+Metadata in DataInfo+
+TOOLS
+All tools
+Large datasets
+Aotearoa Data Explorer
+Infoshare
+NZ.Stat (closed 13 Sept 2024)
+CSV files for download
+Indicators and snapshots
+Ngā Tūtohu Aotearoa – Indicators Aotearoa New Zealand
+Environmental indicators
+Geographic data and maps
+Geographic data service – download geographic boundaries
+Geographic boundary viewer – view boundaries on a map
+New Zealand STATLAS - view Stats NZ's web maps and applications
+Place and ethnic group summaries
+Data for business
+Experimental initiatives
+Explore experimental tools, series, and methods
+Methods, standards, and research
+Ariā – find standards and classifications
+Ariā Coding Service – keyword searching for classifications
+DataInfo+ – information about our data
+SERVICES AND SUPPORT
+Services
+Information centre
+Customised data services
+- Census data for iwi and iwi-related groups
+Integrated Data Infrastructure
+Longitudinal Business Database
+Apply to use microdata for research
+Help with surveys
+Business surveys
+Individual and household surveys
+List of Stats NZ surveys
+Privacy, security, and confidentiality of survey data
+Contact us
+Subscribe to information release notifications
+Subscribe to newsletters
+INTEGRATED DATA
+Integrated data
+Integrated Data Infrastructure
+Longitudinal Business Database
+How we keep integrated data safe
+Using microdata for research
+How to apply to use microdata for research
+How to apply to integrate new data
+CENSUS
+Census
+2023 Census
+2018 Census
+Previous censuses
+Modernising the census
+The process for change
+Cabinet papers and key documents
+Te Ara Takatū
+WELLBEING INDICATORS
+Wellbeing indicators
+Ngā Tūtohu Aotearoa – Indicators Aotearoa New Zealand
+ABOUT US
+About us
+Careers
+Data leadership
+Corporate publications
+Consultations and reviews
+Legislation, policies, and guidelines
+Privacy, security, and confidentiality of survey data
+Publications
+Contact us
+Information centre
+Media enquiries
+Official Information Act (OIA) requests
+Search site
+
+
+HomeInformation releasesSelected price indexes: September 2026
+Selected price indexes: September 2026
+
+16 October 2026, 10:45am
+
+Share on Facebook
+Share on Twitter
+Share on LinkedIn
+
+Selected price indexes (SPI) provide monthly price changes for a selection of goods and services that New Zealand households purchase.
+
+Download data
+Selected price indexes: September 2026
+
+Excel spreadsheet, 267 KB
+
+Selected price indexes: September 2026 – CSV
+
+Comma Separated Values, 10 MB
+
+Key facts
+
+The following table sets out the key percentage changes in monthly and annual prices. We compare September 2026 with August 2026 for the monthly percentage change, and September 2026 with September 2025 for the annual percentage change.
+
+Group, subgroup, class, item, or selected section
+
+
+
+Monthly percentage change
+
+
+
+Annual percentage change
+
+
+
+
+Food group
+
+
+
+0.0
+
+
+
+2.4
+
+
+
+
+Fruit and vegetables
+
+
+
+-2.7
+
+
+
+-1.8
+
+
+
+
+Meat, poultry and fish
+
+
+
+-0.6
+
+
+
+3.2
+
+
+
+
+Grocery food
+
+
+
+0.7
+
+
+
+3.0
+
+
+
+
+Non-alcoholic beverages
+
+
+
+1.5
+
+
+
+2.3
+
+
+
+
+Restaurant meals and ready-to-eat food
+
+
+
+0.2
+
+
+
+3.1
+
+
+
+
+Alcoholic beverages and tobacco group
+
+
+
+0.4
+
+
+
+3.0
+
+
+
+
+Alcoholic beverages
+
+
+
+0.6
+
+
+
+1.4
+
+
+
+
+Cigarettes and tobacco
+
+
+
+0.2
+
+
+
+6.1
+
+
+
+
+Housing and household utilities group
+
+
+
+...
+
+
+
+...
+
+
+
+
+Stock measure of rental property
+
+
+
+0.1
+
+
+
+0.1
+
+
+
+
+Flow measure of rental property
+
+
+
+0.3
+
+
+
+0.9
+
+
+
+
+Electricity
+
+
+
+0.6
+
+
+
+9.5
+
+
+
+
+Gas
+
+
+
+1.8
+
+
+
+11.4
+
+
+
+
+Transport group
+
+
+
+...
+
+
+
+...
+
+
+
+
+Petrol
+
+
+
+6.4
+
+
+
+24.3
+
+
+
+
+Diesel
+
+
+
+7.8
+
+
+
+55.8
+
+
+
+
+Domestic air transport
+
+
+
+9.6
+
+
+
+5.1
+
+
+
+
+International air transport
+
+
+
+2.3
+
+
+
+12.3
+
+
+
+
+Recreation and culture group
+
+
+
+...
+
+
+
+...
+
+
+
+
+Domestic accommodation
+
+
+
+4.2
+
+
+
+2.2
+
+
+
+
+International accommodation
+
+
+
+8.8
+
+
+
+8.0
+
+
+
+
+Symbol: ... not applicable
+
+Source: Stats NZ
+
+More data
+
+Use Infoshare to access time-series data. For this release, select the following categories:
+
+Subject category: Economic indicators
+Group: Consumers price index – CPI
+
+Definitions and metadata
+
+Selected price indexes – DataInfo+ gives general methodology used to produce the selected price indexes and related metadata.
+
+Infoshare is being replaced by Aotearoa Data Explorer
+
+Infoshare is being replaced by Aotearoa Data Explorer. Stay informed and get support with this change by joining our customer group at cdtp@stats.govt.nz.
+
+Media enquiries
+
+Media team
+media@stats.govt.nz
+021 285 9191
+
+Technical enquiries
+
+Prices and deflators team
+info@stats.govt.nz
+04 931 4600
+
+ISSN 3021-145X
+
+Next release
+
+Selected price indexes: October 2026 will be released on 17 November 2026.
+
+Related topics
+Consumers price indexEconomyHouseholdsHousingPrice indexesProperty
+Related releases
+Selected price indexes: September 2026
+Related pages
+Petrol and diesel prices rise in September
+
+16 October 2026
+
+Image: petrol pump
+Economic impacts on New Zealand from conflict in the Middle East
+
+16 April 2026
+
+Image: petrol and diesel at the pump small
+STATISTICS BY TOPIC
+Population
+Business
+Labour market
+Society
+Economy
+Environment
+DATA TOOLS
+Aotearoa Data Explorer
+Infoshare
+Geographic data service
+Place and ethnic group summaries
+CORPORATE
+About us
+Contact us
+Careers
+Archive website
+SUBSCRIBE & FOLLOW
+Follow us on Facebook
+Follow us on Twitter
+Follow us on YouTube
+Follow us on LinkedIn
+SUBSCRIBE TO NEWSLETTERS
+Terms and conditionsPrivacyCopyright
+
+Unless noted otherwise, all content on stats.govt.nz is licensed under the Creative Commons 4.0 International Licence.

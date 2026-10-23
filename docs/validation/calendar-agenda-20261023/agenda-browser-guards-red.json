@@ -1,0 +1,23 @@
+{
+  "source_sha256": {
+    "src/js/10-domain/19-personal-agenda.js": "93864bcb8a8d14d43ff149b3d7f1d7de38b0f2ceea011cb8ab110ed760211f04",
+    "src/js/00-core/07-workspace-backup.js": "bedf27116fab90e0d5aab82dc77461e8f9a22ea76858e493400d4c28d2804a89",
+    "src/js/30-accounting/01-daily-ledger.js": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18",
+    "src/js/40-app/07-finalize-session.js": "8aa17fafd9c869bcb1f23bff07523677aba51cc90244d5535c3831274127980d",
+    "tools/calendar_recovery_test.py": "10168178a95ad6c30b3b6f2e003675de8797b82079c850d7bcb0333a2c1cc199"
+  },
+  "results": [
+    {
+      "case": "preference-boundary",
+      "result": "PRODUCT_FAIL",
+      "evidence": "Known Calendar preference must be accepted by the workspace allowlist: {'valid': False, 'invalid': [False, False, False, False, False, False], 'captured': None, 'captureError': None, 'stateUnchanged': True, 'diskUnchanged': True}",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_recovery_test.py\", line 207, in main\n    evidence = CASES[name](page, dialogs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_recovery_test.py\", line 142, in preference_boundary\n    assert result['valid'], 'Known Calendar preference must be accepted by the workspace allowlist: '+repr(result)\n           ~~~~~~^^^^^^^^^\nAssertionError: Known Calendar preference must be accepted by the workspace allowlist: {'valid': False, 'invalid': [False, False, False, False, False, False], 'captured': None, 'captureError': None, 'stateUnchanged': True, 'diskUnchanged': True}\n"
+    },
+    {
+      "case": "draft-capture",
+      "result": "PRODUCT_FAIL",
+      "evidence": "Calendar provider must own each draft once; generic input collection must exclude .calendar-form: {'drafts': [{'label': 'Título', 'text': 'SYN unsaved agenda draft'}, {'label': 'Notas', 'text': 'SYN draft notes'}, {'provider': 'calendar-agenda', 'version': 1, 'label': 'Agenda — rascunho não salvo (calendário)', 'text': '{\"kind\":\"task\",\"title\":\"SYN unsaved agenda draft\",\"notes\":\"SYN draft notes\",\"date\":\"2026-09-14\",\"allDay\":true,\"startTime\":\"09:00\",\"endDate\":\"2026-09-14\",\"endTime\":\"10:00\",\"timeZone\":\"America/Sao_Paulo\"}', 'baseReference': '{\"status\":\"OK\",\"revision\":0,\"items\":[]}', 'context': {'kind': 'calendar-agenda', 'id': None, 'surface': 'dialog'}}], 'stateUnchanged': True, 'diskUnchanged': True}",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_recovery_test.py\", line 207, in main\n    evidence = CASES[name](page, dialogs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_recovery_test.py\", line 171, in draft_capture\n    assert len(result['drafts']) == 1, 'Calendar provider must own each draft once; generic input collection must exclude .calendar-form: '+repr(result)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Calendar provider must own each draft once; generic input collection must exclude .calendar-form: {'drafts': [{'label': 'Título', 'text': 'SYN unsaved agenda draft'}, {'label': 'Notas', 'text': 'SYN draft notes'}, {'provider': 'calendar-agenda', 'version': 1, 'label': 'Agenda — rascunho não salvo (calendário)', 'text': '{\"kind\":\"task\",\"title\":\"SYN unsaved agenda draft\",\"notes\":\"SYN draft notes\",\"date\":\"2026-09-14\",\"allDay\":true,\"startTime\":\"09:00\",\"endDate\":\"2026-09-14\",\"endTime\":\"10:00\",\"timeZone\":\"America/Sao_Paulo\"}', 'baseReference': '{\"status\":\"OK\",\"revision\":0,\"items\":[]}', 'context': {'kind': 'calendar-agenda', 'id': None, 'surface': 'dialog'}}], 'stateUnchanged': True, 'diskUnchanged': True}\n"
+    }
+  ]
+}

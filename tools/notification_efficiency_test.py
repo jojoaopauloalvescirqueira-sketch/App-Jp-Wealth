@@ -2,7 +2,7 @@
 """Synthetic behavior gates for selective notifications and visible rendering."""
 import argparse, json, os, threading, traceback
 from functools import partial
-from notification_center_test import Quiet, ThreadingHTTPServer, ROOT, prepare, seed_areas, open_center
+from notification_center_test import Quiet, ThreadingHTTPServer, ROOT, prepare, seed_areas, seed_planning, open_center
 from playwright.sync_api import sync_playwright
 from forex_execution_table_test import SEED
 
@@ -10,6 +10,8 @@ PROBE = r'''() => {
  window.__calls={};
  const wrap=(name)=>{const original=window[name];window[name]=function(...args){__calls[name]=(__calls[name]||0)+1;return original.apply(this,args)}};
  for(const name of ['compute','pfPendingBefore','ffNewsReadCache'])wrap(name);
+ const queries=window.JPWPlanning?.queries;
+ if(typeof queries?.pendingActions==='function'){const original=queries.pendingActions;queries.pendingActions=function(...args){__calls.pendingActions=(__calls.pendingActions||0)+1;return original.apply(this,args)}}
 }'''
 def idle(page): page.wait_for_timeout(100)
 def input_local(page):
@@ -17,7 +19,7 @@ def input_local(page):
     page.evaluate("""()=>{__calls={};const e=document.createElement('input');document.body.append(e);e.value='synthetic draft';e.dispatchEvent(new Event('input',{bubbles:true}));}""")
     idle(page)
     calls=page.evaluate('__calls')
-    assert all(calls.get(k,0)==0 for k in ['compute','pfPendingBefore','ffNewsReadCache']), calls
+    assert all(calls.get(k,0)==0 for k in ['compute','pfPendingBefore','ffNewsReadCache','pendingActions']), calls
     return calls
 
 def selective(page):
@@ -38,6 +40,31 @@ def refresh_cancels(page):
     assert calls['before']==calls['after'], calls
     return calls
 
+def planning_selective(page):
+    assert page.evaluate("typeof JPWPlanning.queries.pendingActions==='function'")
+    page.evaluate(PROBE)
+    page.evaluate("__calls={};JPWNotifications.invalidate('planning');JPWNotifications.invalidate('planning')")
+    idle(page);calls=page.evaluate('__calls')
+    assert calls.get('pendingActions')==1,calls
+    assert all(calls.get(k,0)==0 for k in ['compute','pfPendingBefore','ffNewsReadCache']),calls
+    return calls
+
+
+def committed_planning_hook(page):
+    accounts=seed_planning(page);idle(page)
+    page.evaluate(PROBE)
+    result=page.evaluate("""async c=>{
+      const a=JPWPlanning;__calls={};
+      const invalid=a.commands.execute('recordResult',{accountId:c.id,month:'2026-08',usd:null},a.queries.token(c.id));
+      await new Promise(r=>setTimeout(r,100));const invalidCalls={...__calls};__calls={};
+      const confirmed=a.commands.execute('recordResult',{accountId:c.id,month:'2026-08',usd:-10},a.queries.token(c.id));
+      await new Promise(r=>setTimeout(r,100));return {invalid,confirmed,invalidCalls,confirmedCalls:{...__calls}};
+    }""",accounts[0])
+    assert not result['invalid']['ok'] and result['invalidCalls'].get('pendingActions',0)==0,result
+    assert result['confirmed']['ok'] and result['confirmedCalls'].get('pendingActions')==1,result
+    return result
+
+
 def hidden_render(page):
     page.evaluate("JPWNavigation.navigate('personal-finance');closeModal()")
     idle(page)
@@ -53,7 +80,7 @@ def catalog_once(page):
 
 def hidden_flags(page):
     page.evaluate("JPWNavigation.navigate('personal-finance');S.alladin.schemaVersion=999;JPWNotifications.refresh()")
-    open_center(page,'alladin')
+    open_center(page,'system')
     assert page.locator('[data-notification-id="alladin:compatibility"]').count()==1
     return {'hidden_critical_flag_present':True}
 
@@ -112,12 +139,23 @@ def budget_real_host(page):
     return {'hidden_preserved':hidden,'opened_current':current}
 
 def unavailable_calendar_destination(page):
-    page.evaluate("JPWNavigation.navigate('personal-finance');ffNewsReadCache=()=>{throw Error('SYN unavailable')};JPWNotifications.refresh()")
-    open_center(page,'research')
-    page.locator('[data-notification-id="unavailable:collectCalendar"] [data-notification-go]').click()
-    current=page.evaluate('JPWNavigation.current()')
-    assert current['primary']=='research',current
-    return current
+    # Deliberate replacement: agenda is no longer a bell source. A failed
+    # canonical reader offers an explicit read-only retry in the same centre.
+    page.evaluate("JPWModuleAvailability.setState('personal-finance','active');JPWNavigation.navigate('personal-finance');window.__readerBeforeFailure=pfPendingBefore;pfPendingBefore=()=>{throw Error('SYN unavailable')};JPWNotifications.refresh()")
+    before=page.evaluate('JSON.stringify(S)')
+    open_center(page)
+    row=page.locator('[data-notification-id="unavailable:pf"]')
+    assert row.is_visible()
+    row.locator('[data-notification-go]').click()
+    idle(page)
+    assert row.is_visible() and page.locator('#notificationCenter').evaluate('e=>e.open')
+    page.evaluate('pfPendingBefore=window.__readerBeforeFailure')
+    row.locator('[data-notification-go]').click()
+    idle(page)
+    assert row.count()==0
+    assert page.evaluate('JSON.stringify(S)')==before
+    assert page.evaluate('JPWNavigation.current().primary')=='personal-finance'
+    return {'retry_is_readonly':True,'failure_remains_until_verified':True,'agenda_has_no_bell_source':True}
 
 def context_alias_single_paint(page):
     page.evaluate("JPWNavigation.navigate('forex-consolidated');JPWNavigation.navigate('personal-finance')")
@@ -190,12 +228,12 @@ def main():
     try:
       with sync_playwright() as pw:
         browser=pw.chromium.launch(headless=True,executable_path=os.environ['JP_WEALTH_CHROMIUM'])
-        for name,case in [('local-input-no-financial-collectors',input_local),('selective-source-coalescing',selective),('full-refresh-drains-dirty',refresh_cancels),('hidden-dom-zero-writes',hidden_render),('immutable-catalog-mounted-once',catalog_once),('hidden-critical-flags',hidden_flags),('committed-pf-hook-only',committed_hook),('entry-reads-current-state',entry_current_state),('mounted-draft-focus',mounted_draft_focus),('moved-clearance-current',moved_clearance_current),('facts-details-on-demand',facts_details_demand),('budget-real-host',budget_real_host),('unavailable-calendar-destination',unavailable_calendar_destination),('context-alias-single-paint',context_alias_single_paint),('first-context-entry-expanded',first_context_entry_expanded),('settings-close-exposure',settings_close_exposure),('first-canonical-summary',first_canonical_summary),('settings-consolidated-inert',settings_consolidated_inert)]:
+        for name,case in [('local-input-no-financial-collectors',input_local),('selective-source-coalescing',selective),('planning-source-coalescing',planning_selective),('committed-planning-hook-only',committed_planning_hook),('full-refresh-drains-dirty',refresh_cancels),('hidden-dom-zero-writes',hidden_render),('immutable-catalog-mounted-once',catalog_once),('hidden-critical-flags',hidden_flags),('committed-pf-hook-only',committed_hook),('entry-reads-current-state',entry_current_state),('mounted-draft-focus',mounted_draft_focus),('moved-clearance-current',moved_clearance_current),('facts-details-on-demand',facts_details_demand),('budget-real-host',budget_real_host),('unavailable-calendar-destination',unavailable_calendar_destination),('context-alias-single-paint',context_alias_single_paint),('first-context-entry-expanded',first_context_entry_expanded),('settings-close-exposure',settings_close_exposure),('first-canonical-summary',first_canonical_summary),('settings-consolidated-inert',settings_consolidated_inert)]:
           if args.case and name not in args.case:continue
           context=None
           try:
             context,page,_=prepare(browser,f'http://127.0.0.1:{server.server_port}/index.html',
-                personal_finance_active=name in {'hidden-dom-zero-writes','hidden-critical-flags',
+                personal_finance_active=name in {'selective-source-coalescing','committed-pf-hook-only','hidden-dom-zero-writes','hidden-critical-flags',
                     'entry-reads-current-state','moved-clearance-current','unavailable-calendar-destination',
                     'context-alias-single-paint'});idle(page)
             results.append({'case':name,'result':'PASS','evidence':case(page)})

@@ -20,6 +20,9 @@ const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.loc
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
 const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html','Previa_Stoikus_Painel_C5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
 const PRECACHE_URLS = [
+  './src/js/10-domain/19-personal-agenda.js',
+  './src/js/40-app/16-monthly-economic-data.js',
+  './src/js/40-app/19-calendar-agenda.js',
   './src/js/40-app/31-market-hours/01-sessions.js',
   './src/js/40-app/31-market-hours/02-assets.js',
   './src/js/40-app/31-market-hours/03-view.js',

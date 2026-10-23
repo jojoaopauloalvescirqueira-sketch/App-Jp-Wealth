@@ -1,0 +1,2092 @@
+{
+  "classification": "PASS",
+  "started_at": "2026-10-23T17:34:49.538606+00:00",
+  "finished_at": "2026-10-23T17:48:37.450260+00:00",
+  "source_unchanged": true,
+  "source_sha256": {
+    "AGENTS.md": "7a9b8d08e1bca6adc1c366a1872215bf3671aa9f9804cc702cfc94618063225e",
+    "assets/jp-wealth-brand-red.png": "a77960904ec84b92ad2b1701b5beec6979613b8192dc449e9be8ecbdde10cd85",
+    "assets/jp-wealth-logo.png": "0548e55bfb541f770cfa4c002306b2309c91edb97a431394bb18d7e1676968c9",
+    "assets/nocuda-metatrader.png": "1213b5637c49b348fd47e619f86c673f81d43c1aeede4a56f9966be4be47282c",
+    "assets/nocuda-tradingview.png": "ddb0b143ee53c2e26910165e0190ac2b4c8847b042b83cc138f4b6e345f0daf1",
+    "assets/pwa-icon-primary-512.png": "e1da200537dd62f8b3cff7f5dd7c3903f7965d01e8e42013d093998c924cbd04",
+    "build-id.js": "08b6b29987528496ceb1cf915870c8835084b6dc157429a8c08da1905db013c8",
+    "docs/governance/UI-VISUAL-QUALITY.md": "13da3722e323d5770bba7915d6cba558317d0819285084ddc4bb12a4ba7b1393",
+    "docs/normative/ANEXO_PARAMETRICO_CANONICO.md": "6240b6330a35fd488f16d4191129eeb01aff8f7a4707158c043afb37d91cdc23",
+    "docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf": "2dab6166bb8513cd9beb7fe39c574971af086ebae66683d99c0e6fac69eb6769",
+    "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md": "1b414a6ec707b9ed77c2616f483ef58c4d254fe219519f90eaf3b46259abc1d5",
+    "docs/superpowers/plans/2026-10-21-planning-controls-visual-quality.md": "e060a204d40bc50d51faac66868f2503c5fc60750840aeb22c8f3a392a6fc3a1",
+    "downloads/nocuda/MT5-LEIA-ME.md": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+    "downloads/nocuda/Nocuda_Tool.ex5": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+    "downloads/nocuda/Nocuda_Tool.mq5": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+    "downloads/nocuda/Nocuda_Tool.pine": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+    "downloads/nocuda/TRADINGVIEW-LEIA-ME.md": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+    "index.html": "4578781cf45066b3cf9c368a6ac719ede11d3e01d3157f16cf591fffdefdd8d0",
+    "manifests/jp-wealth.webmanifest": "c6959ea991d0ebda10fb4f05fceaae291177368457fca1951ea668548c14e6be",
+    "src/js/00-core/00-forex-policy.js": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed",
+    "src/js/00-core/01-risk-profiles.js": "dbac835cead6b9f9d3807c7d02a7f45773e9c35466771480701efee5725de70e",
+    "src/js/00-core/02-platforms.js": "4d05633be18f223ee8440dbae841141c29848db53aee9ae5f5fea47d1a50c817",
+    "src/js/00-core/03-default-state.js": "4f7381a9f9fbf29c077120aab14564bb28867f1bb490ff1b50ba79ec0d0d9593",
+    "src/js/00-core/04-persistence.js": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+    "src/js/00-core/05-helpers.js": "e3198d6e5ecec9676e24e054424cd6a98ac129178754d263270ae53cc97216db",
+    "src/js/00-core/06-storage-fs.js": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/00-core/08-module-availability.js": "44f40f5d5c0161b4ffc4fc85cb54fb594baff357c8dcf68ce1af6b184fe2cca9",
+    "src/js/00-core/09-evidence-archive.js": "0a2741062e89b1992abd23accea74fbae0cc193f39eb1c5f6282de0b55a14a0a",
+    "src/js/00-core/09-learning-progress.js": "86396ca40e0fc1941c476e2b4645dac96618e11133941fd85f6a25927c0a2db2",
+    "src/js/00-core/10-download-assets.js": "e42f18df8612ac5599aeabc3b0fe364c314878d7bd13c0f6ad2fcc810470b378",
+    "src/js/10-domain/00-forex-engine.js": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e",
+    "src/js/10-domain/00-forex-state.js": "b0dc2d2db1e9917c69c7200aee40e8e90bc4ec91ab8d6058af95f772116b8ac6",
+    "src/js/10-domain/01-risk-instruments.js": "f778f6e26bb00e3a7036c28df5cae357b097a7470f064da88b57161dd570713c",
+    "src/js/10-domain/02-risk-calculations.js": "78b106e981fc83950758a3323b222c2e390d23549c15ddb02223c05126ff9703",
+    "src/js/10-domain/03-phase-transitions.js": "b6e07b345656faec3c278f1de181e93a3ca0a04dd6d708ff1dfb78614e85a859",
+    "src/js/10-domain/04-stop-statistics.js": "9d18b9dd123c0c1e2e3219f93a8428310b0d8dc882cc18a2383a1332e52a6355",
+    "src/js/10-domain/05-brokers-prop-firms.js": "d87c0db5b9abe3d6a31c661462dcda7e68212afa077440ef4e3a8b1c636b21c3",
+    "src/js/10-domain/06-quarantine.js": "08975bcc4c59a25a4348b6ae997bb2ff26e93644c50d95b4f7fae952c4682a38",
+    "src/js/10-domain/07-reserve-requirements.js": "2c1a9d00cce4bda29e87be28398ae7fcd864e3c172f6df69b05246221a5d6a95",
+    "src/js/10-domain/08-usd-brl-quote.js": "f86355fba756dbb267d3f4144dcd861bcc533d42295489727f55aebcb58eedd2",
+    "src/js/10-domain/09-nocoda-geometry.js": "268858faa34378c4dd3c90827699e59d48a1022a1f2287e6bc840bf51265147f",
+    "src/js/10-domain/10-pivot-studies.js": "b2853c1f1856965d6d5b164fb7732e1c386f53e2aa6fda56cf3d1a222eaa3fb5",
+    "src/js/10-domain/11-operation-lifecycle.js": "2e6057486e50603a98d18545452a020cb60661d552c563a00123578b0099e397",
+    "src/js/10-domain/12-personal-finance.js": "333a5b2f4c337aa684960f1a1f98279fd9f42d61e2d66ff0ae3dbe5f6498d416",
+    "src/js/10-domain/13-alladin.js": "e03629ebb1028b4ab1a4e6a0d27b737b0f5feb20ebf43cdf8368da99ceb0d9ad",
+    "src/js/10-domain/16-nocuda-transfer.js": "f70d4b16b25c63cd75eedf65a7e873455fcb43ec5186957a26a7302cc2c1a7cb",
+    "src/js/10-domain/17-fx-consolidated-model.js": "b815e8c4cf16b08b9e5e1e727e411753bb72cb044bf06cd84f3eb677a4be3b7e",
+    "src/js/10-domain/18-execution-board-model.js": "fa98b0b3f360a1ae2b036ef740fe82c940be4a763f32a81b8f3bb1f8d0192129",
+    "src/js/10-domain/19-execution-market.js": "c5511f91a328f671b7491098288f90a23d8f357d67ab47868c2b68f1769fd081",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/20-ui/01-header-readout.js": "8081c4b4a644cfc8728de519c3c8aaec6ae19dbe7feb0b94918f7dbc17ad8e20",
+    "src/js/20-ui/02-sidebar.js": "e3483db32bdcf6f99f24daf572ea8e20846d143401c5e8bb6baa331d3bce6879",
+    "src/js/20-ui/03-main-render.js": "3158767be64587d1911e08ae2115167702c10304185fec77f843d64c76e74df8",
+    "src/js/20-ui/04-operational-clearance.js": "da4c3f9bd553dffb87f5079ff26f7405daba3e220137d246cd724d82c43db750",
+    "src/js/20-ui/05-execution-clearance.js": "538eac18c2e7e93ba8df4fdb06cec68e923fbb46aaf230f66240cee31b2fe4af",
+    "src/js/20-ui/06-chart-terminal-chrome.js": "0223f08d7abfcce1f8f9c841f81b445c2c9ba4fac296565ea7e1140f4e38f842",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "007aa37da1993837fc3be68cd1a2baf4280310ec4aebe8c8cd025b6006c7a1e3",
+    "src/js/20-ui/08-input-bindings.js": "bb0eeb381249145171d7e20f4c7eb0e99c3260323b7968b41b32bc3a35d131aa",
+    "src/js/20-ui/08-scenario-fan.js": "1bdcdbdce612d2b0cd0513edc0e96ed85cdde57224c078cb2b260bd5148c3124",
+    "src/js/20-ui/09-contextual-help.js": "b221ce7943a59a5febca8044b62944f81a7e08d059f848ac417a558042fe84b2",
+    "src/js/20-ui/10-font-scale.js": "b1dd06b7b322a9814863cd0109650ecf2baeff5619c4af9ee1cee30a42baaa78",
+    "src/js/20-ui/11-phase-posture.js": "ca4258642cc1a05ddfbe56e9ee502862eb9f915944b242e7d1cb9d11fef22e5c",
+    "src/js/20-ui/12-nav-style.js": "41c9a9d0d390d8ee02100810b17ac30a705d7222edd933fed7b2aaadb1514483",
+    "src/js/20-ui/13-exec-views.js": "a6a226a01765dccfe7d97f1dd222999106470f09643ce4e9e09dc6b10e0963ad",
+    "src/js/20-ui/14-nocoda-studies.js": "66c546fa9585b8c4dc30103817bf8c5b97ea8e77580cd7bb5e8a3b0a1c9c730d",
+    "src/js/20-ui/15-pivot-studies.js": "a4ebe6d7c23b81fbdd6f44348f2a878b510d3f62001e50ba6e02e9e87c5464c1",
+    "src/js/20-ui/16-operation-history.js": "4efe785de509f413fdb309ce21eb1e8bc808463353f12e46bddc14f6edcc2686",
+    "src/js/20-ui/17-finpes-views.js": "3916e5e21c02817a5883bce84ab64f39fb579873f3a951f2e42ad38c062fa6b9",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/20-ui/19-finpes-debts.js": "3c042b7b90a5909de0e61144c213b49e3fd06884646857a3d89040b021de7b1f",
+    "src/js/20-ui/20-finpes-comparison.js": "85c6df4651dfc83047f30df5262dddd9786c8f9f297f26af9fc30a21f673ad30",
+    "src/js/20-ui/21-finpes-scenarios.js": "18715f24622a32c77a04c4d22aa442ad4cefcdc1fa977b7fc175496079e7cd87",
+    "src/js/20-ui/22-finpes-overview.js": "21eebce0f8a70feca61ff1f0547ea7fb35ecfb525ea5455aa23b2ec2a31f4e35",
+    "src/js/20-ui/23-research-views.js": "4a0b9f3a59e815576dc1335609c88a817c6b9f12823a0060e24eb745f0ecc721",
+    "src/js/20-ui/24-alladin-views.js": "74da048037848e4ecd3183b9a441f7c18efb52d4d6e021bcb8cc665ba6c9a2b3",
+    "src/js/20-ui/25-dash-macro.js": "5daf06408d8082fafb0f7947c9634949353558a001b56a2a442fcbd8239713f1",
+    "src/js/20-ui/26-forex-engine-views.js": "fb3290a475ba57d58a9793a60ffc2fc335fbde9f37eba54a416f29cd71d6c4b0",
+    "src/js/20-ui/28-fx-consolidated.js": "23a09f27f0e2d7069ad838cde454407dd9b36bc53fdd2fa8c9b208aaef7d0723",
+    "src/js/20-ui/30-execution-board.js": "ebde74be7628992e691ec00e318f4cc83d2942454a0572601c6f341261789f1a",
+    "src/js/20-ui/31-forex-accounts.js": "2aab5fda4525f02f8d9c701fee28fac733578028cc7020b444e5336cb4688fd5",
+    "src/js/20-ui/31-tools-services.js": "2e41c1d13246897070849a5d3471ac279f7088bff26d8cf005dcc45335d2b2d7",
+    "src/js/20-ui/32-module-availability.js": "d3d4516fc2087e69d57e2053f0b9b2d54d70d38d3585f4dcbe421ac54c6f6a0a",
+    "src/js/20-ui/33-module-work.js": "9094a3651edbbaab009f627a43122bb6e2c32f6d337e3ae6723624c7d960edd2",
+    "src/js/20-ui/34-normative-reader.js": "beaf00bb9f531496914d7147fd619bb6448cb761df6a6c6bc44a47f3dd3d3f8d",
+    "src/js/30-accounting/01-daily-ledger.js": "196283dcda1ff9f3a7c6137e895692a62ccd06e439169e04430cfe2df2725d2e",
+    "src/js/30-accounting/02-accounting-engine.js": "185c29e78e1b935c1b05de82274f0f5320c632defc947f7a4fb48958108d081f",
+    "src/js/30-accounting/03-mei-jp.js": "0213ae6164606d68102de6190ae7c158bbb7a5879a977afed59841752bc60f46",
+    "src/js/30-accounting/04-patrimonial-simulation.js": "c710bbac4511e6ac37315aa11eef86f34d15eaafd94f21a84b8305d48501232c",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/40-app/01-navigation.js": "837f06cfabb8adbacfb1f0196d0d27c1f459e044ea8e65305deadba7d97d953d",
+    "src/js/40-app/02-reset.js": "43fe62ef9cd1efd3b5f05034b31a593e7dcd04565c8078cb69bc69e72420137b",
+    "src/js/40-app/03-theme.js": "3f3c899c9abf56d819e81b664cf11f5aee969e9936d82ae49ac2f125f3fcc2b3",
+    "src/js/40-app/04-onboarding.js": "14b4b6c053a0dc79641d0a8b0897b635e815a9718b61a990513b208f1271311f",
+    "src/js/40-app/05-wipe-all.js": "e91c282c00067b1250b0a75166c524fb664a500b6311655e08368b8cecdb6d68",
+    "src/js/40-app/06-app-icons.js": "40e5ada4a6887eea186bb4bbfaf3003973b81b9af6901a8bcfc67c2e3285fba3",
+    "src/js/40-app/06-boot.js": "0926a792698573810d19bbcb80f35300c8c6e2cf86b3323d3c5cafc2a44b116d",
+    "src/js/40-app/07-finalize-session.js": "5e30ec5fefb0c2ced68aaf842f2cffd71005573a551fd0cb1709791977c0e789",
+    "src/js/40-app/08-educational-content.js": "877a1fd18350c797f21a9c356d3b439deef397871550154eda454b43dc4f2f23",
+    "src/js/40-app/09-profile-avatar-catalog.js": "2ef8f6552bcce28cad7fe76ea8a9330b3983051e43db29f51bf1d4ddf6275e2a",
+    "src/js/40-app/09-settings-modal.js": "46d0e44b729295cf1d44a4e2999bbe47d180baa8a0519d42e96c55192a04acae",
+    "src/js/40-app/10-dashboard-immersive.js": "2dadd3ee1bcddd57fc9fe50954a475d54046d7055e65ce441e23dd16daca8b1e",
+    "src/js/40-app/11-operational-shell.js": "8e9cbd01549210458b7d8c1c1214d9907c3ee65aef6017a27c489c5c1018d5ee",
+    "src/js/40-app/12-global-dashboard.js": "658e693366d5f993db9ed5715ff786a8f7442b900508d867597027912e0cdd73",
+    "src/js/40-app/13-dashboard-layout.js": "4b3ee2c6a31ed2d301e66304b33b0531c6f57e8074c50da7cf7d95c3daf9a97e",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/40-app/15-ff-news.js": "8763f9c7d00a45b6bcc11b96d80acb115dae4d9ebb0e6b42ad5f32657b4264e3",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/16-storage-governance.js": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be",
+    "src/js/40-app/17-economic-calendar.js": "d76b0bf39e79d55f0c6b1dd37753f515079bf9cf2daaf49c40257a22d6a15043",
+    "src/js/40-app/18-galton-board/01-config.js": "91412690159c995cadbbfad517bcefa6c495aca91c502e8bf0345a003ccae180",
+    "src/js/40-app/18-galton-board/02-rng.js": "88e21a92006eaa4650be783909237aee35304878b2d9805e239d87fc68e09c53",
+    "src/js/40-app/18-galton-board/03-statistics.js": "38157b5f6b21f17af4b63731ab4efa1375b4dc8cc34979305813fe3b97df7e63",
+    "src/js/40-app/18-galton-board/04-physics.js": "f121106f11dff0dbdf11307afb2ea6eb5bcb9c6ad80a9d85eafd9f3258a46f3a",
+    "src/js/40-app/18-galton-board/05-renderer.js": "2e1f1a47c89cc0cdae7c04d51de708bb1a56a72f657ca0fe6d6a4c882b742762",
+    "src/js/40-app/18-galton-board/06-controller.js": "1439457dd5f2e6cad8918cabc5f044fc30ee03dc29977038fedf46366b556141",
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "src/js/40-app/19-calendar-agenda.js": "96abcfb9494912a3592dff787ae07730fa44ac2f8f47320e66f5522d61a6a200",
+    "src/js/40-app/24-fx-consolidated-import.js": "b99ba4d2107841c7c3b2d2181df66dc8b9b1455be2380f6b04769836add3e50e",
+    "src/js/40-app/25-fx-consolidated-pdf.js": "016236f4dc85ca4e101b143904a03f8754635871af07bb454ba898812dbef10f",
+    "src/js/40-app/26-learning-catalog.js": "c5bc330c074e61d04a64a07627a9bdbfd9cf0f8b5f6284bc2d1589a22516a62a",
+    "src/js/40-app/27-learning-view.js": "6fbddab78dc3cbb402d6c41d699a4491e665a4d5a60293511a7f11060b75e729",
+    "src/js/40-app/28-learning-guide.js": "7ab6d853405f9bb8b6e54984f8f1d817d2856e6c2c88afa7fba68b32b2cd93e7",
+    "src/js/40-app/29-time-twins/01-simulation.js": "f7f09c0093f0b5d3584f1204bf55996bc60c9b31f7ba9587fe2588ee423922bb",
+    "src/js/40-app/29-time-twins/02-missions.js": "bbb810d3da792a9b1fd3f5750945891f2b4d1b8d8b9e1715fba2e788340df5ec",
+    "src/js/40-app/29-time-twins/03-progress.js": "bfe5eee4ef986f8c3aa573b8a4178fee62d408499291fe42e1402bbed96e50db",
+    "src/js/40-app/29-time-twins/04-view.js": "8be683d390d27da8b94f34ddca92056829e11dd8464b15d0e336a846db5c400d",
+    "src/js/40-app/29-time-twins/05-controller.js": "331473c0a627f4d18e85f7c472ee818394c2e5f0546cbbb16420feb9c53016d8",
+    "src/js/40-app/30-capital-currents/01-engine.js": "55f6409cc25e6bfc3eee02d581c9b2b9d6f083485937b805e298d17075c69b1b",
+    "src/js/40-app/30-capital-currents/02-scenarios.js": "fdab0dd90693d4278b24c5643788bf4768266b96332b6d9d21257862441ce7ea",
+    "src/js/40-app/30-capital-currents/03-progress.js": "2c5511293709f599ed26f5bb850ada2273f36ddbed56f6c1a262b321d5df7b55",
+    "src/js/40-app/30-capital-currents/04-field-renderer.js": "4bd8fbdf99c8c22e57de1724bf13570009a569f9e4b26f6b93b83476d164a3c4",
+    "src/js/40-app/30-capital-currents/04-view.js": "89ca1fc0ab82c60067ff25be55cc8a32ed2a6ea3c519eca2696ea09b3921a868",
+    "src/js/40-app/30-capital-currents/05-controller.js": "f1feb9ea39cfea07e5b1bd285fbf42bb390ba5f6fab39286ef32681f6cac72de",
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/02-assets.js": "8b738a41e7ad2c625c1f7fac9afb770117df941970c46d55af140f2aabec8309",
+    "src/js/40-app/31-market-hours/03-view.js": "2617750ed456dd94bbb6bfbe13eb504083573b4bd09d27fe44c932e36613305a",
+    "src/js/40-app/31-market-hours/04-controller.js": "70e678f588742b061c425e01da950a4ad07bab00959cfeee7676339e5a23ab33",
+    "src/js/manifest.json": "d699367c22bba262c51d8b0defa0a8d9f6fc2f247a54fef1ac8f4a10779bd23b",
+    "src/styles/app.css": "3fe705621b416526c59ab901c228d22ddaf45751bebd0b5a35b7e91950ad636b",
+    "src/vendor/fflate/fflate-0.8.2.min.js": "c3b34f2e9f5e74d4d7d64e01cac7a0c01954c6c406414d42185c7b53d6875ddf",
+    "src/vendor/planck/planck-1.5.0.min.js": "69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974",
+    "tools/browser_bootstrap_fixture.py": "23d87b313d5d7a12c009b8814ee2239c7eb1341ef63aa59f59442be5a8ccdf30",
+    "tools/browser_fixture_server.py": "be82e4b5b802a711bde25ffc4cd9d31d230b7149b8d6ef524f2f0ad529f1406b",
+    "tools/calendar_agenda_test.py": "ae0fcc5656cf4b1d87255b06d94ae1fe5b21b9d2fc94816a55b626d2cc91c59d",
+    "tools/calendar_visual_quality_test.py": "3dccb058cb70a57a9b0b0b30f5630517cde71e42898aa15274e08b9b31106ef1",
+    "tools/notes_launcher_test.py": "bd2f53a8921c77ba91fe0eb8e20c75f83e1c407bfd40d4a07eb8465a445696d1",
+    "tools/notification_center_test.py": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+    "tools/notification_visual_quality_test.py": "9834b8105abbd8cc7c6155b72dcbbc85ccf2cdcd9d89b8a93392a12a59152f0a",
+    "tools/planning_compact_table_test.py": "4fb30ff95b9911e453e719591a08ec7a15babe430e35890ddf878a131250da52",
+    "tools/planning_monthly_close_test.py": "71c6a5f8f73cd2fae7af6f518a1a902dab0448a7bf3a21a3c938e9e601004405",
+    "tools/planning_monthly_inline_test.py": "4f41b810d37d91b96d3a8f7d0020a541d588dabfa7af2a245bdc8e8f2b2daa0e",
+    "tools/planning_parity_layout_test.py": "23d26943d3618ea1fce1e9c48259b33e6cff351dab0d157428b63d8d23f70c0e",
+    "tools/planning_proportions_test.py": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+    "tools/quality_gate.py": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+    "tools/ui_visual_quality_test.py": "00ea752b8ada384a8083169a21647868dee9dc16bac43279a51208ecef65e2e7"
+  },
+  "test_sha256": "00ea752b8ada384a8083169a21647868dee9dc16bac43279a51208ecef65e2e7",
+  "selection": "all",
+  "coverage": {
+    "executed": 369,
+    "required": 369,
+    "unique": true
+  },
+  "matrix": {
+    "layouts": [
+      "sidebar",
+      "topbar",
+      "glass",
+      "submenu"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "sizes": [
+      [
+        320,
+        700
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        700,
+        600
+      ],
+      [
+        701,
+        601
+      ],
+      [
+        1099,
+        720
+      ],
+      [
+        1100,
+        719
+      ],
+      [
+        1100,
+        720
+      ],
+      [
+        1101,
+        721
+      ],
+      [
+        1440,
+        1000
+      ],
+      [
+        1440,
+        480
+      ]
+    ],
+    "native_zoom": 200,
+    "reduced_motion": true
+  },
+  "limits": {
+    "other_modules": "NOT_RUN",
+    "human_acceptance": "NOT_RUN",
+    "Safari": "NOT_RUN",
+    "screen_reader": "NOT_RUN",
+    "physical_touch": "NOT_RUN",
+    "native_select_popup_ink": "NOT_RUN; closed native selector/input boxes, options and reachability measured"
+  },
+  "rawArtifact": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261023T143410564636/ui-visual-quality/ui-visual-quality-results.json",
+  "rawSha256": "cb178c5d99e263bc397fbcceef71f4831aa44490daf2467805ac8f01dac51890",
+  "rawBytes": 18099526,
+  "caseCounts": {
+    "PASS": 369
+  },
+  "cases": [
+    {
+      "id": "regression-stoikus-vertical-groups",
+      "classification": "PASS",
+      "criteria": "approved13actions/fivegroups/vertical/left/max320/gutter12/nooverlap"
+    },
+    {
+      "id": "regression-forecast-inner-center",
+      "classification": "PASS",
+      "criteria": "actualtextRangecenter<=2CSSpxonbothaxes"
+    },
+    {
+      "id": "regression-close-svg-ink-center",
+      "classification": "PASS",
+      "criteria": "symmetricSVGinkcenter<=2CSSpxand44pxtarget"
+    },
+    {
+      "id": "compact-summary-groups",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-current-calendar-year",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-wide-seven-columns",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-narrow-three-columns",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-month-details-complete",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-calendar-vs-finalization",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-controls-draft-focus",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-scenario-values",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "inline-ordinary-row-density",
+      "classification": "PASS",
+      "criteria": "inline-ordinary-row-density"
+    },
+    {
+      "id": "inline-cell-activation",
+      "classification": "PASS",
+      "criteria": "inline-cell-activation"
+    },
+    {
+      "id": "inline-temporal-filters",
+      "classification": "PASS",
+      "criteria": "inline-temporal-filters"
+    },
+    {
+      "id": "inline-result-real-writer",
+      "classification": "PASS",
+      "criteria": "inline-result-real-writer"
+    },
+    {
+      "id": "inline-future-explicit-save",
+      "classification": "PASS",
+      "criteria": "inline-future-explicit-save"
+    },
+    {
+      "id": "inline-individual-flow-ids",
+      "classification": "PASS",
+      "criteria": "inline-individual-flow-ids"
+    },
+    {
+      "id": "inline-dirty-context-guards",
+      "classification": "PASS",
+      "criteria": "inline-dirty-context-guards"
+    },
+    {
+      "id": "inline-stale-context-conflict",
+      "classification": "PASS",
+      "criteria": "inline-stale-context-conflict"
+    },
+    {
+      "id": "inline-refused-unknown",
+      "classification": "PASS",
+      "criteria": "inline-refused-unknown"
+    },
+    {
+      "id": "inline-closed-reconfirmation",
+      "classification": "PASS",
+      "criteria": "inline-closed-reconfirmation"
+    },
+    {
+      "id": "inline-preferences-isolation",
+      "classification": "PASS",
+      "criteria": "inline-preferences-isolation"
+    },
+    {
+      "id": "inline-preference-failure-incompatible",
+      "classification": "PASS",
+      "criteria": "inline-preference-failure-incompatible"
+    },
+    {
+      "id": "inline-resize-focus-cursor",
+      "classification": "PASS",
+      "criteria": "inline-resize-focus-cursor"
+    },
+    {
+      "id": "inline-reset-lifecycle",
+      "classification": "PASS",
+      "criteria": "inline-reset-lifecycle"
+    },
+    {
+      "id": "inline-review-input-opening",
+      "classification": "PASS",
+      "criteria": "inline-review-input-opening"
+    },
+    {
+      "id": "inline-modal-escape-ownership",
+      "classification": "PASS",
+      "criteria": "inline-modal-escape-ownership"
+    },
+    {
+      "id": "inline-missing-record-fail-closed",
+      "classification": "PASS",
+      "criteria": "inline-missing-record-fail-closed"
+    },
+    {
+      "id": "inline-context-removed-before-save",
+      "classification": "PASS",
+      "criteria": "inline-context-removed-before-save"
+    },
+    {
+      "id": "inline-month-turnover",
+      "classification": "PASS",
+      "criteria": "inline-month-turnover"
+    },
+    {
+      "id": "inline-stoikus-context-guard",
+      "classification": "PASS",
+      "criteria": "inline-stoikus-context-guard"
+    },
+    {
+      "id": "inline-future-context-companion",
+      "classification": "PASS",
+      "criteria": "inline-future-context-companion"
+    },
+    {
+      "id": "inline-menu-escape-ownership",
+      "classification": "PASS",
+      "criteria": "inline-menu-escape-ownership"
+    },
+    {
+      "id": "inline-empty-filter-recovery",
+      "classification": "PASS",
+      "criteria": "inline-empty-filter-recovery"
+    },
+    {
+      "id": "inline-editor-action-targets",
+      "classification": "PASS",
+      "criteria": "inline-editor-action-targets"
+    },
+    {
+      "id": "inline-month-context-identity",
+      "classification": "PASS",
+      "criteria": "inline-month-context-identity"
+    },
+    {
+      "id": "closure-missing-result-recovery",
+      "classification": "PASS",
+      "criteria": "closure-missing-result-recovery"
+    },
+    {
+      "id": "closure-cancelled-review-conflict",
+      "classification": "PASS",
+      "criteria": "closure-cancelled-review-conflict"
+    },
+    {
+      "id": "closure-result-save-cancel",
+      "classification": "PASS",
+      "criteria": "closure-result-save-cancel"
+    },
+    {
+      "id": "closure-previous-pending-navigation",
+      "classification": "PASS",
+      "criteria": "closure-previous-pending-navigation"
+    },
+    {
+      "id": "closure-result-units-validation",
+      "classification": "PASS",
+      "criteria": "closure-result-units-validation"
+    },
+    {
+      "id": "closure-review-changed-data",
+      "classification": "PASS",
+      "criteria": "closure-review-changed-data"
+    },
+    {
+      "id": "closure-writer-refusal-unknown",
+      "classification": "PASS",
+      "criteria": "closure-writer-refusal-unknown"
+    },
+    {
+      "id": "closure-shared-flow-draft-refresh",
+      "classification": "PASS",
+      "criteria": "closure-shared-flow-draft-refresh"
+    },
+    {
+      "id": "closure-zero-opening-usd",
+      "classification": "PASS",
+      "criteria": "closure-zero-opening-usd"
+    },
+    {
+      "id": "closure-draft-backup-retention",
+      "classification": "PASS",
+      "criteria": "closure-draft-backup-retention"
+    },
+    {
+      "id": "closure-invalidated-context-no-refresh",
+      "classification": "PASS",
+      "criteria": "closure-invalidated-context-no-refresh"
+    },
+    {
+      "id": "closure-counterproof-missing-recovery",
+      "classification": "PASS",
+      "criteria": "closure-counterproof-missing-recovery"
+    },
+    {
+      "id": "closure-counterproof-positive-loss",
+      "classification": "PASS",
+      "criteria": "closure-counterproof-positive-loss"
+    },
+    {
+      "id": "closure-counterproof-restored-consent",
+      "classification": "PASS",
+      "criteria": "closure-counterproof-restored-consent"
+    },
+    {
+      "id": "closure-matrix-sidebar-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-light-390"
+    },
+    {
+      "id": "closure-matrix-sidebar-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-light-1440"
+    },
+    {
+      "id": "closure-matrix-sidebar-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-dark-390"
+    },
+    {
+      "id": "closure-matrix-sidebar-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-sidebar-dark-1440"
+    },
+    {
+      "id": "closure-matrix-topbar-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-light-390"
+    },
+    {
+      "id": "closure-matrix-topbar-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-light-1440"
+    },
+    {
+      "id": "closure-matrix-topbar-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-dark-390"
+    },
+    {
+      "id": "closure-matrix-topbar-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-topbar-dark-1440"
+    },
+    {
+      "id": "closure-matrix-glass-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-light-390"
+    },
+    {
+      "id": "closure-matrix-glass-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-light-1440"
+    },
+    {
+      "id": "closure-matrix-glass-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-dark-390"
+    },
+    {
+      "id": "closure-matrix-glass-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-glass-dark-1440"
+    },
+    {
+      "id": "closure-matrix-submenu-light-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-light-390"
+    },
+    {
+      "id": "closure-matrix-submenu-light-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-light-1440"
+    },
+    {
+      "id": "closure-matrix-submenu-dark-390",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-dark-390"
+    },
+    {
+      "id": "closure-matrix-submenu-dark-1440",
+      "classification": "PASS",
+      "criteria": "closure-matrix-submenu-dark-1440"
+    },
+    {
+      "id": "inline-counterproof-row-height",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-duplicate-editor",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-false-green",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-typing-write",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-preference-finance-backup",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-wrong-usd",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-matrix-cell-value",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-action-target-size",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "inline-counterproof-action-inner-center",
+      "classification": "PASS",
+      "criteria": "same permanent oracle must reject deliberately injected violation"
+    },
+    {
+      "id": "counterproof-menu-inner-left",
+      "classification": "PASS",
+      "criteria": "same13realrows,5pxtranslatedtextrejecteddespiteunchangedouterbox"
+    },
+    {
+      "id": "counterproof-menu-width",
+      "classification": "PASS",
+      "criteria": "samegeometryoraclerejects322pxmenuagainstmax320"
+    },
+    {
+      "id": "counterproof-forecast-inner-text",
+      "classification": "PASS",
+      "criteria": "sameactualtextRangeoraclerejects5pxinnertranslation"
+    },
+    {
+      "id": "counterproof-svg-drawing",
+      "classification": "PASS",
+      "criteria": "sameSVGdrawingbbox/screenCTMoraclerejects5unittranslation"
+    },
+    {
+      "id": "matrix-sidebar-light-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-320x700",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-390x844",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-700x600",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-701x601",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-sidebar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-topbar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-light-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-glass-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-light-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "matrix-submenu-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "menu/keyboard/focus/text/SVG/clipping/form/Profiles/Stop/no-write"
+    },
+    {
+      "id": "states-confirmation-review-edit-multiple-cancel",
+      "classification": "PASS",
+      "criteria": "existingrealcreationandfinancialmilestonesplusactualcontrolsgeometry"
+    },
+    {
+      "id": "touch-390x844",
+      "classification": "PASS",
+      "criteria": "realChromiumtouchmenu/jump/close44px/cancel/nofinancialwrite"
+    },
+    {
+      "id": "compact-counterproof-overflow",
+      "classification": "PASS",
+      "criteria": "same monthly geometry oracle rejects provoked horizontal overflow"
+    },
+    {
+      "id": "compact-counterproof-duplicate-control",
+      "classification": "PASS",
+      "criteria": "same uniqueness oracle rejects duplicate financial control"
+    },
+    {
+      "id": "compact-counterproof-wrong-year",
+      "classification": "PASS",
+      "criteria": "same annual calendar oracle rejects wrong year marker"
+    },
+    {
+      "id": "compact-counterproof-false-finalization",
+      "classification": "PASS",
+      "criteria": "same month state oracle rejects elapsed month falsely marked finalized"
+    },
+    {
+      "id": "compact-counterproof-future-input-value",
+      "classification": "PASS",
+      "criteria": "same per-month detail/input oracle rejects corrupted future rate and contribution values"
+    },
+    {
+      "id": "compact-counterproof-cost-values",
+      "classification": "PASS",
+      "criteria": "same bound month-field oracle rejects removed BRL cost and wrong coverage"
+    },
+    {
+      "id": "compact-counterproof-phase-subtotal",
+      "classification": "PASS",
+      "criteria": "same phase-value oracle rejects a wrong subtotal amount despite preserved period label"
+    },
+    {
+      "id": "compact-counterproof-missing-current-row",
+      "classification": "PASS",
+      "criteria": "same read-model annual-membership oracle rejects missing current row and marker"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-320x700",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-390x844",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-700x600",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-701x601",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1099x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1100x719",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1100x720",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1101x721",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1440x1000",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-light-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-boundary-899",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-boundary-900",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-boundary-901",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-touch-keyboard",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "notification-sidebar-light-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-light-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-light-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-dark-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-light-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-dark-320x700",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-light-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-light-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-light-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-dark-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-light-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-dark-390x844",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-light-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-light-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-light-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-light-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-sidebar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-topbar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-light-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-glass-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-light-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-submenu-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "active-actions/SVGinnercenter<=2CSSpx/44px/nooverflow/stablefocus/no-write"
+    },
+    {
+      "id": "notification-counterproof-inner-svg",
+      "classification": "PASS",
+      "criteria": "same-geometry-oracle rejects representative violation"
+    },
+    {
+      "id": "notification-counterproof-overflow",
+      "classification": "PASS",
+      "criteria": "same-geometry-oracle rejects representative violation"
+    },
+    {
+      "id": "notification-long-context-wrap",
+      "classification": "PASS",
+      "criteria": "valid long account name wraps inside scroll container at320"
+    },
+    {
+      "id": "notification-counterproof-scroll-contents",
+      "classification": "PASS",
+      "criteria": "same oracle rejects overflow inside fixed width dialog"
+    },
+    {
+      "id": "calendar-sidebar-light-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-light-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-dark-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-light-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-dark-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-light-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-dark-320x700",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-light-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-light-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-dark-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-light-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-dark-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-light-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-dark-390x844",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-light-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-light-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-light-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-light-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-dark-1440x900",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-sidebar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-light-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-topbar-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-light-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-glass-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-light-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-submenu-dark-1440x480",
+      "classification": "PASS",
+      "criteria": "SVGink<=2CSSpx/44px/7columns/anchored-bounded/default-markers/keyboard/read-only"
+    },
+    {
+      "id": "calendar-counterproof-inner-svg",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "calendar-counterproof-economic-dot",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "calendar-counterproof-overflow",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "calendar-counterproof-personal-only-economic-dot",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "calendar-counterproof-marker-appearance",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "calendar-counterproof-today-selection",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "calendar-counterproof-vertical-clipping",
+      "classification": "PASS",
+      "criteria": "same geometry oracle accepts valid surface and rejects representative violation"
+    },
+    {
+      "id": "notification-native200-sidebar-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-sidebar-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-topbar-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-topbar-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-glass-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-glass-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-submenu-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "notification-native200-submenu-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow"
+    },
+    {
+      "id": "calendar-native200-sidebar-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-sidebar-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-topbar-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-topbar-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-glass-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-glass-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-submenu-light",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "calendar-native200-submenu-dark",
+      "classification": "PASS",
+      "criteria": "native200/SVGink<=2CSSpx/44px/viewport-nooverflow/keyboard/read-only"
+    },
+    {
+      "id": "native200-sidebar-light",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-sidebar-dark",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-topbar-light",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-topbar-dark",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-glass-light",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-glass-dark",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-submenu-light",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "native200-submenu-dark",
+      "classification": "PASS",
+      "criteria": "browsernative200%/menu/text/SVG/focus/dialogs"
+    },
+    {
+      "id": "compact-native200-sidebar-light",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-sidebar-dark",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-topbar-light",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-topbar-dark",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-glass-light",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-glass-dark",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-submenu-light",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "compact-native200-submenu-dark",
+      "classification": "PASS",
+      "criteria": "docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md"
+    },
+    {
+      "id": "closure-native200-sidebar-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-sidebar-light"
+    },
+    {
+      "id": "closure-native200-sidebar-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-sidebar-dark"
+    },
+    {
+      "id": "closure-native200-topbar-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-topbar-light"
+    },
+    {
+      "id": "closure-native200-topbar-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-topbar-dark"
+    },
+    {
+      "id": "closure-native200-glass-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-glass-light"
+    },
+    {
+      "id": "closure-native200-glass-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-glass-dark"
+    },
+    {
+      "id": "closure-native200-submenu-light",
+      "classification": "PASS",
+      "criteria": "closure-native200-submenu-light"
+    },
+    {
+      "id": "closure-native200-submenu-dark",
+      "classification": "PASS",
+      "criteria": "closure-native200-submenu-dark"
+    },
+    {
+      "id": "coverage-missing-and-zero-rejected",
+      "classification": "PASS",
+      "criteria": "nonempty/exactrequiredIDs/executedonly;negativefixturesusesamecoveragevalidator"
+    }
+  ],
+  "recoverableCompressedRaw": "visual-full4-raw.json.gz",
+  "compressedSha256": "fe993366888afe26d7523c6e1eedcac840e96dc1435dc63755b06f0abe851016"
+}

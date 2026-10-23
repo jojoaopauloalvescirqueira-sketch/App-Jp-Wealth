@@ -1,0 +1,1706 @@
+{
+  "baseline": {
+    "viewport": 390,
+    "client": 390,
+    "overflow": 3,
+    "zoom": 1.25,
+    "theme": "light",
+    "navigation": "sidebar",
+    "rail": "expanded",
+    "shell": "global-dashboard",
+    "grid": {
+      "x": 25,
+      "y": 583.5,
+      "w": 340,
+      "h": 1980.5,
+      "right": 365,
+      "bottom": 2564
+    },
+    "canvas": [
+      242,
+      244,
+      247,
+      255
+    ],
+    "panel": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "header": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 133.5,
+      "right": 390,
+      "bottom": 133.5
+    },
+    "headerBorder": {
+      "width": 0.8,
+      "style": "solid",
+      "color": [
+        228,
+        231,
+        237,
+        255
+      ]
+    },
+    "sidebar": null,
+    "sidebarBorder": null,
+    "sidebarRailBorder": {
+      "width": 0.8,
+      "style": "solid",
+      "color": [
+        228,
+        231,
+        237,
+        255
+      ],
+      "display": "none"
+    },
+    "logo": {
+      "x": 25,
+      "y": 25.234375,
+      "w": 180,
+      "h": 19.53125,
+      "right": 205,
+      "bottom": 44.765625,
+      "naturalWidth": 1179,
+      "naturalHeight": 128
+    },
+    "brand": {
+      "x": 25,
+      "y": 7.5,
+      "w": 180,
+      "h": 55,
+      "right": 205,
+      "bottom": 62.5
+    },
+    "actions": [
+      {
+        "id": "Abrir menu de telas",
+        "x": 37.5,
+        "y": 67.5,
+        "w": 55,
+        "h": 60,
+        "right": 92.5,
+        "bottom": 127.5
+      },
+      {
+        "id": "headerCalendarBtn",
+        "x": 97.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 152.5,
+        "bottom": 125
+      },
+      {
+        "id": "headerNotificationsBtn",
+        "x": 157.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 212.5,
+        "bottom": 125
+      },
+      {
+        "id": "headerConfigBtn",
+        "x": 217.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 272.5,
+        "bottom": 125
+      },
+      {
+        "id": "headerProfileBtn",
+        "x": 277.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 332.5,
+        "bottom": 125
+      },
+      {
+        "id": "finalizeSessionBtn",
+        "x": 337.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 392.5,
+        "bottom": 125
+      }
+    ],
+    "cards": [
+      {
+        "id": "forex",
+        "x": 25,
+        "y": 603.5,
+        "w": 340,
+        "h": 255.75,
+        "right": 365,
+        "bottom": 859.25,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 624.5,
+          "w": 298,
+          "h": 137.25,
+          "right": 344,
+          "bottom": 761.75
+        },
+        "body": {
+          "x": 46,
+          "y": 781.75,
+          "w": 298,
+          "h": 56.5,
+          "right": 344,
+          "bottom": 838.25
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 624.5,
+            "w": 167.59375,
+            "h": 21,
+            "right": 258.59375,
+            "bottom": 645.5,
+            "scroll": 134,
+            "client": 134
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 658,
+            "w": 167.59375,
+            "h": 28.75,
+            "right": 258.59375,
+            "bottom": 686.75,
+            "scroll": 134,
+            "client": 134
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 706.75,
+            "w": 103.90625,
+            "h": 55,
+            "right": 149.90625,
+            "bottom": 761.75,
+            "scroll": 82,
+            "client": 82
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 791.75,
+            "w": 298,
+            "h": 46.5,
+            "right": 344,
+            "bottom": 838.25,
+            "scroll": 238,
+            "client": 238
+          }
+        ]
+      },
+      {
+        "id": "planning",
+        "x": 25,
+        "y": 879.25,
+        "w": 340,
+        "h": 335.25,
+        "right": 365,
+        "bottom": 1214.5,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 900.25,
+          "w": 298,
+          "h": 170.25,
+          "right": 344,
+          "bottom": 1070.5
+        },
+        "body": {
+          "x": 46,
+          "y": 1090.5,
+          "w": 298,
+          "h": 103,
+          "right": 344,
+          "bottom": 1193.5
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 900.25,
+            "w": 253,
+            "h": 42,
+            "right": 344,
+            "bottom": 942.25,
+            "scroll": 202,
+            "client": 202
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 954.75,
+            "w": 253,
+            "h": 28.75,
+            "right": 344,
+            "bottom": 983.5,
+            "scroll": 202,
+            "client": 202
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 1003.5,
+            "w": 145,
+            "h": 67,
+            "right": 191,
+            "bottom": 1070.5,
+            "scroll": 114,
+            "client": 114
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 1100.5,
+            "w": 298,
+            "h": 93,
+            "right": 344,
+            "bottom": 1193.5,
+            "scroll": 238,
+            "client": 238
+          }
+        ]
+      },
+      {
+        "id": "personal-finance",
+        "x": 25,
+        "y": 1234.5,
+        "w": 340,
+        "h": 601.75,
+        "right": 365,
+        "bottom": 1836.25,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 1255.5,
+          "w": 298,
+          "h": 149.25,
+          "right": 344,
+          "bottom": 1404.75
+        },
+        "body": {
+          "x": 46,
+          "y": 1424.75,
+          "w": 298,
+          "h": 390.5,
+          "right": 344,
+          "bottom": 1815.25
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 1255.5,
+            "w": 205.515625,
+            "h": 21,
+            "right": 296.515625,
+            "bottom": 1276.5,
+            "scroll": 164,
+            "client": 164
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 1289,
+            "w": 205.515625,
+            "h": 28.75,
+            "right": 296.515625,
+            "bottom": 1317.75,
+            "scroll": 164,
+            "client": 164
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 1337.75,
+            "w": 145,
+            "h": 67,
+            "right": 191,
+            "bottom": 1404.75,
+            "scroll": 114,
+            "client": 114
+          },
+          {
+            "tag": "dm-empty",
+            "x": 46,
+            "y": 1446,
+            "w": 298,
+            "h": 106.25,
+            "right": 344,
+            "bottom": 1552.25,
+            "scroll": 237,
+            "client": 237
+          },
+          {
+            "tag": "dm-row",
+            "x": 46,
+            "y": 1552.25,
+            "w": 298,
+            "h": 35,
+            "right": 344,
+            "bottom": 1587.25,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 1650.75,
+            "w": 298,
+            "h": 46.5,
+            "right": 344,
+            "bottom": 1697.25,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 1728.25,
+            "w": 80.09375,
+            "h": 41,
+            "right": 126.09375,
+            "bottom": 1769.25,
+            "scroll": 64,
+            "client": 64
+          },
+          {
+            "tag": "dm-link",
+            "x": 141.09375,
+            "y": 1728.25,
+            "w": 120.9375,
+            "h": 41,
+            "right": 262.03125,
+            "bottom": 1769.25,
+            "scroll": 97,
+            "client": 97
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 1774.25,
+            "w": 92.078125,
+            "h": 41,
+            "right": 138.078125,
+            "bottom": 1815.25,
+            "scroll": 74,
+            "client": 74
+          },
+          {
+            "tag": "dm-link",
+            "x": 153.078125,
+            "y": 1774.25,
+            "w": 63.984375,
+            "h": 41,
+            "right": 217.0625,
+            "bottom": 1815.25,
+            "scroll": 51,
+            "client": 51
+          }
+        ]
+      },
+      {
+        "id": "research",
+        "x": 25,
+        "y": 1856.25,
+        "w": 340,
+        "h": 707.75,
+        "right": 365,
+        "bottom": 2564,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 1877.25,
+          "w": 298,
+          "h": 137.25,
+          "right": 344,
+          "bottom": 2014.5
+        },
+        "body": {
+          "x": 46,
+          "y": 2034.5,
+          "w": 298,
+          "h": 508.5,
+          "right": 344,
+          "bottom": 2543
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 1877.25,
+            "w": 172.765625,
+            "h": 21,
+            "right": 263.765625,
+            "bottom": 1898.25,
+            "scroll": 138,
+            "client": 138
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 1910.75,
+            "w": 172.765625,
+            "h": 28.75,
+            "right": 263.765625,
+            "bottom": 1939.5,
+            "scroll": 138,
+            "client": 138
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 1959.5,
+            "w": 131.515625,
+            "h": 55,
+            "right": 177.515625,
+            "bottom": 2014.5,
+            "scroll": 104,
+            "client": 104
+          },
+          {
+            "tag": "dm-fact",
+            "x": 46,
+            "y": 2044.5,
+            "w": 136.5,
+            "h": 117,
+            "right": 182.5,
+            "bottom": 2161.5,
+            "scroll": 109,
+            "client": 109
+          },
+          {
+            "tag": "dm-fact",
+            "x": 207.5,
+            "y": 2044.5,
+            "w": 136.5,
+            "h": 117,
+            "right": 344,
+            "bottom": 2161.5,
+            "scroll": 109,
+            "client": 109
+          },
+          {
+            "tag": "dm-row",
+            "x": 46,
+            "y": 2176.5,
+            "w": 298,
+            "h": 57.5,
+            "right": 344,
+            "bottom": 2234,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-row",
+            "x": 46,
+            "y": 2234,
+            "w": 298,
+            "h": 35,
+            "right": 344,
+            "bottom": 2269,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 2332.5,
+            "w": 139,
+            "h": 41,
+            "right": 185,
+            "bottom": 2373.5,
+            "scroll": 111,
+            "client": 111
+          },
+          {
+            "tag": "dm-link",
+            "x": 205,
+            "y": 2332.5,
+            "w": 139,
+            "h": 41,
+            "right": 344,
+            "bottom": 2373.5,
+            "scroll": 111,
+            "client": 111
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 2373.5,
+            "w": 139,
+            "h": 41,
+            "right": 185,
+            "bottom": 2414.5,
+            "scroll": 111,
+            "client": 111
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 2424.5,
+            "w": 298,
+            "h": 46.5,
+            "right": 344,
+            "bottom": 2471,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 2502,
+            "w": 77.796875,
+            "h": 41,
+            "right": 123.796875,
+            "bottom": 2543,
+            "scroll": 62,
+            "client": 62
+          },
+          {
+            "tag": "dm-link",
+            "x": 138.796875,
+            "y": 2502,
+            "w": 58.015625,
+            "h": 41,
+            "right": 196.8125,
+            "bottom": 2543,
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "tag": "dm-link",
+            "x": 211.8125,
+            "y": 2502,
+            "w": 44.3125,
+            "h": 41,
+            "right": 256.125,
+            "bottom": 2543,
+            "scroll": 35,
+            "client": 35
+          }
+        ]
+      }
+    ]
+  },
+  "extra": {
+    "vw": 390,
+    "client": 390,
+    "scroll": 393,
+    "actions": {
+      "box": {
+        "x": 25,
+        "right": 365,
+        "width": 340
+      },
+      "cols": "44px 44px 44px 44px 44px 44px",
+      "gap": "4px",
+      "pad": "0px 0px 0px 10px",
+      "width": "272px"
+    },
+    "offenders": [
+      {
+        "tag": "BUTTON",
+        "id": "finalizeSessionBtn",
+        "cl": "header-action header-action-finalize",
+        "right": 392.5
+      },
+      {
+        "tag": "BUTTON",
+        "id": "headerNotesBtn",
+        "cl": "mvpn-launcher-button",
+        "right": 462.5
+      },
+      {
+        "tag": "svg",
+        "id": "",
+        "cl": {},
+        "right": 445
+      },
+      {
+        "tag": "use",
+        "id": "",
+        "cl": {},
+        "right": 439.1666564941406
+      }
+    ]
+  },
+  "proposedGap2": {
+    "viewport": 390,
+    "client": 390,
+    "overflow": 0,
+    "zoom": 1.25,
+    "theme": "light",
+    "navigation": "sidebar",
+    "rail": "expanded",
+    "shell": "global-dashboard",
+    "grid": {
+      "x": 25,
+      "y": 583.5,
+      "w": 340,
+      "h": 1980.5,
+      "right": 365,
+      "bottom": 2564
+    },
+    "canvas": [
+      242,
+      244,
+      247,
+      255
+    ],
+    "panel": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "header": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 133.5,
+      "right": 390,
+      "bottom": 133.5
+    },
+    "headerBorder": {
+      "width": 0.8,
+      "style": "solid",
+      "color": [
+        228,
+        231,
+        237,
+        255
+      ]
+    },
+    "sidebar": null,
+    "sidebarBorder": null,
+    "sidebarRailBorder": {
+      "width": 0.8,
+      "style": "solid",
+      "color": [
+        228,
+        231,
+        237,
+        255
+      ],
+      "display": "none"
+    },
+    "logo": {
+      "x": 25,
+      "y": 25.234375,
+      "w": 180,
+      "h": 19.53125,
+      "right": 205,
+      "bottom": 44.765625,
+      "naturalWidth": 1179,
+      "naturalHeight": 128
+    },
+    "brand": {
+      "x": 25,
+      "y": 7.5,
+      "w": 180,
+      "h": 55,
+      "right": 205,
+      "bottom": 62.5
+    },
+    "actions": [
+      {
+        "id": "Abrir menu de telas",
+        "x": 37.5,
+        "y": 67.5,
+        "w": 55,
+        "h": 60,
+        "right": 92.5,
+        "bottom": 127.5
+      },
+      {
+        "id": "headerCalendarBtn",
+        "x": 95,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 150,
+        "bottom": 125
+      },
+      {
+        "id": "headerNotificationsBtn",
+        "x": 152.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 207.5,
+        "bottom": 125
+      },
+      {
+        "id": "headerConfigBtn",
+        "x": 210,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 265,
+        "bottom": 125
+      },
+      {
+        "id": "headerProfileBtn",
+        "x": 267.5,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 322.5,
+        "bottom": 125
+      },
+      {
+        "id": "finalizeSessionBtn",
+        "x": 325,
+        "y": 70,
+        "w": 55,
+        "h": 55,
+        "right": 380,
+        "bottom": 125
+      }
+    ],
+    "cards": [
+      {
+        "id": "forex",
+        "x": 25,
+        "y": 603.5,
+        "w": 340,
+        "h": 255.75,
+        "right": 365,
+        "bottom": 859.25,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 624.5,
+          "w": 298,
+          "h": 137.25,
+          "right": 344,
+          "bottom": 761.75
+        },
+        "body": {
+          "x": 46,
+          "y": 781.75,
+          "w": 298,
+          "h": 56.5,
+          "right": 344,
+          "bottom": 838.25
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 624.5,
+            "w": 167.59375,
+            "h": 21,
+            "right": 258.59375,
+            "bottom": 645.5,
+            "scroll": 134,
+            "client": 134
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 658,
+            "w": 167.59375,
+            "h": 28.75,
+            "right": 258.59375,
+            "bottom": 686.75,
+            "scroll": 134,
+            "client": 134
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 706.75,
+            "w": 103.90625,
+            "h": 55,
+            "right": 149.90625,
+            "bottom": 761.75,
+            "scroll": 82,
+            "client": 82
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 791.75,
+            "w": 298,
+            "h": 46.5,
+            "right": 344,
+            "bottom": 838.25,
+            "scroll": 238,
+            "client": 238
+          }
+        ]
+      },
+      {
+        "id": "planning",
+        "x": 25,
+        "y": 879.25,
+        "w": 340,
+        "h": 335.25,
+        "right": 365,
+        "bottom": 1214.5,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 900.25,
+          "w": 298,
+          "h": 170.25,
+          "right": 344,
+          "bottom": 1070.5
+        },
+        "body": {
+          "x": 46,
+          "y": 1090.5,
+          "w": 298,
+          "h": 103,
+          "right": 344,
+          "bottom": 1193.5
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 900.25,
+            "w": 253,
+            "h": 42,
+            "right": 344,
+            "bottom": 942.25,
+            "scroll": 202,
+            "client": 202
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 954.75,
+            "w": 253,
+            "h": 28.75,
+            "right": 344,
+            "bottom": 983.5,
+            "scroll": 202,
+            "client": 202
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 1003.5,
+            "w": 145,
+            "h": 67,
+            "right": 191,
+            "bottom": 1070.5,
+            "scroll": 114,
+            "client": 114
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 1100.5,
+            "w": 298,
+            "h": 93,
+            "right": 344,
+            "bottom": 1193.5,
+            "scroll": 238,
+            "client": 238
+          }
+        ]
+      },
+      {
+        "id": "personal-finance",
+        "x": 25,
+        "y": 1234.5,
+        "w": 340,
+        "h": 601.75,
+        "right": 365,
+        "bottom": 1836.25,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 1255.5,
+          "w": 298,
+          "h": 149.25,
+          "right": 344,
+          "bottom": 1404.75
+        },
+        "body": {
+          "x": 46,
+          "y": 1424.75,
+          "w": 298,
+          "h": 390.5,
+          "right": 344,
+          "bottom": 1815.25
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 1255.5,
+            "w": 205.515625,
+            "h": 21,
+            "right": 296.515625,
+            "bottom": 1276.5,
+            "scroll": 164,
+            "client": 164
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 1289,
+            "w": 205.515625,
+            "h": 28.75,
+            "right": 296.515625,
+            "bottom": 1317.75,
+            "scroll": 164,
+            "client": 164
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 1337.75,
+            "w": 145,
+            "h": 67,
+            "right": 191,
+            "bottom": 1404.75,
+            "scroll": 114,
+            "client": 114
+          },
+          {
+            "tag": "dm-empty",
+            "x": 46,
+            "y": 1446,
+            "w": 298,
+            "h": 106.25,
+            "right": 344,
+            "bottom": 1552.25,
+            "scroll": 237,
+            "client": 237
+          },
+          {
+            "tag": "dm-row",
+            "x": 46,
+            "y": 1552.25,
+            "w": 298,
+            "h": 35,
+            "right": 344,
+            "bottom": 1587.25,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 1650.75,
+            "w": 298,
+            "h": 46.5,
+            "right": 344,
+            "bottom": 1697.25,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 1728.25,
+            "w": 80.09375,
+            "h": 41,
+            "right": 126.09375,
+            "bottom": 1769.25,
+            "scroll": 64,
+            "client": 64
+          },
+          {
+            "tag": "dm-link",
+            "x": 141.09375,
+            "y": 1728.25,
+            "w": 120.9375,
+            "h": 41,
+            "right": 262.03125,
+            "bottom": 1769.25,
+            "scroll": 97,
+            "client": 97
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 1774.25,
+            "w": 92.078125,
+            "h": 41,
+            "right": 138.078125,
+            "bottom": 1815.25,
+            "scroll": 74,
+            "client": 74
+          },
+          {
+            "tag": "dm-link",
+            "x": 153.078125,
+            "y": 1774.25,
+            "w": 63.984375,
+            "h": 41,
+            "right": 217.0625,
+            "bottom": 1815.25,
+            "scroll": 51,
+            "client": 51
+          }
+        ]
+      },
+      {
+        "id": "research",
+        "x": 25,
+        "y": 1856.25,
+        "w": 340,
+        "h": 707.75,
+        "right": 365,
+        "bottom": 2564,
+        "background": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "border": [
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          },
+          {
+            "width": 0.8,
+            "style": "solid",
+            "color": [
+              228,
+              231,
+              237,
+              255
+            ]
+          }
+        ],
+        "radius": 14,
+        "padding": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "scroll": 270,
+        "client": 270,
+        "head": {
+          "x": 46,
+          "y": 1877.25,
+          "w": 298,
+          "h": 137.25,
+          "right": 344,
+          "bottom": 2014.5
+        },
+        "body": {
+          "x": 46,
+          "y": 2034.5,
+          "w": 298,
+          "h": 508.5,
+          "right": 344,
+          "bottom": 2543
+        },
+        "bodyColumns": 1,
+        "elements": [
+          {
+            "tag": "dm-eyebrow",
+            "x": 91,
+            "y": 1877.25,
+            "w": 172.765625,
+            "h": 21,
+            "right": 263.765625,
+            "bottom": 1898.25,
+            "scroll": 138,
+            "client": 138
+          },
+          {
+            "tag": "dm-title",
+            "x": 91,
+            "y": 1910.75,
+            "w": 172.765625,
+            "h": 28.75,
+            "right": 263.765625,
+            "bottom": 1939.5,
+            "scroll": 138,
+            "client": 138
+          },
+          {
+            "tag": "dm-cta",
+            "x": 46,
+            "y": 1959.5,
+            "w": 131.515625,
+            "h": 55,
+            "right": 177.515625,
+            "bottom": 2014.5,
+            "scroll": 104,
+            "client": 104
+          },
+          {
+            "tag": "dm-fact",
+            "x": 46,
+            "y": 2044.5,
+            "w": 136.5,
+            "h": 117,
+            "right": 182.5,
+            "bottom": 2161.5,
+            "scroll": 109,
+            "client": 109
+          },
+          {
+            "tag": "dm-fact",
+            "x": 207.5,
+            "y": 2044.5,
+            "w": 136.5,
+            "h": 117,
+            "right": 344,
+            "bottom": 2161.5,
+            "scroll": 109,
+            "client": 109
+          },
+          {
+            "tag": "dm-row",
+            "x": 46,
+            "y": 2176.5,
+            "w": 298,
+            "h": 57.5,
+            "right": 344,
+            "bottom": 2234,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-row",
+            "x": 46,
+            "y": 2234,
+            "w": 298,
+            "h": 35,
+            "right": 344,
+            "bottom": 2269,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 2332.5,
+            "w": 139,
+            "h": 41,
+            "right": 185,
+            "bottom": 2373.5,
+            "scroll": 111,
+            "client": 111
+          },
+          {
+            "tag": "dm-link",
+            "x": 205,
+            "y": 2332.5,
+            "w": 139,
+            "h": 41,
+            "right": 344,
+            "bottom": 2373.5,
+            "scroll": 111,
+            "client": 111
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 2373.5,
+            "w": 139,
+            "h": 41,
+            "right": 185,
+            "bottom": 2414.5,
+            "scroll": 111,
+            "client": 111
+          },
+          {
+            "tag": "dm-note",
+            "x": 46,
+            "y": 2424.5,
+            "w": 298,
+            "h": 46.5,
+            "right": 344,
+            "bottom": 2471,
+            "scroll": 238,
+            "client": 238
+          },
+          {
+            "tag": "dm-link",
+            "x": 46,
+            "y": 2502,
+            "w": 77.796875,
+            "h": 41,
+            "right": 123.796875,
+            "bottom": 2543,
+            "scroll": 62,
+            "client": 62
+          },
+          {
+            "tag": "dm-link",
+            "x": 138.796875,
+            "y": 2502,
+            "w": 58.015625,
+            "h": 41,
+            "right": 196.8125,
+            "bottom": 2543,
+            "scroll": 46,
+            "client": 46
+          },
+          {
+            "tag": "dm-link",
+            "x": 211.8125,
+            "y": 2502,
+            "w": 44.3125,
+            "h": 41,
+            "right": 256.125,
+            "bottom": 2543,
+            "scroll": 35,
+            "client": 35
+          }
+        ]
+      }
+    ]
+  },
+  "observed": {
+    "pageerror": [],
+    "console": []
+  }
+}

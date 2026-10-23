@@ -8,7 +8,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const {randomUUID}=require('node:crypto');
 const root=path.resolve(__dirname,'..');
-const moduleFile=path.join(root,'src/js/30-accounting/06-planning/02-state.js');
+const moduleFile=process.env.JPW_PLANNING_STATE_SOURCE||path.join(root,'src/js/30-accounting/06-planning/02-state.js');
 const engineFile=path.join(root,'src/js/30-accounting/06-planning/01-engine.js');
 const plain=value=>JSON.parse(JSON.stringify(value));
 const config=(changes={})=>({name:'Conta sintética',broker:'Corretora teste',login:'100',server:'Demo',
@@ -16,7 +16,7 @@ const config=(changes={})=>({name:'Conta sintética',broker:'Corretora teste',lo
   goals:{adequate:null,ideal:{value:5000,currency:'USD'}},...changes});
 const quote={rate:5,referenceDate:'2026-10-19',fetchedAt:'2026-10-20T12:00:00.000Z',source:'Frankfurter'};
 function harness(initial={}){
-  const control={calls:[],mode:'CONFIRMED',disk:plain(initial),beforeWrite:null};
+  const control={calls:[],mode:'CONFIRMED',disk:plain(initial),beforeWrite:null,timelineCalls:0};
   class Clock extends Date{constructor(...args){super(...(args.length?args:['2026-10-20T12:00:00.000Z']));}static now(){return new Date('2026-10-20T12:00:00.000Z').getTime();}}
   const context=vm.createContext({console,structuredClone,crypto:{randomUUID},Date:Clock,initial:plain(initial),control,
     getCurrentUsdBrlQuote:()=>({...quote,status:'fresh'}),jpWealthPersistenceEpoch:()=>control.epoch||0,
@@ -35,7 +35,9 @@ function harness(initial={}){
   vm.runInContext('let S=initial; window=globalThis;',context);
   assert.ok(fs.existsSync(moduleFile),'planning commands module must exist');
   assert.ok(fs.existsSync(engineFile),'planning engine prerequisite must exist');
-  vm.runInContext(fs.readFileSync(engineFile,'utf8'),context,{filename:engineFile});
+  const engineSource=fs.readFileSync(engineFile,'utf8');
+  assert.equal(engineSource.split('function timeline(plan, options) {').length,2,'timeline probe has one exact entry point');
+  vm.runInContext(engineSource.replace('function timeline(plan, options) {','function timeline(plan, options) { control.timelineCalls++;'),context,{filename:engineFile});
   vm.runInContext(fs.readFileSync(moduleFile,'utf8'),context,{filename:moduleFile});
   const api=context.JPWPlanning;
   assert.equal(typeof api?.commands?.execute,'function','commands.execute is available');
@@ -545,7 +547,134 @@ test('PLCLOSE-Q06 effective closure excludes projection and remains USD usable w
 });
 
 for(const t of require('./planning_monthly_result_input_test.js').tests)test(t.name,t.run);
-let failed=0;
-for(const t of tests){try{t.run();console.log('PASS '+t.name);}catch(error){failed++;console.error('FAIL '+t.name+'\n'+error.stack);}}
-console.log(JSON.stringify({suite:'planning_state',tests:tests.length,passed:tests.length-failed,failed}));
-process.exitCode=failed?1:0;
+
+// Approved actionable-notification contract22/10/2026. This is a factual
+// projection, not a second calculation of monthly balances or eligibility.
+const pending=(h,options)=>{assert.equal(typeof h.api.queries.pendingActions,'function');return plain(h.api.queries.pendingActions(options));};
+test('PLNOTICE-Q01 absent and retroactive empty plans produce no fabricated tasks',()=>{
+ const empty=harness({untouched:{keep:true}}),before=empty.state();
+ assert.deepEqual(pending(empty),{available:true,accounts:[],issues:[]});assert.deepEqual(empty.state(),before);
+ const h=harness(),id=create(h),calls=h.control.calls.length,document=h.state();
+ assert.deepEqual(pending(h),{available:true,accounts:[],issues:[]});assert.deepEqual(h.state(),document);assert.equal(h.control.calls.length,calls);
+ assert.equal(h.api.queries.account(id).plan.startMonth,'2026-01');
+});
+test('PLNOTICE-Q02 explicit zero is a past fact and earlier empty months are a dependency not extra tasks',()=>{
+ const h=harness(),id=create(h);ok(h,'recordResult',{accountId:id,month:'2026-04',usd:0});
+ const r=pending(h),a=r.accounts[0];assert.equal(r.available,true);assert.equal(r.accounts.length,1);
+ assert.equal(a.accountId,id);assert.equal(a.planId,h.api.queries.account(id).plan.id);assert.equal(a.name,'Conta sintética');
+ assert.equal(a.count,1);assert.equal(a.firstMonth,'2026-01');assert.equal(a.dependencyMonth,'2026-01');
+ assert.deepEqual(a.months,[{month:'2026-04',codes:['UNCONFIRMED_MONTH']}]);
+});
+test('PLNOTICE-Q03 nonzero current flows count once while annulled flows current and future facts do not',()=>{
+ const h=harness(),id=create(h);ok(h,'recordContribution',{accountId:id,month:'2026-01',usd:5,brl:25});
+ const flow=h.api.queries.account(id).plan.contributions[0];ok(h,'recordContribution',{accountId:id,id:flow.id,month:'2026-01',usd:0,brl:0});
+ ok(h,'recordContribution',{accountId:id,month:'2026-02',usd:5,brl:25});ok(h,'recordWithdrawal',{accountId:id,month:'2026-02',usd:1});
+ ok(h,'recordResult',{accountId:id,month:'2026-10',usd:0});ok(h,'setProjection',{accountId:id,month:'2026-11',rate:.1,contributionUsd:500});
+ const r=pending(h).accounts[0];assert.equal(r.count,1);assert.deepEqual(r.months,[{month:'2026-02',codes:['UNCONFIRMED_MONTH','MISSING_RESULT']}]);
+ assert.equal(r.dependencyMonth,'2026-01');
+ assert.equal(pending(h,{month:'2026-02'}).accounts.length,0);
+ assert.deepEqual(pending(h,{month:'2026-03'}).accounts[0].months,r.months);
+});
+test('PLNOTICE-Q04 confirmed months disappear and invalidated closures remain factual',()=>{
+ const h=harness(),id=create(h);ok(h,'recordResult',{accountId:id,month:'2026-01',usd:0});ok(h,'finalizeMonth',{accountId:id,month:'2026-01',confirmFlows:true});
+ assert.equal(pending(h).accounts.length,0);
+ ok(h,'recordResult',{accountId:id,month:'2026-02',usd:0});ok(h,'finalizeMonth',{accountId:id,month:'2026-02',confirmFlows:true});
+ ok(h,'recordResult',{accountId:id,month:'2026-01',usd:1});
+ const a=pending(h).accounts[0];assert.equal(a.count,2);assert.equal(a.firstMonth,'2026-01');assert.equal(a.dependencyMonth,null);
+ assert.ok(a.months.every(m=>m.codes.includes('CLOSURE_INVALIDATED')));
+ const document=h.state();delete document.patrimonialPlanning.accounts[0].plan.results['2026-02'];h.setState(document);
+ assert.deepEqual(pending(h).accounts[0].months[1],{month:'2026-02',codes:['UNCONFIRMED_MONTH','MISSING_RESULT','CLOSURE_INVALIDATED']});
+});
+test('PLNOTICE-Q05 inactive accounts and false closures without a confirmed predecessor are excluded',()=>{
+ const h=harness(),a=create(h),b=create(h);ok(h,'recordResult',{accountId:a,month:'2026-01',usd:0});ok(h,'archiveAccount',{accountId:a,confirmation:true});
+ const document=h.state();document.patrimonialPlanning.accounts[1].plan.closures['2026-01']={confirmed:false,confirmFlows:false,revision:1};h.setState(document);
+ assert.equal(pending(h).accounts.length,0);assert.equal(h.api.queries.account(b).active,true);
+});
+test('PLNOTICE-Q06 incompatible shape malformed identity and duplicate flows are unavailable not healthy empty',()=>{
+ const future=harness({patrimonialPlanning:{schemaVersion:99,opaque:'preserved'}}),before=future.state();
+ assert.equal(pending(future).available,false);assert.ok(pending(future).issues.length);assert.deepEqual(future.state(),before);
+ const h=harness(),id=create(h);ok(h,'recordContribution',{accountId:id,month:'2026-01',usd:5,brl:25});const valid=h.state();
+ for(const corrupt of [d=>d.patrimonialPlanning.accounts.push(plain(d.patrimonialPlanning.accounts[0])),
+   d=>d.patrimonialPlanning.accounts[0].plan.contributions.push(plain(d.patrimonialPlanning.accounts[0].plan.contributions[0])),
+   d=>d.patrimonialPlanning.accounts[0].plan.startMonth='bad',
+   d=>d.patrimonialPlanning.accounts[0].plan.results['2026-02']={usd:'0',revision:1},
+   d=>d.patrimonialPlanning.accounts[0].plan.closures['2026-01']={confirmed:true,confirmFlows:false,revision:1},
+   d=>d.patrimonialPlanning.accounts[0].plan.closures['2026-01']={confirmed:true,confirmFlows:true,revision:1},
+   d=>{const p=d.patrimonialPlanning.accounts[0].plan;p.results['2026-02']={usd:0,revision:1};p.closures['2026-02']={confirmed:true,confirmFlows:true,revision:1};}]){
+  const d=plain(valid);corrupt(d);h.setState(d);const r=pending(h);assert.equal(r.available,false);assert.ok(r.issues.length);assert.deepEqual(h.state(),d);
+ }
+ assert.equal(pending(h,{month:'not-a-month'}).available,false);
+});
+test('PLNOTICE-Q07 no timeline quote storage network or writes and returned values are detached',()=>{
+ const h=harness(),id=create(h);ok(h,'recordResult',{accountId:id,month:'2026-01',usd:0});const before=h.state(),calls=h.control.calls.length;
+ h.context.getCurrentUsdBrlQuote=()=>{throw Error('unexpected quote read');};
+ h.context.fetch=()=>{throw Error('unexpected network');};h.context.localStorage={getItem(){throw Error('unexpected storage');},setItem(){throw Error('unexpected storage write');}};
+ // The harness instruments the actual timeline entry, including calls made
+ // internally by validateEnvelope, without changing the financial source.
+ const timelineCalls=h.control.timelineCalls;
+ const a=pending(h).accounts[0];a.months[0].codes.push('mutation');a.name='changed';
+ assert.deepEqual(pending(h).accounts[0].months[0].codes,['UNCONFIRMED_MONTH']);assert.equal(pending(h).accounts[0].name,'Conta sintética');
+ assert.deepEqual(h.state(),before);assert.equal(h.control.calls.length,calls);assert.equal(h.control.timelineCalls,timelineCalls);
+});
+test('PLNOTICE-Q08 only confirmed adoption invalidates planning and observer failure cannot change writer result',()=>{
+ const h=harness(),invalidations=[];h.context.JPWNotifications={invalidate(...ids){invalidations.push(ids);throw Error('synthetic observer failure');}};
+ const id=create(h);assert.deepEqual(invalidations,[['planning']]);
+ h.control.mode='REFUSED';assert.equal(execute(h,'recordResult',{accountId:id,month:'2026-01',usd:0}).status,'REFUSED');assert.equal(invalidations.length,1);
+ h.control.mode='CONFIRMED';ok(h,'recordResult',{accountId:id,month:'2026-01',usd:0});assert.equal(invalidations.length,2);assert.equal(h.api.queries.account(id).plan.results['2026-01'].usd,0);
+});
+test('PLNOTICE-Q09 accounts remain independent and unknown fields are preserved without a shared closure',()=>{
+ const h=harness(),a=create(h,{name:'Primeira'}),b=create(h,{name:'Segunda'});
+ ok(h,'recordResult',{accountId:a,month:'2026-01',usd:0});ok(h,'finalizeMonth',{accountId:a,month:'2026-01',confirmFlows:true});
+ ok(h,'recordResult',{accountId:a,month:'2026-02',usd:0});ok(h,'recordResult',{accountId:b,month:'2026-04',usd:0});
+ const d=h.state();d.patrimonialPlanning.accounts[0].extension={preserve:[1,'x']};d.patrimonialPlanning.accounts[1].plan.results['2026-11']={usd:10,revision:1};h.setState(d);
+ const r=pending(h),first=r.accounts.find(x=>x.accountId===a),second=r.accounts.find(x=>x.accountId===b);
+ assert.equal(r.accounts.length,2);assert.equal(first.firstMonth,'2026-02');assert.equal(first.dependencyMonth,null);assert.equal(first.count,1);
+ assert.equal(second.firstMonth,'2026-01');assert.equal(second.dependencyMonth,'2026-01');assert.equal(second.count,1);assert.equal(second.months[0].month,'2026-04');
+ assert.deepEqual(h.state(),d);
+});
+function notificationUI(h,options={}){
+ const control={navigation:0,resume:null,guard:null};
+ const document={activeElement:null,querySelector:()=>control.guard,getElementById:()=>null};
+ Object.assign(h.context,{document,esc:String,getComputedStyle:()=>({display:'none'}),queueMicrotask,
+  JPWNavigation:{navigateLocal(){control.navigation++;return false;},current:()=>({primary:'dashboard'})},
+  JPWModuleAvailability:{canAccess:()=>true},...options});
+ const uiFile=process.env.JPW_PLANNING_UI_SOURCE||path.join(root,'src/js/30-accounting/06-planning/03-ui.js');
+ vm.runInContext(fs.readFileSync(uiFile,'utf8'),h.context);
+ assert.equal(typeof h.api.ui.openMonthlyContext,'function');return control;
+}
+test('PLNOTICE-CTX01 invalid target and frozen module never navigate or write',async()=>{
+ const h=harness(),id=create(h),planId=h.api.queries.account(id).plan.id,c=notificationUI(h),before=h.state(),calls=h.control.calls.length;
+ for(const target of [{accountId:'missing',planId,month:'2026-01'},{accountId:id,planId:'old-plan',month:'2026-01'},{accountId:id,planId,month:'2025-12'}])assert.equal(await h.api.ui.openMonthlyContext(target),false);
+ h.context.JPWModuleAvailability={canAccess:()=>false};assert.equal(await h.api.ui.openMonthlyContext({accountId:id,planId,month:'2026-01'}),false);
+ assert.equal(c.navigation,0);assert.equal(h.control.calls.length,calls);assert.deepEqual(h.state(),before);
+});
+test('PLNOTICE-CTX02 changed planning identity after consent prevents contextual navigation',async()=>{
+ const h=harness(),id=create(h),planId=h.api.queries.account(id).plan.id,c=notificationUI(h);
+ h.context.JPWForex={executionBoardUI:{guardNavigation(_plan,resume){if(c.resume)return true;c.resume=resume;c.guard={open:true,addEventListener(){},removeEventListener(){}};return false;}}};
+ const opening=h.api.ui.openMonthlyContext({accountId:id,planId,month:'2026-01'});assert.equal(c.navigation,0);assert.equal(typeof c.resume,'function');
+ h.setState(h.state());c.guard.open=false;c.resume();assert.equal(await opening,false);assert.equal(c.navigation,0);
+});
+test('PLNOTICE-CTX03 cancellation of existing guard resolves false without choosing a context',async()=>{
+ const h=harness(),id=create(h),planId=h.api.queries.account(id).plan.id,c=notificationUI(h),listeners={};
+ h.context.JPWForex={executionBoardUI:{guardNavigation(_plan,resume){c.resume=resume;c.guard={open:true,addEventListener(type,fn){listeners[type]=fn;},removeEventListener(){}};return false;}}};
+ const opening=h.api.ui.openMonthlyContext({accountId:id,planId,month:'2026-01'});c.guard.open=false;listeners.close();
+ assert.equal(await opening,false);assert.equal(c.navigation,0);
+});
+test('PLNOTICE-CTX04 availability and epoch are checked again after consent and another dialog is respected',async()=>{
+ for(const change of [h=>{h.context.JPWModuleAvailability={canAccess:()=>false};},h=>{h.control.epoch=1;}]){
+  const h=harness(),id=create(h),planId=h.api.queries.account(id).plan.id,c=notificationUI(h);
+  h.context.JPWForex={executionBoardUI:{guardNavigation(_plan,resume){if(c.resume)return true;c.resume=resume;c.guard={open:true,addEventListener(){},removeEventListener(){}};return false;}}};
+  const opening=h.api.ui.openMonthlyContext({accountId:id,planId,month:'2026-01'});change(h);c.guard.open=false;c.resume();assert.equal(await opening,false);assert.equal(c.navigation,0);
+ }
+ const h=harness(),id=create(h),c=notificationUI(h);c.guard={open:true};assert.equal(await h.api.ui.openMonthlyContext({accountId:id,planId:h.api.queries.account(id).plan.id,month:'2026-01'}),false);assert.equal(c.navigation,0);
+});
+
+(async()=>{
+ let failed=0;
+ for(const t of tests){let timeout;try{
+   await Promise.race([Promise.resolve().then(()=>t.run()),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Test did not finish; an unresolved interaction is not PASS.')),5000);})]);
+   console.log('PASS '+t.name);
+  }catch(error){failed++;console.error('FAIL '+t.name+'\n'+error.stack);}finally{clearTimeout(timeout);}}
+ console.log(JSON.stringify({suite:'planning_state',tests:tests.length,passed:tests.length-failed,failed}));
+ process.exitCode=failed?1:0;
+})();

@@ -1,0 +1,74 @@
+[
+  {
+    "variant": "before",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "titles": [],
+    "characters": 2047,
+    "badge": "3",
+    "screenshot": "before-1440.png",
+    "financial_or_preference_writes_after_seeding": 0,
+    "source_overrides": {
+      "index.html": "b39c582fdd3a4e677ba4b62818439bdf5d149dba9c4b330116d412e38b57f7be",
+      "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+      "src/js/30-accounting/06-planning/03-ui.js": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+      "src/js/40-app/18-notification-center.js": "7f852a4f0f24c35fdb0cc48c73b0137ad229472eef7944799ad601df5fb022e4",
+      "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627"
+    },
+    "synthetic_clock": "2026-09-14 12:00:00+00:00",
+    "note": "same two synthetic Planning accounts with explicit zero in Aug2026 and backup dated Aug1; before uses archived source via browser routes only; no source restored"
+  },
+  {
+    "variant": "before",
+    "viewport": [
+      390,
+      844
+    ],
+    "titles": [],
+    "characters": 2047,
+    "badge": "3",
+    "screenshot": "before-390.png",
+    "financial_or_preference_writes_after_seeding": 0,
+    "source_overrides": {
+      "index.html": "b39c582fdd3a4e677ba4b62818439bdf5d149dba9c4b330116d412e38b57f7be",
+      "src/js/30-accounting/06-planning/02-state.js": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+      "src/js/30-accounting/06-planning/03-ui.js": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+      "src/js/40-app/18-notification-center.js": "7f852a4f0f24c35fdb0cc48c73b0137ad229472eef7944799ad601df5fb022e4",
+      "src/styles/app.css": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627"
+    },
+    "synthetic_clock": "2026-09-14 12:00:00+00:00",
+    "note": "same two synthetic Planning accounts with explicit zero in Aug2026 and backup dated Aug1; before uses archived source via browser routes only; no source restored"
+  },
+  {
+    "variant": "after",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "titles": [],
+    "characters": 483,
+    "badge": "3",
+    "screenshot": "after-1440.png",
+    "financial_or_preference_writes_after_seeding": 0,
+    "source_overrides": {},
+    "synthetic_clock": "2026-09-14 12:00:00+00:00",
+    "note": "same two synthetic Planning accounts with explicit zero in Aug2026 and backup dated Aug1; before uses archived source via browser routes only; no source restored"
+  },
+  {
+    "variant": "after",
+    "viewport": [
+      390,
+      844
+    ],
+    "titles": [],
+    "characters": 483,
+    "badge": "3",
+    "screenshot": "after-390.png",
+    "financial_or_preference_writes_after_seeding": 0,
+    "source_overrides": {},
+    "synthetic_clock": "2026-09-14 12:00:00+00:00",
+    "note": "same two synthetic Planning accounts with explicit zero in Aug2026 and backup dated Aug1; before uses archived source via browser routes only; no source restored"
+  }
+]

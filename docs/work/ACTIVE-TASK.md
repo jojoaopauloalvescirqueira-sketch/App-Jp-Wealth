@@ -1,3 +1,15 @@
+# Calendário e Agenda — execução local —23/10/2026
+
+Plano humano aprovado: calendário mensal juntoao sino, agenda confirmada e fontes econômicas permitidas, com cobertura explícita. Branch codex/calendario-agenda-20261023/base d517be0, pendências anteriores preservadas. [Brief](BRIEF-CALENDAR-AGENDA-20261023.md), CHG produtoN2 e verificadoresN3 próprios. Implementação local construída. O estado da validação e seus limites constam no relatório desta tarefa. [Resultados, inventário e limites](../validation/calendar-agenda-20261023/README.md). Nenhum PASS futuro, aceite humano ou Git/publicação presumido.
+
+## Fotografia anterior preservada
+
+# Notificações — ações relevantes —22/10/2026
+
+Plano humano aprovado, branch `codex/notificacoes-acoes-20261022`, base `d517be0` mais14 alterações preservadas. [Brief](BRIEF-NOTIFICATION-ACTIONS-20261022.md) e CHGs PRODUCT/TESTS delimitam apresentação, consultas e verificadores. Execução em andamento; nenhum PASS final antecipado. Sem commit, merge, push ou publicação.
+
+## Fotografia anterior preservada
+
 # Planejamento — fechamento guiado e revisão de uso —22/10/2026
 
 Contrato aprovado: resolver resultado pendente na própria janela, revisar novamente dados alterados, conferir fluxos e finalizar explicitamente. Resultado e fechamento são gravações distintas; zero não é presumido. Meses anteriores pendentes têm orientação recuperável. Dados, fórmulas, histórico e backup preservados.

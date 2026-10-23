@@ -1,0 +1,486 @@
+Quick links
+Go to main content
+Go to search form
+STATISTICS
+Publications
+Insights
+- News
+- Information releases
+- Indicators
+- Reports
+- Infographics
+A–Z of information releases
+Release calendar
+Subscribe to information release notifications
+Subscribe to newsletters
+Statistics by topic
+Population
+Business
+Labour market
+Society
+Māori
+Economy
+Environment
+Statistics by place
+Auckland
+Tauranga
+Hamilton
+Wellington
+Christchurch
+Dunedin
+Methods, standards, and research
+Standards and classifications
+Metadata in DataInfo+
+TOOLS
+All tools
+Large datasets
+Aotearoa Data Explorer
+Infoshare
+NZ.Stat (closed 13 Sept 2024)
+CSV files for download
+Indicators and snapshots
+Ngā Tūtohu Aotearoa – Indicators Aotearoa New Zealand
+Environmental indicators
+Geographic data and maps
+Geographic data service – download geographic boundaries
+Geographic boundary viewer – view boundaries on a map
+New Zealand STATLAS - view Stats NZ's web maps and applications
+Place and ethnic group summaries
+Data for business
+Experimental initiatives
+Explore experimental tools, series, and methods
+Methods, standards, and research
+Ariā – find standards and classifications
+Ariā Coding Service – keyword searching for classifications
+DataInfo+ – information about our data
+SERVICES AND SUPPORT
+Services
+Information centre
+Customised data services
+- Census data for iwi and iwi-related groups
+Integrated Data Infrastructure
+Longitudinal Business Database
+Apply to use microdata for research
+Help with surveys
+Business surveys
+Individual and household surveys
+List of Stats NZ surveys
+Privacy, security, and confidentiality of survey data
+Contact us
+Subscribe to information release notifications
+Subscribe to newsletters
+INTEGRATED DATA
+Integrated data
+Integrated Data Infrastructure
+Longitudinal Business Database
+How we keep integrated data safe
+Using microdata for research
+How to apply to use microdata for research
+How to apply to integrate new data
+CENSUS
+Census
+2023 Census
+2018 Census
+Previous censuses
+Modernising the census
+The process for change
+Cabinet papers and key documents
+Te Ara Takatū
+WELLBEING INDICATORS
+Wellbeing indicators
+Ngā Tūtohu Aotearoa – Indicators Aotearoa New Zealand
+ABOUT US
+About us
+Careers
+Data leadership
+Corporate publications
+Consultations and reviews
+Legislation, policies, and guidelines
+Privacy, security, and confidentiality of survey data
+Publications
+Contact us
+Information centre
+Media enquiries
+Official Information Act (OIA) requests
+Search site
+
+
+HomeInformation releasesConsumers price index: September 2026 quarter
+Consumers price index: September 2026 quarter
+
+22 October 2026, 10:45am
+
+Share on Facebook
+Share on Twitter
+Share on LinkedIn
+
+The consumers price index (CPI) measures the rate of price change of goods and services purchased by New Zealand households.
+
+Download data
+Consumers price index: September 2026 quarter
+
+Excel spreadsheet, 193 KB
+
+Consumers price index: September 2026 quarter – Infoshare data – CSV
+
+Comma Separated Values, 181 KB
+
+Consumers price index: September 2026 quarter – seasonally adjusted – CSV
+
+Comma Separated Values, 1.9 MB
+
+Consumers price index: September 2026 quarter – index numbers – CSV
+
+Comma Separated Values, 2.8 MB
+
+Consumers price index: September 2026 quarter – tradeables and non-tradeables – CSV
+
+Comma Separated Values, 2.4 MB
+
+Consumers price index: September 2026 quarter – central and local government charges
+
+Excel spreadsheet, 37 KB
+
+Consumers price index: September 2026 quarter – summary diagram
+
+Adobe Acrobat PDF file, 134 KB
+
+Consumers price index: September 2026 quarter – selected classes summary
+
+Adobe Acrobat PDF file, 112 KB
+
+Key facts
+
+The following table shows the price changes for the September 2026 quarter.
+
+Description
+
+
+
+Quarterly percentage change
+
+
+
+Annual percentage change
+
+
+
+
+CPI all groups
+
+
+
+0.7
+
+
+
+3.7
+
+
+
+
+Tradeables
+
+
+
+0.2
+
+
+
+4.3
+
+
+
+
+Non-tradeables
+
+
+
+1.0
+
+
+
+3.3
+
+
+
+
+CPI excluding food group, household
+energy subgroup, and vehicle fuels
+
+
+
+1.1
+
+
+
+2.9
+
+
+
+
+Note: Tables 3.01, 3.02, and 3.03 in the ‘Consumers price index: September 2026 quarter’ Excel file under Download data have more analytical groupings.
+
+GRAPH
+TABLE
+loading highcharts...
+Quarterly change
+
+Within the 0.7 percent rise in the CPI in the September 2026 quarter, higher prices were recorded for:
+
+international air transport, up 14.3 percent (36.2 percent contribution to the 0.7 percent rise for all groups)
+local authority rates and payments, up 6.2 percent (29.1 percent contribution to all groups)
+vegetables, up 10.5 percent (18.0 percent contribution to all groups).
+
+Lower prices were recorded for:
+
+petrol, down 6.5 percent (-40.4 percent contribution to all groups)
+other vehicle fuels and lubricants, down 15.5 percent (-16.4 percent contribution to all groups).
+GRAPH
+TABLE
+loading highcharts...
+Annual change
+
+Within the 3.7 percent increase in the CPI in the 12 months to the September 2026 quarter, higher prices were recorded for:
+
+petrol, up 19.1 percent (17.5 percent contribution to the 3.7 percent rise for all groups)
+purchase of housing, up 3.2 percent (7.9 percent contribution to all groups)
+electricity, up 9.3 percent (7.2 percent contribution to all groups).
+
+Lower prices were recorded for:
+
+oils and fats, down 8.3 percent (-0.8 percent contribution to all groups)
+vegetables, down 2.2 percent (-0.8 percent contribution to all groups).
+GRAPH
+TABLE
+loading highcharts...
+Distribution of CPI annual price change
+
+In the 12 months to the September 2026 quarter, 85.5 percent of the CPI basket increased in price.
+
+Over the same period, 54.9 percent of the CPI basket increased by more than 3.0 percent, up from 38.5 percent in the 12 months to the June 2026 quarter.
+
+GRAPH
+TABLE
+loading highcharts...
+Tradeable and non-tradeable inflation
+
+Tradeable inflation measures final goods and services that are influenced by foreign markets.
+
+Within the 4.3 percent increase in tradeable inflation in the 12 months to the September 2026 quarter, higher prices were recorded for:
+
+petrol, up 19.1 percent (36.6 percent contribution to the 4.3 percent rise for all groups tradeable)
+international air transport, up 12.5 percent (12.6 percent contribution to all groups tradeable).
+
+Lower prices were recorded for:
+
+oils and fats, down 8.3 percent (-1.8 percent contribution to all groups tradeable)
+vegetables, down 2.2 percent (-1.7 percent contribution to all groups tradeable).
+
+Non-tradeable inflation measures final goods and services that do not face foreign competition and is an indicator of domestic demand and supply conditions. However, the inputs of these goods and services can be influenced by foreign competition.
+
+Within the 3.3 percent increase in non-tradeable inflation in the 12 months to the September 2026 quarter, higher prices were recorded for:
+
+purchase of housing, up 3.2 percent (15.0 percent contribution to the 3.3 percent rise for all groups non-tradeable)
+electricity, up 9.3 percent (13.7 percent contribution to all groups non-tradeable).
+
+Lower prices were recorded for:
+
+milk, cheese, and eggs, down 14.7 percent (-2.8 percent contribution to all groups non-tradeable)
+other miscellaneous services (driven by auction services), down 5.9 percent (-1.0 percent contribution to all groups non-tradeable).
+
+Note: Eggs is the only non-tradeable item in the milk, cheese, and eggs class.
+
+Annual inflation, international comparisons
+
+Country
+
+
+
+12-month inflation rate
+
+
+
+Time reference
+
+
+
+
+New Zealand
+
+
+
+3.7
+
+
+
+September 2026
+
+
+
+
+Australia
+
+
+
+4.0*
+
+
+
+August 2026
+
+
+
+
+United Kingdom
+
+
+
+3.1**
+
+
+
+August 2026
+
+
+
+
+United States of America
+
+
+
+3.7
+
+
+
+September 2026
+
+
+
+
+OECD average
+
+
+
+4.3
+
+
+
+August 2026
+
+
+
+
+European Union
+
+
+
+3.2
+
+
+
+August 2026
+
+
+
+
+* Australia’s inflation rate is taken from the Australian Bureau of Statistics (ABS) monthly Consumer Price Index release.
+
+** The United Kingdom’s CPI figure is not their headline figure, which is ‘Consumer Prices Index including owner occupiers’ housing costs (CPIH)’.
+
+OECD Inflation has more data on international inflation rates.
+
+Information on water rates and local authority rates
+
+Since 1 July 2026, Tiaki Wai (serving Porirua, the Hutt Valley, and Wellington), IAWAI (serving Hamilton and Waikato), and Selwyn Water Limited (serving Selwyn) have separated water service charges from council rates. Following these changes, we now collect water service charges directly from these entities.
+
+To align with the expenditure classification and weights used in the current CPI, these water service charges have been added back into the local authority rates item. This reflects the 2024 CPI reweighting, which treated council rates in these regions as inclusive of these services.
+
+As a result, the local authority rates class remains comparable with previous periods, as the class continues to represent these separated water service charges despite the new water service entities now directly providing us their charges.
+
+Metered water charges are still included in the water rates item, consistent with their historical treatment. This approach is unchanged, as the water supply component of the CPI weighting is based on metered water charges rather than the newly separated water service entities.
+
+Property rates and related services is the aggregated CPI subgroup that includes local authority rates, water supply, and refuse disposal and recycling services.
+
+More data
+
+Use Infoshare to access the CPI time series:
+
+Subject category: Economic indicators
+Group: Consumers price index
+
+Definitions and metadata
+
+Consumers price index concepts – DataInfo+ gives definitions of terms used in this release and general methodology used to produce the CPI and related metadata.
+
+Consumers price index – DataInfo+ gives general methodology used to produce the CPI and related metadata.
+
+Infoshare is being replaced by Aotearoa Data Explorer
+
+Infoshare is being replaced by Aotearoa Data Explorer. Stay informed and get support with this change by joining our customer group at cdtp@stats.govt.nz.
+
+Media enquiries
+
+Media team
+media@stats.govt.nz
+021 285 9191
+
+
+Technical enquiries
+
+Prices and deflators team
+info@stats.govt.nz
+04 931 4600
+
+
+ISSN 1178-0452
+
+Next release
+
+Consumers price index: December 2026 quarter will be released on 27 January 2027.
+
+Related topics
+Consumers price indexEconomyHouseholdsPrice indexes
+Related releases
+Consumers price index: September 2026 quarter
+Related pages
+Annual inflation at 3.7 percent in September 2026
+
+22 October 2026
+
+Image: CPI women will bills small
+Economic impacts on New Zealand from conflict in the Middle East
+
+16 April 2026
+
+Image: petrol and diesel at the pump small
+Price index methods – updates for the September 2026 quarter
+
+08 October 2026
+
+STATISTICS BY TOPIC
+Population
+Business
+Labour market
+Society
+Economy
+Environment
+DATA TOOLS
+Aotearoa Data Explorer
+Infoshare
+Geographic data service
+Place and ethnic group summaries
+CORPORATE
+About us
+Contact us
+Careers
+Archive website
+SUBSCRIBE & FOLLOW
+Follow us on Facebook
+Follow us on Twitter
+Follow us on YouTube
+Follow us on LinkedIn
+SUBSCRIBE TO NEWSLETTERS
+Terms and conditionsPrivacyCopyright
+
+Unless noted otherwise, all content on stats.govt.nz is licensed under the Creative Commons 4.0 International Licence.

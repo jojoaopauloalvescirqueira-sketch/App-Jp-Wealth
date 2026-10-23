@@ -1,0 +1,564 @@
+{
+  "classification": "PASS",
+  "at": "2026-10-22T17:35:30.393298-03:00",
+  "scope": "Read-only preservation and byte-identity inspection; no additional tests/build/Git mutations. Only this evidence directory written.",
+  "baseline": {
+    "branch": "codex/notificacoes-acoes-20261022",
+    "head": "d517be0748f886085b3029c809bd68046e5c0f77",
+    "files": 2232,
+    "preexisting": 14
+  },
+  "current": {
+    "branch": "codex/notificacoes-acoes-20261022",
+    "head": "d517be0748f886085b3029c809bd68046e5c0f77",
+    "build_id": "8b0b231a1b0c41b7",
+    "regular_baseline_files_same": 2205,
+    "baseline_files_changed": 27,
+    "missing": 0
+  },
+  "freeze": {
+    "reference": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-22-notification-actions/freeze-before.json",
+    "files": 2255,
+    "same_inputs_at_review": true,
+    "changed_inputs": [],
+    "branch_matches": true,
+    "head_matches": true,
+    "external_harness_matches": true,
+    "reference_at": "2026-10-22T17:32:19.747517-03:00",
+    "reference_sha256": "f837a24ed3e66759ccfa7b37dbfc078b8946cb5c2958d5fe99169fd8e200b41c"
+  },
+  "archive": {
+    "members": 25,
+    "baseline_regular_members_checked": 25,
+    "all_hashes_match_baseline": true
+  },
+  "preexisting": [
+    {
+      "path": "build-id.js",
+      "baseline_sha256": "ff9c94b83361f4e6e4ba4d9ad98f1cc0c36d55d720b197f3435e5f6715d92cfc",
+      "current_sha256": "6310b6b652cb34e5ad879af0654483492a9d138884e9e98bc703fc10a99196f9",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "baseline_sha256": "5df691e7832f9a750e441e1e7f4089f79dfe9f30a1753f36e2c1aafde2f0cdd2",
+      "current_sha256": "619d874480daea413e64825ba9ec0b329122c886b54c82a775d1127313017685",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "baseline_sha256": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+      "current_sha256": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+      "classification": "additive_notifications_on_preserved_preexisting_ui"
+    },
+    {
+      "path": "src/js/manifest.json",
+      "baseline_sha256": "eec66cf029bd2738fce10a916f1f82407202db26e24c28fdc9f2f6ee924d7694",
+      "current_sha256": "67317f552a3228084d1dd8d3200290c5e53a5933d8ac30f52f94fd0958343af3",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+      "baseline_sha256": "4bc061d999ca03474d9b31cb5135a48bd68a3e2b642a4701df807917d51c1019",
+      "current_sha256": "a1a24e36ad92b51598c6dfd791440a24bf7feaa31f4813cfdac3f806657133e3",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+      "baseline_sha256": "85d90be91a1f907fb6e659df516a46a318afc0bf26a55b3ee9f02641f7e0dfd5",
+      "current_sha256": "e38e7ff50503ee32ddb43b2acbcde0d7260bf4ee3650819edfce64a89596bbb5",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+      "baseline_sha256": "4888f61f6d8a2310c3b171eeb199cda8bd551d30d38048fad995289ea894d481",
+      "current_sha256": "fa83c447f4936aca1fe3c896b82d7d6d09104131a2af383181d83ed830f82f08",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.js",
+      "baseline_sha256": "4d12b409345fe59019e38db985515eb8de0800af90da8f445d1c3aa48e0232f1",
+      "current_sha256": "c26bc469107d62f3f2069c48ba589bfb9b4c1d4680779874df886cc9038b3b27",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.json",
+      "baseline_sha256": "c54da091bd7f8cccdbc301e5000fe394c62d02d87ee8c501dc536341faa84efc",
+      "current_sha256": "029e873b878627924536743c84c40d0f05aced478a009128d08af43c133c38ea",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-source-payload.js",
+      "baseline_sha256": "3908799601ee8daf05a8ae422f34c0b1f79109882d40b4419be996f93c9e14d3",
+      "current_sha256": "65a63b2069f59dacf35c030e40a4c179fff51e0adb0c8eded3a112d1cfe2626c",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/downloads/nocuda-payload.js",
+      "baseline_sha256": "7b715e0a5c4d4a279334c657ffe8ebf923abdbdd268a9578d1c4ad664c3dd4a5",
+      "current_sha256": "295507b201bf19bb54f63bb3102071d6fef5d45cd49654dfe0cb9eb08ec651f6",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "src/vendor/market-hours/runtime-payload.js",
+      "baseline_sha256": "d4ddf40ba81e2ba8f2c6d7bc146fb398484ceaf6ce9d4f0347f8fc7274e6c202",
+      "current_sha256": "f5e8a590e01426d3223be95aba3edf7ec2ff4538fa5b31f640d31fe0f635d1ab",
+      "classification": "generated_artifact_regenerated"
+    },
+    {
+      "path": "tools/planning_ui_test.py",
+      "baseline_sha256": "e3bc18beac78be38cdba8a3cb5551eda63916d0142deda59e5cef7dfa14c9ad5",
+      "current_sha256": "e3bc18beac78be38cdba8a3cb5551eda63916d0142deda59e5cef7dfa14c9ad5",
+      "classification": "exact_bytes_preserved"
+    },
+    {
+      "path": "tools/regression-memory.json",
+      "baseline_sha256": "99a799840a220e0f4d6aed36e0ac76ea33b6775ae9f52ba3f9c69da595dfa9b2",
+      "current_sha256": "769a1e560ca7f53e22ce74aa6cf338e46c1456242a2fb38fffdd571ad7b2f569",
+      "classification": "old78entries_preserved_with_new_entries"
+    }
+  ],
+  "planning_ui_test": {
+    "path": "tools/planning_ui_test.py",
+    "baseline_preexisting_sha256": "e3bc18beac78be38cdba8a3cb5551eda63916d0142deda59e5cef7dfa14c9ad5",
+    "current_sha256": "e3bc18beac78be38cdba8a3cb5551eda63916d0142deda59e5cef7dfa14c9ad5",
+    "exact_preexisting_bytes_preserved": true
+  },
+  "preexisting_past_start": {
+    "baseline_delta_against_HEAD_sha256": "12359b550a8fce3815fc8040d5450829d4ab2c29f95989e7f9144d2cea18b5e1",
+    "file": "preexisting-planning-ui.patch",
+    "ui_reconstruction_exact": true,
+    "specific_lines": {
+      "remainingText": {
+        "present_before": true,
+        "line_exact": true,
+        "sha256": "347cbf49b1fedfd5f879fa24a15772c5a06f411ea01a2f5d098ceac9ad482ff9"
+      },
+      "pendingPastMonths": {
+        "present_before": true,
+        "line_exact": true,
+        "sha256": "2ce649156bf676e19555a39b625c4506d028626c802048ef296ec12f399ff1b1"
+      },
+      "pastMonthsRange": {
+        "present_before": true,
+        "line_exact": true,
+        "sha256": "57242de8352d85648575106a605da657bf12ed655582b6e156f83e7807c90d5b"
+      },
+      "pastMonthsText": {
+        "present_before": true,
+        "line_exact": true,
+        "sha256": "a5f5a76b425c0fdb64f3819197e7439454071fb08d4a48f9d0725565c0b55d26"
+      },
+      "pastMonthsNotice": {
+        "present_before": true,
+        "line_exact": true,
+        "sha256": "fb80f8e7e9aeb399fd73cf4019236d0e58472e0c8746c81e1fb5f2475f4afcf6"
+      },
+      "goalHTML": {
+        "present_before": true,
+        "line_exact": true,
+        "sha256": "cad5f2c6db472d8da849993b9af62a36a4b58237ab92b416c80985d86ec6ce2d"
+      }
+    }
+  },
+  "reconstruction": [
+    {
+      "path": "src/js/30-accounting/06-planning/02-state.js",
+      "baseline_sha256": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+      "reconstructed_without_notification_delta_sha256": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+      "exact_baseline_reconstructed": true,
+      "method": "Remove only additive pendingActions query, export and isolated post-confirmation invalidate hook"
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/03-ui.js",
+      "baseline_sha256": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+      "reconstructed_without_notification_delta_sha256": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+      "exact_baseline_reconstructed": true,
+      "method": "Remove only additive openMonthlyContext API, private pending pointer, deactivation cancellation and export"
+    },
+    {
+      "path": "src/js/10-domain/18-execution-board-model.js",
+      "baseline_sha256": "380335798e74316f5035ae64a7f6b23c5f4aea240987c2ef8e5098e117a72ba1",
+      "reconstructed_without_notification_delta_sha256": "380335798e74316f5035ae64a7f6b23c5f4aea240987c2ef8e5098e117a72ba1",
+      "exact_baseline_reconstructed": true,
+      "method": "Remove only readonly priceReferences helper and export"
+    },
+    {
+      "path": "src/js/40-app/07-finalize-session.js",
+      "baseline_sha256": "3c64c799468706964419158b56e46337115fe9a424615ecbf5328c2c5e1ee041",
+      "reconstructed_without_notification_delta_sha256": "3c64c799468706964419158b56e46337115fe9a424615ecbf5328c2c5e1ee041",
+      "exact_baseline_reconstructed": true,
+      "method": "Remove only optional notification session-disposal hook"
+    }
+  ],
+  "regression_memory": {
+    "old_entries": 78,
+    "old_prefix_exact": true,
+    "all_old_objects_preserved": true,
+    "current_entries": 86,
+    "added_entries": 8
+  },
+  "protected_scope": {
+    "paths": 57,
+    "changed": [
+      "src/js/10-domain/18-execution-board-model.js",
+      "src/js/30-accounting/06-planning/02-state.js",
+      "src/js/30-accounting/06-planning/03-ui.js"
+    ],
+    "unchanged_count": 54,
+    "permitted_delta": "Planning query/context UI; additive readonly executionBoard priceReferences. Underlying preexisting content reconstructed byte-for-byte."
+  },
+  "backup_persistence_schema_paths": [
+    {
+      "path": "docs/architecture/COMPLETE-BACKUP.md",
+      "baseline": "32cbcbc6dbfa1eed2170b94a4edc834887460f753f2a946e5a95a5e5cc1ee336",
+      "current": "32cbcbc6dbfa1eed2170b94a4edc834887460f753f2a946e5a95a5e5cc1ee336",
+      "status": "same",
+      "preexisting": false
+    },
+    {
+      "path": "docs/architecture/DB-STORAGE-GOVERNANCE.md",
+      "baseline": "5659091b15970b801ff2745b8aa9e4c7ba47735034126e9d5251fcc219e3bf5b",
+      "current": "5659091b15970b801ff2745b8aa9e4c7ba47735034126e9d5251fcc219e3bf5b",
+      "status": "same",
+      "preexisting": false
+    },
+    {
+      "path": "docs/architecture/STATE-SCHEMA.md",
+      "baseline": "63eb744af1701332c92464d7dbd103e8476c6dfb16c0cf29e65881df2c3c45d1",
+      "current": "63eb744af1701332c92464d7dbd103e8476c6dfb16c0cf29e65881df2c3c45d1",
+      "status": "same",
+      "preexisting": false
+    },
+    {
+      "path": "src/js/00-core/04-persistence.js",
+      "baseline": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+      "current": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+      "status": "same",
+      "preexisting": false
+    },
+    {
+      "path": "src/js/00-core/06-storage-fs.js",
+      "baseline": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7",
+      "current": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7",
+      "status": "same",
+      "preexisting": false
+    },
+    {
+      "path": "src/js/00-core/07-workspace-backup.js",
+      "baseline": "bedf27116fab90e0d5aab82dc77461e8f9a22ea76858e493400d4c28d2804a89",
+      "current": "bedf27116fab90e0d5aab82dc77461e8f9a22ea76858e493400d4c28d2804a89",
+      "status": "same",
+      "preexisting": false
+    },
+    {
+      "path": "src/js/40-app/16-storage-governance.js",
+      "baseline": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be",
+      "current": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be",
+      "status": "same",
+      "preexisting": false
+    }
+  ],
+  "added_or_symlink_names_vs_baseline_regular_inventory": [
+    ".agents/skills/jp-ai-engineering",
+    ".agents/skills/jpw-critical-review",
+    ".agents/skills/jpw-design",
+    ".agents/skills/jpw-feature-atlas",
+    ".claude/skills/agentic-evolution-governance",
+    ".claude/skills/jp-ai-engineering",
+    ".claude/skills/jpw-browser-verification",
+    ".claude/skills/jpw-change-control",
+    ".claude/skills/jpw-critical-review",
+    ".claude/skills/jpw-data-safety",
+    ".claude/skills/jpw-design",
+    ".claude/skills/jpw-feature-atlas",
+    ".claude/skills/jpw-normative-audit",
+    ".claude/skills/jpw-post-change-audit",
+    ".claude/skills/jpw-preflight",
+    ".claude/skills/jpw-security-audit",
+    ".claude/skills/jpw-test-triage",
+    ".claude/skills/repository-architecture",
+    "docs/superpowers/plans/2026-10-22-notification-actions.md",
+    "docs/work/BRIEF-NOTIFICATION-ACTIONS-20261022.md",
+    "docs/work/CHG-JPW-NOTIFICATION-ACTIONS-PRODUCT-20261022.md",
+    "docs/work/CHG-JPW-NOTIFICATION-ACTIONS-TESTS-20261022.md",
+    "tools/notification_visual_quality_test.py"
+  ],
+  "limitations": [
+    "Byte preservation does not prove functional correctness, financial homologation, real-data safety in all circumstances or human acceptance.",
+    "FULL is still running; this review attests freeze stability only at the recorded time and does not replace the final freeze-after receipt.",
+    "Generated distributions legitimately have different bytes from the preexisting artifacts. This review did not execute the builder; it inspected recorded builder output and current manifest/build identity.",
+    "Full engine/schema validation is deliberately not part of pendingActions availability; its narrower structural contract does not certify financial integrity."
+  ],
+  "script_manifest": {
+    "scripts_before": 120,
+    "scripts_after": 120,
+    "order_and_paths_equal": true
+  },
+  "download_manifest": {
+    "resource_count_before": 10,
+    "resource_count_after": 10,
+    "all_original_resource_metadata_equal": true,
+    "resources": {
+      "nocuda/Nocuda_Tool.ex5": {
+        "baseline": {
+          "path": "downloads/nocuda/Nocuda_Tool.ex5",
+          "filename": "Nocuda_Tool.ex5",
+          "mime": "application/octet-stream",
+          "bytes": 94704,
+          "sha256": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+          "payload": "nocuda"
+        },
+        "current": {
+          "path": "downloads/nocuda/Nocuda_Tool.ex5",
+          "filename": "Nocuda_Tool.ex5",
+          "mime": "application/octet-stream",
+          "bytes": 94704,
+          "sha256": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+          "payload": "nocuda"
+        },
+        "same": true
+      },
+      "nocuda/Nocuda_Tool.pine": {
+        "baseline": {
+          "path": "downloads/nocuda/Nocuda_Tool.pine",
+          "filename": "Nocuda_Tool.pine",
+          "mime": "text/plain;charset=utf-8",
+          "bytes": 40587,
+          "sha256": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+          "payload": "nocuda"
+        },
+        "current": {
+          "path": "downloads/nocuda/Nocuda_Tool.pine",
+          "filename": "Nocuda_Tool.pine",
+          "mime": "text/plain;charset=utf-8",
+          "bytes": 40587,
+          "sha256": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+          "payload": "nocuda"
+        },
+        "same": true
+      },
+      "nocuda/Nocuda_Tool.mq5": {
+        "baseline": {
+          "path": "downloads/nocuda/Nocuda_Tool.mq5",
+          "filename": "Nocuda_Tool.mq5",
+          "mime": "text/plain;charset=utf-8",
+          "bytes": 29953,
+          "sha256": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+          "payload": "nocuda"
+        },
+        "current": {
+          "path": "downloads/nocuda/Nocuda_Tool.mq5",
+          "filename": "Nocuda_Tool.mq5",
+          "mime": "text/plain;charset=utf-8",
+          "bytes": 29953,
+          "sha256": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+          "payload": "nocuda"
+        },
+        "same": true
+      },
+      "nocuda/TRADINGVIEW-LEIA-ME.md": {
+        "baseline": {
+          "path": "downloads/nocuda/TRADINGVIEW-LEIA-ME.md",
+          "filename": "TRADINGVIEW-LEIA-ME.md",
+          "mime": "text/markdown;charset=utf-8",
+          "bytes": 8578,
+          "sha256": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+          "payload": "nocuda"
+        },
+        "current": {
+          "path": "downloads/nocuda/TRADINGVIEW-LEIA-ME.md",
+          "filename": "TRADINGVIEW-LEIA-ME.md",
+          "mime": "text/markdown;charset=utf-8",
+          "bytes": 8578,
+          "sha256": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+          "payload": "nocuda"
+        },
+        "same": true
+      },
+      "nocuda/MT5-LEIA-ME.md": {
+        "baseline": {
+          "path": "downloads/nocuda/MT5-LEIA-ME.md",
+          "filename": "MT5-LEIA-ME.md",
+          "mime": "text/markdown;charset=utf-8",
+          "bytes": 9664,
+          "sha256": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+          "payload": "nocuda"
+        },
+        "current": {
+          "path": "downloads/nocuda/MT5-LEIA-ME.md",
+          "filename": "MT5-LEIA-ME.md",
+          "mime": "text/markdown;charset=utf-8",
+          "bytes": 9664,
+          "sha256": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+          "payload": "nocuda"
+        },
+        "same": true
+      },
+      "leverage/source": {
+        "baseline": {
+          "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.23.0_painel-C5.zip",
+          "filename": "JPW_Stoikus_Fontes_v1.23.0_painel-C5.zip",
+          "bytes": 815309,
+          "sha256": "aa20c1f65f7b3dbc883eadf6babe312c8f30d9944ea787e89e686fe8aac7bbb2",
+          "mime": "application/zip",
+          "payload": "leverage-source"
+        },
+        "current": {
+          "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Fontes_v1.23.0_painel-C5.zip",
+          "filename": "JPW_Stoikus_Fontes_v1.23.0_painel-C5.zip",
+          "bytes": 815309,
+          "sha256": "aa20c1f65f7b3dbc883eadf6babe312c8f30d9944ea787e89e686fe8aac7bbb2",
+          "mime": "application/zip",
+          "payload": "leverage-source"
+        },
+        "same": true
+      },
+      "leverage/dailySource": {
+        "baseline": {
+          "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.23.0_painel-C5.zip",
+          "filename": "JPW_Stoikus_Uso_Fontes_v1.23.0_painel-C5.zip",
+          "bytes": 479530,
+          "sha256": "0d323ea010c21e043922a318252911262ea2dbf9b4b0217d67b0b9a1fe0242b5",
+          "mime": "application/zip",
+          "payload": "leverage-daily-source"
+        },
+        "current": {
+          "path": "downloads/jpw-alavancagem-atual/JPW_Stoikus_Uso_Fontes_v1.23.0_painel-C5.zip",
+          "filename": "JPW_Stoikus_Uso_Fontes_v1.23.0_painel-C5.zip",
+          "bytes": 479530,
+          "sha256": "0d323ea010c21e043922a318252911262ea2dbf9b4b0217d67b0b9a1fe0242b5",
+          "mime": "application/zip",
+          "payload": "leverage-daily-source"
+        },
+        "same": true
+      },
+      "leverage/nativeKit": {
+        "baseline": {
+          "path": "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Painel_C5_D1.zip",
+          "filename": "Kit_Windows_Stoikus_Painel_C5_D1.zip",
+          "bytes": 513845,
+          "sha256": "92a05d3198fcae3dcbea2558f07cf13a20fbdddac63f1c8902e6dd4ac6b28983",
+          "mime": "application/zip",
+          "payload": "leverage-native-kit"
+        },
+        "current": {
+          "path": "downloads/jpw-alavancagem-atual/Kit_Windows_Stoikus_Painel_C5_D1.zip",
+          "filename": "Kit_Windows_Stoikus_Painel_C5_D1.zip",
+          "bytes": 513845,
+          "sha256": "92a05d3198fcae3dcbea2558f07cf13a20fbdddac63f1c8902e6dd4ac6b28983",
+          "mime": "application/zip",
+          "payload": "leverage-native-kit"
+        },
+        "same": true
+      },
+      "leverage/nativePin": {
+        "baseline": {
+          "path": "downloads/jpw-alavancagem-atual/root-pin-Painel-C5-D1.json",
+          "filename": "root-pin-Painel-C5-D1.json",
+          "bytes": 2406,
+          "sha256": "e0bf392d17e4a28efda316fdc13593101bbb25775be578e8b5f0abec8ef0101d",
+          "mime": "application/json",
+          "payload": "leverage-native-pin"
+        },
+        "current": {
+          "path": "downloads/jpw-alavancagem-atual/root-pin-Painel-C5-D1.json",
+          "filename": "root-pin-Painel-C5-D1.json",
+          "bytes": 2406,
+          "sha256": "e0bf392d17e4a28efda316fdc13593101bbb25775be578e8b5f0abec8ef0101d",
+          "mime": "application/json",
+          "payload": "leverage-native-pin"
+        },
+        "same": true
+      },
+      "leverage/preview": {
+        "baseline": {
+          "path": "downloads/jpw-alavancagem-atual/Previa_Stoikus_Painel_C5.html",
+          "filename": "Previa_Stoikus_Painel_C5.html",
+          "bytes": 477723,
+          "sha256": "380cfe50b26dd6b438e9d5e374482406fe56b86e124e478fcafd05ebebb18afa",
+          "mime": "text/html",
+          "payload": "leverage-preview"
+        },
+        "current": {
+          "path": "downloads/jpw-alavancagem-atual/Previa_Stoikus_Painel_C5.html",
+          "filename": "Previa_Stoikus_Painel_C5.html",
+          "bytes": 477723,
+          "sha256": "380cfe50b26dd6b438e9d5e374482406fe56b86e124e478fcafd05ebebb18afa",
+          "mime": "text/html",
+          "payload": "leverage-preview"
+        },
+        "same": true
+      }
+    },
+    "limits": "Nonempty original downloadable resource paths, sizes and SHA-256 compared. Build IDs and envelope hashes legitimately change."
+  },
+  "explicit_protected_hashes": [
+    {
+      "path": "src/js/00-core/00-forex-policy.js",
+      "baseline_sha256": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed",
+      "current_sha256": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed",
+      "same": true
+    },
+    {
+      "path": "src/js/10-domain/00-forex-engine.js",
+      "baseline_sha256": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e",
+      "current_sha256": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e",
+      "same": true
+    },
+    {
+      "path": "src/js/30-accounting/06-planning/01-engine.js",
+      "baseline_sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+      "current_sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+      "same": true
+    },
+    {
+      "path": "src/js/00-core/04-persistence.js",
+      "baseline_sha256": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+      "current_sha256": "dc98cd449122756878dbc84412cab343ba2fbed5a4a680b780846e8ddcc1e392",
+      "same": true
+    },
+    {
+      "path": "src/js/00-core/06-storage-fs.js",
+      "baseline_sha256": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7",
+      "current_sha256": "5d233d35dc831752eb0b8690314350916927b9617d43d5296657b3edf5413ce7",
+      "same": true
+    },
+    {
+      "path": "src/js/40-app/16-storage-governance.js",
+      "baseline_sha256": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be",
+      "current_sha256": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be",
+      "same": true
+    },
+    {
+      "path": "src/js/30-accounting/01-daily-ledger.js",
+      "baseline_sha256": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18",
+      "current_sha256": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18",
+      "same": true
+    },
+    {
+      "path": "src/js/10-domain/12-personal-finance.js",
+      "baseline_sha256": "333a5b2f4c337aa684960f1a1f98279fd9f42d61e2d66ff0ae3dbe5f6498d416",
+      "current_sha256": "333a5b2f4c337aa684960f1a1f98279fd9f42d61e2d66ff0ae3dbe5f6498d416",
+      "same": true
+    },
+    {
+      "path": "src/js/10-domain/13-alladin.js",
+      "baseline_sha256": "e03629ebb1028b4ab1a4e6a0d27b737b0f5feb20ebf43cdf8368da99ceb0d9ad",
+      "current_sha256": "e03629ebb1028b4ab1a4e6a0d27b737b0f5feb20ebf43cdf8368da99ceb0d9ad",
+      "same": true
+    },
+    {
+      "path": "tools/quality_gate.py",
+      "baseline_sha256": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a",
+      "current_sha256": "682a2ad4bfa53e867b0d7748c4a81dc7d34262da205212dd596369b8f547e31a",
+      "same": true
+    },
+    {
+      "path": "AGENTS.md",
+      "baseline_sha256": "7a9b8d08e1bca6adc1c366a1872215bf3671aa9f9804cc702cfc94618063225e",
+      "current_sha256": "7a9b8d08e1bca6adc1c366a1872215bf3671aa9f9804cc702cfc94618063225e",
+      "same": true
+    }
+  ]
+}

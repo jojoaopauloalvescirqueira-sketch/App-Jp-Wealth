@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "case": "calendar-pref-read-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-read"
+      }
+    },
+    {
+      "case": "calendar-pref-extension-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-extension"
+      }
+    },
+    {
+      "case": "calendar-pref-duplicates-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-duplicates"
+      }
+    }
+  ]
+}

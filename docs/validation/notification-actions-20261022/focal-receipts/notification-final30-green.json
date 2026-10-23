@@ -1,0 +1,341 @@
+{"case": "bell-and-native-dialog", "result": "PASS", "evidence": null}
+{"case": "actionable-only-unresolved-count", "result": "PASS", "evidence": {"active_count": 1, "reading_does_not_resolve": true}}
+{"case": "source-failure-recovery", "result": "PASS", "evidence": {"failed_source_not_healthy": true, "no_double_count": true, "last_diagnostic_retained": true, "recovery": true}}
+{"case": "replacement-diagnosis-generation", "result": "PASS", "evidence": {"positive_old_diagnosis": true, "generation_clears_stale_diagnosis": true, "no_persistence": true}}
+{"case": "actionable-counterproofs", "result": "PASS", "evidence": {"rejected_representative_violations": ["hide-unresolved", "duplicate-cause", "promote-agenda"]}}
+{"case": "frozen-operational-integrity", "result": "PASS", "evidence": {"operational_frozen_excluded": true, "integrity_frozen_retained": true, "no_readonly_writes": true}}
+{"case": "forex-empty-context-no-action", "result": "PASS", "evidence": {"empty_periods": 4, "no_operation_facts_no_action": true, "readonly": true}}
+{"case": "planning-context-dirty-guard", "result": "PASS", "evidence": {"explicit_accounts": 2, "zero_result_counts_as_fact": true, "prior_dependency_accessible": true, "cancel_preserves_draft": true, "navigation_no_writes": true}}
+{"case": "forex-guard-generation-before-navigation", "result": "PASS", "evidence": {"root_replaced_during_guard": true, "navigation_prevented": true, "selection_preserved": true}}
+{"case": "planning-local-month-boundary", "result": "PASS", "evidence": {"automatic_local_midnight": true, "current_month_not_promoted": true, "explicit_zero_becomes_past_action": true, "financial_writes": 0, "independent_economic_cache_writes": []}}
+{"case": "forex-price-reference-provenance", "result": "PASS", "evidence": {"manual_fresh_overrides_stale_legacy": true, "manual_stale_overrides_fresh_legacy": true, "daily_fresh_fallback": true, "scoped_quote_navigation": true, "extra_requests": []}}
+{"case": "planning-touch-context", "result": "PASS", "evidence": {"real_touch_tap": true, "month": "2026-05", "financial_state_preserved": true}}
+{"case": "all-areas-filter-dedupe-readonly", "result": "PASS", "evidence": {"initial_items": 9, "extra_requests": 0, "contextual_reviews": ["forex:order-review:SYN_NOTIFY_A:SYN_NOTIFY_A_SEP", "forex:order-review:SYN_NOTIFY_B:SYN_NOTIFY_B_SEP"], "no_inbox": true}}
+{"case": "contextual-review-navigation", "result": "PASS", "evidence": {"contextual_destinations": [{"accountId": "SYN_NOTIFY_A", "periodId": "SYN_NOTIFY_A_SEP"}, {"accountId": "SYN_NOTIFY_B", "periodId": "SYN_NOTIFY_B_SEP"}], "confirmed_state_preserved": true}}
+{"case": "resolution-navigation", "result": "PASS", "evidence": {"destination": "finpes/mensal", "resolved_id": "pf:pending", "consult_does_not_resolve": true}}
+{"case": "calendar-time-threshold-rollover", "result": "PASS", "evidence": {"economic_agenda_excluded": true, "threshold_day_rollover": true, "agenda_preserved": true}}
+{"case": "calendar-cache-xss", "result": "PASS", "evidence": {"literal_external_title": true, "stale_and_missing_agenda_excluded": true}}
+{"case": "native-events-confirm-exclusion", "result": "PASS", "evidence": {"native_alert_preserved": true, "native_confirm_preserved": true, "session_history_excluded": true}}
+{"case": "event-area-provenance", "result": "PASS", "evidence": {"native_feedback_preserved": true, "screen_not_inferred_as_origin": true, "unclassified_messages_excluded": true}}
+{"case": "detailed-completion-focus", "result": "PASS", "evidence": {"permanent_status_excluded": true, "source_financial_protection_preserved": true}}
+{"case": "alladin-balance-quality", "result": "PASS", "evidence": {"readable_ledger_does_not_conceal_unavailable_balance": true, "different_refusal_renews_attention": true}}
+{"case": "unknown-persistence-gate", "result": "PASS", "evidence": {"unknown_preserved": true, "save_refused": true}}
+{"case": "backup-status-consistency", "result": "PASS", "evidence": null}
+{"case": "replacement-finalization-cleanup", "result": "PASS", "evidence": {"state_replacement_cleanup": true, "real_finalization_cleanup": true, "durable_document_preserved": true, "unknown_sentinel_preserved": true, "transient_cleanup_exact": true, "unclassified_history_excluded_after_finalization": true}}
+{"case": "keyboard-geometry-1440-light", "result": "PASS", "evidence": {"left": 940, "top": 82, "right": 1420, "bottom": 439.59375, "w": 1440, "h": 900}}
+{"case": "keyboard-geometry-390-light", "result": "PASS", "evidence": {"left": 16, "top": 16, "right": 370, "bottom": 384.09375, "w": 390, "h": 844}}
+{"case": "keyboard-geometry-320-light", "result": "PASS", "evidence": {"left": 16, "top": 16, "right": 300, "bottom": 405.09375, "w": 320, "h": 844}}
+{"case": "keyboard-geometry-1440-dark", "result": "PASS", "evidence": {"left": 940, "top": 82, "right": 1420, "bottom": 439.59375, "w": 1440, "h": 900}}
+{"case": "keyboard-geometry-390-dark", "result": "PASS", "evidence": {"left": 16, "top": 16, "right": 370, "bottom": 384.09375, "w": 390, "h": 844}}
+{"case": "keyboard-geometry-320-dark", "result": "PASS", "evidence": {"left": 16, "top": 16, "right": 300, "bottom": 405.09375, "w": 320, "h": 844}}
+{
+  "baseline": false,
+  "source_sha256": {
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "src/styles/app.css": "60787e51e673bf73b1c995706a4cd6965873c314a9c059a89f607d9b366650d5",
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013",
+    "tools/notification_center_test.py": "3f91e31baceb29243a88772fc518f1a62aa706a568ac3c28883d41b559051043",
+    "build-id.js": "09c56eaf76a72c89d19aeeb2936c744fc226bfbe81ad29cef5d7be23749b61c1"
+  },
+  "results": [
+    {
+      "case": "bell-and-native-dialog",
+      "result": "PASS",
+      "evidence": null
+    },
+    {
+      "case": "actionable-only-unresolved-count",
+      "result": "PASS",
+      "evidence": {
+        "active_count": 1,
+        "reading_does_not_resolve": true
+      }
+    },
+    {
+      "case": "source-failure-recovery",
+      "result": "PASS",
+      "evidence": {
+        "failed_source_not_healthy": true,
+        "no_double_count": true,
+        "last_diagnostic_retained": true,
+        "recovery": true
+      }
+    },
+    {
+      "case": "replacement-diagnosis-generation",
+      "result": "PASS",
+      "evidence": {
+        "positive_old_diagnosis": true,
+        "generation_clears_stale_diagnosis": true,
+        "no_persistence": true
+      }
+    },
+    {
+      "case": "actionable-counterproofs",
+      "result": "PASS",
+      "evidence": {
+        "rejected_representative_violations": [
+          "hide-unresolved",
+          "duplicate-cause",
+          "promote-agenda"
+        ]
+      }
+    },
+    {
+      "case": "frozen-operational-integrity",
+      "result": "PASS",
+      "evidence": {
+        "operational_frozen_excluded": true,
+        "integrity_frozen_retained": true,
+        "no_readonly_writes": true
+      }
+    },
+    {
+      "case": "forex-empty-context-no-action",
+      "result": "PASS",
+      "evidence": {
+        "empty_periods": 4,
+        "no_operation_facts_no_action": true,
+        "readonly": true
+      }
+    },
+    {
+      "case": "planning-context-dirty-guard",
+      "result": "PASS",
+      "evidence": {
+        "explicit_accounts": 2,
+        "zero_result_counts_as_fact": true,
+        "prior_dependency_accessible": true,
+        "cancel_preserves_draft": true,
+        "navigation_no_writes": true
+      }
+    },
+    {
+      "case": "forex-guard-generation-before-navigation",
+      "result": "PASS",
+      "evidence": {
+        "root_replaced_during_guard": true,
+        "navigation_prevented": true,
+        "selection_preserved": true
+      }
+    },
+    {
+      "case": "planning-local-month-boundary",
+      "result": "PASS",
+      "evidence": {
+        "automatic_local_midnight": true,
+        "current_month_not_promoted": true,
+        "explicit_zero_becomes_past_action": true,
+        "financial_writes": 0,
+        "independent_economic_cache_writes": []
+      }
+    },
+    {
+      "case": "forex-price-reference-provenance",
+      "result": "PASS",
+      "evidence": {
+        "manual_fresh_overrides_stale_legacy": true,
+        "manual_stale_overrides_fresh_legacy": true,
+        "daily_fresh_fallback": true,
+        "scoped_quote_navigation": true,
+        "extra_requests": []
+      }
+    },
+    {
+      "case": "planning-touch-context",
+      "result": "PASS",
+      "evidence": {
+        "real_touch_tap": true,
+        "month": "2026-05",
+        "financial_state_preserved": true
+      }
+    },
+    {
+      "case": "all-areas-filter-dedupe-readonly",
+      "result": "PASS",
+      "evidence": {
+        "initial_items": 9,
+        "extra_requests": 0,
+        "contextual_reviews": [
+          "forex:order-review:SYN_NOTIFY_A:SYN_NOTIFY_A_SEP",
+          "forex:order-review:SYN_NOTIFY_B:SYN_NOTIFY_B_SEP"
+        ],
+        "no_inbox": true
+      }
+    },
+    {
+      "case": "contextual-review-navigation",
+      "result": "PASS",
+      "evidence": {
+        "contextual_destinations": [
+          {
+            "accountId": "SYN_NOTIFY_A",
+            "periodId": "SYN_NOTIFY_A_SEP"
+          },
+          {
+            "accountId": "SYN_NOTIFY_B",
+            "periodId": "SYN_NOTIFY_B_SEP"
+          }
+        ],
+        "confirmed_state_preserved": true
+      }
+    },
+    {
+      "case": "resolution-navigation",
+      "result": "PASS",
+      "evidence": {
+        "destination": "finpes/mensal",
+        "resolved_id": "pf:pending",
+        "consult_does_not_resolve": true
+      }
+    },
+    {
+      "case": "calendar-time-threshold-rollover",
+      "result": "PASS",
+      "evidence": {
+        "economic_agenda_excluded": true,
+        "threshold_day_rollover": true,
+        "agenda_preserved": true
+      }
+    },
+    {
+      "case": "calendar-cache-xss",
+      "result": "PASS",
+      "evidence": {
+        "literal_external_title": true,
+        "stale_and_missing_agenda_excluded": true
+      }
+    },
+    {
+      "case": "native-events-confirm-exclusion",
+      "result": "PASS",
+      "evidence": {
+        "native_alert_preserved": true,
+        "native_confirm_preserved": true,
+        "session_history_excluded": true
+      }
+    },
+    {
+      "case": "event-area-provenance",
+      "result": "PASS",
+      "evidence": {
+        "native_feedback_preserved": true,
+        "screen_not_inferred_as_origin": true,
+        "unclassified_messages_excluded": true
+      }
+    },
+    {
+      "case": "detailed-completion-focus",
+      "result": "PASS",
+      "evidence": {
+        "permanent_status_excluded": true,
+        "source_financial_protection_preserved": true
+      }
+    },
+    {
+      "case": "alladin-balance-quality",
+      "result": "PASS",
+      "evidence": {
+        "readable_ledger_does_not_conceal_unavailable_balance": true,
+        "different_refusal_renews_attention": true
+      }
+    },
+    {
+      "case": "unknown-persistence-gate",
+      "result": "PASS",
+      "evidence": {
+        "unknown_preserved": true,
+        "save_refused": true
+      }
+    },
+    {
+      "case": "backup-status-consistency",
+      "result": "PASS",
+      "evidence": null
+    },
+    {
+      "case": "replacement-finalization-cleanup",
+      "result": "PASS",
+      "evidence": {
+        "state_replacement_cleanup": true,
+        "real_finalization_cleanup": true,
+        "durable_document_preserved": true,
+        "unknown_sentinel_preserved": true,
+        "transient_cleanup_exact": true,
+        "unclassified_history_excluded_after_finalization": true
+      }
+    },
+    {
+      "case": "keyboard-geometry-1440-light",
+      "result": "PASS",
+      "evidence": {
+        "left": 940,
+        "top": 82,
+        "right": 1420,
+        "bottom": 439.59375,
+        "w": 1440,
+        "h": 900
+      }
+    },
+    {
+      "case": "keyboard-geometry-390-light",
+      "result": "PASS",
+      "evidence": {
+        "left": 16,
+        "top": 16,
+        "right": 370,
+        "bottom": 384.09375,
+        "w": 390,
+        "h": 844
+      }
+    },
+    {
+      "case": "keyboard-geometry-320-light",
+      "result": "PASS",
+      "evidence": {
+        "left": 16,
+        "top": 16,
+        "right": 300,
+        "bottom": 405.09375,
+        "w": 320,
+        "h": 844
+      }
+    },
+    {
+      "case": "keyboard-geometry-1440-dark",
+      "result": "PASS",
+      "evidence": {
+        "left": 940,
+        "top": 82,
+        "right": 1420,
+        "bottom": 439.59375,
+        "w": 1440,
+        "h": 900
+      }
+    },
+    {
+      "case": "keyboard-geometry-390-dark",
+      "result": "PASS",
+      "evidence": {
+        "left": 16,
+        "top": 16,
+        "right": 370,
+        "bottom": 384.09375,
+        "w": 390,
+        "h": 844
+      }
+    },
+    {
+      "case": "keyboard-geometry-320-dark",
+      "result": "PASS",
+      "evidence": {
+        "left": 16,
+        "top": 16,
+        "right": 300,
+        "bottom": 405.09375,
+        "w": 320,
+        "h": 844
+      }
+    }
+  ]
+}

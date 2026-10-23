@@ -104,19 +104,19 @@ def main():
                             page.evaluate('t=>{S.theme=t;applyTheme()}', theme)
                             page.wait_for_timeout(180)
                             facts = page.evaluate("""() => {
-                              const ids=['headerNotificationsBtn','headerConfigBtn','headerProfileBtn','finalizeSessionBtn'];
+                              const ids=['headerCalendarBtn','headerNotificationsBtn','headerConfigBtn','headerProfileBtn','finalizeSessionBtn'];
                               return {nav:document.documentElement.dataset.navigation,buttons:ids.filter(id=>document.getElementById(id)).map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),svg=e.querySelector('svg'),avatar=e.querySelector('.header-profile-avatar');return {id,x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom,visual:svg?svg.getBoundingClientRect().width:(avatar?avatar.getBoundingClientRect().width:0)}})};
                             }""")
                             if not args.baseline:
                                 assert facts['nav']==nav, facts
                                 buttons=facts['buttons']
-                                assert len(buttons)==4 and all(b['x']>=0 and b['right']<=width for b in buttons), facts
-                                assert all(buttons[i]['right']<=buttons[i+1]['x']+1 for i in range(3)), facts
+                                assert len(buttons)==5 and all(b['x']>=0 and b['right']<=width for b in buttons), facts
+                                assert all(buttons[i]['right']<=buttons[i+1]['x']+1 for i in range(4)), facts
                                 assert all(abs(b['w']-44)<1 and abs(b['h']-44)<1 for b in buttons), facts
-                                assert all(abs(b['visual']-20)<1 for b in (buttons[0],buttons[1],buttons[3])), facts
-                                assert abs(buttons[2]['visual']-30)<1, facts
+                                assert all(abs(b['visual']-20)<1 for b in (buttons[0],buttons[1],buttons[2],buttons[4])), facts
+                                assert abs(buttons[3]['visual']-30)<1, facts
                                 assert page.locator('#headerActions .header-action-label').count()==0
-                                for selector in ('#headerNotificationsBtn','#headerConfigBtn','#headerProfileBtn','#finalizeSessionBtn'):
+                                for selector in ('#headerCalendarBtn','#headerNotificationsBtn','#headerConfigBtn','#headerProfileBtn','#finalizeSessionBtn'):
                                     button=page.locator(selector)
                                     assert button.get_attribute('title') and button.get_attribute('aria-label')
                             tag=('baseline' if args.baseline else 'after')+('-portable' if entry.startswith('dist/') else '')+f'-{nav}-{width}-{theme}'

@@ -1,6 +1,6 @@
 // ============ CALENDÁRIO ECONÔMICO — SEMANA CORRENTE (N1) ============
-// UMA implementação, DOIS pontos de entrada (menu ⋯ do widget de Notícias e a
-// folha do grupo Operação na Central). Consome exclusivamente o cache já
+// Legado semanal: widget e Central preservam o mesmo overlay. O workspace
+// mensal de Ferramentas pertence a JPWCalendar. Consome exclusivamente o cache já
 // sanitizado de 15-ff-news.js via ffNewsReadCache() — zero fetch, zero cache e
 // zero sanitização próprios: o pipeline anti-XSS do widget continua sendo o
 // único caminho de entrada de dado externo, e toda escrita de texto aqui é por
@@ -49,10 +49,7 @@ function ecalRangeLabel(events){
 }
 
 // ---- render (textContent em todo dado externo — disciplina do widget) ----
-// NÚCLEO PARAMETRIZADO POR RAIZ. Serve as duas instâncias visuais — o overlay
-// #ecalOverlay e o workspace #execEcal do Execution Board — a partir da mesma
-// leitura de cache e das mesmas regras. Não existe segundo calendário: existe
-// uma função de render e dois lugares onde ela desenha.
+// Renderer semanal limitado ao overlay #ecalOverlay; o mensal não lê este cache.
 //
 // A resolução é por data-ecal-role DENTRO da raiz, nunca por getElementById:
 // os 9 ids do overlay são globais e fixos, e o workspace deliberadamente não
@@ -140,15 +137,6 @@ function ecalRenderRoot(root, filter){
 // ---- instância 1: o overlay, com seus dois pontos de entrada intocados ----
 function ecalRender(){ ecalRenderRoot(ecalEl('ecalOverlay'), ecalState.filter); }
 
-// ---- instância 2: o workspace canônico do Execution Board ----
-// Estado de APRESENTAÇÃO próprio. O filtro de moeda é recorte da view, não
-// verdade do domínio: os eventos são compartilhados, qual subconjunto cada
-// superfície exibe não é — e compartilhá-lo faria a escolha numa tela mudar a
-// outra pelas costas do operador. `var` pela mesma razão de ecalState, acima.
-var ecalWsState={filter:'all'};
-function ecalWsRoot(){ return document.getElementById('execEcal'); }
-function ecalRenderWorkspace(){ ecalRenderRoot(ecalWsRoot(), ecalWsState.filter); }
-
 function ecalSyncFilters(root, filter){
   const box=ecalPart(root,'filters'); if(!box) return;
   box.querySelectorAll('button[data-ecal-cur]').forEach(b=>{
@@ -164,34 +152,10 @@ function ecalSetFilter(cur){
   ecalSyncFilters(ecalEl('ecalOverlay'), ecalState.filter);
   ecalRender();
 }
-function ecalWsSetFilter(cur){
-  // O workspace é superfície permanente: o filtro dele persiste na sessão em
-  // vez de voltar a Todas, ao contrário do overlay, que reabre sempre limpo.
-  ecalWsState.filter=ECAL_CURRENCIES.includes(cur)?cur:'all';
-  ecalSyncFilters(ecalWsRoot(), ecalWsState.filter);
-  ecalRenderWorkspace();
-}
-
-// Chamado por ffNewsRenderAll() ao fim de cada ciclo do domínio: se uma
-// superfície estiver visível quando um fetch/tique atualizar o cache, ela
-// acompanha — sem isso, dado novo só apareceria reabrindo.
+// The weekly FF producer owns only its legacy overlay. The monthly Tools
+// workspace belongs to JPWCalendar and must never be repainted by an FF tick.
 function ecalRenderIfOpen(){
   if(ecalState && ecalState.open) ecalRender();
-  // A guarda `if(ecalWsState)` NÃO é redundante: este arquivo é o script 46 e
-  // 15-ff-news.js é o 44, que chama esta função durante a própria avaliação, no
-  // monólito — a declaração está içada, o valor ainda não. Mesma razão do `var`
-  // documentado no topo. Removê-la derruba o boot inteiro.
-  if(!ecalWsState) return;
-  const root=ecalWsRoot();
-  if(!root || root.hidden) return;
-  // `hidden` sozinho não basta. execApplyView() é o único a escrevê-lo e não
-  // tem caminho de SAÍDA do módulo: sair do Execution Board para outra tela só
-  // troca a classe .active, e .screen{display:none} esconde por CSS deixando
-  // #execEcal com hidden=false. Sem esta segunda condição o tique de 1 min
-  // reconstruiria o workspace inteiro dentro de uma subárvore invisível, para
-  // sempre — cerca de 1.400 repinturas descartadas por dia de app aberto.
-  if(!root.closest('.screen.active')) return;
-  ecalRenderWorkspace();
 }
 
 // ---- foco: armadilha simples, mesmo contrato dos outros diálogos ----
@@ -214,6 +178,7 @@ function ecalKeydown(event){
 
 // ---- entry point único (§10 do ticket) ----
 function openEconomicCalendar(opener){
+  if(document.getElementById('calendarDialog')?.open) return false;
   if(ecalState.open) return;
   ecalState.open=true;
   ecalState.opener=(opener instanceof HTMLElement)?opener:null;
@@ -280,7 +245,7 @@ function ecalOpenMenu(anchor){
   const item=document.createElement('button');
   item.type='button';
   item.setAttribute('role','menuitem');
-  item.textContent='Calendário Econômico';
+  item.textContent='Calendário semanal — FF';
   item.addEventListener('click',()=>{ ecalCloseMenu(false); openEconomicCalendar(anchor); });
   el.append(item);
   el.addEventListener('keydown',event=>{
@@ -316,13 +281,6 @@ function initEconomicCalendar(){
   if(filters) filters.addEventListener('click',e=>{
     const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalSetFilter(b.dataset.ecalCur);
   });
-  // Filtros do workspace: faixa estática no HTML, um único bind. O render
-  // reconstrói apenas o corpo — a faixa não é recriada, então o listener não
-  // se multiplica a cada entrada no workspace.
-  const wsFilters=ecalPart(ecalWsRoot(),'filters');
-  if(wsFilters) wsFilters.addEventListener('click',e=>{
-    const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalWsSetFilter(b.dataset.ecalCur);
-  });
   // Lançador da Central por DELEGAÇÃO: o painel da folha é criado pela própria
   // Central depois deste módulo carregar, então um bind direto não o acharia.
   document.addEventListener('click',e=>{
@@ -340,4 +298,4 @@ initEconomicCalendar();
 // na direção errada: o calendário não deve conhecer os nós do Dashboard.
 window.JPWEcal={open:openEconomicCalendar, openMenu:ecalOpenMenu, close:closeEconomicCalendar};
 // Contrato dos workspaces montados sob demanda (13-exec-views.js).
-window.JPWEcalUI={render:ecalRenderWorkspace};
+window.JPWEcalUI={render:()=>window.JPWCalendar?.mountWorkspace()};

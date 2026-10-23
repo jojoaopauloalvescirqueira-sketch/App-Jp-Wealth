@@ -33,7 +33,12 @@ MODULES = ['src/js/40-app/26-learning-catalog.js', 'src/js/00-core/09-learning-p
            'src/js/40-app/27-learning-view.js', 'src/js/40-app/28-learning-guide.js']
 PLANNING_MODULES = [f'src/js/30-accounting/06-planning/{name}.js' for name in ('01-engine','02-state','03-ui')]
 RETIRED_PLANNING_MODULES = [f'src/js/30-accounting/05-fx-planning/{name}.js' for name in ('01-fx-model','02-fx-engine','03-fx-state','04-fx-charts','05-fx-ui')]
-SOURCES = MODULES + PLANNING_MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
+CALENDAR_AGENDA_INSERTIONS = [
+    ('src/js/00-core/04-persistence.js', 'src/js/10-domain/19-personal-agenda.js'),
+    ('src/js/40-app/15-ff-news.js', 'src/js/40-app/16-monthly-economic-data.js'),
+    ('src/js/40-app/18-notification-center.js', 'src/js/40-app/19-calendar-agenda.js')]
+CALENDAR_AGENDA_MODULES = [path for _,path in CALENDAR_AGENDA_INSERTIONS]
+SOURCES = MODULES + PLANNING_MODULES + CALENDAR_AGENDA_MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
     'src/js/40-app/06-boot.js', 'src/js/40-app/07-finalize-session.js',
     'src/js/40-app/09-settings-modal.js', 'src/js/00-core/04-persistence.js',
     'src/js/00-core/07-workspace-backup.js', 'src/js/20-ui/18-finpes-budget.js',
@@ -674,8 +679,25 @@ CAPITAL_CURRENTS_MODULES = [f'src/js/40-app/30-capital-currents/{name}.js' for n
 MARKET_HOURS_MODULES = [f'src/js/40-app/31-market-hours/{name}.js' for name in
     ('01-sessions','02-assets','03-view','04-controller')]
 
+def calendar_agenda_feature_present(root):
+    """Discover feature intent independently of the supplied script lists."""
+    root=Path(root)
+    if any((root/path).is_file() for path in CALENDAR_AGENDA_MODULES):
+        return True
+    index=root/'index.html'
+    html=index.read_text() if index.is_file() else ''
+    return 'id="headerCalendarBtn"' in html or "id='headerCalendarBtn'" in html
+
 def assert_startup_scripts(root,scripts,expected):
     assert scripts==expected,{'scripts':scripts,'manifest':expected}
+    if calendar_agenda_feature_present(root) or any(path in expected for path in CALENDAR_AGENDA_MODULES):
+        assert all(expected.count(path)==1 for path in CALENDAR_AGENDA_MODULES),'Calendar/Agenda requires all three unique script identities'
+        for predecessor,path in CALENDAR_AGENDA_INSERTIONS:
+            assert expected.count(predecessor)==1 and expected.index(path)==expected.index(predecessor)+1,{'calendarScript':path,'requiredImmediatelyAfter':predecessor}
+            assert (Path(root)/path).is_file(),'Declared Calendar/Agenda source is missing: '+path
+        # Only this approved extension is projected out. The original identities,
+        # ordering hash and exact legacy script counts below remain unchanged.
+        expected=[path for path in expected if path not in CALENDAR_AGENDA_MODULES]
     planning_present=any(path in expected for path in PLANNING_MODULES)
     if planning_present:
         assert expected[-3:]==PLANNING_MODULES and all(expected.count(path)==1 for path in PLANNING_MODULES),'Planning must be one ordered block after the guide'
@@ -718,6 +740,40 @@ def assert_startup_scripts(root,scripts,expected):
     else:
         assert not twins_present and len(expected)==106-(5 if planning_present else 0),expected
 
+def startup_calendar_counterproofs(root,expected):
+    """Mutate both lists, so rejection cannot rely on HTML/manifest inequality."""
+    if not calendar_agenda_feature_present(root) and not any(path in expected for path in CALENDAR_AGENDA_MODULES):
+        return []
+    rejected=[]
+    def rejects(name,mutant):
+        try:
+            assert_startup_scripts(root,mutant,mutant)
+        except AssertionError:
+            rejected.append(name)
+        else:
+            raise AssertionError('Startup oracle accepted deliberate mutation: '+name)
+    rejects('calendar-collective-omission',[item for item in expected if item not in CALENDAR_AGENDA_MODULES])
+    for predecessor,path in CALENDAR_AGENDA_INSERTIONS:
+        rejects('calendar-omission/'+path,[item for item in expected if item!=path])
+        duplicate=list(expected);duplicate.insert(duplicate.index(path),path)
+        rejects('calendar-duplicate/'+path,duplicate)
+        reordered=[item for item in expected if item!=path]
+        reordered.insert(reordered.index(predecessor),path)
+        rejects('calendar-before-dependency/'+path,reordered)
+    # These unrelated legacy identities survive all approved projections. Their
+    # deletion, duplication and swap must still fail the historical106-path bar.
+    legacy='src/js/00-core/01-risk-profiles.js'
+    adjacent='src/js/00-core/02-platforms.js'
+    assert expected.count(legacy)==expected.count(adjacent)==1
+    rejects('legacy-omission',[item for item in expected if item!=legacy])
+    duplicate=list(expected);duplicate.insert(duplicate.index(legacy),legacy)
+    rejects('legacy-duplicate',duplicate)
+    reordered=list(expected);a,b=reordered.index(legacy),reordered.index(adjacent)
+    reordered[a],reordered[b]=reordered[b],reordered[a]
+    rejects('legacy-order',reordered)
+    assert len(rejected)==13,rejected
+    return rejected
+
 def startup_surface(page,row):
     assert page.evaluate("!!(JPWLearningGuide&&JPWLearningProgress&&JPWLearningCatalog&&JPWLearningView)")
     start(page,'basics');click(page,'#jpwLearningUnderstand');seen(page,'basics-home')
@@ -734,6 +790,7 @@ def startup_surface(page,row):
         expected=[item['path'] for item in json.loads((Path(row['root'])/'src/js/manifest.json').read_text())['files']]
         assert_startup_scripts(row['root'],scripts,expected)
         row['classicScriptCount']=len(scripts);row['sourceJSCount']=sum(x.startswith('src/js/') for x in scripts)
+        row['startupCounterproofsRejected']=startup_calendar_counterproofs(row['root'],expected)
     row['startupFacade']=True
 
 def offline(page,row):
@@ -743,7 +800,13 @@ def offline(page,row):
     assert all('/'+asset in paths for asset in MODULES),paths
     if page.evaluate('!!window.JPWPlanning'):
         assert all('/'+asset in paths for asset in PLANNING_MODULES),'The independent Planning scripts must also be precached'
+    calendar_present=calendar_agenda_feature_present(row['root']) or page.evaluate('!!window.JPWAgenda || !!window.JPWCalendar || !!window.JPWEconomicCalendar')
+    if calendar_present:
+        assert all('/'+asset in paths for asset in CALENDAR_AGENDA_MODULES),'All three Calendar/Agenda modules must also be precached'
     page.context.set_offline(True);page.reload();page.wait_for_function('window.JPWLearningGuide && window.JPWLearningCatalog')
+    if calendar_present:
+        assert page.evaluate('!!window.JPWAgenda && !!window.JPWCalendar && !!window.JPWEconomicCalendar'),'Calendar/Agenda APIs must survive the actual offline reload'
+        row['actualPrecachedCalendarAgendaModules']=CALENDAR_AGENDA_MODULES
     startup_surface(page,row);row['actualPrecachedGuideModules']=MODULES
 
 def viewport_events(page,row,kind):

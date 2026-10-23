@@ -1,0 +1,15 @@
+{
+  "classification": "NOT_RUN",
+  "reason": "Interrupted to apply three newly human-approved context records, including fingerprinted CHANGELOG, and rebuild before a fresh final gate. No required failures waived.",
+  "target_pids": [
+    50870,
+    51302,
+    51303,
+    51304,
+    51310,
+    51311,
+    51312,
+    51321,
+    51322
+  ]
+}
