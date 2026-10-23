@@ -1,0 +1,2 @@
+# Raw RFC5545 evidence keeps the publisher's CRLF bytes and recorded SHA-256.
+evidence/*.ics -text -diff

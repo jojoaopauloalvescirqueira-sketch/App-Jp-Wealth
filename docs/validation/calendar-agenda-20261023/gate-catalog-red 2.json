@@ -1,0 +1,19 @@
+{
+  "out": "/private/tmp/jpw-calendar-agenda-20261023",
+  "cases": [
+    {
+      "id": "gate-counterproof-red",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "gate-counterproof-red",
+      "started_at": "2026-10-23T16:49:32.136561+00:00",
+      "error": "('95 existing checks plus visual check required', 102)",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 727, in record\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 702, in gate_counterproof\n    valid = validate_gate_source(source)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py\", line 696, in validate_gate_source\n    assert len(tiers['FULL']) == 96, ('95 existing checks plus visual check required', len(tiers['FULL']))\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('95 existing checks plus visual check required', 102)\n",
+      "finished_at": "2026-10-23T16:49:32.141632+00:00"
+    }
+  ],
+  "triage": "TEST_HARNESS_FAIL: obsolete96-check expectation; current catalog contains96 preserved historical checks and6 approved calendar checks",
+  "hashes": {
+    "tools/ui_visual_quality_test.py": "00028ed7e97f299ec885e2d6b3576361324e03c0d0871070cb84c7f3e7b7cc4a",
+    "tools/quality_gate.py": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "classification": "NOT_RUN",
+  "reason": "Interrupted before final freeze to reconcile exact source-link expectation after approved progressive license links were added; no required check waived. Restart full after independent review of test delta.",
+  "target_pids": [
+    51503,
+    51919,
+    51920,
+    51921,
+    51927,
+    51928,
+    51929,
+    52399,
+    52400
+  ]
+}

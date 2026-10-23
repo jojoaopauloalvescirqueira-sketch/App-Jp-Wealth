@@ -1,0 +1,1566 @@
+/* Public official-source schedule. Pure model: no DOM, requests, cache or state. */
+(function (root) {
+  'use strict';
+  const packet = /* JPW_MONTHLY_DATA_BEGIN */
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-23T15:52:12Z",
+  "updatedAt": "2026-10-23T15:52:12Z",
+  "currencies": [
+    "USD",
+    "GBP",
+    "JPY",
+    "NZD",
+    "CHF"
+  ],
+  "months": [
+    "2026-10"
+  ],
+  "sources": [
+    {
+      "id": "bea",
+      "name": "U.S. Bureau of Economic Analysis",
+      "currency": "USD",
+      "timeZone": "UTC",
+      "url": "https://www.bea.gov/news/schedule/icalendar",
+      "license": "U.S. public domain",
+      "licenseUrl": "https://www.bea.gov/help/faq/147",
+      "attribution": "Source: U.S. Bureau of Economic Analysis",
+      "scope": "BEA release schedule; excludes BLS/Federal Reserve"
+    },
+    {
+      "id": "bls",
+      "name": "U.S. Bureau of Labor Statistics — pendente",
+      "currency": "USD",
+      "timeZone": "America/New_York",
+      "url": "https://www.bls.gov/schedule/",
+      "scope": "No reviewed package in this delivery"
+    },
+    {
+      "id": "fed",
+      "name": "Federal Reserve — pendente",
+      "currency": "USD",
+      "timeZone": "America/New_York",
+      "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
+      "scope": "No reviewed package in this delivery"
+    },
+    {
+      "id": "ons",
+      "name": "Office for National Statistics",
+      "currency": "GBP",
+      "timeZone": "Europe/London",
+      "url": "https://www.ons.gov.uk/releasecalendar",
+      "license": "Open Government Licence v3.0",
+      "licenseUrl": "https://www.ons.gov.uk/help/terms-conditions",
+      "attribution": "Source: Office for National Statistics, © Crown copyright 2026; adapted by JP Wealth",
+      "scope": "Explicit economic release catalogue in curation-2026-10.json; not all ONS releases"
+    },
+    {
+      "id": "boe",
+      "name": "Bank of England — pendente",
+      "currency": "GBP",
+      "timeZone": "Europe/London",
+      "url": "https://www.bankofengland.co.uk/news",
+      "scope": "No reviewed package in this delivery"
+    },
+    {
+      "id": "sbj",
+      "name": "Statistics Bureau of Japan",
+      "currency": "JPY",
+      "timeZone": "Asia/Tokyo",
+      "url": "https://www.stat.go.jp/english/",
+      "license": "Public Data License 1.0 / CC BY 4.0 compatible",
+      "licenseUrl": "https://www.stat.go.jp/english/info/riyou.html",
+      "attribution": "Created by JP Wealth by editing Statistics Bureau of Japan release schedules, accessed 2026-10-23; not a Government of Japan product",
+      "scope": "CPI, labour force, household expenditure, savings, business structure and population schedules; date only"
+    },
+    {
+      "id": "boj",
+      "name": "Bank of Japan — pendente",
+      "currency": "JPY",
+      "timeZone": "Asia/Tokyo",
+      "url": "https://www.boj.or.jp/en/",
+      "scope": "No reviewed package in this delivery"
+    },
+    {
+      "id": "statsnz",
+      "name": "Stats NZ — publicações selecionadas",
+      "currency": "NZD",
+      "timeZone": "Pacific/Auckland",
+      "url": "https://www.stats.govt.nz/release-calendar/",
+      "license": "CC BY 4.0 (Crown copyright; exceptions apply)",
+      "licenseUrl": "https://www.stats.govt.nz/about-us/copyright/",
+      "attribution": "This work is based on/includes Stats NZ’s data which are licensed by Stats NZ for reuse under the Creative Commons Attribution 4.0 International licence. Adapted by JP Wealth.",
+      "scope": "CPI September quarter and selected price indexes September only; export not validated"
+    },
+    {
+      "id": "statsnz-calendar",
+      "name": "Stats NZ — calendário completo pendente",
+      "currency": "NZD",
+      "timeZone": "Pacific/Auckland",
+      "url": "https://www.stats.govt.nz/release-calendar/",
+      "scope": "Calendar export not validated; no complete month claim"
+    },
+    {
+      "id": "rbnz",
+      "name": "Reserve Bank of New Zealand — pendente",
+      "currency": "NZD",
+      "timeZone": "Pacific/Auckland",
+      "url": "https://www.rbnz.govt.nz/",
+      "scope": "Automated access prohibited without permission; no automated collection or claimed human curation"
+    },
+    {
+      "id": "chf-pending",
+      "name": "CHF — licença de agenda pendente",
+      "currency": "CHF",
+      "timeZone": "Europe/Zurich",
+      "url": "https://opendata.swiss/",
+      "scope": "No official calendar commercial redistribution licence verified; no events shipped"
+    }
+  ],
+  "editorialPolicy": {
+    "id": "jpw-macro-impact-v1",
+    "publisher": "JP Wealth",
+    "kind": "editorial",
+    "disclaimer": "Impacto editorial JP Wealth; não informado pelas fontes e não é autorização operacional.",
+    "dateOnly": "Dia do calendário da fonte; horário não informado. A data não muda com o fuso do usuário."
+  },
+  "events": [
+    {
+      "id": "ons:economicactivityandsocialchangeintheukrealtimeindicators1october2026",
+      "title": "Economic activity and social change in the UK, real-time indicators: 1 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-01",
+      "at": "2026-10-01T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/economicactivityandsocialchangeintheukrealtimeindicators1october2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/economicactivityandsocialchangeintheukrealtimeindicators1october2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:fundedoccupationalpensionschemesintheukoctober2025tomarch2026",
+      "title": "Funded occupational pension schemes in the UK: October 2025 to March 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-01",
+      "at": "2026-10-01T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/fundedoccupationalpensionschemesintheukoctober2025tomarch2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/fundedoccupationalpensionschemesintheukoctober2025tomarch2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:cpi-tokyo:2026-09",
+      "title": "Consumer Price Index, Tokyo preliminary — September 2026",
+      "date": "2026-10-02",
+      "impact": "high",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "sourceUid": "cpi-tokyo:2026-09",
+      "documentaryEvidence": "sbj-cpi",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:labour-force:2026-08",
+      "title": "Labour Force Survey, basic tabulation — August 2026",
+      "date": "2026-10-02",
+      "impact": "medium",
+      "sourceUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+      "sourceUid": "labour-force:2026-08",
+      "documentaryEvidence": "sbj-labour",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:averagehouseholdincomeukfinancialyearending2025",
+      "title": "Average household income, UK: financial year ending 2025",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-02",
+      "at": "2026-10-02T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/averagehouseholdincomeukfinancialyearending2025",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/averagehouseholdincomeukfinancialyearending2025",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:e5470114-6282-4e32-894d-61734b5e353e",
+      "title": "U.S. International Trade in Goods and Services, August 2026",
+      "currency": "USD",
+      "impact": "medium",
+      "date": "2026-10-06",
+      "at": "2026-10-06T12:30:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "e5470114-6282-4e32-894d-61734b5e353e",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:300ed1bc-933c-4c2b-8f89-336010269bbd",
+      "title": "Services Supplied Through Affiliates, 2024",
+      "currency": "USD",
+      "impact": "low",
+      "date": "2026-10-06",
+      "at": "2026-10-06T14:00:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "300ed1bc-933c-4c2b-8f89-336010269bbd",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:businessinsightsandimpactontheukeconomy8october2026",
+      "title": "Business insights and impact on the UK economy: 8 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-08",
+      "at": "2026-10-08T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/businessinsightsandimpactontheukeconomy8october2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/businessinsightsandimpactontheukeconomy8october2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:economicactivityandsocialchangeintheukrealtimeindicators8october2026",
+      "title": "Economic activity and social change in the UK, real-time indicators: 8 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-08",
+      "at": "2026-10-08T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/economicactivityandsocialchangeintheukrealtimeindicators8october2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/economicactivityandsocialchangeintheukrealtimeindicators8october2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:family-expenditure:2026-08",
+      "title": "Family Income and Expenditure, two-or-more-person households — August 2026",
+      "date": "2026-10-09",
+      "impact": "medium",
+      "sourceUrl": "https://www.stat.go.jp/english/data/kakei/1562.html",
+      "sourceUid": "family-expenditure:2026-08",
+      "documentaryEvidence": "sbj-family",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:48:01Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:trendsinukindustryconcentration2007to2025",
+      "title": "Trends in UK industry concentration: 2007 to 2025",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-13",
+      "at": "2026-10-13T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/trendsinukindustryconcentration2007to2025",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/trendsinukindustryconcentration2007to2025",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:constructionoutputingreatbritainaugust2026",
+      "title": "Construction output in Great Britain: August 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-15",
+      "at": "2026-10-15T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/constructionoutputingreatbritainaugust2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/constructionoutputingreatbritainaugust2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:gdpmonthlyestimateukaugust2026",
+      "title": "GDP monthly estimate, UK: August 2026",
+      "currency": "GBP",
+      "impact": "high",
+      "date": "2026-10-15",
+      "at": "2026-10-15T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/gdpmonthlyestimateukaugust2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/gdpmonthlyestimateukaugust2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:indexofproductionukaugust2026",
+      "title": "Index of Production, UK: August 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-15",
+      "at": "2026-10-15T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/indexofproductionukaugust2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/indexofproductionukaugust2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:indexofservicesukaugust2026",
+      "title": "Index of Services, UK: August 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-15",
+      "at": "2026-10-15T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/indexofservicesukaugust2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/indexofservicesukaugust2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:uktradeaugust2026",
+      "title": "UK Trade: August 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-15",
+      "at": "2026-10-15T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/uktradeaugust2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/uktradeaugust2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:economicactivityandsocialchangeintheukrealtimeindicators15october2026",
+      "title": "Economic activity and social change in the UK, real-time indicators: 15 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-15",
+      "at": "2026-10-15T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/economicactivityandsocialchangeintheukrealtimeindicators15october2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/economicactivityandsocialchangeintheukrealtimeindicators15october2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "statsnz:spi:2026-09",
+      "sourceUid": "spi:2026-09",
+      "title": "Selected price indexes: September 2026",
+      "date": "2026-10-16",
+      "at": "2026-10-15T21:45:00Z",
+      "precision": "instant",
+      "impact": "medium",
+      "status": "published",
+      "documentaryEvidence": "statsnz-spi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "reviewedAt": "2026-10-23T15:51:14Z",
+      "sourceTimeLabel": "10:45am",
+      "timeZoneBasis": "Publisher-local New Zealand release time; Pacific/Auckland",
+      "currency": "NZD",
+      "sourceId": "statsnz",
+      "timeZone": "Pacific/Auckland",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:population:2026-10",
+      "title": "Population Estimates, monthly report — October 2026",
+      "date": "2026-10-20",
+      "impact": "low",
+      "sourceUrl": "https://www.stat.go.jp/english/data/jinsui/3.htm",
+      "sourceUid": "population:2026-10",
+      "documentaryEvidence": "sbj-population",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:13Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:earningsandemploymentfrompayasyouearnrealtimeinformationukoctober2026",
+      "title": "Earnings and employment from Pay As You Earn Real Time Information, UK: October 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-20",
+      "at": "2026-10-20T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/earningsandemploymentfrompayasyouearnrealtimeinformationukoctober2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/earningsandemploymentfrompayasyouearnrealtimeinformationukoctober2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:labourmarketintheregionsoftheukoctober2026",
+      "title": "Labour market in the regions of the UK: October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-20",
+      "at": "2026-10-20T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/labourmarketintheregionsoftheukoctober2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/labourmarketintheregionsoftheukoctober2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:uklabourmarketoctober2026",
+      "title": "UK Labour Market: October 2026",
+      "currency": "GBP",
+      "impact": "high",
+      "date": "2026-10-20",
+      "at": "2026-10-20T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/uklabourmarketoctober2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/uklabourmarketoctober2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:consumerpriceinflationukseptember2026",
+      "title": "Consumer price inflation, UK: September 2026",
+      "currency": "GBP",
+      "impact": "high",
+      "date": "2026-10-21",
+      "at": "2026-10-21T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/consumerpriceinflationukseptember2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/consumerpriceinflationukseptember2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:producerpriceinflationukseptember2026includingservicesjulytoseptember2026",
+      "title": "Producer price inflation, UK: September 2026 including services, July to September 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-21",
+      "at": "2026-10-21T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/producerpriceinflationukseptember2026includingservicesjulytoseptember2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/producerpriceinflationukseptember2026includingservicesjulytoseptember2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:publicsectorfinancesukseptember2026",
+      "title": "Public sector finances, UK: September 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-21",
+      "at": "2026-10-21T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/publicsectorfinancesukseptember2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/publicsectorfinancesukseptember2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:privaterentandhousepricesukoctober2026",
+      "title": "Private rent and house prices, UK: October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-21",
+      "at": "2026-10-21T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/privaterentandhousepricesukoctober2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/privaterentandhousepricesukoctober2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "statsnz:cpi:2026-Q3",
+      "sourceUid": "cpi:2026-Q3",
+      "title": "Consumers price index: September 2026 quarter",
+      "date": "2026-10-22",
+      "at": "2026-10-21T21:45:00Z",
+      "precision": "instant",
+      "impact": "high",
+      "status": "published",
+      "documentaryEvidence": "statsnz-cpi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+      "reviewedAt": "2026-10-23T15:51:12Z",
+      "sourceTimeLabel": "10:45am",
+      "timeZoneBasis": "Publisher-local New Zealand release time; Pacific/Auckland",
+      "currency": "NZD",
+      "sourceId": "statsnz",
+      "timeZone": "Pacific/Auckland",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:businessinsightsandimpactontheukeconomy22october2026",
+      "title": "Business insights and impact on the UK economy: 22 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-22",
+      "at": "2026-10-22T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/businessinsightsandimpactontheukeconomy22october2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/businessinsightsandimpactontheukeconomy22october2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:economicactivityandsocialchangeintheukrealtimeindicators22october2026",
+      "title": "Economic activity and social change in the UK, real-time indicators: 22 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-22",
+      "at": "2026-10-22T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/economicactivityandsocialchangeintheukrealtimeindicators22october2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/economicactivityandsocialchangeintheukrealtimeindicators22october2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:employeeearningsintheuk2026",
+      "title": "Employee earnings in the UK: 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-22",
+      "at": "2026-10-22T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/employeeearningsintheuk2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/employeeearningsintheuk2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:aec00139-d1ff-483c-b6a3-d722bc2d2591",
+      "title": "Experimental Research and Development Economic Statistics, U.S. and States, 2024",
+      "currency": "USD",
+      "impact": "low",
+      "date": "2026-10-22",
+      "at": "2026-10-22T14:00:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20261022T133728Z",
+      "sourceUid": "aec00139-d1ff-483c-b6a3-d722bc2d2591",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:cpi-japan:2026-09",
+      "title": "Consumer Price Index, Japan — September 2026",
+      "date": "2026-10-23",
+      "impact": "high",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "sourceUid": "cpi-japan:2026-09",
+      "documentaryEvidence": "sbj-cpi",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:savings-liabilities:2026-Q2",
+      "title": "Savings and Liabilities — Q2 2026",
+      "date": "2026-10-23",
+      "impact": "low",
+      "sourceUrl": "https://www.stat.go.jp/english/data/sav/2.html",
+      "sourceUid": "savings-liabilities:2026-Q2",
+      "documentaryEvidence": "sbj-savings",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:13Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:retailsalesgreatbritainseptember2026",
+      "title": "Retail sales, Great Britain: September 2026",
+      "currency": "GBP",
+      "impact": "high",
+      "date": "2026-10-23",
+      "at": "2026-10-23T06:00:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/retailsalesgreatbritainseptember2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/retailsalesgreatbritainseptember2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:constructionstatisticsgreatbritain2025",
+      "title": "Construction statistics, Great Britain: 2025",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-23",
+      "at": "2026-10-23T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/constructionstatisticsgreatbritain2025",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/constructionstatisticsgreatbritain2025",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:indicatorsofhousebuildingukpermanentdwellingsstartedandcompletedbycountryq22026",
+      "title": "Indicators of house building, UK: permanent dwellings started and completed by country: Q2 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-23",
+      "at": "2026-10-23T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/indicatorsofhousebuildingukpermanentdwellingsstartedandcompletedbycountryq22026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/indicatorsofhousebuildingukpermanentdwellingsstartedandcompletedbycountryq22026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:labourdemandvolumesbystandardoccupationclassificationsoc2020ukjanuary2017toseptember2026",
+      "title": "Labour demand volumes by Standard Occupation Classification (SOC 2020), UK: January 2017 to September 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-23",
+      "at": "2026-10-23T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/labourdemandvolumesbystandardoccupationclassificationsoc2020ukjanuary2017toseptember2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/labourdemandvolumesbystandardoccupationclassificationsoc2020ukjanuary2017toseptember2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:uktradeinservicesbypartnercountryapriltojune2026",
+      "title": "UK trade in services by partner country: April to June 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-23",
+      "at": "2026-10-23T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/uktradeinservicesbypartnercountryapriltojune2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/uktradeinservicesbypartnercountryapriltojune2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:uktradequarterlygoodsandservicesapriltojune2026",
+      "title": "UK trade, quarterly goods and services: April to June 2026",
+      "currency": "GBP",
+      "impact": "medium",
+      "date": "2026-10-23",
+      "at": "2026-10-23T08:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/uktradequarterlygoodsandservicesapriltojune2026",
+      "timeZone": "Europe/London",
+      "status": "published",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/uktradequarterlygoodsandservicesapriltojune2026",
+      "documentaryEvidence": "ons-published",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:business-structure:2025-third",
+      "title": "Annual Business Survey, third tabulation across industries (establishments) — 2025",
+      "date": "2026-10-28",
+      "impact": "low",
+      "sourceUrl": "https://www.stat.go.jp/english/data/kkj/schedule.html",
+      "sourceUid": "business-structure:2025-third",
+      "documentaryEvidence": "sbj-business",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:13Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:businessdemographyquarterlyukjulytoseptember2026",
+      "title": "Business demography, quarterly, UK: July to September 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-29",
+      "at": "2026-10-29T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/businessdemographyquarterlyukjulytoseptember2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/businessdemographyquarterlyukjulytoseptember2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:economicactivityandsocialchangeintheukrealtimeindicators29october2026",
+      "title": "Economic activity and social change in the UK, real-time indicators: 29 October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-29",
+      "at": "2026-10-29T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/economicactivityandsocialchangeintheukrealtimeindicators29october2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/economicactivityandsocialchangeintheukrealtimeindicators29october2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:afcb09fd-b564-4125-88aa-a0b23b358a6f",
+      "title": "GDP (Advance Estimate), 3rd Quarter 2026",
+      "currency": "USD",
+      "impact": "high",
+      "date": "2026-10-29",
+      "at": "2026-10-29T12:30:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "afcb09fd-b564-4125-88aa-a0b23b358a6f",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "bea:ff8bd8ad-bb92-43c5-8a30-7e7b5baa33c2",
+      "title": "Personal Income and Outlays, September 2026",
+      "currency": "USD",
+      "impact": "high",
+      "date": "2026-10-29",
+      "at": "2026-10-29T12:30:00Z",
+      "precision": "instant",
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/icalendar",
+      "timeZone": "UTC",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:46:29Z",
+      "sequence": 0,
+      "sourceUpdatedAt": "20250929T114611Z",
+      "sourceUid": "ff8bd8ad-bb92-43c5-8a30-7e7b5baa33c2",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:cpi-tokyo:2026-10",
+      "title": "Consumer Price Index, Tokyo preliminary — October 2026",
+      "date": "2026-10-30",
+      "impact": "high",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "sourceUid": "cpi-tokyo:2026-10",
+      "documentaryEvidence": "sbj-cpi",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "sbj:labour-force:2026-09",
+      "title": "Labour Force Survey, basic tabulation — September and Q3 2026",
+      "date": "2026-10-30",
+      "impact": "medium",
+      "sourceUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+      "sourceUid": "labour-force:2026-09",
+      "documentaryEvidence": "sbj-labour",
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "timeZone": "Asia/Tokyo",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "status": "scheduled",
+      "at": null,
+      "precision": "date",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:annualgrossfixedcapitalformationbyindustryandassetoctober2026",
+      "title": "Annual gross fixed capital formation by industry and asset: October 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/annualgrossfixedcapitalformationbyindustryandassetoctober2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/annualgrossfixedcapitalformationbyindustryandassetoctober2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:gdprevisionsinbluebook2026",
+      "title": "GDP revisions in Blue Book: 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/gdprevisionsinbluebook2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/gdprevisionsinbluebook2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:inputoutputsupplyandusetables2026edition",
+      "title": "Input-output supply and use tables: 2026 edition",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/inputoutputsupplyandusetables2026edition",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/inputoutputsupplyandusetables2026edition",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:inputoutputsupplyandusetablessummarytables2026",
+      "title": "Input-output supply and use tables – summary tables: 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/inputoutputsupplyandusetablessummarytables2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/inputoutputsupplyandusetablessummarytables2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:supplyanduseofproductsandindustrygvaukexperimental2024",
+      "title": "Supply and Use of products and industry GVA, UK: 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/supplyanduseofproductsandindustrygvaukexperimental2024",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/supplyanduseofproductsandindustrygvaukexperimental2024",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:ukbalanceofpaymentsthepinkbook2026",
+      "title": "UK Balance of Payments, The Pink Book: 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/ukbalanceofpaymentsthepinkbook2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/ukbalanceofpaymentsthepinkbook2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "ons:uknationalaccountsthebluebook2026",
+      "title": "UK National Accounts, The Blue Book: 2026",
+      "currency": "GBP",
+      "impact": "low",
+      "date": "2026-10-30",
+      "at": "2026-10-30T09:30:00.000Z",
+      "precision": "instant",
+      "sourceId": "ons",
+      "sourceUrl": "https://www.ons.gov.uk/releases/uknationalaccountsthebluebook2026",
+      "timeZone": "Europe/London",
+      "status": "scheduled",
+      "reviewedAt": "2026-10-23T15:47:12Z",
+      "sourceUid": "/releases/uknationalaccountsthebluebook2026",
+      "documentaryEvidence": "ons-upcoming",
+      "dateChanges": null,
+      "editorialPolicy": "jpw-macro-impact-v1"
+    },
+    {
+      "id": "statsnz:spi:2026-10",
+      "sourceUid": "spi:2026-10",
+      "title": "Selected price indexes: October 2026",
+      "date": "2026-11-17",
+      "at": null,
+      "precision": "date",
+      "impact": "medium",
+      "status": "scheduled",
+      "documentaryEvidence": "statsnz-spi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "reviewedAt": "2026-10-23T15:51:14Z",
+      "sourceTimeLabel": null,
+      "timeZoneBasis": "Date only; announcement gives no release time",
+      "currency": "NZD",
+      "sourceId": "statsnz",
+      "timeZone": "Pacific/Auckland",
+      "editorialPolicy": "jpw-macro-impact-v1"
+    }
+  ],
+  "coverage": [
+    {
+      "currency": "USD",
+      "sourceId": "bea",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "confirmed",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Mês completo do calendário BEA somente; USD continua parcial sem BLS e Fed.",
+      "validUntil": "2026-10-25T15:52:12Z"
+    },
+    {
+      "currency": "USD",
+      "sourceId": "bls",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Calendário BLS ainda não coletado/revisado neste pacote."
+    },
+    {
+      "currency": "USD",
+      "sourceId": "fed",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Calendário Federal Reserve ainda não coletado/revisado neste pacote."
+    },
+    {
+      "currency": "GBP",
+      "sourceId": "ons",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "confirmed",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Catálogo econômico ONS explicitamente selecionado: mês inteiro, publicadas/futuras/canceladas consultadas; exclui séries duplicadas e publicações fora do catálogo.",
+      "validUntil": "2026-10-25T15:52:12Z"
+    },
+    {
+      "currency": "GBP",
+      "sourceId": "boe",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Bank of England sem pacote de eventos revisado."
+    },
+    {
+      "currency": "JPY",
+      "sourceId": "sbj",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "partial",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Seis famílias de calendários oficiais SBJ; horários não comprovados, datas preservadas no Japão. Não cobre todas as estatísticas japonesas.",
+      "validUntil": "2026-10-25T15:52:12Z"
+    },
+    {
+      "currency": "JPY",
+      "sourceId": "boj",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Bank of Japan sem pacote de eventos revisado."
+    },
+    {
+      "currency": "NZD",
+      "sourceId": "statsnz",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "partial",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Somente CPI trimestral e selected price indexes comprovados; não representa o mês econômico NZD completo.",
+      "validUntil": "2026-10-25T15:52:12Z"
+    },
+    {
+      "currency": "NZD",
+      "sourceId": "statsnz-calendar",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Exportação mensal Stats NZ ainda não validada; ausência de outros eventos não significa agenda vazia."
+    },
+    {
+      "currency": "NZD",
+      "sourceId": "rbnz",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Sem acesso automatizado autorizado e sem curadoria humana fornecida; nenhum evento presumido."
+    },
+    {
+      "currency": "CHF",
+      "sourceId": "chf-pending",
+      "month": "2026-10",
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "status": "pending",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "reason": "Redistribuição comercial gratuita da agenda oficial CHF não comprovada; nenhum evento presumido."
+    },
+    {
+      "currency": "NZD",
+      "sourceId": "statsnz",
+      "month": "2026-11",
+      "from": "2026-11-01",
+      "to": "2026-11-30",
+      "status": "partial",
+      "reviewedAt": "2026-10-23T15:52:12Z",
+      "validUntil": "2026-10-25T15:52:12Z",
+      "reason": "Somente próxima divulgação SPI citada na publicação de setembro; demais eventos não revisados, horário não informado."
+    }
+  ],
+  "provenance": [
+    {
+      "sourceId": "bea",
+      "sourceUrl": "https://www.bea.gov/news/schedule/ics/online-calendar-subscription.ics",
+      "licenseUrl": "https://www.bea.gov/help/faq/147",
+      "capturedAt": "2026-10-23T15:46:29Z",
+      "normalizedAt": "2026-10-23T15:46:29Z",
+      "method": "explicit-official-GET",
+      "sha256": "81be5c35e43d4a5209536a542012ef406b66a20db7d4e065cf0f73f8d5e6a81d",
+      "fullSourceEventCount": 168,
+      "sourceRange": {
+        "from": "2025-01-07",
+        "to": "2027-12-22"
+      }
+    },
+    {
+      "id": "ons-published",
+      "sourceUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false",
+      "resolvedUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false",
+      "capturedAt": "2026-10-23T15:47:12Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "7158b6f34321b3c807685e4655dcc7f7461f128d09e75d83f7bbc2f7fc428c52",
+      "evidenceFile": "ons-published.json",
+      "evidenceSha256": "5594b13643d1eb18b8b5074df76acb18dbd458876ccaaec31e4064703e5c4c79"
+    },
+    {
+      "id": "ons-upcoming",
+      "sourceUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-upcoming",
+      "resolvedUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-upcoming",
+      "capturedAt": "2026-10-23T15:47:12Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "51ed9de9698b2e9da41fda8e93cd016cac316af2c6f1ff2b8ed03d72a47c22c8",
+      "evidenceFile": "ons-upcoming.json",
+      "evidenceSha256": "5a69eac60936b69e1cdccb9fc282a3178f914564950d41de0b84106212d286e8"
+    },
+    {
+      "id": "ons-cancelled",
+      "sourceUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-cancelled",
+      "resolvedUrl": "https://api.beta.ons.gov.uk/v1/search/releases?fromDate=2026-10-01&toDate=2026-10-31&limit=1000&sort=release_date_asc&highlight=false&release-type=type-cancelled",
+      "capturedAt": "2026-10-23T15:47:12Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "53e2a0eff314fa7a7dda74e9f3504c04b08177daf19291ede763587858e8b486",
+      "evidenceFile": "ons-cancelled.json",
+      "evidenceSha256": "2d937f49a6dce40e2545b1ce0cab60acfc3c1f048b4bcb57be58e4702bffa97e"
+    },
+    {
+      "id": "sbj-cpi",
+      "sourceUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "resolvedUrl": "https://www.stat.go.jp/english/data/cpi/1582.html",
+      "capturedAt": "2026-10-23T15:47:12Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "09bad0238470a50763a480c56910d642496902956682268e3122ffd3537d1262",
+      "evidenceFile": "sbj-cpi.txt",
+      "evidenceSha256": "c3c46e45a2d909e4e8d3985769ed2e113de7e5a63d36effafe8144efe06fba3e"
+    },
+    {
+      "id": "sbj-labour",
+      "sourceUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+      "resolvedUrl": "https://www.stat.go.jp/english/data/roudou/1543.html",
+      "capturedAt": "2026-10-23T15:47:12Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "9fd400024e593ccd6f0838ca0e175d6ea45d2225f8ff8556b69f406d90f85bbf",
+      "evidenceFile": "sbj-labour.txt",
+      "evidenceSha256": "89d52126dc79d794ee4a5201b10732004679565fa93dd91c9299fa99ea4ecba6"
+    },
+    {
+      "id": "sbj-savings",
+      "sourceUrl": "https://www.stat.go.jp/english/data/sav/2.html",
+      "resolvedUrl": "https://www.stat.go.jp/english/data/sav/2.html",
+      "capturedAt": "2026-10-23T15:47:13Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "15802aa43a6189c3b0cdb4ce923e8c0448f3f8f06dd6d59f20d21d131e1e744b",
+      "evidenceFile": "sbj-savings.txt",
+      "evidenceSha256": "97350be8d1dd7ee01f03f585de81473c3b39b869f95f1256307ae28bec0e2c16"
+    },
+    {
+      "id": "sbj-business",
+      "sourceUrl": "https://www.stat.go.jp/english/data/kkj/schedule.html",
+      "resolvedUrl": "https://www.stat.go.jp/english/data/kkj/schedule.html",
+      "capturedAt": "2026-10-23T15:47:13Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "ffcc0f23a9d27c764a06ab095402058e81e28585b035be795c6ed3179c5dc3c7",
+      "evidenceFile": "sbj-business.txt",
+      "evidenceSha256": "d2e175cf877c634b675425718bf00fc821315dee8595efc1ba23438d78fdf9f3"
+    },
+    {
+      "id": "sbj-population",
+      "sourceUrl": "https://www.stat.go.jp/english/data/jinsui/3.htm",
+      "resolvedUrl": "https://www.stat.go.jp/english/data/jinsui/3.htm",
+      "capturedAt": "2026-10-23T15:47:13Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "452e9701bb26a411e32760fe42cf96bf0ca128374431dfa17aad542b7933e5d5",
+      "evidenceFile": "sbj-population.txt",
+      "evidenceSha256": "c5b0a676c3d5938fd7e6d1265da51c48ac25c194ab5ec5bd934ed38d82244df1"
+    },
+    {
+      "id": "sbj-license",
+      "sourceUrl": "https://www.stat.go.jp/english/info/riyou.html",
+      "resolvedUrl": "https://www.stat.go.jp/english/info/riyou.html",
+      "capturedAt": "2026-10-23T15:47:13Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "0f3041962a0ca20fe272d25e7195cfbab00f72919538fbc2013dcd0fd2fff813",
+      "evidenceFile": "sbj-license.txt",
+      "evidenceSha256": "ff8654f0dff2fb6e4adc35df82894c910eddcb5334ae72e5bc089755075724c9"
+    },
+    {
+      "id": "statsnz-cpi",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+      "resolvedUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+      "capturedAt": "2026-10-23T15:47:14Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "2b84722b435791da20453021c18fc2e0d3a1db5ab0d2e29e7f49f1aefd26132a",
+      "evidenceFile": "statsnz-cpi.txt",
+      "evidenceSha256": "73a56b049ce750c45e75cf2a6f58bb7c0ea446184796088fc358b8c93a647fcd"
+    },
+    {
+      "id": "statsnz-spi",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "resolvedUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "capturedAt": "2026-10-23T15:47:15Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "26f8412537ec628d71080cad17179e443f78ef43896bf82c2a921956f0d5db08",
+      "evidenceFile": "statsnz-spi.txt",
+      "evidenceSha256": "3ccb33ad76522dd339e57e2bd92e014817e7c9559d21e9ae448b5b1f81e35427"
+    },
+    {
+      "id": "statsnz-license",
+      "sourceUrl": "https://www.stats.govt.nz/about-us/copyright/",
+      "resolvedUrl": "https://www.stats.govt.nz/about-us/copyright/",
+      "capturedAt": "2026-10-23T15:47:15Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "564310f4630694871c9630bacd3a621fda62f84119e15b18b0e9457780b7ace2",
+      "evidenceFile": "statsnz-license.txt",
+      "evidenceSha256": "4148346b16c4c920b670e68558a4de34957028296ac6a602652140d32bd3b7b3"
+    },
+    {
+      "id": "ons-license",
+      "sourceUrl": "https://www.ons.gov.uk/help/terms-conditions",
+      "resolvedUrl": "https://www.ons.gov.uk/help/terms-conditions",
+      "capturedAt": "2026-10-23T15:47:13Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "e4edc5e22fe599d20602ffc29d16477fd4bb45453a8cad17d5bbf07607478f4c",
+      "evidenceFile": "ons-license.txt",
+      "evidenceSha256": "51a60977ec43b09350e73af6583cd76e7e475f3dbc82c5ce1d35cfbb117a56fb"
+    },
+    {
+      "id": "bea-license",
+      "sourceUrl": "https://www.bea.gov/help/faq/147",
+      "resolvedUrl": "https://www.bea.gov/help/faq/147",
+      "capturedAt": "2026-10-23T15:47:14Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "23118389b7d672fef50aa5caeb20e55f97a595c8b5604a2f8829d05bb0b9abf5",
+      "evidenceFile": "bea-license.txt",
+      "evidenceSha256": "aad0c8fddda51cc11eb1c977be36a98593cbf6a61e3f7ee5c24ff705c73e5000"
+    },
+    {
+      "id": "sbj-family",
+      "sourceUrl": "https://www.stat.go.jp/english/data/kakei/1562.html",
+      "capturedAt": "2026-10-23T15:48:01Z",
+      "method": "explicit-documentary-GET",
+      "rawSha256": "d3a1308d6254d76d25b8202173009f1e874b7a2ee5cfabfe44481de4a84df0c7",
+      "evidenceFile": "sbj-family.txt",
+      "evidenceSha256": "5f9bde17dfef70afa0d1680cf148018f310b6be9d5a4734142c00bd052f26a20",
+      "responseCharset": "iso-8859-1"
+    },
+    {
+      "id": "statsnz-license-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/about-us/copyright/",
+      "resolvedUrl": "https://www.stats.govt.nz/about-us/copyright/",
+      "capturedAt": "2026-10-23T15:51:08Z",
+      "method": "explicit-public-browser-DOM-read",
+      "evidenceFile": "statsnz-license-rendered.txt",
+      "evidenceSha256": "c090252ce8bf775305a5fd6a024a2eecf5c5513256ccd0d9cdbc5478868b782c",
+      "extractedBeforeWhitespaceNormalizationSha256": "06218682f267a7a9c21e5356c64c0f891a3a82219fc82329742dfdb7cc4cc307",
+      "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+    },
+    {
+      "id": "statsnz-cpi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+      "resolvedUrl": "https://www.stats.govt.nz/information-releases/consumers-price-index-september-2026-quarter/",
+      "capturedAt": "2026-10-23T15:51:12Z",
+      "method": "explicit-public-browser-DOM-read",
+      "evidenceFile": "statsnz-cpi-rendered.txt",
+      "evidenceSha256": "cb163c762abb6258ae36af24801896ec1d3e94871e6c31da4bbddb8001479cc4",
+      "extractedBeforeWhitespaceNormalizationSha256": "31a1afeaa2c375b54ccf530cff991df4c0b3917c0d6bd2d437093598bc16bb98",
+      "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+    },
+    {
+      "id": "statsnz-spi-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "resolvedUrl": "https://www.stats.govt.nz/information-releases/selected-price-indexes-september-2026/",
+      "capturedAt": "2026-10-23T15:51:14Z",
+      "method": "explicit-public-browser-DOM-read",
+      "evidenceFile": "statsnz-spi-rendered.txt",
+      "evidenceSha256": "bd4e5e899d41585f7108a4440e04701469358771c53e71862ff1f5988e2cc3a9",
+      "extractedBeforeWhitespaceNormalizationSha256": "ced074e68d25db64915ca413bd1ccdab1c366e64e5d7afaab83f6a5990776895",
+      "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+    },
+    {
+      "id": "statsnz-calendar-rendered",
+      "sourceUrl": "https://www.stats.govt.nz/release-calendar/",
+      "capturedAt": "2026-10-23T15:52:12Z",
+      "method": "explicit-public-browser-DOM-read",
+      "evidenceFile": "statsnz-calendar-rendered.txt",
+      "evidenceSha256": "7e5be4f49c068f6aec45ca168603746177afd66aeeb01096876a09a1dacd76ae",
+      "extractedBeforeWhitespaceNormalizationSha256": "5e777bcbeb608d3765c936e5c10d51a442aebc60db9b0f328dd896185b6d6de0",
+      "textNormalization": "Trailing whitespace removed per line; content/order preserved"
+    },
+    {
+      "sourceId": "ons",
+      "method": "explicit-catalogue-selection",
+      "queryCounts": {
+        "ons-published": 67,
+        "ons-upcoming": 16,
+        "ons-cancelled": 1
+      },
+      "catalogueFile": "data/curation-2026-10.json",
+      "selectedCount": 37
+    }
+  ],
+  "limitations": [
+    "Entrega parcial por fontes/famílias; não comprova mês completo de todas as cinco moedas.",
+    "Não contém valores anteriores, consenso, resultado, surpresa ou impacto nativo de provedor.",
+    "Status scheduled em calendário passado não comprova publicação; não inferir published pela passagem do tempo.",
+    "Sem atualização automática no app; pacote estático revisado, validade de cobertura de 48 horas.",
+    "Curadoria documental assistida por IA não é aceite ou revisão humana.",
+    "Identidades SBJ por família/período; ONS por URI; BEA por UID. Nunca usar a data de divulgação como identidade."
+  ]
+}
+  /* JPW_MONTHLY_DATA_END */;
+  const impacts = ['high', 'medium', 'low', 'unclassified'];
+  const statuses = ['scheduled', 'published', 'cancelled'];
+  const coverageStatuses = ['confirmed', 'partial', 'pending', 'stale', 'unavailable'];
+  const copy = value => JSON.parse(JSON.stringify(value));
+  function day(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const parsed = new Date(value + 'T00:00:00Z');
+    return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+  }
+  function instant(value) {
+    return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)
+      && day(value.slice(0, 10)) && Number.isFinite(Date.parse(value));
+  }
+  function safeUrl(value) {
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) && !!url.hostname && !url.username && !url.password;
+    } catch (_) { return false; }
+  }
+  function formatter(timeZone) {
+    return new Intl.DateTimeFormat('en-US', {timeZone, year:'numeric', month:'2-digit', day:'2-digit'});
+  }
+  function civil(at, format) {
+    const parts = format.formatToParts(new Date(at));
+    const get = name => parts.find(p => p.type === name).value;
+    return get('year') + '-' + get('month') + '-' + get('day');
+  }
+  function monthKeys(from, to) {
+    const values = [];
+    let year = Number(from.slice(0, 4)), month = Number(from.slice(5, 7));
+    const end = to.slice(0, 7);
+    for (;;) {
+      const key = String(year).padStart(4, '0') + '-' + String(month).padStart(2, '0');
+      values.push(key);
+      if (key === end) return values;
+      if (++month === 13) { month = 1; year++; }
+    }
+  }
+  const sources = (Array.isArray(packet.sources) ? packet.sources : []).filter(source =>
+    source && typeof source.id === 'string' && typeof source.name === 'string' && safeUrl(source.url));
+  const sourceIds = new Set(sources.map(source => source.id));
+  const damaged = new Set();
+  const byId = new Map();
+  for (const row of Array.isArray(packet.events) ? packet.events : []) {
+    let valid = row && typeof row.id === 'string' && row.id.length > 0 && row.id.length <= 300
+      && typeof row.title === 'string' && row.title.trim().length > 0 && row.title.length <= 600
+      && /^[A-Z]{3}$/.test(row.currency) && sourceIds.has(row.sourceId)
+      && impacts.includes(row.impact) && day(row.date) && safeUrl(row.sourceUrl)
+      && statuses.includes(row.status) && instant(row.reviewedAt)
+      && ((row.precision === 'date' && row.at === null) || (row.precision === 'instant' && instant(row.at)));
+    if (valid) { try { formatter(row.timeZone); } catch (_) { valid = false; } }
+    if (!valid) { if (row && row.sourceId) damaged.add(row.sourceId); continue; }
+    const candidate = copy(row);
+    const previous = byId.get(row.id);
+    const rank = value => [Number.isInteger(value.sequence) ? value.sequence : 0,
+      String(value.sourceUpdatedAt || ''), value.reviewedAt];
+    const compareRank = (a, b) => a[0] - b[0] || a[1].localeCompare(b[1]) || a[2].localeCompare(b[2]);
+    if (!previous || compareRank(rank(candidate), rank(previous)) > 0) byId.set(row.id, candidate);
+    else if (compareRank(rank(candidate), rank(previous)) === 0 && JSON.stringify(candidate) !== JSON.stringify(previous))
+      damaged.add(row.sourceId);
+  }
+  const events = Array.from(byId.values());
+  const declaredCurrencies = Array.from(new Set([
+    ...(packet.currencies || []), ...sources.map(source => source.currency),
+    ...events.map(row => row.currency), ...(packet.coverage || []).map(row => row.currency)
+  ].filter(value => typeof value === 'string' && /^[A-Z]{3}$/.test(value))));
+  function selection(value, fallback, allowed) {
+    if (value === undefined) return fallback.slice();
+    if (!Array.isArray(value) || value.some(item => typeof item !== 'string')) throw new TypeError('Filter must be an array');
+    return Array.from(new Set(value)).filter(item => !allowed || allowed.includes(item));
+  }
+  function queryRange(options) {
+    const query = options || {};
+    if (!day(query.from) || !day(query.to) || query.from > query.to) throw new RangeError('Invalid civil date range');
+    if (Number(query.to.slice(0, 4)) - Number(query.from.slice(0, 4)) > 10) throw new RangeError('Range exceeds ten years');
+    const format = formatter(query.timeZone === undefined ? 'UTC' : query.timeZone);
+    const currencies = selection(query.currencies, declaredCurrencies);
+    const selectedImpacts = selection(query.impacts, impacts, impacts);
+    const selected = events.filter(row => currencies.includes(row.currency) && selectedImpacts.includes(row.impact))
+      .map(row => ({...copy(row), sourceDate:row.date,
+        date:row.precision === 'instant' ? civil(row.at, format) : row.date}))
+      .filter(row => row.date >= query.from && row.date <= query.to)
+      .sort((a, b) => a.date.localeCompare(b.date) || String(a.at || '').localeCompare(String(b.at || '')) || a.id.localeCompare(b.id));
+    const coverage = [];
+    for (const currency of currencies) for (const month of monthKeys(query.from, query.to)) {
+      const rows = (packet.coverage || []).filter(row => row.currency === currency && row.month === month
+        && coverageStatuses.includes(row.status) && day(row.from) && day(row.to) && row.from <= row.to);
+      if (!rows.length) {
+        const end = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0));
+        coverage.push({currency, sourceId:null, month, from:month + '-01', to:end.toISOString().slice(0, 10),
+          status:'unavailable', reviewedAt:null, reason:'Nenhum pacote verificado para esta moeda e mês.'});
+      }
+      for (const original of rows) {
+        const row = copy(original);
+        if (damaged.has(row.sourceId) && ['confirmed', 'partial'].includes(row.status)) {
+          row.status = 'partial'; row.reason += ' Registros inválidos/conflitantes foram recusados.';
+        }
+        if (['confirmed', 'partial'].includes(row.status) && instant(row.validUntil) && Date.parse(row.validUntil) < Date.now()) {
+          row.status = 'stale'; row.reason += ' Prazo de revisão vencido; confirme na fonte.';
+        }
+        coverage.push(row);
+      }
+    }
+    return {events:selected, coverage, updatedAt:packet.updatedAt || null};
+  }
+  root.JPWEconomicCalendar = Object.freeze({
+    queryRange,
+    sources: () => copy(sources),
+    metadata: () => copy({schemaVersion:packet.schemaVersion, updatedAt:packet.updatedAt || null,
+      generatedAt:packet.generatedAt || null, currencies:declaredCurrencies, months:packet.months || [],
+      coverageScope:'source-and-family', editorialPolicy:packet.editorialPolicy || null,
+      provenance:packet.provenance || [], limitations:packet.limitations || [], rejectedSources:Array.from(damaged)})
+  });
+})(window);

@@ -1,0 +1,152 @@
+[
+  {
+    "path": "build-id.js",
+    "archive_sha256": "ff9c94b83361f4e6e4ba4d9ad98f1cc0c36d55d720b197f3435e5f6715d92cfc",
+    "baseline_sha256": "ff9c94b83361f4e6e4ba4d9ad98f1cc0c36d55d720b197f3435e5f6715d92cfc",
+    "match": true
+  },
+  {
+    "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "archive_sha256": "5df691e7832f9a750e441e1e7f4089f79dfe9f30a1753f36e2c1aafde2f0cdd2",
+    "baseline_sha256": "5df691e7832f9a750e441e1e7f4089f79dfe9f30a1753f36e2c1aafde2f0cdd2",
+    "match": true
+  },
+  {
+    "path": "docs/architecture/NOTIFICATION-CENTER.md",
+    "archive_sha256": "cd56a48c07ff25ff52eaf84d04159bf43cf30f696635e19fc362498c2bd6df70",
+    "baseline_sha256": "cd56a48c07ff25ff52eaf84d04159bf43cf30f696635e19fc362498c2bd6df70",
+    "match": true
+  },
+  {
+    "path": "docs/architecture/PLANNING.md",
+    "archive_sha256": "54ed9f0550964b03b3cf2a6daf7a9e1258999e08afd58b49cf3640a2e6eaea51",
+    "baseline_sha256": "54ed9f0550964b03b3cf2a6daf7a9e1258999e08afd58b49cf3640a2e6eaea51",
+    "match": true
+  },
+  {
+    "path": "docs/work/ACTIVE-TASK.md",
+    "archive_sha256": "c3fd948c01bbf0cbd01eec9b25d0ccd67708013d009ae37247bfd9f03b5e5502",
+    "baseline_sha256": "c3fd948c01bbf0cbd01eec9b25d0ccd67708013d009ae37247bfd9f03b5e5502",
+    "match": true
+  },
+  {
+    "path": "index.html",
+    "archive_sha256": "b39c582fdd3a4e677ba4b62818439bdf5d149dba9c4b330116d412e38b57f7be",
+    "baseline_sha256": "b39c582fdd3a4e677ba4b62818439bdf5d149dba9c4b330116d412e38b57f7be",
+    "match": true
+  },
+  {
+    "path": "src/js/30-accounting/06-planning/02-state.js",
+    "archive_sha256": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "baseline_sha256": "53287b45ad24bf12b2f8a6beac4b324225f24e5656e2f19492708863e2c0c6c2",
+    "match": true
+  },
+  {
+    "path": "src/js/30-accounting/06-planning/03-ui.js",
+    "archive_sha256": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+    "baseline_sha256": "a118f07d6b101299c0ad88bf1064c75aed6d88113b974eb9c47c8eab183c9bd2",
+    "match": true
+  },
+  {
+    "path": "src/js/40-app/18-notification-center.js",
+    "archive_sha256": "7f852a4f0f24c35fdb0cc48c73b0137ad229472eef7944799ad601df5fb022e4",
+    "baseline_sha256": "7f852a4f0f24c35fdb0cc48c73b0137ad229472eef7944799ad601df5fb022e4",
+    "match": true
+  },
+  {
+    "path": "src/js/manifest.json",
+    "archive_sha256": "eec66cf029bd2738fce10a916f1f82407202db26e24c28fdc9f2f6ee924d7694",
+    "baseline_sha256": "eec66cf029bd2738fce10a916f1f82407202db26e24c28fdc9f2f6ee924d7694",
+    "match": true
+  },
+  {
+    "path": "src/styles/app.css",
+    "archive_sha256": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "baseline_sha256": "9ea40bc9c0b357694dd3860720fb0f5ec0d6b68602093170946ff8b695145627",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+    "archive_sha256": "4bc061d999ca03474d9b31cb5135a48bd68a3e2b642a4701df807917d51c1019",
+    "baseline_sha256": "4bc061d999ca03474d9b31cb5135a48bd68a3e2b642a4701df807917d51c1019",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+    "archive_sha256": "85d90be91a1f907fb6e659df516a46a318afc0bf26a55b3ee9f02641f7e0dfd5",
+    "baseline_sha256": "85d90be91a1f907fb6e659df516a46a318afc0bf26a55b3ee9f02641f7e0dfd5",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+    "archive_sha256": "4888f61f6d8a2310c3b171eeb199cda8bd551d30d38048fad995289ea894d481",
+    "baseline_sha256": "4888f61f6d8a2310c3b171eeb199cda8bd551d30d38048fad995289ea894d481",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/leverage-preview-payload.js",
+    "archive_sha256": "4d12b409345fe59019e38db985515eb8de0800af90da8f445d1c3aa48e0232f1",
+    "baseline_sha256": "4d12b409345fe59019e38db985515eb8de0800af90da8f445d1c3aa48e0232f1",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/leverage-preview-payload.json",
+    "archive_sha256": "c54da091bd7f8cccdbc301e5000fe394c62d02d87ee8c501dc536341faa84efc",
+    "baseline_sha256": "c54da091bd7f8cccdbc301e5000fe394c62d02d87ee8c501dc536341faa84efc",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/leverage-source-payload.js",
+    "archive_sha256": "3908799601ee8daf05a8ae422f34c0b1f79109882d40b4419be996f93c9e14d3",
+    "baseline_sha256": "3908799601ee8daf05a8ae422f34c0b1f79109882d40b4419be996f93c9e14d3",
+    "match": true
+  },
+  {
+    "path": "src/vendor/downloads/nocuda-payload.js",
+    "archive_sha256": "7b715e0a5c4d4a279334c657ffe8ebf923abdbdd268a9578d1c4ad664c3dd4a5",
+    "baseline_sha256": "7b715e0a5c4d4a279334c657ffe8ebf923abdbdd268a9578d1c4ad664c3dd4a5",
+    "match": true
+  },
+  {
+    "path": "src/vendor/market-hours/runtime-payload.js",
+    "archive_sha256": "d4ddf40ba81e2ba8f2c6d7bc146fb398484ceaf6ce9d4f0347f8fc7274e6c202",
+    "baseline_sha256": "d4ddf40ba81e2ba8f2c6d7bc146fb398484ceaf6ce9d4f0347f8fc7274e6c202",
+    "match": true
+  },
+  {
+    "path": "tools/notification_center_test.py",
+    "archive_sha256": "c84861cd576fc772e3b193695384fc8d79e93261d83f871208ce908f35b12cd0",
+    "baseline_sha256": "c84861cd576fc772e3b193695384fc8d79e93261d83f871208ce908f35b12cd0",
+    "match": true
+  },
+  {
+    "path": "tools/notification_efficiency_test.py",
+    "archive_sha256": "1d971edd306ce0a33980c822f9847f7d972868ec9d19d5a7bf125f10a9c2b7a3",
+    "baseline_sha256": "1d971edd306ce0a33980c822f9847f7d972868ec9d19d5a7bf125f10a9c2b7a3",
+    "match": true
+  },
+  {
+    "path": "tools/planning_state_test.js",
+    "archive_sha256": "f63fc649334e96e49b9e9936585bed795ed3dd5fd79c79eb31c94daa7ab841d2",
+    "baseline_sha256": "f63fc649334e96e49b9e9936585bed795ed3dd5fd79c79eb31c94daa7ab841d2",
+    "match": true
+  },
+  {
+    "path": "tools/planning_ui_test.py",
+    "archive_sha256": "e3bc18beac78be38cdba8a3cb5551eda63916d0142deda59e5cef7dfa14c9ad5",
+    "baseline_sha256": "e3bc18beac78be38cdba8a3cb5551eda63916d0142deda59e5cef7dfa14c9ad5",
+    "match": true
+  },
+  {
+    "path": "tools/regression-memory.json",
+    "archive_sha256": "99a799840a220e0f4d6aed36e0ac76ea33b6775ae9f52ba3f9c69da595dfa9b2",
+    "baseline_sha256": "99a799840a220e0f4d6aed36e0ac76ea33b6775ae9f52ba3f9c69da595dfa9b2",
+    "match": true
+  },
+  {
+    "path": "tools/ui_visual_quality_test.py",
+    "archive_sha256": "18e184312d9ca0f399637bb50f3cdbf40dd1260b5e22176855288f3428b60dbc",
+    "baseline_sha256": "18e184312d9ca0f399637bb50f3cdbf40dd1260b5e22176855288f3428b60dbc",
+    "match": true
+  }
+]

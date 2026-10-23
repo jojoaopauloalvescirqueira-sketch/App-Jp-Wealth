@@ -1,0 +1,49 @@
+{
+  "url": "http://127.0.0.1:58998/index.html?v=85ae832b1f542745",
+  "build": "85ae832b1f542745",
+  "serverSession": 16408,
+  "validation": "101PASS1ENV; global approval pending",
+  "origin": "New isolated loopback origin; existing8000/52429 data were not migrated or cleared",
+  "checks": [
+    {
+      "path": "index.html",
+      "httpStatus": 200,
+      "contentType": "text/html",
+      "bytes": 547653,
+      "sha256": "4578781cf45066b3cf9c368a6ac719ede11d3e01d3157f16cf591fffdefdd8d0",
+      "matchesDisk": true
+    },
+    {
+      "path": "build-id.js",
+      "httpStatus": 200,
+      "contentType": "text/javascript",
+      "bytes": 39890,
+      "sha256": "6c94cc5e36f698007438a39fa9ce5dd778978f2500d97e81e32355d92ed36320",
+      "matchesDisk": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "httpStatus": 200,
+      "contentType": "text/css",
+      "bytes": 924483,
+      "sha256": "2936bb091f6692037ca8111f9e2608bab44a6c6c5b46aaa7629bdf430a58aa92",
+      "matchesDisk": true
+    },
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "httpStatus": 200,
+      "contentType": "text/javascript",
+      "bytes": 41304,
+      "sha256": "8a4c74ff81a1d39765efa4a4c1cf8fd1a6e6b5d36dd1b24d7d1c6aa83ce8a3c3",
+      "matchesDisk": true
+    },
+    {
+      "path": "src/js/40-app/16-monthly-economic-data.js",
+      "httpStatus": 200,
+      "contentType": "text/javascript",
+      "bytes": 66385,
+      "sha256": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+      "matchesDisk": true
+    }
+  ]
+}

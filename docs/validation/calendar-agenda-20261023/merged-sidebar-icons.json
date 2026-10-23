@@ -1,0 +1,2347 @@
+{
+  "results": [
+    {
+      "check": "static: PROVENANCE lista exatamente os símbolos shell-icon-*",
+      "result": "PASS",
+      "detail": []
+    },
+    {
+      "check": "static: arquivos vendorizados == PROVENANCE",
+      "result": "PASS",
+      "detail": []
+    },
+    {
+      "check": "static: hash bell",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria bell idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: bell sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash settings",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria settings idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: settings sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash log-out",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria log-out idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: log-out sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash layout-dashboard",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria layout-dashboard idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: layout-dashboard sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash briefcase-business",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria briefcase-business idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: briefcase-business sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash x",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria x idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: x sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash chevron-left",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria chevron-left idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chevron-left sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash microscope",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria microscope idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: microscope sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash target",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria target idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: target sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash chart-candlestick",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria chart-candlestick idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chart-candlestick sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash wallet",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria wallet idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: wallet sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash wrench",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria wrench idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: wrench sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash panel-left-close",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria panel-left-close idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: panel-left-close sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash panel-left-open",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria panel-left-open idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: panel-left-open sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: hash chevron-right",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: geometria chevron-right idêntica ao Lucide",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chevron-right sem script/foreignObject/url",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: ícone esperado por área",
+      "result": "PASS",
+      "detail": {
+        "dashboard": "layout-dashboard",
+        "research": "microscope",
+        "planning": "target",
+        "forex": "chart-candlestick",
+        "personal-finance": "wallet",
+        "alladin": "briefcase-business",
+        "tools": "wrench"
+      }
+    },
+    {
+      "check": "static: nenhum desenho repetido entre áreas",
+      "result": "PASS",
+      "detail": {
+        "dashboard": "layout-dashboard",
+        "research": "microscope",
+        "planning": "target",
+        "forex": "chart-candlestick",
+        "personal-finance": "wallet",
+        "alladin": "briefcase-business",
+        "tools": "wrench"
+      }
+    },
+    {
+      "check": "static: sem glifo de texto no #railToggle",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chevron Lucide em researchNavTrigger",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chevron Lucide em execNavTrigger",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chevron Lucide em finpesNavTrigger",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: chevron Lucide em toolsNavTrigger",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: renderRailToggle sem ‹ ›",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "static: digest de 02-sidebar.js no manifest",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: layout lateral padrão expandida",
+      "result": "PASS",
+      "detail": [
+        "sidebar",
+        "expanded"
+      ]
+    },
+    {
+      "check": "source: ícones visíveis esperados (7 áreas)",
+      "result": "PASS",
+      "detail": {
+        "dashboard": "layout-dashboard",
+        "research": "microscope",
+        "planning": "target",
+        "forex": "chart-candlestick",
+        "personal-finance": "wallet",
+        "alladin": "briefcase-business",
+        "tools": "wrench"
+      }
+    },
+    {
+      "check": "source: ícones visíveis distintos",
+      "result": "PASS",
+      "detail": {
+        "dashboard": "layout-dashboard",
+        "research": "microscope",
+        "planning": "target",
+        "forex": "chart-candlestick",
+        "personal-finance": "wallet",
+        "alladin": "briefcase-business",
+        "tools": "wrench"
+      }
+    },
+    {
+      "check": "source: dashboard ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 150,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 160,
+          "r": 46,
+          "b": 170
+        },
+        "1.75px",
+        "rgb(0, 104, 214)",
+        "rgb(0, 104, 214)"
+      ]
+    },
+    {
+      "check": "source: dashboard ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 150,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 160,
+          "r": 46,
+          "b": 170
+        },
+        {
+          "x": 14,
+          "y": 136,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 160,
+          "r": 227,
+          "b": 184
+        }
+      ]
+    },
+    {
+      "check": "source: dashboard rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: dashboard rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 149.5,
+          "w": 157,
+          "h": 21,
+          "cx": 136.5,
+          "cy": 160,
+          "r": 215,
+          "b": 170.5
+        }
+      ]
+    },
+    {
+      "check": "source: research ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 202,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 212,
+          "r": 46,
+          "b": 222
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "source: research ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 202,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 212,
+          "r": 46,
+          "b": 222
+        },
+        {
+          "x": 14,
+          "y": 188,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 212,
+          "r": 227,
+          "b": 236
+        }
+      ]
+    },
+    {
+      "check": "source: research chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 204,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 212,
+          "r": 220,
+          "b": 220
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 201.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 212,
+          "r": 192,
+          "b": 222.5
+        }
+      ]
+    },
+    {
+      "check": "source: research chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "source: research rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: research rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 201.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 212,
+          "r": 192,
+          "b": 222.5
+        }
+      ]
+    },
+    {
+      "check": "source: planning ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 254,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 264,
+          "r": 46,
+          "b": 274
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "source: planning ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 254,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 264,
+          "r": 46,
+          "b": 274
+        },
+        {
+          "x": 14,
+          "y": 240,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 264,
+          "r": 227,
+          "b": 288
+        }
+      ]
+    },
+    {
+      "check": "source: planning rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: planning rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 253.5,
+          "w": 157,
+          "h": 21,
+          "cx": 136.5,
+          "cy": 264,
+          "r": 215,
+          "b": 274.5
+        }
+      ]
+    },
+    {
+      "check": "source: forex ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 306,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 316,
+          "r": 46,
+          "b": 326
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "source: forex ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 306,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 316,
+          "r": 46,
+          "b": 326
+        },
+        {
+          "x": 14,
+          "y": 292,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 316,
+          "r": 227,
+          "b": 340
+        }
+      ]
+    },
+    {
+      "check": "source: forex chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 308,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 316,
+          "r": 220,
+          "b": 324
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 305.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 316,
+          "r": 192,
+          "b": 326.5
+        }
+      ]
+    },
+    {
+      "check": "source: forex chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "source: forex rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: forex rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 305.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 316,
+          "r": 192,
+          "b": 326.5
+        }
+      ]
+    },
+    {
+      "check": "source: personal-finance ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 358,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 368,
+          "r": 46,
+          "b": 378
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "source: personal-finance ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 358,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 368,
+          "r": 46,
+          "b": 378
+        },
+        {
+          "x": 14,
+          "y": 344,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 368,
+          "r": 227,
+          "b": 392
+        }
+      ]
+    },
+    {
+      "check": "source: personal-finance chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 360,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 368,
+          "r": 220,
+          "b": 376
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 357.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 368,
+          "r": 192,
+          "b": 378.5
+        }
+      ]
+    },
+    {
+      "check": "source: personal-finance chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "source: personal-finance rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: personal-finance rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 357.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 368,
+          "r": 192,
+          "b": 378.5
+        }
+      ]
+    },
+    {
+      "check": "source: alladin ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 410,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 420,
+          "r": 46,
+          "b": 430
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "source: alladin ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 410,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 420,
+          "r": 46,
+          "b": 430
+        },
+        {
+          "x": 14,
+          "y": 396,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 420,
+          "r": 227,
+          "b": 444
+        }
+      ]
+    },
+    {
+      "check": "source: alladin rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: alladin rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 409.5,
+          "w": 157,
+          "h": 21,
+          "cx": 136.5,
+          "cy": 420,
+          "r": 215,
+          "b": 430.5
+        }
+      ]
+    },
+    {
+      "check": "source: tools ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 471,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 481,
+          "r": 46,
+          "b": 491
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "source: tools ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 471,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 481,
+          "r": 46,
+          "b": 491
+        },
+        {
+          "x": 14,
+          "y": 448,
+          "w": 213,
+          "h": 66,
+          "cx": 120.5,
+          "cy": 481,
+          "r": 227,
+          "b": 514
+        }
+      ]
+    },
+    {
+      "check": "source: tools chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 473,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 481,
+          "r": 220,
+          "b": 489
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 460,
+          "w": 134,
+          "h": 42,
+          "cx": 125,
+          "cy": 481,
+          "r": 192,
+          "b": 502
+        }
+      ]
+    },
+    {
+      "check": "source: tools chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "source: tools rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "source: tools rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        2,
+        {
+          "x": 58,
+          "y": 460,
+          "w": 134,
+          "h": 42,
+          "cx": 125,
+          "cy": 481,
+          "r": 192,
+          "b": 502
+        }
+      ]
+    },
+    {
+      "check": "source: recolher = panel-left-close centrado",
+      "result": "PASS",
+      "detail": [
+        "#shell-icon-panel-left-close",
+        [
+          {
+            "x": 196,
+            "y": 76,
+            "w": 44,
+            "h": 44,
+            "cx": 218,
+            "cy": 98,
+            "r": 240,
+            "b": 120
+          },
+          {
+            "x": 208,
+            "y": 88,
+            "w": 20,
+            "h": 20,
+            "cx": 218,
+            "cy": 98,
+            "r": 228,
+            "b": 108
+          }
+        ],
+        "Recolher"
+      ]
+    },
+    {
+      "check": "source: grupo aberto gira o chevron 90°",
+      "result": "PASS",
+      "detail": [
+        true,
+        "matrix(0, 1, -1, 0, 0, 0)"
+      ]
+    },
+    {
+      "check": "source: recolhida",
+      "result": "PASS",
+      "detail": "collapsed"
+    },
+    {
+      "check": "source: recolhida dashboard ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 150,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 160,
+          "r": 48,
+          "b": 170
+        },
+        {
+          "x": 12,
+          "y": 136,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 160,
+          "r": 64,
+          "b": 184
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida dashboard sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: recolhida research ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 206,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 216,
+          "r": 48,
+          "b": 226
+        },
+        {
+          "x": 12,
+          "y": 192,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 216,
+          "r": 64,
+          "b": 240
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida research sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: recolhida planning ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 262,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 272,
+          "r": 48,
+          "b": 282
+        },
+        {
+          "x": 12,
+          "y": 248,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 272,
+          "r": 64,
+          "b": 296
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida planning sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: recolhida forex ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 318,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 328,
+          "r": 48,
+          "b": 338
+        },
+        {
+          "x": 12,
+          "y": 304,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 328,
+          "r": 64,
+          "b": 352
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida forex sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: recolhida personal-finance ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 374,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 384,
+          "r": 48,
+          "b": 394
+        },
+        {
+          "x": 12,
+          "y": 360,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 384,
+          "r": 64,
+          "b": 408
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida personal-finance sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: recolhida alladin ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 430,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 440,
+          "r": 48,
+          "b": 450
+        },
+        {
+          "x": 12,
+          "y": 416,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 440,
+          "r": 64,
+          "b": 464
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida alladin sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: recolhida tools ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 486,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 496,
+          "r": 48,
+          "b": 506
+        },
+        {
+          "x": 12,
+          "y": 472,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 496,
+          "r": 64,
+          "b": 520
+        }
+      ]
+    },
+    {
+      "check": "source: recolhida tools sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: expandir = panel-left-open centrado",
+      "result": "PASS",
+      "detail": [
+        "#shell-icon-panel-left-open",
+        [
+          {
+            "x": 16,
+            "y": 76,
+            "w": 44,
+            "h": 44,
+            "cx": 38,
+            "cy": 98,
+            "r": 60,
+            "b": 120
+          },
+          {
+            "x": 28,
+            "y": 88,
+            "w": 20,
+            "h": 20,
+            "cx": 38,
+            "cy": 98,
+            "r": 48,
+            "b": 108
+          }
+        ],
+        "Expandir"
+      ]
+    },
+    {
+      "check": "source: escuro — ícones seguem a cor do texto",
+      "result": "PASS",
+      "detail": [
+        [
+          "dashboard",
+          "rgb(64, 156, 255)",
+          "rgb(64, 156, 255)"
+        ],
+        [
+          "research",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "planning",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "forex",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "personal-finance",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "alladin",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "tools",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ]
+      ]
+    },
+    {
+      "check": "source: expandida de novo restaura recolher",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: Configurações — ícone e rótulo alinhados",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 1026.46875,
+          "y": 408.53125,
+          "w": 20,
+          "h": 20,
+          "cx": 1036.46875,
+          "cy": 418.53125,
+          "r": 1046.46875,
+          "b": 428.53125
+        },
+        {
+          "x": 1058.46875,
+          "y": 411.03125,
+          "w": 51.03125,
+          "h": 15,
+          "cx": 1083.984375,
+          "cy": 418.53125,
+          "r": 1109.5,
+          "b": 426.03125
+        },
+        "Recolher"
+      ]
+    },
+    {
+      "check": "source: topbar não exibe o chevron da lateral padrão",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: glass não exibe o chevron da lateral padrão",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: submenu não exibe o chevron da lateral padrão",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "source: submenu mantém seu ::after",
+      "result": "PASS",
+      "detail": "\"›\""
+    },
+    {
+      "check": "source: sem erros de página/console",
+      "result": "PASS",
+      "detail": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      }
+    },
+    {
+      "check": "portable: layout lateral padrão expandida",
+      "result": "PASS",
+      "detail": [
+        "sidebar",
+        "expanded"
+      ]
+    },
+    {
+      "check": "portable: ícones visíveis esperados (7 áreas)",
+      "result": "PASS",
+      "detail": {
+        "dashboard": "layout-dashboard",
+        "research": "microscope",
+        "planning": "target",
+        "forex": "chart-candlestick",
+        "personal-finance": "wallet",
+        "alladin": "briefcase-business",
+        "tools": "wrench"
+      }
+    },
+    {
+      "check": "portable: ícones visíveis distintos",
+      "result": "PASS",
+      "detail": {
+        "dashboard": "layout-dashboard",
+        "research": "microscope",
+        "planning": "target",
+        "forex": "chart-candlestick",
+        "personal-finance": "wallet",
+        "alladin": "briefcase-business",
+        "tools": "wrench"
+      }
+    },
+    {
+      "check": "portable: dashboard ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 150,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 160,
+          "r": 46,
+          "b": 170
+        },
+        "1.75px",
+        "rgb(0, 104, 214)",
+        "rgb(0, 104, 214)"
+      ]
+    },
+    {
+      "check": "portable: dashboard ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 150,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 160,
+          "r": 46,
+          "b": 170
+        },
+        {
+          "x": 14,
+          "y": 136,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 160,
+          "r": 227,
+          "b": 184
+        }
+      ]
+    },
+    {
+      "check": "portable: dashboard rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: dashboard rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 149.5,
+          "w": 157,
+          "h": 21,
+          "cx": 136.5,
+          "cy": 160,
+          "r": 215,
+          "b": 170.5
+        }
+      ]
+    },
+    {
+      "check": "portable: research ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 202,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 212,
+          "r": 46,
+          "b": 222
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "portable: research ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 202,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 212,
+          "r": 46,
+          "b": 222
+        },
+        {
+          "x": 14,
+          "y": 188,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 212,
+          "r": 227,
+          "b": 236
+        }
+      ]
+    },
+    {
+      "check": "portable: research chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 204,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 212,
+          "r": 220,
+          "b": 220
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 201.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 212,
+          "r": 192,
+          "b": 222.5
+        }
+      ]
+    },
+    {
+      "check": "portable: research chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "portable: research rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: research rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 201.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 212,
+          "r": 192,
+          "b": 222.5
+        }
+      ]
+    },
+    {
+      "check": "portable: planning ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 254,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 264,
+          "r": 46,
+          "b": 274
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "portable: planning ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 254,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 264,
+          "r": 46,
+          "b": 274
+        },
+        {
+          "x": 14,
+          "y": 240,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 264,
+          "r": 227,
+          "b": 288
+        }
+      ]
+    },
+    {
+      "check": "portable: planning rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: planning rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 253.5,
+          "w": 157,
+          "h": 21,
+          "cx": 136.5,
+          "cy": 264,
+          "r": 215,
+          "b": 274.5
+        }
+      ]
+    },
+    {
+      "check": "portable: forex ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 306,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 316,
+          "r": 46,
+          "b": 326
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "portable: forex ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 306,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 316,
+          "r": 46,
+          "b": 326
+        },
+        {
+          "x": 14,
+          "y": 292,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 316,
+          "r": 227,
+          "b": 340
+        }
+      ]
+    },
+    {
+      "check": "portable: forex chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 308,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 316,
+          "r": 220,
+          "b": 324
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 305.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 316,
+          "r": 192,
+          "b": 326.5
+        }
+      ]
+    },
+    {
+      "check": "portable: forex chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "portable: forex rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: forex rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 305.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 316,
+          "r": 192,
+          "b": 326.5
+        }
+      ]
+    },
+    {
+      "check": "portable: personal-finance ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 358,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 368,
+          "r": 46,
+          "b": 378
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "portable: personal-finance ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 358,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 368,
+          "r": 46,
+          "b": 378
+        },
+        {
+          "x": 14,
+          "y": 344,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 368,
+          "r": 227,
+          "b": 392
+        }
+      ]
+    },
+    {
+      "check": "portable: personal-finance chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 360,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 368,
+          "r": 220,
+          "b": 376
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 357.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 368,
+          "r": 192,
+          "b": 378.5
+        }
+      ]
+    },
+    {
+      "check": "portable: personal-finance chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "portable: personal-finance rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: personal-finance rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 357.5,
+          "w": 134,
+          "h": 21,
+          "cx": 125,
+          "cy": 368,
+          "r": 192,
+          "b": 378.5
+        }
+      ]
+    },
+    {
+      "check": "portable: alladin ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 410,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 420,
+          "r": 46,
+          "b": 430
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "portable: alladin ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 410,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 420,
+          "r": 46,
+          "b": 430
+        },
+        {
+          "x": 14,
+          "y": 396,
+          "w": 213,
+          "h": 48,
+          "cx": 120.5,
+          "cy": 420,
+          "r": 227,
+          "b": 444
+        }
+      ]
+    },
+    {
+      "check": "portable: alladin rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: alladin rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        1,
+        {
+          "x": 58,
+          "y": 409.5,
+          "w": 157,
+          "h": 21,
+          "cx": 136.5,
+          "cy": 420,
+          "r": 215,
+          "b": 430.5
+        }
+      ]
+    },
+    {
+      "check": "portable: tools ícone 20 px traço 1,75 currentColor",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 471,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 481,
+          "r": 46,
+          "b": 491
+        },
+        "1.75px",
+        "rgb(82, 96, 113)",
+        "rgb(82, 96, 113)"
+      ]
+    },
+    {
+      "check": "portable: tools ícone centrado na vertical",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 26,
+          "y": 471,
+          "w": 20,
+          "h": 20,
+          "cx": 36,
+          "cy": 481,
+          "r": 46,
+          "b": 491
+        },
+        {
+          "x": 14,
+          "y": 448,
+          "w": 213,
+          "h": 66,
+          "cx": 120.5,
+          "cy": 481,
+          "r": 227,
+          "b": 514
+        }
+      ]
+    },
+    {
+      "check": "portable: tools chevron Lucide 16 px à direita, sem ::after",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 204,
+          "y": 473,
+          "w": 16,
+          "h": 16,
+          "cx": 212,
+          "cy": 481,
+          "r": 220,
+          "b": 489
+        },
+        "none",
+        {
+          "x": 58,
+          "y": 460,
+          "w": 134,
+          "h": 42,
+          "cx": 125,
+          "cy": 481,
+          "r": 192,
+          "b": 502
+        }
+      ]
+    },
+    {
+      "check": "portable: tools chevron fechado sem rotação",
+      "result": "PASS",
+      "detail": "none"
+    },
+    {
+      "check": "portable: tools rótulo sem corte",
+      "result": "PASS",
+      "detail": false
+    },
+    {
+      "check": "portable: tools rótulo com as mesmas linhas da baseline",
+      "result": "PASS",
+      "detail": [
+        2,
+        {
+          "x": 58,
+          "y": 460,
+          "w": 134,
+          "h": 42,
+          "cx": 125,
+          "cy": 481,
+          "r": 192,
+          "b": 502
+        }
+      ]
+    },
+    {
+      "check": "portable: recolher = panel-left-close centrado",
+      "result": "PASS",
+      "detail": [
+        "#shell-icon-panel-left-close",
+        [
+          {
+            "x": 196,
+            "y": 76,
+            "w": 44,
+            "h": 44,
+            "cx": 218,
+            "cy": 98,
+            "r": 240,
+            "b": 120
+          },
+          {
+            "x": 208,
+            "y": 88,
+            "w": 20,
+            "h": 20,
+            "cx": 218,
+            "cy": 98,
+            "r": 228,
+            "b": 108
+          }
+        ],
+        "Recolher"
+      ]
+    },
+    {
+      "check": "portable: grupo aberto gira o chevron 90°",
+      "result": "PASS",
+      "detail": [
+        true,
+        "matrix(0, 1, -1, 0, 0, 0)"
+      ]
+    },
+    {
+      "check": "portable: recolhida",
+      "result": "PASS",
+      "detail": "collapsed"
+    },
+    {
+      "check": "portable: recolhida dashboard ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 150,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 160,
+          "r": 48,
+          "b": 170
+        },
+        {
+          "x": 12,
+          "y": 136,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 160,
+          "r": 64,
+          "b": 184
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida dashboard sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: recolhida research ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 206,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 216,
+          "r": 48,
+          "b": 226
+        },
+        {
+          "x": 12,
+          "y": 192,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 216,
+          "r": 64,
+          "b": 240
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida research sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: recolhida planning ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 262,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 272,
+          "r": 48,
+          "b": 282
+        },
+        {
+          "x": 12,
+          "y": 248,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 272,
+          "r": 64,
+          "b": 296
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida planning sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: recolhida forex ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 318,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 328,
+          "r": 48,
+          "b": 338
+        },
+        {
+          "x": 12,
+          "y": 304,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 328,
+          "r": 64,
+          "b": 352
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida forex sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: recolhida personal-finance ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 374,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 384,
+          "r": 48,
+          "b": 394
+        },
+        {
+          "x": 12,
+          "y": 360,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 384,
+          "r": 64,
+          "b": 408
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida personal-finance sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: recolhida alladin ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 430,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 440,
+          "r": 48,
+          "b": 450
+        },
+        {
+          "x": 12,
+          "y": 416,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 440,
+          "r": 64,
+          "b": 464
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida alladin sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: recolhida tools ícone centrado (<=2 px)",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 28,
+          "y": 486,
+          "w": 20,
+          "h": 20,
+          "cx": 38,
+          "cy": 496,
+          "r": 48,
+          "b": 506
+        },
+        {
+          "x": 12,
+          "y": 472,
+          "w": 52,
+          "h": 48,
+          "cx": 38,
+          "cy": 496,
+          "r": 64,
+          "b": 520
+        }
+      ]
+    },
+    {
+      "check": "portable: recolhida tools sem chevron",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: expandir = panel-left-open centrado",
+      "result": "PASS",
+      "detail": [
+        "#shell-icon-panel-left-open",
+        [
+          {
+            "x": 16,
+            "y": 76,
+            "w": 44,
+            "h": 44,
+            "cx": 38,
+            "cy": 98,
+            "r": 60,
+            "b": 120
+          },
+          {
+            "x": 28,
+            "y": 88,
+            "w": 20,
+            "h": 20,
+            "cx": 38,
+            "cy": 98,
+            "r": 48,
+            "b": 108
+          }
+        ],
+        "Expandir"
+      ]
+    },
+    {
+      "check": "portable: escuro — ícones seguem a cor do texto",
+      "result": "PASS",
+      "detail": [
+        [
+          "dashboard",
+          "rgb(64, 156, 255)",
+          "rgb(64, 156, 255)"
+        ],
+        [
+          "research",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "planning",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "forex",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "personal-finance",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "alladin",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ],
+        [
+          "tools",
+          "rgb(192, 202, 216)",
+          "rgb(192, 202, 216)"
+        ]
+      ]
+    },
+    {
+      "check": "portable: expandida de novo restaura recolher",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: Configurações — ícone e rótulo alinhados",
+      "result": "PASS",
+      "detail": [
+        {
+          "x": 1026.46875,
+          "y": 408.53125,
+          "w": 20,
+          "h": 20,
+          "cx": 1036.46875,
+          "cy": 418.53125,
+          "r": 1046.46875,
+          "b": 428.53125
+        },
+        {
+          "x": 1058.46875,
+          "y": 411.03125,
+          "w": 51.03125,
+          "h": 15,
+          "cx": 1083.984375,
+          "cy": 418.53125,
+          "r": 1109.5,
+          "b": 426.03125
+        },
+        "Recolher"
+      ]
+    },
+    {
+      "check": "portable: topbar não exibe o chevron da lateral padrão",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: glass não exibe o chevron da lateral padrão",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: submenu não exibe o chevron da lateral padrão",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "check": "portable: submenu mantém seu ::after",
+      "result": "PASS",
+      "detail": "\"›\""
+    },
+    {
+      "check": "portable: sem erros de página/console",
+      "result": "PASS",
+      "detail": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      }
+    }
+  ],
+  "failures": 0
+}

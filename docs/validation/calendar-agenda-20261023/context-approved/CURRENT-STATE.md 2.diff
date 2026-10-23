@@ -1,0 +1,14 @@
+--- docs/governance/CURRENT-STATE.md
++++ docs/governance/CURRENT-STATE.md
+@@ -1,3 +1,11 @@
++# Calendário e Agenda — candidato local de 23/10/2026
++
++Implementação autorizada na branch `codex/calendario-agenda-20261023`, base `d517be0748f886085b3029c809bd68046e5c0f77`, preservando as pendências anteriores de Planejamento e Notificações. Acesso mensal imediatamente antes do sino, agenda pessoal confirmada, filtros e pacote econômico público local; calendário semanal FF preservado. Contrato e evidências: ../../docs/architecture/CALENDAR-AGENDA.md e ../../docs/validation/calendar-agenda-20261023/README.md.
++
++Pacote inicial com 54 eventos (53 de outubro e um de novembro), cobertura parcial identificada por fonte e CHF pendente. Fontes públicas e agenda pessoal são independentes. Validações focais executadas; o resultado final do gate, os hashes e os limites são publicados somente no relatório factual citado. Aceite humano separado; sem commit, merge, push ou publicação, e sem alterar instruções, autoridade ou configuração de memória.
++
++## Fotografia anterior preservada
++
+ # Planejamento — fechamento guiado e revisão de uso —22/10/2026
+ 
+ Contrato aprovado: resolver resultado pendente na própria janela, revisar novamente dados alterados, conferir fluxos e finalizar explicitamente. Resultado e fechamento são gravações distintas; zero não é presumido. Meses anteriores pendentes têm orientação recuperável. Dados, fórmulas, histórico e backup preservados.

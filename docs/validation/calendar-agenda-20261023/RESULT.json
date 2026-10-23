@@ -1,7 +1,7 @@
 {
   "result": "PASS",
   "technicalReadiness": "AUTOMATED_GATES_PASS; human acceptance separate",
-  "build": "85ae832b1f542745",
+  "build": "2627605be26c162c",
   "branch": "codex/calendario-agenda-20261023",
   "head": "d517be0748f886085b3029c809bd68046e5c0f77",
   "fullSummary": {
@@ -69,6 +69,11 @@
     "BASELINE_FAIL": 0,
     "NOT_RUN": 0
   },
-  "latestFullArtifact": "quality-full-coordinated.json",
-  "latestFullSha256": "0415e4fc29eaed3688b1bd28bbafd46ceda5c073da9477e5406c3ca5f52efb1d"
+  "latestFullArtifact": "quality-full-merged.json",
+  "latestFullSha256": "0415e4fc29eaed3688b1bd28bbafd46ceda5c073da9477e5406c3ca5f52efb1d",
+  "integrationPreservesLocalCommits": [
+    "c921aa6",
+    "6ee52cd"
+  ],
+  "mergedSidebarChecks": 186
 }

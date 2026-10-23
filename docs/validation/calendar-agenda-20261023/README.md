@@ -107,3 +107,7 @@ O gravador focal posterior executou os 19 casos originais e passou, com fontes e
 ## Validação coordenada anterior à integração
 
 A suíte completa posterior concluiu **102/102 PASS**, sem falhas ou checks não executados. [JSON bruto](quality-full-coordinated.json) · [Log](quality-full-coordinated.log). O usuário informou uso de mouse durante as execuções anteriores e disponibilizou o Mac sem interação para esta rodada. Três repetições estritas de Notas também passaram previamente. Isso é compatível com interferência na entrada, sem comprovar retrospectivamente a causa de cada ocorrência histórica. Fontes e verificadores permaneceram iguais ao freeze anterior; nenhuma proteção ou timeout foi alterado. Os resultados anteriores permanecem históricos. Cobertura econômica parcial e aceite visual humano continuam separados.
+
+## Integração dos ícones locais
+
+Os commits locais c921aa6 e 6ee52cd foram preservados na integração. Conflitos limitados aos artefatos gerados foram resolvidos por reconstrução oficial, mantendo ambas as fontes. O candidato combinado, build `2627605be26c162c`, passou **102/102 checks** no FULL e o teste específico de ícones, sem alterar critérios ou timeouts. [FULL combinado](quality-full-merged.json) · [Log](quality-full-merged.log) · [Ícones](merged-sidebar-icons.json). As fotografias, hashes e prévias anteriores permanecem históricas dos candidatos identificados.

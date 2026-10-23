@@ -1,0 +1,17 @@
+{
+  "source_sha256": {
+    "src/js/10-domain/19-personal-agenda.js": "93864bcb8a8d14d43ff149b3d7f1d7de38b0f2ceea011cb8ab110ed760211f04",
+    "src/js/00-core/07-workspace-backup.js": "bedf27116fab90e0d5aab82dc77461e8f9a22ea76858e493400d4c28d2804a89",
+    "src/js/30-accounting/01-daily-ledger.js": "36e42adf7fb7b530454ec5e39f165b887193e4e18bdcc51b23742ed93cdecb18",
+    "src/js/40-app/07-finalize-session.js": "8aa17fafd9c869bcb1f23bff07523677aba51cc90244d5535c3831274127980d",
+    "tools/calendar_recovery_test.py": "e8e3bd6fafb12d4c3a6e3bfa9212d851e6854de67510417450001906212c3368"
+  },
+  "results": [
+    {
+      "case": "import-containers",
+      "result": "PRODUCT_FAIL",
+      "evidence": "Present incompatible Agenda containers must refuse before import: {'rejected': [False, False, False, False, False], 'legacyAbsent': True, 'stateUnchanged': True, 'diskUnchanged': True}",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_recovery_test.py\", line 151, in main\n    evidence = CASES[name](page, dialogs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_recovery_test.py\", line 84, in import_containers\n    assert result['rejected'] == [True]*5, 'Present incompatible Agenda containers must refuse before import: '+repr(result)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Present incompatible Agenda containers must refuse before import: {'rejected': [False, False, False, False, False], 'legacyAbsent': True, 'stateUnchanged': True, 'diskUnchanged': True}\n"
+    }
+  ]
+}

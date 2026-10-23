@@ -1,0 +1,57 @@
+[
+  {
+    "path": "capture-comparison-attempt1.log",
+    "sha256": "2f601ef4183bb26b938584aa7ac26920ff16627d53bdf6b5d028ed309c9868bf",
+    "bytes": 2558
+  },
+  {
+    "path": "full-first-interruption.json",
+    "sha256": "90c42588b70bb18a5cba0aeef41f7d129e8dbec421c3ada1baccf05d96a03304",
+    "bytes": 265
+  },
+  {
+    "path": "module-availability-notification-final-green.json",
+    "sha256": "a3bae494e0cbc919ea5a5e298f92d94ed399bfc0a62bc1c55929ecc023a94218",
+    "bytes": 387
+  },
+  {
+    "path": "notification-final20-efficiency-green.json",
+    "sha256": "59fa5c1b8307bf01f257037190bca58275e9e77d6c91c754c5c8512d78152f4e",
+    "bytes": 4462
+  },
+  {
+    "path": "notification-final30-green.json",
+    "sha256": "1e4c4288b4404998aca9102444d577cbf78e9f9c8cb5905708aee6ac0ace0ca2",
+    "bytes": 13045
+  },
+  {
+    "path": "notification-focal-receipt.json",
+    "sha256": "a90f451b7b5b3fe946857514db1e645c23cba6f3d155a3e748ed6bb6bac49032",
+    "bytes": 3093
+  },
+  {
+    "path": "notification-test-contract-map.json",
+    "sha256": "04588c65bbea8cd5a197ba221fe3394652739e9d907f7b315e3c4d687ae754de",
+    "bytes": 10318
+  },
+  {
+    "path": "planning-verification-attempt1.json",
+    "sha256": "9b0eb7c5a0f5a371a6046b592d42815c6a9d7c5f838e11bca972ed4634960952",
+    "bytes": 3896
+  },
+  {
+    "path": "planning-verification.json",
+    "sha256": "c869489b5a655ded1f0d51c3221e8d7de4b9df7ebf4ed895a4aa5c6a70201768",
+    "bytes": 4220
+  },
+  {
+    "path": "protection-preservation.json",
+    "sha256": "14c5efcbc6cc79608b69cead95e60a2c5536664c2623ffbc6795eaf6f6fe6ac6",
+    "bytes": 2067
+  },
+  {
+    "path": "visual-long-context-red.json",
+    "sha256": "3d97f450e9d651e5dfb2c411f5a4f79319ba4d5391b604b80a72e82daadb522c",
+    "bytes": 252
+  }
+]

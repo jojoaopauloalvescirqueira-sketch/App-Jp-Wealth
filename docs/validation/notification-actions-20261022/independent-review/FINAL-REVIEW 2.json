@@ -1,0 +1,125 @@
+{
+  "result": "PASS",
+  "scope": "Independent bounded product/checker review; not FULL, release approval, financial certification, or human visual acceptance",
+  "at_utc": "2026-10-22T20:34:16.426321+00:00",
+  "branch": "codex/notificacoes-acoes-20261022",
+  "head": "d517be0748f886085b3029c809bd68046e5c0f77",
+  "build_id": "8b0b231a1b0c41b7",
+  "freeze_sha256": "f837a24ed3e66759ccfa7b37dbfc078b8946cb5c2958d5fe99169fd8e200b41c",
+  "checked_regular_files": 2237,
+  "checked_links": 18,
+  "freeze_mismatches": [],
+  "final_freeze_change_from_interrupted_attempt": [
+    "tools/regression-memory.json"
+  ],
+  "findings": [
+    {
+      "id": "RV-01",
+      "severity": "P2",
+      "issue": "Empty Forex periods emitted reconciliation alerts",
+      "final_state": "FIXED",
+      "evidence": "Own same-fixture clean/factual contrast and current fact gate"
+    },
+    {
+      "id": "RV-02",
+      "severity": "P2",
+      "issue": "Quote age came from legacy metadata instead of effective price",
+      "final_state": "FIXED",
+      "evidence": "Own fresh/manual-old contrast, scoped CTA, zero storage/network writes; readonly priceReferences reuses existing precedence"
+    },
+    {
+      "id": "RV-03",
+      "severity": "P2",
+      "issue": "Long account context overflowed the inner mobile scroller",
+      "final_state": "FIXED",
+      "evidence": "Own text bounds and scroll clientWidth=scrollWidth=282 at 320px; before/after screenshots independently inspected"
+    },
+    {
+      "id": "RV-04",
+      "severity": "P2",
+      "issue": "Stale consent could navigate before freshness was checked",
+      "final_state": "FIXED",
+      "evidence": "Own cause/root/frozen contrasts retain source screen and operational selection"
+    },
+    {
+      "id": "RV-05",
+      "severity": "P3",
+      "issue": "New regression pointer invoked a helper lacking a standalone main",
+      "final_state": "FIXED",
+      "evidence": "Command now points to ui_visual_quality_test.py --case notification-regressions; first FULL attempt retained as incomplete and final freeze changed only regression-memory.json"
+    }
+  ],
+  "own_execution": {
+    "planning_state": {
+      "result": "PASS",
+      "passed": 87,
+      "failed": 0
+    },
+    "counterproof_current": {
+      "result": "PASS",
+      "meaning": "Expected mutant rejection: Q03 fails (86/87)"
+    },
+    "counterproof_annulled": {
+      "result": "PASS",
+      "meaning": "Expected mutant rejection: Q03 fails (86/87)"
+    },
+    "counterproof_stale": {
+      "result": "PASS",
+      "meaning": "Expected mutant rejection: CTX02/CTX04 fail (85/87)"
+    },
+    "actionable_counterproofs": {
+      "result": "PASS",
+      "rejected": [
+        "hidden unresolved badge",
+        "duplicate cause",
+        "promoted agenda"
+      ]
+    },
+    "six_browser_contrasts": {
+      "result": "PASS",
+      "count": 6,
+      "all_recorded_modular_inputs_match_final_freeze": true
+    }
+  },
+  "preservation": {
+    "old_regression_objects_equal": 78,
+    "old_visual_ids_preserved": 278,
+    "current_visual_ids": 322,
+    "old_visual_oracle_functions_unchanged": true,
+    "literal_old_planning_case_names_preserved": 60,
+    "literal_current_planning_case_names": 73,
+    "unchanged_forbidden_inputs": {
+      "src/js/30-accounting/06-planning/01-engine.js": true,
+      "src/js/10-domain/00-forex-engine.js": true,
+      "src/js/00-core/00-forex-policy.js": true,
+      "tools/quality_gate.py": true,
+      "AGENTS.md": true,
+      "tools/planning_ui_test.py": true
+    },
+    "out_of_contract_changes": [],
+    "preexisting_planning_ui_delta": "Diff against task tar is additive contextual-navigation work; preexisting native form line and earlier preferences remain byte-identical outside task hunks."
+  },
+  "not_run_or_not_claimed": [
+    "Official FULL result is pending with root; first interrupted attempt is NOT_RUN, never PASS.",
+    "No heavy visual matrix was rerun by this reviewer during FULL.",
+    "Portable/file/PWA final distribution behavior belongs to the official gate; this review identifies its frozen bytes, not independent deployment validation.",
+    "Human visual acceptance and financial/normative certification are separate and not granted.",
+    "No commit/push/merge/publication was performed by this reviewer."
+  ],
+  "prior_receipt_limits": [
+    "Initial plain-node attempt was ENVIRONMENT_ERROR (missing PATH runtime), followed by actual bundled Node execution.",
+    "First own opposite-price stimulus was TEST_HARNESS_FAIL because the canonical writer correctly refused an older replacement observation; raw receipt remains.",
+    "The first empty-forex.json was unintentionally overwritten by its GREEN rerun; original RED log and the earlier adversarial result remain intact, as disclosed in artifact-correction.txt."
+  ],
+  "evidence_sha256": {
+    "planning-frozen.log": "f4a6655463640cc66064d60f597b0e9c604e8d9a4bb59093722574a5c06c5639",
+    "planning-counterproof-current.log": "946ee5a69726ccd9dc3dc72bf00f052b7527fe9bf29699bd53bc284fe9e7cb68",
+    "planning-counterproof-annulled.log": "fcdd9f9c3b08c94aacf5eb69e5cdb90e34ac495e5113678674a1d7671c4a16b8",
+    "planning-counterproof-stale.log": "fb7c0c16fdd43d47aa4ed4768bd570d2267023425cbbefab82bea2aa65af9435",
+    "actionable-counterproofs-frozen.log": "a0a63cd9863fb9a997f0faf3a586f216d7cd9b89b71f3013e4364e88a7c073e8",
+    "own-six-contrasts.json": "f8cb2603e27ecebdab47280963cde63b715d50ce0231011bf94d9362b8ad23ec",
+    "own-six-contrasts.log": "74467a6f69523d747ecd645748f6134affeb9b37a0ec6e2143659adb31d61888",
+    "scope-and-preservation.json": "1dc8a04fbfefbf4756a5b94b500b4c614276f5bc45ef3cc3e1e93a78cefea3dd",
+    "scope-and-preservation.log": "7a9c3430becbb1194affafef5ebcd86e3019aafb8d647c0c5b56010399e99bb2"
+  }
+}

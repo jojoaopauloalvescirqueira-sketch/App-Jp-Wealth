@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "path": "docs/governance/CURRENT-STATE.md",
+      "approvedPrefixBytes": 1011,
+      "exactApprovedPrefix": true,
+      "priorHistorySha256": "ccdadfe37d88464505da5ab953e6ac7edb7511f6d5ca2a5d992cb408ff3cbda9",
+      "historyMatchesInitialBaseline": true
+    },
+    {
+      "path": "SESSION_HANDOFF.md",
+      "approvedPrefixBytes": 999,
+      "exactApprovedPrefix": true,
+      "priorHistorySha256": "92f4e37e24733dddce44d3ee2803b9727c40f4bc04b20334677dd03fba435a13",
+      "historyMatchesInitialBaseline": true
+    },
+    {
+      "path": "CHANGELOG.md",
+      "approvedPrefixBytes": 999,
+      "exactApprovedPrefix": true,
+      "priorHistorySha256": "07c3ac3df8bb98eef5555088abf81c388cd553aa11f0e685b2bf570d4ebb89c3",
+      "historyMatchesInitialBaseline": true
+    }
+  ]
+}

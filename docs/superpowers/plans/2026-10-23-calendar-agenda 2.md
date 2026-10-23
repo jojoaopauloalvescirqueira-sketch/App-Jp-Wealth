@@ -1,0 +1,9 @@
+# Calendário e Agenda — plano humano aprovado —23/10/2026
+
+Referência de autoridade: mensagem PLEASE IMPLEMENT THIS PLAN desta conversa, em sua integralidade. Este registro organiza a execução, não amplia o plano.
+
+1. Painel mensal macOS no cabeçalho imediatamente àesquerda do sino; Tools usa mesmo domínio com estado de apresentação independente. Grade44px, marcador vermelho centralizado sob numeral para economia filtrada, azul para agenda/app, hoje/seleção distintos. Teclado, temas e quatro layouts, celular320–1440 ezoom200.
+2. Agenda local: compromisso/tarefa, datas civis e instantes+IANA, CRUD explícito, conclusão sótarefas pessoais. Draft preservado ao fechar; Cancelar explícito. Writer confirmado, conflito/recusa/UNKNOWN semfalsosucesso, semguardar conteúdo pessoal no alimentador. Backup completo/recuperação, prefs separadas e limpeza própria.
+3. Econômico: USD BEA/BLS/Fed, GBP ONS, JPY StatisticsBureau, NZD StatsNZ/curadoriaRBNZ apenasquando efetivamente permitida. CHFpendente e links oficiais. Fonte/API sem comprovação fica pendente. Nenhuma ampliaçãoFF. Mês corrente inteiro para catálogo declarado e futurasdatas anunciadas; cobertura porfonte/intervalo, precisão/revisão/status, IDs estáveis e impacto editorial explícito. Filtros5moedas+alto/médio/baixo/semclassificação, defaults5+alto e3conteúdos.
+4. Preservar JPWEcal.open/openMenu/close semanal e impedir FF reconstruindo Tools mensal. Native dialog semempilhar, preservar foco/rascunhos, reset/dispose na finalização. Backup é o único prazo real deapp confirmado; outras pendências ficam na origem.
+5. Testes RED/GREEN/counterproofs, visual interno2px e44px, fluxo CRUD/conflitos/backup/finalização, fontes/tempo/cancelamentos/filtros/cobertura, read-onlyfinanceiro, HTTP/PWAoffline/file/portátil. Reconstruçãooficial, fullfinal congelado, revisãoindependente e entrega versionada. Aceite humano separado. Semcommit/merge/push/publicação/deps novas.

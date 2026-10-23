@@ -1,0 +1,29 @@
+{
+  "scope": "inline economic packet JavaScript serialization only",
+  "red": {
+    "result": "PRODUCT_FAIL",
+    "tests": 2,
+    "failures": 2,
+    "log": "/private/tmp/jpw-calendar-agenda-20261023/inline-safety-RED.log",
+    "observed": "Mixed-case closing-script title executed a second inline script in real Chromium; raw delimiter remained in generated JS"
+  },
+  "green": {
+    "result": "PASS",
+    "tests": 19,
+    "failures": 0,
+    "log": "/private/tmp/jpw-calendar-agenda-20261023/inline-safety-GREEN.log",
+    "observed": "Canonical JSON and queryRange preserve markup title, generated inline JS escapes less-than, injection sentinel never executes"
+  },
+  "original_guards_preserved": 17,
+  "new_tests": [
+    "InlineDistributionContract.test_18_generated_js_escapes_html_delimiters_without_changing_canonical_titles",
+    "InlineDistributionContract.test_19_portable_style_inline_html_never_executes_title_markup"
+  ],
+  "product_packet_regenerated": false,
+  "reason": "--check passed; current normal packet already has no less-than character and bytes need no regeneration",
+  "sha256": {
+    "infra/monthly-economic-feed/build_package.py": "c842249ab47caa59cc77726aa5742d97836ecc7e24fc27f0f63fc253a449a907",
+    "tools/monthly_economic_feed_test.py": "f6e8e8cc413991402c516e99bff1a5ba754e1ab554a1bc38bd38485a03ef11d0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90"
+  }
+}

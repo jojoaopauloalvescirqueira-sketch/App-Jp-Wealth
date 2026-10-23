@@ -1,0 +1,211 @@
+[
+  {
+    "case": "local-input-no-financial-collectors",
+    "result": "PASS",
+    "evidence": {}
+  },
+  {
+    "case": "selective-source-coalescing",
+    "result": "PASS",
+    "evidence": {
+      "pfPendingBefore": 1
+    }
+  },
+  {
+    "case": "planning-source-coalescing",
+    "result": "PASS",
+    "evidence": {
+      "pendingActions": 1
+    }
+  },
+  {
+    "case": "committed-planning-hook-only",
+    "result": "PASS",
+    "evidence": {
+      "invalid": {
+        "ok": false,
+        "status": "INVALID",
+        "errors": [
+          "Resultado deve ser o total em USD com centavos."
+        ]
+      },
+      "confirmed": {
+        "ok": true,
+        "status": "CONFIRMED",
+        "errors": [],
+        "accountId": "planning_account_04701c7b-a04f-49b0-8be2-9802d34ab5da",
+        "planId": "planning_plan_9e25aeb9-886e-4a0e-b9cc-6b87b69e2d18",
+        "revision": 5,
+        "operationId": "planning_operation_50c9c0d6-8c5a-4164-adaf-eb6cad953831"
+      },
+      "invalidCalls": {},
+      "confirmedCalls": {
+        "pendingActions": 1
+      }
+    }
+  },
+  {
+    "case": "full-refresh-drains-dirty",
+    "result": "PASS",
+    "evidence": {
+      "before": {
+        "pendingActions": 1
+      },
+      "after": {
+        "pendingActions": 1
+      }
+    }
+  },
+  {
+    "case": "hidden-dom-zero-writes",
+    "result": "PASS",
+    "evidence": {
+      "count": 0,
+      "changes": [],
+      "hidden": [
+        "forexEnginePanel",
+        "forexReservesPanel",
+        "execOverview"
+      ]
+    }
+  },
+  {
+    "case": "immutable-catalog-mounted-once",
+    "result": "PASS",
+    "evidence": {
+      "mounted": true,
+      "preserved": true
+    }
+  },
+  {
+    "case": "hidden-critical-flags",
+    "result": "PASS",
+    "evidence": {
+      "hidden_critical_flag_present": true
+    }
+  },
+  {
+    "case": "committed-pf-hook-only",
+    "result": "PASS",
+    "evidence": {
+      "refused": {
+        "ok": false,
+        "persistido": false,
+        "erro": "synthetic refusal"
+      },
+      "confirmed": {
+        "ok": true,
+        "persistido": true,
+        "erro": null
+      },
+      "refusalCalls": {},
+      "confirmedCalls": {
+        "pfPendingBefore": 1
+      }
+    }
+  },
+  {
+    "case": "entry-reads-current-state",
+    "result": "PASS",
+    "evidence": {
+      "entry_reads_current_state": true
+    }
+  },
+  {
+    "case": "mounted-draft-focus",
+    "result": "PASS",
+    "evidence": {
+      "same": true,
+      "value": "SYN preserved draft",
+      "focused": true,
+      "touched": "true",
+      "fingerprintBefore": null,
+      "fingerprintAfter": null
+    }
+  },
+  {
+    "case": "moved-clearance-current",
+    "result": "PASS",
+    "evidence": {
+      "current_title": "Execução normativa bloqueada",
+      "vrm": "Não calculável"
+    }
+  },
+  {
+    "case": "facts-details-on-demand",
+    "result": "PASS",
+    "evidence": {
+      "si": "10000",
+      "currency": "USD",
+      "options": 1,
+      "fingerprint": true
+    }
+  },
+  {
+    "case": "budget-real-host",
+    "result": "PASS",
+    "evidence": {
+      "hidden_preserved": {
+        "context": "SYN untouched",
+        "history": "SYN history"
+      },
+      "opened_current": "Conta não identificada · período não identificado · moeda não informada · próximo primeiro registro. Orçamento: Não calculável. NOT_COMPUTABLE"
+    }
+  },
+  {
+    "case": "unavailable-calendar-destination",
+    "result": "PASS",
+    "evidence": {
+      "retry_is_readonly": true,
+      "failure_remains_until_verified": true,
+      "agenda_has_no_bell_source": true
+    }
+  },
+  {
+    "case": "context-alias-single-paint",
+    "result": "PASS",
+    "evidence": {
+      "accepted": true,
+      "paints": 1
+    }
+  },
+  {
+    "case": "first-context-entry-expanded",
+    "result": "PASS",
+    "evidence": {
+      "first_context_visible": true
+    }
+  },
+  {
+    "case": "settings-close-exposure",
+    "result": "PASS",
+    "evidence": {
+      "writer_confirmed": true,
+      "hidden_value": "0,00%",
+      "exposed_value": "5,00%"
+    }
+  },
+  {
+    "case": "first-canonical-summary",
+    "result": "PASS",
+    "evidence": {
+      "summary_current": true
+    }
+  },
+  {
+    "case": "settings-consolidated-inert",
+    "result": "PASS",
+    "evidence": {
+      "writer": {
+        "ok": true,
+        "persistido": true
+      },
+      "inert": true,
+      "mutations": 0,
+      "changes": [],
+      "identityPreserved": true,
+      "hidden_value": "0,00%",
+      "exposed_value": "5,00%"
+    }
+  }
+]

@@ -1,0 +1,97 @@
+Statistics Bureau Home Page/Information for use of this Website
+For full functionality of this site it is necessary to enable JavaScript.
+Search the site
+Inquiry
+Site Map
+Japanese
+Search the site
+Inquiry
+Site Map
+Japanese
+HOME
+Statistics
+Public Relations
+FAQ
+ABOUT US
+close
+Home
+Information for use of this Website
+Main contents start here
+Information for use of this Website
+Terms of Use
+Copyright Policy
+Unless a copyright of carrying and the information which is being sent (It's called "contents" in the following.) is reported by the Statistics Bureau home page (It's called "this website" in the following.) and a social account of media of the Statistics Bureau (It's called "our account" in the following.), it belongs to the Statistics Bureau, and as far as there is no mentioning of a right mark, it's possible to use it under the use condition based upon the
+"Public Data License (Version 1.0)" (PDL1.0)
+.
+Among PDL1.0 and this website, please refer to "material information about PDL1.0" about partial information different from the contents which aren't applied to personal source mentioning example and this rule in the contents depending on sites.
+Important part about PDL1.0
+Information made available on this website (hereinafter referred to as "Content") may be freely used, copied, publicly transmitted, translated or otherwise modified on condition that the user complies with provisions 1) to 4) below. Commercial use of Content is also permitted.
+Note, however, that numerical data and data in Simple tables, graphs, and so forth are not subject to copyright. Accordingly the terms of use does not apply to such data, and said data may be used freely.
+Use of the Content constitutes agreement by the user with these terms of use for using the Content described herein (hereinafter referred to as "Terms of Use").
+1) Source citation
+a. The user must cite the source when using the Content. Sources should be cited in the following manner:
+(Examples of source citation)
+Source: Statistics Bureau, Ministry of Internal Affairs and Communications website (URL of the relevant page)
+Source: XX Survey (Statistics Bureau, Ministry of Internal Affairs and Communications) (URL of the relevant page) (accessed on year/month/day)
+b. If you have edited the Content for use, you must include a statement expressing that the content has been edited, in addition to the abovementioned source citation, but not in any way that making public or using edited information in a format that may be misconstrued as having been created by the Government of Japan (or its ministries and/or agencies).
+(Example of citation when using edited content)
+Created by editing the XX Survey (Statistics Bureau, Ministry of Internal Affairs and Communications) (URL of the relevant page)
+Created by Company YY based on XX Survey (Statistics Bureau, Ministry of Internal Affairs and Communications) (URL of the relevant page)
+2) No infringement of third party rights
+a. In some cases, a third party (refers to a party other than the state. Hereinafter referred to as "Third Party") may hold copyrights or other rights to a part of the Content. For Content where a Third Party holds copyrights or other rights (e.g. portrait rights in a photograph, publicity rights etc.), it is the responsibility of the user to obtain consent for use from the Third Party unless there is explicit indication that the rights have already been cleared.
+b. If a Third Party holds rights to a part of the Content, said fact may be directly or indirectly stated or indicated through source citations, but in some cases the part of the Content to which the Third Party holds the rights may not be clear or may not be explicitly stated. It is the responsibility of the user to confirm the rights pertaining to use of the Content.
+c. Even if a Third Party holds copyrights to the Content, some use of the Content, such as quoting, may be allowed without the consent of the copyright holder, under the Copyright Act of Japan.
+3) Content where the Terms of Use does not apply
+The Terms of Use herein does not apply to the following Content.
+a. Symbol mark, Logo, and Character Design which represent the organization or specific business.
+b. Content where other terms of use apply with rational and concrete reason.
+(Please refer to Notes. Content where other terms of use apply.)
+4) Governing law and jurisdiction
+a. The Terms of Use shall be governed by and construed in accordance with the laws of Japan.
+b. In case of disputes relating to the use of the Content based on the Terms of Use, or the Terms of Use, the user agrees that the exclusive court of first instance shall be the district court with jurisdiction in the place where the organization that has published the disputed Content or Terms of Use is located.
+Disclaimer
+a. The state bears absolutely no responsibility for any action taken by the user involving the use of the Content (including use of information based on edited Content).
+b. The Content may be modified, moved or deleted without prior notice.
+Other
+a. The Terms of Use does not limit those types of uses for which, under Copyright Act of Japan, license from the right holders are not required.
+b. The Terms of Use was established on March 7, 2025. The Terms of Use is based on the Public Data License (Version 1.0). The Terms of Use may be modified in the future. If you are already using Content under previous version of the Government of Japan Standard Terms of Use, these terms and conditions will continue to apply.
+c. The Terms of Use are compatible with the Creative Commons Attribution License 4.0 (hereinafter referred to as the CC License). This means that Content based on the Terms of Use may be used under the CC License in lieu of the Terms of Use.
+Notes. Content where other terms of use apply
+Please refer to the relevant link(s) below for details.
+-Use of the MIC symbol mark:
+When using the symbol mark of the Ministry of Internal Affairs and Communications (MIC), please contact the department in charge.
+-Use of the Statistics Bureau symbol mark:
+When using the symbol mark of the Statistics Bureau, please contact the Statistical Information Planning Office (tel:03-5273-1023).
+-Use of the logo of the Portal Site of Official Statistics of Japan (e-Stat):
+When using the logo of the Portal Site of Official Statistics of Japan (e-Stat), please contact the Statistical Information Systems Division (tel:03-5273-1007).
+-Use of CENSUS-KUN or MIRAI-CHAN:
+When using CENSUS-KUN or MIRAI-CHAN, please contact the Population Census Division (tel:03-5273-1152).
+-Use of the images on the Data Science School:
+When using the images on the Data Science School, please contact the Statistical Information Planning Office (tel:03-5273-1023)
+-Use of the images on the Statistical Handbook of Japan, Nihon no Tokei (Statistics of Japan) and Sekai no Tokei (International Statistical Compendium):
+When using the images on the Statistical Handbook of Japan, Nihon no Tokei (Statistics of Japan) and Sekai no Tokei (International Statistical Compendium), please contact the Statistical Information Planning Office (tel:03-5273-1015).
+-Use of the maps on the Statistical Handbook of Japan and Sekai no Tokei (International Statistical Compendium):
+When using the maps on the Statistical Handbook of Japan and Sekai no Tokei (International Statistical Compendium), please contact the Statistical Information Planning Office (tel:03-5273-1015).
+-Use of the images of the TV personalities on advertisements for surveys:
+When using the images of the TV personalities on advertisements for surveys, please contact the department in charge.
+Links
+Users are not required to ask permission to link to pages on this website.
+Trademarks
+Microsoft, Internet Explorer and Excel are either registered trademarks or trademarks of Microsoft Corporation in the United States and/or other countries.
+Adobe Reader and the Adobe logo are either registered trademarks or trademarks of the Adobe Systems Incorporated in the United States and/or other countries.
+Privacy Policy
+1) Basic Policy
+We collect information from users of this website within the scope necessary to ensure the smooth operation of the services provided on this website, as outlined below. Collected information will be handled appropriately within the scope of its intended purpose.
+2) Scope of Information Collected and Purpose of Use
+This website automatically collects information such as internet domain names, IP addresses, site search query information, and other data related to browsing this website. Cookies (information sent from the server to the user's browser and stored on the user's computer to identify the user) are limited to content intended to improve convenience and do not contain any personal information whatsoever. The collected information is used as a reference to ensure the smooth operation of the services provided on this website.
+3) Restrictions on Use and Provision
+Except for requests for disclosure as required by law, in cases of illegal activities such as unauthorized access or threats, or for other special reasons, we will not use the collected information for purposes other than those stated in 2) nor provide it to third parties. However, we may publish statistically processed information such as access data and users' attributes for this website.
+4) Security Measures
+We will implement necessary measures to prevent the leakage, loss, or damage of collected information and to ensure its proper management. Furthermore, in cases where the operation of this website is outsourced to an external party, the handling of collected information may also be outsourced. In such cases, we will take necessary measures to ensure that the outsourcing party also prevents leakage, loss, or damage of collected information and otherwise manages it appropriately.
+5) Scope of Application
+This Privacy Policy applies solely to this website. The handling of information by relevant ministries and agencies will be conducted under the responsibility of each respective organization.
+Top of this page
+19-1 Wakamatsu-cho, Shinjuku-ku, Tokyo 162-8668 Japan
+©1996 Statistics Bureau, Ministry of Internal Affairs and Communications (JCN2000012020001)
+Access Map
+Information for use of this Website

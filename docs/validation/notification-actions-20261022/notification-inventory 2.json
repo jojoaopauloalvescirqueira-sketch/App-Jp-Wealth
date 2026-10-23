@@ -1,0 +1,172 @@
+{
+  "build": "8b0b231a1b0c41b7",
+  "scope": "Inventário factual da implementação; não cria regras financeiras nem novos prazos",
+  "items": [
+    {
+      "id_pattern": "system:persistence",
+      "area": "Sistema",
+      "trigger": "Resultado de gravação indeterminado, recuperação ativa, falha/conflito ou bloqueio existentes",
+      "priority": "Crítica quando indeterminado/recuperação/falha; aviso no bloqueio residual",
+      "action": "Ver recuperação",
+      "resolution": "Estado confirmado do mecanismo de persistência/recuperação",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "system:backup",
+      "area": "Sistema",
+      "trigger": "dgBackupStatus due ou unknown, critérios existentes",
+      "priority": "Gravidade existente do backup",
+      "action": "Revisar backup",
+      "resolution": "Confirmação observável no mecanismo atual de backup",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "forex:compatibility",
+      "area": "Sistema · Forex",
+      "trigger": "Agregado não suportado",
+      "priority": "Crítica",
+      "action": "Ver recuperação",
+      "resolution": "Leitura compatível restaurada",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "forex:context:<conta>:<período>",
+      "area": "Forex",
+      "trigger": "Fatos de ordens/reservas com códigos canônicos de contexto não conciliado",
+      "priority": "Crítica",
+      "action": "Revisar contexto",
+      "resolution": "Conciliação confirmada na origem",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "forex:order-review:<conta>:<período>",
+      "area": "Forex",
+      "trigger": "Ordens sinalizadas ou abertas com stop ausente/não validado",
+      "priority": "Crítica para stop aberto; aviso para demais sinalizações",
+      "action": "Revisar ordens",
+      "resolution": "Conferência confirmada pelo módulo",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "forex:compulsory:<conta>:<período>",
+      "area": "Forex",
+      "trigger": "Motor sinaliza encerramento compulsório",
+      "priority": "Crítica",
+      "action": "Revisar exposição",
+      "resolution": "Condição de origem deixa de estar ativa",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "forex:leverage:<conta>:<período>",
+      "area": "Forex",
+      "trigger": "Finding canônico LEVERAGE_EXCEEDED",
+      "priority": "Crítica",
+      "action": "Revisar exposição",
+      "resolution": "Finding deixa de estar ativo",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "forex:quotes:<conta>:<período>",
+      "area": "Forex",
+      "trigger": "Referência efetiva antiga/indisponível de instrumento usado em ordem aberta/pendente ativa que amplia exposição",
+      "priority": "Aviso",
+      "action": "Revisar referências",
+      "resolution": "Referência efetiva e sua data recuperadas ou dependência deixa de existir",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "forex:legacy-context",
+      "area": "Forex",
+      "trigger": "Fatos anteriores sem contexto operacional confirmado",
+      "priority": "Crítica",
+      "action": "Revisar contexto",
+      "resolution": "Conciliação na origem",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "planning:compatibility",
+      "area": "Sistema · Planejamento",
+      "trigger": "Projeção factual indisponível por incompatibilidade estrutural",
+      "priority": "Crítica",
+      "action": "Ver recuperação",
+      "resolution": "Consulta factual compatível; não equivale a validação financeira geral",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "planning:close:<conta>:<plano>",
+      "area": "Planejamento",
+      "trigger": "Conta ativa/plano atual com mês passado de resultado explícito inclusive zero, fluxo vigente ou fechamento invalidado não confirmado",
+      "priority": "Aviso",
+      "action": "Revisar meses",
+      "resolution": "Fechamentos pertinentes confirmados; nenhuma finalização automática",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "pf:compatibility",
+      "area": "Sistema · Finanças Pessoais",
+      "trigger": "Unidade armazenada não suportada",
+      "priority": "Crítica",
+      "action": "Ver recuperação",
+      "resolution": "Leitura compatível restaurada",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "pf:pending",
+      "area": "Finanças Pessoais",
+      "trigger": "Pendências anteriores já derivadas pelo orçamento",
+      "priority": "Aviso",
+      "action": "Revisar pendências",
+      "resolution": "Pendências da origem resolvidas",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "pf:credit",
+      "area": "Finanças Pessoais",
+      "trigger": "Limite informado de crédito excedido segundo derivação existente",
+      "priority": "Aviso",
+      "action": "Revisar crédito",
+      "resolution": "Condição da origem deixa de estar ativa",
+      "integrity_visible_when_frozen": "Não"
+    },
+    {
+      "id_pattern": "alladin:compatibility",
+      "area": "Sistema · Alladin",
+      "trigger": "Schema posterior ao suportado",
+      "priority": "Crítica",
+      "action": "Ver recuperação",
+      "resolution": "Leitura compatível restaurada",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "alladin:quality",
+      "area": "Sistema · Alladin",
+      "trigger": "Leitor canônico de ledger, posições ou saldos recusa consulta",
+      "priority": "Crítica",
+      "action": "Ver recuperação",
+      "resolution": "Leituras pertinentes disponíveis",
+      "integrity_visible_when_frozen": "Sim"
+    },
+    {
+      "id_pattern": "unavailable:<fonte>",
+      "area": "Área da fonte",
+      "trigger": "Exceção na consulta de uma fonte",
+      "priority": "Aviso de verificação não atual",
+      "action": "Verificar novamente",
+      "resolution": "Consulta explícita posterior concluída; diagnóstico antigo preservado como não atual",
+      "integrity_visible_when_frozen": "Verificação não certifica integridade"
+    }
+  ],
+  "excluded": [
+    "agenda econômica",
+    "histórico de atividades",
+    "sucessos",
+    "validações ordinárias de campo",
+    "rascunhos normais",
+    "bloqueios normativos permanentes sem fato específico"
+  ],
+  "limitations": [
+    "A ausência de aviso não certifica segurança financeira ou autorização operacional.",
+    "Meses anteriores sem fatos podem aparecer como dependência, não como nova movimentação presumida.",
+    "Consultas somente leitura; escritores financeiros e critérios de backup não são implementados pela central."
+  ]
+}

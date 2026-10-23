@@ -1,0 +1,14 @@
+{
+  "result": "TEST_HARNESS_FAIL",
+  "scope": "official calendar integration must run before browser disposal",
+  "calls": [
+    [
+      "browser.close",
+      814
+    ],
+    [
+      "calendar_visual.matrix",
+      818
+    ]
+  ]
+}

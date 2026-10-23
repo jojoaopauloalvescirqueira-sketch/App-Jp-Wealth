@@ -1,0 +1,74 @@
+{
+  "result": "PASS",
+  "technicalReadiness": "AUTOMATED_GATES_PASS; human acceptance separate",
+  "build": "85ae832b1f542745",
+  "branch": "codex/calendario-agenda-20261023",
+  "head": "d517be0748f886085b3029c809bd68046e5c0f77",
+  "fullSummary": {
+    "PASS": 102,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "fullRawSha256": "6b5378377bc71f95bbeb8548094c34419a43ce02dafcd481a73e897a6c5a23e5",
+  "sourceAndOraclesStableDuringFull": true,
+  "frozenPaths": 2358,
+  "protectedFilesMatchInitialBaseline": {
+    "AGENTS.md": true,
+    "src/js/00-core/04-persistence.js": true,
+    "src/js/00-core/00-forex-policy.js": true,
+    "src/js/10-domain/00-forex-engine.js": true,
+    "src/js/30-accounting/06-planning/01-engine.js": true,
+    "src/js/30-accounting/06-planning/02-state.js": true,
+    "src/js/30-accounting/06-planning/03-ui.js": true,
+    "src/js/40-app/18-notification-center.js": true
+  },
+  "featureChecks": {
+    "calendarInterfaceGroups": 13,
+    "recoveryGroups": 8,
+    "visualCases": 370,
+    "calendarDistributionCases": 4,
+    "result": "PASS"
+  },
+  "openValidationFinding": {
+    "case": "notes-launcher/native-200/dark",
+    "result": "ENVIRONMENT_ERROR",
+    "cause": "UNDETERMINED; interrupted pointer capture is observed, external cause is not established",
+    "notesPassed": 18,
+    "notesRequired": 19,
+    "historyPreserved": true
+  },
+  "humanAcceptance": "NOT_RUN",
+  "feed": "Static local partial package,54 events; BLS,Fed,RBNZ,CHF,fullNZ pending",
+  "gitPublicationPerformed": false,
+  "failureHtml": {
+    "path": "notes-native-full6.html.gz",
+    "rawSha256": "5356ec3b5445fa560c9bcd763335fa5b2c41bd6e45d42a7c52cc0c457d8f1ed2",
+    "compressedSha256": "df94bd415b0286238d1f4553cf13f12c1e51dc1ad6f677c6ccc2de2b42b33ead",
+    "roundtripVerified": true
+  },
+  "preview": "http://127.0.0.1:58998/index.html?v=85ae832b1f542745",
+  "subsequentNotesDiagnostic": {
+    "result": "PASS",
+    "checks": 19,
+    "causeDetermined": false,
+    "replacesFullGate": false
+  },
+  "independentReceiptReview": {
+    "result": "PASS",
+    "scope": "Consistency of receipts, protected sources, approved histories and stated limits only; no overall technical approval",
+    "globalGateApproved": false
+  },
+  "previousFullSummary": {
+    "PASS": 101,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 1,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "latestFullArtifact": "quality-full-coordinated.json",
+  "latestFullSha256": "0415e4fc29eaed3688b1bd28bbafd46ceda5c073da9477e5406c3ca5f52efb1d"
+}

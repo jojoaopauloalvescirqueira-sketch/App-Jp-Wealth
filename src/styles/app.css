@@ -8452,6 +8452,13 @@ html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#
   background:var(--shell-hover);color:var(--shell-action);border-color:var(--shell-action);
 }
 html[data-shell="global-dashboard"] #sidebarClose .shell-lucide{display:block;margin:auto}
+/* CHG-JPW-SIDEBAR-ICONS-20261022 · #railToggle usa panel-left-close/open do sprite
+   em vez de glifo de texto; vale onde o controle já é exibido (lateral,
+   submenu, Configurações). */
+#railToggle .shell-lucide{
+  display:inline-block;vertical-align:middle;width:20px;height:20px;min-width:20px;max-width:20px;flex:0 0 20px;
+  fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+}
 html[data-shell="global-dashboard"] #submenuNavBack>span[aria-hidden]{display:inline-flex;align-items:center;font-size:inherit;line-height:1}
 html[data-shell="global-dashboard"] #appSidebar :is(#submenuNavBack,#railToggle){color:var(--shell-action)}
 html[data-shell="global-dashboard"] #nav>.tab{color:var(--shell-secondary)}
@@ -8641,13 +8648,24 @@ html[data-navigation="sidebar"] #appSidebar #nav>.tab .lbl{
 html[data-navigation="sidebar"] #appSidebar #nav>.tab .nav-area-icon{
   display:block;width:20px;height:20px;min-width:20px;max-width:20px;flex:0 0 20px;
 }
-html[data-navigation="sidebar"] #appSidebar #nav>.tab[data-nav-surface]::after{
-  content:"";display:block;flex:0 0 7px;width:7px;height:7px;margin:0 2px 0 auto;
-  border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
-  transform:rotate(-45deg);transition:transform 180ms var(--jp-ease);
+/* CHG-JPW-SIDEBAR-ICONS-20261022 · disclosure Lucide (chevron-right) na mesma
+   família dos ícones de área. Caixa de 16 px; o traço é compensado para render
+   igual ao dos ícones de 20 px a 1,75 (1,75 × 20/16). Os demais layouts não o
+   exibem; o ::after do layout submenu permanece. A margem -5 px devolve ao
+   rótulo a largura da seta anterior (7 + 2 + 2 px): o desenho ocupa só o
+   centro da caixa. #nav vence o svg[viewbox]
+   genérico, que exibiria o chevron nos layouts topbar/glass/submenu. */
+#nav .nav-disclosure-icon{display:none}
+html[data-navigation="sidebar"] #appSidebar #nav>.tab .nav-disclosure-icon{
+  display:block;flex:0 0 16px;width:16px;height:16px;min-width:16px;max-width:16px;margin:0 -5px 0 auto;
+  fill:none;stroke:currentColor;stroke-width:2.1875;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform 180ms var(--jp-ease);
 }
-html[data-navigation="sidebar"] #appSidebar #nav>.tab.sidebar-group-open[data-nav-surface]::after{
-  transform:rotate(45deg);
+html[data-navigation="sidebar"] #appSidebar #nav>.tab.sidebar-group-open .nav-disclosure-icon{
+  transform:rotate(90deg);
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-navigation="sidebar"] #appSidebar #nav>.tab .nav-disclosure-icon{transition:none}
 }
 html[data-navigation="sidebar"] #appSidebar #nav>.tab:hover{
   background:var(--sidebar-hover);color:var(--sidebar-label);
@@ -8742,7 +8760,8 @@ html[data-navigation="sidebar"][data-sidebar-closing="true"] #appSidebar #navSub
   html[data-navigation="sidebar"][data-rail="collapsed"]:not([data-sidebar-overlay="true"]) #appSidebar #nav>.tab{
     justify-content:center;padding:12px 8px;
   }
-  html[data-navigation="sidebar"][data-rail="collapsed"]:not([data-sidebar-overlay="true"]) #appSidebar #nav>.tab::after{
+  html[data-navigation="sidebar"][data-rail="collapsed"]:not([data-sidebar-overlay="true"]) #appSidebar #nav>.tab::after,
+  html[data-navigation="sidebar"][data-rail="collapsed"]:not([data-sidebar-overlay="true"]) #appSidebar #nav>.tab .nav-disclosure-icon{
     display:none;
   }
   html[data-navigation="sidebar"][data-sidebar-overlay="true"] #appSidebar{

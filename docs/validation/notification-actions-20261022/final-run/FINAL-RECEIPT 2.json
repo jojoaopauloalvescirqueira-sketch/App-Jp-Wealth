@@ -1,0 +1,27 @@
+{
+  "classification": "PASS",
+  "build": "8b0b231a1b0c41b7",
+  "official_full_summary": {
+    "PASS": 96,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "official_exit_code": 0,
+  "input_inventory_count": 2255,
+  "same_inputs": true,
+  "started_at": "2026-10-22T17:32:19.747517-03:00",
+  "finished_at": "2026-10-22T18:07:50.727861-03:00",
+  "served_bytes_equal_local": {
+    "index.html": "56fcc3dce282eda6bf7e701733fc5794d18c3eb770a86386421c39b48fa3774b",
+    "build-id.js": "6310b6b652cb34e5ad879af0654483492a9d138884e9e98bc703fc10a99196f9",
+    "src/styles/app.css": "60787e51e673bf73b1c995706a4cd6965873c314a9c059a89f607d9b366650d5",
+    "src/js/40-app/18-notification-center.js": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013"
+  },
+  "diff_check": "PASS",
+  "human_acceptance": "NOT_RUN",
+  "financial_homologation": "NOT_RUN; not claimed",
+  "git_integration_publication": "NOT_RUN; explicitly excluded"
+}

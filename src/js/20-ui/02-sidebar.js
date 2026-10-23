@@ -27,7 +27,8 @@ function renderRailToggle(){
   const t=$('railToggle');
   if(t){
     const label=collapsed?'Expandir barra lateral':'Recolher barra lateral';
-    t.innerHTML=(collapsed?'›':'‹')+' <span class="lbl">'+(collapsed?'Expandir':'Recolher')+'</span>';
+    // Lucide do sprite shell-icon-*; decorativo, o nome acessível fica no botão.
+    t.innerHTML='<svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-panel-left-'+(collapsed?'open':'close')+'"/></svg> <span class="lbl">'+(collapsed?'Expandir':'Recolher')+'</span>';
     t.setAttribute('aria-label',label);t.title=label;t.setAttribute('aria-expanded',String(!collapsed));
   }
 }

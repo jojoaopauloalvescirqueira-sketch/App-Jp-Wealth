@@ -1,0 +1,123 @@
+{
+  "out": "/private/tmp/jpw-calendar-agenda-20261023",
+  "cases": [
+    {
+      "id": "gate-counterproof-green",
+      "classification": "PASS",
+      "criteria": "gate-counterproof-green",
+      "started_at": "2026-10-23T16:53:42.555494+00:00",
+      "evidence": {
+        "positive": {
+          "STANDARD": {
+            "entries": 59,
+            "visual_entries": 1,
+            "historical_entries": 55,
+            "calendar_entries": [
+              "personal-agenda",
+              "monthly-economic-feed",
+              "calendar-agenda",
+              "calendar-recovery"
+            ],
+            "historical_ast_sha256": "dec6559f92a890524f149680b953b2f777fde61d820fe96b27251b1e0f68f767",
+            "calendar_ast_sha256": "5721964a401d84d682a2d7ef30ac04a768df2730b25883c704c238aa6ecf7e00"
+          },
+          "FULL": {
+            "entries": 102,
+            "visual_entries": 1,
+            "historical_entries": 96,
+            "calendar_entries": [
+              "personal-agenda",
+              "monthly-economic-feed",
+              "calendar-agenda",
+              "calendar-recovery",
+              "calendar-distribution",
+              "ff-news-cache"
+            ],
+            "historical_ast_sha256": "43c6cec6702b768a4229f828c5d20edf138f16b99f25563d343d684415190cd9",
+            "calendar_ast_sha256": "b9048ab67f72eac35122f39080c17910ba0ffdac0c1125bbc4d9bf16c733af4d"
+          }
+        },
+        "removed_visual_other101_preserved": {
+          "rejected": true,
+          "measurement_failure": "('visual check must run exactly once', 'STANDARD', 0)"
+        },
+        "focal_instead_of_default": {
+          "rejected": true,
+          "measurement_failure": "('visual gate must invoke default complete CLI and unique output', 'STANDARD')"
+        },
+        "each_calendar_check_omitted": {
+          "personal-agenda": {
+            "rejected": true,
+            "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+          },
+          "monthly-economic-feed": {
+            "rejected": true,
+            "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+          },
+          "calendar-agenda": {
+            "rejected": true,
+            "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+          },
+          "calendar-recovery": {
+            "rejected": true,
+            "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+          },
+          "calendar-distribution": {
+            "rejected": true,
+            "measurement_failure": "('approved calendar identities/order missing or substituted', 'FULL')"
+          },
+          "ff-news-cache": {
+            "rejected": true,
+            "measurement_failure": "('approved calendar identities/order missing or substituted', 'FULL')"
+          }
+        },
+        "historical96_without_calendar": {
+          "rejected": true,
+          "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+        },
+        "standard_subset_as_full": {
+          "rejected": true,
+          "measurement_failure": "('historical gate identities/order changed', 'FULL')"
+        },
+        "historical_check_omitted": {
+          "rejected": true,
+          "measurement_failure": "('historical gate identities/order changed', 'FULL')"
+        },
+        "historical_identity_substituted_same102": {
+          "rejected": true,
+          "measurement_failure": "('historical gate identities/order changed', 'STANDARD')"
+        },
+        "calendar_identity_substituted_same102": {
+          "rejected": true,
+          "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+        },
+        "historical_command_substituted_same102": {
+          "rejected": true,
+          "measurement_failure": "('historical gate command declarations changed', 'STANDARD')"
+        },
+        "calendar_focal_instead_of_complete": {
+          "rejected": true,
+          "measurement_failure": "('approved calendar gate command declarations changed', 'STANDARD')"
+        },
+        "calendar_checks_before_preflight": {
+          "rejected": true,
+          "measurement_failure": "('approved gate sequence changed; preflight and tier boundaries must be preserved', 'STANDARD')"
+        },
+        "duplicate_tier_declaration": {
+          "rejected": true,
+          "measurement_failure": "('duplicate tier declaration', 'STANDARD')"
+        }
+      },
+      "finished_at": "2026-10-23T16:53:42.664340+00:00"
+    }
+  ],
+  "hashes_before": {
+    "tools/ui_visual_quality_test.py": "00ea752b8ada384a8083169a21647868dee9dc16bac43279a51208ecef65e2e7",
+    "tools/quality_gate.py": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a"
+  },
+  "scope": "gate_counterproof only; no browser matrix",
+  "hashes_after": {
+    "tools/ui_visual_quality_test.py": "00ea752b8ada384a8083169a21647868dee9dc16bac43279a51208ecef65e2e7",
+    "tools/quality_gate.py": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a"
+  }
+}

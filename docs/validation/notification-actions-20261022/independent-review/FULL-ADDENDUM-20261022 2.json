@@ -1,0 +1,50 @@
+{
+  "classification": "PASS",
+  "scope": "Independent verification of completed official receipts and current identity; no tests rerun",
+  "verified_at_utc": "2026-10-22T21:10:15.175108+00:00",
+  "build": "8b0b231a1b0c41b7",
+  "branch": "codex/notificacoes-acoes-20261022",
+  "head": "d517be0748f886085b3029c809bd68046e5c0f77",
+  "official_full_started_at": "2026-10-22T17:32:19-03:00",
+  "official_full_finished_at": "2026-10-22T18:07:50-03:00",
+  "official_raw_sha256": "31c42a401765d9efa8463443a1c751a8ee593b756ae69638706b445d18b3da08",
+  "freeze_before_sha256": "f837a24ed3e66759ccfa7b37dbfc078b8946cb5c2958d5fe99169fd8e200b41c",
+  "freeze_after_sha256": "19609cd8c2c41d1a46e91b04640d45a9e7d1de059bf9bcaabb4415c7978625c1",
+  "checks": {
+    "raw_sha_matches_reported": true,
+    "raw_full_tier": true,
+    "raw_has_96_unique_checks": true,
+    "raw_all_pass_zero_exit": true,
+    "recorder_exit_zero": true,
+    "frozen_maps_equal": true,
+    "current_2255_inputs_equal": true,
+    "branch_head_equal": true,
+    "external_harness_equal": true,
+    "visual_322_complete_pass": true,
+    "recorded_http_hashes_match_current": true,
+    "human_acceptance_remains_not_run": true
+  },
+  "raw_result_counts": {
+    "PASS": 96
+  },
+  "visual_result_counts": {
+    "PASS": 322
+  },
+  "current_input_mismatches": [],
+  "visual_source_mismatches": [],
+  "http_receipt_hash_mismatches": [],
+  "receipt_sha256": {
+    "FINAL-RECEIPT.json": "278b0d02606542a830a7ecbbd5f50a33741d7d39615ead6a10fdbcd2b4bc1914",
+    "full-raw.json": "31c42a401765d9efa8463443a1c751a8ee593b756ae69638706b445d18b3da08",
+    "full-recording-receipt.json": "04130e0c8409090f80b38c1901525c231f40a0d1883c508f84d0e79012ffb7ae",
+    "freeze-before.json": "f837a24ed3e66759ccfa7b37dbfc078b8946cb5c2958d5fe99169fd8e200b41c",
+    "freeze-after.json": "19609cd8c2c41d1a46e91b04640d45a9e7d1de059bf9bcaabb4415c7978625c1",
+    "ui-visual-quality-results.json": "c21fdce5d69bd067c5e2430fdcc9d6464aa7b62778590a80cdfdb2880bbf83fd"
+  },
+  "limits": [
+    "The official gate was executed by root; this agent independently read and checked its completed receipts.",
+    "HTTP serving is a recorded root observation whose hashes match current files; no new HTTP request was made by this reviewer.",
+    "Human visual acceptance, financial homologation and Git/publication remain NOT_RUN.",
+    "The earlier FINAL-REVIEW remains unchanged and correctly described FULL as pending at its earlier timestamp."
+  ]
+}

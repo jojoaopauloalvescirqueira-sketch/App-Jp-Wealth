@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "baseline": "initial pending candidate d517be0 + preserved work",
+  "checks": {
+    "AGENTS.md": true,
+    "src/js/00-core/04-persistence.js": true,
+    "src/js/00-core/00-forex-policy.js": true,
+    "src/js/10-domain/00-forex-engine.js": true,
+    "src/js/30-accounting/06-planning/01-engine.js": true,
+    "src/js/30-accounting/06-planning/02-state.js": true,
+    "src/js/30-accounting/06-planning/03-ui.js": true,
+    "src/js/40-app/18-notification-center.js": true
+  }
+}

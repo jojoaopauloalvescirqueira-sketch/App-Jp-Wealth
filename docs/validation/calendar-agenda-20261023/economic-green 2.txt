@@ -1,0 +1,22 @@
+test_12_ics_unfolds_and_uses_uid_instead_of_date_for_identity (__main__.CollectorContract) ... ok
+test_13_collector_refuses_missing_identity_and_invalid_timestamp (__main__.CollectorContract) ... ok
+test_14_invalid_input_never_overwrites_existing_output (__main__.CollectorContract) ... ok
+test_15_embedded_data_matches_canonical_package (__main__.CollectorContract) ... ok
+test_16_offline_collector_reproduces_real_month_without_fresh_capture_claim (__main__.CollectorContract) ... ok
+test_17_offline_package_check_reproduces_without_writing_product_files (__main__.CollectorContract) ... ok
+test_01_first_and_last_civil_day_are_inclusive (__main__.ModelContract) ... ok
+test_02_instant_moves_to_user_day_and_retains_source_date (__main__.ModelContract) ... ok
+test_03_date_only_never_shifts_with_user_zone (__main__.ModelContract) ... ok
+test_04_currency_and_impact_filters_do_not_change_coverage (__main__.ModelContract) ... ok
+test_05_explicit_empty_filter_means_empty_and_unknown_currency_remains_unknown (__main__.ModelContract) ... ok
+test_06_latest_revision_reschedules_same_identity_and_keeps_cancelled (__main__.ModelContract) ... ok
+test_07_unsafe_external_link_and_offsetless_instant_are_not_exposed (__main__.ModelContract) ... ok
+test_08_invalid_range_and_zone_refuse_without_io (__main__.ModelContract) ... ok
+test_09_returned_objects_cannot_mutate_embedded_data (__main__.ModelContract) ... ok
+test_10_missing_month_and_expired_review_are_not_confirmed (__main__.ModelContract) ... ok
+test_11_shipped_package_has_real_uid_and_honest_pending_currencies (__main__.ModelContract) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.186s
+
+OK
