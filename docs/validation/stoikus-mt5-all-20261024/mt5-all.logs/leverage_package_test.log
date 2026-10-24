@@ -1,0 +1,29 @@
+test_absent_contract_keeps_default_names_and_archive_bytes (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_artifact_inventory_metadata_and_unsafe_paths_rejected (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_interface_names_sealed_bytes_and_idempotence (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_interface_rejects_native_promotion_and_unproved_ex5 (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_invalid_release_values_and_unbounded_keys_rejected (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_missing_corrupt_and_symlink_assets_rejected_even_with_coherent_metadata (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_source_identity_and_guide_corruption_rejected (stoikus_interface_package_test.InterfacePackageTests) ... ok
+test_absent_contract_keeps_default_names_and_archive_bytes (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_all_added_headers_and_sealed_readme_are_bound (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_artifact_inventory_metadata_and_unsafe_paths_rejected (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_cross_release_and_terminal_promotion_rejected (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_empty_variant_does_not_bypass_build_or_daily_pins (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_exact_r5_sdk_and_daily_identity_without_suffix (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_interface_names_sealed_bytes_and_idempotence (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_interface_rejects_native_promotion_and_unproved_ex5 (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_invalid_release_values_and_unbounded_keys_rejected (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_missing_corrupt_and_symlink_assets_rejected_even_with_coherent_metadata (stoikus_r5_release_test.R5ReleaseTests) ... ok
+test_source_identity_and_guide_corruption_rejected (stoikus_r5_release_test.R5ReleaseTests) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 38.889s
+
+OK
+PASS immutable GENETRIX 1.21.2 archive and size/hash counterexamples; no current-tree substitution
+PASS immutable Stoikus 1.22.0 archive and size/hash counterexamples
+PASS immutable Stoikus 1.22.1 SDK and size/hash counterexamples
+NATIVE_COMPILATION_SLICE: NOT_RUN; source-only candidate; no old EX5 accepted
+PASS C5 SDK142/daily89, exact pins and documentary native derivative; native NOT_RUN
+LEVERAGE PACKAGE OK — deterministic bytes, exact extraction, missing include and unverified .ex5 refused

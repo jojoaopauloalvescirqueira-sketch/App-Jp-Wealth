@@ -1,0 +1,24 @@
+SOURCE_SHA256: 8754f794016f906d86023195a2c9ef9deb1e024dc07db07a718d4838db7c9ce2
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stop-ui-3w_pj1x_/scope.cpp:50:11: warning: unused variable 'JPW_FOCUS_SIGNAL_ROLE' [-Wunused-const-variable]
+   50 | const int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001;
+      |           ^~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stop-ui-3w_pj1x_/scope.cpp:50:39: warning: unused variable 'JPW_FOCUS_SIGNAL_COPY' [-Wunused-const-variable]
+   50 | const int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001;
+      |                                       ^~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.
+STOP_UI_SCOPE: 21 PASS / 0 FAIL; MT5 NOT_RUN
+EXIT_CODE: 0
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-stop-refresh-nbcgcygo/stop-refresh.cpp:209:29: warning: unused parameter 'value' [-Wunused-parameter]
+  209 | void JPWRender(const string value,const string state=""){
+      |                             ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-stop-refresh-nbcgcygo/stop-refresh.cpp:209:48: warning: unused parameter 'state' [-Wunused-parameter]
+  209 | void JPWRender(const string value,const string state=""){
+      |                                                ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-stop-refresh-nbcgcygo/stop-refresh.cpp:14:16: warning: unused variable 'ACCOUNT_MARGIN_MODE_RETAIL_HEDGING' [-Wunused-const-variable]
+   14 | constexpr long ACCOUNT_MARGIN_MODE_RETAIL_HEDGING=2;
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-stop-refresh-nbcgcygo/stop-refresh.cpp:15:16: warning: unused variable 'ACCOUNT_MARGIN_MODE_RETAIL_NETTING' [-Wunused-const-variable]
+   15 | constexpr long ACCOUNT_MARGIN_MODE_RETAIL_NETTING=0;
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4 warnings generated.
+STOP_REFRESH_PRESENTATION: 18 PASS / 0 FAIL; native controls NOT_RUN

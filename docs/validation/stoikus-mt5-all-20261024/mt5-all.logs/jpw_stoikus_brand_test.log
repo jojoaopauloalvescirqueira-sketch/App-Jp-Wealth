@@ -1,0 +1,90 @@
+ALIAS_GUARD_TRIAL: actual exit 0 ALIAS_GUARD_CASES: 12 / failures=0
+ALIAS_GUARD_TRIAL: without_legacy exit 1 ALIAS_GUARD_CASES: 12 / failures=6
+ALIAS_GUARD_TRIAL: accept_all exit 1 ALIAS_GUARD_CASES: 12 / failures=4
+ALIAS_GUARD_SOURCE_SHA256: {"mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "a4c62738d56c3974ca939d7c3a76635492b11007fdd5f9ade91cc2b39cf2d71d", "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "8754f794016f906d86023195a2c9ef9deb1e024dc07db07a718d4838db7c9ce2", "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "536ce92438412c6e260faab48187242191c539d1f23e92e82d602376f33cb68c"}
+PASS actual OnInit count/refusal, old/new aliases, unrelated indicators and two sensitive counterexamples; native MT5 NOT_RUN
+GENETRIX_BRAND_RENDER: 10682 PASS / 0 FAIL; native MT5 NOT_RUN
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:12:28: warning: 'codecvt_utf8_utf16<char16_t>' is deprecated [-Wdeprecated-declarations]
+   12 |  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> c;auto value=c.from_bytes(s);
+      |                            ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/codecvt:573:7: note: 'codecvt_utf8_utf16<char16_t>' has been explicitly marked deprecated here
+  573 | class _LIBCPP_DEPRECATED_IN_CXX17 codecvt_utf8_utf16 : public __codecvt_utf8_utf16<_Elem> {
+      |       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:540:41: note: expanded from macro '_LIBCPP_DEPRECATED_IN_CXX17'
+  540 | #    define _LIBCPP_DEPRECATED_IN_CXX17 _LIBCPP_DEPRECATED
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:504:49: note: expanded from macro '_LIBCPP_DEPRECATED'
+  504 | #      define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                                 ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:12:7: warning: 'wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>' is deprecated [-Wdeprecated-declarations]
+   12 |  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> c;auto value=c.from_bytes(s);
+      |       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h:34:7: note: 'wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>' has been explicitly marked deprecated here
+   34 | class _LIBCPP_DEPRECATED_IN_CXX17 wstring_convert {
+      |       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:540:41: note: expanded from macro '_LIBCPP_DEPRECATED_IN_CXX17'
+  540 | #    define _LIBCPP_DEPRECATED_IN_CXX17 _LIBCPP_DEPRECATED
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:504:49: note: expanded from macro '_LIBCPP_DEPRECATED'
+  504 | #      define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                                 ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:17:163: warning: 'codecvt_utf8_utf16<char16_t>' is deprecated [-Wdeprecated-declarations]
+   17 | std::string StringSubstr(const std::string&s,int at,int length=-1){const auto &u=HUDNativeUTF16(s);if(at<0||at>=(int)u.size())return "";std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> c;return c.to_bytes(u.substr(at,length<0?std::u16string::npos:(size_t)length));}
+      |                                                                                                                                                                   ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/codecvt:573:7: note: 'codecvt_utf8_utf16<char16_t>' has been explicitly marked deprecated here
+  573 | class _LIBCPP_DEPRECATED_IN_CXX17 codecvt_utf8_utf16 : public __codecvt_utf8_utf16<_Elem> {
+      |       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:540:41: note: expanded from macro '_LIBCPP_DEPRECATED_IN_CXX17'
+  540 | #    define _LIBCPP_DEPRECATED_IN_CXX17 _LIBCPP_DEPRECATED
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:504:49: note: expanded from macro '_LIBCPP_DEPRECATED'
+  504 | #      define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                                 ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:17:142: warning: 'wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>' is deprecated [-Wdeprecated-declarations]
+   17 | std::string StringSubstr(const std::string&s,int at,int length=-1){const auto &u=HUDNativeUTF16(s);if(at<0||at>=(int)u.size())return "";std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> c;return c.to_bytes(u.substr(at,length<0?std::u16string::npos:(size_t)length));}
+      |                                                                                                                                              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h:34:7: note: 'wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>' has been explicitly marked deprecated here
+   34 | class _LIBCPP_DEPRECATED_IN_CXX17 wstring_convert {
+      |       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:540:41: note: expanded from macro '_LIBCPP_DEPRECATED_IN_CXX17'
+  540 | #    define _LIBCPP_DEPRECATED_IN_CXX17 _LIBCPP_DEPRECATED
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:504:49: note: expanded from macro '_LIBCPP_DEPRECATED'
+  504 | #      define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                                 ^
+In file included from /var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:4:
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale:203:
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h:179:1: warning: 'wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>' is deprecated [-Wdeprecated-declarations]
+  179 | wstring_convert<_Codecvt, _Elem, _WideAlloc, _ByteAlloc>::to_bytes(const _Elem* __frm, const _Elem* __frm_end) {
+      | ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h:83:12: note: in instantiation of member function 'std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>::to_bytes' requested here
+   83 |     return to_bytes(__wstr.data(), __wstr.data() + __wstr.size());
+      |            ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:17:213: note: in instantiation of member function 'std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>::to_bytes' requested here
+   17 | std::string StringSubstr(const std::string&s,int at,int length=-1){const auto &u=HUDNativeUTF16(s);if(at<0||at>=(int)u.size())return "";std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> c;return c.to_bytes(u.substr(at,length<0?std::u16string::npos:(size_t)length));}
+      |                                                                                                                                                                                                                     ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h:34:7: note: 'wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>' has been explicitly marked deprecated here
+   34 | class _LIBCPP_DEPRECATED_IN_CXX17 wstring_convert {
+      |       ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:540:41: note: expanded from macro '_LIBCPP_DEPRECATED_IN_CXX17'
+  540 | #    define _LIBCPP_DEPRECATED_IN_CXX17 _LIBCPP_DEPRECATED
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:504:49: note: expanded from macro '_LIBCPP_DEPRECATED'
+  504 | #      define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                                 ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:66:15: warning: unused variable 'JPW_COCKPIT_METRIC_COUNT' [-Wunused-const-variable]
+   66 | constexpr int JPW_COCKPIT_METRIC_COUNT=7,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1;
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:66:42: warning: unused variable 'JPW_ROUTE_SETTINGS' [-Wunused-const-variable]
+   66 | constexpr int JPW_COCKPIT_METRIC_COUNT=7,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1;
+      |                                          ^~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:134:11: warning: unused variable 'JPW_FOCUS_SIGNAL_ROLE' [-Wunused-const-variable]
+  134 | const int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001;
+      |           ^~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/r2-hud-we6wawpg/hud.cpp:134:39: warning: unused variable 'JPW_FOCUS_SIGNAL_COPY' [-Wunused-const-variable]
+  134 | const int JPW_FOCUS_SIGNAL_ROLE=-2000,JPW_FOCUS_SIGNAL_COPY=-2001;
+      |                                       ^~~~~~~~~~~~~~~~~~~~~
+9 warnings generated.
+STOIKUS_FUNCTIONAL_CONTA: 72 DPI/width/collapse/resource cases, 432 checks, 0 failures; native MT5 NOT_RUN
+BRAND_SOURCE_SHA256: a50b1b9932d58f3f1337a62be347614307613f2ef15008b915907b6b25f1092a
+RESOURCES: 8 traced RGB BMPs; approved signature geometry and source hash confirmed; native MT5 NOT_RUN

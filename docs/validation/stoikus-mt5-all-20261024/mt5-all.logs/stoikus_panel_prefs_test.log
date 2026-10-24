@@ -1,0 +1,3 @@
+production_sha256=7b937f0f0f03ff2558ddf333bc26ab8c6a980d39888995b2776e8e0c13340491
+test_sha256=74ecb11cb098ae5a7b32dad76012eefd08ee5b2facb88cd9935ddacdaa13e681
+Stoikus panel prefs checks=1695935 permutations=5040 failures=0; native NOT_RUN

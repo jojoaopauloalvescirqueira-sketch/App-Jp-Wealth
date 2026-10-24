@@ -1,0 +1,62 @@
+{
+  "test": "leverage_live_adapter",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh": "04f1b3ecdac6a0877f11a369d753ce7bdaacc0418457eacf25a1d3ff31224a8f",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047"
+  },
+  "compiler": "/usr/bin/clang++",
+  "kind": "HOST_COMPAT_1_18_1_NOT_MQL5",
+  "script_host_transforms": [],
+  "host_main_transform": {
+    "before": "sample.bar_time==172800 && api_buffer_reads==2,",
+    "after": "sample.bar_time==172800 && api_buffer_reads==4,",
+    "basis": "four captures: Current, Estimated, reanchored Current, H4 rollover"
+  },
+  "script_original_sha256": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+  "script_host_compatible_sha256": "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+  "host_control_reference": {
+    "method": "Decimal precision 50: ATR * sqrt(30) * 1.25",
+    "p0": "100",
+    "initial_atr": "0.4",
+    "corrected_atr": "0.8",
+    "initial_distance_and_percent": "2.7386127875258305672848489140040106697637234749899",
+    "corrected_distance_and_percent": "5.4772255750516611345696978280080213395274469499798"
+  },
+  "original_script_native_execution": "NOT_RUN",
+  "official_mql_judge_revision": "1.21.2-CANDIDATE",
+  "legacy_r2_raw_result": "PRODUCT_FAIL_PRESERVED",
+  "financial_assertions": "UNCHANGED"
+}
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin27.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+{
+  "host_cpp_sha256": "4bd8a55c32138c53ee926199861541dc452c156e16e4c15f6510303693501478",
+  "controlled_stale_cache_cpp_sha256": "18e73d2efea9fdcebc86d970b1f8ace9f4dc2fb6bdd772e92e88855a8948ebe9"
+}
+JPW_Alavancagem_RaizN_Live_Tests PASS: 46 asserts
+HOST_ADAPTER: 57 PASS / 0 FAIL
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN
+CONTROLLED_STALE_CACHE_MUTANT_BEGIN: EXPECTED_HOST_FAILURE
+FAIL: each capture rereads closed ATR, including unchanged H4
+FAIL: new H4 refreshes ATR at newly closed bar
+FAIL: corrected ATR content with unchanged metadata is used
+FAIL: unavailable corrected ATR leaves no Current or stale numeric result
+JPW_Alavancagem_RaizN_Live_Tests FAIL: 4 failures / 42 passes
+FAIL: HOST_CONTRACT_1_18_1 corrected ATR with unchanged series metadata
+FAIL: HOST_CONTRACT_1_18_1 unavailable ATR invalidates current result
+FAIL: native CopyTime/CopyBuffer binding refreshes at H4 rollover
+HOST_ADAPTER: 50 PASS / 7 FAIL
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN
+{
+  "control": "DELIBERATELY_STALE_CACHE_HOST_ONLY",
+  "exit_code": 1,
+  "required_failures_observed": true,
+  "source_originals_modified": false,
+  "result": "EXPECTED_FAILURE_DETECTED"
+}
+CONTROLLED_STALE_CACHE_MUTANT_END
+ORIGINAL_DISTRIBUTED_SCRIPT_NATIVE_BEHAVIOR: NOT_RUN; RAW_R2_PRODUCT_FAIL_PRESERVED
+HOST_COMPAT_EXIT_CODE: 0

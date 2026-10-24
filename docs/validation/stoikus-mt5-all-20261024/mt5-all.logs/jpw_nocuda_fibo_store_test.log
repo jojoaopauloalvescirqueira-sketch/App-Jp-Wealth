@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "checks": 22,
+  "results": [
+    "create+read exact head",
+    "payload retained",
+    "revision update rejected",
+    "revision deletion rejected",
+    "second writer is BUSY without wait",
+    "stale generation changes zero rows",
+    "CAS accepts exact generation",
+    "failed transaction preserves former revision",
+    "rollback creates new revision and pauses",
+    "next revision derives from max",
+    "all revisions survive rollback/resume",
+    "note repetition idempotent",
+    "note immutable",
+    "note deletion refused",
+    "invalid kind not inserted",
+    "SQLite integrity",
+    "separate namespace no account access",
+    "projection save guarded",
+    "head/revision checksum paths present",
+    "nonwaiting transaction policy",
+    "restart retained head",
+    "corrupt database refused"
+  ],
+  "scope": "actual production SQL on host sqlite; bindings and native filesystem NOT_RUN",
+  "native": "NOT_RUN",
+  "sha256": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd"
+}
