@@ -1,0 +1,10 @@
+{
+  "kind": "HOST_SYNTHETIC_NOT_MQL5",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh": "cee189d989148d6cd2f5979bf2a0d4a73a5dd47789c6b86c0cdb2b853f7ec623"
+  }
+}
+HOST_HORIZON: 22 PASS / 0 FAIL
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN
+EXIT_CODE: 0

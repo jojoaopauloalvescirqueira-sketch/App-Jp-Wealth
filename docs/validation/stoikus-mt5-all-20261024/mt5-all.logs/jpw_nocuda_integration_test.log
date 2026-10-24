@@ -1,0 +1,37 @@
+test_chart_view_state_is_context_bound_and_not_saved_on_repaint (__main__.NoCudaIntegration) ... ok
+test_compact_chart_controls_do_not_overlap (__main__.NoCudaIntegration) ... ok
+test_context_identity_and_history_verification (__main__.NoCudaIntegration) ... ok
+test_controller_actions_host (__main__.NoCudaIntegration) ... ok
+test_duplicate_attach_guard_precedes_state_access (__main__.NoCudaIntegration) ... ok
+test_only_explicit_confirm_can_reach_revision_write (__main__.NoCudaIntegration) ... ok
+test_paint_and_view_have_no_study_write_boundary (__main__.NoCudaIntegration) ... ok
+test_pending_anchor_pick_requires_timer (__main__.NoCudaIntegration) ... ok
+test_query_revalidation_on_history_or_session_change_host (__main__.NoCudaIntegration) ... ok
+test_reference_roundtrip_ownership_and_spacing_host (__main__.NoCudaIntegration) ... ok
+test_selected_level_and_quote_are_observations (__main__.NoCudaIntegration) ... ok
+test_source_bar_projection_survives_chart_timeframe_and_decimation (__main__.NoCudaIntegration) ... ok
+test_source_candle_adapter_host (__main__.NoCudaIntegration) ... ok
+test_source_identity_report (__main__.NoCudaIntegration) ... ok
+test_source_period_is_carried_through_read_and_render (__main__.NoCudaIntegration) ... ok
+test_source_signature_host (__main__.NoCudaIntegration) ... ok
+test_store_is_only_revision_write_api (__main__.NoCudaIntegration) ... ok
+test_strict_date_and_all65_level_inputs_host (__main__.NoCudaIntegration) ... ok
+test_transient_query_has_no_store_write_path (__main__.NoCudaIntegration) ... ok
+test_view_offers_all_required_study_controls (__main__.NoCudaIntegration) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 9.786s
+
+OK
+HOST_NOCUDA_COCKPIT_COEXISTENCE: 7872 reserved-HUD, DPI, resize and live-text stability checks
+HOST_NOCUDA_UI_GEOMETRY: 79168/79168 measured bounds, button, full-price and field-preservation checks
+NATIVE_MT5: NOT_RUN; simulated font metrics do not prove DPI rendering
+HOST_NOCUDA_ACTIONS: 41/41 PASS
+HOST_NOCUDA_QUERY_REVALIDATION: 7/7 PASS
+HOST_NOCUDA_REFERENCE_PIXELS: 11/11 PASS
+HOST_NOCUDA_PROJECTION: 4/4 PASS (H1 source on H1/M15 viewports)
+HOST_NOCUDA_ADAPTER: 23/23 PASS
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN
+NOCUDA_INTEGRATION_SOURCES: {'JPW_NoCuda_Core.mqh': '9fed10b552abdd9ff3b8181b81332635270cb85a02393730b9b5b7bfb8988e71', 'JPW_NoCuda_Terminal.mqh': 'ff89bc319bb956c46d4eba30eda24c2cfa7c3c400ece14ab408ac34f00e3b14a', 'JPW_NoCuda_Render.mqh': '82a6afcb2ab0c559824d1c99c0a5ac5d9fa71ce4b35cb4fcfcbd239a21285d33', 'JPW_NoCuda_UI.mqh': '863758d5521e1f77f3d8efea3e2cfeb510971f7a51444756a4bbfe14109f13fe', 'JPW_NoCuda_Store.mqh': 'e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e', 'JPW_NoCuda_Channels.mq5': '536ce92438412c6e260faab48187242191c539d1f23e92e82d602376f33cb68c'}
+HOST_NOCUDA_SIGNATURE: 6/6 PASS (deterministic crypto stand-in)
+HOST_NOCUDA_INPUTS: 92/92 PASS

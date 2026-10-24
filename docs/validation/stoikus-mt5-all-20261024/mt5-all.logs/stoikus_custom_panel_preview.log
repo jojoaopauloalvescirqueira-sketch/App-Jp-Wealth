@@ -1,0 +1,43 @@
+STOIKUS_PREVIEW_INPUTS: {"assets/stoikus/stoikus-assinatura-clara.svg": "646f1383149e184760630d6373e19b21e61e90bf741ae78a212eb72c0ef99b67", "assets/stoikus/stoikus-assinatura-escura.svg": "2a3cd0ed124a2b217197144b3ba86bb394d6db3a261077693412c58fe1457181", "docs/preview/stoikus-painel-personalizavel/index.html": "9e8f0379eb98c48d4c73501a0655ddc1da2191f8db9a5182735287c91f204013", "tools/stoikus_custom_panel_preview_test.mjs": "658afc6a6551194dec701e40d0c6235bd3b94ba8d49ed8f2432b23a9033fdedb"}
+STOIKUS_PREVIEW_NODE: /private/tmp/claude-501/-Users-joaoalvescirqueira-Library-Mobile-Documents-com-apple-CloudDocs-SOFTWARES---EAS-JP-Wealth-OS/c2259ea0-a6ac-4c03-9f93-66f40ba0edb7/scratchpad/venv/lib/python3.9/site-packages/playwright/driver/node
+STOIKUS_PREVIEW_RUNTIME: {"browser": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing", "package": "/private/tmp/claude-501/-Users-joaoalvescirqueira-Library-Mobile-Documents-com-apple-CloudDocs-SOFTWARES---EAS-JP-Wealth-OS/c2259ea0-a6ac-4c03-9f93-66f40ba0edb7/scratchpad/venv/lib/python3.9/site-packages/playwright/driver/package", "source": "python-playwright"}
+{
+  "status": "PASS",
+  "date": "2026-10-24T16:47:48.035Z",
+  "browser": "148.0.7778.96",
+  "fingerprints": {
+    "docs/preview/stoikus-painel-personalizavel/index.html": "9e8f0379eb98c48d4c73501a0655ddc1da2191f8db9a5182735287c91f204013",
+    "tools/stoikus_custom_panel_preview_test.mjs": "658afc6a6551194dec701e40d0c6235bd3b94ba8d49ed8f2432b23a9033fdedb"
+  },
+  "scope": "Standalone browser preview only; native MT5 NOT_RUN",
+  "checks": [
+    "default selection/order, width 280, background 30%, brand, no load write",
+    "cancel preserves selection/order and storage",
+    "apply changes order, selection, width and only background alpha; reload restores chart preference",
+    "empty selection persists and retains all three shared accesses",
+    "shared NoCuda access and minimize/panel collapse preserve anchor draft and preview phase",
+    "restore default requires Apply; personalizer minimize preserves draft",
+    "all seven metrics selectable and reachable through panel pagination",
+    "six Conta sections, visible reasons/details, tab state retention and Escape",
+    "header drag moves panel within chart",
+    "far-right drag/collapse retains clickable restore within chart after small-area change and 320px viewport resize",
+    "320/375/1280 px × light/dark × Current/Estimated/N/A; small chart pagination; complete long numbers at 14 px",
+    "out-of-range geometry rejected without closing or saving",
+    "denied write clearly reports session-only apply and preserves prior stored preference",
+    "invalid stored record preserved on read; explicit Apply affects only the preview chart key"
+  ],
+  "screenshots": [
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/desktop-default.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/personalizer-draft.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/empty-selection.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/nocuda-confirmation.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/account-system.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/collapsed-restore-small-chart.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/collapsed-restore-mobile-resize.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/small-long-light.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/small-long-dark.png",
+    "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-stoikus-custom-panel-preview/desktop-dark-estimated.png"
+  ],
+  "errors": []
+}
+Native MT5 execution NOT_RUN; isolated synthetic preview only.

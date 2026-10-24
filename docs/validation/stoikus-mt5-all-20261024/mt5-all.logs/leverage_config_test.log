@@ -1,0 +1,27 @@
+{
+  "test": "leverage_config",
+  "kind": "HOST_SYNTHETIC_NOT_MQL5",
+  "compiler": "/usr/bin/clang++",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh": "d9ede1cc0bcda749c0245f136331aa08efc0d71760873a8b629eb4fc7456b61f",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh": "50dcb401e51cf176a404846add48d59d14ce2e75c78c30b5fd2dd67abbfa444e",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1"
+  },
+  "limitations": "Synthetic file primitives and ASCII fixtures; no native MT5, interprocess OS lock, Unicode codec or crash durability evidence."
+}
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin27.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-raizn-config-synthetic-tnmgcbqm/config.cpp:29:18: warning: unused variable 'EMPTY_VALUE' [-Wunused-const-variable]
+   29 | constexpr double EMPTY_VALUE=2147483647.0;
+      |                  ^~~~~~~~~~~
+1 warning generated.
+JPW_Alavancagem_RaizN_Config_Tests PASS: 72 asserts
+INJECTED_FAULT: post-FileMove destination readback FileOpen refused
+POST_MOVE_READBACK_FAULT: IO_ERROR; caller generation=1; later loaded generation=2; prior slot bytes preserved
+HOST_CONFIG: 87 PASS / 0 FAIL
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN
+HOST_CONFIG_RESULT: PASS; EXIT_CODE: 0

@@ -1,0 +1,4 @@
+PASS daily guide: two charts, all 20 inputs, uncertainty and preserved data
+PASS hosted preview: real lazy bytes despite 307/injection; missing/MIME/hash/size refused without HTML fallback
+PASS real R5 kit/pin/preview downloads; malicious base ignored; network kit/pin missing, same-size corruption and truncation refused
+PASS real browser: daily path, keyboard disclosures, input tables, help, mobile and no writes
