@@ -337,6 +337,12 @@ em execução, e integração nova exige contrato e autorização. O botão
 "Stoikus ▾" do Planejamento patrimonial é exceção de nome do aplicativo web e
 segue a rota do Planejamento.
 
+**Aviso (24/10/2026):** o "Mapa ativo" de `mt5/jpw-alavancagem-atual/AGENTS.md`
+descreve GENETRIX 1.20.0 e cita `JPW_Genetrix_Monitor`/`JPW_Genetrix_Supervisor`,
+renomeados para `JPW_Stoikus_*` na 1.22.0. O estado vigente é 1.23.0/C5, no topo
+do `README.md` da pasta. A reescrita fica para a próxima versão, porque o
+arquivo está no ZIP selado do C5 ([plano](../superpowers/plans/2026-10-24-stoikus-pasta-mt5-stoikus.md)).
+
 ## Fronteiras compartilhadas e verificação dirigida
 
 | Contrato e caminhos reais | Entradas, saídas e consumidores | Invariante/risco e testes pertinentes |
