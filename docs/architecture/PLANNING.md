@@ -40,7 +40,7 @@ Fonte: [plano humano aprovado](../superpowers/plans/2026-10-21-planning-consolid
 
 ## Controles e verificação visual
 
-Stoikus é um menu vertical de13ações em5grupos: Contas; Registros mensais; Correções; Consulta e relatórios; Reinício. Usa limite320px/gutter12px/rolagem disponível, posição abaixo ou acima sem encobrir o acionador, setas/Home/End/Enter/Escape e Tab. Fecha por ação, interação externa, troca de área ou diálogo, sem alterar seleção implícita de contas ou contratos dos comandos.
+Stoikus é um menu vertical de13ações em5grupos: Contas; Registros mensais; Correções; Consulta e relatórios; Reinício. Usa limite320px/gutter12px/rolagem disponível, posição abaixo ou acima sem encobrir o acionador, setas/Home/End/Enter/Escape e Tab. Fecha por ação, interação externa, troca de área ou diálogo, sem alterar seleção implícita de contas ou contratos dos comandos. O nome "Stoikus" deste menu é exceção documentada: o menu pertence ao aplicativo web e não ao projeto Stoikus para MT5 ([decisão](../decisions/2026-10-22-stoikus-escopo-projeto-independente.md)).
 
 Fechar mantém nome acessível e alvo44×44 com SVG simétrico. Ver sua previsão conserva ordem e destino, centralizando conteúdo nos dois eixos. [Contrato visual](../governance/UI-VISUAL-QUALITY.md) exige medir conteúdo interno, além da caixa. Teste inicial `tools/ui_visual_quality_test.py` compõe standard/full e declara cobertura/limites. Fórmulas, dados, rascunhos e confirmações existentes permanecem sob contratos abaixo. [Execução e provas](../validation/planning-controls-visual-quality-20261021/README.md).
 
