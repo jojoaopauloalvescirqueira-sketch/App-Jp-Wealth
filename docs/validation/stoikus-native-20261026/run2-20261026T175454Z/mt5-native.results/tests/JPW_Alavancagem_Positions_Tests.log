@@ -1,0 +1,46 @@
+JM	0	15:02:57.352	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: whole-account oracle 29000 USD
+CJ	0	15:02:57.353	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: all positions use frozen production inputs
+EJ	0	15:02:57.353	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: hedging directions do not compensate; multisymbol breakdown
+ID	0	15:02:57.353	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: 1.10x + 0.55x + 1.25x reconcile to 2.90x
+GE	0	15:02:57.353	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: wrong total refuses partial breakdown
+CQ	0	15:02:57.354	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: invalid instrument never publishes subtotal
+ML	0	15:02:57.354	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: duplicate ticket refuses breakdown
+QS	0	15:02:57.354	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: USC equity unit normalization
+NG	0	15:02:57.354	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: USC contract 1000 gives 0.60x without price scaling
+HE	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: USC cent contract 100000 x 0.01 gives same 0.60x
+HK	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: unverified USC scale remains unavailable
+FJ	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: remaining volume after partial close controls contribution
+HG	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: nonpositive equity is unavailable, not zero exposure
+PE	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: old complete quote remains Estimated with source age
+CN	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: Estimated breakdown preserves same quote
+ON	0	15:02:57.355	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: missing quote is not a zero contribution
+CL	0	15:02:57.356	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: inverse conversion reused from pure core
+NQ	0	15:02:57.357	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: two-step conversion and oldest leg are retained
+IE	0	15:02:57.358	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: two-step frozen route reconciles
+DH	0	15:02:57.358	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: failed conversion doesn't leak former amounts
+HJ	0	15:02:57.358	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: tiny nonzero exposure cannot reconcile to artificial zero
+CG	0	15:02:57.359	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: live catalog stages without EA or a positive SL
+NI	0	15:02:57.359	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: contributions reconcile before acceptance
+EO	0	15:02:57.360	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: catalog and financial contribution reuse accepted sample identity
+RN	0	15:02:57.360	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: missing SL does not invalidate leverage
+FL	0	15:02:57.360	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: view lookup never mints samples and rejects changed chart context
+ML	0	15:02:57.361	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: enumeration order does not change inventory identity
+CL	0	15:02:57.361	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: SL update invalidates catalog overlay consistency
+QP	0	15:02:57.361	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: selection is ticket plus identifier
+LQ	0	15:02:57.361	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: shrinking inventory stages 3 to 2
+NF	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: accepted shrink removes closed position instead of leaving ArrayCopy tail
+HM	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: confirmed empty inventory stages zero
+LF	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: accepted shrink 2 to 0 stays distinct from unavailable
+PK	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: netting catalog permits absent optional prices
+EH	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: failed finance keeps full ticket, volume and netting inventory visible
+OI	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: catalog expires independently of a financial number
+DF	0	15:02:57.362	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: mismatched contributions cannot be published as complete
+QG	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: catalog survives refused numerical reconciliation
+QF	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: valid netting contribution stages aggregate
+MJ	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: different accepted account total does not reuse staged numbers
+KI	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: valid contribution can be re-staged
+LN	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: Estimated quality and same source time propagate without becoming Current
+JH	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: stage before account switch
+HL	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: account switch clears visible and staged old rows
+RO	0	15:02:57.363	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	PASS: expiry/context invalidation does not fabricate a zero catalog
+RR	0	15:02:57.364	JPW_Alavancagem_Positions_Tests (EURUSD,H1)	JPW Positions: 45 PASS / 0 FAIL

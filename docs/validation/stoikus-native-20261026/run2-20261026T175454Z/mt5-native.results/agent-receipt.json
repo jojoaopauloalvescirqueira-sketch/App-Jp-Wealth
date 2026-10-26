@@ -1,0 +1,969 @@
+{
+    "schema":  "JPW_STOIKUS_NATIVE_AGENT_RECEIPT_V1",
+    "run_id":  "20261026T175454Z",
+    "scope":  "all",
+    "started_utc":  "2026-10-26T17:54:57.2487724Z",
+    "finished_utc":  "2026-10-26T18:08:09.2642002Z",
+    "agent_sha256":  "6ac065cc777febb0837bea54d700226b921953ea860fa575d6175631c99007d8",
+    "core_sha256":  "2dba568c184e31f1e28814c706d3e6a9459fe4e45524e33b52db14c0776ed542",
+    "environment":  {
+                        "os":  "Microsoft Windows NT 10.0.26300.0",
+                        "powershell":  "5.1.26100.9711",
+                        "user":  "JOOPAULOCIR1828\\mt5lab",
+                        "session_id":  2,
+                        "metaeditor":  {
+                                           "path":  "C:\\MT5Lab\\runs\\20261026T175454Z\\terminal\\MetaEditor64.exe",
+                                           "sha256":  "aa95f9d3e7406591a41c3a26a1a9b8109914897a206dec7139d4795217ba2ab0",
+                                           "bytes":  69856640,
+                                           "file_version":  "5.0.0.6286",
+                                           "product_version":  "5.0.0.6286",
+                                           "company":  "MetaQuotes Ltd.",
+                                           "pe_machine":  "X64"
+                                       },
+                        "terminal":  {
+                                         "path":  "C:\\MT5Lab\\runs\\20261026T175454Z\\terminal\\terminal64.exe",
+                                         "sha256":  "46b37c22cf9adf903d44ffb5590b892eeff1e5a6a5a852ebef95c6edd91f60be",
+                                         "bytes":  129080448,
+                                         "file_version":  "5.0.0.6286",
+                                         "product_version":  "5.0.0.6286",
+                                         "company":  "MetaQuotes Ltd.",
+                                         "pe_machine":  "X64"
+                                     }
+                    },
+    "payload":  {
+                    "zip_sha256":  "8331217e921e1e836c890247a2755a3abff6bc1894270dcfff03d7f371da17e6",
+                    "entries":  121,
+                    "inflate_bytes":  2395607,
+                    "validation":  "PASS"
+                },
+    "standard_includes":  [
+                              {
+                                  "path":  "Math/Stat/Normal.mqh",
+                                  "sha256":  "f233b1348aed9608efdfa68035c584351b1d0faafd126fb758c2dccb59f464f9"
+                              },
+                              {
+                                  "path":  "Canvas/Canvas.mqh",
+                                  "sha256":  "d4bd7c6916104ce6ceabd31fe119e1b283658d4c639ec8b62171a2805da84c48"
+                              },
+                              {
+                                  "path":  "Math/Stat/Math.mqh",
+                                  "sha256":  "be94394defd24e590f09b3cfac53b925ccea47aee7e24939c71f40dee0a8b795"
+                              },
+                              {
+                                  "path":  "Files/FileBin.mqh",
+                                  "sha256":  "18ea9c6a3734d19e456c49594255b75417a63dcea1265219a0373b46aa197b12"
+                              },
+                              {
+                                  "path":  "Controls/Rect.mqh",
+                                  "sha256":  "c6a94653554997665b86a3dde619ee5e2e04acf4fc0165abb1022ac858ab9f54"
+                              },
+                              {
+                                  "path":  "Files/File.mqh",
+                                  "sha256":  "8d61e0e660e008d87d686d5b20fcd7ec2d294eb3b6152022d214d55386fbf25f"
+                              },
+                              {
+                                  "path":  "Object.mqh",
+                                  "sha256":  "dfad4fdb6d1bf47cf43fcbc2882e52979459f17a776f75f250a7c32d0623ab35"
+                              },
+                              {
+                                  "path":  "StdLibErr.mqh",
+                                  "sha256":  "04bb2c47b1b04dceb052e6dba1f85e0330c53abc602f341e2ea95ea1498ab28b"
+                              }
+                          ],
+    "golden":  {
+                   "before_sha256":  "ad6a7b6c17d272de86860ddbdc4b8fc334414df6ec7cda64d44fdb844737aec3",
+                   "after_sha256":  "ad6a7b6c17d272de86860ddbdc4b8fc334414df6ec7cda64d44fdb844737aec3",
+                   "files":  1220
+               },
+    "compile":  [
+                    {
+                        "path":  "MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5",
+                        "source_sha256":  "5d3237f6e01da8409db0c3a76228930e9eb306824e79b1d84249fe4297958a5f",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Observer.log",
+                        "log_sha256":  "60a715a8a45d9f77a7a601818ddfde4884f27c4adbf153d5d2eec7eb457ab0d7",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  20405,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "e6573dae0dc2ac5e697321e1af2f4ec96d735667b08436d9ddb930182cc790f7",
+                        "ex5_bytes":  289980
+                    },
+                    {
+                        "path":  "MQL5/Experts/JPWealth/JPW_Stoikus_Accountant.mq5",
+                        "source_sha256":  "bc93ccf06111a4ba8751e9c8c49cb512f39221248dc87763aa0275b46ed233e8",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Stoikus_Accountant.log",
+                        "log_sha256":  "96e0058f1ca721b153f92ffa8bd3d50381837a033d33072f374b89c07bc852f6",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  10397,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "359be853852993ae7109002877fec57db557162b6d894906154e254338f81e1d",
+                        "ex5_bytes":  102522
+                    },
+                    {
+                        "path":  "MQL5/Experts/JPWealth/JPW_Stoikus_Monitor.mq5",
+                        "source_sha256":  "6a223efa0a69e2a9891f83e014c8a01ea8ed0ca86b26e019e45d664f28fafa1e",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Stoikus_Monitor.log",
+                        "log_sha256":  "9a0e8a2687613fc93df5552ff829a2f8af9d9d08684753a8cce62704311260a7",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  31248,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "05a4b3e4fa8738a81de83f8e456d027192173d8b8d34955d5052908ff2c59836",
+                        "ex5_bytes":  451868
+                    },
+                    {
+                        "path":  "MQL5/Experts/JPWealth/JPW_Stoikus_Supervisor.mq5",
+                        "source_sha256":  "006f58fb84ac2121589a374f5c2ac1d827930059741f7793897c469bea570514",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Stoikus_Supervisor.log",
+                        "log_sha256":  "883f865cfa28a5f800265ecc1025418641cf6429288356762562db03fb92f723",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  7686,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "175ec71f39f500706a978188c87c125cb67d88f649d3349c9c2e4946029fb825",
+                        "ex5_bytes":  122514
+                    },
+                    {
+                        "path":  "MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5",
+                        "source_sha256":  "8754f794016f906d86023195a2c9ef9deb1e024dc07db07a718d4838db7c9ce2",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Atual.log",
+                        "log_sha256":  "162418bc4a4e41461f82a322ad71d92a545daa022e96967993244e95cdd28a8d",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  61558,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "40affcb4041d8ab7a3dd1f8f96b38b97340e933bc174879ff572473cada4ea7b",
+                        "ex5_bytes":  1126954
+                    },
+                    {
+                        "path":  "MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5",
+                        "source_sha256":  "536ce92438412c6e260faab48187242191c539d1f23e92e82d602376f33cb68c",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_NoCuda_Channels.log",
+                        "log_sha256":  "756da4039affdeb844cf8962f5ef1bfc410dda8144b90f8fad6a4cd0285c80cb",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  23136,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "71624e14bb2f648f0b986c882f4b0f0f08c3e591bb46b93bfc69e2d89935dc42",
+                        "ex5_bytes":  517008
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Consultar_MDD.mq5",
+                        "source_sha256":  "94158b95e02e194480fb87b74a6fbb91fc8cd73c7ff4b9c047ae34976009901b",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Consultar_MDD.log",
+                        "log_sha256":  "a83e19e9d62b56c497c803c97634669397df897abb7f879d47d8f741fe8d9d14",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  4679,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "e367255169e2ed99827ce88839ef312165e4155958ee8612f986cebb10ce61d7",
+                        "ex5_bytes":  42168
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5",
+                        "source_sha256":  "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Diagnostics_Tests.log",
+                        "log_sha256":  "bfe76e478ec54f4b3e75c4245b523d044afa178d8a6fe9792bc828cecbdc3099",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3727,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "5c17d4ab5785e7f1446f45b3a1a74be5b7c1d95b4622ef85b4ec5352e9331ece",
+                        "ex5_bytes":  38232
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Store_Tests.mq5",
+                        "source_sha256":  "8b50f01a9e9deea1dc29b12cad6ee70012b49abda84bb9dae4e81a18e19184bb",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Genesis_Store_Tests.log",
+                        "log_sha256":  "7c21b5f1402ad70d3f9bdbd2fd045b8dcfce16fe48fb7497d3c77f770f7a1902",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  4326,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "9b60a8b7ed6ab0b609f0d472f3b4f93709c4c4568c663efe59c0e8d04b1e6878",
+                        "ex5_bytes":  50780
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Genesis_Tests.mq5",
+                        "source_sha256":  "bbec66651e0535fb7e4b52bfddb130295a439e32ff9019aac982ebab94891ae2",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Genesis_Tests.log",
+                        "log_sha256":  "1299b59434193830a32e6c6348a8823d6a8cd503d460ae92d90e916cf1822d7b",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2530,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "2f13c9da1eb560ac6fa3ac4bc6f397701dc45deb84693a80d493733b979293ac",
+                        "ex5_bytes":  15798
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Metrics_Tests.mq5",
+                        "source_sha256":  "ad92555cc30c23fdd9f9c93ac0c5ddca79c79365398707a4637ffee655d4e6d8",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Metrics_Tests.log",
+                        "log_sha256":  "2353f74984878a754505121ed63853fd041e512f3e6181adc9c6afbd6b019027",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  4374,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "9dbac27bdf158c1f3b3c5fce94948c17ac5a8a4f6a7fc7fd50df5e379e538d90",
+                        "ex5_bytes":  58740
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Observer_Tests.mq5",
+                        "source_sha256":  "e20241aecbb6598a41f048de75c0fad50190cf9a78ca19cc863e65f696672c72",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Observer_Tests.log",
+                        "log_sha256":  "6a4d42d63bd65296785236bbb77818300f6194cb1fd2ee8da5745daefeef12eb",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2991,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "8c58addbb2a2de1c63dae790da36682c11d10b0f80b04bbabcd6ae3e94d257c1",
+                        "ex5_bytes":  36906
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Panel_Tests.mq5",
+                        "source_sha256":  "ddc970066a98bb16dff88119794e91af947973cd5ca897b4e86d899dee0c648b",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Panel_Tests.log",
+                        "log_sha256":  "6fe8ff4f9dde64b9a59a7f8a84be8e191d0a9b40eb7fa5b1b663d0d41f3c278a",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  1815,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "da89ca1771bbe2cc2ba3eb91d71f98be2cf50845cc73d8210d76d510d9a9c354",
+                        "ex5_bytes":  9404
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5",
+                        "source_sha256":  "baa3f9f47a8e047fe626fa22af696301d4210a7ebf61be735507c29316d7ec34",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Positions_Tests.log",
+                        "log_sha256":  "13dff1e4f166e801bd38e024b3d8226ff08450f1e46a9b02385fc7ee620a1f48",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3439,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "8cced64e348866963d8cfef3c5700d1c3f5bd41694e9196a0f29664f7069b223",
+                        "ex5_bytes":  52520
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Profile_Tests.mq5",
+                        "source_sha256":  "8e247c0457ae8b9aca78d8151516f7864859675fe8f0c624cb0800c2717dfa7a",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Profile_Tests.log",
+                        "log_sha256":  "b39d3cb916c54de31cb823626091d5defd5fb933479cd07294f004ca55925ecb",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  4159,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "0ffa58f73d56795f9564b9739e5637848b15136f7c3c2391408e8a1dc86d8323",
+                        "ex5_bytes":  38822
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Config_Tests.mq5",
+                        "source_sha256":  "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_RaizN_Config_Tests.log",
+                        "log_sha256":  "c81cbe56e5979692e4d14e2a07976772abda0f94da63bac328144e8829f81b40",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  8511,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "8339a56aad112cbf286c6b888b80903d1ba381aa45e0a3aef0d60391bbebf4ea",
+                        "ex5_bytes":  105944
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5",
+                        "source_sha256":  "53779e5d00dc6f9e903dca760406173182025bd903196cc6029eb38b3e11fb7a",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_RaizN_Factor_Tests.log",
+                        "log_sha256":  "50b67204a6e97a779cb894547d5e45e1eb8f3472db9c351516c448248c3a2f70",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  5913,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "0121093e24fcd618cebdfcee08c22fce733c09f6cc1b94a82bb84d181f31de91",
+                        "ex5_bytes":  53698
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Horizon_Tests.mq5",
+                        "source_sha256":  "55c9fd37a7d8829ddda11955b888eb9722179d01e8607edb769a78a9a0a1071e",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_RaizN_Horizon_Tests.log",
+                        "log_sha256":  "6a30a738ce475921777b86e06ac8e3a180656cd03e56e3c088720ce545a44ce4",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3250,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "eda8e5dfb000ca79969bd6b31848508dd972fbc5be7535f643cbf0b6f22ba93a",
+                        "ex5_bytes":  20658
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Live_Tests.mq5",
+                        "source_sha256":  "3153a9a250fe389df563c858658ffbf60d159b7d13579ef5ab456539cfe71047",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_RaizN_Live_Tests.log",
+                        "log_sha256":  "2dde54bcbe1bdd221d3738c75e63dc45753f1353e38f58fa2fc9848e0cf83011",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2586,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "f012e51063f1836a883c00d9eb1eec6ef71a31f5edadab661cbba1499cfefb7d",
+                        "ex5_bytes":  23752
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Store_Tests.mq5",
+                        "source_sha256":  "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_RaizN_Store_Tests.log",
+                        "log_sha256":  "7b15a862e484485c9a5ef2b02ba56f13c640d243e8b64f44af5c1cfce862523a",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  8187,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "2480cd4de564f58e386811ea03376d3d7ab1956983800646201e49643fa86572",
+                        "ex5_bytes":  100274
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Tests.mq5",
+                        "source_sha256":  "e61a63c5c203c10991301fb3ca4867578d695f1db0db52fc2538ee99d939a6dc",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_RaizN_Tests.log",
+                        "log_sha256":  "c16f05165ddfa14c099affc8c0f49ebe7228592f27bf7057c966534fa1c68d13",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  1612,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "96340a7178feef0c09d9adb5525459bdb2821ce99293f59c7a857927b3a7e294",
+                        "ex5_bytes":  7440
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_StopRisk_Tests.mq5",
+                        "source_sha256":  "2b1a92faf049a187b65d94e060ec2270cdd140477251935d3a7639b89429e1a4",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_StopRisk_Tests.log",
+                        "log_sha256":  "4c578ff8cfce6cc52cd3c4140fffdf45903e9519c02ffcd52315e1cc4a0d226b",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3998,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "ca46954d454cffc03b0c9b247923b2044ac1d284dee0a84343f525e27195c590",
+                        "ex5_bytes":  51012
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Tests.mq5",
+                        "source_sha256":  "db1e18181fe075f9892084076600a5f8b53cdb8970396f6d87f54165864d225d",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Tests.log",
+                        "log_sha256":  "b44f7773ad2f91ca4773241b81716303c3ccc2983b7ea57b82b625e6e733c281",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  4589,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "d00ab49f84b03985969d85c6ef1bc511f85a1a9c70a77dbc71fd389291b91fba",
+                        "ex5_bytes":  63678
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Alavancagem_Verificar_USC.mq5",
+                        "source_sha256":  "3ef2ada9c413571d0790422d3a5deef6b3eaaaf0aafe46e0c37467a6de6eb11d",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Alavancagem_Verificar_USC.log",
+                        "log_sha256":  "005e0218500d6acec006f26fe70059a6d2b60d7946ce2ba3ed24a9d2621d0c45",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  6031,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "7f702ace5706fda134d65293a21e06a75e12e7e1424c1701ba9fd2437dce0068",
+                        "ex5_bytes":  70286
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5",
+                        "source_sha256":  "24fe2d818ea18a88e8688133a3295592ff064d60a1e8868a184e7b0100bd15f6",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_NoCuda_Core_Tests.log",
+                        "log_sha256":  "398de50887971935f07194341132a6b816d55741b5f637fbddb1feb417be0681",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2627,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "c07065c91c1c35b81409a8e70dec78fdccf56c7fa3dbc847fa6a5adcf85ecacc",
+                        "ex5_bytes":  10152
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5",
+                        "source_sha256":  "e8b0c1e87ebbb240e9d3e583097ed746cb873231bdcbd65a1eba26b437c49f61",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_NoCuda_Fibo_Lab.log",
+                        "log_sha256":  "3e39ffbf765060e2aed3ff9626bafdf73b85a2b1840c86fc8af515746cefa3be",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3464,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "e41f5dd0133747e824770943713b034b44f795e90e6a0f6533915d4d84ad6bcb",
+                        "ex5_bytes":  34422
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5",
+                        "source_sha256":  "a70aae42b8be574654b5b306bfa7515ee79a37b264ee7b0b3d026cb48bc6cf24",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_NoCuda_Fibo_Tests.log",
+                        "log_sha256":  "a9c388cae823159f490fca72a2b9b3c4ef2c5c28290ecc276e93f29a6c8c81c3",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3396,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "35e68061a613ad59a7966846611f8549742c807a486be3ef34847a24b9fb8db4",
+                        "ex5_bytes":  31424
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5",
+                        "source_sha256":  "721774eadb99e86df51c459004b1e33575202e5bb25cce4a8cca523ebea69c0a",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_NoCuda_Projection_Tests.log",
+                        "log_sha256":  "e1e779cffa20107e7d8112b4520274b6923637634af27f1520136690f0dd324c",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2592,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "c65796ffe4af4d4a43fdb0df9d8ba692082c9981ec7483dd48a214a4db81e1d7",
+                        "ex5_bytes":  19682
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5",
+                        "source_sha256":  "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_NoCuda_Store_Tests.log",
+                        "log_sha256":  "96f0db7c87dc2ae2b10abf272e7f8b51cef16a1f2b727aa6929579475c51bff7",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3014,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "c3c411670d8287c94ff8b741a44c5f0421bc11a8b05c52c138a68d99c5fa0975",
+                        "ex5_bytes":  46314
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5",
+                        "source_sha256":  "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_PersonalHistory_Tests.log",
+                        "log_sha256":  "a19c2fa4fc19ae4bedb90465dbace5570bc20b7e0b35e2a99162b4118a5b0dcf",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2635,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "6cdb44bbe2aba05a8b768542c8229cd2844f8950e5becfdfacb99163e8cb43ea",
+                        "ex5_bytes":  19456
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5",
+                        "source_sha256":  "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_SignalCopy_Tests.log",
+                        "log_sha256":  "a2824ff018631baa0d439267af009404d431ed9bfe91650ede0e1777f223c753",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  4450,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "43c4997e1952aa19578b1b2c6ab70f2e2cc7665fd97027859964461d06626bb0",
+                        "ex5_bytes":  74760
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Stoikus_Abrir_Paineis.mq5",
+                        "source_sha256":  "0c01efa287bc9a814aa67cd49f40b343583c643207f4857134c540de047a9635",
+                        "status":  "FAILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Stoikus_Abrir_Paineis.log",
+                        "log_sha256":  "4dcd92edbcc06c4b5609f0f312df153712be748aa2642d7d6be14f87f008db28",
+                        "log_result":  {
+                                           "accepted":  false,
+                                           "reason":  "UNRECOGNIZED_OR_FOREIGN_BODY_LINE",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  2376,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  null,
+                        "ex5_bytes":  null
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Stoikus_Ledger_Tests.mq5",
+                        "source_sha256":  "18b2678bf6c1d094dfc2b47e0879e09a46a2d8ca68d0efce2cc05868ae2651f2",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Stoikus_Ledger_Tests.log",
+                        "log_sha256":  "3bd265ec2887668c3e0961d29fac14e3f336c0a9e9c984249197187c184b69fa",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3240,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "5f6c51d234e211bec3cbd36d3557b691d55906494aee1594df29bed09fbd21ef",
+                        "ex5_bytes":  36718
+                    },
+                    {
+                        "path":  "MQL5/Scripts/JPWealth/JPW_Stoikus_Risk_Tests.mq5",
+                        "source_sha256":  "100a833f2ce488df1306cbee5e1dc796aed2ad6e61970736542f4c574af232e1",
+                        "status":  "COMPILED",
+                        "exit_code":  1,
+                        "timeout_action":  null,
+                        "log":  "compile/JPW_Stoikus_Risk_Tests.log",
+                        "log_sha256":  "71ef7d1ee98f8767abf422be10f1ba3e1ca1e18441d441a86e22b74c0b8ecf13",
+                        "log_result":  {
+                                           "accepted":  true,
+                                           "reason":  "COMPLETE_EXCLUSIVE_ZERO_ERROR_ZERO_WARNING_LOG",
+                                           "errors":  0,
+                                           "warnings":  0,
+                                           "elapsed_ms":  3141,
+                                           "cpu":  "X64 Regular"
+                                       },
+                        "ex5_sha256":  "179ba4b3af616a5a3d46ad9dd2f866f45cf419d01c9fd56a69fc8b85eafb56f1",
+                        "ex5_bytes":  37276
+                    }
+                ],
+    "tests":  [
+                  {
+                      "script":  "JPW_Alavancagem_Diagnostics_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  30.4,
+                      "excerpt":  "tests/JPW_Alavancagem_Diagnostics_Tests.log",
+                      "excerpt_sha256":  "d909da96f5b27976fa57f280322899a1154cc0798bdc926ffed729b770884cbd",
+                      "journal":  "tests/JPW_Alavancagem_Diagnostics_Tests.journal.log",
+                      "journal_sha256":  "68a7f88f2dfeee2177fad80480a1113edd6e21d6c6d7f792e940ed90eead3704"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Genesis_Store_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  14.9,
+                      "excerpt":  "tests/JPW_Alavancagem_Genesis_Store_Tests.log",
+                      "excerpt_sha256":  "f8283f3105cb36bb17aa8b45378d1f04dd11851928848a3f265f027de811b153",
+                      "journal":  "tests/JPW_Alavancagem_Genesis_Store_Tests.journal.log",
+                      "journal_sha256":  "21feb3bf1bd802a1e1e1d3bfc5c75ccf9a0b2f29c763f1cd0954b6c3f362f3c7"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Genesis_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  15.7,
+                      "excerpt":  "tests/JPW_Alavancagem_Genesis_Tests.log",
+                      "excerpt_sha256":  "81e59d60539ed36ede9ebd3ceabddbab42b0165f0829e6e4e3028dd5e3c34b85",
+                      "journal":  "tests/JPW_Alavancagem_Genesis_Tests.journal.log",
+                      "journal_sha256":  "d11017a33ff0672d9d4142b9db06115907192967649ed830e5da9c5105627a4b"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Metrics_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  15.9,
+                      "excerpt":  "tests/JPW_Alavancagem_Metrics_Tests.log",
+                      "excerpt_sha256":  "8f521be85d8716b2d4f1a9ce5bcc6097d246d6a2c9299d493761b278a1722340",
+                      "journal":  "tests/JPW_Alavancagem_Metrics_Tests.journal.log",
+                      "journal_sha256":  "9e2313985828c479b0be2c5a2088b44c798113c3f372fc650814a3642104a8c5"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Observer_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  18.3,
+                      "excerpt":  "tests/JPW_Alavancagem_Observer_Tests.log",
+                      "excerpt_sha256":  "e6b72ad80f861d4b7dd033422c130d5271d6687aef35a6ff6a648420b45fefd3",
+                      "journal":  "tests/JPW_Alavancagem_Observer_Tests.journal.log",
+                      "journal_sha256":  "9829007dc73e3e756941d32cb709f41ced2ca5173d859119706a667b129345b4"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Panel_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  15.6,
+                      "excerpt":  "tests/JPW_Alavancagem_Panel_Tests.log",
+                      "excerpt_sha256":  "43dfe17c83d90a9b1e376c52c56f81510c874030a3b453115a09b2de5a127144",
+                      "journal":  "tests/JPW_Alavancagem_Panel_Tests.journal.log",
+                      "journal_sha256":  "9f2ec84d9bf7acc5431ed5f1f7a173033b70f2930db583abdcdbdf99035c649b"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Positions_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  15.1,
+                      "excerpt":  "tests/JPW_Alavancagem_Positions_Tests.log",
+                      "excerpt_sha256":  "074d88dc0e08f8ef7b2c0ca3a60e379e34f4993b130e1152f2ff925c5fbc3c0e",
+                      "journal":  "tests/JPW_Alavancagem_Positions_Tests.journal.log",
+                      "journal_sha256":  "36327bc5bff774bac650125f77f278d591124138dd3d8739985402642a26049d"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Profile_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  14.8,
+                      "excerpt":  "tests/JPW_Alavancagem_Profile_Tests.log",
+                      "excerpt_sha256":  "2d16cb1d872551438d09a8d3cca35fc9224796035977eda8cb639cd580c989bf",
+                      "journal":  "tests/JPW_Alavancagem_Profile_Tests.journal.log",
+                      "journal_sha256":  "57843ac4563da5c5140406204d52fb255024ac746f9441fc515e7809ba564289"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_RaizN_Config_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  22.2,
+                      "excerpt":  "tests/JPW_Alavancagem_RaizN_Config_Tests.log",
+                      "excerpt_sha256":  "419483891668efdd0bdca58676ae4cfbd2e5117fc54ab8227524ad33e0d2ad1f",
+                      "journal":  "tests/JPW_Alavancagem_RaizN_Config_Tests.journal.log",
+                      "journal_sha256":  "087753c524f6f96caad87244c86fd057861bee102a681cabcaff13f5cb7de007"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_RaizN_Factor_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  20,
+                      "excerpt":  "tests/JPW_Alavancagem_RaizN_Factor_Tests.log",
+                      "excerpt_sha256":  "839d14aa9c82deadb2fc7aafba8df8beb49eea013d091b5c13384c73571e0a9c",
+                      "journal":  "tests/JPW_Alavancagem_RaizN_Factor_Tests.journal.log",
+                      "journal_sha256":  "f6d13dea735f6cf94ab8279fec9abc3dd048acc411828eef74f58a8a82a9c572"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_RaizN_Horizon_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  17.9,
+                      "excerpt":  "tests/JPW_Alavancagem_RaizN_Horizon_Tests.log",
+                      "excerpt_sha256":  "6ed3228d3ddc45c215c4833e4f158ead17db9662faf848d96d92a45002da8a9a",
+                      "journal":  "tests/JPW_Alavancagem_RaizN_Horizon_Tests.journal.log",
+                      "journal_sha256":  "906fcaf439f5278a6b0fca626def3c2cd1f590aa717562342cd2c4635d30b04f"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_RaizN_Live_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  19.7,
+                      "excerpt":  "tests/JPW_Alavancagem_RaizN_Live_Tests.log",
+                      "excerpt_sha256":  "6f7111e6bb4c22ed19ecd4236a913483ddde3d4fd4f5893a36a50733a8edd59d",
+                      "journal":  "tests/JPW_Alavancagem_RaizN_Live_Tests.journal.log",
+                      "journal_sha256":  "ec7cc9fe3a53c5b63df0dfff8f205cdfa81e8abcb2a51baff2acf54c3240845a"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_RaizN_Store_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  12.5,
+                      "excerpt":  "tests/JPW_Alavancagem_RaizN_Store_Tests.log",
+                      "excerpt_sha256":  "163bae1907989f3ceac2d1595e7e6e37f64bba653aecaf3a51a1d5098a87756c",
+                      "journal":  "tests/JPW_Alavancagem_RaizN_Store_Tests.journal.log",
+                      "journal_sha256":  "a6316fb14512131d0014eb544b956d25e69578357d906c8f8038439d327ff994"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_RaizN_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  14.5,
+                      "excerpt":  "tests/JPW_Alavancagem_RaizN_Tests.log",
+                      "excerpt_sha256":  "d0cfb71b4dc71c07af491e9f0c2c7831fd58025055f9870f65c01506296cc5bf",
+                      "journal":  "tests/JPW_Alavancagem_RaizN_Tests.journal.log",
+                      "journal_sha256":  "42314ba985920ff67d9147b76b9029ed7846c1ae77ab471c1a5d1801e46ef609"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_StopRisk_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  14.6,
+                      "excerpt":  "tests/JPW_Alavancagem_StopRisk_Tests.log",
+                      "excerpt_sha256":  "cdcce1c5da92f6cf8b4158f1e8e9bf76047fdd8f150eb3045fd1de7e3e0dc23d",
+                      "journal":  "tests/JPW_Alavancagem_StopRisk_Tests.journal.log",
+                      "journal_sha256":  "a3fd3affb5b5b72f4cdca52c60917a2270b05417c404e4928818f136fe657446"
+                  },
+                  {
+                      "script":  "JPW_Alavancagem_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  16.3,
+                      "excerpt":  "tests/JPW_Alavancagem_Tests.log",
+                      "excerpt_sha256":  "0acc6a672cd70b83ec069e389723e347fbcb6aaf3e82156782b5cd26452f3eb2",
+                      "journal":  "tests/JPW_Alavancagem_Tests.journal.log",
+                      "journal_sha256":  "aa7f6a4f704ea390da2aee5521e22930eaeae0fa8090943a2595ad1a872c52f2"
+                  },
+                  {
+                      "script":  "JPW_NoCuda_Core_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  11.9,
+                      "excerpt":  "tests/JPW_NoCuda_Core_Tests.log",
+                      "excerpt_sha256":  "a3f6e88d27ad6f41536f1d3a8c2b0ea596811a44a2fe96b7815172ac37e53e93",
+                      "journal":  "tests/JPW_NoCuda_Core_Tests.journal.log",
+                      "journal_sha256":  "fb05a332c55cb70fae6d2c6e5d09458d93b64b9bfa8293381568e39a7922ee09"
+                  },
+                  {
+                      "script":  "JPW_NoCuda_Fibo_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  23.6,
+                      "excerpt":  "tests/JPW_NoCuda_Fibo_Tests.log",
+                      "excerpt_sha256":  "c9b4c0bfde2db577148a0ab1959ae74682d7b884065ddcb6874ecfbc5663c6b9",
+                      "journal":  "tests/JPW_NoCuda_Fibo_Tests.journal.log",
+                      "journal_sha256":  "42a31ff1722673ba502f6186e1bd03d7177f6f4f780e2ef392cec6d4f8024790"
+                  },
+                  {
+                      "script":  "JPW_NoCuda_Projection_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  22.4,
+                      "excerpt":  "tests/JPW_NoCuda_Projection_Tests.log",
+                      "excerpt_sha256":  "f01359f0a94c80f10b7cbd827474550a49ece1bb9ec01cfa46af06d6f04afdad",
+                      "journal":  "tests/JPW_NoCuda_Projection_Tests.journal.log",
+                      "journal_sha256":  "b9fb434edfe8883e5208a00cd725f15713b5d18627f3bde15d7ee97d64d8baf1"
+                  },
+                  {
+                      "script":  "JPW_NoCuda_Store_Tests",
+                      "status":  "RAN",
+                      "exit_code":  1,
+                      "duration_seconds":  22.4,
+                      "excerpt":  "tests/JPW_NoCuda_Store_Tests.log",
+                      "excerpt_sha256":  "197a1836d01086bf1c60594ffb7d6ac816a9c28e0e747876e73f158f43b3b2d0",
+                      "journal":  "tests/JPW_NoCuda_Store_Tests.journal.log",
+                      "journal_sha256":  "4c43fab36378aa7ce742883065a36de895eda9e66eb884b13bfdd1e7557c48f5"
+                  },
+                  {
+                      "script":  "JPW_PersonalHistory_Tests",
+                      "status":  "RAN",
+                      "exit_code":  557057,
+                      "duration_seconds":  13.1,
+                      "excerpt":  "tests/JPW_PersonalHistory_Tests.log",
+                      "excerpt_sha256":  "17323e09a554c0794aa6008082ce00d9697eb5f983e5e263441683d64a633761",
+                      "journal":  "tests/JPW_PersonalHistory_Tests.journal.log",
+                      "journal_sha256":  "b52d8ae4dbe71308e590fe172da96eff141bb16876119ef1368e505adbf3b236"
+                  },
+                  {
+                      "script":  "JPW_SignalCopy_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  14.6,
+                      "excerpt":  "tests/JPW_SignalCopy_Tests.log",
+                      "excerpt_sha256":  "27fbdced40fb5aad27ea16c278ead37aabb16e28095a00799ab9972a478fb0d4",
+                      "journal":  "tests/JPW_SignalCopy_Tests.journal.log",
+                      "journal_sha256":  "817b8a08fbdd32a7bc06bd164aabce0b04242c32f0d1308cc77cce02255ff44a"
+                  },
+                  {
+                      "script":  "JPW_Stoikus_Ledger_Tests",
+                      "status":  "RAN",
+                      "exit_code":  0,
+                      "duration_seconds":  19.7,
+                      "excerpt":  "tests/JPW_Stoikus_Ledger_Tests.log",
+                      "excerpt_sha256":  "c2ddbd02fe6d3fe8c250fc65816f01880dd1530d170fc10469cd11f802b723ca",
+                      "journal":  "tests/JPW_Stoikus_Ledger_Tests.journal.log",
+                      "journal_sha256":  "54d89ba983d45194acbf4e3a859aff262cf10091c1b1e9a1ee9f3f4645eab345"
+                  },
+                  {
+                      "script":  "JPW_Stoikus_Risk_Tests",
+                      "status":  "RAN",
+                      "exit_code":  557057,
+                      "duration_seconds":  15.5,
+                      "excerpt":  "tests/JPW_Stoikus_Risk_Tests.log",
+                      "excerpt_sha256":  "dc82878365cd3fb9b690c51a8e8533310e080f85c908ed0c8d0737e0dc318630",
+                      "journal":  "tests/JPW_Stoikus_Risk_Tests.journal.log",
+                      "journal_sha256":  "d724258495d274e5c301c583b0bf9287f09297c4aff496e9ceb63dd7ef0ec48e"
+                  }
+              ],
+    "error":  null
+}

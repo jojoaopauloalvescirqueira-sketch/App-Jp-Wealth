@@ -3820,6 +3820,201 @@
         "test_sha256": "4d0719eb03cd4e68f15f9823daebcea0c7742912c91c503736fb6ddfb2602442",
         "scope": "focal execution, not human acceptance or whole final gate"
       }
+    },
+    {
+      "id": "stoikus_native_diagnostics_persistence",
+      "state": "open_incident",
+      "summary": "JPW_Alavancagem_Diagnostics_Tests falha no MT5 nativo (build 6286) e passa na suíte host: coalescência, abertura só leitura, trava exclusiva, exportação e corrupção sintética",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh",
+        "section": "Persistência nativa (arquivos/SQLite em MQL5\\Files da cópia isolada do terminal)"
+      },
+      "stimulus": "Ciclo nativo de 26/10/2026: script JPW_Alavancagem_Diagnostics_Tests.mq5 compilado com 0 erros e 0 avisos e executado por [StartUp] numa cópia portable do golden (sem login, EURUSD H1, pasta própria da execução).",
+      "expected": "Resumo com 0 falhas, como na suíte host.",
+      "cause": "Não diagnosticada. Os stores declaram não usar FILE_COMMON; a execução é isolada por pasta. Investigação pendente em tarefa própria; nenhuma hipótese foi confirmada.",
+      "protection": {
+        "path": "tools/stoikus_native_runner.py",
+        "case": "test:JPW_Alavancagem_Diagnostics_Tests",
+        "command": "python3 tools/stoikus_native_runner.py --host jpw-mt5-lab --scope all",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/tests/JPW_Alavancagem_Diagnostics_Tests.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "2312e313946aa931928a46167c4aa4b1dcb8f5478ad4a9e8e372f3c419aadb72",
+          "availability": "repository",
+          "note": "5 passed; 13 failed; casos: coalesced durable gap, read-only open, exclusive lock no wait, preview/export, corruption refused"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/tests/JPW_Alavancagem_Diagnostics_Tests.journal.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "c8f4e0fd42656ae88f0b80f3646ec3e3462b4cfa5f7bf99c689536e3935b1d17",
+          "availability": "repository",
+          "note": "diário do terminal: script carregado e encerrado com código 1"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.results/tests/JPW_Alavancagem_Diagnostics_Tests.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "d909da96f5b27976fa57f280322899a1154cc0798bdc926ffed729b770884cbd",
+          "availability": "repository",
+          "note": "Segunda execução 20261026T175454Z com o agente final: 5 passed; 13 failed (reproduzido)"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+        "source_sha256": "98c47b0526c772846d1e70b048f01deab7881c8be879ba0e0ca9693902534418",
+        "test_sha256": "23fd588b410b1052e2cce819877406d2c06dfee4e63e55bddceb2a7ba2975811",
+        "scope": "Recibo nativo docs/validation/stoikus-native-20261026/mt5-native.json SHA-256 25e9a511ecf922e491ef6ab73a8363e2d4f918930767f0291de34d1b84cbfb30; compilação e scripts nativos, sem Tester, interação de gráfico ou aceite humano. Reproduzido na segunda execução: docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.json SHA-256 c5b11d324abe8a349f3cc3028116d52bd94cecb5235be873fa1a0faefb7226de."
+      }
+    },
+    {
+      "id": "stoikus_native_raizn_config_legacy",
+      "state": "open_incident",
+      "summary": "JPW_Alavancagem_RaizN_Config_Tests falha no MT5 nativo (build 6286) e passa na suíte host: cenário legado e bytes do formato antigo",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Config.mqh",
+        "section": "Persistência nativa (arquivos/SQLite em MQL5\\Files da cópia isolada do terminal)"
+      },
+      "stimulus": "Ciclo nativo de 26/10/2026: script JPW_Alavancagem_RaizN_Config_Tests.mq5 compilado com 0 erros e 0 avisos e executado por [StartUp] numa cópia portable do golden (sem login, EURUSD H1, pasta própria da execução).",
+      "expected": "Resumo com 0 falhas, como na suíte host.",
+      "cause": "Não diagnosticada. Os stores declaram não usar FILE_COMMON; a execução é isolada por pasta. Investigação pendente em tarefa própria; nenhuma hipótese foi confirmada.",
+      "protection": {
+        "path": "tools/stoikus_native_runner.py",
+        "case": "test:JPW_Alavancagem_RaizN_Config_Tests",
+        "command": "python3 tools/stoikus_native_runner.py --host jpw-mt5-lab --scope all",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/tests/JPW_Alavancagem_RaizN_Config_Tests.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "be232ecc7141902c78e6f2eac0670f0030ffcf0f5e8b7d4b4bfdf6ba195ada9f",
+          "availability": "repository",
+          "note": "4 of 72 asserts; casos: synthetic legacy scenario confirmed, capture real legacy-format bytes, legacy slots byte-identical, advanced scenario N"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/tests/JPW_Alavancagem_RaizN_Config_Tests.journal.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "3eb107565527780e88cd686fb747e5f67bb0c2c2a2dc1f198804f805fcaaab3a",
+          "availability": "repository",
+          "note": "diário do terminal: script carregado e encerrado com código 1"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.results/tests/JPW_Alavancagem_RaizN_Config_Tests.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "419483891668efdd0bdca58676ae4cfbd2e5117fc54ab8227524ad33e0d2ad1f",
+          "availability": "repository",
+          "note": "Segunda execução 20261026T175454Z com o agente final: 4 of 72 asserts (reproduzido)"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+        "source_sha256": "50dcb401e51cf176a404846add48d59d14ce2e75c78c30b5fd2dd67abbfa444e",
+        "test_sha256": "a5aab48a0e5f12934443b9da0f20134092aa25d2fa0861eac4248218e0e492d1",
+        "scope": "Recibo nativo docs/validation/stoikus-native-20261026/mt5-native.json SHA-256 25e9a511ecf922e491ef6ab73a8363e2d4f918930767f0291de34d1b84cbfb30; compilação e scripts nativos, sem Tester, interação de gráfico ou aceite humano. Reproduzido na segunda execução: docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.json SHA-256 c5b11d324abe8a349f3cc3028116d52bd94cecb5235be873fa1a0faefb7226de."
+      }
+    },
+    {
+      "id": "stoikus_native_raizn_store_scenarios",
+      "state": "open_incident",
+      "summary": "JPW_Alavancagem_RaizN_Store_Tests falha no MT5 nativo (build 6286) e passa na suíte host: round trip do codec de cenário e vínculos de posição",
+      "source": {
+        "path": "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh",
+        "section": "Persistência nativa (arquivos/SQLite em MQL5\\Files da cópia isolada do terminal)"
+      },
+      "stimulus": "Ciclo nativo de 26/10/2026: script JPW_Alavancagem_RaizN_Store_Tests.mq5 compilado com 0 erros e 0 avisos e executado por [StartUp] numa cópia portable do golden (sem login, EURUSD H1, pasta própria da execução).",
+      "expected": "Resumo com 0 falhas, como na suíte host.",
+      "cause": "Não diagnosticada. Os stores declaram não usar FILE_COMMON; a execução é isolada por pasta. Investigação pendente em tarefa própria; nenhuma hipótese foi confirmada.",
+      "protection": {
+        "path": "tools/stoikus_native_runner.py",
+        "case": "test:JPW_Alavancagem_RaizN_Store_Tests",
+        "command": "python3 tools/stoikus_native_runner.py --host jpw-mt5-lab --scope all",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/tests/JPW_Alavancagem_RaizN_Store_Tests.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "b25a03ac5eb929448e073d703f10e225883930236e8144d8f34ceefa00f17cfa",
+          "availability": "repository",
+          "note": "40 of 82 asserts; casos: scenario codec round trip, first scenario confirmed, bindings, revisions, stale editor"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/tests/JPW_Alavancagem_RaizN_Store_Tests.journal.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "df4a412ffd88212da9075f397d9d9af4ff6c1b6a3f3acc074d133c0992e355d3",
+          "availability": "repository",
+          "note": "diário do terminal: script carregado e encerrado com código 1"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.results/tests/JPW_Alavancagem_RaizN_Store_Tests.log",
+          "result": "PRODUCT_FAIL",
+          "sha256": "163bae1907989f3ceac2d1595e7e6e37f64bba653aecaf3a51a1d5098a87756c",
+          "availability": "repository",
+          "note": "Segunda execução 20261026T175454Z com o agente final: 40 of 82 asserts (reproduzido)"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+        "source_sha256": "d9ede1cc0bcda749c0245f136331aa08efc0d71760873a8b629eb4fc7456b61f",
+        "test_sha256": "02901c490251eb752320eeb773401ef2867eeb8fa629f493f88acd32725f969c",
+        "scope": "Recibo nativo docs/validation/stoikus-native-20261026/mt5-native.json SHA-256 25e9a511ecf922e491ef6ab73a8363e2d4f918930767f0291de34d1b84cbfb30; compilação e scripts nativos, sem Tester, interação de gráfico ou aceite humano. Reproduzido na segunda execução: docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.json SHA-256 c5b11d324abe8a349f3cc3028116d52bd94cecb5235be873fa1a0faefb7226de."
+      }
+    },
+    {
+      "id": "stoikus_native_compile_log_tester_indicator_info",
+      "state": "baseline_limitation",
+      "summary": "O parser estrito de log do NativeKit.Core recusa as linhas informativas \"info property tester_indicator ... implicitly added\" que o MetaEditor 6286 emite para programas com iCustom, mesmo com 0 erros e 0 avisos.",
+      "source": {
+        "path": "tools/stoikus_native/windows/NativeKit.Core.ps1",
+        "section": "Test-CompileLog (cópia byte a byte do kit C5-D1)"
+      },
+      "stimulus": "Compilação nativa de JPW_Stoikus_Abrir_Paineis.mq5 (usa iCustom) no ciclo de 26/10/2026.",
+      "expected": "Um programa com Result: 0 errors, 0 warnings e EX5 novo é aceito; linhas informativas reconhecidas não o reprovam.",
+      "cause": "Gramática congelada do Core anterior ao build 6286; reason UNRECOGNIZED_OR_FOREIGN_BODY_LINE. Ampliar a gramática é decisão de control plane do proprietário; o kit selado reprovaria o mesmo programa.",
+      "protection": {
+        "path": null,
+        "case": null,
+        "command": null,
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/stoikus-native-20261026/mt5-native.results/compile/JPW_Stoikus_Abrir_Paineis.log",
+          "result": "ENVIRONMENT_ERROR",
+          "sha256": "972b986ecf38e5b2426ee139fc5109c0925812a06a72883c3ebeaa5981d5729e",
+          "availability": "repository",
+          "note": "Result: 0 errors, 0 warnings, 2722 ms; duas linhas info property tester_indicator"
+        },
+        {
+          "path": "docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.results/compile/JPW_Stoikus_Abrir_Paineis.log",
+          "result": "TEST_HARNESS_FAIL",
+          "sha256": "4dcd92edbcc06c4b5609f0f312df153712be748aa2642d7d6be14f87f008db28",
+          "availability": "repository",
+          "note": "Segunda execução 20261026T175454Z com o agente final: Result: 0 errors, 0 warnings; recusado pela gramática congelada (reproduzido)"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
+        "scope": "Recibo nativo docs/validation/stoikus-native-20261026/mt5-native.json SHA-256 25e9a511ecf922e491ef6ab73a8363e2d4f918930767f0291de34d1b84cbfb30. Reproduzido na segunda execução: docs/validation/stoikus-native-20261026/run2-20261026T175454Z/mt5-native.json SHA-256 c5b11d324abe8a349f3cc3028116d52bd94cecb5235be873fa1a0faefb7226de."
+      }
     }
   ]
 }

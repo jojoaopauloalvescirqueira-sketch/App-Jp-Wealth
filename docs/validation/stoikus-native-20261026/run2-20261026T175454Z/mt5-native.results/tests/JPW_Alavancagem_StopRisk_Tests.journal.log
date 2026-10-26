@@ -1,0 +1,12 @@
+FM	0	15:05:06.544	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T175454Z\work\JPW_Alavancagem_StopRisk_Tests.ini"
+FR	0	15:05:06.678	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+FN	0	15:05:06.680	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+NS	0	15:05:06.680	Terminal	C:\MT5Lab\runs\20261026T175454Z\terminal
+QK	0	15:05:06.680	Terminal	launched with C:\MT5Lab\runs\20261026T175454Z\work\JPW_Alavancagem_StopRisk_Tests.ini
+MO	0	15:05:06.686	MCP	started on 127.0.0.1:22346
+HF	0	15:05:14.821	Scripts	script JPW_Alavancagem_StopRisk_Tests (EURUSD,H1) loaded successfully
+CK	0	15:05:15.159	Scripts	script JPW_Alavancagem_StopRisk_Tests (EURUSD,H1) closes terminal with code 0
+CS	0	15:05:15.160	Scripts	script JPW_Alavancagem_StopRisk_Tests (EURUSD,H1) removed
+IS	0	15:05:17.715	Terminal	exit with code 0
+HQ	0	15:05:17.992	Terminal	stopped with 0
+ID	0	15:05:18.238	Terminal	shutdown with 0

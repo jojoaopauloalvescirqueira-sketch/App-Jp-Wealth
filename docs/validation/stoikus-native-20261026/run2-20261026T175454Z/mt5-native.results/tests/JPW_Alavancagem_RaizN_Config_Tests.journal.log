@@ -1,0 +1,12 @@
+EN	0	15:03:21.375	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T175454Z\work\JPW_Alavancagem_RaizN_Config_Tests.ini"
+KL	0	15:03:21.942	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+MK	0	15:03:21.947	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+QE	0	15:03:21.947	Terminal	C:\MT5Lab\runs\20261026T175454Z\terminal
+KM	0	15:03:21.948	Terminal	launched with C:\MT5Lab\runs\20261026T175454Z\work\JPW_Alavancagem_RaizN_Config_Tests.ini
+LN	0	15:03:21.987	MCP	started on 127.0.0.1:22346
+PD	0	15:03:34.643	Scripts	script JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1) loaded successfully
+NH	0	15:03:35.032	Scripts	script JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1) closes terminal with code 1
+PR	0	15:03:35.033	Scripts	script JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1) removed
+KS	0	15:03:37.381	Terminal	exit with code 1
+DQ	0	15:03:38.838	Terminal	stopped with 0
+ED	0	15:03:38.974	Terminal	shutdown with 1

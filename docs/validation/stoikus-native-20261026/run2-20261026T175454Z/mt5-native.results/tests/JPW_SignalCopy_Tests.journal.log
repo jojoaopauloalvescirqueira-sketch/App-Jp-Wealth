@@ -1,0 +1,12 @@
+HL	0	15:07:11.165	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T175454Z\work\JPW_SignalCopy_Tests.ini"
+DL	0	15:07:11.302	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+CK	0	15:07:11.304	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+GE	0	15:07:11.304	Terminal	C:\MT5Lab\runs\20261026T175454Z\terminal
+MM	0	15:07:11.304	Terminal	launched with C:\MT5Lab\runs\20261026T175454Z\work\JPW_SignalCopy_Tests.ini
+IL	0	15:07:11.309	MCP	started on 127.0.0.1:22346
+GJ	0	15:07:19.800	Scripts	script JPW_SignalCopy_Tests (EURUSD,H1) loaded successfully
+RL	0	15:07:20.038	Scripts	script JPW_SignalCopy_Tests (EURUSD,H1) closes terminal with code 0
+OM	0	15:07:20.039	Scripts	script JPW_SignalCopy_Tests (EURUSD,H1) removed
+EH	0	15:07:22.364	Terminal	exit with code 0
+LN	0	15:07:22.721	Terminal	stopped with 0
+LM	0	15:07:22.861	Terminal	shutdown with 0
