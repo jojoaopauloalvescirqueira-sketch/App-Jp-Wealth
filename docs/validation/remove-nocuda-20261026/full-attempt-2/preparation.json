@@ -1,0 +1,13 @@
+{
+  "state": "PREPARED_NOT_RUN_AWAITING_MAC_WINDOW",
+  "build": "5cd40fe879de6727",
+  "frozenInputs": 678,
+  "changedSincePriorFull": [
+    "tools/learning_guide_test.py",
+    "tools/regression-memory.json"
+  ],
+  "productBytesUnchanged": true,
+  "priorFull": "101PASS1PRODUCT_FAIL exit1, preserved",
+  "gateAndUIJudgeUnchanged": true,
+  "onlyWrapperOUTChanged": true
+}

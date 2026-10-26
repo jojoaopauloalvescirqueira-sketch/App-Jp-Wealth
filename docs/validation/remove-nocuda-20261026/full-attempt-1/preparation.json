@@ -1,0 +1,11 @@
+{
+  "priorAttempt": "INCOMPLETE exit130; stopped before two factual corrections; no failed check completed",
+  "changedInputsSincePriorFreeze": [
+    "docs/architecture/LEARNING-GUIDE.md",
+    "tools/regression-memory.json"
+  ],
+  "build": "5cd40fe879de6727",
+  "noRuntimeTestOrCriteriaChanges": true,
+  "inputs": 678,
+  "wrapperOnlyOUTChanged": true
+}

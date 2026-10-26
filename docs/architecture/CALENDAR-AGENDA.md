@@ -1,5 +1,13 @@
 # Calendário e Agenda — contrato aprovado23/10/2026
 
+## Calendário e Mercados — integração24/10/2026
+
+[Plano aprovado](../superpowers/plans/2026-10-24-calendar-markets.md). Ferramentas → Calendário e Mercados mantém tools-calendar como destino único. Calendário e Agenda permanece em #execEcal; Bolsas Globais — Agora é seção irmã, com resumo de três abertas/três próximas24h e exploração sob demanda. O modal ao lado do sino não muda. Calendário segue a data selecionada; bolsas seguem Agora, com filtros independentes. tools-market-hours e chamada local antiga conservam intenção de abrir diretamente a exploração, canonicalizada para tools-calendar após aceite.
+
+JPWMarketHours.mount(host,{collapsed:true}) cria resumo; sem opções conserva full. setExpanded(boolean) mantém instância/catálogo/snapshot, filtros, seleção e DOM. Resumo atualiza ao minuto/limites; full só é montado na primeira expansão. Renderer executado somente com mapa expandido e visível; câmera/quadros pausam fora da viewport, diálogo, hidden, blur, saída ou descarte. Falhas no resumo oferecem retry e mantêm último diagnóstico identificado como não atual. Não altera calendários, fontes, persistência ou escritores financeiros.
+
+Novos resultados: [validação desta integração](../validation/calendar-markets-20261024/README.md), somente quando os recibos existirem. Evidências anteriores abaixo mantêm seu escopo histórico; não comprovam este candidate.
+
 Fonte: plano humano [Calendário e Agenda](../superpowers/plans/2026-10-23-calendar-agenda.md), produtoN2/verificadoresN3 em CHGs dedicados. Este contrato descreve o delta autorizado, não altera normas financeiras. Implementação local; resultado técnico e aceite humano nos recibos próprios, nunca inferidos deste texto.
 
 ## Finalidade e entradas

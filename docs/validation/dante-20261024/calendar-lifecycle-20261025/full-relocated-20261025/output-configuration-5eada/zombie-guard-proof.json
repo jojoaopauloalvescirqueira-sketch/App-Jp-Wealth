@@ -1,0 +1,287 @@
+{
+  "classification": "PASS",
+  "scope": "dummy filesystem only; wrapper run/selftest and gate/browser not called",
+  "wrapper_sha256": "5eadae0f21b03835df0ba63270f95869a49dd4fca59f08eb7f8bac28ad523754",
+  "cases": [
+    {
+      "case": "valid-bidirectional-write-profile-cleanup",
+      "result": "PASS",
+      "logicalAndRealRecorded": true,
+      "samefile": true,
+      "profileChildRemoved": true,
+      "fullSymlinkRetained": true
+    },
+    {
+      "case": "nonempty-source",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "source-existing-before",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "source-symlink",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "source-file",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "wrong-name",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "multiple",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "none",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "target-nonempty",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "target-symlink",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "target-file",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "wrong-owner",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "changed-inode",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "symlink-failure-restores-own-empty-directory",
+      "result": "PASS",
+      "rollback": true
+    },
+    {
+      "case": "handshake-valid-stopped-own-group",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-calendar-already-active",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-browser-already-active",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-child-not-stopped",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-parent-not-stopped",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-no-own-group",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-additional-status-queued",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-first-line-is-later-check",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 0,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-wrong-group",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-unrelated-running-group-ignored",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-stop-transition",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 2,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-zombie-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-parent-stopped-direct-defunct-accepted",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-parent-zombie-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-indirect-defunct-child-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-identified-consumer-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-unrecognized-command-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-direct-defunct-plus-active-consumer-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-direct-defunct-plus-queued-status-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-direct-defunct-parent-running-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "z-direct-defunct-with-preflight-stopped-accepted",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "post-official-pass-preflight-accepted",
+      "result": "PASS",
+      "accepted": true
+    },
+    {
+      "case": "post-product-fail-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-environment-error-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-harness-fail-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-later-run-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-wrong-check-pass-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-prefix-collision-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-empty-line-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-eof-without-pass-rejected",
+      "result": "PASS",
+      "accepted": false
+    },
+    {
+      "case": "post-final-requires-verified-pass",
+      "result": "PASS",
+      "accepted": true
+    },
+    {
+      "case": "z-helper-wrong-pgid-rejected",
+      "result": "PASS"
+    }
+  ],
+  "count": 46,
+  "frozen": {
+    "checked": 679,
+    "changed": []
+  },
+  "verifier_sha256": "cc8ae935b6b4612942d60f881867db367804ac4761ad3eceab6d8d970f4d3305"
+}

@@ -1,0 +1,82 @@
+{
+  "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/session_write_serialization_test.py",
+  "sha256": "a3595c0c4a60c38c07287f55bbfb6b87b0fbf54b0428c95f652268a7a481f32e",
+  "mode": "fixture-only",
+  "fixture": {
+    "forexAccountId": "SERIALIZATION-SYNTHETIC",
+    "nome": "Conta sint\u00e9tica de serializa\u00e7\u00e3o",
+    "tipo": "MESTRE",
+    "broker": "Corretora sint\u00e9tica",
+    "platform": "",
+    "platformLogin": "",
+    "investorPassword": "",
+    "perfil": "Base",
+    "sini": 0,
+    "satu": 0,
+    "perfilLocked": false
+  },
+  "unchanged_assertions": true,
+  "setup_snapshots": [
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    },
+    {
+      "before": 0,
+      "blocked": false,
+      "raw": null
+    }
+  ],
+  "exit_code": 0
+}

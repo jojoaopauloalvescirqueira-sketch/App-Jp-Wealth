@@ -1,0 +1,12 @@
+diff --git a/tools/build_reproducibility_test.py b/tools/build_reproducibility_test.py
+index c05ca7d..84d5602 100644
+--- a/tools/build_reproducibility_test.py
++++ b/tools/build_reproducibility_test.py
+@@ -162,6 +162,7 @@ def arquivos_do_candidato():
+     arquivos.update(item['path'] for item in manifest.get('runtimeAssets', []))
+     arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
+     arquivos.update(BRAND_BUILD_INPUTS)
++    arquivos.add('assets/dante-guide.png')  # New explicit builder input, including pre-commit candidates.
+     arquivos.update(NOCUDA_BUILD_INPUTS)
+     arquivos.update(MARKET_HOURS_BUILD_INPUTS)
+     leverage = json.loads((ROOT / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))

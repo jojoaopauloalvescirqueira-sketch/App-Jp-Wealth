@@ -1,0 +1,13 @@
+{
+  "cmd": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/ui_visual_quality_test.py",
+    "--case",
+    "regressions",
+    "--out",
+    "/private/tmp/jpw-visual-measurement-20261025/impl-regressions"
+  ],
+  "exit": 0,
+  "timeout": 900,
+  "elapsed": 2.2821676249150187
+}

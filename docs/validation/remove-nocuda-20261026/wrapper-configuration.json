@@ -1,0 +1,7 @@
+{
+  "gateSha256": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+  "wrapperFunctionsIdentical": true,
+  "onlyOutputRootChanged": true,
+  "wrapperSha256": "f47246cec56869c3ed9991e458105336d9442bb5a31f664da2dba317d59d935c",
+  "scope": "same official FULL,102check IDs,900s cap; only fresh empty attempt outputs redirected to scratch"
+}

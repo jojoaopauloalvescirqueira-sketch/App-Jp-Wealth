@@ -1,0 +1,289 @@
+{
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "startedUTC": "2026-10-25T03:55:39.434214+00:00",
+  "inputs_before": {
+    "src/js/40-app/26-learning-catalog.js": "4c671a75b9df8ab69047d775f279558eb801a7f8f2c875517c3467b96fd4b040",
+    "src/js/00-core/09-learning-progress.js": "ad4da2a8ad5b5b63276c6a38fba71e7be34e3936db9fa4f876412ba29cebbab6",
+    "src/js/40-app/27-learning-view.js": "ffc4f41c980d1e534e9493ba0b69fc3de0ed877c8b9efeedfe0fccd9bed91fa3",
+    "src/js/40-app/28-learning-guide.js": "2bded75161d7bd4d3c9f5408215ae3209e48985a3a463036d58621c8b15cf2c3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/19-calendar-agenda.js": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c",
+    "src/styles/app.css": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/40-app/06-boot.js": "bfe41d77e3abdfddda3720788951f980d12f366f945f62d0ab60ef0a4ac2f58a",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/40-app/09-settings-modal.js": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/manifest.json": "9aaa09edb0e035b95f84f155c90d85ff1e3ebce22e6719243474416ea7054430",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "sw.js": "b3c6226bda14ecfbd0e9b63f9a87f4c9a23502bbc734771a1b9063f7794cf718",
+    "build-id.js": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "25df944043e4a3222051fd8cf7a728dc1d7eb44384d2c47968a3053222432f43",
+    "assets/dante-guide.png": "42269f1a0ad8e40c494de63c71d734d7d205b9d875386f233cf67dfca21110a2",
+    "tools/dante_guide_test.py": "add1bafa91137f8c12989c33afbbf06d908c923b6eb3766bb63f5042d6c2f48d",
+    "tools/dante_profile_test.py": "18f9667022e502ebf910c7b2593921802b111c6bee3246b14334e7ccfd777869",
+    "tools/dante_catalog_test.mjs": "788f27729ef8f39ec69617b5bca5cf4bc89e27757cfa79a6c9e0573da0893d01",
+    "tools/learning_foundation_test.mjs": "86bb50e2fcc88b04f5df75524392e933075cda48f5d8d4c8cb8c0cb67a3f8d91",
+    "tools/learning_controller_test.mjs": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11"
+  },
+  "test_sha256": "6bfc1b496c82a7e1cc720c36ee38f23bd950cd60b5b932b36c70021cd6dbfa4e",
+  "cases": [
+    {
+      "name": "dante/model-contracts",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "models": [
+        {
+          "test": "learning_foundation_test.mjs",
+          "exit": 0,
+          "output": "ll with independent defensive snapshots\nPASS invalid frozen unavailable and settings-only applications emit nothing\nPASS pending guard emits only when deferred navigation is actually accepted\nPASS deferred route made frozen before acceptance emits nothing\nPASS current snapshot ignores caller arguments\nPASS unavailable physical target emits nothing\nPASS unsubscribe is idempotent and listener exceptions do not stop following routes\nPASS a subscriber rejecting another route cannot change the accepted caller result\nPASS reentrant acceptance reaches every subscriber in monotonic sequence order\nPASS publication captures the accepted route even when a subscriber navigates again\n53 passed; 0 failed\n"
+        },
+        {
+          "test": "learning_controller_test.mjs",
+          "exit": 0,
+          "output": "w outside an editable logical form and releases it after cancellation\nPASS Dante opening the center removes a suspended coach and invalidates queued exit redraws\nPASS Dante center takes its own surface without an overlapping paused card\nPASS Dante reduced motion and resumed speech are complete without timer or focus change\nPASS Dante actual controller reveal and speech changes never mark reading before final acknowledgment\nPASS Dante action narration exposes reveal while original action remains required\nPASS Dante pause cancels typing and resumes same speech whole; reload returns to its first speech\nPASS Dante visibility and session disposal leave no scheduled narration\n116 passed, 0 failed\n"
+        },
+        {
+          "test": "dante_catalog_test.mjs",
+          "exit": 0,
+          "output": "{\n  \"result\": \"PASS\",\n  \"legacyIds\": 57,\n  \"lessons\": 64,\n  \"chapters\": 8,\n  \"checks\": \"ownership, unique complete journey, planning availability, short speech, safe observers, coverage, complete task phases, per-speech anchors, restricted hosts, source hooks, immutable\"\n}\n"
+        }
+      ]
+    },
+    {
+      "name": "dante/profile-and-welcome",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "profileAndWelcome": "confirmed through disposable real UI, default never writes identity"
+    },
+    {
+      "name": "dante/journey-cross-chapter",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "boundaries": [
+        [
+          "basics-progress",
+          "research-forex"
+        ],
+        [
+          "research-others",
+          "forex-planning"
+        ],
+        [
+          "planning-monthly",
+          "forex-accounts"
+        ]
+      ],
+      "financialWrites": 0
+    },
+    {
+      "name": "dante/v1-and-legacy-track",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "v1ReadWithoutWrite": true,
+      "legacyModePreserved": true,
+      "legacyRecords": {
+        "basics-home": {
+          "orientation": "seen",
+          "practice": null
+        },
+        "basics-menu": {
+          "orientation": "skipped",
+          "practice": null
+        }
+      }
+    },
+    {
+      "name": "dante/frozen-and-independent-planning",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "frozenExplanationTraversable": true
+    },
+    {
+      "name": "dante/typewriter-reveal-pause",
+      "result": "PASS",
+      "config": {
+        "motion": "no-preference"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "firstRevealOnly": true,
+      "pauseCompletePhrase": true
+    },
+    {
+      "name": "dante/reduced-motion",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "reducedMotionFullText": true
+    },
+    {
+      "name": "dante/index-single-bookmark",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "singleBookmark": "planning-consolidated"
+    },
+    {
+      "name": "dante/planning-owned-form",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "ownedFormDraft": "preserved, no account writer or automatic selection"
+    },
+    {
+      "name": "dante/agenda-owned-form",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "agendaDraft": "type/time-zone changes and cancellation preserve finance"
+    },
+    {
+      "name": "dante/planning-monthly-editor",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "monthlyDraft": "real editor and review preserved without confirmation/write"
+    },
+    {
+      "name": "dante/planning-owned-form/mobile",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "ownedFormDraft": "preserved, no account writer or automatic selection"
+    },
+    {
+      "name": "dante/agenda-owned-form/mobile",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "agendaDraft": "type/time-zone changes and cancellation preserve finance"
+    },
+    {
+      "name": "dante/touch-balloon",
+      "result": "PASS",
+      "config": {
+        "touch": true,
+        "motion": "no-preference",
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "touch": "first reveals, second advances speech, no credit"
+    }
+  ],
+  "registeredCaseCount": 66,
+  "baselineFocusRoot": "/private/tmp/jpw-dante-20261024/source-baseline",
+  "limits": [
+    "Disposable synthetic contexts only; no operator profile or production account.",
+    "Headless viewport/reflow and CDP page scale are measured separately from native browser zoom.",
+    "Physical touch, screen reader and real mobile keyboard NOT_RUN."
+  ],
+  "runtime": {
+    "launch": {
+      "headless": true,
+      "executable_path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    },
+    "python": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "browserVersion": "155.0.8059.86"
+  },
+  "inputs_after": {
+    "src/js/40-app/26-learning-catalog.js": "4c671a75b9df8ab69047d775f279558eb801a7f8f2c875517c3467b96fd4b040",
+    "src/js/00-core/09-learning-progress.js": "ad4da2a8ad5b5b63276c6a38fba71e7be34e3936db9fa4f876412ba29cebbab6",
+    "src/js/40-app/27-learning-view.js": "ffc4f41c980d1e534e9493ba0b69fc3de0ed877c8b9efeedfe0fccd9bed91fa3",
+    "src/js/40-app/28-learning-guide.js": "2bded75161d7bd4d3c9f5408215ae3209e48985a3a463036d58621c8b15cf2c3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/19-calendar-agenda.js": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c",
+    "src/styles/app.css": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/40-app/06-boot.js": "bfe41d77e3abdfddda3720788951f980d12f366f945f62d0ab60ef0a4ac2f58a",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/40-app/09-settings-modal.js": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/manifest.json": "9aaa09edb0e035b95f84f155c90d85ff1e3ebce22e6719243474416ea7054430",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "sw.js": "b3c6226bda14ecfbd0e9b63f9a87f4c9a23502bbc734771a1b9063f7794cf718",
+    "build-id.js": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "25df944043e4a3222051fd8cf7a728dc1d7eb44384d2c47968a3053222432f43",
+    "assets/dante-guide.png": "42269f1a0ad8e40c494de63c71d734d7d205b9d875386f233cf67dfca21110a2",
+    "tools/dante_guide_test.py": "add1bafa91137f8c12989c33afbbf06d908c923b6eb3766bb63f5042d6c2f48d",
+    "tools/dante_profile_test.py": "18f9667022e502ebf910c7b2593921802b111c6bee3246b14334e7ccfd777869",
+    "tools/dante_catalog_test.mjs": "788f27729ef8f39ec69617b5bca5cf4bc89e27757cfa79a6c9e0573da0893d01",
+    "tools/learning_foundation_test.mjs": "86bb50e2fcc88b04f5df75524392e933075cda48f5d8d4c8cb8c0cb67a3f8d91",
+    "tools/learning_controller_test.mjs": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11"
+  },
+  "source_unchanged": true,
+  "durationSeconds": 44.890848208917305,
+  "counts": {
+    "PASS": 14,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "NOT_RUN": 0
+  }
+}

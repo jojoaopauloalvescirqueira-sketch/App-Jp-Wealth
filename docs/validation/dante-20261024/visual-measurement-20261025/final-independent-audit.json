@@ -1,0 +1,673 @@
+{
+  "classification": "PASS",
+  "scope": "Independent A0 audit of authorized measurement delta and final FULL receipts; human acceptance and Git excluded",
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "branch": "codex/dante-guia-20261024",
+  "critical_findings": 0,
+  "important_findings": 0,
+  "full": {
+    "receipt_sha256": "6209c7cfa6f4f83bd7220f5739c6b9c706e588765c5f12fad1fd4e3e1a6dc608",
+    "command_receipt_sha256": "641e8908e85f71263bb4a7e9a760c0f1782d938f781ea6bbe443306e6504a3af",
+    "summary": {
+      "PASS": 102,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "checks": 102,
+    "all_checks_PASS_returncode0": true,
+    "exit": 0,
+    "seconds": 2789.102,
+    "ordered_names_equal_previous": true,
+    "argv_equal_except_output_root": true,
+    "preflight": {
+      "name": "preflight",
+      "command": "'/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/agent_preflight.py --mode audit --allow-dirty",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.412,
+      "output_tail": "PREFLIGHT PASS\n- branch: codex/dante-guia-20261024\n- HEAD: a4bf278cd4dc\n- rastreados: 2708\n- alteracoes: 94\n- scripts no manifest: 123\n- AVISO: arvore possui 94 alteracao(oes); confirme autoria e escopo\n- AVISO: POTENTIAL MATERIAL CHANGE AFTER SOURCE REVISION: 1279 caminho(s) alterado(s) apos ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34 fora dos caminhos reconhecidos como reconciliacao contextual; executar avaliacao de impacto agentico e reconciliar o contexto se aplicavel\n"
+    },
+    "all_check_durations_under900": true
+  },
+  "inputs": {
+    "count": 681,
+    "freeze_file_sha256": "fab874c2ad87817c8e5a4023fcaf03789881365ca19f293b5e6b107ff1375ec0",
+    "mismatch_current": [],
+    "baseline679_changed": [
+      "docs/work/ACTIVE-TASK.md",
+      "tools/ui_visual_quality_test.py"
+    ],
+    "new_paths": [
+      "docs/work/CHG-JPW-VISUAL-MEASUREMENT-CONTROLS-20261025.md",
+      "tools/ui_visual_measurement_test.py"
+    ],
+    "gate_sha256": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+    "measurement_sha256": "41f9d9be12248e7741cff20b8edc4d6beb8b0cd8674bc39fc175f43630d1b64e",
+    "visual_sha256": "f5cee3d6442bbb95901afed953ca9ea504c6c30873fd6e0751a274c8b3c5c69c"
+  },
+  "ui": {
+    "receipt_sha256": "7fbd49191fafb23731e5812ac4ca19f02b10ff422b843aa265c6b8fd36f8b7b3",
+    "coverage": {
+      "executed": 413,
+      "required": 413,
+      "unique": true
+    },
+    "case_classifications": {
+      "PASS": 413
+    },
+    "ordered_ids_equal_focal": true,
+    "required_ids_equal_focal": true,
+    "source161_same_focal_and_live": true,
+    "native_closure_pass": 8,
+    "nested_counterproofs": 14,
+    "tolerance": 2,
+    "process_seconds": 868.509
+  },
+  "artifact_destinations": [
+    {
+      "check": "calendar-agenda",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/calendar-agenda.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/calendar-agenda.json",
+          "sha256": "f2544aab64f1fe35abe9a2c5014c559cb66891816c8dcc50e77de1ea0a3afe5d",
+          "type": "dict",
+          "declared_status": {},
+          "collection_counts": {
+            "results": 14
+          },
+          "explicit_row_status_counts": {
+            "PASS": 14
+          }
+        }
+      ]
+    },
+    {
+      "check": "calendar-recovery",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/calendar-recovery.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/calendar-recovery.json",
+          "sha256": "e5e49b1ccfd8747c7e5d59f3fdf087a6add13df281ca226b1a37646b9ee1fde1",
+          "type": "dict",
+          "declared_status": {},
+          "collection_counts": {
+            "results": 8
+          },
+          "explicit_row_status_counts": {
+            "PASS": 8
+          }
+        }
+      ]
+    },
+    {
+      "check": "ui-visual-quality",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/ui-visual-quality",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/ui-visual-quality/ui-visual-quality-results.json",
+          "sha256": "7fbd49191fafb23731e5812ac4ca19f02b10ff422b843aa265c6b8fd36f8b7b3",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS",
+            "source_unchanged": true
+          },
+          "collection_counts": {
+            "cases": 413,
+            "required_case_ids": 413,
+            "matrix": 5,
+            "limits": 6,
+            "matrix_config_validation": 4,
+            "compact_fixture": 10,
+            "native_zoom": 3,
+            "coverage": 3
+          },
+          "explicit_row_status_counts": {
+            "PASS": 413
+          }
+        }
+      ]
+    },
+    {
+      "check": "calendar-distribution",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/calendar-distribution.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/calendar-distribution.json",
+          "sha256": "1ffd77c4a8bb12610ec7f746fd18e4db91669ce96ed18da3404a8322fc60598d",
+          "type": "dict",
+          "declared_status": {
+            "result": "PASS",
+            "counts": {
+              "PASS": 4,
+              "PRODUCT_FAIL": 0,
+              "TEST_HARNESS_FAIL": 0,
+              "ENVIRONMENT_ERROR": 0,
+              "NOT_RUN": 0
+            },
+            "sourceUnchanged": true
+          },
+          "collection_counts": {
+            "cases": 4,
+            "requiredCases": 4,
+            "selectedCases": 4,
+            "limits": 2,
+            "economicPack": 4,
+            "git": 2,
+            "runtime": 3,
+            "counts": 5
+          },
+          "explicit_row_status_counts": {
+            "PASS": 4
+          }
+        }
+      ]
+    },
+    {
+      "check": "ff-news-cache",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/ff-news-cache.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/ff-news-cache.json",
+          "sha256": "d33bc605b3aad9188485eed421c017a4132b144a4f6b298a84322ebed72d37be",
+          "type": "dict",
+          "declared_status": {
+            "counts": {
+              "PASS": 184,
+              "PRODUCT_FAIL": 0
+            }
+          },
+          "collection_counts": {
+            "checks": 184,
+            "cases": 16,
+            "screenshots": 2,
+            "counts": 2
+          },
+          "explicit_row_status_counts": {
+            "PASS": 184
+          }
+        }
+      ]
+    },
+    {
+      "check": "planning-three-tabs",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/planning-three-tabs.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/planning-three-tabs.json",
+          "sha256": "3818bbb9e1bf420c84735285ec53463a217f6263b05c70f1132427d0afbdaf93",
+          "type": "dict",
+          "declared_status": {
+            "status": "PASS"
+          },
+          "collection_counts": {
+            "cases": 10
+          },
+          "explicit_row_status_counts": {
+            "PASS": 10
+          }
+        }
+      ]
+    },
+    {
+      "check": "planning-proportions",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/planning-proportions",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/planning-proportions/proporcoes-results.json",
+          "sha256": "9ff5abfdd4bd4dc172e4fbbd86edd20c4ba56b204d62c42e64da10afbccdf78f",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS",
+            "source_unchanged": true
+          },
+          "collection_counts": {
+            "cases": 94,
+            "matrix": 4,
+            "limits": 4,
+            "native_zoom": 3
+          },
+          "explicit_row_status_counts": {
+            "PASS": 94
+          }
+        }
+      ]
+    },
+    {
+      "check": "planning-parity-layout",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/planning-layout",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/planning-layout/layout-results.json",
+          "sha256": "87a5a346f2c02c403581f507a8bfc4a4d719a6863e66638a2dec933efcd27253",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS",
+            "source_unchanged": true
+          },
+          "collection_counts": {
+            "cases": 24,
+            "limits": 4,
+            "long_projection_mobile": 8,
+            "native_zoom": 3
+          },
+          "explicit_row_status_counts": {
+            "PASS": 24
+          }
+        }
+      ]
+    },
+    {
+      "check": "notes-launcher",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/notes-launcher.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/notes-launcher.json",
+          "sha256": "339c6657887c23b1449b52bb1da91554758a8c7244085fb9b0a191e123931866",
+          "type": "dict",
+          "declared_status": {
+            "result": "PASS",
+            "source_unchanged": true
+          },
+          "collection_counts": {
+            "checks": 19,
+            "limits": 4
+          },
+          "explicit_row_status_counts": {
+            "PASS": 19
+          }
+        }
+      ]
+    },
+    {
+      "check": "notes-global-launcher",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/notes-global-launcher.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/notes-global-launcher.json",
+          "sha256": "8193565df173f03a7c73071a52e99ff5ea6fb3f5f67011edadc9a7fc27e1c760",
+          "type": "dict",
+          "declared_status": {
+            "result": "PASS",
+            "sameBytes": true
+          },
+          "collection_counts": {
+            "checks": 6,
+            "limits": 1
+          },
+          "explicit_row_status_counts": {
+            "PASS": 6
+          }
+        }
+      ]
+    },
+    {
+      "check": "consolidated-efficiency",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/consolidated.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/consolidated.json",
+          "sha256": "5e407fcec560617eed9e703a0a20197b00f6127286c84e36cd33a168d402f7e7",
+          "type": "dict",
+          "declared_status": {},
+          "collection_counts": {
+            "results": 4
+          },
+          "explicit_row_status_counts": {
+            "PASS": 4
+          }
+        }
+      ]
+    },
+    {
+      "check": "consolidated-storage",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/consolidated-storage.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/consolidated-storage.json",
+          "sha256": "a7fb4557a48b7e4999b926bf89799a9229246f9c1c3ba65c6850a73a620facb0",
+          "type": "dict",
+          "declared_status": {
+            "result": "PASS",
+            "counts": {
+              "total": 26,
+              "passed": 26,
+              "failed": 0
+            },
+            "source_unchanged": true
+          },
+          "collection_counts": {
+            "cases": 26,
+            "counts": 3
+          },
+          "explicit_row_status_counts": {
+            "PASS": 26
+          }
+        }
+      ]
+    },
+    {
+      "check": "consolidated-ui",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/consolidated-ui.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/consolidated-ui.json",
+          "sha256": "baf0170f74824a144356820002f009d9bbb66f512689b19ec78e51c1cfad2ff6",
+          "type": "dict",
+          "declared_status": {
+            "passed": 32,
+            "total": 32
+          },
+          "collection_counts": {
+            "observations": 2,
+            "results": 32
+          },
+          "explicit_row_status_counts": {
+            "True": 32
+          }
+        }
+      ]
+    },
+    {
+      "check": "forex-professional-panel",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/professional-panel",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/professional-panel/professional-panel-results.json",
+          "sha256": "747b64ff43cc85e1ef257043370a238f728ba90461dfe357c8e2bb5ed363016a",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS"
+          },
+          "collection_counts": {
+            "cases": 12,
+            "limits": 4
+          },
+          "explicit_row_status_counts": {
+            "PASS": 12
+          }
+        }
+      ]
+    },
+    {
+      "check": "execution-efficiency",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/rows",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/rows/focal-results.json",
+          "sha256": "025aff2a1e3528e52a88c08472206eb6fd677c30d6a93f4004349f645b8ecc46",
+          "type": "dict",
+          "declared_status": {
+            "result": "PASS"
+          },
+          "collection_counts": {
+            "checks": 80,
+            "failures": 0
+          },
+          "explicit_row_status_counts": {
+            "True": 80
+          }
+        }
+      ]
+    },
+    {
+      "check": "execution-table",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/table",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/table/focal-results.json",
+          "sha256": "bfde9013860308ee0a3b5224eebcbd826f949971298266cf58fe84a89098c95a",
+          "type": "dict",
+          "declared_status": {
+            "result": "PASS"
+          },
+          "collection_counts": {
+            "results": 8,
+            "pageerrors": 0
+          },
+          "explicit_row_status_counts": {}
+        }
+      ]
+    },
+    {
+      "check": "execution-workbook",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/workbook",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/workbook/workbook-results.json",
+          "sha256": "caf86d571194739f8270be551501fb13b0879689ca11233207b9b85c62118f2f",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS"
+          },
+          "collection_counts": {
+            "cases": 8
+          },
+          "explicit_row_status_counts": {
+            "PASS": 7,
+            "NOT_RUN": 1
+          }
+        }
+      ]
+    },
+    {
+      "check": "execution-proportions",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/proportions",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/proportions/proportions-results.json",
+          "sha256": "c3cfe5d3ca1abfbf0f6196dc4e3214da9cd714fb349420ffb39f5dfc6bc0552b",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS"
+          },
+          "collection_counts": {
+            "cases": 14
+          },
+          "explicit_row_status_counts": {
+            "PASS": 14
+          }
+        }
+      ]
+    },
+    {
+      "check": "forex-context",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/context.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/context.json",
+          "sha256": "2e5cfb98675ef8d00fa5222cb23f920c53b58ae6c81a653244d842503572e806",
+          "type": "dict",
+          "declared_status": {
+            "classification": "PASS",
+            "count": 60
+          },
+          "collection_counts": {
+            "observations": 60
+          },
+          "explicit_row_status_counts": {}
+        }
+      ]
+    },
+    {
+      "check": "forex-navigation-journey",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/journey.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/journey.json",
+          "sha256": "2ab24dfd2b27942eeddf9fc236307a80e393d33406c01fa223a99a48984cbc7e",
+          "type": "dict",
+          "declared_status": {
+            "passed": 60,
+            "total": 60
+          },
+          "collection_counts": {
+            "inputs": 4,
+            "results": 60,
+            "observations": 1
+          },
+          "explicit_row_status_counts": {
+            "PASS": 60
+          }
+        }
+      ]
+    },
+    {
+      "check": "learning-guide",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/guide.json",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/guide.json",
+          "sha256": "1ae11e30c56440172774b48b2016eb655d4f1fd2916a1357cf4b64cb02c9f378",
+          "type": "dict",
+          "declared_status": {
+            "counts": {
+              "PASS": 66,
+              "PRODUCT_FAIL": 0,
+              "TEST_HARNESS_FAIL": 0,
+              "NOT_RUN": 0
+            },
+            "registeredCaseCount": 66,
+            "source_unchanged": true
+          },
+          "collection_counts": {
+            "cases": 66,
+            "limits": 3,
+            "runtime": 3,
+            "counts": 4
+          },
+          "explicit_row_status_counts": {
+            "PASS": 66
+          }
+        }
+      ]
+    },
+    {
+      "check": "download-assets-browser",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/downloads",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/downloads/result.json",
+          "sha256": "b8e56a7c1cd4304f647a76575d347886cd3067972716b89ef26a4d159763909c",
+          "type": "dict",
+          "declared_status": {
+            "count": 111
+          },
+          "collection_counts": {
+            "checks": 111
+          },
+          "explicit_row_status_counts": {}
+        }
+      ]
+    },
+    {
+      "check": "capital-currents-browser",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/capital-currents",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/capital-currents/matrix.json",
+          "sha256": "6e9b9e432eaa66af1d53f9262952a9baf06014d013856c8ab893790833e920f7",
+          "type": "list",
+          "rows": 48
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/capital-currents/result.json",
+          "sha256": "b5afe0fba3ce418b97f4e721a7193a61a5cfa9b9b57f00b4ae5e8c32430d5f23",
+          "type": "dict",
+          "declared_status": {
+            "passed": 8,
+            "failed": 0
+          },
+          "collection_counts": {
+            "rows": 8,
+            "candidateBefore": 25,
+            "candidateAfter": 25,
+            "environment": 4,
+            "limits": 3
+          },
+          "explicit_row_status_counts": {
+            "PASS": 8
+          }
+        }
+      ]
+    },
+    {
+      "check": "time-twins-browser",
+      "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/time-twins",
+      "exists": true,
+      "json_files": [
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/time-twins/integrated-result.json",
+          "sha256": "ca6909441c39a376b9d094861897350dfb191f1820606271bbd0c75bd15b5238",
+          "type": "dict",
+          "declared_status": {
+            "passed": 6,
+            "failed": 0
+          },
+          "collection_counts": {
+            "failures": 0,
+            "rows": 6,
+            "limits": 3
+          },
+          "explicit_row_status_counts": {}
+        },
+        {
+          "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087/time-twins/matrix.json",
+          "sha256": "ec6389d4def5a777aa8d4c83ad204f4233927ef97c57e7f7a60e709eb6d1df4b",
+          "type": "list",
+          "rows": 32
+        }
+      ]
+    }
+  ],
+  "guide": {
+    "cases": 66,
+    "pass": 66,
+    "dante_cases": 14,
+    "sources_stable": true
+  },
+  "calendar_lifecycle": [
+    [
+      "calendar-lifecycle-320-light",
+      "PASS"
+    ]
+  ],
+  "historical_failure_preserved": [
+    [
+      "ui-visual-quality",
+      "ENVIRONMENT_ERROR",
+      124
+    ]
+  ],
+  "reviewer_executed_browser_tests_signals": false,
+  "human_acceptance": "NOT_RUN",
+  "git_publication": "NOT_AUTHORIZED",
+  "performance_guarantee": false
+}

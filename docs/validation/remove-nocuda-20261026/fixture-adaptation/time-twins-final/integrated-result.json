@@ -1,0 +1,21 @@
+{
+  "suite": "time_twins_browser_integrated",
+  "passed": 1,
+  "failed": 0,
+  "failures": [],
+  "rows": [
+    {
+      "name": "integrated lazy hub, three refused entries, form/focus and Research independence",
+      "facts": {
+        "refused": 3,
+        "researchFrozenIndependent": true,
+        "cards": 3
+      }
+    }
+  ],
+  "limits": [
+    "Synthetic disposable profiles; no personal account data.",
+    "32 CSS zoom/reflow presentations are not native browser zoom.",
+    "Physical touch, screen reader and human learning NOT_RUN."
+  ]
+}

@@ -31,7 +31,7 @@ function acctProfiles(){return RISK_PROFILES.map(p=>riskProfileForAcct(p.key));}
 function riskProfileOperationalLabel(p){return riskProfileByAny(p).desc;}
 function riskProfileUXSummary(p){return riskProfileByAny(p).desc;}
 function riskProfileIconText(p){return ({base:'B',longevity:'L',high_longevity:'HL',high_longevity_plus:'H+'})[riskProfileByAny(p).key]||'?';}
-function getActiveRiskProfile(profileKey){return riskProfileForAcct(profileKey??(S.period&&S.period.profile)??'base');}
+function getActiveRiskProfile(profileKey){return riskProfileForAcct(profileKey??(S.period&&S.period.profile)??'');}
 // Explicit documentary reader; legacy/global consumers keep their existing contract.
 function getAccountRiskProfileContext(target){return globalThis.JPWForex?.state?.accountProfileContext(target)??null;}
 function activeProfileFator(){return getActiveRiskProfile().fator;}

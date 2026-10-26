@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checks": [
+    "http lazy catalog + actual verified IIFE; no remote frameworks",
+    "file lazy catalog + actual verified IIFE; no remote frameworks",
+    "portable lazy catalog + actual verified IIFE; no remote frameworks",
+    "corrupt source refused before execution; retry succeeds",
+    "one consumer cancellation preserves shared renderer job",
+    "last consumer aborted before transport; file retry succeeds",
+    "actual 15s HTTP timeout does not execute; explicit retry succeeds",
+    "incompatible build rejected"
+  ],
+  "scope": "real browser, synthetic public catalog, HTTP/file/portable payload",
+  "browser": "148.0.7778.96"
+}

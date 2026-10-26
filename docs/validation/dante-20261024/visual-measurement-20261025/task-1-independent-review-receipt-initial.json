@@ -1,0 +1,53 @@
+{
+  "classification": "PASS",
+  "scope": "independent static A0 review and existing receipt inspection; no browser or suite executed by reviewer",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "branch": "codex/dante-guia-20261024",
+  "package_entries_checked": 24,
+  "package_mismatches": [],
+  "live_source_sha256": {
+    "ui_visual_quality_test.py": "f5cee3d6442bbb95901afed953ca9ea504c6c30873fd6e0751a274c8b3c5c69c",
+    "ui_visual_measurement_test.py": "41f9d9be12248e7741cff20b8edc4d6beb8b0cd8674bc39fc175f43630d1b64e"
+  },
+  "live_equals_package": {
+    "ui_visual_quality_test.py": true,
+    "ui_visual_measurement_test.py": true
+  },
+  "findings": {
+    "critical": 0,
+    "important": 0
+  },
+  "all413": "NOT_RUN by reviewer",
+  "full102": "NOT_RUN by reviewer",
+  "native_zoom": "NOT_RUN by reviewer",
+  "human_acceptance": "NOT_RUN",
+  "preflight": {
+    "exit": 0,
+    "result": "PASS",
+    "dirty_entries": 94,
+    "material_freshness_warning": true
+  },
+  "baseline679_changes": [
+    "docs/work/ACTIVE-TASK.md",
+    "tools/ui_visual_quality_test.py"
+  ],
+  "changed_functions_ast": [
+    "centered",
+    "controls_geometry",
+    "counterproofs"
+  ],
+  "assertions_identical": {
+    "centered": true,
+    "controls_geometry": true
+  },
+  "external_full_configuration": {
+    "classification": "PASS",
+    "wrapper_sha256": "234161ab54997586bbd7f889a991fc375208260d122a39d73e8c301ba656c39c",
+    "only_AST_difference": "OUT constant",
+    "selftest_receipt_cases": 7,
+    "selftest_receipt_all_pass": true,
+    "frozen_inputs": 681,
+    "frozen_inputs_current_match": true,
+    "execution_by_reviewer": "NOT_RUN"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "python": ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+  "node": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "browser": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "headless": true,
+  "attempts": [
+    {
+      "command": "node tools/download_assets_test.js",
+      "result": "TEST_HARNESS_FAIL",
+      "exit": 1,
+      "reason": "First rewritten synthetic ID fixture.zip outside real leverage ID allowlist; fixed to source/dailySource before product run."
+    },
+    {
+      "command": "node tools/download_assets_test.js",
+      "result": "PASS",
+      "exit": 0,
+      "checks": 26,
+      "log": "unit.log"
+    },
+    {
+      "command": "python tools/download_assets_browser_test.py --browser Chrome --out-dir browser",
+      "result": "PRODUCT_FAIL",
+      "exit": "SIGTERM by worker after unbounded readiness stall",
+      "reason": "Retired Nocuda URLs remained in SW precache and prevented install. Root corrected SW; first attempt retained.",
+      "log": "browser-attempt1-interrupted-sw.log"
+    },
+    {
+      "command": "python tools/download_assets_browser_test.py --browser Chrome --out-dir browser-final",
+      "result": "PASS",
+      "exit": 0,
+      "checks": 54,
+      "log": "browser-final.log"
+    },
+    {
+      "command": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/download_assets_test.js",
+      "result": "PASS",
+      "exit": 0,
+      "checks": 26,
+      "log": "unit-final.log"
+    },
+    {
+      "command": ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 tools/build_reproducibility_test.py",
+      "result": "PASS",
+      "exit": 0,
+      "log": "repro-final.log"
+    }
+  ],
+  "replacement_scope": "Synthetic unit fixtures now use real leverage/source and leverage/dailySource IDs. Browser uses actual Stoikus source ZIP and surviving manifest ZIPs. Retired editable/draft reset/clear/input actions have no surviving UI and are removed, not claimed tested. Navigation/session/pagehide late-action/status suppression remains on actual Stoikus handler. Repro excludes retired tool inputs and brand assets, retaining normative and all sealed Stoikus/native/interface checks. Preexisting dante-guide input preserved."
+}

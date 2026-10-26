@@ -1,0 +1,10 @@
+{
+  "results": [
+    {
+      "case": "calendar-lifecycle-320-light",
+      "result": "PRODUCT_FAIL",
+      "evidence": "CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py\", line 409, in main\n    details=preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)\n                                                                                ^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py\", line 370, in lifecycle\n    assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==1,'CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar\n"
+    }
+  ]
+}

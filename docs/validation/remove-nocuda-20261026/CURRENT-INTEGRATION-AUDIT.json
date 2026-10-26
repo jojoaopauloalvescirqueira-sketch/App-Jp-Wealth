@@ -1,0 +1,102 @@
+{
+  "schema": "jpw-current-integration-audit/v1",
+  "at": "2026-10-26T18:19:11.330781+00:00",
+  "verdict": "INTEGRATION_BLOCKED_APPLICABLE_GATE_FAILED",
+  "scope": "A0 existing evidence and source identity only",
+  "candidate": {
+    "build": "5cd40fe879de6727",
+    "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+    "branch": "codex/remover-nocuda-tool-20261026"
+  },
+  "full": {
+    "checks": 102,
+    "unique": 102,
+    "official_order_exact": true,
+    "summary": {
+      "PASS": 101,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 1,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "all_pass_returncode_zero": true,
+    "exit": 1,
+    "seconds": 2913.039
+  },
+  "freeze": {
+    "paths": 680,
+    "hash_mismatches": [],
+    "expected_absent": 11,
+    "absence_violations": [],
+    "wrapper_source_unchanged": true
+  },
+  "visual": {
+    "classification": "ENVIRONMENT_ERROR",
+    "returncode": 124,
+    "seconds": 900.025,
+    "tail_characters": 12000,
+    "complete_PASS_lines": 324,
+    "last_completed_printed": "compact-native200-glass-light",
+    "ordinal_in_unchanged_sequence": 401,
+    "retained_sequence_exact_contiguous": true,
+    "remaining_not_evidenced": [
+      "compact-native200-glass-dark",
+      "compact-native200-submenu-light",
+      "compact-native200-submenu-dark",
+      "closure-native200-sidebar-light",
+      "closure-native200-sidebar-dark",
+      "closure-native200-topbar-light",
+      "closure-native200-topbar-dark",
+      "closure-native200-glass-light",
+      "closure-native200-glass-dark",
+      "closure-native200-submenu-light",
+      "closure-native200-submenu-dark",
+      "coverage-missing-and-zero-rejected"
+    ],
+    "source_stdout_truncated": true,
+    "final_ui_json_exists": false,
+    "error_lines": [
+      "ENVIRONMENT_ERROR: timeout apos 900s"
+    ]
+  },
+  "approved_source_hashes": {
+    "tools/planning_compact_table_test.py": "0ae1b0ef88af5b7ebb9c6200d8593f6b9bba9e9ceb9f98a5d5da1303df25643b",
+    "tools/ui_visual_quality_test.py": "ea5324e785181d8a1ef172b186980521ea591e7f089d7325cee9d00db4e1add0",
+    "tools/quality_gate.py": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+    "docs/work/CHG-JPW-VISUAL-BOUND-VALUE-20261026.md": "dddd30be4b3b9e8df1c78c8da7c0873d4da1c9d17f3b696bf1440729b769c3ae",
+    "docs/work/CHG-JPW-VISUAL-MENU-WIDTH-20261026.md": "9c2b6a1e9986c03a3dcc02b4f23745d0cfd1265483ff8016b2f60382653b1bfd"
+  },
+  "approved_patch_hashes": {
+    "/private/tmp/jpw-remove-nocuda-20261026/DIAGNOSTIC-PROPOSAL.patch": "ee61a5ff50c0e201f6201a73113b447ffe90745b83d1c257d5e2c2aefa51a72d",
+    "/private/tmp/jpw-remove-nocuda-20261026/menu-width-proposal/PROPOSAL.patch": "d8e5f3c3206277785723ddfe95cd591e9afad6d60241c136d6eed27928dbc036"
+  },
+  "old_round": {
+    "ui_cases": 413,
+    "ui_pass": 412,
+    "ui_failed": [
+      "counterproof-menu-width"
+    ],
+    "wrapper_exit": null,
+    "wrapper_status": "INTERRUPTED_INCOMPLETE",
+    "terminal_130": "parent reports exec11049 observed130; separate from gate receipt; not independently re-read"
+  },
+  "authority": {
+    "human_git_actions_authorized": true,
+    "explicit_failed_gate_override": false,
+    "commit_merge_push_allowed_by_current_review": false,
+    "rule": "AGENTS.md:101; separate gates also :95,:139,:145"
+  },
+  "virtual_machine": "No VM tools/process controls used; user instruction to keep VM running remains in effect. Running state not independently inspected.",
+  "actions_performed": [
+    "read existing files",
+    "parse AST statically",
+    "compute file hashes",
+    "write these two scratch audit reports"
+  ],
+  "evidence_sha256": {
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-menu-width/full-relocated.json": "dba09e640d4f563d17826dcf03dfa92179192c98e79fd551cf4cb0c2ef7fae18",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-menu-width/full-relocated-command.json": "1ca5ca6424d93fde955f77b058ed4c272c4179a01ed7d61b03ef19f429bd4b67",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-menu-width/frozen-inputs.json": "b6cede68816592911c028ce1f9dddfcc23713a6f74a9acbf5bc5ccadf01efbe4"
+  }
+}

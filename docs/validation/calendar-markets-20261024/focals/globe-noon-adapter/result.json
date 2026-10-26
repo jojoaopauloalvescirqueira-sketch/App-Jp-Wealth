@@ -1,0 +1,452 @@
+{
+  "case": "noon-adapter",
+  "bundleSHA256": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd",
+  "checks": [
+    "geographic-focus-atomic",
+    "shortest-antimeridian-reduced",
+    "pointer-held-up-cancel-capture",
+    "keyboard-accepted-noop-lifecycle",
+    "pointer-multipointer-hold",
+    "keyboard-pending-focus-cancellation",
+    "focus-interruption",
+    "observer-isolation",
+    "geographic-svg-restore"
+  ],
+  "observations": [
+    {
+      "geographic45": {
+        "x": 133.875,
+        "y": 300,
+        "visible": true
+      },
+      "rejected": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "antimeridian": [
+        {
+          "x": 303.077,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 302.616,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 302.184,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 301.394,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 301.041,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 300.711,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 300.129,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 299.838,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 299.585,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 299.349,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 299.124,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 298.917,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 298.723,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 298.54,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.922,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.669,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.556,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.448,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.35,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.168,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.087,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 297.01,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.939,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.871,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.75,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.695,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.644,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.551,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.509,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.469,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.399,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.367,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.336,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.282,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.234,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.193,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.156,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.124,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.11,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.083,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.071,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.051,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.04,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 296.032,
+          "y": 300,
+          "visible": true
+        },
+        {
+          "x": 295.9,
+          "y": 300,
+          "visible": true
+        }
+      ],
+      "reduced": {
+        "x": 300,
+        "y": 300,
+        "visible": true
+      }
+    },
+    {
+      "pointerPhases": [
+        {
+          "type": "start",
+          "pointerId": 1,
+          "pointerType": "mouse"
+        },
+        {
+          "type": "end",
+          "pointerId": 1,
+          "pointerType": "mouse",
+          "cancelled": true
+        }
+      ]
+    },
+    {
+      "multipointerSecondReleased": {
+        "first": 2,
+        "second": 3,
+        "whileFirstHeld": [
+          {
+            "type": "start",
+            "pointerId": 2,
+            "pointerType": "touch"
+          }
+        ],
+        "firstCaptured": true,
+        "xBefore": 301.004,
+        "xAfter": 345.887,
+        "final": [
+          {
+            "type": "start",
+            "pointerId": 2,
+            "pointerType": "touch"
+          },
+          {
+            "type": "end",
+            "pointerId": 2,
+            "pointerType": "touch",
+            "cancelled": false
+          }
+        ],
+        "native": [
+          {
+            "type": "pointerdown",
+            "id": 2,
+            "pointerType": "touch"
+          },
+          {
+            "type": "gotpointercapture",
+            "id": 2,
+            "pointerType": "touch"
+          },
+          {
+            "type": "pointermove",
+            "id": 2,
+            "pointerType": "touch"
+          },
+          {
+            "type": "pointerdown",
+            "id": 3,
+            "pointerType": "touch"
+          },
+          {
+            "type": "gotpointercapture",
+            "id": 3,
+            "pointerType": "touch"
+          },
+          {
+            "type": "pointerup",
+            "id": 3,
+            "pointerType": "touch"
+          },
+          {
+            "type": "lostpointercapture",
+            "id": 3,
+            "pointerType": "touch"
+          },
+          {
+            "type": "pointermove",
+            "id": 2,
+            "pointerType": "touch"
+          },
+          {
+            "type": "pointerup",
+            "id": 2,
+            "pointerType": "touch"
+          },
+          {
+            "type": "lostpointercapture",
+            "id": 2,
+            "pointerType": "touch"
+          }
+        ]
+      }
+    },
+    {
+      "pendingHome": {
+        "idle": true,
+        "pending": true,
+        "again": true,
+        "rejected": [],
+        "after": [
+          {
+            "type": "key",
+            "key": "Home"
+          }
+        ],
+        "final": [
+          {
+            "type": "key",
+            "key": "Home"
+          }
+        ]
+      },
+      "homeProjection": {
+        "x": 300,
+        "y": 300,
+        "visible": true
+      },
+      "pendingClampedUp": {
+        "idle": true,
+        "pending": true,
+        "again": true,
+        "after": [
+          {
+            "type": "key",
+            "key": "ArrowUp"
+          }
+        ],
+        "final": [
+          {
+            "type": "key",
+            "key": "ArrowUp"
+          }
+        ]
+      },
+      "clampedProjection": {
+        "x": 300,
+        "y": 503.461,
+        "visible": true
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "geographic-focus-atomic",
+      "status": "PASS"
+    },
+    {
+      "id": "shortest-antimeridian-reduced",
+      "status": "PASS"
+    },
+    {
+      "id": "pointer-held-up-cancel-capture",
+      "status": "PASS"
+    },
+    {
+      "id": "keyboard-accepted-noop-lifecycle",
+      "status": "PASS"
+    },
+    {
+      "id": "pointer-multipointer-hold",
+      "status": "PASS"
+    },
+    {
+      "id": "keyboard-pending-focus-cancellation",
+      "status": "PASS"
+    },
+    {
+      "id": "focus-interruption",
+      "status": "PASS"
+    },
+    {
+      "id": "observer-isolation",
+      "status": "PASS"
+    },
+    {
+      "id": "geographic-svg-restore",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "DPR": 1,
+  "errors": [],
+  "browser": "148.0.7778.96"
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "variant": "current",
+    "build": "2c4a3d9f65b3c664",
+    "initial": {
+      "refreshed": 1,
+      "open": true
+    },
+    "afterCloseReopen": {
+      "refreshed": 0,
+      "open": true,
+      "hidden": false,
+      "closeEvents": [
+        {
+          "type": "close",
+          "open": true,
+          "at": 394
+        }
+      ],
+      "status": {
+        "state": "unknown",
+        "tone": "warn",
+        "text": "Data de confirmação precisa de verificação",
+        "at": "2026-10-25T15:00:00.000Z",
+        "due": false
+      },
+      "nov1dots": 1
+    }
+  },
+  {
+    "variant": "baseline1b695b",
+    "build": "1b695b809fe80c26",
+    "initial": {
+      "refreshed": 1,
+      "open": true
+    },
+    "afterCloseReopen": {
+      "refreshed": 0,
+      "open": true,
+      "hidden": false,
+      "closeEvents": [
+        {
+          "type": "close",
+          "open": true,
+          "at": 3010
+        }
+      ],
+      "status": {
+        "state": "unknown",
+        "tone": "warn",
+        "text": "Data de confirmação precisa de verificação",
+        "at": "2026-10-25T15:00:00.000Z",
+        "due": false
+      },
+      "nov1dots": 1
+    }
+  }
+]

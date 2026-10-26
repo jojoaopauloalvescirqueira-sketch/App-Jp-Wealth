@@ -1,0 +1,16 @@
+{
+  "files": 481,
+  "changed_after_run": [],
+  "build": "3a9f6157481ae050",
+  "gate": "full-final.json",
+  "summary": {
+    "PASS": 102,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "started_at": "2026-10-24T13:54:42-03:00",
+  "finished_at": "2026-10-24T14:36:12-03:00"
+}

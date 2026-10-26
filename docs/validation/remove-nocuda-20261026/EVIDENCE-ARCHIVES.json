@@ -1,0 +1,110 @@
+{
+  "reason": "Lossless preservation of historical raw patches/logs; prevents Git treating embedded diff context and raw process whitespace as source defects",
+  "files": [
+    {
+      "original": "docs/validation/dante-20261024/calendar-fix-proposal/proposal.patch",
+      "archive": "docs/validation/dante-20261024/calendar-fix-proposal/proposal.patch.gz",
+      "sha256": "f754f0e71a3adb54cdf83ec93e540d2ed50c77582d321ac89f29b43310df7599",
+      "originalBytes": 10165,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/dante-20261024/calendar-fix-proposal/regression.patch",
+      "archive": "docs/validation/dante-20261024/calendar-fix-proposal/regression.patch.gz",
+      "sha256": "a32f742875b63794401c8224435a7c9450d5c707ba52d98d4076cb89612d57eb",
+      "originalBytes": 8933,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/dante-20261024/calendar-lifecycle-20261025/full-relocated-20261025/visual-budget-proposal/batch-control-read.patch",
+      "archive": "docs/validation/dante-20261024/calendar-lifecycle-20261025/full-relocated-20261025/visual-budget-proposal/batch-control-read.patch.gz",
+      "sha256": "7b59fff1bfd49d318bf3273976fb95691bfa95dd0c69a49d85c6ed8a5bed71a2",
+      "originalBytes": 2914,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/dante-20261024/finalization-default-proposal/proposal.patch",
+      "archive": "docs/validation/dante-20261024/finalization-default-proposal/proposal.patch.gz",
+      "sha256": "51f1b20fe70a7b8a9a0c3f3a282598b6aa50ff9871a3022b845ca49b9a6c95ce",
+      "originalBytes": 3301,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/dante-20261024/visual-measurement-20261025/task-1-baseline-delta.patch",
+      "archive": "docs/validation/dante-20261024/visual-measurement-20261025/task-1-baseline-delta.patch.gz",
+      "sha256": "6d6f92344c96c0b6c6e88fab1197cc8b217dac5683ddc57b272b4cd89d562767",
+      "originalBytes": 18687,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/dante-20261024/visual-measurement-20261025/task-1-review-package/task-1-baseline-delta.patch",
+      "archive": "docs/validation/dante-20261024/visual-measurement-20261025/task-1-review-package/task-1-baseline-delta.patch.gz",
+      "sha256": "6d6f92344c96c0b6c6e88fab1197cc8b217dac5683ddc57b272b4cd89d562767",
+      "originalBytes": 18687,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/empty-first-use-20261024/fixture-adaptations.patch",
+      "archive": "docs/validation/empty-first-use-20261024/fixture-adaptations.patch.gz",
+      "sha256": "2da3ca312e5dc074268f62408a9328fbfa2cbb3c539761f296c693000b6712b0",
+      "originalBytes": 10600,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/empty-first-use-20261024/triage-finalize/proposed.patch",
+      "archive": "docs/validation/empty-first-use-20261024/triage-finalize/proposed.patch.gz",
+      "sha256": "1f8c4af59ecd2cc19534780fb6b82c0153a709bb506ac412ed739574252fd7b5",
+      "originalBytes": 6362,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/empty-first-use-20261024/triage-serialization/proposed.patch",
+      "archive": "docs/validation/empty-first-use-20261024/triage-serialization/proposed.patch.gz",
+      "sha256": "1090091aaeae8aa450bdf89f256b6ada58cf6bff7a90c9b63707fac46805ff12",
+      "originalBytes": 1010,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/remove-nocuda-20261026/bound-value/DIAGNOSTIC-PROPOSAL.patch",
+      "archive": "docs/validation/remove-nocuda-20261026/bound-value/DIAGNOSTIC-PROPOSAL.patch.gz",
+      "sha256": "ee61a5ff50c0e201f6201a73113b447ffe90745b83d1c257d5e2c2aefa51a72d",
+      "originalBytes": 1353,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/remove-nocuda-20261026/bound-value/prepatch-resource-snapshot.txt",
+      "archive": "docs/validation/remove-nocuda-20261026/bound-value/prepatch-resource-snapshot.txt.gz",
+      "sha256": "3adc6d90a5ea31ba6cec7d1e67028f400f0e6304b0a78952fb8affc1d3d91967",
+      "originalBytes": 1715,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/remove-nocuda-20261026/download-tests/candidate.diff",
+      "archive": "docs/validation/remove-nocuda-20261026/download-tests/candidate.diff.gz",
+      "sha256": "111728a311662a1407f8d254cdd09d8764908144140412c4dcc9d80d1f59ab20",
+      "originalBytes": 21248,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/remove-nocuda-20261026/guide-startup-fix/proposal.patch",
+      "archive": "docs/validation/remove-nocuda-20261026/guide-startup-fix/proposal.patch.gz",
+      "sha256": "235c6a7f11762c192c920ed8d6d34d9259dc320df3593c4981fdea40a3be1575",
+      "originalBytes": 4214,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/remove-nocuda-20261026/product-scoped.patch",
+      "archive": "docs/validation/remove-nocuda-20261026/product-scoped.patch.gz",
+      "sha256": "768ae88e2da3aa49a7a27753aae1898a70beb814ab004abf07d4eb7f0e5741f5",
+      "originalBytes": 36881,
+      "exactRoundTrip": true
+    },
+    {
+      "original": "docs/validation/remove-nocuda-20261026/retirement-tests/all-owned-tests.delta.patch",
+      "archive": "docs/validation/remove-nocuda-20261026/retirement-tests/all-owned-tests.delta.patch.gz",
+      "sha256": "d12b9c9816aa37b4b44545d291e5375f67218436f832aac4976154031237c9b6",
+      "originalBytes": 26291,
+      "exactRoundTrip": true
+    }
+  ]
+}

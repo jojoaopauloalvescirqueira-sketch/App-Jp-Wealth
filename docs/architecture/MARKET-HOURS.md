@@ -1,5 +1,13 @@
 # Bolsas Globais — ações conforme calendário
 
+## Bolsas Globais dentro de Calendário e Mercados —24/10/2026
+
+[Plano aprovado](../superpowers/plans/2026-10-24-calendar-markets.md). Ferramentas → Calendário e Mercados mantém tools-calendar como destino único. Calendário e Agenda permanece em #execEcal; Bolsas Globais — Agora é seção irmã, com resumo de três abertas/três próximas24h e exploração sob demanda. O modal ao lado do sino não muda. Calendário segue a data selecionada; bolsas seguem Agora, com filtros independentes. tools-market-hours e chamada local antiga conservam intenção de abrir diretamente a exploração, canonicalizada para tools-calendar após aceite.
+
+JPWMarketHours.mount(host,{collapsed:true}) cria resumo; sem opções conserva full. setExpanded(boolean) mantém instância/catálogo/snapshot, filtros, seleção e DOM. Resumo atualiza ao minuto/limites; full só é montado na primeira expansão. Renderer executado somente com mapa expandido e visível; câmera/quadros pausam fora da viewport, diálogo, hidden, blur, saída ou descarte. Falhas no resumo oferecem retry e mantêm último diagnóstico identificado como não atual. Não altera calendários, fontes, persistência ou escritores financeiros.
+
+Novos resultados: [validação desta integração](../validation/calendar-markets-20261024/README.md), somente quando os recibos existirem. Evidências anteriores abaixo mantêm seu escopo histórico; não comprovam este candidate.
+
 ## Interface minimalista —16/10/2026
 
 Fonte deste incremento: plano integral humano aprovado em16/10, [CHG-JPW-MARKET-MINIMAL](../work/CHG-JPW-MARKET-MINIMAL-20261016.md) e [plano](../superpowers/plans/2026-10-16-market-minimal.md). Implementação e correção do contorno disponíveis: MIN01–10 e onze focais aprovados; FULL atual81PASS/0outros no buildf682e54eda2adc11. A falha anterior de downloads/boas-vindas permanece histórica e aberta, sem reparo causal nesta correçãoCSS. Recibos e identidade no CHG. Aceite visual humano e prontidão acumulada continuam separados.
@@ -10,7 +18,7 @@ Dois botões[i] abrem balões ancorados: ao lado do título, escopo do calendár
 
 Prova adicional permanente: tools/market_hours_minimal_test.py, executada explicitamente junto aos focais e FULL existentes; runner/gates não alterados. Evidências desta revisão em tools/.artifacts/market-hours/minimal-20261016/. Aceite visual humano separado de provas automáticas.
 
-Ferramentas e Serviços → Bolsas Globais (`tools-market-hours`, visão local `tools/market-hours`) reúne um globo Aisol adaptado e uma tabela de 16 praças: B3, NYSE, Nasdaq, TSX, LSE, Xetra, Euronext Paris, JPX/TSE, HKEX, SSE, SZSE, NSE, BSE, KRX/KOSPI e Saudi Exchange e ASX. B3 é a seleção inicial. Bolsas na mesma cidade conservam identidades próprias; o marcador representa a cidade e os botões identificam seus membros.
+Na exploração de Ferramentas e Serviços → Calendário e Mercados (`tools-calendar`; entrada compatível `tools-market-hours`, visão local `tools/market-hours`), Bolsas Globais reúne um globo Aisol adaptado e uma tabela de 16 praças: B3, NYSE, Nasdaq, TSX, LSE, Xetra, Euronext Paris, JPX/TSE, HKEX, SSE, SZSE, NSE, BSE, KRX/KOSPI e Saudi Exchange e ASX. B3 é a seleção inicial. Bolsas na mesma cidade conservam identidades próprias; o marcador representa a cidade e os botões identificam seus membros.
 
 A informação é **conforme calendário de ações**, sem cotações, confirmação operacional de interrupções ou derivados. O relógio UTC da referência e a hora local de cada praça pertencem ao mesmo snapshot. A apresentação distingue Aberta, Parcialmente aberta, Pré-abertura, Em leilão, Intervalo, Sessão estendida, Fechada e Sem confirmação. Os identificadores internos das fases permanecem inalterados. Uma praça parcialmente desconhecida não é contada como abertura regular confirmada.
 

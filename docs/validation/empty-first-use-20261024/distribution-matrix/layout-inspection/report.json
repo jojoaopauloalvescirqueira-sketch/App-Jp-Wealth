@@ -1,0 +1,151 @@
+{
+  "before": {
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "build-id.js": "b191606defcab2b937156e4fc34a63eea201ef063b7ddc0e68574f2beb23e32c",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+    "src/js/00-core/03-default-state.js": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe"
+  },
+  "cases": [
+    {
+      "width": 320,
+      "classification": {
+        "text": "Não concluído — 0 de 15 respostas",
+        "box": {
+          "x": 149.328125,
+          "y": 867,
+          "w": 108.671875,
+          "h": 18,
+          "right": 258
+        },
+        "textBounds": {
+          "x": 149.328125,
+          "y": 867,
+          "w": 298.015625,
+          "h": 18,
+          "right": 447.34375
+        },
+        "scroll": 298,
+        "client": 109,
+        "overflow": "hidden",
+        "textOverflow": "ellipsis",
+        "whiteSpace": "nowrap",
+        "font": ""
+      },
+      "closeButtonContent": {
+        "width": 76.96875,
+        "height": 44,
+        "dx": 0,
+        "dy": -0.875
+      },
+      "classificationClipped": true
+    },
+    {
+      "width": 390,
+      "classification": {
+        "text": "Não concluído — 0 de 15 respostas",
+        "box": {
+          "x": 172.65625,
+          "y": 886.5,
+          "w": 155.34375,
+          "h": 18,
+          "right": 328
+        },
+        "textBounds": {
+          "x": 172.65625,
+          "y": 886.5,
+          "w": 298.015625,
+          "h": 18,
+          "right": 470.671875
+        },
+        "scroll": 298,
+        "client": 155,
+        "overflow": "hidden",
+        "textOverflow": "ellipsis",
+        "whiteSpace": "nowrap",
+        "font": ""
+      },
+      "closeButtonContent": {
+        "width": 76.96875,
+        "height": 44,
+        "dx": 0,
+        "dy": -0.875
+      },
+      "classificationClipped": true
+    },
+    {
+      "width": 900,
+      "classification": {
+        "text": "Não concluído — 0 de 15 respostas",
+        "box": {
+          "x": 349.328125,
+          "y": 878.5,
+          "w": 468.671875,
+          "h": 18,
+          "right": 818
+        },
+        "textBounds": {
+          "x": 349.328125,
+          "y": 878.5,
+          "w": 298.015625,
+          "h": 18,
+          "right": 647.34375
+        },
+        "scroll": 469,
+        "client": 469,
+        "overflow": "hidden",
+        "textOverflow": "ellipsis",
+        "whiteSpace": "nowrap",
+        "font": ""
+      },
+      "closeButtonContent": {
+        "width": 76.96875,
+        "height": 44,
+        "dx": 0,
+        "dy": -0.875
+      },
+      "classificationClipped": false
+    },
+    {
+      "width": 1440,
+      "classification": {
+        "text": "Não concluído — 0 de 15 respostas",
+        "box": {
+          "x": 604,
+          "y": 878.3125,
+          "w": 530,
+          "h": 18,
+          "right": 1134
+        },
+        "textBounds": {
+          "x": 604,
+          "y": 878.3125,
+          "w": 298.015625,
+          "h": 18,
+          "right": 902.015625
+        },
+        "scroll": 530,
+        "client": 530,
+        "overflow": "hidden",
+        "textOverflow": "ellipsis",
+        "whiteSpace": "nowrap",
+        "font": ""
+      },
+      "closeButtonContent": {
+        "width": 76.96875,
+        "height": 44,
+        "dx": 0,
+        "dy": -0.875
+      },
+      "classificationClipped": false
+    }
+  ],
+  "after": {
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "build-id.js": "b191606defcab2b937156e4fc34a63eea201ef063b7ddc0e68574f2beb23e32c",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+    "src/js/00-core/03-default-state.js": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe"
+  },
+  "sourcesUnchanged": true
+}

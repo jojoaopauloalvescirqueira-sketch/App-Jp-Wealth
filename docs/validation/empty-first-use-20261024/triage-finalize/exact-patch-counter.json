@@ -1,0 +1,403 @@
+{
+  "mode": "mutated-clear-on-abort",
+  "executed": [
+    "C8",
+    "C11",
+    "C14"
+  ],
+  "exit_code": 1,
+  "product_and_test_files_edited": false,
+  "source_test_sha256": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+  "evidence": [
+    {
+      "case": "C8",
+      "before_any_case_action": {
+        "accounts": [],
+        "blocked": false
+      },
+      "after_fixture": [
+        {
+          "forexAccountId": "triage-synthetic-preserved",
+          "nome": "Conta sintética de preservação",
+          "tipo": "PRÓPRIA",
+          "broker": "Corretora sintética",
+          "platform": "MetaTrader 5",
+          "platformLogin": "synthetic-001",
+          "investorPassword": "",
+          "perfil": "Base",
+          "sini": 1000,
+          "satu": 1000,
+          "perfilLocked": true
+        }
+      ],
+      "failures": [
+        "C8: a sessao foi PARCIALMENTE finalizada — accounts foi zerado",
+        "C8: a recusa alterou o conteudo das contas existentes"
+      ],
+      "after_case": {
+        "accounts": [],
+        "blocked": false,
+        "raw": "{documento truncado",
+        "alladin": {
+          "schemaVersion": 6,
+          "reportingCurrency": "BRL",
+          "instruments": [
+            {
+              "instrumentId": "aldi_fx_petr4",
+              "name": "Petrobras PN",
+              "symbol": "PETR4",
+              "exchange": "B3",
+              "country": null,
+              "currency": "BRL",
+              "assetClass": "RENDA_VARIAVEL",
+              "instrumentFamily": "EQUITY_LIKE",
+              "externalIdentifiers": {
+                "isin": "BRPETRACNPR6"
+              },
+              "symbolHistory": [
+                {
+                  "symbol": "PETR4X",
+                  "exchange": "B3",
+                  "from": null,
+                  "to": "2026-01-02T00:00:00.000Z"
+                }
+              ],
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            },
+            {
+              "instrumentId": "aldi_fx_usdt",
+              "name": "Tether",
+              "symbol": "USDT",
+              "exchange": null,
+              "country": null,
+              "currency": "USD",
+              "assetClass": "CRIPTO",
+              "instrumentFamily": "CRYPTO",
+              "externalIdentifiers": {
+                "network": "Ethereum"
+              },
+              "symbolHistory": [],
+              "recordStatus": "INACTIVE",
+              "createdAt": "2026-01-03T00:00:00.000Z"
+            }
+          ],
+          "assets": [
+            {
+              "assetId": "alda_fx_apto",
+              "name": "Apartamento",
+              "nature": "IMOVEL",
+              "category": "Residencial",
+              "subcategory": null,
+              "strategicPurpose": "MORADIA",
+              "strategicGroup": null,
+              "tags": [
+                "moradia",
+                "sp"
+              ],
+              "recordMode": "INDIVIDUAL",
+              "owners": [
+                {
+                  "name": "Operador Sintetico",
+                  "shareBp": 5000,
+                  "isSelf": true
+                },
+                {
+                  "name": "Coproprietario Sintetico",
+                  "shareBp": 5000
+                }
+              ],
+              "location": "Sao Paulo",
+              "acquisitionDate": "2020-03-15",
+              "recordStatus": "ACTIVE",
+              "lifecycleStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "accounts": [
+            {
+              "accountId": "aldacc_fx_corretora",
+              "name": "Corretora Sintetica",
+              "institution": "Corretora Sintetica CCTVM",
+              "accountType": "BROKERAGE",
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "cashAccounts": [
+            {
+              "cashAccountId": "aldc_fx_brl",
+              "accountId": "aldacc_fx_corretora",
+              "currency": "BRL",
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "transactions": []
+        },
+        "modal": "Não foi possível finalizar a sessãoNada foi apagado. O encerramento foi interrompido antes de tocar nos seus dados, porque o estado persistido não pôde ser lido com segurança e o patrimônio não seria preservado.Falha ao ler o estado persistido: Expected property name or '}' in JSON at position 1 (line 1 column 2)Cancelar"
+      }
+    },
+    {
+      "case": "C11",
+      "before_any_case_action": {
+        "accounts": [],
+        "blocked": false
+      },
+      "after_fixture": [
+        {
+          "forexAccountId": "triage-synthetic-preserved",
+          "nome": "Conta sintética de preservação",
+          "tipo": "PRÓPRIA",
+          "broker": "Corretora sintética",
+          "platform": "MetaTrader 5",
+          "platformLogin": "synthetic-001",
+          "investorPassword": "",
+          "perfil": "Base",
+          "sini": 1000,
+          "satu": 1000,
+          "perfilLocked": true
+        }
+      ],
+      "failures": [
+        "C11: a sessao foi finalizada mesmo sem conseguir ler o estado persistido",
+        "C11: a recusa alterou o conteudo das contas existentes"
+      ],
+      "after_case": {
+        "accounts": [],
+        "blocked": false,
+        "raw": "{documento truncado",
+        "alladin": {
+          "schemaVersion": 6,
+          "reportingCurrency": "BRL",
+          "instruments": [
+            {
+              "instrumentId": "aldi_fx_petr4",
+              "name": "Petrobras PN",
+              "symbol": "PETR4",
+              "exchange": "B3",
+              "country": null,
+              "currency": "BRL",
+              "assetClass": "RENDA_VARIAVEL",
+              "instrumentFamily": "EQUITY_LIKE",
+              "externalIdentifiers": {
+                "isin": "BRPETRACNPR6"
+              },
+              "symbolHistory": [
+                {
+                  "symbol": "PETR4X",
+                  "exchange": "B3",
+                  "from": null,
+                  "to": "2026-01-02T00:00:00.000Z"
+                }
+              ],
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            },
+            {
+              "instrumentId": "aldi_fx_usdt",
+              "name": "Tether",
+              "symbol": "USDT",
+              "exchange": null,
+              "country": null,
+              "currency": "USD",
+              "assetClass": "CRIPTO",
+              "instrumentFamily": "CRYPTO",
+              "externalIdentifiers": {
+                "network": "Ethereum"
+              },
+              "symbolHistory": [],
+              "recordStatus": "INACTIVE",
+              "createdAt": "2026-01-03T00:00:00.000Z"
+            }
+          ],
+          "assets": [
+            {
+              "assetId": "alda_fx_apto",
+              "name": "Apartamento",
+              "nature": "IMOVEL",
+              "category": "Residencial",
+              "subcategory": null,
+              "strategicPurpose": "MORADIA",
+              "strategicGroup": null,
+              "tags": [
+                "moradia",
+                "sp"
+              ],
+              "recordMode": "INDIVIDUAL",
+              "owners": [
+                {
+                  "name": "Operador Sintetico",
+                  "shareBp": 5000,
+                  "isSelf": true
+                },
+                {
+                  "name": "Coproprietario Sintetico",
+                  "shareBp": 5000
+                }
+              ],
+              "location": "Sao Paulo",
+              "acquisitionDate": "2020-03-15",
+              "recordStatus": "ACTIVE",
+              "lifecycleStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "accounts": [
+            {
+              "accountId": "aldacc_fx_corretora",
+              "name": "Corretora Sintetica",
+              "institution": "Corretora Sintetica CCTVM",
+              "accountType": "BROKERAGE",
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "cashAccounts": [
+            {
+              "cashAccountId": "aldc_fx_brl",
+              "accountId": "aldacc_fx_corretora",
+              "currency": "BRL",
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "transactions": []
+        },
+        "modal": ""
+      }
+    },
+    {
+      "case": "C14",
+      "before_any_case_action": {
+        "accounts": [],
+        "blocked": false
+      },
+      "after_fixture": [
+        {
+          "forexAccountId": "triage-synthetic-preserved",
+          "nome": "Conta sintética de preservação",
+          "tipo": "PRÓPRIA",
+          "broker": "Corretora sintética",
+          "platform": "MetaTrader 5",
+          "platformLogin": "synthetic-001",
+          "investorPassword": "",
+          "perfil": "Base",
+          "sini": 1000,
+          "satu": 1000,
+          "perfilLocked": true
+        }
+      ],
+      "failures": [
+        "C14: a sessao foi finalizada sem conseguir garantir a preservacao",
+        "C14: a recusa alterou o conteudo das contas existentes"
+      ],
+      "after_case": {
+        "accounts": [],
+        "blocked": false,
+        "raw": null,
+        "alladin": {
+          "schemaVersion": 6,
+          "reportingCurrency": "BRL",
+          "instruments": [
+            {
+              "instrumentId": "aldi_fx_petr4",
+              "name": "Petrobras PN",
+              "symbol": "PETR4",
+              "exchange": "B3",
+              "country": null,
+              "currency": "BRL",
+              "assetClass": "RENDA_VARIAVEL",
+              "instrumentFamily": "EQUITY_LIKE",
+              "externalIdentifiers": {
+                "isin": "BRPETRACNPR6"
+              },
+              "symbolHistory": [
+                {
+                  "symbol": "PETR4X",
+                  "exchange": "B3",
+                  "from": null,
+                  "to": "2026-01-02T00:00:00.000Z"
+                }
+              ],
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            },
+            {
+              "instrumentId": "aldi_fx_usdt",
+              "name": "Tether",
+              "symbol": "USDT",
+              "exchange": null,
+              "country": null,
+              "currency": "USD",
+              "assetClass": "CRIPTO",
+              "instrumentFamily": "CRYPTO",
+              "externalIdentifiers": {
+                "network": "Ethereum"
+              },
+              "symbolHistory": [],
+              "recordStatus": "INACTIVE",
+              "createdAt": "2026-01-03T00:00:00.000Z"
+            }
+          ],
+          "assets": [
+            {
+              "assetId": "alda_fx_apto",
+              "name": "Apartamento",
+              "nature": "IMOVEL",
+              "category": "Residencial",
+              "subcategory": null,
+              "strategicPurpose": "MORADIA",
+              "strategicGroup": null,
+              "tags": [
+                "moradia",
+                "sp"
+              ],
+              "recordMode": "INDIVIDUAL",
+              "owners": [
+                {
+                  "name": "Operador Sintetico",
+                  "shareBp": 5000,
+                  "isSelf": true
+                },
+                {
+                  "name": "Coproprietario Sintetico",
+                  "shareBp": 5000
+                }
+              ],
+              "location": "Sao Paulo",
+              "acquisitionDate": "2020-03-15",
+              "recordStatus": "ACTIVE",
+              "lifecycleStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "accounts": [
+            {
+              "accountId": "aldacc_fx_corretora",
+              "name": "Corretora Sintetica",
+              "institution": "Corretora Sintetica CCTVM",
+              "accountType": "BROKERAGE",
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "cashAccounts": [
+            {
+              "cashAccountId": "aldc_fx_brl",
+              "accountId": "aldacc_fx_corretora",
+              "currency": "BRL",
+              "recordStatus": "ACTIVE",
+              "createdAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "transactions": []
+        },
+        "modal": ""
+      }
+    }
+  ],
+  "raw_selected_run_output": "ALLADIN FINALIZE PRESERVATION TEST FALHOU\n  - C8: a sessao foi PARCIALMENTE finalizada — accounts foi zerado\n  - C8: a recusa alterou o conteudo das contas existentes\n  - C11: a sessao foi finalizada mesmo sem conseguir ler o estado persistido\n  - C11: a recusa alterou o conteudo das contas existentes\n  - C14: a sessao foi finalizada sem conseguir garantir a preservacao\n  - C14: a recusa alterou o conteudo das contas existentes\n",
+  "expected_applied_test_sha256": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+  "scope": "Exact corrected test input; only C8/C11/C14 were executed; suite final summary line does not represent other cases."
+}

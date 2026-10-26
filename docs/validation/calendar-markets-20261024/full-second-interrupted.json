@@ -1,0 +1,141 @@
+{
+  "classification": "ENVIRONMENT_ERROR",
+  "attempt": "FULL2 interrupted, not a completed gate receipt",
+  "reason": "ui-visual-quality exceeded unchanged global900s; user then confirmed using Mac and provided quiet45min window. Runner stopped to start one isolated fresh FULL, without concurrent full tests. Interference possible, not proven causal. No pass inferred for unexecuted remainder.",
+  "completed_from_runner_log": [
+    {
+      "check": "preflight",
+      "classification": "PASS",
+      "seconds": 0.709
+    },
+    {
+      "check": "structure",
+      "classification": "PASS",
+      "seconds": 5.615
+    },
+    {
+      "check": "diff-check",
+      "classification": "PASS",
+      "seconds": 0.305
+    },
+    {
+      "check": "preflight-context",
+      "classification": "PASS",
+      "seconds": 1.877
+    },
+    {
+      "check": "personal-agenda",
+      "classification": "PASS",
+      "seconds": 0.143
+    },
+    {
+      "check": "monthly-economic-feed",
+      "classification": "PASS",
+      "seconds": 3.173
+    },
+    {
+      "check": "calendar-agenda",
+      "classification": "PASS",
+      "seconds": 23.935
+    },
+    {
+      "check": "calendar-recovery",
+      "classification": "PASS",
+      "seconds": 8.632
+    },
+    {
+      "check": "ui-visual-quality",
+      "classification": "ENVIRONMENT_ERROR",
+      "seconds": 900.027
+    },
+    {
+      "check": "navigation-ia",
+      "classification": "PASS",
+      "seconds": 8.077
+    },
+    {
+      "check": "dashboard-macro",
+      "classification": "PASS",
+      "seconds": 37.905
+    },
+    {
+      "check": "research-navigation",
+      "classification": "PASS",
+      "seconds": 11.645
+    },
+    {
+      "check": "smoke",
+      "classification": "PASS",
+      "seconds": 10.299
+    },
+    {
+      "check": "settings",
+      "classification": "PASS",
+      "seconds": 21.407
+    },
+    {
+      "check": "brand-identity-contract",
+      "classification": "PASS",
+      "seconds": 3.173
+    },
+    {
+      "check": "brand-identity-browser",
+      "classification": "PASS",
+      "seconds": 1.76
+    },
+    {
+      "check": "statute-documentary",
+      "classification": "PASS",
+      "seconds": 12.168
+    },
+    {
+      "check": "galton-board",
+      "classification": "PASS",
+      "seconds": 7.972
+    },
+    {
+      "check": "planning-engine",
+      "classification": "PASS",
+      "seconds": 0.845
+    },
+    {
+      "check": "planning-parity-engine",
+      "classification": "PASS",
+      "seconds": 0.505
+    },
+    {
+      "check": "planning-state",
+      "classification": "PASS",
+      "seconds": 2.392
+    },
+    {
+      "check": "planning-navigation",
+      "classification": "PASS",
+      "seconds": 0.037
+    },
+    {
+      "check": "planning-quote",
+      "classification": "PASS",
+      "seconds": 0.036
+    },
+    {
+      "check": "planning-boundaries",
+      "classification": "PASS",
+      "seconds": 0.033
+    },
+    {
+      "check": "planning-ui",
+      "classification": "PASS",
+      "seconds": 23.653
+    }
+  ],
+  "remaining": "NOT_RUN or interrupted; official final gate JSON absent",
+  "source_fingerprint": "final-gate-inputs.json",
+  "raw_log": "full-second-interrupted.log",
+  "timeout": {
+    "check": "ui-visual-quality",
+    "seconds": 900.027
+  },
+  "human_context": "Sim, estava usando o Mac; Agora, posso deixar sem uso",
+  "changes": "No product, test, gate or timeout changes"
+}

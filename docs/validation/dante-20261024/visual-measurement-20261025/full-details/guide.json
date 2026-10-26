@@ -1,0 +1,2477 @@
+{
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "startedUTC": "2026-10-25T20:41:03.413260+00:00",
+  "inputs_before": {
+    "src/js/40-app/26-learning-catalog.js": "4c671a75b9df8ab69047d775f279558eb801a7f8f2c875517c3467b96fd4b040",
+    "src/js/00-core/09-learning-progress.js": "ad4da2a8ad5b5b63276c6a38fba71e7be34e3936db9fa4f876412ba29cebbab6",
+    "src/js/40-app/27-learning-view.js": "ffc4f41c980d1e534e9493ba0b69fc3de0ed877c8b9efeedfe0fccd9bed91fa3",
+    "src/js/40-app/28-learning-guide.js": "2bded75161d7bd4d3c9f5408215ae3209e48985a3a463036d58621c8b15cf2c3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/19-calendar-agenda.js": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c",
+    "src/styles/app.css": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/40-app/06-boot.js": "bfe41d77e3abdfddda3720788951f980d12f366f945f62d0ab60ef0a4ac2f58a",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/40-app/09-settings-modal.js": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/manifest.json": "9aaa09edb0e035b95f84f155c90d85ff1e3ebce22e6719243474416ea7054430",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "sw.js": "b3c6226bda14ecfbd0e9b63f9a87f4c9a23502bbc734771a1b9063f7794cf718",
+    "build-id.js": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "25df944043e4a3222051fd8cf7a728dc1d7eb44384d2c47968a3053222432f43",
+    "assets/dante-guide.png": "42269f1a0ad8e40c494de63c71d734d7d205b9d875386f233cf67dfca21110a2",
+    "tools/dante_guide_test.py": "add1bafa91137f8c12989c33afbbf06d908c923b6eb3766bb63f5042d6c2f48d",
+    "tools/dante_profile_test.py": "18f9667022e502ebf910c7b2593921802b111c6bee3246b14334e7ccfd777869",
+    "tools/dante_catalog_test.mjs": "788f27729ef8f39ec69617b5bca5cf4bc89e27757cfa79a6c9e0573da0893d01",
+    "tools/learning_foundation_test.mjs": "86bb50e2fcc88b04f5df75524392e933075cda48f5d8d4c8cb8c0cb67a3f8d91",
+    "tools/learning_controller_test.mjs": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11"
+  },
+  "test_sha256": "6bfc1b496c82a7e1cc720c36ee38f23bd950cd60b5b932b36c70021cd6dbfa4e",
+  "cases": [
+    {
+      "name": "welcome-permanent-entry",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "trackCount": 8,
+      "entryMode": "journey"
+    },
+    {
+      "name": "readonly-all-64-native-actions",
+      "result": "PASS",
+      "config": {
+        "active_alladin": true,
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "completedLessonIds": [
+        "basics-home",
+        "basics-menu",
+        "basics-location",
+        "basics-help",
+        "basics-local-state",
+        "basics-progress",
+        "personal-finance-overview",
+        "personal-finance-budget",
+        "personal-finance-income",
+        "personal-finance-expense",
+        "personal-finance-debts",
+        "personal-finance-comparison",
+        "personal-finance-scenarios",
+        "forex-accounts",
+        "forex-context",
+        "forex-performance",
+        "forex-operation",
+        "forex-history",
+        "forex-accounting",
+        "forex-planning",
+        "forex-reserves",
+        "research-forex",
+        "research-pivots",
+        "research-stocks-br",
+        "research-stocks-global",
+        "research-reits",
+        "research-others",
+        "tools-calendar",
+        "tools-agenda",
+        "tools-calendar-coverage",
+        "tools-markets",
+        "tools-nocuda",
+        "tools-genetrix",
+        "tools-normative",
+        "alladin-start",
+        "alladin-instruments",
+        "alladin-assets",
+        "alladin-accounts",
+        "alladin-cashAccounts",
+        "alladin-ledger",
+        "alladin-balances",
+        "alladin-positions",
+        "general-notes",
+        "general-notes-save",
+        "general-settings-general",
+        "general-settings-account",
+        "general-settings-appearance",
+        "general-settings-interface",
+        "general-settings-editor",
+        "general-settings-statute",
+        "general-settings-parameters",
+        "general-settings-tool-params",
+        "general-settings-tool-check",
+        "general-settings-forex-consolidated",
+        "general-settings-educational",
+        "general-settings-probability-lab",
+        "general-settings-storage",
+        "general-settings-about",
+        "general-backup",
+        "general-session",
+        "general-notifications",
+        "planning-form",
+        "planning-consolidated",
+        "planning-monthly"
+      ],
+      "seenCount": 64,
+      "legacyLessonIdsPreserved": 57,
+      "skippedCount": 0,
+      "confirmedPracticeCount": 0,
+      "observedNativeActions": [
+        "menu",
+        "notes",
+        "session"
+      ],
+      "declaredReadFallbacks": [
+        {
+          "step": "basics-help",
+          "reason": "No native i at declared destination; approved Entendi reading fallback"
+        }
+      ],
+      "mainWrites": 0
+    },
+    {
+      "name": "progress-skip-pause-reload-resume-restart",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "skipDistinct": true,
+      "reloadCursor": "basics-location",
+      "resetOnlyGuide": true
+    },
+    {
+      "name": "invalid-version-raw-preserved",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "incompatibleRawPreservedUntilRestart": true
+    },
+    {
+      "name": "guide-storage-read-refused",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "fault": "read-refused",
+      "storage": "memory"
+    },
+    {
+      "name": "guide-storage-write-refused",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "fault": "refused",
+      "storage": "memory"
+    },
+    {
+      "name": "cross-tabs-conflict-before-receipt",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "competingRawPreserved": true
+    },
+    {
+      "name": "cleanup-dispose-clear-stale-boot",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "removedKeys": [
+        "jpw_module_availability_v1",
+        "jpw_rail",
+        "jpw_nav_submenu_rail",
+        "jpw_expl",
+        "jpw_fs",
+        "jpwealth_v9_icon_theme",
+        "jpwealth_v9_icon_choice",
+        "jpwealth_galton_preferences_v1",
+        "jpwealth_local_profile_v1",
+        "jpwealth_notes_launcher_position_v1",
+        "jpwealth_notes_appearance_v1",
+        "jpwealth_learning_guide_v1",
+        "jpwealth_time_twins_v1",
+        "jpwealth_capital_currents_v1",
+        "jpwealth_capital_field_v1",
+        "jpwealth_planning_monthly_view_v1",
+        "jpwealth_calendar_view_v1",
+        "jpwealth_session_wipe_signal_v1"
+      ],
+      "staleCallbacksNoResurrection": true
+    },
+    {
+      "name": "frozen-alladin",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "suspension": "frozen-alladin"
+    },
+    {
+      "name": "frozen-personal-finance",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "suspension": "frozen-personal-finance"
+    },
+    {
+      "name": "missing-anchor",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "suspension": "missing-anchor"
+    },
+    {
+      "name": "off-route",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "suspension": "off-route"
+    },
+    {
+      "name": "foreign-dialog",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "suspension": "foreign-dialog"
+    },
+    {
+      "name": "layout/sidebar/1440/dark",
+      "result": "PASS",
+      "config": {
+        "layout": "sidebar",
+        "width": 1440,
+        "theme": "dark"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 284,
+        "y": 149.796875,
+        "right": 644,
+        "bottom": 577.140625,
+        "width": 360,
+        "height": 427.34375,
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 1440,
+        "innerWidth": 1440
+      }
+    },
+    {
+      "name": "layout/sidebar/390/light",
+      "result": "PASS",
+      "config": {
+        "layout": "sidebar",
+        "width": 390,
+        "theme": "light"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 20,
+        "y": 192.796875,
+        "right": 370,
+        "bottom": 612.59375,
+        "width": 350,
+        "height": 419.796875,
+        "viewport": {
+          "width": 390,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 390,
+        "innerWidth": 390
+      }
+    },
+    {
+      "name": "layout/topbar/1440/dark",
+      "result": "PASS",
+      "config": {
+        "layout": "topbar",
+        "width": 1440,
+        "theme": "dark"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 32,
+        "y": 149.796875,
+        "right": 392,
+        "bottom": 577.140625,
+        "width": 360,
+        "height": 427.34375,
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 1440,
+        "innerWidth": 1440
+      }
+    },
+    {
+      "name": "layout/topbar/390/light",
+      "result": "PASS",
+      "config": {
+        "layout": "topbar",
+        "width": 390,
+        "theme": "light"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 20,
+        "y": 192.796875,
+        "right": 370,
+        "bottom": 612.59375,
+        "width": 350,
+        "height": 419.796875,
+        "viewport": {
+          "width": 390,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 390,
+        "innerWidth": 390
+      }
+    },
+    {
+      "name": "layout/glass/1440/dark",
+      "result": "PASS",
+      "config": {
+        "layout": "glass",
+        "width": 1440,
+        "theme": "dark"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 32,
+        "y": 177.796875,
+        "right": 392,
+        "bottom": 605.140625,
+        "width": 360,
+        "height": 427.34375,
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 1440,
+        "innerWidth": 1440
+      }
+    },
+    {
+      "name": "layout/glass/390/light",
+      "result": "PASS",
+      "config": {
+        "layout": "glass",
+        "width": 390,
+        "theme": "light"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 20,
+        "y": 167.796875,
+        "right": 370,
+        "bottom": 587.59375,
+        "width": 350,
+        "height": 419.796875,
+        "viewport": {
+          "width": 390,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 390,
+        "innerWidth": 390
+      }
+    },
+    {
+      "name": "layout/submenu/1440/dark",
+      "result": "PASS",
+      "config": {
+        "layout": "submenu",
+        "width": 1440,
+        "theme": "dark"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 320,
+        "y": 149.796875,
+        "right": 680,
+        "bottom": 577.140625,
+        "width": 360,
+        "height": 427.34375,
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 1440,
+        "innerWidth": 1440
+      }
+    },
+    {
+      "name": "layout/submenu/390/light",
+      "result": "PASS",
+      "config": {
+        "layout": "submenu",
+        "width": 390,
+        "theme": "light"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "geometry": {
+        "x": 20,
+        "y": 192.796875,
+        "right": 370,
+        "bottom": 612.59375,
+        "width": 350,
+        "height": 419.796875,
+        "viewport": {
+          "width": 390,
+          "height": 1000,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 390,
+        "innerWidth": 390
+      }
+    },
+    {
+      "name": "native-pf/confirmed",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeBackupReminderDismissedByUser": true,
+      "nativeBackupReminderDismissal": {
+        "visibleBefore": true,
+        "closeButtonPointer": {
+          "x": 844.0546875,
+          "y": 952,
+          "width": 21.921875,
+          "height": 23,
+          "uncovered": true,
+          "hit": "dgBannerClose"
+        },
+        "removedAfterTrustedClick": true,
+        "financialUnchanged": true,
+        "storageWritesBefore": 0,
+        "storageWritesAfter": 0
+      },
+      "practiceBannerState": "dismissed-by-native-X",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "personal-finance-budget",
+          "instruction": "Se já existir uma receita ou despesa real neste mês, escolha um campo e use um dado seu correto. O app salva ao sair do campo; Escape cancela o rascunho antes de salvar. Sem registro ou com edição bloqueada, use Entendi ou Pular. Não crie valores de exemplo.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 434.984375,
+            "y": 638.140625,
+            "width": 269.96875,
+            "height": 44,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeFieldPointer": {
+        "x": 778.2265625,
+        "y": 500.453125,
+        "width": 199.234375,
+        "height": 40,
+        "uncovered": true,
+        "hit": "INPUT"
+      },
+      "receipt": {
+        "status": "CONFIRMED",
+        "reason": "READBACK_MATCH",
+        "component": "state",
+        "context": "7ca07c8a-075d-4f6e-9198-59c670e20b6e",
+        "epoch": 0,
+        "at": "2026-10-25T20:41:45.289Z"
+      },
+      "durableAmount": 12345,
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "7ca07c8a-075d-4f6e-9198-59c670e20b6e",
+        "epoch": 0,
+        "at": null
+      },
+      "nativePF": "confirmed"
+    },
+    {
+      "name": "native-pf/refused",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeBackupReminderDismissedByUser": true,
+      "nativeBackupReminderDismissal": {
+        "visibleBefore": true,
+        "closeButtonPointer": {
+          "x": 844.0546875,
+          "y": 952,
+          "width": 21.921875,
+          "height": 23,
+          "uncovered": true,
+          "hit": "dgBannerClose"
+        },
+        "removedAfterTrustedClick": true,
+        "financialUnchanged": true,
+        "storageWritesBefore": 0,
+        "storageWritesAfter": 0
+      },
+      "practiceBannerState": "dismissed-by-native-X",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "personal-finance-budget",
+          "instruction": "Se já existir uma receita ou despesa real neste mês, escolha um campo e use um dado seu correto. O app salva ao sair do campo; Escape cancela o rascunho antes de salvar. Sem registro ou com edição bloqueada, use Entendi ou Pular. Não crie valores de exemplo.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 434.984375,
+            "y": 638.140625,
+            "width": 269.96875,
+            "height": 44,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeFieldPointer": {
+        "x": 778.2265625,
+        "y": 500.453125,
+        "width": 199.234375,
+        "height": 40,
+        "uncovered": true,
+        "hit": "INPUT"
+      },
+      "receipt": {
+        "status": "REFUSED",
+        "reason": "WRITE_REFUSED",
+        "component": "state",
+        "context": "e46be8bb-8f11-442a-9e9e-044b81499b29",
+        "epoch": 0,
+        "at": "2026-10-25T20:41:47.374Z"
+      },
+      "durableAmount": 10000,
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "e46be8bb-8f11-442a-9e9e-044b81499b29",
+        "epoch": 0,
+        "at": null
+      },
+      "nativePF": "refused"
+    },
+    {
+      "name": "native-pf/unknown",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeBackupReminderDismissedByUser": true,
+      "nativeBackupReminderDismissal": {
+        "visibleBefore": true,
+        "closeButtonPointer": {
+          "x": 844.0546875,
+          "y": 952,
+          "width": 21.921875,
+          "height": 23,
+          "uncovered": true,
+          "hit": "dgBannerClose"
+        },
+        "removedAfterTrustedClick": true,
+        "financialUnchanged": true,
+        "storageWritesBefore": 0,
+        "storageWritesAfter": 0
+      },
+      "practiceBannerState": "dismissed-by-native-X",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "personal-finance-budget",
+          "instruction": "Se já existir uma receita ou despesa real neste mês, escolha um campo e use um dado seu correto. O app salva ao sair do campo; Escape cancela o rascunho antes de salvar. Sem registro ou com edição bloqueada, use Entendi ou Pular. Não crie valores de exemplo.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 434.984375,
+            "y": 638.140625,
+            "width": 269.96875,
+            "height": 44,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeFieldPointer": {
+        "x": 778.2265625,
+        "y": 500.453125,
+        "width": 199.234375,
+        "height": 40,
+        "uncovered": true,
+        "hit": "INPUT"
+      },
+      "receipt": {
+        "status": "UNKNOWN",
+        "reason": "READ_AFTER_WRITE",
+        "component": "state",
+        "context": "eb7c5a69-1070-4159-bf4a-a80571390652",
+        "epoch": 1,
+        "at": "2026-10-25T20:41:49.290Z"
+      },
+      "durableAmount": 12345,
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "eb7c5a69-1070-4159-bf4a-a80571390652",
+        "epoch": 0,
+        "at": null
+      },
+      "nativePF": "unknown"
+    },
+    {
+      "name": "native-pf/escape",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeBackupReminderDismissedByUser": true,
+      "nativeBackupReminderDismissal": {
+        "visibleBefore": true,
+        "closeButtonPointer": {
+          "x": 844.0546875,
+          "y": 952,
+          "width": 21.921875,
+          "height": 23,
+          "uncovered": true,
+          "hit": "dgBannerClose"
+        },
+        "removedAfterTrustedClick": true,
+        "financialUnchanged": true,
+        "storageWritesBefore": 0,
+        "storageWritesAfter": 0
+      },
+      "practiceBannerState": "dismissed-by-native-X",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "personal-finance-budget",
+          "instruction": "Se já existir uma receita ou despesa real neste mês, escolha um campo e use um dado seu correto. O app salva ao sair do campo; Escape cancela o rascunho antes de salvar. Sem registro ou com edição bloqueada, use Entendi ou Pular. Não crie valores de exemplo.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 434.984375,
+            "y": 638.140625,
+            "width": 269.96875,
+            "height": 44,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeFieldPointer": {
+        "x": 778.2265625,
+        "y": 500.453125,
+        "width": 199.234375,
+        "height": 40,
+        "uncovered": true,
+        "hit": "INPUT"
+      },
+      "nativePF": "escape"
+    },
+    {
+      "name": "native-notes/confirmed",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "durableNote": {
+        "id": "mvpn_mvoamu79_b43f1r",
+        "ticket": "JPW-65872Z",
+        "type": "bug",
+        "content": "Synthetic native note\nSecond fixture line",
+        "title": "Synthetic native note",
+        "aiImplementationPolicy": "blocked",
+        "priority": "critical",
+        "status": "in_progress",
+        "folderId": null,
+        "screenId": "dash",
+        "buildId": "8c127c2f92de375e",
+        "sourceRevision": null,
+        "createdAt": "2026-10-25T20:41:52.485Z",
+        "updatedAt": "2026-10-25T20:41:52.485Z",
+        "completedAt": null
+      },
+      "receipt": {
+        "status": "CONFIRMED",
+        "reason": "READBACK_MATCH",
+        "component": "state",
+        "context": "e38112f6-4c5b-4908-8da9-f83c12b89233",
+        "epoch": 0,
+        "at": "2026-10-25T20:41:52.485Z"
+      },
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "e38112f6-4c5b-4908-8da9-f83c12b89233",
+        "epoch": 0,
+        "at": null
+      },
+      "nativeNotes": "confirmed"
+    },
+    {
+      "name": "native-notes/refused",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "receipt": {
+        "status": "REFUSED",
+        "reason": "WRITE_REFUSED",
+        "component": "state",
+        "context": "fc7aa4d4-0edd-4d0a-878e-aa4b2f7db081",
+        "epoch": 0,
+        "at": "2026-10-25T20:41:54.122Z"
+      },
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "fc7aa4d4-0edd-4d0a-878e-aa4b2f7db081",
+        "epoch": 0,
+        "at": null
+      },
+      "nativeNotes": "refused"
+    },
+    {
+      "name": "native-notes/unknown",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "receipt": {
+        "status": "UNKNOWN",
+        "reason": "READ_AFTER_WRITE",
+        "component": "state",
+        "context": "81f310f3-af98-4d53-8642-7d8b1a990e49",
+        "epoch": 1,
+        "at": "2026-10-25T20:41:55.548Z"
+      },
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "81f310f3-af98-4d53-8642-7d8b1a990e49",
+        "epoch": 0,
+        "at": null
+      },
+      "nativeNotes": "unknown"
+    },
+    {
+      "name": "native-notes/dirty-refusal",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeDiscardDialogs": [
+        "Existem alterações não salvas nesta nota. Deseja descartá-las?",
+        "Existem alterações não salvas nesta nota. Deseja descartá-las?"
+      ],
+      "nativeNotes": "dirty-refusal"
+    },
+    {
+      "name": "native-notes-metadata-cancel/button",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "focusAfterDismissal": {
+        "id": "mvpNotesNewBtn",
+        "tag": "BUTTON",
+        "insideCoach": false
+      },
+      "metadataCancelledBy": "button"
+    },
+    {
+      "name": "native-notes-metadata-cancel/escape",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "focusAfterDismissal": {
+        "id": "mvpNotesNewBtn",
+        "tag": "BUTTON",
+        "insideCoach": false
+      },
+      "metadataCancelledBy": "escape"
+    },
+    {
+      "name": "native-notes-metadata-cancel/backdrop",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "focusAfterDismissal": {
+        "id": "",
+        "tag": "BODY",
+        "insideCoach": false
+      },
+      "baselineFocus": {
+        "id": "",
+        "tag": "BODY",
+        "insideCoach": false
+      },
+      "metadataCancelledBy": "backdrop"
+    },
+    {
+      "name": "native-contextual-help",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeHelpOpenedAndClosed": true
+    },
+    {
+      "name": "native-pending-account-guard",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "guardDiagnostic": {
+        "events": [
+          {
+            "sequence": 2,
+            "current": {
+              "canonical": "dashboard",
+              "requested": "dashboard",
+              "source": "canonical",
+              "primary": "dashboard",
+              "child": null,
+              "screen": "dash",
+              "localView": null
+            }
+          }
+        ],
+        "drafts": false,
+        "current": {
+          "canonical": "dashboard",
+          "requested": "dashboard",
+          "source": "canonical",
+          "primary": "dashboard",
+          "child": null,
+          "screen": "dash",
+          "localView": null
+        },
+        "touched": ""
+      },
+      "acceptedPublications": [
+        {
+          "sequence": 2,
+          "current": {
+            "canonical": "dashboard",
+            "requested": "dashboard",
+            "source": "canonical",
+            "primary": "dashboard",
+            "child": null,
+            "screen": "dash",
+            "localView": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "native-research-draft-preservation-local-refusal",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "localRefusalDialogs": [
+        "Há parâmetros alterados e não salvos neste instrumento. Trocar de instrumento descarta essas alterações. Continuar?"
+      ],
+      "canonicalDraftNavigationAccepted": true,
+      "acceptedPublications": [
+        {
+          "sequence": 2,
+          "current": {
+            "canonical": "dashboard",
+            "requested": "dashboard",
+            "source": "canonical",
+            "primary": "dashboard",
+            "child": null,
+            "screen": "dash",
+            "localView": null
+          }
+        },
+        {
+          "sequence": 3,
+          "current": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "sequence": 4,
+          "current": {
+            "canonical": "research-forex",
+            "requested": "research:pivots",
+            "source": "local",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "pivots"
+            }
+          }
+        },
+        {
+          "sequence": 5,
+          "current": {
+            "canonical": "dashboard",
+            "requested": "dashboard",
+            "source": "canonical",
+            "primary": "dashboard",
+            "child": null,
+            "screen": "dash",
+            "localView": null
+          }
+        },
+        {
+          "sequence": 6,
+          "current": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "sequence": 7,
+          "current": {
+            "canonical": "research-forex",
+            "requested": "research:pivots",
+            "source": "local",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "pivots"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "actual-backup-excludes-guide",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "actualDownload": "JP_WEALTH_DB_000001_2026-10-25_1742_eaf7fc97-a778-4f9d-9413-a87f50c053b4.json",
+      "backupInspection": {
+        "kind": "FULL_V2",
+        "legacy": false,
+        "sections": [
+          "accounts",
+          "acct",
+          "activeOperation",
+          "alladin",
+          "atr55",
+          "atr660",
+          "atrPctManual",
+          "checklist",
+          "cycleRealizado",
+          "dataGovernance",
+          "expAlvo",
+          "forex",
+          "fxConsolidated",
+          "fxPlanning",
+          "instruments",
+          "ledger",
+          "ledgerArchive",
+          "ledgerHistory",
+          "loteMaster",
+          "matrix",
+          "mei",
+          "mvpNotes",
+          "nocoda",
+          "onboarding",
+          "operationHistory",
+          "params",
+          "perf",
+          "period",
+          "personalFinance",
+          "phaseUnlocked",
+          "phases",
+          "pivotStudies",
+          "profiles",
+          "protocolBreaches",
+          "quarantine",
+          "riskPinHash",
+          "stopF",
+          "theme",
+          "transitionLog",
+          "workspaceRecovery"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "name": "actual-backup-import-pauses-invalidates-practice",
+      "result": "PASS",
+      "config": {
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "postImportReceipt": {
+        "status": "CONFIRMED",
+        "reason": "READBACK_MATCH",
+        "component": "state",
+        "context": "55aafdff-c324-4271-a322-c4a452b4de9e",
+        "epoch": 0,
+        "at": "2026-10-25T20:42:08.885Z"
+      },
+      "postImportBaseEpoch": "753a76e9-8dae-4cdc-ae30-81f682523ea0",
+      "nativeImportDialogs": [
+        {
+          "type": "confirm",
+          "message": "Backup Completo v2: checksum SHA-256 conferido. Registros confirmados e rascunhos permanecem separados.\n\nImportar e substituir o estado atual deste navegador?"
+        },
+        {
+          "type": "alert",
+          "message": "Backup importado com sucesso. Recarregue para aplicar todas as preferências visuais."
+        }
+      ],
+      "preImportReceipt": {
+        "status": "CONFIRMED",
+        "reason": "READBACK_MATCH",
+        "component": "state",
+        "context": "55aafdff-c324-4271-a322-c4a452b4de9e",
+        "epoch": 0,
+        "at": "2026-10-25T20:42:08.517Z"
+      },
+      "preImportBaseEpoch": "BASE-V0-LEGACY",
+      "guideRawPreserved": true
+    },
+    {
+      "name": "startup-source-manifest",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "classicScriptCount": 123,
+      "sourceJSCount": 121,
+      "startupCounterproofsRejected": [
+        "calendar-collective-omission",
+        "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+        "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+        "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+        "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+        "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+        "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+        "legacy-omission",
+        "legacy-duplicate",
+        "legacy-order"
+      ],
+      "startupFacade": true
+    },
+    {
+      "name": "startup-portable-http",
+      "result": "PASS",
+      "config": {
+        "surface": "portable-http"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "startupFacade": true
+    },
+    {
+      "name": "startup-portable-file",
+      "result": "PASS",
+      "config": {
+        "surface": "portable-file"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "startupFacade": true
+    },
+    {
+      "name": "offline-sw-four-guide-modules",
+      "result": "PASS",
+      "config": {
+        "service_workers": "allow"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "actualPrecachedCalendarAgendaModules": [
+        "src/js/10-domain/19-personal-agenda.js",
+        "src/js/40-app/16-monthly-economic-data.js",
+        "src/js/40-app/19-calendar-agenda.js"
+      ],
+      "classicScriptCount": 123,
+      "sourceJSCount": 121,
+      "startupCounterproofsRejected": [
+        "calendar-collective-omission",
+        "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+        "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+        "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+        "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+        "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+        "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+        "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+        "legacy-omission",
+        "legacy-duplicate",
+        "legacy-order"
+      ],
+      "startupFacade": true,
+      "actualPrecachedGuideModules": [
+        "src/js/40-app/26-learning-catalog.js",
+        "src/js/00-core/09-learning-progress.js",
+        "src/js/40-app/27-learning-view.js",
+        "src/js/40-app/28-learning-guide.js"
+      ]
+    },
+    {
+      "name": "nested-scroll",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "scrollFixture": {
+        "clientHeight": 550,
+        "scrollHeight": 5794
+      },
+      "nestedScrollTargetY": [
+        95,
+        -5
+      ]
+    },
+    {
+      "name": "reflow-200-equivalent",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "reflowViewport": {
+        "width": 720,
+        "height": 600
+      }
+    },
+    {
+      "name": "visualViewport-shrink",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "pageScale": 1.399999976158142
+    },
+    {
+      "name": "native-browser-zoom-200",
+      "result": "PASS",
+      "config": {
+        "nativeZoom": true,
+        "theme": "dark"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeZoomMeasurement": {
+        "ratio": 2,
+        "cssZoom": "1"
+      },
+      "geometry": {
+        "x": 20,
+        "y": 149.796875,
+        "right": 380,
+        "bottom": 424.734375,
+        "width": 360,
+        "height": 274.9375,
+        "viewport": {
+          "width": 712.5,
+          "height": 437,
+          "left": 0,
+          "top": 0
+        },
+        "docWidth": 712,
+        "innerWidth": 720
+      }
+    },
+    {
+      "name": "guide-controls-in-metadata-own-enter",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "afterKeyboard": {
+        "metadataOpen": true,
+        "stage": "list",
+        "focus": "",
+        "draft": null
+      }
+    },
+    {
+      "name": "native-metadata-geometry/1440x900",
+      "result": "PASS",
+      "config": {
+        "width": 1440,
+        "height": 900
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "general-notes-save",
+          "instruction": "Escreva apenas uma nota sua necessária. Nova nota abre um formulário antes do editor. Clique Salvar para gravar; cancelar não conta como prática. O guia verifica a nota salva sem guardar texto, título ou identificação no progresso.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 381.984375,
+            "y": 705,
+            "width": 269.96875,
+            "height": 44,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeControls": {
+        "mvpNotesNewType": {
+          "x": 613,
+          "y": 227.875,
+          "width": 204,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewType"
+        },
+        "mvpNotesNewPriority": {
+          "x": 827,
+          "y": 227.875,
+          "width": 204,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewPriority"
+        },
+        "mvpNotesNewStatus": {
+          "x": 613,
+          "y": 314.0625,
+          "width": 204,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewStatus"
+        },
+        "mvpNotesNewFolder": {
+          "x": 827,
+          "y": 314.0625,
+          "width": 204,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewFolder"
+        },
+        "mvpNotesNewPolicy": {
+          "x": 720,
+          "y": 400.25,
+          "width": 418,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewPolicy"
+        },
+        "mvpNotesNewConfirmBtn": {
+          "x": 869,
+          "y": 507.84375,
+          "width": 120,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewConfirmBtn"
+        },
+        "mvpNotesNewCancelBtn": {
+          "x": 743,
+          "y": 507.84375,
+          "width": 120,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewCancelBtn"
+        }
+      },
+      "trustedTabFocus": [
+        "mvpNotesNewPriority",
+        "mvpNotesNewStatus",
+        "mvpNotesNewFolder",
+        "mvpNotesNewPolicy",
+        "mvpNotesNewCancelBtn",
+        "mvpNotesNewConfirmBtn",
+        "jpwLearningDetailsSummary",
+        "jpwLearningUnderstand",
+        "jpwLearningBack",
+        "jpwLearningSkip",
+        "jpwLearningPause",
+        "mvpNotesNewType"
+      ],
+      "stableFrameRanges": [
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "instructionDisclosure": {
+        "initiallyCollapsed": true,
+        "nativeEnterExpandedAndCollapsed": true,
+        "fullCatalogCopy": true
+      },
+      "cancelAfterKeyboard": {
+        "x": 743,
+        "y": 507.84375,
+        "width": 120,
+        "height": 42,
+        "uncovered": true,
+        "hit": "mvpNotesNewCancelBtn"
+      },
+      "mainWrites": 0,
+      "nativeFormPreserved": true
+    },
+    {
+      "name": "native-metadata-geometry/390x844",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "general-notes-save",
+          "instruction": "Escreva apenas uma nota sua necessária. Nova nota abre um formulário antes do editor. Clique Salvar para gravar; cancelar não conta como prática. O guia verifica a nota salva sem guardar texto, título ou identificação no progresso.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 275.5,
+            "y": 683,
+            "width": 161,
+            "height": 44,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeControls": {
+        "mvpNotesNewType": {
+          "x": 195,
+          "y": 203.875,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewType"
+        },
+        "mvpNotesNewPriority": {
+          "x": 195,
+          "y": 290.0625,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewPriority"
+        },
+        "mvpNotesNewStatus": {
+          "x": 195,
+          "y": 376.25,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewStatus"
+        },
+        "mvpNotesNewFolder": {
+          "x": 195,
+          "y": 462.4375,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewFolder"
+        },
+        "mvpNotesNewPolicy": {
+          "x": 195,
+          "y": 548.625,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewPolicy"
+        },
+        "mvpNotesNewConfirmBtn": {
+          "x": 195,
+          "y": 656.21875,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewConfirmBtn"
+        },
+        "mvpNotesNewCancelBtn": {
+          "x": 195,
+          "y": 704.21875,
+          "width": 306,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewCancelBtn"
+        }
+      },
+      "trustedTabFocus": [
+        "mvpNotesNewPriority",
+        "mvpNotesNewStatus",
+        "mvpNotesNewFolder",
+        "mvpNotesNewPolicy",
+        "mvpNotesNewCancelBtn",
+        "mvpNotesNewConfirmBtn",
+        "jpwLearningDetailsSummary",
+        "jpwLearningUnderstand",
+        "jpwLearningBack",
+        "jpwLearningSkip",
+        "jpwLearningPause",
+        "mvpNotesNewType"
+      ],
+      "stableFrameRanges": [
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "instructionDisclosure": {
+        "initiallyCollapsed": true,
+        "nativeEnterExpandedAndCollapsed": true,
+        "fullCatalogCopy": true
+      },
+      "cancelAfterKeyboard": {
+        "x": 195,
+        "y": 704.21875,
+        "width": 306,
+        "height": 42,
+        "uncovered": true,
+        "hit": "mvpNotesNewCancelBtn"
+      },
+      "mainWrites": 0,
+      "nativeFormPreserved": true
+    },
+    {
+      "name": "native-metadata-geometry/320x640",
+      "result": "PASS",
+      "config": {
+        "width": 320,
+        "height": 640
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "general-notes-save",
+          "instruction": "Escreva apenas uma nota sua necessária. Nova nota abre um formulário antes do editor. Clique Salvar para gravar; cancelar não conta como prática. O guia verifica a nota salva sem guardar texto, título ou identificação no progresso.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 223,
+            "y": 482.3046875,
+            "width": 126,
+            "height": 54.640625,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeControls": {
+        "mvpNotesNewType": {
+          "x": 160,
+          "y": 203.875,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewType"
+        },
+        "mvpNotesNewPriority": {
+          "x": 160,
+          "y": 290.0625,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewPriority"
+        },
+        "mvpNotesNewStatus": {
+          "x": 160,
+          "y": 376.25,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewStatus"
+        },
+        "mvpNotesNewFolder": {
+          "x": 160,
+          "y": 462.4375,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewFolder"
+        },
+        "mvpNotesNewPolicy": {
+          "x": 160,
+          "y": 548.625,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewPolicy"
+        },
+        "mvpNotesNewConfirmBtn": {
+          "x": 160,
+          "y": 421.015625,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewConfirmBtn"
+        },
+        "mvpNotesNewCancelBtn": {
+          "x": 160,
+          "y": 469.015625,
+          "width": 236,
+          "height": 42,
+          "uncovered": true,
+          "hit": "mvpNotesNewCancelBtn"
+        }
+      },
+      "trustedTabFocus": [
+        "mvpNotesNewPriority",
+        "mvpNotesNewStatus",
+        "mvpNotesNewFolder",
+        "mvpNotesNewPolicy",
+        "mvpNotesNewCancelBtn",
+        "mvpNotesNewConfirmBtn",
+        "jpwLearningDetailsSummary",
+        "jpwLearningUnderstand",
+        "jpwLearningBack",
+        "jpwLearningSkip",
+        "jpwLearningPause",
+        "mvpNotesNewType"
+      ],
+      "stableFrameRanges": [
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 0,
+          "y": 0.0,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "instructionDisclosure": {
+        "initiallyCollapsed": true,
+        "nativeEnterExpandedAndCollapsed": true,
+        "fullCatalogCopy": true
+      },
+      "cancelAfterKeyboard": {
+        "x": 160,
+        "y": 469.015625,
+        "width": 236,
+        "height": 42,
+        "uncovered": true,
+        "hit": "mvpNotesNewCancelBtn"
+      },
+      "mainWrites": 0,
+      "nativeFormPreserved": true
+    },
+    {
+      "name": "readonly-all-64-native-actions/mobile-390x844",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844,
+        "active_alladin": true,
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "completedLessonIds": [
+        "basics-home",
+        "basics-menu",
+        "basics-location",
+        "basics-help",
+        "basics-local-state",
+        "basics-progress",
+        "personal-finance-overview",
+        "personal-finance-budget",
+        "personal-finance-income",
+        "personal-finance-expense",
+        "personal-finance-debts",
+        "personal-finance-comparison",
+        "personal-finance-scenarios",
+        "forex-accounts",
+        "forex-context",
+        "forex-performance",
+        "forex-operation",
+        "forex-history",
+        "forex-accounting",
+        "forex-planning",
+        "forex-reserves",
+        "research-forex",
+        "research-pivots",
+        "research-stocks-br",
+        "research-stocks-global",
+        "research-reits",
+        "research-others",
+        "tools-calendar",
+        "tools-agenda",
+        "tools-calendar-coverage",
+        "tools-markets",
+        "tools-nocuda",
+        "tools-genetrix",
+        "tools-normative",
+        "alladin-start",
+        "alladin-instruments",
+        "alladin-assets",
+        "alladin-accounts",
+        "alladin-cashAccounts",
+        "alladin-ledger",
+        "alladin-balances",
+        "alladin-positions",
+        "general-notes",
+        "general-notes-save",
+        "general-settings-general",
+        "general-settings-account",
+        "general-settings-appearance",
+        "general-settings-interface",
+        "general-settings-editor",
+        "general-settings-statute",
+        "general-settings-parameters",
+        "general-settings-tool-params",
+        "general-settings-tool-check",
+        "general-settings-forex-consolidated",
+        "general-settings-educational",
+        "general-settings-probability-lab",
+        "general-settings-storage",
+        "general-settings-about",
+        "general-backup",
+        "general-session",
+        "general-notifications",
+        "planning-form",
+        "planning-consolidated",
+        "planning-monthly"
+      ],
+      "seenCount": 64,
+      "legacyLessonIdsPreserved": 57,
+      "skippedCount": 0,
+      "confirmedPracticeCount": 0,
+      "observedNativeActions": [
+        "menu",
+        "notes",
+        "session"
+      ],
+      "declaredReadFallbacks": [
+        {
+          "step": "basics-help",
+          "reason": "No native i at declared destination; approved Entendi reading fallback"
+        }
+      ],
+      "mainWrites": 0
+    },
+    {
+      "name": "readonly-all-64-native-actions/mobile-320x700",
+      "result": "PASS",
+      "config": {
+        "width": 320,
+        "height": 700,
+        "active_alladin": true,
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "completedLessonIds": [
+        "basics-home",
+        "basics-menu",
+        "basics-location",
+        "basics-help",
+        "basics-local-state",
+        "basics-progress",
+        "personal-finance-overview",
+        "personal-finance-budget",
+        "personal-finance-income",
+        "personal-finance-expense",
+        "personal-finance-debts",
+        "personal-finance-comparison",
+        "personal-finance-scenarios",
+        "forex-accounts",
+        "forex-context",
+        "forex-performance",
+        "forex-operation",
+        "forex-history",
+        "forex-accounting",
+        "forex-planning",
+        "forex-reserves",
+        "research-forex",
+        "research-pivots",
+        "research-stocks-br",
+        "research-stocks-global",
+        "research-reits",
+        "research-others",
+        "tools-calendar",
+        "tools-agenda",
+        "tools-calendar-coverage",
+        "tools-markets",
+        "tools-nocuda",
+        "tools-genetrix",
+        "tools-normative",
+        "alladin-start",
+        "alladin-instruments",
+        "alladin-assets",
+        "alladin-accounts",
+        "alladin-cashAccounts",
+        "alladin-ledger",
+        "alladin-balances",
+        "alladin-positions",
+        "general-notes",
+        "general-notes-save",
+        "general-settings-general",
+        "general-settings-account",
+        "general-settings-appearance",
+        "general-settings-interface",
+        "general-settings-editor",
+        "general-settings-statute",
+        "general-settings-parameters",
+        "general-settings-tool-params",
+        "general-settings-tool-check",
+        "general-settings-forex-consolidated",
+        "general-settings-educational",
+        "general-settings-probability-lab",
+        "general-settings-storage",
+        "general-settings-about",
+        "general-backup",
+        "general-session",
+        "general-notifications",
+        "planning-form",
+        "planning-consolidated",
+        "planning-monthly"
+      ],
+      "seenCount": 64,
+      "legacyLessonIdsPreserved": 57,
+      "skippedCount": 0,
+      "confirmedPracticeCount": 0,
+      "observedNativeActions": [
+        "menu",
+        "notes",
+        "session"
+      ],
+      "declaredReadFallbacks": [
+        {
+          "step": "basics-help",
+          "reason": "No native i at declared destination; approved Entendi reading fallback"
+        }
+      ],
+      "mainWrites": 0
+    },
+    {
+      "name": "native-pf/confirmed/mobile-390x844",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844,
+        "active_pf": true
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "nativeBackupReminderDismissedByUser": true,
+      "nativeBackupReminderDismissal": {
+        "visibleBefore": true,
+        "closeButtonPointer": {
+          "x": 123.4609375,
+          "y": 805.5,
+          "width": 21.921875,
+          "height": 23,
+          "uncovered": true,
+          "hit": "dgBannerClose"
+        },
+        "removedAfterTrustedClick": true,
+        "financialUnchanged": true,
+        "storageWritesBefore": 0,
+        "storageWritesAfter": 0
+      },
+      "practiceBannerState": "dismissed-by-native-X",
+      "practiceNoticeEvidence": [
+        {
+          "stepId": "personal-finance-budget",
+          "instruction": "Se já existir uma receita ou despesa real neste mês, escolha um campo e use um dado seu correto. O app salva ao sair do campo; Escape cancela o rascunho antes de salvar. Sem registro ou com edição bloqueada, use Entendi ou Pular. Não crie valores de exemplo.",
+          "layout": "flow",
+          "matchingCopies": 1,
+          "visibleCopies": 1,
+          "paragraphId": "jpwLearningPracticeInstruction",
+          "insideClosedDetails": false,
+          "practiceStartPointer": {
+            "x": 109.5,
+            "y": 728.9140625,
+            "width": 151,
+            "height": 54.640625,
+            "uncovered": true,
+            "hit": "jpwLearningPracticeStart"
+          }
+        }
+      ],
+      "nativeFieldPointer": {
+        "x": 112.5,
+        "y": 421.90625,
+        "width": 145,
+        "height": 40,
+        "uncovered": true,
+        "hit": "INPUT"
+      },
+      "receipt": {
+        "status": "CONFIRMED",
+        "reason": "READBACK_MATCH",
+        "component": "state",
+        "context": "cb8d9bbd-b0f0-4297-80ca-f621b0f09280",
+        "epoch": 0,
+        "at": "2026-10-25T20:43:29.440Z"
+      },
+      "durableAmount": 12345,
+      "priorReceipt": {
+        "status": "REFUSED",
+        "reason": "NOT_ATTEMPTED",
+        "component": "startup",
+        "context": "cb8d9bbd-b0f0-4297-80ca-f621b0f09280",
+        "epoch": 0,
+        "at": null
+      },
+      "nativePF": "confirmed"
+    },
+    {
+      "name": "dante/model-contracts",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "models": [
+        {
+          "test": "learning_foundation_test.mjs",
+          "exit": 0,
+          "output": "ll with independent defensive snapshots\nPASS invalid frozen unavailable and settings-only applications emit nothing\nPASS pending guard emits only when deferred navigation is actually accepted\nPASS deferred route made frozen before acceptance emits nothing\nPASS current snapshot ignores caller arguments\nPASS unavailable physical target emits nothing\nPASS unsubscribe is idempotent and listener exceptions do not stop following routes\nPASS a subscriber rejecting another route cannot change the accepted caller result\nPASS reentrant acceptance reaches every subscriber in monotonic sequence order\nPASS publication captures the accepted route even when a subscriber navigates again\n53 passed; 0 failed\n"
+        },
+        {
+          "test": "learning_controller_test.mjs",
+          "exit": 0,
+          "output": "w outside an editable logical form and releases it after cancellation\nPASS Dante opening the center removes a suspended coach and invalidates queued exit redraws\nPASS Dante center takes its own surface without an overlapping paused card\nPASS Dante reduced motion and resumed speech are complete without timer or focus change\nPASS Dante actual controller reveal and speech changes never mark reading before final acknowledgment\nPASS Dante action narration exposes reveal while original action remains required\nPASS Dante pause cancels typing and resumes same speech whole; reload returns to its first speech\nPASS Dante visibility and session disposal leave no scheduled narration\n116 passed, 0 failed\n"
+        },
+        {
+          "test": "dante_catalog_test.mjs",
+          "exit": 0,
+          "output": "{\n  \"result\": \"PASS\",\n  \"legacyIds\": 57,\n  \"lessons\": 64,\n  \"chapters\": 8,\n  \"checks\": \"ownership, unique complete journey, planning availability, short speech, safe observers, coverage, complete task phases, per-speech anchors, restricted hosts, source hooks, immutable\"\n}\n"
+        }
+      ]
+    },
+    {
+      "name": "dante/profile-and-welcome",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "profileAndWelcome": "confirmed through disposable real UI, default never writes identity"
+    },
+    {
+      "name": "dante/journey-cross-chapter",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "boundaries": [
+        [
+          "basics-progress",
+          "research-forex"
+        ],
+        [
+          "research-others",
+          "forex-planning"
+        ],
+        [
+          "planning-monthly",
+          "forex-accounts"
+        ]
+      ],
+      "financialWrites": 0
+    },
+    {
+      "name": "dante/v1-and-legacy-track",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "v1ReadWithoutWrite": true,
+      "legacyModePreserved": true,
+      "legacyRecords": {
+        "basics-home": {
+          "orientation": "seen",
+          "practice": null
+        },
+        "basics-menu": {
+          "orientation": "skipped",
+          "practice": null
+        }
+      }
+    },
+    {
+      "name": "dante/frozen-and-independent-planning",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "frozenExplanationTraversable": true
+    },
+    {
+      "name": "dante/typewriter-reveal-pause",
+      "result": "PASS",
+      "config": {
+        "motion": "no-preference"
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "firstRevealOnly": true,
+      "pauseCompletePhrase": true
+    },
+    {
+      "name": "dante/reduced-motion",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "reducedMotionFullText": true
+    },
+    {
+      "name": "dante/index-single-bookmark",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "singleBookmark": "planning-consolidated"
+    },
+    {
+      "name": "dante/planning-owned-form",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "ownedFormDraft": "preserved, no account writer or automatic selection"
+    },
+    {
+      "name": "dante/agenda-owned-form",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "agendaDraft": "type/time-zone changes and cancellation preserve finance"
+    },
+    {
+      "name": "dante/planning-monthly-editor",
+      "result": "PASS",
+      "config": {},
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "monthlyDraft": "real editor and review preserved without confirmation/write"
+    },
+    {
+      "name": "dante/planning-owned-form/mobile",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "ownedFormDraft": "preserved, no account writer or automatic selection"
+    },
+    {
+      "name": "dante/agenda-owned-form/mobile",
+      "result": "PASS",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "agendaDraft": "type/time-zone changes and cancellation preserve finance"
+    },
+    {
+      "name": "dante/touch-balloon",
+      "result": "PASS",
+      "config": {
+        "touch": true,
+        "motion": "no-preference",
+        "width": 390,
+        "height": 844
+      },
+      "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+      "pageErrors": [],
+      "knownBoot": true,
+      "build": "8c127c2f92de375e",
+      "touch": "first reveals, second advances speech, no credit"
+    }
+  ],
+  "registeredCaseCount": 66,
+  "baselineFocusRoot": "/private/tmp/jpw-dante-20261024/source-baseline",
+  "limits": [
+    "Disposable synthetic contexts only; no operator profile or production account.",
+    "Headless viewport/reflow and CDP page scale are measured separately from native browser zoom.",
+    "Physical touch, screen reader and real mobile keyboard NOT_RUN."
+  ],
+  "runtime": {
+    "launch": {
+      "headless": true,
+      "executable_path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    },
+    "python": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "browserVersion": "155.0.8059.86"
+  },
+  "inputs_after": {
+    "src/js/40-app/26-learning-catalog.js": "4c671a75b9df8ab69047d775f279558eb801a7f8f2c875517c3467b96fd4b040",
+    "src/js/00-core/09-learning-progress.js": "ad4da2a8ad5b5b63276c6a38fba71e7be34e3936db9fa4f876412ba29cebbab6",
+    "src/js/40-app/27-learning-view.js": "ffc4f41c980d1e534e9493ba0b69fc3de0ed877c8b9efeedfe0fccd9bed91fa3",
+    "src/js/40-app/28-learning-guide.js": "2bded75161d7bd4d3c9f5408215ae3209e48985a3a463036d58621c8b15cf2c3",
+    "src/js/30-accounting/06-planning/01-engine.js": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/40-app/16-monthly-economic-data.js": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "src/js/40-app/19-calendar-agenda.js": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c",
+    "src/styles/app.css": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/40-app/06-boot.js": "bfe41d77e3abdfddda3720788951f980d12f366f945f62d0ab60ef0a4ac2f58a",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/40-app/09-settings-modal.js": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/00-core/07-workspace-backup.js": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+    "src/js/20-ui/18-finpes-budget.js": "e64a0e30295caa3fb557e18f89c49822724f4343d4d1d15d2109b43d940714da",
+    "src/js/40-app/14-mvp-notes.js": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d",
+    "src/js/manifest.json": "9aaa09edb0e035b95f84f155c90d85ff1e3ebce22e6719243474416ea7054430",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "sw.js": "b3c6226bda14ecfbd0e9b63f9a87f4c9a23502bbc734771a1b9063f7794cf718",
+    "build-id.js": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "25df944043e4a3222051fd8cf7a728dc1d7eb44384d2c47968a3053222432f43",
+    "assets/dante-guide.png": "42269f1a0ad8e40c494de63c71d734d7d205b9d875386f233cf67dfca21110a2",
+    "tools/dante_guide_test.py": "add1bafa91137f8c12989c33afbbf06d908c923b6eb3766bb63f5042d6c2f48d",
+    "tools/dante_profile_test.py": "18f9667022e502ebf910c7b2593921802b111c6bee3246b14334e7ccfd777869",
+    "tools/dante_catalog_test.mjs": "788f27729ef8f39ec69617b5bca5cf4bc89e27757cfa79a6c9e0573da0893d01",
+    "tools/learning_foundation_test.mjs": "86bb50e2fcc88b04f5df75524392e933075cda48f5d8d4c8cb8c0cb67a3f8d91",
+    "tools/learning_controller_test.mjs": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11"
+  },
+  "source_unchanged": true,
+  "durationSeconds": 166.94990308291744,
+  "counts": {
+    "PASS": 66,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "NOT_RUN": 0
+  }
+}

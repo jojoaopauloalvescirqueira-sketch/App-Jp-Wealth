@@ -29,6 +29,7 @@ import planning_monthly_inline_test as inline
 import planning_monthly_close_test as closure
 import notification_visual_quality_test as notification_visual
 import calendar_visual_quality_test as calendar_visual
+import dante_visual_quality_test as dante_visual
 from planning_parity_layout_test import financial
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,6 +50,7 @@ REQUIRED_SIZES = [(320, 700), (390, 844), (700, 600), (701, 601),
                   (1440, 1000), (1440, 480)]
 SOURCE_FILES = sorted(set(planning.SOURCES + [
     'tools/ui_visual_quality_test.py',
+    'tools/ui_visual_measurement_test.py',
     'tools/quality_gate.py', 'AGENTS.md', 'docs/governance/UI-VISUAL-QUALITY.md',
     'docs/superpowers/plans/2026-10-21-planning-controls-visual-quality.md',
     'docs/superpowers/plans/2026-10-21-planning-consolidated-monthly-compact.md',
@@ -59,6 +61,9 @@ SOURCE_FILES = sorted(set(planning.SOURCES + [
     'tools/calendar_visual_quality_test.py','tools/calendar_agenda_test.py',
     'src/js/40-app/19-calendar-agenda.js','src/js/40-app/16-monthly-economic-data.js',
     'src/js/10-domain/19-personal-agenda.js',
+    'tools/dante_visual_quality_test.py','assets/dante-guide.png',
+    'src/js/40-app/26-learning-catalog.js','src/js/40-app/27-learning-view.js',
+    'src/js/40-app/28-learning-guide.js',
 ]))
 
 # Reusable inner-content measurement, including text nodes and transformed SVG
@@ -115,9 +120,9 @@ def no_writes(page):
     return observed
 
 
-def centered(locator, kind='text', close=False):
+def centered(locator, kind='text', close=False, *, measurement=None):
     assert locator.count() == 1, ('exactly one control required', locator.count())
-    data = locator.evaluate(CONTENT_GEOMETRY)
+    data = locator.evaluate(CONTENT_GEOMETRY) if measurement is None else measurement
     outer, content = data['outer'], data[kind]
     assert outer['width'] > 0 and outer['height'] > 0, ('zero-size control', data)
     assert content, ('missing measurable ' + kind, data)
@@ -272,19 +277,23 @@ def controls_geometry(page, scope='#planning dialog[open]'):
         # fractional pixels behind the owner edge after integer scroll rounding.
         control.evaluate("el=>el.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'})")
         planning.settle(page)
-        kind = 'ink' if control.locator('svg').count() else 'text'
-        is_close = control.evaluate("el=>el.matches('.pl-close,.risk-close')")
-        result.append(centered(control, kind, is_close))
-        box = control.bounding_box()
-        assert box and box['width'] >= 24 and box['height'] >= 24, ('nonzero accessible target', result[-1])
-        cuts = control.evaluate(r'''el=>{
-          const b=el.getBoundingClientRect(),bad=[];
+        # Read the same post-scroll DOM once. The two-frame synchronization,
+        # measured content, ancestry checks and assertions remain unchanged.
+        inspection = control.evaluate(r'''el=>{
+          const geometry=(''' + CONTENT_GEOMETRY + r''')(el),b=el.getBoundingClientRect(),bad=[];
           for(let p=el.parentElement;p&&p!==document.body;p=p.parentElement){
             const r=p.getBoundingClientRect(),s=getComputedStyle(p);
             if(['auto','scroll','hidden','clip'].includes(s.overflowX)&&(b.left<r.left-.25||b.right>r.right+.25))bad.push('horizontal:'+p.className);
             if(['auto','scroll','hidden','clip'].includes(s.overflowY)&&(b.top<r.top-.25||b.bottom>r.bottom+.25))bad.push('vertical:'+p.className);
-          }return bad;
+          }
+          return {geometry,isClose:el.matches('.pl-close,.risk-close'),cuts:bad};
         }''')
+        data = inspection['geometry']
+        kind = 'ink' if data['svg'] else 'text'
+        result.append(centered(control, kind, inspection['isClose'], measurement=data))
+        box = data['outer']
+        assert box and box['width'] >= 24 and box['height'] >= 24, ('nonzero accessible target', result[-1])
+        cuts = inspection['cuts']
         assert not cuts, ('control cut by its owner', result[-1], cuts)
     order = page.locator(scope).evaluate_all(r'''dialogs=>dialogs.map(d=>{
       const nodes=[...d.querySelectorAll('button,input,select,textarea,a[href],[tabindex]')].filter(n=>!n.disabled&&n.getBoundingClientRect().width&&n.getBoundingClientRect().height);
@@ -454,7 +463,10 @@ def counterproofs(browser, url, report):
             menu = page.locator('#pl-stoikus-menu')
             original = menu.get_attribute('style') or ''
             try:
-                menu.evaluate("el=>el.style.setProperty('width','322px','important')")
+                # Keep the deliberate violation in place when positioning updates width.
+                menu.evaluate("el=>el.style.setProperty('min-width','322px','important')")
+                mutated_width = menu.evaluate('el=>el.getBoundingClientRect().width')
+                assert mutated_width == 322, ('322px width counterproof actually applied', mutated_width)
                 invalid = rejected(lambda: menu_geometry(page))
             finally:
                 menu.evaluate('(el,style)=>el.setAttribute("style",style)', original)
@@ -474,8 +486,10 @@ def counterproofs(browser, url, report):
                 invalid = rejected(lambda: centered(jump))
             finally:
                 jump.evaluate('(el,html)=>el.innerHTML=html', original)
+            import ui_visual_measurement_test as measurement_test
             return {'positive_control': valid, 'shifted_text': invalid,
-                    'restored_positive_control': centered(jump)}
+                    'restored_positive_control': centered(jump),
+                    'batched_measurement_counterproofs': measurement_test.run(browser, __import__(__name__), planning_page=page)}
 
         record(report, 'counterproof-forecast-inner-text', shifted_text, page,
                criteria='sameactualtextRangeoraclerejects5pxinnertranslation')
@@ -601,6 +615,8 @@ def native_zoom(pw, url, report, legacy=True):
 
 
 def required_ids(selection):
+    if selection == 'dante-regressions':
+        return dante_visual.required_ids()
     if selection == 'calendar-regressions':
         return calendar_visual.required_ids()
     if selection == 'notification-regressions':
@@ -624,6 +640,7 @@ def required_ids(selection):
         ids += closure.required_ids('all')
         ids += notification_visual.required_ids()
         ids += calendar_visual.required_ids()
+        ids += dante_visual.required_ids()
     return ids
 
 
@@ -866,7 +883,7 @@ def regressions(browser, url, report):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=['all', 'regressions', 'compact-regressions', 'compact', 'inline-regressions', 'closure-regressions', 'notification-regressions', 'calendar-regressions'], default='all')
+    parser.add_argument('--case', choices=['all', 'regressions', 'compact-regressions', 'compact', 'inline-regressions', 'closure-regressions', 'notification-regressions', 'calendar-regressions', 'dante-regressions'], default='all')
     parser.add_argument('--out', type=Path, default=ROOT / 'tools/.artifacts' / ('ui-visual-quality-' + datetime.now().strftime('%Y%m%dT%H%M%S%f')))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
@@ -911,11 +928,15 @@ def main():
                 notification_visual.matrix(browser,url,report,__import__(__name__))
             if args.case in ['all','calendar-regressions']:
                 calendar_visual.matrix(browser,url,report,__import__(__name__))
+            if args.case in ['all','dante-regressions']:
+                dante_visual.matrix(browser,url,report,__import__(__name__))
             browser.close()
             if args.case in ['all','notification-regressions']:
                 notification_visual.native_zoom(pw,url,report,__import__(__name__))
             if args.case in ['all','calendar-regressions']:
                 calendar_visual.native_zoom(pw,url,report,__import__(__name__))
+            if args.case in ['all','dante-regressions']:
+                dante_visual.native_zoom(pw,url,report,__import__(__name__))
             if args.case in ['all', 'compact']:
                 native_zoom(pw, url, report, legacy=args.case == 'all')
             if args.case == 'all':

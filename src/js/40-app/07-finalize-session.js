@@ -591,8 +591,8 @@ function emptyJPWealthState(preservado){
   if(!preservado?.document){
     // Compatibility for an empty/legacy document; never invent example accounts.
     Object.assign(empty,{accounts:[],ledger:[],ledgerArchive:[],transitionLog:[],cycleRealizado:0,
-      activeOperation:null,period:{nome:'',profile:'base'},perf:[],phases:forexNewOperationPhases()});
-    empty.params={...empty.params,saldoIni:0,saldoAtu:0,inicio:''};
+      activeOperation:null,period:{nome:'',profile:''},perf:[],phases:forexNewOperationPhases()});
+    empty.params={...empty.params,saldoIni:null,saldoAtu:null,inicio:''};
     empty.onboarding={...empty.onboarding,done:false,reserveMasterCapital:''};
     empty.mvpNotes=structuredClone(S?.mvpNotes||DEFAULTS.mvpNotes);
     empty.personalFinance=structuredClone(S?.personalFinance||DEFAULTS.personalFinance);

@@ -1,0 +1,25 @@
+{
+  "status": "PRODUCT_FAIL",
+  "checks": [],
+  "failures": [
+    {
+      "id": "CM-P2-01",
+      "case": "pending catalog retry must not steal focus after user moves to an external control",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 98, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 288, in retry_focus_departure\n    assert page.evaluate('document.activeElement.id===\"SYN_retry_external\"'), 'PRODUCT_FAIL: late catalog retry stole focus after the user left its button'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: PRODUCT_FAIL: late catalog retry stole focus after the user left its button\n"
+    },
+    {
+      "id": "CM-P2-02",
+      "case": "expanded mobile snapshot failure and recovery remain visible with the map collapsed",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 98, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 300, in expanded_mobile_failure\n    assert status.count() >= 1, 'PRODUCT_FAIL: expanded mobile consultation silently displays stale facts with the map collapsed'\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: PRODUCT_FAIL: expanded mobile consultation silently displays stale facts with the map collapsed\n"
+    }
+  ],
+  "errors": [],
+  "oracle": "docs/superpowers/plans/2026-10-24-calendar-markets.md",
+  "mutant": null,
+  "sources": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "7f6b5e1915df0b12705bb75a74f268bfe1a1c9fcb7da5701fbae38a30445755c",
+    "src/js/40-app/31-market-hours/04-controller.js": "c8c03e3c3a8bff8d78ff435213a57cd9e58f04a0d44c0b8a9ba6f17d1aae751c",
+    "src/styles/app.css": "a6db0e8f550f334de80f64e88b63b86e1f1f053b7a19351b41a6298dcef3274f"
+  }
+}

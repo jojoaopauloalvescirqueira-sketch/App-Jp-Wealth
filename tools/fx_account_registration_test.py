@@ -64,7 +64,7 @@ CASES={
  const p=__begin(null,id);__assert(p.ok&&p.mode==='reregister'&&p.draft.accountEnvironment==='demo'&&p.draft.profileKey==='longevity','Archived registration inaccessible or metadata lost');
  const r=await __saveReg(p,{profileKey:p.draft.profileKey},{confirmHistorical:true});__assert(r.ok&&r.accountId===id,'Recadastro did not reuse identity');
  const live=S.accounts.find(a=>a.forexAccountId===id);
- __assert(__same(live.riskProfileAssignment,assignment)&&live.accountEnvironment==='demo'&&live.sini===0&&live.satu===0&&!live.investorPassword,'Recadastro lost profile revision or restored financial/access data');
+ __assert(__same(live.riskProfileAssignment,assignment)&&live.accountEnvironment==='demo'&&live.sini===null&&live.satu===null&&!live.investorPassword,'Recadastro lost profile revision or restored financial/access data');
  __assert(__same(S.forex.accountContexts.archivedAccounts[id],tombstone)&&S.fxConsolidated.receipts.length===0,'Archive history or import changed');
  archived=JPWForex.state.archiveRegisteredAccount(id,{reason:'Synthetic rearchive'});__assert(archived.ok&&__same(S.forex.accountContexts.archivedAccounts[id].previous,tombstone),'Repeated archive lost earlier tombstone');
  return {id,profileRevision:assignment.revision,archiveChainRetained:true};
@@ -126,7 +126,7 @@ CASES={
  const before=__snap(),p=__begin(__report('40004'),null);__assert(p.ok&&p.mode==='create','New draft unavailable');
  __assert(p.draft.name===''&&!('satu' in p.draft)&&__same(before,__snap()),'Draft copied financial identity or wrote');
  const r=await __saveReg(p);__assert(r.ok&&S.accounts.length===4&&S.fxConsolidated.receipts.length===0,'Save imported or failed');
- const a=S.accounts[3];__assert(a.sini===0&&a.satu===0&&S.forex.activeAccountId==='fx_B'&&!S.forex.accounts[a.forexAccountId],'Financial observations restored');
+ const a=S.accounts[3];__assert(a.sini===null&&a.satu===null&&S.forex.activeAccountId==='fx_B'&&!S.forex.accounts[a.forexAccountId],'Financial observations restored');
  __assert(__same(before.manual,S.operationHistory),'Manual history changed');
  const imported=await __import('40004',r.accountId);__assert(imported.ok&&S.fxConsolidated.receipts.length===1,'Separate import failed');return {r,imported};
 }""",
@@ -142,7 +142,7 @@ CASES={
  const p=__begin();__assert(p.mode==='reregister','Historical draft not explicit');
  const refusal=await __saveReg(p);__assert(!refusal.ok&&S.accounts.length===2,'Historical confirmation bypass');
  const r=await __saveReg(p,{}, {confirmHistorical:true});__assert(r.ok&&r.accountId==='fx_A','Historical ID not reused');
- const a=S.accounts.find(a=>a.forexAccountId==='fx_A');__assert(a.satu===0&&a.sini===0&&S.forex.activeAccountId==='fx_B','Historical balances activated');
+ const a=S.accounts.find(a=>a.forexAccountId==='fx_A');__assert(a.satu===null&&a.sini===null&&S.forex.activeAccountId==='fx_B','Historical balances activated');
  __assert(__same(history,S.fxConsolidated)&&__same(manual,S.operationHistory),'Registration mutated histories');
  const d=await __import();__assert(d.duplicate&&S.fxConsolidated.receipts.length===1,'Reregistration lost deduplication');return {r,d};
 }""",

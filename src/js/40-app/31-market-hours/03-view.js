@@ -46,6 +46,62 @@
     return action+' em '+duration(earliest, seconds);
   }
   function disclosure(name, title) {const el=hook(node('details'),name);el.append(node('summary',title));return el;}
+  function createOverview(host, toggleExpansion, select, retry) {
+    const root=node('section',undefined,'mh-overview-shell');root.setAttribute('aria-label','Mercados conforme calendário');
+    const heading=node('div',undefined,'mh-overview-heading');
+    const toggle=hook(node('button','Explorar bolsas e mapa'),'expansion-toggle');toggle.type='button';toggle.setAttribute('aria-expanded','false');
+    toggle.addEventListener('click',toggleExpansion);
+    const summary=hook(node('div',undefined,'mh-overview'),'summary');
+    const counts=node('p',undefined,'mh-overview-counts'),openCount=hook(node('span'),'summary-open-count'),upcomingCount=hook(node('span'),'summary-upcoming-count'),unknownCount=hook(node('span'),'summary-unknown-count');
+    counts.append(openCount,node('span',' · '),upcomingCount,node('span',' · '),unknownCount);
+    const clock=hook(node('time',undefined,'mh-overview-note'),'summary-clock');clock.hidden=true;
+    heading.append(clock,toggle);
+    function section(label,name,emptyText) {
+      const section=node('section',undefined,'mh-overview-section'),list=hook(node('ul',undefined,'mh-overview-list'),name),empty=node('p',emptyText,'mh-overview-note');
+      section.append(node('h4',label),list,empty);return {section,list,empty,rows:new Map()};
+    }
+    const open=section('Abertas agora','summary-open-list','Nenhuma bolsa aberta agora conforme calendário.'),upcoming=section('Próximas 24 horas','summary-upcoming-list','Nenhuma abertura confirmada nas próximas 24 horas.');
+    const status=node('p',undefined,'mh-overview-status');status.setAttribute('role','status');
+    const retryButton=hook(node('button','Tentar carregar o calendário novamente'),'catalog-retry');retryButton.type='button';retryButton.hidden=true;retryButton.addEventListener('click',retry);
+    const note=node('p','Conforme calendário de ações; sem cotações ou confirmação operacional.','mh-overview-note');
+    counts.hidden=true;open.section.hidden=true;upcoming.section.hidden=true;summary.append(counts,open.section,upcoming.section,note);root.append(heading,summary,status,retryButton);host.append(root);
+    function renderList(target,entries,catalog,snapshot) {
+      const desired=entries.slice(0,3).map(entry=>{
+        const venue=catalog.venues.find(v=>v.id===entry.id);let row=target.rows.get(entry.id);
+        if(!row){const element=node('li'),button=node('button',venue.name),location=node('span',venue.city+' · '+venue.country,'mh-overview-location'),stamp=node('span',undefined,'mh-overview-time');button.type='button';button.dataset.mhSummaryVenue=entry.id;button.addEventListener('click',()=>select(entry.id));element.append(button,location,stamp);row={element,stamp};target.rows.set(entry.id,row);}
+        const value=entry.nextRegularOpen;
+        if(target===open)row.stamp.textContent=symbol(entry)+' '+label(entry)+' · '+transition(entry.nextTransition,venue.timeZone,snapshot.asOf)+' (hora local)';
+        else{
+          const dated=utc=>day(utc,venue.timeZone)!==day(snapshot.asOf,venue.timeZone),seconds=value.earliestUtc%60000!==0 || value.latestUtc%60000!==0;
+          const stamp=utc=>time(utc,venue.timeZone,dated(utc),seconds),window=value.earliestUtc!==value.latestUtc;
+          const action=value.kind==='resume' ? 'Retoma':'Abre',minutes=Math.max(1,Math.ceil((value.earliestUtc-snapshot.asOf)/60000));
+          const waiting=value.earliestUtc<=snapshot.asOf && window ? 'Janela de abertura em andamento':action+' em cerca de '+minutes+' min';
+          row.stamp.textContent=waiting+' · '+stamp(value.earliestUtc)+(window ? '–'+stamp(value.latestUtc):'')+' (hora local)';
+        }
+        return row.element;
+      });
+      const actual=Array.from(target.list.children);
+      if(actual.length!==desired.length || desired.some((el,i)=>actual[i]!==el)){
+        const focused=document.activeElement,keepFocus=desired.some(el=>el.contains(focused));
+        if(actual.some(el=>el.contains(document.activeElement) && !desired.includes(el)))toggle.focus({preventScroll:true});
+        actual.filter(el=>!desired.includes(el)).forEach(el=>el.remove());desired.forEach(el=>target.list.append(el));
+        if(keepFocus && focused.isConnected && document.activeElement!==focused)focused.focus({preventScroll:true});
+      }
+      target.empty.hidden=entries.length>0;
+    }
+    return Object.freeze({root,summary,toggle,
+      render(snapshot,catalog){
+        const opened=snapshot.venues.filter(global.JPWMarketSessions.isRegularOpen),future=snapshot.venues.filter(v=>!global.JPWMarketSessions.isRegularOpen(v) && v.nextRegularOpen && v.nextRegularOpen.latestUtc>snapshot.asOf && v.nextRegularOpen.latestUtc<=snapshot.asOf+86400000);
+        future.sort((a,b)=>a.nextRegularOpen.earliestUtc-b.nextRegularOpen.earliestUtc || a.nextRegularOpen.latestUtc-b.nextRegularOpen.latestUtc || catalog.venues.findIndex(v=>v.id===a.id)-catalog.venues.findIndex(v=>v.id===b.id));
+        openCount.textContent=opened.length+' abertas agora';upcomingCount.textContent=future.length+' próximas 24 horas';unknownCount.textContent=snapshot.venues.filter(v=>v.phase==='unknown').length+' sem confirmação';
+        counts.hidden=false;open.section.hidden=false;upcoming.section.hidden=false;clock.hidden=summary.hidden;clock.textContent='Agora · '+time(snapshot.asOf)+' UTC';clock.dateTime=new Date(snapshot.asOf).toISOString();clock.title='Referência: '+time(snapshot.asOf,'UTC',true)+' UTC';clock.setAttribute('aria-label',clock.title);
+        renderList(open,opened,catalog,snapshot);renderList(upcoming,future,catalog,snapshot);
+      },
+      message(message,canRetry=false){status.textContent=message;status.hidden=!message;retryButton.hidden=!canRetry;},
+      setExpanded(value,ready=true){root.dataset.expanded=String(value && ready);summary.hidden=value && ready;clock.hidden=value && ready || !clock.dateTime;toggle.textContent=value ? 'Recolher bolsas':'Explorar bolsas e mapa';toggle.setAttribute('aria-expanded',String(value && ready));},
+      dispose(){root.remove();}
+    });
+  }
   function create(host, catalog, select, retryRenderer, mapVisibilityChanged) {
     const root=node('section',undefined,'market-hours');root.setAttribute('aria-label','Sessões das bolsas globais');
     const heading=node('div',undefined,'mh-heading');
@@ -246,7 +302,7 @@
       placeDetail();if(mapVisibilityChanged)mapVisibilityChanged();
     }
     mapToggle.addEventListener('click',()=>{mobileExpanded=!mobileExpanded;resize();});
-    const sizeObserver=new ResizeObserver(()=>{if((root.clientWidth<=800)!==compact)resize();});sizeObserver.observe(root);resize();
+    const sizeObserver=new ResizeObserver(()=>{if(!root.hidden && (root.clientWidth<=800)!==compact)resize();});sizeObserver.observe(root);resize();
     function renderSources(venue,status) {
       const signature=JSON.stringify([venue.id,status.groups.map(g=>[g.id,g.coverage,g.sourceIds])]);
       if(signature===sourceSignature)return;sourceSignature=signature;
@@ -294,7 +350,7 @@
       renderSources(venue,status);visibility();
     }
     function focusSelected() {const button=rows.get(selected)?.button;(button?.isConnected && button.getClientRects().length && !button.closest('[hidden],[inert]') ? button:search).focus({preventScroll:true});}
-    return Object.freeze({root,globe,render,focusSelected,closeHelp,get mapVisible(){return !mapContent.hidden;},globeStatus(message,retry=false){globeStatus.textContent=message;globeStatus.hidden=!message;globeRetry.hidden=!retry;},dispose(){closeHelp();sizeObserver.disconnect();infoButtons.forEach(button=>button.remove());root.remove();}});
+    return Object.freeze({root,globe,render,focusSelected,closeHelp,containsFocus(){return root.contains(document.activeElement) || !!help?.element.contains(document.activeElement);},setExpanded(value){root.hidden=!value;infoButtons.get('calendar').hidden=!value;if(!value)closeHelp();else resize();},get mapVisible(){return !mapContent.hidden;},globeStatus(message,retry=false){globeStatus.textContent=message;globeStatus.hidden=!message;globeRetry.hidden=!retry;},dispose(){closeHelp();sizeObserver.disconnect();infoButtons.forEach(button=>button.remove());root.remove();}});
   }
-  global.JPWMarketHoursView=Object.freeze({create,labels:LABELS});
+  global.JPWMarketHoursView=Object.freeze({create,createOverview,labels:LABELS});
 })(globalThis);

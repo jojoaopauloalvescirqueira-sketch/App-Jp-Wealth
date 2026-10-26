@@ -1,0 +1,23 @@
+{
+  "logical": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T160807623336",
+  "resolved": "/private/tmp/jpw-remove-nocuda-20261026/full-exclusive/full-relocated-evidence",
+  "priorInode": 19357970,
+  "emptyOwnedFreshDirectoryOnly": true,
+  "stoppedGroupMembers": [
+    [
+      "83716",
+      "83713",
+      "83716",
+      "Ts",
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 -u tools/quality_gate.py --tier full --artifact /private/tmp/jpw-remove-nocuda-20261026/full-exclusive/full-relocated.json"
+    ],
+    [
+      "83717",
+      "83716",
+      "83716",
+      "Z",
+      "<defunct>"
+    ]
+  ],
+  "pauseSeconds": 0.415747
+}

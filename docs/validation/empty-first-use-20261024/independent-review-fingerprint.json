@@ -1,0 +1,26 @@
+{
+  "HEAD": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "files": {
+    "src/js/00-core/01-risk-profiles.js": "5f50402be4e8f9cd2c7896fc78706818c598817465164e49f995e2cb0e56b7ac",
+    "src/js/00-core/03-default-state.js": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/10-domain/04-stop-statistics.js": "a2e160a87fb16cd6e77d26df9b7cc660a0adfa74907b6300292c79904448bf11",
+    "src/js/20-ui/03-main-render.js": "de26d34cea9c4af973f74981d5f4d602bbaea97f79f86bc527b8b59ddd0337e9",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+    "src/js/20-ui/08-input-bindings.js": "58afe02b32a5f6d42bbfba477182627538e765f76200cc828bee83b8954385e5",
+    "src/js/40-app/04-onboarding.js": "bcb0bbd3024a396bc054edbe02190f812d11b467a7049cec7153f2758f887c3a",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/40-app/24-fx-consolidated-import.js": "7fe959ed66304a2d26dd8b09559b631e6cf73e97b150bb0f07362e7214a5c2bc",
+    "tools/alladin_foundation_test.py": "634ef868e5832d573d156cdf9603dcbb65bd48f8b4113893b20a4cb4d0781c4d",
+    "tools/backup_import_audit_test.py": "b82edbf2d73509bc4bff9bb9f7dba31e6224035657a2b814874f925323c63528",
+    "tools/backup_reliability_test.py": "f43673ed51d72ee806f0a3b12e6b5750022b9f3d553d5bd33b4bf00ebecfcaf9",
+    "tools/fx_account_registration_test.py": "e76f77be3dacb38344412e3d1e746cd384655081e15201175b9db0482794fbe3",
+    "tools/investor_password_test.py": "5b3604afeb0155ea1ca33ee17f9b6a8533e3dfa028d62733012a06bfd26949bb",
+    "tools/empty_first_use_test.py": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+    "src/styles/app.css": "f3898356b5fbaacbfc70e885e3dcd6d40cd83f8f44996eb7f4cd531e4ef0fe83",
+    "tools/alladin_finalize_preservation_test.py": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+    "tools/session_write_serialization_test.py": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5"
+  },
+  "build": "1b695b809fe80c26",
+  "recheck": "Final audit: FULL3 102/102 PASS; 664 current inputs match; human acceptance pending"
+}

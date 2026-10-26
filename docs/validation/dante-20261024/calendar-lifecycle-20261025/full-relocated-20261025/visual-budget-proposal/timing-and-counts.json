@@ -1,0 +1,144 @@
+{
+  "evidence_source": "/private/tmp/jpw-dante-calendar-20261025/visual-isolated/ui-visual-quality-results.json",
+  "evidence_sha256": "18e6db61e0a114535e794b170db211c564fb58c241da2b5bec1efa8e5330371b",
+  "whole_action_seconds": 685.272483,
+  "whole_wall_seconds": 852.829788,
+  "phase": {
+    "regression": {
+      "cases": 3,
+      "action_seconds": 0.496382,
+      "preceding_gap_seconds": 1.765107,
+      "max_preceding_gap_seconds": 1.62182,
+      "max_gap_case": "regression-stoikus-vertical-groups"
+    },
+    "compact": {
+      "cases": 100,
+      "action_seconds": 240.09597,
+      "preceding_gap_seconds": 7.169024,
+      "max_preceding_gap_seconds": 0.917157,
+      "max_gap_case": "compact-scenario-values"
+    },
+    "inline": {
+      "cases": 34,
+      "action_seconds": 24.176585,
+      "preceding_gap_seconds": 30.452869,
+      "max_preceding_gap_seconds": 1.104519,
+      "max_gap_case": "inline-counterproof-wrong-usd"
+    },
+    "closure": {
+      "cases": 30,
+      "action_seconds": 17.881794,
+      "preceding_gap_seconds": 15.070906,
+      "max_preceding_gap_seconds": 1.004877,
+      "max_gap_case": "closure-counterproof-positive-loss"
+    },
+    "counterproof": {
+      "cases": 4,
+      "action_seconds": 1.469479,
+      "preceding_gap_seconds": 0.706915,
+      "max_preceding_gap_seconds": 0.563476,
+      "max_gap_case": "counterproof-menu-inner-left"
+    },
+    "matrix": {
+      "cases": 80,
+      "action_seconds": 251.141828,
+      "preceding_gap_seconds": 1.652565,
+      "max_preceding_gap_seconds": 0.545641,
+      "max_gap_case": "matrix-sidebar-light-320x700"
+    },
+    "states": {
+      "cases": 1,
+      "action_seconds": 5.787253,
+      "preceding_gap_seconds": 0.018413,
+      "max_preceding_gap_seconds": 0.018413,
+      "max_gap_case": "states-confirmation-review-edit-multiple-cancel"
+    },
+    "touch": {
+      "cases": 1,
+      "action_seconds": 1.520807,
+      "preceding_gap_seconds": 0.503604,
+      "max_preceding_gap_seconds": 0.503604,
+      "max_gap_case": "touch-390x844"
+    },
+    "notification": {
+      "cases": 36,
+      "action_seconds": 9.477955,
+      "preceding_gap_seconds": 18.006932,
+      "max_preceding_gap_seconds": 0.699808,
+      "max_gap_case": "notification-counterproof-overflow"
+    },
+    "calendar": {
+      "cases": 40,
+      "action_seconds": 62.407601,
+      "preceding_gap_seconds": 19.604652,
+      "max_preceding_gap_seconds": 0.546203,
+      "max_gap_case": "calendar-submenu-dark-390x844"
+    },
+    "dante": {
+      "cases": 35,
+      "action_seconds": 1.770518,
+      "preceding_gap_seconds": 18.89316,
+      "max_preceding_gap_seconds": 1.00683,
+      "max_gap_case": "dante-submenu-light-390x844"
+    },
+    "notification-native200": {
+      "cases": 8,
+      "action_seconds": 0.632262,
+      "preceding_gap_seconds": 2.183488,
+      "max_preceding_gap_seconds": 1.388245,
+      "max_gap_case": "notification-native200-sidebar-light"
+    },
+    "calendar-native200": {
+      "cases": 8,
+      "action_seconds": 14.754683,
+      "preceding_gap_seconds": 0.977445,
+      "max_preceding_gap_seconds": 0.86583,
+      "max_gap_case": "calendar-native200-sidebar-light"
+    },
+    "dante-native200": {
+      "cases": 8,
+      "action_seconds": 0.474715,
+      "preceding_gap_seconds": 6.883368,
+      "max_preceding_gap_seconds": 0.922076,
+      "max_gap_case": "dante-native200-sidebar-light"
+    },
+    "native200-native200": {
+      "cases": 8,
+      "action_seconds": 32.076036,
+      "preceding_gap_seconds": 0.924161,
+      "max_preceding_gap_seconds": 0.830602,
+      "max_gap_case": "native200-sidebar-light"
+    },
+    "compact-native200": {
+      "cases": 8,
+      "action_seconds": 17.363727,
+      "preceding_gap_seconds": 19.770197,
+      "max_preceding_gap_seconds": 14.020996,
+      "max_gap_case": "compact-native200-sidebar-light"
+    },
+    "closure-native200": {
+      "cases": 8,
+      "action_seconds": 3.649448,
+      "preceding_gap_seconds": 22.656676,
+      "max_preceding_gap_seconds": 22.557777,
+      "max_gap_case": "closure-native200-sidebar-light"
+    },
+    "coverage": {
+      "cases": 1,
+      "action_seconds": 0.09544,
+      "preceding_gap_seconds": 0.127262,
+      "max_preceding_gap_seconds": 0.127262,
+      "max_gap_case": "coverage-missing-and-zero-rejected"
+    }
+  },
+  "inspection_counts": {
+    "journeys": 88,
+    "button_inspections": 2000,
+    "field_inspections": 880
+  },
+  "existing_sync_RPC_per_button_success_path": 8,
+  "proposed_sync_RPC_per_button_success_path": 4,
+  "static_eliminated_RPC_for_reported_buttons": 8000,
+  "elapsed_saving": "NOT_MEASURED",
+  "cause_of_full_focal_variance": "NOT_IDENTIFIED"
+}

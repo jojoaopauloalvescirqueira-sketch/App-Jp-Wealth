@@ -1,4 +1,4 @@
-// ============ ESTADO INICIAL (espelha a planilha) ============
+// ============ ESTADO INICIAL — fatos pessoais ainda não informados ============
 // Tela inicial canônica do aplicativo (JPW-HJFGDE §12) — fonte ÚNICA de verdade.
 // Consumida por: boot sem base válida, Zona de Perigo (wipe), reset total e falha de
 // importação sem base restante. Se a tela inicial do produto mudar um dia, muda AQUI
@@ -6,7 +6,7 @@
 const DEFAULT_START_ROUTE='dash';
 const DEFAULTS = {
   workspaceRecovery:null, // Portable preferences restore journal and unconfirmed draft archive.
-  params:{saldoIni:10000,saldoAtu:10240,inicio:'2026-05-25',
+  params:{saldoIni:null,saldoAtu:null,inicio:'',
     mdd:JPWForex.policy.get('P-03').value/100,alarm:null,genLev:JPWForex.policy.get('P-15').value,genRisk:null,fw:null,
     vrmN:JPWForex.policy.get('P-12a').value.normalBelow,vrmHV:JPWForex.policy.get('P-12a').value.highAbove,
     refM:BASE_TARGET_MONTHLY,refA:null},
@@ -18,7 +18,7 @@ const DEFAULTS = {
   // Longitudinal, separado do histórico manual canônico em operationHistory.
   // O modelo tardio valida este envelope; migrate só cria a chave quando ausente.
   fxConsolidated:{schemaVersion:1,accounts:[],receipts:[],revisions:[],defaultAccountId:null},
-  atr55:0.00335, atr660:0.00426, expAlvo:0.4,
+  atr55:null, atr660:null, expAlvo:null,
   // 'preco' = cotação de mercado do par. O nocional USD é derivado por usdPerBase():
   // pares de base USD (USDJPY/CHF/CAD) têm nocional fixo de $100k; AUDCAD usa AUDUSD.
   instruments:[
@@ -36,22 +36,17 @@ const DEFAULTS = {
      banned:true,banReason:'Decreto pessoal — proibição de operar metais (comportamento destrutivo recorrente).'},
   ],
   profiles:riskProfilesForState(),
-  accounts:[
-    {nome:'Jp Wealth MAM',tipo:'MESTRE',broker:'Hantec Markets',platform:'',platformLogin:'',investorPassword:'',perfil:'Base',sini:10000,satu:10240,perfilLocked:true},
-    {nome:'Swissquote I',tipo:'PRÓPRIA',broker:'Swissquote',platform:'',platformLogin:'',investorPassword:'',perfil:'Base',sini:5000,satu:5100,perfilLocked:true},
-    {nome:'TTP 10K I',tipo:'SATÉLITE',broker:'The Trading Pit',platform:'',platformLogin:'',investorPassword:'',perfil:'Longevity',sini:10000,satu:10000,perfilLocked:true},
-    {nome:'FTMO 100k',tipo:'SATÉLITE',broker:'FTMO',platform:'',platformLogin:'',investorPassword:'',perfil:'High Longevity Plus',sini:100000,satu:100000,perfilLocked:true},
-  ],
+  accounts:[],
   riskPinHash:null, // hash SHA-256 da senha de alteração de perfil (fricção, não criptografia militar)
   phaseUnlocked:[], // registro legado de checklist; não autoriza nem bloqueia CRUD
   transitionLog:[], // auditoria: {fase, ts, resumo}
   protocolBreaches:0, // contador de fechamentos marcados como rompimento de protocolo sem justificativa
-  loteMaster:0.04,
+  loteMaster:null,
   cycleRealizado:0, // resultado líquido acumulado de operações ARQUIVADAS no ciclo (perda mantém DD; lucro não amplia limites — Art. 4.3)
   quarantine:null, // Registro de restrição; prazo vigente P-24 não presumido.
   ledger:[], // fechamento diário: {data,resultado,saldo,nota}
   ledgerArchive:[], // períodos encerrados: snapshots do ledger antigo ao reiniciar período
-  period:{nome:'',profile:'base'}, // período contábil: identificação + perfil de risco escolhido
+  period:{nome:'',profile:''}, // período contábil: identificação + perfil de risco escolhido
   theme:'light', // aparência padrão clara; 'dark' permanece escolha explícita
   acct:{diasSemana:4.5, mesesAno:10.5}, // programação da contabilidade → dias líquidos/ano
   // MEI-JP: somente parâmetros e observações históricas persistem. Resultados de Monte Carlo
@@ -89,27 +84,22 @@ const DEFAULTS = {
     summaryAccepted:false,
     consentAccepted:false, consentVersion:'', consentDocument:'', consentAcceptedAt:'', consentOperator:''}, // questionário de início de período (SET 5b)
   // grades por fase: cada ordem {id,par,tipo,lote,entry,sl,tp,result,status}
-  // Gênese de exemplo com risco ≤ 1% do saldo inicial (Art. 8.6): 0.04 × 100k × 0.02432 = $97,28
+  // Grades vazias de registro; nenhuma ordem ou Gênese é presumida.
   phases:forexNewOperationPhases(),
-  perf:[
-    {mes:'Jan',ret:0.012,dd:0.01},{mes:'Fev',ret:0.019,dd:0.008},{mes:'Mar',ret:0.031,dd:0.012},
-    {mes:'Abr',ret:-0.021,dd:0.021},{mes:'Mai',ret:0.028,dd:0.015},{mes:'Jun',ret:0.015,dd:0.009},
-    {mes:'Jul',ret:0,dd:0},{mes:'Ago',ret:0,dd:0},{mes:'Set',ret:0,dd:0},
-    {mes:'Out',ret:0,dd:0},{mes:'Nov',ret:0,dd:0},{mes:'Dez',ret:0,dd:0},
-  ],
+  perf:[],
   checklist:[
     {group:'Contexto — o mercado permite operar?',items:[
-      {label:'Calendário econômico verificado',v:1},{label:'Juros / Dólar / COT alinhados',v:1}]},
+      {label:'Calendário econômico verificado',v:null},{label:'Juros / Dólar / COT alinhados',v:null}]},
     {group:'Regime de mercado',items:[
-      {label:'Tendência limpa / impulsos consistentes',v:2},{label:'Não está em expansão sem pullback',v:1}]},
+      {label:'Tendência limpa / impulsos consistentes',v:null},{label:'Não está em expansão sem pullback',v:null}]},
     {group:'Lógica operacional',items:[
-      {label:'Tendência dominante (D1)',v:2},{label:'Tendência primária/secundária (H4/H1)',v:1}]},
+      {label:'Tendência dominante (D1)',v:null},{label:'Tendência primária/secundária (H4/H1)',v:null}]},
     {group:'Zonas de liquidez',items:[
-      {label:'Suportes/resistências e LTA/LTB',v:2},{label:'Linhas Nocuda revalidadas',v:1},{label:'Pivots D1 e H1/H4',v:2}]},
+      {label:'Suportes/resistências e LTA/LTB',v:null},{label:'Linhas Nocuda revalidadas',v:null},{label:'Pivots D1 e H1/H4',v:null}]},
     {group:'Gatilho válido',items:[
-      {label:'Toque na linha Nocuda a favor da tendência',v:2},{label:'Nocuda + Confluência',v:2}]},
+      {label:'Toque na linha Nocuda a favor da tendência',v:null},{label:'Nocuda + Confluência',v:null}]},
     {group:'Bússola Estratégica (Art. 1.3)',items:[
-      {label:'Padrão',v:1},{label:'Tendência',v:2},{label:'Amplitude',v:1},{label:'Confluência',v:2}]},
+      {label:'Padrão',v:null},{label:'Tendência',v:null},{label:'Amplitude',v:null},{label:'Confluência',v:null}]},
   ],
   // Backlog interno do período de MVP (14-mvp-notes.js) — tarefas/bugs/funcionalidades/
   // melhorias registradas pelo operador durante testes. Não é log de auditoria financeira,
@@ -284,13 +274,6 @@ const DEFAULTS = {
     transactions:[],
   },
 };
-// REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
-// params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
-// reconcilia como String(saldoIni||0) em todo load de estado salvo. Um boot fresco
-// com DEFAULTS, porém, pulava a migrate e carregava o literal '' — a MESMA base
-// tinha duas grafias conforme o caminho de boot, e o checkpoint de Finalizar Sessão
-// (que sobrevive a reload no sessionStorage) acusava alteração inexistente.
-// A reconciliação aqui, no nascimento do objeto, fecha o caminho fresco com a mesma
-// fórmula da migrate — uma fonte, uma grafia, idempotente por construção.
-DEFAULTS.onboarding.reserveMasterCapital=String(DEFAULTS.params.saldoIni||0);
+// Capital nominal e saldo inicial são observações distintas. O primeiro acesso
+// não deriva uma declaração de capital de outra observação ainda ausente.
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:null,status:''}));}

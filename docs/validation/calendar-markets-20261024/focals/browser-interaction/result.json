@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "checks": [
+    "B3 initial; real table selection and pointer marker selection",
+    "New York and Mumbai use distinct city/venue identities",
+    "filter empty state; real calendar boundary updates existing rows without focus loss",
+    "one mount; inactive/hidden clock stops; activation uses current instant; no idle renderer updates",
+    "four layout attributes in both themes; list left and wider selected inspector; mobile maximum text scale without horizontal overflow",
+    "dispose terminal; pending catalog/renderer canceled; loader/render failure preserves functional table"
+  ],
+  "errors": [],
+  "screenshots": [
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-sidebar-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-sidebar-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-topbar-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-topbar-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-submenu-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-submenu-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-glass-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/desktop-glass-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/mobile-zoom.png"
+  ],
+  "browser": "148.0.7778.96"
+}

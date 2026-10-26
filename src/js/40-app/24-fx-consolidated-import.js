@@ -293,7 +293,7 @@
           let account;
           if(attempt.mode==='complete')account=S.accounts[attempt.selected.liveIndex];
           else{
-            account={investorPassword:'',perfil:'',perfilLocked:false,sini:0,satu:0};
+            account={investorPassword:'',perfil:'',perfilLocked:false,sini:null,satu:null};
             // Restore only cadastral identity/profile; captured financial facts stay in their original periods.
             if(attempt.mode==='reregister'&&attempt.selected?.riskProfileAssignment){
               account.riskProfileAssignment=clone(attempt.selected.riskProfileAssignment);

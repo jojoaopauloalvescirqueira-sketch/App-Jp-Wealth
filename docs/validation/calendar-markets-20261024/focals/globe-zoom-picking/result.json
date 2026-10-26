@@ -1,0 +1,147 @@
+{
+  "case": "zoom-picking",
+  "bundleSHA256": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd",
+  "checks": [
+    "600px zoom 1: center/16px local threshold/primary gesture/drag/occlusion",
+    "600px zoom 0.8: center/16px local threshold/primary gesture/drag/occlusion",
+    "600px zoom 1.25: center/16px local threshold/primary gesture/drag/occlusion",
+    "600px zoom 2: center/16px local threshold/primary gesture/drag/occlusion",
+    "310px zoom 1: center/16px local threshold/primary gesture/drag/occlusion",
+    "310px zoom 0.8: center/16px local threshold/primary gesture/drag/occlusion",
+    "310px zoom 1.25: center/16px local threshold/primary gesture/drag/occlusion",
+    "310px zoom 2: center/16px local threshold/primary gesture/drag/occlusion"
+  ],
+  "observations": [
+    {
+      "width": 600,
+      "zoom": 1,
+      "physicalRootBox": {
+        "x": 17,
+        "y": 17,
+        "width": 600,
+        "height": 600
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 600,
+      "zoom": 0.8,
+      "physicalRootBox": {
+        "x": 13.59375,
+        "y": 13.59375,
+        "width": 480,
+        "height": 480
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 600,
+      "zoom": 1.25,
+      "physicalRootBox": {
+        "x": 21.25,
+        "y": 21.25,
+        "width": 750,
+        "height": 750
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 600,
+      "zoom": 2,
+      "physicalRootBox": {
+        "x": 34,
+        "y": 34,
+        "width": 1200,
+        "height": 1200
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 310,
+      "zoom": 1,
+      "physicalRootBox": {
+        "x": 17,
+        "y": 17,
+        "width": 310,
+        "height": 310
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 310,
+      "zoom": 0.8,
+      "physicalRootBox": {
+        "x": 13.59375,
+        "y": 13.59375,
+        "width": 248,
+        "height": 248
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 310,
+      "zoom": 1.25,
+      "physicalRootBox": {
+        "x": 21.25,
+        "y": 21.25,
+        "width": 387.5,
+        "height": 387.5
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    },
+    {
+      "width": 310,
+      "zoom": 2,
+      "physicalRootBox": {
+        "x": 34,
+        "y": 34,
+        "width": 620,
+        "height": 620
+      },
+      "centerClick": [
+        {
+          "markerId": "b3",
+          "source": "pointer"
+        }
+      ]
+    }
+  ],
+  "status": "PASS",
+  "DPR": 1,
+  "browser": "148.0.7778.96"
+}

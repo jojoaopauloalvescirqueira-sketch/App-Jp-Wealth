@@ -38,12 +38,23 @@ CALENDAR_AGENDA_INSERTIONS = [
     ('src/js/40-app/15-ff-news.js', 'src/js/40-app/16-monthly-economic-data.js'),
     ('src/js/40-app/18-notification-center.js', 'src/js/40-app/19-calendar-agenda.js')]
 CALENDAR_AGENDA_MODULES = [path for _,path in CALENDAR_AGENDA_INSERTIONS]
+# Frozen 57 lesson identities from a4bf278; Dante appends Planning lessons without
+# retiring the native-action, practice or privacy coverage attached to these IDs.
+LEGACY_LESSON_IDS = set('''basics-home basics-menu basics-location basics-help basics-local-state basics-progress
+personal-finance-overview personal-finance-budget personal-finance-income personal-finance-expense personal-finance-debts personal-finance-comparison personal-finance-scenarios
+forex-accounts forex-context forex-performance forex-operation forex-history forex-accounting forex-planning forex-reserves
+research-forex research-pivots research-stocks-br research-stocks-global research-reits research-others
+tools-calendar tools-nocuda tools-genetrix tools-normative
+alladin-start alladin-instruments alladin-assets alladin-accounts alladin-cashAccounts alladin-ledger alladin-balances alladin-positions
+general-notes general-notes-save general-settings-general general-settings-account general-settings-appearance general-settings-interface general-settings-editor general-settings-statute general-settings-parameters general-settings-tool-params general-settings-tool-check general-settings-forex-consolidated general-settings-educational general-settings-probability-lab general-settings-storage general-settings-about general-backup general-session'''.split())
 SOURCES = MODULES + PLANNING_MODULES + CALENDAR_AGENDA_MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
     'src/js/40-app/06-boot.js', 'src/js/40-app/07-finalize-session.js',
     'src/js/40-app/09-settings-modal.js', 'src/js/00-core/04-persistence.js',
     'src/js/00-core/07-workspace-backup.js', 'src/js/20-ui/18-finpes-budget.js',
     'src/js/40-app/14-mvp-notes.js', 'src/js/manifest.json', 'index.html',
-    'sw.js', 'build-id.js', PORTABLE]
+    'sw.js', 'build-id.js', PORTABLE, 'assets/dante-guide.png',
+    'tools/dante_guide_test.py', 'tools/dante_profile_test.py', 'tools/dante_catalog_test.mjs',
+    'tools/learning_foundation_test.mjs', 'tools/learning_controller_test.mjs']
 
 def hashes(root):
     return {name: hashlib.sha256((root/name).read_bytes()).hexdigest()
@@ -107,6 +118,35 @@ def keyboard_click(page, selector):
     target=page.locator(selector).filter(visible=True).first
     target.focus();page.keyboard.press('Enter');settle(page)
 
+def finish_speech(page, selector, keyboard=False):
+    """Use only the actual guide control; narration cannot acknowledge or skip."""
+    activate=keyboard_click if keyboard else click
+    current=snap(page)['stepId'];prior=record(page,current)
+    for _ in range(32):
+        control=page.locator(selector).filter(visible=True).first
+        if control.inner_text() not in ['Mostrar fala','Continuar fala']:
+            return
+        activate(page,selector)
+        assert snap(page)['stepId']==current,'Narration control skipped a lesson'
+        assert record(page,current)==prior,'Narration control manufactured acknowledgment or practice'
+    raise AssertionError('Narration did not reach its final speech through the original control')
+
+def acknowledge_reading(page, keyboard=False):
+    finish_speech(page,'#jpwLearningUnderstand',keyboard)
+    control=page.locator('#jpwLearningUnderstand').filter(visible=True).first
+    assert control.inner_text()=='Entendi (somente leitura)','Native-action prerequisite must not be bypassed by reading'
+    (keyboard_click if keyboard else click)(page,'#jpwLearningUnderstand')
+
+def next_lesson(page, keyboard=False):
+    # Native actions can be observed before the narration ends. Continue only
+    # its speech control; Next remains hidden until the final speech is shown.
+    current=snap(page)['stepId'];prior=record(page,current)
+    assert prior is not None,'Next cannot replace the original acknowledgment or native action'
+    finish_speech(page,'#jpwLearningUnderstand',keyboard)
+    assert snap(page)['stepId']==current and record(page,current)==prior
+    assert page.locator('#jpwLearningNext').is_visible() and page.locator('#jpwLearningNext').is_enabled()
+    (keyboard_click if keyboard else click)(page,'#jpwLearningNext')
+
 def pointer_uncovered(page, selector):
     target=page.locator(selector).filter(visible=True).first
     target.scroll_into_view_if_needed();settle(page)
@@ -146,7 +186,7 @@ def reach(page, track, step):
         if snap(page)['stepId']==step:
             return
         if snap(page)['stepId']=='general-notes':
-            complete_action(page,{'id':'general-notes','action':'notes'});click(page,'#jpwLearningNext')
+            complete_action(page,{'id':'general-notes','action':'notes'});next_lesson(page)
             continue
         click(page,'#jpwLearningSkip')
     raise AssertionError('Target lesson not reached: '+step)
@@ -162,7 +202,7 @@ def complete_action(page, step):
         help_button=page.locator('.note-i').filter(visible=True).first
         if not help_button.count():
             assert step.get('allowRead'),'Native action has no approved reading fallback'
-            click(page,'#jpwLearningUnderstand');seen(page,step['id'])
+            acknowledge_reading(page);seen(page,step['id'])
             return 'declared-read-fallback'
         help_button.focus();page.keyboard.press('Enter');seen(page,step['id'])
         if help_button.get_attribute('aria-expanded')=='true':
@@ -181,13 +221,17 @@ def complete_action(page, step):
 
 def welcome(page, row):
     page.locator('#jpwWelcomeExplore').wait_for(state='visible')
+    assert page.locator('#jpwWelcomeExplore strong').inner_text()=='Conhecer com Dante'
     instrument(page);before=financial(page)
     click(page,'#jpwWelcomeExplore')
-    # This is intentionally the first oracle: absent guide fails frozen baseline.
-    page.locator('#jpwLearningCenter').wait_for(state='visible')
+    # The accepted first-access action now starts the optional Dante journey.
+    page.locator('#jpwLearningCoach').wait_for(state='visible')
     assert page.evaluate("JPWNavigation.current().canonical==='dashboard'")
     assert not page.locator('#jpwWelcome').is_visible()
-    assert page.locator('[data-learning-track]').count()==7
+    assert snap(page)['active'] and not snap(page)['paused'] and snap(page)['mode']=='journey'
+    assert snap(page)['stepId']=='basics-home' and snap(page)['progress']['steps']=={}
+    central(page)
+    assert page.locator('[data-learning-track]').count()==8
     assert page.locator('#jpwLearningCenter').count()==1
     invariant(page,before)
     click(page,'#settingsCloseBtn')
@@ -196,12 +240,14 @@ def welcome(page, row):
     page.locator('#jpwLearningCenter').wait_for(state='visible')
     assert page.locator('[data-settings-panel="learning-guide"] #jpwLearningCenter').count()==1
     assert page.evaluate("SETTINGS_NAV.some(x=>x.id==='knowledge')") if page.evaluate("typeof SETTINGS_NAV!=='undefined'") else True
-    row['trackCount']=7
+    row['trackCount']=8;row['entryMode']='journey'
 
 def readonly(page, row):
     instrument(page);before=financial(page)
     tracks=page.evaluate('JPWLearningCatalog.tracks')
-    assert len(tracks)==7 and sum(len(t['steps']) for t in tracks)==57
+    assert len(tracks)==8 and sum(len(t['steps']) for t in tracks)==63
+    ids=[s['id'] for t in tracks for s in t['steps']]
+    assert len(set(ids))==63 and len(LEGACY_LESSON_IDS)==57 and (LEGACY_LESSON_IDS-{'tools-nocuda'})<=set(ids) and 'tools-nocuda' not in ids
     actions=[];completed=[];fallbacks=[]
     for track in tracks:
         start(page,track['id'])
@@ -215,20 +261,20 @@ def readonly(page, row):
                 if outcome=='observed':actions.append(step['action'])
                 else:fallbacks.append({'step':step['id'],'reason':'No native i at declared destination; approved Entendi reading fallback'})
             else:
-                click(page,'#jpwLearningUnderstand');seen(page,step['id'])
+                acknowledge_reading(page);seen(page,step['id'])
             assert record(page,step['id'])=={'orientation':'seen','practice':None}
             completed.append(step['id']);invariant(page,before)
-            click(page,'#jpwLearningNext')
+            next_lesson(page)
     records=snap(page)['progress']['steps']
-    assert len(records)==57 and all(r=={'orientation':'seen','practice':None} for r in records.values())
+    assert len(records)==63 and set(records)==set(ids) and all(r=={'orientation':'seen','practice':None} for r in records.values())
     assert actions in [['menu','help','notes','session'],['menu','notes','session']],actions
     invariant(page,before)
-    row.update(completedLessonIds=completed,seenCount=57,skippedCount=0,confirmedPracticeCount=0,observedNativeActions=actions,declaredReadFallbacks=fallbacks,mainWrites=0)
+    row.update(completedLessonIds=completed,seenCount=63,legacyLessonIdsPreserved=56,retiredLessonIdsPreservedAsHistory=1,skippedCount=0,confirmedPracticeCount=0,observedNativeActions=actions,declaredReadFallbacks=fallbacks,mainWrites=0)
 
 def progress_lifecycle(page,row):
     instrument(page);before=financial(page);start(page,'basics')
-    click(page,'#jpwLearningUnderstand');seen(page,'basics-home')
-    click(page,'#jpwLearningNext');click(page,'#jpwLearningSkip')
+    acknowledge_reading(page);seen(page,'basics-home')
+    next_lesson(page);click(page,'#jpwLearningSkip')
     assert record(page,'basics-menu')=={'orientation':'skipped','practice':None}
     step=snap(page)['stepId'];click(page,'#jpwLearningPause')
     raw=page.evaluate('localStorage.getItem('+json.dumps(GUIDE_KEY)+')')
@@ -258,7 +304,7 @@ def guide_storage(page,row,mode):
     before=financial(page);fault(page,mode,GUIDE_KEY)
     if mode=='read-refused':
         page.evaluate("JPWLearningGuide.revalidate('import')")
-    start(page,'basics');click(page,'#jpwLearningUnderstand')
+    start(page,'basics');acknowledge_reading(page)
     assert record(page,'basics-home')=={'orientation':'seen','practice':None}
     assert snap(page)['storage']=='memory' and 'sessão' in snap(page)['notice']
     invariant(page,before);row.update(fault=mode,storage=snap(page)['storage'])
@@ -313,16 +359,16 @@ def geometry(page,row):
     v=metrics['viewport'];assert metrics['x']>=v['left']-1 and metrics['right']<=v['left']+v['width']+1,metrics
     assert metrics['y']>=v['top']-1 and metrics['bottom']<=v['top']+v['height']+1,metrics
     assert metrics['docWidth']<=metrics['innerWidth']+1,metrics
-    page.locator('#jpwLearningUnderstand').focus();page.keyboard.press('Enter');seen(page,'basics-home')
-    page.locator('#jpwLearningNext').focus();page.keyboard.press('Enter');settle(page)
+    acknowledge_reading(page,keyboard=True);seen(page,'basics-home')
+    next_lesson(page,keyboard=True)
     assert page.evaluate("document.activeElement?.closest('#jpwLearningCoach')!==null"),'Guide transition lost keyboard focus'
     pointer_uncovered(page,'[data-shell-menu-toggle]' if page.locator('[data-shell-menu-toggle]').is_visible() else '[data-route="dashboard"]')
     invariant(page,before);row['geometry']=metrics
 
 def cleanup(page,row):
-    instrument(page);before=financial(page);start(page,'basics');click(page,'#jpwLearningUnderstand')
+    instrument(page);before=financial(page);start(page,'basics');acknowledge_reading(page)
     assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)
-    click(page,'#jpwLearningNext')
+    next_lesson(page)
     selector='[data-shell-menu-toggle]' if page.locator('[data-shell-menu-toggle]').is_visible() else '[data-route="dashboard"]'
     page.evaluate("""selector=>{window.__lgCleanupResult=null;
       document.addEventListener('click',event=>{if(!event.isTrusted||!event.target.closest?.(selector))return;
@@ -354,7 +400,8 @@ def pf_fixture(page):
 
 def private_free_progress(page):
     progress=snap(page)['progress']
-    assert set(progress)=={'schemaVersion','catalogVersion','trackId','stepId','paused','steps'}
+    assert set(progress)=={'schemaVersion','mode','catalogVersion','trackId','stepId','paused','steps'}
+    assert progress['schemaVersion']==2 and progress['mode'] in ['journey','track']
     known=page.evaluate('JPWLearningCatalog.tracks.flatMap(t=>t.steps.map(s=>s.id))')
     for key,value in progress['steps'].items():
         assert key in known and set(value)=={'orientation','practice'}
@@ -544,7 +591,7 @@ def native_backdrop_focus(page):
         context.close();server.shutdown();server.server_close()
 
 def backup(page,row):
-    start(page,'basics');click(page,'#jpwLearningUnderstand');central(page)
+    start(page,'basics');acknowledge_reading(page);central(page)
     assert page.evaluate("settingsNavigateToLeaf('backup',{focus:false})") is not False
     page.locator('#exportFullBackupBtn').wait_for(state='visible')
     guide_raw=page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)
@@ -668,6 +715,8 @@ def research_drafts(page,row):
 # The original106 classic-script path identities and order in base0037bd3.
 # A single planned download loader may precede its tools-services consumer.
 ORIGINAL_SCRIPT_PATHS_SHA256 = '40a619eac3b449f7e0704d8aa2be46f38280902d0340f961e898057d22b36c82'
+RETIRED_NOCUDA_SCRIPT = 'src/js/10-domain/16-nocuda-transfer.js'
+RETIRED_NOCUDA_PREDECESSOR = 'src/js/20-ui/30-execution-board.js'
 DOWNLOAD_LOADER = 'src/js/00-core/10-download-assets.js'
 DOWNLOAD_CONSUMER = 'src/js/20-ui/31-tools-services.js'
 TIME_TWINS_MODULES = [f'src/js/40-app/29-time-twins/{name}.js' for name in
@@ -689,6 +738,9 @@ def calendar_agenda_feature_present(root):
     return 'id="headerCalendarBtn"' in html or "id='headerCalendarBtn'" in html
 
 def assert_startup_scripts(root,scripts,expected):
+    # Approved removal changes one active identity only; restored wire is rejected
+    # before reconstructing its historical slot for the unchanged order oracle.
+    assert RETIRED_NOCUDA_SCRIPT not in scripts and RETIRED_NOCUDA_SCRIPT not in expected,'Retired Nocuda transfer script must not be loaded'
     assert scripts==expected,{'scripts':scripts,'manifest':expected}
     if calendar_agenda_feature_present(root) or any(path in expected for path in CALENDAR_AGENDA_MODULES):
         assert all(expected.count(path)==1 for path in CALENDAR_AGENDA_MODULES),'Calendar/Agenda requires all three unique script identities'
@@ -725,6 +777,9 @@ def assert_startup_scripts(root,scripts,expected):
         assert expected[start:start+5]==TIME_TWINS_MODULES,expected
         assert start+5==expected.index(CAPITAL_CURRENTS_MODULES[0] if capital_present else DOWNLOAD_LOADER),'Time Twins must precede the next isolated game or the download loader'
     original=[path for path in expected if path!=DOWNLOAD_LOADER and path not in TIME_TWINS_MODULES and path not in CAPITAL_CURRENTS_MODULES]
+    assert original.count(RETIRED_NOCUDA_PREDECESSOR)==1,'Retired wire historical predecessor must remain unique'
+    retired_slot=original.index(RETIRED_NOCUDA_PREDECESSOR)+1
+    original=original[:retired_slot]+[RETIRED_NOCUDA_SCRIPT]+original[retired_slot:]
     if planning_present:
         # Only the five explicitly retired identities are replaced. Reconstruct
         # their original slot for the unchanged106-path hash: every other legacy
@@ -734,11 +789,11 @@ def assert_startup_scripts(root,scripts,expected):
         original=original[:old_slot]+RETIRED_PLANNING_MODULES+original[old_slot:]
     assert len(original)==106 and hashlib.sha256('\n'.join(original).encode()).hexdigest()==ORIGINAL_SCRIPT_PATHS_SHA256,{'original':original}
     if DOWNLOAD_LOADER in expected:
-        assert len(expected)==(118 if capital_present else 112 if twins_present else 107)-(5 if planning_present else 0) and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
+        assert len(expected)==(118 if capital_present else 112 if twins_present else 107)-(5 if planning_present else 0)-1 and expected.count(DOWNLOAD_LOADER)==1 and expected.count(DOWNLOAD_CONSUMER)==1,expected
         assert (Path(root)/DOWNLOAD_LOADER).is_file(),'Declared download loader source is missing'
         assert expected.index(DOWNLOAD_LOADER)+1==expected.index(DOWNLOAD_CONSUMER),'Download loader must immediately precede tools-services'
     else:
-        assert not twins_present and len(expected)==106-(5 if planning_present else 0),expected
+        assert not twins_present and len(expected)==106-(5 if planning_present else 0)-1,expected
 
 def startup_calendar_counterproofs(root,expected):
     """Mutate both lists, so rejection cannot rely on HTML/manifest inequality."""
@@ -772,12 +827,17 @@ def startup_calendar_counterproofs(root,expected):
     reordered[a],reordered[b]=reordered[b],reordered[a]
     rejects('legacy-order',reordered)
     assert len(rejected)==13,rejected
+    reintroduced=list(expected);reintroduced.insert(reintroduced.index(RETIRED_NOCUDA_PREDECESSOR)+1,RETIRED_NOCUDA_SCRIPT)
+    rejects('retired-nocuda-reintroduced',reintroduced)
+    substituted=list(expected);substituted[substituted.index(DOWNLOAD_CONSUMER)]=RETIRED_NOCUDA_SCRIPT
+    rejects('retired-nocuda-substituted-for-consumer',substituted)
+    assert len(rejected)==15,rejected
     return rejected
 
 def startup_surface(page,row):
     assert page.evaluate("!!(JPWLearningGuide&&JPWLearningProgress&&JPWLearningCatalog&&JPWLearningView)")
-    start(page,'basics');click(page,'#jpwLearningUnderstand');seen(page,'basics-home')
-    assert len(page.evaluate('JPWLearningCatalog.tracks'))==7
+    start(page,'basics');acknowledge_reading(page);seen(page,'basics-home')
+    assert len(page.evaluate('JPWLearningCatalog.tracks'))==8
     assert page.evaluate('JPWLearningCatalog.version')==1
     if page.locator('#minigamesTimeTwinsCard').count():
         entry=page.evaluate("JPWLearningCatalog.tracks.flatMap(t=>t.steps).find(s=>s.id==='general-settings-probability-lab')")
@@ -946,7 +1006,7 @@ def prepare(context,url,row,welcome_case=False):
     return page
 
 def case_list():
-    cases=[('welcome-permanent-entry',welcome,{}),('readonly-all-57-native-actions',readonly,{'active_alladin':True,'active_pf':True}),
+    cases=[('welcome-permanent-entry',welcome,{}),('readonly-all-64-native-actions',readonly,{'active_alladin':True,'active_pf':True}),
       ('progress-skip-pause-reload-resume-restart',progress_lifecycle,{}),('invalid-version-raw-preserved',invalid_progress,{}),
       ('guide-storage-read-refused',lambda p,r:guide_storage(p,r,'read-refused'),{}),
       ('guide-storage-write-refused',lambda p,r:guide_storage(p,r,'refused'),{}),
@@ -971,9 +1031,11 @@ def case_list():
       ('guide-controls-in-metadata-own-enter',metadata_guide_keyboard,{})]
     cases += [(f'native-metadata-geometry/{width}x{height}',native_metadata_geometry,{'width':width,'height':height})
       for width,height in [(1440,900),(390,844),(320,640)]]
-    cases += [(f'readonly-all-57-native-actions/mobile-{width}x{height}',readonly,
+    cases += [(f'readonly-all-64-native-actions/mobile-{width}x{height}',readonly,
       {'width':width,'height':height,'active_alladin':True,'active_pf':True}) for width,height in [(390,844),(320,700)]]
     cases += [('native-pf/confirmed/mobile-390x844',lambda p,r:pf_practice(p,r,'confirmed'),{'width':390,'height':844,'active_pf':True})]
+    from dante_guide_test import cases as dante_cases
+    cases += dante_cases()
     return cases
 
 def main():
@@ -1011,7 +1073,8 @@ def main():
                         context=pw.chromium.launch_persistent_context(str(profile),**native)
                     else:
                         context=browser.new_context(viewport={'width':config.get('width',1440),'height':config.get('height',1000)},
-                            service_workers=config.get('service_workers','block'),reduced_motion='reduce',accept_downloads=True)
+                            service_workers=config.get('service_workers','block'),reduced_motion=config.get('motion','reduce'),
+                            has_touch=config.get('touch',False),is_mobile=config.get('touch',False),accept_downloads=True)
                     context.add_init_script('localStorage.setItem("jpw_nav_layout",'+json.dumps(config.get('layout','sidebar'))+');')
                     surface=config.get('surface');url=(root/PORTABLE).as_uri() if surface=='portable-file' else prefix+(PORTABLE if surface=='portable-http' else 'index.html')
                     page=prepare(context,url,row,name=='welcome-permanent-entry')

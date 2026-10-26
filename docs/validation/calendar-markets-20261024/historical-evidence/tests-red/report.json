@@ -1,0 +1,34 @@
+{
+  "status": "PRODUCT_FAIL",
+  "checks": [],
+  "failures": [
+    {
+      "id": "CM-HOST-01",
+      "case": "single named calendar and markets submenu",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 74, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 100, in <lambda>\n    check('CM-HOST-01', 'single named calendar and markets submenu', lambda: host(names))\n                                                                             ^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 83, in host\n    fn(current)\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 98, in names\n    assert entry.count() == 1 and entry.inner_text().strip() == 'Calendário e Mercados', 'PRODUCT_FAIL: combined submenu name absent'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: PRODUCT_FAIL: combined submenu name absent\n"
+    },
+    {
+      "id": "CM-HOST-02",
+      "case": "canonical legacy destination, heading, quicklink and sibling panels",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 74, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 108, in <lambda>\n    check('CM-HOST-02', 'canonical legacy destination, heading, quicklink and sibling panels', lambda: host(canonical))\n                                                                                                       ^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 83, in host\n    fn(current)\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 103, in canonical\n    assert p.evaluate(\"(()=>{const r=JPWNavigation.resolve('tools-market-hours');return r.accepted&&r.child==='tools-calendar'&&r.localView==='market-hours'})()\"), 'PRODUCT_FAIL: legacy market route does not canonicalize to calendar child'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: PRODUCT_FAIL: legacy market route does not canonicalize to calendar child\n"
+    },
+    {
+      "id": "CM-HOST-03",
+      "case": "normal calendar entry exposes collapsed market overview",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 74, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 115, in <lambda>\n    check('CM-HOST-03', 'normal calendar entry exposes collapsed market overview', lambda: host(host_overview))\n                                                                                           ^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 83, in host\n    fn(current)\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 112, in host_overview\n    assert p.locator('#marketHoursTool').is_visible(), 'PRODUCT_FAIL: market overview absent from calendar'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: PRODUCT_FAIL: market overview absent from calendar\n"
+    },
+    {
+      "id": "CM-API-01",
+      "case": "collapsed mount and public expansion API",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 74, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 119, in api\n    assert page.evaluate(\"typeof JPWMarketHours.setExpanded==='function'\"), 'PRODUCT_FAIL: public setExpanded API absent'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: PRODUCT_FAIL: public setExpanded API absent\n"
+    }
+  ],
+  "errors": [],
+  "oracle": "approved calendar/markets plan 2026-10-24",
+  "sources": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "2617750ed456dd94bbb6bfbe13eb504083573b4bd09d27fe44c932e36613305a",
+    "src/js/40-app/31-market-hours/04-controller.js": "70e678f588742b061c425e01da950a4ad07bab00959cfeee7676339e5a23ab33",
+    "src/styles/app.css": "4ed02196989dfb19882c3ebd46e4109c8bfcd0c645eae5ab4b819da549393688"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "build": "5cd40fe879de6727",
+  "menu": [
+    {
+      "id": "tools-calendar",
+      "text": "Calendário e Mercados"
+    },
+    {
+      "id": "tools-leverage",
+      "text": "Stoikus — MT5"
+    },
+    {
+      "id": "tools-normative",
+      "text": "Estrutura Normativa JP Wealth"
+    },
+    {
+      "id": "tools-minigames",
+      "text": "MiniGames"
+    }
+  ],
+  "retiredMenu": 0,
+  "retiredPanel": 0,
+  "caches": [
+    "jp-wealth-5cd40fe879de6727"
+  ],
+  "worker": true,
+  "url": "http://127.0.0.1:62421/index.html",
+  "isolatedContext": true,
+  "personalBrowserStateInspected": false,
+  "oldOriginDataMigrated": false,
+  "financialAndStorageUnchanged": true,
+  "pageErrors": [],
+  "at": "2026-10-26T16:39:04.454422+00:00"
+}

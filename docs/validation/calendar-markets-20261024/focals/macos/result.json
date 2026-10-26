@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "checks": [
+    "entire row selects, native button selects once, keyboard works, full row highlight",
+    "selected facts and local time precede globe",
+    "actual host width controls list-first mode, lazy renderer, state and observer cleanup",
+    "mobile first exchange visible and no map work or horizontal overflow",
+    "repeated host resize preserves source focus, disclosure, renderer and nonzero list scroll",
+    "inline disclosure does not bubble into another selection",
+    "155px border-box at 200 percent contains local time and all content"
+  ],
+  "failures": [],
+  "errors": [],
+  "screenshots": [],
+  "hashes": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "tools/market_hours_macos_test.py": "74e30bc34bad0161d80909f002842376caecd2c0255e75f6a35067aaad4713c4"
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "contract": "CHG-JPW-EMPTY-FIRST-USE-TESTS-20261024",
+  "network": "Public requests aborted; no live quote coverage claimed",
+  "stateFixtureBeforeCleanBoot": false,
+  "mutant": null,
+  "sources": {
+    "src/js/00-core/03-default-state.js": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/30-accounting/01-daily-ledger.js": "196283dcda1ff9f3a7c6137e895692a62ccd06e439169e04430cfe2df2725d2e",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "build-id.js": "b191606defcab2b937156e4fc34a63eea201ef063b7ddc0e68574f2beb23e32c",
+    "tools/empty_first_use_test.py": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986"
+  },
+  "cases": [
+    {
+      "id": "EMPTY-VISUAL-01",
+      "name": "complete classification and accessible close at320/390 in four layouts and two themes",
+      "blockedPublic": [
+        "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json",
+        "https://api.frankfurter.dev/v2/rate/EUR/USD",
+        "https://api.frankfurter.dev/v2/rate/GBP/USD",
+        "https://api.frankfurter.dev/v2/rate/AUD/USD",
+        "https://api.frankfurter.dev/v2/rate/NZD/USD",
+        "https://api.frankfurter.dev/v2/rate/USD/JPY",
+        "https://api.frankfurter.dev/v2/rate/USD/CHF",
+        "https://api.frankfurter.dev/v2/rate/USD/CAD",
+        "https://api.frankfurter.dev/v2/rate/AUD/CAD"
+      ],
+      "localAssetFailures": [],
+      "pageerrors": [],
+      "sourceMutations": [],
+      "build": "3803d0914e547f39",
+      "status": "PRODUCT_FAIL",
+      "error": "Classification clipped horizontally: {'text': 'Não concluído — 0 de 15 respostas', 'scroll': 298, 'client': 109, 'scrollHeight': 18, 'clientHeight': 18, 'whiteSpace': 'nowrap', 'textOverflow': 'ellipsis', 'overflow': 'hidden', 'box': {'left': 149.328125, 'right': 258, 'top': 867, 'bottom': 885}, 'rects': [{'left': 149.328125, 'right': 447.34375, 'top': 867, 'bottom': 885}, {'left': 149.328125, 'right': 248.671875, 'top': 867, 'bottom': 885}], 'dialog': {'scroll': 302, 'client': 302}, 'pageOverflow': False, 'close': {'left': 25, 'right': 101.96875, 'top': 134.546875, 'bottom': 178.546875, 'width': 76.96875, 'height': 44, 'disabled': False}, 'viewport': {'width': 320, 'height': 1000}, 'width': 320, 'layout': 'sidebar', 'theme': 'light'}",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/empty_first_use_test.py\", line 197, in run\n    record['observation'] = callback(page, context)\n                            ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/empty_first_use_test.py\", line 316, in visual_classification\n    assert measured['scroll'] <= measured['client'] + 2, 'Classification clipped horizontally: ' + repr(measured)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Classification clipped horizontally: {'text': 'Não concluído — 0 de 15 respostas', 'scroll': 298, 'client': 109, 'scrollHeight': 18, 'clientHeight': 18, 'whiteSpace': 'nowrap', 'textOverflow': 'ellipsis', 'overflow': 'hidden', 'box': {'left': 149.328125, 'right': 258, 'top': 867, 'bottom': 885}, 'rects': [{'left': 149.328125, 'right': 447.34375, 'top': 867, 'bottom': 885}, {'left': 149.328125, 'right': 248.671875, 'top': 867, 'bottom': 885}], 'dialog': {'scroll': 302, 'client': 302}, 'pageOverflow': False, 'close': {'left': 25, 'right': 101.96875, 'top': 134.546875, 'bottom': 178.546875, 'width': 76.96875, 'height': 44, 'disabled': False}, 'viewport': {'width': 320, 'height': 1000}, 'width': 320, 'layout': 'sidebar', 'theme': 'light'}\n",
+      "finalSnapshot": {
+        "accounts": [],
+        "perf": [],
+        "params": {
+          "saldoIni": null,
+          "saldoAtu": null,
+          "inicio": ""
+        },
+        "atr55": null,
+        "atr660": null,
+        "expAlvo": null,
+        "loteMaster": null,
+        "period": {
+          "nome": "",
+          "profile": ""
+        },
+        "reserveMasterCapital": "",
+        "forex": {
+          "schemaVersion": 1,
+          "policyVersion": "JPW-FOREX-V11-T03-1",
+          "activeAccountId": null,
+          "accounts": {},
+          "market": null,
+          "h4Closes": [],
+          "grid": null,
+          "reserves": null,
+          "proposals": [],
+          "auditLog": [],
+          "migration": {
+            "source": "NEW_EMPTY_STATE"
+          }
+        },
+        "ledger": [],
+        "ledgerArchive": [],
+        "transitionLog": [],
+        "fxConsolidated": {
+          "schemaVersion": 1,
+          "accounts": [],
+          "receipts": [],
+          "revisions": [],
+          "defaultAccountId": null
+        },
+        "checklist": [
+          {
+            "group": "Contexto — o mercado permite operar?",
+            "items": [
+              {
+                "label": "Calendário econômico verificado",
+                "v": null
+              },
+              {
+                "label": "Juros / Dólar / COT alinhados",
+                "v": null
+              }
+            ]
+          },
+          {
+            "group": "Regime de mercado",
+            "items": [
+              {
+                "label": "Tendência limpa / impulsos consistentes",
+                "v": null
+              },
+              {
+                "label": "Não está em expansão sem pullback",
+                "v": null
+              }
+            ]
+          },
+          {
+            "group": "Lógica operacional",
+            "items": [
+              {
+                "label": "Tendência dominante (D1)",
+                "v": null
+              },
+              {
+                "label": "Tendência primária/secundária (H4/H1)",
+                "v": null
+              }
+            ]
+          },
+          {
+            "group": "Zonas de liquidez",
+            "items": [
+              {
+                "label": "Suportes/resistências e LTA/LTB",
+                "v": null
+              },
+              {
+                "label": "Linhas Nocuda revalidadas",
+                "v": null
+              },
+              {
+                "label": "Pivots D1 e H1/H4",
+                "v": null
+              }
+            ]
+          },
+          {
+            "group": "Gatilho válido",
+            "items": [
+              {
+                "label": "Toque na linha Nocuda a favor da tendência",
+                "v": null
+              },
+              {
+                "label": "Nocuda + Confluência",
+                "v": null
+              }
+            ]
+          },
+          {
+            "group": "Bússola Estratégica (Art. 1.3)",
+            "items": [
+              {
+                "label": "Padrão",
+                "v": null
+              },
+              {
+                "label": "Tendência",
+                "v": null
+              },
+              {
+                "label": "Amplitude",
+                "v": null
+              },
+              {
+                "label": "Confluência",
+                "v": null
+              }
+            ]
+          }
+        ],
+        "raw": null,
+        "checkpoints": {
+          "jpwealth_session_checkpoint_v1": "{\"state\":{\"accounts\":[],\"acct\":{\"diasSemana\":4.5,\"mesesAno\":10.5},\"activeOperation\":null,\"alladin\":{\"accounts\":[],\"assets\":[],\"cashAccounts\":[],\"instruments\":[],\"reportingCurrency\":\"BRL\",\"schemaVersion\":6,\"transactions\":[]},\"atr55\":null,\"atr660\":null,\"atrPctManual\":0,\"checklist\":[{\"group\":\"Contexto — o mercado permite operar?\",\"items\":[{\"label\":\"Calendário econômico verificado\",\"v\":null},{\"label\":\"Juros / Dólar / COT alinhados\",\"v\":null}]},{\"group\":\"Regime de mercado\",\"items\":[{\"label\":\"Tendência limpa / impulsos consistentes\",\"v\":null},{\"label\":\"Não está em expansão sem pullback\",\"v\":null}]},{\"group\":\"Lógica operacional\",\"items\":[{\"label\":\"Tendência dominante (D1)\",\"v\":null},{\"label\":\"Tendência primária/secundária (H4/H1)\",\"v\":null}]},{\"group\":\"Zonas de liquidez\",\"items\":[{\"label\":\"Suportes/resistências e LTA/LTB\",\"v\":null},{\"label\":\"Linhas Nocuda revalidadas\",\"v\":null},{\"label\":\"Pivots D1 e H1/H4\",\"v\":null}]},{\"group\":\"Gatilho válido\",\"items\":[{\"label\":\"Toque na linha Nocuda a favor da tendência\",\"v\":null},{\"label\":\"Nocuda + Confluência\",\"v\":null}]},{\"group\":\"Bússola Estratégica (Art. 1.3)\",\"items\":[{\"label\":\"Padrão\",\"v\":null},{\"label\":\"Tendência\",\"v\":null},{\"label\":\"Amplitude\",\"v\":null},{\"label\":\"Confluência\",\"v\":null}]}],\"cycleRealizado\":0,\"dataGovernance\":{\"backup\":{\"lastConfirmedAt\":\"\",\"lastConfirmedExportSequence\":0},\"changeLog\":[],\"export\":{\"lastExportAt\":\"\",\"lastExportFile\":\"\",\"lastSequence\":0},\"responsibility\":{\"accepted\":false,\"acceptedAt\":\"\",\"version\":1},\"schemaVersion\":1,\"storage\":{\"configured\":false,\"configuredAt\":\"\",\"folderDisplayPath\":\"\",\"folderName\":\"\"}},\"expAlvo\":null,\"forex\":{\"accounts\":{},\"activeAccountId\":null,\"auditLog\":[],\"grid\":null,\"h4Closes\":[],\"market\":null,\"migration\":{\"source\":\"NEW_EMPTY_STATE\"},\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"proposals\":[],\"reserves\":null,\"schemaVersion\":1},\"fxConsolidated\":{\"accounts\":[],\"defaultAccountId\":null,\"receipts\":[],\"revisions\":[],\"schemaVersion\":1},\"fxPlanning\":{\"auditLog\":[],\"plan\":null,\"schemaVersion\":1},\"instruments\":[{\"cpl\":100000,\"name\":\"EURUSD\",\"preco\":1.1413,\"teto\":0.05,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"GBPUSD\",\"preco\":1.3303,\"teto\":0.04,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"AUDUSD\",\"preco\":0.6893,\"teto\":0.09,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"NZDUSD\",\"preco\":0.5681,\"teto\":0.09,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"USDJPY\",\"preco\":161.93,\"teto\":0.05,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"USDCHF\",\"preco\":0.8069,\"teto\":0.05,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"USDCAD\",\"preco\":1.4213,\"teto\":0.05,\"updated\":\"2026-07-02\"},{\"cpl\":100000,\"name\":\"AUDCAD\",\"preco\":0.9796,\"teto\":0.11,\"updated\":\"2026-07-02\"},{\"banReason\":\"Suspenso pelo Estatuto JP Wealth V10.0 — pendente de deliberação sobre exclusão definitiva ou reativação futura.\",\"banned\":true,\"cpl\":1,\"name\":\"US500\",\"preco\":7000,\"teto\":0.88,\"updated\":\"2026-06-25\"},{\"banReason\":\"Decreto pessoal — proibição de operar metais (comportamento destrutivo recorrente).\",\"banned\":true,\"cpl\":100,\"name\":\"XAUUSD\",\"preco\":4200,\"teto\":0.02,\"updated\":\"2026-05-01\"}],\"ledger\":[],\"ledgerArchive\":[],\"ledgerHistory\":{\"events\":[],\"schemaVersion\":1},\"loteMaster\":null,\"matrix\":[{\"alav\":1,\"ddmax\":0.02,\"ddmin\":0,\"nome\":\"FASE 1\"},{\"alav\":4,\"ddmax\":0.06,\"ddmin\":0.02,\"nome\":\"FASE 2\"},{\"alav\":2.4,\"ddmax\":0.1,\"ddmin\":0.06,\"nome\":\"FASE 3\"},{\"alav\":1.4,\"ddmax\":0.14,\"ddmin\":0.1,\"nome\":\"FASE 4\"},{\"alav\":0.8,\"ddmax\":0.18,\"ddmin\":0.14,\"nome\":\"FASE 5\"},{\"alav\":0.4,\"ddmax\":0.22,\"ddmin\":0.18,\"nome\":\"FASE 6\"}],\"mei\":{\"cid\":{\"base\":\"\",\"high_longevity\":\"\",\"high_longevity_plus\":\"\",\"longevity\":\"\"},\"confidenceLevel\":0.9,\"empiricalStartMonths\":36,\"enabled\":true,\"fixedSeed\":\"\",\"history\":[],\"horizonMonths\":60,\"hybridStartMonths\":6,\"lastCalibrationAt\":\"\",\"minimumHistoricalMonths\":36,\"notes\":\"\",\"seedMode\":\"random\",\"simulationCount\":5000,\"sourceMode\":\"auto\",\"version\":\"1.0\"},\"mvpNotes\":{\"folders\":[],\"items\":[],\"schemaVersion\":5,\"showHeaderIcon\":true,\"ui\":{\"drawerWidth\":980,\"foldersPaneWidth\":190,\"notesPaneWidth\":300}},\"nocoda\":{\"schemaVersion\":1,\"studies\":{}},\"onboarding\":{\"alavCorretora\":\"\",\"brokerLogin\":\"\",\"brokerServer\":\"\",\"cashLedgerStatus\":\"\",\"centralCashAgilePct\":\"\",\"centralCashCompositionMode\":\"percentual\",\"centralCashCompositionTotal\":\"\",\"centralCashCustody\":\"\",\"centralCashCustodyOther\":\"\",\"centralCashExternalPct\":\"\",\"centralCashLiquidityPct\":\"\",\"centralCashMainPct\":\"\",\"centralCashNoAccepted\":false,\"centralCashNotes\":\"\",\"centralCashOtherPct\":\"\",\"centralCashPolicyAccepted\":false,\"centralCashStatus\":\"\",\"centralCashTraceabilityScore\":\"\",\"consentAccepted\":false,\"consentAcceptedAt\":\"\",\"consentDocument\":\"\",\"consentOperator\":\"\",\"consentVersion\":\"\",\"corretora\":\"\",\"done\":false,\"epDailyLimit\":\"\",\"epMaxDrawdown\":\"\",\"epNoConfigAccepted\":false,\"epNotes\":\"\",\"epPlatform\":\"\",\"epPlatformOther\":\"\",\"epPropDailyBase\":\"\",\"epPropDailyEnabled\":\"\",\"epPropDailyNotes\":\"\",\"epReference\":\"\",\"epRestrictiveAccepted\":false,\"epStatus\":\"\",\"epStatuteMatch\":\"\",\"epTestStatus\":\"\",\"fcrLiquidity\":\"\",\"feoLiquidity\":\"\",\"investorPassword\":\"\",\"moedaBase\":\"USD\",\"operador\":\"\",\"plataforma\":\"\",\"propAbsenceRules\":\"\",\"propDailyDrawdown\":\"\",\"propMaxDrawdown\":\"\",\"propMinTradingDays\":\"\",\"propProfitTarget\":\"\",\"propTrailingDescription\":\"\",\"propTrailingRule\":\"\",\"reserveDeficitAccepted\":false,\"reserveFcrCoveragePct\":\"\",\"reserveFcrCurrent\":\"\",\"reserveFcrRequired\":\"\",\"reserveFcrStatus\":\"\",\"reserveFeoCoveragePct\":\"\",\"reserveFeoCurrent\":\"\",\"reserveFeoMonthsCovered\":\"\",\"reserveFeoRequired\":\"\",\"reserveFeoStatus\":\"\",\"reserveMasterCapital\":\"\",\"reserveMonthlyExpenses\":\"\",\"reserveNotes\":\"\",\"reserveSegregationAccepted\":false,\"restrictiveRuleAccepted\":false,\"summaryAccepted\":false,\"supervisor\":\"\"},\"operationHistory\":{\"records\":[],\"schemaVersion\":1},\"params\":{\"alarm\":null,\"fw\":null,\"genLev\":1,\"genRisk\":null,\"inicio\":\"\",\"mdd\":0.22,\"refA\":null,\"refM\":0.035,\"saldoAtu\":null,\"saldoIni\":null,\"vrmHV\":1.5,\"vrmN\":1.2},\"perf\":[],\"period\":{\"nome\":\"\",\"profile\":\"\"},\"personalFinance\":{\"creditLines\":[],\"debts\":[],\"moneyUnit\":\"BRL_CENTS\",\"months\":{},\"recurringIncome\":[],\"scenarios\":[],\"schemaVersion\":1},\"phaseUnlocked\":[],\"phases\":[{\"alavtxt\":\"1x\",\"cls\":\"p1\",\"ddtxt\":\"0–2%\",\"faseNome\":\"FASE 1\",\"orders\":[{\"entry\":0,\"id\":\"\",\"lote\":0,\"par\":\"\",\"result\":null,\"sl\":0,\"status\":\"\",\"tipo\":\"BUY\",\"tp\":0}],\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"title\":\"FASE 1 — GÊNESE\"},{\"alavtxt\":\"4x\",\"cls\":\"p2\",\"ddtxt\":\">2–6%\",\"faseNome\":\"FASE 2\",\"orders\":[{\"entry\":0,\"id\":\"\",\"lote\":0,\"par\":\"\",\"result\":null,\"sl\":0,\"status\":\"\",\"tipo\":\"BUY\",\"tp\":0}],\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"title\":\"FASE 2 — ATAQUE\"},{\"alavtxt\":\"2.4x\",\"cls\":\"p3\",\"ddtxt\":\">6–10%\",\"faseNome\":\"FASE 3\",\"orders\":[{\"entry\":0,\"id\":\"\",\"lote\":0,\"par\":\"\",\"result\":null,\"sl\":0,\"status\":\"\",\"tipo\":\"BUY\",\"tp\":0}],\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"title\":\"FASE 3 — INTERMÉDIO\"},{\"alavtxt\":\"1.4x\",\"cls\":\"p4\",\"ddtxt\":\">10–14%\",\"faseNome\":\"FASE 4\",\"orders\":[{\"entry\":0,\"id\":\"\",\"lote\":0,\"par\":\"\",\"result\":null,\"sl\":0,\"status\":\"\",\"tipo\":\"BUY\",\"tp\":0}],\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"title\":\"FASE 4 — DEFESA\"},{\"alavtxt\":\"0.8x\",\"cls\":\"p5\",\"ddtxt\":\">14–18%\",\"faseNome\":\"FASE 5\",\"orders\":[{\"entry\":0,\"id\":\"\",\"lote\":0,\"par\":\"\",\"result\":null,\"sl\":0,\"status\":\"\",\"tipo\":\"BUY\",\"tp\":0}],\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"title\":\"FASE 5 — CUIDADO\"},{\"alavtxt\":\"0.4x\",\"cls\":\"p6\",\"ddtxt\":\">18–22%\",\"faseNome\":\"FASE 6\",\"orders\":[{\"entry\":0,\"id\":\"\",\"lote\":0,\"par\":\"\",\"result\":null,\"sl\":0,\"status\":\"\",\"tipo\":\"BUY\",\"tp\":0}],\"policyVersion\":\"JPW-FOREX-V11-T03-1\",\"title\":\"FASE 6 — PREPARAÇÃO\"}],\"pivotStudies\":{\"schemaVersion\":1,\"studies\":[]},\"profiles\":[{\"desc\":\"V11 · referências de planejamento, sem promessa de retorno.\",\"fator\":1,\"key\":\"base\",\"name\":\"Base\",\"status\":\"DOCUMENTARY_CURRENT\"},{\"desc\":\"Fator de replicação P-30 PENDING; cadastro não autoriza replicar.\",\"fator\":null,\"key\":\"longevity\",\"name\":\"Longevity\",\"status\":\"PENDING\"},{\"desc\":\"Fator de replicação P-30 PENDING; cadastro não autoriza replicar.\",\"fator\":null,\"key\":\"high_longevity\",\"name\":\"High Longevity\",\"status\":\"PENDING\"},{\"desc\":\"Fator de replicação P-30 PENDING; cadastro não autoriza replicar.\",\"fator\":null,\"key\":\"high_longevity_plus\",\"name\":\"High Longevity Plus\",\"status\":\"PENDING\"}],\"protocolBreaches\":0,\"quarantine\":null,\"riskPinHash\":null,\"stopF\":1.8,\"theme\":\"light\",\"transitionLog\":[],\"workspaceRecovery\":null},\"workspace\":{\"drafts\":[],\"preferences\":{\"jpw_expl\":null,\"jpw_fs\":null,\"jpw_module_availability_v1\":null,\"jpw_nav\":null,\"jpw_nav_glass_tint\":null,\"jpw_nav_layout\":null,\"jpw_nav_order\":null,\"jpw_nav_submenu_rail\":null,\"jpw_rail\":null,\"jpwealth.ui.ffNews.sourceUrl\":null,\"jpwealth.ui.widgetLayout.v2\":null,\"jpwealth.ui.widgetLayouts.v3\":null,\"jpwealth.ui.widgetLayouts.v4\":null,\"jpwealth.ui.widgetLayouts.v5\":null,\"jpwealth.ui.widgetLayouts.v6\":null,\"jpwealth_calendar_view_v1\":null,\"jpwealth_galton_preferences_v1\":null,\"jpwealth_local_profile_v1\":null,\"jpwealth_notes_appearance_v1\":null,\"jpwealth_notes_launcher_position_v1\":null,\"jpwealth_v9_icon_choice\":null,\"jpwealth_v9_icon_theme\":null},\"schemaVersion\":2}}"
+        }
+      }
+    }
+  ],
+  "result": "PRODUCT_FAIL",
+  "counts": {
+    "PASS": 0,
+    "PRODUCT_FAIL": 1,
+    "ENVIRONMENT_ERROR": 0,
+    "TEST_HARNESS_FAIL": 0
+  },
+  "selectedCases": 1,
+  "failurePrecedence": [
+    "PRODUCT_FAIL",
+    "ENVIRONMENT_ERROR",
+    "TEST_HARNESS_FAIL"
+  ]
+}

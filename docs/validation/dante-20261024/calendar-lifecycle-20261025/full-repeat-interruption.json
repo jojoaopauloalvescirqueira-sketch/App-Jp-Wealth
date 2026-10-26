@@ -1,0 +1,45 @@
+{
+  "classification": "INCOMPLETE",
+  "interruptedAt": "2026-10-25T02:39:20.661263-03:00",
+  "reason": "Second UI budget timeout900 on unchanged candidate; stop duplicate remaining tests. First complete full101PASS1ENV and isolated413PASS retained.",
+  "signal": "SIGINT",
+  "processGroup": 83933,
+  "ownedGroupMembersAtStop": [
+    "83933 83933 .superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 -u tools/quality_gate.py --tier full --artifact /private/tmp/jpw-dante-calendar-20261025/full-repeat.json",
+    "85986 83933 /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 tools/planning_ui_test.py",
+    "85987 83933 /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/driver/node /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/driver/package/cli.js run-driver"
+  ],
+  "passedBeforeInterruption": [
+    "preflight",
+    "structure",
+    "diff-check",
+    "preflight-context",
+    "personal-agenda",
+    "monthly-economic-feed",
+    "calendar-agenda",
+    "calendar-recovery",
+    "navigation-ia",
+    "dashboard-macro",
+    "research-navigation",
+    "smoke",
+    "settings",
+    "brand-identity-contract",
+    "brand-identity-browser",
+    "statute-documentary",
+    "galton-board",
+    "planning-engine",
+    "planning-parity-engine",
+    "planning-state",
+    "planning-navigation",
+    "planning-quote",
+    "planning-boundaries"
+  ],
+  "failedBeforeInterruption": [
+    [
+      "ENVIRONMENT_ERROR",
+      "ui-visual-quality "
+    ]
+  ],
+  "remainingChecks": "NOT_RUN in this interrupted repeat, not merged into prior full",
+  "financialProductChanges": false
+}

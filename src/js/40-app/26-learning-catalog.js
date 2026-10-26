@@ -7,7 +7,7 @@
   const route=(route)=>({route}),local=(surface,view,route)=>({route,local:{surface,view}}),settings=(leaf)=>({settings:leaf});
   const tracks=[
     {id:'basics',title:'Primeiros passos',description:'Menu, painel inicial, ajuda e progresso neste navegador.',module:null,steps:[
-      step('basics-home','Conheça o painel inicial','Reconhecer o ponto de partida do JP Wealth.','Na entrada, Começar do zero mostra a escolha da primeira tarefa; Restaurar Backup Completo confere um arquivo antes de importar; Conhecer o app abre este guia. Fechar a entrada não cadastra uma conta. O painel reúne as áreas do app. Uma área vazia indica ausência de registros, não um saldo zero confirmado. Use Ir para esta tela e observe o painel; depois escolha Entendi. A marca JP Wealth também volta para cá.','Painel inicial visível. Entendi registra somente que você leu esta orientação.','#dash',route('dashboard')),
+      step('basics-home','Conheça o painel inicial','Reconhecer o ponto de partida do JP Wealth.','Na entrada, Começar do zero mostra a escolha da primeira tarefa; Restaurar Backup Completo confere um arquivo antes de importar; Conhecer com Dante abre este guia por sua escolha. Fechar a entrada não cadastra uma conta. O painel reúne as áreas do app. Uma área vazia indica ausência de registros, não um saldo zero confirmado. Use Ir para esta tela e observe o painel; depois escolha Entendi. A marca JP Wealth também volta para cá.','Painel inicial visível. Entendi registra somente que você leu esta orientação.','#dash',route('dashboard')),
       step('basics-menu','Explore o menu de navegação','Encontrar as áreas e seus submenus.','Em telas compactas, acione Menu na barra superior. Em telas amplas, use o menu já visível e escolha Painel inicial. O menu mostra Finanças Pessoais, Forex, Research, Ferramentas e as áreas disponíveis. Fechar o menu muda a apresentação e preserva seus dados.','Menu aberto ou Painel inicial escolhido no menu visível, após sua ação.','[data-shell-menu-toggle],[data-route="dashboard"]',route('dashboard'),{kind:'action',action:'menu'}),
       step('basics-location','Confira sua localização no app','Identificar a área, a subpágina e a visão atual.','Leia a linha de localização acima do conteúdo: ela acompanha a área principal, a subpágina e a visão selecionada. O menu escolhe a área; seus submenus e abas escolhem a consulta. Essa linha não é o endereço do navegador e não seleciona uma conta. Use a marca JP Wealth para voltar ao painel inicial.','Localização atual visível; você reconhece onde está antes de usar um controle.','#shellLocation',route('dashboard')),
       step('basics-help','Consulte uma ajuda contextual','Distinguir orientação de um comando de gravação.','Os botões com i explicam o controle ao lado. Abra uma ajuda visível: o texto depende da tela. Se esta tela não tiver i, Entendi conclui apenas a leitura. Feche a ajuda pelo botão original quando terminar.','Ajuda aberta após seu clique, ou leitura reconhecida explicitamente.','.note-i',route('dashboard'),{kind:'action',action:'help',allowRead:true}),
@@ -30,7 +30,7 @@
       step('forex-operation','Reconheça a área de operação','Entender a dependência de conta, período e elegibilidade.','Abra Operação. Mensagens de preparação ou bloqueio explicam o requisito pendente; não são erro do guia. O guia não autoriza operação, não marca consentimento e não preenche parâmetros. O botão Checklist pré-trade abre a janela de critérios e pontuação do filtro. As respostas gravam durante o preenchimento; abrir e ler basta para conhecer. Fechar conserva respostas existentes. Use os controles originais somente quando decidir operar.','Área de operação visível, inclusive sua explicação quando faltar contexto.','#exec',route('forex-operation')),
       step('forex-history','Consulte o histórico','Encontrar operações já registradas.','Abra Histórico de operações. Confira conta, período e filtros antes de interpretar uma linha. Lista vazia pode refletir filtro ou ausência de registro. Consultar não registra uma nova operação.','Histórico visível; você reconhece os filtros e o estado vazio.','#exec',route('forex-history')),
       step('forex-accounting','Conheça a contabilidade','Localizar o acompanhamento contábil.','Abra Contabilidade e leia os estados de conciliação. Um valor exibido depende das observações existentes. Ajustar ou conciliar exige os comandos e confirmações originais; esta etapa termina na consulta.','Contabilidade aberta sem conciliação automática.','#exec',route('forex-accounting')),
-      step('forex-planning','Leia o planejamento patrimonial','Distinguir planejamento de execução.','Abra o menu Planejamento e leia Comece aqui. Preencher o formulário abre as perguntas do plano; revisar não grava e a confirmação libera o Consolidado. As três abas são Comece aqui, Consolidado e Preenchimento mensal. O formulário mostra os prazos para o custo de vida atual e a renda dos sonhos antes de confirmar. Em telas estreitas ou baixas, Ver sua previsão leva diretamente aos dois marcos; comparar perfis e simular a parada dos aportes mantém as escolhas no formulário até sua confirmação. Preenchimento mensal reúne resultados, aportes, saques e finalização; o plano inicial fica preservado internamente para os comparativos. Um plano não executa transferências nem operações.','Planejamento aberto; nenhuma hipótese foi gravada pelo guia.','#planning',route('planning')),
+      step('forex-planning','Leia o planejamento patrimonial','Distinguir planejamento de execução.','Abra o menu Planejamento e leia Comece aqui. Preencher o formulário abre as perguntas do plano; revisar não grava e a confirmação libera o Consolidado. As três abas são Comece aqui, Consolidado e Preenchimento mensal. O formulário mostra os prazos para o custo de vida atual e a renda dos sonhos antes de confirmar. Em telas estreitas ou baixas, Ver sua previsão leva diretamente aos dois marcos; comparar perfis e simular a parada dos aportes mantém as escolhas no formulário até sua confirmação. Preenchimento mensal reúne resultados, aportes, saques e finalização; o plano inicial fica preservado internamente para os comparativos. Um plano não executa transferências nem operações.','Planejamento aberto; nenhuma hipótese foi gravada pelo guia.','#planning',route('planning'),{availabilityModule:'planning'}),
       step('forex-reserves','Localize as reservas','Reconhecer a área de acompanhamento de reservas.','Abra Reservas e consulte os rótulos e estados. Sem base elegível, siga a mensagem da própria tela. Transferir, destinar ou registrar valores são decisões suas e não são necessários para esta etapa.','Área de reservas visível ou requisito explicado pela tela.','#forexReservesPanel',route('forex-reserves'))
     ]},
     {id:'research',title:'Research',description:'Pesquisa de Forex e espaços de Ações, Stocks, REITs e outras pesquisas.',module:'research',steps:[
@@ -39,9 +39,8 @@
       ...[['stocks-br','Ações','#researchStocksBr'],['stocks-global','Stocks','#researchStocksGlobal'],['reits','REITs','#researchReits']].map(([id,label,anchor])=>step('research-'+id,'Conheça a área de '+label,'Reconhecer o estado atual desta área de pesquisa.','Abra '+label+'. Se a tela informar que é um espaço reservado, esse é o limite atual: não há análise completa nem dados de mercado implícitos. Entendi registra que você reconheceu essa limitação.','Área aberta; seu estado reservado continua explícito.',anchor,route('research-'+id))),
       step('research-others','Consulte outras pesquisas','Encontrar a visão de pesquisas adicionais.','Abra Outras pesquisas. Conteúdo ausente ou reservado não significa resultado de pesquisa. Use a tela para reconhecer o que existe hoje; esta orientação não adiciona fontes ou análises.','Outras pesquisas visíveis com seus limites atuais.','#researchOthers',local('research','others','research-forex'))
     ]},
-    {id:'tools',title:'Ferramentas',description:'Calendário, Nocuda Tool, Stoikus — MT5 e Estrutura Normativa.',module:null,steps:[
-      step('tools-calendar','Consulte o calendário e organize sua agenda','Localizar o mês, os eventos econômicos e sua agenda.','Abra o calendário pelo ícone ao lado do sino ou em Ferramentas e Serviços. Selecione um dia; a bolinha vermelha marca eventos econômicos que passam pelos filtros de moeda e impacto. Compromissos e tarefas usam outro marcador e só são salvos por uma ação explícita. Confira cobertura e fontes em [i]; uma fonte pendente não significa ausência de eventos. O calendário semanal FF dos widgets mantém um escopo próprio. Para consultar sessões de ações, use Bolsas Globais, também em Ferramentas e Serviços: a lista destaca as bolsas abertas pelo calendário de ações, incluindo B3. Use os filtros e selecione uma bolsa para ver a próxima mudança. No celular, Explorar mapa abre o globo; Sem confirmação indica falta de cobertura, não fechamento. Sessões de negociação e eventos econômicos têm fontes e finalidades diferentes. Confira datas, fuso e fonte antes de interpretar um evento. Falta de eventos ou conexão não confirma ausência de risco. Consultar um calendário não registra nem autoriza uma operação.','Calendário aberto e seus filtros identificados.','#execEcal',route('tools-calendar')),
-      step('tools-nocuda','Conheça a Nocuda Tool','Encontrar a ferramenta e suas instruções de validação.','Abra Nocuda Tool e consulte os campos e a ajuda i. Validar verifica a informação inserida; o resultado não cria fatos financeiros nem substitui a governança da operação. Sem dados próprios, conclua apenas a leitura.','Ferramenta aberta sem preencher dados nem acionar validação automaticamente.','#nocudaTool',route('tools-nocuda')),
+    {id:'tools',title:'Ferramentas',description:'Calendário, Stoikus — MT5 e Estrutura Normativa.',module:null,steps:[
+      step('tools-calendar','Consulte o calendário e organize sua agenda','Localizar o mês, os eventos econômicos e sua agenda.','Abra o calendário pelo ícone ao lado do sino ou em Ferramentas e Serviços → Calendário e Mercados. Selecione um dia; a bolinha vermelha marca eventos econômicos que passam pelos filtros de moeda e impacto. Compromissos e tarefas usam outro marcador e só são salvos por uma ação explícita. Confira cobertura e fontes em [i]; uma fonte pendente não significa ausência de eventos. O calendário semanal FF dos widgets mantém um escopo próprio. Para consultar sessões de ações, consulte Bolsas Globais — Agora abaixo do calendário. O resumo mostra abertas e próximas sessões; Bolsas agora leva direto à seção. Explorar bolsas e mapa abre a lista completa, incluindo B3. Use os filtros e selecione uma bolsa para ver a próxima mudança. A referência das bolsas é o instante atual, independente do dia selecionado na agenda; os filtros também são independentes. Recolher bolsas preserva sua exploração durante a sessão. No celular, Explorar mapa abre o globo; Sem confirmação indica falta de cobertura, não fechamento. Sessões de negociação e eventos econômicos têm fontes e finalidades diferentes. Confira datas, fuso e fonte antes de interpretar um evento. Falta de eventos ou conexão não confirma ausência de risco. Consultar um calendário não registra nem autoriza uma operação.','Calendário aberto e seus filtros identificados.','#execEcal',route('tools-calendar')),
       step('tools-genetrix','Entenda o Stoikus — MT5','Separar documentação e distribuição de execução no terminal.','Abra Stoikus — MT5. O site apresenta instruções e arquivos: ele não acessa sua conta nem executa o MT5. Baixar fontes não comprova compilação, instalação ou funcionamento. Siga a documentação do pacote quando decidir usá-lo.','Página de distribuição visível, sem promessa de execução ou instalação.','#jpwLeveragePage',route('tools-leverage')),
       step('tools-normative','Leia a Estrutura Normativa','Localizar as referências normativas do JP Wealth.','Abra Estrutura Normativa JP Wealth. Consulte as versões e o papel de cada documento. Uma ferramenta, estudo ou resumo não adota uma regra por si só; a referência normativa é a fonte da orientação aplicável.','Estrutura Normativa visível com suas referências.','#jpwNormativePage',route('tools-normative'))
     ]},
@@ -57,6 +56,209 @@
       step('general-session','Veja como encerrar com segurança','Conhecer o início do fluxo sem finalizar a sessão.','Feche as Configurações pelos controles originais e acione Finalizar sessão. Leia o diálogo e use Cancelar. Continuar, reconhecer exportação e confirmar encerramento são decisões separadas suas; o guia termina na abertura e no cancelamento.','Fluxo original aberto e depois cancelado por você; a sessão continua.','#finalizeSessionBtn',null,{kind:'action',action:'session',allowRead:true})
     ]}
   ];
+  // New owners add coverage without moving the 57 existing stable IDs.
+  tracks.push({id:'planning',title:'Planejamento',description:'Formulário, Consolidado e mês confirmado, com hipóteses separadas dos fatos.',module:'planning',steps:[
+    step('planning-form','Conheça o formulário do plano','Encontrar premissas, previsão e revisão antes da confirmação.','Em Planejamento, abra Comece aqui e localize Preencher o formulário. O app oferece criar ou editar conforme as contas existentes; não escolhe uma conta entre várias. O formulário reúne início, capital, aporte, perfil hipotético e objetivos. Comparar perfis, planejar a parada e consultar Ver sua previsão não grava o plano. Revisar permite conferir; somente confirmar aplica a configuração. Fechar ou Cancelar resolve o rascunho pelo controle original. Para esta lição basta ler os controles, sem criar ou editar plano.','Entrada e controles localizados; nenhuma criação ou edição é exigida.','#planning',route('planning')),
+    step('planning-consolidated','Leia o Consolidado do planejamento','Distinguir posição confirmada, projeção e referências.','Quando existir plano confirmado, abra Consolidado e confira Conta ou Todas as contas. Sem plano, a tela Comece aqui permanece como entrada: não cadastre uma conta apenas para avançar. Posição confirmada, projeção, metas e referência de câmbio têm papéis distintos. O gráfico realizado usa meses confirmados; projeção não comprova rendimento. Confira período, cobertura do câmbio e dados pendentes antes de comparar. Filtros e leitura não registram resultados.','Você distingue projeção de posição confirmada, ou reconhece a dependência de um plano.','#planning',route('planning')),
+    step('planning-monthly','Entenda o registro e o fechamento mensal','Separar edição, resultado registrado e mês finalizado.','Com plano disponível, abra Preenchimento mensal. Sem plano, apenas reconheça esta dependência e conclua a leitura. Clicar numa célula abre edição com Salvar e Cancelar; sair do campo não grava. Resultado, aporte e saque exigem os fluxos de revisão e confirmação originais. Finalizar é outra confirmação: exige resultado e conferência dos fluxos, respeitando meses anteriores pendentes. Salvar resultado e revisar fechamento pode registrar o resultado e manter o mês aberto se você cancelar depois. Mês passado ou cor verde não significa Finalizado. Premissas futuras são projeções; não crie fatos para conhecer o controle.','Fluxos e estados reconhecidos; nenhum resultado, aporte, saque ou fechamento foi exigido.','#planning',route('planning'))
+  ]});
+  tracks.find(t=>t.id==='tools').steps.splice(1,0,
+    step('tools-agenda','Conheça sua agenda de tarefas e compromissos','Distinguir consulta, rascunho e item confirmado.','Em Calendário e Mercados, selecione um dia e consulte a agenda. Tarefas e compromissos têm marcador próprio, separado dos eventos econômicos. Criar ou editar abre o formulário original; Salvar solicita a gravação, e a confirmação depende da resposta original. Fechar conserva o rascunho e Cancelar o descarta explicitamente. Concluir uma tarefa e remover um item são comandos próprios; o guia não os aciona. A agenda pode estar vazia e não cria cobranças no sino. Basta ler para seguir.','Agenda localizada sem criar, concluir ou remover itens.','#execEcal',route('tools-calendar')),
+    step('tools-calendar-coverage','Confira fontes e cobertura do calendário','Interpretar filtros e ausência de eventos com cautela.','No Calendário e Mercados, confira dia, fuso, moedas, impactos e conteúdos selecionados. O marcador econômico acompanha os filtros. Consulte [i] para fontes e cobertura: pendente, parcial e não confirmado não significam ausência de evento. Data sem hora não recebe um horário inventado. O calendário semanal FF dos widgets tem cobertura própria e não completa silenciosamente o calendário mensal. A leitura de um evento não autoriza uma operação.','Você localiza filtros e cobertura e reconhece os limites dos dados.','#execEcal',route('tools-calendar')),
+    step('tools-markets','Explore Bolsas Globais — Agora','Distinguir sessão de negociação e evento econômico.','Em Calendário e Mercados, localize Bolsas Globais — Agora abaixo do calendário. O resumo mostra abertas e próximas sessões; Explorar bolsas e mapa abre a lista completa, incluindo B3. Seus filtros são independentes da agenda, e a referência é Agora, mesmo ao selecionar outro dia no calendário. Selecione uma bolsa para consultar a próxima mudança; Sem confirmação indica cobertura insuficiente, não fechamento. Recolher preserva a exploração nesta sessão; no celular, Explorar mapa abre o globo. Horário de sessão não é recomendação de negociação.','Resumo e entrada da exploração localizados; nenhuma negociação foi iniciada.','#marketHoursTool',route('tools-calendar'))
+  );
+  tracks.find(t=>t.id==='general').steps.push(
+    step('general-notifications','Entenda o sino de ações pendentes','Separar causa pendente, consulta e resolução confirmada.','Localize o sino na barra superior. Abra a central pelos controles originais e confira a área, a causa e o contexto antes de usar uma ação. O guia pausa quando outro diálogo abre; feche a central e retome pelo guia quando terminar. Consultar um aviso não resolve nem confirma um fato financeiro. Uma ação pode abrir a tela de origem para revisão; os comandos e confirmações continuam nela. Sem ação pendente identificada não certifica ausência de risco. Agenda pessoal e eventos econômicos ficam no calendário, sem virarem cobranças no sino.','Sino localizado e finalidade compreendida, sem confirmar ou resolver uma pendência.','#headerNotificationsBtn',null)
+  );
+
+  // Each balloon is edited for Dante; the longer instruction remains a reference.
+  const speech={
+    'basics-home':['Oi, eu sou o Dante! Vou mostrar os controles do JP Wealth, um passo de cada vez.','Aqui está o painel inicial; uma área vazia pode estar esperando seus registros. Quando terminar de ler, escolha Entendi.'],
+    'basics-menu':['Vamos encontrar as áreas pelo menu. Em telas menores, ele fica no botão Menu da barra superior.','Abra o menu ou escolha Painel inicial no menu já visível. Eu acompanho esse controle, sem alterar seus dados.'],
+    'basics-location':['Eu me localizo por esta linha acima do conteúdo. Ela mostra a área, a subpágina e a visão atual, sem escolher uma conta.'],
+    'basics-help':['O botão i explica o controle ao lado. Abra uma ajuda e feche pelo botão original; se não houver ajuda visível, você pode concluir só a leitura.'],
+    'basics-local-state':['Vou separar duas coisas: o que está escrito na tela e o que foi confirmado como salvo. Um rascunho ainda pode estar pendente.','LOCAL é a base deste navegador e deste endereço. Abrir outra URL não transfere seus registros.'],
+    'basics-progress':['Eu guardo aqui só o andamento deste guia. Leituras, etapas puladas e práticas confirmadas têm registros separados.','Você pode pausar e voltar quando quiser. Se a gravação não for confirmada, eu aviso o limite.'],
+    'personal-finance-overview':['Vamos olhar suas Finanças Pessoais. Lista vazia não é um saldo zero confirmado.'],
+    'personal-finance-budget':['Aqui eu começo pela competência do orçamento. Confira o mês antes de interpretar receitas e despesas.','Se decidir praticar, use somente dados seus corretos. Os campos existentes podem salvar ao sair; Escape cancela o rascunho antes de gravar.'],
+    'personal-finance-income':['Eu separo Projetado de Recebido: expectativa e valor registrado como recebido. Adicionar receita cria um registro real; você pode apenas ler.'],
+    'personal-finance-expense':['Vamos distinguir Meta, Previsto, Fora cartão e Cartão. Adicionar uma despesa cria um registro real; não é necessário fazer isso para seguir.'],
+    'personal-finance-debts':['Aqui você consulta dívidas, parcelas e vencimentos. Eu não preciso que você cadastre ou quite uma dívida para conhecer a tela.'],
+    'personal-finance-comparison':['Vamos conferir quais períodos o Comparativo usa. Um mês sem dados não equivale a um mês liquidado.'],
+    'personal-finance-scenarios':['Eu uso Cenários para reconhecer hipóteses. Uma projeção não comprova receita recebida.'],
+    'forex-accounts':['Vamos conhecer Contas e Períodos antes da operação. Você pode concluir esta leitura sem cadastrar ou selecionar uma conta.'],
+    'forex-context':['Eu separo consultar uma conta de aplicar seu contexto na Operação. Confira conta, período e observações antes de interpretar os números.','Um traço no cabeçalho significa informação indisponível. Saldo inicial não comprova equity.'],
+    'forex-performance':['Vamos ler os rótulos de conta e período no Desempenho. A consulta consolidada não escolhe a conta para operar.'],
+    'forex-operation':['Aqui eu mostro os requisitos da Operação. Uma preparação ou um bloqueio precisa ser entendido antes de qualquer decisão sua.','O Checklist pré-trade abre uma janela própria e suas respostas salvam durante o preenchimento. Para conhecer, basta abrir e ler sem marcar exemplos.'],
+    'forex-history':['Vamos conferir conta, período e filtros do Histórico. Uma lista vazia pode refletir o filtro ou a ausência de registros.'],
+    'forex-accounting':['Aqui eu localizo o acompanhamento contábil. Ajustes e conciliações pertencem aos comandos originais; esta lição termina na consulta.'],
+    'forex-planning':['Vamos conhecer Planejamento, uma área própria do menu. Comece aqui, Consolidado e Preenchimento mensal separam preparação, leitura e acompanhamento.','As hipóteses do plano não executam transferências nem operações. Eu não gravo uma configuração para mostrar essa área.'],
+    'forex-reserves':['Vamos localizar Reservas e ler seus estados. Se faltar uma base elegível, siga a explicação da própria tela.'],
+    'research-forex':['Vamos explorar Research e o estudo NoCoda. As três âncoras atualizam uma prévia; só Salvar parâmetros confirma a gravação.','Trocar instrumento com alterações pede uma decisão sua. Consultar outra área pode preservar o rascunho nesta sessão, mas não o salva.'],
+    'research-pivots':['Aqui eu encontro o estudo de pivôs. Editar abre o formulário, e Salvar pivot ou Salvar alterações confirma a gravação.','As confirmações originais protegem a troca de instrumento e o descarte. Você pode apenas consultar para seguir.'],
+    'research-others':['Vamos reconhecer o que existe em Outras pesquisas. Conteúdo reservado não representa uma análise concluída.'],
+    'tools-calendar':['Vamos abrir Calendário e Mercados. O calendário acompanha o dia selecionado, e Bolsas Globais usa o instante atual.','Eu separo eventos econômicos, sua agenda e horários de negociação. Cada parte tem seus próprios dados e limites.'],
+    'tools-genetrix':['Aqui eu encontro instruções e arquivos do Stoikus — MT5. O site não acessa sua conta nem executa o terminal.','Baixar fontes não comprova compilação ou instalação. Siga a documentação do pacote quando decidir usá-lo.'],
+    'tools-normative':['Vamos localizar as referências da Estrutura Normativa JP Wealth. Um resumo ou uma ferramenta não adota uma regra por conta própria.'],
+    'alladin-start':['Eu respeito a disponibilidade do Alladin. Quando estiver congelado, você pode seguir pelo índice ou pular esta etapa sem ativar o módulo.'],
+    'general-notes':['Vamos abrir Notas pelo botão da barra superior. Nova nota inicia um rascunho; só Salvar confirma seu texto.'],
+    'general-notes-save':['Eu separo a nota em edição da nota salva. A primeira linha vira o título, e texto vazio é recusado.','Você pode apenas ler ou salvar uma nota sua necessária pelos controles originais. Cancelar não conta como prática confirmada.'],
+    'general-settings-probability-lab':['Vamos encontrar MiniGames em Ferramentas e Serviços. Galton Board, Gêmeos do Tempo e Correntes de Capital usam experiências educacionais.','Abrir entra no jogo sem iniciar a simulação automaticamente. Esses modelos não fazem previsões nem alteram seus registros financeiros.'],
+    'general-backup':['Vamos distinguir arquivo gerado, download solicitado e arquivo verificado. Eu não confirmo que um arquivo está salvo no disco só porque o download começou.','Importar pode substituir dados reais. Para esta orientação, basta consultar Backup e Recuperação.'],
+    'general-session':['Vamos conhecer o começo do encerramento seguro. Abra Finalizar sessão, leia o diálogo e use Cancelar para continuar aqui.','Eu observo a abertura e o cancelamento. Continuar e confirmar o encerramento são decisões suas em outro momento.'],
+    'planning-form':['Vou mostrar onde começa o formulário do plano. Você pode conhecer os controles sem criar ou editar uma conta.','Comparar perfis e consultar a previsão mantém as hipóteses no formulário. Revisar não grava; a confirmação original aplica a configuração.'],
+    'planning-consolidated':['Aqui eu separo posição confirmada, projeção e referências de câmbio. Confira a conta e o período antes de comparar.','Sem plano confirmado, Comece aqui continua sendo a entrada. Você pode reconhecer esse requisito sem cadastrar uma conta para o guia.'],
+    'planning-monthly':['Vamos separar resultado registrado de mês finalizado. A edição usa Salvar e Cancelar; sair do campo não grava.','Salvar um resultado e cancelar a revisão pode deixar o mês aberto. Só a confirmação de fechamento finaliza, respeitando os requisitos anteriores.'],
+    'tools-agenda':['Vamos localizar tarefas e compromissos na agenda do dia. Eles têm marcador próprio, separado dos eventos econômicos.','Salvar confirma o item; Fechar conserva o rascunho e Cancelar o descarta. Para seguir comigo, basta conhecer os controles.'],
+    'tools-calendar-coverage':['Eu confiro data, fuso, filtros e cobertura antes de interpretar o calendário. Uma fonte pendente ou uma lista vazia não confirma ausência de evento.','A ajuda i mostra fontes e limites. Os widgets semanais FF têm um escopo próprio.'],
+    'tools-markets':['Vamos encontrar Bolsas Globais — Agora abaixo do calendário. Explorar bolsas e mapa abre a lista completa.','As bolsas usam Agora e filtros independentes da agenda. Sem confirmação indica cobertura insuficiente, não fechamento.'],
+    'general-notifications':['O sino reúne causas que pedem revisão. Eu confiro área e contexto antes de seguir para uma ação.','Ler um aviso não resolve a pendência nem confirma um fato financeiro. Se abrir a central, o guia pausa; feche pelo controle original e retome quando quiser.']
+  };
+  [['stocks-br','Ações'],['stocks-global','Stocks'],['reits','REITs']].forEach(([id,label])=>{
+    speech['research-'+id]=['Vamos localizar '+label+' e reconhecer seu estado atual. Se a tela disser espaço reservado, ainda não há análise completa nessa área.'];
+  });
+  [['instruments','instrumentos'],['assets','bens'],['accounts','contas'],['cashAccounts','caixa'],['ledger','lançamentos'],['balances','saldos'],['positions','posições']].forEach(([id,label])=>{
+    speech['alladin-'+id]=['Vamos consultar '+label+' quando o Alladin estiver disponível. Uma lista vazia indica ausência de registros nesta visão.'];
+  });
+  speech['alladin-ledger'].push('Estornar abre a confirmação de um novo fato que neutraliza o lançamento e preserva o original. Eu não aciono esse comando.');
+  [['general','Geral'],['account','JP Wealth Account'],['appearance','Aparência'],['interface','Interface'],['editor','Editor'],['statute','Estatuto Operacional'],['parameters','Parâmetros e Calibração'],['tool-params','Parâmetros da Operação'],['forex-consolidated','Conta padrão do Consolidado'],['educational','Centro Educacional'],['storage','Armazenamento Local'],['about','Sobre']].forEach(([id,label])=>{
+    speech['general-settings-'+id]=['Vamos localizar '+label+' nas Configurações. Leia as instruções antes de alterar uma opção, pois algumas salvam imediatamente.'];
+  });
+  speech['general-settings-account'].push('Uma conta local não é uma conta de corretora. Eu não cadastro uma identidade para apresentar esta tela.');
+  speech['general-settings-tool-check']=['Vamos localizar o Checklist nas Configurações. Ele abre uma janela própria e salva respostas durante o preenchimento.','Para conhecer, leia sem marcar exemplos e use Fechar na janela. Eu não marco respostas por você.'];
+  // Complete optional task walkthroughs; statements never serve as save receipts.
+  speech['planning-form']=[
+    'Vamos abrir Comece aqui e Preencher o formulário. Você pode acompanhar a leitura sem registrar um plano.',
+    'Se houver escolha, use Criar nova conta ou selecione explicitamente a conta para editar. Editar conta escolhida abre os dados dessa conta, sem mudar o filtro do Consolidado.',
+    'Começo pelo ano e mês iniciais. Eles definem o início do calendário do plano; confira a data antes de seguir.',
+    'Informe o capital inicial em dólares e, se desejar, o aporte mensal. Use somente dados seus corretos; aporte previsto ainda não é dinheiro registrado.',
+    'Em Escolher perfil de risco, compare os perfis e escolha conscientemente. Os percentuais são hipóteses de simulação, sem garantia de retorno.',
+    'Se quiser simular a parada dos aportes, abra Planejar quando parar de aportar e compare limite e data. Usar esta data no plano volta ao formulário, sem salvar a configuração.',
+    'Confira o custo mensal atual opcional e a renda mensal desejada, cada um com sua moeda. Para valores em reais, leia a cotação e atualize o câmbio quando a tela pedir.',
+    'Em Sua previsão, confira os dois marcos: padrão atual e renda dos sonhos. Ver sua previsão leva a eles em telas menores; falta de dados ou prazo fora do plano precisa ser lido.',
+    'Dados da conta são opcionais: nome, corretora, conta e servidor. Não informe senhas; em Opções do plano, confira se deseja reaplicar as premissas futuras.',
+    'Use Revisar plano, Revisar nova conta ou Revisar alterações, conforme a tela. Confira período, valores, perfil e alcance da mudança; Voltar e editar permite corrigir antes de gravar.',
+    'Somente Confirmar e liberar, Confirmar e criar conta ou Confirmar e salvar solicita a gravação. Confira Plano liberado ou a confirmação original antes de ir para o Consolidado.',
+    'Cancelar ou Fechar mantém o rascunho pelo fluxo original, sem confirmar o plano. Você pode concluir comigo apenas a leitura.',
+    'Se houver erro, preserve o rascunho e confira os campos; se os dados mudaram, Atualizar revisão exige nova conferência. Resultado indeterminado pede Backup e Recuperação, sem repetir a confirmação.'
+  ];
+  speech['planning-monthly']=[
+    'Abra Preenchimento mensal e confira a conta e o mês selecionados. Sem plano disponível, você pode ler este percurso sem criar uma conta.',
+    'Na célula de resultado do mês atual ou passado, escolha Percentual ou USD e informe o resultado total. Percentual precisa de saldo de abertura positivo; caso contrário, use dólares.',
+    'Lucro é positivo, prejuízo é negativo, e zero só vale quando informado explicitamente. Ausência de resultado não é zero; aportes e saques ficam separados do resultado.',
+    'Salvar abre a revisão do registro realizado; confira valor, unidade e competência antes de Confirmar registro. Cancelar ou Escape fecha a edição sem gravar; sair do campo não salva.',
+    'Uma correção pode deixar fechamentos para reconferência. Leia os meses afetados e marque a ciência original somente se concordar, antes de confirmar.',
+    'Para um aporte, abra a célula correspondente e informe os dólares e os reais pagos, obrigatórios nesse registro. Confira cada lançamento individual e a revisão antes de Confirmar registro.',
+    'Para um saque, informe os dólares retirados; os reais recebidos são opcionais. Confira a revisão e confirme o registro somente quando os dados estiverem corretos.',
+    'Os botões Registrar rentabilidade, Registrar aporte e Registrar saque oferecem outro percurso. Confira MM/AAAA, dólares e reais quando pedidos; a revisão termina em Sim, registrar.',
+    'Confira Alteração confirmada ou o retorno original após cada gravação. Um valor ainda visível no rascunho não prova que foi salvo.',
+    'Depois dos registros, escolha Finalizado = Sim no mês correto. A janela mostra os fatos efetivos; aportes previstos não contam como aportes realizados.',
+    'Se faltar resultado, escolha a unidade e informe o valor, inclusive zero apenas se for o resultado real. Use Revisar resultado e Salvar resultado e revisar fechamento; isso ainda não finaliza o mês.',
+    'Confira os aportes e saques efetivos, marque a conferência original e use Confirmar fechamento. Verifique o estado Finalizado após a confirmação, sem presumir sucesso pela cor do mês.',
+    'Se aparecer primeiro mês anterior pendente, use Ir para o mês indicado e confira cada mês em ordem. Nenhum anterior é fechado automaticamente.',
+    'Cancelar o fechamento depois de salvar um resultado deixa o resultado registrado e o mês aberto. Resultado e fechamento são confirmações separadas.',
+    'Se os dados mudaram ou uma gravação foi recusada, confira o contexto e a revisão antes de tentar de novo. Resultado indeterminado bloqueia repetição: consulte Backup e Recuperação.'
+  ];
+  speech['tools-agenda']=[
+    'Selecione o dia no calendário e use Novo para começar uma tarefa ou compromisso seu. Você também pode acompanhar comigo só a leitura.',
+    'Escolha Tipo e preencha o Título. Confira a Data; uma tarefa usa essa data civil, sem criar um horário fictício.',
+    'Em um compromisso, escolha Dia inteiro se ele não tiver um instante marcado. Caso contrário, desmarque essa opção para informar os horários.',
+    'Confira Horário inicial, data final e horário final, junto do Fuso horário. Uma mudança de fuso pode mudar o instante do compromisso; use o fuso correspondente ao evento.',
+    'Um horário inexistente na mudança do relógio precisa ser corrigido; um horário ambíguo exige escolha explícita entre as opções apresentadas. Não aceite um instante presumido.',
+    'Notas são opcionais. Antes de Salvar, revise Tipo, Título, Data, horários e fuso no próprio formulário; não há uma confirmação separada de revisão.',
+    'Salvar pede a gravação e pode encontrar validação recusada. Só considere o item salvo depois de Registro salvo na agenda e de conferir o item no dia correspondente.',
+    'Se houver conflito ou revisão antiga, os campos permanecem: use Atualizar revisão e confira tudo de novo. Uma recusa não significa que a agenda foi alterada.',
+    'Se o resultado for indeterminado, preserve a entrada e consulte Backup e Recuperação. Não repita Salvar presumindo que a primeira tentativa falhou.',
+    'Para alterar um item existente, localize-o no dia e use Editar. Confira os dados, escolha Salvar e verifique a confirmação original e a lista atualizada.',
+    'Concluir usa a caixa da tarefa, não de um compromisso. Confira a marcação após a atualização; se a conclusão for recusada ou não confirmada, a tela informa o limite.',
+    'Para excluir, abra Editar, escolha Excluir e leia a pergunta; Excluir registro confirma o pedido. Manter registro cancela essa exclusão; confira a mensagem original e a lista depois.',
+    'Cancelar no formulário descarta explicitamente o rascunho. Fechar calendário conserva o rascunho; nenhum desses gestos confirma uma gravação.'
+  ];
+  const planningTask=id=>'#planning '+id;
+  const agendaTask=selector=>selector.split(',').flatMap(part=>['#execEcal '+part,'#calendarDialog '+part]).join(',');
+  const taskPresentation={
+    'planning-form':{
+      speechAnchors:[
+        planningTask('[data-pl-action="configure"]'),
+        planningTask('[data-pl-configure-account],#planning [data-pl-action="configure-create"]'),
+        planningTask('#pl-native-ano,#planning #pl-native-mes'),
+        planningTask('#pl-native-saldo,#planning #pl-native-aporte'),
+        planningTask('#pl-native-openProfiles,#planning [data-pl-choose-profile]'),
+        planningTask('#pl-native-stopOpen,#planning #pl-native-stopLimit,#planning #pl-native-stopUse'),
+        planningTask('#pl-native-custoValor,#planning #pl-native-sonhoBRL'),
+        planningTask('#pl-native-forecastArea,#planning [data-pl-action="forecast-focus"]'),
+        planningTask('#pl-native-nome,#planning #pl-native-substituir'),
+        planningTask('[data-pl-native-review],#planning dialog[data-pl-submit="create"] [data-pl-submit],#planning dialog[data-pl-submit="edit"] [data-pl-submit]'),
+        planningTask('[data-pl-native-success],#planning dialog[data-pl-submit="create"] [data-pl-submit],#planning dialog[data-pl-submit="edit"] [data-pl-submit]'),
+        planningTask('dialog[data-pl-submit="create"] [data-pl-action="close"],#planning dialog[data-pl-submit="edit"] [data-pl-action="close"]'),
+        planningTask('[data-pl-form-error],#planning [data-pl-draft-stale]')
+      ],
+      followHosts:[
+        '#planning dialog[data-pl-submit="configure-choice"]',
+        '#planning dialog[data-pl-submit="create"]',
+        '#planning dialog[data-pl-submit="edit"]',
+        '#planning:has(dialog[data-pl-submit="create"][open],dialog[data-pl-submit="edit"][open]) dialog[data-pl-subdialog="profiles"]',
+        '#planning:has(dialog[data-pl-submit="create"][open],dialog[data-pl-submit="edit"][open]) dialog[data-pl-subdialog="stop"]'
+      ]
+    },
+    'planning-monthly':{
+      speechAnchors:[
+        planningTask('[data-pl-account],#planning [data-pl-month]'),
+        planningTask('[data-pl-inline-editor] [name="unit"],#planning [data-pl-inline-open="result"]'),
+        planningTask('[data-pl-inline-editor] [name="value"],#planning [data-pl-flow-step="usd"]'),
+        planningTask('[data-pl-inline-review],#planning [data-pl-inline-save]'),
+        planningTask('[data-pl-inline-ack],#planning [data-pl-inline-review]'),
+        planningTask('[data-pl-inline-editor] [name="brl"],#planning [data-pl-inline-open="contribution"]'),
+        planningTask('[data-pl-inline-open="withdrawal"],#planning [data-pl-inline-editor] [name="usd"]'),
+        planningTask('[data-pl-flow-step="review"],#planning [name="flowMonth"],#planning [data-pl-action="result"]'),
+        planningTask('[data-pl-notice],#planning [data-pl-form-error]'),
+        planningTask('[data-pl-action="finalize"],#planning [data-pl-finalized-month]'),
+        planningTask('[data-pl-closure-result],#planning [data-pl-action="closure-save-result"]'),
+        planningTask('[name="confirmFlows"],#planning dialog[data-pl-submit="finalize"] [data-pl-submit]'),
+        planningTask('[data-pl-action="closure-previous"]'),
+        planningTask('dialog[data-pl-submit="finalize"] [data-pl-action="close"],#planning [data-pl-notice]'),
+        planningTask('[data-pl-inline-error],#planning [data-pl-form-error],#planning [data-pl-draft-stale]')
+      ],
+      followHosts:[
+        '#planning dialog[data-pl-submit="result"]',
+        '#planning dialog[data-pl-submit="contribution"]',
+        '#planning dialog[data-pl-submit="withdrawal"]',
+        '#planning dialog[data-pl-submit="finalize"]',
+        '#planning dialog[data-pl-inline-guard]'
+      ]
+    },
+    'tools-agenda':{
+      speechAnchors:[
+        agendaTask('[data-calendar-action="new"]'),
+        agendaTask('.calendar-form [name="kind"]'),
+        agendaTask('.calendar-form [name="allDay"]'),
+        agendaTask('.calendar-form [name="startTime"]'),
+        agendaTask('.calendar-form-ambiguities,.calendar-form-errors'),
+        agendaTask('.calendar-form [data-calendar-action="save-form"]'),
+        agendaTask('.calendar-notice,.calendar-form-errors'),
+        agendaTask('[data-calendar-action="refresh-revision"]'),
+        agendaTask('.calendar-form-errors'),
+        agendaTask('[data-calendar-action="edit"]'),
+        agendaTask('[data-calendar-complete]'),
+        agendaTask('[data-calendar-action="remove-form"],.calendar-remove-confirm'),
+        agendaTask('[data-calendar-action="cancel-form"],[data-calendar-action="close"]')
+      ],
+      followHosts:['#calendarDialog','#execEcal .calendar-form','#calendarDialog .calendar-form']
+    }
+  };
+  tracks.forEach(t=>t.steps.forEach(s=>{s.speech=speech[s.id];if(taskPresentation[s.id])Object.assign(s,taskPresentation[s.id]);}));
+  const chapter=(id,title,module,stepIds)=>({id,title,module,stepIds});
+  const ids=id=>tracks.find(t=>t.id===id).steps.map(s=>s.id);
+  const journey=[
+    chapter('basics','Primeiros passos',null,ids('basics')),
+    chapter('research','Research','research',ids('research')),
+    chapter('planning','Planejamento','planning',['forex-planning',...ids('planning')]),
+    chapter('forex','Forex','forex',ids('forex').filter(id=>id!=='forex-planning')),
+    chapter('personal-finance','Finanças Pessoais','personal-finance',ids('personal-finance')),
+    chapter('tools','Ferramentas',null,ids('tools')),
+    chapter('alladin','Alladin','alladin',ids('alladin')),
+    chapter('general','Recursos gerais',null,ids('general'))
+  ];
   function freeze(value){if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;}
-  root.JPWLearningCatalog=freeze({version:1,tracks});
+  root.JPWLearningCatalog=freeze({version:1,tracks,journey,retiredSteps:[{id:'tools-nocuda',trackId:'tools',replacementId:'tools-genetrix'}]});
 })(window);

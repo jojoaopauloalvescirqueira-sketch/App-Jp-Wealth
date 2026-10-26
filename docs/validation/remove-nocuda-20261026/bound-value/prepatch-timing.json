@@ -1,0 +1,1251 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "-u",
+    "tools/ui_visual_quality_test.py",
+    "--out",
+    "/private/tmp/jpw-remove-nocuda-20261026/visual-timing/evidence"
+  ],
+  "exit": -9,
+  "seconds": 900.472,
+  "rows": [
+    {
+      "elapsed": 3.114,
+      "line": "PASS regression-stoikus-vertical-groups"
+    },
+    {
+      "elapsed": 3.266,
+      "line": "PASS regression-forecast-inner-center"
+    },
+    {
+      "elapsed": 3.273,
+      "line": "PASS regression-close-svg-ink-center"
+    },
+    {
+      "elapsed": 4.115,
+      "line": "PASS compact-summary-groups"
+    },
+    {
+      "elapsed": 4.48,
+      "line": "PASS compact-current-calendar-year"
+    },
+    {
+      "elapsed": 4.832,
+      "line": "PASS compact-wide-seven-columns"
+    },
+    {
+      "elapsed": 4.985,
+      "line": "PASS compact-narrow-three-columns"
+    },
+    {
+      "elapsed": 98.543,
+      "line": "PASS compact-month-details-complete"
+    },
+    {
+      "elapsed": 99.574,
+      "line": "PASS compact-calendar-vs-finalization"
+    },
+    {
+      "elapsed": 102.091,
+      "line": "PASS compact-controls-draft-focus"
+    },
+    {
+      "elapsed": 106.742,
+      "line": "PASS compact-scenario-values"
+    },
+    {
+      "elapsed": 107.804,
+      "line": "PASS inline-ordinary-row-density"
+    },
+    {
+      "elapsed": 109.025,
+      "line": "PASS inline-cell-activation"
+    },
+    {
+      "elapsed": 110.172,
+      "line": "PASS inline-temporal-filters"
+    },
+    {
+      "elapsed": 111.668,
+      "line": "PASS inline-result-real-writer"
+    },
+    {
+      "elapsed": 114.18,
+      "line": "PASS inline-future-explicit-save"
+    },
+    {
+      "elapsed": 116.472,
+      "line": "PASS inline-individual-flow-ids"
+    },
+    {
+      "elapsed": 118.573,
+      "line": "PASS inline-dirty-context-guards"
+    },
+    {
+      "elapsed": 120.087,
+      "line": "PASS inline-stale-context-conflict"
+    },
+    {
+      "elapsed": 121.492,
+      "line": "PASS inline-refused-unknown"
+    },
+    {
+      "elapsed": 122.839,
+      "line": "PASS inline-closed-reconfirmation"
+    },
+    {
+      "elapsed": 124.415,
+      "line": "PASS inline-preferences-isolation"
+    },
+    {
+      "elapsed": 125.804,
+      "line": "PASS inline-preference-failure-incompatible"
+    },
+    {
+      "elapsed": 127.212,
+      "line": "PASS inline-resize-focus-cursor"
+    },
+    {
+      "elapsed": 128.538,
+      "line": "PASS inline-reset-lifecycle"
+    },
+    {
+      "elapsed": 130.314,
+      "line": "PASS inline-review-input-opening"
+    },
+    {
+      "elapsed": 131.632,
+      "line": "PASS inline-modal-escape-ownership"
+    },
+    {
+      "elapsed": 132.651,
+      "line": "PASS inline-missing-record-fail-closed"
+    },
+    {
+      "elapsed": 133.933,
+      "line": "PASS inline-context-removed-before-save"
+    },
+    {
+      "elapsed": 135.059,
+      "line": "PASS inline-month-turnover"
+    },
+    {
+      "elapsed": 137.208,
+      "line": "PASS inline-stoikus-context-guard"
+    },
+    {
+      "elapsed": 139.226,
+      "line": "PASS inline-future-context-companion"
+    },
+    {
+      "elapsed": 140.396,
+      "line": "PASS inline-menu-escape-ownership"
+    },
+    {
+      "elapsed": 141.746,
+      "line": "PASS inline-empty-filter-recovery"
+    },
+    {
+      "elapsed": 145.972,
+      "line": "PASS inline-editor-action-targets"
+    },
+    {
+      "elapsed": 157.403,
+      "line": "PASS inline-month-context-identity"
+    },
+    {
+      "elapsed": 159.75,
+      "line": "PASS closure-missing-result-recovery"
+    },
+    {
+      "elapsed": 162.052,
+      "line": "PASS closure-cancelled-review-conflict"
+    },
+    {
+      "elapsed": 163.623,
+      "line": "PASS closure-result-save-cancel"
+    },
+    {
+      "elapsed": 165.098,
+      "line": "PASS closure-previous-pending-navigation"
+    },
+    {
+      "elapsed": 166.754,
+      "line": "PASS closure-result-units-validation"
+    },
+    {
+      "elapsed": 168.416,
+      "line": "PASS closure-review-changed-data"
+    },
+    {
+      "elapsed": 170.111,
+      "line": "PASS closure-writer-refusal-unknown"
+    },
+    {
+      "elapsed": 172.187,
+      "line": "PASS closure-shared-flow-draft-refresh"
+    },
+    {
+      "elapsed": 174.262,
+      "line": "PASS closure-zero-opening-usd"
+    },
+    {
+      "elapsed": 175.837,
+      "line": "PASS closure-draft-backup-retention"
+    },
+    {
+      "elapsed": 181.346,
+      "line": "PASS closure-invalidated-context-no-refresh"
+    },
+    {
+      "elapsed": 182.944,
+      "line": "PASS closure-counterproof-missing-recovery"
+    },
+    {
+      "elapsed": 184.377,
+      "line": "PASS closure-counterproof-positive-loss"
+    },
+    {
+      "elapsed": 186.07,
+      "line": "PASS closure-counterproof-restored-consent"
+    },
+    {
+      "elapsed": 187.751,
+      "line": "PASS closure-matrix-sidebar-light-390"
+    },
+    {
+      "elapsed": 188.416,
+      "line": "PASS closure-matrix-sidebar-light-1440"
+    },
+    {
+      "elapsed": 189.091,
+      "line": "PASS closure-matrix-sidebar-dark-390"
+    },
+    {
+      "elapsed": 189.708,
+      "line": "PASS closure-matrix-sidebar-dark-1440"
+    },
+    {
+      "elapsed": 190.342,
+      "line": "PASS closure-matrix-topbar-light-390"
+    },
+    {
+      "elapsed": 190.939,
+      "line": "PASS closure-matrix-topbar-light-1440"
+    },
+    {
+      "elapsed": 191.524,
+      "line": "PASS closure-matrix-topbar-dark-390"
+    },
+    {
+      "elapsed": 192.087,
+      "line": "PASS closure-matrix-topbar-dark-1440"
+    },
+    {
+      "elapsed": 192.728,
+      "line": "PASS closure-matrix-glass-light-390"
+    },
+    {
+      "elapsed": 193.292,
+      "line": "PASS closure-matrix-glass-light-1440"
+    },
+    {
+      "elapsed": 193.937,
+      "line": "PASS closure-matrix-glass-dark-390"
+    },
+    {
+      "elapsed": 194.575,
+      "line": "PASS closure-matrix-glass-dark-1440"
+    },
+    {
+      "elapsed": 195.495,
+      "line": "PASS closure-matrix-submenu-light-390"
+    },
+    {
+      "elapsed": 196.075,
+      "line": "PASS closure-matrix-submenu-light-1440"
+    },
+    {
+      "elapsed": 196.728,
+      "line": "PASS closure-matrix-submenu-dark-390"
+    },
+    {
+      "elapsed": 197.82,
+      "line": "PASS closure-matrix-submenu-dark-1440"
+    },
+    {
+      "elapsed": 200.012,
+      "line": "PASS inline-counterproof-row-height"
+    },
+    {
+      "elapsed": 201.952,
+      "line": "PASS inline-counterproof-duplicate-editor"
+    },
+    {
+      "elapsed": 205.203,
+      "line": "PASS inline-counterproof-false-green"
+    },
+    {
+      "elapsed": 206.457,
+      "line": "PASS inline-counterproof-typing-write"
+    },
+    {
+      "elapsed": 207.795,
+      "line": "PASS inline-counterproof-preference-finance-backup"
+    },
+    {
+      "elapsed": 209.033,
+      "line": "PASS inline-counterproof-wrong-usd"
+    },
+    {
+      "elapsed": 210.81,
+      "line": "PASS inline-counterproof-matrix-cell-value"
+    },
+    {
+      "elapsed": 212.178,
+      "line": "PASS inline-counterproof-action-target-size"
+    },
+    {
+      "elapsed": 213.437,
+      "line": "PASS inline-counterproof-action-inner-center"
+    },
+    {
+      "elapsed": 215.002,
+      "line": "PASS counterproof-menu-inner-left"
+    },
+    {
+      "elapsed": 215.451,
+      "line": "PASS counterproof-menu-width"
+    },
+    {
+      "elapsed": 215.901,
+      "line": "{\"budget_evidence\": {\"rpc_per_control\": {\"0\": 4, \"1\": 4, \"2\": 4}, \"calls\": {\"0\": [\"evaluate\", \"double-RAF\", \"evaluate\", \"count\"], \"1\": [\"evaluate\", \"double-RAF\", \"evaluate\", \"count\"], \"2\": [\"evaluate\", \"double-RAF\", \"evaluate\", \"count\"]}, \"measured_controls\": 3, \"excluded\": \"scope/setup counts, reading order, selectors and inputs\"}}"
+    },
+    {
+      "elapsed": 218.29,
+      "line": "PASS counterproof-forecast-inner-text"
+    },
+    {
+      "elapsed": 218.362,
+      "line": "PASS counterproof-svg-drawing"
+    },
+    {
+      "elapsed": 222.085,
+      "line": "PASS matrix-sidebar-light-320x700"
+    },
+    {
+      "elapsed": 225.254,
+      "line": "PASS matrix-sidebar-dark-320x700"
+    },
+    {
+      "elapsed": 228.67,
+      "line": "PASS matrix-topbar-light-320x700"
+    },
+    {
+      "elapsed": 231.87,
+      "line": "PASS matrix-topbar-dark-320x700"
+    },
+    {
+      "elapsed": 235.17,
+      "line": "PASS matrix-glass-light-320x700"
+    },
+    {
+      "elapsed": 238.357,
+      "line": "PASS matrix-glass-dark-320x700"
+    },
+    {
+      "elapsed": 241.563,
+      "line": "PASS matrix-submenu-light-320x700"
+    },
+    {
+      "elapsed": 244.617,
+      "line": "PASS matrix-submenu-dark-320x700"
+    },
+    {
+      "elapsed": 247.733,
+      "line": "PASS matrix-sidebar-light-390x844"
+    },
+    {
+      "elapsed": 250.765,
+      "line": "PASS matrix-sidebar-dark-390x844"
+    },
+    {
+      "elapsed": 253.916,
+      "line": "PASS matrix-topbar-light-390x844"
+    },
+    {
+      "elapsed": 256.964,
+      "line": "PASS matrix-topbar-dark-390x844"
+    },
+    {
+      "elapsed": 260.031,
+      "line": "PASS matrix-glass-light-390x844"
+    },
+    {
+      "elapsed": 263.348,
+      "line": "PASS matrix-glass-dark-390x844"
+    },
+    {
+      "elapsed": 266.4,
+      "line": "PASS matrix-submenu-light-390x844"
+    },
+    {
+      "elapsed": 269.449,
+      "line": "PASS matrix-submenu-dark-390x844"
+    },
+    {
+      "elapsed": 272.555,
+      "line": "PASS matrix-sidebar-light-700x600"
+    },
+    {
+      "elapsed": 275.685,
+      "line": "PASS matrix-sidebar-dark-700x600"
+    },
+    {
+      "elapsed": 278.781,
+      "line": "PASS matrix-topbar-light-700x600"
+    },
+    {
+      "elapsed": 281.814,
+      "line": "PASS matrix-topbar-dark-700x600"
+    },
+    {
+      "elapsed": 284.881,
+      "line": "PASS matrix-glass-light-700x600"
+    },
+    {
+      "elapsed": 288.033,
+      "line": "PASS matrix-glass-dark-700x600"
+    },
+    {
+      "elapsed": 291.258,
+      "line": "PASS matrix-submenu-light-700x600"
+    },
+    {
+      "elapsed": 294.521,
+      "line": "PASS matrix-submenu-dark-700x600"
+    },
+    {
+      "elapsed": 297.898,
+      "line": "PASS matrix-sidebar-light-701x601"
+    },
+    {
+      "elapsed": 301.548,
+      "line": "PASS matrix-sidebar-dark-701x601"
+    },
+    {
+      "elapsed": 305.116,
+      "line": "PASS matrix-topbar-light-701x601"
+    },
+    {
+      "elapsed": 308.49,
+      "line": "PASS matrix-topbar-dark-701x601"
+    },
+    {
+      "elapsed": 312.355,
+      "line": "PASS matrix-glass-light-701x601"
+    },
+    {
+      "elapsed": 316.486,
+      "line": "PASS matrix-glass-dark-701x601"
+    },
+    {
+      "elapsed": 320.4,
+      "line": "PASS matrix-submenu-light-701x601"
+    },
+    {
+      "elapsed": 324.438,
+      "line": "PASS matrix-submenu-dark-701x601"
+    },
+    {
+      "elapsed": 330.036,
+      "line": "PASS matrix-sidebar-light-1099x720"
+    },
+    {
+      "elapsed": 334.829,
+      "line": "PASS matrix-sidebar-dark-1099x720"
+    },
+    {
+      "elapsed": 338.168,
+      "line": "PASS matrix-topbar-light-1099x720"
+    },
+    {
+      "elapsed": 341.483,
+      "line": "PASS matrix-topbar-dark-1099x720"
+    },
+    {
+      "elapsed": 344.902,
+      "line": "PASS matrix-glass-light-1099x720"
+    },
+    {
+      "elapsed": 348.399,
+      "line": "PASS matrix-glass-dark-1099x720"
+    },
+    {
+      "elapsed": 351.782,
+      "line": "PASS matrix-submenu-light-1099x720"
+    },
+    {
+      "elapsed": 355.173,
+      "line": "PASS matrix-submenu-dark-1099x720"
+    },
+    {
+      "elapsed": 358.398,
+      "line": "PASS matrix-sidebar-light-1100x719"
+    },
+    {
+      "elapsed": 361.495,
+      "line": "PASS matrix-sidebar-dark-1100x719"
+    },
+    {
+      "elapsed": 364.717,
+      "line": "PASS matrix-topbar-light-1100x719"
+    },
+    {
+      "elapsed": 367.96,
+      "line": "PASS matrix-topbar-dark-1100x719"
+    },
+    {
+      "elapsed": 371.286,
+      "line": "PASS matrix-glass-light-1100x719"
+    },
+    {
+      "elapsed": 374.57,
+      "line": "PASS matrix-glass-dark-1100x719"
+    },
+    {
+      "elapsed": 377.75,
+      "line": "PASS matrix-submenu-light-1100x719"
+    },
+    {
+      "elapsed": 380.948,
+      "line": "PASS matrix-submenu-dark-1100x719"
+    },
+    {
+      "elapsed": 383.112,
+      "line": "PASS matrix-sidebar-light-1100x720"
+    },
+    {
+      "elapsed": 385.296,
+      "line": "PASS matrix-sidebar-dark-1100x720"
+    },
+    {
+      "elapsed": 387.494,
+      "line": "PASS matrix-topbar-light-1100x720"
+    },
+    {
+      "elapsed": 389.749,
+      "line": "PASS matrix-topbar-dark-1100x720"
+    },
+    {
+      "elapsed": 391.896,
+      "line": "PASS matrix-glass-light-1100x720"
+    },
+    {
+      "elapsed": 394.027,
+      "line": "PASS matrix-glass-dark-1100x720"
+    },
+    {
+      "elapsed": 396.714,
+      "line": "PASS matrix-submenu-light-1100x720"
+    },
+    {
+      "elapsed": 399.095,
+      "line": "PASS matrix-submenu-dark-1100x720"
+    },
+    {
+      "elapsed": 403.388,
+      "line": "PASS matrix-sidebar-light-1101x721"
+    },
+    {
+      "elapsed": 405.985,
+      "line": "PASS matrix-sidebar-dark-1101x721"
+    },
+    {
+      "elapsed": 408.299,
+      "line": "PASS matrix-topbar-light-1101x721"
+    },
+    {
+      "elapsed": 410.628,
+      "line": "PASS matrix-topbar-dark-1101x721"
+    },
+    {
+      "elapsed": 412.881,
+      "line": "PASS matrix-glass-light-1101x721"
+    },
+    {
+      "elapsed": 415.126,
+      "line": "PASS matrix-glass-dark-1101x721"
+    },
+    {
+      "elapsed": 417.466,
+      "line": "PASS matrix-submenu-light-1101x721"
+    },
+    {
+      "elapsed": 419.846,
+      "line": "PASS matrix-submenu-dark-1101x721"
+    },
+    {
+      "elapsed": 422.078,
+      "line": "PASS matrix-sidebar-light-1440x1000"
+    },
+    {
+      "elapsed": 424.395,
+      "line": "PASS matrix-sidebar-dark-1440x1000"
+    },
+    {
+      "elapsed": 426.873,
+      "line": "PASS matrix-topbar-light-1440x1000"
+    },
+    {
+      "elapsed": 429.443,
+      "line": "PASS matrix-topbar-dark-1440x1000"
+    },
+    {
+      "elapsed": 431.576,
+      "line": "PASS matrix-glass-light-1440x1000"
+    },
+    {
+      "elapsed": 433.677,
+      "line": "PASS matrix-glass-dark-1440x1000"
+    },
+    {
+      "elapsed": 436.03,
+      "line": "PASS matrix-submenu-light-1440x1000"
+    },
+    {
+      "elapsed": 438.333,
+      "line": "PASS matrix-submenu-dark-1440x1000"
+    },
+    {
+      "elapsed": 442.092,
+      "line": "PASS matrix-sidebar-light-1440x480"
+    },
+    {
+      "elapsed": 445.226,
+      "line": "PASS matrix-sidebar-dark-1440x480"
+    },
+    {
+      "elapsed": 448.273,
+      "line": "PASS matrix-topbar-light-1440x480"
+    },
+    {
+      "elapsed": 451.525,
+      "line": "PASS matrix-topbar-dark-1440x480"
+    },
+    {
+      "elapsed": 454.625,
+      "line": "PASS matrix-glass-light-1440x480"
+    },
+    {
+      "elapsed": 457.716,
+      "line": "PASS matrix-glass-dark-1440x480"
+    },
+    {
+      "elapsed": 460.861,
+      "line": "PASS matrix-submenu-light-1440x480"
+    },
+    {
+      "elapsed": 464.365,
+      "line": "PASS matrix-submenu-dark-1440x480"
+    },
+    {
+      "elapsed": 470.884,
+      "line": "PASS states-confirmation-review-edit-multiple-cancel"
+    },
+    {
+      "elapsed": 473.343,
+      "line": "PASS touch-390x844"
+    },
+    {
+      "elapsed": 474.458,
+      "line": "PASS compact-counterproof-overflow"
+    },
+    {
+      "elapsed": 478.623,
+      "line": "PASS compact-counterproof-duplicate-control"
+    },
+    {
+      "elapsed": 478.864,
+      "line": "PASS compact-counterproof-wrong-year"
+    },
+    {
+      "elapsed": 479.22,
+      "line": "PASS compact-counterproof-false-finalization"
+    },
+    {
+      "elapsed": 481.333,
+      "line": "PASS compact-counterproof-future-input-value"
+    },
+    {
+      "elapsed": 483.324,
+      "line": "PASS compact-counterproof-cost-values"
+    },
+    {
+      "elapsed": 487.431,
+      "line": "PASS compact-counterproof-phase-subtotal"
+    },
+    {
+      "elapsed": 487.812,
+      "line": "PASS compact-counterproof-missing-current-row"
+    },
+    {
+      "elapsed": 491.635,
+      "line": "PASS compact-matrix-sidebar-light-320x700"
+    },
+    {
+      "elapsed": 493.86,
+      "line": "PASS compact-matrix-sidebar-dark-320x700"
+    },
+    {
+      "elapsed": 496.063,
+      "line": "PASS compact-matrix-topbar-light-320x700"
+    },
+    {
+      "elapsed": 498.269,
+      "line": "PASS compact-matrix-topbar-dark-320x700"
+    },
+    {
+      "elapsed": 500.51,
+      "line": "PASS compact-matrix-glass-light-320x700"
+    },
+    {
+      "elapsed": 502.663,
+      "line": "PASS compact-matrix-glass-dark-320x700"
+    },
+    {
+      "elapsed": 504.84,
+      "line": "PASS compact-matrix-submenu-light-320x700"
+    },
+    {
+      "elapsed": 506.988,
+      "line": "PASS compact-matrix-submenu-dark-320x700"
+    },
+    {
+      "elapsed": 509.789,
+      "line": "PASS compact-matrix-sidebar-light-390x844"
+    },
+    {
+      "elapsed": 512.604,
+      "line": "PASS compact-matrix-sidebar-dark-390x844"
+    },
+    {
+      "elapsed": 517.236,
+      "line": "PASS compact-matrix-topbar-light-390x844"
+    },
+    {
+      "elapsed": 520.218,
+      "line": "PASS compact-matrix-topbar-dark-390x844"
+    },
+    {
+      "elapsed": 522.604,
+      "line": "PASS compact-matrix-glass-light-390x844"
+    },
+    {
+      "elapsed": 524.894,
+      "line": "PASS compact-matrix-glass-dark-390x844"
+    },
+    {
+      "elapsed": 527.234,
+      "line": "PASS compact-matrix-submenu-light-390x844"
+    },
+    {
+      "elapsed": 529.644,
+      "line": "PASS compact-matrix-submenu-dark-390x844"
+    },
+    {
+      "elapsed": 532.069,
+      "line": "PASS compact-matrix-sidebar-light-700x600"
+    },
+    {
+      "elapsed": 534.408,
+      "line": "PASS compact-matrix-sidebar-dark-700x600"
+    },
+    {
+      "elapsed": 536.62,
+      "line": "PASS compact-matrix-topbar-light-700x600"
+    },
+    {
+      "elapsed": 539.036,
+      "line": "PASS compact-matrix-topbar-dark-700x600"
+    },
+    {
+      "elapsed": 541.408,
+      "line": "PASS compact-matrix-glass-light-700x600"
+    },
+    {
+      "elapsed": 544.363,
+      "line": "PASS compact-matrix-glass-dark-700x600"
+    },
+    {
+      "elapsed": 547.957,
+      "line": "PASS compact-matrix-submenu-light-700x600"
+    },
+    {
+      "elapsed": 552.085,
+      "line": "PASS compact-matrix-submenu-dark-700x600"
+    },
+    {
+      "elapsed": 554.638,
+      "line": "PASS compact-matrix-sidebar-light-701x601"
+    },
+    {
+      "elapsed": 556.98,
+      "line": "PASS compact-matrix-sidebar-dark-701x601"
+    },
+    {
+      "elapsed": 559.993,
+      "line": "PASS compact-matrix-topbar-light-701x601"
+    },
+    {
+      "elapsed": 563.566,
+      "line": "PASS compact-matrix-topbar-dark-701x601"
+    },
+    {
+      "elapsed": 569.453,
+      "line": "PASS compact-matrix-glass-light-701x601"
+    },
+    {
+      "elapsed": 572.913,
+      "line": "PASS compact-matrix-glass-dark-701x601"
+    },
+    {
+      "elapsed": 575.873,
+      "line": "PASS compact-matrix-submenu-light-701x601"
+    },
+    {
+      "elapsed": 578.357,
+      "line": "PASS compact-matrix-submenu-dark-701x601"
+    },
+    {
+      "elapsed": 580.911,
+      "line": "PASS compact-matrix-sidebar-light-1099x720"
+    },
+    {
+      "elapsed": 583.483,
+      "line": "PASS compact-matrix-sidebar-dark-1099x720"
+    },
+    {
+      "elapsed": 585.961,
+      "line": "PASS compact-matrix-topbar-light-1099x720"
+    },
+    {
+      "elapsed": 588.616,
+      "line": "PASS compact-matrix-topbar-dark-1099x720"
+    },
+    {
+      "elapsed": 594.986,
+      "line": "PASS compact-matrix-glass-light-1099x720"
+    },
+    {
+      "elapsed": 598.448,
+      "line": "PASS compact-matrix-glass-dark-1099x720"
+    },
+    {
+      "elapsed": 602.222,
+      "line": "PASS compact-matrix-submenu-light-1099x720"
+    },
+    {
+      "elapsed": 605.216,
+      "line": "PASS compact-matrix-submenu-dark-1099x720"
+    },
+    {
+      "elapsed": 608.0,
+      "line": "PASS compact-matrix-sidebar-light-1100x719"
+    },
+    {
+      "elapsed": 610.711,
+      "line": "PASS compact-matrix-sidebar-dark-1100x719"
+    },
+    {
+      "elapsed": 614.422,
+      "line": "PASS compact-matrix-topbar-light-1100x719"
+    },
+    {
+      "elapsed": 616.948,
+      "line": "PASS compact-matrix-topbar-dark-1100x719"
+    },
+    {
+      "elapsed": 619.646,
+      "line": "PASS compact-matrix-glass-light-1100x719"
+    },
+    {
+      "elapsed": 622.198,
+      "line": "PASS compact-matrix-glass-dark-1100x719"
+    },
+    {
+      "elapsed": 624.767,
+      "line": "PASS compact-matrix-submenu-light-1100x719"
+    },
+    {
+      "elapsed": 628.519,
+      "line": "PASS compact-matrix-submenu-dark-1100x719"
+    },
+    {
+      "elapsed": 631.913,
+      "line": "PASS compact-matrix-sidebar-light-1100x720"
+    },
+    {
+      "elapsed": 636.607,
+      "line": "PASS compact-matrix-sidebar-dark-1100x720"
+    },
+    {
+      "elapsed": 639.859,
+      "line": "PASS compact-matrix-topbar-light-1100x720"
+    },
+    {
+      "elapsed": 643.008,
+      "line": "PASS compact-matrix-topbar-dark-1100x720"
+    },
+    {
+      "elapsed": 645.885,
+      "line": "PASS compact-matrix-glass-light-1100x720"
+    },
+    {
+      "elapsed": 649.168,
+      "line": "PASS compact-matrix-glass-dark-1100x720"
+    },
+    {
+      "elapsed": 652.207,
+      "line": "PASS compact-matrix-submenu-light-1100x720"
+    },
+    {
+      "elapsed": 655.089,
+      "line": "PASS compact-matrix-submenu-dark-1100x720"
+    },
+    {
+      "elapsed": 659.066,
+      "line": "PASS compact-matrix-sidebar-light-1101x721"
+    },
+    {
+      "elapsed": 661.996,
+      "line": "PASS compact-matrix-sidebar-dark-1101x721"
+    },
+    {
+      "elapsed": 665.059,
+      "line": "PASS compact-matrix-topbar-light-1101x721"
+    },
+    {
+      "elapsed": 668.048,
+      "line": "PASS compact-matrix-topbar-dark-1101x721"
+    },
+    {
+      "elapsed": 674.291,
+      "line": "PASS compact-matrix-glass-light-1101x721"
+    },
+    {
+      "elapsed": 678.261,
+      "line": "PASS compact-matrix-glass-dark-1101x721"
+    },
+    {
+      "elapsed": 681.905,
+      "line": "PASS compact-matrix-submenu-light-1101x721"
+    },
+    {
+      "elapsed": 686.655,
+      "line": "PASS compact-matrix-submenu-dark-1101x721"
+    },
+    {
+      "elapsed": 690.437,
+      "line": "PASS compact-matrix-sidebar-light-1440x1000"
+    },
+    {
+      "elapsed": 693.76,
+      "line": "PASS compact-matrix-sidebar-dark-1440x1000"
+    },
+    {
+      "elapsed": 696.418,
+      "line": "PASS compact-matrix-topbar-light-1440x1000"
+    },
+    {
+      "elapsed": 699.232,
+      "line": "PASS compact-matrix-topbar-dark-1440x1000"
+    },
+    {
+      "elapsed": 702.216,
+      "line": "PASS compact-matrix-glass-light-1440x1000"
+    },
+    {
+      "elapsed": 706.556,
+      "line": "PASS compact-matrix-glass-dark-1440x1000"
+    },
+    {
+      "elapsed": 710.332,
+      "line": "PASS compact-matrix-submenu-light-1440x1000"
+    },
+    {
+      "elapsed": 713.261,
+      "line": "PASS compact-matrix-submenu-dark-1440x1000"
+    },
+    {
+      "elapsed": 716.202,
+      "line": "PASS compact-matrix-sidebar-light-1440x480"
+    },
+    {
+      "elapsed": 718.992,
+      "line": "PASS compact-matrix-sidebar-dark-1440x480"
+    },
+    {
+      "elapsed": 724.609,
+      "line": "PASS compact-matrix-topbar-light-1440x480"
+    },
+    {
+      "elapsed": 730.11,
+      "line": "PASS compact-matrix-topbar-dark-1440x480"
+    },
+    {
+      "elapsed": 733.976,
+      "line": "PASS compact-matrix-glass-light-1440x480"
+    },
+    {
+      "elapsed": 738.896,
+      "line": "PASS compact-matrix-glass-dark-1440x480"
+    },
+    {
+      "elapsed": 744.892,
+      "line": "PASS compact-matrix-submenu-light-1440x480"
+    },
+    {
+      "elapsed": 749.225,
+      "line": "PASS compact-matrix-submenu-dark-1440x480"
+    },
+    {
+      "elapsed": 749.881,
+      "line": "PASS compact-boundary-899"
+    },
+    {
+      "elapsed": 749.994,
+      "line": "PASS compact-boundary-900"
+    },
+    {
+      "elapsed": 750.111,
+      "line": "PASS compact-boundary-901"
+    },
+    {
+      "elapsed": 753.865,
+      "line": "PASS compact-touch-keyboard"
+    },
+    {
+      "elapsed": 757.375,
+      "line": "PASS notification-sidebar-light-320x700"
+    },
+    {
+      "elapsed": 759.463,
+      "line": "PASS notification-sidebar-dark-320x700"
+    },
+    {
+      "elapsed": 761.202,
+      "line": "PASS notification-topbar-light-320x700"
+    },
+    {
+      "elapsed": 762.398,
+      "line": "PASS notification-topbar-dark-320x700"
+    },
+    {
+      "elapsed": 763.808,
+      "line": "PASS notification-glass-light-320x700"
+    },
+    {
+      "elapsed": 765.024,
+      "line": "PASS notification-glass-dark-320x700"
+    },
+    {
+      "elapsed": 766.37,
+      "line": "PASS notification-submenu-light-320x700"
+    },
+    {
+      "elapsed": 767.934,
+      "line": "PASS notification-submenu-dark-320x700"
+    },
+    {
+      "elapsed": 773.896,
+      "line": "PASS notification-sidebar-light-390x844"
+    },
+    {
+      "elapsed": 778.345,
+      "line": "PASS notification-sidebar-dark-390x844"
+    },
+    {
+      "elapsed": 779.577,
+      "line": "PASS notification-topbar-light-390x844"
+    },
+    {
+      "elapsed": 780.942,
+      "line": "PASS notification-topbar-dark-390x844"
+    },
+    {
+      "elapsed": 782.359,
+      "line": "PASS notification-glass-light-390x844"
+    },
+    {
+      "elapsed": 783.623,
+      "line": "PASS notification-glass-dark-390x844"
+    },
+    {
+      "elapsed": 785.131,
+      "line": "PASS notification-submenu-light-390x844"
+    },
+    {
+      "elapsed": 786.417,
+      "line": "PASS notification-submenu-dark-390x844"
+    },
+    {
+      "elapsed": 787.747,
+      "line": "PASS notification-sidebar-light-1440x900"
+    },
+    {
+      "elapsed": 788.941,
+      "line": "PASS notification-sidebar-dark-1440x900"
+    },
+    {
+      "elapsed": 790.324,
+      "line": "PASS notification-topbar-light-1440x900"
+    },
+    {
+      "elapsed": 792.036,
+      "line": "PASS notification-topbar-dark-1440x900"
+    },
+    {
+      "elapsed": 793.993,
+      "line": "PASS notification-glass-light-1440x900"
+    },
+    {
+      "elapsed": 795.482,
+      "line": "PASS notification-glass-dark-1440x900"
+    },
+    {
+      "elapsed": 797.414,
+      "line": "PASS notification-submenu-light-1440x900"
+    },
+    {
+      "elapsed": 798.783,
+      "line": "PASS notification-submenu-dark-1440x900"
+    },
+    {
+      "elapsed": 799.845,
+      "line": "PASS notification-sidebar-light-1440x480"
+    },
+    {
+      "elapsed": 801.272,
+      "line": "PASS notification-sidebar-dark-1440x480"
+    },
+    {
+      "elapsed": 803.12,
+      "line": "PASS notification-topbar-light-1440x480"
+    },
+    {
+      "elapsed": 804.644,
+      "line": "PASS notification-topbar-dark-1440x480"
+    },
+    {
+      "elapsed": 806.317,
+      "line": "PASS notification-glass-light-1440x480"
+    },
+    {
+      "elapsed": 807.317,
+      "line": "PASS notification-glass-dark-1440x480"
+    },
+    {
+      "elapsed": 808.353,
+      "line": "PASS notification-submenu-light-1440x480"
+    },
+    {
+      "elapsed": 809.816,
+      "line": "PASS notification-submenu-dark-1440x480"
+    },
+    {
+      "elapsed": 811.897,
+      "line": "PASS notification-counterproof-inner-svg"
+    },
+    {
+      "elapsed": 813.03,
+      "line": "PASS notification-counterproof-overflow"
+    },
+    {
+      "elapsed": 814.766,
+      "line": "PASS notification-long-context-wrap"
+    },
+    {
+      "elapsed": 814.784,
+      "line": "PASS notification-counterproof-scroll-contents"
+    },
+    {
+      "elapsed": 819.234,
+      "line": "PASS calendar-sidebar-light-320x700"
+    },
+    {
+      "elapsed": 824.438,
+      "line": "PASS calendar-sidebar-dark-320x700"
+    },
+    {
+      "elapsed": 837.483,
+      "line": "PASS calendar-topbar-light-320x700"
+    },
+    {
+      "elapsed": 848.088,
+      "line": "PASS calendar-topbar-dark-320x700"
+    },
+    {
+      "elapsed": 852.766,
+      "line": "PASS calendar-glass-light-320x700"
+    },
+    {
+      "elapsed": 857.069,
+      "line": "PASS calendar-glass-dark-320x700"
+    },
+    {
+      "elapsed": 859.963,
+      "line": "PASS calendar-submenu-light-320x700"
+    },
+    {
+      "elapsed": 862.87,
+      "line": "PASS calendar-submenu-dark-320x700"
+    },
+    {
+      "elapsed": 866.474,
+      "line": "PASS calendar-sidebar-light-390x844"
+    },
+    {
+      "elapsed": 870.755,
+      "line": "PASS calendar-sidebar-dark-390x844"
+    },
+    {
+      "elapsed": 873.323,
+      "line": "PASS calendar-topbar-light-390x844"
+    },
+    {
+      "elapsed": 876.42,
+      "line": "PASS calendar-topbar-dark-390x844"
+    },
+    {
+      "elapsed": 879.56,
+      "line": "PASS calendar-glass-light-390x844"
+    },
+    {
+      "elapsed": 882.703,
+      "line": "PASS calendar-glass-dark-390x844"
+    },
+    {
+      "elapsed": 885.398,
+      "line": "PASS calendar-submenu-light-390x844"
+    },
+    {
+      "elapsed": 888.139,
+      "line": "PASS calendar-submenu-dark-390x844"
+    },
+    {
+      "elapsed": 890.905,
+      "line": "PASS calendar-sidebar-light-1440x900"
+    },
+    {
+      "elapsed": 894.22,
+      "line": "PASS calendar-sidebar-dark-1440x900"
+    },
+    {
+      "elapsed": 897.534,
+      "line": "PASS calendar-topbar-light-1440x900"
+    }
+  ],
+  "timeoutSeconds": 900,
+  "testEdited": false
+}

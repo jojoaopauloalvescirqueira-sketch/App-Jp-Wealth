@@ -1,0 +1,264 @@
+{
+  "script": "tools/empty_first_use_test.py",
+  "sha256": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+  "green": {
+    "file": "tests-green-visual-final.json",
+    "passed": 16,
+    "total": 16,
+    "exitCode": 0
+  },
+  "visual": {
+    "id": "EMPTY-VISUAL-01",
+    "states": 16,
+    "widths": [
+      320,
+      390
+    ],
+    "layouts": [
+      "sidebar",
+      "topbar",
+      "glass",
+      "submenu"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "criteria": [
+      "full text range inside class box, tolerance2px",
+      "scrollWidth <= clientWidth+2",
+      "no vertical clipping",
+      "no dialog or page horizontal overflow",
+      "close >=44px and insideviewport",
+      "no financial changes"
+    ],
+    "screenshots": "/private/tmp/jpw-empty-first-use-20261024/tests-green-visual-final-artifacts"
+  },
+  "sourceCounterproofs": [
+    {
+      "file": "tests-counter-account-visual-final.json",
+      "mutant": "account-seed",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "Pre-created accounts: ['Synthetic unwanted seed']"
+    },
+    {
+      "file": "tests-counter-answers-visual-final.json",
+      "mutant": "answered-checklist",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "No answer may be selected before input"
+    },
+    {
+      "file": "tests-counter-zero-visual-final.json",
+      "mutant": "coerced-zero",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "Missing balance/date became a financial fact: {'saldoIni': 0, 'saldoAtu': 0, 'inicio': ''}"
+    },
+    {
+      "file": "tests-counter-classify-visual-final.json",
+      "mutant": "classify-incomplete",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "Incomplete checklist shows numeric score"
+    },
+    {
+      "file": "tests-counter-null-visual-final.json",
+      "mutant": "reject-null-checklist",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "Page.evaluate: Error: PRODUCT_ASSERTION: documented null not accepted/preserved {\"ok\":false,\"error\":\"Error: Checklist inválido: item, descrição ou valor incompatível.\"}\n    at eval (eval at evaluate (:302:30), <anonymous>:6:117)\n    at UtilityScript.evaluate (<anonymous>:309:18)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "file": "tests-counter-missing-visual-final.json",
+      "mutant": "accept-missing-checklist",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "Page.evaluate: Error: PRODUCT_ASSERTION: malformed checklist accepted undefined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:40)\n    at UtilityScript.evaluate (<anonymous>:309:18)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "file": "tests-counter-clipped-visual-final.json",
+      "mutant": "clipped-classification",
+      "status": "PRODUCT_FAIL",
+      "exitCode": 1,
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "error": "Classification clipped horizontally: {'text': 'Não concluído — 0 de 15 respostas', 'scroll': 298, 'client': 109, 'scrollHeight': 18, 'clientHeight': 18, 'whiteSpace': 'nowrap', 'textOverflow': 'ellipsis', 'overflow': 'hidden', 'box': {'left': 149.328125, 'right': 258, 'top': 867, 'bottom': 885}, 'rects': [{'left': 149.328125, 'right': 447.34375, 'top': 867, 'bottom': 885}, {'left': 149.328125, 'right': 248.671875, 'top': 867, 'bottom': 885}], 'dialog': {'scroll': 302, 'client': 302}, 'pageOverflow': False, 'close': {'left': 25, 'right': 101.96875, 'top': 134.546875, 'bottom': 178.546875, 'width': 76.96875, 'height': 44, 'disabled': False}, 'viewport': {'width': 320, 'height': 1000}, 'width': 320, 'layout': 'sidebar', 'theme': 'light'}"
+    }
+  ],
+  "sharedSourceHashes": {
+    "src/js/00-core/03-default-state.js": true,
+    "src/js/00-core/04-persistence.js": true,
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": true,
+    "src/js/40-app/07-finalize-session.js": true,
+    "src/js/30-accounting/01-daily-ledger.js": true,
+    "src/styles/app.css": true,
+    "index.html": true,
+    "build-id.js": true,
+    "tools/empty_first_use_test.py": true
+  },
+  "sourceHashes": {
+    "src/js/00-core/03-default-state.js": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe",
+    "src/js/00-core/04-persistence.js": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+    "src/js/20-ui/07-chart-crosshair-tooltip.js": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "src/js/30-accounting/01-daily-ledger.js": "196283dcda1ff9f3a7c6137e895692a62ccd06e439169e04430cfe2df2725d2e",
+    "src/styles/app.css": "f3898356b5fbaacbfc70e885e3dcd6d40cd83f8f44996eb7f4cd531e4ef0fe83",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "build-id.js": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+    "tools/empty_first_use_test.py": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986"
+  },
+  "taxonomy": {
+    "checks": [
+      {
+        "statuses": [],
+        "expected": "TEST_HARNESS_FAIL",
+        "actual": "TEST_HARNESS_FAIL",
+        "counts": {
+          "PASS": 0,
+          "PRODUCT_FAIL": 0,
+          "ENVIRONMENT_ERROR": 0,
+          "TEST_HARNESS_FAIL": 0
+        },
+        "pass": true
+      },
+      {
+        "statuses": [
+          "PASS"
+        ],
+        "expected": "PASS",
+        "actual": "PASS",
+        "counts": {
+          "PASS": 1,
+          "PRODUCT_FAIL": 0,
+          "ENVIRONMENT_ERROR": 0,
+          "TEST_HARNESS_FAIL": 0
+        },
+        "pass": true
+      },
+      {
+        "statuses": [
+          "PASS",
+          "TEST_HARNESS_FAIL"
+        ],
+        "expected": "TEST_HARNESS_FAIL",
+        "actual": "TEST_HARNESS_FAIL",
+        "counts": {
+          "PASS": 1,
+          "PRODUCT_FAIL": 0,
+          "ENVIRONMENT_ERROR": 0,
+          "TEST_HARNESS_FAIL": 1
+        },
+        "pass": true
+      },
+      {
+        "statuses": [
+          "PASS",
+          "ENVIRONMENT_ERROR"
+        ],
+        "expected": "ENVIRONMENT_ERROR",
+        "actual": "ENVIRONMENT_ERROR",
+        "counts": {
+          "PASS": 1,
+          "PRODUCT_FAIL": 0,
+          "ENVIRONMENT_ERROR": 1,
+          "TEST_HARNESS_FAIL": 0
+        },
+        "pass": true
+      },
+      {
+        "statuses": [
+          "TEST_HARNESS_FAIL",
+          "ENVIRONMENT_ERROR"
+        ],
+        "expected": "ENVIRONMENT_ERROR",
+        "actual": "ENVIRONMENT_ERROR",
+        "counts": {
+          "PASS": 0,
+          "PRODUCT_FAIL": 0,
+          "ENVIRONMENT_ERROR": 1,
+          "TEST_HARNESS_FAIL": 1
+        },
+        "pass": true
+      },
+      {
+        "statuses": [
+          "ENVIRONMENT_ERROR",
+          "PRODUCT_FAIL",
+          "TEST_HARNESS_FAIL"
+        ],
+        "expected": "PRODUCT_FAIL",
+        "actual": "PRODUCT_FAIL",
+        "counts": {
+          "PASS": 0,
+          "PRODUCT_FAIL": 1,
+          "ENVIRONMENT_ERROR": 1,
+          "TEST_HARNESS_FAIL": 1
+        },
+        "pass": true
+      },
+      {
+        "statuses": [
+          "UNKNOWN"
+        ],
+        "expected": "TEST_HARNESS_FAIL",
+        "actual": "TEST_HARNESS_FAIL",
+        "counts": {
+          "PASS": 0,
+          "PRODUCT_FAIL": 0,
+          "ENVIRONMENT_ERROR": 0,
+          "TEST_HARNESS_FAIL": 1
+        },
+        "pass": true
+      }
+    ],
+    "physicalEmptySelectionPreviousReceipt": "tests-taxonomy-exit-receipt.json",
+    "aggregateBehaviorUnchanged": true
+  },
+  "redVisual": "tests-red-visual-01.json",
+  "limits": [
+    "Headless HTTP only; native zoom and distributions with parent.",
+    "No human visual acceptance."
+  ]
+}

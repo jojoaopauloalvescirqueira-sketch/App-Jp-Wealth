@@ -80,6 +80,16 @@ def abrir(browser, url, sem_weblocks=False):
     page.wait_for_function(PRONTO)
     page.wait_for_timeout(400)
     page.evaluate("() => { window.alert=()=>{}; window.confirm=()=>true; window.prompt=()=>'APAGAR'; closeModal(); }")
+    # Explicit synthetic registration: the preservation probes below require an
+    # account to preserve; clean product DEFAULTS deliberately contains none.
+    page.evaluate("""() => {
+        S.accounts=[{forexAccountId:'SERIALIZATION-SYNTHETIC',
+            nome:'Conta sintética de serialização',tipo:'MESTRE',
+            broker:'Corretora sintética',platform:'',platformLogin:'',
+            investorPassword:'',perfil:'Base',sini:0,satu:0,perfilLocked:false}];
+    }""")
+    assert page.evaluate("() => S.accounts.length === 1 && S.accounts[0].forexAccountId === 'SERIALIZATION-SYNTHETIC'"), \
+        "synthetic preservation account was not prepared"
     return ctx, page, erros
 
 

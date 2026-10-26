@@ -1,3 +1,9 @@
+# Ferramentas — retirada do Nocuda Tool em 26/10/2026
+
+Submenu atual: Calendário e Mercados (`tools-calendar`), Stoikus (`tools-leverage`), Estrutura Normativa (`tools-normative`) e MiniGames (`tools-minigames`). `tools-nocuda`, `navigateLocal('tools','nocuda')` e a chamada antiga de visão encaminham ao Stoikus, com aviso somente após aceite. Diálogos e rascunhos conservam suas guardas. A rota retirada não integra catálogo nem submenu.
+
+## Fotografias históricas preservadas
+
 # Navegação — três abas e Notas globais
 
 Ordem padrão editável: Dashboard → Research → Planejamento → Forex → Finanças Pessoais → Alladin → Ferramentas. Módulos congelados continuam ausentes. Ordens antigas5/6 recebem Planning após Research; a antiga ordem padrão7 projeta o novo padrão sem gravar. Ordens personalizadas válidas distintas dessa ordem canônica antiga permanecem editáveis. A lista antiga idêntica não informa intenção; não há nova chave ou redefinição persistente para distingui-la.

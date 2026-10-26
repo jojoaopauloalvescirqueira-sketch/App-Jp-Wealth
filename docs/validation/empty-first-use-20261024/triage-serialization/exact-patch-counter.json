@@ -1,0 +1,84 @@
+{
+  "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/session_write_serialization_test.py",
+  "sha256": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5",
+  "expected_sha256": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5",
+  "mode": "destructive SI handler only in disposable page RAM",
+  "extra_fixture": false,
+  "unchanged_assertions": true,
+  "original_setup_precondition_completed": [
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    },
+    {
+      "accounts": [
+        "SERIALIZATION-SYNTHETIC"
+      ],
+      "blocked": false
+    }
+  ],
+  "exit_code": 1,
+  "repository_test_unchanged": true
+}

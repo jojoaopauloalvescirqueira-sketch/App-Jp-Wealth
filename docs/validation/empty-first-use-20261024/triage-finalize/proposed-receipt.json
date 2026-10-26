@@ -1,0 +1,15 @@
+{
+  "source_sha256": "13e923d351b6e0e18cd7be5fb77c8c389d36ad04814157bb59da523d892ae2e6",
+  "source_current_sha256": "13e923d351b6e0e18cd7be5fb77c8c389d36ad04814157bb59da523d892ae2e6",
+  "source_unchanged": true,
+  "proposed_sha256": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+  "patch_sha256": "1f8c4af59ecd2cc19534780fb6b82c0153a709bb506ac412ed739574252fd7b5",
+  "python_ast_valid": true,
+  "scope": "proposal only, not applied",
+  "cases": [
+    "C8",
+    "C11",
+    "C14"
+  ],
+  "old_assertions_preserved": true
+}

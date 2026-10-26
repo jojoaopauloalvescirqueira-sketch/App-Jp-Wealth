@@ -1,0 +1,24 @@
+{
+  "classification": "TEST_HARNESS_FAIL",
+  "wrapperHash": "58a1b44639f54398be8addbced847a13fc2da144f9a9e84471e722195fa15195",
+  "reason": "Own parentT plus exited childZ rejected by old allT guard; no redirect or UI started",
+  "preserved": [
+    {
+      "name": "full-relocated-evidence",
+      "emptyDirectory": true
+    },
+    {
+      "name": "full-relocated-command.json",
+      "sha256": "404e0a8abc2cfe0a30a8cac71fa8b0b20332a0ff6dd7a109f9832e9aefb97a3f"
+    },
+    {
+      "name": "full-relocated.log",
+      "sha256": "57f5cc072100dc490c9c0433bf71c372de2eeac0d5fcad28de64a5678f907990"
+    },
+    {
+      "name": "redirect-full-console.log",
+      "sha256": "aad967b7da0a88bd768ca3df8bfb6e78372d10375450b7bf2e8cbd0e37d87a9a"
+    }
+  ],
+  "state": "SETUP_ABORT"
+}

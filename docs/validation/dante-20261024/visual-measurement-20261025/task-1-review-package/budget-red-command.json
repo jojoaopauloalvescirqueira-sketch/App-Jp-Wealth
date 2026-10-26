@@ -1,0 +1,11 @@
+{
+  "cmd": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/ui_visual_measurement_test.py",
+    "--budget-only",
+    "--out",
+    "/private/tmp/jpw-visual-measurement-20261025/budget-red-confirmed.json"
+  ],
+  "exit": 1,
+  "timeout": 900
+}

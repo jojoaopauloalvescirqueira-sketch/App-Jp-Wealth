@@ -1,0 +1,20 @@
+{
+  "case": "engine",
+  "bundle": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/src/vendor/aisol-dot-globe/aisol-globe.iife.js",
+  "bundleSHA256": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd",
+  "checks": [
+    "factory present (offline file)",
+    "Three encapsulated; no React/Framer globals"
+  ],
+  "errors": [],
+  "network": [],
+  "screenshots": [],
+  "viewport": [
+    800,
+    700
+  ],
+  "DPR": 1,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+  "status": "ENVIRONMENT_ERROR",
+  "failure": "'/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-engine/engine-dark.png' is not in the subpath of '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS'"
+}

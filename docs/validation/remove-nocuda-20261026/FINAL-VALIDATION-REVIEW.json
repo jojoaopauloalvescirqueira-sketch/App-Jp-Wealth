@@ -1,0 +1,234 @@
+{
+  "schema": "jpw-independent-final-validation-review/v1",
+  "reviewer": "/root/nocuda_final_review",
+  "reviewed_utc": "2026-10-26T16:21:45.625706+00:00",
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "branch": "codex/remover-nocuda-tool-20261026",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "build": "5cd40fe879de6727",
+  "review_verdict": "BOUNDED_REVIEW_COMPLETE_FULL_BLOCKED",
+  "full_result": "ENVIRONMENT_ERROR",
+  "technical_ready": false,
+  "human_acceptance": "NOT_RUN",
+  "commit_publication_authorized_by_review": false,
+  "completed_gate": {
+    "checks": 102,
+    "unique": 102,
+    "official_id_order_exact": true,
+    "commands_match_prior_unchanged_official_gate_after_output_path_normalization": true,
+    "summary": {
+      "PASS": 101,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 1,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "exit": 1,
+    "seconds": 2819.804,
+    "all_checks_have_returncode": true,
+    "only_empty_output": "diff-check (expected success silence)"
+  },
+  "source_identity": {
+    "frozen_paths": 678,
+    "mismatches": [],
+    "expected_absent": 11,
+    "absence_violations": [],
+    "wrapper_source_unchanged": true,
+    "gate_sha256": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+    "ui_test_sha256": "f5cee3d6442bbb95901afed953ca9ea504c6c30873fd6e0751a274c8b3c5c69c",
+    "guide_test_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6"
+  },
+  "guide": {
+    "counts": {
+      "PASS": 66,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "unique_cases": 66,
+    "registered": 66,
+    "source_unchanged": true,
+    "source_hashes_match": true,
+    "startup_counterproofs": {
+      "startup-source-manifest": 15,
+      "offline-sw-four-guide-modules": 15
+    }
+  },
+  "ui_timeout": {
+    "result": "ENVIRONMENT_ERROR",
+    "returncode": 124,
+    "seconds": 900.033,
+    "retained_stdout_characters": 12000,
+    "retained_stdout_complete": false,
+    "retained_tail_pass_lines": 326,
+    "last_printed_completed_case": "compact-native200-submenu-dark",
+    "last_case_ordinal_in_unchanged_sequence": 404,
+    "tail_matches_unchanged_sequence": true,
+    "failure_markers_in_retained_tail": [],
+    "following_required_cases_not_evidenced": [
+      "closure-native200-sidebar-light",
+      "closure-native200-sidebar-dark",
+      "closure-native200-topbar-light",
+      "closure-native200-topbar-dark",
+      "closure-native200-glass-light",
+      "closure-native200-glass-dark",
+      "closure-native200-submenu-light",
+      "closure-native200-submenu-dark",
+      "coverage-missing-and-zero-rejected"
+    ],
+    "final_ui_json_exists": false,
+    "root_cause": "outer900s deadline confirmed; exact slowdown source not established",
+    "prior_413_pass_used_to_override": false
+  },
+  "pertinent_completed_checks": [
+    {
+      "name": "galton-board",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.557
+    },
+    {
+      "name": "storage-governance",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.08
+    },
+    {
+      "name": "persistence-failure",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.77
+    },
+    {
+      "name": "persistence-recovery",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 48.197
+    },
+    {
+      "name": "import-xss",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 72.126
+    },
+    {
+      "name": "state-integrity",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.122
+    },
+    {
+      "name": "build-reproducibility",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 30.832
+    },
+    {
+      "name": "service-worker-upgrade",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 76.291
+    },
+    {
+      "name": "learning-guide",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 167.717
+    },
+    {
+      "name": "nocuda-tools",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.803
+    },
+    {
+      "name": "stoikus-downloads",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.708
+    },
+    {
+      "name": "download-assets-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.05
+    },
+    {
+      "name": "download-assets-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 19.158
+    },
+    {
+      "name": "capital-currents-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.219
+    },
+    {
+      "name": "capital-currents-progress",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.033
+    },
+    {
+      "name": "capital-currents-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 58.329
+    },
+    {
+      "name": "time-twins-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.157
+    },
+    {
+      "name": "time-twins-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 84.613
+    },
+    {
+      "name": "minigames",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.888
+    }
+  ],
+  "observed_suite_details": {
+    "retirement": 130,
+    "shared_download_unit": 26,
+    "shared_download_browser": 54,
+    "capital_currents_browser": {
+      "passed": 8,
+      "failed": 0,
+      "mode": "all"
+    },
+    "time_twins_standalone": 33,
+    "time_twins_integrated": 6,
+    "minigames_pwa_sw_responses": 137
+  },
+  "history_preserved": [
+    "initial intentionally interrupted run",
+    "first completed FULL101PASS1PRODUCT_FAIL(exit1), startup oracle later corrected",
+    "second completed FULL101PASS1ENVIRONMENT_ERROR(exit1), UI timeout unresolved"
+  ],
+  "limits": [
+    "No new tests or browsers by this audit.",
+    "No acceptance from summing different FULL rounds.",
+    "UI partial stdout is truncated to12000 chars.",
+    "Human visual acceptance, native MT5 and publication remain separate."
+  ],
+  "evidence_sha256": {
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/full-relocated.json": "322d0f6cf64296a96139537e552408b43d354f442691b8935e66d818349cabc6",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/full-relocated-command.json": "4d3babf79d2a49f6f84e20a1b2d27b1cb422e41e5555f0918489ea5a445e291c",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/frozen-inputs.json": "d3a941762984703008403388b2a393392a41fd6a579d217f74571f7bc9252bf4",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/full-relocated-evidence/guide.json": "871add29db94d688b75b7c52103a91bed68951488a63c247552f1e33e14d6ad3",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/full-relocated-evidence/downloads/result.json": "b96267ebd612825f4071ca09f7e8f502d2a88cda38ffb107aabbd342caf0f1c2",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/full-relocated-evidence/capital-currents/result.json": "73dc6570c70979ceb12a5d21a2b05621349514e35c3a5c120d632206cbde9b6c",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-startup-fix/full-relocated-evidence/time-twins/integrated-result.json": "ca6909441c39a376b9d094861897350dfb191f1820606271bbd0c75bd15b5238",
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/nocuda/result.json": "57601f6b4d2088deafd22cef2d45531e69d9f577f4bcf389c6917da361b0fe2e"
+  }
+}

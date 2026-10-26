@@ -1,0 +1,101 @@
+{
+  "at": "2026-10-26T12:24:04.512648+00:00",
+  "build": "5cd40fe879de6727",
+  "servers": [
+    {
+      "port": 51629,
+      "served": [
+        {
+          "path": "index.html",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada"
+        },
+        {
+          "path": "build-id.js",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640"
+        },
+        {
+          "path": "src/styles/app.css",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "301ce56aa787f32b0eda24b665e4cfb9cf5c05dfd9c586703551261f2db0e437"
+        },
+        {
+          "path": "src/js/20-ui/31-tools-services.js",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+        }
+      ],
+      "retired": [
+        {
+          "path": "downloads/nocuda/Nocuda_Tool.pine",
+          "status": 404
+        },
+        {
+          "path": "src/js/10-domain/16-nocuda-transfer.js",
+          "status": 404
+        },
+        {
+          "path": "src/vendor/downloads/nocuda-payload.js",
+          "status": 404
+        },
+        {
+          "path": "assets/nocuda-metatrader.png",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "port": 64886,
+      "served": [
+        {
+          "path": "index.html",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada"
+        },
+        {
+          "path": "build-id.js",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640"
+        },
+        {
+          "path": "src/styles/app.css",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "301ce56aa787f32b0eda24b665e4cfb9cf5c05dfd9c586703551261f2db0e437"
+        },
+        {
+          "path": "src/js/20-ui/31-tools-services.js",
+          "status": 200,
+          "sameBytes": true,
+          "sha256": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+        }
+      ],
+      "retired": [
+        {
+          "path": "downloads/nocuda/Nocuda_Tool.pine",
+          "status": 404
+        },
+        {
+          "path": "src/js/10-domain/16-nocuda-transfer.js",
+          "status": 404
+        },
+        {
+          "path": "src/vendor/downloads/nocuda-payload.js",
+          "status": 404
+        },
+        {
+          "path": "assets/nocuda-metatrader.png",
+          "status": 404
+        }
+      ]
+    }
+  ],
+  "scope": "stateless HTTP bytes and retired URLs only; not personal browser cache"
+}

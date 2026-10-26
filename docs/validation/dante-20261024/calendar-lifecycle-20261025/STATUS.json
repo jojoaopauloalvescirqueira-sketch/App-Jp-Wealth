@@ -1,0 +1,77 @@
+{
+  "build": "8c127c2f92de375e",
+  "frozenInputs": 679,
+  "unchanged": true,
+  "calendarPatch": "applied exact proposed product/test hashes; RED/GREEN and default14PASS",
+  "fullComplete": {
+    "artifact": "full-final.json",
+    "PASS": 101,
+    "ENVIRONMENT_ERROR": 1,
+    "PRODUCT_FAIL": 0,
+    "exit": 1
+  },
+  "visualIsolated": {
+    "PASS": 413,
+    "required": 413,
+    "seconds": 853.471,
+    "timeout": 900,
+    "exit": 0,
+    "sourceUnchanged": true
+  },
+  "repeat": {
+    "state": "INCOMPLETE",
+    "exit": 130,
+    "reason": "Second visual900timeout; interrupted duplicate remaining checks, no merged results"
+  },
+  "next": "Pending specific human authorization of proposed validator measurement batching; no patch applied; no blind full retry",
+  "financialChangesInCalendarWave": false,
+  "gitOperations": false,
+  "humanAcceptance": "NOT_RUN",
+  "outputConfiguration": {
+    "wrapperSHA256": "5eadae0f21b03835df0ba63270f95869a49dd4fca59f08eb7f8bac28ad523754",
+    "independentControlsPASS": 46,
+    "selftestPASS": 7,
+    "gateSourceChanges": false,
+    "realHandshake": "PASS; preflight raw body and exit0 confirmed",
+    "newFull": "COMPLETE:101PASS/1ENV;exit1",
+    "setupAborts": 2,
+    "logicalAndRealPath": "full-relocated-20261025/redirection-mapping.json"
+  },
+  "distributionCurrent": {
+    "HTTP": "PASS",
+    "file": "PASS",
+    "portable": "PASS",
+    "PWAoffline": "PASS"
+  },
+  "lastFull": {
+    "artifact": "full-relocated-20261025/full-relocated.json",
+    "PASS": 101,
+    "PRODUCT_FAIL": 0,
+    "ENVIRONMENT_ERROR": 1,
+    "NOT_RUN": 0,
+    "checks": 102,
+    "exit": 1,
+    "seconds": 2790.959,
+    "uiTimeoutSeconds": 900.026,
+    "gateApproved": false,
+    "frozenInputsUnchanged": 679
+  },
+  "outputConfigurationPrevious": {
+    "independentControlsPASS": 26,
+    "selftestPASS": 7,
+    "wrapperSHA256": "58a1b44639f54398be8addbced847a13fc2da144f9a9e84471e722195fa15195",
+    "gateSourceChanges": false,
+    "realHandshake": "NOT_RUN",
+    "newFull": "NOT_RUN",
+    "awaiting": "hands-off coordination requested asynchronously"
+  },
+  "visualBudgetProposal": {
+    "state": "A1;permission pending",
+    "path": "full-relocated-20261025/visual-budget-proposal/README.md",
+    "sourceApplied": false,
+    "runtime": "NOT_RUN",
+    "performanceGain": "NOT_MEASURED",
+    "independentInMemoryCounterproofs": 18
+  },
+  "MacHandsOffWindow": "Released after all browser test processes ended at completed full; no new GUI tests scheduled"
+}

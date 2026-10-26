@@ -38,6 +38,7 @@ EXPECTED = [
     ('Adam Smith', 'Economia'), ('Friedrich Nietzsche', 'Filosofia e pensamento'),
     ('Albert Einstein', 'Ciência'), ('Isaac Newton', 'Ciência'),
     ('Leonardo da Vinci', 'Artes e literatura'),
+    ('Dante — mascote JP Wealth', 'JP Wealth'),
 ]
 CARDS = '[data-profile-avatar]'
 CATALOG_PATH = 'src/js/40-app/09-profile-avatar-catalog.js'
@@ -67,7 +68,7 @@ def reveal_gallery(page):
 def catalog(page):
     result = page.evaluate('SETTINGS_PROFILE_AVATARS.map(({id,name,group})=>({id,name,group}))')
     assert [(item['name'], item['group']) for item in result] == EXPECTED, result
-    assert len({item['id'] for item in result}) == 19
+    assert len({item['id'] for item in result}) == 20
     return result
 
 
@@ -85,11 +86,11 @@ def check_images(page):
       return {id:item.id, width:image.naturalWidth, height:image.naturalHeight,
         length:item.avatarDataUrl.length, valid:settingsProfileAvatarValid(item.avatarDataUrl)};
     }))""")
-    assert len(facts) == 19
+    assert len(facts) == 20
     assert all(x['valid'] and x['width'] == x['height'] == 256 and x['length'] <= 200 * 1024 for x in facts), facts
     page.wait_for_function("""() => [...document.querySelectorAll('[data-profile-avatar] img')]
       .every(image=>image.complete && image.naturalWidth>0)""")
-    assert page.locator(CARDS + ' img').count() == 19
+    assert page.locator(CARDS + ' img').count() == 20
     return facts
 
 
@@ -121,7 +122,7 @@ def served_contract(browser, url, out):
         assert not page.locator('#settingsProfileGallery').evaluate('e=>e.open'), 'Gallery is initially collapsed'
         reveal_gallery(page)
         items = catalog(page)
-        assert page.locator(CARDS).all_text_contents() and page.locator(CARDS).count() == 19
+        assert page.locator(CARDS).all_text_contents() and page.locator(CARDS).count() == 20
         assert sorted(page.locator(CARDS).evaluate_all('els=>els.map(e=>e.dataset.profileAvatar)')) == sorted(x['id'] for x in items)
         images = check_images(page)
         assert profile_raw(page) is None and page.evaluate('window.__profileTestOps') == []
@@ -153,7 +154,7 @@ def served_contract(browser, url, out):
         assert page.locator('#settingsProfileNameInput').input_value() == 'Pessoa sintética da galeria'
         assert profile_raw(page) == initial, 'Choice must remain a draft'
         expect(page.locator('#settingsAccountAvatar img')).to_have_attribute('src', avatar(page, items[0]))
-        assert page.locator('#settingsProfileAvatar img').count() == 0, 'Sidebar remains confirmed state'
+        expect(page.locator('#settingsProfileAvatar img')).to_have_attribute('src', avatar(page, items[-1]))  # Confirmed default remains Dante.
         # Search lives inside the profile form; Enter must not implicitly save.
         writes_before = page.evaluate('window.__profileTestOps.length')
         page.locator('#settingsProfileAvatarSearch').fill('Einstein')
@@ -173,7 +174,7 @@ def served_contract(browser, url, out):
         reveal_gallery(page)
         expect(card(page, items[16])).to_have_attribute('aria-pressed', 'true')
         assert profile_raw(page) == saved and page.evaluate('window.__profileTestOps') == []
-        card(page, items[-1]).click()
+        card(page, items[18]).click()
         page.locator('#settingsProfileCancelBtn').click()
         expect(card(page, items[16])).to_have_attribute('aria-pressed', 'true')
         page.locator('#settingsProfileRemovePhotoBtn').click()
@@ -219,7 +220,7 @@ def blocked_contract(browser, url):
         context, page = profile_boot(browser, url, raw, read_failure)
         try:
             open_profile(page); reveal_gallery(page)
-            assert page.locator(CARDS).count() == 19
+            assert page.locator(CARDS).count() == 20
             assert page.locator(CARDS + ':enabled').count() == 0
             before = page.evaluate('JSON.stringify(settingsProfileState.draft)')
             page.evaluate('selectSettingsProfileAvatar(SETTINGS_PROFILE_AVATARS[0].id)')
@@ -255,7 +256,7 @@ def blocked_contract(browser, url):
         expect(page.locator('#settingsProfileStatus')).to_have_attribute('data-state', 'blocked')
         assert page.locator(CARDS + ':enabled').count() == 0
         page.locator('#settingsProfileCancelBtn').click()
-        assert page.locator(CARDS + ':enabled').count() == 19
+        assert page.locator(CARDS + ':enabled').count() == 20
         assert page.locator('#settingsProfileNameInput').input_value() == 'Alterado na outra aba'
         profile_close(context, page)
     finally:
@@ -285,7 +286,7 @@ def saving_and_session_guards(browser, url):
         expect(page.locator('#settingsProfileStatus')).to_have_attribute('data-state', 'success')
         saved = profile_raw(page)
         assert json.loads(saved)['avatarDataUrl'] == avatar(page, items[0])
-        assert page.locator(CARDS + ':enabled').count() == 19
+        assert page.locator(CARDS + ':enabled').count() == 20
         # Exercise the profile lifecycle hook itself; the existing finalization
         # suite separately proves the complete removal protocol through its UI.
         page.evaluate('handleSettingsProfileSessionWipe()')
@@ -307,11 +308,11 @@ def portable_contract(browser, root, out):
         try:
             open_profile(page); reveal_gallery(page)
             items = catalog(page); check_images(page)
-            card(page, items[-1]).click(); assert profile_raw(page) is None
+            card(page, items[18]).click(); assert profile_raw(page) is None
             save_profile(page); saved = profile_raw(page)
             page.reload(wait_until='load'); wait_bootstrap(page); page.evaluate('closeModal()'); open_profile(page)
             reveal_gallery(page)
-            expect(card(page, items[-1])).to_have_attribute('aria-pressed', 'true')
+            expect(card(page, items[18])).to_have_attribute('aria-pressed', 'true')
             assert profile_raw(page) == saved
             assert not page.jpwealth_profile_observed['pageerror'], page.jpwealth_profile_observed
             assert page.evaluate('JSON.stringify(S)') == page.jpwealth_profile_before['state']

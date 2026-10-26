@@ -48,27 +48,30 @@ def main():
                 page.wait_for_timeout(700)
                 page.evaluate("() => {closeModal();window.__onbShown=true;S.onboarding.done=true;save();}")
                 if not args.baseline:
-                    assert page.locator('#headerProfileAvatar').inner_text() == 'JP'
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     page.locator('#headerProfileBtn').focus()
                     assert page.locator('#headerProfileBtn').evaluate("e=>e.matches(':focus-visible')")
                     page.keyboard.press('Enter')
                     assert page.evaluate('settingsState.active') == 'account'
                     page.locator('#settingsProfileNameInput').fill('Perfil Teste')
-                    assert page.locator('#headerProfileAvatar').inner_text() == 'JP'
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     page.locator('#settingsProfileSaveBtn').click()
-                    page.wait_for_function("document.querySelector('#headerProfileAvatar').textContent==='PT'")
+                    page.wait_for_function("settingsProfileState.confirmed.displayName==='Perfil Teste'")
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     page.locator('#settingsCloseBtn').click()
                     page.wait_for_function("document.activeElement.id==='headerProfileBtn'")
                     page.locator('#headerProfileBtn').click()
                     page.locator('#settingsProfileNameInput').fill('Rascunho Cancelado')
                     page.keyboard.press('Escape')
-                    assert page.locator('#headerProfileAvatar').inner_text() == 'PT'
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     page.locator('#headerProfileBtn').click()
                     page.locator('#settingsProfileGallery summary').click()
                     page.locator('[data-profile-avatar]').first.click()
-                    assert page.locator('#headerProfileAvatar img').count() == 0
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     page.locator('#settingsProfileSaveBtn').click()
+                    page.wait_for_function("settingsProfileState.confirmed.avatarDataUrl===SETTINGS_PROFILE_AVATARS[0].avatarDataUrl")
                     page.wait_for_function("document.querySelector('#headerProfileAvatar img')?.naturalWidth>0")
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate('SETTINGS_PROFILE_AVATARS[0].avatarDataUrl')
                     page.locator('#settingsCloseBtn').click()
                     page.reload(); wait_bootstrap(page)
                     page.wait_for_function("document.querySelector('#headerProfileAvatar img')?.naturalWidth>0")
@@ -79,14 +82,17 @@ def main():
                     page.locator('#settingsProfileRemovePhotoBtn').click()
                     assert page.locator('#headerProfileAvatar img').count() == 1
                     page.locator('#settingsProfileSaveBtn').click()
-                    page.wait_for_function("!document.querySelector('#headerProfileAvatar img')")
+                    page.wait_for_function("settingsProfileState.confirmed.avatarDataUrl===null")
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     # Real file input/raster path, using an image synthesized in the disposable page.
                     data = page.evaluate("() => {const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');x.fillStyle='#a32024';x.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1]}")
                     page.locator('#settingsProfilePhotoInput').set_input_files({'name':'synthetic.png','mimeType':'image/png','buffer':base64.b64decode(data)})
                     page.wait_for_function('!settingsProfileState.busy && !!settingsProfileState.draft.avatarDataUrl')
-                    assert page.locator('#headerProfileAvatar img').count() == 0
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate("SETTINGS_PROFILE_AVATARS.find(x=>x.id==='dante-mascote').avatarDataUrl")
                     page.locator('#settingsProfileSaveBtn').click()
+                    page.wait_for_function("settingsProfileState.confirmed.avatarDataUrl!==null && settingsProfileState.confirmed.avatarDataUrl===settingsProfileState.draft.avatarDataUrl && !settingsProfileState.saving")
                     page.wait_for_function("document.querySelector('#headerProfileAvatar img')?.naturalWidth>0")
+                    assert page.locator('#headerProfileAvatar img').get_attribute('src') == page.evaluate('settingsProfileState.confirmed.avatarDataUrl')
                     page.locator('#settingsCloseBtn').click()
                     page.locator('#finalizeSessionBtn').click()
                     assert page.locator('#modalBox').is_visible()

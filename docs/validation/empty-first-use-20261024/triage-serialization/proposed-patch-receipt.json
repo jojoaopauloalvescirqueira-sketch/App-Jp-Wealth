@@ -1,0 +1,11 @@
+{
+  "source_sha256": "a3595c0c4a60c38c07287f55bbfb6b87b0fbf54b0428c95f652268a7a481f32e",
+  "proposed_sha256": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5",
+  "patch_sha256": "1090091aaeae8aa450bdf89f256b6ada58cf6bff7a90c9b63707fac46805ff12",
+  "changed_files": [
+    "tools/session_write_serialization_test.py"
+  ],
+  "scope": "abrir setup only; one explicit synthetic account and precondition; existing assertions/timing unchanged",
+  "syntax": "PASS",
+  "repository_test_unchanged": true
+}

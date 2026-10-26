@@ -1,0 +1,28 @@
+{
+  "classification": "PASS",
+  "count": 130,
+  "red": {
+    "exitCode": 1,
+    "semanticClassification": "TEST_HARNESS_FAIL",
+    "reason": "obsolete six-child expectation against approved five-child navigation",
+    "originalSha256": "80e79dc598db192284b50e6a35796f21c05f80432f1d6f5bd3a0546e5d65e20a",
+    "log": "nocuda-red/stdout.txt"
+  },
+  "green": {
+    "exitCode": 0,
+    "sha256": "2295d820781c7e05e031021c441bd4b7b801738f9fd9d60dfc2320cbb0217081",
+    "modes": [
+      "http",
+      "file",
+      "portable",
+      "PWA offline"
+    ],
+    "result": "nocuda-green/result.json"
+  },
+  "fullAttempt1Raw": "PRODUCT_FAIL; preserved, not replaced by this focal receipt",
+  "allowedDelta": [
+    "remove tools-market-hours from child list",
+    "NoCuda ArrowUp Calendar ArrowDown NoCuda ArrowUp Calendar Enter"
+  ],
+  "runtime": "existing Python runtime and Chromium1223; no dependency changes"
+}

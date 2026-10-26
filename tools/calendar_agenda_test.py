@@ -315,6 +315,78 @@ def preference_preservation(page,variant):
     page.evaluate('()=>{Storage.prototype.getItem=__calendarOriginalGet;}')
     return {'raw_bytes':'preserved','filter_interaction':'real checkbox','case':variant}
 
+def lifecycle_setup(page):
+    """Synthetic backup fixture; observe real calendar timers and header controls."""
+    page.evaluate("""()=>{closeModal();window.__onbShown=true;
+      const set=window.setTimeout,clear=window.clearTimeout;window.__calendarLifecycleTimers=new Map();
+      window.setTimeout=function(fn,ms,...args){const track=new Error().stack.includes('armClock');let id;
+        id=set(()=>{__calendarLifecycleTimers.delete(id);fn(...args)},ms);if(track)__calendarLifecycleTimers.set(id,{ms});return id};
+      window.clearTimeout=function(id){__calendarLifecycleTimers.delete(id);return clear(id)};
+      S.dataGovernance.backup.lastConfirmedAt='2026-10-03T04:30:00.000Z';
+    }""")
+    financial=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')
+    launcher=page.locator('#headerCalendarBtn');launcher.focus();page.keyboard.press('Enter')
+    panel=page.locator('#calendarDialog .calendar-panel');expect(panel).to_be_visible()
+    assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==1
+    page.evaluate("calendarDialog.addEventListener('close',()=>{window.__calendarLifecycleCloseEvents.push({open:calendarDialog.open})});window.__calendarLifecycleCloseEvents=[]")
+    assert page.evaluate('__calendarLifecycleTimers.size')==1
+    header=launcher.evaluate("e=>{const r=e.getBoundingClientRect();return {id:e.id,label:e.getAttribute('aria-label'),title:e.title,expanded:e.getAttribute('aria-expanded'),width:r.width,height:r.height,svg:e.querySelectorAll('svg').length}}")
+    assert header['expanded']=='true' and header['label'] and header['title'] and header['svg']==1
+    assert header['width']>=44 and header['height']>=44
+    return panel,financial,header
+
+
+def lifecycle_close_controls(page):
+    panel,financial,header=lifecycle_setup(page)
+    trace=[]
+    for method in ['original-button','Escape','native-close-event']:
+        before=page.evaluate('__calendarLifecycleCloseEvents.length')
+        if method=='original-button':panel.locator('[data-calendar-action="close"]').click()
+        elif method=='Escape':page.keyboard.press('Escape')
+        else:page.evaluate('calendarDialog.close()')
+        page.wait_for_function('count=>__calendarLifecycleCloseEvents.length>count',arg=before)
+        assert page.evaluate('calendarDialog.open') is False
+        assert page.evaluate('__calendarLifecycleTimers.size')==0
+        assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==0
+        expect(page.locator('#headerCalendarBtn')).to_have_attribute('aria-expanded','false')
+        if method!='native-close-event':expect(page.locator('#headerCalendarBtn')).to_be_focused()
+        assert page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')==financial
+        trace.append({'method':method,'open':False,'timers':0,'activeRefreshes':0,'expanded':'false'})
+        if method!='native-close-event':
+            page.locator('#headerCalendarBtn').focus();page.keyboard.press('Enter')
+            assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==1
+            assert page.evaluate('__calendarLifecycleTimers.size')==1
+    return {'header':header,'realClosures':trace,'financialUnchanged':True}
+
+
+def lifecycle(page):
+    panel,financial,header=lifecycle_setup(page)
+    expect(panel.locator('[data-calendar-date="2026-11-01"] .calendar-personal-dot')).to_have_count(1)
+    # Native dialog.close queues its event. Reopening synchronously must remain
+    # active when that prior close event is delivered to the same original host.
+    page.evaluate('JPWCalendar.close(false);JPWCalendar.open(document.getElementById("headerCalendarBtn"))')
+    page.wait_for_function('__calendarLifecycleCloseEvents.some(event=>event.open)')
+    assert page.evaluate('calendarDialog.open') is True
+    assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==1,'CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar'
+    assert page.evaluate('__calendarLifecycleTimers.size')==1
+    expect(page.locator('#headerCalendarBtn')).to_have_attribute('aria-expanded','true')
+    expected=json.loads(financial['state']);expected['dataGovernance']['backup']['lastConfirmedAt']='2026-10-25T15:00:00.000Z'
+    page.evaluate("S.dataGovernance.backup.lastConfirmedAt='2026-10-25T15:00:00.000Z'")
+    assert page.evaluate('dgBackupStatus().state')=='unknown'
+    assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==1
+    expect(panel.locator('[data-calendar-date="2026-11-01"] .calendar-personal-dot')).to_have_count(0)
+    assert json.loads(page.evaluate('JSON.stringify(S)'))==expected
+    assert page.evaluate('localStorage.getItem(LSKEY)')==financial['raw']
+    events=page.evaluate('__calendarLifecycleCloseEvents')
+    page.locator('#calendarDialog [data-calendar-action="close"]').click()
+    page.wait_for_function('__calendarLifecycleTimers.size===0')
+    # New independent page/context owns the ordinary close counterproofs in the
+    # scratch replay; permanent runner executes them after this reset as well.
+    counterproofs=lifecycle_close_controls(page)
+    return {'header':header,'priorCloseEvents':events,'reopenedActive':True,'futureBackupMarkerRemoved':True,
+            'financialUnchangedExceptExplicitFixtureTimestamp':True,'closeCounterproofs':counterproofs}
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--baseline',action='store_true');p.add_argument('--artifact');p.add_argument('--width',type=int);p.add_argument('--path',default='index.html');p.add_argument('--case',action='append');args=p.parse_args()
     server=BrowserFixtureServer(('127.0.0.1',0),functools.partial(Quiet,directory=str(ROOT)))
@@ -323,18 +395,18 @@ def main():
         with sync_playwright() as pw:
             browser=launch_browser(pw)
             cases=[(1440,'light','baseline')] if args.baseline else [(w,t,'ui') for w in ([args.width] if args.width else [1440,390,320]) for t in ['light','dark']]
-            if not args.baseline and args.path=='index.html':cases.extend([(320,'light',kind) for kind in ['edges','pref-read','pref-extension','pref-duplicates','adjacent-selection','adjacent-range','feed-recovery']])
+            if not args.baseline and args.path=='index.html':cases.extend([(320,'light',kind) for kind in ['edges','lifecycle','pref-read','pref-extension','pref-duplicates','adjacent-selection','adjacent-range','feed-recovery']])
             if args.case:cases=[case for case in cases if case[2] in args.case]
             for width,theme,kind in cases:
-                ctx=browser.new_context(viewport={'width':width,'height':900},timezone_id='America/New_York' if kind=='edges' else 'America/Sao_Paulo',service_workers='block');install_bootstrap(ctx);ctx.add_init_script('window.__onbShown=true')
+                ctx=browser.new_context(viewport={'width':width,'height':900},timezone_id='America/New_York' if kind in ['edges','lifecycle'] else 'America/Sao_Paulo',service_workers='block');install_bootstrap(ctx);ctx.add_init_script('window.__onbShown=true')
                 if kind=='edges' or kind.startswith('adjacent-') or kind=='feed-recovery':calendar_packet(ctx,adjacent=kind.startswith('adjacent-'))
                 page=ctx.new_page()
-                if kind=='edges':page.clock.install(time=datetime(2026,10,23,15,tzinfo=timezone.utc))
+                if kind in ['edges','lifecycle']:page.clock.install(time=datetime(2026,10,23,15,tzinfo=timezone.utc))
                 else:page.clock.set_fixed_time(datetime(2026,10,23,15,tzinfo=timezone.utc))
                 errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
                 try:
                     page.goto(f'http://127.0.0.1:{server.server_port}/{args.path}',wait_until='load');wait_bootstrap(page)
-                    details=preference_preservation(page,kind) if kind.startswith('pref-') else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)
+                    details=preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)
                     assert not errors,errors
                     results.append({'case':f'calendar-{kind}-{width}-{theme}','result':'PASS','geometry':details})
                     if args.artifact:

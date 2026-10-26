@@ -33,16 +33,25 @@
         steps.set(step.id,track.id);
       }
     }
+    // Retired IDs remain valid records, never visible lessons or new credits.
+    if(catalog.retiredSteps!==undefined){
+      if(!Array.isArray(catalog.retiredSteps))return null;
+      for(const item of catalog.retiredSteps){
+        if(!item||typeof item.id!=='string'||!item.id||blocked.has(item.id)||steps.has(item.id)||!tracks.has(item.trackId)||steps.get(item.replacementId)!==item.trackId)return null;
+        steps.set(item.id,item.trackId);
+      }
+    }
     return {tracks,steps};
   }
   function empty(catalog){
-    return {schemaVersion:1,catalogVersion:catalog?.version,trackId:null,stepId:null,paused:true,steps:{}};
+    return {schemaVersion:2,mode:'journey',catalogVersion:catalog?.version,trackId:null,stepId:null,paused:true,steps:{}};
   }
   const failure=(reason,raw)=>({ok:false,reason,document:null,...(raw===undefined?{}:{raw})});
   function validate(value,catalog){
     const ids=registry(catalog);
-    if(!ids||!keys(value,['schemaVersion','catalogVersion','trackId','stepId','paused','steps'])||
-      value.schemaVersion!==1||value.catalogVersion!==catalog.version||typeof value.paused!=='boolean'||
+    const legacy=plain(value)&&Object.getOwnPropertyDescriptor(value,'schemaVersion')?.value===1;
+    if(!ids||!keys(value,legacy?['schemaVersion','catalogVersion','trackId','stepId','paused','steps']:['schemaVersion','mode','catalogVersion','trackId','stepId','paused','steps'])||
+      (!legacy&&(value.schemaVersion!==2||!['journey','track'].includes(value.mode)))||value.catalogVersion!==catalog.version||typeof value.paused!=='boolean'||
       !plain(value.steps))return failure('incompatible');
     if(value.trackId===null||value.stepId===null){
       if(value.trackId!==null||value.stepId!==null)return failure('incompatible');
@@ -58,7 +67,7 @@
         (record.practice==='confirmed'&&record.orientation!=='seen'))return failure('incompatible');
       records[id]={orientation:record.orientation,practice:record.practice};
     }
-    return {ok:true,reason:'confirmed',document:{schemaVersion:1,catalogVersion:catalog.version,
+    return {ok:true,reason:'confirmed',document:{schemaVersion:2,mode:legacy?(value.trackId===null?'journey':'track'):value.mode,catalogVersion:catalog.version,
       trackId:value.trackId,stepId:value.stepId,paused:value.paused,steps:records}};
   }
   function inspect(raw,catalog){

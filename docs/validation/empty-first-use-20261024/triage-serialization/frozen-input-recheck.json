@@ -1,0 +1,8 @@
+{
+  "candidate": "1b695b809fe80c26",
+  "frozen_input_count": 664,
+  "drift": [],
+  "target_sha256": "a3595c0c4a60c38c07287f55bbfb6b87b0fbf54b0428c95f652268a7a481f32e",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "node": "v24.19.0"
+}

@@ -1,0 +1,17 @@
+{
+  "reason": "New verified mobile checklist text clipping; preserve first run and restart after bounded CSS correction",
+  "root_pid": 36720,
+  "owned_descendants": [
+    36720,
+    37471,
+    37472,
+    37473,
+    37479,
+    37480,
+    37481,
+    37491,
+    37492
+  ],
+  "signal": "SIGINT",
+  "timestamp": 1792865145.166432
+}

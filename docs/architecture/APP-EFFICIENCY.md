@@ -11,7 +11,7 @@ O escopo é reduzir trabalho de apresentação e distribuição. Fórmulas, escr
 - No Consolidado, as abas Painel, Movimentos, Estatísticas e Risco constroem somente o conteúdo da aba exposta. Gráficos e restauração de apresentação acompanham esse painel; os nós das demais abas ficam preservados até sua entrada com dados atuais.
 - A grade usa um snapshot privado da última leitura fresca para prévias da linha. Instrumento, entrada, SL e TP determinam a geometria; os demais campos atualizam o rascunho. Salvar continua reconferindo o estado pelos caminhos existentes.
 - `JPWNotifications.invalidate(...sourceIds)` reúne invalidações numa microtask e mantém caches separados por `system`, `forex`, `pf`, `alladin`, `calendar` e `local`. `refresh()` continua sendo síncrono e completo.
-- `JPWDownloadAssets.getBytes(id, {signal})` e `getText(id, {signal})` são assíncronos. Os originais web, sidecars locais e envelopes inertes do portátil têm verificação de build, tamanho e SHA-256 antes do consumo. `JPWTools.generateEditable` passa a exigir `await`.
+- `JPWDownloadAssets.getBytes(id, {signal})` e `getText(id, {signal})` são assíncronos. Os originais web, sidecars locais e envelopes inertes do portátil têm verificação de build, tamanho e SHA-256 antes do consumo. O gerador exclusivo `JPWTools.generateEditable` foi retirado em 26/10/2026; o loader compartilhado atende os recursos Stoikus.
 
 ## Medição e regressões
 

@@ -61,6 +61,23 @@ FIXTURE = json.loads((ROOT / "tools/fixtures/alladin_v2.json").read_text(encodin
 # mesmo — e faz a suite falhar se a migracao mudar sem que ninguem diga.
 FIXTURE = {**FIXTURE, "schemaVersion": 6, "transactions": []}
 
+# C8/C11/C14 verificam que uma recusa nao apaga contas existentes. A conta e
+# uma pre-condicao sintetica explicita: DEFAULTS deve continuar vazio.
+CONTA_PRESERVACAO = {
+    "forexAccountId": "FINALIZE-PRESERVATION-SYNTHETIC",
+    "nome": "Conta sintetica de preservacao",
+    "tipo": "PRÓPRIA",
+    "broker": "Corretora sintetica",
+    "platform": "MetaTrader 5",
+    "platformLogin": "synthetic-finalize-001",
+    "investorPassword": "",
+    "currency": "USD",
+    "perfil": "Base",
+    "sini": 1000,
+    "satu": 1000,
+    "perfilLocked": True,
+}
+
 # O mesmo agregado DEPOIS de o operador agir NOUTRA aba: status alterado, campo
 # textual alterado e PII de terceiro alterada. E o retrato AUTORITATIVO — o que
 # esta no disco. A aba que finaliza pode ter uma memoria anterior a isso, e o
@@ -392,7 +409,14 @@ def main() -> int:
                 # recusar ali: antes do export, antes de qualquer save(), antes do
                 # clear e antes do broadcast. Por isso o caso usa o botao REAL.
                 ctx, page, erros = abrir(browser, url)
-                page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
+                page.evaluate("""(fixture) => {
+                    S.accounts = [fixture.account];
+                    S.alladin = fixture.alladin;
+                    if(save() !== true) throw new Error('C8: fixture nao confirmada');
+                }""", {"account": CONTA_PRESERVACAO, "alladin": FIXTURE})
+                contas_antes = page.evaluate("() => structuredClone(S.accounts)")
+                if contas_antes != [CONTA_PRESERVACAO]:
+                    falhas.append("C8 pre-condicao: conta sintetica nao esta presente integralmente")
                 page.evaluate("() => localStorage.setItem('%s', '{documento truncado')" % LSKEY)
                 page.evaluate("""() => {
                     window.__tocadas = [];
@@ -424,6 +448,8 @@ def main() -> int:
                     falhas.append("C8: a recusa deixou a persistencia BLOQUEADA")
                 if r["contas"] == 0:
                     falhas.append("C8: a sessao foi PARCIALMENTE finalizada — accounts foi zerado")
+                if page.evaluate("() => structuredClone(S.accounts)") != contas_antes:
+                    falhas.append("C8: a recusa alterou o conteudo das contas existentes")
                 if r["instrumentos"] != len(FIXTURE["instruments"]):
                     falhas.append(f"C8: S.alladin foi alterado apesar da recusa ({r['instrumentos']})")
                 # CONTRATO NOVO (Camada 1): o disco contem uma escrita que esta aba nao
@@ -485,7 +511,14 @@ def main() -> int:
             # ---- C11: cross-tab com disco ilegivel ABORTA (nao cai na memoria velha) ----
             def c11():
                 ctx, page, erros = abrir(browser, url)
-                page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
+                page.evaluate("""(fixture) => {
+                    S.accounts = [fixture.account];
+                    S.alladin = fixture.alladin;
+                    if(save() !== true) throw new Error('C11: fixture nao confirmada');
+                }""", {"account": CONTA_PRESERVACAO, "alladin": FIXTURE})
+                contas_antes = page.evaluate("() => structuredClone(S.accounts)")
+                if contas_antes != [CONTA_PRESERVACAO]:
+                    falhas.append("C11 pre-condicao: conta sintetica nao esta presente integralmente")
                 page.evaluate("() => localStorage.setItem('%s', '{documento truncado')" % LSKEY)
                 r = page.evaluate(REMOTO, "aba-remota-c11")
                 bruto = page.evaluate("() => localStorage.getItem('%s')" % LSKEY)
@@ -493,6 +526,8 @@ def main() -> int:
                     falhas.append(f"C11: o disco ilegivel foi sobrescrito em vez de o ato abortar ({str(bruto)[:60]})")
                 if r["contas"] == 0:
                     falhas.append("C11: a sessao foi finalizada mesmo sem conseguir ler o estado persistido")
+                if page.evaluate("() => structuredClone(S.accounts)") != contas_antes:
+                    falhas.append("C11: a recusa alterou o conteudo das contas existentes")
                 # CONTRATO B3: o abort nao pode deixar a aba permanentemente read-only.
                 # A protecao anti-ressurreicao mudou de dono: e a guarda de concorrencia
                 # do save() (o disco nao e o que esta aba conhece => escrita recusada).
@@ -513,7 +548,14 @@ def main() -> int:
                 # deixar a aba permanentemente read-only; a guarda do save() e quem
                 # impede a regravacao de memoria velha sobre o disco indeterminado.
                 ctx, page, erros = abrir(browser, url)
-                page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
+                page.evaluate("""(fixture) => {
+                    S.accounts = [fixture.account];
+                    S.alladin = fixture.alladin;
+                    if(save() !== true) throw new Error('C14: fixture nao confirmada');
+                }""", {"account": CONTA_PRESERVACAO, "alladin": FIXTURE})
+                contas_antes = page.evaluate("() => structuredClone(S.accounts)")
+                if contas_antes != [CONTA_PRESERVACAO]:
+                    falhas.append("C14 pre-condicao: conta sintetica nao esta presente integralmente")
                 page.evaluate("() => localStorage.removeItem('%s')" % LSKEY)
                 r = page.evaluate(REMOTO, "aba-remota-c14")
                 if igual(r["memoria"], {"schemaVersion": 6, "reportingCurrency": "BRL",
@@ -528,6 +570,8 @@ def main() -> int:
                                   f"({str(do_disco(page))[:80]})")
                 if r["contas"] == 0:
                     falhas.append("C14: a sessao foi finalizada sem conseguir garantir a preservacao")
+                if page.evaluate("() => structuredClone(S.accounts)") != contas_antes:
+                    falhas.append("C14: a recusa alterou o conteudo das contas existentes")
                 if r["bloqueada"] is not False:
                     falhas.append("C14: o abort deixou a aba PERMANENTEMENTE bloqueada (viola B3)")
                 pos = page.evaluate("() => save()")

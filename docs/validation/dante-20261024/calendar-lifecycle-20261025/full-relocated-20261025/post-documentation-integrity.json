@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-25T19:23:12.725828+00:00",
+  "after": "Evidence-only documentation and validate_project, diff-check, loopback preview byte checks",
+  "frozenInputs": 679,
+  "changed": [],
+  "sourceUnchanged": true,
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "branch": "codex/dante-guia-20261024",
+  "previewBuild": "8c127c2f92de375e",
+  "fullGateApproved": false,
+  "validatorProposalApplied": false
+}

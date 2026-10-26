@@ -667,16 +667,17 @@ def run_integrated(out_dir, case=""):
                 assert p.locator('#minigamesHub').get_by_role('button',name='Abrir',exact=True).count()==3
                 assert p.locator('#minigamesTimeTwinsCard').get_by_role('heading',name='Gêmeos do Tempo').is_visible()
                 assert p.locator('[data-time-twins-root],[data-galton-root]').count()==0
-                p.evaluate("JPWNavigation.navigate('tools-nocuda')")
-                p.locator('#nocudaPayload').fill('Synthetic untouched draft')
+                p.evaluate("JPWNavigation.navigateLocal('research','nocoda')")
+                p.locator('#ncPrice1').fill('1,23412')
                 p.evaluate("openSettingsModal('knowledge')")
                 p.locator('#settingsPageTitle').focus()
                 before_route=p.evaluate('JPWNavigation.current()');focus=p.evaluate('document.activeElement.id')
                 for call in ["JPWNavigation.navigateLocal('tools','time-twins')","JPWNavigation.navigate('time-twins')","JPWNavigation.navigate('galton-board')"]:
                     assert p.evaluate(call) is False
                     assert p.evaluate('JPWNavigation.current()')==before_route
+                    assert p.locator('#settingsOverlay').evaluate('(e)=>e.classList.contains("show")')
                     assert p.evaluate('document.activeElement.id')==focus
-                    assert p.locator('#nocudaPayload').input_value()=='Synthetic untouched draft'
+                    assert p.locator('#ncPrice1').input_value()=='1,23412'
                     assert p.locator('[data-time-twins-root],[data-galton-root]').count()==0
                     assert p.locator('[data-minigames-navigation-status]').inner_text()=='Feche a janela atual antes de abrir um jogo em MiniGames'
                 p.evaluate('closeSettingsModal()');settle(p)

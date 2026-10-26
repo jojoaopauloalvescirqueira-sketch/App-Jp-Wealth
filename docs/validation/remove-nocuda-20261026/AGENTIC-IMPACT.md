@@ -1,0 +1,5 @@
+# Impacto da retirada
+
+AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED. BASIS: contratos do produto, catálogo do guia, gerador e expectativas exclusivas do recurso mudam por plano explícito. A arquitetura vigente distingue a ferramenta retirada dos componentes NoCoda preservados em Research/Stoikus. Documentos exclusivos recebem cabeçalho de descontinuação, mantendo especificações históricas. NAVIGATION-HIERARCHY, LEARNING-GUIDE, APP-EFFICIENCY e JPW-NOCUDA-CHANNELS são reconciliados factual e localmente. Testes têm CHG separado e substituições por propriedade; fonte normativa financeira, instruções/skills, memória global e CI não mudam. Registro de regressões será factual e delimitado; snapshots e relatórios anteriores permanecem históricos. Não há necessidade de reindexação Graphify nem mudança de agregadores gerais para comprovar este recorte.
+
+Contagem anterior 102 checks não equivale ao resultado atual: exigir recibo novo do FULL. Aceite humano, Git e publicação são gates separados.

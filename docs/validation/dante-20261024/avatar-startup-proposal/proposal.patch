@@ -1,0 +1,17 @@
+--- a/src/js/40-app/09-settings-modal.js
++++ b/src/js/40-app/09-settings-modal.js
+@@ -193,9 +193,11 @@
+   if(!element) return;
+   const initials=settingsProfileInitials(profile.displayName);
+   element.replaceChildren(document.createTextNode(initials));
+-  // O padrão é apenas visual: não cria nome, foto ou envelope no armazenamento.
+-  const source=profile.avatarDataUrl==null?SETTINGS_PROFILE_AVATARS.find(avatar=>avatar.id==='dante-mascote')?.avatarDataUrl:profile.avatarDataUrl;
+-  if(!source||!settingsProfileAvatarValid(source)) return;
++  // O padrão estático/imutável já é validado no catálogo; não decodificar em JS no boot.
++  // Qualquer foto persistida continua atravessando a validação completa, inclusive a da galeria.
++  const personal=profile.avatarDataUrl!=null;
++  const source=personal?profile.avatarDataUrl:SETTINGS_PROFILE_AVATARS.find(avatar=>avatar.id==='dante-mascote')?.avatarDataUrl;
++  if(!source||(personal&&!settingsProfileAvatarValid(source))) return;
+   const picture=document.createElement('img');picture.alt='';picture.draggable=false;
+   picture.addEventListener('error',()=>{
+     if(picture.parentNode!==element) return;

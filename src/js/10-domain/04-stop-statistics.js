@@ -253,12 +253,12 @@ function renderContas(){
 }
 function recomputeContasCalc(){renderContas();}
 function renderAplicacao(){
-  $('cLoteMaster').value=S.loteMaster;
+  $('cLoteMaster').value=Number.isFinite(S.loteMaster)?S.loteMaster:'';
   const ab=$('aplicBody');
   ab.innerHTML=S.accounts.map(a=>{
     const {loteVs}=contaCalc(a);
-    return `<tr><td class="hl">${esc(a.nome)}</td><td>${accountFactorText(loteVs)}</td><td class="hl">${Number.isFinite(loteVs)?(S.loteMaster*loteVs).toFixed(3):'BLOCKED'}</td></tr>`;
-  }).join('');
+    return `<tr><td class="hl">${esc(a.nome)}</td><td>${accountFactorText(loteVs)}</td><td class="hl">${Number.isFinite(S.loteMaster)&&Number.isFinite(loteVs)?(S.loteMaster*loteVs).toFixed(3):'Não calculável'}</td></tr>`;
+  }).join('')||'<tr><td colspan="3">Nenhuma conta cadastrada.</td></tr>';
 }
 
 // ---- Dashboard — Acompanhamento Mensal estilo MQL5 Signals ----

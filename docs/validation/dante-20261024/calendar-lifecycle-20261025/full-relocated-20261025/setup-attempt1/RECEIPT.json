@@ -1,0 +1,24 @@
+{
+  "classification": "ENVIRONMENT_ERROR",
+  "scope": "Preparation aborted by own strict stopped-group guard; no calendar/UI check started",
+  "sourceUnchanged": true,
+  "guard": "parentT childZ refused; no mapping created",
+  "preserved": [
+    {
+      "name": "full-relocated-evidence",
+      "emptyDirectory": true
+    },
+    {
+      "name": "full-relocated-command.json",
+      "sha256": "26874348f4c650bf70624cac8ecdeedef6b4575995298c592a41ab1ac9e7295e"
+    },
+    {
+      "name": "full-relocated.log",
+      "sha256": "57f5cc072100dc490c9c0433bf71c372de2eeac0d5fcad28de64a5678f907990"
+    },
+    {
+      "name": "redirect-full-console.log",
+      "sha256": "ab5372dda7848013d62f7a01c3813b04ca1b593a5251a4ecde073868c6b97cdc"
+    }
+  ]
+}

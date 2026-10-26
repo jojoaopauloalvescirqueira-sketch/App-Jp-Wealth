@@ -1,0 +1,36 @@
+{
+  "classification": "PASS",
+  "scope": "controlled synthetic reproduction of real existing reposition observer; establishes mechanism, not unique historical trigger",
+  "rows": [
+    {
+      "mode": "old-width",
+      "stimulus": {
+        "injectedWidth": 322,
+        "event": "body childList mutation invokes existing menu position observer"
+      },
+      "afterObserver": {
+        "width": 320,
+        "style": "width: 320px; max-height: 591.625px; left: 12px; top: 296.375px;"
+      },
+      "oracleRejected": false,
+      "reason": null
+    },
+    {
+      "mode": "candidate-min-width",
+      "stimulus": {
+        "injectedWidth": 322,
+        "event": "body childList mutation invokes existing menu position observer"
+      },
+      "afterObserver": {
+        "width": 322,
+        "style": "width: 320px; max-height: 591.625px; left: 12px; top: 296.375px; min-width: 322px !important;"
+      },
+      "oracleRejected": true,
+      "reason": "('menu width limit', {'box': {'left': 12, 'right': 334, 'top': 296.375, 'bottom': 888, 'width': 322, 'height': 591.625}, 'viewport': [700, 900], 'layoutViewport': [700, 900], 'scroll': [766, 590], 'overflow': 'auto', 'trigger': {'left': 131.890625, 'right': 216.171875, 'top': 244.375, 'bottom': 288.375, 'width': 84.28125, 'height': 44}, 'rows': [{'action': 'create', 'left': 19, 'right': 327, 'top': 153.375, 'bottom': 197.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'edit-selected', 'left': 19, 'right': 327, 'top': 197.375, 'bottom': 241.3"
+    }
+  ],
+  "positiveBefore": true,
+  "positiveAfterRestore": true,
+  "financialUnchanged": true,
+  "sourceEdited": false
+}

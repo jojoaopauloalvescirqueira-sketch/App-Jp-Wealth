@@ -1,0 +1,6 @@
+{
+  "oldSHA256": "5eadae0f21b03835df0ba63270f95869a49dd4fca59f08eb7f8bac28ad523754",
+  "currentSHA256": "234161ab54997586bbd7f889a991fc375208260d122a39d73e8c301ba656c39c",
+  "onlyChange": "OUT constant points at fresh task scratch",
+  "allFunctionASTIdentical": true
+}

@@ -1,0 +1,56 @@
+{
+  "at": "2026-10-25T19:22:44.218381+00:00",
+  "checks": [
+    {
+      "port": 51629,
+      "files": [
+        {
+          "path": "index.html",
+          "matchesDisk": true,
+          "sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748"
+        },
+        {
+          "path": "build-id.js",
+          "matchesDisk": true,
+          "sha256": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c"
+        },
+        {
+          "path": "src/styles/app.css",
+          "matchesDisk": true,
+          "sha256": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937"
+        },
+        {
+          "path": "src/js/40-app/19-calendar-agenda.js",
+          "matchesDisk": true,
+          "sha256": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c"
+        }
+      ]
+    },
+    {
+      "port": 64886,
+      "files": [
+        {
+          "path": "index.html",
+          "matchesDisk": true,
+          "sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748"
+        },
+        {
+          "path": "build-id.js",
+          "matchesDisk": true,
+          "sha256": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c"
+        },
+        {
+          "path": "src/styles/app.css",
+          "matchesDisk": true,
+          "sha256": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937"
+        },
+        {
+          "path": "src/js/40-app/19-calendar-agenda.js",
+          "matchesDisk": true,
+          "sha256": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c"
+        }
+      ]
+    }
+  ],
+  "buildExpected": "8c127c2f92de375e"
+}

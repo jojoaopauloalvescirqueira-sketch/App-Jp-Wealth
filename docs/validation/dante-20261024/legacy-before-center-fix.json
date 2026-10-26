@@ -1,0 +1,581 @@
+{
+  "runtimeBuild": "58d8c49dc1977418",
+  "test_sha256": "6bfc1b496c82a7e1cc720c36ee38f23bd950cd60b5b932b36c70021cd6dbfa4e",
+  "counts": {
+    "PASS": 51,
+    "PRODUCT_FAIL": 2,
+    "TEST_HARNESS_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "cases": [
+    {
+      "name": "layout/sidebar/1440/dark",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/sidebar/390/light",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/topbar/1440/dark",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/topbar/390/light",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/glass/1440/dark",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/glass/390/light",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/submenu/1440/dark",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "layout/submenu/390/light",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-00.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-metadata-geometry/1440x900",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-01.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-metadata-geometry/390x844",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-01.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-metadata-geometry/320x640",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-01.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "guide-controls-in-metadata-own-enter",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-02.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-pf/confirmed",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-03.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-pf/refused",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-03.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-pf/unknown",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-03.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-pf/escape",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-03.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-pf/confirmed/mobile-390x844",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-03.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes/confirmed",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-04.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes/refused",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-04.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes/unknown",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-04.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes/dirty-refusal",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-04.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes-metadata-cancel/button",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-05.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes-metadata-cancel/escape",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-05.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-notes-metadata-cancel/backdrop",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-05.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "welcome-permanent-entry",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-06.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "dante/profile-and-welcome",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-06.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "progress-skip-pause-reload-resume-restart",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-07.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "invalid-version-raw-preserved",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-08.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "guide-storage-read-refused",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-09.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "guide-storage-write-refused",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-09.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "cross-tabs-conflict-before-receipt",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-10.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "cleanup-dispose-clear-stale-boot",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-11.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "frozen-alladin",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-12.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "frozen-personal-finance",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-12.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "dante/frozen-and-independent-planning",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-12.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "missing-anchor",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-13.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "off-route",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-14.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "foreign-dialog",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-15.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-contextual-help",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-16.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-pending-account-guard",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-17.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "native-research-draft-preservation-local-refusal",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-18.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "actual-backup-excludes-guide",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-19.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "actual-backup-import-pauses-invalidates-practice",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-19.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "startup-source-manifest",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-20.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "startup-portable-http",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-20.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "startup-portable-file",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-20.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "offline-sw-four-guide-modules",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-21.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "nested-scroll",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-22.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "reflow-200-equivalent",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-23.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "visualViewport-shrink",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-24.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "readonly-all-64-native-actions",
+      "result": "PASS",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-readonly.json",
+      "build": "58d8c49dc1977418",
+      "detail": null,
+      "stepId": null
+    },
+    {
+      "name": "readonly-all-64-native-actions/mobile-390x844",
+      "result": "PRODUCT_FAIL",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-readonly.json",
+      "build": "58d8c49dc1977418",
+      "detail": "Locator.click: Timeout 7000ms exceeded.\nCall log:\n  - waiting for locator(\"#jpwLearningResume\").filter(visible=True).first\n    - locator resolved to <button type=\"button\" class=\"reset-btn\" id=\"jpwLearningResume\">Continuar</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <p id=\"jpwLearningBody\">Feche as Configurações pelos controles originais …</p> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <p id=\"jpwLearningObjective\">Conhecer o início do fluxo sem finalizar a sessão.</p> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n  2 × retrying click action\n      - waiting 100ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"settings-page-nav\">…</div> intercepts pointer events\n  3 × retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <p id=\"jpwLearningBody\">Feche as Configurações pelos controles originais …</p> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n    - retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <p id=\"jpwLearningObjective\">Conhecer o início do fluxo sem finalizar a sessão.</p> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n    - retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"settings-page-nav\">…</div> intercepts pointer events\n    - retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"settings-page-nav\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n",
+      "stepId": "general-session"
+    },
+    {
+      "name": "readonly-all-64-native-actions/mobile-320x700",
+      "result": "PRODUCT_FAIL",
+      "source_unchanged": true,
+      "report": "/private/tmp/jpw-dante-20261024/reports/legacy-build3-readonly.json",
+      "build": "58d8c49dc1977418",
+      "detail": "Locator.click: Timeout 7000ms exceeded.\nCall log:\n  - waiting for locator(\"#jpwLearningResume\").filter(visible=True).first\n    - locator resolved to <button type=\"button\" class=\"reset-btn\" id=\"jpwLearningResume\">Continuar</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <button type=\"button\" class=\"reset-btn\" id=\"jpwLearningBack\">Voltar</button> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <p id=\"jpwLearningBody\">Feche as Configurações pelos controles originais …</p> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n  2 × retrying click action\n      - waiting 100ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> intercepts pointer events\n  3 × retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <button type=\"button\" class=\"reset-btn\" id=\"jpwLearningBack\">Voltar</button> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n    - retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <p id=\"jpwLearningBody\">Feche as Configurações pelos controles originais …</p> from <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> subtree intercepts pointer events\n    - retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> intercepts pointer events\n    - retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <aside id=\"jpwLearningCoach\" class=\"jpw-learning-coach\" data-learning-status=\"paused\" data-learning-layout=\"floating\" aria-label=\"Orientação do guia\" data-learning-step=\"general-session\">…</aside> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n",
+      "stepId": "general-session"
+    }
+  ],
+  "registeredNotRunByThisAgent": [
+    {
+      "name": "native-browser-zoom-200",
+      "config": {
+        "nativeZoom": true,
+        "theme": "dark"
+      },
+      "reason": "native-headed zoom intentionally not run"
+    },
+    {
+      "name": "dante/model-contracts",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/journey-cross-chapter",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/v1-and-legacy-track",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/typewriter-reveal-pause",
+      "config": {
+        "motion": "no-preference"
+      },
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/reduced-motion",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/index-single-bookmark",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/planning-owned-form",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/agenda-owned-form",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/planning-monthly-editor",
+      "config": {},
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/planning-owned-form/mobile",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/agenda-owned-form/mobile",
+      "config": {
+        "width": 390,
+        "height": 844
+      },
+      "reason": "new Dante cases owned and executed by principal"
+    },
+    {
+      "name": "dante/touch-balloon",
+      "config": {
+        "touch": true,
+        "motion": "no-preference",
+        "width": 390,
+        "height": 844
+      },
+      "reason": "new Dante cases owned and executed by principal"
+    }
+  ],
+  "readonlyScreenshots": [
+    "/private/tmp/jpw-dante-20261024/reports/legacy-build3-readonly-readonly-all-64-native-actions-mobile-390x844.png",
+    "/private/tmp/jpw-dante-20261024/reports/legacy-build3-readonly-readonly-all-64-native-actions-mobile-320x700.png"
+  ],
+  "limits": [
+    "Paused per principal after real mobile overlapping-coach failures.",
+    "No helper/source edits after freeze; future product rebuild invalidates related final evidence.",
+    "No native-headed zoom run."
+  ]
+}

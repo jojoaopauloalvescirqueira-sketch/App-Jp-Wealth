@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-26T16:20:00.848743+00:00",
+  "build": "5cd40fe879de6727",
+  "branch": "codex/remover-nocuda-tool-20261026",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "product": "implemented locally; focused retirement and preservation tests passed",
+  "fullAttempt1": {
+    "PASS": 101,
+    "PRODUCT_FAIL": 1,
+    "exit": 1,
+    "seconds": 2724.52,
+    "sourceUnchanged": true,
+    "cause": "obsolete startup oracle; subsequently corrected and reviewed; raw failure preserved"
+  },
+  "fullAttempt2": {
+    "summary": {
+      "PASS": 101,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 1,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "exit": 1,
+    "seconds": 2819.804,
+    "frozenInputs": 678,
+    "sourceUnchanged": true,
+    "expectedAbsent": 11,
+    "retiredFilesStillPresent": [],
+    "cause": "ui-visual-quality exceeded unchanged900second deadline; exact underlying cause not established",
+    "fullApproved": false
+  },
+  "currentValidation": "Complete execution finished, approval blocked by1ENVIRONMENT_ERROR; not combined with earlier visual PASS",
+  "humanAcceptance": "pending",
+  "macReleased": true,
+  "macReleaseNotice": "delivered after second FULL completed; no owned test processes found",
+  "gitMutations": "authorized branch creation only; no commit/merge/push",
+  "publication": false,
+  "nextStep": "Measure the visual verifier duration by phase before proposing a bounded control-plane fix; preserve413cases,2px criteria and900second deadline; no additional GUI suite launched",
+  "independentFinalReview": {
+    "result": "BOUNDED_REVIEW_COMPLETE_FULL_BLOCKED",
+    "report": "FINAL-VALIDATION-REVIEW.md",
+    "additionalRuntimeBlockerIdentified": false,
+    "missingVisualCases": "nine completion receipts unavailable after timeout; no full visual approval"
+  }
+}

@@ -1,0 +1,3 @@
+# Errata de proveniência da contraprova direta
+
+O recibo bruto proof-after-apply.json conserva o resultado observado, mas seu campo baseGuideSHA256 lia o arquivo corrente após aplicação, em vez do before.py que o script efetivamente executava como baseline. O bruto não foi editado. Uma cópia do gerador foi corrigida para ler o hash do before.py e executada novamente, exit0, em proof-after-apply-corrected.json. O baseline é332ffc86056fd88dc7e758473c76b902c4b4d4ab9e308744fa726c67e3874978; o aplicado é9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6. Permanecem duas reproduções RED, duas GREEN,15negativos rejeitados e66IDs. Nenhum código do aplicativo ou teste versionado mudou para esta errata.

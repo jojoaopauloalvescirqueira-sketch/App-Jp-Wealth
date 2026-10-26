@@ -1,0 +1,411 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "MIN-01",
+      "case": "two dedicated named nonmodal help regions with explicit close and ARIA state"
+    },
+    {
+      "id": "MIN-02",
+      "case": "native Enter and Space, Escape focus return and Tab may leave help"
+    },
+    {
+      "id": "MIN-03",
+      "case": "own toggle, one help at a time, inside click retained, outside click closes"
+    },
+    {
+      "id": "MIN-04",
+      "case": "tick retains help DOM/focus and help preserves selection, state and camera deadline"
+    },
+    {
+      "id": "MIN-05",
+      "case": "deactivate, hidden/inert dialog, blur, visibility and dispose close portal help"
+    },
+    {
+      "id": "MIN-06",
+      "case": "help containment and close reachability on mobile, themes and CSS zoom 200 percent"
+    },
+    {
+      "id": "MIN-07",
+      "case": "selected facts, single compact UTC reference, collapsed evidence and complete contextual facts"
+    },
+    {
+      "id": "MIN-08",
+      "case": "closed, unconfirmed, no upcoming and unmatched additional search remain truthful distinct states"
+    },
+    {
+      "id": "MIN-09",
+      "case": "host-only resize closes focused map help and transfers focus to visible map toggle"
+    },
+    {
+      "id": "MIN-10",
+      "case": "painted rounded outer surface, usable inset and reflow across themes and zoom"
+    }
+  ],
+  "failures": [],
+  "errors": [],
+  "screenshots": [
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-calendar-390-scale1-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-map-390-scale1-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-calendar-390-scale1-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-map-390-scale1-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-calendar-390-scale2-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-map-390-scale2-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-calendar-1280-scale1-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/help-map-1280-scale1-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/surface-1280-scale1-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/surface-1280-scale1-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/surface-390-scale1-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/surface-390-scale1-dark.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/surface-390-scale2-light.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/surface-390-scale2-dark.png"
+  ],
+  "selection": "all",
+  "oracle": "docs/superpowers/plans/2026-10-16-market-minimal.md",
+  "surface_samples": [
+    {
+      "width": 1248,
+      "scale": 1,
+      "theme": "light",
+      "height": 819,
+      "corners": [
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ]
+      ],
+      "edges": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "distances": [
+        32,
+        32,
+        32,
+        32
+      ]
+    },
+    {
+      "width": 1248,
+      "scale": 1,
+      "theme": "dark",
+      "height": 819,
+      "corners": [
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ]
+      ],
+      "edges": [
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ]
+      ],
+      "distances": [
+        36,
+        36,
+        36,
+        36
+      ]
+    },
+    {
+      "width": 358,
+      "scale": 1,
+      "theme": "light",
+      "height": 800,
+      "corners": [
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ]
+      ],
+      "edges": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "distances": [
+        32,
+        32,
+        32,
+        32
+      ]
+    },
+    {
+      "width": 358,
+      "scale": 1,
+      "theme": "dark",
+      "height": 800,
+      "corners": [
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ]
+      ],
+      "edges": [
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ]
+      ],
+      "distances": [
+        36,
+        36,
+        36,
+        36
+      ]
+    },
+    {
+      "width": 326,
+      "scale": 2,
+      "theme": "light",
+      "height": 2263,
+      "corners": [
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ],
+        [
+          242,
+          244,
+          247
+        ]
+      ],
+      "edges": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "distances": [
+        32,
+        32,
+        32,
+        32
+      ]
+    },
+    {
+      "width": 326,
+      "scale": 2,
+      "theme": "dark",
+      "height": 2263,
+      "corners": [
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ],
+        [
+          16,
+          21,
+          29
+        ]
+      ],
+      "edges": [
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ],
+        [
+          24,
+          33,
+          45
+        ]
+      ],
+      "distances": [
+        36,
+        36,
+        36,
+        36
+      ]
+    }
+  ],
+  "hashes": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "tools/market_hours_minimal_test.py": "92b491d65ea8f74f7df163d70cecce4034a6e231bcae5299d069eec37f4803f1",
+    "docs/superpowers/plans/2026-10-16-market-minimal.md": "f79ee31aaf0b048fd115aee6737d0813aa52e516e22f6749e74699ac871bdde3"
+  }
+}

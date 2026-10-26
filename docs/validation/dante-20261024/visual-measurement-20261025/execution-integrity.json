@@ -1,0 +1,118 @@
+{
+  "at": "2026-10-25T20:49:53.747904+00:00",
+  "summary": {
+    "PASS": 102,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "fullExit": 0,
+  "fullSeconds": 2789.102,
+  "frozenInputs": 681,
+  "changed": [],
+  "all102IDsAndOrderPreserved": true,
+  "all102CommandsPreservedExceptOutputPrefix": true,
+  "all413VisualPASS": true,
+  "visualSourceFiles": 161,
+  "uiSeconds": 868.509,
+  "copies": {
+    "full-relocated.json": {
+      "sha256": "6209c7cfa6f4f83bd7220f5739c6b9c706e588765c5f12fad1fd4e3e1a6dc608",
+      "bytes": 373643,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated.json"
+    },
+    "full-relocated.log": {
+      "sha256": "fb7232562372e64f033000d0c367ec808ad31762536388eef32e5b7d5fe93068",
+      "bytes": 30962,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated.log"
+    },
+    "full-relocated-command.json": {
+      "sha256": "641e8908e85f71263bb4a7e9a760c0f1782d938f781ea6bbe443306e6504a3af",
+      "bytes": 1437,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-command.json"
+    },
+    "redirection-mapping.json": {
+      "sha256": "cc4bfe660703416dd8673c442fc422ee31c0f22df77216799bd1a2cb61a36a3d",
+      "bytes": 833,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/redirection-mapping.json"
+    },
+    "frozen-inputs.json": {
+      "sha256": "fab874c2ad87817c8e5a4023fcaf03789881365ca19f293b5e6b107ff1375ec0",
+      "bytes": 78131,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/frozen-inputs.json"
+    },
+    "frozen-inputs-before-full.json": {
+      "sha256": "7bea9ebd3fa02cfe89dcb94ad7bbdc852bb4cc939b788251d43f2558c60f8637",
+      "bytes": 77851,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/frozen-inputs-before-full.json"
+    },
+    "pre-full-refreeze.json": {
+      "sha256": "f7dbaeb157d90ba085364bbbaa5ff148c860f34987694d5e0096b310296aab8d",
+      "bytes": 220,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/pre-full-refreeze.json"
+    },
+    "performance-descriptive.json": {
+      "sha256": "4183247b8f0068f959c279cbd1d2ef54257441c81f4e906661a81904eb62a57a",
+      "bytes": 537,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/performance-descriptive.json"
+    },
+    "task-1-independent-review.md": {
+      "sha256": "12324e90f38f691a12cbef302475657915ae7fad26bf16f2f638cfb54378e648",
+      "bytes": 13657,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/task-1-independent-review.md"
+    },
+    "task-1-independent-review-receipt.json": {
+      "sha256": "d4a11fddf4a543a8272b64ce79816ef713a2ceaada5797d3c5e7202501da3e75",
+      "bytes": 3101,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/task-1-independent-review-receipt.json"
+    },
+    "visual-all-command.json": {
+      "sha256": "02fe96cd9b7b94e6077a9d6d45ae10b33bad494fa39001d14042bd3ad96a6caa",
+      "bytes": 595,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/visual-all-command.json"
+    },
+    "visual-all.log": {
+      "sha256": "ceef2c1643ea88ee2843aab0889c0bec9f378bea58414b568c059b262f21469d",
+      "bytes": 15444,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/visual-all.log"
+    },
+    "wrapper-configuration.json": {
+      "sha256": "572f729df45b50488fd472a0c836046a4c1af985ffcc109e9a37f3570b831a09",
+      "bytes": 269,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/wrapper-configuration.json"
+    },
+    "visual-all-results.json": {
+      "sha256": "12ab7fc3c36d30a54df0eb9d0d5d72e662ad6106859ce09c7184c6c8baa6f696",
+      "bytes": 19373269,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/visual-all/ui-visual-quality-results.json"
+    },
+    "full-ui-visual-results.json": {
+      "sha256": "7fbd49191fafb23731e5812ac4ca19f02b10ff422b843aa265c6b8fd36f8b7b3",
+      "bytes": 19378230,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-evidence/ui-visual-quality/ui-visual-quality-results.json"
+    },
+    "full-details/calendar-agenda.json": {
+      "sha256": "f2544aab64f1fe35abe9a2c5014c559cb66891816c8dcc50e77de1ea0a3afe5d",
+      "bytes": 10530,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-evidence/calendar-agenda.json"
+    },
+    "full-details/calendar-recovery.json": {
+      "sha256": "e5e49b1ccfd8747c7e5d59f3fdf087a6add13df281ca226b1a37646b9ee1fde1",
+      "bytes": 3869,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-evidence/calendar-recovery.json"
+    },
+    "full-details/calendar-distribution.json": {
+      "sha256": "1ffd77c4a8bb12610ec7f746fd18e4db91669ce96ed18da3404a8322fc60598d",
+      "bytes": 191181,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-evidence/calendar-distribution.json"
+    },
+    "full-details/guide.json": {
+      "sha256": "1ae11e30c56440172774b48b2016eb655d4f1fd2916a1357cf4b64cb02c9f378",
+      "bytes": 79087,
+      "source": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-evidence/guide.json"
+    }
+  },
+  "scope": "Evidence-only reconciliation after frozen candidate; no product or validator edits"
+}

@@ -21,9 +21,7 @@ const NAV_RESEARCH_CHILDREN=Object.freeze([
 ]);
 
 const NAV_TOOLS_CHILDREN=Object.freeze([
-  Object.freeze({id:'tools-calendar',label:'Calendário Econômico',primary:'tools',child:'tools-calendar',screen:'tools',localView:Object.freeze({surface:'tools',view:'calendar'}),aliases:Object.freeze(['tools'])}),
-  Object.freeze({id:'tools-market-hours',label:'Bolsas Globais',primary:'tools',child:'tools-market-hours',screen:'tools',localView:Object.freeze({surface:'tools',view:'market-hours'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'tools-nocuda',label:'Nocuda Tool',primary:'tools',child:'tools-nocuda',screen:'tools',localView:Object.freeze({surface:'tools',view:'nocuda'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'tools-calendar',label:'Calendário e Mercados',primary:'tools',child:'tools-calendar',screen:'tools',localView:Object.freeze({surface:'tools',view:'calendar'}),aliases:Object.freeze(['tools'])}),
   Object.freeze({id:'tools-leverage',label:'Stoikus — MT5',primary:'tools',child:'tools-leverage',screen:'tools',localView:Object.freeze({surface:'tools',view:'leverage'}),aliases:Object.freeze([])}),
   Object.freeze({id:'tools-normative',label:'Estrutura Normativa JP Wealth',primary:'tools',child:'tools-normative',screen:'tools',localView:Object.freeze({surface:'tools',view:'normative'}),aliases:Object.freeze([])}),
   Object.freeze({id:'tools-minigames',label:'MiniGames',primary:'tools',child:'tools-minigames',screen:'tools',localView:Object.freeze({surface:'tools',view:'minigames'}),aliases:Object.freeze([])})
@@ -42,6 +40,7 @@ const NAV_CANONICAL_ROUTES=Object.freeze([
 // Destinos legados. Saber resolvê-los não os promove a rotas primárias: as três
 // estudos pertencem a Research / Forex; ecal pertence a Ferramentas.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
+  'tools-nocuda':Object.freeze({canonical:'tools-leverage',child:'tools-leverage',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'leverage'})}),
   contas:Object.freeze({canonical:'forex-management-accounts',child:'forex-management-accounts',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
   'forex-account':Object.freeze({canonical:'forex-management-accounts',child:'forex-management-accounts',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
   contab:Object.freeze({canonical:'forex-accounting',child:'forex-accounting',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
@@ -55,6 +54,7 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   'forex-preparation':Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'checklist'}),
   'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
   ecal:Object.freeze({canonical:'tools-calendar',child:'tools-calendar',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'calendar'})}),
+  'tools-market-hours':Object.freeze({canonical:'tools-calendar',child:'tools-calendar',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'market-hours'})}),
   nocoda:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
   pivots:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'pivots'})}),
   'probability-lab':Object.freeze({canonical:'tools-minigames',child:'tools-minigames',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'galton'})}),
@@ -74,7 +74,7 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
   planning:Object.freeze({screen:'planning',primary:'planning',views:Object.freeze(['start','consolidated','monthly']),resolve:()=>window.JPWPlanning&&window.JPWPlanning.ui}),
   research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['nocoda','pivots','stocks-br','stocks-global','reits','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui}),
-  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','market-hours','nocuda','leverage','normative','minigames','galton','time-twins','capital-currents']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
+  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','market-hours','leverage','normative','minigames','galton','time-twins','capital-currents']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
@@ -179,6 +179,7 @@ function navSelectPrimary(primary){
 }
 
 function navApply(plan,target){
+  if(plan.requested==='tools-nocuda'&&window.JPWTools?.ui?.canNavigateRetired?.()===false){navLastResult={accepted:false,reason:'dialog-open'};return false;}
   if(plan.localView?.surface==='tools'&&['galton','time-twins','capital-currents'].includes(plan.localView.view)&&window.JPWTools?.minigames?.canNavigate?.()===false){
     navLastResult={accepted:false,reason:'dialog-open'};return false;
   }
@@ -268,13 +269,14 @@ function navLocalPlan(surfaceId,view,descriptor){
     else if(view==='reits') canonical='research-reits';
     else if(view==='others') canonical='research-others';
   }
-  if(surfaceId==='tools') canonical=({calendar:'tools-calendar','market-hours':'tools-market-hours',nocuda:'tools-nocuda',leverage:'tools-leverage',normative:'tools-normative',minigames:'tools-minigames',galton:'tools-minigames','time-twins':'tools-minigames','capital-currents':'tools-minigames'})[view]||null;
+  if(surfaceId==='tools') canonical=({calendar:'tools-calendar','market-hours':'tools-calendar',leverage:'tools-leverage',normative:'tools-normative',minigames:'tools-minigames',galton:'tools-minigames','time-twins':'tools-minigames','capital-currents':'tools-minigames'})[view]||null;
   const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-')||canonical.startsWith('tools-'))?canonical:null;
   return {accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
     canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
 }
 
 function navNavigateLocal(surfaceId,view){
+  if(surfaceId==='tools'&&view==='nocuda')return navNavigate('tools-nocuda');
   if(surfaceId==='planning'&&(view==='reference'||view==='accounts'))view='consolidated';
   if(surfaceId==='fxplan')return navNavigateLocal('planning',({overview:'consolidated',planning:'start',actuals:'monthly',table:'monthly'})[view]||view);
   if(surfaceId==='research'&&view==='calendar') return navNavigate('tools-calendar');

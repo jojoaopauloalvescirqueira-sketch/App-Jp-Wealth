@@ -1,0 +1,280 @@
+{
+  "results": [
+    {
+      "path": "index.html",
+      "check": "PF input survives remount and explicit recovery without save",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspect": {
+          "compatible": true,
+          "reason": "O registro, campo e valor original devem corresponder; uma edição aberta não será substituída."
+        },
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Incompatible field refuses reopening",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "result": {
+          "ok": false,
+          "reason": "O registro, campo e valor original devem corresponder; uma edição aberta não será substituída."
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Navigation draft captured independently of confirmed order",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspected": {
+          "compatible": true,
+          "reason": "Confira a ordem original; uma edição já aberta ou preferência diferente impede a reabertura."
+        },
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Retired NoCuda draft remains read-copy-only without an adapter or storage writes",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspection": {
+          "compatible": false,
+          "reason": "Nocuda Tool foi descontinuado. Este rascunho permanece disponível somente para leitura e cópia."
+        },
+        "restored": {
+          "ok": false,
+          "reason": "Nocuda Tool foi descontinuado. Este rascunho permanece disponível somente para leitura e cópia."
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Profile explicit reopen preserves stored preference",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Notes draft reopens without promoting a fact",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Notes appearance and folder drafts reopen without saving",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Malformed Notes fields and unavailable folders refuse reopening",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Planning imported fields remain readable and safely refuse automatic replay",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspect": {
+          "compatible": false,
+          "reason": "Rascunho patrimonial preservado para leitura e cópia. Abra o formulário correspondente, copie os valores e confira a prévia e os dados atuais antes de confirmar."
+        },
+        "restored": {
+          "ok": false,
+          "reason": "Rascunho patrimonial preservado para leitura e cópia. Abra o formulário correspondente, copie os valores e confira a prévia e os dados atuais antes de confirmar."
+        }
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Forged draft selectors and malformed identities refuse reopening",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Widget migration preserves old key on refused write",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "index.html",
+      "check": "Widget v2 promotes current envelope and verified write before removal",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "PF input survives remount and explicit recovery without save",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspect": {
+          "compatible": true,
+          "reason": "O registro, campo e valor original devem corresponder; uma edição aberta não será substituída."
+        },
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Incompatible field refuses reopening",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "result": {
+          "ok": false,
+          "reason": "O registro, campo e valor original devem corresponder; uma edição aberta não será substituída."
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Navigation draft captured independently of confirmed order",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspected": {
+          "compatible": true,
+          "reason": "Confira a ordem original; uma edição já aberta ou preferência diferente impede a reabertura."
+        },
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Retired NoCuda draft remains read-copy-only without an adapter or storage writes",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspection": {
+          "compatible": false,
+          "reason": "Nocuda Tool foi descontinuado. Este rascunho permanece disponível somente para leitura e cópia."
+        },
+        "restored": {
+          "ok": false,
+          "reason": "Nocuda Tool foi descontinuado. Este rascunho permanece disponível somente para leitura e cópia."
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Profile explicit reopen preserves stored preference",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Notes draft reopens without promoting a fact",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "restored": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Notes appearance and folder drafts reopen without saving",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Malformed Notes fields and unavailable folders refuse reopening",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Planning imported fields remain readable and safely refuse automatic replay",
+      "status": "PASS",
+      "evidence": {
+        "ok": true,
+        "inspect": {
+          "compatible": false,
+          "reason": "Rascunho patrimonial preservado para leitura e cópia. Abra o formulário correspondente, copie os valores e confira a prévia e os dados atuais antes de confirmar."
+        },
+        "restored": {
+          "ok": false,
+          "reason": "Rascunho patrimonial preservado para leitura e cópia. Abra o formulário correspondente, copie os valores e confira a prévia e os dados atuais antes de confirmar."
+        }
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Forged draft selectors and malformed identities refuse reopening",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Widget migration preserves old key on refused write",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "check": "Widget v2 promotes current envelope and verified write before removal",
+      "status": "PASS",
+      "evidence": {
+        "ok": true
+      }
+    }
+  ],
+  "summary": {
+    "PASS": 24
+  },
+  "scope": "Synthetic application adapters; native folder/Safari/Firefox/hosted transfer NOT_RUN"
+}

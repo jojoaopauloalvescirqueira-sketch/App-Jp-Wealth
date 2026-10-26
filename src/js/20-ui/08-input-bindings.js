@@ -5,8 +5,9 @@ function bindParams(){
     const input=$(id);if(!input)continue;input.readOnly=true;
     input.title='Registro explícito em Configurações → Operação → Parâmetros. Não altera norma a cada tecla.';
   }
-  $('mExpAlvo').addEventListener('input',e=>{S.expAlvo=parseFloat(e.target.value)||0;save();renderMotor();});
-  $('cLoteMaster').addEventListener('input',e=>{S.loteMaster=parseFloat(e.target.value)||0;save();renderAplicacao();});
+  const absentOrNumber=input=>input.value.trim()===''?null:parseFloat(input.value);
+  $('mExpAlvo').addEventListener('input',e=>{const value=absentOrNumber(e.target);if(value!==null&&!Number.isFinite(value))return;S.expAlvo=value;save();renderMotor();});
+  $('cLoteMaster').addEventListener('input',e=>{const value=absentOrNumber(e.target);if(value!==null&&!Number.isFinite(value))return;S.loteMaster=value;save();renderAplicacao();});
   $('addAccountBtn')?.addEventListener('click',()=>{
     JPWFXConsolidated.openAccountRegistration({trigger:$('addAccountBtn')});
   });

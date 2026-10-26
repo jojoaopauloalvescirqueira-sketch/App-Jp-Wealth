@@ -1,0 +1,5 @@
+{
+  "classification": "TEST_HARNESS_FAIL",
+  "cause": "attempted mobile-menu opener in desktop layout where it is hidden; no product assertion executed",
+  "sourceChanges": false
+}

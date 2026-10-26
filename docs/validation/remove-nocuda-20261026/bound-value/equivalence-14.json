@@ -1,0 +1,246 @@
+{
+  "classification": "PASS",
+  "fixtures": 14,
+  "rows": [
+    {
+      "name": "text",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "US$ 1.234,56"
+          ],
+          "actual": "US$ 1.234,56"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "US$ 1.234,56"
+          ],
+          "actual": "US$ 1.234,56"
+        }
+      }
+    },
+    {
+      "name": "nbsp",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "US$ 0,00"
+          ],
+          "actual": "US$ 0,00"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "US$ 0,00"
+          ],
+          "actual": "US$ 0,00"
+        }
+      }
+    },
+    {
+      "name": "negative",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "−25,00"
+          ],
+          "actual": "−25,00"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "−25,00"
+          ],
+          "actual": "−25,00"
+        }
+      }
+    },
+    {
+      "name": "missing-value",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "—"
+          ],
+          "actual": "—"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "—"
+          ],
+          "actual": "—"
+        }
+      }
+    },
+    {
+      "name": "multiline",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "US$ 10,00"
+          ],
+          "actual": "US$\n10,00"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "US$ 10,00"
+          ],
+          "actual": "US$\n10,00"
+        }
+      }
+    },
+    {
+      "name": "hidden-child",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "10"
+          ],
+          "actual": "10"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "10"
+          ],
+          "actual": "10"
+        }
+      }
+    },
+    {
+      "name": "strip-label",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "3%"
+          ],
+          "actual": "3%"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "3%"
+          ],
+          "actual": "3%"
+        }
+      }
+    },
+    {
+      "name": "list-candidates",
+      "expectedAccepted": true,
+      "before": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "3%",
+            "—"
+          ],
+          "actual": "3%"
+        }
+      },
+      "after": {
+        "accepted": true,
+        "result": {
+          "expected": [
+            "3%",
+            "—"
+          ],
+          "actual": "3%"
+        }
+      }
+    },
+    {
+      "name": "wrong-value",
+      "expectedAccepted": false,
+      "before": {
+        "accepted": false
+      },
+      "after": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "missing",
+      "expectedAccepted": false,
+      "before": {
+        "accepted": false
+      },
+      "after": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "duplicate",
+      "expectedAccepted": false,
+      "before": {
+        "accepted": false
+      },
+      "after": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "hidden",
+      "expectedAccepted": false,
+      "before": {
+        "accepted": false
+      },
+      "after": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "unrelated-equal",
+      "expectedAccepted": false,
+      "before": {
+        "accepted": false
+      },
+      "after": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "hidden-strip",
+      "expectedAccepted": false,
+      "before": {
+        "accepted": false
+      },
+      "after": {
+        "accepted": false
+      }
+    }
+  ],
+  "scope": "real Chromium static syntheticDOM old/new functions; no claim of universal equivalence or runtime speed",
+  "caseIdsAndGateEdited": false
+}

@@ -1,0 +1,324 @@
+{
+  "case": "labels",
+  "bundleSHA256": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd",
+  "checks": [
+    "default false preserves original four visible overlapping labels",
+    "600px selected Paris wins; hidden secondary pin still emits exact city callback and becomes visible",
+    "310px mobile, keyboard rotation and 600x400 resize keep visible labels nonoverlapping and inside bounds",
+    "rotation reuses cached dimensions; font loading invalidates all four labels exactly once"
+  ],
+  "snapshots": [
+    {
+      "name": "default-600",
+      "width": 600,
+      "height": 600,
+      "labels": [
+        {
+          "id": "london",
+          "visible": true,
+          "x": 306.6318664550781,
+          "y": 281.828125,
+          "w": 56.90625,
+          "h": 14.40625,
+          "pinX": 293.673,
+          "pinY": 289.031
+        },
+        {
+          "id": "paris",
+          "visible": true,
+          "x": 312.9599914550781,
+          "y": 292.796875,
+          "w": 35.265625,
+          "h": 14.40625,
+          "pinX": 300,
+          "pinY": 300
+        },
+        {
+          "id": "frankfurt",
+          "visible": true,
+          "x": 329.5693664550781,
+          "y": 286.953125,
+          "w": 65.8125,
+          "h": 14.40625,
+          "pinX": 316.611,
+          "pinY": 294.166
+        },
+        {
+          "id": "zurich",
+          "visible": true,
+          "x": 330.1006164550781,
+          "y": 298.15625,
+          "w": 54.640625,
+          "h": 14.40625,
+          "pinX": 317.153,
+          "pinY": 305.368
+        }
+      ],
+      "collisions": [
+        [
+          "london",
+          "paris"
+        ],
+        [
+          "london",
+          "frankfurt"
+        ],
+        [
+          "paris",
+          "frankfurt"
+        ],
+        [
+          "paris",
+          "zurich"
+        ],
+        [
+          "frankfurt",
+          "zurich"
+        ]
+      ]
+    },
+    {
+      "name": "declutter-600",
+      "width": 600,
+      "height": 600,
+      "labels": [
+        {
+          "id": "london",
+          "visible": false,
+          "x": 306.6318664550781,
+          "y": 281.828125,
+          "w": 56.90625,
+          "h": 14.40625,
+          "pinX": 293.673,
+          "pinY": 289.031
+        },
+        {
+          "id": "paris",
+          "visible": true,
+          "x": 312.9599914550781,
+          "y": 292.796875,
+          "w": 35.265625,
+          "h": 14.40625,
+          "pinX": 300,
+          "pinY": 300
+        },
+        {
+          "id": "frankfurt",
+          "visible": false,
+          "x": 329.5693664550781,
+          "y": 286.953125,
+          "w": 65.8125,
+          "h": 14.40625,
+          "pinX": 316.611,
+          "pinY": 294.166
+        },
+        {
+          "id": "zurich",
+          "visible": false,
+          "x": 330.1006164550781,
+          "y": 298.15625,
+          "w": 54.640625,
+          "h": 14.40625,
+          "pinX": 317.153,
+          "pinY": 305.368
+        }
+      ],
+      "collisions": []
+    },
+    {
+      "name": "selected-hidden-pin-600",
+      "width": 600,
+      "height": 600,
+      "labels": [
+        {
+          "id": "london",
+          "visible": true,
+          "x": 306.6318664550781,
+          "y": 281.828125,
+          "w": 56.90625,
+          "h": 14.40625,
+          "pinX": 293.673,
+          "pinY": 289.031
+        },
+        {
+          "id": "paris",
+          "visible": false,
+          "x": 312.9599914550781,
+          "y": 292.796875,
+          "w": 35.265625,
+          "h": 14.40625,
+          "pinX": 300,
+          "pinY": 300
+        },
+        {
+          "id": "frankfurt",
+          "visible": false,
+          "x": 329.5693664550781,
+          "y": 286.953125,
+          "w": 65.8125,
+          "h": 14.40625,
+          "pinX": 316.611,
+          "pinY": 294.166
+        },
+        {
+          "id": "zurich",
+          "visible": false,
+          "x": 330.1006164550781,
+          "y": 298.15625,
+          "w": 54.640625,
+          "h": 14.40625,
+          "pinX": 317.153,
+          "pinY": 305.368
+        }
+      ],
+      "collisions": []
+    },
+    {
+      "name": "declutter-310",
+      "width": 310,
+      "height": 310,
+      "labels": [
+        {
+          "id": "london",
+          "visible": true,
+          "x": 161.61874389648438,
+          "y": 143.828125,
+          "w": 44.90625,
+          "h": 11,
+          "pinX": 151.731,
+          "pinY": 149.333
+        },
+        {
+          "id": "paris",
+          "visible": false,
+          "x": 164.89999389648438,
+          "y": 149.5,
+          "w": 27.953125,
+          "h": 11,
+          "pinX": 155,
+          "pinY": 155
+        },
+        {
+          "id": "frankfurt",
+          "visible": false,
+          "x": 173.47811889648438,
+          "y": 146.484375,
+          "w": 52.125,
+          "h": 11,
+          "pinX": 163.583,
+          "pinY": 151.986
+        },
+        {
+          "id": "zurich",
+          "visible": false,
+          "x": 173.75936889648438,
+          "y": 152.265625,
+          "w": 43.171875,
+          "h": 11,
+          "pinX": 163.862,
+          "pinY": 157.774
+        }
+      ],
+      "collisions": []
+    },
+    {
+      "name": "rotated-310",
+      "width": 310,
+      "height": 310,
+      "labels": [
+        {
+          "id": "london",
+          "visible": true,
+          "x": 161.61874389648438,
+          "y": 156.859375,
+          "w": 44.90625,
+          "h": 11,
+          "pinX": 151.731,
+          "pinY": 162.37
+        },
+        {
+          "id": "paris",
+          "visible": false,
+          "x": 164.89999389648438,
+          "y": 162.515625,
+          "w": 27.953125,
+          "h": 11,
+          "pinX": 155,
+          "pinY": 168.024
+        },
+        {
+          "id": "frankfurt",
+          "visible": false,
+          "x": 173.47811889648438,
+          "y": 159.484375,
+          "w": 52.125,
+          "h": 11,
+          "pinX": 163.583,
+          "pinY": 164.99
+        },
+        {
+          "id": "zurich",
+          "visible": false,
+          "x": 173.75936889648438,
+          "y": 165.234375,
+          "w": 43.171875,
+          "h": 11,
+          "pinX": 163.862,
+          "pinY": 170.743
+        }
+      ],
+      "collisions": []
+    },
+    {
+      "name": "resized-600x400",
+      "width": 600,
+      "height": 400,
+      "labels": [
+        {
+          "id": "london",
+          "visible": true,
+          "x": 305.6812438964844,
+          "y": 208.78125,
+          "w": 44.90625,
+          "h": 11,
+          "pinX": 295.782,
+          "pinY": 214.292
+        },
+        {
+          "id": "paris",
+          "visible": false,
+          "x": 309.8999938964844,
+          "y": 216.0625,
+          "w": 27.953125,
+          "h": 11,
+          "pinX": 300,
+          "pinY": 221.566
+        },
+        {
+          "id": "frankfurt",
+          "visible": false,
+          "x": 320.9624938964844,
+          "y": 212.140625,
+          "w": 52.125,
+          "h": 11,
+          "pinX": 311.074,
+          "pinY": 217.653
+        },
+        {
+          "id": "zurich",
+          "visible": false,
+          "x": 321.3218688964844,
+          "y": 219.546875,
+          "w": 43.171875,
+          "h": 11,
+          "pinX": 311.435,
+          "pinY": 225.048
+        }
+      ],
+      "collisions": []
+    }
+  ],
+  "status": "PASS",
+  "DPR": 1,
+  "browser": "148.0.7778.96"
+}

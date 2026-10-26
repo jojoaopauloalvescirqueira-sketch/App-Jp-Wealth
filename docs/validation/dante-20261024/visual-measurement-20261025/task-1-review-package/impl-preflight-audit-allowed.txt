@@ -1,0 +1,8 @@
+PREFLIGHT PASS
+- branch: codex/dante-guia-20261024
+- HEAD: a4bf278cd4dc
+- rastreados: 2708
+- alteracoes: 94
+- scripts no manifest: 123
+- AVISO: arvore possui 94 alteracao(oes); confirme autoria e escopo
+- AVISO: POTENTIAL MATERIAL CHANGE AFTER SOURCE REVISION: 1279 caminho(s) alterado(s) apos ea15afc9c6a9c30cc69c5b98a8b85c85211ffb34 fora dos caminhos reconhecidos como reconciliacao contextual; executar avaliacao de impacto agentico e reconciliar o contexto se aplicavel

@@ -1,0 +1,42 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "-u",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-after-bound-value/full-relocated.json"
+  ],
+  "mapping": {
+    "logical": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T140724995913",
+    "resolved": "/private/tmp/jpw-remove-nocuda-20261026/full-after-bound-value/full-relocated-evidence",
+    "priorInode": 18656113,
+    "emptyOwnedFreshDirectoryOnly": true,
+    "stoppedGroupMembers": [
+      [
+        "53834",
+        "53832",
+        "53834",
+        "Ts",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 -u tools/quality_gate.py --tier full --artifact /private/tmp/jpw-remove-nocuda-20261026/full-after-bound-value/full-relocated.json"
+      ],
+      [
+        "53835",
+        "53834",
+        "53834",
+        "Z",
+        "<defunct>"
+      ]
+    ],
+    "pauseSeconds": 0.487741
+  },
+  "exit": null,
+  "seconds": 1027.558,
+  "frozenInputs": 679,
+  "sourceUnchanged": true,
+  "preflightVerified": true,
+  "sourceEdits": false,
+  "timeoutEdits": false,
+  "criteriaEdits": false
+}

@@ -1,0 +1,47 @@
+{
+  "base_sha256": "332ffc86056fd88dc7e758473c76b902c4b4d4ab9e308744fa726c67e3874978",
+  "reviewed_applied_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6",
+  "tests": [
+    {
+      "command": ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 tools/learning_guide_test.py --case startup-source-manifest --out /private/tmp/jpw-remove-nocuda-20261026/guide-startup-fix/startup-source-manifest.json",
+      "exit": 0,
+      "result": "PASS",
+      "receipt": "startup-source-manifest.json",
+      "source_unchanged": true,
+      "runtime": {
+        "launch": {
+          "headless": true,
+          "executable_path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        },
+        "python": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "browserVersion": "155.0.8059.86"
+      },
+      "test_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6"
+    },
+    {
+      "command": ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 tools/learning_guide_test.py --case offline-sw-four-guide-modules --out /private/tmp/jpw-remove-nocuda-20261026/guide-startup-fix/offline-sw-four-guide-modules.json",
+      "exit": 0,
+      "result": "PASS",
+      "receipt": "offline-sw-four-guide-modules.json",
+      "source_unchanged": true,
+      "runtime": {
+        "launch": {
+          "headless": true,
+          "executable_path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        },
+        "python": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "browserVersion": "155.0.8059.86"
+      },
+      "test_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6"
+    }
+  ],
+  "direct_proof": {
+    "command": ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 /private/tmp/jpw-remove-nocuda-20261026/guide-startup-fix/prove-after-apply.py",
+    "exit": 0,
+    "result": "PASS",
+    "receipt": "proof-after-apply.json",
+    "counterproofsRejected": 15,
+    "caseIdsUnchanged": 66
+  },
+  "scope": "Only exact independently reviewed tools/learning_guide_test.py candidate applied; no product/build edits; headless synthetic tests"
+}

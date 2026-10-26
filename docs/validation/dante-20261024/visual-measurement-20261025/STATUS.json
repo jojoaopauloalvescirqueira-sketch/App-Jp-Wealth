@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-25T20:55:34.283198+00:00",
+  "scope": "authorized visual measurement optimization and final candidate validation",
+  "branch": "codex/dante-guia-20261024",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "build": "8c127c2f92de375e",
+  "technicalStatus": "PASS",
+  "full": {
+    "checks": 102,
+    "pass": 102,
+    "exit": 0,
+    "seconds": 2789.102
+  },
+  "visual": {
+    "required": 413,
+    "pass": 413,
+    "seconds": 868.509,
+    "timeoutSeconds": 900,
+    "toleranceCssPx": 2
+  },
+  "frozenInputs": 681,
+  "frozenChanged": [],
+  "rpcPerButton": {
+    "before": 8,
+    "after": 4
+  },
+  "totalRuntimeGainDemonstrated": false,
+  "independentReview": "PASS; no material Critical/Important findings",
+  "humanAcceptance": "PENDING",
+  "macReleased": true,
+  "gitMutations": false,
+  "publication": false,
+  "applicationChangesInOptimization": false,
+  "historicalFailuresPreserved": true,
+  "postSuiteEdits": "scoped factual evidence and execution indexes only; outside 681 frozen inputs"
+}

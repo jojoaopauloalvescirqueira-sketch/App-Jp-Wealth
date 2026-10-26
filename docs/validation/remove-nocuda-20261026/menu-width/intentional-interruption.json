@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-26T17:24:31.912287+00:00",
+  "pid": 53832,
+  "command": ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 -u /private/tmp/jpw-remove-nocuda-20261026/full-after-bound-value/redirect_full.py --run",
+  "reason": "completedvisual413cases contains confirmed counterproof failure; stop remainingchecks before further diagnosis; not FULLPASS",
+  "signal": "SIGINT ownedwrapper only",
+  "visual": "412PASS1PRODUCT_FAIL;849.578s"
+}

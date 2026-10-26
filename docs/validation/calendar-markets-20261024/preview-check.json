@@ -1,0 +1,17 @@
+{
+  "build": "3a9f6157481ae050",
+  "url": "http://127.0.0.1:58998/index.html?v=3a9f6157481ae050",
+  "responses": [
+    {
+      "path": "build-id.js",
+      "status": 200,
+      "bytes": 39890
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 549227
+    }
+  ],
+  "input_drift": 0
+}

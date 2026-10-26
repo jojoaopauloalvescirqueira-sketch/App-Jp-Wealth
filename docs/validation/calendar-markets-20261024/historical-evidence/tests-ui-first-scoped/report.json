@@ -1,0 +1,37 @@
+{
+  "status": "PRODUCT_FAIL",
+  "checks": [],
+  "failures": [
+    {
+      "id": "CM-UI-01",
+      "case": "320 to 1440 reflow, themes, 44px controls and native expansion keyboard",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 101, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 352, in keyboard_reflow\n    assert all(b['width'] >= 44 and b['height'] >= 44 for b in bounds), (width, theme, bounds)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: (320, 'light', [{'width': 246.140625, 'height': 44}, {'width': 22.578125, 'height': 44}, {'width': 63.796875, 'height': 44}, {'width': 61.234375, 'height': 44}, {'width': 143.65625, 'height': 44}, {'width': 138.71875, 'height': 44}, {'width': 49.828125, 'height': 44}])\n"
+    }
+  ],
+  "errors": [],
+  "oracle": "docs/superpowers/plans/2026-10-24-calendar-markets.md",
+  "mutant": null,
+  "sources": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "f5103cf1d3727f70f359d0093faaee97ee286d74d88824aecf857fc9ae36f7a0",
+    "src/js/40-app/31-market-hours/04-controller.js": "ef91f93e89724e7eb1a5b9e7253d7d6e3887e3887fe010d43fd5fd427041f475",
+    "src/styles/app.css": "a6db0e8f550f334de80f64e88b63b86e1f1f053b7a19351b41a6298dcef3274f",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/20-ui/31-tools-services.js": "0ecfd5c63a71c90ea0f800ebab9c23d2936f2bebdaa2dff91956c63f0f4911ca",
+    "tools/calendar_markets_test.py": "831e1e11628b04fc046275589ae3379e7f60034f656bd7506cafc0bcb6fc2a60",
+    "docs/superpowers/plans/2026-10-24-calendar-markets.md": "695d2b3b1b6198a82cc9cb00abdaab5a19a9b86bc27ea01aab17d5df164fda5f"
+  },
+  "inputsAfter": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "f5103cf1d3727f70f359d0093faaee97ee286d74d88824aecf857fc9ae36f7a0",
+    "src/js/40-app/31-market-hours/04-controller.js": "ef91f93e89724e7eb1a5b9e7253d7d6e3887e3887fe010d43fd5fd427041f475",
+    "src/styles/app.css": "a6db0e8f550f334de80f64e88b63b86e1f1f053b7a19351b41a6298dcef3274f",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/20-ui/31-tools-services.js": "0ecfd5c63a71c90ea0f800ebab9c23d2936f2bebdaa2dff91956c63f0f4911ca",
+    "tools/calendar_markets_test.py": "831e1e11628b04fc046275589ae3379e7f60034f656bd7506cafc0bcb6fc2a60",
+    "docs/superpowers/plans/2026-10-24-calendar-markets.md": "695d2b3b1b6198a82cc9cb00abdaab5a19a9b86bc27ea01aab17d5df164fda5f"
+  },
+  "stableInputs": true
+}

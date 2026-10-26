@@ -1,0 +1,45 @@
+{
+  "build": "8c127c2f92de375e",
+  "frozenInputs": 679,
+  "unchanged": true,
+  "calendarPatch": "applied exact proposed product/test hashes; RED/GREEN and default14PASS",
+  "fullComplete": {
+    "artifact": "full-final.json",
+    "PASS": 101,
+    "ENVIRONMENT_ERROR": 1,
+    "PRODUCT_FAIL": 0,
+    "exit": 1
+  },
+  "visualIsolated": {
+    "PASS": 413,
+    "required": 413,
+    "seconds": 853.471,
+    "timeout": 900,
+    "exit": 0,
+    "sourceUnchanged": true
+  },
+  "repeat": {
+    "state": "INCOMPLETE",
+    "exit": 130,
+    "reason": "Second visual900timeout; interrupted duplicate remaining checks, no merged results"
+  },
+  "next": "Unchanged official full with only its own fresh empty artifact directory mapped to scratch; waiting coordinated hands-off window and final independent wrapper review",
+  "financialChangesInCalendarWave": false,
+  "gitOperations": false,
+  "humanAcceptance": "NOT_RUN",
+  "outputConfiguration": {
+    "independentControlsPASS": 26,
+    "selftestPASS": 7,
+    "wrapperSHA256": "58a1b44639f54398be8addbced847a13fc2da144f9a9e84471e722195fa15195",
+    "gateSourceChanges": false,
+    "realHandshake": "NOT_RUN",
+    "newFull": "NOT_RUN",
+    "awaiting": "hands-off coordination requested asynchronously"
+  },
+  "distributionCurrent": {
+    "HTTP": "PASS",
+    "file": "PASS",
+    "portable": "PASS",
+    "PWAoffline": "PASS"
+  }
+}

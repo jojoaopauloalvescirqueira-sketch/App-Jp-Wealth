@@ -1,0 +1,55 @@
+{
+  "python": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "env": {
+    "JP_WEALTH_CHROMIUM": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "checks": [
+    {
+      "command": "python tools/saving_draft_recovery_test.py --artifact /private/tmp/jpw-remove-nocuda-20261026/fixture-adaptation/saving-final-results.json",
+      "status": "PASS",
+      "exit": 0,
+      "scope": "24 checks; modular and portable"
+    },
+    {
+      "command": "python tools/minigames_test.py",
+      "status": "PASS",
+      "exit": 0,
+      "scope": "hub, guide, modular-file, portable-alone and pwa-offline (137 SW responses)"
+    },
+    {
+      "command": "python tools/time_twins_browser_test.py --mode integrated --case 'integrated lazy hub' --out-dir /private/tmp/jpw-remove-nocuda-20261026/fixture-adaptation/time-twins-final",
+      "status": "PASS",
+      "exit": 0,
+      "scope": "1 focused integrated group"
+    },
+    {
+      "command": "python tools/capital_currents_browser_test.py --mode integrated --case navigation --out-dir /private/tmp/jpw-remove-nocuda-20261026/fixture-adaptation/capital-currents-final",
+      "status": "PASS",
+      "exit": 0,
+      "scope": "1 focused integrated group"
+    },
+    {
+      "command": "python tools/planning_proportions_test.py --case regressions --out /private/tmp/jpw-remove-nocuda-20261026/fixture-adaptation/planning",
+      "status": "PASS",
+      "exit": 0,
+      "scope": "5 cases before SW-only rebuild; final FULL delegated to root"
+    },
+    {
+      "command": "python tools/minigames_test.py [initial before final SW rebuild]",
+      "status": "ENVIRONMENT_ERROR",
+      "exit": 143,
+      "scope": "interrupted own hung test after build changed; partial assertions retained, final retry passed"
+    }
+  ],
+  "hashes": {
+    "tools/saving_draft_recovery_test.py": "f22f02465ba394aa05db5b057333d85ada1dd91d23d9a76c5f4c760effd14df6",
+    "tools/time_twins_browser_test.py": "32e2ebe5f4fe8ddffc755823d16a8dd4147ec7b3a9a037243d256484da534a1b",
+    "tools/capital_currents_browser_test.py": "683e347c59eb30608474c57e27ff7cc845510f667ebd408ec2054f8fd8073289",
+    "tools/planning_proportions_test.py": "112dc287d14557b725b69c204a67fd004fb3e45ee3fb891a767d9e2de231a8dc",
+    "tools/minigames_test.py": "4a1c2fd7e199a1d10ab5b13f2a0d4cf9996ab8cf52ecb281c92aa76ca7057dd2",
+    "build-id.js": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640",
+    "sw.js": "49217775a22a02572439625d5fd7128c44378f92a791fddc733b8d0cc446b59a",
+    "index.html": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "cda2311428689320caaad3e3665cc0e93207f09a25ea96f2c50fc40a5849e2eb"
+  }
+}

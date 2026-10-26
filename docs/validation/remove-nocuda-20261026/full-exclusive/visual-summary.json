@@ -1,0 +1,2086 @@
+{
+  "classification": "PASS",
+  "started_at": "2026-10-26T19:09:08.179186+00:00",
+  "finished_at": "2026-10-26T19:23:23.217354+00:00",
+  "selection": "all",
+  "required_case_ids": [
+    "regression-stoikus-vertical-groups",
+    "regression-forecast-inner-center",
+    "regression-close-svg-ink-center",
+    "matrix-sidebar-light-320x700",
+    "matrix-sidebar-dark-320x700",
+    "matrix-topbar-light-320x700",
+    "matrix-topbar-dark-320x700",
+    "matrix-glass-light-320x700",
+    "matrix-glass-dark-320x700",
+    "matrix-submenu-light-320x700",
+    "matrix-submenu-dark-320x700",
+    "matrix-sidebar-light-390x844",
+    "matrix-sidebar-dark-390x844",
+    "matrix-topbar-light-390x844",
+    "matrix-topbar-dark-390x844",
+    "matrix-glass-light-390x844",
+    "matrix-glass-dark-390x844",
+    "matrix-submenu-light-390x844",
+    "matrix-submenu-dark-390x844",
+    "matrix-sidebar-light-700x600",
+    "matrix-sidebar-dark-700x600",
+    "matrix-topbar-light-700x600",
+    "matrix-topbar-dark-700x600",
+    "matrix-glass-light-700x600",
+    "matrix-glass-dark-700x600",
+    "matrix-submenu-light-700x600",
+    "matrix-submenu-dark-700x600",
+    "matrix-sidebar-light-701x601",
+    "matrix-sidebar-dark-701x601",
+    "matrix-topbar-light-701x601",
+    "matrix-topbar-dark-701x601",
+    "matrix-glass-light-701x601",
+    "matrix-glass-dark-701x601",
+    "matrix-submenu-light-701x601",
+    "matrix-submenu-dark-701x601",
+    "matrix-sidebar-light-1099x720",
+    "matrix-sidebar-dark-1099x720",
+    "matrix-topbar-light-1099x720",
+    "matrix-topbar-dark-1099x720",
+    "matrix-glass-light-1099x720",
+    "matrix-glass-dark-1099x720",
+    "matrix-submenu-light-1099x720",
+    "matrix-submenu-dark-1099x720",
+    "matrix-sidebar-light-1100x719",
+    "matrix-sidebar-dark-1100x719",
+    "matrix-topbar-light-1100x719",
+    "matrix-topbar-dark-1100x719",
+    "matrix-glass-light-1100x719",
+    "matrix-glass-dark-1100x719",
+    "matrix-submenu-light-1100x719",
+    "matrix-submenu-dark-1100x719",
+    "matrix-sidebar-light-1100x720",
+    "matrix-sidebar-dark-1100x720",
+    "matrix-topbar-light-1100x720",
+    "matrix-topbar-dark-1100x720",
+    "matrix-glass-light-1100x720",
+    "matrix-glass-dark-1100x720",
+    "matrix-submenu-light-1100x720",
+    "matrix-submenu-dark-1100x720",
+    "matrix-sidebar-light-1101x721",
+    "matrix-sidebar-dark-1101x721",
+    "matrix-topbar-light-1101x721",
+    "matrix-topbar-dark-1101x721",
+    "matrix-glass-light-1101x721",
+    "matrix-glass-dark-1101x721",
+    "matrix-submenu-light-1101x721",
+    "matrix-submenu-dark-1101x721",
+    "matrix-sidebar-light-1440x1000",
+    "matrix-sidebar-dark-1440x1000",
+    "matrix-topbar-light-1440x1000",
+    "matrix-topbar-dark-1440x1000",
+    "matrix-glass-light-1440x1000",
+    "matrix-glass-dark-1440x1000",
+    "matrix-submenu-light-1440x1000",
+    "matrix-submenu-dark-1440x1000",
+    "matrix-sidebar-light-1440x480",
+    "matrix-sidebar-dark-1440x480",
+    "matrix-topbar-light-1440x480",
+    "matrix-topbar-dark-1440x480",
+    "matrix-glass-light-1440x480",
+    "matrix-glass-dark-1440x480",
+    "matrix-submenu-light-1440x480",
+    "matrix-submenu-dark-1440x480",
+    "native200-sidebar-light",
+    "native200-sidebar-dark",
+    "native200-topbar-light",
+    "native200-topbar-dark",
+    "native200-glass-light",
+    "native200-glass-dark",
+    "native200-submenu-light",
+    "native200-submenu-dark",
+    "states-confirmation-review-edit-multiple-cancel",
+    "touch-390x844",
+    "counterproof-menu-inner-left",
+    "counterproof-menu-width",
+    "counterproof-forecast-inner-text",
+    "counterproof-svg-drawing",
+    "coverage-missing-and-zero-rejected",
+    "compact-summary-groups",
+    "compact-current-calendar-year",
+    "compact-wide-seven-columns",
+    "compact-narrow-three-columns",
+    "compact-month-details-complete",
+    "compact-calendar-vs-finalization",
+    "compact-controls-draft-focus",
+    "compact-scenario-values",
+    "compact-matrix-sidebar-light-320x700",
+    "compact-matrix-sidebar-dark-320x700",
+    "compact-matrix-topbar-light-320x700",
+    "compact-matrix-topbar-dark-320x700",
+    "compact-matrix-glass-light-320x700",
+    "compact-matrix-glass-dark-320x700",
+    "compact-matrix-submenu-light-320x700",
+    "compact-matrix-submenu-dark-320x700",
+    "compact-matrix-sidebar-light-390x844",
+    "compact-matrix-sidebar-dark-390x844",
+    "compact-matrix-topbar-light-390x844",
+    "compact-matrix-topbar-dark-390x844",
+    "compact-matrix-glass-light-390x844",
+    "compact-matrix-glass-dark-390x844",
+    "compact-matrix-submenu-light-390x844",
+    "compact-matrix-submenu-dark-390x844",
+    "compact-matrix-sidebar-light-700x600",
+    "compact-matrix-sidebar-dark-700x600",
+    "compact-matrix-topbar-light-700x600",
+    "compact-matrix-topbar-dark-700x600",
+    "compact-matrix-glass-light-700x600",
+    "compact-matrix-glass-dark-700x600",
+    "compact-matrix-submenu-light-700x600",
+    "compact-matrix-submenu-dark-700x600",
+    "compact-matrix-sidebar-light-701x601",
+    "compact-matrix-sidebar-dark-701x601",
+    "compact-matrix-topbar-light-701x601",
+    "compact-matrix-topbar-dark-701x601",
+    "compact-matrix-glass-light-701x601",
+    "compact-matrix-glass-dark-701x601",
+    "compact-matrix-submenu-light-701x601",
+    "compact-matrix-submenu-dark-701x601",
+    "compact-matrix-sidebar-light-1099x720",
+    "compact-matrix-sidebar-dark-1099x720",
+    "compact-matrix-topbar-light-1099x720",
+    "compact-matrix-topbar-dark-1099x720",
+    "compact-matrix-glass-light-1099x720",
+    "compact-matrix-glass-dark-1099x720",
+    "compact-matrix-submenu-light-1099x720",
+    "compact-matrix-submenu-dark-1099x720",
+    "compact-matrix-sidebar-light-1100x719",
+    "compact-matrix-sidebar-dark-1100x719",
+    "compact-matrix-topbar-light-1100x719",
+    "compact-matrix-topbar-dark-1100x719",
+    "compact-matrix-glass-light-1100x719",
+    "compact-matrix-glass-dark-1100x719",
+    "compact-matrix-submenu-light-1100x719",
+    "compact-matrix-submenu-dark-1100x719",
+    "compact-matrix-sidebar-light-1100x720",
+    "compact-matrix-sidebar-dark-1100x720",
+    "compact-matrix-topbar-light-1100x720",
+    "compact-matrix-topbar-dark-1100x720",
+    "compact-matrix-glass-light-1100x720",
+    "compact-matrix-glass-dark-1100x720",
+    "compact-matrix-submenu-light-1100x720",
+    "compact-matrix-submenu-dark-1100x720",
+    "compact-matrix-sidebar-light-1101x721",
+    "compact-matrix-sidebar-dark-1101x721",
+    "compact-matrix-topbar-light-1101x721",
+    "compact-matrix-topbar-dark-1101x721",
+    "compact-matrix-glass-light-1101x721",
+    "compact-matrix-glass-dark-1101x721",
+    "compact-matrix-submenu-light-1101x721",
+    "compact-matrix-submenu-dark-1101x721",
+    "compact-matrix-sidebar-light-1440x1000",
+    "compact-matrix-sidebar-dark-1440x1000",
+    "compact-matrix-topbar-light-1440x1000",
+    "compact-matrix-topbar-dark-1440x1000",
+    "compact-matrix-glass-light-1440x1000",
+    "compact-matrix-glass-dark-1440x1000",
+    "compact-matrix-submenu-light-1440x1000",
+    "compact-matrix-submenu-dark-1440x1000",
+    "compact-matrix-sidebar-light-1440x480",
+    "compact-matrix-sidebar-dark-1440x480",
+    "compact-matrix-topbar-light-1440x480",
+    "compact-matrix-topbar-dark-1440x480",
+    "compact-matrix-glass-light-1440x480",
+    "compact-matrix-glass-dark-1440x480",
+    "compact-matrix-submenu-light-1440x480",
+    "compact-matrix-submenu-dark-1440x480",
+    "compact-boundary-899",
+    "compact-boundary-900",
+    "compact-boundary-901",
+    "compact-native200-sidebar-light",
+    "compact-native200-sidebar-dark",
+    "compact-native200-topbar-light",
+    "compact-native200-topbar-dark",
+    "compact-native200-glass-light",
+    "compact-native200-glass-dark",
+    "compact-native200-submenu-light",
+    "compact-native200-submenu-dark",
+    "compact-touch-keyboard",
+    "compact-counterproof-overflow",
+    "compact-counterproof-duplicate-control",
+    "compact-counterproof-wrong-year",
+    "compact-counterproof-false-finalization",
+    "compact-counterproof-future-input-value",
+    "compact-counterproof-cost-values",
+    "compact-counterproof-phase-subtotal",
+    "compact-counterproof-missing-current-row",
+    "inline-ordinary-row-density",
+    "inline-cell-activation",
+    "inline-temporal-filters",
+    "inline-result-real-writer",
+    "inline-future-explicit-save",
+    "inline-individual-flow-ids",
+    "inline-dirty-context-guards",
+    "inline-stale-context-conflict",
+    "inline-refused-unknown",
+    "inline-closed-reconfirmation",
+    "inline-preferences-isolation",
+    "inline-preference-failure-incompatible",
+    "inline-resize-focus-cursor",
+    "inline-reset-lifecycle",
+    "inline-review-input-opening",
+    "inline-modal-escape-ownership",
+    "inline-missing-record-fail-closed",
+    "inline-context-removed-before-save",
+    "inline-month-turnover",
+    "inline-stoikus-context-guard",
+    "inline-future-context-companion",
+    "inline-menu-escape-ownership",
+    "inline-empty-filter-recovery",
+    "inline-editor-action-targets",
+    "inline-month-context-identity",
+    "inline-counterproof-row-height",
+    "inline-counterproof-duplicate-editor",
+    "inline-counterproof-false-green",
+    "inline-counterproof-typing-write",
+    "inline-counterproof-preference-finance-backup",
+    "inline-counterproof-wrong-usd",
+    "inline-counterproof-matrix-cell-value",
+    "inline-counterproof-action-target-size",
+    "inline-counterproof-action-inner-center",
+    "closure-missing-result-recovery",
+    "closure-cancelled-review-conflict",
+    "closure-result-save-cancel",
+    "closure-previous-pending-navigation",
+    "closure-result-units-validation",
+    "closure-review-changed-data",
+    "closure-writer-refusal-unknown",
+    "closure-shared-flow-draft-refresh",
+    "closure-zero-opening-usd",
+    "closure-draft-backup-retention",
+    "closure-invalidated-context-no-refresh",
+    "closure-counterproof-missing-recovery",
+    "closure-counterproof-positive-loss",
+    "closure-counterproof-restored-consent",
+    "closure-matrix-sidebar-light-390",
+    "closure-matrix-sidebar-light-1440",
+    "closure-matrix-sidebar-dark-390",
+    "closure-matrix-sidebar-dark-1440",
+    "closure-matrix-topbar-light-390",
+    "closure-matrix-topbar-light-1440",
+    "closure-matrix-topbar-dark-390",
+    "closure-matrix-topbar-dark-1440",
+    "closure-matrix-glass-light-390",
+    "closure-matrix-glass-light-1440",
+    "closure-matrix-glass-dark-390",
+    "closure-matrix-glass-dark-1440",
+    "closure-matrix-submenu-light-390",
+    "closure-matrix-submenu-light-1440",
+    "closure-matrix-submenu-dark-390",
+    "closure-matrix-submenu-dark-1440",
+    "closure-native200-sidebar-light",
+    "closure-native200-sidebar-dark",
+    "closure-native200-topbar-light",
+    "closure-native200-topbar-dark",
+    "closure-native200-glass-light",
+    "closure-native200-glass-dark",
+    "closure-native200-submenu-light",
+    "closure-native200-submenu-dark",
+    "notification-sidebar-light-320x700",
+    "notification-sidebar-dark-320x700",
+    "notification-topbar-light-320x700",
+    "notification-topbar-dark-320x700",
+    "notification-glass-light-320x700",
+    "notification-glass-dark-320x700",
+    "notification-submenu-light-320x700",
+    "notification-submenu-dark-320x700",
+    "notification-sidebar-light-390x844",
+    "notification-sidebar-dark-390x844",
+    "notification-topbar-light-390x844",
+    "notification-topbar-dark-390x844",
+    "notification-glass-light-390x844",
+    "notification-glass-dark-390x844",
+    "notification-submenu-light-390x844",
+    "notification-submenu-dark-390x844",
+    "notification-sidebar-light-1440x900",
+    "notification-sidebar-dark-1440x900",
+    "notification-topbar-light-1440x900",
+    "notification-topbar-dark-1440x900",
+    "notification-glass-light-1440x900",
+    "notification-glass-dark-1440x900",
+    "notification-submenu-light-1440x900",
+    "notification-submenu-dark-1440x900",
+    "notification-sidebar-light-1440x480",
+    "notification-sidebar-dark-1440x480",
+    "notification-topbar-light-1440x480",
+    "notification-topbar-dark-1440x480",
+    "notification-glass-light-1440x480",
+    "notification-glass-dark-1440x480",
+    "notification-submenu-light-1440x480",
+    "notification-submenu-dark-1440x480",
+    "notification-native200-sidebar-light",
+    "notification-native200-sidebar-dark",
+    "notification-native200-topbar-light",
+    "notification-native200-topbar-dark",
+    "notification-native200-glass-light",
+    "notification-native200-glass-dark",
+    "notification-native200-submenu-light",
+    "notification-native200-submenu-dark",
+    "notification-counterproof-inner-svg",
+    "notification-counterproof-overflow",
+    "notification-long-context-wrap",
+    "notification-counterproof-scroll-contents",
+    "calendar-sidebar-light-320x700",
+    "calendar-sidebar-dark-320x700",
+    "calendar-topbar-light-320x700",
+    "calendar-topbar-dark-320x700",
+    "calendar-glass-light-320x700",
+    "calendar-glass-dark-320x700",
+    "calendar-submenu-light-320x700",
+    "calendar-submenu-dark-320x700",
+    "calendar-sidebar-light-390x844",
+    "calendar-sidebar-dark-390x844",
+    "calendar-topbar-light-390x844",
+    "calendar-topbar-dark-390x844",
+    "calendar-glass-light-390x844",
+    "calendar-glass-dark-390x844",
+    "calendar-submenu-light-390x844",
+    "calendar-submenu-dark-390x844",
+    "calendar-sidebar-light-1440x900",
+    "calendar-sidebar-dark-1440x900",
+    "calendar-topbar-light-1440x900",
+    "calendar-topbar-dark-1440x900",
+    "calendar-glass-light-1440x900",
+    "calendar-glass-dark-1440x900",
+    "calendar-submenu-light-1440x900",
+    "calendar-submenu-dark-1440x900",
+    "calendar-sidebar-light-1440x480",
+    "calendar-sidebar-dark-1440x480",
+    "calendar-topbar-light-1440x480",
+    "calendar-topbar-dark-1440x480",
+    "calendar-glass-light-1440x480",
+    "calendar-glass-dark-1440x480",
+    "calendar-submenu-light-1440x480",
+    "calendar-submenu-dark-1440x480",
+    "calendar-native200-sidebar-light",
+    "calendar-native200-sidebar-dark",
+    "calendar-native200-topbar-light",
+    "calendar-native200-topbar-dark",
+    "calendar-native200-glass-light",
+    "calendar-native200-glass-dark",
+    "calendar-native200-submenu-light",
+    "calendar-native200-submenu-dark",
+    "calendar-counterproof-inner-svg",
+    "calendar-counterproof-economic-dot",
+    "calendar-counterproof-overflow",
+    "calendar-counterproof-personal-only-economic-dot",
+    "calendar-counterproof-marker-appearance",
+    "calendar-counterproof-today-selection",
+    "calendar-counterproof-vertical-clipping",
+    "calendar-counterproof-focus-return",
+    "dante-sidebar-light-320x700",
+    "dante-sidebar-dark-320x700",
+    "dante-topbar-light-320x700",
+    "dante-topbar-dark-320x700",
+    "dante-glass-light-320x700",
+    "dante-glass-dark-320x700",
+    "dante-submenu-light-320x700",
+    "dante-submenu-dark-320x700",
+    "dante-sidebar-light-390x844",
+    "dante-sidebar-dark-390x844",
+    "dante-topbar-light-390x844",
+    "dante-topbar-dark-390x844",
+    "dante-glass-light-390x844",
+    "dante-glass-dark-390x844",
+    "dante-submenu-light-390x844",
+    "dante-submenu-dark-390x844",
+    "dante-sidebar-light-900x720",
+    "dante-sidebar-dark-900x720",
+    "dante-topbar-light-900x720",
+    "dante-topbar-dark-900x720",
+    "dante-glass-light-900x720",
+    "dante-glass-dark-900x720",
+    "dante-submenu-light-900x720",
+    "dante-submenu-dark-900x720",
+    "dante-sidebar-light-1440x900",
+    "dante-sidebar-dark-1440x900",
+    "dante-topbar-light-1440x900",
+    "dante-topbar-dark-1440x900",
+    "dante-glass-light-1440x900",
+    "dante-glass-dark-1440x900",
+    "dante-submenu-light-1440x900",
+    "dante-submenu-dark-1440x900",
+    "dante-native200-sidebar-light",
+    "dante-native200-sidebar-dark",
+    "dante-native200-topbar-light",
+    "dante-native200-topbar-dark",
+    "dante-native200-glass-light",
+    "dante-native200-glass-dark",
+    "dante-native200-submenu-light",
+    "dante-native200-submenu-dark",
+    "dante-counterproof-inner-text",
+    "dante-counterproof-small-target",
+    "dante-counterproof-speech-overflow"
+  ],
+  "tolerance_css_px": 2,
+  "source_unchanged": true,
+  "limits": {
+    "other_modules": "NOT_RUN",
+    "human_acceptance": "NOT_RUN",
+    "Safari": "NOT_RUN",
+    "screen_reader": "NOT_RUN",
+    "physical_touch": "NOT_RUN",
+    "native_select_popup_ink": "NOT_RUN; closed native selector/input boxes, options and reachability measured"
+  },
+  "cases": [
+    {
+      "id": "regression-stoikus-vertical-groups",
+      "classification": "PASS"
+    },
+    {
+      "id": "regression-forecast-inner-center",
+      "classification": "PASS"
+    },
+    {
+      "id": "regression-close-svg-ink-center",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-summary-groups",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-current-calendar-year",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-wide-seven-columns",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-narrow-three-columns",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-month-details-complete",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-calendar-vs-finalization",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-controls-draft-focus",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-scenario-values",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-ordinary-row-density",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-cell-activation",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-temporal-filters",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-result-real-writer",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-future-explicit-save",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-individual-flow-ids",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-dirty-context-guards",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-stale-context-conflict",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-refused-unknown",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-closed-reconfirmation",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-preferences-isolation",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-preference-failure-incompatible",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-resize-focus-cursor",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-reset-lifecycle",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-review-input-opening",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-modal-escape-ownership",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-missing-record-fail-closed",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-context-removed-before-save",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-month-turnover",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-stoikus-context-guard",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-future-context-companion",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-menu-escape-ownership",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-empty-filter-recovery",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-editor-action-targets",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-month-context-identity",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-missing-result-recovery",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-cancelled-review-conflict",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-result-save-cancel",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-previous-pending-navigation",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-result-units-validation",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-review-changed-data",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-writer-refusal-unknown",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-shared-flow-draft-refresh",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-zero-opening-usd",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-draft-backup-retention",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-invalidated-context-no-refresh",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-counterproof-missing-recovery",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-counterproof-positive-loss",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-counterproof-restored-consent",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-sidebar-light-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-sidebar-light-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-sidebar-dark-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-sidebar-dark-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-topbar-light-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-topbar-light-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-topbar-dark-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-topbar-dark-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-glass-light-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-glass-light-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-glass-dark-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-glass-dark-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-submenu-light-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-submenu-light-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-submenu-dark-390",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-matrix-submenu-dark-1440",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-row-height",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-duplicate-editor",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-false-green",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-typing-write",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-preference-finance-backup",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-wrong-usd",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-matrix-cell-value",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-action-target-size",
+      "classification": "PASS"
+    },
+    {
+      "id": "inline-counterproof-action-inner-center",
+      "classification": "PASS"
+    },
+    {
+      "id": "counterproof-menu-inner-left",
+      "classification": "PASS"
+    },
+    {
+      "id": "counterproof-menu-width",
+      "classification": "PASS"
+    },
+    {
+      "id": "counterproof-forecast-inner-text",
+      "classification": "PASS"
+    },
+    {
+      "id": "counterproof-svg-drawing",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-sidebar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-topbar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-glass-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "matrix-submenu-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "states-confirmation-review-edit-multiple-cancel",
+      "classification": "PASS"
+    },
+    {
+      "id": "touch-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-overflow",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-duplicate-control",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-wrong-year",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-false-finalization",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-future-input-value",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-cost-values",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-phase-subtotal",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-counterproof-missing-current-row",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-700x600",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-701x601",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1099x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1100x719",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1100x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1101x721",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1440x1000",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-sidebar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-topbar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-glass-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-matrix-submenu-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-boundary-899",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-boundary-900",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-boundary-901",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-touch-keyboard",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-sidebar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-topbar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-glass-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-submenu-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-counterproof-inner-svg",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-counterproof-overflow",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-long-context-wrap",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-counterproof-scroll-contents",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-sidebar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-topbar-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-glass-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-light-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-submenu-dark-1440x480",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-inner-svg",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-economic-dot",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-overflow",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-personal-only-economic-dot",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-marker-appearance",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-today-selection",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-vertical-clipping",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-counterproof-focus-return",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-light-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-dark-320x700",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-light-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-dark-390x844",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-light-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-dark-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-light-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-dark-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-light-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-dark-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-light-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-dark-900x720",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-sidebar-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-topbar-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-glass-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-light-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-submenu-dark-1440x900",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-counterproof-inner-text",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-counterproof-small-target",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-counterproof-speech-overflow",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-sidebar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-sidebar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-topbar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-topbar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-glass-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-glass-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-submenu-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "notification-native200-submenu-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-sidebar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-sidebar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-topbar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-topbar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-glass-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-glass-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-submenu-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "calendar-native200-submenu-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-sidebar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-sidebar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-topbar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-topbar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-glass-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-glass-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-submenu-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "dante-native200-submenu-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-sidebar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-sidebar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-topbar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-topbar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-glass-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-glass-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-submenu-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "native200-submenu-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-sidebar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-sidebar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-topbar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-topbar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-glass-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-glass-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-submenu-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "compact-native200-submenu-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-sidebar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-sidebar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-topbar-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-topbar-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-glass-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-glass-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-submenu-light",
+      "classification": "PASS"
+    },
+    {
+      "id": "closure-native200-submenu-dark",
+      "classification": "PASS"
+    },
+    {
+      "id": "coverage-missing-and-zero-rejected",
+      "classification": "PASS"
+    }
+  ],
+  "raw_sha256": "6962407ea643ed99b46324075b7a74cc9d4fe992a58d3a112f46d29d9234485b"
+}

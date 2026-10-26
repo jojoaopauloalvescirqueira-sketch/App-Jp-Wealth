@@ -1,0 +1,1442 @@
+{
+  "status": "PASS",
+  "modes": [
+    {
+      "mode": "modular-file",
+      "venues": 16,
+      "mobileColdMapLazy": true,
+      "mobileFirstNameVisible": true,
+      "presentations": 48,
+      "equivalent200Reflow": 8,
+      "nativeZoom": "NOT_RUN",
+      "sharedShellBaselineIssues": [],
+      "css200Cases": [
+        {
+          "layout": "sidebar",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -37,
+              "width": 1440,
+              "height": 128,
+              "top": -37,
+              "right": 1440,
+              "bottom": 91,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 404,
+            "client": 404,
+            "left": 568,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -1003,
+              "width": 1440,
+              "height": 128,
+              "top": -1003,
+              "right": 1440,
+              "bottom": -875,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 404,
+            "client": 404,
+            "left": 568,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -1423,
+              "width": 390,
+              "height": 306,
+              "top": -1423,
+              "right": 390,
+              "bottom": -1117,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2563,
+              "width": 390,
+              "height": 306,
+              "top": -2563,
+              "right": 390,
+              "bottom": -2257,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 128,
+              "top": 0,
+              "right": 1440,
+              "bottom": 128,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 128,
+              "top": 0,
+              "right": 1440,
+              "bottom": 128,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -642,
+              "width": 390,
+              "height": 306,
+              "top": -642,
+              "right": 390,
+              "bottom": -336,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2150,
+              "width": 390,
+              "height": 306,
+              "top": -2150,
+              "right": 390,
+              "bottom": -1844,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -321,
+              "width": 1440,
+              "height": 128,
+              "top": -321,
+              "right": 1440,
+              "bottom": -193,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 368,
+            "client": 368,
+            "left": 640,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -1003,
+              "width": 1440,
+              "height": 128,
+              "top": -1003,
+              "right": 1440,
+              "bottom": -875,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 368,
+            "client": 368,
+            "left": 640,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -1454,
+              "width": 390,
+              "height": 306,
+              "top": -1454,
+              "right": 390,
+              "bottom": -1148,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2563,
+              "width": 390,
+              "height": 306,
+              "top": -2563,
+              "right": 390,
+              "bottom": -2257,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 32,
+              "y": 28,
+              "width": 2360,
+              "height": 128,
+              "top": 28,
+              "right": 2392,
+              "bottom": 156,
+              "left": 32
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 32,
+              "y": 28,
+              "width": 2360,
+              "height": 128,
+              "top": 28,
+              "right": 2392,
+              "bottom": 156,
+              "left": 32
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 24,
+              "y": 16,
+              "width": 342,
+              "height": 120,
+              "top": 16,
+              "right": 366,
+              "bottom": 136,
+              "left": 24
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 24,
+              "y": 16,
+              "width": 342,
+              "height": 120,
+              "top": 16,
+              "right": 366,
+              "bottom": 136,
+              "left": 24
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        }
+      ],
+      "financialStateUnchanged": true,
+      "singleInstance": true,
+      "finalized": true
+    },
+    {
+      "mode": "portable-alone",
+      "venues": 16,
+      "mobileColdMapLazy": true,
+      "mobileFirstNameVisible": true,
+      "presentations": 48,
+      "equivalent200Reflow": 8,
+      "nativeZoom": "NOT_RUN",
+      "sharedShellBaselineIssues": [],
+      "css200Cases": [
+        {
+          "layout": "sidebar",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -37,
+              "width": 1440,
+              "height": 128,
+              "top": -37,
+              "right": 1440,
+              "bottom": 91,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 404,
+            "client": 404,
+            "left": 568,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -1003,
+              "width": 1440,
+              "height": 128,
+              "top": -1003,
+              "right": 1440,
+              "bottom": -875,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 404,
+            "client": 404,
+            "left": 568,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -1422,
+              "width": 390,
+              "height": 306,
+              "top": -1422,
+              "right": 390,
+              "bottom": -1116,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2564,
+              "width": 390,
+              "height": 306,
+              "top": -2564,
+              "right": 390,
+              "bottom": -2258,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 128,
+              "top": 0,
+              "right": 1440,
+              "bottom": 128,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 128,
+              "top": 0,
+              "right": 1440,
+              "bottom": 128,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -641,
+              "width": 390,
+              "height": 306,
+              "top": -641,
+              "right": 390,
+              "bottom": -335,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2150,
+              "width": 390,
+              "height": 306,
+              "top": -2150,
+              "right": 390,
+              "bottom": -1844,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -322,
+              "width": 1440,
+              "height": 128,
+              "top": -322,
+              "right": 1440,
+              "bottom": -194,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 368,
+            "client": 368,
+            "left": 640,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -1003,
+              "width": 1440,
+              "height": 128,
+              "top": -1003,
+              "right": 1440,
+              "bottom": -875,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 368,
+            "client": 368,
+            "left": 640,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -1454,
+              "width": 390,
+              "height": 306,
+              "top": -1454,
+              "right": 390,
+              "bottom": -1148,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2563,
+              "width": 390,
+              "height": 306,
+              "top": -2563,
+              "right": 390,
+              "bottom": -2257,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 32,
+              "y": 28,
+              "width": 2360,
+              "height": 128,
+              "top": 28,
+              "right": 2392,
+              "bottom": 156,
+              "left": 32
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 32,
+              "y": 28,
+              "width": 2360,
+              "height": 128,
+              "top": 28,
+              "right": 2392,
+              "bottom": 156,
+              "left": 32
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 24,
+              "y": 16,
+              "width": 342,
+              "height": 120,
+              "top": 16,
+              "right": 366,
+              "bottom": 136,
+              "left": 24
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 24,
+              "y": 16,
+              "width": 342,
+              "height": 120,
+              "top": 16,
+              "right": 366,
+              "bottom": 136,
+              "left": 24
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        }
+      ],
+      "financialStateUnchanged": true,
+      "singleInstance": true,
+      "finalized": true
+    },
+    {
+      "mode": "pwa-offline",
+      "venues": 16,
+      "mobileColdMapLazy": true,
+      "mobileFirstNameVisible": true,
+      "presentations": 48,
+      "equivalent200Reflow": 8,
+      "nativeZoom": "NOT_RUN",
+      "sharedShellBaselineIssues": [],
+      "css200Cases": [
+        {
+          "layout": "sidebar",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -42,
+              "width": 1440,
+              "height": 128,
+              "top": -42,
+              "right": 1440,
+              "bottom": 86,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 404,
+            "client": 404,
+            "left": 568,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -1003,
+              "width": 1440,
+              "height": 128,
+              "top": -1003,
+              "right": 1440,
+              "bottom": -875,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 404,
+            "client": 404,
+            "left": 568,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -1422,
+              "width": 390,
+              "height": 306,
+              "top": -1422,
+              "right": 390,
+              "bottom": -1116,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "sidebar",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2563,
+              "width": 390,
+              "height": 306,
+              "top": -2563,
+              "right": 390,
+              "bottom": -2257,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 128,
+              "top": 0,
+              "right": 1440,
+              "bottom": 128,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 128,
+              "top": 0,
+              "right": 1440,
+              "bottom": 128,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -642,
+              "width": 390,
+              "height": 306,
+              "top": -642,
+              "right": 390,
+              "bottom": -336,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "topbar",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2150,
+              "width": 390,
+              "height": 306,
+              "top": -2150,
+              "right": 390,
+              "bottom": -1844,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -322,
+              "width": 1440,
+              "height": 128,
+              "top": -322,
+              "right": 1440,
+              "bottom": -194,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 368,
+            "client": 368,
+            "left": 640,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 0,
+              "y": -1004,
+              "width": 1440,
+              "height": 128,
+              "top": -1004,
+              "right": 1440,
+              "bottom": -876,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 368,
+            "client": 368,
+            "left": 640,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -1454,
+              "width": 390,
+              "height": 306,
+              "top": -1454,
+              "right": 390,
+              "bottom": -1148,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "submenu",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 0,
+              "y": -2563,
+              "width": 390,
+              "height": 306,
+              "top": -2563,
+              "right": 390,
+              "bottom": -2257,
+              "left": 0
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 1440,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 32,
+              "y": 28,
+              "width": 2360,
+              "height": 128,
+              "top": 28,
+              "right": 2392,
+              "bottom": 156,
+              "left": 32
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 1440,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 1440,
+            "scroll": 1440,
+            "header": {
+              "x": 32,
+              "y": 28,
+              "width": 2360,
+              "height": 128,
+              "top": 28,
+              "right": 2392,
+              "bottom": 156,
+              "left": 32
+            }
+          },
+          "afterGlobalWidth": 1440,
+          "tool": {
+            "scroll": 656,
+            "client": 656,
+            "left": 64,
+            "right": 1376
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 390,
+          "theme": "dark",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 24,
+              "y": 16,
+              "width": 342,
+              "height": 120,
+              "top": 16,
+              "right": 366,
+              "bottom": 136,
+              "left": 24
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        },
+        {
+          "layout": "glass",
+          "width": 390,
+          "theme": "light",
+          "cssZoom": 2,
+          "localResult": "PASS",
+          "sharedShellResult": "PASS",
+          "beforeTool": {
+            "width": 390,
+            "scroll": 390,
+            "header": {
+              "x": 24,
+              "y": 16,
+              "width": 342,
+              "height": 120,
+              "top": 16,
+              "right": 366,
+              "bottom": 136,
+              "left": 24
+            }
+          },
+          "afterGlobalWidth": 390,
+          "tool": {
+            "scroll": 155,
+            "client": 155,
+            "left": 40,
+            "right": 350
+          }
+        }
+      ],
+      "financialStateUnchanged": true,
+      "singleInstance": true,
+      "finalized": true
+    }
+  ]
+}

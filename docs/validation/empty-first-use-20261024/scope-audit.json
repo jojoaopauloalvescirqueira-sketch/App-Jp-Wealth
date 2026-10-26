@@ -1,0 +1,33 @@
+{
+  "build": "1b695b809fe80c26",
+  "lost": [],
+  "unexpected": [],
+  "allowed_preexisting_changed": [
+    "build-id.js",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "docs/work/ACTIVE-TASK.md",
+    "src/js/manifest.json",
+    "src/styles/app.css",
+    "src/vendor/downloads/leverage-daily-source-payload.js",
+    "src/vendor/downloads/leverage-native-kit-payload.js",
+    "src/vendor/downloads/leverage-native-pin-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.json",
+    "src/vendor/downloads/leverage-source-payload.js",
+    "src/vendor/downloads/nocuda-payload.js",
+    "src/vendor/market-hours/runtime-payload.js",
+    "tools/regression-memory.json"
+  ],
+  "old96_regressions_preserved": true,
+  "old_active_preserved": true,
+  "old_css_preserved_prefix": true,
+  "protected_unchanged": {
+    "AGENTS.md": true,
+    "tools/quality_gate.py": true,
+    "src/js/00-core/00-forex-policy.js": true,
+    "src/js/10-domain/00-forex-engine.js": true,
+    "src/js/40-app/31-market-hours/03-view.js": true,
+    "src/js/40-app/31-market-hours/04-controller.js": true
+  },
+  "new_regressions": 5
+}

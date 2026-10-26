@@ -1,0 +1,143 @@
+{
+  "kind": "IN_MEMORY_DECISION_AND_STATIC_ONLY_NOT_BROWSER",
+  "source_sha256": "f7a176ab58c048801326d84c626d9c2d4524cd38f01c69971e70d2b5977d8b03",
+  "candidate_sha256": "8efe7a09583a044d4d15d84c8e6d321365f84e3f3e9f288f732aebd74945d963",
+  "changed_functions": [
+    "centered",
+    "controls_geometry"
+  ],
+  "assert_AST_identical": true,
+  "content_geometry_identical": true,
+  "controls": [
+    {
+      "case": "valid-text",
+      "matched": true,
+      "accepted": true,
+      "originalCalls": 8,
+      "candidateCalls": 4
+    },
+    {
+      "case": "text-shift5",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "no-text",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "zero-target",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "small-accessible-target",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 7,
+      "candidateCalls": 4
+    },
+    {
+      "case": "ancestor-clipping",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 8,
+      "candidateCalls": 4
+    },
+    {
+      "case": "valid-close-svg",
+      "matched": true,
+      "accepted": true,
+      "originalCalls": 8,
+      "candidateCalls": 4
+    },
+    {
+      "case": "svg-shift5",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "missing-ink",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "close-size20",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "close-no-label",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "multiple-svg-close",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 4
+    },
+    {
+      "case": "zero-locator",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 5
+    },
+    {
+      "case": "multiple-locator",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 6,
+      "candidateCalls": 5
+    },
+    {
+      "case": "positive-tabindex",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 8,
+      "candidateCalls": 4
+    },
+    {
+      "case": "footer-order",
+      "matched": true,
+      "accepted": false,
+      "originalCalls": 8,
+      "candidateCalls": 4
+    },
+    {
+      "case": "provided-measurement-cardinality-0",
+      "matched": true,
+      "accepted": false
+    },
+    {
+      "case": "provided-measurement-cardinality-2",
+      "matched": true,
+      "accepted": false
+    }
+  ],
+  "count": 18,
+  "frozenInputs": 679,
+  "drift": [],
+  "limitations": [
+    "Browser DOM snapshot and bounding_box equivalence NOT_RUN",
+    "413-case candidate runtime and performance NOT_RUN",
+    "Fake adapters supply measurement dictionaries; they do not prove browser layout"
+  ]
+}

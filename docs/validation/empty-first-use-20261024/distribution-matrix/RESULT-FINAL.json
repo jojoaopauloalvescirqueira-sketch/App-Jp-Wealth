@@ -1,0 +1,88 @@
+{
+  "candidate": "1b695b809fe80c26",
+  "overallStatus": "PASS",
+  "functionalMatrix": {
+    "status": "PASS",
+    "totals": {
+      "PASS": 43,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0
+    },
+    "cases": 43,
+    "sourceFiles": 215,
+    "sourceUnchanged": true,
+    "localAssetFailures": 0,
+    "pageErrors": 0,
+    "classificationNoCutCases": 43,
+    "nativeZoom": [
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      }
+    ]
+  },
+  "visualFinding": {
+    "status": "PASS",
+    "id": "EMPTY-VIS-CHECKLIST-01",
+    "priorEvidencePreserved": "layout-inspection/report.json and RESULT.json",
+    "finalEvidence": "attempt3-layout-inspection/report.json",
+    "widths": [
+      320,
+      390,
+      900,
+      1440
+    ],
+    "sourceUnchanged": true
+  },
+  "limits": [
+    "Synthetic isolated profiles only; no human comprehension/visual acceptance",
+    "Public network aborted; no live feeds claimed",
+    "No repo/Git/dependency/personal-data mutation",
+    "200% native engine headless Preferences; no CSSzoom or deviceScaleFactor substitute"
+  ]
+}

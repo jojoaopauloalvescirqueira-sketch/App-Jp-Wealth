@@ -1,0 +1,19 @@
+{
+  "build": "1b695b809fe80c26",
+  "testHashes": {
+    "tools/alladin_finalize_preservation_test.py": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+    "tools/session_write_serialization_test.py": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5"
+  },
+  "full3FrozenInputCount": 664,
+  "full3CurrentMatches": 664,
+  "changedSinceFull2": [
+    "tools/alladin_finalize_preservation_test.py",
+    "tools/session_write_serialization_test.py"
+  ],
+  "focals": "two integral runs PASS; logs inspected",
+  "counterproofs": "finalize C8/C11/C14 six assertions and serialization SI three scenarios reject destructive effect; no precondition error",
+  "method": "read-only source/diff/receipt/hash review; no browser execution by independent auditor",
+  "result": "PASS for exact fixture delta",
+  "FULL3": "pending",
+  "humanAcceptance": "NOT_RUN"
+}

@@ -1,0 +1,204 @@
+{
+  "cases": [
+    {
+      "name": "RED-original-regression",
+      "source": "real unmodified source",
+      "expected": "PRODUCT_FAIL",
+      "result": "PRODUCT_FAIL",
+      "pageErrors": [],
+      "build": "2c4a3d9f65b3c664",
+      "error": "CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar",
+      "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-dante-20261024/calendar-fix-proposal/replay.py\", line 21, in <module>\n    page.goto(f'http://127.0.0.1:{server.server_port}/index.html',wait_until='load');wait_bootstrap(page);row['build']=page.evaluate('JP_WEALTH_BUILD_ID');row['evidence']=fn(page);row['result']='PASS';assert not row['pageErrors'],row['pageErrors']\n                                                                                                                                                                           ^^^^^^^^\n  File \"/private/tmp/jpw-dante-20261024/calendar-fix-proposal/calendar_agenda_test.proposed.py\", line 370, in lifecycle\n    assert page.evaluate('async()=>(await JPWCalendar.refresh()).length')==1,'CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: CAL-LIFECYCLE-01: delayed prior close deactivated the reopened calendar\n"
+    },
+    {
+      "name": "GREEN-patched-regression",
+      "source": "source-route candidate",
+      "expected": "PASS",
+      "result": "PASS",
+      "pageErrors": [],
+      "build": "2c4a3d9f65b3c664",
+      "evidence": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "priorCloseEvents": [
+          {
+            "open": true
+          }
+        ],
+        "reopenedActive": true,
+        "futureBackupMarkerRemoved": true,
+        "financialUnchangedExceptExplicitFixtureTimestamp": true,
+        "closeCounterproofs": {
+          "header": {
+            "id": "headerCalendarBtn",
+            "label": "Abrir Calendário e Agenda",
+            "title": "Calendário e Agenda",
+            "expanded": "true",
+            "width": 44,
+            "height": 44,
+            "svg": 1
+          },
+          "realClosures": [
+            {
+              "method": "original-button",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "Escape",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "native-close-event",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            }
+          ],
+          "financialUnchanged": true
+        }
+      }
+    },
+    {
+      "name": "original-close-counterproofs",
+      "source": "real unmodified source",
+      "expected": "PASS",
+      "result": "PASS",
+      "pageErrors": [],
+      "build": "2c4a3d9f65b3c664",
+      "evidence": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "realClosures": [
+          {
+            "method": "original-button",
+            "open": false,
+            "timers": 0,
+            "activeRefreshes": 0,
+            "expanded": "false"
+          },
+          {
+            "method": "Escape",
+            "open": false,
+            "timers": 0,
+            "activeRefreshes": 0,
+            "expanded": "false"
+          },
+          {
+            "method": "native-close-event",
+            "open": false,
+            "timers": 0,
+            "activeRefreshes": 0,
+            "expanded": "false"
+          }
+        ],
+        "financialUnchanged": true
+      }
+    },
+    {
+      "name": "patched-close-counterproofs",
+      "source": "source-route candidate",
+      "expected": "PASS",
+      "result": "PASS",
+      "pageErrors": [],
+      "build": "2c4a3d9f65b3c664",
+      "evidence": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "realClosures": [
+          {
+            "method": "original-button",
+            "open": false,
+            "timers": 0,
+            "activeRefreshes": 0,
+            "expanded": "false"
+          },
+          {
+            "method": "Escape",
+            "open": false,
+            "timers": 0,
+            "activeRefreshes": 0,
+            "expanded": "false"
+          },
+          {
+            "method": "native-close-event",
+            "open": false,
+            "timers": 0,
+            "activeRefreshes": 0,
+            "expanded": "false"
+          }
+        ],
+        "financialUnchanged": true
+      }
+    },
+    {
+      "name": "GREEN-original-edges-oracle-patched-source",
+      "source": "source-route candidate",
+      "expected": "PASS",
+      "result": "PASS",
+      "pageErrors": [],
+      "build": "2c4a3d9f65b3c664",
+      "evidence": {
+        "timer_open": 1,
+        "timer_closed": 0,
+        "opaque_preferences": "preserved",
+        "workspace_state": "independent",
+        "synthetic_feed_markers": "filtered and counted",
+        "date_precision": "no invented time",
+        "pending_coverage": "visible",
+        "backup": "elapsed30days across DST; no future or missing invented date",
+        "midnight": "real timer advanced to new day"
+      }
+    }
+  ],
+  "source_before": {
+    "src/js/40-app/19-calendar-agenda.js": "8a4c74ff81a1d39765efa4a4c1cf8fd1a6e6b5d36dd1b24d7d1c6aa83ce8a3c3",
+    "tools/calendar_agenda_test.py": "ae0fcc5656cf4b1d87255b06d94ae1fe5b21b9d2fc94816a55b626d2cc91c59d",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+  },
+  "source_after": {
+    "src/js/40-app/19-calendar-agenda.js": "8a4c74ff81a1d39765efa4a4c1cf8fd1a6e6b5d36dd1b24d7d1c6aa83ce8a3c3",
+    "tools/calendar_agenda_test.py": "ae0fcc5656cf4b1d87255b06d94ae1fe5b21b9d2fc94816a55b626d2cc91c59d",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+  },
+  "runtimeSourceUnchanged": true,
+  "candidateHashes": {
+    "19-calendar-agenda.proposed.js": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c",
+    "calendar_agenda_test.proposed.py": "c19fe3272601bfb6816fe4a0ed1d7b01bca04905d878a4fbba56065490181a6e",
+    "product.patch": "7d66165a2f8c8fc52d53663cff8b91d82385b7fd5cf57546b3c91f179f5d0295",
+    "regression.patch": "a32f742875b63794401c8224435a7c9450d5c707ba52d98d4076cb89612d57eb"
+  },
+  "limits": [
+    "Synthetic disposable contexts, headless only.",
+    "Real product script served except one source-route response for GREEN; source file not applied.",
+    "Expected RED preserved; no altered oracle or financial writer.",
+    "This scratch replay is not whole FULL nor human visual acceptance."
+  ]
+}

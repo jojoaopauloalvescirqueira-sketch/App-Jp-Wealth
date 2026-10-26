@@ -1,0 +1,11 @@
+{
+  "scope": "explicit synthetic fixture only; preserve original assertions",
+  "files": {
+    "tools/alladin_finalize_preservation_test.py": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+    "tools/session_write_serialization_test.py": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5"
+  },
+  "patches": {
+    "/private/tmp/jpw-empty-first-use-20261024/triage-finalize/proposed.patch": "1f8c4af59ecd2cc19534780fb6b82c0153a709bb506ac412ed739574252fd7b5",
+    "/private/tmp/jpw-empty-first-use-20261024/triage-serialization/proposed.patch": "1090091aaeae8aa450bdf89f256b6ada58cf6bff7a90c9b63707fac46805ff12"
+  }
+}

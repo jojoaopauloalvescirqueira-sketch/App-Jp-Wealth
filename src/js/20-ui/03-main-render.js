@@ -141,8 +141,8 @@ function renderPresentation(options={}){
   // ddPct/alavPct/ddZones seguem calculados acima porque alimentam gaugeDD e
   // gaugeAlav, que são do EXECUTION BOARD e não fazem parte deste bloco.
   // metrics
-  $('mSaldo').textContent=fmtForexMoney(p.saldoAtu,null,0);
-  $('mSaldoSub').textContent='Cadastro contábil legado · inicial '+fmtForexMoney(p.saldoIni,null,0)+' — não substitui equity observada'
+  $('mSaldo').textContent=known(p.saldoAtu)?fmtForexMoney(p.saldoAtu,null,0):'Não informado';
+  $('mSaldoSub').textContent='Cadastro contábil legado · inicial '+(known(p.saldoIni)?fmtForexMoney(p.saldoIni,null,0):'Não informado')+' — não substitui equity observada'
     +(S.cycleRealizado?(' · ciclo arquivado LEGACY '+fmtForexMoney(S.cycleRealizado,null,2)):'');
   $('mDD').textContent=percent(c.dd);
   $('mDDsub').textContent=metrics.drawdown.status==='OK'?'SI e equity da conta observada · fluxos documentados neutralizados':'Registre SI, equity flutuante e ajuste de fluxos com fonte.';

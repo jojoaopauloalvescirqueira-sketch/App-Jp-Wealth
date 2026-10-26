@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/empty_first_use_test.py",
+    "--out",
+    "/private/tmp/jpw-empty-first-use-20261024/tests-taxonomy-empty-selection-v2.json",
+    "--only",
+    "nonexistent"
+  ],
+  "exitCode": 1,
+  "stdout": "TEST_HARNESS_FAIL\n",
+  "stderr": "",
+  "result": "PASS",
+  "assertion": "zero selected cases gives TEST_HARNESS_FAIL and exit1"
+}

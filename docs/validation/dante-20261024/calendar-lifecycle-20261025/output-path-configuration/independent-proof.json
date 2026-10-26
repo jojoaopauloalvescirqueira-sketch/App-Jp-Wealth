@@ -1,0 +1,170 @@
+{
+  "classification": "PASS",
+  "scope": "dummy filesystem only; wrapper run/selftest and gate/browser not called",
+  "wrapper_sha256": "58a1b44639f54398be8addbced847a13fc2da144f9a9e84471e722195fa15195",
+  "cases": [
+    {
+      "case": "valid-bidirectional-write-profile-cleanup",
+      "result": "PASS",
+      "logicalAndRealRecorded": true,
+      "samefile": true,
+      "profileChildRemoved": true,
+      "fullSymlinkRetained": true
+    },
+    {
+      "case": "nonempty-source",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "source-existing-before",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "source-symlink",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "source-file",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "wrong-name",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "multiple",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "none",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "target-nonempty",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "target-symlink",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "target-file",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "wrong-owner",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "changed-inode",
+      "result": "PASS",
+      "invalidInputRejected": true
+    },
+    {
+      "case": "symlink-failure-restores-own-empty-directory",
+      "result": "PASS",
+      "rollback": true
+    },
+    {
+      "case": "handshake-valid-stopped-own-group",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-calendar-already-active",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-browser-already-active",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-child-not-stopped",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-parent-not-stopped",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-no-own-group",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-additional-status-queued",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-first-line-is-later-check",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 0,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-wrong-group",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-unrelated-running-group-ignored",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 1,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-stop-transition",
+      "result": "PASS",
+      "accepted": true,
+      "psSnapshots": 2,
+      "signalsMocked": true
+    },
+    {
+      "case": "handshake-zombie-rejected",
+      "result": "PASS",
+      "accepted": false,
+      "psSnapshots": 50,
+      "signalsMocked": true
+    }
+  ],
+  "count": 26,
+  "frozen": {
+    "checked": 679,
+    "changed": []
+  },
+  "verifier_sha256": "ef34a9f87f8b4846ac8e9e375ca25552d204c722bd3de74ec22c10753d3e7853"
+}

@@ -1,0 +1,53 @@
+{
+  "task": "EMPTY-FIRST-USE fixture adaptations",
+  "branch": "codex/primeiro-acesso-vazio-20261024",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "tests": {
+    "tools/investor_password_test.py": "5b3604afeb0155ea1ca33ee17f9b6a8533e3dfa028d62733012a06bfd26949bb",
+    "tools/backup_import_audit_test.py": "b82edbf2d73509bc4bff9bb9f7dba31e6224035657a2b814874f925323c63528",
+    "tools/backup_reliability_test.py": "f43673ed51d72ee806f0a3b12e6b5750022b9f3d553d5bd33b4bf00ebecfcaf9",
+    "tools/alladin_foundation_test.py": "634ef868e5832d573d156cdf9603dcbb65bd48f8b4113893b20a4cb4d0781c4d"
+  },
+  "diff_sha256": "2da3ca312e5dc074268f62408a9328fbfa2cbb3c539761f296c693000b6712b0",
+  "syntax": "PASS: ast.parse four files",
+  "diff_check": "PASS",
+  "runtime": "PARTIAL: three focals PASS; backup reliability needs stable-input rerun",
+  "gate_counts_static": {
+    "FAST": 4,
+    "STANDARD": 59,
+    "FULL": 102
+  },
+  "runner_changed": false,
+  "financial_data": "synthetic only; no user storage/profile touched",
+  "runtime_attempts": [
+    {
+      "path": "/private/tmp/jpw-empty-first-use-20261024/fixture-focals-run1/receipt.json",
+      "checks": [
+        {
+          "name": "investor-password",
+          "status": "PASS",
+          "exit_code": 0,
+          "seconds": 7.45
+        },
+        {
+          "name": "backup-import-audit",
+          "status": "PASS",
+          "exit_code": 0,
+          "seconds": 29.31
+        },
+        {
+          "name": "backup-reliability",
+          "status": "TEST_HARNESS_FAIL",
+          "exit_code": 1,
+          "seconds": 57.17
+        },
+        {
+          "name": "alladin-foundation",
+          "status": "PASS",
+          "exit_code": 0,
+          "seconds": 32.58
+        }
+      ]
+    }
+  ]
+}

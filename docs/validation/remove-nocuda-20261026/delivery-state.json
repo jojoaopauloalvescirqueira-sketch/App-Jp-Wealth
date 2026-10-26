@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-26T16:23:56.407951+00:00",
+  "build": "5cd40fe879de6727",
+  "frozenInputs": 678,
+  "sourceMismatch": [],
+  "expectedAbsentViolations": [],
+  "docsOutsideFreezeUpdatedOnly": true,
+  "fullApproved": false,
+  "humanAcceptance": "NOT_RUN",
+  "macReleased": true,
+  "preview": "http://127.0.0.1:51629/index.html?v=5cd40fe879de6727",
+  "full": "full-attempt-2/full-relocated.json",
+  "review": "FINAL-VALIDATION-REVIEW.json"
+}

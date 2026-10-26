@@ -1,0 +1,15 @@
+{
+  "oldCommandSeconds": 853.471,
+  "newCommandSeconds": 878.249,
+  "oldBrowser": "155.0.8059.86",
+  "newBrowser": "155.0.8059.86",
+  "oldMatrix80ActionSeconds": 251.142,
+  "newMatrix80ActionSeconds": 238.376,
+  "actualControlRPCs": {
+    "old": 8,
+    "new": 4,
+    "syntheticControls": 3,
+    "planningControls": 12
+  },
+  "limitation": "Different observation windows; descriptive durations only. No demonstrated total-time improvement or causal timing claim. Same413IDs and product bytes; added counterproofs/hashing are declared."
+}

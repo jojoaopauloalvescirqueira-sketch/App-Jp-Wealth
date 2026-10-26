@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "-u",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "/private/tmp/jpw-dante-calendar-20261025/full-relocated.json"
+  ],
+  "mapping": null,
+  "exit": null,
+  "seconds": 2.596,
+  "frozenInputs": 679,
+  "sourceUnchanged": true,
+  "sourceEdits": false,
+  "timeoutEdits": false,
+  "criteriaEdits": false
+}

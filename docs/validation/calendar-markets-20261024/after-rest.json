@@ -1,0 +1,25 @@
+{
+  "samples": [
+    {
+      "queries": 0,
+      "renders": 0,
+      "elapsedMs": 5106.500625028275
+    },
+    {
+      "queries": 0,
+      "renders": 0,
+      "elapsedMs": 5107.874584035017
+    },
+    {
+      "queries": 1,
+      "renders": 0,
+      "elapsedMs": 5104.995166067965
+    }
+  ],
+  "coldEntryMs": 88.5167500237003,
+  "mode": "after",
+  "source": "current uncommitted candidate",
+  "viewport": "1440x900",
+  "environment": "isolated headless Chromium1223, real HTTP",
+  "previousAttempts": "Discarded invalid Proxy probe and hidden-B3 selector timeout; no counts used from them"
+}

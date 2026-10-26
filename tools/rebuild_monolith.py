@@ -98,13 +98,6 @@ NORMATIVE_DOCUMENTS = (
     ('docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf', 'application/pdf', 'Estatuto_JP_Wealth_V11.pdf'),
     ('docs/normative/ANEXO_PARAMETRICO_CANONICO.md', 'text/markdown;charset=utf-8', 'Anexo_Parametrico_Canonico.md'),
 )
-NOCUDA_DOCUMENTS = (
-    ('downloads/nocuda/Nocuda_Tool.ex5', 'application/octet-stream', 'Nocuda_Tool.ex5'),
-    ('downloads/nocuda/Nocuda_Tool.pine', 'text/plain;charset=utf-8', 'Nocuda_Tool.pine'),
-    ('downloads/nocuda/Nocuda_Tool.mq5', 'text/plain;charset=utf-8', 'Nocuda_Tool.mq5'),
-    ('downloads/nocuda/TRADINGVIEW-LEIA-ME.md', 'text/markdown;charset=utf-8', 'TRADINGVIEW-LEIA-ME.md'),
-    ('downloads/nocuda/MT5-LEIA-ME.md', 'text/markdown;charset=utf-8', 'MT5-LEIA-ME.md'),
-)
 PROJECT_DOCUMENTS = (
     ('README.md', 'text/markdown;charset=utf-8', 'README.md'),
     ('CHANGELOG.md', 'text/markdown;charset=utf-8', 'CHANGELOG.md'),
@@ -187,12 +180,12 @@ FINGERPRINT_FIXED_INPUTS = (
     'downloads/jpw-alavancagem-atual/manifest.json',
     *leverage_manifest['sourceFiles'],
     *(item['path'] for _mime, item in leverage_delivery_files.values()),
-    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS + PROJECT_DOCUMENTS),
+    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + PROJECT_DOCUMENTS),
 )
 FINGERPRINT_TAIL_INPUTS = (
+    'assets/dante-guide.png',
     'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
     'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png', 'assets/jp-wealth-logo.png',
-    'assets/nocuda-tradingview.png', 'assets/nocuda-metatrader.png',
     'assets/pwa-icon-primary.png', 'assets/pwa-icon-primary-192.png', 'assets/pwa-icon-primary-512.png',
     'assets/pwa-icon-secondary.png', 'assets/pwa-icon-secondary-192.png', 'assets/pwa-icon-secondary-512.png',
 )
@@ -273,11 +266,6 @@ current_build_id = build_id()
 build_id_source = f"// Gerado por tools/rebuild_monolith.py. Não editar manualmente.\nconst JP_WEALTH_BUILD_ID = '{current_build_id}';\n"
 # Lazy download metadata carries no archive/source bytes into bootstrap or SW.
 resources, payloads, envelopes = {}, {}, {}
-for relative, mime, filename in NOCUDA_DOCUMENTS:
-    data = (ROOT / relative).read_bytes()
-    key = 'nocuda/' + filename
-    resources[key] = dict(path=relative, filename=filename, mime=mime, bytes=len(data), sha256=hashlib.sha256(data).hexdigest(), payload='nocuda')
-    envelopes.setdefault('nocuda', {})[key] = base64.b64encode(data).decode('ascii')
 for kind, (mime, item) in leverage_delivery_files.items():
     group = 'leverage-' + {'dailySource':'daily-source','source':'source','compiled':'compiled','nativeKit':'native-kit','nativePin':'native-pin','preview':'preview'}[kind]
     key = 'leverage/' + kind
@@ -364,11 +352,6 @@ for relative, mime, filename in NORMATIVE_DOCUMENTS + PROJECT_DOCUMENTS:
         f'href="{relative}"',
         f'href="data:{mime};base64,{encoded}" download="{filename}"',
     )
-
-for platform in ('tradingview', 'metatrader'):
-    relative = f'assets/nocuda-{platform}.png'
-    encoded = base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')
-    html = html.replace(f'src="{relative}"', f'src="data:image/png;base64,{encoded}"')
 
 out = ROOT / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
 out.parent.mkdir(parents=True, exist_ok=True)

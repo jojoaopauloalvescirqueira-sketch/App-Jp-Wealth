@@ -783,6 +783,33 @@ def release_profile_reader(page):
     page.wait_for_timeout(250)
 
 
+def assert_profile_session_default(page):
+    """Dante is visual only; a finalized session cannot expose saved identity."""
+    facts=page.evaluate("""() => {
+      const read=settingsProfileRead(),mascot=SETTINGS_PROFILE_AVATARS.find(item=>item.id==='dante-mascote');
+      return {confirmed:settingsProfileState.confirmed,draft:settingsProfileState.draft,blocked:settingsProfileState.blocked,
+        mascot:mascot?.avatarDataUrl,saved:read.value,savedRawPresent:read.raw!==null,readBlocked:read.blocked};
+    }""")
+    empty={'displayName':'','avatarDataUrl':None}
+    assert facts['blocked']=='session' and facts['confirmed']==empty and facts['draft']==empty
+    assert facts['mascot'] and facts['savedRawPresent'] and not facts['readBlocked']
+    # A positive control proves that the fixture still contains a personal photo
+    # and name; clearing storage or returning an empty reader must not pass.
+    assert facts['saved']['displayName'] and facts['saved']['avatarDataUrl']
+    assert facts['saved']['avatarDataUrl']!=facts['mascot']
+    for selector in ['#settingsProfileAvatar','#headerProfileAvatar','#settingsAccountAvatar']:
+        avatar=page.locator(selector)
+        assert avatar.locator('img').count()==1
+        assert avatar.locator('img').get_attribute('src')==facts['mascot']
+        assert avatar.locator('img').get_attribute('src')!=facts['saved']['avatarDataUrl']
+        assert avatar.text_content()==''
+    assert page.locator('#settingsProfileNameInput').input_value()==''
+    assert page.locator('#settingsProfileName').inner_text()=='Seu perfil'
+    assert page.locator('#settingsAccountHeading').inner_text()=='Seu perfil'
+    assert page.locator('#headerProfileBtn').get_attribute('aria-label')=='Abrir configurações do perfil — Seu perfil'
+    assert page.locator('#headerProfileBtn').get_attribute('title')=='Abrir perfil — Seu perfil'
+
+
 def run_profile_finalize_contract(browser,url):
     from settings_modal_test import (PROFILE_KEY, profile_boot, open_profile,
         profile_raw, save_profile, synthetic_png, upload_profile, profile_close)
@@ -819,7 +846,7 @@ def run_profile_finalize_contract(browser,url):
     assert profile_raw(page)==original,'A late local image callback must not change the preserved profile'
     open_profile(page)
     assert page.locator('#settingsProfileNameInput').input_value()==''
-    assert page.locator('#settingsProfileAvatar img').count()==0
+    assert_profile_session_default(page)
     assert not page.locator('#settingsProfileSaveBtn').is_enabled()
     assert page.evaluate("localStorage.getItem('settings_profile_unrelated')")=='synthetic-preserved'
     profile_close(context,page,allow_operational_change=True)
@@ -842,7 +869,7 @@ def run_profile_finalize_contract(browser,url):
     release_profile_reader(b)
     open_profile(b)
     assert b.locator('#settingsProfileNameInput').input_value()==''
-    assert b.locator('#settingsProfileAvatar img').count()==0
+    assert_profile_session_default(b)
     assert not b.locator('#settingsProfileSaveBtn').is_enabled()
     assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY)==profile_raw(a)
     b.reload(wait_until='load');wait_bootstrap(b);b.evaluate('closeModal()');open_profile(b)

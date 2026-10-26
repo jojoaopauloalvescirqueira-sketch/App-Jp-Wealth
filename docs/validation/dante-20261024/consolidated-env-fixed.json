@@ -1,0 +1,221 @@
+{
+  "source_sha256": "23a09f27f0e2d7069ad838cde454407dd9b36bc53fdd2fa8c9b208aaef7d0723",
+  "results": [
+    {
+      "case": "hidden-tabs-preserved",
+      "result": "PASS",
+      "evidence": [
+        {
+          "active": "account",
+          "mutations": 0,
+          "targets": [],
+          "hidden": [
+            {
+              "id": "fxcPanel-history",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-statistics",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-risks",
+              "sameNode": true,
+              "sameMarkup": true
+            }
+          ],
+          "duplicateBindings": []
+        },
+        {
+          "active": "history",
+          "mutations": 0,
+          "targets": [],
+          "hidden": [
+            {
+              "id": "fxcPanel-account",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-statistics",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-risks",
+              "sameNode": true,
+              "sameMarkup": true
+            }
+          ],
+          "duplicateBindings": []
+        },
+        {
+          "active": "statistics",
+          "mutations": 0,
+          "targets": [],
+          "hidden": [
+            {
+              "id": "fxcPanel-account",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-history",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-risks",
+              "sameNode": true,
+              "sameMarkup": true
+            }
+          ],
+          "duplicateBindings": []
+        },
+        {
+          "active": "risks",
+          "mutations": 0,
+          "targets": [],
+          "hidden": [
+            {
+              "id": "fxcPanel-account",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-history",
+              "sameNode": true,
+              "sameMarkup": true
+            },
+            {
+              "id": "fxcPanel-statistics",
+              "sameNode": true,
+              "sameMarkup": true
+            }
+          ],
+          "duplicateBindings": []
+        }
+      ]
+    },
+    {
+      "case": "current-model-on-entry",
+      "result": "PASS",
+      "evidence": {
+        "writer": {
+          "ok": true,
+          "persistido": true,
+          "accountId": "PANEL-A",
+          "receipt": {
+            "id": "fx-import-2-ff5eb66e",
+            "accountId": "PANEL-A",
+            "format": "mt5-classic-html-v1",
+            "importedAt": "2026-10-14T12:00:00Z",
+            "fileHash": "19317ea3a15727eb55fcdd1b0343373af64ae2ba46afa4e754ca030f0f4c2192",
+            "fileName": "synthetic-revision.html",
+            "period": {
+              "from": null,
+              "to": null,
+              "declared": true,
+              "timezone": "unknown"
+            },
+            "counts": {
+              "newOrders": 0,
+              "newDeals": 0,
+              "newPositions": 0,
+              "duplicates": 9,
+              "conflicts": 1
+            },
+            "issues": [
+              {
+                "code": "timezone_unknown",
+                "message": "Horários do servidor preservados; fuso não informado pelo arquivo.",
+                "severity": "warning"
+              },
+              {
+                "code": "balance_reconciliation_mismatch",
+                "message": "DIVERGÊNCIA DE SALDO: relatório declara 1425; histórico comprovado calcula 1525. Diferença -100. Ambos os valores foram preservados; a importação não comprova conciliação.",
+                "severity": "warning"
+              }
+            ],
+            "reconciliation": {
+              "status": "mismatch",
+              "declaredBalance": 1425,
+              "ledgerBalance": 1525,
+              "difference": -100
+            }
+          }
+        },
+        "updatedDealNet": "218",
+        "expectedPayoff": "55 USD",
+        "hiddenPreservedUntilEntry": true
+      }
+    },
+    {
+      "case": "presentation-and-single-chart-binding",
+      "result": "PASS",
+      "evidence": {
+        "before": {
+          "ticket": "104",
+          "point": "4",
+          "scroll": 37,
+          "focus": "fxcCurve-main-cursor"
+        },
+        "after": {
+          "ticket": "104",
+          "point": "4",
+          "scroll": 37,
+          "focus": "fxcCurve-main-cursor",
+          "open": true
+        },
+        "oneClickAdvancedTo": "5",
+        "duplicateBindings": []
+      }
+    },
+    {
+      "case": "inert-host-render-preference-and-resize",
+      "result": "PASS",
+      "evidence": {
+        "draw": {
+          "mutations": 0,
+          "targets": [],
+          "inert": true
+        },
+        "render": {
+          "mutations": 0,
+          "targets": [],
+          "inert": true
+        },
+        "preferenceWriter": {
+          "mutations": 2,
+          "changes": [
+            {
+              "id": "fxcImportResult",
+              "type": "childList",
+              "attribute": null,
+              "added": 0,
+              "removed": 2
+            },
+            {
+              "id": "fxcImportResult",
+              "type": "attributes",
+              "attribute": "hidden",
+              "added": 0,
+              "removed": 0
+            }
+          ],
+          "importResultHidden": true,
+          "remainingImportChildren": 0,
+          "saved": true,
+          "explicitCancelCleanupOnly": true
+        },
+        "exposedRedraw": {
+          "width": 540,
+          "svgWidth": 540,
+          "segments": 1
+        }
+      }
+    }
+  ]
+}

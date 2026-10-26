@@ -1,0 +1,11 @@
+--- minigames_test.py.before
++++ minigames_test.py
+@@ -20,7 +20,7 @@
+     assert page.evaluate('sessionEpochCurrent()')
+     before = page.evaluate("JSON.stringify({state:S,storage:{...localStorage}})")
+     children = page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")
+-    assert children == ['tools-calendar','tools-nocuda','tools-leverage','tools-normative','tools-minigames'], ('MiniGames must be the last Tools destination', children)
++    assert children == ['tools-calendar','tools-leverage','tools-normative','tools-minigames'], ('MiniGames must be the last Tools destination', children)
+     assert page.evaluate("JPWNavigation.navigate('tools-minigames')") is True
+     assert page.evaluate("JPWNavigation.current().localView.view") == 'minigames'
+     assert page.locator('#tools').get_by_role('heading', name='MiniGames', exact=True).is_visible()

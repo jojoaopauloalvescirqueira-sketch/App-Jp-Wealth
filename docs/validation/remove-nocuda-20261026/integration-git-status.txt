@@ -1,0 +1,125 @@
+## codex/remover-nocuda-tool-20261026
+ M AGENTS.md
+ D assets/nocuda-metatrader.png
+ D assets/nocuda-tradingview.png
+ M build-id.js
+ M dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html
+ M docs/architecture/APP-EFFICIENCY.md
+ M docs/architecture/CALENDAR-AGENDA.md
+ M docs/architecture/JPW-NOCUDA-CHANNELS.md
+ M docs/architecture/LEARNING-GUIDE.md
+ M docs/architecture/MARKET-HOURS.md
+ M docs/architecture/NAVIGATION-HIERARCHY.md
+ M docs/architecture/NOCUDA-TOOLS.md
+ M docs/architecture/NOCUDA-TRANSFER.md
+ M docs/architecture/STATE-SCHEMA.md
+ M docs/recovery/DATA-RECOVERY.md
+ M docs/work/ACTIVE-TASK.md
+ D downloads/nocuda/MT5-LEIA-ME.md
+ D downloads/nocuda/Nocuda_Tool.ex5
+ D downloads/nocuda/Nocuda_Tool.mq5
+ D downloads/nocuda/Nocuda_Tool.pine
+ D downloads/nocuda/TRADINGVIEW-LEIA-ME.md
+ M index.html
+ M src/js/00-core/01-risk-profiles.js
+ M src/js/00-core/03-default-state.js
+ M src/js/00-core/04-persistence.js
+ M src/js/00-core/07-workspace-backup.js
+ M src/js/00-core/09-learning-progress.js
+ M src/js/00-core/10-download-assets.js
+ M src/js/10-domain/04-stop-statistics.js
+ D src/js/10-domain/16-nocuda-transfer.js
+ M src/js/20-ui/03-main-render.js
+ M src/js/20-ui/07-chart-crosshair-tooltip.js
+ M src/js/20-ui/08-input-bindings.js
+ M src/js/20-ui/31-tools-services.js
+ M src/js/40-app/01-navigation.js
+ M src/js/40-app/04-onboarding.js
+ M src/js/40-app/06-boot.js
+ M src/js/40-app/07-finalize-session.js
+ M src/js/40-app/09-profile-avatar-catalog.js
+ M src/js/40-app/09-settings-modal.js
+ M src/js/40-app/19-calendar-agenda.js
+ M src/js/40-app/24-fx-consolidated-import.js
+ M src/js/40-app/26-learning-catalog.js
+ M src/js/40-app/27-learning-view.js
+ M src/js/40-app/28-learning-guide.js
+ M src/js/40-app/31-market-hours/03-view.js
+ M src/js/40-app/31-market-hours/04-controller.js
+ M src/js/manifest.json
+ M src/styles/app.css
+ M src/vendor/downloads/leverage-daily-source-payload.js
+ M src/vendor/downloads/leverage-native-kit-payload.js
+ M src/vendor/downloads/leverage-native-pin-payload.js
+ M src/vendor/downloads/leverage-preview-payload.js
+ M src/vendor/downloads/leverage-preview-payload.json
+ M src/vendor/downloads/leverage-source-payload.js
+ D src/vendor/downloads/nocuda-payload.js
+ M src/vendor/market-hours/runtime-payload.js
+ M sw.js
+ M tools/alladin_finalize_preservation_test.py
+ M tools/alladin_foundation_test.py
+ M tools/backup_import_audit_test.py
+ M tools/backup_reliability_test.py
+ M tools/build_reproducibility_test.py
+ M tools/calendar_agenda_test.py
+ M tools/capital_currents_browser_test.py
+ M tools/download_assets_browser_test.py
+ M tools/download_assets_test.js
+ M tools/finalize_session_test.py
+ D tools/fixtures/nocuda/synthetic-v1.txt
+ M tools/fx_account_registration_test.py
+ M tools/header_profile_test.py
+ M tools/investor_password_test.py
+ M tools/learning_controller_test.mjs
+ M tools/learning_foundation_test.mjs
+ M tools/learning_guide_test.py
+ M tools/market_hours_integration_test.py
+ M tools/minigames_test.py
+ M tools/navigation_ia_test.py
+ M tools/nocuda_tools_test.py
+ D tools/nocuda_transfer_test.js
+ M tools/planning_compact_table_test.py
+ M tools/planning_proportions_test.py
+ M tools/profile_gallery_test.py
+ M tools/rebuild_monolith.py
+ M tools/regression-memory.json
+ M tools/saving_draft_recovery_test.py
+ M tools/session_write_serialization_test.py
+ M tools/time_twins_browser_test.py
+ M tools/ui_visual_quality_test.py
+?? assets/dante-guide.png
+?? assets/dante-original.jpg
+?? assets/dante-provenance.json
+?? docs/branding/DANTE.md
+?? docs/superpowers/plans/2026-10-24-calendar-markets.md
+?? docs/superpowers/plans/2026-10-24-dante.md
+?? docs/superpowers/plans/2026-10-24-empty-first-use.md
+?? docs/superpowers/plans/2026-10-26-remove-nocuda.md
+?? docs/validation/calendar-markets-20261024/
+?? docs/validation/dante-20261024/
+?? docs/validation/empty-first-use-20261024/
+?? docs/validation/remove-nocuda-20261026/
+?? docs/work/BRIEF-CALENDAR-MARKETS-20261024.md
+?? docs/work/BRIEF-DANTE-20261024.md
+?? docs/work/BRIEF-EMPTY-FIRST-USE-20261024.md
+?? docs/work/CHG-JPW-CALENDAR-LIFECYCLE-CONTROLS-20261025.md
+?? docs/work/CHG-JPW-CALENDAR-LIFECYCLE-PRODUCT-20261025.md
+?? docs/work/CHG-JPW-CALENDAR-MARKETS-PRODUCT-20261024.md
+?? docs/work/CHG-JPW-CALENDAR-MARKETS-TESTS-20261024.md
+?? docs/work/CHG-JPW-DANTE-CONTROLS-20261024.md
+?? docs/work/CHG-JPW-DANTE-PRODUCT-20261024.md
+?? docs/work/CHG-JPW-EMPTY-FIRST-USE-PRODUCT-20261024.md
+?? docs/work/CHG-JPW-EMPTY-FIRST-USE-TESTS-20261024.md
+?? docs/work/CHG-JPW-REMOVE-NOCUDA-CONTROLS-20261026.md
+?? docs/work/CHG-JPW-REMOVE-NOCUDA-PRODUCT-20261026.md
+?? docs/work/CHG-JPW-VISUAL-BOUND-VALUE-20261026.md
+?? docs/work/CHG-JPW-VISUAL-MEASUREMENT-CONTROLS-20261025.md
+?? docs/work/CHG-JPW-VISUAL-MENU-WIDTH-20261026.md
+?? tools/calendar_markets_test.py
+?? tools/dante_catalog_test.mjs
+?? tools/dante_guide_test.py
+?? tools/dante_profile_test.py
+?? tools/dante_visual_quality_test.py
+?? tools/empty_first_use_test.py
+?? tools/ui_visual_measurement_test.py

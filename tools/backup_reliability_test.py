@@ -486,6 +486,10 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
     pf = json.loads((root / 'tools/fixtures/personal_finance_v1.json').read_text())['personalFinance']
     page.evaluate(design.ALLADIN_SEED)
     page.evaluate(r"""({pf,nc,pv,aux}) => {
+      // This roundtrip deliberately contains a synthetic Forex registration.
+      // The Alladin seed does not create one, and product DEFAULTS stays empty.
+      S.accounts=[{forexAccountId:'BR-FOREX-SYNTHETIC',nome:'Conta sintética de backup',
+        tipo:'MESTRE',broker:'Corretora sintética',investorPassword:''}];
       S.personalFinance=structuredClone(pf);
       const instrument=instrumentCatalog()[0].id;
       S.nocoda={schemaVersion:1,studies:{[instrument]:{...nc,updatedAt:'2025-01-01',extension:'BR-NC'}}};

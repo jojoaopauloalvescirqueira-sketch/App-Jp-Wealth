@@ -1,0 +1,230 @@
+{
+  "cases": [
+    {
+      "case": "RED-default-startup",
+      "expected": "PRODUCT_FAIL",
+      "result": "PRODUCT_FAIL",
+      "facts": {
+        "decodes": 2,
+        "stacks": [
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at settingsProfileAvatarValid (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:146:18)\n    at renderSettingsProfileAvatar (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:198:16)\n    at renderSettingsProfile (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:211:3)\n    at settingsProfileReload (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:176:3)\n    at initSettingsModal (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:878:3)\n    at http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:898:1",
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at settingsProfileAvatarValid (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:146:18)\n    at renderSettingsProfileAvatar (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:198:16)\n    at renderSettingsProfile (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:212:3)\n    at settingsProfileReload (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:176:3)\n    at initSettingsModal (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:878:3)\n    at http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:898:1"
+        ],
+        "profileRaw": {
+          "present": false,
+          "sha256": null
+        },
+        "confirmed": {
+          "displayName": "",
+          "avatarPresent": false
+        },
+        "images": [
+          {
+            "id": "settingsProfileAvatar",
+            "count": 1,
+            "sourceDante": true,
+            "sourcePersonal": false
+          },
+          {
+            "id": "headerProfileAvatar",
+            "count": 1,
+            "sourceDante": true,
+            "sourcePersonal": false
+          }
+        ]
+      },
+      "error": "zero base64 decode before action",
+      "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-dante-20261024/avatar-startup-proposal/replay.py\", line 32, in <module>\n    assert facts['decodes']==0,'zero base64 decode before action'\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: zero base64 decode before action\n"
+    },
+    {
+      "case": "GREEN-default-startup",
+      "expected": "PASS",
+      "result": "PASS",
+      "facts": {
+        "decodes": 0,
+        "stacks": [],
+        "profileRaw": {
+          "present": false,
+          "sha256": null
+        },
+        "confirmed": {
+          "displayName": "",
+          "avatarPresent": false
+        },
+        "images": [
+          {
+            "id": "settingsProfileAvatar",
+            "count": 1,
+            "sourceDante": true,
+            "sourcePersonal": false
+          },
+          {
+            "id": "headerProfileAvatar",
+            "count": 1,
+            "sourceDante": true,
+            "sourcePersonal": false
+          }
+        ]
+      }
+    },
+    {
+      "case": "personal-portrait-still-validates",
+      "expected": "PASS",
+      "result": "PASS",
+      "facts": {
+        "decodes": 5,
+        "stacks": [
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at jpwWorkspaceValidate (http://127.0.0.1:64634/src/js/00-core/07-workspace-backup.js:105:37)\n    at jpwWorkspaceCapture (http://127.0.0.1:64634/src/js/00-core/07-workspace-backup.js:160:18)\n    at sessionStateFingerprint (http://127.0.0.1:64634/src/js/40-app/07-finalize-session.js:218:74)\n    at initSessionCheckpoint (http://127.0.0.1:64634/src/js/40-app/07-finalize-session.js:231:17)\n    at http://127.0.0.1:64634/src/js/40-app/06-boot.js:208:102",
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at settingsProfileAvatarValid (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:146:18)\n    at settingsProfileRead (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:162:12)\n    at settingsProfileReload (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:173:14)\n    at initSettingsModal (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:880:3)\n    at http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:900:1"
+        ],
+        "profileRaw": {
+          "present": true,
+          "sha256": "29b4a35fc6ac200688eec87ff380fb98f7a886be0e9b460a8ea89463a70360a0"
+        },
+        "confirmed": {
+          "displayName": "Synthetic startup",
+          "avatarPresent": true
+        },
+        "images": [
+          {
+            "id": "settingsProfileAvatar",
+            "count": 1,
+            "sourceDante": false,
+            "sourcePersonal": true
+          },
+          {
+            "id": "headerProfileAvatar",
+            "count": 1,
+            "sourceDante": false,
+            "sourcePersonal": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "explicitly-stored-Dante-still-validates",
+      "expected": "PASS",
+      "result": "PASS",
+      "facts": {
+        "decodes": 5,
+        "stacks": [
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at jpwWorkspaceValidate (http://127.0.0.1:64634/src/js/00-core/07-workspace-backup.js:105:37)\n    at jpwWorkspaceCapture (http://127.0.0.1:64634/src/js/00-core/07-workspace-backup.js:160:18)\n    at sessionStateFingerprint (http://127.0.0.1:64634/src/js/40-app/07-finalize-session.js:218:74)\n    at initSessionCheckpoint (http://127.0.0.1:64634/src/js/40-app/07-finalize-session.js:231:17)\n    at http://127.0.0.1:64634/src/js/40-app/06-boot.js:208:102",
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at settingsProfileAvatarValid (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:146:18)\n    at settingsProfileRead (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:162:12)\n    at settingsProfileReload (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:173:14)\n    at initSettingsModal (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:880:3)\n    at http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:900:1"
+        ],
+        "profileRaw": {
+          "present": true,
+          "sha256": "7e10d24721d7767546adec7fd73748209a6a202c3ab85f53029b194a9687000f"
+        },
+        "confirmed": {
+          "displayName": "Synthetic startup",
+          "avatarPresent": true
+        },
+        "images": [
+          {
+            "id": "settingsProfileAvatar",
+            "count": 1,
+            "sourceDante": true,
+            "sourcePersonal": true
+          },
+          {
+            "id": "headerProfileAvatar",
+            "count": 1,
+            "sourceDante": true,
+            "sourcePersonal": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "invalid-stored-photo-still-rejected",
+      "expected": "PASS",
+      "result": "PASS",
+      "facts": {
+        "decodes": 5,
+        "stacks": [
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at jpwWorkspaceValidate (http://127.0.0.1:64634/src/js/00-core/07-workspace-backup.js:105:37)\n    at jpwWorkspaceCapture (http://127.0.0.1:64634/src/js/00-core/07-workspace-backup.js:160:18)\n    at sessionStateFingerprint (http://127.0.0.1:64634/src/js/40-app/07-finalize-session.js:218:74)\n    at initSessionCheckpoint (http://127.0.0.1:64634/src/js/40-app/07-finalize-session.js:231:17)\n    at http://127.0.0.1:64634/src/js/40-app/06-boot.js:208:102",
+          "Error\n    at window.atob (<anonymous>:2:201)\n    at settingsProfileAvatarValid (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:146:18)\n    at settingsProfileRead (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:162:12)\n    at settingsProfileReload (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:173:14)\n    at initSettingsModal (http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:880:3)\n    at http://127.0.0.1:64634/src/js/40-app/09-settings-modal.js:900:1"
+        ],
+        "profileRaw": {
+          "present": true,
+          "sha256": "f3984e8a529fa1c9235a762eabde29981e88504cae0a8147f1a11e469702937a"
+        },
+        "confirmed": {
+          "displayName": "Synthetic startup",
+          "avatarPresent": true
+        },
+        "images": [
+          {
+            "id": "settingsProfileAvatar",
+            "count": 0,
+            "sourceDante": false,
+            "sourcePersonal": false
+          },
+          {
+            "id": "headerProfileAvatar",
+            "count": 0,
+            "sourceDante": false,
+            "sourcePersonal": false
+          }
+        ]
+      }
+    },
+    {
+      "case": "invalid-empty-photo-stays-initials",
+      "expected": "PASS",
+      "result": "PASS",
+      "facts": {
+        "decodes": 0,
+        "stacks": [],
+        "profileRaw": {
+          "present": true,
+          "sha256": "26d7f09fe2de0abf4df097a5b765c5bcc30e9878cdeb22ad218b2e8a3f2831ec"
+        },
+        "confirmed": {
+          "displayName": "Synthetic startup",
+          "avatarPresent": true
+        },
+        "images": [
+          {
+            "id": "settingsProfileAvatar",
+            "count": 0,
+            "sourceDante": false,
+            "sourcePersonal": false
+          },
+          {
+            "id": "headerProfileAvatar",
+            "count": 0,
+            "sourceDante": false,
+            "sourcePersonal": false
+          }
+        ]
+      }
+    },
+    {
+      "case": "existing-complete-profile-safety-oracles",
+      "expected": "PASS",
+      "result": "PASS"
+    }
+  ],
+  "source_before": {
+    "src/js/40-app/09-settings-modal.js": "571f05b72c08266588656c633490309c3dced5418226499b59c57b5b5bc6ab22",
+    "src/js/40-app/09-profile-avatar-catalog.js": "1f1c854b32fc9f1ec11e0562e4ab156e2dcab8d796c2e427f31988f5ad059510",
+    "tools/download_assets_browser_test.py": "ba6c180b51527408f5b0a70bf09cda11a0439b0ca8df6289212c64ef26f404f0",
+    "tools/settings_modal_test.py": "b3d7d25b8846d93ecbde84e6b0f253c064271cbfa5c96f819c889267ff587eb8",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+  },
+  "source_after": {
+    "src/js/40-app/09-settings-modal.js": "571f05b72c08266588656c633490309c3dced5418226499b59c57b5b5bc6ab22",
+    "src/js/40-app/09-profile-avatar-catalog.js": "1f1c854b32fc9f1ec11e0562e4ab156e2dcab8d796c2e427f31988f5ad059510",
+    "tools/download_assets_browser_test.py": "ba6c180b51527408f5b0a70bf09cda11a0439b0ca8df6289212c64ef26f404f0",
+    "tools/settings_modal_test.py": "b3d7d25b8846d93ecbde84e6b0f253c064271cbfa5c96f819c889267ff587eb8",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+  },
+  "source_unchanged": true,
+  "candidate_sha256": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+  "limits": [
+    "Scratch source-route candidate, not applied.",
+    "Original zero-atob startup oracle kept; original complete profile-safety test reused unchanged.",
+    "Synthetic disposable contexts, Chromium headless only."
+  ]
+}

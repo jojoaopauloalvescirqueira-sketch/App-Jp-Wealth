@@ -1,0 +1,51 @@
+{
+  "classification": "PASS",
+  "untouched_functions_ast": {
+    "now": true,
+    "hashes": true,
+    "setup": true,
+    "start_write_probe": true,
+    "no_writes": true,
+    "menu_geometry": true,
+    "focus_visible": true,
+    "selector_geometry": true,
+    "menu_keyboard": true,
+    "visual_journey": true,
+    "state_journey": true,
+    "outside_dialog_controls": true,
+    "menu_lifecycle": true,
+    "rejected": true,
+    "reset_transients": true,
+    "matrix": true,
+    "touch": true,
+    "native_zoom": true,
+    "required_ids": true,
+    "validate_coverage": true,
+    "coverage_counterproof": true,
+    "validate_matrix_config": true,
+    "matrix_counterproof": true,
+    "tier_entries": true,
+    "gate_entries_fingerprint": true,
+    "validate_gate_source": true,
+    "gate_counterproof": true,
+    "record": true,
+    "regressions": true,
+    "main": true
+  },
+  "centered_controls_assertions_AST_identical": true,
+  "required_ids": 413,
+  "source_files": 161,
+  "added_source_hashes": [
+    "tools/ui_visual_measurement_test.py"
+  ],
+  "tolerance_css_px": 2,
+  "coverage_counterproofs": "PASS",
+  "sha256": {
+    "tools/ui_visual_quality_test.py": "f5cee3d6442bbb95901afed953ca9ea504c6c30873fd6e0751a274c8b3c5c69c",
+    "tools/ui_visual_measurement_test.py": "41f9d9be12248e7741cff20b8edc4d6beb8b0cd8674bc39fc175f43630d1b64e",
+    "/private/tmp/jpw-visual-measurement-20261025/task-1-baseline-delta.patch": "6d6f92344c96c0b6c6e88fab1197cc8b217dac5683ddc57b272b4cd89d562767"
+  },
+  "baseline_source_files": 160,
+  "unchanged_quality_gate_sha256": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+  "content_geometry_AST_identical": true
+}

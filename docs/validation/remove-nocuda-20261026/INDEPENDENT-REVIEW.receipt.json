@@ -1,0 +1,421 @@
+{
+  "schema": "independent-nocuda-review/v1",
+  "reviewer": "/root/nocuda_final_review",
+  "created_utc": "2026-10-26T12:20:55.489821+00:00",
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "branch": "codex/remover-nocuda-tool-20261026",
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "build": "5cd40fe879de6727",
+  "scope_verdict": "PASS",
+  "full_verdict": "PRODUCT_FAIL",
+  "final_acceptance": "NOT_RUN",
+  "findings": [
+    {
+      "id": "DOC-01",
+      "priority": 3,
+      "path": "docs/architecture/LEARNING-GUIDE.md",
+      "line": 18,
+      "description": "Chapter table still lists 7 Tools lessons; current chapter has 6.",
+      "state": "corrected_by_owner_and_independently_verified"
+    },
+    {
+      "id": "TRACE-01",
+      "priority": 3,
+      "path": "tools/regression-memory.json",
+      "line": 4592,
+      "description": "Retirement browser case attributes legacy learning record coverage to itself; actual coverage lives in learning controller/foundation tests.",
+      "state": "corrected_by_owner_and_independently_verified"
+    }
+  ],
+  "executed_checks": [
+    {
+      "command": "python3 tools/agent_preflight.py --mode audit",
+      "result": "PASS",
+      "scope": "branch and manifest; dirty/freshness warnings retained"
+    },
+    {
+      "command": "node tools/download_assets_test.js",
+      "result": "PASS",
+      "scope": "26 contracts"
+    },
+    {
+      "command": "node tools/learning_foundation_test.mjs",
+      "result": "PASS",
+      "scope": "54 checks"
+    },
+    {
+      "command": "node tools/learning_controller_test.mjs",
+      "result": "PASS",
+      "scope": "120 checks"
+    },
+    {
+      "command": "node tools/dante_catalog_test.mjs",
+      "result": "PASS",
+      "scope": "63 lessons / ownership / immutable catalog"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "ZipFile.testzip(pending-before.zip)",
+      "result": "PASS",
+      "scope": "525 entries CRC"
+    }
+  ],
+  "changed_files": [
+    {
+      "path": "assets/nocuda-metatrader.png",
+      "before_sha256": "1213b5637c49b348fd47e619f86c673f81d43c1aeede4a56f9966be4be47282c",
+      "after_sha256": null
+    },
+    {
+      "path": "assets/nocuda-tradingview.png",
+      "before_sha256": "ddb0b143ee53c2e26910165e0190ac2b4c8847b042b83cc138f4b6e345f0daf1",
+      "after_sha256": null
+    },
+    {
+      "path": "build-id.js",
+      "before_sha256": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c",
+      "after_sha256": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640"
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "before_sha256": "25df944043e4a3222051fd8cf7a728dc1d7eb44384d2c47968a3053222432f43",
+      "after_sha256": "cda2311428689320caaad3e3665cc0e93207f09a25ea96f2c50fc40a5849e2eb"
+    },
+    {
+      "path": "docs/architecture/APP-EFFICIENCY.md",
+      "before_sha256": "051b73fbd78f39c53240a6c1a0669c21383d1de820bd050d833ee972f60039b1",
+      "after_sha256": "b7b9959e4299730fad4c11de5be479216538ceb05d911507c1a008835521b866"
+    },
+    {
+      "path": "docs/architecture/JPW-NOCUDA-CHANNELS.md",
+      "before_sha256": "e002cdd1d43177bb3b8cd38eb47c6352fea20499d32bb2f92f8527396172eff7",
+      "after_sha256": "1ff350e75efd6041cb87b8691d19e55edcf18b553c2c1381ff6e1193f96bae03"
+    },
+    {
+      "path": "docs/architecture/LEARNING-GUIDE.md",
+      "before_sha256": "d22c966563b720ed0c9fc67edcd3197f87bbcebf12aa934fcd3e265900231b2d",
+      "after_sha256": "fc55d785c5e97cde19d60359cf38115c4e41204f6b50bfaeb455521ea1cce1cd"
+    },
+    {
+      "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+      "before_sha256": "ef6970c0148859a40d5bc135dfa9c2789d8cb944c8d1c875fd63a934300e9eb0",
+      "after_sha256": "9c30afd0a907338b150fe3d3942e4b36a7c66713e199d4d3d34299f5478ab487"
+    },
+    {
+      "path": "docs/architecture/NOCUDA-TOOLS.md",
+      "before_sha256": "025c51f182d958f9a54c944dc9317329e5969a97508a63f48452f987e95bc257",
+      "after_sha256": "2a033d26ba0b9aab3981c625cee2f24b7725b545de77f9e3b13546543ea74fd4"
+    },
+    {
+      "path": "docs/architecture/NOCUDA-TRANSFER.md",
+      "before_sha256": "dbf6f9b2c4641265bbbefcb639dfc768bfea88f645df174b76862ead196e75df",
+      "after_sha256": "459c58f58e08281f26823f281bb74491873988259c5230bcda97cb1a3d4a6aaa"
+    },
+    {
+      "path": "docs/work/ACTIVE-TASK.md",
+      "before_sha256": "7b3ebac51344e82ce6d76ee112f2a2375e0f5dbd388ee21982de72da334da9b2",
+      "after_sha256": "60201937e4b07d3da756ad67072ae680c706c5b36e73b2638cf19a61cab53756"
+    },
+    {
+      "path": "downloads/nocuda/MT5-LEIA-ME.md",
+      "before_sha256": "a23f4101033d8cdf6cdabb023be89d5e01c9e23d6de084a8dfd3575254738fb0",
+      "after_sha256": null
+    },
+    {
+      "path": "downloads/nocuda/Nocuda_Tool.ex5",
+      "before_sha256": "3cbbefc52d63c7592ff0bbf2fecc958593636eaecd5bea8ec8db26539577fd5b",
+      "after_sha256": null
+    },
+    {
+      "path": "downloads/nocuda/Nocuda_Tool.mq5",
+      "before_sha256": "f93a813eacbdb0bd944020d9ee187720ab2b3a2f9ea7cfb6131ae7957a11719c",
+      "after_sha256": null
+    },
+    {
+      "path": "downloads/nocuda/Nocuda_Tool.pine",
+      "before_sha256": "a11c503b2516239b1c6f360ca89008e2bfef3c5aa44bf98d1c1427f970a4fc57",
+      "after_sha256": null
+    },
+    {
+      "path": "downloads/nocuda/TRADINGVIEW-LEIA-ME.md",
+      "before_sha256": "bbf1ef551e7a5cea6e4e70e65ff50f8da86372d4b0ce0cbe689b16b4e936ff1c",
+      "after_sha256": null
+    },
+    {
+      "path": "index.html",
+      "before_sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+      "after_sha256": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada"
+    },
+    {
+      "path": "src/js/00-core/07-workspace-backup.js",
+      "before_sha256": "418accb65116fb7b5f2a959965c80f0c6e52caff94c847e55201988c7e6694ac",
+      "after_sha256": "30891efb82a9270c23cfbb318c3380cb1a5de0872ab72c16d00792290d4a1a9a"
+    },
+    {
+      "path": "src/js/00-core/09-learning-progress.js",
+      "before_sha256": "ad4da2a8ad5b5b63276c6a38fba71e7be34e3936db9fa4f876412ba29cebbab6",
+      "after_sha256": "782cdd7f7d726eac8ac5d6a00cfddd055ac5ad7cbcd4d9e39ab7bb523fc699d0"
+    },
+    {
+      "path": "src/js/00-core/10-download-assets.js",
+      "before_sha256": "e42f18df8612ac5599aeabc3b0fe364c314878d7bd13c0f6ad2fcc810470b378",
+      "after_sha256": "46887f62c99136b532a7bf32832338d5015561c3e487be7d7eab0e6361e78687"
+    },
+    {
+      "path": "src/js/10-domain/16-nocuda-transfer.js",
+      "before_sha256": "f70d4b16b25c63cd75eedf65a7e873455fcb43ec5186957a26a7302cc2c1a7cb",
+      "after_sha256": null
+    },
+    {
+      "path": "src/js/20-ui/31-tools-services.js",
+      "before_sha256": "b0580faad139788c15f6afbdaf305705f7dbe26f7338405fd3732162502683a3",
+      "after_sha256": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+    },
+    {
+      "path": "src/js/40-app/01-navigation.js",
+      "before_sha256": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+      "after_sha256": "b683ce248781a81df0b5c38ce4caf222de87bc77e07b809ffbecd1b2f2802abb"
+    },
+    {
+      "path": "src/js/40-app/26-learning-catalog.js",
+      "before_sha256": "4c671a75b9df8ab69047d775f279558eb801a7f8f2c875517c3467b96fd4b040",
+      "after_sha256": "784f0bbf6dba081bd647eaf6f353d3bc707b13f6fc019f47f72b38a125923f7c"
+    },
+    {
+      "path": "src/js/40-app/28-learning-guide.js",
+      "before_sha256": "2bded75161d7bd4d3c9f5408215ae3209e48985a3a463036d58621c8b15cf2c3",
+      "after_sha256": "0710b7083e0353f3b11d83cfaef96f03c2c3804d97aac818c6c6661f45e08a64"
+    },
+    {
+      "path": "src/js/manifest.json",
+      "before_sha256": "9aaa09edb0e035b95f84f155c90d85ff1e3ebce22e6719243474416ea7054430",
+      "after_sha256": "f14a699a5d939395843fbbae73f6e6d7ad8ffd26e9690d9afd0ec8bc3475350e"
+    },
+    {
+      "path": "src/styles/app.css",
+      "before_sha256": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937",
+      "after_sha256": "301ce56aa787f32b0eda24b665e4cfb9cf5c05dfd9c586703551261f2db0e437"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+      "before_sha256": "38fe1ceeec9fda76664d014a3cc95b1a39e3c9f6e98ce3018eb2f6177ffa0ef7",
+      "after_sha256": "91b1c71e1b07c6017ee6504012b72a972a056b4a3b53eecc4a830f049efe2152"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+      "before_sha256": "164b270b6c484c35ee5bb1b8c46e7709b29ace28b6e512aac048d309e64784e9",
+      "after_sha256": "19653a7b21e725694f3065bc87ccdd0f1e3b35b3ea60005669e5f2c50dd14abf"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+      "before_sha256": "4ff2cf24be6a927ed061875c761cf833d4044ce87a4b7848f868e18c9cb1a0e0",
+      "after_sha256": "2b2bed40b5b5209365779c081dedeb4124ba1ce619d77898eef4cbcff544fe30"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.js",
+      "before_sha256": "245bee18ecff98cdc89cfd874f28e8e028cb3a457a6c2c096cd7b7612670347c",
+      "after_sha256": "8743ba2d2a7ba55f63ef47be2ada232020e2c168d5642efae8fc0ec1f5baf7a3"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.json",
+      "before_sha256": "3be25db0d63d5f8d6c1be92f66c4aaf977f3610fa3ceaf4d014e68f244d2ae9d",
+      "after_sha256": "43ec0cc7af24f53d7d71bbb6a1bc3c5bd93611c1f62c012615b43491f3a99928"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-source-payload.js",
+      "before_sha256": "b04d9328ed73de75b188ad6e34e63b9e8076d9d749efdf644ebc7938de128c34",
+      "after_sha256": "a942d68f5600b00b489281b3667575d66de6352d30a3e977d3b0033cf76662d5"
+    },
+    {
+      "path": "src/vendor/downloads/nocuda-payload.js",
+      "before_sha256": "a3e0d58e36fc88e8f11e4f98d5949b8608e1bea713b534eed63d29278a14b8d1",
+      "after_sha256": null
+    },
+    {
+      "path": "src/vendor/market-hours/runtime-payload.js",
+      "before_sha256": "e8840533ddf2d320ac9759d4aa2347b8fb66dac8f6a6ee2e10c9d1b216917bd4",
+      "after_sha256": "78204329ab70470ce55f8152ed89ed42ff9bc906521ec1755831a646f87a9369"
+    },
+    {
+      "path": "sw.js",
+      "before_sha256": "b3c6226bda14ecfbd0e9b63f9a87f4c9a23502bbc734771a1b9063f7794cf718",
+      "after_sha256": "49217775a22a02572439625d5fd7128c44378f92a791fddc733b8d0cc446b59a"
+    },
+    {
+      "path": "tools/build_reproducibility_test.py",
+      "before_sha256": "c5233eeb295d554314e11fb7a61ec5bfe734c9a465cc836b7b6fa67b957cd62b",
+      "after_sha256": "78adfabe84c986404a3bb2b79ec2a0d1de798c6fad02f736624708277e873d1e"
+    },
+    {
+      "path": "tools/capital_currents_browser_test.py",
+      "before_sha256": "64b03af9ed1e5a783efe92e103974dd2d9885d03010b9f81fb4ea7f9819d724b",
+      "after_sha256": "683e347c59eb30608474c57e27ff7cc845510f667ebd408ec2054f8fd8073289"
+    },
+    {
+      "path": "tools/dante_catalog_test.mjs",
+      "before_sha256": "788f27729ef8f39ec69617b5bca5cf4bc89e27757cfa79a6c9e0573da0893d01",
+      "after_sha256": "55f07ca16912527c37b5546bc90202fbba2156eff2d604ebfef632068de23b9b"
+    },
+    {
+      "path": "tools/download_assets_browser_test.py",
+      "before_sha256": "ba6c180b51527408f5b0a70bf09cda11a0439b0ca8df6289212c64ef26f404f0",
+      "after_sha256": "e632f970dbd4b8568604c86b52671a72afbba39b9dd8b60a17f3d393c01aab15"
+    },
+    {
+      "path": "tools/download_assets_test.js",
+      "before_sha256": "05dd740f4e9dc364907b885d35388655768f5452dc6570231b385add86434219",
+      "after_sha256": "17ba6ecbe35b8d4d36e239e7be2ce11a2e7d202f14ff157b33b24fbde9a3780e"
+    },
+    {
+      "path": "tools/fixtures/nocuda/synthetic-v1.txt",
+      "before_sha256": "182de0ab2b6d481a090260d91748ae72a3ef7bba0004b7e0c2b224c27f4f58aa",
+      "after_sha256": null
+    },
+    {
+      "path": "tools/learning_controller_test.mjs",
+      "before_sha256": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11",
+      "after_sha256": "a873b8aa6ce75073c6e5fa7e0e2c654e6c82dcb5d54f69ceba19d9fce820d6d9"
+    },
+    {
+      "path": "tools/learning_foundation_test.mjs",
+      "before_sha256": "86bb50e2fcc88b04f5df75524392e933075cda48f5d8d4c8cb8c0cb67a3f8d91",
+      "after_sha256": "2cd3490964f1c27e83992eb34775db79d5179aad540e86f7fad8169deb644b27"
+    },
+    {
+      "path": "tools/learning_guide_test.py",
+      "before_sha256": "6bfc1b496c82a7e1cc720c36ee38f23bd950cd60b5b932b36c70021cd6dbfa4e",
+      "after_sha256": "332ffc86056fd88dc7e758473c76b902c4b4d4ab9e308744fa726c67e3874978"
+    },
+    {
+      "path": "tools/minigames_test.py",
+      "before_sha256": "58ed0ebf26f3c78b864f3b2cdfc7ebcbdcab58d61710625717b5098461dfea50",
+      "after_sha256": "4a1c2fd7e199a1d10ab5b13f2a0d4cf9996ab8cf52ecb281c92aa76ca7057dd2"
+    },
+    {
+      "path": "tools/navigation_ia_test.py",
+      "before_sha256": "1b7af3a48d85848eb3a71e1b7e7a984cd4bbd4dce3554fa3364d89d22bf2e95a",
+      "after_sha256": "2f59f750070dd85884ce0a3ffb5d155bd299c96c38f74150c469c45da7ac6e0c"
+    },
+    {
+      "path": "tools/nocuda_tools_test.py",
+      "before_sha256": "2295d820781c7e05e031021c441bd4b7b801738f9fd9d60dfc2320cbb0217081",
+      "after_sha256": "c1b146b16b8add635fbafbadeef9a06df90011541364680f865aa95bb9f09f51"
+    },
+    {
+      "path": "tools/nocuda_transfer_test.js",
+      "before_sha256": "7b3b04c02bcedd35def6e954027e2b563085741f62bb0240f221995d8b24fe90",
+      "after_sha256": null
+    },
+    {
+      "path": "tools/planning_proportions_test.py",
+      "before_sha256": "270e6aeadf059f0d17823eb79a2772882b56543eb38f4c9aa5b2e159ac70ed5a",
+      "after_sha256": "112dc287d14557b725b69c204a67fd004fb3e45ee3fb891a767d9e2de231a8dc"
+    },
+    {
+      "path": "tools/rebuild_monolith.py",
+      "before_sha256": "2b0d692ab05b933642f5ee24d5982c63cb71f863afcafec1644d85f39c505977",
+      "after_sha256": "9f7439c90f915d8275dc1e14f6983569e397ea451cfdf00b9bd8629f5d564897"
+    },
+    {
+      "path": "tools/regression-memory.json",
+      "before_sha256": "5b1ce222cac3dc695be3794ef5db1465b70b99df5baf62cdb2461fb270ab1ce0",
+      "after_sha256": "0187bf6d167d0a2e993a362db6ecb9b254150e3249fea9ff9a3a3c0ce5693ca8"
+    },
+    {
+      "path": "tools/saving_draft_recovery_test.py",
+      "before_sha256": "7a43624155f7f28de1707927efb5a7d11e20382e9ee2b4dd1c1b2bb2b5d4db1c",
+      "after_sha256": "f22f02465ba394aa05db5b057333d85ada1dd91d23d9a76c5f4c760effd14df6"
+    },
+    {
+      "path": "tools/time_twins_browser_test.py",
+      "before_sha256": "32168849f9721083bb396c6af63b1f812accddbc79b43ccf7a1250ea79f9ad42",
+      "after_sha256": "32e2ebe5f4fe8ddffc755823d16a8dd4147ec7b3a9a037243d256484da534a1b"
+    }
+  ],
+  "limits": [
+    "Full receipt not yet available.",
+    "Browser evidence reviewed from separate agents; reviewer did not rerun browsers.",
+    "No headed, native MT5, deployment or human visual acceptance."
+  ],
+  "artifact_hashes": {
+    "INDEPENDENT-REVIEW.md": "10bb69ba154d5c3bff0b9a79813ef0a1cbf3dbfd4795b54fd1f5d47eb4e402b0"
+  },
+  "updated_utc": "2026-10-26T13:08:53.242209+00:00",
+  "full_verdict_scope": "first completed full-final round",
+  "first_full_attempt": {
+    "exit": 130,
+    "state": "incomplete; deliberate interruption",
+    "complete_checks_passed": 6
+  },
+  "final_full_state": "completed101PASS1PRODUCT_FAIL; corrected rerun required",
+  "open_findings": [
+    "TEST-01: apply approved minimal startup-oracle retirement adaptation, focused browser and new full required"
+  ],
+  "ui_and_freeze_audit": {
+    "reviewed_utc": "2026-10-26T12:38:05.071692+00:00",
+    "classification": "PASS",
+    "scope": "UI receipt and live final freeze only; final FULL audit still pending",
+    "cases": 413,
+    "required": 413,
+    "exact_unique_set": true,
+    "tolerance_css_px": 2,
+    "source_unchanged": true,
+    "source_hashes_match": true,
+    "test_sha256": "f5cee3d6442bbb95901afed953ca9ea504c6c30873fd6e0751a274c8b3c5c69c",
+    "native_zoom_evidence": {
+      "outer": 1440,
+      "inner": 720,
+      "css": "1"
+    },
+    "frozen_paths": 678,
+    "expected_absent": 11,
+    "all_frozen_hashes_match": true,
+    "all_expected_absent": true,
+    "evidence_path": "/private/tmp/jpw-remove-nocuda-20261026/full-final/full-relocated-evidence/ui-visual-quality/ui-visual-quality-results.json",
+    "evidence_sha256": "944b7c18ba70ee31bb8439b7307a7b607ac65bbadcd98f26b51211aa0443fda4",
+    "freeze_sha256": "c1203fdb72e1bb015d0d1d29f1395c78f27a9324b3082f55e09283c0e8ce7ecf",
+    "limits": {
+      "other_modules": "NOT_RUN",
+      "human_acceptance": "NOT_RUN",
+      "Safari": "NOT_RUN",
+      "screen_reader": "NOT_RUN",
+      "physical_touch": "NOT_RUN",
+      "native_select_popup_ink": "NOT_RUN; closed native selector/input boxes, options and reachability measured"
+    }
+  },
+  "final_full_audit_pending_checks": [
+    "official full-relocated.json exists and is complete",
+    "full-relocated-command.json exit0",
+    "102 official IDs exactly once, allPASS and no omitted/skipped checks",
+    "same frozen678 paths and expectedAbsent11",
+    "sourceUnchanged true",
+    "preserved first failure/interrupted history and UI900secondcap"
+  ],
+  "first_completed_full": {
+    "checks": 102,
+    "counts": {
+      "PASS": 101,
+      "PRODUCT_FAIL": 1
+    },
+    "exit": 1,
+    "source_unchanged": true,
+    "frozen_inputs": 678,
+    "full_sha256": "4e25aa61b7834196ed0ff140baf3e4ca34aff15334843f1b071430d70ecc89d0"
+  },
+  "startup_oracle_proposal_review": {
+    "classification": "PASS",
+    "decision": "GO exact scratch adaptation, not full acceptance",
+    "candidate_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6",
+    "original_hash_unchanged": "40a619eac3b449f7e0704d8aa2be46f38280902d0340f961e898057d22b36c82",
+    "case_ids": 66,
+    "original_negative_probes": 13,
+    "new_negative_probes": 2,
+    "additional_independent_negative_probes": 2,
+    "before_rejects_current": true,
+    "candidate_accepts_current": true,
+    "repo_not_edited_by_reviewer": true
+  }
+}

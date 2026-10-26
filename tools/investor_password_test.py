@@ -44,6 +44,9 @@ def run_suite(browser, url, rotulo):
     # 1) digitar senha em memória → save() → localStorage limpo, memória intacta
     ctx, page = open_page(browser, url)
     r = page.evaluate("""(seg) => {
+      // Explicit synthetic registration fixture; clean first use has no accounts.
+      S.accounts=[{forexAccountId:'PASSWORD-SYNTHETIC',nome:'Conta sintética de privacidade',
+        tipo:'MESTRE',broker:'Corretora sintética',investorPassword:''}];
       S.accounts[0].investorPassword = seg;
       S.onboarding.investorPassword = seg;
       save(); markSessionCheckpoint();

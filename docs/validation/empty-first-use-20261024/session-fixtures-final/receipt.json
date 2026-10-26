@@ -1,0 +1,24 @@
+[
+  {
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/alladin_finalize_preservation_test.py"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 35.81,
+    "result": "PASS",
+    "test_sha256": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+    "log": "/private/tmp/jpw-empty-first-use-20261024/session-fixtures-final/alladin_finalize_preservation.log"
+  },
+  {
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/session_write_serialization_test.py"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 21.97,
+    "result": "PASS",
+    "test_sha256": "2f821fe09765e5ec0dd9f203fcd8ffa87785e2629fd725feb5337130f8df2ce5",
+    "log": "/private/tmp/jpw-empty-first-use-20261024/session-fixtures-final/session_write_serialization.log"
+  }
+]

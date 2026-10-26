@@ -6,20 +6,20 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { webcrypto, createHash } = require('node:crypto');
 const loaderPath = path.join(__dirname, '../src/js/00-core/10-download-assets.js');
-const bytes = Buffer.from('fixture Pine and archive bytes\n');
+const bytes = Buffer.from('synthetic shared archive bytes\n');
 const hash = value => createHash('sha256').update(value).digest('hex');
-const resourceId = 'nocuda/fixture.pine', payloadId = 'nocuda';
+const resourceId = 'leverage/source', payloadId = 'leverage-fixture';
 const buildId = 'fixture-build-001';
 const envelope = delta => ({ schemaVersion: 1, buildId, id: payloadId,
   files: { [resourceId]: bytes.toString('base64') }, ...delta });
 function harness({ protocol = 'https:', inline, fetchBytes = bytes, rejectFetch = false, cryptoOverride } = {}) {
   const calls = { fetch: 0, decode: 0, scripts: [], timers: [] };
-  const descriptor = { path: 'downloads/nocuda/fixture.pine', filename: 'fixture.pine',
-    mime: 'text/plain;charset=utf-8', bytes: bytes.length, sha256: hash(bytes), payload: payloadId };
+  const descriptor = { path: 'downloads/leverage/fixture.zip', filename: 'fixture.zip',
+    mime: 'application/zip', bytes: bytes.length, sha256: hash(bytes), payload: payloadId };
   const manifest = { schemaVersion: 1, buildId, resources: { [resourceId]: descriptor },
-    payloads: { [payloadId]: { path: 'src/vendor/downloads/nocuda-payload.js', elementId: 'jpw-download-payload-nocuda' } } };
+    payloads: { [payloadId]: { path: 'src/vendor/downloads/leverage-fixture-payload.js', elementId: 'jpw-download-payload-leverage-fixture' } } };
   const document = { currentScript: null,
-    getElementById(id) { return inline && id === manifest.payloads.nocuda.elementId ?
+    getElementById(id) { return inline && id === manifest.payloads[payloadId].elementId ?
       { type: 'application/json', textContent: JSON.stringify(inline) } : null; },
     createElement() { return { dataset: {}, remove() {} }; },
     head: { appendChild(script) { calls.scripts.push(script); }, append(script) { calls.scripts.push(script); } } };
@@ -60,7 +60,7 @@ for(const [name, fetchBytes] of [['size', Buffer.concat([bytes, Buffer.from('x')
   test(`reject corrupt HTTP ${name}`, async () => { const h = harness({fetchBytes}); await assert.rejects(apiOf(h).getBytes(resourceId)); });
 }
 test('unknown resource never requests a network asset', async () => {
-  const h = harness(); await assert.rejects(apiOf(h).getBytes('nocuda/missing.pine')); assert.equal(h.calls.fetch, 0);
+  const h = harness(); await assert.rejects(apiOf(h).getBytes('leverage/missing.zip')); assert.equal(h.calls.fetch, 0);
 });
 test('portable HTTP uses inert envelope only after action', async () => {
   const h = harness({inline: envelope()}); const api = apiOf(h); assert.equal(h.calls.decode, 0);
@@ -101,7 +101,7 @@ test('sidecar times out at 15 seconds and permits next click', async () => {
   timeout.fn(); await rejection;
   const retry = api.getBytes(resourceId); h.register(envelope()); assert.deepEqual(Buffer.from(await retry), bytes);
 });
-for(const [field, value] of [['path','../fixture.pine'], ['bytes',0], ['bytes',Number.MAX_SAFE_INTEGER+1], ['sha256','bad'], ['payload','missing']]) {
+for(const [field, value] of [['path','../fixture.zip'], ['bytes',0], ['bytes',Number.MAX_SAFE_INTEGER+1], ['sha256','bad'], ['payload','missing']]) {
   test(`reject invalid descriptor ${field} before loading`, async () => {
     const h = harness(); h.manifest.resources[resourceId][field] = value;
     await assert.rejects(apiOf(h).getBytes(resourceId)); assert.equal(h.calls.fetch,0); assert.equal(h.calls.scripts.length,0);
@@ -133,8 +133,8 @@ test('returned byte arrays cannot corrupt another consumer or validated cache', 
 test('old resource hash failure cannot erase another resource retry in the same group', async () => {
   let release,started;const gate=new Promise(resolve=>release=resolve),digestStarted=new Promise(resolve=>started=resolve);let count=0;
   const cryptoOverride={subtle:{async digest(...args){if(++count===1){started();await gate;}return webcrypto.subtle.digest(...args);}}};
-  const h=harness({protocol:'file:',cryptoOverride}),api=apiOf(h),other='nocuda/second.pine';
-  h.manifest.resources[other]={...h.manifest.resources[resourceId],path:'downloads/nocuda/second.pine',filename:'second.pine'};
+  const h=harness({protocol:'file:',cryptoOverride}),api=apiOf(h),other='leverage/dailySource';
+  h.manifest.resources[other]={...h.manifest.resources[resourceId],path:'downloads/leverage/second.zip',filename:'second.zip'};
   const a=api.getBytes(resourceId),aFails=assert.rejects(a),b=api.getBytes(other),bFails=assert.rejects(b);
   h.register(envelope({files:{[resourceId]:Buffer.alloc(bytes.length,120).toString('base64')}}));
   await digestStarted;await bFails;

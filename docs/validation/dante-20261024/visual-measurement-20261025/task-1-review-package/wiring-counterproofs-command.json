@@ -1,0 +1,10 @@
+{
+  "cmd": [
+    ".superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "-c",
+    "import sys,json,threading\nfrom pathlib import Path\nfrom functools import partial\nsys.path.insert(0,'tools')\nimport ui_visual_quality_test as h\nfrom playwright.sync_api import sync_playwright\nserver=h.BrowserFixtureServer(('127.0.0.1',0),partial(h.planning.Quiet,directory=str(h.ROOT)))\nthreading.Thread(target=server.serve_forever,daemon=True).start()\nreport={'cases':[]}\ntry:\n with sync_playwright() as pw:\n  browser=pw.chromium.launch(**h.launch_options())\n  try:h.counterproofs(browser,f'http://127.0.0.1:{server.server_port}/index.html',report)\n  finally:browser.close()\nfinally:server.shutdown();server.server_close()\nPath('/private/tmp/jpw-visual-measurement-20261025/wiring-counterproofs.json').write_text(json.dumps(report,indent=2))\nprint([(c['id'],c['classification']) for c in report['cases']])\nassert len(report['cases'])==4 and all(c['classification']=='PASS' for c in report['cases'])\ncase=next(c for c in report['cases'] if c['id']=='counterproof-forecast-inner-text')\nassert 'batched_measurement_counterproofs' in case['observed']\n"
+  ],
+  "exit": 1,
+  "timeout": 900,
+  "elapsed": 6.259945666999556
+}

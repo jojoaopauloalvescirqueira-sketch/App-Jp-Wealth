@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Nocuda UI boundaries: synthetic data only; HTTP, file, portable and PWA."""
+"""Nocuda retirement and legacy compatibility; synthetic HTTP/file/portable/PWA."""
 from pathlib import Path
 import base64
 import hashlib
@@ -45,43 +45,42 @@ try:
     for mode,target in targets:
         context,page,errors=boot(browser,target)
         baseline=state(page)
-        check(mode+' routes',page.evaluate("JPWNavigation.navigate('tools-nocuda')"))
-        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-market-hours','tools-nocuda','tools-leverage','tools-normative','tools-minigames'])
-        page.click('#nocudaExample');wire=page.locator('#nocudaCanonical').input_value()
-        check(mode+' preview49',page.locator('#nocudaPreview line').count()==49)
-        check(mode+' anchors3',page.locator('#nocudaAnchors tr').count()==3)
-        with page.expect_download() as dl:page.click('#nocudaSave')
-        data=Path(dl.value.path()).read_bytes()
-        check(mode+' txt exact',data==wire.encode())
-        page.set_input_files('#nocudaFile',{'name':'Nocuda.txt','mimeType':'text/plain','buffer':data})
-        page.wait_for_function("document.getElementById('nocudaStatus').textContent.startsWith('Código válido')")
-        check(mode+' ownfile valid',page.locator('#nocudaCanonical').input_value()==wire)
-        page.fill('#nocudaPayload',wire+'|unknown=<img src=x onerror=alert(1)>');page.click('#nocudaValidate')
-        check(mode+' invalid preserves',page.locator('#nocudaCanonical').input_value()==wire and page.locator('#nocudaPreview line').count()==49)
-        check(mode+' stale actions blocked',page.locator('#nocudaCopy').is_disabled() and page.locator('#nocudaEditable').is_disabled())
-        # Os únicos elementos de imagem permitidos são os dois ícones locais
-        # das plataformas. O payload inválido não pode acrescentar nenhum nó.
-        expected_icons = "imgs=>imgs.length===2&&imgs.every(img=>['assets/nocuda-tradingview.png','assets/nocuda-metatrader.png'].some(path=>img.getAttribute('src')===path||img.src.endsWith('/'+path)))"
-        if mode == 'portable':
-            expected_icons = "imgs=>imgs.length===2&&imgs.every(img=>img.src.startsWith('data:image/png;base64,'))"
-        check(mode+' no injection',page.locator('#nocudaTool img').evaluate_all(expected_icons))
-        check(mode+' drawing included as unvalidated recovery draft',page.evaluate("jpwWorkspaceDrafts().some(x=>x.provider==='nocuda-transfer'&&x.context.route==='tools-nocuda'&&x.text===document.getElementById('nocudaPayload').value)"))
-        page.click('#nocudaRestore')
-        with page.expect_download() as dl:page.click('#nocudaEditable')
-        generated=Path(dl.value.path()).read_text()
-        check(mode+' generated preconfigured','const bool PRECONFIGURED = true // NOCUDA_PRECONFIGURED' in generated)
-        check(mode+' generated blank symbol','input.string("", "Símbolo canônico' in generated)
-        check(mode+' generated source retains grid','max_lines_count = 400' in generated)
-        check(mode+' generated exact A price','input.price(100.00000,' in generated)
-        check(mode+' generated seed',json.dumps(wire,ensure_ascii=False) in generated)
-        # Generated artifacts change defaults only; parser and geometry source unchanged.
-        original=(ROOT/'downloads/nocuda/Nocuda_Tool.pine').read_text().splitlines()
-        result=generated.splitlines()
-        check(mode+' generated same lines',len(original)==len(result))
-        check(mode+' changed only allowlisted defaults',all(a==b or 'NOCUDA_DEFAULT:' in a or 'NOCUDA_PRECONFIGURED' in a for a,b in zip(original,result)))
-        for filename in ['Nocuda_Tool.pine','Nocuda_Tool.mq5','Nocuda_Tool.ex5','TRADINGVIEW-LEIA-ME.md','MT5-LEIA-ME.md']:
-            with page.expect_download() as dl:page.locator('[data-nocuda-file="'+filename+'"]').click()
-            check(mode+' download '+filename,Path(dl.value.path()).read_bytes()==(ROOT/'downloads/nocuda'/filename).read_bytes())
+        # CHG-JPW-REMOVE-NOCUDA-CONTROLS: retired UI/global behavior replaces
+        # the approved removed editor/source-generator/download assertions.
+        check(mode+' retired submenu absent',page.locator('[data-nav-child="tools-nocuda"]').count()==0)
+        check(mode+' retired panel absent',page.locator('#nocudaTool,#nocudaPayload,[data-nocuda-file]').count()==0)
+        check(mode+' retired globals absent',page.evaluate("typeof JPWNocudaTransfer==='undefined'&&typeof JPWTools.generateEditable==='undefined'"))
+        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-leverage','tools-normative','tools-minigames'])
+        check(mode+' ordinary Stoikus entry',page.evaluate("JPWNavigation.navigate('tools-leverage')"))
+        check(mode+' ordinary entry has no retirement notice',page.locator('#nocudaRetirementNotice').is_hidden())
+        for local in [False,True]:
+            before_refusal=state(page)
+            before_route=page.evaluate('JPWNavigation.current()')
+            before_notice=page.locator('#nocudaRetirementNotice').evaluate('(n)=>({hidden:n.hidden,text:n.textContent})')
+            page.evaluate("()=>{const d=document.createElement('dialog');d.id='retirementRefusalDialog';d.textContent='Synthetic unsaved context';document.body.append(d);d.showModal();window.__retirementEvents=[];window.__retirementOff=JPWNavigation.subscribe(e=>__retirementEvents.push(e));}")
+            check(mode+' refused alias '+str(local),not page.evaluate("local=>local?JPWNavigation.navigateLocal('tools','nocuda'):JPWNavigation.navigate('tools-nocuda')",local))
+            check(mode+' refusal preserves context '+str(local),state(page)==before_refusal and page.evaluate('JPWNavigation.current()')==before_route)
+            check(mode+' refusal no notice/event '+str(local),page.locator('#nocudaRetirementNotice').evaluate('(n)=>({hidden:n.hidden,text:n.textContent})')==before_notice and page.evaluate('__retirementEvents.length')==0)
+            page.evaluate("__retirementOff();document.getElementById('retirementRefusalDialog').close();document.getElementById('retirementRefusalDialog').remove()")
+        for local in [False,True]:
+            check(mode+' legacy alias accepted '+str(local),page.evaluate("local=>local?JPWNavigation.navigateLocal('tools','nocuda'):JPWNavigation.navigate('tools-nocuda')",local))
+            check(mode+' alias redirects '+str(local),page.evaluate("JPWNavigation.current().canonical==='tools-leverage'&&JPWTools.ui.getView()==='leverage'"))
+            check(mode+' accepted alias retirement notice '+str(local),page.locator('#nocudaRetirementNotice').is_visible() and bool(page.locator('#nocudaRetirementNotice').inner_text().strip()))
+        # A recovered legacy drawing stays readable/copyable, with no adapter.
+        draft={'label':'Synthetic retired drawing','provider':'nocuda-transfer','version':1,'context':{'route':'tools-nocuda'},'baseReference':None,'text':'synthetic legacy payload <img src=x onerror=alert(1)>'}
+        check(mode+' retired recovery inspect refuses',page.evaluate("item=>JPWWorkspaceDrafts.inspect(item).compatible===false",draft))
+        route=page.evaluate('JPWNavigation.current()')
+        check(mode+' retired recovery reopen refuses',page.evaluate("item=>JPWWorkspaceDrafts.reopen(item).ok===false",draft))
+        check(mode+' recovery no state effects',state(page)==baseline and page.evaluate('JPWNavigation.current()')==route)
+        page.evaluate("item=>{window.__retiredRecoveryBefore=S.workspaceRecovery;S.workspaceRecovery={drafts:[item]};jpwWorkspaceShowDrafts();}",draft)
+        area=page.locator('#workspaceDraftDialog textarea')
+        check(mode+' legacy recovery text exact',area.input_value()==draft['text'] and area.get_attribute('readonly') is not None)
+        check(mode+' legacy recovery cannot reopen',page.locator('#workspaceDraftDialog button').filter(has_text='Conferir e reabrir campos').count()==0)
+        # Selection and copy use the native readonly textarea, without executing markup.
+        area.select_text()
+        check(mode+' legacy recovery selectable',area.evaluate('(node)=>node.selectionStart===0&&node.selectionEnd===node.value.length'))
+        check(mode+' recovery payload remains text',page.locator('#workspaceDraftDialog img').count()==0)
+        page.evaluate("document.getElementById('workspaceDraftDialog').close();document.getElementById('workspaceDraftDialog').remove();if(__retiredRecoveryBefore===undefined)delete S.workspaceRecovery;else S.workspaceRecovery=__retiredRecoveryBefore;delete window.__retiredRecoveryBefore")
         check(mode+' calendar alias',page.evaluate("JPWNavigation.navigate('ecal')&&JPWNavigation.current().primary==='tools'"))
         page.wait_for_selector('#execEcal .calendar-grid [data-calendar-date]')
         check(mode+' single calendar DOM',page.locator('#tools #execEcal').count()==1 and page.locator('#research #execEcal').count()==0)
@@ -101,17 +100,12 @@ try:
         page.evaluate('JPWEcal.close()')
         check(mode+' weekly filter leaves monthly unchanged',page.locator('#execEcal').inner_html()==monthly)
         check(mode+' studies retained',page.evaluate("JPWNavigation.navigate('nocoda')&&JPWNavigation.current().primary==='research'&&JPWResearch.ui.getView()==='nocoda'"))
-        page.evaluate("JPWNavigation.navigate('tools-nocuda')")
-        page.set_input_files('#nocudaFile',{'name':'huge.txt','mimeType':'text/plain','buffer':b'x'*16385})
-        check(mode+' oversized refused','16 KiB' in page.locator('#nocudaStatus').inner_text())
-        page.click('#nocudaRestore')
         check(mode+' no financial/storage changes',state(page)==baseline)
-        page.click('#nocudaClear');check(mode+' explicit clear',page.locator('#nocudaResult').is_hidden() and page.locator('#nocudaPayload').input_value()=='')
         check(mode+' no runtime errors',not errors)
         context.close()
     for width,height in [(1440,1000),(390,844)]:
         context,page,errors=boot(browser,url,{'width':width,'height':height})
-        page.evaluate("JPWNavigation.navigate('tools-nocuda')")
+        page.evaluate("JPWNavigation.navigate('tools-leverage')")
         for theme in ['light','dark']:
             page.evaluate("theme=>document.documentElement.setAttribute('data-theme',theme)",theme)
             page.wait_for_timeout(250)  # Settle existing theme color transitions before visual evidence.
@@ -122,30 +116,30 @@ try:
             page.locator('#toolsNavSubmenu [data-nav-child="tools-calendar"]').click()
             check('mobile navigation',page.evaluate("JPWNavigation.current().canonical==='tools-calendar'") and page.locator('#sidebarBackdrop').is_hidden())
         else:
-            page.locator('#toolsNavSubmenu [data-nav-child="tools-nocuda"]').focus();page.keyboard.press('ArrowUp')
-            check('keyboard market-hours focus',page.locator('#toolsNavSubmenu [data-nav-child="tools-market-hours"]').evaluate('(node)=>node===document.activeElement'))
-            page.keyboard.press('ArrowUp')
+            page.locator('#toolsNavSubmenu [data-nav-child="tools-leverage"]').focus();page.keyboard.press('ArrowUp')
             check('keyboard calendar focus',page.locator('#toolsNavSubmenu [data-nav-child="tools-calendar"]').evaluate('(node)=>node===document.activeElement'))
+            page.keyboard.press('ArrowDown')
+            check('keyboard Stoikus return focus',page.locator('#toolsNavSubmenu [data-nav-child="tools-leverage"]').evaluate('(node)=>node===document.activeElement'))
+            page.keyboard.press('ArrowUp')
+            check('keyboard calendar return focus',page.locator('#toolsNavSubmenu [data-nav-child="tools-calendar"]').evaluate('(node)=>node===document.activeElement'))
             page.keyboard.press('Enter')
             check('keyboard navigation',page.evaluate("JPWNavigation.current().canonical==='tools-calendar'"))
         check('responsive no runtime errors '+str(width),not errors)
         context.close()
     context,page,errors=boot(browser,url,sw='allow')
-    page.evaluate('navigator.serviceWorker.ready')
+    page.wait_for_function('async()=>!!(await navigator.serviceWorker.getRegistration())?.active',timeout=20000)
     page.reload();wait_bootstrap(page)
     page.wait_for_function('navigator.serviceWorker.controller!==null')
     await_cache=page.evaluate("async()=>{const reg=await navigator.serviceWorker.ready;const keys=await caches.keys();return {active:!!reg.active,keys};}")
     check('PWA activated',await_cache['active'])
     context.set_offline(True)
     page.reload();wait_bootstrap(page)
-    page.evaluate("JPWNavigation.navigate('tools-nocuda')")
-    for filename in ['Nocuda_Tool.pine','Nocuda_Tool.mq5','Nocuda_Tool.ex5','TRADINGVIEW-LEIA-ME.md','MT5-LEIA-ME.md']:
-        result=page.evaluate("async name=>{const r=await fetch('downloads/nocuda/'+name);return {ok:r.ok,b:Array.from(new Uint8Array(await r.arrayBuffer()))};}",filename)
-        check('PWA offline '+filename,result['ok'] and bytes(result['b'])==(ROOT/'downloads/nocuda'/filename).read_bytes())
-    page.click('#nocudaExample')
-    check('PWA offline sourcegen',page.evaluate("async()=>{const source=await JPWTools.generateEditable(null,JPWNocudaTransfer.example());return source.includes('const bool PRECONFIGURED = true // NOCUDA_PRECONFIGURED')&&source.includes('NOCUDA_DEFAULT:');}"))
+    page.evaluate("JPWNavigation.navigate('tools-leverage')")
+    check('PWA offline retired globals absent',page.evaluate("typeof JPWNocudaTransfer==='undefined'&&typeof JPWTools.generateEditable==='undefined'"))
+    check('PWA offline retired UI absent',page.locator('#nocudaTool,[data-nocuda-file],[data-nav-child="tools-nocuda"]').count()==0)
+    check('PWA offline alias redirects',page.evaluate("JPWNavigation.navigate('tools-nocuda')&&JPWNavigation.current().canonical==='tools-leverage'"))
     check('PWA no runtime errors',not errors)
     context.close();browser.close()
 finally:server.shutdown()
 (EVIDENCE/'result.json').write_text(json.dumps({'checks':checks,'count':len(checks)},ensure_ascii=False,indent=2))
-print('PASS',len(checks),'Nocuda UI checks')
+print('PASS',len(checks),'Nocuda retirement checks')

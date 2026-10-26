@@ -1,0 +1,168 @@
+{
+  "logicalCommands": 21,
+  "PASS": 20,
+  "ENVIRONMENT_ERROR": 1,
+  "results": [
+    {
+      "name": "unit",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/unit/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "catalog",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/catalog/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "assets",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/assets/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "build",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/build/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-engine",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-engine-corrected/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-fidelity",
+      "status": "ENVIRONMENT_ERROR",
+      "exitCode": 1,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-fidelity/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-lifecycle",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-lifecycle/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-lost-focus",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-lost-focus/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-secondary-click",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-secondary-click/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-labels",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-labels/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-zoom-picking",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-zoom-picking/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-zoom-labels",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-zoom-labels/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "globe-noon-adapter",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/globe-noon-adapter/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "browser-interaction",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-interaction/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "browser-recovery",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/browser-recovery/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "redesign",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/redesign/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "macos",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/macos/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "minimal",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/minimal/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "upcoming",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/upcoming/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "noon",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/noon/receipt.json",
+      "stableInputs": true
+    },
+    {
+      "name": "integration-distributions",
+      "status": "PASS",
+      "exitCode": 0,
+      "receipt": "/private/tmp/jpw-calendar-markets-20261024/focals-current/integration-distributions/receipt.json",
+      "stableInputs": true
+    }
+  ],
+  "firstAttemptPreserved": {
+    "globe-engine": {
+      "raw": "ENVIRONMENT_ERROR",
+      "causalClassification": "TEST_HARNESS_FAIL",
+      "reason": "Absolute output directory incompatible with screenshot relative_to(ROOT); valid relative CLI retry PASS; no source/test edit"
+    },
+    "globe-fidelity": {
+      "raw": "ENVIRONMENT_ERROR",
+      "reason": "Original pinned Three0.186.1/esbuild0.25.12 unavailable; broken old esbuild symlink; local cache absent; no network/install attempted"
+    }
+  },
+  "allSourceChecksStable": true,
+  "performance": "NOT_RUN until root confirms FULL completion",
+  "scope": "Current frozen source/compiled bundle, synthetic isolated browser contexts; no production or test source edits"
+}

@@ -1,0 +1,13 @@
+[
+  "src/js/10-domain/16-nocuda-transfer.js",
+  "src/vendor/downloads/nocuda-payload.js",
+  "assets/nocuda-tradingview.png",
+  "assets/nocuda-metatrader.png",
+  "downloads/nocuda/TRADINGVIEW-LEIA-ME.md",
+  "downloads/nocuda/Nocuda_Tool.ex5",
+  "downloads/nocuda/Nocuda_Tool.pine",
+  "downloads/nocuda/MT5-LEIA-ME.md",
+  "downloads/nocuda/Nocuda_Tool.mq5",
+  "tools/nocuda_transfer_test.js",
+  "tools/fixtures/nocuda/synthetic-v1.txt"
+]

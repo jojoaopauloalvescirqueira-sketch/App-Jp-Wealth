@@ -1,0 +1,37 @@
+{
+  "status": "PRODUCT_FAIL",
+  "checks": [],
+  "failures": [
+    {
+      "id": "CM-LIFE-01",
+      "case": "one adaptive minute scheduler while collapsed, seconds full, and inactive pause",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 99, in check\n    fn()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_markets_test.py\", line 214, in scheduler\n    assert page.evaluate('__atCalls') == calls, 'Collapsed consultation still recalculates once per second'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Collapsed consultation still recalculates once per second\n"
+    }
+  ],
+  "errors": [],
+  "oracle": "docs/superpowers/plans/2026-10-24-calendar-markets.md",
+  "mutant": "second-cadence",
+  "sources": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/20-ui/31-tools-services.js": "b0580faad139788c15f6afbdaf305705f7dbe26f7338405fd3732162502683a3",
+    "tools/calendar_markets_test.py": "04e2090c707e9459e2281e5ca185564215ec7657fe798d8a074e0c2cf50aa4b7",
+    "docs/superpowers/plans/2026-10-24-calendar-markets.md": "695d2b3b1b6198a82cc9cb00abdaab5a19a9b86bc27ea01aab17d5df164fda5f"
+  },
+  "inputsAfter": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/20-ui/31-tools-services.js": "b0580faad139788c15f6afbdaf305705f7dbe26f7338405fd3732162502683a3",
+    "tools/calendar_markets_test.py": "04e2090c707e9459e2281e5ca185564215ec7657fe798d8a074e0c2cf50aa4b7",
+    "docs/superpowers/plans/2026-10-24-calendar-markets.md": "695d2b3b1b6198a82cc9cb00abdaab5a19a9b86bc27ea01aab17d5df164fda5f"
+  },
+  "stableInputs": true
+}

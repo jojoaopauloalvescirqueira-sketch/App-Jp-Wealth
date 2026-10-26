@@ -1,0 +1,107 @@
+{
+  "sha256": "afb8e0d97a8e9ef766d83640e79f751b4422f8bf60f8021a45b8b92bb351fc65",
+  "checks": [
+    {
+      "statuses": [],
+      "expected": "TEST_HARNESS_FAIL",
+      "actual": "TEST_HARNESS_FAIL",
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 0,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "pass": true
+    },
+    {
+      "statuses": [
+        "PASS"
+      ],
+      "expected": "PASS",
+      "actual": "PASS",
+      "counts": {
+        "PASS": 1,
+        "PRODUCT_FAIL": 0,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "pass": true
+    },
+    {
+      "statuses": [
+        "PASS",
+        "TEST_HARNESS_FAIL"
+      ],
+      "expected": "TEST_HARNESS_FAIL",
+      "actual": "TEST_HARNESS_FAIL",
+      "counts": {
+        "PASS": 1,
+        "PRODUCT_FAIL": 0,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 1
+      },
+      "pass": true
+    },
+    {
+      "statuses": [
+        "PASS",
+        "ENVIRONMENT_ERROR"
+      ],
+      "expected": "ENVIRONMENT_ERROR",
+      "actual": "ENVIRONMENT_ERROR",
+      "counts": {
+        "PASS": 1,
+        "PRODUCT_FAIL": 0,
+        "ENVIRONMENT_ERROR": 1,
+        "TEST_HARNESS_FAIL": 0
+      },
+      "pass": true
+    },
+    {
+      "statuses": [
+        "TEST_HARNESS_FAIL",
+        "ENVIRONMENT_ERROR"
+      ],
+      "expected": "ENVIRONMENT_ERROR",
+      "actual": "ENVIRONMENT_ERROR",
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 0,
+        "ENVIRONMENT_ERROR": 1,
+        "TEST_HARNESS_FAIL": 1
+      },
+      "pass": true
+    },
+    {
+      "statuses": [
+        "ENVIRONMENT_ERROR",
+        "PRODUCT_FAIL",
+        "TEST_HARNESS_FAIL"
+      ],
+      "expected": "PRODUCT_FAIL",
+      "actual": "PRODUCT_FAIL",
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 1,
+        "ENVIRONMENT_ERROR": 1,
+        "TEST_HARNESS_FAIL": 1
+      },
+      "pass": true
+    },
+    {
+      "statuses": [
+        "UNKNOWN"
+      ],
+      "expected": "TEST_HARNESS_FAIL",
+      "actual": "TEST_HARNESS_FAIL",
+      "counts": {
+        "PASS": 0,
+        "PRODUCT_FAIL": 0,
+        "ENVIRONMENT_ERROR": 0,
+        "TEST_HARNESS_FAIL": 1
+      },
+      "pass": true
+    }
+  ],
+  "result": "PASS"
+}

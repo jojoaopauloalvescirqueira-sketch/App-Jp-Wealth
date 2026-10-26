@@ -1,5 +1,16 @@
 # Estado persistido — visão inicial
 
+## Primeiro acesso vazio — contrato24/10/2026
+
+[Plano aprovado](../superpowers/plans/2026-10-24-empty-first-use.md), contratos PRODUCT/TESTS em docs/work. A implementação e suas provas pertencem ao candidato desta tarefa; fotografias anteriores não o aprovam.
+
+- Contas, períodos, operações e históricos pessoais nascem vazios. Catálogos, política, referências públicas datadas e exemplos identificados de simuladores permanecem. Sugestões editáveis de formulários não são fatos registrados.
+- `params.saldoIni` e `saldoAtu` aceitam `null` explícito como não informado; `inicio`, nome/perfil do período e capital nominal legado ficam vazios inicialmente. ATRs, exposição e lote legados sem observação aceitam `null`. Não usar coerção numérica para apresentar ausência como zero. Um zero explicitamente registrado continua distinto.
+- `checklist[].items[].v` aceita `null` (não respondido) ou os inteiros0/1/2. A pontuação/classificação somente aparece com todos os itens respondidos e ao menos um item. Chave apagada, string, booleano, fração ou valor fora da faixa continuam inválidos. Respostas antigas são preservadas.
+- O envelope do Backup Completo permanece; o domínio desses campos foi ampliado. O candidato novo deve ler backups antigos e fazer roundtrip dos novos. Leitores antigos podem recusar os novos nulos: não há compatibilidade bidirecional universal.
+- Não há exclusão retroativa por nome/valor semelhante aos antigos exemplos. Dados confirmados e campos desconhecidos compatíveis são preservados.
+
+
 ## Chave principal
 
 ```text

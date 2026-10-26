@@ -113,9 +113,11 @@ function jpwValidateChecklist(documento){
     if(!record(group)||typeof group.group!=='string'||!Array.isArray(group.items))
       throw new Error('Checklist inválido: grupo e lista de itens incompatíveis.');
     for(const item of group.items){
-      // The current checklist input offers exactly 0, 1 and 2; labels are free
+      // null is explicitly unanswered, distinct from the answer zero. Missing
+      // values and all other incompatible inputs remain refused. Labels are
       // inert text, never matched against a closed catalogue of DEFAULTS.
-      if(!record(item)||typeof item.label!=='string'||!Number.isInteger(item.v)||item.v<0||item.v>2)
+      if(!record(item)||typeof item.label!=='string'||
+        !(item.v===null || Number.isInteger(item.v)&&item.v>=0&&item.v<=2))
         throw new Error('Checklist inválido: item, descrição ou valor incompatível.');
     }
   }
@@ -1223,9 +1225,9 @@ function alladinNormalizeState(){
 // NENHUM PARÂMETRO NORMATIVO É ALTERADO aqui: os limiares estatutários voltam a
 // vir de DEFAULTS, que é onde o Estatuto está expresso, em vez de ficarem
 // `undefined`. Saldo, saldo atual e data de início são DADO DO OPERADOR e não
-// são inventados — na ausência de saldoIni utilizável o estado é tratado como
-// corrompido e roteado para o modo de recuperação A-005, que preserva a base,
-// bloqueia gravação e avisa. Fabricar um saldo seria pior que falhar.
+// são inventados. null explícito significa "não informado"; chave ausente ou
+// valor incompatível continuam em recuperação A-005, preservando a base e o
+// bloqueio de gravação. null jamais é um denominador zero.
 const PARAMS_DADOS_DO_OPERADOR=['saldoIni','saldoAtu','inicio'];
 function paramsNormalizeState(){
   if(!S.params || typeof S.params!=='object' || Array.isArray(S.params))
@@ -1238,9 +1240,10 @@ function paramsNormalizeState(){
     if(typeof ref==='number' && !(typeof atual==='number' && Number.isFinite(atual))) S.params[k]=ref;
     else if(typeof ref==='string' && typeof atual!=='string') S.params[k]=ref;
   }
-  if(!(typeof S.params.saldoIni==='number' && Number.isFinite(S.params.saldoIni)))
-    throw new Error('Estado sem saldo inicial numérico: o denominador de drawdown e do teto de risco não existe.');
-  if(!(typeof S.params.saldoAtu==='number' && Number.isFinite(S.params.saldoAtu))) S.params.saldoAtu=S.params.saldoIni;
+  if(!Object.prototype.hasOwnProperty.call(S.params,'saldoIni') ||
+    !(S.params.saldoIni===null || typeof S.params.saldoIni==='number' && Number.isFinite(S.params.saldoIni)))
+    throw new Error('Estado sem saldo inicial válido: informe um número ou null explícito para ausência.');
+  if(!(S.params.saldoAtu===null || typeof S.params.saldoAtu==='number' && Number.isFinite(S.params.saldoAtu))) S.params.saldoAtu=S.params.saldoIni;
   if(typeof S.params.inicio!=='string') S.params.inicio=String(S.params.inicio==null?'':S.params.inicio);
 }
 function migrate(){ // garante chaves novas se schema evoluir
@@ -1312,8 +1315,8 @@ function migrate(){ // garante chaves novas se schema evoluir
   if(!('quarantine' in S)) S.quarantine=null;
   if(!Array.isArray(S.ledger)) S.ledger=[];
   if(!Array.isArray(S.ledgerArchive)) S.ledgerArchive=[];
-  if(!S.period || typeof S.period!=='object') S.period={nome:'',profile:'base'};
-  S.period.profile=normalizeRiskProfileKey(S.period.profile||'base');
+  if(!S.period || typeof S.period!=='object') S.period={nome:'',profile:''};
+  S.period.profile=S.period.profile?normalizeRiskProfileKey(S.period.profile):'';
   // Stored profiles/parameters preserve legacy provenance and do not supply current policy.
   if(S.theme!=='dark' && S.theme!=='light')
     throw new Error('Preferência de tema inválida; a base original foi preservada para recuperação.');

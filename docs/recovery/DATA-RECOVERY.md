@@ -1,5 +1,12 @@
 # Recuperação e preservação de dados
 
+## Primeiro acesso vazio e ausência explícita —24/10/2026
+
+Contrato do [plano aprovado](../superpowers/plans/2026-10-24-empty-first-use.md): sem base salva, iniciar sem contas/resultados/respostas de demonstração. Recarga e nova base após exclusão autorizada seguem a mesma fonte. Checkpoints não devem reintroduzir exemplos. Ausência financeira usa os nulos documentados em STATE-SCHEMA; não equivale a saldo/risco zero.
+
+Uma base salva malformada ou incompatível continua em recuperação, com o conteúdo original preservado e gravações bloqueadas. Não substituir erro por uma nova base nem remover contas por nomes conhecidos. Finalizar sessão conserva fatos confirmados; exclusão total tem sua confirmação própria. Novos backups com nulos podem ser recusados por versões antigas. A execução e os limites serão registrados na validação da tarefa.
+
+
 ## Programa versus dados
 
 O repositório contém o programa. Os dados reais normalmente permanecem no navegador, vinculados à origem onde o sistema foi usado.

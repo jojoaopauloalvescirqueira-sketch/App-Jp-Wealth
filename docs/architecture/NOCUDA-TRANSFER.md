@@ -1,3 +1,11 @@
+# Descontinuado no site — 26/10/2026
+
+O Nocuda Tool foi removido do produto: interface, motor de transferência, gerador Pine e arquivos exclusivos não são mais distribuídos. Acessos antigos encaminham ao Stoikus após navegação aceita. Rascunhos já recuperados permanecem somente leitura/cópia; nenhum dado financeiro é removido. Research NoCoda, o método e os componentes internos Stoikus são preservados. [Contrato atual de retirada](../work/CHG-JPW-REMOVE-NOCUDA-PRODUCT-20261026.md).
+
+## Especificação histórica preservada
+
+Tudo abaixo descreve a ferramenta anterior e não capacidades atuais.
+
 # Nocuda Tool — transferência de desenhos v1
 
 Contrato de produto N2 autorizado em 2026-09-17; base `f1d383f`.

@@ -1,0 +1,23 @@
+{
+  "logical": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T153333156784",
+  "resolved": "/private/tmp/jpw-dante-calendar-20261025/full-relocated-evidence",
+  "priorInode": 16914603,
+  "emptyOwnedFreshDirectoryOnly": true,
+  "stoppedGroupMembers": [
+    [
+      "97957",
+      "97955",
+      "97957",
+      "Ts",
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 -u tools/quality_gate.py --tier full --artifact /private/tmp/jpw-dante-calendar-20261025/full-relocated.json"
+    ],
+    [
+      "97958",
+      "97957",
+      "97957",
+      "Z",
+      "<defunct>"
+    ]
+  ],
+  "pauseSeconds": 0.419864
+}

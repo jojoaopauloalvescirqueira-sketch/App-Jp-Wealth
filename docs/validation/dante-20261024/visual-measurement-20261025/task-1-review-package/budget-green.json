@@ -1,0 +1,39 @@
+{
+  "classification": "PASS",
+  "source_sha256": {
+    "ui_visual_measurement_test.py": "51cb00a96e8260972df7a4e1d40fb23fca2413f28abe7dd3406b5bb69a38e019",
+    "ui_visual_quality_test.py": "ecb2b63172c6d55d7472be299f65a5fcc9dee8d9b1a6ef91fd2cd5c427881eec"
+  },
+  "browser": "155.0.8059.86",
+  "measurements": {
+    "budget": {
+      "rpc_per_control": {
+        "0": 4,
+        "1": 4,
+        "2": 4
+      },
+      "calls": {
+        "0": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "1": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "2": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ]
+      },
+      "measured_controls": 3,
+      "excluded": "scope/setup counts, reading order, selectors and inputs"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+Scratch selftest first run exit1: valid fixture rejected because macOS /var aliases /private/var. No product run or redirection occurred. Replaced parent spelling equality with canonical-parent/name equality; file-level symlink rejection and lstat remain. This was a wrapper fixture error, not a product RED.

@@ -1,0 +1,22 @@
+{
+  "saving_draft_recovery_test.py": {
+    "syntax": "PASS",
+    "sha256": "f22f02465ba394aa05db5b057333d85ada1dd91d23d9a76c5f4c760effd14df6"
+  },
+  "time_twins_browser_test.py": {
+    "syntax": "PASS",
+    "sha256": "32e2ebe5f4fe8ddffc755823d16a8dd4147ec7b3a9a037243d256484da534a1b"
+  },
+  "capital_currents_browser_test.py": {
+    "syntax": "PASS",
+    "sha256": "683e347c59eb30608474c57e27ff7cc845510f667ebd408ec2054f8fd8073289"
+  },
+  "planning_proportions_test.py": {
+    "syntax": "PASS",
+    "sha256": "112dc287d14557b725b69c204a67fd004fb3e45ee3fb891a767d9e2de231a8dc"
+  },
+  "minigames_test.py": {
+    "syntax": "PASS",
+    "sha256": "4a1c2fd7e199a1d10ab5b13f2a0d4cf9996ab8cf52ecb281c92aa76ca7057dd2"
+  }
+}

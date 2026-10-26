@@ -59,11 +59,11 @@ function openFirstAccessWelcome(){
     <section id="jpwWelcome" class="jpw-welcome">
       <header class="jpw-welcome-header"><img class="jpw-welcome-logo" src="${window.JPW_PORTABLE_IMAGES?.['assets/jp-wealth-brand-red.png']||'assets/jp-wealth-brand-red.png'}" alt="JP Wealth"><button type="button" id="jpwWelcomeClose" class="modal-btn cancel">Fechar</button></header>
       <div class="jpw-welcome-body">
-        <section id="jpwWelcomeChoices"><h1 id="jpwWelcomeTitle">Bem-vindo ao JP Wealth.</h1><p>Organize sua gestão. Escolha por onde começar.</p>
+        <section id="jpwWelcomeChoices"><div class="jpw-welcome-intro"><img id="jpwWelcomeDante" src="${window.JPW_PORTABLE_IMAGES?.['assets/dante-guide.png']||'assets/dante-guide.png'}" alt="Dante, mascote e guia do JP Wealth" width="160" height="240"><div><h1 id="jpwWelcomeTitle">Bem-vindo ao JP Wealth.</h1><p>Sou Dante, seu guia por aqui. Escolha por onde começar e vamos no seu ritmo.</p></div></div>
           <div class="jpw-welcome-actions">
             <button type="button" id="jpwWelcomeStart" class="jpw-welcome-choice"><strong>Começar do zero</strong><span>Escolher a primeira tarefa e preparar seu contexto.</span></button>
             <button type="button" id="jpwWelcomeRestore" class="jpw-welcome-choice"><strong>Restaurar Backup Completo</strong><span>Conferir um arquivo antes de importar seus dados.</span></button>
-            <button type="button" id="jpwWelcomeExplore" class="jpw-welcome-choice"><strong>Conhecer o app</strong><span>Explorar o guia interativo e os controles de cada área.</span></button>
+            <button type="button" id="jpwWelcomeExplore" class="jpw-welcome-choice"><strong>Conhecer com Dante</strong><span>Conhecer as áreas e seus controles, uma etapa por vez.</span></button>
           </div>
         </section>
         <section id="jpwWelcomeTasks" hidden inert><h2 id="jpwWelcomeTasksTitle" tabindex="-1">Escolha sua primeira tarefa.</h2><p>Cada área terá seus próprios dados e confirmações.</p>
@@ -83,8 +83,9 @@ function openFirstAccessWelcome(){
   const available=primary=>window.JPWModuleAvailability?.canAccess(primary)!==false;
   const leave=()=>{
     // No account preparation, consent or preference is written by dismissing this view.
-    jpwFirstAccessEmptyAtLoad=false;
-    return closeModal();
+    const accepted=closeModal();
+    if(accepted!==false)jpwFirstAccessEmptyAtLoad=false;
+    return accepted;
   };
   $('jpwWelcomeClose').onclick=leave;
   $('jpwWelcomeStart').onclick=()=>{
@@ -98,11 +99,21 @@ function openFirstAccessWelcome(){
     status('');$('jpwWelcomeStart').focus({preventScroll:true});
   };
   $('jpwWelcomeExplore').onclick=()=>{
-    if(typeof window.JPWLearningGuide?.open!=='function'){
-      status('O guia ainda está carregando. Tente Conhecer o app novamente quando o carregamento terminar.');return;
+    if(typeof window.JPWLearningGuide?.startJourney!=='function'){
+      status('O guia ainda está carregando. Tente Conhecer com Dante novamente quando o carregamento terminar.');return;
+    }
+    // A recusa de navegação mantém esta escolha disponível e não inicia o guia.
+    if(window.JPWNavigation?.navigate('dashboard')!==true){
+      status('Não foi possível abrir o início agora. Confira a janela em aberto e tente novamente.');return;
     }
     if(leave()===false)return;
-    if(window.JPWNavigation?.navigate('dashboard')===true)window.JPWLearningGuide.open();
+    const started=window.JPWLearningGuide.startJourney();
+    // Falha síncrona sem outro host aberto: mantenha uma tentativa explícita.
+    // Nunca substituir diálogo, rascunho ou central que o próprio guia abriu.
+    if(started===false&&!$('modalOverlay').classList.contains('show')&&!document.querySelector('dialog[open]')&&
+       !(typeof settingsIsOpen==='function'&&settingsIsOpen())&&openFirstAccessWelcome()){
+      status('O guia não pôde começar agora. Tente Conhecer com Dante novamente quando estiver pronto.');
+    }
   };
   $('jpwWelcomeRestore').onclick=()=>$('jpwWelcomeFile').click();
   $('jpwWelcomeFile').onchange=event=>{

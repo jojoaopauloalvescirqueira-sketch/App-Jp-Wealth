@@ -3820,6 +3820,844 @@
         "test_sha256": "4d0719eb03cd4e68f15f9823daebcea0c7742912c91c503736fb6ddfb2602442",
         "scope": "focal execution, not human acceptance or whole final gate"
       }
+    },
+    {
+      "id": "calendar-markets-20261024-late-retry-focus",
+      "state": "fixed_regression",
+      "summary": "Retry de catálogo não rouba foco movido pelo usuário.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Integração24/10/2026; plano humano aprovado"
+      },
+      "stimulus": "Após erro, iniciar retry, mover foco para controle externo e resolver carregamento.",
+      "expected": "Foco permanece no controle externo; permanência no retry permite retorno esperado.",
+      "cause": "Conclusão restaurava foco sem verificar foco/geração do iniciador.",
+      "protection": {
+        "path": "tools/calendar_markets_test.py",
+        "case": "CM-P2-01",
+        "command": "python3 tools/calendar_markets_test.py --only CM-P2-01 --out-dir tools/.artifacts/calendar-markets-focal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/calendar-markets-20261024/final21.json",
+          "result": "PASS",
+          "note": "Focal atual21casos; standalone, não incluído no runnerFULL."
+        },
+        {
+          "path": "docs/validation/calendar-markets-20261024/review.md",
+          "result": "PASS",
+          "note": "Reprodução/recheck independente dos5achados; não é teste humano."
+        }
+      ],
+      "last_verified": {
+        "build": "3a9f6157481ae050",
+        "date": "2026-10-24",
+        "test_sha256": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+        "scope": "focal corrente; FULL/distribuições e aceite humano separados"
+      }
+    },
+    {
+      "id": "calendar-markets-20261024-expanded-error",
+      "state": "fixed_regression",
+      "summary": "Erro e recuperação visíveis com exploração aberta e mapa móvel recolhido.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Integração24/10/2026; plano humano aprovado"
+      },
+      "stimulus": "Falhar consulta de snapshot depois de expandir; mapa continua recolhido.",
+      "expected": "Aviso de dados não atuais e retry visíveis; não declarar zero ou resolução.",
+      "cause": "Status/retry estavam dentro do resumo oculto e do mapa oculto.",
+      "protection": {
+        "path": "tools/calendar_markets_test.py",
+        "case": "CM-P2-02",
+        "command": "python3 tools/calendar_markets_test.py --only CM-P2-02 --out-dir tools/.artifacts/calendar-markets-focal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/calendar-markets-20261024/final21.json",
+          "result": "PASS",
+          "note": "Focal atual21casos; standalone, não incluído no runnerFULL."
+        },
+        {
+          "path": "docs/validation/calendar-markets-20261024/review.md",
+          "result": "PASS",
+          "note": "Reprodução/recheck independente dos5achados; não é teste humano."
+        }
+      ],
+      "last_verified": {
+        "build": "3a9f6157481ae050",
+        "date": "2026-10-24",
+        "test_sha256": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+        "scope": "focal corrente; FULL/distribuições e aceite humano separados"
+      }
+    },
+    {
+      "id": "calendar-markets-20261024-cold-alias-anchor",
+      "state": "fixed_regression",
+      "summary": "Acesso antigo ancora a seção após carregamento frio sem roubo tardio.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Integração24/10/2026; plano humano aprovado"
+      },
+      "stimulus": "Abrir tools-market-hours em contexto novo nas larguras390/1440, esperar montagem da exploração e estabilização.",
+      "expected": "Destino aceito e título da seção na área visível após montagem fria. Cancelamento de âncora por foco/navegação foi exercitado separadamente na revisão independente, não por este caso permanente.",
+      "cause": "Âncora anterior à montagem completa era limitada pela altura inicial do documento.",
+      "protection": {
+        "path": "tools/calendar_markets_test.py",
+        "case": "CM-P2-03",
+        "command": "python3 tools/calendar_markets_test.py --only CM-P2-03 --out-dir tools/.artifacts/calendar-markets-focal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/calendar-markets-20261024/final21.json",
+          "result": "PASS",
+          "note": "Focal atual21casos; standalone, não incluído no runnerFULL."
+        },
+        {
+          "path": "docs/validation/calendar-markets-20261024/review.md",
+          "result": "PASS",
+          "note": "Reprodução/recheck independente dos5achados; não é teste humano."
+        }
+      ],
+      "last_verified": {
+        "build": "3a9f6157481ae050",
+        "date": "2026-10-24",
+        "test_sha256": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+        "scope": "focal corrente; FULL/distribuições e aceite humano separados"
+      }
+    },
+    {
+      "id": "calendar-markets-20261024-summary-focus",
+      "state": "fixed_regression",
+      "summary": "Atualização do top3 preserva foco de bolsa sobrevivente.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Integração24/10/2026; plano humano aprovado"
+      },
+      "stimulus": "Focar active-resume, avançar relógio e trocar composição do resumo.",
+      "expected": "Mesmo botão sobrevivente retém foco; removido devolve ao controle de expansão.",
+      "cause": "Reconciliação reanexava nós sobreviventes e perdia foco.",
+      "protection": {
+        "path": "tools/calendar_markets_test.py",
+        "case": "CM-P2-04",
+        "command": "python3 tools/calendar_markets_test.py --only CM-P2-04 --out-dir tools/.artifacts/calendar-markets-focal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/calendar-markets-20261024/final21.json",
+          "result": "PASS",
+          "note": "Focal atual21casos; standalone, não incluído no runnerFULL."
+        },
+        {
+          "path": "docs/validation/calendar-markets-20261024/review.md",
+          "result": "PASS",
+          "note": "Reprodução/recheck independente dos5achados; não é teste humano."
+        }
+      ],
+      "last_verified": {
+        "build": "3a9f6157481ae050",
+        "date": "2026-10-24",
+        "test_sha256": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+        "scope": "focal corrente; FULL/distribuições e aceite humano separados"
+      }
+    },
+    {
+      "id": "calendar-markets-20261024-summary-touch-size",
+      "state": "fixed_regression",
+      "summary": "Botão curto B3 tem área de44×44px.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Integração24/10/2026; plano humano aprovado"
+      },
+      "stimulus": "Renderizar resumo em320px com B3 e consultar área clicável.",
+      "expected": "Largura e altura mínimas44px sem overflow.",
+      "cause": "Somente min-height estava definido; nome curto media22.58px de largura.",
+      "protection": {
+        "path": "tools/calendar_markets_test.py",
+        "case": "CM-UI-01",
+        "command": "python3 tools/calendar_markets_test.py --only CM-UI-01 --out-dir tools/.artifacts/calendar-markets-focal",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/calendar-markets-20261024/final21.json",
+          "result": "PASS",
+          "note": "Focal atual21casos; standalone, não incluído no runnerFULL."
+        },
+        {
+          "path": "docs/validation/calendar-markets-20261024/review.md",
+          "result": "PASS",
+          "note": "Reprodução/recheck independente dos5achados; não é teste humano."
+        }
+      ],
+      "last_verified": {
+        "build": "3a9f6157481ae050",
+        "date": "2026-10-24",
+        "test_sha256": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+        "scope": "focal corrente; FULL/distribuições e aceite humano separados"
+      }
+    },
+    {
+      "id": "empty-first-use-20261024-accounts",
+      "state": "fixed_regression",
+      "summary": "Primeiro acesso sem contas ou desempenho demonstrativos.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-empty-first-use.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT/TESTS próprios"
+      },
+      "stimulus": "Abrir contexto novo sem seed e consultarForex/recarregar.",
+      "expected": "Nenhuma conta/período/histórico antes de criação confirmada.",
+      "cause": "DEFAULTS criava quatro contas e desempenho fictício.",
+      "protection": {
+        "path": "tools/empty_first_use_test.py",
+        "case": "EMPTY-BOOT-01",
+        "command": "python3 tools/empty_first_use_test.py --out <novo-recibo.json>",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/empty-first-use-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "16casos atuais;7contraprovas pela mesma entrada. Focal adicional ao runnerFULL, aceite humano separado."
+        }
+      ],
+      "last_verified": {
+        "build": "1b695b809fe80c26",
+        "date": "2026-10-24",
+        "test_sha256": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+        "scope": "focal16PASS atual; FULL e aceite humano têm recibos próprios"
+      }
+    },
+    {
+      "id": "empty-first-use-20261024-checklist",
+      "state": "fixed_regression",
+      "summary": "Checklist só classifica respostas completas.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-empty-first-use.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT/TESTS próprios"
+      },
+      "stimulus": "Abrir checklist sem respostas; responder parcialmente/completamente; lista vazia.",
+      "expected": "null permanece não respondido e sem classificação;0 explícito é resposta; limiares preservados.",
+      "cause": "DEFAULTS tinha15respostas e pontuação23/30 sem interação.",
+      "protection": {
+        "path": "tools/empty_first_use_test.py",
+        "case": "EMPTY-CHECK-01;EMPTY-CHECK-02;EMPTY-CHECK-03",
+        "command": "python3 tools/empty_first_use_test.py --out <novo-recibo.json>",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/empty-first-use-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "16casos atuais;7contraprovas pela mesma entrada. Focal adicional ao runnerFULL, aceite humano separado."
+        }
+      ],
+      "last_verified": {
+        "build": "1b695b809fe80c26",
+        "date": "2026-10-24",
+        "test_sha256": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+        "scope": "focal16PASS atual; FULL e aceite humano têm recibos próprios"
+      }
+    },
+    {
+      "id": "empty-first-use-20261024-registration",
+      "state": "fixed_regression",
+      "summary": "Cadastro sem observação conserva saldos ausentes.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-empty-first-use.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT/TESTS próprios"
+      },
+      "stimulus": "Cadastrar conta porUI sem informar saldo; recarregar/importar legado0 explícito.",
+      "expected": "sini/satu null nos cadastros novos;0 e valores salvos existentes intactos.",
+      "cause": "Inicializador de cadastro gravava0 em saldos não observados.",
+      "protection": {
+        "path": "tools/empty_first_use_test.py",
+        "case": "EMPTY-CREATE-01;EMPTY-BACKUP-01",
+        "command": "python3 tools/empty_first_use_test.py --out <novo-recibo.json>",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/empty-first-use-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "16casos atuais;7contraprovas pela mesma entrada. Focal adicional ao runnerFULL, aceite humano separado."
+        }
+      ],
+      "last_verified": {
+        "build": "1b695b809fe80c26",
+        "date": "2026-10-24",
+        "test_sha256": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+        "scope": "focal16PASS atual; FULL e aceite humano têm recibos próprios"
+      }
+    },
+    {
+      "id": "empty-first-use-20261024-null-recovery",
+      "state": "fixed_regression",
+      "summary": "Ausência explícita permanece distinta de documento malformado.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-empty-first-use.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT/TESTS próprios"
+      },
+      "stimulus": "Salvar/carregar null; testar saldoIni apagado e respostas bool/string/fracionárias.",
+      "expected": "null documentado aceito; missing/tipos inválidos continuam recusados preservando raw.",
+      "cause": "Normalizador exigia saldo numérico e validador só aceitou0/1/2 antes do contrato aprovado.",
+      "protection": {
+        "path": "tools/empty_first_use_test.py",
+        "case": "EMPTY-IMPORT-01;EMPTY-RECOVERY-02",
+        "command": "python3 tools/empty_first_use_test.py --out <novo-recibo.json>",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/empty-first-use-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "16casos atuais;7contraprovas pela mesma entrada. Focal adicional ao runnerFULL, aceite humano separado."
+        }
+      ],
+      "last_verified": {
+        "build": "1b695b809fe80c26",
+        "date": "2026-10-24",
+        "test_sha256": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+        "scope": "focal16PASS atual; FULL e aceite humano têm recibos próprios"
+      }
+    },
+    {
+      "id": "empty-first-use-20261024-checklist-mobile-wrap",
+      "state": "fixed_regression",
+      "summary": "Classificação incompleta visível integralmente no celular.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-empty-first-use.md",
+        "section": "Conferência de telas vazias, layouts e zoom"
+      },
+      "stimulus": "Abrir checklist em320/390px,4layouts2temas; medirRange/scroll e fechar44px.",
+      "expected": "Não concluído —0de15respostas inteiro, semellipsis/cortes ou gravação financeira.",
+      "cause": "Texto novo herdava nowrap/ellipsis dos indicadores globais.",
+      "protection": {
+        "path": "tools/empty_first_use_test.py",
+        "case": "EMPTY-VISUAL-01",
+        "command": "python3 tools/empty_first_use_test.py --only EMPTY-VISUAL-01 --out <novo-recibo.json>",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/empty-first-use-20261024/tests-red-visual-01.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Texto298px emcaixa109px."
+        },
+        {
+          "path": "docs/validation/empty-first-use-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "16estadosvisuais; contraprovaCSSclippedclassificationrejeitada."
+        }
+      ],
+      "last_verified": {
+        "build": "1b695b809fe80c26",
+        "date": "2026-10-24",
+        "test_sha256": "3e2add32b49bac7d3c828e3fb4c7b4fac9c826ca24febcdf137779836ba4c986",
+        "scope": "focal atual, aceite humano separado"
+      }
+    },
+    {
+      "id": "dante-20261024-progress-journey",
+      "state": "fixed_regression",
+      "summary": "Jornada única preserva progresso de trilhas antigas e distinção de resultados.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT e CONTROLS separados"
+      },
+      "stimulus": "Ler v1 sem gravar, iniciar jornada, atravessar capítulos, ir pelo índice e retomar; manter forex-planning com owner legado.",
+      "expected": "Uma posição explícita; schema2 só acrescenta modo; leitura, prática e pulo distintos; incompatíveis preservados.",
+      "cause": "Evolução deliberada do contrato de trilhas para jornada contínua exige compatibilidade explícita.",
+      "protection": {
+        "path": "tools/dante_guide_test.py",
+        "case": "dante/v1-and-legacy-track;dante/journey-cross-chapter;dante/index-single-bookmark",
+        "command": "python3 tools/learning_guide_test.py --case dante/ --out <novo-recibo.json>",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "14 casos, exit0, fontes estáveis; inclui modelos puros e percursos reais sem confirmação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2c4a3d9f65b3c664",
+        "date": "2026-10-24",
+        "test_sha256": "add1bafa91137f8c12989c33afbbf06d908c923b6eb3766bb63f5042d6c2f48d",
+        "scope": "focal atual; FULL tem recibo próprio; aceite humano separado"
+      }
+    },
+    {
+      "id": "dante-20261024-speech-reanchor",
+      "state": "fixed_regression",
+      "summary": "Reancorar sem reiniciar fala ou remover foco.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT e CONTROLS separados"
+      },
+      "stimulus": "Substituir alvo durante a digitação e usar revelar/continuar, pausa e movimento reduzido.",
+      "expected": "Frase/offset/timer preservados quando a fala não muda; revelar não registra leitura ou prática.",
+      "cause": "A chave da posição visual havia reiniciado a narração na troca do nó do alvo.",
+      "protection": {
+        "path": "tools/learning_controller_test.mjs",
+        "case": "Dante same-lesson reanchoring preserves partial speech, timer, input focus and no credit; Dante fully revealed speech remains complete across same-host reanchoring",
+        "command": "node tools/learning_controller_test.mjs",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "14 casos, exit0, fontes estáveis; inclui modelos puros e percursos reais sem confirmação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2c4a3d9f65b3c664",
+        "date": "2026-10-24",
+        "test_sha256": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11",
+        "scope": "focal atual; FULL tem recibo próprio; aceite humano separado"
+      }
+    },
+    {
+      "id": "dante-20261024-owned-form-flow",
+      "state": "fixed_regression",
+      "summary": "Explicação acompanha o formulário permitido sem encobrir campos.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT e CONTROLS separados"
+      },
+      "stimulus": "Abrir formulário Planejamento e Agenda, alterar campos de tipo/horário/fuso, pausar, retomar e cancelar em desktop e390px.",
+      "expected": "Mesmos rascunhos e campos utilizáveis; nenhuma conta, consentimento ou registro criado pelo guia.",
+      "cause": "Cartão sobreposto no formulário e perda de host exigiram reserva de fluxo e hosts estritamente delimitados.",
+      "protection": {
+        "path": "tools/dante_guide_test.py",
+        "case": "dante/planning-owned-form;dante/agenda-owned-form;dante/planning-monthly-editor",
+        "command": "python3 tools/learning_guide_test.py --case dante/ --out <novo-recibo.json>",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "14 casos, exit0, fontes estáveis; inclui modelos puros e percursos reais sem confirmação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2c4a3d9f65b3c664",
+        "date": "2026-10-24",
+        "test_sha256": "add1bafa91137f8c12989c33afbbf06d908c923b6eb3766bb63f5042d6c2f48d",
+        "scope": "focal atual; FULL tem recibo próprio; aceite humano separado"
+      }
+    },
+    {
+      "id": "dante-20261024-default-avatar",
+      "state": "fixed_regression",
+      "summary": "Dante é apenas fallback visual e não identidade gravada.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT e CONTROLS separados"
+      },
+      "stimulus": "Primeiro acesso, galeria, foto customizada, remoção, cancelamento e boas-vindas recusadas/aceitas.",
+      "expected": "Sem escrita de nome/perfil no fallback; customizada prevalece; retrato Alighieri distinto; guia somente opt-in.",
+      "cause": "Novo padrão visual deliberado não pode preencher dados pessoais ou eliminar a precedência da foto própria.",
+      "protection": {
+        "path": "tools/dante_profile_test.py",
+        "case": "dante/profile-and-welcome",
+        "command": "python3 tools/learning_guide_test.py --case dante/profile-and-welcome --out <novo-recibo.json>",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "14 casos, exit0, fontes estáveis; inclui modelos puros e percursos reais sem confirmação financeira."
+        }
+      ],
+      "last_verified": {
+        "build": "2c4a3d9f65b3c664",
+        "date": "2026-10-24",
+        "test_sha256": "18f9667022e502ebf910c7b2593921802b111c6bee3246b14334e7ccfd777869",
+        "scope": "focal atual; FULL tem recibo próprio; aceite humano separado"
+      }
+    },
+    {
+      "id": "dante-20261024-visual-targets",
+      "state": "fixed_regression",
+      "summary": "Controles do Dante têm44px e conteúdo interno alinhado.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Plano humano aprovado; CHGs PRODUCT e CONTROLS separados"
+      },
+      "stimulus": "Medir4layouts/2temas/320–1440px e zoom nativo200%; injetar deslocamento5px, alvo20px e overflow.",
+      "expected": "43casos passam; as três contraprovas são rejeitadas pelo mesmo verificador geométrico.",
+      "cause": "Especificidade de estilos globais conservava42px apesar da intenção local de44px.",
+      "protection": {
+        "path": "tools/dante_visual_quality_test.py",
+        "case": "dante-*;dante-native200-*;dante-counterproof-*",
+        "command": "python3 tools/ui_visual_quality_test.py --case dante-regressions --out <novo-diretorio>",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/visual-final.json",
+          "result": "PASS",
+          "note": "43 casos, fonte estável, incluindo32matriz+8zoom+3contraprovas."
+        }
+      ],
+      "last_verified": {
+        "build": "2c4a3d9f65b3c664",
+        "date": "2026-10-24",
+        "test_sha256": "41237acc0d2585185c33a0a8d3d7ceabba2f955c36d66a078dec81b1a3371ce6",
+        "scope": "focal atual; FULL tem recibo próprio; aceite humano separado"
+      }
+    },
+    {
+      "id": "dante-20261024-paused-center",
+      "state": "fixed_regression",
+      "summary": "Central de continuidade não é coberta pelo cartão suspenso.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Pausa, retomada, host correto e foco preservados"
+      },
+      "stimulus": "Chegar à lição de finalização, fechar Configurações, abrir a central com guia já pausado e tentar Continuar em320/390px.",
+      "expected": "Cartão antigo removido e observadores invalidados; central acessível sem sobreposição e bookmark preservado.",
+      "cause": "open() interrompia somente guia rodando; guia já pausado conservava cartão e exit watcher que podia redesenhá-lo.",
+      "protection": {
+        "path": "tools/learning_controller_test.mjs",
+        "case": "Dante opening the center removes a suspended coach and invalidates queued exit redraws; Dante center takes its own surface without an overlapping paused card; readonly-all-64-native-actions/mobile-",
+        "command": "python3 tools/learning_guide_test.py --case readonly-all-64-native-actions/mobile- --out <novo-recibo.json>",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/legacy-before-center-fix.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Duas falhas móveis reais entre53casos;51PASSnão eliminam essas falhas."
+        },
+        {
+          "path": "docs/validation/dante-20261024/focal-final.json",
+          "result": "PASS",
+          "note": "Modelo controller116inclui os dois casos novos; contraprova independente remove sóstop e recupera2FAIL. O replaybrowser completo tem recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "build": "2c4a3d9f65b3c664",
+        "date": "2026-10-24",
+        "test_sha256": "31e7bf55e68be41778e8473dee9d59d1ab44feb435c7927fd5778554dcf91d11",
+        "scope": "controller116 atual; replaymobile e FULL separados"
+      }
+    },
+    {
+      "id": "dante-20261024-session-privacy-default",
+      "state": "fixed_regression",
+      "summary": "Avatar Dante após anonimizar a tela não é identidade pessoal residual.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Avatar padrão e verificação de navegação, privacidade e distribuição aprovados; CHG CONTROLS separado"
+      },
+      "stimulus": "Finalizar com leitor de foto pendente, evento real de outra aba e reload; injetar foto/PII residuais como contraprova.",
+      "expected": "Três hosts mostram somente Dante; memória/UI anônimas, campos bloqueados e perfil salvo preservado pelo contrato original.",
+      "cause": "As duas expectativas de nenhuma imagem eram deliberadamente substituídas pelo novo avatar padrão. Nenhuma alteração no protocolo de finalização.",
+      "protection": {
+        "path": "tools/finalize_session_test.py",
+        "case": "assert_profile_session_default;run_profile_finalize_contract",
+        "command": "python3 tools/finalize_session_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "session-finalization"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/full-first.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Bruto da expectativa antiga img==0 preservado."
+        },
+        {
+          "path": "docs/validation/dante-20261024/finalization-b799.log",
+          "result": "PASS",
+          "note": "Runner completo exit0; contrato servido/portátil, privacidade e fontes estáveis."
+        },
+        {
+          "path": "docs/validation/dante-20261024/finalization-default-proposal/replay-receipt.json",
+          "result": "PASS",
+          "note": "24 rejeições: seis violações em quatro checkpoints; original RED preservado."
+        }
+      ],
+      "last_verified": {
+        "build": "b7990f8c828e8d6f",
+        "date": "2026-10-24",
+        "test_sha256": "9419592bf4754f56cfaf47e5f2568d9b5e97a71c7bd5fd98951ceb98c67c0452",
+        "scope": "focal posterior ao FULL1; não reclassifica o bruto anterior nem dispensa novo FULL"
+      }
+    },
+    {
+      "id": "navigation-20261024-observe-focus-after-frame",
+      "state": "fixed_regression",
+      "summary": "O teste observa o foco ao concluir o frame já previsto pelo shell.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Avatar padrão e verificação de navegação, privacidade e distribuição aprovados; CHG CONTROLS separado"
+      },
+      "stimulus": "Clicar Alladin no menu móvel390px e medir imediatamente e após RAF; remover somente a função de foco na contraprova.",
+      "expected": "Foco dentro da tela após o frame; mesmo predicado rejeita ausência definitiva; geometria e menu continuam exigidos.",
+      "cause": "A asserção antecipava shellFinishNavigation. Código de navegação e teste anteriores ao Dante já continham essa corrida; o runtime não foi alterado.",
+      "protection": {
+        "path": "tools/navigation_ia_test.py",
+        "case": "assert_keyboard_and_mobile",
+        "command": "python3 tools/navigation_ia_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "navigation-ia"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/full-first.json",
+          "result": "PRODUCT_FAIL",
+          "note": "focusInsidefalse na leitura imediata; bruto preservado."
+        },
+        {
+          "path": "docs/validation/dante-20261024/navigation-focus-proposal/receipt.json",
+          "result": "PASS",
+          "note": "Cinco positivos e uma contraprova; não representa frequência de usuários."
+        },
+        {
+          "path": "docs/validation/dante-20261024/navigation-b799.log",
+          "result": "PASS",
+          "note": "Runner permanente completo exit0, sem sleep/retry/tolerância nova."
+        }
+      ],
+      "last_verified": {
+        "build": "b7990f8c828e8d6f",
+        "date": "2026-10-24",
+        "test_sha256": "1b7af3a48d85848eb3a71e1b7e7a984cd4bbd4dce3554fa3364d89d22bf2e95a",
+        "scope": "focal posterior ao FULL1; não reclassifica o bruto anterior nem dispensa novo FULL"
+      }
+    },
+    {
+      "id": "dante-20261024-trusted-default-startup",
+      "state": "fixed_regression",
+      "summary": "Avatar padrão não provoca parse JS de base64 de imagem no boot.",
+      "source": {
+        "path": "docs/superpowers/plans/2026-10-24-dante.md",
+        "section": "Avatar padrão e verificação de navegação, privacidade e distribuição aprovados; CHG CONTROLS separado"
+      },
+      "stimulus": "Primeiro acesso sem foto, foto pessoal válida/inválida, Dante salvo explicitamente e downloads reais nos cinco modos.",
+      "expected": "Default de catálogo imutável sem atob; qualquer fonte persistida conserva validação integral; zero downloads ou decode de payload antes de ação.",
+      "cause": "Render validava o JPEG estático confiável duas vezes no início. O caminho default agora usa a fonte embutida; parser/writer de foto pessoal permanecem íntegros.",
+      "protection": {
+        "path": "tools/download_assets_browser_test.py",
+        "case": "zero base64 decode before action; all111downloadchecks",
+        "command": "python3 tools/download_assets_browser_test.py --out-dir <novo-diretorio>",
+        "full_gate": {
+          "included": true,
+          "check_id": "download-assets-browser"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/full-first.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Falha de inicialização introduzida pelo fallback Dante, sem mascarar o critério."
+        },
+        {
+          "path": "docs/validation/dante-20261024/avatar-startup-proposal/replay-receipt.json",
+          "result": "PASS",
+          "note": "RED original2atob; candidato0; pessoais continuam validados; contrato de perfil original preservado."
+        },
+        {
+          "path": "docs/validation/dante-20261024/downloads-b799.log",
+          "result": "PASS",
+          "note": "111 checks atuais, cinco distribuições, bytes, cancelamento, integridade, retry e timeout."
+        }
+      ],
+      "last_verified": {
+        "build": "b7990f8c828e8d6f",
+        "date": "2026-10-24",
+        "test_sha256": "ba6c180b51527408f5b0a70bf09cda11a0439b0ca8df6289212c64ef26f404f0",
+        "scope": "focal posterior ao FULL1; não reclassifica o bruto anterior nem dispensa novo FULL"
+      }
+    },
+    {
+      "id": "calendar-20261025-delayed-close-after-reopen",
+      "state": "fixed_regression",
+      "summary": "Fechamento nativo antigo não desativa o mesmo calendário já reaberto.",
+      "source": {
+        "path": "docs/architecture/CALENDAR-AGENDA.md",
+        "section": "Tarefas do aplicativo e ciclo; ampliação humana25/10 e CHGs CALENDAR-LIFECYCLE próprios"
+      },
+      "stimulus": "Fechar e reabrir sincronamente o host original antes da entrega do evento close; depois invalidar timestamp sintético do backup. Conferir botão, Escape e native-close reais.",
+      "expected": "Host aberto continua ativo, um timer e aria-expanded true; refresh remove marcador sem data válida. Fechamento real cancela timer, desativa instância e preserva foco do acionador onde contratado.",
+      "cause": "Listener close incondicional encerrava a instância após reabertura. Guard dialog.open preserva a abertura atual sem alterar regras de backup.",
+      "protection": {
+        "path": "tools/calendar_agenda_test.py",
+        "case": "lifecycle, lifecycle_close_controls; existing edges unchanged",
+        "command": "python3 tools/calendar_agenda_test.py --case lifecycle --case edges --artifact <receipt>",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-agenda"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/dante-20261024/full-first.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Bruto histórico preservado; causa também reproduzida no portátil anterior ao Dante."
+        },
+        {
+          "path": "docs/validation/dante-20261024/calendar-lifecycle-20261025/lifecycle-red.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Runner permanente antes da correção: CAL-LIFECYCLE-01; exit1."
+        },
+        {
+          "path": "docs/validation/dante-20261024/calendar-lifecycle-20261025/lifecycle-green.json",
+          "result": "PASS",
+          "note": "Runner permanente lifecycle e edges, build8c127c2f92de375e; exit0; nenhuma expectativa anterior enfraquecida."
+        }
+      ],
+      "last_verified": {
+        "build": "8c127c2f92de375e",
+        "date": "2026-10-25",
+        "test_sha256": "c19fe3272601bfb6816fe4a0ed1d7b01bca04905d878a4fbba56065490181a6e",
+        "scope": "Focais; FULL novo ainda necessário; aceite humano separado"
+      }
+    },
+    {
+      "id": "nocuda_tool_retirement_20261026",
+      "state": "fixed_regression",
+      "summary": "Retirada explícita do Nocuda Tool: ausência no produto com compatibilidade de acessos, progresso e rascunhos.",
+      "source": {
+        "path": "docs/work/CHG-JPW-REMOVE-NOCUDA-PRODUCT-20261026.md",
+        "section": "plano humano aprovado de remoção completa; compatibilidade e preservação"
+      },
+      "stimulus": "Abrir distribuições novas; procurar submenu/API exclusivos; usar acesso antigo, progresso salvo v1/v2 e rascunho antigo recuperado.",
+      "expected": "Ferramenta e arquivos ausentes; acesso aceito encaminha ao Stoikus; diálogo impede navegação; progresso preservado sem crédito; rascunho somente leitura/cópia; estado financeiro intacto.",
+      "cause": "Mudança deliberada de contrato: Stoikus substitui a ferramenta web. As expectativas positivas de ferramenta anterior deixam de ser contrato atual; propriedades compartilhadas continuam verificadas.",
+      "protection": {
+        "path": "tools/nocuda_tools_test.py",
+        "case": "http retired submenu absent; aliases; readonly recovery; pwa-offline",
+        "command": "python3 tools/nocuda_tools_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "nocuda-tools"
+        }
+      },
+      "evidence": [
+        {
+          "path": "/private/tmp/jpw-remove-nocuda-20261026/retirement-tests/red.log",
+          "result": "PRODUCT_FAIL",
+          "note": "RED comportamental antes da retirada; submenu antigo presente."
+        },
+        {
+          "path": "/private/tmp/jpw-remove-nocuda-20261026/retirement-tests/receipts.json",
+          "result": "PASS",
+          "note": "Focal atual 130 checks, exit0. Não substitui FULL final."
+        },
+        {
+          "path": "/private/tmp/jpw-remove-nocuda-20261026/retirement-tests/receipts.json",
+          "result": "PASS",
+          "note": "Compatibilidade do progresso antigo exercitada separadamente por tools/learning_foundation_test.mjs, tools/learning_controller_test.mjs e tools/dante_catalog_test.mjs; não atribuída ao teste de UI retirement."
+        }
+      ],
+      "last_verified": {
+        "build": "5cd40fe879de6727",
+        "date": "2026-10-26",
+        "scope": "focais atuais; FULL ainda pendente",
+        "tested_map_sha256": "c1b146b16b8add635fbafbadeef9a06df90011541364680f865aa95bb9f09f51"
+      }
+    },
+    {
+      "id": "nocuda_retired_startup_oracle_20261026",
+      "state": "fixed_regression",
+      "summary": "Projeção explícita do script retirado conserva o oráculo histórico de startup.",
+      "source": {
+        "path": "docs/work/CHG-JPW-REMOVE-NOCUDA-CONTROLS-20261026.md",
+        "section": "substituição aprovada de expectativas exclusivas; proteções compartilhadas preservadas"
+      },
+      "stimulus": "Executar startup-source-manifest e offline-sw-four-guide-modules após a retirada de 16-nocuda-transfer.js.",
+      "expected": "122 scripts reais concordam com o manifesto; somente o script retirado é reconstituído na comparação histórica de 106 identidades; carregá-lo realmente ou omitir/reordenar/duplicar outros scripts é recusado.",
+      "cause": "A contagem anterior de 101 não projetava a retirada aprovada de uma identidade; o produto atual tinha 100 nessa projeção intermediária.",
+      "protection": {
+        "path": "tools/learning_guide_test.py",
+        "case": "startup-source-manifest; offline-sw-four-guide-modules; startup_calendar_counterproofs rejects 13 original + 2 retired-script mutants",
+        "command": "python3 tools/learning_guide_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/remove-nocuda-20261026/full-attempt-1/guide.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Rodada completa bruta preservada, 64 PASS/2 PRODUCT_FAIL no guia."
+        },
+        {
+          "path": "docs/validation/remove-nocuda-20261026/guide-startup-fix/final-receipt.json",
+          "result": "PASS",
+          "note": "Dois focais em navegador real; 15 contraprovas; novo FULL continua necessário."
+        }
+      ],
+      "last_verified": {
+        "build": "5cd40fe879de6727",
+        "date": "2026-10-26",
+        "test_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6",
+        "scope": "focais do ajuste de oráculo; sem mudança no aplicativo; FULL novo pendente"
+      }
     }
   ]
 }

@@ -11,15 +11,11 @@ const NORMATIVE_DOCUMENT_URLS = [
 // Project documents share the active build; navigation must preserve their bytes.
 const PROJECT_DOCUMENT_URLS = ['./README.md', './CHANGELOG.md']
   .map(path => new URL(path, self.location.href).href);
-const NOCUDA_DOCUMENT_URLS = [
-  './downloads/nocuda/Nocuda_Tool.ex5',
-  './downloads/nocuda/Nocuda_Tool.pine', './downloads/nocuda/Nocuda_Tool.mq5',
-  './downloads/nocuda/TRADINGVIEW-LEIA-ME.md', './downloads/nocuda/MT5-LEIA-ME.md'
-].map(path => new URL(path, self.location.href).href);
 const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.location.href).href;
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
 const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html','Previa_Stoikus_Painel_C5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
 const PRECACHE_URLS = [
+  './assets/dante-guide.png',
   './src/js/10-domain/19-personal-agenda.js',
   './src/js/40-app/16-monthly-economic-data.js',
   './src/js/40-app/19-calendar-agenda.js',
@@ -52,10 +48,8 @@ const PRECACHE_URLS = [
   './src/js/20-ui/32-module-availability.js',
   './src/js/20-ui/33-module-work.js',
   './src/js/00-core/08-module-availability.js',
-  './assets/nocuda-tradingview.png', './assets/nocuda-metatrader.png',
-  ...NOCUDA_DOCUMENT_URLS,
   LEVERAGE_MANIFEST_URL,
-  './src/js/10-domain/16-nocuda-transfer.js', './src/js/00-core/10-download-assets.js', './src/js/20-ui/31-tools-services.js',
+  './src/js/00-core/10-download-assets.js', './src/js/20-ui/31-tools-services.js',
   './src/js/10-domain/19-execution-market.js',
   './src/js/10-domain/18-execution-board-model.js',
   './src/js/20-ui/30-execution-board.js',
@@ -237,7 +231,7 @@ self.addEventListener('fetch', event => {
     }));
     return;
   }
-  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||PROJECT_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)||documentURL===LEVERAGE_MANIFEST_URL||documentURL.startsWith(LEVERAGE_ROOT_URL)){
+  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||PROJECT_DOCUMENT_URLS.includes(documentURL)||documentURL===LEVERAGE_MANIFEST_URL||documentURL.startsWith(LEVERAGE_ROOT_URL)){
     event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(documentURL).then(cached=>cached||fetch(event.request))));
     return;
   }

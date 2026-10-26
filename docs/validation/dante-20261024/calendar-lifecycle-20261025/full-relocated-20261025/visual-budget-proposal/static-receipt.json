@@ -1,0 +1,17 @@
+{
+  "kind": "STATIC_ONLY_NOT_RUNTIME_PASS",
+  "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ui_visual_quality_test.py",
+  "source_sha256": "f7a176ab58c048801326d84c626d9c2d4524cd38f01c69971e70d2b5977d8b03",
+  "proposed_sha256": "8efe7a09583a044d4d15d84c8e6d321365f84e3f3e9f288f732aebd74945d963",
+  "patch_sha256": "7b59fff1bfd49d318bf3273976fb95691bfa95dd0c69a49d85c6ed8a5bed71a2",
+  "changed_functions": [
+    "centered",
+    "controls_geometry"
+  ],
+  "centered_assert_AST_identical": true,
+  "controls_geometry_assert_AST_identical": true,
+  "matrix_native_ids_gate_main_AST_identical": true,
+  "scroll_and_double_RAF_lines_unchanged": true,
+  "runtime": "NOT_RUN",
+  "repo_edited": false
+}

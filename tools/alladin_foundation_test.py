@@ -115,6 +115,7 @@ def boot(browser, url, pronto, mutacao_js=None):
     page.goto(url, wait_until="load")
     page.wait_for_function(pronto)
     if mutacao_js:
+        context._jpw_params_before_mutation = page.evaluate('JSON.stringify(S.params)')
         page.evaluate(f"""() => {{
             {mutacao_js}
             localStorage.setItem({json.dumps(LSKEY)}, JSON.stringify(S));
@@ -147,7 +148,7 @@ def main() -> int:
             r = page.evaluate("""() => ({
                 forma: JSON.stringify(S.alladin),
                 pf: !!(S.personalFinance && S.personalFinance.moneyUnit === 'BRL_CENTS'),
-                saldo: S.params && typeof S.params.saldoIni === 'number',
+                params: JSON.stringify(S.params),
             })""")
             esperado = json.dumps({"schemaVersion": 6, "reportingCurrency": "BRL",
                                    "instruments": [], "assets": [], "accounts": [],
@@ -155,7 +156,7 @@ def main() -> int:
                                   separators=(",", ":"))
             if r["forma"] != esperado:
                 falhas.append(f"A: agregado legado nao nasceu de DEFAULTS: {r['forma']}")
-            if not (r["pf"] and r["saldo"]):
+            if not (r["pf"] and r["params"] == ctx._jpw_params_before_mutation):
                 falhas.append("A: vizinhos (personalFinance/params) alterados pela migracao do alladin")
             if erros:
                 falhas.append(f"A: pageerror {erros}")
@@ -401,13 +402,13 @@ def main() -> int:
                 rc: S.alladin.reportingCurrency,
                 compat: JPWAlladin.compat(),
                 pf: !!(S.personalFinance && S.personalFinance.moneyUnit === 'BRL_CENTS'),
-                saldo: !!(S.params && typeof S.params.saldoIni === 'number'),
+                params: JSON.stringify(S.params),
             })""")
             if r["versao"] != 6:
                 falhas.append(f"M: v1 nao percorreu a cadeia ate a versao vigente: {r['versao']!r}")
             if r["registro"] != '[{"assetId":"alda_legado","name":"Bem legado"}]':
                 falhas.append(f"M: a migracao TRANSFORMOU o registro: {r['registro']}")
-            if r["rc"] != "BRL" or not (r["pf"] and r["saldo"]):
+            if r["rc"] != "BRL" or not (r["pf"] and r["params"] == ctx._jpw_params_before_mutation):
                 falhas.append("M: migracao tocou moeda de apresentacao ou vizinhos")
             if r["compat"]["readOnly"] is not False:
                 falhas.append(f"M: estado migrado ficou bloqueado indevidamente: {r['compat']!r}")

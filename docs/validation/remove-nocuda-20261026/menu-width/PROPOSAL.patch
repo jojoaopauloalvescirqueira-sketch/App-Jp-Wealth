@@ -1,0 +1,14 @@
+--- tools/ui_visual_quality_test.py
++++ tools/ui_visual_quality_test.py
+@@ -463,7 +463,10 @@
+             menu = page.locator('#pl-stoikus-menu')
+             original = menu.get_attribute('style') or ''
+             try:
+-                menu.evaluate("el=>el.style.setProperty('width','322px','important')")
++                # Keep the deliberate violation in place when positioning updates width.
++                menu.evaluate("el=>el.style.setProperty('min-width','322px','important')")
++                mutated_width = menu.evaluate('el=>el.getBoundingClientRect().width')
++                assert mutated_width == 322, ('322px width counterproof actually applied', mutated_width)
+                 invalid = rejected(lambda: menu_geometry(page))
+             finally:
+                 menu.evaluate('(el,style)=>el.setAttribute("style",style)', original)

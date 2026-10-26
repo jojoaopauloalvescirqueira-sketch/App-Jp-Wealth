@@ -1,0 +1,22 @@
+{
+  "result": "PASS: destructive counterproof correctly rejected by original and new equality assertions",
+  "test_execution_exit_code": 1,
+  "source_test_sha256": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+  "source_current_sha256": "ce43caef6e53414884a5f7b06de2b3fc5ac1807277a5a340b324cbafd432cf19",
+  "source_unchanged_during_probe": true,
+  "only_cases": [
+    "C8",
+    "C11",
+    "C14"
+  ],
+  "failures": [
+    "C8: a sessao foi PARCIALMENTE finalizada — accounts foi zerado",
+    "C8: a recusa alterou o conteudo das contas existentes",
+    "C11: a sessao foi finalizada mesmo sem conseguir ler o estado persistido",
+    "C11: a recusa alterou o conteudo das contas existentes",
+    "C14: a sessao foi finalizada sem conseguir garantir a preservacao",
+    "C14: a recusa alterou o conteudo das contas existentes"
+  ],
+  "precondition_or_environment_failures": false,
+  "repo_edited_by_probe": false
+}

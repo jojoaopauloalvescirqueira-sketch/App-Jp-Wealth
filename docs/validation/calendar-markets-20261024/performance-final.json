@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "environment": "headless Chromium; native WebGL backend reported below; desktop1440x900 DPR2; reduced_motion=reduce; automatic rotation off; OS shader cache not reset",
+  "coldEntryMs": 252.2983750095591,
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+  "idleDraws5s": 0,
+  "selectionMs": {
+    "samples": 30,
+    "median": 6.400000095367432,
+    "p95": 7.200000047683716
+  },
+  "dragFrameIntervalMs": {
+    "samples": 137,
+    "median": 8.299999952316284,
+    "p95": 9.0
+  },
+  "hiddenDraws5s": 0,
+  "warmEntryMs": 90.21829208359122,
+  "collapsedMobileDraws5s": 0,
+  "expandedInteractionDraws": 1,
+  "rendererAndCanvasRetained": true,
+  "targetSelectionP95Met": true,
+  "targetDragP95Met": true,
+  "sourceHashes": {
+    "build-id.js": "1a4029a54f239096965b651d65711b218ec04695be7c49bb66e26ffcf3cc76e3",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/vendor/aisol-dot-globe/aisol-globe.iife.js": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd"
+  }
+}

@@ -106,11 +106,12 @@ def run(args):
                     assert p.evaluate("JPWNavigation.navigate('dashboard')") and not snap(p)['active']
                     return {'singleton':True,'actualNumeric15Ticks':True,'threeRealDialogsZeroRAF':True,'noAutoplay':True,'financialBytesUnchanged':True}
                 def navigation(p):
-                    p.evaluate("JPWNavigation.navigate('tools-nocuda')");p.locator('#nocudaPayload').fill('Synthetic pending draft')
+                    p.evaluate("JPWNavigation.navigateLocal('research','nocoda')");p.locator('#ncPrice1').fill('1,23412')
                     p.evaluate("openSettingsModal('knowledge')");route=p.evaluate('JPWNavigation.current()');p.wait_for_timeout(150);p.locator('#settingsPageTitle').focus();focus=p.evaluate('document.activeElement.id')
                     for call in ["JPWNavigation.navigate('capital-currents')","JPWNavigation.navigateLocal('tools','capital-currents')"]:
                         assert p.evaluate(call) is False and p.evaluate('JPWNavigation.current()')==route
-                        assert p.locator('#nocudaPayload').input_value()=='Synthetic pending draft' and p.locator('[data-capital-currents-root]').count()==0
+                        assert p.locator('#ncPrice1').input_value()=='1,23412' and p.locator('[data-capital-currents-root]').count()==0
+                        assert p.locator('#settingsOverlay').evaluate('(e)=>e.classList.contains("show")')
                         assert p.evaluate('document.activeElement.id')==focus,{'before':focus,'after':p.evaluate('document.activeElement.id')}
                     p.evaluate('closeSettingsModal()');before=financial(p);p.evaluate("JPWModuleAvailability.setState('research','frozen')")
                     open_game(p);assert not snap(p)['running'] and financial(p)==before

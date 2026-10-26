@@ -1,0 +1,167 @@
+{
+  "cases": [
+    {
+      "case": "RED-original-default-oracle",
+      "expected": "PRODUCT_FAIL",
+      "result": "PRODUCT_FAIL",
+      "entry": "index.html",
+      "error": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-dante-20261024/finalization-default-proposal/replay.py\", line 37, in <module>\n    try:module.run_profile_finalize_contract(b,url+entry);row['result']='PASS'\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/finalize_session_test.py\", line 822, in run_profile_finalize_contract\n    assert page.locator('#settingsProfileAvatar img').count()==0\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "case": "GREEN-source-profile-privacy",
+      "expected": "PASS",
+      "result": "PASS",
+      "entry": "index.html"
+    },
+    {
+      "case": "GREEN-portable-profile-privacy",
+      "expected": "PASS",
+      "result": "PASS",
+      "entry": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    }
+  ],
+  "negativeControls": [
+    {
+      "mutation": "residual-sidebar-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-header-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-editor-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "cached-personal-identity",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-name-input",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-header-accessible-name",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-sidebar-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-header-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-editor-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "cached-personal-identity",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-name-input",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-header-accessible-name",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/index.html"
+    },
+    {
+      "mutation": "residual-sidebar-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-header-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-editor-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "cached-personal-identity",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-name-input",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-header-accessible-name",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-sidebar-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-header-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-editor-photo",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "cached-personal-identity",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-name-input",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    },
+    {
+      "mutation": "residual-header-accessible-name",
+      "rejected": true,
+      "url": "http://127.0.0.1:58538/dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+    }
+  ],
+  "negativeCount": 24,
+  "source_before": {
+    "tools/finalize_session_test.py": "0b912d2677d119bc3e921900a9606cf0d41359c81bb403fc9bd6dd3c20b525e4",
+    "src/js/40-app/09-settings-modal.js": "571f05b72c08266588656c633490309c3dced5418226499b59c57b5b5bc6ab22",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+  },
+  "source_after": {
+    "tools/finalize_session_test.py": "0b912d2677d119bc3e921900a9606cf0d41359c81bb403fc9bd6dd3c20b525e4",
+    "src/js/40-app/09-settings-modal.js": "571f05b72c08266588656c633490309c3dced5418226499b59c57b5b5bc6ab22",
+    "src/js/40-app/07-finalize-session.js": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+  },
+  "source_unchanged": true,
+  "proposal_sha256": "9419592bf4754f56cfaf47e5f2568d9b5e97a71c7bd5fd98951ceb98c67c0452",
+  "limits": [
+    "Scratch candidate test executed; no project file changed.",
+    "Real product/profile reader/storage and finalization UI; disposable synthetic contexts.",
+    "Stored personal profile intentionally preserved, anonymized session memory/UI enforced.",
+    "No headed or native zoom, no gate override."
+  ]
+}

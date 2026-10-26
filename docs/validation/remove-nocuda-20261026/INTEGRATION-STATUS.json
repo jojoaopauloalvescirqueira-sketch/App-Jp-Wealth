@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-26T19:59:53.072773+00:00",
+  "build": "5cd40fe879de6727",
+  "branch": "codex/remover-nocuda-tool-20261026",
+  "head_before_commit": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "latestFull": {
+    "summary": {
+      "PASS": 102,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "exit": 0,
+    "seconds": 3029.393,
+    "checks": 102,
+    "sourceUnchanged": true,
+    "frozenInputs": 680,
+    "expectedAbsent": 11,
+    "fullApproved": true,
+    "directory": "full-exclusive"
+  },
+  "macReleased": true,
+  "gitOperations": "Authorized; pending execution after independent final audit",
+  "humanVisualFeedback": "User accepted fresh-origin preview; no universal human usability or financial homologation claim",
+  "vm": "Untouched; remained running"
+}

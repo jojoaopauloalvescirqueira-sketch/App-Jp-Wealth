@@ -1,0 +1,86 @@
+{
+  "at": "2026-10-26T16:20:00.848743+00:00",
+  "scope": "stateless HTTP bytes only; no claim about personal browser or service-worker cache",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:51629/index.html?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada"
+    },
+    {
+      "url": "http://127.0.0.1:51629/build-id.js?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640"
+    },
+    {
+      "url": "http://127.0.0.1:51629/src/styles/app.css?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "301ce56aa787f32b0eda24b665e4cfb9cf5c05dfd9c586703551261f2db0e437"
+    },
+    {
+      "url": "http://127.0.0.1:51629/src/js/20-ui/31-tools-services.js?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+    },
+    {
+      "url": "http://127.0.0.1:51629/src/js/10-domain/16-nocuda-transfer.js?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:51629/src/vendor/downloads/nocuda-payload.js?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:51629/downloads/nocuda/Nocuda_Tool.mq5?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:51629/assets/nocuda-tradingview.png?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:64886/index.html?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada"
+    },
+    {
+      "url": "http://127.0.0.1:64886/build-id.js?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640"
+    },
+    {
+      "url": "http://127.0.0.1:64886/src/styles/app.css?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "301ce56aa787f32b0eda24b665e4cfb9cf5c05dfd9c586703551261f2db0e437"
+    },
+    {
+      "url": "http://127.0.0.1:64886/src/js/20-ui/31-tools-services.js?v=5cd40fe879de6727",
+      "status": 200,
+      "bytesEqual": true,
+      "sha256": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+    },
+    {
+      "url": "http://127.0.0.1:64886/src/js/10-domain/16-nocuda-transfer.js?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:64886/src/vendor/downloads/nocuda-payload.js?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:64886/downloads/nocuda/Nocuda_Tool.mq5?v=5cd40fe879de6727",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:64886/assets/nocuda-tradingview.png?v=5cd40fe879de6727",
+      "status": 404
+    }
+  ]
+}

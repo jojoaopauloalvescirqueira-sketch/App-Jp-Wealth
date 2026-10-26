@@ -1,0 +1,85 @@
+{
+  "build": "5cd40fe879de6727",
+  "python": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "node": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "browser": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "browser_version": "155.0.8059.86",
+  "headless": true,
+  "synthetic_only": true,
+  "tests": [
+    {
+      "test": "tools/nocuda_tools_test.py",
+      "result": "PASS",
+      "exit": 0,
+      "checks": 130,
+      "receipt": "browser-green.log",
+      "env": "NOCUDA_EVIDENCE=/private/tmp/jpw-remove-nocuda-20261026/retirement-tests/green"
+    },
+    {
+      "test": "tools/navigation_ia_test.py",
+      "result": "PASS",
+      "exit": 0,
+      "receipt": "navigation-green.log"
+    },
+    {
+      "test": "tools/learning_guide_test.py --case readonly-all-64-native-actions --out /private/tmp/jpw-remove-nocuda-20261026/retirement-tests/guide-readonly-green.json",
+      "result": "PASS",
+      "exit": 0,
+      "checks": "3 contexts x 63 lessons",
+      "receipt": "guide-readonly-green.json"
+    },
+    {
+      "test": "tools/learning_foundation_test.mjs",
+      "result": "PASS",
+      "exit": 0,
+      "checks": 54,
+      "receipt": "foundation.log"
+    },
+    {
+      "test": "tools/learning_controller_test.mjs",
+      "result": "PASS",
+      "exit": 0,
+      "checks": 120,
+      "receipt": "learning_controller_test.mjs.log"
+    },
+    {
+      "test": "tools/dante_catalog_test.mjs",
+      "result": "PASS",
+      "exit": 0,
+      "receipt": "dante_catalog_test.mjs.log"
+    }
+  ],
+  "red": {
+    "test": "tools/nocuda_tools_test.py",
+    "result": "PRODUCT_FAIL",
+    "exit": 1,
+    "reason": "http retired submenu absent",
+    "receipt": "red.log"
+  },
+  "first_build": {
+    "result": "PRODUCT_FAIL",
+    "reason": "SW never active after removed precache URL; stopped own process; root repaired SW",
+    "receipt": "browser-first-build-partial.log"
+  },
+  "guide_first_build": {
+    "exit": 1,
+    "result": "TEST_HARNESS_FAIL",
+    "reason": "Inputs changed during execution (root rebuild); all 3 behavior cases passed but candidate freshness rejected; stable rerun recorded separately",
+    "receipt": "guide-readonly.json"
+  },
+  "candidate_inputs_unchanged": true,
+  "final_test_hashes": {
+    "nocuda_tools_test.py": "c1b146b16b8add635fbafbadeef9a06df90011541364680f865aa95bb9f09f51",
+    "navigation_ia_test.py": "2f59f750070dd85884ce0a3ffb5d155bd299c96c38f74150c469c45da7ac6e0c",
+    "learning_guide_test.py": "332ffc86056fd88dc7e758473c76b902c4b4d4ab9e308744fa726c67e3874978",
+    "learning_controller_test.mjs": "a873b8aa6ce75073c6e5fa7e0e2c654e6c82dcb5d54f69ceba19d9fce820d6d9",
+    "learning_foundation_test.mjs": "2cd3490964f1c27e83992eb34775db79d5179aad540e86f7fad8169deb644b27",
+    "dante_catalog_test.mjs": "55f07ca16912527c37b5546bc90202fbba2156eff2d604ebfef632068de23b9b"
+  },
+  "limits": [
+    "Full suite delegated to root",
+    "No headed/native zoom executed",
+    "No real financial data used",
+    "No production/source/build edits by this agent"
+  ]
+}

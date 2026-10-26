@@ -259,21 +259,26 @@ function renderCheck(){
     const items=g.items.map((it,ii)=>`<div class="check-item">
         <span class="ci-label">${esc(it.label)}</span>
         <div class="seg" data-g="${gi}" data-i="${ii}">
-          ${[0,1,2].map(n=>`<button class="${it.v===n?'on':''}" data-v="${n}">${n}</button>`).join('')}
+          ${[0,1,2].map(n=>`<button class="${it.v===n?'on':''}" data-v="${n}" aria-pressed="${it.v===n}">${n}</button>`).join('')}
         </div></div>`).join('');
     return `<div class="check-group"><div class="gh">${esc(g.group)}</div>${items}</div>`;
   }).join('');
   cont.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
     const seg=b.parentElement; const gi=+seg.dataset.g, ii=+seg.dataset.i, v=+b.dataset.v;
     S.checklist[gi].items[ii].v=v;
-    seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',+x.dataset.v===v));
+    seg.querySelectorAll('button').forEach(x=>{const selected=+x.dataset.v===v;x.classList.toggle('on',selected);x.setAttribute('aria-pressed',String(selected));});
     save(); computeCheck();
   }));
   computeCheck();
 }
 function computeCheck(){
-  let score=0,max=0;
-  S.checklist.forEach(g=>g.items.forEach(it=>{score+=it.v; max+=2;}));
+  let score=0,max=0,answered=0,total=0;
+  S.checklist.forEach(g=>g.items.forEach(it=>{total++;max+=2;if(Number.isInteger(it.v)&&it.v>=0&&it.v<=2){score+=it.v;answered++;}}));
+  if(total===0||answered!==total){
+    $('chScore').textContent='—';$('chMax').textContent='de '+max;
+    const el=$('chClass');el.textContent='Não concluído — '+answered+' de '+total+' respostas';el.style.color='var(--ink-dim)';
+    return;
+  }
   $('chScore').textContent=score; $('chMax').textContent='de '+max;
   let cls,col;
   if(score>=24){cls='SETUP A+ — confiança estrutural';col='var(--f1)';}

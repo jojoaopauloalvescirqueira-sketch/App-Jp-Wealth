@@ -55,7 +55,7 @@ continuam Estimated; paridade geométrica não aprova um calendário futuro.
 
 O EA observador não é dependência. O NoCuda não altera as seis métricas,
 USC, MDD, Gênese, Raiz N, Stop risk, mensagens, ordens ou stops. A antiga
-`downloads/nocuda/Nocuda_Tool.mq5` permanece intacta. Seus números geométricos
+A ferramenta web anterior `downloads/nocuda/Nocuda_Tool.mq5` foi retirada da distribuição em 26/10/2026. Seus números geométricos históricos
 não são reutilizados como se obedecessem ao novo contrato.
 
 ## Dois modos, sem migração implícita

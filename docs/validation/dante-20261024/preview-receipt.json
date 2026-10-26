@@ -1,0 +1,23 @@
+{
+  "url": "http://127.0.0.1:64886/index.html?v=2c4a3d9f65b3c664",
+  "checks": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+      "matchesDisk": true
+    },
+    {
+      "path": "build-id.js",
+      "status": 200,
+      "sha256": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18",
+      "matchesDisk": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "status": 200,
+      "sha256": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937",
+      "matchesDisk": true
+    }
+  ]
+}

@@ -1,0 +1,370 @@
+{
+  "verdict": "FULL_EXECUTED_ENVIRONMENT_FAILURE_NOT_APPROVED",
+  "exit": 1,
+  "seconds": 2790.959,
+  "summary": {
+    "PASS": 101,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 1,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "checks": {
+    "count": 102,
+    "unique": true,
+    "idsAndOrderPreserved": true,
+    "commandDifferencesAfterOnlyEvidencePrefixNormalization": []
+  },
+  "frozen": {
+    "checked": 679,
+    "changed": [],
+    "build": "8c127c2f92de375e",
+    "branch": "codex/dante-guia-20261024",
+    "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67"
+  },
+  "preflight": {
+    "bodyConfirmed": true,
+    "returncode": 0,
+    "duration": 0.421
+  },
+  "ui": {
+    "result": "ENVIRONMENT_ERROR",
+    "returncode": 124,
+    "seconds": 900.026,
+    "tailCompleteUniquePASS": 326,
+    "sliceOfPriorExecutionOrderOneBased": [
+      79,
+      404
+    ],
+    "lastPASS": "compact-native200-submenu-dark",
+    "unobservedFinalIDs": [
+      "closure-native200-sidebar-light",
+      "closure-native200-sidebar-dark",
+      "closure-native200-topbar-light",
+      "closure-native200-topbar-dark",
+      "closure-native200-glass-light",
+      "closure-native200-glass-dark",
+      "closure-native200-submenu-light",
+      "closure-native200-submenu-dark",
+      "coverage-missing-and-zero-rejected"
+    ],
+    "finalJSONPresent": false,
+    "own413CoverageAnd160SourceReport": "NOT_AVAILABLE_TIMEOUT",
+    "externalVisualSourceComparison": {
+      "checked": 160,
+      "changed": []
+    }
+  },
+  "calendar": {
+    "defaultPASS": 14,
+    "lifecycleExactlyOnce": true,
+    "lifecycle": {
+      "case": "calendar-lifecycle-320-light",
+      "result": "PASS",
+      "geometry": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "priorCloseEvents": [
+          {
+            "open": true
+          }
+        ],
+        "reopenedActive": true,
+        "futureBackupMarkerRemoved": true,
+        "financialUnchangedExceptExplicitFixtureTimestamp": true,
+        "closeCounterproofs": {
+          "header": {
+            "id": "headerCalendarBtn",
+            "label": "Abrir Calendário e Agenda",
+            "title": "Calendário e Agenda",
+            "expanded": "true",
+            "width": 44,
+            "height": 44,
+            "svg": 1
+          },
+          "realClosures": [
+            {
+              "method": "original-button",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "Escape",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "native-close-event",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            }
+          ],
+          "financialUnchanged": true
+        }
+      }
+    },
+    "recoveryPASS": 8,
+    "distributionPASS": 4
+  },
+  "guide": {
+    "casesPASS": 66,
+    "inputHashesChecked": 30,
+    "ownSourceUnchanged": true
+  },
+  "routedOutputInventory": [
+    {
+      "check": "calendar-agenda",
+      "relative": "calendar-agenda.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "calendar-recovery",
+      "relative": "calendar-recovery.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "ui-visual-quality",
+      "relative": "ui-visual-quality",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "ENVIRONMENT_ERROR",
+      "returncode": 124,
+      "uiFinalJSONAbsent": true
+    },
+    {
+      "check": "calendar-distribution",
+      "relative": "calendar-distribution.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "ff-news-cache",
+      "relative": "ff-news-cache.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "planning-three-tabs",
+      "relative": "planning-three-tabs.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "planning-proportions",
+      "relative": "planning-proportions",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "planning-parity-layout",
+      "relative": "planning-layout",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "notes-launcher",
+      "relative": "notes-launcher.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "notes-global-launcher",
+      "relative": "notes-global-launcher.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "consolidated-efficiency",
+      "relative": "consolidated.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "consolidated-storage",
+      "relative": "consolidated-storage.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "consolidated-ui",
+      "relative": "consolidated-ui.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "forex-professional-panel",
+      "relative": "professional-panel",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "execution-efficiency",
+      "relative": "rows",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "execution-table",
+      "relative": "table",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "execution-workbook",
+      "relative": "workbook",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "execution-proportions",
+      "relative": "proportions",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "forex-context",
+      "relative": "context.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "forex-navigation-journey",
+      "relative": "journey.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "learning-guide",
+      "relative": "guide.json",
+      "exists": true,
+      "type": "file",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "download-assets-browser",
+      "relative": "downloads",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "capital-currents-browser",
+      "relative": "capital-currents",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    },
+    {
+      "check": "time-twins-browser",
+      "relative": "time-twins",
+      "exists": true,
+      "type": "directory",
+      "checkResult": "PASS",
+      "returncode": 0,
+      "uiFinalJSONAbsent": null
+    }
+  ],
+  "curatedCopiesExact": {
+    "full-relocated.json": true,
+    "full-relocated-command.json": true,
+    "full-relocated.log": true,
+    "redirection-mapping.json": true,
+    "frozen-inputs.json": true,
+    "redirect_full.py": true
+  },
+  "identities": {
+    "full-relocated.json": "059476c2ff7498e4ce62e8d2e176232355320de7bb56f51884f2ebea6cb70b02",
+    "full-relocated-command.json": "3b6590506ca6ff9d7139cd7119b19dec3d6461a15a6f2f8afbe0b3b414261b8e",
+    "full-relocated.log": "a4ce3040a1e0942618ee65b55369fc65d6c3eb1c5bb4644acb6b8122961728a9",
+    "redirection-mapping.json": "34982b80f667f904fa22d20c06cde8876cf3eaceaa949770d006f9e5ad507b8d",
+    "frozen-inputs.json": "11cf8e2809ac3c871a729c5533ab3a86e5ef76a08511ea069b63e0a292639b65",
+    "redirect_full.py": "5eadae0f21b03835df0ba63270f95869a49dd4fca59f08eb7f8bac28ad523754"
+  },
+  "limits": [
+    "No browser/tests/signals by reviewer",
+    "Output inventory is presence/header audit; no exhaustive heavy payload comparison",
+    "No final UI413/coverage/source_unchanged report in this interrupted child",
+    "Focal413PASS is separate",
+    "No causal conclusion on CloudDocs/IO/performance",
+    "Human acceptance remains separate"
+  ]
+}

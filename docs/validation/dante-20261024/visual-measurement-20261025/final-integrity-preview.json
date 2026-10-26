@@ -1,0 +1,84 @@
+{
+  "at": "2026-10-25T20:56:28.627267+00:00",
+  "frozenInputs": 681,
+  "changed": [],
+  "preview": [
+    {
+      "port": 51629,
+      "files": [
+        {
+          "path": "index.html",
+          "status": 200,
+          "bytes": 549227,
+          "sameBytes": true,
+          "sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748"
+        },
+        {
+          "path": "build-id.js",
+          "status": 200,
+          "bytes": 39890,
+          "sameBytes": true,
+          "sha256": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c"
+        },
+        {
+          "path": "src/styles/app.css",
+          "status": 200,
+          "bytes": 931134,
+          "sameBytes": true,
+          "sha256": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937"
+        },
+        {
+          "path": "src/js/40-app/19-calendar-agenda.js",
+          "status": 200,
+          "bytes": 41326,
+          "sameBytes": true,
+          "sha256": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c"
+        }
+      ]
+    },
+    {
+      "port": 64886,
+      "files": [
+        {
+          "path": "index.html",
+          "status": 200,
+          "bytes": 549227,
+          "sameBytes": true,
+          "sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748"
+        },
+        {
+          "path": "build-id.js",
+          "status": 200,
+          "bytes": 39890,
+          "sameBytes": true,
+          "sha256": "0569ce3aceda803f7fe78388262b4e1ede107a5f57ca5e5e06481d4270e95d6c"
+        },
+        {
+          "path": "src/styles/app.css",
+          "status": 200,
+          "bytes": 931134,
+          "sameBytes": true,
+          "sha256": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937"
+        },
+        {
+          "path": "src/js/40-app/19-calendar-agenda.js",
+          "status": 200,
+          "bytes": 41326,
+          "sameBytes": true,
+          "sha256": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c"
+        }
+      ]
+    }
+  ],
+  "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+  "branch": "codex/dante-guia-20261024",
+  "statusEntries": 94,
+  "reportLinksPresent": true,
+  "postFullSourceEdits": false,
+  "diffCheckExit": 0,
+  "validateProject": {
+    "exit": 0,
+    "output": "VALIDACAO OK - 123 arquivos JS, 711 IDs estaticos, portatil reconstruido.",
+    "evidence": "successful unified exec session 34330; no GUI run"
+  }
+}

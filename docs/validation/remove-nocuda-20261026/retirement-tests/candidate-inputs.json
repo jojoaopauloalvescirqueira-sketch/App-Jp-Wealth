@@ -1,0 +1,15 @@
+{
+  "hashes": {
+    "index.html": "e6894ada071a30dd43ff453a6d2d46618be076a86a27694a4130b53cc8ae6ada",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "cda2311428689320caaad3e3665cc0e93207f09a25ea96f2c50fc40a5849e2eb",
+    "sw.js": "49217775a22a02572439625d5fd7128c44378f92a791fddc733b8d0cc446b59a",
+    "build-id.js": "4cae49023fe5bec5eca059e777a08e2178edc30a338ccf4c084b6c6bd975c640",
+    "src/js/manifest.json": "f14a699a5d939395843fbbae73f6e6d7ad8ffd26e9690d9afd0ec8bc3475350e",
+    "src/js/40-app/01-navigation.js": "b683ce248781a81df0b5c38ce4caf222de87bc77e07b809ffbecd1b2f2802abb",
+    "src/js/40-app/26-learning-catalog.js": "784f0bbf6dba081bd647eaf6f353d3bc707b13f6fc019f47f72b38a125923f7c",
+    "src/js/40-app/28-learning-guide.js": "0710b7083e0353f3b11d83cfaef96f03c2c3804d97aac818c6c6661f45e08a64",
+    "src/js/00-core/09-learning-progress.js": "782cdd7f7d726eac8ac5d6a00cfddd055ac5ad7cbcd4d9e39ab7bb523fc699d0",
+    "src/js/20-ui/31-tools-services.js": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+  },
+  "platform": "macOS-27.0.1-arm64-arm-64bit"
+}

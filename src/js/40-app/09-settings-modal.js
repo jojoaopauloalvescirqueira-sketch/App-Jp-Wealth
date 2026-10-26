@@ -22,7 +22,7 @@ const SETTINGS_LEAVES={
   interface:{label:'Interface', group:'appearance-interface', desc:'Tamanho do texto e instruções do sistema.', terms:['interface','fonte','tamanho','tipografia','sidebar','barra lateral','ajuda','instruções']},
   editor:{label:'Editor', group:'appearance-interface', desc:'Preferências de edição.', terms:['editor']},
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
-  'learning-guide':{label:'Guia do site', group:'knowledge', desc:'Trilhas interativas para conhecer os controles e retomar seu aprendizado.', terms:['guia','tutorial','primeiros passos','aprender','ajuda']},
+  'learning-guide':{label:'Guia do site', group:'knowledge', desc:'Conheça os controles com Dante e retome seu aprendizado no seu ritmo.', terms:['Dante','mascote','jornada','guia','tutorial','primeiros passos','aprender','ajuda']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Estatuto V11.0 e Anexo Paramétrico Canônico vigentes.', terms:['estatuto','V11','anexo','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Motor Forex, observações da conta, política V11 e propostas locais.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','V11','seis fases','reservas','editor']},
@@ -193,14 +193,18 @@ function renderSettingsProfileAvatar(element,profile){
   if(!element) return;
   const initials=settingsProfileInitials(profile.displayName);
   element.replaceChildren(document.createTextNode(initials));
-  if(!profile.avatarDataUrl||!settingsProfileAvatarValid(profile.avatarDataUrl)) return;
+  // O padrão estático/imutável já é validado no catálogo; não decodificar em JS no boot.
+  // Qualquer foto persistida continua atravessando a validação completa, inclusive a da galeria.
+  const personal=profile.avatarDataUrl!=null;
+  const source=personal?profile.avatarDataUrl:SETTINGS_PROFILE_AVATARS.find(avatar=>avatar.id==='dante-mascote')?.avatarDataUrl;
+  if(!source||(personal&&!settingsProfileAvatarValid(source))) return;
   const picture=document.createElement('img');picture.alt='';picture.draggable=false;
   picture.addEventListener('error',()=>{
     if(picture.parentNode!==element) return;
     element.replaceChildren(document.createTextNode(initials));
-    if(element.id==='settingsAccountAvatar'&&settingsState.active==='account') settingsProfileSetStatus('A foto está indisponível. Escolha outra foto ou remova-a; o conteúdo salvo foi preservado.','error');
+    if(profile.avatarDataUrl&&element.id==='settingsAccountAvatar'&&settingsState.active==='account') settingsProfileSetStatus('A foto está indisponível. Escolha outra foto ou remova-a; o conteúdo salvo foi preservado.','error');
   },{once:true});
-  picture.src=profile.avatarDataUrl;element.replaceChildren(picture);
+  picture.src=source;element.replaceChildren(picture);
 }
 function renderSettingsProfile(){
   const state=settingsProfileState,name=state.confirmed.displayName.trim()||'Seu perfil';
@@ -237,7 +241,7 @@ function cancelSettingsProfileDraft(){
 function settingsProfileGalleryPanel(){
   const groups=[...new Set(SETTINGS_PROFILE_AVATARS.map(avatar=>avatar.group))];
   return `<details id="settingsProfileGallery" class="settings-avatar-gallery">
-    <summary><span>Galeria do JP Wealth<small>19 retratos para escolher</small></span></summary>
+    <summary><span>Galeria do JP Wealth<small>${SETTINGS_PROFILE_AVATARS.length} retratos para escolher</small></span></summary>
     <div class="settings-avatar-filters">
       <label for="settingsProfileAvatarSearch">Buscar por nome<input id="settingsProfileAvatarSearch" type="search" placeholder="Buscar retrato" autocomplete="off" spellcheck="false"></label>
       <label for="settingsProfileAvatarGroup">Grupo<select id="settingsProfileAvatarGroup"><option value="all">Todos os grupos</option>${groups.map(group=>`<option value="${settingsEsc(group)}">${settingsEsc(group)}</option>`).join('')}</select></label>

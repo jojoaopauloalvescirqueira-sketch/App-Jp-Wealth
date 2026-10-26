@@ -1,0 +1,5 @@
+# Brief — retirada do Nocuda Tool
+
+JP Wealth organiza registros e consultas financeiras sob fontes explícitas. Nocuda Tool é transferência efêmera de desenhos, distinta dos estudos Research e do motor Stoikus. Seu controlador compartilha calendário, normativa e jogos; a remoção será por blocos exclusivos. Fontes: AGENTS.md, plano aprovado, NOCUDA-TOOLS/NOCUDA-TRANSFER, manifesto e consumidores atuais. Harness §§12–14,28–30 lidos; fonte e hash abaixo. Baseline a4bf278, branch autorizada; 94 pendências/525 arquivos preservados em ZIP testado. Estado anterior inclui gerador Pine e downloads MQL/EX5/Pine; esperado é ausência completa e encaminhamento legado ao Stoikus. Invariantes: escritores/formulas/estado/backup/MT5/Research intactos; progressos e rascunhos antigos não descartados. Teste de retirada RED antes do produto e GREEN depois, compartilhados de distribuição/download e FULL final. Rollback somente delta desta tarefa sobre a cópia preservada, sem apagar trabalho anterior.
+
+Harness SHA256: b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95

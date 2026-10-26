@@ -1,0 +1,44 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "playwright": "1.60.0",
+  "scope": "read-only causal triage; external temporary probes only",
+  "candidate_build": "1b695b809fe80c26",
+  "inputs": [
+    {
+      "path": "tools/alladin_finalize_preservation_test.py",
+      "sha256": "13e923d351b6e0e18cd7be5fb77c8c389d36ad04814157bb59da523d892ae2e6",
+      "frozen_sha256": "13e923d351b6e0e18cd7be5fb77c8c389d36ad04814157bb59da523d892ae2e6",
+      "unchanged": true
+    },
+    {
+      "path": "src/js/00-core/03-default-state.js",
+      "sha256": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe",
+      "frozen_sha256": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe",
+      "unchanged": true
+    },
+    {
+      "path": "src/js/00-core/04-persistence.js",
+      "sha256": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+      "frozen_sha256": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c",
+      "unchanged": true
+    },
+    {
+      "path": "src/js/40-app/07-finalize-session.js",
+      "sha256": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+      "frozen_sha256": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b",
+      "unchanged": true
+    },
+    {
+      "path": "src/js/20-ui/07-chart-crosshair-tooltip.js",
+      "sha256": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+      "frozen_sha256": "7dda2772ee87f9f31766da21a781860af813961006a90f831e8b1e3dafd34307",
+      "unchanged": true
+    },
+    {
+      "path": "build-id.js",
+      "sha256": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+      "frozen_sha256": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+      "unchanged": true
+    }
+  ]
+}

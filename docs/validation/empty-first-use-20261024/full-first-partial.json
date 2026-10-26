@@ -1,0 +1,45 @@
+{
+  "kind": "explicit partial record; not official final runner receipt",
+  "attempt": "FULL1",
+  "reason": "New independent mobile visual PRODUCT_FAIL before completion; intentionally interrupted to correct and revalidate final candidate",
+  "completed_checks": [
+    {
+      "name": "preflight",
+      "result": "PASS"
+    },
+    {
+      "name": "structure",
+      "result": "PASS"
+    },
+    {
+      "name": "diff-check",
+      "result": "PASS"
+    },
+    {
+      "name": "preflight-context",
+      "result": "PASS"
+    },
+    {
+      "name": "personal-agenda",
+      "result": "PASS"
+    },
+    {
+      "name": "monthly-economic-feed",
+      "result": "PASS"
+    },
+    {
+      "name": "calendar-agenda",
+      "result": "PASS"
+    },
+    {
+      "name": "calendar-recovery",
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "PASS": 8,
+    "NOT_RUN": 94
+  },
+  "log": "full-first.log",
+  "full_success": false
+}

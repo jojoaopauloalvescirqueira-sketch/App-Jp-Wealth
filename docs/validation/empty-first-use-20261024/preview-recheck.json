@@ -1,0 +1,26 @@
+{
+  "url": "http://127.0.0.1:51629/index.html?v=1b695b809fe80c26",
+  "build": "1b695b809fe80c26",
+  "checked_at": "2026-10-24T16:26:36.596091-03:00",
+  "files": {
+    "index.html": {
+      "status": 200,
+      "bytes": 549227,
+      "sha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+      "matches_disk": true
+    },
+    "build-id.js": {
+      "status": 200,
+      "bytes": 39890,
+      "sha256": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+      "matches_disk": true
+    },
+    "src/styles/app.css": {
+      "status": 200,
+      "bytes": 929250,
+      "sha256": "f3898356b5fbaacbfc70e885e3dcd6d40cd83f8f44996eb7f4cd531e4ef0fe83",
+      "matches_disk": true
+    }
+  },
+  "result": "PASS"
+}

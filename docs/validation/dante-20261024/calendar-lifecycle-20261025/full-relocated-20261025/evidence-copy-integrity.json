@@ -1,0 +1,160 @@
+{
+  "createdAt": "2026-10-25T19:21:49.571831+00:00",
+  "build": "8c127c2f92de375e",
+  "fullSummary": {
+    "PASS": 101,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 1,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "fullExit": 1,
+  "frozenInputs": 679,
+  "changed": [],
+  "sourceUnchanged": true,
+  "fullSeconds": 2790.959,
+  "copies": {
+    "full-relocated.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/full-relocated.json",
+      "sha256": "059476c2ff7498e4ce62e8d2e176232355320de7bb56f51884f2ebea6cb70b02",
+      "bytes": 371435
+    },
+    "full-relocated.log": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/full-relocated.log",
+      "sha256": "a4ce3040a1e0942618ee65b55369fc65d6c3eb1c5bb4644acb6b8122961728a9",
+      "bytes": 30960
+    },
+    "full-relocated-command.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/full-relocated-command.json",
+      "sha256": "3b6590506ca6ff9d7139cd7119b19dec3d6461a15a6f2f8afbe0b3b414261b8e",
+      "bytes": 1431
+    },
+    "redirection-mapping.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/redirection-mapping.json",
+      "sha256": "34982b80f667f904fa22d20c06cde8876cf3eaceaa949770d006f9e5ad507b8d",
+      "bytes": 831
+    },
+    "redirect_full.py": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/redirect_full.py",
+      "sha256": "5eadae0f21b03835df0ba63270f95869a49dd4fca59f08eb7f8bac28ad523754",
+      "bytes": 8366
+    },
+    "frozen-inputs.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/frozen-inputs.json",
+      "sha256": "11cf8e2809ac3c871a729c5533ab3a86e5ef76a08511ea069b63e0a292639b65",
+      "bytes": 77383
+    },
+    "FINAL-EVIDENCE-CHECKLIST.md": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/FINAL-EVIDENCE-CHECKLIST.md",
+      "sha256": "f066a4819243ff299d6019240504cc434b565546d017a61923bc8369ace6c101",
+      "bytes": 5120
+    },
+    "output-configuration-5eada/ZOMBIE-GUARD-REVIEW.md": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/output-path-proposal/ZOMBIE-GUARD-REVIEW.md",
+      "sha256": "5204a4a3ef721b5e560b8afb302716f2fe908a75f7ba86289d00c288f37eda26",
+      "bytes": 5093
+    },
+    "output-configuration-5eada/zombie-guard-proof.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/output-path-proposal/zombie-guard-proof.json",
+      "sha256": "995b3212d91a6e2ffcae70b89cc25749f33d309c1659824632be32440ee59079",
+      "bytes": 6589
+    },
+    "output-configuration-5eada/verify_zombie_guard.py": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/output-path-proposal/verify_zombie_guard.py",
+      "sha256": "cc8ae935b6b4612942d60f881867db367804ac4761ad3eceab6d8d970f4d3305",
+      "bytes": 12746
+    },
+    "setup-attempt1/RECEIPT.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt1/RECEIPT.json",
+      "sha256": "7a131e4995de3efd01ce9d9bee114cede1774cd939b0ccb91893987d16bb55d1",
+      "bytes": 742
+    },
+    "setup-attempt1/full-relocated-command.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt1/full-relocated-command.json",
+      "sha256": "26874348f4c650bf70624cac8ecdeedef6b4575995298c592a41ab1ac9e7295e",
+      "bytes": 532
+    },
+    "setup-attempt1/full-relocated.log": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt1/full-relocated.log",
+      "sha256": "57f5cc072100dc490c9c0433bf71c372de2eeac0d5fcad28de64a5678f907990",
+      "bytes": 243
+    },
+    "setup-attempt1/redirect-full-console.log": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt1/redirect-full-console.log",
+      "sha256": "ab5372dda7848013d62f7a01c3813b04ca1b593a5251a4ecde073868c6b97cdc",
+      "bytes": 1146
+    },
+    "setup-attempt1/as-reviewed-wrapper.py": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt1/as-reviewed-wrapper.py",
+      "sha256": "58a1b44639f54398be8addbced847a13fc2da144f9a9e84471e722195fa15195",
+      "bytes": 7541
+    },
+    "setup-attempt2/RECEIPT.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt2/RECEIPT.json",
+      "sha256": "4b02ae0b70b2267c86e4159fa967e3a31026de3607d645011510ddf81ba8752f",
+      "bytes": 771
+    },
+    "setup-attempt2/full-relocated-command.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt2/full-relocated-command.json",
+      "sha256": "404e0a8abc2cfe0a30a8cac71fa8b0b20332a0ff6dd7a109f9832e9aefb97a3f",
+      "bytes": 532
+    },
+    "setup-attempt2/full-relocated.log": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt2/full-relocated.log",
+      "sha256": "57f5cc072100dc490c9c0433bf71c372de2eeac0d5fcad28de64a5678f907990",
+      "bytes": 243
+    },
+    "setup-attempt2/redirect-full-console.log": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt2/redirect-full-console.log",
+      "sha256": "aad967b7da0a88bd768ca3df8bfb6e78372d10375450b7bf2e8cbd0e37d87a9a",
+      "bytes": 1146
+    },
+    "setup-attempt2/as-reviewed-wrapper.py": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/setup-attempt2/as-reviewed-wrapper.py",
+      "sha256": "58a1b44639f54398be8addbced847a13fc2da144f9a9e84471e722195fa15195",
+      "bytes": 7541
+    },
+    "visual-budget-proposal/README.md": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/README.md",
+      "sha256": "73726a4f76430975c804c39975a5bff96bacb93cb1b17ca47ab445c16f3d314b",
+      "bytes": 6975
+    },
+    "visual-budget-proposal/INDEPENDENT-REVIEW.md": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/INDEPENDENT-REVIEW.md",
+      "sha256": "dab7271c12ea86993ca04a060ddd1392dc5a4054cf42fa15258a66ffcd0f4441",
+      "bytes": 5728
+    },
+    "visual-budget-proposal/batch-control-read.patch": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/batch-control-read.patch",
+      "sha256": "7b59fff1bfd49d318bf3273976fb95691bfa95dd0c69a49d85c6ed8a5bed71a2",
+      "bytes": 2914
+    },
+    "visual-budget-proposal/static-receipt.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/static-receipt.json",
+      "sha256": "45537fe3bbdf6e7a5f4d4ad266e1c00499c8168b969cb1568a48516aecd7a144",
+      "bytes": 765
+    },
+    "visual-budget-proposal/timing-and-counts.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/timing-and-counts.json",
+      "sha256": "9ff450c17c98924e3a489b041ed3b4a11ecf0fbca7198745418b83b105397f46",
+      "bytes": 4651
+    },
+    "visual-budget-proposal/independent-static-and-decision.json": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/independent-static-and-decision.json",
+      "sha256": "fa596f66e8d72a987dba5c9e95330de3ca64238d811c7b8b65667df0d22321c6",
+      "bytes": 3220
+    },
+    "visual-budget-proposal/independent_static_and_decision.py": {
+      "source": "/private/tmp/jpw-dante-calendar-20261025/visual-budget-proposal/independent_static_and_decision.py",
+      "sha256": "7a2ad9c17e7adf84712e4c453f676df0a050efc679a9ad61b62e2cf38c8f798e",
+      "bytes": 6566
+    }
+  },
+  "notes": [
+    "Only evidence records copied; no source or validator patch applied",
+    "UI timeout remains ENVIRONMENT_ERROR; no final413JSON from this round",
+    "Earlier complete/aborted/focal receipts remain historical",
+    "Visual-budget patch is proposed only, permission pending"
+  ]
+}

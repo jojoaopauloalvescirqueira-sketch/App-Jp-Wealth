@@ -1,0 +1,83 @@
+{
+  "baselineFiles": 263,
+  "unchanged": 248,
+  "sharedDeltas": [
+    {
+      "path": "build-id.js",
+      "before": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+      "after": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18"
+    },
+    {
+      "path": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "before": "9eb64d3257a331e07d2d1deec5e4ad5044c9a38ad8cb9d927f8ba4275ec9e142",
+      "after": "eb73db88d052f4d8492837563123e83aae5e5643ada78d2cc64801faf1f7c743"
+    },
+    {
+      "path": "docs/work/ACTIVE-TASK.md",
+      "before": "3e24a33bbded375ffa6b39978e80774c60b6208e3160a7fa19ad14b9da85ecd2",
+      "after": "07795c90c5683e1e19bd93075b1c2a3324711aac3007e89459ffb15c9841c0cb"
+    },
+    {
+      "path": "src/js/40-app/26-learning-catalog.js",
+      "before": "17dc70226819723b417b3b0ac43bc8ff5d73cc42091068149a22e81df983e192",
+      "after": "4c671a75b9df8ab69047d775f279558eb801a7f8f2c875517c3467b96fd4b040"
+    },
+    {
+      "path": "src/js/manifest.json",
+      "before": "3c58dbc2938f8f9d3d0db96dd7b0d83474dfcedb0657caf3433a5a500fc7ff9a",
+      "after": "9947a376c4c1132bfe0f7072313e94773ab3aa51587c5d0e1d74fcf4ceff018c"
+    },
+    {
+      "path": "src/styles/app.css",
+      "before": "f3898356b5fbaacbfc70e885e3dcd6d40cd83f8f44996eb7f4cd531e4ef0fe83",
+      "after": "dafd7c741d8eef14585b983e6392bc4ffe648d63dcb2c7ceb2b3b456fb67e937"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+      "before": "ac29328e08cd682020ebe1936e26da41d71464de7cbf1d4d1515946036c5c5a0",
+      "after": "cd81627bc8ea89461b96e78f9443e2b2701254365e5c57fb0a279ec1b70f8fc5"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+      "before": "850c10a2973a38eb9296bcf215a7434d25eb2b71b176c882889eeb46673a230e",
+      "after": "f0b01735efd9d8e46fd2d5d6cb6da9f33950b840e281bea97b0293afe3075c8b"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+      "before": "302cce08f131f6800282586cf55fc10f6e3eb5cd2622b8c858dffa907549eef3",
+      "after": "dba2f04c5faf75408996b35033597c07ada40b45045dc6bdb909ef8aafe10da1"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.js",
+      "before": "4be67289de0f07d485ce41caca54919dbc05c319eff5a560a498a68555a8498e",
+      "after": "2dff47bf209d0770fee2a09eafbba4853c6419276f81a48e6d9c35fae189cf73"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.json",
+      "before": "1fec834286e69a5c6fbedc0257c25623834516b53be07dd6074ba15ecc48bcd4",
+      "after": "2b2bd458b4568ab58899bedaa4f91ddf3e7aa4c49e4eaf4e8fd3505ce741c8c1"
+    },
+    {
+      "path": "src/vendor/downloads/leverage-source-payload.js",
+      "before": "971135b78b978ccc07ad70093a1f2b87b8522b86bf7bfc59e5ee471407bcce5c",
+      "after": "8f2d0266211de0681dfc30304472b0d61a71ea3e69b0470d5cd793c839fccabc"
+    },
+    {
+      "path": "src/vendor/downloads/nocuda-payload.js",
+      "before": "1d3b22bf3fe86961ae4ec781c2390edd22318fb886b3c8e1760f6d12c2b9eded",
+      "after": "7587d6ebd388c1883ecc9aa5355886dfb25619a0dec3b8b243332be0966e13ff"
+    },
+    {
+      "path": "src/vendor/market-hours/runtime-payload.js",
+      "before": "78d8bdbc0d06b7b5d915344f7753b252d9e244e8652637526c0c652536026c47",
+      "after": "84d8c8f385e59d2696b354f2f76207b80d407d44f817162ac06c45fe4bd16012"
+    },
+    {
+      "path": "tools/regression-memory.json",
+      "before": "1eea68b22f303d15a354205f49a4a71881c10904c6d8fdb18e5c11e55877476a",
+      "after": "e9e4a23ff81923d57b68cdc2ef703a0af9e92c697ecd5e0128ea9cc4dd6316f2"
+    }
+  ],
+  "headUnchanged": true,
+  "baselineArchive": "baseline-pending.zip"
+}

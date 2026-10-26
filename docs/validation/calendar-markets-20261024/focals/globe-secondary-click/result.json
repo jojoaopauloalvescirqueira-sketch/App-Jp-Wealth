@@ -1,0 +1,20 @@
+{
+  "case": "secondary-click",
+  "bundleSHA256": "65d25e3fc43e00548e5a9db740a28c2f083031d5017b575b6118eff841c0f2cd",
+  "checks": [
+    "secondary and auxiliary clicks emit nothing; primary click still selects once",
+    "rear hemisphere cannot select",
+    "invalid coordinates rejected atomically; hostile label stays text",
+    "optional empty labels preserve city identity",
+    "actual WebGL context loss and one restore preserve latest snapshot",
+    "native SVG without WebGL2 and idempotent fallback dispose"
+  ],
+  "status": "PASS",
+  "viewport": [
+    800,
+    1250
+  ],
+  "DPR": 1,
+  "renderer": "Chromium ANGLE SwiftShader (headless)",
+  "browser": "148.0.7778.96"
+}

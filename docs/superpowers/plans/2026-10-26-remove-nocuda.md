@@ -1,0 +1,3 @@
+# Remoção completa do Nocuda Tool
+
+Plano humano aprovado em 26/10/2026. Remover interface, motor de transferência, downloads, imagens, payload e entradas do produto. Preservar NoCoda Research, método educacional, Stoikus, calendário e três jogos. Acessos antigos encaminham ao Stoikus após navegação aceita com aviso breve. Progresso antigo conserva seus registros e retoma em Stoikus sem crédito automático; rascunhos antigos permanecem somente leitura/cópia. Reconstruir oficialmente, manter verificações compartilhadas de downloads, revisar independentemente, validar distribuições e FULL. Sem dados reais, dependências, commit, merge, push ou publicação. Branch autorizada codex/remover-nocuda-tool-20261026, candidato completo a4bf278 e 94 pendências preservadas.

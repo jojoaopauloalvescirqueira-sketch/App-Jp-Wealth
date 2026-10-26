@@ -260,11 +260,12 @@ def normalized(text):
 
 def bound_value(locator, field, expected, identity, strip_rate_label=False):
     """Check a value in its own actual container; equal values elsewhere cannot pass."""
-    assert locator.count() == 1 and locator.is_visible(), ('one accessible value container', identity, field, locator.count())
-    if strip_rate_label:
-        actual = locator.evaluate('''el=>{const copy=el.cloneNode(true);copy.querySelectorAll('.pl-rate-label').forEach(n=>n.remove());return copy.textContent;}''')
-    else:
-        actual = locator.inner_text()
+    observed = locator.evaluate_all('''(els,stripRateLabel)=>els.map(el=>{
+      if(!stripRateLabel)return el.innerText;
+      const copy=el.cloneNode(true);copy.querySelectorAll('.pl-rate-label').forEach(n=>n.remove());return copy.textContent;
+    })''', strip_rate_label)
+    assert len(observed) == 1 and locator.is_visible(), ('one accessible value container', identity, field, len(observed))
+    actual = observed[0]
     candidates = expected if isinstance(expected, list) else [expected]
     assert normalized(actual) in [normalized(value) for value in candidates], ('value in its named container', identity, field, candidates, actual)
     return {'expected': candidates, 'actual': actual}

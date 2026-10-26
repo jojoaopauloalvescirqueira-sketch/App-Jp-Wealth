@@ -1,0 +1,25 @@
+{
+  "baselineFiles": 263,
+  "unchanged": 247,
+  "sharedDeltas": [
+    "build-id.js",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "docs/work/ACTIVE-TASK.md",
+    "src/js/40-app/26-learning-catalog.js",
+    "src/js/manifest.json",
+    "src/styles/app.css",
+    "src/vendor/downloads/leverage-daily-source-payload.js",
+    "src/vendor/downloads/leverage-native-kit-payload.js",
+    "src/vendor/downloads/leverage-native-pin-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.json",
+    "src/vendor/downloads/leverage-source-payload.js",
+    "src/vendor/downloads/nocuda-payload.js",
+    "src/vendor/market-hours/runtime-payload.js",
+    "tools/navigation_ia_test.py",
+    "tools/regression-memory.json"
+  ],
+  "headUnchanged": true,
+  "independentReview": "INDEPENDENT-REVIEW.md and three final addenda",
+  "scope": "shared deltas limited to generated files, catalog/CSS/manifest, ACTIVE-TASK, test synchronization and factual regression registry; prior financial runtime sources byte exact"
+}

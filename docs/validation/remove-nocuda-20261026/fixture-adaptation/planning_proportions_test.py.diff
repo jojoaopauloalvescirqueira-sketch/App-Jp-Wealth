@@ -1,0 +1,28 @@
+--- planning_proportions_test.py.before
++++ planning_proportions_test.py
+@@ -38,17 +38,10 @@
+ SOURCES = [
+     'assets/jp-wealth-brand-red.png',
+     'assets/jp-wealth-logo.png',
+-    'assets/nocuda-metatrader.png',
+-    'assets/nocuda-tradingview.png',
+     'assets/pwa-icon-primary-512.png',
+     'build-id.js',
+     'docs/normative/ANEXO_PARAMETRICO_CANONICO.md',
+     'docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
+-    'downloads/nocuda/MT5-LEIA-ME.md',
+-    'downloads/nocuda/Nocuda_Tool.ex5',
+-    'downloads/nocuda/Nocuda_Tool.mq5',
+-    'downloads/nocuda/Nocuda_Tool.pine',
+-    'downloads/nocuda/TRADINGVIEW-LEIA-ME.md',
+     'index.html',
+     'manifests/jp-wealth.webmanifest',
+     'src/js/00-core/00-forex-policy.js',
+@@ -78,7 +71,6 @@
+     'src/js/10-domain/11-operation-lifecycle.js',
+     'src/js/10-domain/12-personal-finance.js',
+     'src/js/10-domain/13-alladin.js',
+-    'src/js/10-domain/16-nocuda-transfer.js',
+     'src/js/10-domain/17-fx-consolidated-model.js',
+     'src/js/10-domain/18-execution-board-model.js',
+     'src/js/10-domain/19-execution-market.js',

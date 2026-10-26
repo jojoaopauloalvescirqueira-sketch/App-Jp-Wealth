@@ -1,0 +1,77 @@
+{
+  "results": [
+    {
+      "case": "calendar-edges-320-light",
+      "result": "PASS",
+      "geometry": {
+        "timer_open": 1,
+        "timer_closed": 0,
+        "opaque_preferences": "preserved",
+        "workspace_state": "independent",
+        "synthetic_feed_markers": "filtered and counted",
+        "date_precision": "no invented time",
+        "pending_coverage": "visible",
+        "backup": "elapsed30days across DST; no future or missing invented date",
+        "midnight": "real timer advanced to new day"
+      }
+    },
+    {
+      "case": "calendar-lifecycle-320-light",
+      "result": "PASS",
+      "geometry": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "priorCloseEvents": [
+          {
+            "open": true
+          }
+        ],
+        "reopenedActive": true,
+        "futureBackupMarkerRemoved": true,
+        "financialUnchangedExceptExplicitFixtureTimestamp": true,
+        "closeCounterproofs": {
+          "header": {
+            "id": "headerCalendarBtn",
+            "label": "Abrir Calendário e Agenda",
+            "title": "Calendário e Agenda",
+            "expanded": "true",
+            "width": 44,
+            "height": 44,
+            "svg": 1
+          },
+          "realClosures": [
+            {
+              "method": "original-button",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "Escape",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "native-close-event",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            }
+          ],
+          "financialUnchanged": true
+        }
+      }
+    }
+  ]
+}

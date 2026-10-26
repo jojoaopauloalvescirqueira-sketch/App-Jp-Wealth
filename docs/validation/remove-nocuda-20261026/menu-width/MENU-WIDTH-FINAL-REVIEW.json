@@ -1,0 +1,26 @@
+{
+  "verdict": "GO_FOR_FOCAL_AND_NEW_FULL_NOT_FINAL_APPROVAL",
+  "scope": "A0 exact authorized menu width stimulus patch review",
+  "candidate_matches_actual": true,
+  "candidate_sha256": "ea5324e785181d8a1ef172b186980521ea591e7f089d7325cee9d00db4e1add0",
+  "proposal_sha256": "d8e5f3c3206277785723ddfe95cd591e9afad6d60241c136d6eed27928dbc036",
+  "gate_sha256": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+  "required_case_ids": 413,
+  "unique_required_case_ids": 413,
+  "previous_ui": {
+    "executed": 413,
+    "pass": 412,
+    "fail": [
+      "counterproof-menu-width"
+    ]
+  },
+  "frozen_input_differences": [
+    "tools/ui_visual_quality_test.py"
+  ],
+  "runtime_source_differences": [],
+  "expected_absence_violations": [],
+  "prior_full_command_receipt_exit": null,
+  "review_tests_executed": false,
+  "review_browser_started": false,
+  "review_repository_edits": false
+}

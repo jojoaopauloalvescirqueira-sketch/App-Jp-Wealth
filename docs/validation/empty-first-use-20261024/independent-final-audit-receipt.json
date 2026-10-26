@@ -1,0 +1,24 @@
+{
+  "build": "1b695b809fe80c26",
+  "fullChecks": 102,
+  "uniqueCheckIds": 102,
+  "allReturnCodesZero": true,
+  "sameIdsAsFULL2": true,
+  "currentFullHashesMatched": 664,
+  "currentReviewHashesMatched": 19,
+  "fullReceiptCopiesByteIdentical": true,
+  "preexistingFilesPresent": 153,
+  "unexpectedPreexistingChanges": 0,
+  "oldRegressionsUnmodified": 96,
+  "addedRegressions": 5,
+  "protectedFilesMatchHEAD": [
+    "AGENTS.md",
+    "tools/quality_gate.py",
+    "src/js/00-core/00-forex-policy.js",
+    "src/js/10-domain/00-forex-engine.js"
+  ],
+  "harnessActualHashMatched": true,
+  "result": "PASS technical bounded review",
+  "humanAcceptance": "NOT_RUN",
+  "executionByAuditor": "read-only artifact/hash checks; no repeated browser or product tests"
+}

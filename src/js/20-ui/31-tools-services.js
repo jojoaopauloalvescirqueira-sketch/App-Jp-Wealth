@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const el=id=>document.getElementById(id);
-  let view='calendar',valid=null,lastCanonical=null,revision=0,downloadGeneration=0;
+  let view='calendar',downloadGeneration=0;
   const downloadControllers=new Set();
   const epoch=()=>typeof sessionEpochRead==='function'?sessionEpochRead():null;
   function cancelDownloads(){downloadGeneration++;downloadControllers.forEach(c=>c.abort());downloadControllers.clear();}
@@ -10,16 +10,6 @@
   function downloadAction(){const controller=new AbortController(),generation=downloadGeneration,base=epoch();downloadControllers.add(controller);
     return {signal:controller.signal,current:()=>!controller.signal.aborted&&generation===downloadGeneration&&base===epoch(),done:()=>downloadControllers.delete(controller)};}
 
-  jpwWorkspaceDraftProviders.set('nocuda-transfer',(reset=false)=>{
-    if(reset){invalidate();lastCanonical=null;valid=null;el('nocudaPayload').value='';return [];}
-    const text=el('nocudaPayload').value;
-    return text?[{label:'NoCuda — parâmetros em conferência',provider:'nocuda-transfer',version:1,context:{route:'tools-nocuda'},baseReference:null,text}]:[];
-  });
-  window.JPWWorkspaceDrafts.registerRestorer('nocuda-transfer',{
-    inspect(item){return {compatible:typeof item.text==='string'&&item.text.length<=16384&&!el('nocudaPayload').value,reason:'Não pode existir outro desenho aberto; código recuperado precisa de nova validação.'};},
-    reopen(item){if(typeof closeSettingsModal==='function')closeSettingsModal();if(window.JPWNavigation?.navigate('tools-nocuda')===false)throw new Error('Navegação recusada.');
-      el('nocudaPayload').value=item.text;invalidate();status('Parâmetros recuperados, ainda não validados. Confira e valide antes de gerar.');el('nocudaPayload').focus();}
-  });
   // The Tools workspace owns visibility; the existing Galton controller owns
   // physics, preferences and session epochs. Never rebuild a mounted board.
   const dialogSelector='dialog[open],[role="dialog"],[aria-modal="true"]';
@@ -29,6 +19,12 @@
     return [...document.querySelectorAll(dialogSelector)].find(isVisible)||
       [...document.querySelectorAll(overlaySelector.split(',').map(selector=>selector+'.show').join(','))].find(isVisible)||null;
   }
+  function canNavigateRetired(){
+    const dialog=openDialog();if(!dialog)return true;
+    let notice=dialog.querySelector('[data-retired-tool-navigation-status]');
+    if(!notice){notice=document.createElement('p');notice.dataset.retiredToolNavigationStatus='';notice.setAttribute('role','status');dialog.append(notice);}
+    notice.textContent='Feche a janela atual pelos controles originais antes de abrir o Stoikus.';return false;
+  }
   function canNavigateToGame(){
     const dialog=openDialog();if(!dialog)return true;
     let notice=dialog.querySelector('[data-minigames-navigation-status]');
@@ -36,16 +32,37 @@
     notice.textContent='Feche a janela atual antes de abrir um jogo em MiniGames';
     return false;
   }
-  let marketEntryPending=false;
-  function syncMarketHours(allowMount=false){
+  let marketEntryPending=false,marketExpandPending=false,marketFocusPending=false;
+  let marketAnchorGeneration=0,marketAnchorPending=null;
+  function cancelMarketAnchor(){marketAnchorGeneration++;marketAnchorPending=null;}
+  function finishMarketAnchor(){
+    const pending=marketAnchorPending;if(!pending)return;marketAnchorPending=null;
+    requestAnimationFrame(()=>{
+      if(pending.generation!==marketAnchorGeneration||pending.epoch!==epoch()||view!=='calendar'||!el('tools').classList.contains('active')||openDialog()||document.hidden||document.activeElement!==pending.heading)return;
+      pending.heading.scrollIntoView({block:'start',behavior:'instant'});
+    });
+  }
+  function focusMarketSection(defer=false){
+    const heading=el('marketHoursTitle');if(!heading||openDialog())return;
+    marketAnchorPending={generation:++marketAnchorGeneration,epoch:epoch(),heading};
+    heading.focus({preventScroll:true});
+    // Cancel the shell's preceding smooth scroll-to-top with one final anchor.
+    heading.scrollIntoView({block:'start',behavior:'instant'});
+    // Cold entry may initially clamp at the bottom of the shorter calendar.
+    // The mount completion anchors again only while the original intent holds.
+    if(!defer)finishMarketAnchor();
+  }
+  function syncMarketHours(allowMount=false,expand=false){
     const slot=el('toolsMarketHoursSlot');if(!slot)return;
-    if(allowMount)marketEntryPending=true;
-    if(view!=='market-hours'||!el('tools').classList.contains('active'))marketEntryPending=false;
-    const visible=view==='market-hours'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&isVisible(slot);
+    if(allowMount){marketEntryPending=true;marketExpandPending=expand;marketFocusPending=expand;}
+    if(view!=='calendar'||!el('tools').classList.contains('active')){marketEntryPending=false;marketExpandPending=false;marketFocusPending=false;cancelMarketAnchor();}
+    const visible=view==='calendar'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&isVisible(slot);
     if(!visible){window.JPWMarketHours?.deactivate();return;}
     // Only accepted navigation may mount. Visibility observers cannot recreate
     // a finalized controller, and async completion must recheck the real host.
-    if(marketEntryPending){marketEntryPending=false;window.JPWMarketHours?.mount(slot).then(()=>syncMarketHours()).catch(()=>{});}
+    if(marketEntryPending){marketEntryPending=false;window.JPWMarketHours?.mount(slot,{collapsed:true}).then(()=>{syncMarketHours();finishMarketAnchor();}).catch(()=>{});}
+    if(marketExpandPending){marketExpandPending=false;window.JPWMarketHours?.setExpanded(true);}
+    if(marketFocusPending){marketFocusPending=false;focusMarketSection(true);}
     window.JPWMarketHours?.activate();
   }
   function syncMiniGames(allowMount=false){
@@ -81,15 +98,19 @@
     else if(!visible&&controller?.active)window.deactivateGaltonBoard?.({resume:false});
   }
   window.JPWNavigation?.subscribe(({current})=>{
-    syncMarketHours(current.primary==='tools'&&current.localView?.view==='market-hours');
+    cancelMarketAnchor();
+    el('nocudaRetirementNotice').hidden=current.requested!=='tools-nocuda';
+    syncMarketHours(current.primary==='tools'&&['calendar','market-hours'].includes(current.localView?.view),current.localView?.view==='market-hours');
     syncMiniGames(current.primary==='tools'&&['time-twins','capital-currents'].includes(current.localView?.view));
     if(current.primary!=='tools'||openDialog())return;
-    if(current.localView?.view==='market-hours')el('marketHoursTitle').focus({preventScroll:true});
     if(current.localView?.view==='galton')el('minigamesGaltonTitle').focus({preventScroll:true});
     if(current.localView?.view==='time-twins')el('minigamesTimeTwinsTitle').focus({preventScroll:true});
     if(current.localView?.view==='capital-currents')el('minigamesCapitalCurrentsTitle').focus({preventScroll:true});
   });
   function initMiniGames(){
+    el('calendarMarketsJump').addEventListener('click',()=>focusMarketSection());
+    ['wheel','touchstart','pointerdown','keydown'].forEach(name=>document.addEventListener(name,cancelMarketAnchor,{capture:true,passive:true}));
+    window.addEventListener('pagehide',cancelMarketAnchor);
     el('minigamesOpenCapitalCurrents').addEventListener('click',()=>window.JPWNavigation?.navigateLocal('tools','capital-currents'));
     el('minigamesCapitalCurrentsBack').addEventListener('click',()=>{
       if(window.JPWNavigation?.navigate('tools-minigames'))el('minigamesOpenCapitalCurrents').focus({preventScroll:true});
@@ -112,9 +133,12 @@
     observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','inert','open','aria-hidden','role','aria-modal','style']});
   }
   function selectView(next){
-    if(!['calendar','market-hours','nocuda','leverage','normative','minigames','galton','time-twins','capital-currents'].includes(next))return;
+    if(next==='nocuda')return window.JPWNavigation?.navigate('tools-nocuda');
+    if(!['calendar','market-hours','leverage','normative','minigames','galton','time-twins','capital-currents'].includes(next))return;
+    // market-hours is an entry intent; both domains share the calendar surface.
+    if(next==='market-hours')next='calendar';
     if(view==='calendar'&&next!=='calendar')window.JPWCalendar?.deactivateWorkspace?.();
-    if(view==='market-hours'&&next!=='market-hours')window.JPWMarketHours?.deactivate();
+    if(view==='calendar'&&next!=='calendar')window.JPWMarketHours?.deactivate();
     if(view==='capital-currents'&&next!=='capital-currents')window.JPWCapitalCurrents?.deactivate(el('toolsCapitalCurrentsSlot'));
     if(view==='time-twins'&&next!=='time-twins')window.JPWTimeTwins?.deactivate(el('toolsTimeTwinsSlot'));
     if(view==='galton'&&next!=='galton')window.deactivateGaltonBoard?.({resume:false});
@@ -126,85 +150,6 @@
     if(next==='calendar')window.JPWCalendar?.mountWorkspace();
     if(next==='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.enter();
   }
-  function status(message,bad){el('nocudaStatus').textContent=message;el('nocudaStatus').dataset.state=bad?'error':'ok';}
-  function invalidate(){cancelDownloads();revision++;valid=null;['nocudaCopy','nocudaSave','nocudaEditable'].forEach(id=>el(id).disabled=true);el('nocudaRestore').hidden=!lastCanonical;}
-  function summary(value){
-    const items=[['Instrumento',value.symbol],['Período',value.tf%3600===0?(value.tf/3600)+' h':value.tf%60===0?(value.tf/60)+' min':value.tf+' s'],['Origem',value.src+' · '+value.feed],['Linhas',(17+value.before+value.after).toString()],['Passo','0,125'],['Largura assinada',value.d]];
-    const nodes=[];items.forEach(([name,text])=>{const box=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=text;box.append(dt,dd);nodes.push(box);});el('nocudaSummary').replaceChildren(...nodes);
-    el('nocudaAnchors').replaceChildren(...['a','b','c'].map(key=>{const point=value[key],row=document.createElement('tr');const offset=point.offset,sign=offset<0?'−':'+';[key.toUpperCase()+' · linha '+(key==='c'?'9':'17'),new Date(point.time).toISOString().replace('T',' ').replace('.000Z',''),point.price,'UTC'+sign+String(Math.floor(Math.abs(offset)/60)).padStart(2,'0')+':'+String(Math.abs(offset)%60).padStart(2,'0')].forEach(text=>{const cell=document.createElement('td');cell.textContent=text;row.append(cell);});return row;}));
-  }
-  function preview(value){
-    const svg=el('nocudaPreview'),geo=window.JPWNocudaTransfer.geometry(value),ns='http://www.w3.org/2000/svg';
-    const lines=geo.lines.filter(line=>line.visible),prices=lines.flatMap(line=>[line.fromPrice,line.toPrice]);
-    if(!prices.length){svg.replaceChildren();return;}
-    const lo=Math.min(...prices),hi=Math.max(...prices),range=hi-lo||1,y=price=>238-(price-lo)/range*218;
-    const nodes=[];
-    lines.forEach(item=>{
-      const line=document.createElementNS(ns,'line'),style=item.style;
-      line.setAttribute('x1','25');line.setAttribute('x2','805');line.setAttribute('y1',y(item.fromPrice));line.setAttribute('y2',y(item.toPrice));line.setAttribute('stroke',`rgb(${style.r},${style.g},${style.b})`);line.setAttribute('stroke-opacity',1-style.alpha/100);line.setAttribute('stroke-width',style.width);
-      if(style.style!=='S')line.setAttribute('stroke-dasharray',style.style==='D'?'7 5':'2 4');nodes.push(line);
-      if(item.label){const text=document.createElementNS(ns,'text');text.setAttribute('x','820');text.setAttribute('y',y(item.toPrice)+4);text.textContent=item.label;text.setAttribute('fill','currentColor');text.setAttribute('font-size','11');nodes.push(text);}
-    });svg.replaceChildren(...nodes);
-  }
-  function validate(){
-    invalidate();const result=window.JPWNocudaTransfer.parse(el('nocudaPayload').value);
-    if(!result.ok){status(result.error.message+(result.error.field?' Campo: '+result.error.field+'.':'')+(lastCanonical?' A prévia abaixo mantém o último código válido.':''),true);return false;}
-    valid=result;lastCanonical=result.canonical;el('nocudaRestore').hidden=true;['nocudaCopy','nocudaSave','nocudaEditable'].forEach(id=>el(id).disabled=false);el('nocudaCanonical').value=result.canonical;summary(result.value);preview(result.value);el('nocudaResult').hidden=false;
-    status('Código válido. Confira instrumento, período e provedor na plataforma de destino.');return true;
-  }
-  function download(text,name,type){
-    const blob=new Blob([text],{type:type||'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
-  }
-  async function generateEditable(value,canonical,options){
-    // Always validate at the boundary, including callers of the public helper.
-    const checked=window.JPWNocudaTransfer.parse(canonical);
-    if(!checked.ok)throw new Error('Parâmetros inválidos.');value=checked.value;
-    const values={modeInput:'Manual',generatedSeed:canonical,importText:'',drawingId:value.id,symbolIdentity:'',confirmDifferentFeed:false,exportEnabled:false,beforeSteps:value.before,afterSteps:value.after,extendInput:({N:'Nenhum',R:'Direita',L:'Esquerda',B:'Ambos'})[value.ext]};
-    const raw={};['A','B','C'].forEach(key=>{const point=value[key.toLowerCase()];values['time'+key]=point.time;raw['price'+key]=point.price;});
-    const hex=(r,g,b)=>'#'+[r,g,b].map(c=>c.toString(16).padStart(2,'0')).join('').toUpperCase();
-    const styles={S:'Contínua',D:'Tracejada',P:'Pontilhada'};
-    Object.entries({s1:'1',s3:'3',s5:'5',s9:'9',s17:'17',si:'Inner',sx:'Outer'}).forEach(([key,suffix])=>{
-      const s=value.styles[key];values['show'+suffix]=!!s.on;values['custom'+suffix]=true;raw['color'+suffix]=hex(s.r,s.g,s.b);values['alpha'+suffix]=s.alpha;values['width'+suffix]=s.width;values['style'+suffix]=styles[s.style];
-    });
-    const l=value.labels;
-    Object.assign(values,{labelMode:({M:'Marcos',A:'Todas as linhas',N:'Nenhum'})[l.mode],labelSize:l.size,labelTransparency:l.alpha,labelPosition:({L:'Início',C:'Centro',R:'Fim',T:'Último candle'})[l.pos],labelVertical:({U:'Acima',O:'Sobre a linha',D:'Abaixo'})[l.vert],labelGap:l.gapPercent,labelOffset:l.offsetBars,showLevel:!!l.showLevel,showPrice:!!l.showPrice,showMax:!!l.showMax,labelUseLineColor:!!l.useLineColor});raw.labelColor=hex(l.r,l.g,l.b);
-    const expected=new Set([...Object.keys(values),...Object.keys(raw)]),found=new Set();
-    const source=(await window.JPWDownloadAssets.getText('nocuda/Nocuda_Tool.pine',options)).split('\n').map(line=>{
-      const match=line.match(/\/\/ NOCUDA_DEFAULT:([A-Za-z0-9_]+)\s*$/);if(!match||!expected.has(match[1]))return line;
-      const key=match[1];if(found.has(key))throw new Error('Modelo Pine com marcador duplicado.');
-      const literal=Object.hasOwn(raw,key)?raw[key]:JSON.stringify(values[key]);
-      const updated=line.replace(/(input\.(?:int|float|price|time|bool|string|text_area|color)\()\s*(?:"(?:[^"\\]|\\.)*"|#[A-Fa-f0-9]{6,8}|true|false|-?\d+(?:\.\d+)?|timestamp\("(?:[^"\\]|\\.)*"\))(?=\s*,)/,(_all,start)=>start+literal);
-      if(updated===line&&!line.includes('('+literal+','))throw new Error('Modelo Pine incompatível: '+key);found.add(key);return updated;
-    }).join('\n');
-    if(found.size!==expected.size||!source.includes('const bool PRECONFIGURED = false // NOCUDA_PRECONFIGURED'))throw new Error('Modelo Pine incompleto. Atualize o aplicativo.');return source.replace('const bool PRECONFIGURED = false // NOCUDA_PRECONFIGURED','const bool PRECONFIGURED = true // NOCUDA_PRECONFIGURED');
-  }
-  el('nocudaValidate').addEventListener('click',validate);
-  el('nocudaPayload').addEventListener('input',()=>{invalidate();status('Rascunho alterado. Valide antes de copiar ou gerar. A prévia mantém o último código válido.');});
-  el('nocudaClear').addEventListener('click',()=>{lastCanonical=null;invalidate();el('nocudaResult').hidden=true;el('nocudaCanonical').value='';el('nocudaPayload').value='';el('nocudaFile').value='';status('O desenho fica apenas nesta página durante a sessão.');el('nocudaPayload').focus();});
-  el('nocudaRestore').addEventListener('click',()=>{if(lastCanonical){el('nocudaPayload').value=lastCanonical;validate();}});
-  el('nocudaExample').addEventListener('click',()=>{el('nocudaPayload').value=window.JPWNocudaTransfer.example();validate();status('Exemplo fictício carregado para demonstração.');});
-  el('nocudaFile').addEventListener('change',async event=>{
-    invalidate();const token=revision,file=event.target.files[0];if(!file)return;
-    if(file.size>16384){status('Arquivo maior que 16 KiB. Abra somente parâmetros Nocuda.',true);event.target.value='';return;}
-    try{const text=await file.text();if(token!==revision)return;el('nocudaPayload').value=text;validate();}catch(_error){if(token===revision)status('Não foi possível abrir o arquivo.',true);}finally{event.target.value='';}
-  });
-  el('nocudaCopy').addEventListener('click',async()=>{
-    if(!valid)return;const token=revision;
-    try{await navigator.clipboard.writeText(valid.canonical);if(token===revision)status('Parâmetros copiados. Cole no campo de importação do indicador.');}
-    catch(_error){if(token!==revision)return;el('nocudaCanonical').focus();el('nocudaCanonical').select();status('Selecione e copie o código validado abaixo com ⌘C ou Ctrl+C.');}
-  });
-  el('nocudaSave').addEventListener('click',()=>{if(valid)download(valid.canonical,'Nocuda_Parametros.txt');});
-  el('nocudaEditable').addEventListener('click',async()=>{if(!valid)return;const token=revision,action=downloadAction(),value=valid;
-    try{const source=await generateEditable(value.value,value.canonical,{signal:action.signal});if(!action.current()||token!==revision)return;
-      download(source,'Nocuda_Tool_Editavel.pine');status('Pine editável gerado. Abra no Pine Editor, salve e adicione ao gráfico compatível.');
-    }catch(error){if(action.current()&&token===revision)status(error.message,true);}finally{action.done();}});
-  document.querySelectorAll('[data-nocuda-file]').forEach(link=>link.addEventListener('click',async event=>{
-    if(event.button>0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
-    event.preventDefault();const action=downloadAction(),name=link.dataset.nocudaFile;
-    try{const bytes=await window.JPWDownloadAssets.getBytes('nocuda/'+name,{signal:action.signal});if(!action.current())return;
-      const descriptor=window.JPW_DOWNLOAD_MANIFEST.resources['nocuda/'+name];download(bytes,descriptor.filename,descriptor.mime);
-    }catch(error){if(action.current())status('Download não iniciado: '+error.message,true);}finally{action.done();}
-  }));
   function initLeverageDownloads(){
     // Public release metadata and embedded bytes are generated from the same
     // manifest by the official build. The page never reads account data.
@@ -446,5 +391,5 @@
   // Publish the existing Tools facade before resolving an initial deep link.
   // JPWNavigation needs that facade to reveal its outer Tools view.
   const genetrix=initGenetrixUI();
-  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view}),generateEditable,genetrix,minigames:Object.freeze({canNavigate:canNavigateToGame})});selectView(view);
+  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view,canNavigateRetired}),genetrix,minigames:Object.freeze({canNavigate:canNavigateToGame})});selectView(view);
 })();

@@ -57,11 +57,18 @@ def main():
                 const ok=!!item&&inspected.compatible&&restored.ok&&navOrderDirty()&&localStorage.getItem(NAV_ORDER_KEY)===before;
                 cancelNavOrderPreview();closeSettingsModal();return {ok,inspected,restored};
             }''')
-            check('NoCuda programmatically loaded parameters are captured but not validated on recovery',r'''()=>{
-                document.getElementById('nocudaPayload').value=JPWNocudaTransfer.example();
-                const item=jpwWorkspaceDrafts().find(d=>d.provider==='nocuda-transfer'),before=localStorage.getItem(LSKEY);
-                document.getElementById('nocudaClear').click();const restored=JPWWorkspaceDrafts.reopen(item);
-                return {ok:restored.ok&&document.getElementById('nocudaPayload').value===item.text&&document.getElementById('nocudaSave').disabled&&localStorage.getItem(LSKEY)===before,restored};
+            check('Retired NoCuda draft remains read-copy-only without an adapter or storage writes',r'''()=>{
+                const item={provider:'nocuda-transfer',version:1,label:'Legacy synthetic NoCuda',text:'{"legacy":"synthetic parameters"}',context:{source:'retired-tool'}};
+                const previous=S.workspaceRecovery;S.workspaceRecovery={schemaVersion:1,pending:false,drafts:[structuredClone(item)]};
+                const before=localStorage.getItem(LSKEY),snapshot=JSON.stringify(S.workspaceRecovery);
+                const inspection=JPWWorkspaceDrafts.inspect(item),restored=JPWWorkspaceDrafts.reopen(item);
+                jpwWorkspaceShowDrafts();const dialog=document.getElementById('workspaceDraftDialog'),area=dialog.querySelector('textarea');
+                const ok=!inspection.compatible&&!restored.ok&&inspection.reason.includes('descontinuado')&&
+                    !jpwWorkspaceDraftRestorers.has('nocuda-transfer')&&area.readOnly&&area.value===item.text&&
+                    ![...dialog.querySelectorAll('button')].some(b=>b.textContent==='Conferir e reabrir campos')&&
+                    JSON.stringify(S.workspaceRecovery)===snapshot&&localStorage.getItem(LSKEY)===before&&
+                    jpwWorkspaceDrafts().some(d=>d.provider===item.provider&&d.text===item.text);
+                dialog.close();S.workspaceRecovery=previous;return {ok,inspection,restored};
             }''')
             check('Profile explicit reopen preserves stored preference',r'''()=>{
                 beginSettingsProfileDraft();settingsProfileState.draft.displayName='Unsaved synthetic profile';settingsProfileState.editing=true;

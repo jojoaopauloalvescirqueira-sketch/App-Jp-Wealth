@@ -1,3 +1,33 @@
+# Remoção do Nocuda Tool — 26/10/2026
+
+Branch autorizada `codex/remover-nocuda-tool-20261026`; HEAD a4bf278. Objetivo, produto e juiz têm contratos separados CHG-JPW-REMOVE-NOCUDA-PRODUCT/CONTROLS-20261026, aprovados pelo plano humano e autorização específica de branch. Preservar 94 pendências anteriores (525 arquivos no ZIP verificado em /private/tmp/jpw-remove-nocuda-20261026). N1 produto/A2; N3 controles/A4. Remover apenas ferramenta web exclusiva, preservar Research/Stoikus e dados. Focais, distribuições, revisão independente e FULL obrigatórios; resultado atual em docs/validation/remove-nocuda-20261026. Sem operações Git adicionais, dependências, publicação ou dados reais.
+
+## Fotografia anterior preservada
+
+# Otimização autorizada do verificador visual — 25/10/2026
+
+Autorização específica call_2fef00bbd89f4bdf8537108cae962427. [Contrato N3/A4](CHG-JPW-VISUAL-MEASUREMENT-CONTROLS-20261025.md): reduzir chamadas remotas repetidas na coleta geométrica, contraprovas permanentes, medição e nova validação. Produto, dados,413casos,102checks,2px e900s preservados. Rodada anterior101PASS/1ENV continua histórica; nenhum sucesso antecipado. Sem commit, merge, push ou publicação.
+
+## Fotografia anterior preservada
+
+# Dante — mascote e guia — validação ampliada25/10/2026
+
+Plano Dante e branch já autorizados, com todas as alterações anteriores preservadas. Em25/10 o proprietário autorizou a correção pontual do calendário e nova validação: fechamento antigo não poderá desativar o host já reaberto. [ProdutoN1](CHG-JPW-CALENDAR-LIFECYCLE-PRODUCT-20261025.md) e [verificadoresN3](CHG-JPW-CALENDAR-LIFECYCLE-CONTROLS-20261025.md) delimitam dois arquivos e saídas oficiais. Snapshot verificado em /private/tmp/jpw-dante-calendar-20261025/before-calendar.json. RED/GREEN permanente, reconstrução, focais e novo FULL obrigatórios; em andamento, sem PASS antecipado. FULL1 bruto e proposta histórica preservados. [Resultados e limites](../validation/dante-20261024/README.md). Sem commit, merge, push, publicação ou mudança de memória global; aceite humano separado.
+
+## Fotografia anterior preservada
+
+# Primeiro acesso realmente vazio —24/10/2026
+
+Plano humano aprovado, branch `codex/primeiro-acesso-vazio-20261024`, base `a4bf278` e 32 pendências preservadas. [Brief](BRIEF-EMPTY-FIRST-USE-20261024.md), [plano](../superpowers/plans/2026-10-24-empty-first-use.md) e CHGs PRODUCT/TESTS próprios. Implementação local no build `1b695b809fe80c26`; suíte final 102/102 PASS, exit 0 e 664 entradas estáveis. Focal adicional 16/16 PASS, sete contraprovas rejeitadas, matriz de distribuição 43/43 PASS e revisão independente delimitada. [Resultados e limites](../validation/empty-first-use-20261024/README.md). FULL1 parcial e FULL2 com duas falhas de fixtures permanecem históricos, sem dispensa. Dados salvos, fórmulas e normas preservados; sem novas dependências, commit, merge, push ou publicação. Aceite visual humano pendente.
+
+## Fotografia anterior preservada
+
+# Calendário e Mercados —24/10/2026
+
+Implementação do [plano humano aprovado](../superpowers/plans/2026-10-24-calendar-markets.md) na branch autorizada codex/calendario-mercados-20261024, base a4bf278 limpa. [Brief](BRIEF-CALENDAR-MARKETS-20261024.md), CHGs PRODUCT/TESTS dedicados. Implementação local concluída no build `3a9f6157481ae050`. Suíte completa atual: 102/102 PASS, fontes congeladas conferidas; [resultados e limites](../validation/calendar-markets-20261024/README.md). A recompilação de fidelidade do globo permanece com ENVIRONMENT_ERROR por ferramentas antigas ausentes; bundle original intacto. Aceite visual humano pendente. Sem commit, merge, push ou publicação. Histórico correto preservado abaixo.
+
+## Fotografia anterior preservada
+
 # Calendário e Agenda — execução local —23/10/2026
 
 Plano humano aprovado: calendário mensal juntoao sino, agenda confirmada e fontes econômicas permitidas, com cobertura explícita. Branch codex/calendario-agenda-20261023/base d517be0, pendências anteriores preservadas. [Brief](BRIEF-CALENDAR-AGENDA-20261023.md), CHG produtoN2 e verificadoresN3 próprios. Implementação local construída. O estado da validação e seus limites constam no relatório desta tarefa. [Resultados, inventário e limites](../validation/calendar-agenda-20261023/README.md). Nenhum PASS futuro, aceite humano ou Git/publicação presumido.

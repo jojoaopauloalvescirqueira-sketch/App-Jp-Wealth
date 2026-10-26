@@ -2499,7 +2499,8 @@ function renderMEIConfig(){
 function renderConfigOnboarding(){
   const el=$('configOnboarding'); if(!el) return;
   const ob=S.onboarding||{};
-  const {ep,obj,pr}=onboardingEP(S.params.saldoIni||0,(S.period&&S.period.profile)||'base');
+  const profileKey=S.period?.profile||'';
+  const {ep,obj,pr}=onboardingEP(S.params.saldoIni,profileKey);
   const maskedInvestorPassword=ob.investorPassword ? '••••••••' : '';
   const row=(k,v)=>`<tr><td style="color:var(--ink-dim); padding:5px 8px">${k}</td><td class="hl" style="text-align:right; padding:5px 8px">${v||'—'}</td></tr>`;
   const completion=getOnboardingCompletionState();
@@ -2537,10 +2538,10 @@ function renderConfigOnboarding(){
     ${row('Alavancagem da corretora', esc(ob.alavCorretora))}
     ${row('Login da Conta', esc(ob.brokerLogin||''))}${row('Servidor da Corretora', esc(ob.brokerServer||''))}
     ${row('Senha de Investidor', maskedInvestorPassword)}
-    ${row('Início do período', esc(S.params.inicio||'—'))}${row('Saldo inicial', fmtMoney2(S.params.saldoIni||0))}
+    ${row('Início do período', esc(S.params.inicio||'Não informado'))}${row('Saldo inicial', Number.isFinite(S.params.saldoIni)?fmtMoney2(S.params.saldoIni):'Não informado')}
     ${row('Moeda-base da conta', esc(normalizeAccountCurrency(ob.moedaBase)))}
     ${propRulesRows}
-    ${row('Sistema de risco', esc(pr.name)+' · '+(Number.isFinite(pr.pct)?Math.round(pr.pct*100)+'%':'PENDING'))}
+    ${row('Sistema de risco', profileKey?esc(pr.name)+' · '+(Number.isFinite(pr.pct)?Math.round(pr.pct*100)+'%':'PENDING'):'Não informado')}
     ${row('Capital nominal Conta Mestre — declarado', ob.reserveMasterCapital!==''&&Number.isFinite(+ob.reserveMasterCapital)?fmtMoney2(+ob.reserveMasterCapital):'—')}
     ${row('FCR mínimo exigido', ob.reserveFcrRequired?fmtMoney2(+ob.reserveFcrRequired):'—')}
     ${row('FCR atual', ob.reserveFcrCurrent?fmtMoney2(+ob.reserveFcrCurrent):'—')}

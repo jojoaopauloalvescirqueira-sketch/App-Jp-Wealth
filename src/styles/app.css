@@ -8157,26 +8157,6 @@ html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-or
 #fxcSetupDialog #fxcSetupStatus{font-size:13px;overflow-wrap:anywhere}
 @media(max-width:540px){#fxcSetupDialog :is(input,select){font-size:16px}#fxcSetupDialog footer button{flex:1}}
 
-/* Ferramentas e Serviços — página de downloads e transferência local. */
-.nocuda-tool{max-width:1240px;margin:0 auto;padding:8px 0 32px;color:var(--ink)}
-.nocuda-heading{padding:16px 0 22px}.nocuda-heading h1{font-size:clamp(28px,3vw,38px);letter-spacing:-1.2px;margin:7px 0 10px;font-weight:650}
-.nocuda-heading p,.nocuda-download p,.nocuda-section-head p,.nocuda-details p{color:var(--ink-dim);line-height:1.6;margin:7px 0 14px;font-size:14px}
-.nocuda-downloads{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}.nocuda-tool .card{padding:26px;border-radius:18px;border:1px solid var(--line);background:var(--panel);box-shadow:none}
-.nocuda-download{display:flex;gap:20px;align-items:flex-start;min-width:0}.nocuda-platform{display:grid;place-items:center;width:56px;height:56px;border-radius:14px;flex:0 0 56px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12),inset 0 0 0 1px rgba(0,0,0,.06)}.nocuda-platform img{display:block;width:100%;height:100%;object-fit:contain}.nocuda-platform--tradingview{background:#000}.nocuda-platform--metatrader img{width:90%;height:90%}
-.nocuda-tool h2{font-size:21px;letter-spacing:-.5px;margin:6px 0 9px;font-weight:650}.nocuda-tool .nocuda-release{font-size:12px;color:var(--ink-faint)}
-.nocuda-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:16px 0}.nocuda-actions a{font-size:13px;color:var(--violet);text-underline-offset:3px}.nocuda-actions .reset-btn{min-height:40px;padding:9px 13px;border-radius:9px;text-decoration:none;margin:0;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--ink)}
-.nocuda-actions .nocuda-primary{background:var(--violet);border-color:var(--violet);color:white}.nocuda-section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.nocuda-section-head>.reset-btn{flex-shrink:0;font-size:12px;margin-top:6px}
-.nocuda-transfer>label,.nocuda-transfer #nocudaResult>label{display:block;font-size:12px;font-weight:650;margin:10px 0 8px;color:var(--ink-dim)}.nocuda-tool textarea{width:100%;box-sizing:border-box;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--ink);font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical;min-height:86px;overflow-wrap:anywhere}
-.nocuda-tool textarea:focus{outline:2px solid var(--violet);outline-offset:2px}.nocuda-tool .nocuda-help{font-size:12px;line-height:1.6;color:var(--ink-faint);margin:8px 0}.nocuda-file-label{position:relative;overflow:hidden}.nocuda-file-label input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}.nocuda-file-label:focus-within{outline:2px solid var(--violet);outline-offset:3px}
-#nocudaStatus{font-size:13px;color:var(--ink-dim);line-height:1.55;margin:14px 0 0}#nocudaStatus[data-state="error"]{color:var(--danger)}
-.nocuda-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;border-top:1px solid var(--line);padding-top:24px;margin-top:24px}.nocuda-summary dt{font-size:11px;color:var(--ink-faint);margin-bottom:7px}.nocuda-summary dd{font-size:14px;font-weight:600;margin:0;overflow-wrap:anywhere}.nocuda-preview{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;margin-top:20px;padding:8px;overflow:hidden}.nocuda-preview svg{display:block;width:100%;height:auto;min-height:120px}
-.nocuda-details{margin-top:20px}.nocuda-markers{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:22px 0}.nocuda-markers span{display:flex;flex-direction:column;gap:8px;padding:18px 14px;font-size:11px;color:var(--ink-dim);border-right:1px solid var(--line)}.nocuda-markers span:last-child{border:0}.nocuda-markers b{font-size:23px;font-weight:600;color:var(--ink)}.nocuda-details summary{font-size:13px;font-weight:600;cursor:pointer;line-height:1.6}.nocuda-details details p{font-size:13px;max-width:950px}
-@media(max-width:1100px){.nocuda-downloads{grid-template-columns:1fr}.nocuda-download{gap:16px}}
-@media(max-width:600px){.nocuda-tool .card{padding:20px;border-radius:14px}.nocuda-section-head{display:block}.nocuda-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.nocuda-markers{grid-template-columns:repeat(3,1fr)}.nocuda-markers span:nth-child(3){border-right:0}.nocuda-markers span:nth-child(-n+3){border-bottom:1px solid var(--line)}.nocuda-download{display:block}.nocuda-platform{margin-bottom:16px}.nocuda-actions{gap:12px}.nocuda-heading{padding-top:8px}.nocuda-heading p{font-size:13px}}
-.nocuda-anchor-wrap{overflow:auto;margin:20px 0;border:1px solid var(--line);border-radius:10px}.nocuda-anchors{width:100%;border-collapse:collapse;text-align:left;font-size:12px;white-space:nowrap}.nocuda-anchors caption{text-align:left;padding:14px;font-weight:650}.nocuda-anchors th,.nocuda-anchors td{padding:10px 14px;border-top:1px solid var(--line)}.nocuda-anchors th{font-size:11px;color:var(--ink-faint);font-weight:500}.nocuda-tool button:disabled{opacity:.5;cursor:not-allowed}.nocuda-tool [hidden]{display:none!important}
-
-#nocudaTool .nocuda-primary:not(:disabled){background:var(--violet);border-color:var(--violet);color:white}#nocudaTool .nocuda-primary:not(:disabled):hover{filter:brightness(1.08)}
-
 /* JPW Alavancagem Atual — guia e distribuição local do indicador MT5. */
 /* Genetrix: local product presentation, isolated from the application shell. */
 #jpwLeveragePage{--genetrix-action:#075da8;--genetrix-action-hover:#064d8a;max-width:1200px;margin:0 auto;padding:8px 0 48px;color:var(--ink);font-size:16px;line-height:1.65}
@@ -10242,8 +10222,21 @@ html[data-navigation="topbar"] #nav>#navSubShell .nav-sub-menu[hidden]{display:n
 .jpw-learning-tracks { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:14px; margin-top:16px; }
 .jpw-learning-track { border:1px solid var(--line, #64748b); border-radius:12px; padding:16px; background:var(--panel); color:var(--ink); }
 .jpw-learning-controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-.jpw-learning-controls button { min-height:38px; max-width:100%; white-space:normal; }
+.jpw-learning-controls button { min-height:44px; max-width:100%; white-space:normal; }
+#jpwLearningCoach button,#jpwLearningCenter button { box-sizing:border-box; min-height:44px; min-width:44px; }
+#jpwLearningCoach button[hidden] { display:none; }
 .jpw-learning-coach { position:fixed; z-index:12000; box-sizing:border-box; width:360px; max-width:calc(100vw - 24px); overflow:auto; overscroll-behavior:contain; border:2px solid var(--violet); border-radius:14px; padding:14px; background:var(--panel); color:var(--ink); box-shadow:0 6px 28px #0004; line-height:1.5; font-size:max(13px,.9rem); }
+.jpw-dante-speech { display:flex; align-items:flex-start; gap:12px; min-width:0; }
+.jpw-dante-guide { width:76px; height:76px; object-fit:cover; object-position:center top; border-radius:14px; flex:none; }
+.jpw-dante-speech #jpwLearningSpeech { flex:1; min-width:0; min-height:4.5em; overflow-wrap:anywhere; }
+.jpw-learning-sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+.jpw-dante-center { display:block; width:100px; height:108px; object-fit:contain; margin:12px 0; }
+#jpwLearningJourney { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:12px; margin:18px 0; }
+.jpw-learning-chapter { min-width:0; border:1px solid var(--line); border-radius:12px; padding:12px; }
+.jpw-learning-chapter button { width:100%; min-height:44px; text-align:left; white-space:normal; }
+.jpw-learning-chapter summary { min-height:44px; display:flex; align-items:center; cursor:pointer; }
+.jpw-learning-chapter details button { margin-top:6px; }
+.jpw-learning-chapter p { margin:8px 0 0; font-size:.85em; overflow-wrap:anywhere; }
 .jpw-learning-coach h3 { margin:6px 0; font-size:1.05rem; }
 .jpw-learning-coach p { margin:7px 0; }
 #jpwLearningCount { font-size:.85em; opacity:.8; }
@@ -10251,7 +10244,7 @@ html[data-navigation="topbar"] #nav>#navSubShell .nav-sub-menu[hidden]{display:n
 #jpwLearningStatus,#jpwLearningCenterStatus { font-size:.9em; font-weight:600; }
 .jpw-learning-target { outline:3px solid var(--violet) !important; outline-offset:4px !important; }
 .jpw-learning-coach button:focus-visible,#jpwLearningCenter button:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
-@media(max-width:600px) { .jpw-learning-coach { font-size:max(12px,.86rem); padding:12px; } .jpw-learning-controls button { min-height:42px; flex:1 1 110px; } }
+@media(max-width:600px) { .jpw-learning-coach { font-size:max(12px,.86rem); padding:12px; } .jpw-learning-controls button { min-height:44px; flex:1 1 110px; } }
 @media(prefers-reduced-motion:reduce) { .jpw-learning-coach,.jpw-learning-target { animation:none !important; transition:none !important; } }
 
 /* Adaptive guide content stays within the original focus owner and natural scroll flow. */
@@ -10846,6 +10839,30 @@ html[data-theme="dark"] .time-twins{--time-twins-a:#b8a4ff;--time-twins-b:#e5ab4
 .market-hours[data-compact="true"] .mh-globe{height:300px}
 @media(prefers-reduced-motion:reduce){.market-hours *{scroll-behavior:auto!important}}
 .market-hours-tool#marketHoursTool>header{position:static;display:block;grid-area:auto;top:auto;height:auto;min-height:0;padding:0 0 16px;border:0;background:transparent;z-index:auto}
+#tools .calendar-markets-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;min-width:0}
+#tools .calendar-markets-heading h2{margin:0;color:var(--ink);font:600 calc(24px * var(--fs-scale,1))/1.25 var(--sans);letter-spacing:-.025em;min-width:0;overflow-wrap:anywhere}
+#calendarMarketsJump{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 14px;border:0;border-radius:12px;background:var(--panel);color:var(--violet);font:500 calc(14px * var(--fs-scale,1))/1.4 var(--sans);flex-shrink:0}
+#marketHoursTool{margin-top:28px;scroll-margin-top:96px}
+#marketHoursTitle{scroll-margin-top:110px}
+#tools .mh-overview-shell{box-sizing:border-box;padding:clamp(16px,2.5vw,28px);border:0;border-radius:24px;background:var(--panel);color:var(--ink);font:400 calc(14px * var(--fs-scale,1))/1.5 var(--sans);min-width:0}
+#tools .mh-overview-shell [hidden]{display:none!important}
+#tools .mh-overview-shell[data-expanded="true"]{padding:0;background:transparent;border-radius:0}
+#tools .mh-overview-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin-bottom:16px}
+#tools .mh-overview-heading h3{margin:0;font-size:inherit}
+#tools .mh-overview-heading>button,#tools .mh-overview-status+button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;max-width:100%;padding:10px 14px;border:0;border-radius:12px;background:var(--panel-2);color:var(--violet);font:500 calc(14px * var(--fs-scale,1))/1.4 var(--sans);text-align:center;white-space:normal}
+#tools .mh-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px;min-width:0}
+#tools .mh-overview-counts,#tools .mh-overview-note,#tools .mh-overview-status{grid-column:1/-1;margin:0;overflow-wrap:anywhere}
+#tools .mh-overview-counts{font-weight:500;color:var(--ink)}
+#tools .mh-overview-note{color:var(--ink-dim);font-size:calc(13px * var(--fs-scale,1))}
+#tools .mh-overview-section{min-width:0}
+#tools .mh-overview-section h4{margin:0 0 8px;font-size:calc(13px * var(--fs-scale,1));font-weight:600;color:var(--ink-dim)}
+#tools .mh-overview-list{list-style:none;padding:0;margin:0}
+#tools .mh-overview-list li{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;padding:2px 0 10px}
+#tools .mh-overview-list button{justify-self:start;display:inline-flex;align-items:center;justify-content:flex-start;min-width:44px;min-height:44px;max-width:100%;padding:8px 0;border:0;border-radius:8px;background:transparent;color:var(--violet);font:600 calc(15px * var(--fs-scale,1))/1.4 var(--sans);text-align:left;white-space:normal;overflow-wrap:anywhere}
+#tools .mh-overview-location,#tools .mh-overview-time{color:var(--ink-dim);font-size:calc(13px * var(--fs-scale,1));line-height:1.5;overflow-wrap:anywhere}
+#tools .mh-overview-status{color:var(--warn);font-weight:500}
+#calendarMarketsJump:focus-visible,#tools .mh-overview-shell button:focus-visible,#calendarMarketsTitle:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+@media(max-width:600px){#tools .calendar-markets-heading{align-items:flex-start;flex-direction:column;gap:8px}#tools .mh-overview{grid-template-columns:minmax(0,1fr)}#tools .mh-overview-shell{border-radius:20px}#marketHoursTool{margin-top:24px}}
 .market-hours-tool>header h2{width:max-content;max-width:100%;margin:0;padding:0;border:0;background:transparent;color:var(--ink);font-family:var(--sans);letter-spacing:-.025em;text-transform:none;line-height:1.25}.market-hours-tool>header p{margin:0;color:var(--ink-dim);line-height:1.5}
 
 .market-hours-tool .mh-title-row{display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:4px}
@@ -11367,3 +11384,18 @@ html[data-shell="global-dashboard"] #headerActions #headerCalendarBtn:focus-visi
 .calendar-agenda-group{margin:16px 0 4px;font-size:12px;font-weight:650;color:var(--ink-dim)}
 .calendar-agenda-group:first-child{margin-top:0}
 @media(max-width:1179px){html[data-navigation="glass"][data-shell="global-dashboard"]:not([data-shell-menu="open"]) #headerActions{display:none}}
+
+/* Unanswered checklist status must remain readable on narrow screens. */
+#chClass {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+/* Dante acolhe na própria tela de boas-vindas, sem host flutuante. */
+#jpwWelcome .jpw-welcome-intro{display:flex;align-items:center;gap:var(--jp-space-6);min-width:0}
+#jpwWelcome .jpw-welcome-intro>div{min-width:0}
+#jpwWelcome .jpw-welcome-intro p{color:var(--ink-dim);line-height:1.5;margin:0;max-width:60ch}
+#jpwWelcomeDante{display:block;flex:0 0 auto;width:140px;height:210px;object-fit:contain;border-radius:var(--jp-radius-md)}
+@media(max-width:600px){#jpwWelcome .jpw-welcome-intro{gap:var(--jp-space-3);align-items:flex-start}#jpwWelcomeDante{width:76px;height:114px}}

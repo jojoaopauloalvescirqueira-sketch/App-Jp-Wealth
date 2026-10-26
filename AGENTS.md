@@ -147,6 +147,8 @@ Prontidão técnica exige escopo/invariantes preservados, gates classificados, d
 
 ## Qualidade visual obrigatória
 
+Ao alterar o mascote Dante, suas falas, avatar padrão ou apresentação do guia, consultar [Dante — identidade e personalidade](docs/branding/DANTE.md) e [contrato do guia](docs/architecture/LEARNING-GUIDE.md). A personalidade pertence ao personagem do produto; não redefine o agente de desenvolvimento, autoridades financeiras, permissões ou gates deste projeto.
+
 Toda alteração de interface segue [UI-VISUAL-QUALITY](docs/governance/UI-VISUAL-QUALITY.md): alinhamento do conteúdo interno e dos ícones, tolerância máxima2pxCSS nos alinhamentos declarados, ausência de cortes/sobreposição e ordem visual/de leitura/teclado coerente. O verificador reutilizável `tools/ui_visual_quality_test.py` integra standard/full; sua cobertura inicial é Planejamento. Demais superfícies permanecem explicitamente pendentes de casos próprios, a acrescentar quando alteradas conforme autorização vigente. Regra escrita não comprova cobertura integral, execução atual ou aceite visual humano. O plugin congelado não é modificado.
 
 ## JP Engenharia — proteção acumulada e memória do projeto

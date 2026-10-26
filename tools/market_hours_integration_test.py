@@ -16,7 +16,10 @@ def _inspect(page):
             lazy_requests.append(request.url)
     page.on('request',observe_lazy)
     assert page.evaluate("JPWNavigation.resolve('tools-market-hours').accepted"), 'PRODUCT_FAIL: Bolsas Globais route absent'
-    assert page.locator('[data-nav-child="tools-market-hours"]').count()==1, 'PRODUCT_FAIL: visible submenu entry absent'
+    # Approved 2026-10-24 contract: one combined entry; the legacy target stays
+    # accepted and opens this same tool expanded through the canonical child.
+    assert page.locator('[data-nav-child="tools-market-hours"]').count()==0, 'PRODUCT_FAIL: duplicate legacy submenu entry'
+    assert page.locator('[data-nav-child="tools-calendar"] .nav-sub-item-title').inner_text().strip()=='Calendário e Mercados', 'PRODUCT_FAIL: combined submenu entry absent'
     assert page.evaluate("!window.JPWAisolGlobeRuntime"), 'renderer executed at bootstrap'
     assert page.locator('.market-hours').count()==0
     assert page.evaluate('sessionEpochCurrent()')
@@ -71,7 +74,7 @@ def _inspect(page):
     page.wait_for_selector('[data-mh="map-content"]',state='visible')
     assert page.locator('[data-mh="detail-title"]').inner_text()=='B3'
     assert page.locator('[data-venue-id]').count()==16
-    assert page.evaluate("JPWNavigation.current().child==='tools-market-hours'")
+    assert page.evaluate("JPWNavigation.current().child==='tools-calendar'")
     assert page.evaluate("JPWNavigation.navigate('tools-market-hours')")
     assert page.locator('#marketHoursTitle').evaluate('e=>e===document.activeElement')
     page.locator('[data-venue-id="nyse"] button').click()
@@ -104,10 +107,10 @@ def _inspect(page):
         page.set_viewport_size({'width':1440,'height':900})
         page.evaluate('(v)=>mountNavigationLayout(v)',layout)
         page.evaluate("shellSubmenu()?submenuOpenSurface(document.getElementById('toolsNavTrigger'),{focus:true}):openNavSub('tools',{focus:true})")
-        entry=page.locator('[data-nav-child="tools-market-hours"]')
-        assert entry.is_visible(),('Bolsas Globais submenu hidden',layout)
+        entry=page.locator('[data-nav-child="tools-calendar"]')
+        assert entry.is_visible(),('Calendário e Mercados submenu hidden',layout)
         entry.focus();entry.press('Enter')
-        assert page.evaluate("JPWNavigation.current().child==='tools-market-hours'")
+        assert page.evaluate("JPWNavigation.current().child==='tools-calendar'")
         assert entry.get_attribute('aria-current')=='page'
         page.wait_for_timeout(50)
         for width in [1440,390]:

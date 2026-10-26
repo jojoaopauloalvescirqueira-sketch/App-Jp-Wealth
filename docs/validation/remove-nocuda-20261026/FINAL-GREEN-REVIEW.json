@@ -1,0 +1,97 @@
+{
+  "schema": "jpw-final-green-review/v1",
+  "reviewed_at": "2026-10-26T20:00:07.753024+00:00",
+  "reviewer": "/root/nocuda_final_review",
+  "verdict": "TECHNICAL_GO_WITHIN_ALREADY_AUTHORIZED_GIT_SCOPE",
+  "material_findings": [],
+  "candidate": {
+    "build": "5cd40fe879de6727",
+    "head": "a4bf278cd4dc38bbaa5b905ed17a79e33684fb67",
+    "branch": "codex/remover-nocuda-tool-20261026"
+  },
+  "full": {
+    "checks": 102,
+    "unique": 102,
+    "official_current_order_exact": true,
+    "previous_round_order_exact": true,
+    "summary": {
+      "PASS": 102,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "all_returncodes_zero": true,
+    "exit": 0,
+    "seconds": 3029.393
+  },
+  "freeze": {
+    "files": 680,
+    "hash_mismatches": [],
+    "expected_absent": 11,
+    "absence_violations": [],
+    "wrapper_source_unchanged": true,
+    "identical_to_previous_round": true
+  },
+  "visual": {
+    "classification": "PASS",
+    "cases": 413,
+    "unique": 413,
+    "all_pass": true,
+    "coverage": {
+      "executed": 413,
+      "required": 413,
+      "unique": true
+    },
+    "case_set_equals_required": true,
+    "source_unchanged": true,
+    "source_hashes_checked": 153,
+    "source_mismatches": [],
+    "test_sha256": "ea5324e785181d8a1ef172b186980521ea591e7f089d7325cee9d00db4e1add0",
+    "duration_seconds": 855.688,
+    "tolerance_css_px": 2,
+    "native_zoom": {
+      "outer": 1440,
+      "inner": 720,
+      "css": "1"
+    },
+    "deadline_seconds": 900,
+    "timing_margin_seconds": 44.312
+  },
+  "approved_source_hashes": {
+    "tools/planning_compact_table_test.py": "0ae1b0ef88af5b7ebb9c6200d8593f6b9bba9e9ceb9f98a5d5da1303df25643b",
+    "tools/ui_visual_quality_test.py": "ea5324e785181d8a1ef172b186980521ea591e7f089d7325cee9d00db4e1add0",
+    "tools/quality_gate.py": "074fd1d63154b50a1eefcbc3feac4c9f41e1d6356615bc089e04b5adffb2cd2a",
+    "docs/work/CHG-JPW-VISUAL-BOUND-VALUE-20261026.md": "dddd30be4b3b9e8df1c78c8da7c0873d4da1c9d17f3b696bf1440729b769c3ae",
+    "docs/work/CHG-JPW-VISUAL-MENU-WIDTH-20261026.md": "9c2b6a1e9986c03a3dcc02b4f23745d0cfd1265483ff8016b2f60382653b1bfd"
+  },
+  "approvals": {
+    "bound_value": "call_4f33cb2f7f58429da833b2b2201a88c2",
+    "menu_width": "call_889e53bc46224663bae70e344c8cf821",
+    "git_authorization": "User authorization conveyed by parent persists; this audit supplies technical gate evidence only."
+  },
+  "scope_limits": [
+    "No universal human acceptance, publication, or native MT5 acceptance inferred.",
+    "No permission to include unrelated pre-existing pending changes.",
+    "No third-party worktrees or VM controls touched.",
+    "Current PASS does not prove the cause or permanent elimination of earlier timing variability.",
+    "Any material change or merge conflict resolution requires validation of the resulting candidate."
+  ],
+  "history": "Prior failed and interrupted rounds remain historical raw results, not aggregated into this PASS.",
+  "actions": [
+    "Read existing evidence and source",
+    "Static AST comparison",
+    "SHA-256 verification",
+    "Read current Git branch/HEAD",
+    "Write only these two scratch reports"
+  ],
+  "tests_or_browsers_started": false,
+  "repository_or_git_mutations": false,
+  "evidence_sha256": {
+    "/private/tmp/jpw-remove-nocuda-20261026/full-exclusive/full-relocated.json": "18dcaf1e242e1f9998ae3ed5cad18777ed795d8e8d608997b105ec08cc568298",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-exclusive/full-relocated-command.json": "82df12ac8992685cfb9cfe84c6c33800fd3bfca7d9cfedb2e25a963be84ad18d",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-exclusive/frozen-inputs.json": "b6cede68816592911c028ce1f9dddfcc23713a6f74a9acbf5bc5ccadf01efbe4",
+    "/private/tmp/jpw-remove-nocuda-20261026/full-exclusive/full-relocated-evidence/ui-visual-quality/ui-visual-quality-results.json": "6962407ea643ed99b46324075b7a74cc9d4fe992a58d3a112f46d29d9234485b"
+  }
+}

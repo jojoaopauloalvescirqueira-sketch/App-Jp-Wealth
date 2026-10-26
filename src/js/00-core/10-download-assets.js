@@ -6,7 +6,7 @@
   function entry(id){
     const m=window.JPW_DOWNLOAD_MANIFEST,e=m?.resources?.[id],p=m?.payloads?.[e?.payload];
     if(m?.schemaVersion!==1||m.buildId!==JP_WEALTH_BUILD_ID||!e||!p||
-      !/^(nocuda\/[A-Za-z0-9._-]+|leverage\/(dailySource|source|compiled|nativeKit|nativePin|preview))$/.test(id)||
+      !/^leverage\/(dailySource|source|compiled|nativeKit|nativePin|preview)$/.test(id)||
       !/^downloads\/[A-Za-z0-9._/-]+$/.test(e.path)||e.path.includes('..')||
       e.filename!==e.path.split('/').pop()||!/^[A-Za-z0-9._-]+$/.test(e.filename)||!Number.isSafeInteger(e.bytes)||e.bytes<=0||
       !/^[a-f0-9]{64}$/.test(e.sha256)||e.mime!==(id==='leverage/preview'?'text/html':id==='leverage/nativePin'?'application/json':id.startsWith('leverage/')?'application/zip':e.mime)||typeof e.mime!=='string'||

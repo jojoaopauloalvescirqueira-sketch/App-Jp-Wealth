@@ -28,9 +28,10 @@ window.JPWWorkspaceDrafts=Object.freeze({
   context:jpwWorkspaceDraftContext,baseReference:jpwWorkspaceDraftBaseReference,
   inspect(item){
     const adapter=jpwWorkspaceDraftRestorers.get(item?.provider);
+    if(!adapter&&item?.provider==='nocuda-transfer')return {compatible:false,reason:'Nocuda Tool foi descontinuado. Este rascunho permanece disponível somente para leitura e cópia.'};
     if(!adapter)return {compatible:false,reason:'Este rascunho está disponível para leitura e cópia. Não há adaptador seguro para reabrir seus campos.'};
     try{
-      if(!['nocuda-transfer','personal-finance-field'].includes(item.provider))jpwWorkspaceCheckTree(JSON.parse(item.text));
+      if(!['personal-finance-field'].includes(item.provider))jpwWorkspaceCheckTree(JSON.parse(item.text));
       jpwWorkspaceCheckTree(item);
       const result=adapter.inspect(structuredClone(item));
       if(!result||typeof result.compatible!=='boolean')return {compatible:false,reason:'O contexto não pôde ser conferido.'};
@@ -206,7 +207,7 @@ function jpwWorkspaceResume(){
 function jpwWorkspaceCaptureField(event){
   const el=event.target;
   if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement||el instanceof HTMLSelectElement)||el.closest('#workspaceDraftDialog'))return;
-  if(el.closest('#settingsProfileForm,#mvpNotesDrawer,#ebObservationForm,.calendar-form')||el.matches('[data-fi-campo],[data-fe-campo],[data-fa-campo],#nocudaPayload,[data-f],[data-eb-reason]')||el.hasAttribute('data-eb-field'))return;
+  if(el.closest('#settingsProfileForm,#mvpNotesDrawer,#ebObservationForm,.calendar-form')||el.matches('[data-fi-campo],[data-fe-campo],[data-fa-campo],[data-f],[data-eb-reason]')||el.hasAttribute('data-eb-field'))return;
   const identity=[el.id,el.name,el.autocomplete,el.type,...Object.keys(el.dataset)].join(' ');
   if(/password|senha|secret|token|credential|pin|file|hidden|search|filter|session/i.test(identity))return;
   const label=(el.labels?.[0]?.textContent||el.getAttribute('aria-label')||el.id||el.name||Object.entries(el.dataset).map(([k,v])=>k+':'+v).join(' ')).trim().slice(0,300);

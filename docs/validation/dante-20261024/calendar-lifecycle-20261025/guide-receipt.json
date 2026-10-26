@@ -1,0 +1,43 @@
+{
+  "cases": [
+    {
+      "id": "http",
+      "result": "PASS",
+      "build": "8c127c2f92de375e",
+      "errors": [],
+      "financialUnchanged": true,
+      "profileAbsent": true
+    },
+    {
+      "id": "file",
+      "result": "PASS",
+      "build": "8c127c2f92de375e",
+      "errors": [],
+      "financialUnchanged": true,
+      "profileAbsent": true
+    },
+    {
+      "id": "portable-isolated",
+      "result": "PASS",
+      "build": "8c127c2f92de375e",
+      "errors": [],
+      "financialUnchanged": true,
+      "profileAbsent": true
+    },
+    {
+      "id": "pwa-offline",
+      "result": "PASS",
+      "build": "8c127c2f92de375e",
+      "errors": [],
+      "financialUnchanged": true,
+      "profileAbsent": true
+    }
+  ],
+  "build": null,
+  "limits": [
+    "Only disposable browser profiles",
+    "No financial data fixtures",
+    "Physical touch and Safari not tested"
+  ],
+  "classification": "PASS"
+}

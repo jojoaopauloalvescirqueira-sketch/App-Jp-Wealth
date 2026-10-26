@@ -285,7 +285,7 @@
   function ensureDialog(){
     if(dialog)return instances.get('calendarDialog');dialog=el('dialog','calendar-dialog');dialog.id='calendarDialog';dialog.setAttribute('aria-labelledby','calendarDialogTitle');document.body.append(dialog);const inst=factory(dialog,'calendarDialog',true);
     dialog.addEventListener('cancel',e=>{e.preventDefault();close();});dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
-    dialog.addEventListener('close',()=>{inst.st.active=false;inst.st.request++;clearClock(inst);document.getElementById('headerCalendarBtn')?.setAttribute('aria-expanded','false');});return inst;
+    dialog.addEventListener('close',()=>{if(dialog.open)return;inst.st.active=false;inst.st.request++;clearClock(inst);document.getElementById('headerCalendarBtn')?.setAttribute('aria-expanded','false');});return inst;
   }
   function positionDialog(){
     if(!dialog?.open)return;for(const key of ['margin','inset','left','top','max-height'])dialog.style.removeProperty(key);

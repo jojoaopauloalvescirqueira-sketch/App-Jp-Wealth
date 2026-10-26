@@ -1,0 +1,1263 @@
+{
+  "cases": [
+    {
+      "id": "counterproof-menu-inner-left",
+      "classification": "PASS",
+      "criteria": "same13realrows,5pxtranslatedtextrejecteddespiteunchangedouterbox",
+      "started_at": "2026-10-25T19:38:35.626974+00:00",
+      "evidence": {
+        "positive_control": {
+          "box": {
+            "left": 12,
+            "right": 332,
+            "top": 296.375,
+            "bottom": 888,
+            "width": 320,
+            "height": 591.625
+          },
+          "viewport": [
+            700,
+            900
+          ],
+          "layoutViewport": [
+            700,
+            900
+          ],
+          "scroll": [
+            766,
+            590
+          ],
+          "overflow": "auto",
+          "trigger": {
+            "left": 131.890625,
+            "right": 216.171875,
+            "top": 244.375,
+            "bottom": 288.375,
+            "width": 84.28125,
+            "height": 44
+          },
+          "rows": [
+            {
+              "action": "create",
+              "left": 19,
+              "right": 325,
+              "top": 329.375,
+              "bottom": 373.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "edit-selected",
+              "left": 19,
+              "right": 325,
+              "top": 373.375,
+              "bottom": 417.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "monthly",
+              "left": 19,
+              "right": 325,
+              "top": 456.375,
+              "bottom": 500.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "result",
+              "left": 19,
+              "right": 325,
+              "top": 500.375,
+              "bottom": 544.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "contribution",
+              "left": 19,
+              "right": 325,
+              "top": 544.375,
+              "bottom": 588.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "withdrawal",
+              "left": 19,
+              "right": 325,
+              "top": 588.375,
+              "bottom": 632.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "contribution-history",
+              "left": 19,
+              "right": 325,
+              "top": 671.375,
+              "bottom": 715.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "pending-cost",
+              "left": 19,
+              "right": 325,
+              "top": 715.375,
+              "bottom": 759.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "withdrawal-history",
+              "left": 19,
+              "right": 325,
+              "top": 759.375,
+              "bottom": 803.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "explain-goals",
+              "left": 19,
+              "right": 325,
+              "top": 842.375,
+              "bottom": 886.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "history",
+              "left": 19,
+              "right": 325,
+              "top": 886.375,
+              "bottom": 930.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "print",
+              "left": 19,
+              "right": 325,
+              "top": 930.375,
+              "bottom": 974.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "restart-selected",
+              "left": 19,
+              "right": 325,
+              "top": 1013.375,
+              "bottom": 1057.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            }
+          ],
+          "groups": [
+            {
+              "label": "Contas",
+              "actions": [
+                "create",
+                "edit-selected"
+              ]
+            },
+            {
+              "label": "Registros mensais",
+              "actions": [
+                "monthly",
+                "result",
+                "contribution",
+                "withdrawal"
+              ]
+            },
+            {
+              "label": "Corre\u00e7\u00f5es",
+              "actions": [
+                "contribution-history",
+                "pending-cost",
+                "withdrawal-history"
+              ]
+            },
+            {
+              "label": "Consulta e relat\u00f3rios",
+              "actions": [
+                "explain-goals",
+                "history",
+                "print"
+              ]
+            },
+            {
+              "label": "Rein\u00edcio",
+              "actions": [
+                "restart-selected"
+              ]
+            }
+          ],
+          "actual_text_left_insets": [
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13
+          ],
+          "within_group_gaps": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "shifted_content": {
+          "rejected": true,
+          "measurement_failure": "('menu actual text does not start at left inset', {'outer': {'left': 19, 'right': 325, 'top': 329.375, 'bottom': 373.375, 'width': 306, 'height': 44}, 'text': {'left': 37, 'right': 155.328125, 'top': 343.28125, 'bottom': 358.28125}, 'textRects': [{'left': 37, 'right': 155.328125, 'top': 343.28125, 'bottom': 358.28125, 'width': 118.328125, 'height': 15}], 'ink': None, 'svg': 0, 'label': 'Adicionar nova conta', 'textAlign': 'left', 'declaredLeftInset': 13})"
+        },
+        "restored_positive_control": {
+          "box": {
+            "left": 12,
+            "right": 332,
+            "top": 296.375,
+            "bottom": 888,
+            "width": 320,
+            "height": 591.625
+          },
+          "viewport": [
+            700,
+            900
+          ],
+          "layoutViewport": [
+            700,
+            900
+          ],
+          "scroll": [
+            766,
+            590
+          ],
+          "overflow": "auto",
+          "trigger": {
+            "left": 131.890625,
+            "right": 216.171875,
+            "top": 244.375,
+            "bottom": 288.375,
+            "width": 84.28125,
+            "height": 44
+          },
+          "rows": [
+            {
+              "action": "create",
+              "left": 19,
+              "right": 325,
+              "top": 329.375,
+              "bottom": 373.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "edit-selected",
+              "left": 19,
+              "right": 325,
+              "top": 373.375,
+              "bottom": 417.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "monthly",
+              "left": 19,
+              "right": 325,
+              "top": 456.375,
+              "bottom": 500.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "result",
+              "left": 19,
+              "right": 325,
+              "top": 500.375,
+              "bottom": 544.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "contribution",
+              "left": 19,
+              "right": 325,
+              "top": 544.375,
+              "bottom": 588.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "withdrawal",
+              "left": 19,
+              "right": 325,
+              "top": 588.375,
+              "bottom": 632.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "contribution-history",
+              "left": 19,
+              "right": 325,
+              "top": 671.375,
+              "bottom": 715.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "pending-cost",
+              "left": 19,
+              "right": 325,
+              "top": 715.375,
+              "bottom": 759.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "withdrawal-history",
+              "left": 19,
+              "right": 325,
+              "top": 759.375,
+              "bottom": 803.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "explain-goals",
+              "left": 19,
+              "right": 325,
+              "top": 842.375,
+              "bottom": 886.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "history",
+              "left": 19,
+              "right": 325,
+              "top": 886.375,
+              "bottom": 930.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "print",
+              "left": 19,
+              "right": 325,
+              "top": 930.375,
+              "bottom": 974.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "restart-selected",
+              "left": 19,
+              "right": 325,
+              "top": 1013.375,
+              "bottom": 1057.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            }
+          ],
+          "groups": [
+            {
+              "label": "Contas",
+              "actions": [
+                "create",
+                "edit-selected"
+              ]
+            },
+            {
+              "label": "Registros mensais",
+              "actions": [
+                "monthly",
+                "result",
+                "contribution",
+                "withdrawal"
+              ]
+            },
+            {
+              "label": "Corre\u00e7\u00f5es",
+              "actions": [
+                "contribution-history",
+                "pending-cost",
+                "withdrawal-history"
+              ]
+            },
+            {
+              "label": "Consulta e relat\u00f3rios",
+              "actions": [
+                "explain-goals",
+                "history",
+                "print"
+              ]
+            },
+            {
+              "label": "Rein\u00edcio",
+              "actions": [
+                "restart-selected"
+              ]
+            }
+          ],
+          "actual_text_left_insets": [
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13
+          ],
+          "within_group_gaps": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "finished_at": "2026-10-25T19:38:36.607988+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "counterproof-menu-width",
+      "classification": "PASS",
+      "criteria": "samegeometryoraclerejects322pxmenuagainstmax320",
+      "started_at": "2026-10-25T19:38:36.608036+00:00",
+      "evidence": {
+        "positive_control": {
+          "box": {
+            "left": 12,
+            "right": 332,
+            "top": 296.375,
+            "bottom": 888,
+            "width": 320,
+            "height": 591.625
+          },
+          "viewport": [
+            700,
+            900
+          ],
+          "layoutViewport": [
+            700,
+            900
+          ],
+          "scroll": [
+            766,
+            590
+          ],
+          "overflow": "auto",
+          "trigger": {
+            "left": 131.890625,
+            "right": 216.171875,
+            "top": 244.375,
+            "bottom": 288.375,
+            "width": 84.28125,
+            "height": 44
+          },
+          "rows": [
+            {
+              "action": "create",
+              "left": 19,
+              "right": 325,
+              "top": 153.375,
+              "bottom": 197.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "edit-selected",
+              "left": 19,
+              "right": 325,
+              "top": 197.375,
+              "bottom": 241.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "monthly",
+              "left": 19,
+              "right": 325,
+              "top": 280.375,
+              "bottom": 324.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "result",
+              "left": 19,
+              "right": 325,
+              "top": 324.375,
+              "bottom": 368.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "contribution",
+              "left": 19,
+              "right": 325,
+              "top": 368.375,
+              "bottom": 412.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "withdrawal",
+              "left": 19,
+              "right": 325,
+              "top": 412.375,
+              "bottom": 456.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "contribution-history",
+              "left": 19,
+              "right": 325,
+              "top": 495.375,
+              "bottom": 539.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "pending-cost",
+              "left": 19,
+              "right": 325,
+              "top": 539.375,
+              "bottom": 583.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "withdrawal-history",
+              "left": 19,
+              "right": 325,
+              "top": 583.375,
+              "bottom": 627.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "explain-goals",
+              "left": 19,
+              "right": 325,
+              "top": 666.375,
+              "bottom": 710.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "history",
+              "left": 19,
+              "right": 325,
+              "top": 710.375,
+              "bottom": 754.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "print",
+              "left": 19,
+              "right": 325,
+              "top": 754.375,
+              "bottom": 798.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            },
+            {
+              "action": "restart-selected",
+              "left": 19,
+              "right": 325,
+              "top": 837.375,
+              "bottom": 881.375,
+              "width": 306,
+              "height": 44,
+              "textAlign": "left",
+              "tabIndex": -1,
+              "disabled": false
+            }
+          ],
+          "groups": [
+            {
+              "label": "Contas",
+              "actions": [
+                "create",
+                "edit-selected"
+              ]
+            },
+            {
+              "label": "Registros mensais",
+              "actions": [
+                "monthly",
+                "result",
+                "contribution",
+                "withdrawal"
+              ]
+            },
+            {
+              "label": "Corre\u00e7\u00f5es",
+              "actions": [
+                "contribution-history",
+                "pending-cost",
+                "withdrawal-history"
+              ]
+            },
+            {
+              "label": "Consulta e relat\u00f3rios",
+              "actions": [
+                "explain-goals",
+                "history",
+                "print"
+              ]
+            },
+            {
+              "label": "Rein\u00edcio",
+              "actions": [
+                "restart-selected"
+              ]
+            }
+          ],
+          "actual_text_left_insets": [
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13,
+            13
+          ],
+          "within_group_gaps": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "overwide_menu": {
+          "rejected": true,
+          "measurement_failure": "('menu width limit', {'box': {'left': 12, 'right': 334, 'top': 296.375, 'bottom': 888, 'width': 322, 'height': 591.625}, 'viewport': [700, 900], 'layoutViewport': [700, 900], 'scroll': [766, 590], 'overflow': 'auto', 'trigger': {'left': 131.890625, 'right': 216.171875, 'top': 244.375, 'bottom': 288.375, 'width': 84.28125, 'height': 44}, 'rows': [{'action': 'create', 'left': 19, 'right': 327, 'top': 153.375, 'bottom': 197.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'edit-selected', 'left': 19, 'right': 327, 'top': 197.375, 'bottom': 241.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'monthly', 'left': 19, 'right': 327, 'top': 280.375, 'bottom': 324.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'result', 'left': 19, 'right': 327, 'top': 324.375, 'bottom': 368.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'contribution', 'left': 19, 'right': 327, 'top': 368.375, 'bottom': 412.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'withdrawal', 'left': 19, 'right': 327, 'top': 412.375, 'bottom': 456.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'contribution-history', 'left': 19, 'right': 327, 'top': 495.375, 'bottom': 539.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'pending-cost', 'left': 19, 'right': 327, 'top': 539.375, 'bottom': 583.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'withdrawal-history', 'left': 19, 'right': 327, 'top': 583.375, 'bottom': 627.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'explain-goals', 'left': 19, 'right': 327, 'top': 666.375, 'bottom': 710.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'history', 'left': 19, 'right': 327, 'top': 710.375, 'bottom': 754.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'print', 'left': 19, 'right': 327, 'top': 754.375, 'bottom': 798.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}, {'action': 'restart-selected', 'left': 19, 'right': 327, 'top': 837.375, 'bottom': 881.375, 'width': 308, 'height': 44, 'textAlign': 'left', 'tabIndex': -1, 'disabled': False}], 'groups': [{'label': 'Contas', 'actions': ['create', 'edit-selected']}, {'label': 'Registros mensais', 'actions': ['monthly', 'result', 'contribution', 'withdrawal']}, {'label': 'Corre\u00e7\u00f5es', 'actions': ['contribution-history', 'pending-cost', 'withdrawal-history']}, {'label': 'Consulta e relat\u00f3rios', 'actions': ['explain-goals', 'history', 'print']}, {'label': 'Rein\u00edcio', 'actions': ['restart-selected']}]})"
+        }
+      },
+      "finished_at": "2026-10-25T19:38:37.059509+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "counterproof-forecast-inner-text",
+      "classification": "PASS",
+      "criteria": "sameactualtextRangeoraclerejects5pxinnertranslation",
+      "started_at": "2026-10-25T19:38:37.201746+00:00",
+      "evidence": {
+        "positive_control": {
+          "outer": {
+            "left": 32,
+            "right": 163.390625,
+            "top": 108.078125,
+            "bottom": 152.078125,
+            "width": 131.390625,
+            "height": 44
+          },
+          "text": {
+            "left": 46,
+            "right": 149.390625,
+            "top": 121.296875,
+            "bottom": 137.296875
+          },
+          "textRects": [
+            {
+              "left": 46,
+              "right": 149.390625,
+              "top": 121.296875,
+              "bottom": 137.296875,
+              "width": 103.390625,
+              "height": 16
+            }
+          ],
+          "ink": null,
+          "svg": 0,
+          "label": "Ver sua previs\u00e3o",
+          "textAlign": "center",
+          "declaredLeftInset": 14,
+          "delta": {
+            "x": 0.0,
+            "y": -0.78125
+          }
+        },
+        "shifted_text": {
+          "rejected": true,
+          "measurement_failure": "('inner content center exceeds2CSSpx', {'outer': {'left': 32, 'right': 163.390625, 'top': 108.078125, 'bottom': 152.078125, 'width': 131.390625, 'height': 44}, 'text': {'left': 46, 'right': 149.390625, 'top': 116.296875, 'bottom': 132.296875}, 'textRects': [{'left': 46, 'right': 149.390625, 'top': 116.296875, 'bottom': 132.296875, 'width': 103.390625, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Ver sua previs\u00e3o', 'textAlign': 'center', 'declaredLeftInset': 14, 'delta': {'x': 0.0, 'y': -5.78125}})"
+        },
+        "restored_positive_control": {
+          "outer": {
+            "left": 32,
+            "right": 163.390625,
+            "top": 108.078125,
+            "bottom": 152.078125,
+            "width": 131.390625,
+            "height": 44
+          },
+          "text": {
+            "left": 46,
+            "right": 149.390625,
+            "top": 121.296875,
+            "bottom": 137.296875
+          },
+          "textRects": [
+            {
+              "left": 46,
+              "right": 149.390625,
+              "top": 121.296875,
+              "bottom": 137.296875,
+              "width": 103.390625,
+              "height": 16
+            }
+          ],
+          "ink": null,
+          "svg": 0,
+          "label": "Ver sua previs\u00e3o",
+          "textAlign": "center",
+          "declaredLeftInset": 14,
+          "delta": {
+            "x": 0.0,
+            "y": -0.78125
+          }
+        },
+        "batched_measurement_counterproofs": {
+          "budget": {
+            "rpc_per_control": {
+              "0": 4,
+              "1": 4,
+              "2": 4
+            },
+            "calls": {
+              "0": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "1": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "2": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ]
+            },
+            "measured_controls": 3,
+            "excluded": "scope/setup counts, reading order, selectors and inputs"
+          },
+          "equivalence": {
+            "controls": 3,
+            "original_calls": {
+              "0": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "1": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "2": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ]
+            },
+            "batched_calls": {
+              "0": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "1": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "2": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ]
+            },
+            "geometry_and_decisions_equal": true
+          },
+          "planning_mainframe_equivalence": {
+            "controls": 12,
+            "original_calls": {
+              "0": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "1": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "2": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "3": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "4": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "5": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "6": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "7": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "8": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "9": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "10": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ],
+              "11": [
+                "evaluate",
+                "double-RAF",
+                "count",
+                "evaluate",
+                "count",
+                "evaluate",
+                "bounding_box",
+                "evaluate"
+              ]
+            },
+            "batched_calls": {
+              "0": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "1": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "2": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "3": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "4": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "5": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "6": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "7": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "8": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "9": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "10": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ],
+              "11": [
+                "evaluate",
+                "double-RAF",
+                "evaluate",
+                "count"
+              ]
+            },
+            "geometry_and_decisions_equal": true
+          },
+          "counterproofs": {
+            "text5px": {
+              "original_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': {'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60}, 'textRects': [{'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})",
+              "batched_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': {'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60}, 'textRects': [{'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})"
+            },
+            "svg5px": {
+              "original_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 82, 'bottom': 126, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': {'left': 127, 'right': 139, 'top': 98, 'bottom': 110}, 'svg': 1, 'label': 'Icon', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})",
+              "batched_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 82, 'bottom': 126, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': {'left': 127, 'right': 139, 'top': 98, 'bottom': 110}, 'svg': 1, 'label': 'Icon', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})"
+            },
+            "close20px": {
+              "original_rejection": "('44px close', {'outer': {'left': 38, 'right': 58, 'top': 134, 'bottom': 154, 'width': 20, 'height': 20}, 'text': None, 'textRects': [], 'ink': {'left': 42, 'right': 54, 'top': 138, 'bottom': 150}, 'svg': 1, 'label': 'Close', 'textAlign': 'center', 'declaredLeftInset': 0})",
+              "batched_rejection": "('44px close', {'outer': {'left': 38, 'right': 58, 'top': 134, 'bottom': 154, 'width': 20, 'height': 20}, 'text': None, 'textRects': [], 'ink': {'left': 42, 'right': 54, 'top': 138, 'bottom': 150}, 'svg': 1, 'label': 'Close', 'textAlign': 'center', 'declaredLeftInset': 0})"
+            },
+            "ancestor_clipping": {
+              "original_rejection": "('control cut by its owner', {'outer': {'left': 30, 'right': 210, 'top': 38, 'bottom': 82, 'width': 180, 'height': 44}, 'text': {'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68}, 'textRects': [{'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 0.0, 'y': 0.0}}, ['horizontal:'])",
+              "batched_rejection": "('control cut by its owner', {'outer': {'left': 30, 'right': 210, 'top': 38, 'bottom': 82, 'width': 180, 'height': 44}, 'text': {'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68}, 'textRects': [{'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 0.0, 'y': 0.0}}, ['horizontal:'])"
+            },
+            "missing_content": {
+              "original_rejection": "('missing measurable text', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': None, 'svg': 0, 'label': '', 'textAlign': 'center', 'declaredLeftInset': 0})",
+              "batched_rejection": "('missing measurable text', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': None, 'svg': 0, 'label': '', 'textAlign': 'center', 'declaredLeftInset': 0})"
+            },
+            "zero_locator": "('exactly one control required', 0)",
+            "zero_locator_with_snapshot": "('exactly one control required', 0)",
+            "multiple_locators": "('exactly one control required', 3)",
+            "multiple_locators_with_snapshot": "('exactly one control required', 3)",
+            "missing_scope": "required open dialog missing",
+            "missing_buttons": "dialog has no measured controls",
+            "fresh_dom": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': {'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60}, 'textRects': [{'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})",
+            "stale_snapshot": "wrong/stale immediate real DOM snapshot",
+            "wrong_control_snapshot": "wrong/stale immediate real DOM snapshot"
+          },
+          "fresh_dom_text_shift_css_px": 5.0
+        }
+      },
+      "finished_at": "2026-10-25T19:38:39.712179+00:00",
+      "page_errors": []
+    },
+    {
+      "id": "counterproof-svg-drawing",
+      "classification": "PASS",
+      "criteria": "sameSVGdrawingbbox/screenCTMoraclerejects5unittranslation",
+      "started_at": "2026-10-25T19:38:39.712202+00:00",
+      "evidence": {
+        "positive_control": {
+          "outer": {
+            "left": 624,
+            "right": 668,
+            "top": 39.03125,
+            "bottom": 83.03125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 641,
+            "right": 651,
+            "top": 56.03125,
+            "bottom": 66.03125
+          },
+          "svg": 1,
+          "label": "Fechar e manter rascunho",
+          "textAlign": "center",
+          "declaredLeftInset": 0,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "translated_drawing": {
+          "rejected": true,
+          "measurement_failure": "('inner content center exceeds2CSSpx', {'outer': {'left': 624, 'right': 668, 'top': 39.03125, 'bottom': 83.03125, 'width': 44, 'height': 44}, 'text': None, 'textRects': [], 'ink': {'left': 645.1666666666666, 'right': 655.1666666666666, 'top': 56.03125, 'bottom': 66.03125}, 'svg': 1, 'label': 'Fechar e manter rascunho', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 4.166666666666629, 'y': 0.0}})"
+        },
+        "restored_positive_control": {
+          "outer": {
+            "left": 624,
+            "right": 668,
+            "top": 39.03125,
+            "bottom": 83.03125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 641,
+            "right": 651,
+            "top": 56.03125,
+            "bottom": 66.03125
+          },
+          "svg": 1,
+          "label": "Fechar e manter rascunho",
+          "textAlign": "center",
+          "declaredLeftInset": 0,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "finished_at": "2026-10-25T19:38:39.792649+00:00",
+      "page_errors": []
+    }
+  ]
+}

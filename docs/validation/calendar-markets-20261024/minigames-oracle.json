@@ -1,0 +1,59 @@
+{
+  "result": "PASS",
+  "exitCode": 0,
+  "red": {
+    "exitCode": 1,
+    "semanticClassification": "TEST_HARNESS_FAIL",
+    "originalSha256": "1a23f7b760b204453bcf876b8294801ddba2c0885598ea211bf5fe4e63d3786a",
+    "log": "minigames-red/stdout.txt"
+  },
+  "green": {
+    "sha256": "58ed0ebf26f3c78b864f3b2cdfc7ebcbdcab58d61710625717b5098461dfea50",
+    "flags": [],
+    "main": {
+      "children": [
+        "tools-calendar",
+        "tools-nocuda",
+        "tools-leverage",
+        "tools-normative",
+        "tools-minigames"
+      ],
+      "mounts": 1,
+      "cycles": 3,
+      "dialogs": 3,
+      "presentations": 32,
+      "screenshots": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/minigames-work/test-minigames-visual-n6dyhr_l"
+    },
+    "guide": {
+      "stepId": "general-settings-probability-lab",
+      "view": "minigames",
+      "catalogVersion": 1
+    },
+    "distributions": [
+      {
+        "mode": "modular-file",
+        "controllerSame": true,
+        "motorSpawned": true,
+        "hiddenRaf": 0,
+        "swResponses": 0
+      },
+      {
+        "mode": "portable-alone",
+        "controllerSame": true,
+        "motorSpawned": true,
+        "hiddenRaf": 0,
+        "swResponses": 0
+      },
+      {
+        "mode": "pwa-offline",
+        "controllerSame": true,
+        "motorSpawned": true,
+        "hiddenRaf": 0,
+        "swResponses": 140
+      }
+    ],
+    "log": "minigames-green/stdout.txt"
+  },
+  "delta": "exactly one removal of the tools-market-hours literal from the expected child list; all other bytes unchanged",
+  "rawFullAttempt1": "PRODUCT_FAIL preserved at full-final.json; this focal does not replace it"
+}

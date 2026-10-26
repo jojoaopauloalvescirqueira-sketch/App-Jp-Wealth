@@ -1,0 +1,11 @@
+--- a/tools/navigation_ia_test.py
++++ b/tools/navigation_ia_test.py
+@@ -511,6 +511,8 @@
+         page.click('#nav > .tab[data-route="alladin"]')
+         state = active_state(page)
+         assert state["screen"] == "alladin" and state["primary"] == "alladin", state
++        # shellNavigationApplied finishes accepted navigation in the next frame.
++        page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => resolve()))")
+         geometry = page.evaluate("""() => ({
+           doc: document.documentElement.scrollWidth,
+           win: window.innerWidth,

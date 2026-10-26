@@ -1,0 +1,1277 @@
+{
+  "source_before": {
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/40-app/11-operational-shell.js": "8e9cbd01549210458b7d8c1c1214d9907c3ee65aef6017a27c489c5c1018d5ee",
+    "tools/navigation_ia_test.py": "4aa1f271ba0c527b51a21e023f3656ade9e2555c91d7e6158325ebffeba7ace8",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748"
+  },
+  "scope": "A0; production files untouched; real Playwright clicks, no forced click, no timing delays or RAF suppression",
+  "repetitions": [
+    {
+      "iteration": 1,
+      "state": {
+        "screen": "alladin",
+        "activeScreens": [
+          "alladin"
+        ],
+        "primary": "alladin",
+        "ariaCurrent": "alladin",
+        "current": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "immediate": {
+        "at": 653.6999999284744,
+        "activeId": "",
+        "activeTag": "H2",
+        "activeText": "Alladin",
+        "focusInside": true,
+        "activeInert": false,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "afterNextRAF": {
+        "at": 661.3999999761581,
+        "activeId": "",
+        "activeTag": "H2",
+        "activeText": "Alladin",
+        "focusInside": true,
+        "activeInert": false,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "events": [
+        {
+          "kind": "focusin",
+          "at": 630.5,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "click-capture",
+          "at": 631.1000000238419,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "navigation-RAF-scheduled",
+          "at": 638.1000000238419,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "click-bubble",
+          "at": 640,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-before",
+          "at": 643.2999999523163,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "focusin",
+          "at": 649.8999999761581,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-after",
+          "at": 649.8999999761581,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        }
+      ],
+      "observed": {
+        "pageerror": [],
+        "console": []
+      }
+    },
+    {
+      "iteration": 2,
+      "state": {
+        "screen": "alladin",
+        "activeScreens": [
+          "alladin"
+        ],
+        "primary": "alladin",
+        "ariaCurrent": "alladin",
+        "current": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "immediate": {
+        "at": 621.7999999523163,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "afterNextRAF": {
+        "at": 632.2999999523163,
+        "activeId": "",
+        "activeTag": "H2",
+        "activeText": "Alladin",
+        "focusInside": true,
+        "activeInert": false,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "events": [
+        {
+          "kind": "focusin",
+          "at": 609.6999999284744,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "click-capture",
+          "at": 610.2999999523163,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "navigation-RAF-scheduled",
+          "at": 616.1999999284744,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "click-bubble",
+          "at": 618,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-before",
+          "at": 625,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "focusin",
+          "at": 631.5,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-after",
+          "at": 631.5,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        }
+      ],
+      "observed": {
+        "pageerror": [],
+        "console": []
+      }
+    },
+    {
+      "iteration": 3,
+      "state": {
+        "screen": "alladin",
+        "activeScreens": [
+          "alladin"
+        ],
+        "primary": "alladin",
+        "ariaCurrent": "alladin",
+        "current": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "immediate": {
+        "at": 617.7000000476837,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "afterNextRAF": {
+        "at": 626.7000000476837,
+        "activeId": "",
+        "activeTag": "H2",
+        "activeText": "Alladin",
+        "focusInside": true,
+        "activeInert": false,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "events": [
+        {
+          "kind": "focusin",
+          "at": 606,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "click-capture",
+          "at": 606.5,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "navigation-RAF-scheduled",
+          "at": 612.2000000476837,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "click-bubble",
+          "at": 614,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-before",
+          "at": 619.4000000953674,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "focusin",
+          "at": 625.9000000953674,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-after",
+          "at": 625.9000000953674,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        }
+      ],
+      "observed": {
+        "pageerror": [],
+        "console": []
+      }
+    },
+    {
+      "iteration": 4,
+      "state": {
+        "screen": "alladin",
+        "activeScreens": [
+          "alladin"
+        ],
+        "primary": "alladin",
+        "ariaCurrent": "alladin",
+        "current": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "immediate": {
+        "at": 622.9000000953674,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "afterNextRAF": {
+        "at": 631.6000000238419,
+        "activeId": "",
+        "activeTag": "H2",
+        "activeText": "Alladin",
+        "focusInside": true,
+        "activeInert": false,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "events": [
+        {
+          "kind": "focusin",
+          "at": 610.2000000476837,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "click-capture",
+          "at": 610.9000000953674,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "navigation-RAF-scheduled",
+          "at": 617.1000000238419,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "click-bubble",
+          "at": 619,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-before",
+          "at": 624.4000000953674,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "focusin",
+          "at": 630.8000000715256,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-after",
+          "at": 630.9000000953674,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        }
+      ],
+      "observed": {
+        "pageerror": [],
+        "console": []
+      }
+    },
+    {
+      "iteration": 5,
+      "state": {
+        "screen": "alladin",
+        "activeScreens": [
+          "alladin"
+        ],
+        "primary": "alladin",
+        "ariaCurrent": "alladin",
+        "current": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "immediate": {
+        "at": 631.3999999761581,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "afterNextRAF": {
+        "at": 648.3999999761581,
+        "activeId": "",
+        "activeTag": "H2",
+        "activeText": "Alladin",
+        "focusInside": true,
+        "activeInert": false,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      "events": [
+        {
+          "kind": "focusin",
+          "at": 618.3999999761581,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "click-capture",
+          "at": 619,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "research-forex",
+            "requested": "research-forex",
+            "source": "canonical",
+            "primary": "research",
+            "child": "research-forex",
+            "screen": "research",
+            "localView": {
+              "surface": "research",
+              "view": "nocoda"
+            }
+          }
+        },
+        {
+          "kind": "navigation-RAF-scheduled",
+          "at": 625.3999999761581,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "click-bubble",
+          "at": 627.5,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-before",
+          "at": 632,
+          "activeId": "",
+          "activeTag": "BUTTON",
+          "activeText": "06Alladin",
+          "focusInside": false,
+          "activeInert": false,
+          "menu": "open",
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "focusin",
+          "at": 639,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        },
+        {
+          "kind": "navigation-RAF-after",
+          "at": 639,
+          "activeId": "",
+          "activeTag": "H2",
+          "activeText": "Alladin",
+          "focusInside": true,
+          "activeInert": false,
+          "menu": null,
+          "route": {
+            "canonical": "alladin",
+            "requested": "alladin",
+            "source": "canonical",
+            "primary": "alladin",
+            "child": null,
+            "screen": "alladin",
+            "localView": null
+          }
+        }
+      ],
+      "observed": {
+        "pageerror": [],
+        "console": []
+      }
+    }
+  ],
+  "baselineComparison": {
+    "src/js/40-app/01-navigation.js": {
+      "initialSha256": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+      "currentSha256": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+      "same": true
+    },
+    "tools/navigation_ia_test.py": {
+      "headSha256": "5b549563c7ec56e0bc307dce7742a9e7ba30a9f0089c9d4313500554d9899fd4",
+      "currentSha256": "4aa1f271ba0c527b51a21e023f3656ade9e2555c91d7e6158325ebffeba7ace8",
+      "same": false
+    },
+    "build-id.js": {
+      "initialSha256": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+      "currentSha256": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18",
+      "same": false
+    },
+    "index.html": {
+      "initialSha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+      "currentSha256": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+      "same": true
+    },
+    "src/js/40-app/11-operational-shell.js": {
+      "headSha256": "8e9cbd01549210458b7d8c1c1214d9907c3ee65aef6017a27c489c5c1018d5ee",
+      "currentSha256": "8e9cbd01549210458b7d8c1c1214d9907c3ee65aef6017a27c489c5c1018d5ee",
+      "same": true
+    }
+  },
+  "counterproof": {
+    "mutation": "only in isolated runtime: shellFocusCurrentScreen no-op; native RAF/click/nav unchanged",
+    "state": {
+      "screen": "alladin",
+      "activeScreens": [
+        "alladin"
+      ],
+      "primary": "alladin",
+      "ariaCurrent": "alladin",
+      "current": {
+        "canonical": "alladin",
+        "requested": "alladin",
+        "source": "canonical",
+        "primary": "alladin",
+        "child": null,
+        "screen": "alladin",
+        "localView": null
+      }
+    },
+    "afterNextRAF": {
+      "at": 640.7000000476837,
+      "activeId": "",
+      "activeTag": "BUTTON",
+      "activeText": "06Alladin",
+      "focusInside": false,
+      "activeInert": true,
+      "menu": null,
+      "route": {
+        "canonical": "alladin",
+        "requested": "alladin",
+        "source": "canonical",
+        "primary": "alladin",
+        "child": null,
+        "screen": "alladin",
+        "localView": null
+      }
+    },
+    "sameFocusCriterionRejected": true,
+    "events": [
+      {
+        "kind": "fault-missing-destination-focus",
+        "at": 378.60000002384186,
+        "activeId": "researchNavTrigger",
+        "activeTag": "BUTTON",
+        "activeText": "02Research",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "research-forex",
+          "requested": "research-forex",
+          "source": "canonical",
+          "primary": "research",
+          "child": "research-forex",
+          "screen": "research",
+          "localView": {
+            "surface": "research",
+            "view": "nocoda"
+          }
+        }
+      },
+      {
+        "kind": "focusin",
+        "at": 620.6000000238419,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "research-forex",
+          "requested": "research-forex",
+          "source": "canonical",
+          "primary": "research",
+          "child": "research-forex",
+          "screen": "research",
+          "localView": {
+            "surface": "research",
+            "view": "nocoda"
+          }
+        }
+      },
+      {
+        "kind": "click-capture",
+        "at": 621.3000000715256,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "research-forex",
+          "requested": "research-forex",
+          "source": "canonical",
+          "primary": "research",
+          "child": "research-forex",
+          "screen": "research",
+          "localView": {
+            "surface": "research",
+            "view": "nocoda"
+          }
+        }
+      },
+      {
+        "kind": "navigation-RAF-scheduled",
+        "at": 627.4000000953674,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      {
+        "kind": "click-bubble",
+        "at": 629.4000000953674,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      {
+        "kind": "navigation-RAF-before",
+        "at": 633.4000000953674,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": false,
+        "menu": "open",
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      {
+        "kind": "fault-missing-destination-focus",
+        "at": 639.9000000953674,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": true,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      },
+      {
+        "kind": "navigation-RAF-after",
+        "at": 639.9000000953674,
+        "activeId": "",
+        "activeTag": "BUTTON",
+        "activeText": "06Alladin",
+        "focusInside": false,
+        "activeInert": true,
+        "menu": null,
+        "route": {
+          "canonical": "alladin",
+          "requested": "alladin",
+          "source": "canonical",
+          "primary": "alladin",
+          "child": null,
+          "screen": "alladin",
+          "localView": null
+        }
+      }
+    ],
+    "observed": {
+      "pageerror": [],
+      "console": []
+    }
+  },
+  "source_after": {
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/40-app/11-operational-shell.js": "8e9cbd01549210458b7d8c1c1214d9907c3ee65aef6017a27c489c5c1018d5ee",
+    "tools/navigation_ia_test.py": "4aa1f271ba0c527b51a21e023f3656ade9e2555c91d7e6158325ebffeba7ace8",
+    "build-id.js": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748"
+  },
+  "source_unchanged": true,
+  "initialPendingZipComparison": {
+    "src/js/40-app/01-navigation.js": {
+      "initialSha256": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+      "currentSha256": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+      "same": true
+    },
+    "tools/navigation_ia_test.py": {
+      "initialSha256": "4aa1f271ba0c527b51a21e023f3656ade9e2555c91d7e6158325ebffeba7ace8",
+      "currentSha256": "4aa1f271ba0c527b51a21e023f3656ade9e2555c91d7e6158325ebffeba7ace8",
+      "same": true
+    },
+    "build-id.js": {
+      "initialSha256": "c76cdd47bee4f76974ceb4040659ecf27d1a7d914d8245cb6857dbbb0366ed25",
+      "currentSha256": "b7ddb6a2a3ad74a508663b7b6181b51e88abfc1d4426bd951c9d4be7136c1e18",
+      "same": false
+    }
+  },
+  "initialBuildId": "1b695b809fe80c26",
+  "currentBuildId": "2c4a3d9f65b3c664"
+}

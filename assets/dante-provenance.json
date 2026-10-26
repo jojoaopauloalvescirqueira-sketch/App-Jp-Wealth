@@ -1,0 +1,24 @@
+{
+  "mascot": "Dante",
+  "supplied_by": "proprietário do JP Wealth, conversa24/10/2026",
+  "original_source": "IMG_2561.jpg; ilustração inspirada no cachorro do proprietário",
+  "original_sha256": "db7b8aa062b9b25a135b1598743d9343c2bda8a0129df320d76c68449eacd2c7",
+  "derivative": {
+    "tool": "built-in image_gen",
+    "operation": "background-extraction, identity-preserve",
+    "generated_file": "exec-646a6351-a5c3-44e8-81d9-1b3d2c2a5b32.png",
+    "technical_normalization": "sips -Z640, PNG alpha preserved",
+    "limitations": "derivative regenerated from original; human visual approval pending",
+    "prompt": "Remove only beige background and ground shadow. Preserve exact pose, anatomy, expression, black-and-cream fur, ears, glasses, brown eye image-left, blue eye image-right, JP Wealth shirt, tablet, watch, trousers, shoes and tail. No redesign, mirroring or added elements."
+  },
+  "assets": {
+    "assets/dante-original.jpg": {
+      "sha256": "db7b8aa062b9b25a135b1598743d9343c2bda8a0129df320d76c68449eacd2c7",
+      "bytes": 110066
+    },
+    "assets/dante-guide.png": {
+      "sha256": "42269f1a0ad8e40c494de63c71d734d7d205b9d875386f233cf67dfca21110a2",
+      "bytes": 258896
+    }
+  }
+}

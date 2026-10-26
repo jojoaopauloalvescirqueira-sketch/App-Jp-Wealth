@@ -137,9 +137,14 @@ def assert_registry(page):
     assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
     tools = page.evaluate("() => window.JPWNavigation.children('tools')")
     assert [(child["id"], child["localView"]["view"]) for child in tools] == [
-        ("tools-calendar", "calendar"), ("tools-market-hours", "market-hours"), ("tools-nocuda", "nocuda"),
+        ("tools-calendar", "calendar"),
         ("tools-leverage", "leverage"), ("tools-normative", "normative"),
         ("tools-minigames", "minigames")], tools
+    # Approved combined product entry keeps old market targets compatible while
+    # marking the single calendar child current and preserving requested intent.
+    market_compat = page.evaluate("() => JPWNavigation.resolve('tools-market-hours')")
+    assert market_compat['accepted'] and market_compat['requested']=='tools-market-hours', market_compat
+    assert market_compat['canonical']=='tools-calendar' and market_compat['child']=='tools-calendar' and market_compat['localView']=={'surface':'tools','view':'market-hours'}, market_compat
     assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []
     assert page.evaluate("() => window.JPWNavigation.children('inexistente')") == []
     resolved = page.evaluate("""targets => targets.map(target => ({
@@ -506,6 +511,8 @@ def assert_keyboard_and_mobile(browser, url, desktop_page):
         page.click('#nav > .tab[data-route="alladin"]')
         state = active_state(page)
         assert state["screen"] == "alladin" and state["primary"] == "alladin", state
+        # shellNavigationApplied finishes accepted navigation in the next frame.
+        page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => resolve()))")
         geometry = page.evaluate("""() => ({
           doc: document.documentElement.scrollWidth,
           win: window.innerWidth,

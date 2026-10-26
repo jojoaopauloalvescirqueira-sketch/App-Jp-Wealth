@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "checks": [
+    "city Enter and calendar transition retain the same focused button",
+    "calendar transition hiding focused row transfers focus to search and preserves phase filter/selection",
+    "calendar transition restores focused equivalent source link without moving focus to another control",
+    "catalog error stays stable; semantic keyboard retry recovers once; healthy mount idempotent",
+    "renderer error preserves table/selection; explicit keyboard retry recovers once",
+    "renderer retry with selected row excluded by search focuses visible search without changing state",
+    "renderer retry with selected row excluded by phase filter focuses visible search without changing state",
+    "deactivate aborts renderer consumer; ignores stale return; activation retries cancelled work",
+    "hidden exit aborts catalog; stale return never mounts; reentry recovers",
+    "dispose aborts catalog and stays terminal",
+    "dispose aborts renderer and stays terminal"
+  ],
+  "errors": [],
+  "screenshots": [],
+  "failures": [],
+  "browser": "148.0.7778.96"
+}

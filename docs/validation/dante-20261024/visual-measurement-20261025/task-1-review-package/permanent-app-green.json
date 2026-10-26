@@ -1,0 +1,331 @@
+{
+  "classification": "PASS",
+  "source_sha256": {
+    "ui_visual_measurement_test.py": "41f9d9be12248e7741cff20b8edc4d6beb8b0cd8674bc39fc175f43630d1b64e",
+    "ui_visual_quality_test.py": "f5cee3d6442bbb95901afed953ca9ea504c6c30873fd6e0751a274c8b3c5c69c"
+  },
+  "browser": "155.0.8059.86",
+  "measurements": {
+    "budget": {
+      "rpc_per_control": {
+        "0": 4,
+        "1": 4,
+        "2": 4
+      },
+      "calls": {
+        "0": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "1": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "2": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ]
+      },
+      "measured_controls": 3,
+      "excluded": "scope/setup counts, reading order, selectors and inputs"
+    },
+    "equivalence": {
+      "controls": 3,
+      "original_calls": {
+        "0": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "1": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "2": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ]
+      },
+      "batched_calls": {
+        "0": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "1": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "2": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ]
+      },
+      "geometry_and_decisions_equal": true
+    },
+    "planning_mainframe_equivalence": {
+      "controls": 12,
+      "original_calls": {
+        "0": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "1": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "2": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "3": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "4": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "5": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "6": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "7": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "8": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "9": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "10": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ],
+        "11": [
+          "evaluate",
+          "double-RAF",
+          "count",
+          "evaluate",
+          "count",
+          "evaluate",
+          "bounding_box",
+          "evaluate"
+        ]
+      },
+      "batched_calls": {
+        "0": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "1": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "2": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "3": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "4": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "5": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "6": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "7": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "8": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "9": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "10": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ],
+        "11": [
+          "evaluate",
+          "double-RAF",
+          "evaluate",
+          "count"
+        ]
+      },
+      "geometry_and_decisions_equal": true
+    },
+    "counterproofs": {
+      "text5px": {
+        "original_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': {'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60}, 'textRects': [{'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})",
+        "batched_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': {'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60}, 'textRects': [{'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})"
+      },
+      "svg5px": {
+        "original_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 82, 'bottom': 126, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': {'left': 127, 'right': 139, 'top': 98, 'bottom': 110}, 'svg': 1, 'label': 'Icon', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})",
+        "batched_rejection": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 82, 'bottom': 126, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': {'left': 127, 'right': 139, 'top': 98, 'bottom': 110}, 'svg': 1, 'label': 'Icon', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})"
+      },
+      "close20px": {
+        "original_rejection": "('44px close', {'outer': {'left': 38, 'right': 58, 'top': 134, 'bottom': 154, 'width': 20, 'height': 20}, 'text': None, 'textRects': [], 'ink': {'left': 42, 'right': 54, 'top': 138, 'bottom': 150}, 'svg': 1, 'label': 'Close', 'textAlign': 'center', 'declaredLeftInset': 0})",
+        "batched_rejection": "('44px close', {'outer': {'left': 38, 'right': 58, 'top': 134, 'bottom': 154, 'width': 20, 'height': 20}, 'text': None, 'textRects': [], 'ink': {'left': 42, 'right': 54, 'top': 138, 'bottom': 150}, 'svg': 1, 'label': 'Close', 'textAlign': 'center', 'declaredLeftInset': 0})"
+      },
+      "ancestor_clipping": {
+        "original_rejection": "('control cut by its owner', {'outer': {'left': 30, 'right': 210, 'top': 38, 'bottom': 82, 'width': 180, 'height': 44}, 'text': {'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68}, 'textRects': [{'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 0.0, 'y': 0.0}}, ['horizontal:'])",
+        "batched_rejection": "('control cut by its owner', {'outer': {'left': 30, 'right': 210, 'top': 38, 'bottom': 82, 'width': 180, 'height': 44}, 'text': {'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68}, 'textRects': [{'left': 75.640625, 'right': 164.359375, 'top': 52, 'bottom': 68, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 0.0, 'y': 0.0}}, ['horizontal:'])"
+      },
+      "missing_content": {
+        "original_rejection": "('missing measurable text', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': None, 'svg': 0, 'label': '', 'textAlign': 'center', 'declaredLeftInset': 0})",
+        "batched_rejection": "('missing measurable text', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': None, 'textRects': [], 'ink': None, 'svg': 0, 'label': '', 'textAlign': 'center', 'declaredLeftInset': 0})"
+      },
+      "zero_locator": "('exactly one control required', 0)",
+      "zero_locator_with_snapshot": "('exactly one control required', 0)",
+      "multiple_locators": "('exactly one control required', 3)",
+      "multiple_locators_with_snapshot": "('exactly one control required', 3)",
+      "missing_scope": "required open dialog missing",
+      "missing_buttons": "dialog has no measured controls",
+      "fresh_dom": "('inner content center exceeds2CSSpx', {'outer': {'left': 38, 'right': 218, 'top': 30, 'bottom': 74, 'width': 180, 'height': 44}, 'text': {'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60}, 'textRects': [{'left': 88.640625, 'right': 177.359375, 'top': 44, 'bottom': 60, 'width': 88.71875, 'height': 16}], 'ink': None, 'svg': 0, 'label': 'Measured text', 'textAlign': 'center', 'declaredLeftInset': 0, 'delta': {'x': 5.0, 'y': 0.0}})",
+      "stale_snapshot": "wrong/stale immediate real DOM snapshot",
+      "wrong_control_snapshot": "wrong/stale immediate real DOM snapshot"
+    },
+    "fresh_dom_text_shift_css_px": 5.0
+  },
+  "writes": {
+    "writer_calls": [],
+    "command_calls": []
+  }
+}

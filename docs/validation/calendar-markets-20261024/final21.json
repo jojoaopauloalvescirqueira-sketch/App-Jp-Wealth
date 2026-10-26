@@ -1,0 +1,360 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "CM-HOST-01",
+      "case": "single named calendar and markets submenu"
+    },
+    {
+      "id": "CM-HOST-02",
+      "case": "canonical legacy destination, heading, quicklink and sibling panels"
+    },
+    {
+      "id": "CM-HOST-03",
+      "case": "normal calendar entry exposes collapsed market overview"
+    },
+    {
+      "id": "CM-API-01",
+      "case": "collapsed mount and public expansion API"
+    },
+    {
+      "id": "CM-SUM-01",
+      "case": "catalog ordered three-open and three-upcoming preview with total and unknown counts"
+    },
+    {
+      "id": "CM-SUM-02",
+      "case": "inclusive 24h horizon, uncertain window and unknown exclusions with horizon entry"
+    },
+    {
+      "id": "CM-EXP-01",
+      "case": "summary click expands/selects and reopening retains nodes filters selection and scroll"
+    },
+    {
+      "id": "CM-LIFE-01",
+      "case": "one adaptive minute scheduler while collapsed, seconds full, and inactive pause"
+    },
+    {
+      "id": "CM-LIFE-02",
+      "case": "precise uncertainty bounds and earliest/latest window boundaries"
+    },
+    {
+      "id": "CM-FAIL-01",
+      "case": "collapsed catalog failure stays visible and explicit retry preserves collapsed mode"
+    },
+    {
+      "id": "CM-FAIL-02",
+      "case": "snapshot failure marks last facts stale and explicit retry recovers without false zero"
+    },
+    {
+      "id": "CM-P2-01",
+      "case": "pending catalog retry must not steal focus after user moves to an external control"
+    },
+    {
+      "id": "CM-P2-02",
+      "case": "expanded mobile snapshot failure and recovery remain visible with the map collapsed"
+    },
+    {
+      "id": "CM-P2-03",
+      "case": "cold legacy alias anchors its heading after lazy full DOM grows on mobile and desktop"
+    },
+    {
+      "id": "CM-P2-04",
+      "case": "preview transitions preserve focus on surviving nodes and recover focus when a row is removed"
+    },
+    {
+      "id": "CM-LIFE-04",
+      "case": "viewport gates renderer and late resolution after collapse cannot create or steal focus"
+    },
+    {
+      "id": "CM-LIFE-03",
+      "case": "late catalog after disposal cannot resurrect summary or full view"
+    },
+    {
+      "id": "CM-UI-01",
+      "case": "320 to 1440 reflow, themes, 44px controls and native expansion keyboard"
+    },
+    {
+      "id": "CM-UI-02",
+      "case": "internal text alignment within two CSS pixels and preview content without overlap"
+    },
+    {
+      "id": "CM-UI-03",
+      "case": "native engine zoom200 across four layouts two themes summary exploration selection and focus"
+    },
+    {
+      "id": "CM-HOST-04",
+      "case": "calendar selected date and agenda nodes remain independent of current market time"
+    }
+  ],
+  "failures": [],
+  "errors": [],
+  "oracle": "docs/superpowers/plans/2026-10-24-calendar-markets.md",
+  "mutant": null,
+  "sources": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/20-ui/31-tools-services.js": "b0580faad139788c15f6afbdaf305705f7dbe26f7338405fd3732162502683a3",
+    "tools/calendar_markets_test.py": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+    "docs/superpowers/plans/2026-10-24-calendar-markets.md": "d52674351f3292d93b9fe12c46eba3eea92052e6995c2de572f0df6eb8b49d55"
+  },
+  "nativeZoomEnvironment": {
+    "headless": true,
+    "noViewportOverride": true,
+    "preferenceZoom": 2,
+    "executable": "/Users/joaoalvescirqueira/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "window": [
+      1440,
+      1000
+    ]
+  },
+  "nativeZoomCases": [
+    {
+      "layout": "sidebar",
+      "theme": "light",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "sidebar",
+      "theme": "dark",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "topbar",
+      "theme": "light",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "topbar",
+      "theme": "dark",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "submenu",
+      "theme": "light",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "submenu",
+      "theme": "dark",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "glass",
+      "theme": "light",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    },
+    {
+      "layout": "glass",
+      "theme": "dark",
+      "zoom": {
+        "outer": 1440,
+        "inner": 720,
+        "css": "1",
+        "dpr": 2
+      },
+      "summary": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "exploration": {
+        "scroll": 680,
+        "client": 680,
+        "left": 20,
+        "right": 700,
+        "viewport": 720
+      },
+      "states": [
+        "summary",
+        "full"
+      ],
+      "selectionAndFocus": "PASS"
+    }
+  ],
+  "inputsAfter": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "index.html": "a2f88529437a07211057d7e7531ae2810320cb9ed8abbca7fbeaf980aed1d748",
+    "src/js/40-app/01-navigation.js": "01101642d98fdd1ac18299153eaf6de5bcda4b5316aa1322a957967b3ede186e",
+    "src/js/20-ui/31-tools-services.js": "b0580faad139788c15f6afbdaf305705f7dbe26f7338405fd3732162502683a3",
+    "tools/calendar_markets_test.py": "957319a3159232db4c5a01af5f6422612e26e99198ccd1d937ba2cd87d3f4bb5",
+    "docs/superpowers/plans/2026-10-24-calendar-markets.md": "d52674351f3292d93b9fe12c46eba3eea92052e6995c2de572f0df6eb8b49d55"
+  },
+  "stableInputs": true
+}

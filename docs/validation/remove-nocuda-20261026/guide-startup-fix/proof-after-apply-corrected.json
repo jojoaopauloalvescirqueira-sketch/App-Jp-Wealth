@@ -1,0 +1,60 @@
+{
+  "actualScriptCount": 122,
+  "expectedScriptCount": 122,
+  "htmlManifestEqual": true,
+  "baseGuideSHA256": "332ffc86056fd88dc7e758473c76b902c4b4d4ab9e308744fa726c67e3874978",
+  "candidateGuideSHA256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6",
+  "results": [
+    {
+      "version": "baseline",
+      "case": "startup-source-manifest",
+      "result": "PRODUCT_FAIL",
+      "frame": {
+        "file": "/private/tmp/jpw-remove-nocuda-20261026/guide-startup-fix/learning_guide_test.before.py",
+        "line": 779,
+        "function": "assert_startup_scripts",
+        "source": "assert len(original)==101,original"
+      }
+    },
+    {
+      "version": "baseline",
+      "case": "offline-sw-four-guide-modules",
+      "result": "PRODUCT_FAIL",
+      "frame": {
+        "file": "/private/tmp/jpw-remove-nocuda-20261026/guide-startup-fix/learning_guide_test.before.py",
+        "line": 779,
+        "function": "assert_startup_scripts",
+        "source": "assert len(original)==101,original"
+      }
+    },
+    {
+      "version": "candidate",
+      "case": "startup-source-manifest",
+      "result": "PASS"
+    },
+    {
+      "version": "candidate",
+      "case": "offline-sw-four-guide-modules",
+      "result": "PASS"
+    }
+  ],
+  "counterproofsRejected": [
+    "calendar-collective-omission",
+    "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+    "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+    "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+    "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+    "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+    "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+    "legacy-omission",
+    "legacy-duplicate",
+    "legacy-order",
+    "retired-nocuda-reintroduced",
+    "retired-nocuda-substituted-for-consumer"
+  ],
+  "historicalSHA256Oracle": "40a619eac3b449f7e0704d8aa2be46f38280902d0340f961e898057d22b36c82",
+  "caseIdsUnchanged": 66
+}

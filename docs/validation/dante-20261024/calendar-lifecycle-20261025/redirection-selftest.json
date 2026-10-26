@@ -1,0 +1,42 @@
+[
+  {
+    "case": "valid",
+    "result": "PASS",
+    "evidence": {
+      "logical": "/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-output-redirection-proof-8bnazj49/valid/outputs/app-efficiency-full-20261025T030000123456",
+      "resolved": "/private/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-output-redirection-proof-8bnazj49/valid/scratch",
+      "priorInode": 16851859,
+      "emptyOwnedFreshDirectoryOnly": true
+    }
+  },
+  {
+    "case": "nonempty",
+    "result": "PASS",
+    "invalidInputRejected": true
+  },
+  {
+    "case": "existing",
+    "result": "PASS",
+    "invalidInputRejected": true
+  },
+  {
+    "case": "symlink",
+    "result": "PASS",
+    "invalidInputRejected": true
+  },
+  {
+    "case": "wrong-name",
+    "result": "PASS",
+    "invalidInputRejected": true
+  },
+  {
+    "case": "multiple",
+    "result": "PASS",
+    "invalidInputRejected": true
+  },
+  {
+    "case": "none",
+    "result": "PASS",
+    "invalidInputRejected": true
+  }
+]

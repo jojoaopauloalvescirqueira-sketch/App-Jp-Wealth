@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "checks": [
+    "literal counts, grouping, mixed known/unknown, local HH:mm and quickfilters",
+    "B3 remains selected outside filters; explicit reveal resets filters and focuses row",
+    "reference separate from review; true transition window; collapsed evidence without single-group duplication",
+    "search/caret/scroll/node identity and evidence focus survive tick and regrouping transition",
+    "nonzero list scroll survives idle tick and actual group movement with 29 synthetic venues",
+    "explicit reveal brings an offscreen selected row into the table and page viewport",
+    "mobile names first, map lazy closed, detail adjacent, clock continues and renderer singleton on reopen",
+    "resize default/explicit mobile state, desktop map right, text scaling and no overflow at 320/390/800/1280",
+    "focused mobile map toggle transfers focus to a visible control when desktop hides it",
+    "narrow mobile panel at 155 CSS px and zoom 2 contains HH:mm without local overflow",
+    "closing aborts delayed map load, ignores late resolution, reopen succeeds and dispose removes resize subscription",
+    "modal/inert, window blur, route suspension and current-time resume preserve financial state",
+    "expired catalog is unknown, zero open remains explicit and empty filter retains selected detail",
+    "catalog names/reasons are literal text without executable markup",
+    "known mixed non-open phases and extended session use explicit human labels",
+    "subminute window retains precision; singular count and next-day transition date remain honest"
+  ],
+  "failures": [],
+  "errors": [],
+  "screenshots": [
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/redesign/mobile-initial.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/redesign/mobile.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/redesign/desktop.png",
+    "/private/tmp/jpw-calendar-markets-20261024/focals-current/redesign/narrow-zoom.png"
+  ],
+  "selection": "all",
+  "hashes": {
+    "src/js/40-app/31-market-hours/01-sessions.js": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27",
+    "src/js/40-app/31-market-hours/03-view.js": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760",
+    "src/js/40-app/31-market-hours/04-controller.js": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37",
+    "src/styles/app.css": "43011b2e7b6aad343ce40480192b13ed5fce22edb29fded2195197aab3f43fef",
+    "tools/market_hours_redesign_test.py": "1a61a56234cd2616fc209372d6302be6dcea755bd060b0226c8949a4d2bbd13d"
+  }
+}

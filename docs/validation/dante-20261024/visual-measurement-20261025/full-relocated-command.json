@@ -1,0 +1,42 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "-u",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "/private/tmp/jpw-visual-measurement-20261025/full-relocated.json"
+  ],
+  "mapping": {
+    "logical": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261025T170018577087",
+    "resolved": "/private/tmp/jpw-visual-measurement-20261025/full-relocated-evidence",
+    "priorInode": 17316534,
+    "emptyOwnedFreshDirectoryOnly": true,
+    "stoppedGroupMembers": [
+      [
+        "8770",
+        "8768",
+        "8770",
+        "Ts",
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3 -u tools/quality_gate.py --tier full --artifact /private/tmp/jpw-visual-measurement-20261025/full-relocated.json"
+      ],
+      [
+        "8771",
+        "8770",
+        "8770",
+        "Z",
+        "<defunct>"
+      ]
+    ],
+    "pauseSeconds": 0.411553
+  },
+  "exit": 0,
+  "seconds": 2789.102,
+  "frozenInputs": 681,
+  "sourceUnchanged": true,
+  "preflightVerified": true,
+  "sourceEdits": false,
+  "timeoutEdits": false,
+  "criteriaEdits": false
+}

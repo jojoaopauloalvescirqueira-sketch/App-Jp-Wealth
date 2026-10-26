@@ -1,0 +1,11 @@
+{
+  "clock": "2026-10-23T15:00:00Z, synthetic isolated context",
+  "captures": [
+    "summary-1440-light.png",
+    "summary-1440-dark.png",
+    "summary-390-light.png",
+    "summary-390-dark.png",
+    "exploration-desktop.png"
+  ],
+  "pageerrors": []
+}

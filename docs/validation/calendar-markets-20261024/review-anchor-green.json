@@ -1,0 +1,47 @@
+[
+  {
+    "scenario": "settled-cold",
+    "before": {
+      "requested": "tools-market-hours",
+      "focused": "marketHoursTitle",
+      "top": 452.734375,
+      "scrollY": 195
+    },
+    "after": {
+      "requested": "tools-market-hours",
+      "focused": "marketHoursTitle",
+      "top": 109.671875,
+      "scrollY": 546
+    }
+  },
+  {
+    "scenario": "moved-focus",
+    "before": {
+      "requested": "tools-market-hours",
+      "focused": "calendarMarketsJump",
+      "top": 647.734375,
+      "scrollY": 0
+    },
+    "after": {
+      "requested": "tools-market-hours",
+      "focused": "calendarMarketsJump",
+      "top": 655.671875,
+      "scrollY": 0
+    }
+  },
+  {
+    "scenario": "new-calendar",
+    "before": {
+      "requested": "tools-calendar",
+      "focused": "marketHoursTitle",
+      "top": 636.734375,
+      "scrollY": 11
+    },
+    "after": {
+      "requested": "tools-calendar",
+      "focused": "marketHoursTitle",
+      "top": 655.671875,
+      "scrollY": 0
+    }
+  }
+]

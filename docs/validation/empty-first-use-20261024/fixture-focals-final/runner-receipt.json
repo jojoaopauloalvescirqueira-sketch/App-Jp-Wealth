@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/backup_reliability_test.py",
+    "--artifact",
+    "/private/tmp/jpw-empty-first-use-20261024/fixture-focals-final/backup-reliability.json"
+  ],
+  "exit_code": 0,
+  "seconds": 41.29,
+  "build": "const JP_WEALTH_BUILD_ID = '3803d0914e547f39';",
+  "log": "/private/tmp/jpw-empty-first-use-20261024/fixture-focals-final/backup-reliability.log",
+  "executed_at": "2026-10-24T15:04:26.069147-03:00",
+  "summary": {
+    "PASS": 26,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0
+  },
+  "sources_unchanged": true,
+  "result": "PASS"
+}

@@ -1,0 +1,57 @@
+{
+  "mode": "read-only; no network, extraction or installation",
+  "lockSHA256": "e124e18307ec89d35a8f0dbe76353ba93129fd966bd1a5afc7962adeb940f39a",
+  "pins": {
+    "threeVersion": "0.186.1",
+    "esbuildVersion": "0.25.12",
+    "esbuildBinarySHA256": "3e030ee2aa86ad3c33e5e95ae0e53bb03de40e0da35c9b1180a67de4a497cae5",
+    "packages": {
+      "three": {
+        "version": "0.186.1",
+        "url": "https://registry.npmjs.org/three/-/three-0.186.1.tgz",
+        "integrity": "sha512-blFeqb49wRCSGUGj7gtpfnSGHy2lwDk94RhUmS1c/hTby70kvChbWpkJ4Pm1390LqzzvTmzgXKHPEafJwCb8jA==",
+        "archiveSHA256": "8cd068708ea44f2c73c944b1cead2ba2f0d5c15c8fc194e5700f4e4f4a033fe7"
+      },
+      "esbuild": {
+        "version": "0.25.12",
+        "url": "https://registry.npmjs.org/esbuild/-/esbuild-0.25.12.tgz",
+        "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==",
+        "archiveSHA256": "227584145829e5c4782734b3fb7b91b49c6aa12876d6cf070e6a3d9d4de543f9"
+      },
+      "@esbuild/darwin-arm64": {
+        "version": "0.25.12",
+        "url": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.25.12.tgz",
+        "integrity": "sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==",
+        "archiveSHA256": "2e0d011f852e45046ca5c107db54cfc56338f77aca49d227a063696d958451d7"
+      }
+    }
+  },
+  "paths": {
+    "/Users/joaoalvescirqueira/.npm": {
+      "exists": false,
+      "symlink": false
+    },
+    "/Users/joaoalvescirqueira/.cache/npm": {
+      "exists": false,
+      "symlink": false
+    },
+    "/Users/joaoalvescirqueira/Library/Caches/npm": {
+      "exists": false,
+      "symlink": false
+    },
+    "/private/tmp/jpw-globe-build/node_modules/three": {
+      "exists": false,
+      "symlink": false
+    },
+    "/private/tmp/jpw-globe-build/node_modules/@esbuild/darwin-arm64/bin/esbuild": {
+      "exists": false,
+      "symlink": false
+    },
+    "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/npm": {
+      "exists": false,
+      "symlink": false
+    }
+  },
+  "searchResult": "No matching tarball, npm cache, three.module.js, npm-cli.js or esbuild executable found in inspected .cache, .codex and original tool directory; bundled node/bin contains only node",
+  "fidelity": "ENVIRONMENT_ERROR already observed: original exact build tooling unavailable"
+}
