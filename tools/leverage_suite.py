@@ -53,6 +53,7 @@ HOST = (
     "stoikus_custom_panel_preview",
     "jpw_nocuda_fibo_ui_prerequisites",
     "jpw_nocuda_fibo_controller_prerequisites",
+    "stoikus_native_parsers_test", "stoikus_native_runner_test",
 )
 HOST_VARIANTS = {
     "stoikus_custom_panel_preview": ("stoikus_custom_panel_preview_runner.py",),

@@ -1,0 +1,4 @@
+JQ	2	15:06:50.087	JPW_NoCuda_Store_Tests (EURUSD,H1)	database error, immutable revision
+NN	2	15:06:50.089	JPW_NoCuda_Store_Tests (EURUSD,H1)	database error, immutable revision
+IG	2	15:06:50.204	JPW_NoCuda_Store_Tests (EURUSD,H1)	database error, database is locked
+MN	0	15:06:50.224	JPW_NoCuda_Store_Tests (EURUSD,H1)	JPW_NoCuda_Store_Tests PASS: 36 asserts, 0 failures

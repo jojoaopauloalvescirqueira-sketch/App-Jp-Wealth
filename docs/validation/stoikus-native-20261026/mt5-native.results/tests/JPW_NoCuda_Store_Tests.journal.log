@@ -1,0 +1,12 @@
+OE	0	14:43:26.776	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T172957Z\work\JPW_NoCuda_Store_Tests.ini"
+KK	0	14:43:26.898	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+QP	0	14:43:26.899	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+FL	0	14:43:26.899	Terminal	C:\MT5Lab\runs\20261026T172957Z\terminal
+GR	0	14:43:26.899	Terminal	launched with C:\MT5Lab\runs\20261026T172957Z\work\JPW_NoCuda_Store_Tests.ini
+FE	0	14:43:26.903	MCP	started on 127.0.0.1:22346
+JS	0	14:43:39.504	Scripts	script JPW_NoCuda_Store_Tests (EURUSD,H1) loaded successfully
+DG	0	14:43:40.718	Scripts	script JPW_NoCuda_Store_Tests (EURUSD,H1) closes terminal with code 1
+GF	0	14:43:40.721	Scripts	script JPW_NoCuda_Store_Tests (EURUSD,H1) removed
+JN	0	14:43:43.601	Terminal	exit with code 1
+MD	0	14:43:45.388	Terminal	stopped with 0
+KG	0	14:43:45.579	Terminal	shutdown with 1

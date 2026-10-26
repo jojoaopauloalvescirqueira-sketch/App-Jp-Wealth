@@ -1,0 +1,12 @@
+PM	0	15:05:50.850	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T175454Z\work\JPW_NoCuda_Fibo_Tests.ini"
+QR	0	15:05:51.103	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+QN	0	15:05:51.104	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+RR	0	15:05:51.105	Terminal	C:\MT5Lab\runs\20261026T175454Z\terminal
+DD	0	15:05:51.105	Terminal	launched with C:\MT5Lab\runs\20261026T175454Z\work\JPW_NoCuda_Fibo_Tests.ini
+EN	0	15:05:51.110	MCP	started on 127.0.0.1:22346
+NJ	0	15:06:05.043	Scripts	script JPW_NoCuda_Fibo_Tests (EURUSD,H1) loaded successfully
+DF	0	15:06:05.518	Scripts	script JPW_NoCuda_Fibo_Tests (EURUSD,H1) closes terminal with code 1
+IO	0	15:06:05.521	Scripts	script JPW_NoCuda_Fibo_Tests (EURUSD,H1) removed
+HG	0	15:06:09.229	Terminal	exit with code 1
+DM	0	15:06:10.068	Terminal	stopped with 0
+KH	0	15:06:10.238	Terminal	shutdown with 1

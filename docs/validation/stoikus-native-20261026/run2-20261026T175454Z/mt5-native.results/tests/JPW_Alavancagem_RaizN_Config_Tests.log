@@ -1,0 +1,5 @@
+RK	0	15:03:34.999	JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1)	FAIL: synthetic legacy scenario confirmed
+KK	0	15:03:35.000	JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1)	FAIL: capture real legacy-format bytes
+OE	0	15:03:35.010	JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1)	FAIL: both legacy scenario slots and active pointer remain byte-identical
+KF	0	15:03:35.011	JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1)	FAIL: advanced scenario still loads its original N
+QJ	0	15:03:35.012	JPW_Alavancagem_RaizN_Config_Tests (EURUSD,H1)	JPW_Alavancagem_RaizN_Config_Tests FAIL: 4 of 72 asserts

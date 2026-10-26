@@ -1,0 +1,12 @@
+LR	0	14:44:36.461	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T172957Z\work\JPW_Stoikus_Risk_Tests.ini"
+HP	0	14:44:36.622	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+FO	0	14:44:36.623	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+KQ	0	14:44:36.625	Terminal	C:\MT5Lab\runs\20261026T172957Z\terminal
+RK	0	14:44:36.636	Terminal	launched with C:\MT5Lab\runs\20261026T172957Z\work\JPW_Stoikus_Risk_Tests.ini
+EH	0	14:44:36.643	MCP	started on 127.0.0.1:22346
+FD	0	14:44:48.020	Scripts	script JPW_Stoikus_Risk_Tests (EURUSD,H1) loaded successfully
+DJ	0	14:44:48.193	Scripts	script JPW_Stoikus_Risk_Tests (EURUSD,H1) closes terminal with code 557057
+FP	0	14:44:48.194	Scripts	script JPW_Stoikus_Risk_Tests (EURUSD,H1) removed
+PQ	0	14:44:49.831	Terminal	exit with code 557057
+CP	0	14:44:51.355	Terminal	stopped with 0
+RG	0	14:44:51.516	Terminal	shutdown with 557057

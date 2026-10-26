@@ -1,0 +1,14 @@
+LS	0	15:01:23.427	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: coalesced durable gap
+RI	0	15:01:23.433	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: read-only open
+FE	0	15:01:23.434	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: coalesce row count
+HN	0	15:01:23.434	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: coalesce count
+GS	0	15:01:23.434	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: exclusive lock no wait
+IG	0	15:01:23.434	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: summary reports confirmed synthetic coverage gap
+JL	0	15:01:23.435	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: preview validated rows
+IK	0	15:01:23.435	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: exact preview export readback
+PF	0	15:01:23.436	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: arbitrary export refused
+RF	0	15:01:23.436	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: writer reopen
+PN	0	15:01:23.436	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: synthetic corruption injected
+GR	0	15:01:23.436	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: corruption refused
+PL	0	15:01:23.437	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	DIAGNOSTICS FAIL: summary refuses corrupted synthetic record
+NJ	0	15:01:23.437	JPW_Alavancagem_Diagnostics_Tests (EURUSD,H1)	JPW_Alavancagem_Diagnostics_Tests FAIL: 5 passed; 13 failed; synthetic folder: JPWealth\Alavancagem\Diagnostics\Synthetic\test_14751859\

@@ -1,0 +1,12 @@
+HK	0	14:37:19.964	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T172957Z\work\JPW_Alavancagem_Genesis_Store_Tests.ini"
+DD	0	14:37:20.177	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+LS	0	14:37:20.179	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 0 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+FM	0	14:37:20.180	Terminal	C:\MT5Lab\runs\20261026T172957Z\terminal
+DH	0	14:37:20.180	Terminal	launched with C:\MT5Lab\runs\20261026T172957Z\work\JPW_Alavancagem_Genesis_Store_Tests.ini
+EF	0	14:37:20.185	MCP	started on 127.0.0.1:22346
+CQ	0	14:37:30.784	Scripts	script JPW_Alavancagem_Genesis_Store_Tests (EURUSD,H1) loaded successfully
+GM	0	14:37:31.741	Scripts	script JPW_Alavancagem_Genesis_Store_Tests (EURUSD,H1) closes terminal with code 0
+RF	0	14:37:31.742	Scripts	script JPW_Alavancagem_Genesis_Store_Tests (EURUSD,H1) removed
+EH	0	14:37:33.946	Terminal	exit with code 0
+LI	0	14:37:35.239	Terminal	stopped with 0
+RM	0	14:37:35.423	Terminal	shutdown with 0

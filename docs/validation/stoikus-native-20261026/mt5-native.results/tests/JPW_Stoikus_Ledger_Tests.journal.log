@@ -1,0 +1,12 @@
+PF	0	14:44:19.600	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T172957Z\work\JPW_Stoikus_Ledger_Tests.ini"
+EK	0	14:44:19.763	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+FQ	0	14:44:19.765	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+EL	0	14:44:19.765	Terminal	C:\MT5Lab\runs\20261026T172957Z\terminal
+HQ	0	14:44:19.765	Terminal	launched with C:\MT5Lab\runs\20261026T172957Z\work\JPW_Stoikus_Ledger_Tests.ini
+GF	0	14:44:19.770	MCP	started on 127.0.0.1:22346
+KO	0	14:44:27.545	Scripts	script JPW_Stoikus_Ledger_Tests (EURUSD,H1) loaded successfully
+EE	0	14:44:27.880	Scripts	script JPW_Stoikus_Ledger_Tests (EURUSD,H1) closes terminal with code 0
+HK	0	14:44:27.881	Scripts	script JPW_Stoikus_Ledger_Tests (EURUSD,H1) removed
+JO	0	14:44:31.310	Terminal	exit with code 0
+FE	0	14:44:32.601	Terminal	stopped with 0
+MP	0	14:44:33.293	Terminal	shutdown with 0

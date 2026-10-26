@@ -1,0 +1,12 @@
+FM	0	14:43:48.685	Startup	successfully initialized from start config "C:\MT5Lab\runs\20261026T172957Z\work\JPW_PersonalHistory_Tests.ini"
+DQ	0	14:43:48.963	Terminal	MetaTrader 5 x64 build 6286 started for MetaQuotes Ltd.
+CN	0	14:43:48.965	Terminal	Windows 11 build 26300, 4 x Apple Silicon, AVX2, 1 / 5 Gb memory, 206 / 254 Gb disk, touchable, UAC, GMT-3
+QR	0	14:43:48.966	Terminal	C:\MT5Lab\runs\20261026T172957Z\terminal
+DF	0	14:43:48.966	Terminal	launched with C:\MT5Lab\runs\20261026T172957Z\work\JPW_PersonalHistory_Tests.ini
+NH	0	14:43:48.972	MCP	started on 127.0.0.1:22346
+JH	0	14:43:59.032	Scripts	script JPW_PersonalHistory_Tests (EURUSD,H1) loaded successfully
+ME	0	14:43:59.177	Scripts	script JPW_PersonalHistory_Tests (EURUSD,H1) closes terminal with code 557057
+DL	0	14:43:59.177	Scripts	script JPW_PersonalHistory_Tests (EURUSD,H1) removed
+OQ	0	14:44:01.438	Terminal	exit with code 557057
+PQ	0	14:44:02.617	Terminal	stopped with 0
+EG	0	14:44:03.044	Terminal	shutdown with 557057

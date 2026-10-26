@@ -1,0 +1,27 @@
+LO	0	15:07:55.093	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC01 below7 none
+EH	0	15:07:55.093	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC02 exact7 none
+CP	0	15:07:55.093	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC03 raw above7 whole
+HR	0	15:07:55.093	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC04 no display epsilon
+FJ	0	15:07:55.093	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC05 newest whole not largest
+JF	0	15:07:55.093	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC05 confirmed static after5x
+EN	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC06 aggregate cancel newest
+KE	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC06 minimal prefix stop preserve older
+OG	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC07 zero budget newest pending first
+HG	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC07 zero budget next pending
+DS	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC07 then positions
+JD	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC08 durable intent begin
+NE	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC08 cancel refused proceeds position
+PM	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC09 close intent begin
+ML	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC09 refusal pause no older skip
+MF	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC10 unknown forbids all new requests
+RG	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC11 finish residual even below7
+NN	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC12 netting unavailable
+RP	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC12 FIFO conflict no fallback
+NF	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC13 unarmed begin denied
+KF	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC17 Estimated no action
+PQ	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC17 missing pending no partial aggregate
+ON	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC17 invalid equity no action
+JH	0	15:07:55.094	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-AC18 tie by identifier not ticket
+FN	0	15:07:55.096	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-FX01 planned quote120k not current110k immutable quote
+DN	0	15:07:55.096	JPW_Stoikus_Risk_Tests (EURUSD,H1)	PASS RIS-FX02 account base notional invariant
+IS	0	15:07:55.097	JPW_Stoikus_Risk_Tests (EURUSD,H1)	HOST/PURE_RESULTS 26 PASS / 0 FAIL; native compile/runtime NOT_RUN unless separately executed

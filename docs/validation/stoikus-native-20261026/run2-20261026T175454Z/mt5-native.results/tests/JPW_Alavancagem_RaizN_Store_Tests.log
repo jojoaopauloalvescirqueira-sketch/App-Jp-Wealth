@@ -1,0 +1,41 @@
+OQ	0	15:04:45.921	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: scenario codec round trip
+DF	0	15:04:45.942	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: first scenario confirmed
+QF	0	15:04:45.943	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: confirmed scenario survives read without binding
+RF	0	15:04:45.944	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: second instance cannot reconfirm against absence
+PJ	0	15:04:45.944	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: explicit synthetic position binding
+NR	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: same binding is idempotent
+RS	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: conflicting position identifier is refused
+IO	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: binding survives restart-style read
+EK	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: revision creates a new immutable receipt
+MI	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: prior receipt remains readable and unchanged
+NF	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: active pointer advances without inheriting binding
+QJ	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: stale editor cannot overwrite newer active receipt
+RD	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: inactive scenario cannot receive new binding
+KS	0	15:04:45.945	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: new revision can be bound explicitly
+FM	0	15:04:45.946	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: old immutable binding remains available by receipt
+CR	0	15:04:45.953	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: recovery scenario confirmed
+KQ	0	15:04:45.954	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: other scenario slot recovers receipt
+GF	0	15:04:45.954	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: two corrupt scenario slots block active read
+NF	0	15:04:45.959	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: pointer recovery scenario confirmed
+DJ	0	15:04:45.959	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: pointer recovery creates second generation
+LD	0	15:04:45.961	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: older valid pointer recovers active scenario
+QM	0	15:04:45.989	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: binding recovery scenario confirmed
+NP	0	15:04:45.989	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: binding recovery fixture confirmed
+PR	0	15:04:45.990	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: other binding slot recovers linked identifier
+KN	0	15:04:45.990	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: corrupt binding preserves scenario with invalid state
+KP	0	15:04:46.009	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: lock fixture confirmed
+PD	0	15:04:46.011	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: reader resumes after lock release
+JE	0	15:04:46.017	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: comparison scenario explicitly confirmed
+CQ	0	15:04:46.017	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: comparison requires explicit bound identifier
+RS	0	15:04:46.017	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: scenario slots captured before comparison
+HS	0	15:04:46.017	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: adverse BUY SL creates comparison receipt
+PS	0	15:04:46.017	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: receipt stores scenario, binding and computed gap
+QM	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: same comparison and timestamp are idempotent
+PE	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: idempotent request leaves receipt slots unchanged
+GF	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: later observation creates distinct receipt
+FI	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: later receipt occupies new immutable slots
+EJ	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: later receipt does not overwrite prior receipt
+KI	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: wrong position identifier is refused
+GL	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: another account cannot record this comparison
+MR	0	15:04:46.018	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	FAIL: comparison never mutates scenario slots
+NS	0	15:04:46.019	JPW_Alavancagem_RaizN_Store_Tests (EURUSD,H1)	JPW_Alavancagem_RaizN_Store_Tests FAIL: 40 of 82 asserts
