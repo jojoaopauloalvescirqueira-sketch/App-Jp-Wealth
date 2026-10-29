@@ -1,0 +1,11 @@
+--- a/tools/economic_calendar_feed_runtime_test.js
++++ b/tools/economic_calendar_feed_runtime_test.js
+@@ -25,7 +25,7 @@
+   vm.createContext(c);for(const file of ['src/js/40-app/15-ff-news.js','src/js/40-app/16-monthly-economic-data.js']){let source=fs.readFileSync(path.join(root,file),'utf8');if(file.endsWith('16-monthly-economic-data.js'))source=source.replace(/\/\* JPW_MONTHLY_DATA_BEGIN \*\/[\s\S]*?\/\* JPW_MONTHLY_DATA_END \*\//,'/* JPW_MONTHLY_DATA_BEGIN */'+JSON.stringify(options.modelPacket||{schemaVersion:1,currencies:CURRENCIES,sources:[],events:[],coverage:[],months:[]})+'/* JPW_MONTHLY_DATA_END */');vm.runInContext(source,c,{filename:file});}
+   return {c,storage,writes,timers,listeners,events,requests,setNetwork:v=>network=v,rejectWrite:v=>rejectWrite=v,key};
+ }
+-const results=[];async function test(id,fn){try{await fn();results.push({id,classification:'PASS'});}catch(error){results.push({id,classification:'PRODUCT_FAIL',message:error.message,stack:error.stack});}}
++const results=[];async function test(id,fn){let watchdog;try{const work=fn();await Promise.race([work,new Promise((_,reject)=>{watchdog=setTimeout(()=>reject(new Error('Deterministic public-runtime case did not settle within 5000 ms')),5000);})]);results.push({id,classification:'PASS'});}catch(error){results.push({id,classification:'PRODUCT_FAIL',message:error.message,stack:error.stack});}finally{clearTimeout(watchdog);}}
+ (async()=>{
+  await test('ECON-FEED-01-v1-partial-four-high',()=>{const h=harness({cached:legacy()});assert.ok(h.c.JPWCalendarFeed,'Shared public feed API is absent');const r=h.c.JPWEconomicCalendar.queryRange({from:'2026-10-28',to:'2026-10-28'});assert.equal(r.feed.mode,'legacy-partial');assert.equal(r.events.filter(e=>e.sourceId.startsWith('ff-')).length,4);assert.ok(r.coverage.every(r=>r.status!=='confirmed'));assert.equal(h.writes.length,0);});
+  await test('ECON-FEED-02-v2-nine-currencies-all-impacts',()=>{const h=harness(),r=h.c.JPWEconomicCalendar.queryRange({from:'2026-10-28',to:'2026-10-28'});assert.ok(r.events.some(e=>e.currency==='CAD'));assert.ok(r.events.some(e=>e.currency==='CNY'));assert.ok(r.events.some(e=>e.impact==='medium'));assert.ok(CURRENCIES.every(c=>r.events.some(e=>e.currency===c)));assert.equal(h.c.ffNewsReadCache().events.length,2);assert.equal(h.writes.length,0);});

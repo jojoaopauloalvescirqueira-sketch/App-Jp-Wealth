@@ -1,0 +1,10 @@
+{
+  "authority": "Resposta humana call_9750abf485524af2b6709be09677412e: Autorizar o delta final e concluir a validação",
+  "file": "tools/ff_news_cache_test.py",
+  "before": "f66f357830f04a2c9f6eeb92ac469d8e04c190b6aa1a42aad161f65ebde859a7",
+  "after": "a3f3a00c5a1ff8e1059bc7eb1fd8c69870a5ecf48d1ea2020b8033503194862a",
+  "deltaSHA256": "60a06bce255bd10370c43e9f6fa31855fa703f60da6d69050d66da45ff5004de",
+  "unrelatedChanges": [],
+  "otherFourControls": "unchanged exact37 and exactV3",
+  "build": "aabc8d09faff4aee"
+}

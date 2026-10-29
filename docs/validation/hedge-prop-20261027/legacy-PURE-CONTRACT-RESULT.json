@@ -1,0 +1,172 @@
+{
+  "scope": "PROPOSED verifier pure oracles only; no browser, repo mutation, gate or application acceptance",
+  "currentScripts": 127,
+  "historicalSHA256": "40a619eac3b449f7e0704d8aa2be46f38280902d0340f961e898057d22b36c82",
+  "checks": [
+    {
+      "name": "original-startup-rejects-approved-current-Hedge",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": "['src/js/00-core/00-forex-policy.js', 'src/js/10-domain/00-forex-engine.js', 'src/js/10-domain/07-reserve-requirements.js', 'src/js/00-core/01-risk-profiles.js', 'src/js/00-core/02-platforms.js', 'src/js/00-core/03-default-state.js', 'src/js/00-core/04-persistence.js', 'src/js/00-core/08-module-availability.js', 'src/js/00-core/07-workspace-backup.js', 'src/js/00-core/05-helpers.js', 'src/js/00-core/06-storage-fs.js'"
+    },
+    {
+      "name": "proposal-startup-current-control",
+      "result": "PASS",
+      "value": null
+    },
+    {
+      "name": "management-baseline-without-Hedge/control",
+      "result": "PASS",
+      "value": null
+    },
+    {
+      "name": "pre-management-baseline-without-Hedge/control",
+      "result": "PASS",
+      "value": null
+    },
+    {
+      "name": "source-file-omission/src/js/40-app/32-prop-firms/01-engine.js",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": "Declared Hedge source missing"
+    },
+    {
+      "name": "source-file-omission/src/js/40-app/32-prop-firms/02-ui.js",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": "Declared Hedge source missing"
+    },
+    {
+      "name": "original-readonly-count-rejects-approved-62",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": ""
+    },
+    {
+      "name": "proposal-readonly-62-control",
+      "result": "PASS",
+      "value": true
+    },
+    {
+      "name": "lesson-omission",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": ""
+    },
+    {
+      "name": "lesson-duplicate",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": ""
+    },
+    {
+      "name": "lesson-destination",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": ""
+    },
+    {
+      "name": "lesson-kind",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": "Hedge orientation must not grant practice"
+    },
+    {
+      "name": "lesson-practice",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": "Hedge orientation must not grant practice"
+    },
+    {
+      "name": "lesson-wrong-owner",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": ""
+    },
+    {
+      "name": "previous-61-identity-replaced",
+      "result": "REJECTED_AS_REQUIRED",
+      "reason": ""
+    }
+  ],
+  "currentCounterproofsRejected": [
+    "calendar-collective-omission",
+    "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+    "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+    "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+    "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+    "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+    "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+    "legacy-omission",
+    "legacy-duplicate",
+    "legacy-order",
+    "retired-nocuda-reintroduced",
+    "retired-nocuda-substituted-for-consumer",
+    "management-collective-omission",
+    "management-omission/src/js/30-accounting/07-management/01-engine.js",
+    "management-duplicate/src/js/30-accounting/07-management/01-engine.js",
+    "management-before-planning/src/js/30-accounting/07-management/01-engine.js",
+    "management-omission/src/js/30-accounting/07-management/02-state.js",
+    "management-duplicate/src/js/30-accounting/07-management/02-state.js",
+    "management-before-planning/src/js/30-accounting/07-management/02-state.js",
+    "management-omission/src/js/30-accounting/07-management/03-ui.js",
+    "management-duplicate/src/js/30-accounting/07-management/03-ui.js",
+    "management-before-planning/src/js/30-accounting/07-management/03-ui.js",
+    "hedge-collective-omission",
+    "hedge-omission/src/js/40-app/32-prop-firms/01-engine.js",
+    "hedge-duplicate/src/js/40-app/32-prop-firms/01-engine.js",
+    "hedge-after-consumer/src/js/40-app/32-prop-firms/01-engine.js",
+    "hedge-omission/src/js/40-app/32-prop-firms/02-ui.js",
+    "hedge-duplicate/src/js/40-app/32-prop-firms/02-ui.js",
+    "hedge-after-consumer/src/js/40-app/32-prop-firms/02-ui.js"
+  ],
+  "management-baseline-without-HedgeCounterproofsRejected": [
+    "calendar-collective-omission",
+    "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+    "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+    "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+    "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+    "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+    "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+    "legacy-omission",
+    "legacy-duplicate",
+    "legacy-order",
+    "retired-nocuda-reintroduced",
+    "retired-nocuda-substituted-for-consumer",
+    "management-collective-omission",
+    "management-omission/src/js/30-accounting/07-management/01-engine.js",
+    "management-duplicate/src/js/30-accounting/07-management/01-engine.js",
+    "management-before-planning/src/js/30-accounting/07-management/01-engine.js",
+    "management-omission/src/js/30-accounting/07-management/02-state.js",
+    "management-duplicate/src/js/30-accounting/07-management/02-state.js",
+    "management-before-planning/src/js/30-accounting/07-management/02-state.js",
+    "management-omission/src/js/30-accounting/07-management/03-ui.js",
+    "management-duplicate/src/js/30-accounting/07-management/03-ui.js",
+    "management-before-planning/src/js/30-accounting/07-management/03-ui.js"
+  ],
+  "pre-management-baseline-without-HedgeCounterproofsRejected": [
+    "calendar-collective-omission",
+    "calendar-omission/src/js/10-domain/19-personal-agenda.js",
+    "calendar-duplicate/src/js/10-domain/19-personal-agenda.js",
+    "calendar-before-dependency/src/js/10-domain/19-personal-agenda.js",
+    "calendar-omission/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-duplicate/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-before-dependency/src/js/40-app/16-monthly-economic-data.js",
+    "calendar-omission/src/js/40-app/19-calendar-agenda.js",
+    "calendar-duplicate/src/js/40-app/19-calendar-agenda.js",
+    "calendar-before-dependency/src/js/40-app/19-calendar-agenda.js",
+    "legacy-omission",
+    "legacy-duplicate",
+    "legacy-order",
+    "retired-nocuda-reintroduced",
+    "retired-nocuda-substituted-for-consumer"
+  ],
+  "ownedRepoPathsStillOriginal": true,
+  "summary": {
+    "currentStartupCounterproofs": 32,
+    "preservedPriorCounterproofs": 25,
+    "newHedgeCounterproofs": 7,
+    "managementBaselineCounterproofs": 25,
+    "olderBaselineCounterproofs": 15,
+    "catalogNegativeCases": 7,
+    "missingSourceFileCases": 2,
+    "browser": "NOT_RUN",
+    "FULL": "NOT_RUN for this proposal"
+  }
+}

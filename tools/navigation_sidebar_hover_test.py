@@ -112,7 +112,7 @@ def run_timing(browser, url, evidence, capture, artifacts):
         expect_group(page,'tools')
         page.wait_for_timeout(300);expect_group(page,'exec')
         assert_untouched(page,before,focus)
-        for key in ['research','tools','finpes']:
+        for key in ['research','management','tools','finpes']:
             page.locator('#'+key+'NavTrigger').hover();page.wait_for_timeout(80)
         page.mouse.move(900,700);page.wait_for_timeout(500)
         expect_group(page,'exec');assert_untouched(page,before,focus)
@@ -147,11 +147,13 @@ def run_clicks(browser, url, evidence, capture, artifacts):
         page.locator('#appMain').click(position={'x':300,'y':120})
         # Outside closes the temporary overlay; an expanded pinned group stays.
         expect_group(page,'exec');assert_untouched(page,before)
-        page.locator('#execNavSubmenu [data-nav-child="forex-reserves"]').click();settle(page)
+        page.locator('#managementNavTrigger').click();expect_group(page,'management')
+        assert_untouched(page,before)
+        page.locator('#managementNavSubmenu [data-nav-child="management-reserves"]').click();settle(page)
         calls=page.evaluate('__shCalls')
         assert calls.count('navigateToScreen')==1 and calls.count('navApply')==1, calls
         assert calls.count('board.guard')==1 and calls.count('accounts.guard')==1, calls
-        assert page.evaluate('JPWNavigation.current().canonical')=='forex-reserves'
+        assert page.evaluate('JPWNavigation.current().canonical')=='management-reserves'
         assert page.evaluate("document.getElementById('fxreserves').contains(document.activeElement)")
         assert page.evaluate('JSON.stringify(S)')==before['state'] and raw(page)==before['storage']
         assert page.evaluate('__nlOps')==[]
@@ -191,7 +193,7 @@ def run_keyboard(browser,url,evidence,capture,artifacts):
         assert page.evaluate('document.activeElement.dataset.navChild')=='forex-consolidated'
         items=page.locator('#execNavSubmenu .nav-sub-level-primary [data-nav-child]')
         assert items.evaluate_all('els=>els.every(e=>e.tabIndex===0)'), 'visible N2 children missing from Tab sequence'
-        page.keyboard.press('End');assert page.evaluate('document.activeElement.dataset.navChild')=='forex-reserves'
+        page.keyboard.press('End');assert page.evaluate('document.activeElement.dataset.navChild')=='forex-management-accounts'
         page.keyboard.press('Home');assert page.evaluate('document.activeElement.dataset.navChild')=='forex-consolidated'
         page.keyboard.press('ArrowLeft');assert page.evaluate('document.activeElement.id')=='execNavTrigger'
         page.keyboard.press('ArrowRight')
@@ -210,7 +212,11 @@ def run_keyboard(browser,url,evidence,capture,artifacts):
         assert page.evaluate('document.activeElement.id')==focused, 'Tab departure stole focus'
         assert_untouched(page,before)
         page.locator('#researchNavTrigger').focus();page.keyboard.press('ArrowDown')
-        assert page.evaluate('document.activeElement.id')=='execNavTrigger'
+        assert page.evaluate('document.activeElement.id')=='managementNavTrigger'
+        page.keyboard.press('ArrowDown');assert page.evaluate('document.activeElement.dataset.primary')=='planning'
+        page.keyboard.press('ArrowDown');assert page.evaluate('document.activeElement.id')=='execNavTrigger'
+        page.keyboard.press('ArrowUp');assert page.evaluate('document.activeElement.dataset.primary')=='planning'
+        page.keyboard.press('ArrowUp');assert page.evaluate('document.activeElement.id')=='managementNavTrigger'
         page.keyboard.press('ArrowUp');assert page.evaluate('document.activeElement.id')=='researchNavTrigger'
         clean(observed);evidence['keyboard']='PASS: N1 arrows, Right/Left, Home/End, all visible N2 Tab stops and overlay departure without focus capture'
     finally:finish_context(context)
@@ -363,7 +369,7 @@ def run_overlay(browser,url,evidence,capture,artifacts):
             clean(observed);rows.append({'style':style,'result':'PASS'})
         finally:finish_context(context)
     evidence['overlay']=rows
-    for key in ['research','exec','finpes','tools']:
+    for key in ['research','management','exec','finpes','tools']:
         context,page,observed=boot(browser,url,'sidebar',rail='collapsed',personal_finance_active=key=='finpes')
         try:
             instrument(page);before=snapshot(page)
@@ -376,7 +382,7 @@ def run_overlay(browser,url,evidence,capture,artifacts):
             assert page.get_attribute('html','data-sidebar-overlay')!='true'
             assert_untouched(page,before);clean(observed)
         finally:finish_context(context)
-    evidence['first_collapsed_click']='PASS: four real first clicks open/pin correct parent; overlay outside click closes without navigation'
+    evidence['first_collapsed_click']='PASS: five real first clicks open/pin correct parent; overlay outside click closes without navigation'
 
 
 def run_modals(browser,url,evidence,capture,artifacts):
@@ -449,13 +455,24 @@ def run_geometry(browser,url,evidence,capture,artifacts):
                 assert page.evaluate('JPWNavigation.current()')==before,'touch parent navigated'
                 assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),(width,theme,'overflow')
                 targets=page.locator('#execNavSubmenu .nav-sub-level-primary button').evaluate_all('els=>els.map(e=>{const r=e.getBoundingClientRect();return {w:r.width,h:r.height}})')
-                assert len(targets)==7 and all(t['w']>=44 and t['h']>=44 for t in targets),(width,theme,targets)
+                assert len(targets)==4 and all(t['w']>=44 and t['h']>=44 for t in targets),(width,theme,targets)
+                assert page.locator('#execNavSubmenu .nav-sub-level-primary [data-nav-child]').evaluate_all('els=>els.map(e=>e.dataset.navChild)')==['forex-consolidated','forex-history','forex-operation','forex-management-accounts']
                 if width<=900:
                     assert page.get_attribute('html','data-shell-menu')=='open'
                     assert page.locator('#appSidebar').get_attribute('aria-modal')=='true'
                     assert page.locator('#appMain').evaluate('e=>e.inert')
                     assert page.get_attribute('html','data-sidebar-overlay')!='true'
-                    page.locator('#execNavSubmenu [data-nav-child="forex-reserves"]').click();settle(page)
+                    page.locator('#execNavSubmenu [data-nav-child="forex-management-accounts"]').click();settle(page)
+                    assert page.get_attribute('html','data-shell-menu')!='open'
+                    assert page.evaluate("document.getElementById('exec').contains(document.activeElement)")
+                    assert not page.locator('#appMain').evaluate('e=>e.inert')
+                    page.locator('[data-shell-menu-toggle]').click()
+                page.locator('#managementNavTrigger').click();expect_group(page,'management')
+                management_targets=page.locator('#managementNavSubmenu > [data-nav-child]').evaluate_all('els=>els.map(e=>{const r=e.getBoundingClientRect();return {w:r.width,h:r.height}})')
+                assert len(management_targets)==2 and all(t['w']>=44 and t['h']>=44 for t in management_targets),(width,theme,management_targets)
+                assert page.locator('#managementNavSubmenu [data-nav-child]').evaluate_all('els=>els.map(e=>e.dataset.navChild)')==['management-reserves','management-accounting']
+                if width<=900:
+                    page.locator('#managementNavSubmenu [data-nav-child="management-reserves"]').click();settle(page)
                     assert page.get_attribute('html','data-shell-menu')!='open'
                     assert page.evaluate("document.getElementById('fxreserves').contains(document.activeElement)")
                     assert not page.locator('#appMain').evaluate('e=>e.inert')

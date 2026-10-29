@@ -1,0 +1,68 @@
+{
+  "scope": "Three obsolete navigation expectation updates only",
+  "created_at": "2026-10-26T23:57:42.270272+00:00",
+  "authorization": "Explicit parent task after final gate confirmed exact three outdated expectations; approved user plan adds independent Management primary",
+  "raw_red": {
+    "path": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/RAW-RED-EXCERPT.json",
+    "original": "/private/tmp/jpw-portfolio-management-20261026/full-final.json",
+    "result": "Final FULL failed102PASS/11PRODUCT_FAIL; original outcome preserved, not converted to PASS"
+  },
+  "changes": {
+    "smoke": "primary count7→8, exact route map gains management-reserves→fxreserves after Portfolio; all flow assertions retained",
+    "planning-navigation": "only two exact expected arrays gain management after research; production-source extraction and raw old-six preference equality unchanged",
+    "finpes-navigation": "expected ordinal05→06 plus matching documentation/output text; five local destinations and financial/no-write/keyboard cases unchanged"
+  },
+  "actual_patch": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/APPLIED.patch",
+  "green_pure": [
+    {
+      "test": "node tools/planning_navigation_test.js",
+      "exit_code": 0,
+      "receipt": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/planning-green.log"
+    },
+    {
+      "test": "actual planning test with in-memory source mutations",
+      "exit_code": 0,
+      "cases": 5,
+      "receipt": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/planning-counterproofs.json"
+    },
+    {
+      "test": "actual smoke/PF AST oracles with synthetic objects",
+      "exit_code": 0,
+      "cases": 11,
+      "receipt": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/presentation-counterproofs.json"
+    }
+  ],
+  "preserved_counts": {
+    "tools/smoke_test.py": {
+      "assert_nodes_before": 61,
+      "assert_nodes_after": 61
+    },
+    "tools/planning_navigation_test.js": {
+      "assert_calls_before": 8,
+      "assert_calls_after": 8,
+      "raw_original_six_equality_preserved": true
+    },
+    "tools/finpes_navigation_test.py": {
+      "assert_nodes_before": 0,
+      "assert_nodes_after": 0
+    }
+  },
+  "browser_focals": "NOT_RUN per parent instruction; smoke and finpes end-to-end results remain pending new isolated execution",
+  "browser_counterproofs_prepared_not_run": [
+    "Portable served fixture with seven primaries must fail exact count",
+    "Eight routes with missing/duplicated/reordered identity must fail exact list",
+    "Management leaf routed to exec instead of fxreserves must fail physical screen or canonical assertion",
+    "PF number05 with otherwise correct five destinations must report wrong number; corrected06 accepted while changed label still rejected"
+  ],
+  "unchanged": [
+    "No app src, generated artifacts, gate registration, financial formula, writer, timeout or tolerance edit",
+    "No helper extractor change; missing helper was not supported by source or traceback",
+    "No browser or full suite started"
+  ],
+  "source_sha256": {
+    "tools/smoke_test.py": "3d8bd4a4df6a088e1076076fc925c5b18e8aa31f2dfab5f874f527af3d979ff3",
+    "tools/planning_navigation_test.js": "881fdb669dcbba92b31f82bb37ce23aedfadaf85e47a9e82ce231044cb4bccb1",
+    "tools/finpes_navigation_test.py": "208358931daf2ae71e1fe874abff33d542b1bb2470ea2f52c99574104d3ecd54"
+  },
+  "remaining": "Independent critique of minimal patch; actual smoke/PF browser focals scheduled by root; final full stable candidate must be rerun."
+}

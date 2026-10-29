@@ -2,9 +2,9 @@
 // in-flight responses remain authoritative; no command is issued by suspension.
 (function(root){
   'use strict';
-  const screens={research:['research'],forex:['exec','fxconsolidated','fxreserves','paramsWidgetGrid'],planning:['planning'],
+  const screens={research:['research'],management:['management','fxreserves'],forex:['exec','fxconsolidated','paramsWidgetGrid'],planning:['planning'],
     'personal-finance':['finpes'],alladin:['alladin']};
-  const names={research:'Research',forex:'Forex',planning:'Planejamento','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
+  const names={research:'Portfólio',management:'Gerenciamento',forex:'Forex',planning:'Planejamento','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
   const dialogs={alladinModalOverlay:'alladin',executionBoardDialog:'forex',
     fxcRegistrationDialog:'forex',fxcSetupDialog:'forex',fxAccountsLeaveDialog:'forex',forexChecklistDialog:'forex'};
   const suspended=new Set(),inerted=new Map(),bound=new WeakSet(),focusBefore=new Map(),causes=new Map();
@@ -40,6 +40,7 @@
     if(!screens[id])return false;
     if(id==='alladin'&&root.JPWAlladinUI?.workState().pending)return true;
     if(id==='research'&&(root.JPWNocodaUI?.hasDrafts()||root.JPWPivotsUI?.hasDrafts()))return true;
+    if(id==='management'&&root.JPWManagement?.hasPendingWork())return true;
     if(id==='planning'&&root.JPWPlanning?.ui?.hasPendingWork())return true;
     if(id==='forex'&&(root.JPWForex?.executionBoardUI?.hasDrafts()||root.JPWForex?.accountsUI?.hasDrafts()||
       root.JPWFXConsolidatedUI?.workState().pending))return true;
@@ -118,7 +119,7 @@
     // existing form IDs here rather than editing financial writers or guessing
     // ownership from the current page (Settings and session modals are shared).
     if(visible(shared)&&(byId('modalBox')?.classList.contains('onboarding-modal')||byId('modalBox')?.querySelector('#closeResultInput,#finalReview,[data-compl],input[name="divreason"]')))claimModal('forex',shared);
-    for(const [key,id]of Object.entries(dialogs)){const node=byId(key);if(node)claimModal(id,node);}
+    for(const [key,id]of Object.entries(dialogs)){const node=byId(key);if(node){const captured=['fxcRegistrationDialog','fxcSetupDialog'].includes(key)&&['management','forex'].includes(node.dataset.moduleWorkOwner)?node.dataset.moduleWorkOwner:id;claimModal(captured,node);}}
     for(const id of suspended){
       for(const key of screens[id]){const node=byId(key);if(node){bind(node,id);if(key==='paramsWidgetGrid')notice(node,id);else makeInert(node,id);}}
       for(const node of moduleModals(id))notice(node,id);
@@ -148,7 +149,7 @@
     // if they belonged to the imported base. No financial command is replayed.
     if(reset){
       root.JPWNocodaUI?.resetDraft();root.JPWPivotsUI?.resetDraft();root.JPWAlladinUI?.resetWork();
-      root.JPWPlanning?.ui?.reset();root.JPWFXConsolidatedUI?.resetWork();root.JPWForex?.accountsUI?.resetWork();
+      root.JPWManagement?.reset?.();root.JPWPlanning?.ui?.reset();root.JPWFXConsolidatedUI?.resetWork();root.JPWForex?.accountsUI?.resetWork();
       const shared=byId('modalOverlay');if(shared?.dataset.moduleWorkOwner)shared.classList.remove('show');
       return [];
     }
@@ -162,7 +163,7 @@
       if(id==='alladin'&&root.JPWAlladinUI?.workState().pending)entries.push({kind:'alladin',state:root.JPWAlladinUI.workState()});
       for(const node of moduleModals(id)){const values=fields(node);if(values.length)entries.push({kind:node.id,fields:values});}
       const pending=pendingFields(id);if(pending.length)entries.push({kind:'campos não confirmados',fields:pending.map(field=>fields({querySelectorAll:()=>[field]})[0]).filter(Boolean)});
-      if(entries.length)result.push({label:names[id]+' — trabalho de interface preservado para conferência',provider:'module-work',version:1,context:{moduleId:id},baseReference:JSON.stringify(id==='research'?{nocoda:S.nocoda,pivotStudies:S.pivotStudies}:id==='alladin'?S.alladin:id==='personal-finance'?S.personalFinance:id==='planning'?S.patrimonialPlanning:S.forex),text:JSON.stringify(entries)});
+      if(entries.length)result.push({label:names[id]+' — trabalho de interface preservado para conferência',provider:'module-work',version:1,context:{moduleId:id},baseReference:JSON.stringify(id==='research'?{nocoda:S.nocoda,pivotStudies:S.pivotStudies}:id==='alladin'?S.alladin:id==='personal-finance'?S.personalFinance:id==='planning'?S.patrimonialPlanning:id==='management'?{forex:S.forex,managementAnnual:S.managementAnnual}:S.forex),text:JSON.stringify(entries)});
     }
     return result;
   }

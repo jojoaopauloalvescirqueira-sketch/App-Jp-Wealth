@@ -1,0 +1,68 @@
+{
+  "scope": "Read-only applied metadata review; no test, browser, build, network, Git operation or repository mutation executed. Does not validate the running FULL result.",
+  "createdAt": "2026-10-28T21:53:19.784600+00:00",
+  "build": "5b4ef1141c9583bf",
+  "freeze": {
+    "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/docs/validation/economic-calendar-ff-20261028/INPUT-FREEZE.json",
+    "sha256": "5282d5ca9b98f4f9e72035781c525d16d2eb1d7672967b68fbc9a29c337157b6",
+    "build": "5b4ef1141c9583bf",
+    "createdAt": "2026-10-28T21:52:11.680745+00:00",
+    "files": 1643
+  },
+  "reviewedMetadataFiles": [
+    {
+      "path": "infra/monthly-economic-feed/build_package.py",
+      "sha256": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+      "reviewedSha256": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+      "frozenSha256": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+      "matchesReview": true,
+      "matchesFreeze": true
+    },
+    {
+      "path": "src/js/40-app/16-monthly-economic-data.js",
+      "sha256": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+      "reviewedSha256": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+      "frozenSha256": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+      "matchesReview": true,
+      "matchesFreeze": true
+    },
+    {
+      "path": "tools/monthly_economic_feed_test.py",
+      "sha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "reviewedSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "frozenSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "matchesReview": true,
+      "matchesFreeze": true
+    },
+    {
+      "path": "infra/monthly-economic-feed/data/monthly-economic-2026-10.json",
+      "sha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+      "reviewedSha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+      "frozenSha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+      "matchesReview": true,
+      "matchesFreeze": true
+    }
+  ],
+  "protectedFrozenFiles": [
+    {
+      "path": "src/js/40-app/15-ff-news.js",
+      "sha256": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+      "matchesFreeze": true
+    },
+    {
+      "path": "tools/economic_calendar_feed_runtime_test.js",
+      "sha256": "2162c48cdd0b7d945a9e2dfb2c57a1fabf34191f4ff8d98f81f12acd9233b07f",
+      "matchesFreeze": true
+    },
+    {
+      "path": "src/js/00-core/07-workspace-backup.js",
+      "sha256": "e7c9144ed5f48c4a169fdcbc483c0e59931b902c88b7a1d8fb79eee2a4509207",
+      "matchesFreeze": true
+    },
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "sha256": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+      "matchesFreeze": true
+    }
+  ]
+}

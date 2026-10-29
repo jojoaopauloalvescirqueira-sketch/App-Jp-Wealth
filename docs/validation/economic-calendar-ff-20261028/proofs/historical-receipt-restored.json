@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "path": "docs/validation/hedge-prop-20261027/engine-counterproofs.json",
+  "differences": [
+    "/timestampUTC"
+  ],
+  "originalSHA256": "1bc9e6ce6908fb46c4f1721eb2d1b2b488ebad05c22e75caca507aaf747e3fc3",
+  "generatedSHA256": "6df38bb3f10d6980d6d11a734e7a15b92ca8bfc2dfb1e0d0ee2a423e23865406",
+  "restoredSHA256": "1bc9e6ce6908fb46c4f1721eb2d1b2b488ebad05c22e75caca507aaf747e3fc3",
+  "generatedPreservedAt": "docs/validation/economic-calendar-ff-20261028/proofs/hedge-counterproofs-generated.json"
+}

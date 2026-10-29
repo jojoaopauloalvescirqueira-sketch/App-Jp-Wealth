@@ -109,7 +109,7 @@ function bindAcct(){
 }
 
 function bindContab(){
-  $('ldAddBtn').addEventListener('click',()=>{
+  $('ldAddBtn')?.addEventListener('click',()=>{
     if(jpWealthPersistenceOutcomeIsUnknown()){ledgerFeedback('Gravação indeterminada. Confira a base salva antes de continuar.',false);return;}
     const data=$('ldDate').value;
     const res=parseFloat($('ldResult').value);
@@ -136,7 +136,7 @@ function bindContab(){
     ledgerFeedback('✓ fechamento registrado',true);
     renderLedger(); renderDash(); renderParams(); render();
   });
-  $('exportAuditBtn').addEventListener('click',exportAudit);
+  $('exportAuditBtn')?.addEventListener('click',exportAudit);
   // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
   // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
   //

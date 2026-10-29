@@ -15,6 +15,8 @@ const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.loc
 const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
 const LEVERAGE_PREVIEW_URLS = ['Previa_Stoikus_Interface_R4.html','Previa_Stoikus_Janelas_R5.html','Previa_Stoikus_Painel_C5.html'].map(name=>new URL(name,LEVERAGE_ROOT_URL).href);
 const PRECACHE_URLS = [
+  './src/js/40-app/32-prop-firms/01-engine.js',
+  './src/js/40-app/32-prop-firms/02-ui.js',
   './assets/dante-guide.png',
   './src/js/10-domain/19-personal-agenda.js',
   './src/js/40-app/16-monthly-economic-data.js',
@@ -99,6 +101,9 @@ const PRECACHE_URLS = [
   './src/js/10-domain/08-usd-brl-quote.js',
   './src/js/30-accounting/06-planning/01-engine.js', './src/js/30-accounting/06-planning/02-state.js',
   './src/js/30-accounting/06-planning/03-ui.js',
+  './src/js/30-accounting/07-management/01-engine.js',
+  './src/js/30-accounting/07-management/02-state.js',
+  './src/js/30-accounting/07-management/03-ui.js',
   './src/js/20-ui/13-exec-views.js',
   './src/js/10-domain/09-nocoda-geometry.js',
   './src/js/20-ui/14-nocoda-studies.js',

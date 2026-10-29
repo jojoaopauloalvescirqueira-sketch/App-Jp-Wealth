@@ -1,0 +1,29 @@
+--- corrected-20261028/run_counterproofs.py
++++ applied37-20261029/run_counterproofs.py
+@@ -7,7 +7,7 @@
+ from pathlib import Path
+ HERE=Path(__file__).resolve().parent
+ ROOT=Path('/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS')
+-PRODUCT=Path('/private/tmp/jpw-economic-calendar-table-20261028/product-proposal')
++PRODUCT=HERE/'product-inputs'
+ sys.path[:0]=[str(HERE/'candidates/tools'),str(ROOT/'tools')]
+ from browser_fixture_server import BrowserFixtureServer
+ from browser_bootstrap_fixture import install_bootstrap,wait_bootstrap,assert_fixture_requests
+@@ -15,7 +15,7 @@
+ from playwright.sync_api import sync_playwright
+ import calendar_economic_table_contract as judge
+ 
+-EXPECTED={'19-calendar-agenda.js':'1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831','app.css':'f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38'}
++EXPECTED={'19-calendar-agenda.js':'8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518','app.css':'31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e'}
+ HELPER='35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a'
+ ORACLE_FRAMES={
+  'CP01-zero-is-not-absence':('assert_values',58),
+@@ -35,7 +35,7 @@
+     def log_message(self,*_):pass
+ 
+ def main():
+- out=HERE/'counterproofs-final-v2';out.mkdir(exist_ok=False)
++ out=HERE/'results';out.mkdir(exist_ok=False)
+  texts={n:(PRODUCT/n).read_text() for n in EXPECTED}
+  hashes={n:hashlib.sha256(t.encode()).hexdigest() for n,t in texts.items()}
+  assert hashes==EXPECTED,hashes

@@ -1,0 +1,20 @@
+{
+  "actual": {
+    "infra/monthly-economic-feed/build_package.py": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "tools/monthly_economic_feed_test.py": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+    "infra/monthly-economic-feed/data/monthly-economic-2026-10.json": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f"
+  },
+  "matchesReviewed": true,
+  "generator": "infra/monthly-economic-feed/build_package.py then tools/rebuild_monolith.py --refresh-manifest",
+  "runtimeNode24Unchanged": true,
+  "newBuild": "5b4ef1141c9583bf",
+  "focals": {
+    "monthlyOuterTests": 24,
+    "runtime": 24,
+    "collector": 32,
+    "browserAssertions": 186,
+    "browserCases": 18,
+    "distributionCases": 4
+  }
+}

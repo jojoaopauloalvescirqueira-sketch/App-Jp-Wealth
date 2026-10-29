@@ -23,7 +23,7 @@ UNKNOWN_RAW = '{ "keep" : [1, "opaque", false], "empty": null }\n'
 LAYOUT_RAW = json.dumps(PREF, ensure_ascii=False, indent=1)
 ROUTES = ["dashboard", "forex-overview", "forex-preparation", "forex-account",
           "forex-operation", "forex-reconciliation", "planning", "forex-planning", "fxplan",
-          "personal-finance", "research-forex", "research-stocks-br",
+          "personal-finance", "management-reserves", "management-accounting", "research-forex", "research-stocks-br",
           "research-stocks-global", "research-reits", "research-probability-lab", "research-others", "alladin", "tools-calendar", "tools-nocuda", "tools-minigames"]
 
 
@@ -235,7 +235,7 @@ def run_failures(browser, url, evidence):
     try:
         before = raw_storage(page)
         assert preference_ops(page) == []
-        for route in ["forex-overview", "personal-finance", "research-forex", "alladin", "tools-calendar", "tools-nocuda", "dashboard"]:
+        for route in ["forex-overview", "personal-finance", "management-reserves", "management-accounting", "research-forex", "alladin", "tools-calendar", "tools-nocuda", "dashboard"]:
             go(page, route)
         page.reload(wait_until="load")
         page.wait_for_function("window.JPWNavigation && window.JPWAlladinUI")
@@ -360,10 +360,10 @@ def run_lifecycle(browser, url, evidence, baseline_url):
         expected_contexts = {"pivots": "research-forex"}
         for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Desempenho"]),
                              ("forex-operation", ["Forex", "Operação"]),
-                             ("forex-reconciliation", ["Forex", "Contabilidade"]), ("planning", ["Planejamento"]),
+                             ("forex-reconciliation", ["Gerenciamento", "Caixa Anual"]), ("planning", ["Planejamento"]),
                              ("forex-planning", ["Planejamento"]), ("fxplan", ["Planejamento"]),
-                             ("motor", ["Forex", "Operação"]), ("research-stocks-br", ["Research", "Ações"]),
-                             ("pivots", ["Research", "Forex", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:
+                             ("motor", ["Forex", "Operação"]), ("research-stocks-br", ["Portfólio", "Análise"]),
+                             ("pivots", ["Portfólio", "Análise", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:
             go(page, route)
             location = page.locator("#shellLocation").inner_text()
             assert all(word in location for word in words), (route, words, location)

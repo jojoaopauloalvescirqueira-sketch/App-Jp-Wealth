@@ -7,9 +7,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler
 from browser_fixture_server import BrowserFixtureServer
-from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap
+from browser_bootstrap_fixture import FEED_URL, install_bootstrap, wait_bootstrap
 from dashboard_macro_test import launch_browser
 from playwright.sync_api import sync_playwright, expect
+from calendar_economic_table_contract import table_case
 ROOT=Path(__file__).resolve().parents[1]
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*_): pass
@@ -60,8 +61,8 @@ def run(page, width, theme):
     panel.locator('[data-calendar-action="cancel-form"]').click()
     assert panel.locator('[name="title"]').count()==0
     panel.locator('[data-calendar-action="filters"]').click()
-    assert panel.locator('[data-calendar-currency]').count()==5
-    assert set(panel.locator('[data-calendar-currency]').evaluate_all('es=>es.map(e=>e.value)'))=={'USD','GBP','JPY','NZD','CHF'}
+    assert panel.locator('[data-calendar-currency]').count()==9
+    assert set(panel.locator('[data-calendar-currency]').evaluate_all('es=>es.map(e=>e.value)'))=={'USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'}
     panel.locator('[data-calendar-action="filters"]').click()
     page.keyboard.press('Escape')
     page.locator('#headerNotificationsBtn').click()
@@ -147,12 +148,17 @@ def run(page, width, theme):
     return {**geometry,'icons':icons,'workflows':['keyboard','dismiss-draft','filters','overlay-guard','task-save-complete','focus-cursor-refresh','stale-review','explicit-DST-choice','exclusive-midnight']}
 
 def calendar_packet(context, adjacent=False):
+    # Pure UI fixtures use their declared public sources; shared live transport
+    # has separate end-to-end coverage in ff_news_cache_test.
+    context.route(FEED_URL,lambda route:route.fulfill(status=503,body='Synthetic unavailable public feed'))
     from monthly_economic_feed_test import event, fixture
     packet=fixture([event('SYN-high-1',at='2026-10-23T15:00:00Z'),event('SYN-high-2',at='2026-10-23T16:00:00Z'),event('SYN-medium',at='2026-10-24T16:00:00Z',impact='medium'),event('SYN-dateonly',date='2026-10-25',precision='date')])
     if adjacent:
         packet['events'] += [event('SYN-previous-month',date='2026-09-28',precision='date'),event('SYN-next-month',date='2026-11-01',precision='date')]
     packet['sources'][0].update(attribution='Source: Synthetic fixture; adapted by JP Wealth',license='Synthetic terms',licenseUrl='https://example.org/terms')
-    packet['coverage'] += [{'currency':c,'sourceId':None,'month':'2026-10','from':'2026-10-01','to':'2026-10-31','status':'pending','reviewedAt':None,'reason':'Synthetic unpublished currency month.'} for c in ['GBP','JPY','NZD','CHF']]
+    pending=['GBP','JPY','NZD','CHF']
+    packet['sources'] += [{'id':'fixture-'+c,'name':'Synthetic pending '+c,'currency':c,'url':'https://example.org/calendar/'+c,'timeZone':'UTC'} for c in pending]
+    packet['coverage'] += [{'currency':c,'sourceId':'fixture-'+c,'month':'2026-10','from':'2026-10-01','to':'2026-10-31','status':'pending','reviewedAt':None,'reason':'Synthetic unpublished currency month.'} for c in pending]
     if adjacent:
         for row in packet['coverage']:
             if row['currency']=='GBP':row.update(status='confirmed',reason='Synthetic confirmed October; September is not covered.')
@@ -186,7 +192,7 @@ def adjacent_selection(page, range_only=False):
         expect(panel.locator('[data-calendar-economic-id="SYN-previous-month"]')).to_have_count(1)
         # October coverage cannot stand in for an adjacent selected September day.
         panel.locator('[data-calendar-action="filters"]').click()
-        for currency in ['USD','JPY','NZD','CHF']:
+        for currency in ['USD','EUR','JPY','CHF','CAD','AUD','NZD','CNY']:
             panel.locator(f'[data-calendar-currency="{currency}"]').uncheck()
         page.evaluate('JPWCalendar.refresh()')
         expect(panel.locator('.calendar-agenda .calendar-coverage-note')).to_contain_text('confirmação')
@@ -207,28 +213,28 @@ def feed_recovery(page):
     expect(panel.locator('.calendar-agenda .calendar-coverage-note')).to_contain_text('desatualizados')
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     info=panel.locator('.calendar-info')
-    assert 'Atualização da fonte:' in info.inner_text(),'Last valid source revision must survive query failure'
+    assert 'Referência do pacote:' in info.inner_text(),'Last valid source revision must survive query failure'
     assert 'Não foi possível' in info.inner_text() and 'desatualizados' in info.inner_text()
-    expect(info.locator('[data-calendar-source]')).to_have_count(1)
+    expect(info.locator('[data-calendar-source]')).to_have_count(5)
     # No successful data exists for GBP-only: it must not inherit USD events or revision.
     panel.locator('[data-calendar-action="filters"]').click()
-    for currency in ['USD','JPY','NZD','CHF']:
+    for currency in ['USD','EUR','JPY','CHF','CAD','AUD','NZD','CNY']:
         panel.locator(f'[data-calendar-currency="{currency}"]').uncheck()
     page.evaluate('JPWCalendar.refresh()')
     expect(panel.locator('[data-calendar-economic-id]')).to_have_count(0)
     assert panel.locator('.calendar-economic-dot').count()==0
     expect(panel.locator('.calendar-agenda .calendar-coverage-note')).to_contain_text('Não foi possível')
     assert 'Nenhum item' not in panel.locator('.calendar-agenda').inner_text(),'A failed query must not announce absence'
-    assert 'Atualização da fonte:' not in info.inner_text(),'A new failed context must not inherit another context revision'
+    assert 'Referência do pacote:' not in info.inner_text(),'A new failed context must not inherit another context revision'
     # Returning to the exact original filter recovers its prior values as stale.
-    for currency in ['USD','JPY','NZD','CHF']:
+    for currency in ['USD','EUR','JPY','CHF','CAD','AUD','NZD','CNY']:
         panel.locator(f'[data-calendar-currency="{currency}"]').check()
     page.evaluate('JPWCalendar.refresh()')
     expect(panel.locator('[data-calendar-economic-id="SYN-high-1"]')).to_have_count(1)
-    assert 'Atualização da fonte:' in info.inner_text()
+    assert 'Referência do pacote:' in info.inner_text()
     panel.locator('[data-calendar-action="next"]').click();page.evaluate('JPWCalendar.refresh()')
     expect(panel.locator('[data-calendar-economic-id]')).to_have_count(0)
-    assert 'Atualização da fonte:' not in info.inner_text()
+    assert 'Referência do pacote:' not in info.inner_text()
     panel.locator('[data-calendar-action="previous"]').click();page.evaluate('JPWCalendar.refresh()')
     expect(panel.locator('[data-calendar-economic-id="SYN-high-1"]')).to_have_count(1)
     # A later successful query removes the failure label without dropping items.
@@ -263,9 +269,11 @@ def edges(page):
     expect(panel.locator('.calendar-event-time').filter(has_text='Data · horário não informado')).to_have_count(1)
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     assert 'CHF' in panel.locator('.calendar-source-list').inner_text() and 'Pendente' in panel.locator('.calendar-source-list').inner_text()
-    assert 'classificação editorial JP Wealth' in panel.locator('.calendar-info').inner_text()
+    assert 'classificação Forex Factory' in panel.locator('.calendar-info').inner_text() and 'curadoria editorial JP Wealth' in panel.locator('.calendar-info').inner_text()
     assert 'Source: Synthetic fixture; adapted by JP Wealth' in panel.locator('.calendar-info').inner_text()
-    expect(panel.locator('.calendar-source-links [data-calendar-source]')).to_have_attribute('href','https://example.org/calendar')
+    links=panel.locator('.calendar-source-links [data-calendar-source]')
+    assert sorted(links.evaluate_all('es=>es.map(e=>[e.dataset.calendarSource,e.getAttribute("href")])'))==sorted([['fixture','https://example.org/calendar']]+[['fixture-'+c,'https://example.org/calendar/'+c] for c in ['GBP','JPY','NZD','CHF']])
+    expect(panel.locator('.calendar-source-links [data-calendar-source="fixture"]')).to_have_attribute('href','https://example.org/calendar')
     expect(panel.locator('.calendar-source-links .calendar-license-link')).to_have_attribute('href','https://example.org/terms')
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     assert page.evaluate('__calendarTimers.size')==1
@@ -303,6 +311,60 @@ def edges(page):
     expect(panel.locator('.calendar-event-app')).to_have_count(0)
     return {'timer_open':1,'timer_closed':0,'opaque_preferences':'preserved','workspace_state':'independent','synthetic_feed_markers':'filtered and counted','date_precision':'no invented time','pending_coverage':'visible','backup':'elapsed30days across DST; no future or missing invented date','midnight':'real timer advanced to new day'}
 
+def economic_focus(page):
+    before=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')
+    page.evaluate("""()=>{closeModal();window.__onbShown=true;const api=JPWEconomicCalendar;
+      window.__economicFocus={generation:1,moved:false};
+      window.JPWEconomicCalendar={...api,queryRange(query){return {events:[{
+        id:'SYN-snapshot-'+__economicFocus.generation,title:'SYN notícia CAD',currency:'CAD',impact:'high',
+        date:'2026-10-23',at:__economicFocus.moved?'2026-10-23T16:00:00Z':'2026-10-23T15:00:00Z',precision:'instant',
+        provider:'forexfactory',sourceId:'ff-CAD',sourceUrl:'https://www.forexfactory.com/calendar',
+        status:'scheduled',timeZone:'America/New_York',timeConfirmed:false}],coverage:[],updatedAt:null};}};
+    }""")
+    page.locator('#headerCalendarBtn').click()
+    panel=page.locator('#calendarDialog .calendar-panel')
+    # Same original focus oracle; the approved contract puts secondary links
+    # behind each event disclosure. Opening it is now the real user prerequisite.
+    expect(panel.locator('[data-calendar-action="economic-detail"]')).to_have_count(1)
+    panel.locator('[data-calendar-action="economic-detail"]').click()
+    link=panel.get_by_role('link',name='Fonte: Forex Factory',exact=True)
+    expect(link).to_have_count(1);link.focus()
+    page.evaluate('async()=>{__economicFocus.generation++;await JPWCalendar.refresh()}')
+    expect(link).to_be_focused()
+    assert panel.locator('[data-calendar-economic-id="SYN-snapshot-2"]').count()==1
+    page.evaluate('async()=>{__economicFocus.generation++;__economicFocus.moved=true;await JPWCalendar.refresh()}')
+    # The changed observation now closes its secondary detail. Querying a
+    # visible-role link would time out and misclassify the approved UI change.
+    # Keep the same oracle, strengthened to reject any focus within that row
+    # or its associated inline detail after the instant changes.
+    assert page.evaluate("!document.activeElement?.closest('[data-calendar-economic-id],.calendar-economic-detail-row')"),'A changed observation must not inherit focus by title/day coincidence'
+    assert page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')==before
+    return {'exactObservationFocusPreserved':True,'changedObservationNotConflated':True,'financialUnchanged':True}
+
+
+def info_focus(page):
+    before=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')
+    page.evaluate('closeModal();window.__onbShown=true')
+    page.locator('#headerCalendarBtn').click()
+    panel=page.locator('#calendarDialog .calendar-panel')
+    panel.locator('.calendar-header [data-calendar-action="info"]').click()
+    info=panel.locator('.calendar-info')
+    link=info.locator('a.calendar-source-link').first
+    link.focus();href=link.get_attribute('href')
+    await_refresh='async()=>{await JPWCalendar.refresh();}'
+    page.evaluate(await_refresh)
+    expect(info.locator('a.calendar-source-link').filter(has_text=link.inner_text()).first).to_be_focused()
+    assert page.locator(':focus').get_attribute('href')==href
+    refresh=info.locator('[data-calendar-action="refresh-economic"]')
+    refresh.focus();page.evaluate(await_refresh)
+    expect(refresh).to_be_focused()
+    refresh.click()
+    page.wait_for_function("document.querySelector('#calendarDialog [data-calendar-action=\"refresh-economic\"]').getAttribute('aria-busy')==='false'")
+    expect(refresh).to_be_focused()
+    assert page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')==before
+    return {'sourceLinkFocus':True,'refreshButtonFocus':True,'asyncRefreshFocus':True,'financialUnchanged':True}
+
+
 def preference_preservation(page,variant):
     raw=json.dumps({'schemaVersion':1,'currencies':['USD','GBP','JPY','NZD','CHF'],'impacts':['high'],'contents':['economic','personal','app'],**({'future':{'SYN':'preserved'}} if variant=='pref-extension' else {})},separators=(',',':'))
     if variant=='pref-duplicates':raw=raw.replace('["high"]','["high","high"]')
@@ -314,6 +376,26 @@ def preference_preservation(page,variant):
     assert observed==raw,{'case':variant,'before':raw,'after':observed}
     page.evaluate('()=>{Storage.prototype.getItem=__calendarOriginalGet;}')
     return {'raw_bytes':'preserved','filter_interaction':'real checkbox','case':variant}
+
+def include_new_currencies(page):
+    old={'schemaVersion':1,'currencies':['USD','GBP','JPY','NZD','CHF'],'impacts':['high'],'contents':['economic','personal','app']}
+    raw=json.dumps(old,separators=(',',':'))
+    page.evaluate("""raw=>{closeModal();window.__onbShown=true;localStorage.setItem('jpwealth_calendar_view_v1',raw);JPWCalendar.resetContext()}""",raw)
+    before=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')
+    page.locator('#headerCalendarBtn').click();panel=page.locator('#calendarDialog .calendar-panel')
+    panel.locator('[data-calendar-action="filters"]').click()
+    selected=lambda:panel.locator('[data-calendar-currency]:checked').evaluate_all('es=>es.map(e=>e.value)')
+    assert set(selected())==set(old['currencies']),selected()
+    assert page.evaluate("localStorage.getItem('jpwealth_calendar_view_v1')")==raw
+    action=panel.get_by_role('button',name='Incluir moedas novas',exact=True)
+    expect(action).to_be_visible();action.click()
+    assert set(selected())=={'USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'},selected()
+    saved=page.evaluate("JSON.parse(localStorage.getItem('jpwealth_calendar_view_v1'))")
+    assert saved['impacts']==old['impacts'] and saved['contents']==old['contents'],saved
+    assert set(saved['currencies'])==set(selected()),saved
+    assert page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')==before
+    return {'oldFiveUnchangedOnOpen':True,'explicitInclusionNine':True,'otherPreferencesPreserved':True,'financialUnchanged':True}
+
 
 def lifecycle_setup(page):
     """Synthetic backup fixture; observe real calendar timers and header controls."""
@@ -395,7 +477,9 @@ def main():
         with sync_playwright() as pw:
             browser=launch_browser(pw)
             cases=[(1440,'light','baseline')] if args.baseline else [(w,t,'ui') for w in ([args.width] if args.width else [1440,390,320]) for t in ['light','dark']]
-            if not args.baseline and args.path=='index.html':cases.extend([(320,'light',kind) for kind in ['edges','lifecycle','pref-read','pref-extension','pref-duplicates','adjacent-selection','adjacent-range','feed-recovery']])
+            if not args.baseline and args.path=='index.html':cases.extend([(320,'light',kind) for kind in ['edges','lifecycle','pref-read','pref-extension','pref-duplicates','adjacent-selection','adjacent-range','feed-recovery','info-focus','economic-focus','include-new']])
+            if not args.baseline and args.path=='index.html':
+                cases.extend([(1440,'light','table-natural'),(390,'dark','table-compact'),(2400,'light','table-wide'),(1440,'light','table-state'),(1440,'light','table-boundaries')])
             if args.case:cases=[case for case in cases if case[2] in args.case]
             for width,theme,kind in cases:
                 ctx=browser.new_context(viewport={'width':width,'height':900},timezone_id='America/New_York' if kind in ['edges','lifecycle'] else 'America/Sao_Paulo',service_workers='block');install_bootstrap(ctx);ctx.add_init_script('window.__onbShown=true')
@@ -406,7 +490,7 @@ def main():
                 errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
                 try:
                     page.goto(f'http://127.0.0.1:{server.server_port}/{args.path}',wait_until='load');wait_bootstrap(page)
-                    details=preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)
+                    details=table_case(page,width,theme,kind) if kind.startswith('table-') else include_new_currencies(page) if kind=='include-new' else economic_focus(page) if kind=='economic-focus' else info_focus(page) if kind=='info-focus' else preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)
                     assert not errors,errors
                     results.append({'case':f'calendar-{kind}-{width}-{theme}','result':'PASS','geometry':details})
                     if args.artifact:

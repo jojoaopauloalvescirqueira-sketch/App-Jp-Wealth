@@ -1,0 +1,41 @@
+{
+  "url": "http://127.0.0.1:57622/index.html?v=aabc8d09faff4aee",
+  "build": "aabc8d09faff4aee",
+  "files": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "servedSHA256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+      "diskSHA256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+      "equal": true
+    },
+    {
+      "path": "build-id.js",
+      "status": 200,
+      "servedSHA256": "e09a14541af933658c25e929e5ff712ebcc79c8f55ea5605c4ac573894f36247",
+      "diskSHA256": "e09a14541af933658c25e929e5ff712ebcc79c8f55ea5605c4ac573894f36247",
+      "equal": true
+    },
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "status": 200,
+      "servedSHA256": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518",
+      "diskSHA256": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518",
+      "equal": true
+    },
+    {
+      "path": "src/styles/app.css",
+      "status": 200,
+      "servedSHA256": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e",
+      "diskSHA256": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e",
+      "equal": true
+    },
+    {
+      "path": "src/js/manifest.json",
+      "status": 200,
+      "servedSHA256": "baa7671404747d22ee815d065f4cdf42398cb1f716ae7813645f4ab3057c1360",
+      "diskSHA256": "baa7671404747d22ee815d065f4cdf42398cb1f716ae7813645f4ab3057c1360",
+      "equal": true
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+[
+  {
+    "candidateBuild": "5b4ef1141c9583bf",
+    "variant": "before",
+    "width": 1440,
+    "theme": "light",
+    "currencies": [
+      "USD"
+    ],
+    "economicRows": 0,
+    "events": [],
+    "capture": "before-1440-light.png",
+    "baselineSourceInjectionOnly": true
+  },
+  {
+    "candidateBuild": "5b4ef1141c9583bf",
+    "variant": "after",
+    "width": 1440,
+    "theme": "light",
+    "currencies": [
+      "USD",
+      "CAD"
+    ],
+    "economicRows": 7,
+    "events": [
+      "BOC Rate Statement",
+      "BOC Monetary Policy Report",
+      "Overnight Rate",
+      "BOC Press Conference",
+      "Federal Funds Rate",
+      "FOMC Statement",
+      "FOMC Press Conference"
+    ],
+    "capture": "after-1440-light.png",
+    "baselineSourceInjectionOnly": false
+  },
+  {
+    "candidateBuild": "5b4ef1141c9583bf",
+    "variant": "after",
+    "width": 390,
+    "theme": "dark",
+    "currencies": [
+      "USD",
+      "CAD"
+    ],
+    "economicRows": 7,
+    "events": [
+      "BOC Rate Statement",
+      "BOC Monetary Policy Report",
+      "Overnight Rate",
+      "BOC Press Conference",
+      "Federal Funds Rate",
+      "FOMC Statement",
+      "FOMC Press Conference"
+    ],
+    "capture": "after-390-dark.png",
+    "baselineSourceInjectionOnly": false
+  }
+]

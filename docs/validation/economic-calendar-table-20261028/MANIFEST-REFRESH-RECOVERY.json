@@ -1,0 +1,14 @@
+{
+  "manifest_changes": [
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "before": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+      "after": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831"
+    }
+  ],
+  "script_order_and_metadata_preserved": true,
+  "preflight_after_refresh": "PASS",
+  "applied_tests": "Exact37; V3delta NOT_APPLIED",
+  "build": "aae9e9bd125c94e7",
+  "process_deviation": "Patch37aplicadoantesdetratarBLOCKED; errodeordemexplicitadopeloresponsável, nenhumartefatofalhodeclaradoaprovado."
+}

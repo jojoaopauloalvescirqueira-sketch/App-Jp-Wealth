@@ -1,0 +1,659 @@
+{
+  "AGENTIC IMPACT CHECK": "AGENTIC IMPACT DETECTED",
+  "BASIS": "The approved change moves semantic ownership and removes placeholder routes, introduces a new annual model/optional aggregate and moves learning cursors; these are consumed by active-task bootstrap, canonical contracts, executable gates and factual indices. Read-only reconciliation confirmed updated ACTIVE-TASK, NAVIGATION-HIERARCHY, MANAGEMENT-ANNUAL, STATE-SCHEMA, LEARNING-GUIDE, runtime manifest and additive gate registration. Older declared snapshots were kept historical. One present-tense CONTEXT-MAP area description remains superseded, with safe current routes and a bounded separate proposal. No complete system-wide reconciliation or final FULL approval is claimed.",
+  "mode": [
+    "IMPACT",
+    "RECONCILE"
+  ],
+  "reviewedAt": "2026-10-26T23:17:52.077930+00:00",
+  "scope": {
+    "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+    "branch": "codex/portfolio-gerenciamento-20261026",
+    "head": "3e24f60f8cfe87f79335f40e95a0927379a9f834",
+    "build": "ae2189c2ba4ab31a",
+    "freeze": "/private/tmp/jpw-portfolio-management-20261026/freeze-final.json",
+    "changes": [
+      "Approved Portfolio/Analysis navigation and placeholder retirement",
+      "Independent Management ownership of reserves and annual accounting",
+      "Canonical ledger preservation and optional annual aggregate",
+      "Dante compatibility, Dashboard/Notes and additive permanent controls"
+    ],
+    "classification": "HIGH (product ownership, new architecture and legacy route retirement); dedicated gate delta is N3 control plane and already separately authorized",
+    "nature": [
+      {
+        "kind": "MATERIAL",
+        "items": "Runtime navigation, annual model, optional persisted configuration and compatibility contracts"
+      },
+      {
+        "kind": "RECONCILIATION",
+        "items": "Current task, documentation contracts and factual regression registration reflect the approved runtime"
+      }
+    ]
+  },
+  "authorityBoundary": "A0 read-only review; only scratch report/proposal written. No source, instruction, history, index, global memory or active FULL process was changed.",
+  "categories": [
+    {
+      "category": "Agent instructions and authority",
+      "impact": "NOT_AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "canonical instructions",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "line": 38,
+          "excerpt": "Antes de editar, ler este núcleo, `CLAUDE.md` quando usado pelo Claude, [README](README.md), [CONTEXT-MAP](docs/governance/CONTEXT-MAP.md) e as fontes pertinentes roteadas. Conferir instruções globais/locais realmente aplicáveis; existência de arquivo não comprova carregamento. README/handoff antigos não substituem contrato atual e estado Git conferido.",
+          "meaning": "Bootstrap requires selective routed originals and confrontation with Git/runtime, not historical snapshots alone."
+        },
+        {
+          "path": "AGENTS.md",
+          "line": 9,
+          "excerpt": "A instrução humana vigente delimita tarefa e ações autorizadas. Este arquivo, um CHG preenchido pelo agente ou resultado recuperado não concede autorização. Durante alteração de instruções, o candidate é objeto de avaliação e não pode ampliar a autoridade do próprio executor.",
+          "meaning": "No new authority derives from docs, tests or recovered sources."
+        }
+      ],
+      "basis": "Portfolio/Management changes product navigation and an explicitly approved financial adaptation; it does not change hierarchy, authority, agent personality or financial policy."
+    },
+    {
+      "category": "Client agent adapters and specialized agent metadata",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "references",
+      "evidence": [
+        {
+          "path": "CLAUDE.md",
+          "line": 3,
+          "excerpt": "@AGENTS.md",
+          "meaning": "Claude adapter imports the common authority rather than duplicating product navigation."
+        },
+        {
+          "path": "docs/governance/AI-WORKFLOW.md",
+          "line": 21,
+          "excerpt": "Ler README, mapa, PROJECT-CONTEXT, CURRENT-STATE e tarefa ativa conforme bootstrap. Preflight: `python3 tools/agent_preflight.py --mode audit`; modo `--mode edit` antes de escrita. Registrar base, risco e autoridade real. Resultados antigos, autorização de tarefa anterior e histórico não autorizam a tarefa atual.",
+          "meaning": "Agent consumers are explicitly routed through both the old snapshots and current active task, with freshness checking."
+        }
+      ],
+      "basis": "Clients consuming the task must know its new domain; existing references reach AGENTS, current task and canonical contracts. No new autonomous agent or client-specific product map was introduced. Runtime loading in fresh clients is not proved by this read-only review."
+    },
+    {
+      "category": "Skills, skill registry and discovery routing",
+      "impact": "NOT_AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "frozen procedures and references",
+      "evidence": [
+        {
+          "path": "docs/governance/SKILL-ROUTING.md",
+          "line": 15,
+          "excerpt": "| Mudanca material com potencial de alterar comportamento, contrato, arquitetura, fonte canonica ou representacao consumida pela camada agentica | `agentic-evolution-governance` | blast radius agentico com impacto separado de acao local, estado de coerencia quando houver reconciliacao; escrita somente com plano delimitado aprovado |",
+          "meaning": "Existing routing already calls agentic-evolution-governance for this change."
+        },
+        {
+          "path": "AGENTS.md",
+          "line": 135,
+          "excerpt": "Usar [SKILL-ROUTING](docs/governance/SKILL-ROUTING.md): toda tarefa lê preflight e change-control conforme sua fase; demais gatilhos são obrigatórios quando pertinentes. Skills são procedimentos, não agentes autônomos. Imports congelados não recebem manutenção incidental. Antes de concluir mudança, aplicar post-change-audit.",
+          "meaning": "Post-change audit and applicable procedures remain required."
+        }
+      ],
+      "basis": "No skill was added, removed or relocated by this delta; the generic procedure continues to route by type of work, not module name. Existing inspected skill links resolve to the single local sources. File presence does not prove native automatic activation."
+    },
+    {
+      "category": "Bootstrap, preflight and orchestration",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "workflow referencing current sources",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "line": 38,
+          "excerpt": "Antes de editar, ler este núcleo, `CLAUDE.md` quando usado pelo Claude, [README](README.md), [CONTEXT-MAP](docs/governance/CONTEXT-MAP.md) e as fontes pertinentes roteadas. Conferir instruções globais/locais realmente aplicáveis; existência de arquivo não comprova carregamento. README/handoff antigos não substituem contrato atual e estado Git conferido.",
+          "meaning": "Bootstrap requires selective routed originals and confrontation with Git/runtime, not historical snapshots alone."
+        },
+        {
+          "path": "docs/governance/AI-WORKFLOW.md",
+          "line": 21,
+          "excerpt": "Ler README, mapa, PROJECT-CONTEXT, CURRENT-STATE e tarefa ativa conforme bootstrap. Preflight: `python3 tools/agent_preflight.py --mode audit`; modo `--mode edit` antes de escrita. Registrar base, risco e autoridade real. Resultados antigos, autorização de tarefa anterior e histórico não autorizam a tarefa atual.",
+          "meaning": "Agent consumers are explicitly routed through both the old snapshots and current active task, with freshness checking."
+        },
+        {
+          "path": "docs/governance/CONTEXT-MAP.md",
+          "line": 3,
+          "excerpt": "[Contrato](../architecture/PLANNING.md), [plano aprovado](../superpowers/plans/2026-10-21-planning-proportions.md), [tarefa](../work/ACTIVE-TASK.md) e [provas com limites](../validation/planning-proportions-20261021/README.md). Correções de apresentação implementadas com regressões; três abas e finanças preservadas. Resultado atual somente no recibo FULL próprio e identidade congelada, nunca em fotografias históricas.",
+          "meaning": "Bootstrap can reach the updated active task directly."
+        }
+      ],
+      "basis": "The required discovery chain reaches ACTIVE-TASK and NAVIGATION-HIERARCHY, then MANAGEMENT-ANNUAL. This is evidence of discoverability, not a fresh cold-start comprehension experiment or proof of technical enforcement."
+    },
+    {
+      "category": "Current operational task and brief",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "operational context",
+      "evidence": [
+        {
+          "path": "docs/work/ACTIVE-TASK.md",
+          "line": 1,
+          "excerpt": "# Portfólio e Gerenciamento — execução local 26/10/2026",
+          "meaning": "Current task is 26 October, branch/base identified, links the annual contract and own evidence."
+        },
+        {
+          "path": "docs/work/BRIEF-PORTFOLIO-MANAGEMENT-20261026.md",
+          "line": 6,
+          "excerpt": "2. **Responsabilidades:** shell resolve navegação aceita; Gerenciamento mantém seleção efêmera; motor puro deriva calendário/projeção/comparação; state adapta ao escritor canônico; UI apresenta prévia e confirmação; ledger/backup/recuperação continuam compartilhados.",
+          "meaning": "Brief states separate management selection, pure engine, canonical state adapter and UI responsibility."
+        },
+        {
+          "path": "docs/work/ACTIVE-TASK.md",
+          "line": 5,
+          "excerpt": "Fonte Excel identificada no contrato anual, sem importação de seus dados pessoais. Calendário civil e proporcionalidade composta seguem decisões humanas explícitas. Consultas/digitação não gravam. Validação final e aceite visual humano permanecem pendentes até respectivos recibos. Os 102 checks anteriores são históricos e foram preservados no runner acrescido dos focais da nova área. [Contrato](../architecture/MANAGEMENT-ANNUAL.md) e [evidências](../validation/portfolio-management-20261026/README.md).",
+          "meaning": "No completion or FULL result is pre-announced."
+        }
+      ],
+      "basis": "Authorized ACTIVE-TASK is already reconciled for this branch/base and current pending validation. Its dated earlier sections are explicitly historical, not competing active tasks."
+    },
+    {
+      "category": "Canonical navigation, domain, data and learning contracts",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "canonical contracts",
+      "evidence": [
+        {
+          "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+          "line": 1,
+          "excerpt": "# Portfólio e Gerenciamento — contrato vigente 26/10/2026",
+          "meaning": "Current navigation contract takes precedence over explicitly preserved dated sections below."
+        },
+        {
+          "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+          "line": 1,
+          "excerpt": "# Gerenciamento — planejamento anual e caixa diário",
+          "meaning": "Canonical approved adaptation, model ownership, writes and limitations are discoverable."
+        },
+        {
+          "path": "docs/architecture/STATE-SCHEMA.md",
+          "line": 3,
+          "excerpt": "O novo agregado opcional `S.managementAnnual` tem `schemaVersion:1`, `revision`, `plans[]` e `audit[]`. Cada plano identifica conta, período e ano e preserva `config`, `openingSource`, revisões em `history[]`, declarações explícitas em `declarations[]` e retratos anuais imutáveis em `snapshots[]`. Ausência do agregado em backup antigo é válida e consultas não o criam. Versão futura ou conteúdo inválido seguem recuperação, preservando os bytes de origem.",
+          "meaning": "Optional aggregate and old backup compatibility are documented."
+        },
+        {
+          "path": "docs/architecture/LEARNING-GUIDE.md",
+          "line": 5,
+          "excerpt": "Este contrato incorpora a reorganização Portfólio/Gerenciamento aprovada em26/10/2026 ([contrato anual](MANAGEMENT-ANNUAL.md)) ao candidato de24/10/2026 sob o [brief aprovado](../work/BRIEF-DANTE-20261024.md), com produto e controles em CHGs separados. [Identidade e voz do mascote](../branding/DANTE.md) orientam o texto; não alteram os contratos financeiros. Testes locais e aceite humano têm evidências próprias.",
+          "meaning": "Learning contract covers moved/retired IDs without credits on read."
+        }
+      ],
+      "basis": "The new product truth and compatibility are recorded in current contracts: old research identity retained, management independent of Forex, canonical ledger retained, optional aggregate and Dante cursor compatibility explicit. This review assesses documentation coherence; product correctness remains the responsibility of existing tests/audits."
+    },
+    {
+      "category": "General architecture and code-map summaries",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "dated snapshots plus references",
+      "evidence": [
+        {
+          "path": "docs/architecture/ARCHITECTURE.md",
+          "line": 1,
+          "excerpt": "# Planejamento — contrato sucessor de 20/10/2026",
+          "meaning": "Top summary expressly dates itself to 20 October."
+        },
+        {
+          "path": "docs/architecture/CODE-MAP.md",
+          "line": 1,
+          "excerpt": "# Planejamento — contrato sucessor de 20/10/2026",
+          "meaning": "The same dated summary is preserved, not a claim of inspection of 26 October."
+        },
+        {
+          "path": "docs/governance/CONTEXT-MAP.md",
+          "line": 242,
+          "excerpt": "  `docs/architecture/NAVIGATION-HIERARCHY.md`.",
+          "meaning": "Current UI route discovery reaches the updated navigation contract."
+        },
+        {
+          "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+          "line": 1,
+          "excerpt": "# Portfólio e Gerenciamento — contrato vigente 26/10/2026",
+          "meaning": "Current navigation contract takes precedence over explicitly preserved dated sections below."
+        }
+      ],
+      "basis": "Do not rewrite the dated seven-menu snapshots as if they always described eight menus. For this delta, the live resolver and current navigation/annual contracts are the applicable originals. A short successor pointer could reduce reading effort but is not needed to discover or understand the approved delta; no broad rewrite proposed."
+    },
+    {
+      "category": "Context-map area description and current routing",
+      "impact": "AFFECTED",
+      "local_action": "REQUIRED",
+      "coherence": "STALE",
+      "role": "operational representation with inherited current routes",
+      "evidence": [
+        {
+          "path": "docs/governance/CONTEXT-MAP.md",
+          "line": 294,
+          "excerpt": "Research apoia estudos e análises; hoje oferece Calendário, NoCoda e Pivots.",
+          "meaning": "Undated present-tense area paragraph still describes calendar and removed placeholders."
+        },
+        {
+          "path": "docs/governance/CONTEXT-MAP.md",
+          "line": 242,
+          "excerpt": "  `docs/architecture/NAVIGATION-HIERARCHY.md`.",
+          "meaning": "Current UI route discovery reaches the updated navigation contract."
+        },
+        {
+          "path": "docs/work/ACTIVE-TASK.md",
+          "line": 1,
+          "excerpt": "# Portfólio e Gerenciamento — execução local 26/10/2026",
+          "meaning": "Current task is 26 October, branch/base identified, links the annual contract and own evidence."
+        }
+      ],
+      "basis": "The existing current-tense Research paragraph is semantically superseded: new name Portfolio/Analysis and removal of placeholders are introduced by this delta; calendar placement was already obsolete before it. Current contract routing remains available, so this is not a material block to understanding the implementation. A bounded successor pointer is appropriate; editing this governance file is outside the current CHG allowed files and was not performed."
+    },
+    {
+      "category": "Stable project context, README and dated current-state/handoff photographs",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "explicitly dated historical snapshots and references",
+      "evidence": [
+        {
+          "path": "docs/governance/PROJECT-CONTEXT.md",
+          "line": 19,
+          "excerpt": "Revisão geral histórica: 2026-09-09",
+          "meaning": "General context declares its historical revision and limits."
+        },
+        {
+          "path": "docs/governance/CURRENT-STATE.md",
+          "line": 1,
+          "excerpt": "# Calendário e Agenda — candidato local de 23/10/2026",
+          "meaning": "Top state is a dated 23 October candidate, not evidence for the current build."
+        },
+        {
+          "path": "SESSION_HANDOFF.md",
+          "line": 1,
+          "excerpt": "# Calendário e Agenda — candidato local de 23/10/2026",
+          "meaning": "Handoff also identifies its old candidate and cannot supersede current task/Git."
+        },
+        {
+          "path": "README.md",
+          "line": 398,
+          "excerpt": "Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/governance/CONTEXT-MAP.md`. O estado e as pendências registrados em `docs/governance/CURRENT-STATE.md` correspondem à fotografia e à `Source revision` declaradas ali; confronte-as com a revisão examinada antes de tratá-las como atuais. Conversas e handoffs nunca substituem essas fontes. Consulte o inventário e o roteamento em [SKILL-ROUTING](docs/governance/SKILL-ROUTING.md): procedimentos locais `jpw-*` e skills genéricas instaladas no projeto (`repository-architecture`, `agentic-evolution-governance`), com seus limites e fontes preservados. O fechamento de toda mudança material exige veredito explícito de impacto agêntico, conforme `skills/jpw-post-change-audit/SKILL.md`.",
+          "meaning": "README expressly limits CURRENT-STATE to its declared snapshot/revision and requires confrontation before treating it as current."
+        }
+      ],
+      "basis": "These dated claims remain valid about their own snapshots and must not be marked STALE merely for age or rewritten. They do not cover the current task and are not treated here as evidence of its completion. ACTIVE-TASK and current contracts supply the missing current scope. Broader snapshot reconciliation, if later wanted, needs a separate bounded authorization; it is not required to replace their historical text now."
+    },
+    {
+      "category": "Guards, gates and test registries",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "executable canonical gate and frozen verification catalogs",
+      "evidence": [
+        {
+          "path": "tools/quality_gate.py",
+          "line": 95,
+          "excerpt": "    (\"management-account-flow\", [sys.executable, \"tools/management_account_flow_test.py\"]),",
+          "meaning": "New accepted account-flow check is registered."
+        },
+        {
+          "path": "tools/ui_visual_quality_test.py",
+          "line": 734,
+          "excerpt": "MANAGEMENT_GATE_AST_SHA256 = {'STANDARD':'f5010648fa4ef9a3cb12425c31f83da77a478793cb24f76d169a0c55b6927364','FULL':'13185d30e6efb6fe9a767711fad5385acdf9ca5d31504d840817e58fa1ff27d5'}",
+          "meaning": "Additive gates are frozen independently from the runner."
+        },
+        {
+          "path": "docs/governance/CONTEXT-MAP.md",
+          "line": 447,
+          "excerpt": "contagens descritivas antigas em QUALITY-GATES não alteram o script nem substituem",
+          "meaning": "Existing map already says descriptive old counts do not redefine the script or executed evidence."
+        }
+      ],
+      "basis": "Runner is 69 standard/113 full; prior independent AST review confirmed preservation of all102 old commands and default413 visual cases. Current running FULL is not concluded by this assessment. Old descriptive QUALITY-GATES figures were already older and do not override executable declarations; no new waiver or gate weakening is proposed."
+    },
+    {
+      "category": "Local factual regression memory",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "factual index",
+      "evidence": [
+        {
+          "path": "tools/regression-memory.json",
+          "line": 4894,
+          "excerpt": "      \"id\": \"management_off_calendar_declaration\",",
+          "meaning": "MGT-35 and management-engine linkage are recorded."
+        },
+        {
+          "path": "tools/regression-memory.json",
+          "line": 4960,
+          "excerpt": "      \"id\": \"management_account_flow_owner\",",
+          "meaning": "Account-flow owner regression points at the additive gate."
+        },
+        {
+          "path": "AGENTS.md",
+          "line": 158,
+          "excerpt": "Consultar [memória factual de regressões](tools/regression-memory.json) nas áreas afetadas: fontes, estímulos, oráculos, casos, vínculo real ao gate e pendências. Cada nova correção acrescenta/atualiza o caso permanente e o registro pertinente conforme o procedimento; registrar RED/GREEN e os bytes correspondentes, sem fechar incidente por repetição bem-sucedida. A cobertura do legado é parcial e não deve ser promovida a integral por esse índice. Dados reais e segredos não entram na memória; não há serviço automático de memória nem edição de memória global.",
+          "meaning": "Index is partial and never substitutes for test execution."
+        }
+      ],
+      "basis": "New approved regression entries point to existing cases/contracts and preserve pending final status. This is not a global memory service update or evidence that FULL has passed."
+    },
+    {
+      "category": "Runtime manifest, generated indices and distribution fingerprints",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "CURRENT",
+      "role": "generated runtime index",
+      "evidence": [
+        {
+          "path": "src/js/manifest.json",
+          "line": 739,
+          "excerpt": "      \"path\": \"src/js/30-accounting/07-management/01-engine.js\",",
+          "meaning": "Official manifest includes the pure engine."
+        },
+        {
+          "path": "src/js/manifest.json",
+          "line": 745,
+          "excerpt": "      \"path\": \"src/js/30-accounting/07-management/02-state.js\",",
+          "meaning": "State adapter is indexed."
+        },
+        {
+          "path": "src/js/manifest.json",
+          "line": 751,
+          "excerpt": "      \"path\": \"src/js/30-accounting/07-management/03-ui.js\",",
+          "meaning": "Presentation is indexed."
+        }
+      ],
+      "basis": "The new classic scripts are represented in the official manifest and its recorded hashes match the scoped frozen source observation. Distribution behavior and final candidate stability still depend on the running full verification; this is only a read of the built index."
+    },
+    {
+      "category": "Graphify, optional graph index and historical Atlas",
+      "impact": "AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "STALE",
+      "role": "derived index for an older revision; historical catalogs",
+      "evidence": [
+        {
+          "path": "graphify-out/GRAPH_REPORT.md",
+          "line": 1,
+          "excerpt": "# Grafo atual do JP Wealth — 14/10/2026",
+          "meaning": "Graph is explicitly anchored to14 October."
+        },
+        {
+          "path": "graphify-out/GRAPH_REPORT.md",
+          "line": 3,
+          "excerpt": "Base: `0037bd3c8a7ab2b4e21f7fdcb60f66ed93230874`. Graphify0.9.41. **524 arquivos selecionados; 6852 nós; 17231 arestas; 308 comunidades.**",
+          "meaning": "Graph source revision is not this candidate."
+        },
+        {
+          "path": "docs/architecture/FEATURE-ATLAS.md",
+          "line": 12,
+          "excerpt": "## Reconciliação focal corrente — 2026-10-08",
+          "meaning": "Atlas is partial and explicitly inspected at an older revision."
+        },
+        {
+          "path": "docs/governance/CONTEXT-MAP.md",
+          "line": 364,
+          "excerpt": "| `graphify-out/GRAPH_REPORT.md`, `graphify-out/manifest.json`, `graphify-out/graph.json` | Relatório de 2026-08-17 declara origem `a3052d23`; representação anterior às alterações de navegação, módulos e adoção V11 | **STALE e ausente nesta worktree**. Referência histórica; pode indicar caminhos a conferir diretamente; não prova estado atual. Nenhuma reindexação ou consulta Graphify que grave cache/estatísticas está autorizada por este CHG. |",
+          "meaning": "Older context describes an absent graph; it now exists in this checkout, a pre-existing observation rather than a new product change."
+        }
+      ],
+      "basis": "Graphify manifest lacks the new management files; it must not be used as a current index. Existing Atlas/history is not rewritten. No reindex is needed to deliver this feature because the approved canonical originals/current task are directly discoverable. If a current graph becomes a goal, reindex requires separate authorization and validated source selection. No Graphify command, cache query or index write was run."
+    },
+    {
+      "category": "Historical records, approvals, changelogs and prior validation evidence",
+      "impact": "NOT_AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "NOT_AFFECTED",
+      "role": "historical artifacts",
+      "evidence": [
+        {
+          "path": "docs/work/ACTIVE-TASK.md",
+          "line": 9,
+          "excerpt": "## Fotografia anterior preservada",
+          "meaning": "Earlier tasks are explicitly preserved as history."
+        },
+        {
+          "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+          "line": 11,
+          "excerpt": "## Fotografias anteriores preservadas",
+          "meaning": "Current contract marks earlier navigation as historical."
+        },
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "line": 3,
+          "excerpt": "Implementação autorizada em `codex/portfolio-gerenciamento-20261026`, base `3e24f60`. **Validação em andamento; sem aceite humano ou integração.**",
+          "meaning": "Current evidence entry does not claim a future result."
+        }
+      ],
+      "basis": "Past audits, handoffs, baseline counts and unresolved incidents are historical evidence, not stale claims simply because functionality moved. No old result was promoted to approval of this candidate; no history rewriting is proposed."
+    },
+    {
+      "category": "External shared installations and global memory",
+      "impact": "NOT_AFFECTED",
+      "local_action": "NOT_REQUIRED",
+      "coherence": "NOT_AFFECTED",
+      "role": "external installations and memory outside the approved delta",
+      "evidence": [
+        {
+          "path": "docs/work/CHG-JPW-PORTFOLIO-MANAGEMENT-PRODUCT-20261026.md",
+          "line": 44,
+          "excerpt": "      \"skills/\",",
+          "meaning": "Skills are forbidden edits for this task."
+        },
+        {
+          "path": "docs/work/ACTIVE-TASK.md",
+          "line": 7,
+          "excerpt": "Sem novas dependências, política financeira, exclusão de dados, commit, merge, push ou publicação. Nenhuma memória global alterada.",
+          "meaning": "Current task explicitly excludes global memory changes."
+        }
+      ],
+      "basis": "The change is local to one product checkout, not a release of a shared skill or agent. No cross-project propagation, external plugin update, global memory write or index activation is called for. Their runtime state was not audited here."
+    }
+  ],
+  "consumerPath": [
+    "AGENTS bootstrap → CONTEXT-MAP and AI-WORKFLOW",
+    "CONTEXT-MAP → ACTIVE-TASK and NAVIGATION-HIERARCHY",
+    "ACTIVE-TASK → current CHGs, brief, MANAGEMENT-ANNUAL and own evidence",
+    "NAVIGATION-HIERARCHY → MANAGEMENT-ANNUAL",
+    "Canonical annual/state/learning contracts → actual source and executable tests",
+    "regression-memory → permanent case and quality_gate check_id"
+  ],
+  "materialComprehensionBlockers": [],
+  "reconciliationRequired": true,
+  "systemReconciled": "PARTIAL: scoped canonical task/contracts/gates are coherent; one current-tense area description needs a separately authorized successor pointer. Historical/general catalogs are explicitly revision-limited rather than silently promoted to current.",
+  "pending": [
+    {
+      "id": "AG-CTX-01",
+      "status": "STALE",
+      "severity": "LOW",
+      "blockingForUnderstandingCurrentDelta": false,
+      "affected": "docs/governance/CONTEXT-MAP.md Research current-tense paragraph",
+      "introducedBy": "Portfolio rename and placeholder retirement in this delta; obsolete calendar ownership predates it",
+      "localAction": "REQUIRED: bounded successor pointer; no history rewrite",
+      "authorization": "Outside current CHG; no repository edit performed",
+      "proposal": "/private/tmp/jpw-portfolio-management-20261026/AGENTIC-CONTEXT-POINTER-PROPOSAL.md"
+    },
+    {
+      "id": "AG-SOURCE-01",
+      "status": "ORPHAN",
+      "severity": "PREEXISTING",
+      "blockingForThisReadOnlyAudit": false,
+      "affected": "Original external Harness path in AGENTS",
+      "evidence": {
+        "path": "docs/work/BRIEF-PORTFOLIO-MANAGEMENT-20261026.md",
+        "line": 23,
+        "excerpt": "O Harness indicado no AGENTS foi encontrado na Lixeira do iCloud. A cópia preservada acima é byte a byte idêntica (b5680c22...), também correspondente aos hashes históricos do projeto; §§12–14,19,24,28–30,36–48 foram relidos efetivamente nesta validação. Originais e instruções não foram restaurados nem alterados. Isso não ativa exceção de auditoria ou modifica autoridades.",
+        "meaning": "Brief records the source recovery, byte-identical preserved copy and hash; authority was not changed."
+      },
+      "localAction": "No change in this delivery; any future repair of the mandatory external pointer needs its own authorization. This review did not repeat the parent source reading or restore files."
+    }
+  ],
+  "indexVector": {
+    "verdict": "INDEX NOT REQUIRED for this feature delivery",
+    "existingMechanism": "Graphify static historical graph exists; partial hand-authored Atlas and factual regression-memory also exist. No official current vector runtime was established by these sources.",
+    "currentIndexState": "Graphify is not current for this material revision; historical artifact itself is preserved.",
+    "conditionalFutureReindex": "If a current graph is later required: INDEX BLOCKED until separate explicit authorization and validated canonical source selection. Exclude personal spreadsheet values, secrets, scratch artifacts and generated copies without purpose.",
+    "executed": false
+  },
+  "historicalTreatment": "Dated snapshots and previous audit/validation results were evaluated at their declared revision. They remain historical and are not labeled stale solely for age or rewritten. STALE is limited to live/current representations whose semantics no longer match the scoped change.",
+  "observedFreezeSubset": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "05b7504d63a85aee41af9e7721f3d5a74f56a3905ccf023f69b1be2fcaf23ac0",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "20cb8f90650c6d8f36dcaefcc8a006de36b2f31bf796501f3a54540faa5e11e6",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/work/ACTIVE-TASK.md",
+      "sha256": "09f9fdba20441fae19b3c329827b8a67e10dcaf6383c5f5896fc30ffeee41fb5",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/work/BRIEF-PORTFOLIO-MANAGEMENT-20261026.md",
+      "sha256": "4ea9d77a2dc1eabb3f7e957c71005ba24da7835294fe0220fefc067b0f719558",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+      "sha256": "57c7ada094c5c3b1ce37b874a8e47a122fb3925bcd7fe0a926028ca7724e554d",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+      "sha256": "f921ffd4b9c761c659102ef1dcdb027d98b6c30f2d05315b49283b97cd2166a1",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/architecture/STATE-SCHEMA.md",
+      "sha256": "9d0363f040fc8407acf05330c025863e051c2d1f0a77a7d2881168b7e5e28db0",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/architecture/LEARNING-GUIDE.md",
+      "sha256": "b822a7a9cdc8f9e5a80741d3ceb76a168262694e66f1b1f09e96f4e27de7f7ae",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/architecture/ARCHITECTURE.md",
+      "sha256": "6f223ee69d3851caf8994b2901d8202e53838a18ace627f8f3320287724929c1",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/architecture/CODE-MAP.md",
+      "sha256": "5ee6478eea9c50d73bc157be93bb431f7a5fcbb4289af8468cdf8aec05a3228c",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/architecture/FEATURE-ATLAS.md",
+      "sha256": "280546f85b3f4c85bc7d924e958ed45c4e2999cb5f4aab4c797d4bbd9c5b15d4",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "docs/governance/CONTEXT-MAP.md",
+      "sha256": "06463534dea94f3665fddbe03e2f46ff2367fdffe272a7a3fccd936e0cb73c5b",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/governance/PROJECT-CONTEXT.md",
+      "sha256": "db9e5be8d02bc6ce0a3d98580a65ff8f53bcd01d189a2f3630e9181d0f980d6b",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/governance/CURRENT-STATE.md",
+      "sha256": "53fafe40ef5e9e4bc0fa801ac8e2be8ea317bb31d1a413b428346714c4c54c30",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "SESSION_HANDOFF.md",
+      "sha256": "52ba8340de2a642ea2ea12a39658b9c49191e0a02037bbefd3ed0b8adfd43777",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "README.md",
+      "sha256": "ba054649f0702ca0831079e0aaf944e44ba8a1b0c35ad6f247eaffda4e215ee8",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/governance/SKILL-ROUTING.md",
+      "sha256": "eb07b10e0d15a4e98a19e4b66ff082b99483ebe10f08b97847a940a1e3007500",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/governance/AI-WORKFLOW.md",
+      "sha256": "b7a234cce278f8b68183d9c6b066b2706528d91d89d83618d8b86499923d344c",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "docs/governance/QUALITY-GATES.md",
+      "sha256": "985139e137bb7b18185933255498280a4d3ddcf96fb21ce22e44a8238be72902",
+      "matchesFreeze": null,
+      "frozen": false
+    },
+    {
+      "path": "tools/quality_gate.py",
+      "sha256": "7aa88d48be05786129a1d26baa99bf1d65a2a0f6980e67b0782dd61489ade495",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "tools/regression-memory.json",
+      "sha256": "f41dcc1219f6649da6eef4ec4d9ef0a248e8ce3641c4b31dac866e11fd09e9db",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "src/js/manifest.json",
+      "sha256": "03dc0119c3c4011b8052fef2262d7ecfa1e1063f7ad749f77494403a2d291ef6",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "skills/agentic-evolution-governance/SKILL.md",
+      "sha256": "b484b6a9a5ec2495ef7c37efbb2b92b74e73b9a52bae0964e06a773d8d915335",
+      "matchesFreeze": true,
+      "frozen": true
+    },
+    {
+      "path": "skills/jpw-post-change-audit/SKILL.md",
+      "sha256": "e6c5f03a36a4121997327702d1e41ce13efbc85834014ba287f9b6d4eff8f2c3",
+      "matchesFreeze": true,
+      "frozen": true
+    }
+  ],
+  "limitations": [
+    "FULL113 remains in execution; no final outcome inferred or announced.",
+    "No browser, application journey, financial write, test suite, Graphify query or preflight script was run for this A0 assessment.",
+    "Fresh-client activation, cold-start comprehension, native skill autoload, external memory availability and runtime barriers were not tested.",
+    "Read-only discovery of a dependency does not authorize propagation, reindexing, Git operations or publication.",
+    "The original private workbook values were not read again, copied into the report or indexed."
+  ],
+  "scratchArtifacts": [
+    "/private/tmp/jpw-portfolio-management-20261026/agentic-snapshot-observations.json",
+    "/private/tmp/jpw-portfolio-management-20261026/AGENTIC-CONTEXT-POINTER-PROPOSAL.md"
+  ]
+}

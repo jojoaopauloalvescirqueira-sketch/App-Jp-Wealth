@@ -14,6 +14,9 @@
   const str=(form,name)=>form.elements.namedItem(name).value.trim();
   const checked=(form,name)=>form.elements.namedItem(name).checked;
   const timestamp=(form,name)=>{const v=str(form,name);return v?new Date(v).toISOString():null;};
+  // Reservas pertence a Gerenciamento: contexto de consulta explícito, nunca a seleção operacional.
+  const reserveScope=()=>root.JPWManagement?.context?.()||{accountId:null,periodId:null};
+  const formScope=form=>form.id==='fxReserveFacts'?reserveScope():fx.state.operationalSelection();
   const scopedForms=new Set(['fxOperationBudget','fxMarketFacts','fxH4Facts','fxGridFacts','fxReserveFacts']);
   let initialized=false,stateIdentity=null;
   function mount(){
@@ -46,9 +49,9 @@
       <form id="fxEditorUnlock" class="fx-engine-form">${field('editor','Identificação declarada do editor','text','required maxlength="120"')}${field('phrase','Frase temporária','password','required autocomplete="off"')}${button('Desbloquear por cinco minutos')}${response()}</form>
       <form id="fxParameterProposal" class="fx-engine-form"><label class="fx-engine-field">Parâmetro<select name="id">${fx.policy.list().filter(p=>p.id).map(p=>`<option value="${safe(p.id)}">${safe(p.id)} · ${safe(p.name||p.label||p.id)}</option>`).join('')}</select></label>${field('value','Valor proposto','number','required')}${source()}${reason()}${button('Registrar proposta')}<button type="button" data-fx-lock>Bloquear editor</button>${response()}</form>
       <div id="fxProposals"></div></details>`;
-    el('forexReservesPanel').innerHTML=`<header><span class="cp-kicker">FOREX · GOVERNANÇA PATRIMONIAL</span><h1>Reservas</h1><p>FCR e FEO têm finalidades e requisitos distintos. A apuração registrada não substitui a verificação de liquidez, constituição e autorização.</p></header><p id="fxReserveContext" class="fx-context-caption"></p><div id="fxReserveSummary" class="fx-engine-cards"></div>
+    el('forexReservesPanel').innerHTML=`<header><span class="cp-kicker">GERENCIAMENTO · RESERVAS</span><h1>Reservas</h1><p>FCR e FEO têm finalidades e requisitos distintos. A apuração registrada não substitui a verificação de liquidez, constituição e autorização.</p></header><p id="fxReserveContext" class="fx-context-caption"></p><div id="fxReserveSummary" class="fx-engine-cards"></div>
       <p class="fx-save-contract">Preenchimento em memória. Registrar reservas confirma este ato; fechar ou navegar mantém o rascunho nesta sessão.</p><details><summary>Registrar constituição e apuração</summary><form id="fxReserveFacts" class="fx-engine-form">
-      <p id="fxReserveFormContext" class="fx-context-caption"></p>
+      <p id="fxReserveFormContext" class="fx-context-caption"></p><div id="fxReserveReviewStale" hidden><p>Os dados desta conta e período mudaram. Seu preenchimento foi preservado; atualize a revisão e confira os valores antes de registrar.</p><button type="button" data-fx-refresh-reserves>Atualizar revisão</button></div>
       <fieldset class="fx-reserve-group"><legend>Valores constituídos</legend><p>Valores na moeda do período indicado. Deixe em branco o que não foi apurado; SI não substitui capital nominal.</p>
       ${field('capitalNominal','Capital nominal da conta Mestre','number','min="0"')}${field('fcrConstituted','FCR constituído','number','min="0"')}${field('feoConstituted','FEO constituído','number','min="0"')}</fieldset>
       <fieldset class="fx-reserve-group"><legend>Apuração da FEO</legend><p>Despesas reais apuradas para seis meses; uma taxa histórica não substitui a apuração.</p>
@@ -79,7 +82,7 @@
     event.preventDefault();let result;
     try{
       if(scopedForms.has(form.id)){
-        const scope=fx.state.operationalSelection();
+        const scope=formScope(form);
         if(form.dataset.fxScopeAccount!==String(scope.accountId||'')||
           form.dataset.fxScopePeriod!==String(scope.periodId||'')){
           after(form,{ok:false,error:'Conta ou período mudou durante o preenchimento. Preserve o rascunho e revise o destino antes de registrar.'});return;
@@ -110,11 +113,11 @@
           result=fx.state.recordGrid(Number(str(form,'phase')),
             {reason:reasonValue,target:{...scope,operationId:period.value?.activeOperation?.operationId},
               expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:period.revision});break;}
-        case 'fxReserveFacts':{const scope=fx.state.operationalSelection(),period=fx.state.accountContext(scope);
+        case 'fxReserveFacts':{const scope=reserveScope(),period=fx.state.accountContext(scope);
           result=fx.state.recordReserves(Object.fromEntries([
           ...['capitalNominal','fcrConstituted','feoConstituted','sixMonthExpenseAmount','fcrLiquidityDays','feoLiquidityDays'].map(k=>[k,nullable(form,k)]),
           ...['expensePeriod','determinationReference','source'].map(k=>[k,str(form,k)]),...['determinationRecorded','expensesApproved','verificationRecorded'].map(k=>[k,checked(form,k)]),['verifiedAt',timestamp(form,'verifiedAt')]]),
-            {reason:reasonValue,target:scope,expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:period.revision});break;}
+            {reason:reasonValue,target:scope,expectedEpoch:Number(form.dataset.fxEpoch),expectedRevision:Number(form.dataset.fxPeriodRevision)});break;}
         case 'fxEditorConfigure':{const phrase=str(form,'phrase');form.elements.phrase.value='';result=await fx.state.configureEditor(phrase);break;}
         case 'fxEditorUnlock':{const phrase=str(form,'phrase');form.elements.phrase.value='';result=await fx.state.unlockEditor(phrase,str(form,'editor'));break;}
         case 'fxParameterProposal':result=fx.state.proposeParameterChange({id:str(form,'id'),value:nullable(form,'value'),source:str(form,'source'),reason:reasonValue});break;
@@ -125,6 +128,20 @@
   }
   function click(event){
     const b=event.target.closest('button');if(!b)return;
+    if(b.hasAttribute('data-fx-refresh-reserves')){
+      const form=el('fxReserveFacts'),scope=reserveScope();
+      if(form.dataset.fxScopeAccount!==String(scope.accountId||'')||form.dataset.fxScopePeriod!==String(scope.periodId||'')){
+        after(form,{ok:false,error:'A conta ou o período mudou. O rascunho pertence ao destino original; confira a seleção antes de atualizar a revisão.'});return;
+      }
+      const period=fx.state.accountContext(scope);
+      if(period.status!=='OK'||jpWealthPersistenceOutcomeIsUnknown()){
+        after(form,{ok:false,error:'Não foi possível confirmar o contexto salvo. Preserve o rascunho e consulte a recuperação antes de continuar.'});return;
+      }
+      // An explicit read-only revision refresh preserves every typed field.
+      // Only a later submit can issue the existing recordReserves command.
+      form.dataset.fxEpoch=String(jpWealthPersistenceEpoch());form.dataset.fxPeriodRevision=String(period.revision);
+      render();form.querySelector('.fx-engine-response').textContent='Revisão atualizada. Confira o resumo e os valores; Registrar reservas continua sendo uma confirmação separada.';form.querySelector('button[type="submit"]').focus({preventScroll:true});return;
+    }
     if(b.hasAttribute('data-fx-route')){navigateToScreen(b.dataset.fxRoute);return;}
     if(b.hasAttribute('data-fx-lock')){fx.state.lockEditor();render();return;}
     if(b.hasAttribute('data-fx-migrate')){
@@ -154,10 +171,11 @@
     if(stateIdentity!==S){stateIdentity=S;document.querySelectorAll('#forexEnginePanel form,#forexReservesPanel form').forEach(f=>f.reset());fx.state.clearEditor();}
     if(!['forexEnginePanel','forexReservesPanel','fxAccountFacts','fxOperationalSummary','forexV11Overview'].some(visible))return;
     const model=fx.state.read(),m=model.metrics;
-    const formScope=fx.state.operationalSelection();
     for(const id of scopedForms){const form=el(id);if(form&&form.dataset.fxTouched!=='true'){
-      form.dataset.fxScopeAccount=String(formScope.accountId||'');
-      form.dataset.fxScopePeriod=String(formScope.periodId||'');
+      const scope=formScope(form);
+      form.dataset.fxScopeAccount=String(scope.accountId||'');
+      form.dataset.fxScopePeriod=String(scope.periodId||'');
+      if(id==='fxReserveFacts'){form.dataset.fxEpoch=String(jpWealthPersistenceEpoch());form.dataset.fxPeriodRevision=String(fx.state.accountContext(scope).revision||0);}
     }}
     if(visible('fxAccountFacts')){
     const factForm=el('fxAccountFacts'),factScope=fx.accountsUI?.examination()||fx.state.operationalSelection();
@@ -180,16 +198,20 @@
     el('fxProposals').innerHTML=(S.forex&&Array.isArray(S.forex.proposals)?S.forex.proposals:[]).map(p=>`<p>${safe(p.timestamp)} · ${safe(p.field)}: ${safe(p.oldValue)} → ${safe(p.newValue)} · ${safe(p.status)} · ${safe(p.reason)} · não ativada</p>`).join('')||'<p>Nenhuma proposta registrada.</p>';
     }
     const currency=model.account&&model.account.currency,unit=currency?' '+safe(currency):'';
-    const reserveMetric=(label,r)=>{const v=r.value&&typeof r.value==='object'?r.value:null;const card=metric(label,{...r,value:v?v.constituted:null},unit);return v?card.replace('</article>','<p class="fx-reserve-detail">Requerido '+number(v.required)+unit+' · Déficit '+number(v.deficit)+unit+'</p></article>'):card;};
     if(visible('forexReservesPanel')){
-    el('fxReserveSummary').innerHTML=metric('FCR requerido',m.fcrRequirement,unit)+metric('FEO requerido',m.feoRequirement,unit)+reserveMetric('Constituição FCR',m.fcrStatus)+reserveMetric('Constituição FEO',m.feoStatus);
-    const selectedScope=fx.state.operationalSelection(),selectedPeriod=fx.state.accountContext(selectedScope);
+    const selectedScope=reserveScope(),selectedPeriod=fx.state.accountContext(selectedScope),reserveModel=fx.state.read(selectedScope);
+    const reserveCurrency=selectedPeriod.status==='OK'?selectedPeriod.value.currency:null;
+    const reserveUnit=reserveCurrency?' '+safe(reserveCurrency):'';
+    const reserveCard=(label,r)=>{const v=r.value&&typeof r.value==='object'?r.value:null;const card=metric(label,{...r,value:v?v.constituted:null},reserveUnit);return v?card.replace('</article>','<p class="fx-reserve-detail">Requerido '+number(v.required)+reserveUnit+' · Déficit '+number(v.deficit)+reserveUnit+'</p></article>'):card;};
+    el('fxReserveSummary').innerHTML=metric('FCR requerido',reserveModel.metrics.fcrRequirement,reserveUnit)+metric('FEO requerido',reserveModel.metrics.feoRequirement,reserveUnit)+reserveCard('Constituição FCR',reserveModel.metrics.fcrStatus)+reserveCard('Constituição FEO',reserveModel.metrics.feoStatus);
     const reserveAccount=(S.accounts||[]).find(a=>a.forexAccountId===selectedScope.accountId);
-    el('fxReserveContext').textContent='Conta operacional: '+(reserveAccount?.nome||'Não identificada')+' · Período desde '+(selectedPeriod.value?.startedAt||'não informado')+' · '+(selectedPeriod.value?.currency||'Moeda não verificada');
+    el('fxReserveContext').textContent='Conta em Gerenciamento: '+(reserveAccount?.nome||'Não identificada')+' · Período desde '+(selectedPeriod.value?.startedAt||'não informado')+' · '+(selectedPeriod.value?.currency||'Moeda não verificada');
     const reserveForm=el('fxReserveFacts'),draftScope={accountId:reserveForm.dataset.fxScopeAccount,periodId:reserveForm.dataset.fxScopePeriod};
     const draftPeriod=fx.state.accountContext(draftScope),draftAccount=(S.accounts||[]).find(a=>a.forexAccountId===draftScope.accountId);
     const scopeChanged=draftScope.accountId!==String(selectedScope.accountId||'')||draftScope.periodId!==String(selectedScope.periodId||'');
-    el('fxReserveFormContext').textContent='Destino deste preenchimento: '+(draftAccount?.nome||'Conta não identificada')+' · '+(draftPeriod.value?.startedAt||'Período não identificado')+' · '+(draftPeriod.value?.currency||'Moeda não verificada')+(scopeChanged?'. O contexto operacional mudou; este rascunho foi preservado e o registro será recusado até conferir o destino.':'.');
+    const stale=!scopeChanged&&reserveForm.dataset.fxTouched==='true'&&(reserveForm.dataset.fxEpoch!==String(jpWealthPersistenceEpoch())||reserveForm.dataset.fxPeriodRevision!==String(draftPeriod.revision||0));
+    el('fxReserveReviewStale').hidden=!stale;
+    el('fxReserveFormContext').textContent='Destino deste preenchimento: '+(draftAccount?.nome||'Conta não identificada')+' · '+(draftPeriod.value?.startedAt||'Período não identificado')+' · '+(draftPeriod.value?.currency||'Moeda não verificada')+(scopeChanged?'. A conta ou o período de Gerenciamento mudou; este rascunho foi preservado e o registro será recusado até conferir o destino.':'.');
     let r=selectedPeriod.status==='OK'&&selectedPeriod.value.reserves||
       (S.forex?.reserves?.accountId===selectedScope.accountId&&S.forex.reserves.periodId===selectedScope.periodId?S.forex.reserves:null);
     const history=[],seen=new Set();while(r&&!seen.has(r)){seen.add(r);history.push(`<li>${safe(r.recordedAt)} · FCR ${number(r.fcrConstituted)} · FEO ${number(r.feoConstituted)} · ${safe(r.source)}</li>`);r=r.previous;}
@@ -211,7 +233,7 @@
     }
     if(visible('forexV11Overview'))el('forexV11Overview').innerHTML=`<div class="fx-engine-status"><strong>${safe(model.executionEligibility.status)} — elegibilidade normativa</strong><p>${model.canRecord?'O registro factual permanece acessível, sujeito à integridade da gravação.':'Registro indisponível nesta versão do agregado; preserve a base.'} ${safe(fx.policy.version)}</p><div class="fx-engine-actions"><button type="button" data-fx-route="forex-account">Registrar observação da conta</button><button type="button" data-fx-route="params">Ver parâmetros</button></div></div><div class="fx-engine-cards">
       ${metric('Equity flutuante',{value:a?a.equity:null,status:a?'RECORDED':'NOT_COMPUTABLE',findings:[]},unit)}${metric('Drawdown da conta',m.drawdown,'%')}${metric('Fase da conta',model.accountPhase)}${metric('Fase da grade',model.activeGridPhase)}${metric('Alavancagem bruta',m.leverage,'x')}${metric('Risco financeiro aberto e pendente',m.aggregateRisk,unit)}${metric('Risco de admissão',m.admissionRisk,unit)}${metric('Orçamento declarado da operação',m.operationBudget,unit)}${metric('Risco comprometido',m.committedRisk,unit)}${metric('VRM',m.vrm)}${metric('Orçamento prudencial',m.prudentialCapacity,unit)}${metric('Reservas totais constituídas',{value:model.reserves.totalConstituted,status:model.reserves.totalConstituted===null?'NOT_COMPUTABLE':'RECORDED',findings:[]},unit)}
-      </div><nav class="fx-engine-actions" aria-label="Destinos do resumo Forex"><button type="button" data-fx-route="forex-operation">Ordens e fatos</button><button type="button" data-fx-route="forex-account">Contas</button><button type="button" data-fx-route="forex-reserves">Reservas</button><button type="button" data-fx-route="forex-reconciliation">Contabilidade</button><button type="button" data-fx-route="planning">Planejamento</button></nav>
+      </div><nav class="fx-engine-actions" aria-label="Destinos do resumo Forex"><button type="button" data-fx-route="forex-operation">Ordens e fatos</button><button type="button" data-fx-route="forex-account">Contas</button><button type="button" data-fx-route="forex-reserves">Reservas</button><button type="button" data-fx-route="forex-reconciliation">Caixa Anual</button><button type="button" data-fx-route="planning">Planejamento</button></nav>
       <details><summary>Sequência de dimensionamento — volume final indisponível</summary><p>O parâmetro de risco inicial está pendente. Não há volume sugerido, arredondado ou autorizado.</p><ol>${(m.sizingTrace.steps||[]).map(step=>`<li><b>${safe(step.id)}</b> — ${safe(step.status)} · ${number(step.value)}</li>`).join('')}</ol></details>
       <details><summary>Findings e limites da apuração</summary><ul>${model.findings.map(f=>`<li><b>${safe(f.code)}</b> — ${safe(f.message)}</li>`).join('')}</ul></details>`;
   }

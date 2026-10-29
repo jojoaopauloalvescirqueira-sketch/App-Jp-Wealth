@@ -1,0 +1,22 @@
+[
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/INDEPENDENT-FINAL-5B4E-REVIEW.md",
+    "copy": "docs/validation/economic-calendar-ff-20261028/review/INDEPENDENT-FINAL-5B4E-REVIEW.md",
+    "sha256": "706526f662f7ea4cae72fd98afd92f468a6c60f32d184efffb6de4d59a292c39"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/independent-final-5b4e-audit.json",
+    "copy": "docs/validation/economic-calendar-ff-20261028/review/independent-final-5b4e-audit.json",
+    "sha256": "fb0d6b65397ed2eca5258b0c5990d363008537120ff828a88d0c4a20221b9e8d"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/independent-final-5b4e-child-receipts.json",
+    "copy": "docs/validation/economic-calendar-ff-20261028/review/independent-final-5b4e-child-receipts.json",
+    "sha256": "83e90e19f3aa9344d00a69301ed8b51bb422a53cb7032f49e2cd7e0462343bdc"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/independent-final-5b4e-full-verification.json",
+    "copy": "docs/validation/economic-calendar-ff-20261028/review/independent-final-5b4e-full-verification.json",
+    "sha256": "d8ef0f0f667f57420fc215416387188a36f807cb0089e98e5cc9cb27c5211bd4"
+  }
+]

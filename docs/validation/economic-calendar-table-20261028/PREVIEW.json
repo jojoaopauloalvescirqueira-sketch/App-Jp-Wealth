@@ -1,0 +1,27 @@
+{
+  "url": "http://127.0.0.1:59411/index.html?v=bc08298ef8320bb0",
+  "build": "bc08298ef8320bb0",
+  "checks": [
+    {
+      "path": "index.html",
+      "http_matches_disk": true,
+      "sha256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3"
+    },
+    {
+      "path": "build-id.js",
+      "http_matches_disk": true,
+      "sha256": "0e804ce239d1e1179db8260dde17776a7dcbfd0f23cb876fda13c76b018f18ad"
+    },
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "http_matches_disk": true,
+      "sha256": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831"
+    },
+    {
+      "path": "src/styles/app.css",
+      "http_matches_disk": true,
+      "sha256": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38"
+    }
+  ],
+  "note": "Nova origem local de prévia; nenhum armazenamento do usuário foi transferido ou apagado."
+}

@@ -56,10 +56,22 @@ const RealDate=Date;c.Date=class extends RealDate{static now(){return Date.parse
 for(const key of ['fetch','document','localStorage','sessionStorage','S'])
  Object.defineProperty(c,key,{get(){throw new Error('Forbidden IO: '+key);}});
 vm.createContext(c);vm.runInContext(source,c,{timeout:2000});
+if(input.runtimePayload){
+ const payload=input.runtimePayload,stamp=payload.collectedAt||payload.generated_at;
+ const mode=payload.version===1?'legacy-partial':'normalized';
+ c.JPWCalendarFeed={snapshot:()=>({payload,revision:'SYN runtime',fetchedAt:Date.parse(stamp),mode}),status:()=>({mode,collectedAt:stamp})};
+}
 const api=c.JPWEconomicCalendar;
 let result;
 try {
  if(input.action==='metadata') result={sources:api.sources(),metadata:api.metadata()};
+ else if(input.action==='metadata-immutability'){
+   const first=api.metadata();first.limitations.push('MUTATED');
+   first.editorialPolicy.origins[0].publisher='MUTATED';
+   first.officialBaseMetadata.limitations.push('MUTATED');
+   first.updatePolicy.forexFactoryMaxAgeSeconds=-1;
+   result={metadata:api.metadata()};
+ }
  else if(input.action==='immutability'){
    const first=api.queryRange(input.query);first.events[0].title='MUTATED';
    const sources=api.sources();sources[0].name='MUTATED';
@@ -71,13 +83,14 @@ try {
 
 
 class ModelContract(unittest.TestCase):
-    def call(self, events=None, query=None, action=None, package=None):
+    def call(self, events=None, query=None, action=None, package=None, runtime_payload=None):
         self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
         data = {'model': str(MODEL), 'query': query or {
             'from': '2026-10-01', 'to': '2026-10-31', 'timeZone': 'UTC'}}
         if package is not None or events is not None:
             data['fixture'] = package if package is not None else fixture(events)
         if action: data['action'] = action
+        if runtime_payload is not None: data['runtimePayload'] = runtime_payload
         p = subprocess.run([NODE, '-e', NODE_PROBE], input=json.dumps(data), text=True,
                            capture_output=True, timeout=8)
         self.assertEqual(p.returncode, 0, p.stderr)
@@ -162,10 +175,128 @@ class ModelContract(unittest.TestCase):
         for currency in ['CHF']:
             rows=[x for x in result['coverage'] if x['currency']==currency]
             self.assertTrue(rows,currency)
-            self.assertTrue(all(x['status']=='pending' for x in rows),currency)
+            self.assertTrue(any(x['sourceId']=='chf-pending' and x['status']=='pending' for x in rows),currency)
         self.assertTrue(any(x['currency']=='NZD' and x['status']=='partial' for x in result['coverage']))
         self.assertTrue(any(x['currency']=='NZD' and x['precision']=='instant' for x in events))
         self.assertTrue(all(x['sourceUrl'].startswith(('https://','http://')) for x in events))
+
+    def test_20_nine_currencies_and_verified_oct28_policy_events(self):
+        metadata=self.call(action='metadata')['result']['metadata']
+        self.assertEqual(set(metadata['currencies']),{'USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'})
+        result=self.call(query={'from':'2026-10-28','to':'2026-10-28','currencies':['CAD','USD'],
+                               'impacts':['high'],'timeZone':'America/Sao_Paulo'})['result']
+        expected={'boc-policy-2026-10:'+kind:'2026-10-28T13:45:00+00:00'
+                  for kind in ['rate-decision','policy-statement','monetary-policy-report']}
+        expected.update({'boc-policy-2026-10:press-conference':'2026-10-28T14:30:00+00:00',
+                         'fed-fomc-2026-10:rate-decision':'2026-10-28T18:00:00+00:00',
+                         'fed-fomc-2026-10:policy-statement':'2026-10-28T18:00:00+00:00',
+                         'fed-fomc-2026-10:press-conference':'2026-10-28T18:30:00+00:00'})
+        from datetime import datetime, timezone
+        for family,at in expected.items():
+            rows=[e for e in result['events'] if e.get('familyKey')==family]
+            self.assertEqual(len(rows),1,(family,rows))
+            self.assertEqual(datetime.fromisoformat(rows[0]['at'].replace('Z','+00:00')).astimezone(timezone.utc).isoformat(),at)
+            self.assertEqual(rows[0]['date'],'2026-10-28')
+            self.assertEqual(rows[0]['impact'],'high')
+
+    def test_21_weekly_coverage_cannot_confirm_another_day_in_the_same_month(self):
+        package=fixture([]);package['coverage'][0].update({'from':'2026-10-25','to':'2026-10-31'})
+        outside=self.call(package=package,query={'from':'2026-10-20','to':'2026-10-20','currencies':['USD'],'timeZone':'UTC'})['result']
+        self.assertFalse(any(row['status']=='confirmed' for row in outside['coverage']),outside)
+        inside=self.call(package=package,query={'from':'2026-10-28','to':'2026-10-28','currencies':['USD'],'timeZone':'UTC'})['result']
+        self.assertTrue(any(row['status']=='confirmed' for row in inside['coverage']),inside)
+
+
+    def test_22_composed_metadata_scopes_original_official_policy(self):
+        canonical = json.loads((ROOT / 'infra/monthly-economic-feed/data/monthly-economic-2026-10.json').read_text())
+        metadata = self.call(action='metadata')['result']['metadata']
+        policy = metadata['editorialPolicy']
+        self.assertEqual(policy['kind'], 'mixed', 'Composed events cannot be described as solely JP editorial impact')
+        self.assertEqual(policy['publisherRole'], 'composition-policy')
+        self.assertEqual(policy['origins'], [
+            {'id':'forexfactory','publisher':'Forex Factory','kind':'provider'},
+            {'id':'jpw-editorial','publisher':'JP Wealth','kind':'editorial'}])
+        self.assertEqual(set(metadata['currencies']), {'USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'})
+        self.assertEqual(metadata['updatePolicy'], {
+            'queryMode':'synchronous-snapshot', 'refreshMode':'shared-public-feed-adapter',
+            'sourceAgeBasis':'collectedAt', 'forexFactoryMaxAgeSeconds':7200,
+            'officialExpiryBasis':'coverage.validUntil', 'externalSchedule':'not-asserted'})
+        original = metadata['officialBaseMetadata']
+        self.assertEqual(original['scope'], 'official-base-before-public-feed')
+        self.assertEqual(set(original['currencies']), {'USD','GBP','JPY','NZD','CHF'})
+        self.assertEqual(len(original['sourceIds']), 11)
+        self.assertFalse(any(source_id.startswith('ff-') for source_id in original['sourceIds']))
+        self.assertEqual(original['editorialPolicy']['id'], 'jpw-macro-impact-v1')
+        self.assertEqual(original['editorialPolicy']['kind'], 'editorial')
+        self.assertEqual(original['generatedAt'], '2026-10-23T15:52:12Z')
+        self.assertEqual(original['updatedAt'], '2026-10-23T15:52:12Z')
+        self.assertEqual(metadata['generatedAtScope'], 'official-base')
+        self.assertEqual(metadata['generatedAt'], original['generatedAt'])
+        old_claims = [
+            'Entrega parcial por fontes/famílias; não comprova mês completo de todas as cinco moedas.',
+            'Não contém valores anteriores, consenso, resultado, surpresa ou impacto nativo de provedor.',
+            'Sem atualização automática no app; pacote estático revisado, validade de cobertura de 48 horas.']
+        for claim in old_claims:
+            self.assertIn(claim, original['limitations'], 'Original official metadata must remain recoverable in its own scope')
+            self.assertNotIn(claim, metadata['limitations'], 'An old official-base claim cannot describe the combined feed')
+        self.assertEqual(metadata['officialBaseMetadata'], canonical['officialBaseMetadata'])
+        self.assertEqual(metadata['editorialPolicy'], canonical['editorialPolicy'])
+        self.assertEqual(metadata['updatePolicy'], canonical['updatePolicy'])
+        self.assertEqual(metadata['publicFeedProvenance'], canonical['publicFeedProvenance'])
+        self.assertEqual(self.call(action='metadata-immutability')['result']['metadata'], metadata)
+        # The official-only control stays honest without acquiring an FF policy.
+        official = fixture([event('SYN official', '2026-10-02T12:00:00Z')])
+        official.update(currencies=['USD'], months=['2026-10'],
+                        editorialPolicy={'id':'SYN-official-only','publisher':'JP Wealth','kind':'editorial','dateOnly':'SYN civil date'},
+                        limitations=['SYN original official scope'])
+        control = self.call(package=official, action='metadata')['result']['metadata']
+        self.assertEqual(control['editorialPolicy'], official['editorialPolicy'])
+        self.assertEqual(control['limitations'], official['limitations'])
+        self.assertIsNone(control['officialBaseMetadata'])
+        self.assertIsNone(control['updatePolicy'])
+        self.assertEqual(control['generatedAtScope'], 'packet')
+        legacy = {'version':1,'generated_at':STAMP,'events':[{
+            'title':'SYN runtime FF','country':'USD','date':'2026-10-23T12:00:00Z','impact':'High'}]}
+        for payload in [legacy, {'schemaVersion':2,'collectedAt':STAMP,'packagePublishedAt':STAMP,
+                'sourcePublishedAt':None,'currencies':['USD'],'sources':[{'id':'ff-USD',
+                'currency':'USD','name':'Synthetic FF','url':'https://www.forexfactory.com/calendar'}],
+                'events':[],'coverage':[]}]:
+            dynamic = self.call(package=official, action='metadata', runtime_payload=payload)['result']['metadata']
+            self.assertEqual(dynamic['editorialPolicy']['kind'], 'mixed')
+            self.assertEqual(dynamic['editorialPolicy']['origins'], policy['origins'])
+            self.assertEqual(dynamic['editorialPolicy']['dateOnly'], official['editorialPolicy']['dateOnly'])
+            self.assertEqual(dynamic['updatePolicy'], metadata['updatePolicy'])
+            self.assertEqual(dynamic['limitations'], metadata['limitations'], 'Runtime compatibility and shipped composition need the same truthful global limits')
+            self.assertEqual(dynamic['officialBaseMetadata'], {
+                'scope':'official-base-before-public-feed','generatedAt':STAMP,'updatedAt':STAMP,
+                'currencies':['USD'],'sourceIds':['fixture'],
+                'editorialPolicy':official['editorialPolicy'],'limitations':official['limitations']})
+            self.assertEqual(dynamic['feed']['mode'], 'legacy-partial' if payload.get('version')==1 else 'normalized')
+        # Exercise the compiler with an independent synthetic old policy. Only
+        # composition may add metadata; actual event/coverage records retain identity.
+        script = ROOT / 'infra/monthly-economic-feed/build_package.py'
+        spec = importlib.util.spec_from_file_location('metadata_composition_builder', script)
+        builder = importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
+        snapshot = json.loads(json.dumps(official))
+        ff = event('SYN FF', '2026-10-28T17:00:00Z')
+        ff.update(sourceId='ff-USD', sourceUrl='https://www.forexfactory.com/calendar',
+                  provider='Forex Factory', providerImpact='High', impactOrigin='provider')
+        public = {'schemaVersion':2,'collectedAt':'2026-10-28T20:00:00Z',
+                  'packagePublishedAt':'2026-10-28T20:01:00Z','sourcePublishedAt':None,
+                  'currentWeekFrom':'2026-10-25','currencies':['USD'],
+                  'sources':[{'id':'ff-USD','currency':'USD','name':'Synthetic FF','url':'https://www.forexfactory.com/calendar'}],
+                  'events':[ff], 'coverage':[{'sourceId':'ff-USD','currency':'USD','month':'2026-10',
+                    'from':'2026-10-25','to':'2026-10-31','status':'partial','reviewedAt':'2026-10-28T20:00:00Z'}]}
+        merged = builder.merge_public_packet(official, public)
+        self.assertEqual(merged['officialBaseMetadata'], {
+            'scope':'official-base-before-public-feed','generatedAt':snapshot['generatedAt'],
+            'updatedAt':snapshot['updatedAt'],'currencies':['USD'],'sourceIds':['fixture'],
+            'editorialPolicy':snapshot['editorialPolicy'],'limitations':snapshot['limitations']})
+        self.assertEqual(merged['events'], snapshot['events'] + public['events'])
+        self.assertEqual(merged['sources'], snapshot['sources'] + public['sources'])
+        self.assertEqual(merged['coverage'], snapshot['coverage'] + public['coverage'])
+        self.assertEqual(public['events'], [ff])
+        self.assertEqual(self.call(package=merged, action='metadata')['result']['metadata']['editorialPolicy']['kind'], 'mixed')
 
 
 class CollectorContract(unittest.TestCase):
@@ -294,6 +425,30 @@ class InlineDistributionContract(unittest.TestCase):
                     self.assertEqual(actual, self.TITLE)
                 finally:
                     browser.close()
+
+
+class SharedFeedContract(unittest.TestCase):
+    def test_shared_public_runtime_and_legacy_consumers(self):
+        script=ROOT/'tools/economic_calendar_feed_runtime_test.js'
+        self.assertTrue(script.is_file(),'Permanent shared runtime cases are required')
+        run=subprocess.run([NODE,str(script)],cwd=ROOT,text=True,capture_output=True,timeout=30)
+        self.assertEqual(run.returncode,0,run.stdout+run.stderr)
+        report=json.loads(run.stdout)
+        self.assertEqual(report.get('suite'),'economic-calendar-feed-runtime')
+        rows=report.get('results',[])
+        self.assertEqual(len(rows),24,'Runtime must report all 24 permanent cases')
+        self.assertEqual(len({row.get('id') for row in rows}),24)
+        self.assertEqual({row.get('id','').split('-')[2] for row in rows},{str(i).zfill(2) for i in range(1,25)})
+        self.assertTrue(all(row.get('classification')=='PASS' for row in rows),report)
+        self.assertEqual(report.get('summary'),{'PASS':24,'PRODUCT_FAIL':0})
+        print(run.stdout,end='')
+
+    def test_public_collector_preservation_and_archives(self):
+        script=ROOT/'tools/ff_calendar_collector_test.py'
+        self.assertTrue(script.is_file(),'Permanent public collector cases are required')
+        run=subprocess.run([os.sys.executable,str(script)],cwd=ROOT,text=True,capture_output=True,timeout=60)
+        self.assertEqual(run.returncode,0,run.stdout+run.stderr)
+        print(run.stdout+run.stderr,end='')
 
 
 if __name__=='__main__':

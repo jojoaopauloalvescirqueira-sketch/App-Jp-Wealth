@@ -1,0 +1,11 @@
+--- a/tools/contextual_sidebar_test.py
++++ b/tools/contextual_sidebar_test.py
+@@ -360,7 +360,7 @@
+         expected_contexts = {"pivots": "research-forex"}
+         for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Desempenho"]),
+                              ("forex-operation", ["Forex", "Operação"]),
+-                             ("forex-reconciliation", ["Gerenciamento", "Contabilidade"]), ("planning", ["Planejamento"]),
++                             ("forex-reconciliation", ["Gerenciamento", "Caixa Anual"]), ("planning", ["Planejamento"]),
+                              ("forex-planning", ["Planejamento"]), ("fxplan", ["Planejamento"]),
+                              ("motor", ["Forex", "Operação"]), ("research-stocks-br", ["Portfólio", "Análise"]),
+                              ("pivots", ["Portfólio", "Análise", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:

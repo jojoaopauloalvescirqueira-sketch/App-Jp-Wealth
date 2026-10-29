@@ -1,0 +1,39 @@
+{
+ "version": 1,
+ "generated_at": "2026-08-07T12:24:04Z",
+ "source": "forexfactory-ff_calendar_thisweek",
+ "events": [
+  {
+   "title": "ISM Manufacturing PMI",
+   "country": "USD",
+   "date": "2026-08-03T10:00:00-04:00",
+   "impact": "High",
+   "forecast": "54.0",
+   "previous": "53.3"
+  },
+  {
+   "title": "Average Hourly Earnings m/m",
+   "country": "USD",
+   "date": "2026-08-07T08:30:00-04:00",
+   "impact": "High",
+   "forecast": "0.3%",
+   "previous": "0.3%"
+  },
+  {
+   "title": "Non-Farm Employment Change",
+   "country": "USD",
+   "date": "2026-08-07T08:30:00-04:00",
+   "impact": "High",
+   "forecast": "85K",
+   "previous": "57K"
+  },
+  {
+   "title": "Unemployment Rate",
+   "country": "USD",
+   "date": "2026-08-07T08:30:00-04:00",
+   "impact": "High",
+   "forecast": "4.2%",
+   "previous": "4.2%"
+  }
+ ]
+}

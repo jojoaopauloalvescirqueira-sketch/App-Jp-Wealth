@@ -1,0 +1,98 @@
+{
+  "created_at": "2026-10-27T00:14:26.879315+00:00",
+  "status": "NO_BLOCKING_FINDINGS_IN_BOUNDED_TEST_INTERACTION_PATCH",
+  "scope": "Independent read-only critique of root test correction, with one isolated headless browser and fresh synthetic context for each counterproof",
+  "patch_references": [
+    "tools/research_navigation_test.py:241-246"
+  ],
+  "expected_behavior": "Click an accessible real Dashboard navigation leaf, verify accepted Dashboard route and dismissed mobile drawer, then verify Research local controls hidden/inert. This preserves user interaction semantics of removed placeholder transition instead of performing programmatic navigation behind an already open modal drawer.",
+  "raw_red": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-red.log",
+  "raw_red_observed": "Old programmatic Dashboard navigation left the mobile drawer open; the subsequent external toggle click timed out with sidebar intercepting pointer events.",
+  "review": [
+    "New interaction uses an existing visible leaf and public click behavior, no force or timeout change.",
+    "Explicit canonical and drawer assertions prevent substituting an arbitrary working destination or leaving drawer open.",
+    "Existing hidden/inert checks, N2/N3 keyboard, focus return,44px, overflow, storage and financial-state assertions remain in the full test.",
+    "Route and drawer completion are still checked separately; this focused counterproof does not certify all runtime timing permutations."
+  ],
+  "current_focal_green_read": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-green.log",
+  "independent_counterproof": {
+    "receipt": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-real-leaf-counterproof-fresh.json",
+    "exit_code": 0,
+    "cases": 5,
+    "elapsed_seconds": 47.624,
+    "executed_oracle": "Actual AST nodes243/244/245 from current test; click/canonical/mobiledrawer checks unchanged",
+    "results": [
+      {
+        "name": "Real Dashboard leaf accepted and mobile drawer closed",
+        "status": "PASS",
+        "actual": "accepted",
+        "failure_type": null,
+        "oracle_frames": [],
+        "financial_state_and_stored_unchanged": true
+      },
+      {
+        "name": "Clickable leaf retaining wrong Research destination is rejected",
+        "status": "PASS",
+        "actual": "rejected",
+        "failure_type": "AssertionError",
+        "oracle_frames": [
+          {
+            "file": "tools/research_navigation_test.py",
+            "line": 244,
+            "name": "<module>"
+          }
+        ],
+        "financial_state_and_stored_unchanged": true
+      },
+      {
+        "name": "Restored real destination accepts the same oracle",
+        "status": "PASS",
+        "actual": "accepted",
+        "failure_type": null,
+        "oracle_frames": [],
+        "financial_state_and_stored_unchanged": true
+      },
+      {
+        "name": "Inaccessible disabled Dashboard leaf is rejected at unchanged30000ms timeout",
+        "status": "PASS",
+        "actual": "rejected",
+        "failure_type": "TimeoutError",
+        "oracle_frames": [
+          {
+            "file": "tools/research_navigation_test.py",
+            "line": 243,
+            "name": "<module>"
+          }
+        ],
+        "financial_state_and_stored_unchanged": true
+      },
+      {
+        "name": "Reenabled real control accepts the same oracle",
+        "status": "PASS",
+        "actual": "accepted",
+        "failure_type": null,
+        "oracle_frames": [],
+        "financial_state_and_stored_unchanged": true
+      }
+    ],
+    "source_unchanged": true,
+    "conditions": "Each case began in a new synthetic context with drawer closed, selected Research, and opened real drawer. Mutations only disposable DOM listener/disabled property; restored controls used same fresh preconditions. No force or timeout override; inaccessible leaf timed out at existing30000ms."
+  },
+  "preserved_initial_harness_diagnostic": {
+    "path": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-real-leaf-counterproof-initial-failure.log",
+    "review": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-real-leaf-counterproof-initial-review.json",
+    "status": "INCONCLUSIVE_HARNESS_SEQUENCE_FAILURE_NOT_PRODUCT_RED",
+    "limit": "Earlier run reused terminal state after a negative timeout, unlike the real test precondition. Its caught empty AssertionError did not capture original oracle line; exact first assertion location cannot be recovered from that log. It is preserved rather than called a product defect or silently discarded. Five fresh-context cases subsequently passed."
+  },
+  "limits": [
+    "Reviewer authored earlier navigation code; this review is independent for root test patch only.",
+    "No product, permanent test, gate or distribution file edited by this task.",
+    "No full test suite run here; initial FULL102PASS/11FAIL remains historical and new final FULL required.",
+    "No claim of human visual acceptance."
+  ],
+  "source_sha256": {
+    "tools/research_navigation_test.py": "bde95554a825b026eca744ce45d6c89f690bcd13b62c93a4d27a61013ee674ae",
+    "src/js/40-app/01-navigation.js": "7aa6ab2b541ee5088d0a092f2c7a62be70e5968754d7dcfd9e87b0f61f7e6da4",
+    "src/js/40-app/11-operational-shell.js": "4bab3f5e0e06f16ec7b44f6d386cb5dc935c684cebb1983cd6eecd83cb9b8d53"
+  }
+}

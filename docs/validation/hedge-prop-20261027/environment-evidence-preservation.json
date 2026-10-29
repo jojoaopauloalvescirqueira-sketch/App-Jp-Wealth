@@ -1,0 +1,21 @@
+{
+  "captured_at_client": "2026-10-28T00:45:43.813962-03:00",
+  "scope": "Bounded documentary preservation only; no raw gate reclassification",
+  "files": {
+    "full4-environment-triage/triage.json": "2e54f17a5d4c58e3931eb087d1e93feaf36275d07a7cba008c9d4a4b2fd16efe",
+    "full4-environment-triage/full4-receipt-timing.json": "ddfe5063b0dc9ca4e0373b7e21b59f18995fdc2e1af34faf359137a95cea9d75",
+    "full4-environment-triage/README.md": "43d5aa4d30b32ea30607e8ea99f32c5c2c45754efdfd314e5cce299a2ab0de21",
+    "full4-environment-triage/pmset-sleep-wake.txt": "24443699b50ec1669bd633931c2bc6809ccbf0934dad70f42570af8deb8ef3db",
+    "full4-environment-triage/powerd-sleepwake-category.txt": "827a1af5b550856bed2310cf15692f46a2f5d468e1e7d60eaa83438a7d91883e",
+    "full4-environment-triage/powerd-transitions.txt": "e0e6fd711ae8c8fc7204e02680121c06533a7f83a18e79a3a486303dd2743f00",
+    "full5-environment-triage/planning-receipt-excerpt.json": "ca80d887ac309c2385d5ae4a96f88c9475b2be6be3e8afbccebb0bf1eaa2a20d",
+    "full5-environment-triage/timed-clock-jump-search.txt": "5552d086f407eb44b37ffd4c65bb9cd9ae8f5fb54659445f5b36d2636c189439",
+    "full5-environment-triage/triage.json": "b5f9adb826e705808c727b27f25d69dc817b54329a3ac16bbdbce857f13b8d74",
+    "full5-environment-triage/runtime-clock-info.json": "bf057b385dc41e9181831e369a7556a971b415c6d3ef9226019e10e5ee254b2d",
+    "full5-environment-triage/README.md": "a731a6413eddb80ceb909ef588dc2eeaccc725e0d51a959eeb0f03e4bad1b074",
+    "full5-environment-triage/chrome-dock-quit-events.txt": "289919bfe18204193b2c9189d8ba35660dc666ef2cf6ed3b1266b70e84d393c2",
+    "full5-environment-triage/pmset-sleep-wake.txt": "1ec98aa8022e487c0b0e94a8162b570e0b98c039ef09212e6fe576e261451440",
+    "full5-environment-triage/powerd-sleepwake-category.txt": "02c1530af02e1002e98c13f400d159459b87f4c290baefdc06f5504188f6b5b5",
+    "full5-environment-triage/powerd-transitions.txt": "ef61c45b5c88e0a13019b0c938a32888537e07dbbb1e414070e887f9ee2971c9"
+  }
+}

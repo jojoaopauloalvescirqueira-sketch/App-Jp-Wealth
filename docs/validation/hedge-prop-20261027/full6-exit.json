@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "docs/validation/hedge-prop-20261027/full-final.json"
+  ],
+  "exit": 0,
+  "finished_at_client": "2026-10-28T11:15:24.723826-03:00",
+  "active_seconds": 3225.086051042,
+  "supervisor_pid": 84802,
+  "gate_pid": 84808,
+  "guard_pid": 84806
+}

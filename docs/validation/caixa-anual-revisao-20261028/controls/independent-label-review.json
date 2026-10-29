@@ -1,0 +1,155 @@
+{
+  "status": "PASS",
+  "scope": "Read-only independent applied rename source/controls review; no browser/FULL executed by reviewer",
+  "candidateBuild": "fc1a41530cdc4569",
+  "approvedSources": [
+    {
+      "path": "index.html",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "06749243b2ac7585cf016b37007274a74228099d5a66e0c14cb5ad54702f0944",
+      "candidateHash": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3"
+    },
+    {
+      "path": "src/js/40-app/01-navigation.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "949d6f03746688fdfab3d59a72a8dff9438024bb83376baa1e693f478387bd0c",
+      "candidateHash": "bfb1e5a556ff34bdd07725a169725ef30aeb62b83a3cf9d225fdc482d1c78eb9"
+    },
+    {
+      "path": "src/js/40-app/14-mvp-notes.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "27ce936240ef4fc01d9879a1ed5183f6d1c1a47b6574f9da5e0f6c3f1ace2ae2",
+      "candidateHash": "bd610654670371b43194dfb1840ed5edfb6cfbd9465849f6d6bf15597460310a"
+    },
+    {
+      "path": "src/js/40-app/26-learning-catalog.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "ff24af7ae32d9ceb5c190f1ecbcd2858a0125997e7bea093dc66559860473d36",
+      "candidateHash": "f6b5dde8480febea20f5e3094bb1eabdcb9064006b872e5170ff134fa369a4ac"
+    },
+    {
+      "path": "src/js/20-ui/25-dash-macro.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "f25b50180ed1f3ddfed8bcb38e9bee950703eecae0f9b8fbfe11c71f7317b882",
+      "candidateHash": "175b09127aafc883a3a32428181029cd37dc1aada493050bc497002b64517832"
+    },
+    {
+      "path": "src/js/30-accounting/07-management/03-ui.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "83472c25acd443838c98b0f236403193ed0bdcbc12f203869e0dfd41ec4d27db",
+      "candidateHash": "00587fd09e36616eb607332647256ff9010d140c35841605dc8a29483d46ca5c"
+    },
+    {
+      "path": "tools/portfolio_management_navigation_test.py",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "038583d5dc6a4434379c0368eddb779076040d3beb98e04831bd1120624afa80",
+      "candidateHash": "c194b71d66b3fdcf3d45c634bb2d70e0afe38b24bb8f87b35836e5a0a1ed5fca"
+    },
+    {
+      "path": "tools/management_annual_ui_test.py",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "01ca10104fe314e806ea5566b447485c3e3bd398c29d3f1667542792bf4c177c",
+      "candidateHash": "7657fae77e15d1f0c7933ff59cc6cae0c3d17201d2d7cf4fd05e29873f16530d"
+    },
+    {
+      "path": "tools/management_dashboard_notes_test.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "9e85afa776f72b3fcab21be875e4df7c66a4259b8dde8508331ccaad470608ba",
+      "candidateHash": "dab3bbe7cc13bf067d7e3c4afdc27fce154df83a644883a5b2cf38591e32794b"
+    },
+    {
+      "path": "src/js/20-ui/26-forex-engine-views.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "67696dfd2802798ae24ce462e2844b63c3a079589111843d3d14e168836c3226",
+      "candidateHash": "8b7c6853601c6bb9d12ea8045a9050c6520004e799d098887df9d3d10c09ee9c"
+    },
+    {
+      "path": "src/js/40-app/13-dashboard-layout.js",
+      "exactApprovedLiteralDelta": true,
+      "baselineHash": "4b3ee2c6a31ed2d301e66304b33b0531c6f57e8074c50da7cf7d95c3daf9a97e",
+      "candidateHash": "06ca70d88bca2aa7c2ef9a1ad1b38a8c417596fe5abb14737e0f434762e36ad1"
+    }
+  ],
+  "financialAndControlInvariants": [
+    {
+      "path": "src/js/30-accounting/07-management/01-engine.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "b98b8d45f18084986947553dd8ab60129ba5fdb89c08a80c0791fc155c3982bb"
+    },
+    {
+      "path": "src/js/30-accounting/07-management/02-state.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "21ddb1b256c579132d0b7212f8428b6d2dba488426c0bed40e7067f7768bee71"
+    },
+    {
+      "path": "src/js/10-domain/00-forex-state.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "b0dc2d2db1e9917c69c7200aee40e8e90bc4ec91ab8d6058af95f772116b8ac6"
+    },
+    {
+      "path": "src/js/10-domain/00-forex-engine.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "b705cd43f80f16f3206d8a5b33919c297ce9ef824439feca47b6859106ed1a2e"
+    },
+    {
+      "path": "src/js/00-core/00-forex-policy.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "b82a2c7ea9f5394f00ad7318cd27985b260f62109d90a94452eb5c3d1770dfed"
+    },
+    {
+      "path": "src/js/00-core/03-default-state.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "fd89e6a9f73ee541ee7d72eca5eb7e386fada784a47930290e24041f20f06efe"
+    },
+    {
+      "path": "src/js/00-core/04-persistence.js",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "ba06dbc855979fc2b6d2423f5220ea72230d877c31e81f002d4ba994726e039d"
+    },
+    {
+      "path": "tools/quality_gate.py",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "51fae2e0a9b25972d68c9d8e70023d28536fb4f590e386e8a518eecc568ab84d"
+    },
+    {
+      "path": "tools/regression-memory.json",
+      "unchangedFromDirtyBaseline": true,
+      "sha256": "63487ab6d3de4c246e551bdbad4605cf313d4298633da3e4d2170cd831ed541f"
+    }
+  ],
+  "generatedPayloadDelta": "Build ID and recomputed preview-envelope hash substitutions only in build-id.js; build ID only in 7 payloads; manifest changes only hashes, order and identities identical, hashes checked",
+  "baselineFiles": 3454,
+  "baselineMissingFiles": [],
+  "changedBaselineFiles": [
+    "docs/architecture/MANAGEMENT-ANNUAL.md",
+    "src/js/30-accounting/07-management/03-ui.js",
+    "tools/management_annual_ui_test.py",
+    "tools/management_dashboard_notes_test.js",
+    "tools/portfolio_management_navigation_test.py",
+    "build-id.js",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+    "docs/architecture/NAVIGATION-HIERARCHY.md",
+    "docs/work/ACTIVE-TASK.md",
+    "index.html",
+    "src/js/20-ui/25-dash-macro.js",
+    "src/js/20-ui/26-forex-engine-views.js",
+    "src/js/40-app/01-navigation.js",
+    "src/js/40-app/13-dashboard-layout.js",
+    "src/js/40-app/14-mvp-notes.js",
+    "src/js/40-app/26-learning-catalog.js",
+    "src/js/manifest.json",
+    "src/vendor/downloads/leverage-daily-source-payload.js",
+    "src/vendor/downloads/leverage-native-kit-payload.js",
+    "src/vendor/downloads/leverage-native-pin-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.js",
+    "src/vendor/downloads/leverage-preview-payload.json",
+    "src/vendor/downloads/leverage-source-payload.js",
+    "src/vendor/market-hours/runtime-payload.js"
+  ],
+  "remainingLimits": [
+    "ROOT official generator execution inferred only from rebuild.log, not executed here",
+    "Portable distribution parity belongs to root gate, not inferred by this report",
+    "Same new judges must reject old-label counterproof with expected failure and pass final current candidate",
+    "Math/presentation review findings intentionally unchanged"
+  ]
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/metadata-proposal/model22-red.log",
+    "artifact": "metadata/model22-red.log",
+    "sha256": "2eaa2c34379d151d9ecdc1ae6e20a8ffc021bb1cd4546a38251ebd0db17e368a"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/metadata-proposal/model-contract-green.log",
+    "artifact": "metadata/model-contract-green.log",
+    "sha256": "b7887ba31b072629592931592e4192967c58451eb88b35abc2c245c3567990f5"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/model22-independent-red.log",
+    "artifact": "metadata/model22-independent-red.log",
+    "sha256": "8e3e3d627fc79897b8eaf460dd9762499dad9c0deaafabebc9e76865d9df3748"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/model-contract-independent-green.log",
+    "artifact": "metadata/model-contract-independent-green.log",
+    "sha256": "47ce9c4b2af7b30b5975f43ffd8743a1c397d2a8efa98dfda2108a87db58241c"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/applied-metadata-freeze-review.json",
+    "artifact": "review/applied-metadata-freeze-review.json",
+    "sha256": "efabd913c344d5183585465b15a83e79ed1745b3615fd65c77329c50ec2eac17"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/CAPTURES-INVENTORY-REVIEW.md",
+    "artifact": "review/CAPTURES-INVENTORY-REVIEW.md",
+    "sha256": "a7facec292fd6ed78db3b912b8703a35ff9573d63e1a9d6907b4404e3e8e0b77"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/captures-inventory-readonly-review.json",
+    "artifact": "review/captures-inventory-readonly-review.json",
+    "sha256": "b35da37201f9ef3f334bd6a3db4fc3e6898946ce70108a75ceb29ed944e09600"
+  }
+]

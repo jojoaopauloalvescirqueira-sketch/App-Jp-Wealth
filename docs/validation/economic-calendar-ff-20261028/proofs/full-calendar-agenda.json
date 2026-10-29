@@ -1,0 +1,516 @@
+{
+  "results": [
+    {
+      "case": "calendar-ui-1440-light",
+      "result": "PASS",
+      "geometry": {
+        "w": 758,
+        "sw": 758,
+        "cw": 758,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-1440-dark",
+      "result": "PASS",
+      "geometry": {
+        "w": 758,
+        "sw": 758,
+        "cw": 758,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-390-light",
+      "result": "PASS",
+      "geometry": {
+        "w": 364,
+        "sw": 364,
+        "cw": 364,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-390-dark",
+      "result": "PASS",
+      "geometry": {
+        "w": 364,
+        "sw": 364,
+        "cw": 364,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-320-light",
+      "result": "PASS",
+      "geometry": {
+        "w": 320,
+        "sw": 320,
+        "cw": 320,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-320-dark",
+      "result": "PASS",
+      "geometry": {
+        "w": 320,
+        "sw": 320,
+        "cw": 320,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-edges-320-light",
+      "result": "PASS",
+      "geometry": {
+        "timer_open": 1,
+        "timer_closed": 0,
+        "opaque_preferences": "preserved",
+        "workspace_state": "independent",
+        "synthetic_feed_markers": "filtered and counted",
+        "date_precision": "no invented time",
+        "pending_coverage": "visible",
+        "backup": "elapsed30days across DST; no future or missing invented date",
+        "midnight": "real timer advanced to new day"
+      }
+    },
+    {
+      "case": "calendar-lifecycle-320-light",
+      "result": "PASS",
+      "geometry": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "priorCloseEvents": [
+          {
+            "open": true
+          }
+        ],
+        "reopenedActive": true,
+        "futureBackupMarkerRemoved": true,
+        "financialUnchangedExceptExplicitFixtureTimestamp": true,
+        "closeCounterproofs": {
+          "header": {
+            "id": "headerCalendarBtn",
+            "label": "Abrir Calendário e Agenda",
+            "title": "Calendário e Agenda",
+            "expanded": "true",
+            "width": 44,
+            "height": 44,
+            "svg": 1
+          },
+          "realClosures": [
+            {
+              "method": "original-button",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "Escape",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "native-close-event",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            }
+          ],
+          "financialUnchanged": true
+        }
+      }
+    },
+    {
+      "case": "calendar-pref-read-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-read"
+      }
+    },
+    {
+      "case": "calendar-pref-extension-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-extension"
+      }
+    },
+    {
+      "case": "calendar-pref-duplicates-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-duplicates"
+      }
+    },
+    {
+      "case": "calendar-adjacent-selection-320-light",
+      "result": "PASS",
+      "geometry": {
+        "visible_month": "October retained",
+        "selected_adjacent": "2026-09-28",
+        "single_roving_focus": true,
+        "displayed_range": "selection only",
+        "read_only": true
+      }
+    },
+    {
+      "case": "calendar-adjacent-range-320-light",
+      "result": "PASS",
+      "geometry": {
+        "visible_month": "October retained",
+        "selected_adjacent": "2026-09-28",
+        "single_roving_focus": true,
+        "displayed_range": "2026-09-28 through 2026-11-01",
+        "read_only": true
+      }
+    },
+    {
+      "case": "calendar-feed-recovery-320-light",
+      "result": "PASS",
+      "geometry": {
+        "last_valid": "preserved with stale label and source revision",
+        "context_isolation": [
+          "currency filter",
+          "month"
+        ],
+        "recovery": "explicit later query",
+        "read_only": true
+      }
+    },
+    {
+      "case": "calendar-info-focus-320-light",
+      "result": "PASS",
+      "geometry": {
+        "sourceLinkFocus": true,
+        "refreshButtonFocus": true,
+        "asyncRefreshFocus": true,
+        "financialUnchanged": true
+      }
+    },
+    {
+      "case": "calendar-economic-focus-320-light",
+      "result": "PASS",
+      "geometry": {
+        "exactObservationFocusPreserved": true,
+        "changedObservationNotConflated": true,
+        "financialUnchanged": true
+      }
+    },
+    {
+      "case": "calendar-include-new-320-light",
+      "result": "PASS",
+      "geometry": {
+        "oldFiveUnchangedOnOpen": true,
+        "explicitInclusionNine": true,
+        "otherPreferencesPreserved": true,
+        "financialUnchanged": true
+      }
+    }
+  ]
+}

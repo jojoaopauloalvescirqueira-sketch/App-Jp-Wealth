@@ -1,0 +1,228 @@
+[RUN] preflight: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/agent_preflight.py --mode audit --allow-dirty
+[PASS] preflight (0.669s)
+[RUN] structure: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/validate_project.py
+[PASS] structure (5.037s)
+[RUN] diff-check: git diff --check
+[PASS] diff-check (0.326s)
+[RUN] preflight-context: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/preflight_context_test.py
+[PASS] preflight-context (1.428s)
+[RUN] personal-agenda: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/personal_agenda_test.js
+[PASS] personal-agenda (0.125s)
+[RUN] monthly-economic-feed: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/monthly_economic_feed_test.py
+[PASS] monthly-economic-feed (1.948s)
+[RUN] calendar-agenda: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/calendar_agenda_test.py --artifact '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/calendar-agenda.json'
+[PASS] calendar-agenda (46.725s)
+[RUN] calendar-recovery: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/calendar_recovery_test.py --receipt '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/calendar-recovery.json'
+[PASS] calendar-recovery (6.261s)
+[RUN] ui-visual-quality: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/ui_visual_quality_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/ui-visual-quality'
+[PASS] ui-visual-quality (788.875s)
+[RUN] navigation-ia: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/navigation_ia_test.py
+[PASS] navigation-ia (4.22s)
+[RUN] dashboard-macro: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/dashboard_macro_test.py
+[PASS] dashboard-macro (45.336s)
+[RUN] research-navigation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/research_navigation_test.py
+[PRODUCT_FAIL] research-navigation (45.905s)
+[RUN] smoke: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/smoke_test.py
+[PRODUCT_FAIL] smoke (5.158s)
+[RUN] settings: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/settings_modal_test.py
+[PASS] settings (18.104s)
+[RUN] brand-identity-contract: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/brand_identity_contract_test.py
+[PASS] brand-identity-contract (2.691s)
+[RUN] brand-identity-browser: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/brand_identity_browser_test.py
+[PASS] brand-identity-browser (1.185s)
+[RUN] statute-documentary: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/statute_documentary_test.py
+[PASS] statute-documentary (8.551s)
+[RUN] galton-board: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/galton_board_test.py
+[PASS] galton-board (7.136s)
+[RUN] planning-engine: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/planning_engine_test.js
+[PASS] planning-engine (0.802s)
+[RUN] planning-parity-engine: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/planning_parity_engine_test.js
+[PASS] planning-parity-engine (0.477s)
+[RUN] planning-state: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/planning_state_test.js
+[PASS] planning-state (2.121s)
+[RUN] planning-navigation: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/planning_navigation_test.js
+[PRODUCT_FAIL] planning-navigation (0.033s)
+[RUN] planning-quote: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/planning_quote_test.js
+[PASS] planning-quote (0.03s)
+[RUN] planning-boundaries: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/planning_boundaries_test.js
+[PASS] planning-boundaries (0.031s)
+[RUN] planning-ui: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/planning_ui_test.py
+[PASS] planning-ui (16.645s)
+[RUN] planning-parity-ui: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/planning_parity_test.py
+[PASS] planning-parity-ui (44.274s)
+[RUN] planning-reserve-compat: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/fx_planning_test.py
+[PASS] planning-reserve-compat (1.977s)
+[RUN] exec-submenu: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/exec_submenu_test.py
+[PASS] exec-submenu (10.973s)
+[RUN] nocoda: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/nocoda_test.py
+[PASS] nocoda (5.808s)
+[RUN] pivot-studies: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/pivot_studies_test.py
+[PASS] pivot-studies (6.062s)
+[RUN] order-guards: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/order_guards_test.py
+[PASS] order-guards (6.054s)
+[RUN] operation-identity: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/operation_identity_test.py
+[PASS] operation-identity (2.418s)
+[RUN] operation-finalize: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/operation_finalize_test.py
+[PASS] operation-finalize (2.432s)
+[RUN] operation-history: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/operation_history_test.py
+[PASS] operation-history (1.456s)
+[RUN] operation-wiring: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/operation_wiring_test.py
+[PASS] operation-wiring (3.035s)
+[RUN] phases-visibility: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/phases_visibility_test.py
+[PASS] phases-visibility (1.454s)
+[RUN] exec-three-column: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/exec_three_column_test.py
+[PASS] exec-three-column (3.806s)
+[RUN] finpes-foundation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_foundation_test.py
+[PASS] finpes-foundation (7.306s)
+[RUN] finpes-finalize-preservation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_finalize_preservation_test.py
+[PASS] finpes-finalize-preservation (2.564s)
+[RUN] finpes-backup-roundtrip: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_backup_roundtrip_test.py
+[PASS] finpes-backup-roundtrip (3.332s)
+[RUN] finpes-navigation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_navigation_test.py
+[PRODUCT_FAIL] finpes-navigation (3.031s)
+[RUN] finpes-budget: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_budget_test.py
+[PASS] finpes-budget (17.019s)
+[RUN] finpes-debt-credit: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_debt_credit_test.py
+[PASS] finpes-debt-credit (14.529s)
+[RUN] finpes-comparison: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_comparison_test.py
+[PASS] finpes-comparison (9.088s)
+[RUN] finpes-scenarios: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_scenarios_test.py
+[PASS] finpes-scenarios (33.484s)
+[RUN] finpes-overview: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finpes_overview_test.py
+[PASS] finpes-overview (8.6s)
+[RUN] usd-brl-quote: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/usd_brl_quote_test.py
+[PRODUCT_FAIL] usd-brl-quote (10.102s)
+[RUN] alladin-unit: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_unit_test.py
+[PASS] alladin-unit (0.617s)
+[RUN] alladin-ledger: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_ledger_test.py
+[PASS] alladin-ledger (0.651s)
+[RUN] alladin-position: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_position_test.py
+[PASS] alladin-position (0.492s)
+[RUN] alladin-foundation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_foundation_test.py
+[PASS] alladin-foundation (25.082s)
+[RUN] alladin-finalize-preservation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_finalize_preservation_test.py
+[PASS] alladin-finalize-preservation (36.273s)
+[RUN] session-epoch-protocol: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/session_epoch_protocol_test.py
+[PASS] session-epoch-protocol (25.309s)
+[RUN] session-write-serialization: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/session_write_serialization_test.py
+[PASS] session-write-serialization (31.856s)
+[RUN] alladin-ui-readonly: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_ui_readonly_test.py
+[PASS] alladin-ui-readonly (10.038s)
+[RUN] alladin-ui-crud: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_ui_crud_test.py
+[PASS] alladin-ui-crud (45.265s)
+[RUN] alladin-ui-ledger: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_ui_ledger_test.py
+[PASS] alladin-ui-ledger (29.134s)
+[RUN] alladin-ui-tx-write: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_ui_tx_write_test.py
+[PASS] alladin-ui-tx-write (17.515s)
+[RUN] alladin-ui-tx-reverse: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/alladin_ui_tx_reverse_test.py
+[PASS] alladin-ui-tx-reverse (10.745s)
+[RUN] management-engine: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/management_annual_engine_test.js
+[PASS] management-engine (0.232s)
+[RUN] management-state: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/management_annual_state_test.js
+[PASS] management-state (0.308s)
+[RUN] management-guide: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/management_guide_test.mjs
+[PASS] management-guide (0.09s)
+[RUN] management-dashboard-notes: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/management_dashboard_notes_test.js
+[PASS] management-dashboard-notes (0.083s)
+[RUN] portfolio-management-navigation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/portfolio_management_navigation_test.py
+[PASS] portfolio-management-navigation (6.044s)
+[RUN] management-reserves-context: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/management_reserves_context_test.py
+[PASS] management-reserves-context (2.414s)
+[RUN] management-reserves-drafts: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/management_reserves_draft_test.py
+[PRODUCT_FAIL] management-reserves-drafts (1.799s)
+[RUN] management-account-flow: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/management_account_flow_test.py
+[PASS] management-account-flow (5.679s)
+[RUN] management-annual-ui: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/management_annual_ui_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/management-annual-ui'
+[PASS] management-annual-ui (7.262s)
+[RUN] management-visual-quality: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/ui_visual_quality_test.py --case management --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/management-visual-quality'
+[PASS] management-visual-quality (21.083s)
+[RUN] calendar-distribution: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/calendar_distribution_test.py --receipt '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/calendar-distribution.json'
+[PASS] calendar-distribution (46.563s)
+[RUN] ff-news-cache: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/ff_news_cache_test.py --artifact '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/ff-news-cache.json'
+[PRODUCT_FAIL] ff-news-cache (14.115s)
+[RUN] planning-distribution: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/planning_distribution_test.py
+[PASS] planning-distribution (7.808s)
+[RUN] planning-three-tabs: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/planning_three_tabs_test.py --receipt '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/planning-three-tabs.json'
+[PASS] planning-three-tabs (12.574s)
+[RUN] planning-proportions: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/planning_proportions_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/planning-proportions'
+[PASS] planning-proportions (51.141s)
+[RUN] planning-parity-layout: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/planning_parity_layout_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/planning-layout'
+[PASS] planning-parity-layout (21.605s)
+[RUN] session-finalization: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/finalize_session_test.py
+[PASS] session-finalization (54.465s)
+[RUN] storage-governance: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/storage_governance_test.py
+[PASS] storage-governance (8.269s)
+[RUN] persistence-failure: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/persistence_failure_test.py
+[PRODUCT_FAIL] persistence-failure (2.729s)
+[RUN] persistence-recovery: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/persistence_recovery_test.py
+[PASS] persistence-recovery (44.943s)
+[RUN] investor-password: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/investor_password_test.py
+[PASS] investor-password (6.695s)
+[RUN] import-xss: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/import_xss_security_test.py
+[PRODUCT_FAIL] import-xss (33.807s)
+[RUN] state-integrity: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/state_integrity_test.py
+[PASS] state-integrity (6.92s)
+[RUN] async-generation: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/async_generation_test.py
+[PASS] async-generation (6.465s)
+[RUN] build-reproducibility: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/build_reproducibility_test.py
+[PASS] build-reproducibility (43.065s)
+[RUN] service-worker-upgrade: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/service_worker_upgrade_test.py
+[PASS] service-worker-upgrade (83.826s)
+[RUN] mvp-notes: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/mvp_notes_test.py
+[PASS] mvp-notes (53.42s)
+[RUN] notes-launcher: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/notes_launcher_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/notes-launcher.json' --native-zoom
+[PASS] notes-launcher (46.347s)
+[RUN] notes-global-launcher: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/notes_global_launcher_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/notes-global-launcher.json'
+[PASS] notes-global-launcher (46.933s)
+[RUN] notification-center: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/notification_center_test.py
+[PASS] notification-center (17.846s)
+[RUN] notification-efficiency: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/notification_efficiency_test.py
+[PRODUCT_FAIL] notification-efficiency (0.613s)
+[RUN] consolidated-efficiency: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/consolidated_efficiency_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/consolidated.json'
+[PRODUCT_FAIL] consolidated-efficiency (0.612s)
+[RUN] consolidated-model: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/fx_consolidated_model_test.py
+[PASS] consolidated-model (1.043s)
+[RUN] consolidated-storage: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/fx_consolidated_storage_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/consolidated-storage.json'
+[PASS] consolidated-storage (47.252s)
+[RUN] consolidated-ui: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/fx_consolidated_ui_test.py --output '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/consolidated-ui.json'
+[PASS] consolidated-ui (4.1s)
+[RUN] forex-professional-panel: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_professional_panel_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/professional-panel' --native-zoom
+[PASS] forex-professional-panel (48.08s)
+[RUN] execution-efficiency: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_execution_efficiency_test.py --artifacts '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/rows'
+[PASS] execution-efficiency (17.808s)
+[RUN] execution-table: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_execution_table_test.py --artifacts '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/table' --native-zoom
+[PASS] execution-table (50.38s)
+[RUN] execution-workbook: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_execution_workbook_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/workbook'
+[PASS] execution-workbook (49.945s)
+[RUN] execution-proportions: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_execution_proportions_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/proportions'
+[PASS] execution-proportions (46.489s)
+[RUN] forex-context: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_context_bar_test.py --output '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/context.json'
+[PASS] forex-context (4.728s)
+[RUN] forex-navigation-journey: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/forex_navigation_journey_test.py --output '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/journey.json'
+[PASS] forex-navigation-journey (13.022s)
+[RUN] learning-guide: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/learning_guide_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/guide.json' --baseline-root '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS'
+[PASS] learning-guide (209.176s)
+[RUN] nocuda-tools: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/nocuda_tools_test.py
+[PASS] nocuda-tools (11.403s)
+[RUN] stoikus-downloads: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/stoikus_download_test.py
+[PASS] stoikus-downloads (0.976s)
+[RUN] download-assets-unit: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/download_assets_test.js
+[PASS] download-assets-unit (0.063s)
+[RUN] download-assets-browser: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/download_assets_browser_test.py --out-dir '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/downloads'
+[PASS] download-assets-browser (48.044s)
+[RUN] capital-currents-unit: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/capital_currents_unit_test.js
+[PASS] capital-currents-unit (0.217s)
+[RUN] capital-currents-progress: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/capital_currents_progress_test.js
+[PASS] capital-currents-progress (0.031s)
+[RUN] capital-currents-browser: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/capital_currents_browser_test.py --mode all --out-dir '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/capital-currents'
+[PASS] capital-currents-browser (50.874s)
+[RUN] time-twins-unit: /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/time_twins_unit_test.js
+[PASS] time-twins-unit (0.149s)
+[RUN] time-twins-browser: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/time_twins_browser_test.py --mode all --out-dir '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/time-twins'
+[PASS] time-twins-browser (73.26s)
+[RUN] minigames: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/minigames_test.py
+[PASS] minigames (9.104s)
+[RUN] management-distribution: '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3' tools/management_distribution_test.py --out '/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261026T200833685908/management-distribution'
+[PASS] management-distribution (8.649s)
+Relatorio: /private/tmp/jpw-portfolio-management-20261026/full-final.json
+Resumo: PASS=102, PRODUCT_FAIL=11, TEST_HARNESS_FAIL=0, ENVIRONMENT_ERROR=0, BASELINE_FAIL=0, NOT_RUN=0

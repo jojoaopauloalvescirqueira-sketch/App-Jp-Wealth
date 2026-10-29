@@ -1,0 +1,1 @@
+{"python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]", "monotonic": "namespace(implementation='mach_absolute_time()', monotonic=True, adjustable=False, resolution=4.166666666666667e-08)", "perf_counter": "namespace(implementation='mach_absolute_time()', monotonic=True, adjustable=False, resolution=4.166666666666667e-08)"}

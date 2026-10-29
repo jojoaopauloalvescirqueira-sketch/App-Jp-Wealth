@@ -42,12 +42,20 @@ function fixture(initial=null,setup){
 }
 test('Absent preference freezes PF and Alladin with no incidental writes',()=>{
   const f=fixture();assert.equal(f.api.KEY,key);
-  assert.deepEqual(clean(f.api.snapshot().states),{research:'active',forex:'active',planning:'active','personal-finance':'frozen',alladin:'frozen'});
+  assert.deepEqual(clean(f.api.snapshot().states),{research:'active',management:'active',forex:'active',planning:'active','personal-finance':'frozen',alladin:'frozen'});
   assert.equal(f.api.snapshot().writable,true);assert.equal(f.api.snapshot().confirmed,true);
   assert.equal(f.writes.length,0);assert.equal(f.map.has(key),false);
   ['dashboard','tools','settings','editor','notes','backup'].forEach(id=>assert.equal(f.api.canAccess(id),true));
   assert.equal(f.api.canAccess('alladin'),false);
   assert.equal(f.api.canAccess('personal-finance'),false);
+});
+test('Management default is independent of Forex and explicit state preserves old sparse preferences',()=>{
+  const input=raw({forex:'frozen',research:'frozen'}),f=fixture(input);
+  assert.equal(f.api.canAccess('management'),true);assert.equal(f.writes.length,0);assert.equal(f.map.get(key),input);
+  assert.equal(f.api.setState('management','frozen').ok,true);
+  assert.equal(f.api.canAccess('forex'),false);assert.equal(f.api.canAccess('management'),false);
+  assert.equal(fixture(f.map.get(key)).api.canAccess('management'),false);
+  assert.equal(f.api.setState('forex','active').ok,true);assert.equal(f.api.canAccess('management'),false);
 });
 test('Explicit PF active and frozen choices survive reload without rewriting sparse raw',()=>{
   for(const state of ['active','frozen']){
@@ -118,7 +126,7 @@ test('Already effective state, invalid module and invalid state never write',()=
   assert.equal(f.api.setState('dashboard','frozen').reason,'invalid-module');assert.equal(f.api.setState('forex','disabled').reason,'invalid-state');
   assert.equal(f.writes.length,0);assert.equal(f.map.has(key),false);
 });
-test('All five managed IDs support both states with preserved independent choices',()=>{
+test('All six managed IDs support both states with preserved independent choices',()=>{
   const f=fixture();f.api.IDS.forEach(id=>{assert.equal(f.api.setState(id,'frozen').ok,true);assert.equal(f.api.getState(id),'frozen');});
   f.api.IDS.forEach(id=>assert.equal(f.api.canAccess(id),false));
   f.api.IDS.forEach(id=>{assert.equal(f.api.setState(id,'active').ok,true);assert.equal(f.api.getState(id),'active');});

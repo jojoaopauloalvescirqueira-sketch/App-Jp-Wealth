@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
-// O contrato público global tem sete rotas canônicas. Forex expõe
-// seis filhos, Research quatro e Ferramentas seis; owner semântico, filho, section física e visão
+// Portfólio conserva a identidade interna research. Gerenciamento reúne
+// Reservas e Contabilidade; Forex mantém seus quatro destinos operacionais; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -9,21 +9,22 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-management-accounts',label:'Contas e Períodos',primary:'forex',child:'forex-management-accounts',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounts'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-history',label:'Histórico de operações',primary:'forex',child:'forex-history',screen:'exec',localView:Object.freeze({surface:'exec',view:'history'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-accounting',label:'Contabilidade',primary:'forex',child:'forex-accounting',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounting'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])})
 ]);
 
 const NAV_RESEARCH_CHILDREN=Object.freeze([
-  Object.freeze({id:'research-forex',label:'Forex',primary:'research',child:'research-forex',screen:'research',localView:Object.freeze({surface:'research',view:'nocoda'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'research-stocks-br',label:'Ações',primary:'research',child:'research-stocks-br',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-br'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'research-stocks-global',label:'Stocks',primary:'research',child:'research-stocks-global',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-global'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'research-reits',label:'REITs',primary:'research',child:'research-reits',screen:'research',localView:Object.freeze({surface:'research',view:'reits'}),aliases:Object.freeze([])})
+  Object.freeze({id:'research-forex',label:'Análise',primary:'research',child:'research-forex',screen:'research',localView:Object.freeze({surface:'research',view:'nocoda'}),aliases:Object.freeze([])})
+]);
+
+const NAV_MANAGEMENT_CHILDREN=Object.freeze([
+  Object.freeze({id:'management-reserves',label:'Reservas',primary:'management',child:'management-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'management-accounting',label:'Caixa Anual',primary:'management',child:'management-accounting',screen:'management',localView:null,aliases:Object.freeze([])})
 ]);
 
 const NAV_TOOLS_CHILDREN=Object.freeze([
   Object.freeze({id:'tools-calendar',label:'Calendário e Mercados',primary:'tools',child:'tools-calendar',screen:'tools',localView:Object.freeze({surface:'tools',view:'calendar'}),aliases:Object.freeze(['tools'])}),
   Object.freeze({id:'tools-leverage',label:'Stoikus — MT5',primary:'tools',child:'tools-leverage',screen:'tools',localView:Object.freeze({surface:'tools',view:'leverage'}),aliases:Object.freeze([])}),
   Object.freeze({id:'tools-normative',label:'Estrutura Normativa JP Wealth',primary:'tools',child:'tools-normative',screen:'tools',localView:Object.freeze({surface:'tools',view:'normative'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'tools-prop-firms',label:'Mesas Proprietárias',primary:'tools',child:'tools-prop-firms',screen:'tools',localView:Object.freeze({surface:'tools',view:'prop-firms'}),aliases:Object.freeze([])}),
   Object.freeze({id:'tools-minigames',label:'MiniGames',primary:'tools',child:'tools-minigames',screen:'tools',localView:Object.freeze({surface:'tools',view:'minigames'}),aliases:Object.freeze([])})
 ]);
 
@@ -33,18 +34,22 @@ const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'planning',primary:'planning',screen:'planning',localView:Object.freeze({surface:'planning',view:'start'}),aliases:Object.freeze(['forex-planning','fxplan'])}),
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
   NAV_RESEARCH_CHILDREN[0],
+  NAV_MANAGEMENT_CHILDREN[0],
   Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])}),
   NAV_TOOLS_CHILDREN[0]
 ]);
 
-// Destinos legados. Saber resolvê-los não os promove a rotas primárias: as três
-// estudos pertencem a Research / Forex; ecal pertence a Ferramentas.
+// Destinos legados conservam a intenção após o aceite, sem duplicar menus.
+// Estudos pertencem a Portfólio / Análise; ecal pertence a Ferramentas.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   'tools-nocuda':Object.freeze({canonical:'tools-leverage',child:'tools-leverage',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'leverage'})}),
   contas:Object.freeze({canonical:'forex-management-accounts',child:'forex-management-accounts',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
   'forex-account':Object.freeze({canonical:'forex-management-accounts',child:'forex-management-accounts',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
-  contab:Object.freeze({canonical:'forex-accounting',child:'forex-accounting',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
-  'forex-reconciliation':Object.freeze({canonical:'forex-accounting',child:'forex-accounting',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
+  contab:Object.freeze({canonical:'management-accounting',child:'management-accounting',screen:'management',primary:'management',localView:null}),
+  'forex-reconciliation':Object.freeze({canonical:'management-accounting',child:'management-accounting',screen:'management',primary:'management',localView:null}),
+  'forex-accounting':Object.freeze({canonical:'management-accounting',child:'management-accounting',screen:'management',primary:'management',localView:null}),
+  'exec-accounting':Object.freeze({canonical:'management-accounting',child:'management-accounting',screen:'management',primary:'management',localView:null}),
+  'forex-reserves':Object.freeze({canonical:'management-reserves',child:'management-reserves',screen:'fxreserves',primary:'management',localView:null}),
   motor:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'motor'}),
   history:Object.freeze({canonical:'forex-history',child:'forex-history',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
   // Nomes antigos preservam a intenção, sem destinos duplicados no menu.
@@ -62,7 +67,10 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   'capital-currents':Object.freeze({canonical:'tools-minigames',child:'tools-minigames',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'capital-currents'})}),
   'galton-board':Object.freeze({canonical:'tools-minigames',child:'tools-minigames',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'galton'})}),
   'research-probability-lab':Object.freeze({canonical:'tools-minigames',child:'tools-minigames',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'galton'})}),
-  'research-others':Object.freeze({canonical:'research-others',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'others'})}),
+  'research-stocks-br':Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
+  'research-stocks-global':Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
+  'research-reits':Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
+  'research-others':Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
   normative:Object.freeze({canonical:'tools-normative',child:'tools-normative',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'normative'})}),
   'estrutura-normativa':Object.freeze({canonical:'tools-normative',child:'tools-normative',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'normative'})}),
   params:Object.freeze({action:'settings',leaf:'tool-params'}),
@@ -73,12 +81,12 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','accounting','accounts','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
   planning:Object.freeze({screen:'planning',primary:'planning',views:Object.freeze(['start','consolidated','monthly']),resolve:()=>window.JPWPlanning&&window.JPWPlanning.ui}),
-  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['nocoda','pivots','stocks-br','stocks-global','reits','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui}),
-  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','market-hours','leverage','normative','minigames','galton','time-twins','capital-currents']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
+  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['nocoda','pivots']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui}),
+  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','market-hours','leverage','normative','prop-firms','minigames','galton','time-twins','capital-currents']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
-  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN,...NAV_RESEARCH_CHILDREN,...NAV_TOOLS_CHILDREN].map(route=>[route.id,route])));
+  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN,...NAV_RESEARCH_CHILDREN,...NAV_MANAGEMENT_CHILDREN,...NAV_TOOLS_CHILDREN].map(route=>[route.id,route])));
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
 let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
@@ -195,6 +203,7 @@ function navApply(plan,target){
     navLastResult={accepted:false,reason:plan.accepted?'unavailable-target':plan.reason};
     return false;
   }
+  if(navCurrent.primary==='management'&&window.JPWManagement?.guardNavigation&&!JPWManagement.guardNavigation(plan,()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-management-draft'};return false;}
   if(navCurrent.primary==='planning'&&window.JPWPlanning?.ui?.guardNavigation&&!JPWPlanning.ui.guardNavigation(plan,()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-planning-draft'};return false;}
   if(plan.action==='settings'){
     const opener=typeof target==='string'
@@ -210,6 +219,7 @@ function navApply(plan,target){
   }
   if(window.JPWForex?.executionBoardUI&&!JPWForex.executionBoardUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-operation-draft'};return false;}
   if(window.JPWForex?.accountsUI?.guardNavigation&&!JPWForex.accountsUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-account-draft'};return false;}
+  if(navCurrent.primary==='management'&&plan.primary!=='management')window.JPWManagement?.deactivate();
   if(navCurrent.primary==='planning'&&plan.primary!=='planning')window.JPWPlanning?.ui?.deactivate();
   if(navCurrent.primary==='tools'&&plan.primary!=='tools') window.JPWNormativeReader?.leave();
   document.querySelectorAll('#appMain > .screen').forEach(screen=>screen.classList.remove('active'));
@@ -218,6 +228,7 @@ function navApply(plan,target){
   if(localView) navSurface(localView.surface).selectView(localView.view);
   navCurrent={canonical:plan.canonical||null,requested:plan.requested,source:plan.source,
     primary:plan.primary,child:plan.child||null,screen:plan.screen,localView};
+  if(plan.primary==='management')window.JPWManagement?.activate(plan.screen==='fxreserves'?'reserves':'accounting');
   navLastResult={accepted:true,reason:null};
   if(typeof scheduleNavPill==='function') scheduleNavPill();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -269,13 +280,15 @@ function navLocalPlan(surfaceId,view,descriptor){
     else if(view==='reits') canonical='research-reits';
     else if(view==='others') canonical='research-others';
   }
-  if(surfaceId==='tools') canonical=({calendar:'tools-calendar','market-hours':'tools-calendar',leverage:'tools-leverage',normative:'tools-normative',minigames:'tools-minigames',galton:'tools-minigames','time-twins':'tools-minigames','capital-currents':'tools-minigames'})[view]||null;
+  if(surfaceId==='tools') canonical=({calendar:'tools-calendar','market-hours':'tools-calendar',leverage:'tools-leverage',normative:'tools-normative','prop-firms':'tools-prop-firms',minigames:'tools-minigames',galton:'tools-minigames','time-twins':'tools-minigames','capital-currents':'tools-minigames'})[view]||null;
   const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-')||canonical.startsWith('tools-'))?canonical:null;
   return {accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
     canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
 }
 
 function navNavigateLocal(surfaceId,view){
+  if(surfaceId==='exec'&&view==='accounting')return navNavigate('management-accounting');
+  if(surfaceId==='research'&&['stocks-br','stocks-global','reits','others'].includes(view))return navNavigate('research-forex');
   if(surfaceId==='tools'&&view==='nocuda')return navNavigate('tools-nocuda');
   if(surfaceId==='planning'&&(view==='reference'||view==='accounts'))view='consolidated';
   if(surfaceId==='fxplan')return navNavigateLocal('planning',({overview:'consolidated',planning:'start',actuals:'monthly',table:'monthly'})[view]||view);
@@ -311,7 +324,7 @@ function navFocusCurrentScreen(){
 window.JPWNavigation=Object.freeze({
   routes:()=>NAV_CANONICAL_ROUTES.map(navPublicRoute),
   children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):
-    (primary==='research'?NAV_RESEARCH_CHILDREN.map(navPublicRoute):primary==='tools'?NAV_TOOLS_CHILDREN.map(navPublicRoute):[]),
+    (primary==='research'?NAV_RESEARCH_CHILDREN.map(navPublicRoute):primary==='management'?NAV_MANAGEMENT_CHILDREN.map(navPublicRoute):primary==='tools'?NAV_TOOLS_CHILDREN.map(navPublicRoute):[]),
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,

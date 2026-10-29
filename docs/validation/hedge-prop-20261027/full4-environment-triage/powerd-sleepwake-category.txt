@@ -1,0 +1,158 @@
+exit: 0
+predicate: process == "powerd" AND category == "sleepWake"
+Timestamp               Ty Process[PID:TID]
+2026-10-27 14:19:17.701 Df powerd[414:23e841e] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:19:43.903 Df powerd[414:23e86ac] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:19:43.975 Df powerd[414:23e86ac] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:23.523 Df powerd[414:23e91c0] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:23.555 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:24.326 Df powerd[414:23e91c0] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:24.360 Df powerd[414:23e91c0] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:29.914 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:29.970 Df powerd[414:23e9833] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:30.766 Df powerd[414:23e9833] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:30.818 Df powerd[414:23e9833] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:45.958 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:45.983 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:48.218 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:48.243 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:50.439 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:50.452 Df powerd[414:23eb02b] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:52.627 Df powerd[414:23eb02b] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:52.637 Df powerd[414:23eb02b] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:54.905 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:54.933 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:57.222 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:57.251 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:22:59.564 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:22:59.591 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:01.949 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:01.962 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:04.485 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:04.496 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:06.772 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:06.785 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:09.010 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:09.024 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:11.261 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:11.272 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:13.536 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:13.567 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:15.888 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:15.918 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:18.156 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:18.169 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:20.421 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:20.449 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:22.670 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:22.700 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:24.928 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:24.958 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:27.150 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:27.196 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:29.406 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:29.432 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:31.738 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:31.767 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:34.453 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:34.497 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:36.720 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:36.750 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:38.929 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:38.974 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:41.140 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:41.156 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:43.344 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:43.359 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:45.633 Df powerd[414:23e9832] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:45.651 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:47.858 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:47.892 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:50.122 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:50.142 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:52.345 Df powerd[414:23e9831] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:52.362 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:54.598 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:54.614 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:23:56.855 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:23:56.889 Df powerd[414:23eaee9] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:35.787 Df powerd[414:23eeefe] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:35.864 Df powerd[414:23eeefe] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:37.803 Df powerd[414:23eeefe] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:37.887 Df powerd[414:23eeefe] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:39.802 Df powerd[414:23eee46] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:39.876 Df powerd[414:23eeefe] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:41.735 Df powerd[414:23ef566] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:41.804 Df powerd[414:23eee46] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:43.701 Df powerd[414:23eee46] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:43.768 Df powerd[414:23ef566] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:45.708 Df powerd[414:23ef566] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:45.784 Df powerd[414:23eee46] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:47.716 Df powerd[414:23ef566] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:47.789 Df powerd[414:23ef566] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:24:49.718 Df powerd[414:23ef566] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:24:49.788 Df powerd[414:23eee46] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:29:32.531 Df powerd[414:23ef5f6] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:29:32.576 Df powerd[414:23f6a62] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:29:32.584 Df powerd[414:23f6ebd] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:29:32.720 Df powerd[414:23f6ebd] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:29:33.303 Df powerd[414:23f6ebd] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:29:33.405 Df powerd[414:23f6ebd] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:29:48.595 Df powerd[414:23f6ebd] [com.apple.powerd:sleepWake] Current PerfMode: Restricted, Target PerfMode: Unrestricted
+2026-10-27 14:29:48.630 Df powerd[414:23f6ebd] [com.apple.powerd:sleepWake] Current PerfMode: Unrestricted, Target PerfMode: Restricted
+2026-10-27 14:34:59.009 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 0
+2026-10-27 14:35:00.136 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x19
+2026-10-27 14:35:05.191 Df powerd[414:24035df] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Idle Sleep'
+2026-10-27 14:35:05.191 Df powerd[414:24035df] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x440
+2026-10-27 14:35:06.734 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Wake scheduled by com.apple.alarm
+2026-10-27 14:35:07.966 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-27 14:35:07.981 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25325963625383
+2026-10-27 14:35:08.159 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25325967913025
+2026-10-27 14:35:08.194 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-27 14:35:08.194 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-27 14:35:08.194 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-27 14:35:08.195 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] <private>
+2026-10-27 14:35:08.195 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x39
+2026-10-27 14:35:18.450 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-27 14:35:18.450 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x441
+2026-10-27 14:35:19.985 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] Wake scheduled by com.apple.alarm
+2026-10-27 14:35:25.786 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-27 14:35:25.802 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25326258359820
+2026-10-27 14:35:25.976 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25326262533324
+2026-10-27 14:35:26.007 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-27 14:35:26.012 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-27 14:35:26.012 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-27 14:35:26.012 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] <private>
+2026-10-27 14:35:26.013 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x39
+2026-10-27 14:35:35.026 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Dark Wake Thermal Emergency'
+2026-10-27 14:35:35.026 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x442
+2026-10-27 14:35:36.575 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] Wake scheduled by com.apple.alarm
+2026-10-27 14:44:17.633 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-27 14:44:17.646 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25326524970410
+2026-10-27 14:44:17.833 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25326529463044
+2026-10-27 14:44:17.865 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-27 14:44:17.865 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to NUB.SPMI0Sw3IRQ nub-spmi0.0x02 rtc/Maintenance
+2026-10-27 14:44:17.865 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-27 14:44:17.866 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] <private>
+2026-10-27 14:44:17.866 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x39
+2026-10-27 14:44:33.707 Df powerd[414:24074d6] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-27 14:44:33.708 Df powerd[414:24074d6] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x443
+2026-10-27 14:45:07.077 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-27 14:45:07.093 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25326957626475
+2026-10-27 14:45:07.261 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25326961651323
+2026-10-27 14:45:07.297 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-27 14:45:07.297 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty bluetooth-pcie/
+2026-10-27 14:45:07.297 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-27 14:45:07.297 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] <private>
+2026-10-27 14:45:07.298 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x39
+2026-10-27 14:45:07.303 E  powerd[414:2407eff] [com.apple.powerd:sleepWake] PID 463 is not entitled to set wake reason
+2026-10-27 14:45:42.658 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-27 14:45:42.658 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x444
+2026-10-27 14:51:55.183 Df powerd[414:2408a0a] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-27 14:51:55.194 Df powerd[414:2408a0a] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25327858679814
+2026-10-27 14:51:55.383 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25327862828427
+2026-10-27 14:51:55.384 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-27 14:51:55.385 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNPB] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-27 14:51:55.385 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-27 14:51:55.385 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] <private>
+2026-10-27 14:51:55.385 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] sendNoRespNotification: 0xf9

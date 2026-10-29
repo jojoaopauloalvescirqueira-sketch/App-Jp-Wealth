@@ -1,39 +1,111 @@
 {
- "version": 1,
- "generated_at": "2026-08-07T12:24:04Z",
- "source": "forexfactory-ff_calendar_thisweek",
- "events": [
-  {
-   "title": "ISM Manufacturing PMI",
-   "country": "USD",
-   "date": "2026-08-03T10:00:00-04:00",
-   "impact": "High",
-   "forecast": "54.0",
-   "previous": "53.3"
-  },
-  {
-   "title": "Average Hourly Earnings m/m",
-   "country": "USD",
-   "date": "2026-08-07T08:30:00-04:00",
-   "impact": "High",
-   "forecast": "0.3%",
-   "previous": "0.3%"
-  },
-  {
-   "title": "Non-Farm Employment Change",
-   "country": "USD",
-   "date": "2026-08-07T08:30:00-04:00",
-   "impact": "High",
-   "forecast": "85K",
-   "previous": "57K"
-  },
-  {
-   "title": "Unemployment Rate",
-   "country": "USD",
-   "date": "2026-08-07T08:30:00-04:00",
-   "impact": "High",
-   "forecast": "4.2%",
-   "previous": "4.2%"
-  }
- ]
+  "version": 1,
+  "generated_at": "2026-10-28T20:21:55Z",
+  "source": "forexfactory-ff_calendar_thisweek",
+  "events": [
+    {
+      "title": "Annual Budget Release",
+      "country": "GBP",
+      "date": "2026-10-28T08:30:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "Federal Funds Rate",
+      "country": "USD",
+      "date": "2026-10-28T14:00:00-04:00",
+      "impact": "High",
+      "forecast": "4.00%",
+      "previous": "4.00%"
+    },
+    {
+      "title": "FOMC Statement",
+      "country": "USD",
+      "date": "2026-10-28T14:00:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "FOMC Press Conference",
+      "country": "USD",
+      "date": "2026-10-28T14:30:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "Advance GDP q/q",
+      "country": "USD",
+      "date": "2026-10-29T08:30:00-04:00",
+      "impact": "High",
+      "forecast": "3.2%",
+      "previous": "1.5%"
+    },
+    {
+      "title": "Core PCE Price Index m/m",
+      "country": "USD",
+      "date": "2026-10-29T08:30:00-04:00",
+      "impact": "High",
+      "forecast": "0.3%",
+      "previous": "0.2%"
+    },
+    {
+      "title": "Main Refinancing Rate",
+      "country": "EUR",
+      "date": "2026-10-29T09:15:00-04:00",
+      "impact": "High",
+      "forecast": "2.65%",
+      "previous": "2.65%"
+    },
+    {
+      "title": "Monetary Policy Statement",
+      "country": "EUR",
+      "date": "2026-10-29T09:15:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "ECB Press Conference",
+      "country": "EUR",
+      "date": "2026-10-29T09:45:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "BOJ Policy Rate",
+      "country": "JPY",
+      "date": "2026-10-29T22:30:00-04:00",
+      "impact": "High",
+      "forecast": "<1.25%",
+      "previous": "<1.25%"
+    },
+    {
+      "title": "Monetary Policy Statement",
+      "country": "JPY",
+      "date": "2026-10-29T22:30:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "BOJ Outlook Report",
+      "country": "JPY",
+      "date": "2026-10-29T22:31:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    },
+    {
+      "title": "BOJ Press Conference",
+      "country": "JPY",
+      "date": "2026-10-30T01:30:00-04:00",
+      "impact": "High",
+      "forecast": "",
+      "previous": ""
+    }
+  ]
 }

@@ -1,0 +1,209 @@
+--- a/src/js/40-app/19-calendar-agenda.js
++++ b/src/js/40-app/19-calendar-agenda.js
+@@ -20,8 +20,8 @@
+   const dayLabel=s=>dateAt(s).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+   const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+   const button=(action,label,icon)=>{const b=el('button',icon?'calendar-icon-button':'calendar-button',icon?undefined:label);b.type='button';b.dataset.calendarAction=action;if(icon){b.setAttribute('aria-label',label);b.title=label;
+-    const shapes={close:['M6 6l12 12','M18 6L6 18'],previous:['M15 18l-6-6 6-6'],next:['M9 6l6 6-6 6'],new:['M12 5v14','M5 12h14'],filters:['M4 7h16','M4 17h16','M8 4v6','M16 14v6'],info:['M12 11v6','M12 7h.01']};
+-    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.classList.add('shell-lucide');for(const d of shapes[action]||shapes.info){const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',d);svg.append(path);}if(action==='info'){const circle=document.createElementNS(svg.namespaceURI,'circle');circle.setAttribute('cx','12');circle.setAttribute('cy','12');circle.setAttribute('r','9');svg.append(circle);}b.append(svg);}return b;};
++    const shapes={'economic-detail':['M12 11v6','M12 7h.01'],close:['M6 6l12 12','M18 6L6 18'],previous:['M15 18l-6-6 6-6'],next:['M9 6l6 6-6 6'],new:['M12 5v14','M5 12h14'],filters:['M4 7h16','M4 17h16','M8 4v6','M16 14v6'],info:['M12 11v6','M12 7h.01']};
++    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.classList.add('shell-lucide');for(const d of shapes[action]||shapes.info){const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',d);svg.append(path);}if(action==='info'||action==='economic-detail'){const circle=document.createElementNS(svg.namespaceURI,'circle');circle.setAttribute('cx','12');circle.setAttribute('cy','12');circle.setAttribute('r','9');svg.append(circle);}b.append(svg);}return b;};
+   const isVisible=n=>!!n&&!n.hidden&&n.getClientRects().length>0&&getComputedStyle(n).visibility!=='hidden';
+   function blocked(){
+     if(document.querySelector('dialog[open]:not(#calendarDialog)'))return true;
+@@ -41,7 +41,7 @@
+     try{localStorage.setItem(KEY,JSON.stringify({schemaVersion:1,currencies:st.currencies,impacts:st.impacts,contents:st.content}));}
+     catch(_){st.notice='Não foi possível guardar os filtros neste navegador.';}
+   }
+-  function state(id){const prefs=preferences();return {id,month:monthStart(today()),selected:today(),focused:today(),...prefs,prefWriteBlocked:prefsOpaque||prefsReadFailed,timeZone:browserZone(),form:null,token:null,baseReference:null,stage:'calendar',notice:prefsReadFailed?'Não foi possível ler seus filtros neste navegador. A consulta continua com filtros temporários nesta sessão.':'' ,errors:[],ambiguities:[],removing:false,request:0,economicByContext:new Map(),data:{events:[],coverage:[],items:[],app:[]},active:false};}
++  function state(id){const prefs=preferences();return {id,month:monthStart(today()),selected:today(),focused:today(),...prefs,prefWriteBlocked:prefsOpaque||prefsReadFailed,timeZone:browserZone(),form:null,token:null,baseReference:null,stage:'calendar',notice:prefsReadFailed?'Não foi possível ler seus filtros neste navegador. A consulta continua com filtros temporários nesta sessão.':'' ,errors:[],ambiguities:[],removing:false,request:0,economicByContext:new Map(),expandedEconomicObservation:null,data:{events:[],coverage:[],items:[],app:[]},active:false};}
+   function snapshot(){try{return window.JPWAgenda?.queries.snapshot()||{status:'UNAVAILABLE',items:[]};}catch(_){return {status:'UNAVAILABLE',items:[]};}}
+   function reference(){const s=snapshot();return JSON.stringify({status:s.status,revision:s.revision,items:s.items});}
+   function backupItem(){
+@@ -123,28 +123,64 @@
+   function coverageRows(st){return st.data.coverage.filter(c=>(!c.currency||st.currencies.includes(c.currency))&&(!c.month||c.month===st.selected.slice(0,7))&&typeof c.from==='string'&&typeof c.to==='string'&&c.from<=st.selected&&c.to>=st.selected);}
+   function incomplete(st){const rows=coverageRows(st);return st.content.includes('economic')&&(st.data.econFailed||!rows.length||st.currencies.some(currency=>!rows.some(c=>c.currency===currency&&c.status==='confirmed')||rows.some(c=>c.currency===currency&&c.status!=='confirmed')));}
+   function economicFailure(st){return st.data.econStale?'Não foi possível atualizar o calendário econômico. Os últimos dados deste recorte estão desatualizados.':'Não foi possível consultar o calendário econômico neste recorte. Consulte as fontes ou tente novamente.';}
++  // Presentation identity only. Changing the instant must never retain details,
++  // even when a provider reuses an id; duplicate observations are ambiguous.
++  const economicObservation=event=>JSON.stringify([event.provider||'',event.sourceId,event.currency,event.title,event.precision,event.at?Date.parse(event.at):null,event.date,event.sourceUrl]);
++  function economicLink(host,url,label){
++    try{const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password)return;const a=el('a','calendar-source-link',label);a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';host.append(a);}catch(_){}
++  }
+   function renderAgenda(inst){
+-    const {st,agenda}=inst,scroll=agenda.scrollTop,active=document.activeElement,focusRow=active?.closest('[data-calendar-personal-id]'),focusId=agenda.contains(active)?focusRow?.dataset.calendarPersonalId:null,focusKind=active?.hasAttribute('data-calendar-complete')?'complete':active?.dataset.calendarAction;
+-    const economicRow=agenda.contains(active)?active?.closest('[data-calendar-economic-id]'):null,economicId=economicRow?.dataset.calendarEconomicId,economicObservation=economicRow?.dataset.calendarEconomicObservation,economicHref=active?.tagName==='A'?active.href:null;
+-    const heading=el('h3','calendar-agenda-heading',dayLabel(st.selected)),zone=el('p','calendar-meta',st.timeZone);
+-    const list=el('div','calendar-agenda-list'),economic=st.content.includes('economic')?st.data.events.filter(e=>eventDay(e,st.timeZone)===st.selected&&st.currencies.includes(e.currency)&&st.impacts.includes(e.impact)):[],personal=st.content.includes('personal')?st.data.items.filter(i=>personalOn(i,st.selected,st.timeZone)):[],app=st.content.includes('app')?st.data.app.filter(i=>i.date===st.selected):[];
+-    const total=economic.length+personal.length+app.length;zone.classList.add('calendar-agenda-summary');zone.textContent=total+' '+(total===1?'item':'itens')+' · '+st.timeZone;
++    const {st,agenda}=inst,scroll=agenda.scrollTop,panelScroll=inst.panel.scrollTop,active=document.activeElement,focusRow=active?.closest('[data-calendar-personal-id]'),focusId=agenda.contains(active)?focusRow?.dataset.calendarPersonalId:null,focusKind=active?.hasAttribute('data-calendar-complete')?'complete':active?.dataset.calendarAction;
++    const activeEconomic=agenda.contains(active)?active?.closest('[data-calendar-economic-id],.calendar-economic-detail-row'):null;
++    const focusObservation=activeEconomic?.dataset.calendarEconomicObservation,focusHref=active?.tagName==='A'?active.href:null;
++    const heading=el('h3','calendar-agenda-heading',dayLabel(st.selected));heading.tabIndex=-1;
++    const zone=el('p','calendar-meta calendar-agenda-summary'),list=el('div','calendar-agenda-list'),economic=st.content.includes('economic')?st.data.events.filter(e=>eventDay(e,st.timeZone)===st.selected&&st.currencies.includes(e.currency)&&st.impacts.includes(e.impact)):[],personal=st.content.includes('personal')?st.data.items.filter(i=>personalOn(i,st.selected,st.timeZone)):[],app=st.content.includes('app')?st.data.app.filter(i=>i.date===st.selected):[];
++    const total=economic.length+personal.length+app.length,feed=st.data.feed;
++    let update=st.economicRefreshing?'Atualizando eventos…':st.data.econFailed?economicFailure(st):feed?.fetchFailed?'Falha na atualização; dados anteriores preservados':feed?.stale?'Coleta desatualizada':'';
++    const at=feed?.collectedAt||st.data.updatedAt;
++    if(at&&Number.isFinite(Date.parse(at)))update+=(update?' · ':'')+(feed?.collectedAt?'Coleta: ':'Referência: ')+new Date(at).toLocaleString('pt-BR',{timeZone:st.timeZone,dateStyle:'short',timeStyle:'short'});
++    if(!update)update='Atualização não informada';
++    zone.textContent=total+' '+(total===1?'item':'itens')+' · '+st.timeZone+(st.content.includes('economic')&&update?' · '+update:'');
+     economic.sort((a,b)=>(a.at||'').localeCompare(b.at||''));
+-    if(economic.length)list.append(el('h4','calendar-agenda-group','Economia'));
+-    for(const event of economic){
+-      const row=el('article','calendar-event calendar-event-economic');row.dataset.calendarEconomicId=event.id;
+-      // Exact observation only: this key restores UI focus across recaptures;
+-      // it never merges records or asserts an economic/financial identity.
+-      row.dataset.calendarEconomicObservation=JSON.stringify([event.provider||'',event.sourceId,event.currency,event.title,event.precision,event.at?Date.parse(event.at):null,event.date,event.sourceUrl]);
+-      const fromFF=event.provider==='forexfactory'||String(event.sourceId||'').startsWith('ff-');
+-      const time=el('span','calendar-event-time',event.precision==='date'?'Data · horário não informado':new Date(event.at).toLocaleTimeString('pt-BR',{timeZone:st.timeZone,hour:'2-digit',minute:'2-digit'})+(event.timeConfirmed===false?' · A confirmar':''));
+-      const detail=el('div','calendar-event-content');detail.append(el('strong','calendar-event-title',event.title),el('span','calendar-meta',event.currency+' · '+(IMPACTS[event.impact]||IMPACTS.unclassified)+(event.status==='cancelled'?' · Cancelado':event.status==='published'?' · Publicado':'')+' · Impacto: '+(fromFF?'Forex Factory':'editorial JP Wealth')));
+-      if(event.sourceUrl){const a=el('a','calendar-source-link',fromFF?'Fonte: Forex Factory':'Fonte oficial');try{const u=new URL(event.sourceUrl);if(u.protocol==='https:'){a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';detail.append(a);}}catch(_){}}
+-      if(event.precision==='instant'&&event.at){try{detail.append(el('span','calendar-meta','Horário original: '+new Date(event.at).toLocaleString('pt-BR',{timeZone:event.timeZone||'UTC',dateStyle:'short',timeStyle:'short'})+' · '+(event.timeZone||'UTC')+(event.timeConfirmed===false?' · indicativo, confirme na fonte':'')));}catch(_){}}
+-      if(event.observationStatus==='not-in-latest')detail.append(el('p','calendar-event-warning','Não consta na última coleta. Esta observação anterior não comprova cancelamento.'));
+-      if(event.sourceConflict)detail.append(el('p','calendar-event-warning','As fontes divergem sobre este evento. Data ou horário a confirmar.'));
+-      for(const source of Array.isArray(event.officialReferences)?event.officialReferences:[]){try{const u=new URL(source.url||source.sourceUrl);if(u.protocol==='https:'){const a=el('a','calendar-source-link','Conferir fonte oficial');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';detail.append(a);}}catch(_){}}
+-      row.append(time,detail);list.append(row);
++    const matching=observation=>economic.filter(e=>economicObservation(e)===observation);
++    if(st.expandedEconomicObservation&&matching(st.expandedEconomicObservation).length!==1)st.expandedEconomicObservation=null;
++    if(economic.length){
++      const table=el('table','calendar-economic-table'),caption=el('caption','calendar-economic-caption','Economia'),thead=el('thead'),head=el('tr'),tbody=el('tbody');thead.setAttribute('role','rowgroup');tbody.setAttribute('role','rowgroup');head.setAttribute('role','row');
++      table.setAttribute('role','table');
++      for(const label of ['Horário','Moeda','Impacto','Evento','Atual','Projeção','Anterior']){const th=el('th','',label);th.scope='col';th.setAttribute('role','columnheader');head.append(th);}
++      thead.append(head);table.append(caption,thead,tbody);list.append(table);
++      for(const [index,event] of economic.entries()){
++        const row=el('tr','calendar-event-economic'),observation=economicObservation(event);row.setAttribute('role','row');row.dataset.calendarEconomicId=event.id;row.dataset.calendarEconomicObservation=observation;
++        const cell=(field,cls,text)=>{const td=el('td',cls,text);td.setAttribute('role','cell');td.dataset.calendarEconomicField=field;row.append(td);return td;};
++        const fromFF=event.provider==='forexfactory'||String(event.sourceId||'').startsWith('ff-');
++        const time=cell('time','calendar-economic-time',event.precision==='date'?'Horário não informado':new Date(event.at).toLocaleTimeString('pt-BR',{timeZone:st.timeZone,hour:'2-digit',minute:'2-digit'}));
++        cell('currency','calendar-economic-currency',event.currency);
++        const impact=cell('impact','calendar-economic-impact'),symbol=el('span','calendar-impact-symbol calendar-impact-'+(Object.hasOwn(IMPACTS,event.impact)?event.impact:'unclassified'));
++        symbol.setAttribute('role','img');symbol.setAttribute('aria-label','Impacto: '+(IMPACTS[event.impact]||IMPACTS.unclassified)+' · '+(fromFF?'Forex Factory':'editorial JP Wealth'));symbol.title=symbol.getAttribute('aria-label');
++        if(event.impact==='unclassified'||!Object.hasOwn(IMPACTS,event.impact))symbol.append(el('span','','?'));else for(let n=1;n<=3;n++){const bar=el('span','calendar-impact-bar');bar.setAttribute('aria-hidden','true');bar.classList.toggle('calendar-impact-filled',n<=({high:3,medium:2,low:1}[event.impact]||0));symbol.append(bar);}impact.append(symbol);
++        const title=cell('event','calendar-economic-event'),titleLine=el('div','calendar-economic-title-line'),info=button('economic-detail','Detalhes de '+event.title,'i'),detailId=st.id+'EconomicDetail'+index,expanded=st.expandedEconomicObservation===observation;
++        info.setAttribute('aria-expanded',String(expanded));info.setAttribute('aria-controls',detailId);titleLine.append(el('strong','calendar-event-title',event.title),info);title.append(titleLine);
++        const warnings=[];
++        if(event.precision==='date'||event.timeConfirmed===false)warnings.push('Horário a confirmar.');
++        if(event.status==='cancelled')warnings.push('Cancelado na fonte.');
++        if(event.status==='published')warnings.push('Publicado na fonte.');
++        if(event.observationStatus==='not-in-latest')warnings.push('Não consta na última coleta; não comprova cancelamento.');
++        if(event.sourceConflict)warnings.push('As fontes divergem; data ou horário a confirmar.');
++        if(warnings.length)title.append(el('p','calendar-event-warning',warnings.join(' ')));
++        for(const [field,label] of [['actual','Atual'],['forecast','Projeção'],['previous','Anterior']]){
++          const td=cell(field,'calendar-economic-number'),value=field==='actual'?'—':typeof event[field]==='string'&&event[field].trim()!==''?event[field]:'—';
++          const labelNode=el('span','calendar-economic-value-label',label);labelNode.setAttribute('aria-hidden','true');const number=el('span','calendar-economic-value',value);number.dataset.calendarEconomicValue=field;
++          if(value==='—'){td.setAttribute('aria-label',label+': '+(field==='actual'?'Não fornecido nesta alimentação':'Não informado na fonte'));number.setAttribute('aria-label',label+': '+(field==='actual'?'Não fornecido nesta alimentação':'Não informado na fonte'));number.title=field==='actual'?'Não fornecido nesta alimentação':'Não informado na fonte';}td.append(labelNode,number);
++        }
++        const detailRow=el('tr','calendar-economic-detail-row');detailRow.dataset.calendarEconomicObservation=observation;detailRow.hidden=!expanded;
++        const detailCell=el('td'),detail=el('div','calendar-economic-detail');detailRow.setAttribute('role','row');detailCell.setAttribute('role','cell');detailCell.colSpan=7;detail.id=detailId;detail.setAttribute('role','region');detail.setAttribute('aria-label','Detalhes de '+event.title);
++        detail.append(el('p','calendar-meta','Impacto: '+(fromFF?'classificação Forex Factory':'editorial JP Wealth')));
++        if(event.sourceUrl)economicLink(detail,event.sourceUrl,fromFF?'Fonte: Forex Factory':'Fonte oficial');
++        if(event.precision==='instant'&&event.at){try{detail.append(el('p','calendar-meta','Horário original: '+new Date(event.at).toLocaleString('pt-BR',{timeZone:event.timeZone||'UTC',dateStyle:'short',timeStyle:'short'})+' · '+(event.timeZone||'UTC')+(event.timeConfirmed===false?' · indicativo, confirme na fonte':'')));}catch(_){}}
++        detail.append(el('p','calendar-meta','Atual: não fornecido nesta alimentação.'));
++        for(const source of Array.isArray(event.officialReferences)?event.officialReferences:[])economicLink(detail,source.url||source.sourceUrl,'Conferir fonte oficial');
++        detailCell.append(detail);detailRow.append(detailCell);tbody.append(row,detailRow);
++      }
+     }
+     if(personal.length)list.append(el('h4','calendar-agenda-group','Sua agenda'));
+     for(const item of personal){
+@@ -160,8 +196,17 @@
+     if(!economic.length&&!personal.length&&!app.length)list.append(el('p','calendar-empty',st.content.includes('economic')&&st.data.econFailed?'Não foi possível verificar os eventos econômicos deste dia.':incomplete(st)?'Nenhum item disponível neste recorte. A cobertura econômica ainda precisa de confirmação.':'Nenhum item neste dia com os filtros atuais.'));
+     if(st.content.includes('economic')&&incomplete(st)){const note=el('div','calendar-coverage-note');note.append(el('p','',st.data.econFailed?economicFailure(st):'Cobertura econômica parcial ou pendente para esta data; consulte as fontes para confirmação.'),button('info','Ver fontes e cobertura'));list.append(note);}
+     if(st.content.includes('personal')&&st.data.personalStatus!=='OK')list.append(el('p','calendar-coverage-note',st.data.personalStatus==='INCOMPATIBLE'?'Sua agenda usa uma versão incompatível. Os registros foram preservados.':'Não foi possível consultar sua agenda.'));
+-    agenda.replaceChildren(heading,zone,list);if(focusId){const row=[...agenda.querySelectorAll('[data-calendar-personal-id]')].find(r=>r.dataset.calendarPersonalId===focusId);row?.querySelector(focusKind==='complete'?'[data-calendar-complete]':'[data-calendar-action="edit"]')?.focus({preventScroll:true});}else if(economicId&&economicHref){const rows=[...agenda.querySelectorAll('[data-calendar-economic-id]')];let row=rows.find(r=>r.dataset.calendarEconomicId===economicId);if(!row){const matching=rows.filter(r=>r.dataset.calendarEconomicObservation===economicObservation);if(matching.length===1)row=matching[0];}const link=row?[...row.querySelectorAll('a')].find(a=>a.href===economicHref):null;link?.focus({preventScroll:true});}agenda.scrollTop=scroll;
+-  }
++    agenda.replaceChildren(heading,zone,list);
++    if(focusId){const row=[...agenda.querySelectorAll('[data-calendar-personal-id]')].find(r=>r.dataset.calendarPersonalId===focusId);row?.querySelector(focusKind==='complete'?'[data-calendar-complete]':'[data-calendar-action="edit"]')?.focus({preventScroll:true});}
++    else if(focusObservation){
++      const rows=[...agenda.querySelectorAll('[data-calendar-economic-id]')].filter(r=>r.dataset.calendarEconomicObservation===focusObservation);
++      let target=null;
++      if(rows.length===1){const row=rows[0],detail=row.nextElementSibling;target=focusHref?[...row.querySelectorAll('a'),...(!detail.hidden?detail.querySelectorAll('a'):[])].find(a=>a.href===focusHref):row.querySelector('[data-calendar-action="economic-detail"]');}
++      (target||heading).focus({preventScroll:true});
++    }
++    agenda.scrollTop=scroll;inst.panel.scrollTop=panelScroll;
++  }
++
+   function renderControls(inst){
+     const host=inst.controls,st=inst.st;host.replaceChildren(el('h3','','Filtros'));
+     for(const [key,values,labels] of [['currencies',CURRENCIES,null],['impacts',Object.keys(IMPACTS),IMPACTS],['content',Object.keys(CONTENT),CONTENT]]){
+@@ -290,10 +335,11 @@
+     const date=event.target.closest('[data-calendar-date]');if(date){selectDate(inst,date.dataset.calendarDate);return;}
+     const target=event.target.closest('[data-calendar-action]');if(!target)return;const action=target.dataset.calendarAction,st=inst.st;
+     if(action==='close'){close();return;}
++    if(action==='economic-detail'){const row=target.closest('[data-calendar-economic-id]');if(!row)return;const observation=row.dataset.calendarEconomicObservation;st.expandedEconomicObservation=st.expandedEconomicObservation===observation?null:observation;renderAgenda(inst);return;}
+     if(action==='previous'||action==='next'){st.month=monthShift(st.month,action==='previous'?-1:1);st.focused=st.month;renderMonth(inst);refresh(inst);return;}
+     if(action==='today'){st.month=monthStart(today());selectDate(inst,today());refresh(inst);return;}
+     if(action==='include-new-currencies'){st.currencies=CURRENCIES.filter(currency=>st.currencies.includes(currency)||NEW_CURRENCIES.includes(currency));savePreferences(st);renderControls(inst);refresh(inst);return;}
+-    if(action==='refresh-economic'){if(st.economicRefreshing)return;st.economicRefreshing=true;renderInfo(inst);Promise.resolve().then(()=>window.JPWCalendarFeed?.refresh(true)).catch(()=>{st.notice='Não foi possível atualizar os eventos. Os dados anteriores foram preservados.';renderNotice(inst);}).finally(()=>{st.economicRefreshing=false;if(visibleInstance(inst))refresh(inst);});return;}
++    if(action==='refresh-economic'){if(st.economicRefreshing)return;st.economicRefreshing=true;renderInfo(inst);renderAgenda(inst);Promise.resolve().then(()=>window.JPWCalendarFeed?.refresh(true)).catch(()=>{st.notice='Não foi possível atualizar os eventos. Os dados anteriores foram preservados.';renderNotice(inst);}).finally(()=>{st.economicRefreshing=false;if(visibleInstance(inst))refresh(inst);});return;}
+     if(action==='filters'||action==='info'){if(st.stage==='form'){captureForm(inst);st.notice='Conclua ou cancele a edição para consultar '+(action==='filters'?'os filtros.':'as fontes.');renderNotice(inst);return;}const host=action==='filters'?inst.controls:inst.info;host.hidden=!host.hidden;if(action==='info')renderInfo(inst);return;}
+     if(action==='new'){if(st.form){st.stage='form';renderForm(inst);}else newForm(inst);return;}
+     if(action==='edit'){if(st.form){st.notice='Sua edição atual foi preservada. Salve ou cancele antes de editar outro registro.';renderNotice(inst);return;}newForm(inst,target.dataset.calendarId);return;}
+--- a/src/styles/app.css
++++ b/src/styles/app.css
+@@ -11348,23 +11348,62 @@
+ /* Calendar and personal agenda: isolated surfaces, shared DOM factory. */
+ .calendar-dialog{box-sizing:border-box;width:min(760px,calc(100vw - 32px));max-width:760px;max-height:calc(100dvh - 40px);padding:0;border:1px solid var(--line);border-radius:24px;background:var(--panel);color:var(--ink);box-shadow:0 24px 80px rgba(0,0,0,.24);overflow:auto;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+ .calendar-dialog::backdrop{background:rgba(12,20,32,.35)}
+-.calendar-panel{box-sizing:border-box;width:100%;min-width:0;background:var(--panel);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}
++.calendar-panel{container:calendar-panel / inline-size;box-sizing:border-box;width:100%;min-width:0;background:var(--panel);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}
+ .calendar-panel *{box-sizing:border-box}.calendar-panel [hidden]{display:none!important}
+ .calendar-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px 8px}.calendar-heading{margin:0;font-size:18px;line-height:1.3;font-weight:650;letter-spacing:-.3px}.calendar-header-actions,.calendar-month-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+ .calendar-panel button,.calendar-panel input,.calendar-panel select,.calendar-panel textarea{font:inherit}.calendar-panel button{cursor:pointer;color:var(--ink)}
+ .calendar-panel button:focus-visible,.calendar-panel a:focus-visible,.calendar-panel input:focus-visible,.calendar-panel select:focus-visible,.calendar-panel textarea:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+ .calendar-panel button:disabled{opacity:.55;cursor:wait}.calendar-button,.calendar-icon-button{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border:1px solid transparent;border-radius:12px;background:transparent;line-height:1.2;text-align:center}
+ .calendar-icon-button{width:44px;height:44px;padding:0;font-size:24px;font-weight:400}.calendar-icon-button[data-calendar-action=info]{font-size:17px;font-weight:600}.calendar-button:hover,.calendar-icon-button:hover{background:var(--panel-2)}
+-.calendar-body{display:grid;grid-template-columns:minmax(308px,1fr) minmax(0,1fr);align-items:start;gap:24px;padding:8px 20px 24px}.calendar-month{min-width:0}.calendar-month-nav{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:52px;margin-bottom:4px}.calendar-month-label{margin:0;font-size:15px;font-weight:650;text-transform:capitalize}.calendar-month-actions .calendar-button{padding:8px}.calendar-month-actions .calendar-icon-button{font-size:27px}
++.calendar-body{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:24px;padding:8px 20px 24px}.calendar-month{width:308px;max-width:100%;min-width:0}.calendar-month-nav{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:52px;margin-bottom:4px}.calendar-month-label{margin:0;font-size:15px;font-weight:650;text-transform:capitalize}.calendar-month-actions .calendar-button{padding:8px}.calendar-month-actions .calendar-icon-button{font-size:27px}
+ .calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0}.calendar-weekdays{margin-bottom:4px;color:var(--ink-dim);font-size:11px;text-align:center;font-weight:600}.calendar-weekdays span{padding:4px 0}
+ .calendar-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;min-width:44px;min-height:44px;height:44px;border:0;border-radius:12px;background:transparent;padding:4px 0 0;font-variant-numeric:tabular-nums;font-size:14px;line-height:22px}.calendar-day-number{display:flex;align-items:center;justify-content:center;width:28px;height:25px;border-radius:9px}.calendar-day:hover{background:var(--panel-2)}.calendar-day-outside{opacity:.42}.calendar-day-today .calendar-day-number{outline:1.5px solid var(--violet);outline-offset:0}.calendar-day[aria-selected=true]{background:var(--violet)!important;color:var(--calendar-action-ink,#fff)!important}.calendar-day[aria-selected=true] .calendar-day-number{outline-color:currentColor}.calendar-day-markers{display:flex;position:absolute;left:50%;transform:translateX(-50%);bottom:6px;gap:3px;align-items:center;justify-content:center;height:5px}.calendar-economic-dot,.calendar-personal-dot{width:4px;height:4px;border-radius:50%;background:var(--danger);display:block}.calendar-personal-dot{background:var(--violet)}.calendar-day[aria-selected=true] .calendar-personal-dot{background:#fff}.calendar-day[aria-selected=true] .calendar-economic-dot{background:#ffb2ad}
+-.calendar-agenda{min-width:0;padding-top:15px;max-height:470px;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}.calendar-agenda-heading{margin:0;font-size:15px;font-weight:650;text-transform:capitalize}.calendar-meta{display:block;color:var(--ink-dim);font-size:12px;line-height:1.5;margin:3px 0 8px;overflow-wrap:anywhere}.calendar-agenda-list{margin-top:14px}.calendar-event{display:flex;align-items:start;gap:10px;padding:12px 0;border-top:1px solid var(--line);min-width:0}.calendar-event-content{flex:1;min-width:0;overflow-wrap:anywhere}.calendar-event-title{font-size:13px;font-weight:600;display:block}.calendar-event-time{flex:0 0 55px;max-width:78px;font-size:11px;line-height:1.5;color:var(--ink-dim);font-variant-numeric:tabular-nums}.calendar-source-link{color:var(--violet);font-size:12px;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.calendar-entry-title{display:block;text-align:left;min-height:44px;padding:0;border:0;background:transparent;font-size:13px;font-weight:600;overflow-wrap:anywhere;max-width:100%}.calendar-entry-notes{margin:4px 0;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink-dim)}.calendar-completion{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}.calendar-completion input{width:18px;height:18px;accent-color:var(--violet)}.calendar-empty,.calendar-coverage-note{font-size:12px;color:var(--ink-dim);line-height:1.6}.calendar-coverage-note{margin:16px 0 0;padding:10px 0;border-top:1px solid var(--line)}.calendar-coverage-note p{margin:0}.calendar-coverage-note .calendar-button{color:var(--violet);padding-left:0;text-align:left;justify-content:flex-start}
++.calendar-agenda{container:calendar-economic / inline-size;min-width:0;padding-top:16px;border-top:1px solid var(--line);max-height:none;overflow:visible;scrollbar-gutter:stable}.calendar-agenda-heading{margin:0;font-size:15px;font-weight:650;text-transform:capitalize}.calendar-meta{display:block;color:var(--ink-dim);font-size:12px;line-height:1.5;margin:3px 0 8px;overflow-wrap:anywhere}.calendar-agenda-list{margin-top:14px}.calendar-event{display:flex;align-items:start;gap:10px;padding:12px 0;border-top:1px solid var(--line);min-width:0}.calendar-event-content{flex:1;min-width:0;overflow-wrap:anywhere}.calendar-event-title{font-size:13px;font-weight:600;display:block}.calendar-event-time{flex:0 0 55px;max-width:78px;font-size:11px;line-height:1.5;color:var(--ink-dim);font-variant-numeric:tabular-nums}.calendar-source-link{color:var(--violet);font-size:12px;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.calendar-entry-title{display:block;text-align:left;min-height:44px;padding:0;border:0;background:transparent;font-size:13px;font-weight:600;overflow-wrap:anywhere;max-width:100%}.calendar-entry-notes{margin:4px 0;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink-dim)}.calendar-completion{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}.calendar-completion input{width:18px;height:18px;accent-color:var(--violet)}.calendar-empty,.calendar-coverage-note{font-size:12px;color:var(--ink-dim);line-height:1.6}.calendar-coverage-note{margin:16px 0 0;padding:10px 0;border-top:1px solid var(--line)}.calendar-coverage-note p{margin:0}.calendar-coverage-note .calendar-button{color:var(--violet);padding-left:0;text-align:left;justify-content:flex-start}
+ .calendar-controls,.calendar-info{border-bottom:1px solid var(--line);padding:12px 20px 16px}.calendar-controls h3,.calendar-info h3,.calendar-form h3{font-size:15px;margin:0 0 12px}.calendar-filter-group{margin:0 0 12px;padding:0;border:0;display:flex;flex-wrap:wrap;gap:4px 8px}.calendar-filter-group legend{font-size:12px;font-weight:600;color:var(--ink-dim);padding:0;margin-bottom:4px}.calendar-filter-option{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:4px 7px;background:var(--panel-2);border-radius:10px;cursor:pointer}.calendar-filter-option input{accent-color:var(--violet);margin:0;width:16px;height:16px}.calendar-source-list{padding-left:18px;font-size:12px;line-height:1.6}.calendar-source-list li{margin-bottom:7px}.calendar-source-links{display:flex;flex-wrap:wrap;gap:12px}.calendar-notice{margin:8px 20px 4px;padding:10px 12px;background:var(--panel-2);border-radius:10px;font-size:12px;overflow-wrap:anywhere}
+ .calendar-event-warning{font-size:12px;line-height:1.5;color:var(--ink-dim);margin:6px 0;overflow-wrap:anywhere}.calendar-event-content>.calendar-source-link{display:inline-block;min-height:44px;padding:10px 0;margin-right:12px;box-sizing:border-box}.calendar-info>.calendar-button,.calendar-controls>.calendar-button{min-height:44px;max-width:100%;white-space:normal}
+ .calendar-form-host{padding:16px 20px 24px}.calendar-form{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}.calendar-form h3,.calendar-form [name=notes],.calendar-form-errors,.calendar-form-ambiguities,.calendar-form-actions,.calendar-remove-confirm{grid-column:1/-1}.calendar-form-field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:500;min-width:0}.calendar-form-field:has([name=notes]),.calendar-form-field:has([name=title]){grid-column:1/-1}.calendar-form input,.calendar-form select,.calendar-form textarea{min-height:44px;min-width:0;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--ink);padding:9px 11px;font-weight:400}.calendar-form textarea{resize:vertical}.calendar-form [type=checkbox]{align-self:flex-start;width:22px;height:22px;min-height:22px;accent-color:var(--violet)}.calendar-form-field:has([type=checkbox]){justify-content:center;min-height:56px;flex-direction:row;align-items:center;gap:10px}.calendar-form-errors{color:var(--danger);font-size:12px}.calendar-form-errors:empty,.calendar-form-ambiguities:empty{display:none}.calendar-form-errors p{margin:4px 0}.calendar-form [aria-invalid=true]{border-color:var(--danger)}.calendar-form-ambiguities{display:grid;gap:12px}.calendar-form-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:8px}.calendar-primary{background:var(--violet)!important;color:var(--calendar-action-ink,#fff)!important}.calendar-remove-confirm{border-top:1px solid var(--line);padding-top:12px}.calendar-remove-confirm .calendar-button[data-calendar-action=confirm-remove],.calendar-form [data-calendar-action=remove-form]{color:var(--danger)}
+-#execEcal>.calendar-panel{border:1px solid var(--line);border-radius:24px;overflow:hidden}#execEcal>.calendar-panel .calendar-body{grid-template-columns:minmax(308px,1fr) minmax(0,1fr)}
++#execEcal>.calendar-panel{border:1px solid var(--line);border-radius:24px;overflow:hidden}#execEcal>.calendar-panel .calendar-body{grid-template-columns:minmax(0,1fr)}
+ @media(max-width:700px){.calendar-dialog{width:calc(100vw - 24px)}.calendar-body,#execEcal>.calendar-panel .calendar-body{grid-template-columns:minmax(0,1fr);gap:14px}.calendar-agenda{max-height:none;border-top:1px solid var(--line);padding-top:16px;overflow:visible}.calendar-grid,.calendar-weekdays{max-width:none}.calendar-heading{font-size:16px}.calendar-header{padding:12px 16px 4px;gap:8px}.calendar-body{padding:8px 16px 20px}.calendar-header-actions{gap:0}.calendar-controls,.calendar-info{padding-left:16px;padding-right:16px}.calendar-form-host{padding:16px}.calendar-form{grid-template-columns:minmax(0,1fr)}.calendar-event-time{flex-basis:75px}}
+ @media(max-width:360px){.calendar-dialog{width:100vw;max-width:100vw;max-height:calc(100dvh - 12px);border-left:0;border-right:0;border-radius:24px 24px 0 0;margin:auto 0 0}.calendar-header{padding:10px 6px 6px;gap:2px;flex-wrap:wrap}.calendar-heading{font-size:15px}.calendar-header-actions{margin-left:auto}.calendar-body{padding:6px 6px 18px}.calendar-notice{margin-left:6px;margin-right:6px}.calendar-month-nav{gap:0}.calendar-month-label{font-size:14px}.calendar-month-actions{gap:0}.calendar-month-actions .calendar-button{padding:6px}.calendar-controls,.calendar-info,.calendar-form-host{padding-left:10px;padding-right:10px}.calendar-day{border-radius:10px}}
++/* One semantic table; compact rows reflow without duplicating event nodes. */
++.calendar-economic-table{display:block;width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
++.calendar-economic-caption{display:block;text-align:left;padding:0 0 8px;font-size:12px;font-weight:650;color:var(--ink-dim)}
++.calendar-economic-table thead{display:block;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
++.calendar-economic-table tbody{display:block}
++.calendar-economic-table tr{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:start;min-width:0}
++.calendar-economic-table th,.calendar-economic-table td{min-width:0;padding:0;text-align:left;overflow-wrap:anywhere}
++.calendar-economic-table .calendar-event-economic{padding:10px 0;border-top:1px solid var(--line)}
++.calendar-economic-time{grid-column:span 2;font-variant-numeric:tabular-nums;color:var(--ink-dim);padding-top:12px!important}
++.calendar-economic-currency{grid-column:span 2;font-weight:600;padding-top:12px!important}
++.calendar-economic-impact{grid-column:span 2;padding-top:11px!important}
++.calendar-economic-event{grid-column:span 6}
++.calendar-economic-title-line{display:flex;align-items:center;gap:4px;min-width:0;min-height:44px}
++.calendar-economic-title-line .calendar-event-title{flex:1;min-width:0;font-size:13px;line-height:1.45}
++.calendar-economic-title-line .calendar-icon-button{flex:0 0 44px;align-self:flex-start}
++.calendar-economic-event .calendar-event-warning{margin:2px 0 0;font-size:11px}
++.calendar-economic-table .calendar-economic-number{grid-column:span 4;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
++.calendar-economic-value-label{display:block;color:var(--ink-dim);font-size:11px;margin-bottom:3px}
++.calendar-economic-value{display:block;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
++.calendar-impact-symbol{display:inline-flex;align-items:flex-end;justify-content:center;gap:2px;width:24px;height:20px;color:var(--ink);font-weight:650}
++.calendar-impact-bar{display:block;width:4px;background:var(--ink-dim);opacity:.18;height:7px}.calendar-impact-bar:nth-child(2){height:12px}.calendar-impact-bar:nth-child(3){height:17px}.calendar-impact-filled{background:currentColor;opacity:1}
++.calendar-impact-high{color:var(--danger)}.calendar-impact-medium{color:var(--warn)}.calendar-impact-low{color:var(--violet)}
++.calendar-impact-unclassified{align-items:center;border:1px solid var(--ink-dim);border-radius:50%;width:20px;height:20px;font-size:12px}
++.calendar-economic-table .calendar-economic-detail-row{display:block}.calendar-economic-detail-row>td{display:block;width:100%}
++.calendar-economic-detail{padding:8px 12px 12px;background:var(--panel-2);border-radius:10px;margin:0 0 10px;font-size:12px;overflow-wrap:anywhere}
++.calendar-economic-detail .calendar-source-link{display:inline-flex;align-items:center;min-height:44px;margin-right:12px;max-width:100%}
++.calendar-economic-detail .calendar-meta{margin:4px 0}
++/* The body has 40px horizontal padding: 740px panel means 700px useful. */
++@container calendar-panel (min-width:740px){.calendar-body,#execEcal>.calendar-panel .calendar-body{grid-template-columns:308px minmax(0,1fr)}.calendar-agenda{padding-top:15px;border-top:0;max-height:470px;overflow-y:auto;overflow-x:hidden}}
++@container calendar-economic (min-width:720px){
++.calendar-economic-table tr{grid-template-columns:64px 44px 52px minmax(0,1fr) repeat(3,minmax(70px,.55fr));gap:8px}
++.calendar-economic-table thead{position:static;width:100%;height:auto;overflow:visible;clip-path:none;white-space:normal;padding-bottom:8px;color:var(--ink-dim);font-size:11px;font-weight:600}
++.calendar-economic-table .calendar-event-economic>td{grid-column:auto}
++.calendar-economic-time,.calendar-economic-currency,.calendar-economic-impact{padding-top:12px!important}
++.calendar-economic-number{padding-top:12px!important}
++.calendar-economic-value-label{display:none}
++.calendar-economic-table th:nth-child(n+5){text-align:right}
++}
++@media(max-width:360px){#execEcal>.calendar-panel{width:100vw;max-width:none;margin-left:calc((100% - 100vw)/2);border-left:0;border-right:0;border-radius:0}}
+ /* The calendar joins the existing header icon row immediately before the bell. */
+ html[data-shell="global-dashboard"] #headerActions #headerCalendarBtn{width:44px;min-width:44px;max-width:44px;height:44px;min-height:44px;padding:0;display:grid;place-items:center;flex:0 0 44px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--shell-secondary);align-self:center;justify-self:center}
+ html[data-shell="global-dashboard"] #headerActions #headerCalendarBtn svg.shell-lucide{display:block;width:20px;height:20px;min-width:20px;max-width:20px;flex:0 0 20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}

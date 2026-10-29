@@ -1,0 +1,37 @@
+[
+  {
+    "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261028T185211738644/calendar-agenda.json",
+    "copy": "proofs/full-calendar-agenda.json",
+    "sha256": "0451d9f4c5860e396ab96c4b18359eb357bfa480039c98bdb6b3f8019d46d22d"
+  },
+  {
+    "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261028T185211738644/calendar-recovery.json",
+    "copy": "proofs/full-calendar-recovery.json",
+    "sha256": "358af626a87ae40f70377840fd7f35d7d7d70791a4aed8c62eef8b29260adc8c"
+  },
+  {
+    "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261028T185211738644/calendar-distribution.json",
+    "copy": "proofs/full-calendar-distribution.json",
+    "sha256": "e7abcae6dd2783573b65949885e00d69e9de0b539c86a44fb3904133cd2117a3"
+  },
+  {
+    "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261028T185211738644/ff-news-cache.json",
+    "copy": "proofs/full-shared-browser-pipeline.json",
+    "sha256": "b5df5ef00af2bca0a0b3bd63ace9991dedbe7c99373b7520a5f8aeb0587c0c82"
+  },
+  {
+    "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261028T185211738644/ui-visual-quality/ui-visual-quality-results.json",
+    "copy": "proofs/full-ui-visual-quality.json",
+    "sha256": "516de83d233244ce0ba4c41d314c56fab3b0289d528aecb0ab8a55164046c47e"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/FINAL-RECEIPT-REVIEW.md",
+    "copy": "review/FINAL-RECEIPT-REVIEW.md",
+    "sha256": "d98009d98b1a077d61bed22fdbb42e4b63f20f50d09223e48716cb0e7514c0c2"
+  },
+  {
+    "source": "/private/tmp/jpw-economic-calendar-ff-20261028/metadata-independent-review/FINAL-RECEIPT-REVIEW.json",
+    "copy": "review/FINAL-RECEIPT-REVIEW.json",
+    "sha256": "56835f512cad8e4c33c08be181ac6c708d642a82a0342e0d80d69ea4392969b1"
+  }
+]

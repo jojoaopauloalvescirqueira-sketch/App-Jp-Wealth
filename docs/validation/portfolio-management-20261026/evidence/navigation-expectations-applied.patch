@@ -1,0 +1,73 @@
+diff --git a/tools/finpes_navigation_test.py b/tools/finpes_navigation_test.py
+index d69b95b..11104d8 100644
+--- a/tools/finpes_navigation_test.py
++++ b/tools/finpes_navigation_test.py
+@@ -2,7 +2,7 @@
+ """Navegacao de Financas Pessoais (PF-01, Bloco F).
+ 
+ Prova o checklist minimo do NAVIGATION-HIERARCHY.md para o modulo novo:
+-primário semântico personal-finance (posição visual default 05 em A10), submenu com cinco destinos (Inventario nao pertence a este
++primário semântico personal-finance (posição visual default 06 com Gerenciamento), submenu com cinco destinos (Inventario nao pertence a este
+ dominio — ver run_fronteira_do_dominio), superficie JPWFin.ui, troca por
+ hidden+inert com nos MONTADOS, destino inicial, e a doutrina que aqui e tambem
+ fronteira de dominio: NAVEGAR JAMAIS ESCREVE NO ESTADO — abrir o modulo ou
+@@ -107,7 +107,7 @@ def run_estrutura(page, falhas):
+     if (not r["temTab"] or r["dataRoute"] != "personal-finance"
+             or r["dataPrimary"] != "personal-finance" or r["dataNavSurface"] != "finpes"):
+         falhas.append(f"primário semântico personal-finance ausente ou mal ligado: {r}")
+-    if r["numero"] != "05" or r["rotulo"] != "Finanças Pessoais":
++    if r["numero"] != "06" or r["rotulo"] != "Finanças Pessoais":
+         falhas.append(f"rotulo/numero errados: {r['numero']} {r['rotulo']}")
+     if r["itens"] != VIEWS:
+         falhas.append(f"submenu deveria ter exatamente {VIEWS}; veio {r['itens']}")
+@@ -302,7 +302,7 @@ def main():
+         for f in falhas:
+             print("  - " + f)
+         return 1
+-    print("FINPES NAVIGATION TEST PASS — personal-finance, posição visual default 05, cinco destinos, fronteira do dominio, hidden/inert, navegacao sem escrita, sentinela visual")
++    print("FINPES NAVIGATION TEST PASS — personal-finance, posição visual default 06, cinco destinos, fronteira do dominio, hidden/inert, navegacao sem escrita, sentinela visual")
+     return 0
+ 
+ 
+diff --git a/tools/planning_navigation_test.js b/tools/planning_navigation_test.js
+index 2c3dd80..f9d3fbc 100644
+--- a/tools/planning_navigation_test.js
++++ b/tools/planning_navigation_test.js
+@@ -17,8 +17,8 @@ let raw=null;const d={localStorage:{getItem:()=>raw}};vm.createContext(d);
+ const constant=source.match(/const NAV_ORDER_DEFAULT=.*;/)[0];
+ const fn=n=>source.slice(source.indexOf('function '+n+'('),source.indexOf('\n}',source.indexOf('function '+n+'('))+2);
+ vm.runInContext("const NAV_ORDER_KEY='jpw_nav_order';"+constant+fn('navOrderValid')+fn('navOrderRead'),d);
+-assert.deepEqual(Array.from(vm.runInContext('navOrderRead().order',d)),['dashboard','research','planning','forex','personal-finance','alladin','tools']);
++assert.deepEqual(Array.from(vm.runInContext('navOrderRead().order',d)),['dashboard','research','management','planning','forex','personal-finance','alladin','tools']);
+ raw=JSON.stringify(['tools','alladin','dashboard','forex','research','personal-finance']);
+-assert.deepEqual(Array.from(vm.runInContext('navOrderRead().order',d)),['tools','alladin','dashboard','forex','research','planning','personal-finance']);
++assert.deepEqual(Array.from(vm.runInContext('navOrderRead().order',d)),['tools','alladin','dashboard','forex','research','management','planning','personal-finance']);
+ assert.equal(raw,JSON.stringify(['tools','alladin','dashboard','forex','research','personal-finance']));
+ console.log('PASS planning default order and legacy six-module preference projection without writes');
+diff --git a/tools/smoke_test.py b/tools/smoke_test.py
+index d6eafc8..a8fc6f2 100755
+--- a/tools/smoke_test.py
++++ b/tools/smoke_test.py
+@@ -71,9 +71,9 @@ try:
+         })''')
+         assert facts['compute']=='function', facts
+         assert facts['render']=='function', facts
+-        # NAV-01: o primeiro nível expõe exatamente sete rotas semânticas, incluindo Planejamento independente.
++        # Portfólio/Gerenciamento: oito rotas primárias; Planejamento permanece independente.
+         # Destinos físicos legados continuam na fachada, não como primários.
+-        assert facts['tabs']==7, facts
++        assert facts['tabs']==8, facts
+         assert facts['headerActions']==5, facts
+         assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count()==1
+         assert page.locator('#headerActions #headerNotesBtn').count()==0
+@@ -185,8 +185,8 @@ try:
+         assert page.locator('[data-app-icon-option]').count()==2, 'biblioteca de ícones incompleta'
+         page.evaluate('closeModal()')
+         routes=page.eval_on_selector_all('#nav .tab[data-route]', 'els => els.map(e => e.dataset.route)')
+-        # A10 changes visual default order, preserving existing identities and adding independent planning.
+-        expected_screens={'dashboard':'dash','research-forex':'research','planning':'planning','forex-consolidated':'fxconsolidated','personal-finance':'finpes','alladin':'alladin','tools-calendar':'tools'}
++        # Default order adds independent Management after Portfolio and preserves the other identities.
++        expected_screens={'dashboard':'dash','research-forex':'research','management-reserves':'fxreserves','planning':'planning','forex-consolidated':'fxconsolidated','personal-finance':'finpes','alladin':'alladin','tools-calendar':'tools'}
+         assert routes==list(expected_screens), routes
+         for route in routes:
+             parent=page.locator(f'#nav .tab[data-route="{route}"]')

@@ -98,7 +98,7 @@ function renderNocodaStudies() {
 
   root.innerHTML = `
     <div class="card cp-study cp-nocoda">
-      <header class="cp-study-head"><div><p class="cp-eyebrow">Research · memória técnica</p><h2>Estudos NoCoda</h2></div><span class="cp-study-limit">Estudo técnico · não autoriza operação</span></header>
+      <header class="cp-study-head"><div><p class="cp-eyebrow">Portfólio · Análise · memória técnica</p><h2>Estudos NoCoda</h2></div><span class="cp-study-limit">Estudo técnico · não autoriza operação</span></header>
       <details class="cp-study-details"><summary>Sobre o canal e suas fontes</summary><p class="expl">Guarda as três âncoras do Fibo Channel de cada instrumento e deriva o range entre os níveis −1 e 0 e o de cada subdivisão de 0,125. Os instrumentos vêm do Motor de Lote; esta tela não tem catálogo próprio.</p></details>
 
       <div class="field nc-picker">

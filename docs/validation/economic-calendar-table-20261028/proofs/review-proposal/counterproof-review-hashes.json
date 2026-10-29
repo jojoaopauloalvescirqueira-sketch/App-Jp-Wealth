@@ -1,0 +1,7 @@
+{
+  "run_counterproofs.py": "3b18ce2eb9fa39ccb212e121bbffdcb99d4de9da7ac0e1b4e29c8dacf38d58f9",
+  "counterproofs-final/receipt.json": "c4708f1ad6ec6c3f25d2c9ad6bd7782e8d9a83cef8717b05a4973eea19f9958f",
+  "final-scratch-five.json": "c48f1219844f81c2781adf249af24e7bd9371140c19b9b909a67be83f517ec7f",
+  "tests-candidate.patch": "37a46edbd8e2c56e6327ce8dc8e42cc034c1063c2ef6a55520effa53bc8a39c3",
+  "candidates/tools/calendar_economic_table_contract.py": "35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a"
+}

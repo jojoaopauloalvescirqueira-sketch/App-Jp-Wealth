@@ -1,0 +1,66 @@
+[
+  {
+    "name": "smoke",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/smoke_test.py"
+    ],
+    "exit_code": 1,
+    "duration_seconds": 8.763,
+    "log": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/smoke-green.log"
+  },
+  {
+    "name": "finpes-navigation",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/finpes_navigation_test.py"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 2.998,
+    "log": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/finpes-navigation-green.log"
+  },
+  {
+    "name": "dashboard-macro",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/dashboard_macro_test.py"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 47.109,
+    "log": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/dashboard-macro-green.log"
+  },
+  {
+    "name": "ff-news-cache",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/ff_news_cache_test.py",
+      "--artifact",
+      "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/ff-news-cache-green.json"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 13.498,
+    "log": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/ff-news-cache-green.log"
+  },
+  {
+    "name": "notification-efficiency",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/notification_efficiency_test.py"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 16.972,
+    "log": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/notification-efficiency-green.log"
+  },
+  {
+    "name": "consolidated-efficiency",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/consolidated_efficiency_test.py",
+      "--out",
+      "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/consolidated-green.json"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 6.823,
+    "log": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/consolidated-efficiency-green.log"
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "note": "Historical and focal receipts; new full is still running. No human acceptance or integration claim.",
+  "files": [
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/previous-full-102-pass-11-fail.json",
+      "sha256": "ca457aa9796335ac6f4367ea95a8bf0569919095ea18a642a23168ad4bb6939a"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/previous-full.log",
+      "sha256": "97d62f6bb212797254c2c35b638c860a3370649271b972c7393082043a57bb23"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/previous-freeze.json",
+      "sha256": "d7185168060d730a78b9e39fb4ae1908acbd94e0c569eed1c77b5842cd126921"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/final-freeze.json",
+      "sha256": "15093751c10e51ea44b096362764da9cda3e07e1e04bd4136cd2e2ef0c810f1f"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-state-before-recovery.json",
+      "sha256": "3060d5479f6a552852d964db0dfddcce995c94e2531c781c7416d17791863e71"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-navigation-before-recovery.json",
+      "sha256": "37738f6036b53a8995f3f18e97262f7e2a447c46771c0eaab1d2ef4909bcd68b"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/agentic-impact.json",
+      "sha256": "045a729154d64bfb5e40cd460db474d4e8bcd6eaed54901680f5ec11931542ac"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/context-pointer-proposal.md",
+      "sha256": "72abe34de4f719c014851f570787eebbe0ebc072138f57554569819959e98fb1"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-navigation-expectations.json",
+      "sha256": "307547fde3ea8a7e9ee78360689c55d2ebd586033cd641a18a80539afd8ea5e4"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-security-test-adaptations.json",
+      "sha256": "2da70432d11d3aeee11dadc3148b5f624e064aeae22a8e2f3d176200ab97747d"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-research-leaf.json",
+      "sha256": "0831be35db5ee74877d6c79894e8f9b80db6249655ab1e3f31944f68bdc8d12e"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-reserves-dashboard.json",
+      "sha256": "550da7a1a5342607c30bbd69f1d2f768a3998016ac6ed4eea1b4fdb03b05188d"
+    },
+    {
+      "path": "docs/validation/portfolio-management-20261026/evidence/independent-optional-uuid.json",
+      "sha256": "e9d6365adedeae7dc2718e5191118c4e2b43537b42dca4c64f502f08054d0647"
+    }
+  ]
+}

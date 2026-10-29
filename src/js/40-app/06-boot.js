@@ -143,6 +143,7 @@ function boot(){
   try{window.JPWNotifications?.invalidate('system','forex','pf','alladin','calendar','local');}catch(_){}
   if(window.JPWAgenda?.resetContext?.())window.JPWCalendar?.resetContext?.();
   if(window.JPWPlanning?.commands?.resetContext?.())window.JPWPlanning.ui?.reset();
+  if(window.JPWManagementAnnual?.resetContext?.())window.JPWManagement?.reset?.();
   applyTheme(); applyRailState(); bindRailToggle(); applyFontScale(); applyNavStyle(); startHeaderClock();
   renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderNavStyleSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
   renderParams(); renderMotor(); renderContas(); renderDash(); renderCheck();

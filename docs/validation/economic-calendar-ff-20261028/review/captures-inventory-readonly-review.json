@@ -1,0 +1,151 @@
+{
+  "reviewedAt": "2026-10-28T22:39:03.154176+00:00",
+  "reviewer": "calendar_coverage_audit",
+  "scope": "Read-only independent review of captured PNGs, DOM capture receipt, source inventory, metadata application and frozen hashes. Not approval of the reviewer-authored calendar engine/runtime. No browser, tests, network, builds or repository edits.",
+  "build": "5b4ef1141c9583bf",
+  "inputFreezeSha256": "5282d5ca9b98f4f9e72035781c525d16d2eb1d7672967b68fbc9a29c337157b6",
+  "sourceInventorySha256": "5f48341394540d77cceebf498ba808d2df3371ebf4af7e5183e28c80fce7bdd1",
+  "captureReceiptSha256": "37ddf72e40d28f272985a4eb2c6e0c5ffdc73143e9a31b140b544da69e58bf7c",
+  "artifactCorrespondence": [
+    {
+      "artifact": "public",
+      "path": "infra/ff-news-feed/economic-calendar.json",
+      "sha256": "6275de67ed8f13512941ac2f016bf9c7662d36c619551e4efb6c860a23492fcc",
+      "matchesInventory": true,
+      "matchesFreeze": true,
+      "eventCount": 106
+    },
+    {
+      "artifact": "legacy",
+      "path": "infra/ff-news-feed/ff-high-impact.json",
+      "sha256": "afc5328b1f42bd5259cb735aa623af948703049901d338dee9d93d874d01c78b",
+      "matchesInventory": true,
+      "matchesFreeze": true,
+      "eventCount": 13
+    },
+    {
+      "artifact": "official",
+      "path": "infra/ff-news-feed/data/official-policy-2026.json",
+      "sha256": "eadcb0e1053e87fd0ea83b545e70777fc84578f1e31466297c71eddf6189b900",
+      "matchesInventory": true,
+      "matchesFreeze": true,
+      "eventCount": 9
+    },
+    {
+      "artifact": "monthly",
+      "path": "infra/monthly-economic-feed/data/monthly-economic-2026-10.json",
+      "sha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+      "matchesInventory": true,
+      "matchesFreeze": true,
+      "eventCount": 153
+    }
+  ],
+  "metadataCorrespondence": [
+    {
+      "path": "infra/monthly-economic-feed/build_package.py",
+      "sha256": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+      "matchesIndependentReview": true,
+      "matchesFreeze": true
+    },
+    {
+      "path": "src/js/40-app/16-monthly-economic-data.js",
+      "sha256": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+      "matchesIndependentReview": true,
+      "matchesFreeze": true
+    },
+    {
+      "path": "tools/monthly_economic_feed_test.py",
+      "sha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "matchesIndependentReview": true,
+      "matchesFreeze": true
+    },
+    {
+      "path": "infra/monthly-economic-feed/data/monthly-economic-2026-10.json",
+      "sha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+      "matchesIndependentReview": true,
+      "matchesFreeze": true
+    }
+  ],
+  "captures": [
+    {
+      "path": "before-1440-light.png",
+      "sha256": "d4ab6bd2d01db7220ee25b865edb7c220621f4e31e5cb00b74cbfb43b2d20f90",
+      "imagePixels": [
+        760,
+        407
+      ],
+      "captureViewportWidth": 1440,
+      "receiptBuild": "5b4ef1141c9583bf",
+      "variant": "before",
+      "theme": "light",
+      "domRowsFromReceipt": 0,
+      "domTitlesFromReceipt": [],
+      "baselineSourceInjectionOnly": true
+    },
+    {
+      "path": "after-1440-light.png",
+      "sha256": "7c05fa8784800b11f2cabbcf6313d391b5d33e52c9bc8f9baa2cf77b211759e5",
+      "imagePixels": [
+        760,
+        573
+      ],
+      "captureViewportWidth": 1440,
+      "receiptBuild": "5b4ef1141c9583bf",
+      "variant": "after",
+      "theme": "light",
+      "domRowsFromReceipt": 7,
+      "domTitlesFromReceipt": [
+        "BOC Rate Statement",
+        "BOC Monetary Policy Report",
+        "Overnight Rate",
+        "BOC Press Conference",
+        "Federal Funds Rate",
+        "FOMC Statement",
+        "FOMC Press Conference"
+      ],
+      "baselineSourceInjectionOnly": false
+    },
+    {
+      "path": "after-390-dark.png",
+      "sha256": "b83c2d7b8229d32d4909b57702e1389e4b3d7e09c148099e9a9062bb54cde920",
+      "imagePixels": [
+        366,
+        960
+      ],
+      "captureViewportWidth": 390,
+      "receiptBuild": "5b4ef1141c9583bf",
+      "variant": "after",
+      "theme": "dark",
+      "domRowsFromReceipt": 7,
+      "domTitlesFromReceipt": [
+        "BOC Rate Statement",
+        "BOC Monetary Policy Report",
+        "Overnight Rate",
+        "BOC Press Conference",
+        "Federal Funds Rate",
+        "FOMC Statement",
+        "FOMC Press Conference"
+      ],
+      "baselineSourceInjectionOnly": false
+    }
+  ],
+  "visualObservations": [
+    "Before: selected 28 October, 0 items, no red economic marker on 28, explicit partial/pending coverage. This is a controlled baseline-source injection in the new candidate, not a screenshot of the full historical build; USD only is selected.",
+    "After desktop: same calendar context, red dot centered below 28, 7-item heading, visible BOC Rate Statement and BOC Monetary Policy Report, CAD/Alto/Forex Factory attribution and official-source links. Only the visible part of the list is shown.",
+    "After mobile dark: calendar precedes the agenda, heading says 7 items, two complete CAD entries and part of Overnight Rate are visible. Text wraps within the captured modal; no horizontal clipping is apparent in the captured region.",
+    "Viewport widths in receipt are 1440/390 CSS pixels; screenshots are cropped modal elements of 760x573 and 366x960 image pixels, so image dimensions are not viewport measurements."
+  ],
+  "limits": [
+    "The seven event titles/counts are documented by the existing DOM capture receipt and supported by the data inventory; this review did not reopen or requery the DOM. The PNGs do not visibly show all seven rows simultaneously.",
+    "Captures are partial visible regions, not proof of all scrolling states, keyboard behavior, 44px geometry, all layouts/themes or native 200% zoom.",
+    "All nine FF descriptors are partial weekly snapshots, 25-31 October; sourceCollectedAt is not a fresh GET or proof of full-month coverage.",
+    "External v2 publication and cron activation remain false in inventory; permission is the owner declaration, not independently verified legal scope.",
+    "The metadata source patch was authored by the control-review agent and independently reviewed here; this is not an endorsement of this reviewer-authored engine/runtime.",
+    "Human visual/usability acceptance remains separate. FULL was in progress and final JSON/exit receipt did not exist when read."
+  ],
+  "fullReceiptsPresentAtRead": {
+    "full-final.json": false,
+    "full-exit.json": false
+  },
+  "verdict": "No blocker found within the reviewed captures/inventory/metadata correspondence; no overall FULL or human acceptance claim."
+}

@@ -1,0 +1,490 @@
+{
+  "results": [
+    {
+      "layout": "sidebar",
+      "theme": "light",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 278.640625,
+            "bottom": 322.640625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 293.140625,
+            "bottom": 308.140625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 390.078125,
+            "bottom": 434.078125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 404.578125,
+            "bottom": 419.578125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "sidebar",
+      "theme": "dark",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 278.640625,
+            "bottom": 322.640625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 293.140625,
+            "bottom": 308.140625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 390.078125,
+            "bottom": 434.078125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 404.578125,
+            "bottom": 419.578125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "topbar",
+      "theme": "light",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 278.640625,
+            "bottom": 322.640625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 293.140625,
+            "bottom": 308.140625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 390.078125,
+            "bottom": 434.078125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 404.578125,
+            "bottom": 419.578125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "topbar",
+      "theme": "dark",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 278.640625,
+            "bottom": 322.640625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 293.140625,
+            "bottom": 308.140625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 390.078125,
+            "bottom": 434.078125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 404.578125,
+            "bottom": 419.578125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "glass",
+      "theme": "light",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1011,
+            "right": 1055,
+            "top": 295.140625,
+            "bottom": 339.140625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1025.5,
+            "right": 1040.5,
+            "top": 309.640625,
+            "bottom": 324.640625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1011,
+            "right": 1055,
+            "top": 406.578125,
+            "bottom": 450.578125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1025.5,
+            "right": 1040.5,
+            "top": 421.078125,
+            "bottom": 436.078125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "glass",
+      "theme": "dark",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1011,
+            "right": 1055,
+            "top": 295.140625,
+            "bottom": 339.140625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1025.5,
+            "right": 1040.5,
+            "top": 309.640625,
+            "bottom": 324.640625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1011,
+            "right": 1055,
+            "top": 406.578125,
+            "bottom": 450.578125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1025.5,
+            "right": 1040.5,
+            "top": 421.078125,
+            "bottom": 436.078125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "submenu",
+      "theme": "light",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 278.640625,
+            "bottom": 322.640625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 293.140625,
+            "bottom": 308.140625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 390.078125,
+            "bottom": 434.078125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 404.578125,
+            "bottom": 419.578125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    },
+    {
+      "layout": "submenu",
+      "theme": "dark",
+      "result": "PASS",
+      "measuredIcons": {
+        "economic-detail-0": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 278.640625,
+            "bottom": 322.640625,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 293.140625,
+            "bottom": 308.140625
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-1",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "economic-detail-1": {
+          "outer": {
+            "left": 1120,
+            "right": 1164,
+            "top": 390.078125,
+            "bottom": 434.078125,
+            "width": 44,
+            "height": 44
+          },
+          "text": null,
+          "textRects": [],
+          "ink": {
+            "left": 1134.5,
+            "right": 1149.5,
+            "top": 404.578125,
+            "bottom": 419.578125
+          },
+          "svg": 1,
+          "label": "Detalhes de SYN-high-2",
+          "textAlign": "center",
+          "declaredLeftInset": 1,
+          "delta": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      },
+      "economicRows": 2
+    }
+  ],
+  "scope": "Independent positive icon measurement only; no FULL/native",
+  "hashes": {
+    "19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+    "app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38"
+  },
+  "classification": "PASS"
+}

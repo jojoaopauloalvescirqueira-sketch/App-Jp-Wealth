@@ -726,6 +726,14 @@ time-twins-browser minigames
 """.split())
 CALENDAR_GATE_IDS = ('personal-agenda', 'monthly-economic-feed', 'calendar-agenda',
                      'calendar-recovery', 'calendar-distribution', 'ff-news-cache')
+# Approved additive management declarations, independently frozen from the
+# proposal text; all previous96+6 command fingerprints stay unchanged.
+MANAGEMENT_GATE_IDS = ('management-engine','management-state','management-guide',
+    'management-dashboard-notes','portfolio-management-navigation','management-reserves-context',
+    'management-reserves-drafts','management-account-flow','management-annual-ui','management-visual-quality','management-distribution')
+MANAGEMENT_GATE_AST_SHA256 = {'STANDARD':'f5010648fa4ef9a3cb12425c31f83da77a478793cb24f76d169a0c55b6927364','FULL':'13185d30e6efb6fe9a767711fad5385acdf9ca5d31504d840817e58fa1ff27d5'}
+HEDGE_GATE_IDS = ('hedge-prop-engine','hedge-prop-browser','hedge-prop-distribution')
+HEDGE_GATE_AST_SHA256 = {'STANDARD': 'c278ff10689677fcab390284a1e41340124bcf298533ad68ee302672dbcbd3da', 'FULL': '7454a486ed99235a9e87f00b69f3c12fa71af4923706f0bbf5c42784006e511f'}
 GATE_CATALOG = {
     'STANDARD': {
         'historical_count': 55, 'calendar_count': 4,
@@ -749,7 +757,7 @@ def validate_gate_source(source):
     tree = ast.parse(source)
     tiers = {tier: tier_entries(tree, tier) for tier in ['STANDARD', 'FULL']}
     expected = ast.parse("[sys.executable, 'tools/ui_visual_quality_test.py', '--out', full_evidence('ui-visual-quality')]", mode='eval').body
-    assert len(HISTORICAL_GATE_IDS) == 96 and len(CALENDAR_GATE_IDS) == 6, 'frozen96+6 catalog required'
+    assert len(HISTORICAL_GATE_IDS) == 96 and len(CALENDAR_GATE_IDS) == 6 and len(MANAGEMENT_GATE_IDS) == 11 and len(HEDGE_GATE_IDS) == 3, 'frozen96+6+11 plus3 approved hedge catalog required'
     result = {}
     for tier, entries in tiers.items():
         assert all(isinstance(entry, ast.Tuple) and len(entry.elts) == 2 and isinstance(entry.elts[0], ast.Constant) and isinstance(entry.elts[0].value, str) for entry in entries), ('invalid gate entry', tier)
@@ -760,21 +768,29 @@ def validate_gate_source(source):
         assert ast.dump(selected[0].elts[1]) == ast.dump(expected), ('visual gate must invoke default complete CLI and unique output', tier)
         catalog = GATE_CATALOG[tier]
         historical = [entry for entry in entries if entry.elts[0].value in HISTORICAL_GATE_IDS]
-        calendar = [entry for entry in entries if entry.elts[0].value not in HISTORICAL_GATE_IDS]
+        calendar = [entry for entry in entries if entry.elts[0].value in CALENDAR_GATE_IDS]
+        management = [entry for entry in entries if entry.elts[0].value in MANAGEMENT_GATE_IDS]
+        hedge = [entry for entry in entries if entry.elts[0].value in HEDGE_GATE_IDS]
         assert tuple(entry.elts[0].value for entry in historical) == HISTORICAL_GATE_IDS[:catalog['historical_count']], ('historical gate identities/order changed', tier)
         assert tuple(entry.elts[0].value for entry in calendar) == CALENDAR_GATE_IDS[:catalog['calendar_count']], ('approved calendar identities/order missing or substituted', tier)
+        assert tuple(entry.elts[0].value for entry in management) == MANAGEMENT_GATE_IDS[:10 if tier=='STANDARD' else 11], ('management identities missing or substituted',tier)
+        assert gate_entries_fingerprint(management) == MANAGEMENT_GATE_AST_SHA256[tier], ('management command declarations changed',tier)
+        assert tuple(entry.elts[0].value for entry in hedge) == HEDGE_GATE_IDS[:2 if tier=='STANDARD' else 3], ('hedge identities missing or substituted',tier)
+        assert gate_entries_fingerprint(hedge) == HEDGE_GATE_AST_SHA256[tier], ('hedge command declarations changed',tier)
         standard_count = GATE_CATALOG['STANDARD']['historical_count']
-        expected_ids = HISTORICAL_GATE_IDS[:4] + CALENDAR_GATE_IDS[:4] + HISTORICAL_GATE_IDS[4:standard_count]
+        expected_ids = HISTORICAL_GATE_IDS[:4] + HEDGE_GATE_IDS[:2] + CALENDAR_GATE_IDS[:4] + HISTORICAL_GATE_IDS[4:standard_count] + MANAGEMENT_GATE_IDS[:10]
         if tier == 'FULL':
-            expected_ids += CALENDAR_GATE_IDS[4:] + HISTORICAL_GATE_IDS[standard_count:]
+            expected_ids += CALENDAR_GATE_IDS[4:] + HISTORICAL_GATE_IDS[standard_count:] + HEDGE_GATE_IDS[2:] + MANAGEMENT_GATE_IDS[10:]
         assert tuple(ids) == expected_ids, ('approved gate sequence changed; preflight and tier boundaries must be preserved', tier)
         assert gate_entries_fingerprint(historical) == catalog['historical_ast_sha256'], ('historical gate command declarations changed', tier)
         assert gate_entries_fingerprint(calendar) == catalog['calendar_ast_sha256'], ('approved calendar gate command declarations changed', tier)
         result[tier] = {'entries': len(ids), 'visual_entries': len(selected),
                         'historical_entries': len(historical), 'calendar_entries': [entry.elts[0].value for entry in calendar],
                         'historical_ast_sha256': gate_entries_fingerprint(historical),
-                        'calendar_ast_sha256': gate_entries_fingerprint(calendar)}
-    assert len(tiers['FULL']) == 102, ('96 preserved historical checks plus6 calendar checks required', len(tiers['FULL']))
+                        'calendar_ast_sha256': gate_entries_fingerprint(calendar),
+                        'management_entries':len(management),'management_ast_sha256':gate_entries_fingerprint(management),
+                        'hedge_entries':len(hedge),'hedge_ast_sha256':gate_entries_fingerprint(hedge)}
+    assert len(tiers['FULL']) == 116, ('113 preserved checks plus3 approved hedge checks required', len(tiers['FULL']))
     return result
 
 
@@ -801,12 +817,12 @@ def gate_counterproof():
             entry.elts[1] = ast.parse(command, mode='eval').body
         if append_args:
             entry.elts[1].elts.extend(ast.Constant(value=value) for value in append_args)
-        assert len(tier_entries(tree, 'FULL')) == 102, 'replacement counterproof must preserve102 entries'
+        assert len(tier_entries(tree, 'FULL')) == 116, 'replacement counterproof must preserve116 entries'
         return ast.unparse(tree)
 
     removed_visual = without({'ui-visual-quality'})
     remaining = tier_entries(ast.parse(removed_visual), 'FULL')
-    assert len(remaining) == 101 and sum(entry.elts[0].value in HISTORICAL_GATE_IDS for entry in remaining) == 95, 'visual-removal fixture must preserve95 historical and6 calendar entries'
+    assert len(remaining) == 115 and sum(entry.elts[0].value in HISTORICAL_GATE_IDS for entry in remaining) == 95 and sum(entry.elts[0].value in MANAGEMENT_GATE_IDS for entry in remaining)==11 and sum(entry.elts[0].value in HEDGE_GATE_IDS for entry in remaining)==3, 'visual-removal fixture must preserve95 historical,6 calendar,11 management and3 hedge entries'
     subset = ast.parse(source)
     full_assignment = next(node for node in subset.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'FULL' for target in node.targets))
     full_assignment.value = ast.Name(id='STANDARD', ctx=ast.Load())
@@ -817,20 +833,33 @@ def gate_counterproof():
     standard_assignment = next(node for node in reordered.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'STANDARD' for target in node.targets))
     standard_entries = tier_entries(reordered, 'STANDARD')
     standard_assignment.value = ast.Tuple(elts=([entry for entry in standard_entries if entry.elts[0].value in CALENDAR_GATE_IDS]
-                                               + [entry for entry in standard_entries if entry.elts[0].value in HISTORICAL_GATE_IDS]), ctx=ast.Load())
+                                               + [entry for entry in standard_entries if entry.elts[0].value in HISTORICAL_GATE_IDS]
+                                               + [entry for entry in standard_entries if entry.elts[0].value in MANAGEMENT_GATE_IDS]
+                                               + [entry for entry in standard_entries if entry.elts[0].value in HEDGE_GATE_IDS]), ctx=ast.Load())
+    assert len(tier_entries(reordered, 'FULL')) == 116, 'ordering counterproof must preserve every check'
     return {'positive': valid,
-            'removed_visual_other101_preserved': rejected(lambda: validate_gate_source(removed_visual)),
+            'removed_visual_other115_preserved': rejected(lambda: validate_gate_source(removed_visual)),
             'focal_instead_of_default': rejected(lambda: validate_gate_source(replace('ui-visual-quality', append_args=['--case', 'regressions']))),
             'each_calendar_check_omitted': {identity: rejected(lambda identity=identity: validate_gate_source(without({identity}))) for identity in CALENDAR_GATE_IDS},
             'historical96_without_calendar': rejected(lambda: validate_gate_source(without(set(CALENDAR_GATE_IDS)))),
             'standard_subset_as_full': rejected(lambda: validate_gate_source(ast.unparse(subset))),
             'historical_check_omitted': rejected(lambda: validate_gate_source(without({'minigames'}))),
-            'historical_identity_substituted_same102': rejected(lambda: validate_gate_source(replace('preflight', replacement_id='SYN-unknown-historical'))),
-            'calendar_identity_substituted_same102': rejected(lambda: validate_gate_source(replace('calendar-agenda', replacement_id='SYN-unknown-calendar'))),
-            'historical_command_substituted_same102': rejected(lambda: validate_gate_source(replace('preflight', command="['true']"))),
+            'historical_identity_substituted_same116': rejected(lambda: validate_gate_source(replace('preflight', replacement_id='SYN-unknown-historical'))),
+            'calendar_identity_substituted_same116': rejected(lambda: validate_gate_source(replace('calendar-agenda', replacement_id='SYN-unknown-calendar'))),
+            'historical_command_substituted_same116': rejected(lambda: validate_gate_source(replace('preflight', command="['true']"))),
             'calendar_focal_instead_of_complete': rejected(lambda: validate_gate_source(replace('calendar-agenda', append_args=['--case', 'ui']))),
             'calendar_checks_before_preflight': rejected(lambda: validate_gate_source(ast.unparse(reordered))),
-            'duplicate_tier_declaration': rejected(lambda: validate_gate_source(ast.unparse(duplicate)))}
+            'duplicate_tier_declaration': rejected(lambda: validate_gate_source(ast.unparse(duplicate))),
+            'each_management_check_omitted': {identity: rejected(lambda identity=identity: validate_gate_source(without({identity}))) for identity in MANAGEMENT_GATE_IDS},
+            'old102_without_management': rejected(lambda: validate_gate_source(without(set(MANAGEMENT_GATE_IDS)))),
+            'each_hedge_check_omitted':{identity:rejected(lambda identity=identity:validate_gate_source(without({identity}))) for identity in HEDGE_GATE_IDS},
+            'old113_without_hedge':rejected(lambda:validate_gate_source(without(set(HEDGE_GATE_IDS)))),
+            'hedge_identity_substituted_same116':rejected(lambda:validate_gate_source(replace('hedge-prop-engine',replacement_id='SYN-hedge-substitute'))),
+            'hedge_command_substituted_same116':rejected(lambda:validate_gate_source(replace('hedge-prop-engine',command="['true']"))),
+            'hedge_focal_instead_of_complete':rejected(lambda:validate_gate_source(replace('hedge-prop-browser',append_args=['--smoke']))),
+            'hedge_native_removed':rejected(lambda:validate_gate_source(replace('hedge-prop-browser',command="[sys.executable, 'tools/hedge_prop_browser_test.py', '--out', full_evidence('hedge-prop-browser')]"))),
+            'management_identity_substituted_same116':rejected(lambda:validate_gate_source(replace('management-state',replacement_id='SYN-management-substitute'))),
+            'management_command_substituted_same116':rejected(lambda:validate_gate_source(replace('management-state',command="['true']")))}
 
 
 def record(report, case_id, action, page=None, criteria=None, **metadata):
@@ -883,9 +912,12 @@ def regressions(browser, url, report):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=['all', 'regressions', 'compact-regressions', 'compact', 'inline-regressions', 'closure-regressions', 'notification-regressions', 'calendar-regressions', 'dante-regressions'], default='all')
+    parser.add_argument('--case', choices=['all', 'regressions', 'compact-regressions', 'compact', 'inline-regressions', 'closure-regressions', 'notification-regressions', 'calendar-regressions', 'dante-regressions', 'management'], default='all')
     parser.add_argument('--out', type=Path, default=ROOT / 'tools/.artifacts' / ('ui-visual-quality-' + datetime.now().strftime('%Y%m%dT%H%M%S%f')))
     args = parser.parse_args()
+    if args.case == 'management':
+        import management_visual_quality_test as management_visual
+        return management_visual.main(out=args.out, native=True)
     args.out.mkdir(parents=True, exist_ok=False)
     report = {'classification': 'NOT_RUN', 'started_at': now(), 'out': str(args.out),
               'source_sha256': hashes(), 'cases': [], 'selection': args.case,

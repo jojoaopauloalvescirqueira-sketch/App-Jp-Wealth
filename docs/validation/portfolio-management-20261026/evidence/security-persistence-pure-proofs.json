@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "appliedSHA256": "6553f397140c13306125783011bb1e89bfefcbecb26e493bc1ebe57b2b17fc65",
+  "actualAppliedScanner": true,
+  "guardCounterproofs": {
+    "reviewedGuards": 3,
+    "injectedCredentialMarkers": 24,
+    "modifiedGuards": 3,
+    "duplicateGuards": 3
+  },
+  "actualAuthorizationHeaderRejected": true,
+  "files": {
+    "index.html": "PASS",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "PASS",
+    "src/js/10-domain/08-usd-brl-quote.js": "PASS",
+    "sw.js": "PASS"
+  },
+  "browserNotRun": true
+}

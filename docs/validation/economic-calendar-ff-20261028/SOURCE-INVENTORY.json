@@ -1,0 +1,738 @@
+{
+  "scope": "Read-only final data inventory, no network/browser or repository writes.",
+  "artifacts": {
+    "public": {
+      "path": "infra/ff-news-feed/economic-calendar.json",
+      "sha256": "6275de67ed8f13512941ac2f016bf9c7662d36c619551e4efb6c860a23492fcc",
+      "schemaVersion": 2,
+      "eventCount": 106
+    },
+    "legacy": {
+      "path": "infra/ff-news-feed/ff-high-impact.json",
+      "sha256": "afc5328b1f42bd5259cb735aa623af948703049901d338dee9d93d874d01c78b",
+      "schemaVersion": 1,
+      "eventCount": 13
+    },
+    "official": {
+      "path": "infra/ff-news-feed/data/official-policy-2026.json",
+      "sha256": "eadcb0e1053e87fd0ea83b545e70777fc84578f1e31466297c71eddf6189b900",
+      "schemaVersion": 1,
+      "eventCount": 9
+    },
+    "monthly": {
+      "path": "infra/monthly-economic-feed/data/monthly-economic-2026-10.json",
+      "sha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+      "schemaVersion": 1,
+      "eventCount": 153
+    }
+  },
+  "counts": {
+    "forexFactoryObservations": 97,
+    "newOfficialTopics": 9,
+    "matchedOfficialFamilies": 7,
+    "preservedOfficialBase": 54,
+    "composedLocalRecords": 153,
+    "sourceDescriptors": 22,
+    "coverageRows": 25,
+    "ffImpacts": {
+      "unclassified": 1,
+      "low": 63,
+      "medium": 10,
+      "high": 23
+    },
+    "monthlyDateCounts": {
+      "2026-10": 150,
+      "2026-11": 1,
+      "2026-12": 2
+    }
+  },
+  "sourceCollectedAt": "2026-10-28T20:21:55Z",
+  "localPackageGeneratedAt": "2026-10-28T20:22:57Z",
+  "providerPublishedAt": null,
+  "legacyBaseUpdatedAt": "2026-10-23T15:52:12Z",
+  "currentWeekFrom": "2026-10-25",
+  "currencyStats": [
+    {
+      "currency": "USD",
+      "forexFactoryRows": 26,
+      "preservedBaseRows": 5,
+      "exclusiveNewOfficialRows": 1,
+      "composedRows": 32
+    },
+    {
+      "currency": "EUR",
+      "forexFactoryRows": 25,
+      "preservedBaseRows": 0,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 25
+    },
+    {
+      "currency": "GBP",
+      "forexFactoryRows": 8,
+      "preservedBaseRows": 37,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 45
+    },
+    {
+      "currency": "JPY",
+      "forexFactoryRows": 12,
+      "preservedBaseRows": 9,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 21
+    },
+    {
+      "currency": "CHF",
+      "forexFactoryRows": 3,
+      "preservedBaseRows": 0,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 3
+    },
+    {
+      "currency": "CAD",
+      "forexFactoryRows": 7,
+      "preservedBaseRows": 0,
+      "exclusiveNewOfficialRows": 1,
+      "composedRows": 8
+    },
+    {
+      "currency": "AUD",
+      "forexFactoryRows": 8,
+      "preservedBaseRows": 0,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 8
+    },
+    {
+      "currency": "NZD",
+      "forexFactoryRows": 5,
+      "preservedBaseRows": 3,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 8
+    },
+    {
+      "currency": "CNY",
+      "forexFactoryRows": 3,
+      "preservedBaseRows": 0,
+      "exclusiveNewOfficialRows": 0,
+      "composedRows": 3
+    }
+  ],
+  "policyMerges": [
+    {
+      "familyKey": "boc-policy-2026-10:policy-statement",
+      "currency": "CAD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T09:45:00-04:00",
+      "timeConfirmed": true,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    },
+    {
+      "familyKey": "boc-policy-2026-10:monetary-policy-report",
+      "currency": "CAD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T09:45:00-04:00",
+      "timeConfirmed": true,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    },
+    {
+      "familyKey": "boc-policy-2026-10:rate-decision",
+      "currency": "CAD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T09:45:00-04:00",
+      "timeConfirmed": true,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    },
+    {
+      "familyKey": "boc-policy-2026-10:press-conference",
+      "currency": "CAD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T10:30:00-04:00",
+      "timeConfirmed": false,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    },
+    {
+      "familyKey": "fed-fomc-2026-10:rate-decision",
+      "currency": "USD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T14:00:00-04:00",
+      "timeConfirmed": true,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    },
+    {
+      "familyKey": "fed-fomc-2026-10:policy-statement",
+      "currency": "USD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T14:00:00-04:00",
+      "timeConfirmed": true,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    },
+    {
+      "familyKey": "fed-fomc-2026-10:press-conference",
+      "currency": "USD",
+      "date": "2026-10-28",
+      "at": "2026-10-28T14:30:00-04:00",
+      "timeConfirmed": true,
+      "sourceConflict": false,
+      "officialReferenceCount": 1
+    }
+  ],
+  "sources": [
+    {
+      "id": "bea",
+      "currency": "USD",
+      "name": "U.S. Bureau of Economic Analysis",
+      "url": "https://www.bea.gov/news/schedule/icalendar",
+      "licenseUrl": "https://www.bea.gov/help/faq/147",
+      "permissionBasis": null,
+      "scope": "BEA release schedule; excludes BLS/Federal Reserve",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "confirmed",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": "2026-10-25T15:52:12Z",
+          "reason": "Mês completo do calendário BEA somente; USD continua parcial sem BLS e Fed."
+        }
+      ]
+    },
+    {
+      "id": "bls",
+      "currency": "USD",
+      "name": "U.S. Bureau of Labor Statistics — pendente",
+      "url": "https://www.bls.gov/schedule/",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "No reviewed package in this delivery",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Calendário BLS ainda não coletado/revisado neste pacote."
+        }
+      ]
+    },
+    {
+      "id": "fed",
+      "currency": "USD",
+      "name": "Federal Reserve — demais eventos pendentes",
+      "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "Other Federal Reserve releases; the separate fed-policy source covers only its explicitly curated FOMC dates",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Calendário Federal Reserve ainda não coletado/revisado neste pacote."
+        }
+      ]
+    },
+    {
+      "id": "ons",
+      "currency": "GBP",
+      "name": "Office for National Statistics",
+      "url": "https://www.ons.gov.uk/releasecalendar",
+      "licenseUrl": "https://www.ons.gov.uk/help/terms-conditions",
+      "permissionBasis": null,
+      "scope": "Explicit economic release catalogue in curation-2026-10.json; not all ONS releases",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "confirmed",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": "2026-10-25T15:52:12Z",
+          "reason": "Catálogo econômico ONS explicitamente selecionado: mês inteiro, publicadas/futuras/canceladas consultadas; exclui séries duplicadas e publicações fora do catálogo."
+        }
+      ]
+    },
+    {
+      "id": "boe",
+      "currency": "GBP",
+      "name": "Bank of England — pendente",
+      "url": "https://www.bankofengland.co.uk/news",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "No reviewed package in this delivery",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Bank of England sem pacote de eventos revisado."
+        }
+      ]
+    },
+    {
+      "id": "sbj",
+      "currency": "JPY",
+      "name": "Statistics Bureau of Japan",
+      "url": "https://www.stat.go.jp/english/",
+      "licenseUrl": "https://www.stat.go.jp/english/info/riyou.html",
+      "permissionBasis": null,
+      "scope": "CPI, labour force, household expenditure, savings, business structure and population schedules; date only",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": "2026-10-25T15:52:12Z",
+          "reason": "Seis famílias de calendários oficiais SBJ; horários não comprovados, datas preservadas no Japão. Não cobre todas as estatísticas japonesas."
+        }
+      ]
+    },
+    {
+      "id": "boj",
+      "currency": "JPY",
+      "name": "Bank of Japan — pendente",
+      "url": "https://www.boj.or.jp/en/",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "No reviewed package in this delivery",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Bank of Japan sem pacote de eventos revisado."
+        }
+      ]
+    },
+    {
+      "id": "statsnz",
+      "currency": "NZD",
+      "name": "Stats NZ — publicações selecionadas",
+      "url": "https://www.stats.govt.nz/release-calendar/",
+      "licenseUrl": "https://www.stats.govt.nz/about-us/copyright/",
+      "permissionBasis": null,
+      "scope": "CPI September quarter and selected price indexes September only; export not validated",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": "2026-10-25T15:52:12Z",
+          "reason": "Somente CPI trimestral e selected price indexes comprovados; não representa o mês econômico NZD completo."
+        },
+        {
+          "from": "2026-11-01",
+          "to": "2026-11-30",
+          "month": "2026-11",
+          "status": "partial",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": "2026-10-25T15:52:12Z",
+          "reason": "Somente próxima divulgação SPI citada na publicação de setembro; demais eventos não revisados, horário não informado."
+        }
+      ]
+    },
+    {
+      "id": "statsnz-calendar",
+      "currency": "NZD",
+      "name": "Stats NZ — calendário completo pendente",
+      "url": "https://www.stats.govt.nz/release-calendar/",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "Calendar export not validated; no complete month claim",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Exportação mensal Stats NZ ainda não validada; ausência de outros eventos não significa agenda vazia."
+        }
+      ]
+    },
+    {
+      "id": "rbnz",
+      "currency": "NZD",
+      "name": "Reserve Bank of New Zealand — pendente",
+      "url": "https://www.rbnz.govt.nz/",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "Automated access prohibited without permission; no automated collection or claimed human curation",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Sem acesso automatizado autorizado e sem curadoria humana fornecida; nenhum evento presumido."
+        }
+      ]
+    },
+    {
+      "id": "chf-pending",
+      "currency": "CHF",
+      "name": "CHF — agendas oficiais pendentes",
+      "url": "https://opendata.swiss/",
+      "licenseUrl": null,
+      "permissionBasis": null,
+      "scope": "No official calendar commercial redistribution licence verified; no events shipped",
+      "coverage": [
+        {
+          "from": "2026-10-01",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "pending",
+          "scope": null,
+          "archived": null,
+          "reviewedAt": "2026-10-23T15:52:12Z",
+          "collectedAt": null,
+          "validUntil": null,
+          "reason": "Redistribuição comercial gratuita da agenda oficial CHF não comprovada; nenhum evento presumido."
+        }
+      ]
+    },
+    {
+      "id": "ff-USD",
+      "currency": "USD",
+      "name": "Forex Factory · USD",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-EUR",
+      "currency": "EUR",
+      "name": "Forex Factory · EUR",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-GBP",
+      "currency": "GBP",
+      "name": "Forex Factory · GBP",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-JPY",
+      "currency": "JPY",
+      "name": "Forex Factory · JPY",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-CHF",
+      "currency": "CHF",
+      "name": "Forex Factory · CHF",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-CAD",
+      "currency": "CAD",
+      "name": "Forex Factory · CAD",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-AUD",
+      "currency": "AUD",
+      "name": "Forex Factory · AUD",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-NZD",
+      "currency": "NZD",
+      "name": "Forex Factory · NZD",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "ff-CNY",
+      "currency": "CNY",
+      "name": "Forex Factory · CNY",
+      "url": "https://www.forexfactory.com/calendar",
+      "licenseUrl": "https://www.forexfactory.com/notices",
+      "permissionBasis": "Owner declaration of non-commercial permission; not independently verified.",
+      "scope": "Weekly snapshot observations, all exported impacts; not a complete month.",
+      "coverage": [
+        {
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "weekly-snapshot",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:21:55Z",
+          "collectedAt": "2026-10-28T20:21:55Z",
+          "validUntil": "2026-10-28T22:21:55Z",
+          "reason": "Observações da semana exportada; não comprova mês inteiro nem todos os eventos. Horários do export não distinguem provisórios."
+        }
+      ]
+    },
+    {
+      "id": "fed-policy",
+      "currency": "USD",
+      "name": "Federal Reserve — decisões de política monetária selecionadas",
+      "url": "https://www.federalreserve.gov/newsevents/2026-october.htm",
+      "licenseUrl": "https://www.federalreserve.gov/disclaimer.htm",
+      "permissionBasis": null,
+      "scope": "October FOMC decision/statement/press conference and December meeting decision date; not all Fed events.",
+      "coverage": [
+        {
+          "from": "2026-10-28",
+          "to": "2026-10-28",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "selected-policy-families",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:22:55Z",
+          "collectedAt": "2026-10-28T20:22:55Z",
+          "validUntil": "2026-10-30T20:22:55Z",
+          "reason": "Somente famílias de decisões de política monetária identificadas; não cobre toda a agenda da moeda."
+        },
+        {
+          "from": "2026-12-09",
+          "to": "2026-12-09",
+          "month": "2026-12",
+          "status": "partial",
+          "scope": "selected-policy-families",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:22:55Z",
+          "collectedAt": "2026-10-28T20:22:55Z",
+          "validUntil": "2026-10-30T20:22:55Z",
+          "reason": "Somente famílias de decisões de política monetária identificadas; não cobre toda a agenda da moeda."
+        }
+      ]
+    },
+    {
+      "id": "boc-policy",
+      "currency": "CAD",
+      "name": "Bank of Canada — decisões de política monetária selecionadas",
+      "url": "https://www.bankofcanada.ca/2025/08/bank-canada-publishes-2026-schedule-policy-interest-rate-announcements-other-major-publications/",
+      "licenseUrl": "https://www.bankofcanada.ca/terms/",
+      "permissionBasis": null,
+      "scope": "October policy decision/statement/report/approximate press conference and December policy decision; not all Canadian economic events.",
+      "coverage": [
+        {
+          "from": "2026-10-28",
+          "to": "2026-10-28",
+          "month": "2026-10",
+          "status": "partial",
+          "scope": "selected-policy-families",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:22:57Z",
+          "collectedAt": "2026-10-28T20:22:57Z",
+          "validUntil": "2026-10-30T20:22:57Z",
+          "reason": "Somente famílias de decisões de política monetária identificadas; não cobre toda a agenda da moeda."
+        },
+        {
+          "from": "2026-12-09",
+          "to": "2026-12-09",
+          "month": "2026-12",
+          "status": "partial",
+          "scope": "selected-policy-families",
+          "archived": false,
+          "reviewedAt": "2026-10-28T20:22:56Z",
+          "collectedAt": "2026-10-28T20:22:56Z",
+          "validUntil": "2026-10-30T20:22:56Z",
+          "reason": "Somente famílias de decisões de política monetária identificadas; não cobre toda a agenda da moeda."
+        }
+      ]
+    }
+  ],
+  "activation": {
+    "defaultRemoteEndpoint": "https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json",
+    "defaultRemoteMode": "legacy-v1-four-currencies-high",
+    "externalV2PublishedByThisTask": false,
+    "externalCronActivatedByThisTask": false,
+    "plannedCronMinutes": 30,
+    "externalEnableVariable": "JPW_ECONOMIC_FEED_V2_ENABLED",
+    "sourceStaleSeconds": 7200,
+    "permission": "Owner declaration of non-commercial permission; document and legal scope not independently verified."
+  }
+}

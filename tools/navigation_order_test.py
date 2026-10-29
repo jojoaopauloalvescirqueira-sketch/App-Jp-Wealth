@@ -21,10 +21,10 @@ from contextual_sidebar_test import LAYOUT_KEY, LAYOUT_RAW, UNKNOWN_KEY, UNKNOWN
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY = 'jpw_nav_order'
-DEFAULT = ['dashboard', 'research', 'planning', 'forex', 'personal-finance', 'alladin', 'tools']
+DEFAULT = ['dashboard', 'research', 'management', 'planning', 'forex', 'personal-finance', 'alladin', 'tools']
 OLD_DEFAULT = ['dashboard', 'research', 'forex', 'planning', 'personal-finance', 'alladin', 'tools']
 LEGACY = ['dashboard', 'forex', 'personal-finance', 'research', 'alladin']
-LEGACY_PROJECTED = ['dashboard','forex','personal-finance','research','planning','alladin','tools']
+LEGACY_PROJECTED = ['dashboard','forex','personal-finance','research','management','planning','alladin','tools']
 PROTECTED = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
              'jpw_nav': 'pill', 'jpw_rail': 'expanded', 'jpw_fs': '1', 'jpw_expl': 'off'}
 
@@ -169,19 +169,19 @@ def run(args):
                 page = context.new_page()
                 page.goto(url, wait_until='load')
                 assert order(page) == DEFAULT, order(page)
-                assert page.locator('#nav > .tab[data-primary] .n').all_text_contents() == ['01','02','03','04','05','06','07']
+                assert page.locator('#nav > .tab[data-primary] .n').all_text_contents() == ['01','02','03','04','05','06','07','08']
                 context.close()
-            check('static HTML fallback follows the same seven primary positions', html_fallback_order)
+            check('static HTML fallback follows the same eight primary positions', html_fallback_order)
 
             def legacy_projection_and_custom_preference():
                 # Catch inserting after Forex, resetting custom7, or writing on read.
                 cases = [
                     ('legacy-five', LEGACY, LEGACY_PROJECTED),
                     ('legacy-six', ['tools', 'alladin', 'dashboard', 'forex', 'research', 'personal-finance'],
-                     ['tools', 'alladin', 'dashboard', 'forex', 'research', 'planning', 'personal-finance']),
+                     ['tools', 'alladin', 'dashboard', 'forex', 'research', 'management', 'planning', 'personal-finance']),
                     ('old-default-seven', OLD_DEFAULT, DEFAULT),
                     ('custom-seven', ['tools', 'alladin', 'dashboard', 'planning', 'forex', 'research', 'personal-finance'],
-                     ['tools', 'alladin', 'dashboard', 'planning', 'forex', 'research', 'personal-finance']),
+                     ['tools', 'alladin', 'dashboard', 'planning', 'forex', 'research', 'management', 'personal-finance']),
                 ]
                 for name, saved, expected in cases:
                     raw = json.dumps(saved, separators=(',', ':'))
@@ -208,21 +208,22 @@ def run(args):
             def canonical_collision_during_current_session():
                 context, page, errors = boot(browser, url)
                 editor(page);move(page, 'planning', 'down')
-                assert order(page) == OLD_DEFAULT
+                saved_eight=['dashboard','research','management','forex','planning','personal-finance','alladin','tools']
+                assert order(page) == saved_eight
                 page.locator('#navOrderSave').click()
-                assert json.loads(stored(page)) == OLD_DEFAULT
+                assert json.loads(stored(page)) == saved_eight
                 page.evaluate('closeSettingsModal()');editor(page)
-                assert order(page) == OLD_DEFAULT, 'own Save was immediately reprojected during the same session'
+                assert order(page) == saved_eight, 'own Save was immediately reprojected during the same session'
                 move(page, 'tools', 'up')
-                assert order(page) == ['dashboard','research','forex','planning','personal-finance','tools','alladin']
+                assert order(page) == ['dashboard','research','management','forex','planning','personal-finance','tools','alladin']
                 page.locator('#navOrderCancel').click()
-                assert order(page) == OLD_DEFAULT
+                assert order(page) == saved_eight
                 pristine(page)
                 page.reload();wait_bootstrap(page);checkpoint(page);settle(page)
-                # With no new key/schema, identical old canonical raw is projected on a new session.
-                assert order(page) == DEFAULT and json.loads(stored(page)) == OLD_DEFAULT
+                # Explicit eight-item custom order has no collision with legacy seven-item raw.
+                assert order(page) == saved_eight and json.loads(stored(page)) == saved_eight
                 finish(context, errors)
-            check('explicit old canonical Save stays editable in current session; documented fresh-session projection', canonical_collision_during_current_session)
+            check('explicit eight-item custom order stays editable and survives fresh-session projection', canonical_collision_during_current_session)
 
             def defaults_and_permutations():
                 context, page, errors = boot(browser, url)
@@ -230,7 +231,12 @@ def run(args):
                 assert page.evaluate('JPWNavigation.current().canonical') == 'dashboard'
                 editor(page)
                 before = page.evaluate('JSON.stringify(JPWNavigation.current())')
-                permutations = [list(p) for p in itertools.permutations(DEFAULT)]
+                # Preserve all 5040 previous seven-module permutations. Management
+                # is projected after Research, and all its positions are checked below.
+                prior_ids=[item for item in DEFAULT if item!='management']
+                permutations=[]
+                for prior in itertools.permutations(prior_ids):
+                    projected=list(prior);projected.insert(projected.index('research')+1,'management');permutations.append(projected)
                 examined = page.evaluate('''permutations => {
                   const observed=[];
                   for(const desired of permutations){
@@ -244,10 +250,10 @@ def run(args):
                     const actual=[...document.querySelectorAll('#nav > .tab[data-primary]')].map(el=>el.dataset.primary);
                     if(JSON.stringify(actual)!==JSON.stringify(desired))throw new Error('Wrong preview '+desired);
                     const numbers=[...document.querySelectorAll('#nav > .tab[data-primary] .n')].map(el=>el.textContent);
-                    if(JSON.stringify(numbers)!==JSON.stringify(['01','02','03','04','05','06','07']))throw new Error('Wrong visible positions');
+                    if(JSON.stringify(numbers)!==JSON.stringify(['01','02','03','04','05','06','07','08']))throw new Error('Wrong visible positions');
                     document.getElementById('navOrderSave').click();
                     const raw=window.__a10Get('jpw_nav_order');
-                    if(raw===null&&JSON.stringify(desired)===JSON.stringify(['dashboard','research','planning','forex','personal-finance','alladin','tools'])){}
+                    if(raw===null&&JSON.stringify(desired)===JSON.stringify(['dashboard','research','management','planning','forex','personal-finance','alladin','tools'])){}
                     else if(JSON.stringify(JSON.parse(raw))!==JSON.stringify(desired))throw new Error('Wrong saved order '+desired);
                     observed.push({desired,actual,stored:raw});
                   }
@@ -264,6 +270,29 @@ def run(args):
                 finish(context, errors)
                 return {'permutations': examined}
             check('default, 5040 permutations through DOM controls, same current and reload', defaults_and_permutations)
+
+            def management_all_positions():
+                context,page,errors=boot(browser,url)
+                for position in range(8):
+                    editor(page)
+                    while order(page).index('management')>position:move(page,'management','up')
+                    while order(page).index('management')<position:move(page,'management','down')
+                    desired=order(page)
+                    assert desired.index('management')==position
+                    old=stored(page)
+                    page.locator('#navOrderCancel').click()
+                    assert stored(page)==old
+                    editor(page)
+                    while order(page).index('management')>position:move(page,'management','up')
+                    while order(page).index('management')<position:move(page,'management','down')
+                    if not page.locator('#navOrderSave').is_disabled():page.locator('#navOrderSave').click()
+                    assert order(page)==desired
+                    pristine(page)
+                    page.reload();wait_bootstrap(page);checkpoint(page);settle(page)
+                    assert order(page)==desired and desired.index('management')==position
+                finish(context,errors)
+                return {'positions':8,'all_prior_permutations':5040}
+            check('Management all eight positions preserve cancel save reload',management_all_positions)
 
             def cancel_restore_and_failure():
                 original = json.dumps(LEGACY, separators=(',', ':'))
@@ -370,7 +399,7 @@ def run(args):
 
             def modes_and_routes():
                 details = []
-                desired = ['tools', 'alladin', 'personal-finance', 'planning', 'forex', 'research', 'dashboard']
+                desired = ['tools', 'alladin', 'personal-finance', 'planning', 'management', 'forex', 'research', 'dashboard']
                 for width in [1440, 390]:
                     for mode in ['sidebar', 'topbar', 'glass', 'submenu']:
                         for theme in ['light', 'dark']:
@@ -389,7 +418,7 @@ def run(args):
                             page.locator('#navOrderSave').click()
                             page.evaluate('closeSettingsModal()');settle(page)
                             expected = order(page)
-                            destinations = {'dashboard': 'dashboard', 'research': 'research-forex',
+                            destinations = {'dashboard': 'dashboard', 'research': 'research-forex','management':'management-reserves',
                                             'forex': 'forex-consolidated', 'planning': 'planning', 'personal-finance': 'personal-finance', 'alladin': 'alladin',
                                             'tools': 'tools-calendar'}
                             for module in expected:
@@ -413,6 +442,8 @@ def run(args):
                                         page.locator('[data-nav-context="research-forex"] [data-nav-local-view="nocoda"]').click()
                                     elif module == 'forex':
                                         page.locator('[data-nav-child="forex-consolidated"]').click()
+                                    elif module == 'management':
+                                        page.locator('[data-nav-child="management-reserves"]').click()
                                     elif module == 'personal-finance':
                                         page.locator('[data-nav-sub-view="overview"]').click()
                                     else:

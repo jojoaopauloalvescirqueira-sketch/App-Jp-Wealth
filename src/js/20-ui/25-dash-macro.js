@@ -1,6 +1,6 @@
 // ============ DASHBOARD · VISÃO EXECUTIVA MACRO (DASH-MACRO-01 · N1) ============
-// Panorama transversal dos quatro módulos globais — Forex, Finanças Pessoais,
-// Research e Alladin. READ → CONSUME CANONICAL → PRESENT.
+// Panorama transversal dos módulos disponíveis. Portfólio conserva a identidade
+// research; Gerenciamento possui disponibilidade própria. READ → PRESENT.
 //
 // FRONTEIRA: este arquivo não contém uma única fórmula financeira. Cada card
 // consome a superfície pública do seu domínio e apresenta. Nenhum cálculo é
@@ -50,7 +50,8 @@ const DM_AREAS = {
   forex: ['01', 'Risco e operação'],
   planning: ['05', 'Planejamento patrimonial'],
   'personal-finance': ['02', 'Orçamento e crédito'],
-  research: ['03', 'Estudos e agenda'],
+  research: ['03', 'Estudos e análises'],
+  management: ['06', 'Reservas e caixa diário'],
   alladin: ['04', 'Contas e patrimônio']
 };
 function dmRoutePrimary(route){
@@ -72,8 +73,9 @@ function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
   if(dmFrozenRoute(rota)) return '';
+  const icon=id==='management'?'shell-icon-briefcase-business':'i-area-'+(id==='planning'?'forex':id);
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
-    + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+(id==='planning'?'forex':id)+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
+    + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#'+icon+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
     + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+'</button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '</article>';
@@ -123,16 +125,8 @@ function dmForexHTML(c){
   if(cl.reasons && cl.reasons.length){
     corpo += dmNote(cl.reasons[0] + (cl.reasons.length > 1 ? '  (+' + (cl.reasons.length - 1) + ')' : ''));
   }
-  corpo += '</div><div class="dm-record">';
-  const led = ledgerSorted();
-  const last = led.length ? led[led.length-1] : null;
-  corpo += dmSection('Contabilidade', last
-    ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtForexMoney(last.saldo,{currency:unit})+'</b>')
-      + dmRow('Resultado do dia', '<b>'+fmtForexMoney(last.resultado,{currency:unit})+'</b>')
-    : dmNote('Nenhum fechamento registrado neste período.'));
   corpo += '</div>';
-  corpo += dmLinks(dmLink('Contas', 'forex-account')+dmLink('Checklist pré-trade', 'check')
-    +dmLink('Contabilidade', 'forex-reconciliation'));
+  corpo += dmLinks(dmLink('Contas', 'forex-account')+dmLink('Checklist pré-trade', 'check'));
   return {html: corpo, tom};
 }
 
@@ -241,7 +235,7 @@ function dmPctMetric(nome, m){
   return dmRow(nome, dmAux('N/A — cobertura incompleta'));
 }
 
-// ---- RESEARCH ---------------------------------------------------------------
+// ---- PORTFÓLIO (identidade compatível research) -------------------------------
 // Resumo informacional: não se força métrica financeira onde ela não existe.
 function dmResearchHTML(){
   const nc = (S.nocoda && S.nocoda.studies && typeof S.nocoda.studies === 'object') ? Object.keys(S.nocoda.studies) : [];
@@ -262,9 +256,9 @@ function dmResearchHTML(){
              pv.length ? 'amostras registradas' : null)
   );
   // Cache nulo = "sem cache válido", NUNCA "zero eventos": zero não pode ser
-  // afirmado sem prova. O calendário permanece de Research por rota canônica
-  // (NAV_COMPATIBILITY_TARGETS.ecal -> research-forex); esta revisão apenas o
-  // CONSOME, sem redefinir a ownership do widget.
+  // afirmado sem prova. Portfólio conserva este consumidor informacional
+  // do calendário semanal compartilhado; a agenda completa pertence a Tools.
+  // Somente leitura, sem rede própria ou nova fonte de eventos.
   const cal = (typeof ecalEvents === 'function') ? ecalEvents() : null;
   if(!cal){
     corpo += dmRow('Calendário de hoje', dmAux('dados ainda não carregados'));
@@ -277,16 +271,18 @@ function dmResearchHTML(){
     if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
   }
   if(typeof ffNewsStatusText==='function') corpo += dmRow('Cache',dmAux(ffNewsStatusText(cal)));
-  corpo += '</div><div class="dm-record">';
-  corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
-    +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
-    +dmLink('REITs','research-reits')
-    +'</div>'+dmNote('Áreas em preparação · sem conteúdo publicado.'));
   corpo += '</div>';
-  corpo += dmLinks(dmLink('Calendário','research-forex','research','calendar')
-    +dmLink('NoCoda','research-forex','research','nocoda')
-    +dmLink('Pivots','research-forex','research','pivots'));
+  corpo += dmLinks(dmLink('Calendário e Mercados','tools-calendar')
+    +dmLink('Estudos Nocuda','research-forex','research','nocoda')
+    +dmLink('Estudos de Pivots','research-forex','research','pivots'));
   return {html: corpo, tom: null};
+}
+
+// Management selection is independent of the operational Forex selection.
+// A landing card must not choose an account, infer balances or aggregate money.
+function dmManagementHTML(){
+  return {html:dmNote('Selecione a conta e o período em Gerenciamento para consultar Reservas ou comparar seu plano anual com os fechamentos diários.')+
+    dmLinks(dmLink('Reservas','management-reserves')+dmLink('Caixa Anual','management-accounting')),tom:null};
 }
 
 // ---- ALLADIN ----------------------------------------------------------------
@@ -361,7 +357,8 @@ const DM_MODULES=[
   {id:'forex',label:'Forex',route:'forex-consolidated',cta:'Abrir Forex',read:()=>dmForexHTML(compute())},
   {id:'planning',label:'Planejamento',route:'planning',cta:'Abrir Planejamento',read:()=>dmPlanningHTML()},
   {id:'personal-finance',label:'Finanças Pessoais',route:'personal-finance',cta:'Abrir Finanças Pessoais',read:()=>dmFinpesHTML()},
-  {id:'research',label:'Research',route:'research-forex',cta:'Abrir Research',read:()=>dmResearchHTML()},
+  {id:'research',label:'Portfólio',route:'research-forex',cta:'Abrir Portfólio',read:()=>dmResearchHTML()},
+  {id:'management',label:'Gerenciamento',route:'management-reserves',cta:'Abrir Gerenciamento',read:()=>dmManagementHTML()},
   {id:'alladin',label:'Alladin',route:'alladin',cta:'Abrir Alladin',read:()=>dmAlladinHTML()}
 ];
 function dashMacroRender(){

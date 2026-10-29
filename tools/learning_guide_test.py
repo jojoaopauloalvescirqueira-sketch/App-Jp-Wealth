@@ -31,6 +31,10 @@ MAIN_KEY = 'jpwealth_v9_state'
 PORTABLE = 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
 MODULES = ['src/js/40-app/26-learning-catalog.js', 'src/js/00-core/09-learning-progress.js',
            'src/js/40-app/27-learning-view.js', 'src/js/40-app/28-learning-guide.js']
+MANAGEMENT_MODULES = [f'src/js/30-accounting/07-management/{name}.js' for name in ('01-engine','02-state','03-ui')]
+HEDGE_MODULES = ['src/js/40-app/32-prop-firms/01-engine.js',
+                 'src/js/40-app/32-prop-firms/02-ui.js']
+RETIRED_LESSON_IDS = {'tools-nocuda','research-stocks-br','research-stocks-global','research-reits','research-others'}
 PLANNING_MODULES = [f'src/js/30-accounting/06-planning/{name}.js' for name in ('01-engine','02-state','03-ui')]
 RETIRED_PLANNING_MODULES = [f'src/js/30-accounting/05-fx-planning/{name}.js' for name in ('01-fx-model','02-fx-engine','03-fx-state','04-fx-charts','05-fx-ui')]
 CALENDAR_AGENDA_INSERTIONS = [
@@ -47,7 +51,13 @@ research-forex research-pivots research-stocks-br research-stocks-global researc
 tools-calendar tools-nocuda tools-genetrix tools-normative
 alladin-start alladin-instruments alladin-assets alladin-accounts alladin-cashAccounts alladin-ledger alladin-balances alladin-positions
 general-notes general-notes-save general-settings-general general-settings-account general-settings-appearance general-settings-interface general-settings-editor general-settings-statute general-settings-parameters general-settings-tool-params general-settings-tool-check general-settings-forex-consolidated general-settings-educational general-settings-probability-lab general-settings-storage general-settings-about general-backup general-session'''.split())
-SOURCES = MODULES + PLANNING_MODULES + CALENDAR_AGENDA_MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
+# Frozen pre-Hedge identities: retain the 52 visible legacy lessons and all nine
+# approved Planning, Calendar/Agenda, Management and notification additions.
+PRE_HEDGE_LESSON_IDS = (LEGACY_LESSON_IDS - RETIRED_LESSON_IDS) | set('''
+planning-form planning-consolidated planning-monthly
+tools-agenda tools-calendar-coverage tools-markets general-notifications
+management-plan management-annual'''.split())
+SOURCES = MODULES + PLANNING_MODULES + MANAGEMENT_MODULES + HEDGE_MODULES + CALENDAR_AGENDA_MODULES + ['src/styles/app.css', 'src/js/40-app/01-navigation.js',
     'src/js/40-app/06-boot.js', 'src/js/40-app/07-finalize-session.js',
     'src/js/40-app/09-settings-modal.js', 'src/js/00-core/04-persistence.js',
     'src/js/00-core/07-workspace-backup.js', 'src/js/20-ui/18-finpes-budget.js',
@@ -231,7 +241,7 @@ def welcome(page, row):
     assert snap(page)['active'] and not snap(page)['paused'] and snap(page)['mode']=='journey'
     assert snap(page)['stepId']=='basics-home' and snap(page)['progress']['steps']=={}
     central(page)
-    assert page.locator('[data-learning-track]').count()==8
+    assert page.locator('[data-learning-track]').count()==9
     assert page.locator('#jpwLearningCenter').count()==1
     invariant(page,before)
     click(page,'#settingsCloseBtn')
@@ -240,14 +250,18 @@ def welcome(page, row):
     page.locator('#jpwLearningCenter').wait_for(state='visible')
     assert page.locator('[data-settings-panel="learning-guide"] #jpwLearningCenter').count()==1
     assert page.evaluate("SETTINGS_NAV.some(x=>x.id==='knowledge')") if page.evaluate("typeof SETTINGS_NAV!=='undefined'") else True
-    row['trackCount']=8;row['entryMode']='journey'
+    row['trackCount']=9;row['entryMode']='journey'
 
 def readonly(page, row):
     instrument(page);before=financial(page)
     tracks=page.evaluate('JPWLearningCatalog.tracks')
-    assert len(tracks)==8 and sum(len(t['steps']) for t in tracks)==63
+    assert len(tracks)==9 and sum(len(t['steps']) for t in tracks)==62
     ids=[s['id'] for t in tracks for s in t['steps']]
-    assert len(set(ids))==63 and len(LEGACY_LESSON_IDS)==57 and (LEGACY_LESSON_IDS-{'tools-nocuda'})<=set(ids) and 'tools-nocuda' not in ids
+    assert len(set(ids))==62 and len(LEGACY_LESSON_IDS)==57 and (LEGACY_LESSON_IDS-RETIRED_LESSON_IDS)<=set(ids) and not (RETIRED_LESSON_IDS & set(ids))
+    assert len(PRE_HEDGE_LESSON_IDS)==61 and set(ids)==PRE_HEDGE_LESSON_IDS|{'tools-hedge-prop'}
+    hedge=[s for t in tracks if t['id']=='tools' for s in t['steps'] if s['id']=='tools-hedge-prop']
+    assert len(hedge)==1 and hedge[0]['destination']=={'route':'tools-prop-firms'}
+    assert hedge[0]['kind']=='read' and not hedge[0].get('practice'),'Hedge orientation must not grant practice'
     actions=[];completed=[];fallbacks=[]
     for track in tracks:
         start(page,track['id'])
@@ -266,10 +280,10 @@ def readonly(page, row):
             completed.append(step['id']);invariant(page,before)
             next_lesson(page)
     records=snap(page)['progress']['steps']
-    assert len(records)==63 and set(records)==set(ids) and all(r=={'orientation':'seen','practice':None} for r in records.values())
+    assert len(records)==62 and set(records)==set(ids) and all(r=={'orientation':'seen','practice':None} for r in records.values())
     assert actions in [['menu','help','notes','session'],['menu','notes','session']],actions
     invariant(page,before)
-    row.update(completedLessonIds=completed,seenCount=63,legacyLessonIdsPreserved=56,retiredLessonIdsPreservedAsHistory=1,skippedCount=0,confirmedPracticeCount=0,observedNativeActions=actions,declaredReadFallbacks=fallbacks,mainWrites=0)
+    row.update(completedLessonIds=completed,seenCount=62,legacyLessonIdsPreserved=52,retiredLessonIdsPreservedAsHistory=5,skippedCount=0,confirmedPracticeCount=0,observedNativeActions=actions,declaredReadFallbacks=fallbacks,mainWrites=0)
 
 def progress_lifecycle(page,row):
     instrument(page);before=financial(page);start(page,'basics')
@@ -742,6 +756,16 @@ def assert_startup_scripts(root,scripts,expected):
     # before reconstructing its historical slot for the unchanged order oracle.
     assert RETIRED_NOCUDA_SCRIPT not in scripts and RETIRED_NOCUDA_SCRIPT not in expected,'Retired Nocuda transfer script must not be loaded'
     assert scripts==expected,{'scripts':scripts,'manifest':expected}
+    hedge_present=any((Path(root)/path).is_file() for path in HEDGE_MODULES) or any(path in expected for path in HEDGE_MODULES)
+    if hedge_present:
+        assert all(expected.count(path)==1 for path in HEDGE_MODULES),'Hedge requires both unique script identities'
+        assert expected.count(DOWNLOAD_CONSUMER)==1,'Hedge requires its unique Tools consumer'
+        hedge_end=expected.index(DOWNLOAD_CONSUMER)
+        assert hedge_end>=len(HEDGE_MODULES) and expected[hedge_end-len(HEDGE_MODULES):hedge_end]==HEDGE_MODULES,'Hedge must be one ordered block immediately before tools-services'
+        assert all((Path(root)/path).is_file() for path in HEDGE_MODULES),'Declared Hedge source missing'
+        # Only the two approved Hedge identities are projected out; all legacy
+        # identities, 106-path SHA-256, counts and dependency checks stay intact.
+        expected=[path for path in expected if path not in HEDGE_MODULES]
     if calendar_agenda_feature_present(root) or any(path in expected for path in CALENDAR_AGENDA_MODULES):
         assert all(expected.count(path)==1 for path in CALENDAR_AGENDA_MODULES),'Calendar/Agenda requires all three unique script identities'
         for predecessor,path in CALENDAR_AGENDA_INSERTIONS:
@@ -750,6 +774,11 @@ def assert_startup_scripts(root,scripts,expected):
         # Only this approved extension is projected out. The original identities,
         # ordering hash and exact legacy script counts below remain unchanged.
         expected=[path for path in expected if path not in CALENDAR_AGENDA_MODULES]
+    management_present=any((Path(root)/path).is_file() for path in MANAGEMENT_MODULES) or any(path in expected for path in MANAGEMENT_MODULES)
+    if management_present:
+        assert expected[-3:]==MANAGEMENT_MODULES and all(expected.count(path)==1 for path in MANAGEMENT_MODULES),'Management must be one complete ordered block after Planning'
+        assert all((Path(root)/path).is_file() for path in MANAGEMENT_MODULES),'Declared Management source missing'
+        expected=expected[:-3]
     planning_present=any(path in expected for path in PLANNING_MODULES)
     if planning_present:
         assert expected[-3:]==PLANNING_MODULES and all(expected.count(path)==1 for path in PLANNING_MODULES),'Planning must be one ordered block after the guide'
@@ -832,12 +861,33 @@ def startup_calendar_counterproofs(root,expected):
     substituted=list(expected);substituted[substituted.index(DOWNLOAD_CONSUMER)]=RETIRED_NOCUDA_SCRIPT
     rejects('retired-nocuda-substituted-for-consumer',substituted)
     assert len(rejected)==15,rejected
+    if any(path in expected for path in MANAGEMENT_MODULES):
+        rejects('management-collective-omission',[item for item in expected if item not in MANAGEMENT_MODULES])
+        for path in MANAGEMENT_MODULES:
+            rejects('management-omission/'+path,[item for item in expected if item!=path])
+            duplicate=list(expected);duplicate.insert(duplicate.index(path),path)
+            rejects('management-duplicate/'+path,duplicate)
+            reordered=[item for item in expected if item!=path];reordered.insert(reordered.index(PLANNING_MODULES[0]),path)
+            rejects('management-before-planning/'+path,reordered)
+
+    previous_count=25 if any(path in expected for path in MANAGEMENT_MODULES) else 15
+    assert len(rejected)==previous_count,rejected
+    hedge_present=any((Path(root)/path).is_file() for path in HEDGE_MODULES) or any(path in expected for path in HEDGE_MODULES)
+    if hedge_present:
+        rejects('hedge-collective-omission',[item for item in expected if item not in HEDGE_MODULES])
+        for path in HEDGE_MODULES:
+            rejects('hedge-omission/'+path,[item for item in expected if item!=path])
+            duplicate=list(expected);duplicate.insert(duplicate.index(path),path)
+            rejects('hedge-duplicate/'+path,duplicate)
+            reordered=[item for item in expected if item!=path];reordered.insert(reordered.index(DOWNLOAD_CONSUMER)+1,path)
+            rejects('hedge-after-consumer/'+path,reordered)
+    assert len(rejected)==previous_count+(7 if hedge_present else 0),rejected
     return rejected
 
 def startup_surface(page,row):
     assert page.evaluate("!!(JPWLearningGuide&&JPWLearningProgress&&JPWLearningCatalog&&JPWLearningView)")
     start(page,'basics');acknowledge_reading(page);seen(page,'basics-home')
-    assert len(page.evaluate('JPWLearningCatalog.tracks'))==8
+    assert len(page.evaluate('JPWLearningCatalog.tracks'))==9
     assert page.evaluate('JPWLearningCatalog.version')==1
     if page.locator('#minigamesTimeTwinsCard').count():
         entry=page.evaluate("JPWLearningCatalog.tracks.flatMap(t=>t.steps).find(s=>s.id==='general-settings-probability-lab')")
@@ -896,16 +946,16 @@ def viewport_events(page,row,kind):
     invariant(page,before)
 
 def contextual_help(page,row):
-    reach(page,'research','research-stocks-br')
-    assert snap(page)['stepId']=='research-stocks-br'
+    reach(page,'research','research-forex')
+    assert snap(page)['stepId']=='research-forex'
     instrument(page);before=financial(page)
-    target=page.locator('#researchStocksBr .note-i').filter(visible=True).first
+    target=page.locator('#execNocoda .note-i').filter(visible=True).first
     target.wait_for(state='visible')
     target.focus();page.keyboard.press('Enter');settle(page)
     assert target.get_attribute('aria-expanded')=='true'
     target.focus();page.keyboard.press('Enter');settle(page)
     assert target.get_attribute('aria-expanded')=='false'
-    assert record(page,'research-stocks-br') is None,'Unrelated help must not manufacture lesson acknowledgment'
+    assert record(page,'research-forex') is None,'Unrelated help must not manufacture lesson acknowledgment'
     invariant(page,before);row['nativeHelpOpenedAndClosed']=True
 
 def metadata_guide_keyboard(page,row):

@@ -1,0 +1,7 @@
+{
+  "originalCounterproof": "silentResume yielded exit0 and no JSON because an unresolved fake-network Promise did not keep Node alive",
+  "classification": "TEST_HARNESS_FAIL",
+  "effect": "No PASS or valid rejection claimed for that old attempt",
+  "correction": "host referenced watchdog per deterministic async case, cleared in finally; full 24-case JSON now always emitted for tested deadlock",
+  "productChanged": false
+}

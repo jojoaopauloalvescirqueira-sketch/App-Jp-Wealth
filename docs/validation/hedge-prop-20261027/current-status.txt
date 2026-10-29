@@ -1,0 +1,104 @@
+## codex/mesas-proprietarias-hedge-20261027
+ M build-id.js
+ M dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html
+ M docs/architecture/LEARNING-GUIDE.md
+ M docs/architecture/NAVIGATION-HIERARCHY.md
+ M docs/architecture/STATE-SCHEMA.md
+ M docs/work/ACTIVE-TASK.md
+ M index.html
+ M src/js/00-core/04-persistence.js
+ M src/js/00-core/08-module-availability.js
+ M src/js/00-core/09-learning-progress.js
+ M src/js/20-ui/12-nav-style.js
+ M src/js/20-ui/13-exec-views.js
+ M src/js/20-ui/14-nocoda-studies.js
+ M src/js/20-ui/15-pivot-studies.js
+ M src/js/20-ui/23-research-views.js
+ M src/js/20-ui/25-dash-macro.js
+ M src/js/20-ui/26-forex-engine-views.js
+ M src/js/20-ui/28-fx-consolidated.js
+ M src/js/20-ui/31-tools-services.js
+ M src/js/20-ui/32-module-availability.js
+ M src/js/20-ui/33-module-work.js
+ M src/js/30-accounting/01-daily-ledger.js
+ M src/js/30-accounting/04-patrimonial-simulation.js
+ M src/js/40-app/01-navigation.js
+ M src/js/40-app/06-boot.js
+ M src/js/40-app/07-finalize-session.js
+ M src/js/40-app/11-operational-shell.js
+ M src/js/40-app/14-mvp-notes.js
+ M src/js/40-app/18-notification-center.js
+ M src/js/40-app/26-learning-catalog.js
+ M src/js/40-app/28-learning-guide.js
+ M src/js/manifest.json
+ M src/styles/app.css
+ M src/vendor/downloads/leverage-daily-source-payload.js
+ M src/vendor/downloads/leverage-native-kit-payload.js
+ M src/vendor/downloads/leverage-native-pin-payload.js
+ M src/vendor/downloads/leverage-preview-payload.js
+ M src/vendor/downloads/leverage-preview-payload.json
+ M src/vendor/downloads/leverage-source-payload.js
+ M src/vendor/market-hours/runtime-payload.js
+ M sw.js
+ M tools/contextual_sidebar_test.py
+ M tools/dante_catalog_test.mjs
+ M tools/dante_guide_test.py
+ M tools/dashboard_macro_test.py
+ M tools/exec_submenu_test.py
+ M tools/finpes_navigation_test.py
+ M tools/forex_navigation_journey_test.py
+ M tools/forex_navigation_table_test.py
+ M tools/forex_task_design_test.py
+ M tools/forex_v11_journey_test.py
+ M tools/fx_consolidated_ui_test.py
+ M tools/import_xss_security_test.py
+ M tools/learning_controller_test.mjs
+ M tools/learning_guide_test.py
+ M tools/minigames_test.py
+ M tools/module_availability_core_test.py
+ M tools/module_availability_test.py
+ M tools/mvp_notes_test.py
+ M tools/navigation_ia_test.py
+ M tools/navigation_layout_choice_test.py
+ M tools/navigation_local_contract_test.py
+ M tools/navigation_order_test.py
+ M tools/navigation_sidebar_hover_test.py
+ M tools/nocuda_tools_test.py
+ M tools/persistence_failure_test.py
+ M tools/planning_boundaries_test.js
+ M tools/planning_navigation_test.js
+ M tools/quality_gate.py
+ M tools/regression-memory.json
+ M tools/research_navigation_test.py
+ M tools/smoke_test.py
+ M tools/ui_visual_quality_test.py
+ M tools/usd_brl_quote_test.py
+?? docs/architecture/HEDGE-PROP-FIRM.md
+?? docs/architecture/MANAGEMENT-ANNUAL.md
+?? docs/superpowers/plans/2026-10-26-portfolio-management.md
+?? docs/superpowers/plans/2026-10-27-hedge-prop.md
+?? docs/validation/hedge-prop-20261027/
+?? docs/validation/portfolio-management-20261026/
+?? docs/work/BRIEF-HEDGE-PROP-20261027.md
+?? docs/work/BRIEF-PORTFOLIO-MANAGEMENT-20261026.md
+?? docs/work/CHG-JPW-HEDGE-PROP-CONTROLS-20261027.md
+?? docs/work/CHG-JPW-HEDGE-PROP-PRODUCT-20261027.md
+?? docs/work/CHG-JPW-HEDGE-RESEARCH-FRAME-CONTROLS-20261027.md
+?? docs/work/CHG-JPW-PORTFOLIO-MANAGEMENT-CONTROLS-20261026.md
+?? docs/work/CHG-JPW-PORTFOLIO-MANAGEMENT-PRODUCT-20261026.md
+?? src/js/30-accounting/07-management/
+?? src/js/40-app/32-prop-firms/
+?? tools/hedge_prop_browser_test.py
+?? tools/hedge_prop_distribution_test.py
+?? tools/hedge_prop_engine_test.js
+?? tools/management_account_flow_test.py
+?? tools/management_annual_engine_test.js
+?? tools/management_annual_state_test.js
+?? tools/management_annual_ui_test.py
+?? tools/management_dashboard_notes_test.js
+?? tools/management_distribution_test.py
+?? tools/management_guide_test.mjs
+?? tools/management_reserves_context_test.py
+?? tools/management_reserves_draft_test.py
+?? tools/management_visual_quality_test.py
+?? tools/portfolio_management_navigation_test.py

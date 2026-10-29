@@ -1,0 +1,73 @@
+{
+  "scope": "pure Hedge Prop engine only; no UI/manifest/build/browser/global-context writes",
+  "authority": "parent packet and BRIEF-HEDGE-PROP-20261027; branch codex/mesas-proprietarias-hedge-20261027; baseline 3e24f60f8cfe87f79335f40e95a0927379a9f834",
+  "timestampUTC": "2026-10-27T15:38:17.562390+00:00",
+  "runtime": "Node.js v24.19.0, /Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "command": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/hedge_prop_engine_test.js",
+  "result": "PASS",
+  "cases": 15,
+  "red": [
+    {
+      "file": "engine-red.txt",
+      "exitCode": 1,
+      "classification": "PRODUCT_FAIL",
+      "reason": "HEDGE-ENGINE-EXISTS assertion before creating implementation"
+    },
+    {
+      "file": "engine-extra-cost-red.txt",
+      "exitCode": 1,
+      "classification": "PRODUCT_FAIL",
+      "reason": "extra cost rows were accepted as COMPLETE; now all adjusted paths INVALID"
+    },
+    {
+      "file": "engine-payout-red.txt",
+      "exitCode": 1,
+      "classification": "PRODUCT_FAIL",
+      "reason": "unrepresentable payout identified wrong field; now payoutPercent"
+    }
+  ],
+  "green": {
+    "file": "engine-green.txt",
+    "exitCode": 0,
+    "classification": "PASS",
+    "cases": "15/15"
+  },
+  "syntax": {
+    "command": "node --check engine and test",
+    "classification": "PASS",
+    "exitCode": 0
+  },
+  "sha256": {
+    "src/js/40-app/32-prop-firms/01-engine.js": "c6b2c73296bcdbc97a3cbfc6b9be5581fe7d54ee6a295625dd7b0d5b6307640f",
+    "tools/hedge_prop_engine_test.js": "4eccddb28c638f5be70ebf8d2659159c76007e93d9bcbc2c4dc37c4fb47c2731"
+  },
+  "interface": {
+    "global": "JPWHedgeProp",
+    "export": "Object.freeze({ calculate })",
+    "status": [
+      "VALID",
+      "INVALID",
+      "INFEASIBLE",
+      "UNREPRESENTABLE"
+    ],
+    "costStatus": [
+      "COMPLETE",
+      "PENDING",
+      "INVALID"
+    ],
+    "ids": [
+      "evaluation-fail-0",
+      "evaluation-fail-1 when applicable",
+      "funded-fail",
+      "funded-pass",
+      "funded-no-receipt"
+    ],
+    "stageIndex": "zero based evaluation; null funded",
+    "costPolicy": "ideal remains VALID even if adjusted costs pending/invalid; costErrors separate; missingCostFields per path; no-receipt uses funded passUSD"
+  },
+  "limitations": [
+    "Focused tests only: full gate, browser integration and human acceptance are parent responsibilities; NOT_RUN in this subtask.",
+    "No financial approval or operational permission is asserted.",
+    "RED receipts are historical iterations; SHA256 identifies final GREEN candidate."
+  ]
+}

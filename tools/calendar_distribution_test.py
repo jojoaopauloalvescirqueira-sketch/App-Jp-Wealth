@@ -24,9 +24,10 @@ import traceback
 from zoneinfo import ZoneInfo
 
 from playwright.sync_api import sync_playwright, expect, TimeoutError as PlaywrightTimeout
-from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
+from browser_bootstrap_fixture import FEED_URL, install_bootstrap, wait_bootstrap, assert_fixture_requests
 from browser_fixture_server import BrowserFixtureServer
 from notes_launcher_test import Quiet, launch_options
+from calendar_economic_table_contract import assert_values, assert_layout, collapsed
 
 ROOT = Path(__file__).resolve().parents[1]
 PORTABLE = 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
@@ -34,7 +35,7 @@ MAIN_KEY = 'jpwealth_v9_state'
 PREFS_KEY = 'jpwealth_calendar_view_v1'
 PANEL = '#calendarDialog .calendar-panel'
 NOW = datetime(2026, 10, 23, 12, tzinfo=timezone.utc)
-CURRENCIES = ['USD', 'GBP', 'JPY', 'NZD', 'CHF']
+CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'NZD', 'CNY']
 IMPACTS = ['high', 'medium', 'low', 'unclassified']
 MODULES = ['src/js/10-domain/19-personal-agenda.js',
            'src/js/40-app/16-monthly-economic-data.js',
@@ -193,11 +194,11 @@ def read_pack_and_filters(page, packet, row):
     panel = open_calendar(page)
     assert_dots(page, packet, CURRENCIES, ['high'])
     panel.locator('[data-calendar-action="filters"]').click()
-    assert panel.locator('[data-calendar-currency]').count() == 5
+    assert panel.locator('[data-calendar-currency]').count() == 9
     assert set(panel.locator('[data-calendar-currency]').evaluate_all('es=>es.map(e=>e.value)')) == set(CURRENCIES)
     for impact in ('medium','low','unclassified'):
         panel.locator('[data-calendar-filter="impacts"][value="'+impact+'"]').check()
-    for currency in ('USD','JPY','NZD','CHF'):
+    for currency in (currency for currency in CURRENCIES if currency != 'GBP'):
         panel.locator('[data-calendar-filter="currencies"][value="'+currency+'"]').uncheck()
     row['filteredEconomicDayCounts'] = assert_dots(page, packet, ['GBP'], IMPACTS)
     chosen = expected_events(packet, ['GBP'], ['low'], start='2026-10-01', end='2026-10-31')[0]['date']
@@ -205,10 +206,13 @@ def read_pack_and_filters(page, packet, row):
     expected_ids = sorted(e['id'] for e in expected_events(packet, ['GBP'], IMPACTS, start=chosen, end=chosen))
     expect(panel.locator('[data-calendar-economic-id]')).to_have_count(len(expected_ids))
     assert sorted(panel.locator('[data-calendar-economic-id]').evaluate_all('es=>es.map(e=>e.dataset.calendarEconomicId)')) == expected_ids
+    selected_events=query(page,currencies=['GBP'],impacts=IMPACTS,start=chosen,end=chosen)['events']
+    row['economicTableValues']=assert_values(panel,selected_events)
+    row['economicTableGeometry']=assert_layout(panel);collapsed(panel)
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     assert 'GBP' in panel.locator('.calendar-source-list').inner_text()
     assert_source_disclosures(panel, packet, row)
-    for currency in ('USD','JPY','NZD','CHF'):
+    for currency in (currency for currency in CURRENCIES if currency != 'GBP'):
         panel.locator('[data-calendar-filter="currencies"][value="'+currency+'"]').check()
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     panel.locator('[data-calendar-action="filters"]').click()
@@ -282,6 +286,9 @@ def run_case(browser, root, url, name, packet, row):
     context = browser.new_context(viewport={'width':1280,'height':900},
                                   timezone_id='UTC', service_workers='allow' if name=='pwa-offline' else 'block')
     install_bootstrap(context)
+    # This check proves the unchanged shipped fallback in each distribution.
+    # The real shared v2 transport pipeline is exercised by ff_news_cache_test.
+    context.route(FEED_URL,lambda route:route.fulfill(status=503,body='Synthetic unavailable public feed'))
     context.add_init_script('window.__onbShown=true;')
     page = context.new_page()
     page.clock.set_fixed_time(NOW)

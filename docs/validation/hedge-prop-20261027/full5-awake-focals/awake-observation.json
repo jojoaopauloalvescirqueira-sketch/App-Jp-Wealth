@@ -1,0 +1,15 @@
+{
+  "captured_at_client": "2026-10-28T00:52:29.042469-03:00",
+  "command": "pmset -g assertions",
+  "observed_guard_lines": [
+    "   pid 81074(caffeinate): [0x001098250001970a] 00:01:08 PreventUserIdleSystemSleep named: \"caffeinate command-line tool\"  ",
+    "\tDetails: caffeinate asserting on behalf of Process ID 81072",
+    "\tCreated for PID: 81072. ",
+    "\tLocalized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.",
+    "   pid 81074(caffeinate): [0x001098250005970b] 00:01:08 PreventUserIdleDisplaySleep named: \"caffeinate command-line tool\"  ",
+    "\tDetails: caffeinate asserting on behalf of Process ID 81072",
+    "\tCreated for PID: 81072. ",
+    "\tLocalized=THE CAFFEINATE TOOL IS PREVENTING SLEEP."
+  ],
+  "scope": "Focal supervision; documentary read only"
+}

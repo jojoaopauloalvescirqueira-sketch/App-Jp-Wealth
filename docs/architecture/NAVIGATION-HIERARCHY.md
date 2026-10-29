@@ -1,3 +1,15 @@
+# Portfólio e Gerenciamento — contrato vigente 26/10/2026
+
+Plano humano e isolamento `codex/portfolio-gerenciamento-20261026`, base `3e24f60`. Ordem padrão: Dashboard → Portfólio → Gerenciamento → Planejamento → Forex → Finanças Pessoais → Alladin → Ferramentas e Serviços, respeitando congelamento. Preferências personalizadas válidas conservam a ordem relativa; Gerenciamento é inserido após Portfólio em memória, sem regravação automática.
+
+Portfólio conserva o ID `research`; tem apenas Análise (`research-forex`) e os estudos Nocuda/Pivots existentes. Placeholders de outras pesquisas deixam a navegação e suas rotas antigas encaminham a Análise. Identidades de dados e progresso continuam preservadas.
+
+Gerenciamento (`management`) tem Reservas (`management-reserves`, tela `fxreserves`) e Caixa Anual (`management-accounting`, tela `management`). Sua disponibilidade é independente de Forex. Seleção própria de conta/período vive em memória e não altera `operationalSelection`. Antigos `forex-reserves`, `forex-accounting`, `forex-reconciliation`, `contab` e `exec/accounting` passam pelo resolvedor e pelas guardas antes de encaminhar. Sem permissão de navegação, nada é selecionado ou gravado.
+
+Dashboard, Notas, busca e Dante refletem essas responsabilidades, preservando IDs e conteúdo anteriores. [Contrato anual](MANAGEMENT-ANNUAL.md). Esta especificação não comprova aprovação visual humana nem resultado do gate; evidências do candidato em `docs/validation/portfolio-management-20261026`.
+
+## Fotografias anteriores preservadas
+
 # Ferramentas — retirada do Nocuda Tool em 26/10/2026
 
 Submenu atual: Calendário e Mercados (`tools-calendar`), Stoikus (`tools-leverage`), Estrutura Normativa (`tools-normative`) e MiniGames (`tools-minigames`). `tools-nocuda`, `navigateLocal('tools','nocuda')` e a chamada antiga de visão encaminham ao Stoikus, com aviso somente após aceite. Diálogos e rascunhos conservam suas guardas. A rota retirada não integra catálogo nem submenu.
@@ -540,3 +552,8 @@ Laboratório de Probabilidade passa a Configurações → Conhecimento → Labor
 Ferramentas e Serviços acrescenta `tools-normative`, visão local `tools/normative`, título Estrutura Normativa JP Wealth. Os aliases `normative` e `estrutura-normativa` selecionam o mesmo owner. A seleção é efêmera e não acrescenta router ou persistência de navegação. A saída aceita de Tools chama `JPWNormativeReader.leave()` depois dos guards existentes.
 
 Cartões, fatos, leituras de domínio e âncoras do Dashboard usam uma única projeção ativa. Forex congelado também oculta sua Governança do período e Log de Auditoria; saúde global da base, backup e cotações permanece. Nenhuma preferência de ordem, histórico de validação, dado financeiro ou gate é reescrito.
+
+
+## Hedge Prop Firm —27/10/2026
+
+Nova rota `tools-prop-firms`: Ferramentas e Serviços → Mesas Proprietárias, antes de MiniGames. Hedge Prop Firm é o primeiro tópico local, sem ampliar o shell de terceiro nível. Respeita navegação aceita e funciona independentemente de Forex. [Contrato](HEDGE-PROP-FIRM.md).

@@ -1,0 +1,11 @@
+{
+  "classification": "TEST_HARNESS_FAIL",
+  "raw_receipt": "counterproofs-final/receipt.json",
+  "raw_classification_preserved": "PASS",
+  "reason": "v1 matcher searched full traceback and matched the expected marker literal at its own callsite; CP05 actually failed No horizontal overflow before header/cell bound assertion",
+  "affected_claim": "The initial12/12 result is not approval of12 properties",
+  "CP05_actual_rejection": "('No horizontal overflow', [{'name': 'calendar-panel', 'scroll': 1122, 'client': 1122}, {'name': 'calendar-body', 'scroll': 1122, 'client': 1122}, {'name': 'calendar-agenda', 'scroll': 740, 'client': 735}, {'name': 'calendar-event-economic', 'scroll': 735, 'client': 735}, {'name': 'calendar-event-economic', 'scroll': 735, 'client': 735}, {'name': 'calendar-event-economic', 'scroll': 735, 'client': 735}, {'name': 'calendar-event-economic', 'scroll': 735, 'client': 735}, {'name': 'calendar-event-economic', 'scroll': 735, 'client': 735}, {'name': 'calendar-event-economic', 'scroll': 735, 'client': 735}])",
+  "CP05_expected_message_present": false,
+  "frozen_candidates_changed": false,
+  "correction": "Scratch launcher v2 matches exception message plus exact final helper frame/function/line bound to helper SHA; CP08 uses its exact source statement because error message is empty. CP05 shifts last header -5px to avoid horizontal overflow."
+}

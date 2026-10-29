@@ -200,7 +200,7 @@ function renderPivotStudies() {
   if (!math) return;
 
   const options = pvEnsureSelection();
-  const head = `<header class="cp-study-head"><div><p class="cp-eyebrow">Research · caderno de observações</p><h2>Estudos dos Pivots</h2></div><span class="cp-study-limit">Memória empírica · não autoriza operação</span></header>`;
+  const head = `<header class="cp-study-head"><div><p class="cp-eyebrow">Portfólio · Análise · caderno de observações</p><h2>Estudos dos Pivots</h2></div><span class="cp-study-limit">Memória empírica · não autoriza operação</span></header>`;
 
   if (!options.length) {
     root.innerHTML = `<div class="card">${head}

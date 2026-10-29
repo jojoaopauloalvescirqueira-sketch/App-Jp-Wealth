@@ -1,0 +1,1 @@
+{"status": "PASS", "cases": ["explicit Stay and returned focus", "context-scoped Preserve", "explicit Discard", "Escape", "cross-module and same-module navigation decision", "original context restore", "captured revision preserved", "read-only draft recovery", "stale write refusal", "operational selection unchanged", "confirmed write clears recovery draft", "RAM reset"]}

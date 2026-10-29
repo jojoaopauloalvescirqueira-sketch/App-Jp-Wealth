@@ -1,0 +1,33 @@
+{
+  "url": "http://127.0.0.1:57622/index.html?v=aabc8d09faff4aee",
+  "build": "aabc8d09faff4aee",
+  "checks": [
+    {
+      "path": "index.html",
+      "httpMatchesDisk": true,
+      "sha256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3"
+    },
+    {
+      "path": "build-id.js",
+      "httpMatchesDisk": true,
+      "sha256": "e09a14541af933658c25e929e5ff712ebcc79c8f55ea5605c4ac573894f36247"
+    },
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "httpMatchesDisk": true,
+      "sha256": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518"
+    },
+    {
+      "path": "src/styles/app.css",
+      "httpMatchesDisk": true,
+      "sha256": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e"
+    },
+    {
+      "path": "src/js/manifest.json",
+      "httpMatchesDisk": true,
+      "sha256": "baa7671404747d22ee815d065f4cdf42398cb1f716ae7813645f4ab3057c1360"
+    }
+  ],
+  "serverSession": 68205,
+  "note": "Origem local nova, sem limpar ou transferir armazenamento pessoal. FULL pendente do deltaFFV3."
+}

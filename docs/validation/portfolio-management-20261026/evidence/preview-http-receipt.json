@@ -1,0 +1,17 @@
+{
+  "url": "http://127.0.0.1:62421/",
+  "financial_writes": 0,
+  "index.html": {
+    "status": 200,
+    "bytes": 537769,
+    "matches_candidate": true,
+    "sha256": "f5151771267b44587b129c56e74f3d1383df77145345948ee24ab9f9cbae14fa"
+  },
+  "build-id.js": {
+    "status": 200,
+    "bytes": 37228,
+    "matches_candidate": true,
+    "sha256": "f951f6cc5d660994175b02f9154de1c353719bed1ed141fc73be70af6bac1cf9"
+  },
+  "contains_expected_build": true
+}

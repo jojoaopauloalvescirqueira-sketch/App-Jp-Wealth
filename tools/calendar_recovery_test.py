@@ -92,23 +92,30 @@ def import_containers(page, _dialogs):
 
 def backup_roundtrip(page, _dialogs):
     seed(page)
-    result = page.evaluate("""async input => {
+    result = page.evaluate("""async ({input,preferences}) => {
       const created=JPWAgenda.commands.save({input,token:JPWAgenda.queries.prepare({id:null}).token});
       if(!created.ok)throw Error(JSON.stringify(created));
       S.personalAgenda.extension={opaque:['aggregate',9]};S.personalAgenda.items[0].extension={opaque:'item'};
       if(save()!==true)throw Error('Synthetic compatible extensions were refused');JPWAgenda.commands.resetContext();
+      const key='jpwealth_calendar_view_v1',preferenceRaw=JSON.stringify(preferences);localStorage.setItem(key,preferenceRaw);
+      const publicKey='jpwealth.ui.ffNews.v1';localStorage.setItem(publicKey,JSON.stringify({fetchedAt:Date.now(),payload:{version:1,generated_at:new Date().toISOString(),events:[]}}));
+      const publicCacheExists=localStorage.getItem(publicKey)!==null;
       const before=JSON.stringify(S.personalAgenda),blob=dgBuildBackupBlob(1,'synthetic-calendar.json',new Date().toISOString());
       const file=new File([blob],'synthetic-calendar.json',{type:'application/json'});
       const parsed=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(JSON.parse(reader.result));reader.onerror=()=>reject(reader.error);reader.readAsText(file);});
       const oldRoot=S,oldRaw=localStorage.getItem(LSKEY),normalized=normalizeImportedState(parsed);
       return {created,fromFile:parsed.state.personalAgenda,roundtrip:normalized.personalAgenda,exact:JSON.stringify(normalized.personalAgenda)===before,
+        preferenceRaw,exportedPreference:parsed.workspace.preferences[key],recoveredPreference:normalized.workspaceRecovery.snapshot.preferences[key],
+        publicCacheExists,publicCacheExcluded:!Object.hasOwn(parsed.workspace.preferences,publicKey),
         currentUnchanged:S===oldRoot&&localStorage.getItem(LSKEY)===oldRaw,hasCoverage:parsed.cobertura.sections.includes('personalAgenda')};
-    }""", TASK)
+    }""", {'input': TASK, 'preferences': {**PREFS, 'currencies': ['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY']}})
     assert result['exact'] and result['currentUnchanged'] and result['hasCoverage'], result
     assert result['roundtrip']['items'][0]['date'] == '2026-09-14'
     assert result['roundtrip']['items'][0]['extension'] == {'opaque': 'item'}
     assert result['roundtrip']['extension'] == {'opaque': ['aggregate', 9]}
-    return {'blob_file_reader_normalizer_exact': True, 'item_id': result['created']['id']}
+    assert result['exportedPreference']==result['preferenceRaw']==result['recoveredPreference'],result
+    assert result['publicCacheExists'] and result['publicCacheExcluded'],result
+    return {'blob_file_reader_normalizer_exact': True, 'nineCurrenciesPreferenceExact':True,'publicCacheExcluded':True,'item_id': result['created']['id']}
 
 
 def future_opaque(page, _dialogs):
@@ -135,12 +142,13 @@ def preference_boundary(page, _dialogs):
     result = page.evaluate("""({key,preferences}) => {
       const validRaw=JSON.stringify(preferences),before=localStorage.getItem(LSKEY),source=JSON.stringify(S);
       const check=value=>{try{jpwWorkspaceValidate({schemaVersion:2,preferences:{[key]:JSON.stringify(value)},drafts:[]});return true;}catch(error){return false;}};
-      const valid=check(preferences),invalid=[{...preferences,schemaVersion:99},{...preferences,currencies:['EUR']},{...preferences,impacts:['critical']},{...preferences,contents:['forex']},{...preferences,contents:'personal'},[]].map(check);
+      const valid=check(preferences),expanded=check({...preferences,currencies:['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY']}),invalid=[{...preferences,schemaVersion:99},{...preferences,currencies:['XXX']},{...preferences,impacts:['critical']},{...preferences,contents:['forex']},{...preferences,contents:'personal'},[]].map(check);
       let captured=null,captureError=null;localStorage.setItem(key,validRaw);
       try{captured=jpwWorkspaceCapture().preferences[key];}catch(error){captureError=error.message;}
-      return {valid,invalid,captured,captureError,stateUnchanged:source===JSON.stringify(S),diskUnchanged:before===localStorage.getItem(LSKEY)};
+      return {valid,expanded,invalid,captured,captureError,stateUnchanged:source===JSON.stringify(S),diskUnchanged:before===localStorage.getItem(LSKEY)};
     }""", {'key': PREFS_KEY, 'preferences': PREFS})
     assert result['valid'], 'Known Calendar preference must be accepted by the workspace allowlist: '+repr(result)
+    assert result['expanded'], 'All nine approved currency filters must be accepted without resetting the old preference: '+repr(result)
     assert result['invalid'] == [False]*6, 'Calendar enum/schema/container validation must reject invalid imported preferences: '+repr(result)
     assert result['captured'] == json.dumps(PREFS, separators=(',', ':')), result
     assert result['stateUnchanged'] and result['diskUnchanged'], result

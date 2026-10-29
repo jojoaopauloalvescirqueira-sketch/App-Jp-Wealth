@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Forex table navigation: six destinations, one History, isolated workspaces.
+"""Forex table navigation: four operational destinations; management aliases, one History, isolated workspaces.
 Synthetic fresh browser contexts; no financial fixture or external network.
 """
 from functools import partial
@@ -13,13 +13,10 @@ from notes_launcher_test import launch_options
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT = Path(__file__).resolve().parents[1]
-CHILDREN = ['forex-consolidated', 'forex-management-accounts', 'forex-operation', 'forex-history',
-            'forex-accounting', 'forex-reserves']
-LABELS = ['Desempenho', 'Histórico de operações', 'Operação', 'Contas e Períodos',
-          'Contabilidade', 'Reservas']
+CHILDREN = ['forex-consolidated', 'forex-management-accounts', 'forex-operation', 'forex-history']
+LABELS = ['Desempenho', 'Histórico de operações', 'Operação', 'Contas e Períodos']
 VIEWS = [('forex-operation', 'panel', 'executionBoard'),
          ('forex-history', 'history', 'execHistory'),
-         ('forex-accounting', 'accounting', 'contab'),
          ('forex-management-accounts', 'accounts', 'contas'),
          ('motor', 'panel', 'executionBoard')]
 
@@ -41,11 +38,11 @@ def main():
                 page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page)
                 assert page.evaluate("JPWNavigation.children('forex').map(r=>r.id)") == CHILDREN
                 assert page.locator('#execNavSubmenu [data-nav-child] .nav-sub-item-title').all_text_contents() == LABELS
-                assert page.locator('#execNavSubmenu [data-nav-child]').count() == 6
-                assert page.evaluate("execHistory.parentElement.id==='exec'&&!contab.contains(execHistory)")
+                assert page.locator('#execNavSubmenu [data-nav-child]').count() == 4
+                assert page.evaluate("execHistory.parentElement.id==='exec'&&!document.querySelector('#management')?.contains(execHistory)&&!document.querySelector('#contab')")
                 page.evaluate("""() => {
                   window.__navBefore=JSON.stringify(S); window.__navRaw=JSON.stringify({...localStorage});
-                  window.__navNodes=['executionBoard','execWidgetGrid','execHistory','contab','contas','motorWidgetGrid'].map(id=>document.getElementById(id));
+                  window.__navNodes=['executionBoard','execWidgetGrid','execHistory','contas','motorWidgetGrid'].map(id=>document.getElementById(id));
                   window.__navWrites=[];
                   for(const method of ['setItem','removeItem','clear']){const original=Storage.prototype[method];Storage.prototype[method]=function(...args){__navWrites.push(method);return original.apply(this,args);};}
                 }""")
@@ -54,17 +51,21 @@ def main():
                         assert page.evaluate('(r)=>JPWNavigation.navigate(r)', route)
                         assert page.evaluate('JPWExec.ui.getView()') == view
                         assert page.locator('#'+host).is_visible(), (layout, route, host)
-                        assert page.evaluate("""host=>['executionBoard','execHistory','contab','contas','motorWidgetGrid']
+                        assert page.evaluate("""host=>['executionBoard','execHistory','contas','motorWidgetGrid']
                           .filter(id=>id!==host).every(id=>document.getElementById(id).hidden&&document.getElementById(id).inert)""", host)
                         assert page.evaluate("(view)=>execWidgetGrid.hidden===(view!=='panel')", view)
                         if route=='motor':
                             assert page.locator('#ebToolsBody:not([hidden])').is_visible()
-                for alias, child, view in [('history', 'forex-history', 'history'), ('contab', 'forex-accounting', 'accounting'),
-                    ('forex-reconciliation', 'forex-accounting', 'accounting'), ('contas','forex-management-accounts','accounts'),
+                for alias, child, view in [('history', 'forex-history', 'history'), ('contas','forex-management-accounts','accounts'),
                     ('forex-account','forex-management-accounts','accounts'), ('motor','forex-operation','panel')]:
                     assert page.evaluate('(r)=>JPWNavigation.navigate(r)', alias)
                     assert page.evaluate('JPWNavigation.current().child') == child
                     assert page.evaluate('JPWExec.ui.getView()') == view
+                for alias in ['contab','forex-reconciliation','forex-accounting','exec-accounting']:
+                    assert page.evaluate('(r)=>JPWNavigation.navigate(r)', alias)
+                    assert page.evaluate('JPWNavigation.current().child') == 'management-accounting'
+                    assert page.locator('#management').is_visible()
+                    assert page.evaluate("JPWNavigation.current().primary") == 'management'
                 # Moving between workspaces is presentation only and conserves exact nodes.
                 assert page.evaluate('JSON.stringify(S)===__navBefore&&JSON.stringify({...localStorage})===__navRaw&&__navWrites.length===0')
                 assert page.evaluate('__navNodes.every(el=>el===document.getElementById(el.id))')

@@ -196,7 +196,7 @@ def assert_structure(page, expected):
     }""", expected)
     expected_parent = "appSidebar" if expected == "sidebar" else "submenuNavStage" if expected == "submenu" else "gdTopbarNavSlot"
     assert result["navParent"] == expected_parent, result
-    assert result["primaryCount"] == 7 and result["duplicateIds"] == [], result
+    assert result["primaryCount"] == 8 and result["duplicateIds"] == [], result
     if expected == "sidebar":
         assert result["shellInSidebar"] and result["execParent"] == result["researchParent"] == "navLocalSlot", result
     elif expected == "topbar":
@@ -551,10 +551,10 @@ def glass_panel_closed(page, restore=False):
 def module_entry_keys(page, layout, evidence):
     # N3 remains in the topbar's module panel. Entering N2 from its trigger
     # must never pick a hidden N3 item simply because it is last in DOM order.
-    cases = [('forex-overview', 'exec', 'forex-consolidated', 'forex-reserves'),
-             ('forex-operation', 'exec', 'forex-operation', 'forex-reserves'),
-             ('research-forex', 'research', 'research-forex', 'research-reits'),
-             ('pivots', 'research', 'research-forex', 'research-reits')]
+    cases = [('forex-overview', 'exec', 'forex-consolidated', 'forex-management-accounts'),
+             ('forex-operation', 'exec', 'forex-operation', 'forex-management-accounts'),
+             ('research-forex', 'research', 'research-forex', 'research-forex'),
+             ('pivots', 'research', 'research-forex', 'research-forex')]
     for route, module, current_child, last_child in cases:
         if layout == 'sidebar':
             # Approved N1 arrows move between parents; Right enters the inline
@@ -757,7 +757,7 @@ def run_submenu(browser, url, evidence):
         assert page.get_attribute('html', 'data-submenu-level') == '3'
         assert page.evaluate('JPWNavigation.current()') == before
         visible_titles = page.locator('#researchNavSubmenu button').evaluate_all("els=>els.filter(e=>e.getClientRects().length).map(e=>e.querySelector('.nav-sub-item-title').textContent.trim())")
-        assert visible_titles == ['NoCoda', 'Pivots'], visible_titles
+        assert visible_titles == ['Estudos Nocuda', 'Estudos de Pivots'], visible_titles
         page.keyboard.press('ArrowLeft')
         assert page.get_attribute('html', 'data-submenu-level') == '2'
         assert page.locator('[data-nav-child="research-forex"]').evaluate('e=>e===document.activeElement')

@@ -1,0 +1,27 @@
+captured_local: 2026-10-28T11:17:53.199850-03:00
+ps selectedPIDs84802,84806,84808 exit: 1
+
+pmset -g assertions exit: 0
+2026-10-28 11:17:53 -0300 
+Assertion status system-wide:
+   BackgroundTask                 0
+   ApplePushServiceTask           0
+   UserIsActive                   1
+   PreventUserIdleDisplaySleep    0
+   SoftwareUpdateTask             0
+   PreventSystemSleep             0
+   PreventSystemSleepSecurityIndicator 0
+   ExternalMedia                  0
+   InternalPreventDisplaySleep    1
+   PreventUserIdleSystemSleep     1
+   NetworkClientActive            0
+Listed by owning process:
+   pid 414(powerd): [0x001116f800018844] 00:59:13 PreventUserIdleSystemSleep named: "Powerd - Prevent sleep while display is on"  
+   pid 414(powerd): [0x0011238f00108771] 00:02:28 InternalPreventDisplaySleep named: "com.apple.powermanagement.delayDisplayOff"  
+	Timeout will fire in 152 secs Action=TimeoutActionTurnOff
+   pid 843(sharingd): [0x00112450000196c1] 00:02:17 PreventUserIdleSystemSleep named: "Handoff"  
+   pid 470(WindowServer): [0x0011227800099449] 00:00:00 UserIsActive named: "com.apple.iohideventsystem.queue.tickle serviceID:1000890af service:AppleUserHIDEventService product:MX KEYS S eventType:3"  
+	Timeout will fire in 600 secs Action=TimeoutActionRelease
+   pid 463(bluetoothd): [0x001124cc00019741] 00:00:13 PreventUserIdleSystemSleep named: "com.apple.BTStack"  
+Kernel Assertions: 0x100=MAGICWAKE
+   id=556  level=255 0x100=MAGICWAKE creat=11/10/26, 17:54  mod=25/10/26, 22:12 description=en0 owner=IOSkywalkNetworkBSDClient

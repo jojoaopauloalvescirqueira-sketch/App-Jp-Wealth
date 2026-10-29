@@ -1,0 +1,194 @@
+{
+  "baselineBuild": "5b4ef1141c9583bf",
+  "currentBuild": "aabc8d09faff4aee",
+  "baselineFileCountExcludingValidation": 1643,
+  "unchanged": 1625,
+  "changed": {
+    "build-id.js": {
+      "before": "5a92c19927124f9607d24501afe2c4d06c4b05e4715ff10a66936fe8b10ee9df",
+      "after": "e09a14541af933658c25e929e5ff712ebcc79c8f55ea5605c4ac573894f36247"
+    },
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": {
+      "before": "e65635e89ccda8047038a4a0c6a2736bfb509d06f05077cebf5ee538c2792566",
+      "after": "f0a148398d853156dd0a42d56d98199ae2b4ba859409a19771a4658f434e1db7"
+    },
+    "docs/architecture/CALENDAR-AGENDA.md": {
+      "before": "bee949446e0fe9a7748efb4f36d30495121e992b9fbd371025c713467b9f771e",
+      "after": "600aa91c82a7920e6f172cda9c24548b9fc00347b6216760be4494d69425bc6b"
+    },
+    "docs/work/ACTIVE-TASK.md": {
+      "before": "d33ce967f28de1ec34aaf3c934473f5f1f8a848ebe485599f8505ac6056406ef",
+      "after": "edf7f98b3c80228b3b4a19a90b73cc5d4358418b9cb8b7824ffc05856db69ce8"
+    },
+    "src/js/40-app/19-calendar-agenda.js": {
+      "before": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+      "after": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518"
+    },
+    "src/js/manifest.json": {
+      "before": "11b6e2a9e8e510eb6163a3e12ad5bea56ccfc527032184b1bc8e0340f4e44223",
+      "after": "baa7671404747d22ee815d065f4cdf42398cb1f716ae7813645f4ab3057c1360"
+    },
+    "src/styles/app.css": {
+      "before": "3bc75488d2013b5b5febc435a05c6cd5183317fb353a6c2cbaaf8396f7255b47",
+      "after": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e"
+    },
+    "src/vendor/downloads/leverage-daily-source-payload.js": {
+      "before": "853d2b74abad0d43f9481a34d715d4738580061bdbd2ee98f91eff6602539229",
+      "after": "f3d0ff09d047b5b34c0545191fe991e7d44caf6098d4ab2a491106afd72ed678"
+    },
+    "src/vendor/downloads/leverage-native-kit-payload.js": {
+      "before": "77d1a44c14a654dfe7b2ddc16df985ebb5af3de23fc47dc4a2918f4a06e5ed8a",
+      "after": "efdfbbba6cfad7522f05188ce3dc1608fb580d9904328901ac2a849ec5b9e132"
+    },
+    "src/vendor/downloads/leverage-native-pin-payload.js": {
+      "before": "e01a7d8d5f344bc657bb6cbceea1f0e09538f715270ff30c4ff6b2cfba3d66f1",
+      "after": "cfc4435a208311bce91ce3ac5aaece29e5e73ca94b2c4d32c0371fc3931fe2e0"
+    },
+    "src/vendor/downloads/leverage-preview-payload.js": {
+      "before": "8ac3d9e9147c67e7138a7f308bff30391940dc9e6b3f21e77691fb4d06abf501",
+      "after": "852be3a53245a27e280b4bf5dc4d15b66d3d5f584b70b9837497269f1556cb54"
+    },
+    "src/vendor/downloads/leverage-preview-payload.json": {
+      "before": "8bb5eb81d7f7d38f05cbfc5720c3c982c8e4c9c3eea958a275bf5ff63ce51289",
+      "after": "9e8b274a7d2ba89f0cc171c5c953c7dabdd704d29e384bd4028e3c14685d6418"
+    },
+    "src/vendor/downloads/leverage-source-payload.js": {
+      "before": "6d176829855d4803c33bc4107b01c9e20e1f324502f444105229d82c635a879a",
+      "after": "c08afb44fb3abb69768c8f604cc7c76aeb1e326d2c68e42f546b85baeca40f37"
+    },
+    "src/vendor/market-hours/runtime-payload.js": {
+      "before": "d89e8fee6f4c2f2733054bb182f34f31c1b8c4db4dfc99983eaa1df84a946304",
+      "after": "5624be38b668d107daef07a94eec7c577d9006acbd7d5c42623fdff6763568a4"
+    },
+    "tools/calendar_agenda_test.py": {
+      "before": "3eaf710b4a63c5302a394bf905e2ffd094c7ab61303b5d64dc9223df3c3104de",
+      "after": "655556061f9fbbecd28f73de0861ac2e05741a658d7da0777b2591da28ab7ddd"
+    },
+    "tools/calendar_distribution_test.py": {
+      "before": "39b43a33a40d3f911f806b82364348c7a5498f0d542001b6ac8b06e6aa906570",
+      "after": "cbaf54be1a5dd0ebecf80773158a86453f849fbf0ab8734a1ad32376065003a9"
+    },
+    "tools/calendar_visual_quality_test.py": {
+      "before": "0c5c948231a87ec3ce5e1e51292c96ef1e58b0b6865faa161d63014c144da883",
+      "after": "b883b966e1be638707da5c53999392cfc6ae02da36440500ddd18fc12970b95f"
+    },
+    "tools/ff_news_cache_test.py": {
+      "before": "5a2821e0330885af5b589cf0d3fdd66603be451eed3209190f65a5b1ac9a9f42",
+      "after": "a3f3a00c5a1ff8e1059bc7eb1fd8c69870a5ecf48d1ea2020b8033503194862a"
+    }
+  },
+  "removed": [],
+  "newRegularFiles": [
+    "docs/superpowers/plans/2026-10-28-economic-calendar-table.md",
+    "docs/work/BRIEF-ECONOMIC-CALENDAR-TABLE-20261028.md",
+    "docs/work/CHG-JPW-ECONOMIC-CALENDAR-TABLE-CONTROLS-20261028.md",
+    "docs/work/CHG-JPW-ECONOMIC-CALENDAR-TABLE-PRODUCT-20261028.md",
+    "tools/calendar_economic_table_contract.py"
+  ],
+  "payloadComparisons": [
+    {
+      "path": "src/vendor/downloads/leverage-daily-source-payload.js",
+      "onlySingleBuildIdReplacement": true
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-kit-payload.js",
+      "onlySingleBuildIdReplacement": true
+    },
+    {
+      "path": "src/vendor/downloads/leverage-native-pin-payload.js",
+      "onlySingleBuildIdReplacement": true
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.js",
+      "onlySingleBuildIdReplacement": true
+    },
+    {
+      "path": "src/vendor/downloads/leverage-preview-payload.json",
+      "onlySingleBuildIdReplacement": true
+    },
+    {
+      "path": "src/vendor/downloads/leverage-source-payload.js",
+      "onlySingleBuildIdReplacement": true
+    },
+    {
+      "path": "src/vendor/market-hours/runtime-payload.js",
+      "onlySingleBuildIdReplacement": true
+    }
+  ],
+  "archiveSHA256": "5c50501d04c0207027e1f9a9d43bc6980b25dad88fd827433d9058af7c3d9d3d",
+  "scope": "READ_ONLY; docs/validation excluded; FULL in progress, not judged",
+  "originalsMatchBaseline": {
+    "build-id.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "docs/architecture/CALENDAR-AGENDA.md": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "docs/work/ACTIVE-TASK.md": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/js/40-app/19-calendar-agenda.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/js/manifest.json": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/styles/app.css": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/downloads/leverage-daily-source-payload.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/downloads/leverage-native-kit-payload.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/downloads/leverage-native-pin-payload.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/downloads/leverage-preview-payload.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/downloads/leverage-preview-payload.json": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/downloads/leverage-source-payload.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "src/vendor/market-hours/runtime-payload.js": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "tools/calendar_agenda_test.py": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "tools/calendar_distribution_test.py": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    },
+    "tools/calendar_visual_quality_test.py": {
+      "source": "original HEAD (not pending at baseline)",
+      "matchesBaselineHash": true
+    },
+    "tools/ff_news_cache_test.py": {
+      "source": "baseline-pending.tar.gz",
+      "matchesBaselineHash": true
+    }
+  }
+}

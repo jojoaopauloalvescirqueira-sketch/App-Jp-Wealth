@@ -1,0 +1,30 @@
+{
+  "classification": "PASS",
+  "scope": "Supplemental screenshots of real headless app at scrollY=0; synthetic parameters only",
+  "captures": [
+    {
+      "file": "browser-desktop.png",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "theme": "light",
+      "scrollY": 0,
+      "sha256": "ee924f4307aa1226ff9145a18977784253da289245ae45de714b3d86f23d508a"
+    },
+    {
+      "file": "browser-mobile.png",
+      "viewport": [
+        390,
+        844
+      ],
+      "theme": "dark",
+      "scrollY": 0,
+      "sha256": "08e9c50cffd37843ba3439b5395ed8d99b4de89747f814e077a61f44febaac7e"
+    }
+  ],
+  "source_sha256": {
+    "src/styles/app.css": "157d086b68eecf36c2a42c43a71960b4414ad5017b8d1bddec2ee3e8fdc83cbf",
+    "src/js/40-app/32-prop-firms/02-ui.js": "f7a5021242b1f8d5638f23cec22a891387bf1d39ad6a534cecbed896cce01c66"
+  }
+}

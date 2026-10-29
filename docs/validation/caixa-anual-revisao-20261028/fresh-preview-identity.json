@@ -1,0 +1,26 @@
+{
+  "verifiedAt": "2026-10-28T12:47:33.227258-03:00",
+  "url": "http://127.0.0.1:61534/index.html?v=fc1a41530cdc4569",
+  "build": "fc1a41530cdc4569",
+  "origin": "new local origin, original browser data not transferred or cleared",
+  "resources": [
+    {
+      "path": "index.html",
+      "http": 200,
+      "sha256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+      "equalLocal": true
+    },
+    {
+      "path": "build-id.js",
+      "http": 200,
+      "sha256": "0b1d376887c7bc1ccdccb6f9df0798e694f01aba1bdc4c9e87e51d1077b11537",
+      "equalLocal": true
+    },
+    {
+      "path": "src/js/30-accounting/07-management/03-ui.js",
+      "http": 200,
+      "sha256": "00587fd09e36616eb607332647256ff9010d140c35841605dc8a29483d46ca5c",
+      "equalLocal": true
+    }
+  ]
+}

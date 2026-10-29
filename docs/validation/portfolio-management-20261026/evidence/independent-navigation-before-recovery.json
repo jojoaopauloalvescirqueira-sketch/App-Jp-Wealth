@@ -1,0 +1,400 @@
+{
+  "review": "Final navigation, integration and preservation source audit",
+  "created_at": "2026-10-26T23:13:55.085096+00:00",
+  "mode": "READ_ONLY_SOURCE_REVIEW; no tests, browser, Git mutation, product or test edits",
+  "candidate_build": "ae2189c2ba4ab31a",
+  "full_gate": {
+    "status": "RUNNING_AS_REPORTED_BY_PARENT",
+    "session": 43157,
+    "result_observed_by_this_reviewer": false,
+    "note": "This report neither concludes nor replaces the final FULL result."
+  },
+  "scope_limit": {
+    "independence": "Independent review of parent-authored Dashboard, Notes, guide/progress and annual integration; self-review for navigation, ordering, module ownership, Reservas adapter/guards and shared account flow authored by this reviewer. Separate independent critic previously reviewed shared account patch without blocker.",
+    "runtime": "No browser, native zoom, synthetic financial command or visual acceptance executed in this final review."
+  },
+  "blocking_findings": [],
+  "verified_by_source": [
+    {
+      "criterion": "Portfólio / Análise exposes only the two approved studies",
+      "status": "CONFIRMED_STATIC",
+      "observed": "research internal identity retained; one Análise child; nocoda and pivots only public local views. Old Stocks/REITs/Outras placeholders are compatibility redirects, not public destinations. Existing study renderers and storage identities retained.",
+      "references": [
+        {
+          "path": "index.html",
+          "line_start": 284,
+          "line_end": 297
+        },
+        {
+          "path": "index.html",
+          "line_start": 328,
+          "line_end": 332
+        },
+        {
+          "path": "index.html",
+          "line_start": 1131,
+          "line_end": 1136
+        },
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 14,
+          "line_end": 20
+        },
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 69,
+          "line_end": 72
+        },
+        {
+          "path": "src/js/20-ui/23-research-views.js",
+          "line_start": 6,
+          "line_end": 14
+        },
+        {
+          "path": "src/js/20-ui/23-research-views.js",
+          "line_start": 29,
+          "line_end": 41
+        }
+      ]
+    },
+    {
+      "criterion": "Gerenciamento independent from Forex with Reservas first, Contabilidade second",
+      "status": "CONFIRMED_STATIC",
+      "observed": "management is an independent active-by-default module with its own two screens and routes; Forex has only four operational children. Availability is checked against destination primary before mounting/guards.",
+      "references": [
+        {
+          "path": "src/js/00-core/08-module-availability.js",
+          "line_start": 5,
+          "line_end": 7
+        },
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 7,
+          "line_end": 20
+        },
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 193,
+          "line_end": 205
+        },
+        {
+          "path": "src/js/20-ui/33-module-work.js",
+          "line_start": 5,
+          "line_end": 9
+        },
+        {
+          "path": "index.html",
+          "line_start": 295,
+          "line_end": 297
+        }
+      ]
+    },
+    {
+      "criterion": "Legacy routes resolve after accepted navigation and retain draft guards",
+      "status": "CONFIRMED_STATIC",
+      "observed": "forex-reserves targets management-reserves; contab/forex-accounting/exec-accounting/forex-reconciliation target management-accounting; exec/accounting shim uses canonical navigation. Management, Planning, operation and accounts draft guards run before replacing active screen or activating destination.",
+      "references": [
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 47,
+          "line_end": 51
+        },
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 205,
+          "line_end": 230
+        },
+        {
+          "path": "src/js/40-app/01-navigation.js",
+          "line_start": 288,
+          "line_end": 301
+        },
+        {
+          "path": "src/js/20-ui/13-exec-views.js",
+          "line_start": 72,
+          "line_end": 72
+        }
+      ]
+    },
+    {
+      "criterion": "Order migration preserves custom relative order without implicit persistence",
+      "status": "CONFIRMED_STATIC",
+      "observed": "Default eight modules place management after research. Old five/six/seven module formats project in memory; valid custom seven relative orders gain management after research; valid eight retained. Explicit old canonical default receives the deliberate updated default; original preference raw stays intact until explicit Save.",
+      "references": [
+        {
+          "path": "src/js/20-ui/12-nav-style.js",
+          "line_start": 280,
+          "line_end": 302
+        },
+        {
+          "path": "src/js/20-ui/12-nav-style.js",
+          "line_start": 303,
+          "line_end": 323
+        },
+        {
+          "path": "src/js/20-ui/12-nav-style.js",
+          "line_start": 325,
+          "line_end": 341
+        },
+        {
+          "path": "src/js/00-core/07-workspace-backup.js",
+          "line_start": 4,
+          "line_end": 4
+        },
+        {
+          "path": "src/js/00-core/07-workspace-backup.js",
+          "line_start": 96,
+          "line_end": 113
+        }
+      ]
+    },
+    {
+      "criterion": "Management account/period selection is explicit RAM context and does not switch Forex operation",
+      "status": "CONFIRMED_STATIC",
+      "observed": "Selection initially empty; selectors have explicit empty options; context() returns only own selection, resets at session reset. Reservas queries/submits use JPWManagement.context with null fallback, never operationalSelection. Existing canonical recordReserves and recordAccountLedger remain financial writers.",
+      "references": [
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 21,
+          "line_end": 32
+        },
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 69,
+          "line_end": 75
+        },
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 161,
+          "line_end": 178
+        },
+        {
+          "path": "src/js/20-ui/26-forex-engine-views.js",
+          "line_start": 17,
+          "line_end": 20
+        },
+        {
+          "path": "src/js/20-ui/26-forex-engine-views.js",
+          "line_start": 116,
+          "line_end": 120
+        },
+        {
+          "path": "src/js/20-ui/26-forex-engine-views.js",
+          "line_start": 201,
+          "line_end": 217
+        },
+        {
+          "path": "src/js/30-accounting/07-management/02-state.js",
+          "line_start": 24,
+          "line_end": 28
+        },
+        {
+          "path": "src/js/30-accounting/07-management/02-state.js",
+          "line_start": 119,
+          "line_end": 119
+        }
+      ]
+    },
+    {
+      "criterion": "Shared account and period flows honor captured module owner and preserve operational selection",
+      "status": "CONFIRMED_STATIC_WITH_PRIOR_FOCAL_RECEIPT",
+      "observed": "Management launch passes owner only in accepted management route; dialogs capture before showModal, submit checks captured owner, ownership survives dynamic refresh and Registration/Setup chains. Management cannot activate current period, skips Forex examine/useContext and refreshes selector options without autoselect. Legacy callers keep Forex owner/default behavior.",
+      "references": [
+        {
+          "path": "src/js/20-ui/28-fx-consolidated.js",
+          "line_start": 5,
+          "line_end": 6
+        },
+        {
+          "path": "src/js/20-ui/28-fx-consolidated.js",
+          "line_start": 373,
+          "line_end": 392
+        },
+        {
+          "path": "src/js/20-ui/28-fx-consolidated.js",
+          "line_start": 436,
+          "line_end": 459
+        },
+        {
+          "path": "src/js/20-ui/28-fx-consolidated.js",
+          "line_start": 487,
+          "line_end": 508
+        },
+        {
+          "path": "src/js/20-ui/28-fx-consolidated.js",
+          "line_start": 512,
+          "line_end": 550
+        },
+        {
+          "path": "src/js/20-ui/33-module-work.js",
+          "line_start": 122,
+          "line_end": 122
+        },
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 325,
+          "line_end": 327
+        }
+      ],
+      "prior_receipt": "/private/tmp/jpw-portfolio-management-20261026/MANAGEMENT-ACCOUNT-FLOW-REPORT.json",
+      "prior_receipt_not_final_full": true
+    },
+    {
+      "criterion": "Draft and data preservation integrated with reset/backup/recovery",
+      "status": "CONFIRMED_STATIC",
+      "observed": "Reserve and annual drafts are context-keyed and preserved after explicit decision, retaining captured review rather than silently reauthorizing. Recovery provides read/copy, not automatic replay. managementAnnual optional family validated and included in Backup Completo, existing studies/financial families retained; boot/finalization resets presentation context without deleting confirmed facts.",
+      "references": [
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 36,
+          "line_end": 66
+        },
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 170,
+          "line_end": 178
+        },
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 318,
+          "line_end": 323
+        },
+        {
+          "path": "src/js/30-accounting/07-management/03-ui.js",
+          "line_start": 362,
+          "line_end": 369
+        },
+        {
+          "path": "src/js/20-ui/26-forex-engine-views.js",
+          "line_start": 129,
+          "line_end": 143
+        },
+        {
+          "path": "src/js/00-core/04-persistence.js",
+          "line_start": 125,
+          "line_end": 134
+        },
+        {
+          "path": "src/js/30-accounting/01-daily-ledger.js",
+          "line_start": 691,
+          "line_end": 691
+        },
+        {
+          "path": "src/js/40-app/07-finalize-session.js",
+          "line_start": 166,
+          "line_end": 166
+        },
+        {
+          "path": "src/js/40-app/06-boot.js",
+          "line_start": 146,
+          "line_end": 146
+        }
+      ]
+    },
+    {
+      "criterion": "Dashboard, Notes, Dante, historic progress and documentation follow new ownership",
+      "status": "CONFIRMED_STATIC",
+      "observed": "Dashboard uses independent availability before readers and new CTAs; notes screen labels updated; guide preserves moved IDs and retired records without automatic completion, updates track on explicit resume; documentation marks previous contracts historical.",
+      "references": [
+        {
+          "path": "src/js/20-ui/25-dash-macro.js",
+          "line_start": 259,
+          "line_end": 268
+        },
+        {
+          "path": "src/js/20-ui/25-dash-macro.js",
+          "line_start": 339,
+          "line_end": 355
+        },
+        {
+          "path": "src/js/40-app/14-mvp-notes.js",
+          "line_start": 10,
+          "line_end": 13
+        },
+        {
+          "path": "src/js/40-app/26-learning-catalog.js",
+          "line_start": 34,
+          "line_end": 42
+        },
+        {
+          "path": "src/js/40-app/26-learning-catalog.js",
+          "line_start": 256,
+          "line_end": 270
+        },
+        {
+          "path": "src/js/00-core/09-learning-progress.js",
+          "line_start": 36,
+          "line_end": 50
+        },
+        {
+          "path": "src/js/40-app/28-learning-guide.js",
+          "line_start": 338,
+          "line_end": 347
+        },
+        {
+          "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+          "line_start": 1,
+          "line_end": 17
+        }
+      ]
+    }
+  ],
+  "nonblocking_findings": [
+    {
+      "id": "NAV-FINAL-P3-01",
+      "priority": "P3",
+      "status": "KNOWN_RESIDUAL_ALREADY_DOCUMENTED",
+      "expected": "Pending-work ownership query should ideally distinguish the two shared dialog owners.",
+      "observed": "hasPending(forex) consults aggregate FXConsolidatedUI workState pending; a Management-owned shared form can cause a redundant Forex-work warning.",
+      "cause": "Legacy global pending query remains; effective dialog owner and captured submit guards were corrected independently.",
+      "impact": "Orientation warning only; this review found no corresponding financial writer, automatic context switch or continuation override.",
+      "disposition": "Parent explicitly bounded this iteration to documentation; no adjacent query edit performed.",
+      "references": [
+        {
+          "path": "src/js/20-ui/33-module-work.js",
+          "line_start": 39,
+          "line_end": 47
+        },
+        {
+          "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+          "line_start": 76,
+          "line_end": 76
+        }
+      ]
+    }
+  ],
+  "not_claimed": [
+    "Final FULL passed",
+    "Human visual or usability acceptance",
+    "All runtime paths proved by source inspection",
+    "No hidden regression in untouched modules",
+    "Native MT5 runtime or publication"
+  ],
+  "source_sha256": {
+    "build-id.js": "5ccb1fec4cb183ed990fe14c9a3cc978a6af2f7d516f3e8d785bad099f60d0c5",
+    "index.html": "f5151771267b44587b129c56e74f3d1383df77145345948ee24ab9f9cbae14fa",
+    "src/js/40-app/01-navigation.js": "7aa6ab2b541ee5088d0a092f2c7a62be70e5968754d7dcfd9e87b0f61f7e6da4",
+    "src/js/40-app/11-operational-shell.js": "4bab3f5e0e06f16ec7b44f6d386cb5dc935c684cebb1983cd6eecd83cb9b8d53",
+    "src/js/20-ui/13-exec-views.js": "fd30cbf5dfc059fe12c7b4bdcf55bb3ea103acdad4bf7cb143ed540bb94ddf52",
+    "src/js/20-ui/23-research-views.js": "9a50294f945153a8cb6f1952db04c22a90fbb6de15ac6eb011362954865ee608",
+    "src/js/00-core/08-module-availability.js": "98eddff44b9494d47de144c151f12c79a48f3fb7ee19a8349b98596a10856a83",
+    "src/js/20-ui/12-nav-style.js": "78261568203a75f6a340f011454246c253643b62024c3a37e5c22f41ec8259bb",
+    "src/js/20-ui/26-forex-engine-views.js": "67696dfd2802798ae24ce462e2844b63c3a079589111843d3d14e168836c3226",
+    "src/js/20-ui/28-fx-consolidated.js": "3826ef8e955dca348101bc21dd87781c2ecd34734a53588cc3837cce24ceaef4",
+    "src/js/20-ui/33-module-work.js": "cc034f19d594d26a04aa9ec9035387360c81ddb4f3d1612edf056258debcf9da",
+    "src/js/30-accounting/07-management/02-state.js": "989c141bc1140ef78524617b5f216f3f320a187d30ec3e5cb6a2a2e5f4ecba42",
+    "src/js/30-accounting/07-management/03-ui.js": "c1d5b9cf2e7d3b32af25e483c81a7baf2f48c8c12d93c4b4e2f08f86633ef323",
+    "src/js/00-core/04-persistence.js": "ba06dbc855979fc2b6d2423f5220ea72230d877c31e81f002d4ba994726e039d",
+    "src/js/00-core/07-workspace-backup.js": "30891efb82a9270c23cfbb318c3380cb1a5de0872ab72c16d00792290d4a1a9a",
+    "src/js/00-core/09-learning-progress.js": "04991df6b2c03fb8b932a9be1af7dfa797ecf3551b257daa7b62f999fedb05eb",
+    "src/js/20-ui/25-dash-macro.js": "2ca48c8381ecade4112b5cd0294c5c62745bdac8bad5ccdc169ebf5704c9f4a7",
+    "src/js/40-app/14-mvp-notes.js": "27ce936240ef4fc01d9879a1ed5183f6d1c1a47b6574f9da5e0f6c3f1ace2ae2",
+    "src/js/40-app/26-learning-catalog.js": "318d6d2524d69f326792cbab8504e5cd2a9ed7d442c5004b003aeddc4e8ab8fc",
+    "src/js/40-app/28-learning-guide.js": "1cc4bdf50b48c572f30623e16c8b5836c64be0bb6552990a0e8694fc546322df",
+    "src/js/30-accounting/01-daily-ledger.js": "b134acc15c59329bc27b7bd4b4f8107833287d97b0aa9e506233b6b0e2afeabf",
+    "src/js/40-app/07-finalize-session.js": "9d22cefdab949776dd8d8b326418720175726c0f950e4d2c0e74b0367d96e824",
+    "src/js/40-app/06-boot.js": "4604b77cac47fe6c8c3048cf99f620107961740a9aa4a1f03e9d8331bf1d32cc",
+    "docs/architecture/NAVIGATION-HIERARCHY.md": "57c7ada094c5c3b1ce37b874a8e47a122fb3925bcd7fe0a926028ca7724e554d",
+    "docs/architecture/MANAGEMENT-ANNUAL.md": "f921ffd4b9c761c659102ef1dcdb027d98b6c30f2d05315b49283b97cd2166a1"
+  }
+}

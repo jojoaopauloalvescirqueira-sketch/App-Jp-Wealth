@@ -1,0 +1,9 @@
+exit: 0
+predicate: process == "powerd" AND (eventMessage CONTAINS[c] "Entering Sleep state" OR eventMessage CONTAINS[c] "DarkWake from" OR eventMessage CONTAINS[c] "Wake from")
+Timestamp               Ty Process[PID:TID]
+2026-10-28 00:02:03.424 Df powerd[414:24986a8] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Idle Sleep'
+2026-10-28 00:02:34.077 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-28 00:02:46.380 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-28 00:11:47.846 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to NUB.SPMI0Sw3IRQ nub-spmi0.0x02 rtc/Maintenance
+2026-10-28 00:14:47.865 Df powerd[414:249d3c6] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-28 00:30:01.854 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi0.0x02 rtc/Maintenance

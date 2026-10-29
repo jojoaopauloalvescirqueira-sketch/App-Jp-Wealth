@@ -1,0 +1,82 @@
+{
+  "classification": "PASS",
+  "checks": [
+    {
+      "id": "fresh-optional-domain-absent",
+      "classification": "PASS"
+    },
+    {
+      "id": "HTTP-confirmed-reload",
+      "classification": "PASS"
+    },
+    {
+      "id": "Backup-Completo-confirmed-aggregate",
+      "classification": "PASS"
+    },
+    {
+      "id": "Backup-canonical-real-results",
+      "classification": "PASS"
+    },
+    {
+      "id": "real-import-identities-history-preserved",
+      "classification": "PASS"
+    },
+    {
+      "id": "finalization-preserves-optional-domain",
+      "classification": "PASS"
+    },
+    {
+      "id": "future-domain-rejected-no-write",
+      "classification": "PASS"
+    },
+    {
+      "id": "old-backup-without-domain-valid",
+      "classification": "PASS"
+    },
+    {
+      "id": "restore-no-page-errors",
+      "classification": "PASS"
+    },
+    {
+      "id": "file-scoped-styles",
+      "classification": "PASS"
+    },
+    {
+      "id": "file-confirmed-reload",
+      "classification": "PASS"
+    },
+    {
+      "id": "file-no-page-errors",
+      "classification": "PASS"
+    },
+    {
+      "id": "portable-scoped-styles",
+      "classification": "PASS"
+    },
+    {
+      "id": "portable-confirmed-reload",
+      "classification": "PASS"
+    },
+    {
+      "id": "portable-no-page-errors",
+      "classification": "PASS"
+    },
+    {
+      "id": "PWA-offline-aggregate-preserved",
+      "classification": "PASS"
+    },
+    {
+      "id": "PWA-offline-route",
+      "classification": "PASS"
+    },
+    {
+      "id": "PWA-offline-table",
+      "classification": "PASS"
+    },
+    {
+      "id": "PWA-offline-no-page-errors",
+      "classification": "PASS"
+    }
+  ],
+  "fixture": "synthetic-only; actual Storage/FileReader/download/SW"
+}

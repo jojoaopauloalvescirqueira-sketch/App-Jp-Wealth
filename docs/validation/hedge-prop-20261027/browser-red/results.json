@@ -1,0 +1,7 @@
+{
+  "classification": "PRODUCT_FAIL",
+  "checks": [],
+  "headless": true,
+  "failure": "Hedge route is absent or refuses independent access",
+  "test_sha256": "bf4a0b643fccbfeeb9f885e6d3c2c4f4c98b162bcd13adcc768bc817dd542997"
+}

@@ -1,0 +1,426 @@
+{
+  "scope": "PROPOSED_CHECKER_COUNTERPROOFS_ONLY",
+  "appliedToRepository": false,
+  "sourceHashes": {
+    "tools/research_navigation_test.py": "bde95554a825b026eca744ce45d6c89f690bcd13b62c93a4d27a61013ee674ae",
+    "src/js/40-app/01-navigation.js": "949d6f03746688fdfab3d59a72a8dff9438024bb83376baa1e693f478387bd0c",
+    "src/js/40-app/11-operational-shell.js": "4bab3f5e0e06f16ec7b44f6d386cb5dc935c684cebb1983cd6eecd83cb9b8d53",
+    "index.html": "06749243b2ac7585cf016b37007274a74228099d5a66e0c14cb5ad54702f0944",
+    "src/styles/app.css": "157d086b68eecf36c2a42c43a71960b4414ad5017b8d1bddec2ee3e8fdc83cbf",
+    "build-id.js": "0eec814afb46e5ceda16f27728f6795fb6357b686d5e42bad327c232fe646363"
+  },
+  "candidateSHA256": "2315d2aaf8c41ebfd36e0d3571a821ce80923566bc41f6a931d41c5c2add0dc7",
+  "expectedDrawerAssertionLine": 249,
+  "expectedCanonicalAssertionLine": 244,
+  "limits": [
+    "Synthetic fresh contexts; no operator profile or app edits.",
+    "Inert functions and refused eligibility are deliberate RAM fault injections, not naturally occurring product defects.",
+    "This result is not a gate or FULL result."
+  ],
+  "cases": [
+    {
+      "name": "control-before",
+      "mode": "control",
+      "freshContext": true,
+      "observedAssertion": null,
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1242,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1242,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1967.7999999523163,
+          "canonical": "research-forex",
+          "menu": null,
+          "open": false,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1972,
+        "canonical": "research-forex",
+        "menu": null,
+        "open": false,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "PASS_CONTROL",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    },
+    {
+      "name": "no-close",
+      "mode": "no-close",
+      "freshContext": true,
+      "observedAssertion": {
+        "type": "AssertionError",
+        "message": "",
+        "line": 249,
+        "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/research_drawer_counterproofs.py\", line 67, in main\n    try:mod.assert_shell_and_accessibility(page,{'width':390,'height':844},'light')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/research_navigation_test.py.proposed\", line 249, in assert_shell_and_accessibility\n    assert page.evaluate(\"document.documentElement.dataset.shellMenu\") is None\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+      },
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1169.2000000476837,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1169.3000000715256,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "inert-close-called",
+            "at": 1187.2000000476837,
+            "canonical": "dashboard",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1201.4000000953674,
+          "canonical": "dashboard",
+          "menu": "open",
+          "open": true,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1215.7000000476837,
+        "canonical": "dashboard",
+        "menu": "open",
+        "open": true,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "REJECTED_AS_REQUIRED",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    },
+    {
+      "name": "control-after-no-close",
+      "mode": "control",
+      "freshContext": true,
+      "observedAssertion": null,
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1175.7999999523163,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1175.7999999523163,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1926.5999999046326,
+          "canonical": "research-forex",
+          "menu": null,
+          "open": false,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1935.3999999761581,
+        "canonical": "research-forex",
+        "menu": null,
+        "open": false,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "PASS_CONTROL",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    },
+    {
+      "name": "no-finish",
+      "mode": "no-finish",
+      "freshContext": true,
+      "observedAssertion": {
+        "type": "AssertionError",
+        "message": "",
+        "line": 249,
+        "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/research_drawer_counterproofs.py\", line 67, in main\n    try:mod.assert_shell_and_accessibility(page,{'width':390,'height':844},'light')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/research_navigation_test.py.proposed\", line 249, in assert_shell_and_accessibility\n    assert page.evaluate(\"document.documentElement.dataset.shellMenu\") is None\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+      },
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1054.3999999761581,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1054.3999999761581,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "inert-finish-called",
+            "at": 1069.2000000476837,
+            "canonical": "dashboard",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1071.5,
+          "canonical": "dashboard",
+          "menu": "open",
+          "open": true,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1082.7000000476837,
+        "canonical": "dashboard",
+        "menu": "open",
+        "open": true,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "REJECTED_AS_REQUIRED",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    },
+    {
+      "name": "control-after-no-finish",
+      "mode": "control",
+      "freshContext": true,
+      "observedAssertion": null,
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1165.5,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1165.5999999046326,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1902.1999999284744,
+          "canonical": "research-forex",
+          "menu": null,
+          "open": false,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1906.6999999284744,
+        "canonical": "research-forex",
+        "menu": null,
+        "open": false,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "PASS_CONTROL",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    },
+    {
+      "name": "refused-route",
+      "mode": "refused-route",
+      "freshContext": true,
+      "observedAssertion": {
+        "type": "AssertionError",
+        "message": "",
+        "line": 244,
+        "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/research_drawer_counterproofs.py\", line 67, in main\n    try:mod.assert_shell_and_accessibility(page,{'width':390,'height':844},'light')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/research_navigation_test.py.proposed\", line 244, in assert_shell_and_accessibility\n    assert page.evaluate(\"JPWNavigation.current().canonical\") == 'dashboard'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+      },
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1049.8999999761581,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1050,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "dashboard-refused-by-injected-eligibility",
+            "at": 1050.1000000238419,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1068.1000000238419,
+          "canonical": "research-forex",
+          "menu": "open",
+          "open": true,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1081.5,
+        "canonical": "research-forex",
+        "menu": "open",
+        "open": true,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "REJECTED_AS_REQUIRED",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    },
+    {
+      "name": "control-after-refusal",
+      "mode": "control",
+      "freshContext": true,
+      "observedAssertion": null,
+      "probe": {
+        "injected": true,
+        "trusted": true,
+        "trace": [
+          {
+            "event": "before-dashboard-injection",
+            "at": 1172.6000000238419,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          },
+          {
+            "event": "injection-installed",
+            "at": 1172.7000000476837,
+            "canonical": "research-forex",
+            "menu": "open",
+            "open": true,
+            "focus": "BUTTON"
+          }
+        ],
+        "state": {
+          "at": 1910.5,
+          "canonical": "research-forex",
+          "menu": null,
+          "open": false,
+          "focus": "BUTTON"
+        }
+      },
+      "postFrame": {
+        "at": 1914.1000000238419,
+        "canonical": "research-forex",
+        "menu": null,
+        "open": false,
+        "focus": "BUTTON"
+      },
+      "financialAndStorageUnchanged": true,
+      "result": "PASS_CONTROL",
+      "observed": {
+        "pageerror": [],
+        "console": [],
+        "requestfailed": []
+      },
+      "functionsRestored": true
+    }
+  ],
+  "sourceHashesAfter": {
+    "tools/research_navigation_test.py": "bde95554a825b026eca744ce45d6c89f690bcd13b62c93a4d27a61013ee674ae",
+    "src/js/40-app/01-navigation.js": "949d6f03746688fdfab3d59a72a8dff9438024bb83376baa1e693f478387bd0c",
+    "src/js/40-app/11-operational-shell.js": "4bab3f5e0e06f16ec7b44f6d386cb5dc935c684cebb1983cd6eecd83cb9b8d53",
+    "index.html": "06749243b2ac7585cf016b37007274a74228099d5a66e0c14cb5ad54702f0944",
+    "src/styles/app.css": "157d086b68eecf36c2a42c43a71960b4414ad5017b8d1bddec2ee3e8fdc83cbf",
+    "build-id.js": "0eec814afb46e5ceda16f27728f6795fb6357b686d5e42bad327c232fe646363"
+  },
+  "sourceUnchanged": true,
+  "summary": {
+    "PASS_CONTROL": 4,
+    "REJECTED_AS_REQUIRED": 3,
+    "COUNTERPROOF_FAIL": 0
+  },
+  "result": "PASS"
+}

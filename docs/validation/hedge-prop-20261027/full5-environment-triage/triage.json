@@ -1,0 +1,82 @@
+{
+  "captured_at_utc": "2026-10-28T03:38:23.633761+00:00",
+  "scope": "A0 bounded local diagnostic reads only. No browser/test launch, product/test/repo edit, process control, power setting change or VM interaction by this subagent. Only this scratch directory was written.",
+  "window_local": "2026-10-28 00:00:00..00:34:59 America/Sao_Paulo UTC-03:00",
+  "confirmed_power_transitions": [
+    {
+      "sleep_local": "00:02:03.424",
+      "reason": "Idle Sleep",
+      "wake_local": "00:02:34.077",
+      "wake_kind": "DarkWake from Deep Idle",
+      "pmset_sleep_seconds": 31
+    },
+    {
+      "sleep_local": "00:02:46.380",
+      "reason": "Maintenance Sleep",
+      "wake_local": "00:11:47.846",
+      "wake_kind": "DarkWake from Deep Idle",
+      "pmset_sleep_seconds": 541
+    },
+    {
+      "sleep_local": "00:14:47.865",
+      "reason": "Maintenance Sleep",
+      "wake_start_update_local": "00:30:01.655",
+      "wake_local": "00:30:01.854",
+      "wake_kind": "DarkWake from Deep Idle",
+      "pmset_sleep_seconds": 914
+    }
+  ],
+  "planning_facts": {
+    "receipt": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261027T233826678834/planning-proportions/proporcoes-results.json",
+    "sha256": "9c1193340a0c856dcf3b8121aed671706e0808bc963aa762072e1cc20456a35e",
+    "raw_classification_unchanged": "TEST_HARNESS_FAIL",
+    "case_counts": {
+      "PASS": 93,
+      "TEST_HARNESS_FAIL": 1
+    },
+    "whole_wall_seconds": 961.552829,
+    "gate_active_seconds_reported_by_root": 49.808,
+    "wall_minus_reported_gate_seconds": 911.744829,
+    "failed_case_id": "matrix-submenu-light-1099x720",
+    "failed_case_wall_seconds": 912.322055,
+    "failed_case_started_local": "00:14:49.336620",
+    "failed_case_finished_local": "00:30:01.658675",
+    "timeout_message_ms": 15000,
+    "failed_action": "#pl-native-stopOpen Locator.click; last call log stage scrolling into view",
+    "difference_from_wake_start_update_ms": 3.675,
+    "next_case_started_local": "00:30:01.740044",
+    "next_case_classification": "PASS"
+  },
+  "assessment": {
+    "confirmed": [
+      "Mac entered three system Sleep periods in the diagnostic window, independently corroborated by powerd unified logs and pmset. This is more than display sleep.",
+      "Planning single failed case spans the914second sleep episode and ends3.675ms after powerd records updating wake-start timestamp. Adjacent case before and next case after pass in fractions of a second.",
+      "The large wall/runner-duration discrepancy is consistent with host suspension and a suspend-sensitive elapsed-time counter; the actual Python3.12.14 runtime reports monotonic/perf_counter implementation mach_absolute_time(), adjustableFalse.",
+      "No Dock-issued/Chrome-received Quit AppleEvent or approved-termination messages matched the narrow query in this window."
+    ],
+    "strong_hypothesis": "Host suspension/resume interrupted the Planning click and its timeout timing. This is a demonstrated environmental interruption of that verification; the exact browser/Node timeout mechanism is not established by OS logs alone.",
+    "alladin_hypothesis": "Alladin window around00:02..00:13, reported by root, overlaps the31s and541s Sleep episodes. Sleep is a concrete environmental confound and candidate cause. Its exact failed action/stdout remain unavailable until FULL finishes, so no case-level cause is claimed.",
+    "not_established": [
+      "That every timeout in FULL5 or earlier FULL4 has the same cause",
+      "A native Chrome crash, OOM kill or external Quit during this window",
+      "A product correction or clean FULL result",
+      "Exact CPU suspend instant from Entering Sleep log: preparation/acknowledgment spans about1-2seconds; wake log dispatch is also staged",
+      "No wall-clock adjustment of any kind: narrow timed clock-jump marker query has zero matches, which is not exhaustive proof"
+    ]
+  },
+  "raw_result_policy": "No original receipt, runner classification, application or test modified. Keep raw Planning TEST_HARNESS_FAIL and raw Alladin PRODUCT_FAIL until separately authorized adjudication; this report adds environmental evidence only.",
+  "root_reported_followup": {
+    "temporary_guard": "Root reports caffeinate -di -w74810 started around00:34:42, PID79125; root pmset assertions check00:35:02 confirms idle-system/display prevention bound to gate.",
+    "verification_origin": "These guard actions were reported by root; not executed or independently rechecked by this subagent.",
+    "permanent_power_settings": "Root reports no permanent power-setting changes."
+  },
+  "evidence_files": [
+    "pmset-sleep-wake.txt",
+    "powerd-transitions.txt",
+    "powerd-sleepwake-category.txt",
+    "chrome-dock-quit-events.txt",
+    "timed-clock-jump-search.txt",
+    "runtime-clock-info.json",
+    "planning-receipt-excerpt.json"
+  ]
+}

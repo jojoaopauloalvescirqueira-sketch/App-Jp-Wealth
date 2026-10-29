@@ -1,0 +1,90 @@
+{
+  "captured_at_utc": "2026-10-28T14:19:28.901945+00:00",
+  "window_local": "2026-10-28 10:21:39..11:15:25 America/Sao_Paulo UTC-03:00",
+  "scope": "A0 extension of environmental metadata reads only. No test/browser execution, browser protocol, process signals/control, repository changes, VM interaction or power-setting changes by this subagent. Only this scratch directory written.",
+  "completion_reported_by_root": {
+    "full": "FULL6",
+    "exit": 0,
+    "checks_passed": 116,
+    "finished_local": "2026-10-28 11:15:24-03:00",
+    "origin": "Root coordination message, not independently reread from the consolidated FULL6 receipt in this diagnostic."
+  },
+  "bounded_historical_findings": {
+    "powerd_sleepwake_events": 0,
+    "pmset_sleepwake_event_rows": 0,
+    "chrome_relevant_quit_approved_termination_forcequit_markers": 0,
+    "diagnostic_commands_exit": 0,
+    "meaning": "No matching host Sleep/Wake or Chrome Quit/force-quit evidence found during the complete requested FULL6 window."
+  },
+  "guard_evidence": {
+    "guard_pid": 84806,
+    "name": "caffeinate",
+    "asserted_on_behalf_of_supervisor_pid": 84802,
+    "historical_rows": [
+      {
+        "local": "10:21:39",
+        "kind": "Created",
+        "assertion": "PreventUserIdleDisplaySleep"
+      },
+      {
+        "local": "10:22:39",
+        "kind": "Summary",
+        "assertions": [
+          "PreventUserIdleSystemSleep",
+          "PreventUserIdleDisplaySleep"
+        ]
+      },
+      {
+        "local": "10:37:39",
+        "kind": "Summary",
+        "assertions": [
+          "PreventUserIdleSystemSleep",
+          "PreventUserIdleDisplaySleep"
+        ]
+      },
+      {
+        "local": "10:52:39",
+        "kind": "Summary",
+        "assertions": [
+          "PreventUserIdleSystemSleep",
+          "PreventUserIdleDisplaySleep"
+        ]
+      },
+      {
+        "local": "11:07:39",
+        "kind": "Summary",
+        "assertions": [
+          "PreventUserIdleSystemSleep",
+          "PreventUserIdleDisplaySleep"
+        ]
+      },
+      {
+        "local": "11:15:24",
+        "kind": "ClientDied",
+        "assertions": [
+          "PreventUserIdleSystemSleep",
+          "PreventUserIdleDisplaySleep"
+        ],
+        "age": "00:53:45"
+      }
+    ],
+    "previous_live_snapshot": "11:11:42 pmset confirms both assertions active for84806, on behalf of84802; initial evidence file retained.",
+    "afterward_live_snapshot": "11:17:53.199850-03:00 ps has no entries for84802,84806,84808 (exit1 means no selected PIDs), and pmset lists no84806/caffeinate.",
+    "other_assertions_afterward": "At11:17:53 global PreventUserIdleDisplaySleep=0; global PreventUserIdleSystemSleep=1 belongs to other processes and is not evidence that84806 remains active.",
+    "conclusion": "The guard was active in earlier reads and its two temporary assertions were released via ClientDied at11:15:24, matching reported supervisor/gate completion. Its later absence corroborates the expected automatic termination linked to the supervisor."
+  },
+  "latency_assessment": "Download latency remains unexplained by this bounded environment investigation. FULL6 completion/PASS does not identify the cause of the approximately320s delay reported by root, and no cause is assigned.",
+  "power_settings_limit": "Observed protection is temporary process-owned assertions with a recorded release. No permanent energy-setting change was executed by this diagnostic; this investigation did not perform a separate persistent-settings before/after audit.",
+  "preservation": "Earlier11:04..11:11:42 latency snapshot, triage.json and evidence are preserved unchanged. No raw FULL classification was altered.",
+  "limits": [
+    "Negative log searches are bounded to the stated predicate, processes and window; they are not universal proof against every unlogged event or browser executable.",
+    "This inspection does not diagnose network, download dialog, browser/renderer state or internal test mechanisms.",
+    "ClientDied and PID absence establish release/end of the guard. The link to normal supervisor completion is corroborated by the matching timestamp and earlier on-behalf-of metadata."
+  ],
+  "evidence_files": [
+    "final-powerd-chrome-dock-events.txt",
+    "final-pmset-sleepwake-guard.txt",
+    "final-guard-status.txt",
+    "pmset-current-assertions.txt"
+  ]
+}

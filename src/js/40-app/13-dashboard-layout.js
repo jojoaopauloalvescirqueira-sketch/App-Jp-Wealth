@@ -34,7 +34,7 @@ const JP_WIDGET_SCREENS = {
   dash: { label: 'Dashboard', zones: ['main'], main: 'gdDashMain', sidebar: null },
   exec: { label: 'Execution Board', zones: ['main'], main: 'execWidgetGrid', sidebar: null },
   contas: { label: 'Contas', zones: ['main'], main: 'contasWidgetGrid', sidebar: null },
-  contab: { label: 'Contabilidade', zones: ['main'], main: 'contabWidgetGrid', sidebar: null }
+  contab: { label: 'Caixa Anual', zones: ['main'], main: 'contabWidgetGrid', sidebar: null }
 };
 const JP_WIDGET_SCREEN_IDS = Object.keys(JP_WIDGET_SCREENS);
 

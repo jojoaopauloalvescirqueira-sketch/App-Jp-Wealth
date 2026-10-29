@@ -1,0 +1,63 @@
+{
+  "metadataModel22Red": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "assertion": " : Composed events cannot be described as solely JP editorial impact"
+  },
+  "preservedCanonicalFields": {
+    "events": {
+      "equal": true,
+      "sha256": "7c3b6abd573fd9e736e4b14bdbe956161ac24c3715ff6288460651025545824f"
+    },
+    "sources": {
+      "equal": true,
+      "sha256": "f0a1bb929529b3c0bacfc43cdca39957f30a0571afb2f3486508a22008ff022a"
+    },
+    "coverage": {
+      "equal": true,
+      "sha256": "d333575f12d1500bca294695839076cf0c74fb6381271818466aecb02e5b5b03"
+    },
+    "currencies": {
+      "equal": true,
+      "sha256": "d3110f699c268093a65ba7ddae512d763a6d6e0c47f6e5657a40adca46cb6ad5"
+    },
+    "months": {
+      "equal": true,
+      "sha256": "13c0aa0102527d218cb6e27f6ecc5c439ae616bca5a4f7734a78cb045b4692b7"
+    },
+    "provenance": {
+      "equal": true,
+      "sha256": "fe1e66e18af3c7a3c81bf565a6eb240ae7ec0e8871ecbea1550f948cf7f33a5c"
+    },
+    "publicFeed": {
+      "equal": true,
+      "sha256": "3db615620cf39a181925f7edd93d1ed7310f933679bb23c5c475d5964633f09a"
+    },
+    "publicFeedProvenance": {
+      "equal": true,
+      "sha256": "472ec0d0442e49abee64440f2c30489895db654720d809d960f6a9c234c59753"
+    },
+    "generatedAt": {
+      "equal": true,
+      "sha256": "a5540f0ce6dec908006549792467c24609181a7c4245fcf979a187bda6103b2c"
+    },
+    "updatedAt": {
+      "equal": true,
+      "sha256": "a5540f0ce6dec908006549792467c24609181a7c4245fcf979a187bda6103b2c"
+    }
+  },
+  "queryRangeUnchanged": true,
+  "sourcesApiUnchanged": true,
+  "currentProtectedHashes": {
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "tools/economic_calendar_feed_runtime_test.js": "2162c48cdd0b7d945a9e2dfb2c57a1fabf34191f4ff8d98f81f12acd9233b07f",
+    "src/js/40-app/19-calendar-agenda.js": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+    "src/js/00-core/07-workspace-backup.js": "e7c9144ed5f48c4a169fdcbc483c0e59931b902c88b7a1d8fb79eee2a4509207"
+  },
+  "reviewedHashes": {
+    "infra/monthly-economic-feed/build_package.py": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "tools/monthly_economic_feed_test.py": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89"
+  }
+}

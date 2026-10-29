@@ -1,0 +1,3 @@
+exit: 0
+predicate: (process == "Dock" OR process == "Google Chrome") AND (eventMessage CONTAINS[c] "AESendMessage(aevt,quit" OR eventMessage CONTAINS[c] "RECEIVED:(aevt,quit)" OR eventMessage CONTAINS[c] "Handling Quit AppleEvent" OR eventMessage CONTAINS[c] "App termination approved")
+Timestamp               Ty Process[PID:TID]

@@ -8,7 +8,9 @@ const MVP_NOTES_TYPE_LABELS={task:'Tarefa', bug:'Bug', feature:'Funcionalidade',
 const MVP_NOTES_STATUS_LABELS={open:'Aberta', in_progress:'Em andamento', done:'Concluída', discarded:'Descartada'};
 const MVP_NOTES_PRIORITY_LABELS={low:'Baixa', medium:'Média', high:'Alta', critical:'Crítica'};
 const MVP_NOTES_SCREEN_LABELS={dash:'Dashboard', exec:'Execution Board', params:'Parâmetros', motor:'Motor de Lote',
-  contas:'Contas', check:'Checklist', contab:'Contabilidade', config:'Configurações'};
+  contas:'Contas', check:'Checklist', contab:'Gerenciamento · Caixa Anual', config:'Configurações',
+  research:'Portfólio · Análise', 'research-forex':'Portfólio · Análise',
+  management:'Gerenciamento · Caixa Anual', fxreserves:'Gerenciamento · Reservas'};
 
 const MVP_NOTES_POLICY_LABELS={blocked:'Bloqueada', analysis_only:'Somente análise', autonomous_allowed:'Implementação autorizada'};
 // Instrução que fecha o Trace Reference, dependente da política. NENHUMA delas autoriza

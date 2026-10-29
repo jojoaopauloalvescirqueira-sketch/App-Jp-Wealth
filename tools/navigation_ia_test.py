@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """NAV-01..NAV-03 — contrato da navegacao semantica.
 
-Prova que a API publica expoe somente as sete rotas canonicas, enquanto a
+Prova que a API publica expoe somente as oito rotas canonicas, enquanto a
 fachada legada continua resolvendo destinos fisicos sem promovê-los ao contrato
 canônico. Navegação é UI pura: não grava storage, não salva estado financeiro e
 a navegacao nao le nem altera o dominio patrimonial do Alladin.
@@ -27,6 +27,7 @@ CANONICAL = [
     ("planning", "planning", "planning", "start"),
     ("personal-finance", "finpes", "personal-finance", "overview"),
     ("research-forex", "research", "research", "nocoda"),
+    ("management-reserves", "fxreserves", "management", None),
     ("alladin", "alladin", "alladin", None),
     ("tools-calendar", "tools", "tools", "calendar"),
 ]
@@ -35,27 +36,21 @@ FOREX_CHILDREN = [
     ("forex-management-accounts", "exec", "accounts"),
     ("forex-operation", "exec", "panel"),
     ("forex-history", "exec", "history"),
-    ("forex-accounting", "exec", "accounting"),
-    ("forex-reserves", "fxreserves", None),
 ]
 
-RESEARCH_CHILDREN = [
-    ("research-forex", "research", "nocoda"),
-    ("research-stocks-br", "research", "stocks-br"),
-    ("research-stocks-global", "research", "stocks-global"),
-    ("research-reits", "research", "reits"),
-]
+RESEARCH_CHILDREN = [("research-forex", "research", "nocoda")]
 LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "forex-planning", "finpes",
           "motor", "history", "check", "tool-check", "ecal", "nocoda",
           "pivots", "params", "config"]
 PRIMARY = [
     ("01", "Dashboard", "dashboard", "dashboard"),
-    ("02", "Research", "research-forex", "research"),
-    ("03", "Planejamento", "planning", "planning"),
-    ("04", "Forex", "forex-consolidated", "forex"),
-    ("05", "Finanças Pessoais", "personal-finance", "personal-finance"),
-    ("06", "Alladin", "alladin", "alladin"),
-    ("07", "Ferramentas e Serviços", "tools-calendar", "tools"),
+    ("02", "Portfólio", "research-forex", "research"),
+    ("03", "Gerenciamento", "management-reserves", "management"),
+    ("04", "Planejamento", "planning", "planning"),
+    ("05", "Forex", "forex-consolidated", "forex"),
+    ("06", "Finanças Pessoais", "personal-finance", "personal-finance"),
+    ("07", "Alladin", "alladin", "alladin"),
+    ("08", "Ferramentas e Serviços", "tools-calendar", "tools"),
 ]
 
 
@@ -139,7 +134,7 @@ def assert_registry(page):
     assert [(child["id"], child["localView"]["view"]) for child in tools] == [
         ("tools-calendar", "calendar"),
         ("tools-leverage", "leverage"), ("tools-normative", "normative"),
-        ("tools-minigames", "minigames")], tools
+        ("tools-prop-firms", "prop-firms"), ("tools-minigames", "minigames")], tools
     # Approved combined product entry keeps old market targets compatible while
     # marking the single calendar child current and preserving requested intent.
     market_compat = page.evaluate("() => JPWNavigation.resolve('tools-market-hours')")
@@ -186,10 +181,10 @@ def assert_primary_dom(page):
     assert page.locator("#gdTopbarNavSlot #nav").count() == 0
     # Approved sidebar parents now own disclosure; legacy expanders stay unique
     # for compatibility but do not expose a duplicate interactive control.
-    assert page.locator("#nav > .tab[aria-expanded]").count() == 4
+    assert page.locator("#nav > .tab[aria-expanded]").count() == 5
     assert not any(page.locator('[data-nav-expand]').evaluate_all('els=>els.map(e=>e.getClientRects().length>0)'))
     assert page.locator("#nav > [data-nav-expand]").evaluate_all(
-        "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes", "tools"]
+        "els => els.map(el=>el.dataset.navExpand)") == ["research", "management", "exec", "finpes", "tools"]
     assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
     assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 2
     assert page.locator("#navSubShell [data-nav-child='forex-planning'], #navLocalSlot [data-nav-context='forex-planning']").count() == 0
@@ -301,7 +296,7 @@ def assert_canonical_navigation(page):
         state = active_state(page)
         assert state["activeScreens"] == [screen], (route, state)
         assert state["primary"] == primary, (route, state)
-        if primary in {'forex','personal-finance','research','tools'}:
+        if primary in {'forex','personal-finance','research','management','tools'}:
             assert state['ariaCurrent'] is None, 'disclosure parent impersonates current leaf'
             selector = (f'#navSubShell [data-nav-child="{state["current"]["child"]}"]'
                         if state['current']['child'] else
@@ -507,7 +502,7 @@ def assert_keyboard_and_mobile(browser, url, desktop_page):
         assert page.evaluate("() => appSidebar.contains(document.activeElement)")
         sizes = page.evaluate("""() => [...document.querySelectorAll('#nav > .tab[data-route]')]
           .map(el => el.getBoundingClientRect().height)""")
-        assert len(sizes) == 7 and min(sizes) >= 44, sizes
+        assert len(sizes) == 8 and min(sizes) >= 44, sizes
         page.click('#nav > .tab[data-route="alladin"]')
         state = active_state(page)
         assert state["screen"] == "alladin" and state["primary"] == "alladin", state

@@ -278,7 +278,7 @@ function initNavLayoutChoice(){
 // do envelope de widgets, incluída no workspace do Backup Completo. A lista usa
 // identidades, nunca rótulos ou rotas novas.
 const NAV_ORDER_KEY='jpw_nav_order';
-const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','planning','forex','personal-finance','alladin','tools']);
+const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','management','planning','forex','personal-finance','alladin','tools']);
 const navOrderState={confirmed:[],draft:[],raw:null,editing:false,blocked:null,note:'',restoreRequested:false};
 jpwWorkspaceDraftProviders.set('navigation-order',(reset=false)=>{
   if(reset){navOrderState.editing=false;return [];}
@@ -307,13 +307,17 @@ function navOrderRead(){
   let order=null;
   if(raw!==null){try{order=JSON.parse(raw);}catch(e){}}
   // Project old orders in memory; preserve their raw backup/preference until explicit Save.
-  const oldIds=NAV_ORDER_DEFAULT.filter(id=>id!=='planning');
+  const beforeManagement=NAV_ORDER_DEFAULT.filter(id=>id!=='management');
+  const oldIds=beforeManagement.filter(id=>id!=='planning');
   if(Array.isArray(order)&&order.length===5&&new Set(order).size===5&&order.every(id=>oldIds.includes(id)&&id!=='tools'))order=[...order,'tools'];
   if(Array.isArray(order)&&order.length===6&&new Set(order).size===6&&order.every(id=>oldIds.includes(id))){
     order=[...order];order.splice(order.indexOf('research')+1,0,'planning');
   }
   const oldDefault=['dashboard','research','forex','planning','personal-finance','alladin','tools'];
-  if(Array.isArray(order)&&order.length===oldDefault.length&&order.every((id,index)=>id===oldDefault[index]))order=[...NAV_ORDER_DEFAULT];
+  if(Array.isArray(order)&&order.length===oldDefault.length&&order.every((id,index)=>id===oldDefault[index]))order=[...beforeManagement];
+  if(Array.isArray(order)&&order.length===beforeManagement.length&&new Set(order).size===order.length&&order.every(id=>beforeManagement.includes(id))){
+    order=[...order];order.splice(order.indexOf('research')+1,0,'management');
+  }
   const valid=navOrderValid(order);
   return {raw,order:valid?order:[...NAV_ORDER_DEFAULT],blocked:null,
     note:raw!==null&&!valid?'Ordem salva não reconhecida. O padrão é exibido; a preferência original permanece intacta até você salvar uma nova ordem.':''};

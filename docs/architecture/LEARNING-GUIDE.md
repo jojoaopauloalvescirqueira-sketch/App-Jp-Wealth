@@ -2,24 +2,25 @@
 
 O guia apresenta os controles reais do aplicativo. A entrada **Conhecer com Dante** na acolhida é opcional; começar do zero e restaurar continuam sendo escolhas separadas. Também é possível abrir **Configurações → Conhecimento → Guia do site**. A busca das Configurações encontra o guia por “tutorial”, “primeiros passos”, “aprender” ou “ajuda”. Abrir o aplicativo não inicia uma jornada nem cria um perfil.
 
-Este contrato descreve o candidato de 24/10/2026 sob o [brief aprovado](../work/BRIEF-DANTE-20261024.md), com produto e controles em CHGs separados. [Identidade e voz do mascote](../branding/DANTE.md) orientam o texto; não alteram os contratos financeiros. Testes locais e aceite humano têm evidências próprias.
+Este contrato incorpora a reorganização Portfólio/Gerenciamento aprovada em26/10/2026 ([contrato anual](MANAGEMENT-ANNUAL.md)) ao candidato de24/10/2026 sob o [brief aprovado](../work/BRIEF-DANTE-20261024.md), com produto e controles em CHGs separados. [Identidade e voz do mascote](../branding/DANTE.md) orientam o texto; não alteram os contratos financeiros. Testes locais e aceite humano têm evidências próprias.
 
 ## Jornada e trilhas
 
-O catálogo contém 63 lições em oito trilhas de autoria. A jornada contínua apresenta oito capítulos nesta ordem:
+O catálogo contém61 lições em nove trilhas de autoria. A jornada contínua apresenta nove capítulos nesta ordem:
 
 | Capítulo | Lições | Disponibilidade |
 |---|---:|---|
 | Primeiros passos | 6 | Recursos gerais |
-| Research | 6 | Research |
+| Portfólio | 2 | Portfólio (`research`) |
+| Gerenciamento | 4 | Gerenciamento |
 | Planejamento | 4 | Planejamento |
-| Forex | 7 | Forex |
+| Forex | 5 | Forex |
 | Finanças Pessoais | 7 | Finanças Pessoais |
 | Ferramentas | 6 | Recursos de Ferramentas e disponibilidade das telas originais |
 | Alladin | 8 | Alladin |
 | Recursos gerais | 19 | Recursos gerais |
 
-O índice muda o cursor somente por escolha explícita. Há um único ponto de retomada, com modo `journey` ou `track`; navegar pelo índice não marca etapas como lidas. As trilhas existentes continuam acessíveis pela API legada. A trilha Forex mantém oito lições de autoria, incluindo `forex-planning`; a trilha nova `planning` tem três. Na jornada, `forex-planning` aparece uma única vez, no capítulo Planejamento, e usa a disponibilidade de Planejamento. Seu ID e seu proprietário Forex permanecem para preservar o progresso anterior.
+O índice muda o cursor somente por escolha explícita. Há um único ponto de retomada, com modo `journey` ou `track`; navegar pelo índice não marca etapas como lidas. As trilhas existentes continuam acessíveis pela API legada. A trilha Forex mantém seis lições de autoria, incluindo `forex-planning`; `planning` tem três. Gerenciamento apresenta Reservas, preparação do ano, caixa diário e retrato anual. Os IDs `forex-reserves` e `forex-accounting` passaram a pertencer à trilha `management`; sua disponibilidade e seus destinos independem de Forex. Na jornada, `forex-planning` aparece uma única vez, no capítulo Planejamento, e usa a disponibilidade de Planejamento. Seu ID e seu proprietário Forex permanecem para preservar o progresso anterior.
 
 Uma etapa indisponível mostra seu requisito. A pessoa pode atravessá-la pelos controles explícitos, voltar ao índice ou escolher pular; o guia não ativa módulos, não marca leitura automaticamente e não confirma prática. Sem plano, as lições do Consolidado e de Preenchimento mensal explicam a dependência usando a entrada existente de Planejamento. Conhecer o app não exige criar uma conta ou um plano.
 
@@ -41,11 +42,11 @@ A central separa leituras ou ações observadas, etapas puladas e práticas conf
 
 Só existem os observadores de prática já suportados: campos existentes do orçamento de Finanças Pessoais e salvamento de Notas. A prática é opcional e começa por escolha explícita. O orçamento pode salvar ao sair do campo; Escape cancela o rascunho antes da gravação. Notas exige Salvar. A confirmação de prática depende da ação original e da conferência do resultado persistido correspondente. Cancelamento, gravação recusada ou resultado desconhecido deixam a prática pendente. O guia não guarda o conteúdo usado nessa verificação.
 
-Planejamento, agenda, calendário, bolsas, notificações e demais lições novas são leituras. Formulário, registro mensal e agenda apresentam também sequências completas de tarefa, que a pessoa pode acompanhar ou apenas ler; o guia não transforma essa explicação em uma prática confirmada. Na central de notificações, consultar não resolve uma causa; abrir o diálogo original pausa o guia. Agenda pessoal e eventos econômicos não se transformam em cobranças no sino. Calendário segue o dia selecionado, bolsas seguem Agora e os filtros são independentes. Cobertura pendente não confirma ausência de eventos ou fechamento de bolsa.
+Gerenciamento, Planejamento, agenda, calendário, bolsas, notificações e demais lições novas são leituras. Explicar plano, resultado diário ou retrato anual não chama um escritor nem concede prática; a confirmação permanece nos controles originais de Gerenciamento. Formulário, registro mensal e agenda apresentam também sequências completas de tarefa, que a pessoa pode acompanhar ou apenas ler; o guia não transforma essa explicação em uma prática confirmada. Na central de notificações, consultar não resolve uma causa; abrir o diálogo original pausa o guia. Agenda pessoal e eventos econômicos não se transformam em cobranças no sino. Calendário segue o dia selecionado, bolsas seguem Agora e os filtros são independentes. Cobertura pendente não confirma ausência de eventos ou fechamento de bolsa.
 
 ## Progresso local e compatibilidade
 
-A chave auxiliar continua sendo `jpwealth_learning_guide_v1`, com `catalogVersion:1`, separada de `S`, dos fatos financeiros e do Backup Completo. Os 57 IDs originais e seus proprietários são preservados como registros compatíveis: 56 permanecem ativos e `tools-nocuda` é somente histórico, fora da jornada e do índice. Sua continuação vai para `tools-genetrix` apenas ao acionar Retomar, sem nova conclusão ou prática; abrir ou ler progresso não grava essa mudança. O envelope novo usa `schemaVersion:2` e acrescenta somente `mode:'journey'|'track'` aos campos do progresso anterior: versão de catálogo, trilha proprietária, lição, pausa e estados de leitura/pulo/prática. `trackId` identifica sempre o proprietário da lição, inclusive quando seu capítulo é outro.
+A chave auxiliar continua sendo `jpwealth_learning_guide_v1`, com `catalogVersion:1`, separada de `S`, dos fatos financeiros e do Backup Completo. Os57 IDs originais permanecem reconhecíveis:52 seguem ativos e cinco são históricos, fora da jornada e do índice. `tools-nocuda` continua retomando em `tools-genetrix`; `research-stocks-br`, `research-stocks-global`, `research-reits` e `research-others` retomam em `research-forex`, em Portfólio > Análise. A troca só ocorre ao acionar Retomar, sem nova conclusão ou prática; abrir ou ler progresso não grava a mudança. Os dois IDs movidos de Forex para Gerenciamento aceitam cursores antigos com proprietário `forex`, preservando bytes e registros na leitura. Retomar muda explicitamente seu proprietário para `management`, sem conceder créditos. O catálogo declara `movedSteps` e `retiredSteps`; nenhum ID desconhecido passa a ser aceito por semelhança. O envelope novo usa `schemaVersion:2` e acrescenta somente `mode:'journey'|'track'` aos campos do progresso anterior: versão de catálogo, trilha proprietária, lição, pausa e estados de leitura/pulo/prática. `trackId` identifica o proprietário ativo da lição, inclusive quando seu capítulo é outro; a leitura compatível dos dois proprietários anteriores fica intacta até Retomar.
 
 O leitor aceita schema1 e o interpreta em memória, sem escrever durante o boot. Um cursor antigo retoma em modo trilha; um documento novo vazio usa jornada. A gravação de schema2 ocorre por ação explícita do guia. Não há migração de perfil, dados financeiros ou formato do Backup Completo.
 
@@ -64,6 +65,7 @@ O catálogo, progresso, apresentação e controlador permanecem scripts clássic
 - `version:1` e `tracks:[{id,title,description,module,steps}]`, preservando autoria e APIs legadas;
 - `journey:[{id,title,module,stepIds}]`, ordem editorial completa sem duplicar IDs;
 - lições com os campos existentes, `speech:string[]` e `availabilityModule` opcional, que prevalece sobre o módulo da trilha para aquela lição;
+- `movedSteps:[{id,previousTrackId,trackId}]` e `retiredSteps`, com validação explícita dos proprietários e destinos compatíveis;
 - `speechAnchors:string[]` opcional, com um seletor por fala, e `followHosts:string[]` opcional, com os hosts concretos permitidos para acompanhar aquela tarefa.
 
 Nas três lições `planning-form`, `planning-monthly` e `tools-agenda`, cada fala aponta para os controles reais do estado correspondente. A resolução procura um controle visível; quando ele ainda não existe ou está oculto, usa o host permitido aberto e, por fim, a âncora de entrada da lição. Esse fallback permite concluir a leitura sem abrir formulário nem criar fatos. Não avança formulário, preenche campos, move foco de edição ou interpreta texto como recibo de gravação.
@@ -76,7 +78,7 @@ Hosts permitidos são estreitos: formulário de Planejamento usa `configure-choi
 
 ## Validação e limites
 
-O focal `node tools/dante_catalog_test.mjs` executa o catálogo sem DOM e verifica os 57 IDs/proprietários antigos, versão, ordem de capítulos, cobertura única de todas as 63 lições, disponibilidade independente de Planejamento, balões curtos, imutabilidade e ausência de novos observadores de prática. Também verifica sequência semântica das três tarefas, cardinalidade das âncoras por fala, allowlist exata dos hosts e presença dos hooks nas fontes reais de UI; isso não comprova que o alvo esteja visível no navegador. [Matriz editorial e limites](../validation/dante-20261024/LESSONS.md) relaciona as áreas cobertas às fontes reais. Esse teste não demonstra navegação no navegador, aparência ou persistência financeira.
+O focal `node tools/dante_catalog_test.mjs` executa o catálogo sem DOM e verifica os57 IDs antigos e as mudanças delimitadas de proprietário/retirada, versão, ordem dos nove capítulos e cobertura única das61 lições, disponibilidade independente de Planejamento, balões curtos, imutabilidade e ausência de novos observadores de prática. O focal `node tools/management_guide_test.mjs` verifica a compatibilidade dos cursores movidos/retirados sem gravação na leitura e sem créditos automáticos, usando os módulos reais de catálogo, progresso e controlador. O focal do catálogo também verifica sequência semântica das três tarefas, cardinalidade das âncoras por fala, allowlist exata dos hosts e presença dos hooks nas fontes reais de UI; isso não comprova que o alvo esteja visível no navegador. [Matriz editorial e limites](../validation/dante-20261024/LESSONS.md) relaciona as áreas cobertas às fontes reais. Esse teste não demonstra navegação no navegador, aparência ou persistência financeira.
 
 Os contratos acumulados incluem `node tools/learning_foundation_test.mjs` e `node tools/learning_controller_test.mjs`. A regressão de navegador usa raiz candidata e cópia congelada das fontes reais anteriores ao guia:
 
@@ -85,3 +87,8 @@ python3 tools/learning_guide_test.py --root /path/to/project --baseline-root /pa
 ```
 
 A raiz `--baseline-root` contém fontes reais, sem perfil ou dados pessoais; a suíte usa contextos descartáveis. Distribuições, offline, teclado, telas pequenas, redução de movimento, limites de persistência, revisão independente e gate completo exigem provas vinculadas aos bytes finais. Esta documentação não declara execução desses testes, publicação ou aceite humano.
+
+
+## Hedge Prop Firm —27/10/2026
+
+Lição aditiva `tools-hedge-prop` em Ferramentas abre `tools-prop-firms`. Explica hipótese, taxa, reservas, custos e contratos sem executar operações ou registrar prática por leitura; IDs e progresso anteriores permanecem. [Contrato](HEDGE-PROP-FIRM.md).

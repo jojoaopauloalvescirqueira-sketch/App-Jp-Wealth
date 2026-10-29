@@ -41,7 +41,15 @@
         steps.set(item.id,item.trackId);
       }
     }
-    return {tracks,steps};
+    const previousOwners=new Map();
+    if(catalog.movedSteps!==undefined){
+      if(!Array.isArray(catalog.movedSteps))return null;
+      for(const item of catalog.movedSteps){
+        if(!item||!tracks.has(item.trackId)||!tracks.has(item.previousTrackId)||item.trackId===item.previousTrackId||steps.get(item.id)!==item.trackId||previousOwners.has(item.id))return null;
+        previousOwners.set(item.id,item.previousTrackId);
+      }
+    }
+    return {tracks,steps,previousOwners};
   }
   function empty(catalog){
     return {schemaVersion:2,mode:'journey',catalogVersion:catalog?.version,trackId:null,stepId:null,paused:true,steps:{}};
@@ -56,7 +64,7 @@
     if(value.trackId===null||value.stepId===null){
       if(value.trackId!==null||value.stepId!==null)return failure('incompatible');
     }else if(typeof value.trackId!=='string'||typeof value.stepId!=='string'||
-      !ids.tracks.has(value.trackId)||ids.steps.get(value.stepId)!==value.trackId)return failure('incompatible');
+      !ids.tracks.has(value.trackId)||(ids.steps.get(value.stepId)!==value.trackId&&ids.previousOwners.get(value.stepId)!==value.trackId))return failure('incompatible');
     const records={};
     for(const id of Reflect.ownKeys(value.steps)){
       const descriptor=Object.getOwnPropertyDescriptor(value.steps,id);

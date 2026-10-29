@@ -3,7 +3,7 @@
 (function initNotificationCenter(){
   if(window.JPWNotifications)return;
   const el=id=>document.getElementById(id);
-  const names={system:'Sistema',forex:'Forex',planning:'Planejamento',pf:'Finanças Pessoais',alladin:'Alladin',research:'Research',notes:'Notas'};
+  const names={system:'Sistema',forex:'Forex',planning:'Planejamento',pf:'Finanças Pessoais',alladin:'Alladin',research:'Portfólio',notes:'Notas'};
   const rank={critical:0,warning:1,info:2};
   const catalog=Object.freeze({
     persistence:{source:'system',action:'Ver recuperação'},backup:{source:'system',action:'Revisar backup'},

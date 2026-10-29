@@ -163,6 +163,9 @@ function sessionResetAuxiliarySurfaces(){
   try{ window.JPWLearningGuide?.disposeForSession?.(); }catch(error){}
   try{ window.JPWNotifications?.disposeForSession?.(); }catch(error){}
   try{ window.JPWCalendar?.disposeForSession?.(); }catch(error){}
+  try{ window.JPWCalendarFeed?.disposeForSession?.(); }catch(error){}
+  try{ window.JPWPropFirms?.disposeForSession?.(); }catch(error){}
+  try{ window.JPWManagement?.reset?.(); }catch(error){}
   try{ window.JPWAgenda?.disposeForSession?.(); }catch(error){}
   if(window.JPWFXConsolidated){
     for(const hook of ['cancelImport','disposePDF','reset']){

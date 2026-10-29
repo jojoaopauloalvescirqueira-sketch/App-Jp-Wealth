@@ -1,0 +1,65 @@
+{
+  "scope": "Final authored source copies and 23-case judge; before final generated package and integration gate. Runtime source injection in memory only.",
+  "cases": [
+    {
+      "mutant": "stale",
+      "exit": 1,
+      "testSha256": "177d1b20471a5376a7b8942f5afd7cd1f6ca04c91ba1c012797a5446272afcaa",
+      "failedCases": [
+        "ECON-FEED-03-source-age-not-get-time"
+      ],
+      "applications": "COUNTERPROOF_APPLICATIONS 22"
+    },
+    {
+      "mutant": "cad",
+      "exit": 1,
+      "testSha256": "177d1b20471a5376a7b8942f5afd7cd1f6ca04c91ba1c012797a5446272afcaa",
+      "failedCases": [
+        "ECON-FEED-02-v2-nine-currencies-all-impacts"
+      ],
+      "applications": "COUNTERPROOF_APPLICATIONS 23"
+    },
+    {
+      "mutant": "gap",
+      "exit": 1,
+      "testSha256": "177d1b20471a5376a7b8942f5afd7cd1f6ca04c91ba1c012797a5446272afcaa",
+      "failedCases": [
+        "ECON-FEED-04-day-gaps-not-month-coverage"
+      ],
+      "applications": "COUNTERPROOF_APPLICATIONS 23"
+    },
+    {
+      "mutant": "duplicate",
+      "exit": 1,
+      "testSha256": "177d1b20471a5376a7b8942f5afd7cd1f6ca04c91ba1c012797a5446272afcaa",
+      "failedCases": [
+        "ECON-FEED-12-confirmed-official-family-retains-provider-impact",
+        "ECON-FEED-13-same-instant-different-offset-is-confirmed",
+        "ECON-FEED-14-conflicting-official-time-is-preserved",
+        "ECON-FEED-15-indicative-official-hour-does-not-confirm",
+        "ECON-FEED-17-live-compat-preserves-exact-curated-association",
+        "ECON-FEED-18-changed-hour-does-not-inherit-family",
+        "ECON-FEED-19-official-cancellation-is-a-source-conflict"
+      ],
+      "applications": "COUNTERPROOF_APPLICATIONS 23"
+    },
+    {
+      "mutant": "quota",
+      "exit": 1,
+      "testSha256": "177d1b20471a5376a7b8942f5afd7cd1f6ca04c91ba1c012797a5446272afcaa",
+      "failedCases": [
+        "ECON-FEED-07-cache-refusal-no-adoption"
+      ],
+      "applications": "COUNTERPROOF_APPLICATIONS 22"
+    },
+    {
+      "mutant": "source",
+      "exit": 1,
+      "testSha256": "177d1b20471a5376a7b8942f5afd7cd1f6ca04c91ba1c012797a5446272afcaa",
+      "failedCases": [
+        "ECON-FEED-09-source-switch-refuses-old-response"
+      ],
+      "applications": "COUNTERPROOF_APPLICATIONS 22"
+    }
+  ]
+}

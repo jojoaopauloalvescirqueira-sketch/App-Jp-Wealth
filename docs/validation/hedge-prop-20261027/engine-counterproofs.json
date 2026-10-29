@@ -1,0 +1,94 @@
+{
+  "timestampUTC": "2026-10-28T13:21:47.753Z",
+  "result": "PASS",
+  "originalCases": 15,
+  "rejectedMutants": 4,
+  "originalAfterMutations": "PASS",
+  "command": "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/hedge_prop_engine_test.js",
+  "runtime": "v24.19.0",
+  "scope": "Pure engine contracts in isolated VMs; synthetic data; same suite and assertions for original/mutants",
+  "engineSha256": "c6b2c73296bcdbc97a3cbfc6b9be5581fe7d54ee6a295625dd7b0d5b6307640f",
+  "testSha256": "976e45c915681f64037716a9484c8686d687b9443840e7ed212de7602f78cd3e",
+  "counterproofs": [
+    {
+      "id": "HEDGE-MUTANT-FEE-OMITTED-FROM-BUDGET",
+      "result": "PASS",
+      "mutantResult": "PRODUCT_FAIL",
+      "engineEdited": false,
+      "candidateSha256": "84348f0748232133251c51093170f5ab0ec67d62a404049d205b3af6bcadc3b2",
+      "edits": [
+        [
+          "const budget = fee + hedgeCapital;",
+          "const budget = hedgeCapital;"
+        ]
+      ],
+      "rejection": {
+        "testId": "HEDGE-ORACLE-ONE-PHASE",
+        "message": "budget: 2920.197044334974 vs 4120.197044334975",
+        "actual": false,
+        "expected": true
+      }
+    },
+    {
+      "id": "HEDGE-MUTANT-REFUND-PRESUMED",
+      "result": "PASS",
+      "mutantResult": "PRODUCT_FAIL",
+      "engineEdited": false,
+      "candidateSha256": "8502581e2aec32c4764d0c57fd47e9b2eb5657b8598331dd1d0f26a8e7ec779f",
+      "edits": [
+        [
+          "(loss - input.refundUSD) / (payout - fundedRatio)",
+          "(loss - fee) / (payout - fundedRatio)"
+        ]
+      ],
+      "rejection": {
+        "testId": "HEDGE-REFUND-ZERO",
+        "message": "zero refund: 2896.55172413793 vs 4924.137931034483",
+        "actual": false,
+        "expected": true
+      }
+    },
+    {
+      "id": "HEDGE-MUTANT-RATIO-ROUNDED-TWO-DIGITS",
+      "result": "PASS",
+      "mutantResult": "PRODUCT_FAIL",
+      "engineEdited": false,
+      "candidateSha256": "10488e062bea2319f6e199d65e43ad90383c94a5a4ef17ff509ef73d40a133f2",
+      "edits": [
+        [
+          "const ratio = loss / drawdown;",
+          "const ratio = Math.round(loss / drawdown * 100) / 100;"
+        ],
+        [
+          "const fundedRatio = loss / drawdown;",
+          "const fundedRatio = Math.round(loss / drawdown * 100) / 100;"
+        ]
+      ],
+      "rejection": {
+        "testId": "HEDGE-ORACLE-ONE-PHASE",
+        "message": "stage capital: 1800 vs 1714.2857142857142",
+        "actual": false,
+        "expected": true
+      }
+    },
+    {
+      "id": "HEDGE-MUTANT-COSTS-COUNTED-TWICE",
+      "result": "PASS",
+      "mutantResult": "PRODUCT_FAIL",
+      "engineEdited": false,
+      "candidateSha256": "59fc117423bc201fb4225affadbc3f614ecffdfcb2603871a10304b663b44816",
+      "edits": [
+        [
+          "net = idealNet - total;",
+          "net = idealNet - 2 * total;"
+        ]
+      ],
+      "rejection": {
+        "testId": "HEDGE-ORACLE-TWO-PHASES-AND-COST-PATHS",
+        "message": "evaluation-fail-0: -20 vs -10",
+        "actual": false,
+        "expected": true
+      }
+    }
+  ]
+}

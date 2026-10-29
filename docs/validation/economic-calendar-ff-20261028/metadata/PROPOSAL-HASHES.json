@@ -1,0 +1,70 @@
+{
+  "scope": "Scratch only; root must apply SOURCE-ONLY.patch then use the official offline generator/rebuild. Node24 and finance unchanged.",
+  "repositoryBefore": {
+    "infra/monthly-economic-feed/build_package.py": "a1ea9009276c1d0e75db22a4de5e652d116651a51a1d101174d57a7e3ccbaf18",
+    "src/js/40-app/16-monthly-economic-data.js": "ae45bc1586eacd614234a782845fb0e438c05b785076ed27abb0c3e8c2b2f486",
+    "tools/monthly_economic_feed_test.py": "7b38cea6b46e6134b6ea2ce7572ffcaafac76d432068d602133ff2bf5b1a2da3"
+  },
+  "candidateAfter": {
+    "infra/monthly-economic-feed/build_package.py": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "tools/monthly_economic_feed_test.py": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+    "infra/monthly-economic-feed/data/monthly-economic-2026-10.json": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f"
+  },
+  "patchSha256": "bc00f516b30ad15fa08f662079dd6e1503b4c63b0cdddee4551176acd82c4c83",
+  "preservedCanonicalFields": {
+    "events": {
+      "unchanged": true,
+      "sha256": "85f89e19158fefd8ca9b23fb023b1339700f03106ef59caa9b8c929ea7e7d840"
+    },
+    "sources": {
+      "unchanged": true,
+      "sha256": "2aa0652aaf7f17818523c39857df45c3ee1d78b49082758eebb06cbba543f336"
+    },
+    "coverage": {
+      "unchanged": true,
+      "sha256": "dac177f587d53a865f5ec335dc6a44377181fb96b5ed5845a70e0a3adf242706"
+    },
+    "currencies": {
+      "unchanged": true,
+      "sha256": "ba1b038455185fa559b8e693263fb9d8fd1cd6c23dd2b16063ddad453c738cf0"
+    },
+    "months": {
+      "unchanged": true,
+      "sha256": "10ed35f63554cdabbde243129d1436c0aa736fb6024f5bc0b4774560de32e827"
+    },
+    "provenance": {
+      "unchanged": true,
+      "sha256": "a0d6ef06d9e42b76413bf0de0908f5f146654d86fcd851f98c87a701821b695e"
+    },
+    "publicFeed": {
+      "unchanged": true,
+      "sha256": "242f167781574ccfa22ce6d6f8ddb1144607f27577789d725fde9692d22c283e"
+    },
+    "publicFeedProvenance": {
+      "unchanged": true,
+      "sha256": "9b7a7b80bd7e6eb3a7ba413ee5b0b0d1431022b1c736206ad62cb03bef616f60"
+    },
+    "generatedAt": {
+      "unchanged": true,
+      "sha256": "a5540f0ce6dec908006549792467c24609181a7c4245fcf979a187bda6103b2c"
+    },
+    "updatedAt": {
+      "unchanged": true,
+      "sha256": "a5540f0ce6dec908006549792467c24609181a7c4245fcf979a187bda6103b2c"
+    }
+  },
+  "runtimeNode24Sha256": "2162c48cdd0b7d945a9e2dfb2c57a1fabf34191f4ff8d98f81f12acd9233b07f",
+  "baselineCounts": {
+    "official": 54,
+    "forexFactory": 97,
+    "newOfficial": 9,
+    "associatedFamilies": 7,
+    "composed": 153
+  },
+  "tests": {
+    "Model22AgainstRepository": "RED exit1 editorial != mixed",
+    "ScratchModelContract": "14PASS",
+    "CounterproofsRejected": 8
+  }
+}

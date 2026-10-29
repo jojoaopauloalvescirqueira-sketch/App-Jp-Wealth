@@ -1,0 +1,62 @@
+{
+  "scope": "Scratch only, same Model22 oracle; public JSON and embedded block mutated together so rejection is semantic, not a copy mismatch.",
+  "cases": [
+    {
+      "mutation": "old-global-official-claims",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "missing-original-official-namespace",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "missing-provider-classification-origin",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "ff-freshness-48h-instead-of-2h",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "compiler-forgets-legacy-policy",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "api-shares-metadata-references",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "runtime-metadata-ignores-new-provider",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "runtime-metadata-invents-provider-on-official-base",
+      "exitCode": 1,
+      "judgeSha256": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+      "executedCases": 1,
+      "rejected": true
+    }
+  ],
+  "allRejected": true
+}

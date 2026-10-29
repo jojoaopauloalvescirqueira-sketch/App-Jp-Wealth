@@ -21,15 +21,10 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-PRIMARY = ["dashboard", "forex-consolidated", "planning", "personal-finance", "research-forex", "alladin", "tools-calendar"]
-RESEARCH_CHILDREN = [
-    ("research-forex", "Forex", "nocoda"),
-    ("research-stocks-br", "Ações", "stocks-br"),
-    ("research-stocks-global", "Stocks", "stocks-global"),
-    ("research-reits", "REITs", "reits"),
-]
+PRIMARY = ["dashboard", "forex-consolidated", "planning", "personal-finance", "research-forex", "management-reserves", "alladin", "tools-calendar"]
+RESEARCH_CHILDREN = [("research-forex", "Análise", "nocoda")]
 RESEARCH_FOREX_VIEWS = ["nocoda", "pivots"]
-EXEC_VIEWS = ["panel", "accounting", "accounts", "motor"]
+EXEC_VIEWS = ["panel", "accounts", "motor"]
 WORKSPACES = ["execEcal", "execNocoda", "execPivots"]
 
 
@@ -175,19 +170,15 @@ def assert_routes_aliases_and_empty_states(page):
         assert not page.locator("#exec").evaluate("el => el.classList.contains('active')")
 
     empty_ids = ["researchStocksBr", "researchStocksGlobal", "researchReits", "researchOthers"]
-    combined = "\n".join(page.locator(f"#{item}").inner_text() for item in empty_ids)
-    assert not re.search(r"(?:R\$|US\$|\$|€|£|¥|\b\d+[.,]?\d*%|\b\d{2,}\b)", combined), combined
     for item in empty_ids:
-        root = page.locator(f"#{item}")
-        assert root.count() == 1
-        assert root.locator("input, form, table, canvas, [data-layout-card], .metric").count() == 0
-    assert "Brasil" in page.locator("#researchStocksBr").inner_text()
-    assert "B3" in page.locator("#researchStocksBr").inner_text()
+        assert page.locator(f"#{item}").count() == 0
+    for alias in ['research-stocks-br','research-stocks-global','research-reits','research-others']:
+        assert page.evaluate('(target)=>JPWNavigation.navigate(target)',alias) is True
+        assert page.evaluate('JPWNavigation.current().canonical') == 'research-forex'
+        assert page.evaluate('JPWResearch.ui.getView()') == 'nocoda'
     assert page.locator("#researchProbabilityLab").count() == 0
     assert page.locator("#settingsModal [data-galton-root]").count() == 0
     assert page.locator('[data-nav-child="research-others"], [data-dm-route="research-others"]').count() == 0
-    assert page.evaluate("JPWNavigation.navigate('research-others')") is True
-    assert page.evaluate("JPWResearch.ui.getView()") == "others"
 
 
 def assert_atomic_and_storage(page):
@@ -244,14 +235,25 @@ def assert_shell_and_accessibility(page, viewport, theme):
         assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
         assert page.evaluate("() => research.contains(document.activeElement)")
         page.click("[data-shell-menu-toggle]")
-    page.click('#researchNavSubmenu [data-nav-child="research-stocks-br"]')
-    assert page.evaluate("() => JPWResearch.ui.getView()") == "stocks-br"
+    # The removed placeholder is no longer a menu destination. Leaving the
+    # analysis context hides and inerts the same local controls without cloning.
+    assert page.locator('#researchNavSubmenu [data-nav-child="research-stocks-br"]').count()==0
+    # Use an available leaf, as the former placeholder interaction did. A JS
+    # route change intentionally does not dismiss the modal mobile drawer.
+    page.locator('#nav > [data-route="dashboard"]').click()
+    assert page.evaluate("JPWNavigation.current().canonical") == 'dashboard'
+    if mobile:
+        # Accepted primary navigation closes the drawer in shellNavigationApplied's
+        # next frame; retain the exact state assertion after that completion point.
+        page.evaluate("() => new Promise(resolve => requestAnimationFrame(resolve))")
+        assert page.evaluate("document.documentElement.dataset.shellMenu") is None
     context = page.locator('#navLocalSlot [data-nav-context="research-forex"]')
     assert context.is_hidden()
     assert context.evaluate("el => el.inert") is True
-
     if mobile:
         page.click("[data-shell-menu-toggle]")
+    if page.get_attribute("#researchNavTrigger", "aria-expanded") != "true":
+        page.click("#researchNavTrigger")
     page.click('#researchNavSubmenu [data-nav-child="research-forex"]')
     assert page.evaluate("() => JPWResearch.ui.getView()") == "nocoda"
     assert not context.is_hidden()
@@ -265,7 +267,7 @@ def assert_shell_and_accessibility(page, viewport, theme):
     page.keyboard.press("ArrowRight")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-reits"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
     # Medir enquanto N2 esta aberto: alvos ocultos nao tornariam a prova util.

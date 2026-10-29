@@ -1,0 +1,96 @@
+{
+  "captured_at_utc": "2026-10-28T03:44:23.100062+00:00",
+  "scope": "A0 read-only inspection of FULL4 receipt and powerd/pmset events ONLY within2026-10-27 14:11:00..15:16:59local America/Sao_Paulo. Only this separate scratch directory was written. No test/browser execution, repository changes, process control, VM interaction or power-setting changes.",
+  "raw_receipt": {
+    "path": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/docs/validation/hedge-prop-20261027/full-attempt4-113pass-3fail.json",
+    "sha256": "f65c8e54c6a2b22d7182610d5fb7f59275ce50bc780d8e929580925f0331cdb0",
+    "started_at": "2026-10-27T14:11:26-03:00",
+    "finished_at": "2026-10-27T15:15:59-03:00",
+    "summary_unchanged": {
+      "PASS": 113,
+      "PRODUCT_FAIL": 3,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "wall_seconds": 3873.0,
+    "sum_duration_seconds": 2943.44,
+    "gap_seconds": 929.56
+  },
+  "sleep_periods": [
+    {
+      "sleep_local": "14:35:05.191",
+      "darkwake_local": "14:35:08.194",
+      "reason_literal": "Idle Sleep",
+      "pmset_rounded_sleep_seconds": 3,
+      "transition_span_seconds": 3.003
+    },
+    {
+      "sleep_local": "14:35:18.450",
+      "darkwake_local": "14:35:26.012",
+      "reason_literal": "Maintenance Sleep",
+      "pmset_rounded_sleep_seconds": 8,
+      "transition_span_seconds": 7.562
+    },
+    {
+      "sleep_local": "14:35:35.026",
+      "darkwake_local": "14:44:17.865",
+      "reason_literal": "Dark Wake Thermal Emergency",
+      "pmset_rounded_sleep_seconds": 522,
+      "transition_span_seconds": 522.839
+    },
+    {
+      "sleep_local": "14:44:33.707",
+      "darkwake_local": "14:45:07.297",
+      "reason_literal": "Maintenance Sleep",
+      "pmset_rounded_sleep_seconds": 34,
+      "transition_span_seconds": 33.59
+    },
+    {
+      "sleep_local": "14:45:42.658",
+      "darkwake_local": "14:51:55.385",
+      "reason_literal": "Maintenance Sleep",
+      "pmset_rounded_sleep_seconds": 373,
+      "transition_span_seconds": 372.727
+    }
+  ],
+  "sleep_transition_span_sum_seconds": 939.7210000000001,
+  "pmset_sleep_seconds_sum_rounded": 940,
+  "assessment": {
+    "confirmed": [
+      "Five system Sleep→DarkWake intervals occurred inside FULL4 wall interval, corroborated independently by powerd unified logs and pmset.",
+      "One sleep reason is literally Dark Wake Thermal Emergency. This report does not infer a physical temperature or hardware defect from that label.",
+      "FULL4 wall3873s minus summed runner durations2943.44s leaves929.56s. Power-transition spans total939.721s and pmset rounded sleep durations total940s."
+    ],
+    "supported_hypothesis": "Sleep is a strong explanation for most of the FULL4 wall/runner-duration gap. Transition spans include sleep preparation and wake dispatch; rounding, runner overhead and clock semantics prevent treating the10.161s difference as an exact unexplained remainder.",
+    "not_established": [
+      "Which individual check/click/assertion overlapped a specific Sleep episode: FULL4 receipt lacks per-check wall-clock timestamps.",
+      "That Sleep caused Epoch ReferenceError brokerFor is not defined or the Alladin I4/I5 click timeout. Both incidents remain open.",
+      "That the separate Research assertion was caused by Sleep.",
+      "A clean repeat, product correction or PASS of the raw gate.",
+      "Exact fully suspended CPU duration: Entering Sleep and DarkWake logs bracket preparation/resumption and are not exact CPU-stop instants."
+    ]
+  },
+  "incidents_kept_open": [
+    {
+      "name": "session-epoch-protocol",
+      "raw_result": "PRODUCT_FAIL",
+      "returncode": 1,
+      "duration_seconds": 17.594
+    },
+    {
+      "name": "alladin-ui-crud",
+      "raw_result": "PRODUCT_FAIL",
+      "returncode": 1,
+      "duration_seconds": 43.19
+    }
+  ],
+  "preservation": "No original receipt or classification changed. FULL5 scratch directory was not modified.",
+  "evidence_files": [
+    "powerd-sleepwake-category.txt",
+    "powerd-transitions.txt",
+    "pmset-sleep-wake.txt",
+    "full4-receipt-timing.json"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/research_navigation_test.py"
+  ],
+  "exit": 0,
+  "seconds": 14.043,
+  "at": "2026-10-27T23:17:27.741262-03:00",
+  "beforeSHA": "2315d2aaf8c41ebfd36e0d3571a821ce80923566bc41f6a931d41c5c2add0dc7",
+  "afterSHA": "2315d2aaf8c41ebfd36e0d3571a821ce80923566bc41f6a931d41c5c2add0dc7",
+  "log": "/private/tmp/jpw-hedge-prop-20261027/research-frame-proposal/applied-focal.log"
+}

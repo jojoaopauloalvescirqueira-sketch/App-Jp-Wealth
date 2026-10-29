@@ -1,0 +1,25 @@
+{
+  "classification": "PASS",
+  "build": "abbcd8b5e67be657",
+  "checked_at_utc": "2026-10-27T01:19:02.739489+00:00",
+  "branch": "codex/portfolio-gerenciamento-20261026",
+  "head": "3e24f60f8cfe87f79335f40e95a0927379a9f834",
+  "frozen_files": 693,
+  "mismatches": [],
+  "gate_summary": {
+    "PASS": 113,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "gate_check_count": 113,
+  "observed_runner_exit_code": 0,
+  "started_at": "2026-10-26T21:21:56-03:00",
+  "finished_at": "2026-10-26T22:18:05-03:00",
+  "limits": [
+    "Human visual and native Excel acceptance not performed",
+    "Only validation outputs and factual authorized work-status may change after freeze"
+  ]
+}

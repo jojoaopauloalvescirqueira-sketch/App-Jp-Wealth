@@ -44,7 +44,7 @@
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "f3f4d14249be57b8adfe310bc2328dc59880b8ee13bfe326cb163635b7ab4c3c"
+      "sha256": "ba06dbc855979fc2b6d2423f5220ea72230d877c31e81f002d4ba994726e039d"
     },
     {
       "path": "src/js/10-domain/19-personal-agenda.js",
@@ -56,13 +56,13 @@
       "path": "src/js/00-core/08-module-availability.js",
       "section": "Module availability · local preference",
       "order": 8,
-      "sha256": "44f40f5d5c0161b4ffc4fc85cb54fb594baff357c8dcf68ce1af6b184fe2cca9"
+      "sha256": "98eddff44b9494d47de144c151f12c79a48f3fb7ee19a8349b98596a10856a83"
     },
     {
       "path": "src/js/00-core/07-workspace-backup.js",
       "section": "Portable workspace backup",
       "order": 9,
-      "sha256": "30891efb82a9270c23cfbb318c3380cb1a5de0872ab72c16d00792290d4a1a9a"
+      "sha256": "e7c9144ed5f48c4a169fdcbc483c0e59931b902c88b7a1d8fb79eee2a4509207"
     },
     {
       "order": 10,
@@ -176,7 +176,7 @@
       "order": 28,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "196283dcda1ff9f3a7c6137e895692a62ccd06e439169e04430cfe2df2725d2e"
+      "sha256": "b134acc15c59329bc27b7bd4b4f8107833287d97b0aa9e506233b6b0e2afeabf"
     },
     {
       "order": 29,
@@ -200,13 +200,13 @@
       "order": 32,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "c710bbac4511e6ac37315aa11eef86f34d15eaafd94f21a84b8305d48501232c"
+      "sha256": "009ff942d9b1d954bad2b9c6083408ef7e0abebe4f5bdab8acc737eac6960ec6"
     },
     {
       "order": 33,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "b683ce248781a81df0b5c38ce4caf222de87bc77e07b809ffbecd1b2f2802abb"
+      "sha256": "bfb1e5a556ff34bdd07725a169725ef30aeb62b83a3cf9d225fdc482d1c78eb9"
     },
     {
       "order": 34,
@@ -248,7 +248,7 @@
       "order": 40,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "41c9a9d0d390d8ee02100810b17ac30a705d7222edd933fed7b2aaadb1514483"
+      "sha256": "78261568203a75f6a340f011454246c253643b62024c3a37e5c22f41ec8259bb"
     },
     {
       "order": 41,
@@ -272,13 +272,13 @@
       "order": 44,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "2ec8087cfd53de281830a609e29398248c3599a6ed33370114a941b95bcf8d1b"
+      "sha256": "3ed7107b6838d2e6388a66639c5231a2851a5c97238268761eb8f6e960a8d508"
     },
     {
       "order": 45,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "bfe41d77e3abdfddda3720788951f980d12f366f945f62d0ab60ef0a4ac2f58a"
+      "sha256": "4604b77cac47fe6c8c3048cf99f620107961740a9aa4a1f03e9d8331bf1d32cc"
     },
     {
       "order": 46,
@@ -308,7 +308,7 @@
       "order": 50,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "8e9cbd01549210458b7d8c1c1214d9907c3ee65aef6017a27c489c5c1018d5ee"
+      "sha256": "4bab3f5e0e06f16ec7b44f6d386cb5dc935c684cebb1983cd6eecd83cb9b8d53"
     },
     {
       "order": 51,
@@ -320,24 +320,24 @@
       "order": 52,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "4b3ee2c6a31ed2d301e66304b33b0531c6f57e8074c50da7cf7d95c3daf9a97e"
+      "sha256": "06ca70d88bca2aa7c2ef9a1ad1b38a8c417596fe5abb14737e0f434762e36ad1"
     },
     {
       "order": 53,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "e01b97d9dd15ce6a373ddd09c4c4db7ed3d6d165dce1a46a47914cb5cb40378d"
+      "sha256": "bd610654670371b43194dfb1840ed5edfb6cfbd9465849f6d6bf15597460310a"
     },
     {
       "order": 54,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
-      "sha256": "8763f9c7d00a45b6bcc11b96d80acb115dae4d9ebb0e6b42ad5f32657b4264e3"
+      "sha256": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d"
     },
     {
       "path": "src/js/40-app/16-monthly-economic-data.js",
       "section": "MONTHLY ECONOMIC CALENDAR · official public snapshot",
-      "sha256": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+      "sha256": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
       "order": 55
     },
     {
@@ -404,7 +404,7 @@
       "order": 66,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "a6a226a01765dccfe7d97f1dd222999106470f09643ce4e9e09dc6b10e0963ad"
+      "sha256": "fd30cbf5dfc059fe12c7b4bdcf55bb3ea103acdad4bf7cb143ed540bb94ddf52"
     },
     {
       "order": 67,
@@ -416,7 +416,7 @@
       "order": 68,
       "path": "src/js/20-ui/14-nocoda-studies.js",
       "section": "ESTUDOS NOCODA · interface do workspace",
-      "sha256": "66c546fa9585b8c4dc30103817bf8c5b97ea8e77580cd7bb5e8a3b0a1c9c730d"
+      "sha256": "c78bc2aa54aaea928a02a223c8e0e94725d88e412fcab35865847dba700b548a"
     },
     {
       "order": 69,
@@ -428,7 +428,7 @@
       "order": 70,
       "path": "src/js/20-ui/15-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · interface do workspace",
-      "sha256": "a4ebe6d7c23b81fbdd6f44348f2a878b510d3f62001e50ba6e02e9e87c5464c1"
+      "sha256": "5b5b5a7055517397c0b52aea24dfd8c8fafbb7307ec628ef66b4598b4860d8d5"
     },
     {
       "order": 71,
@@ -493,7 +493,7 @@
       "order": 81,
       "path": "src/js/20-ui/23-research-views.js",
       "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
-      "sha256": "4a0b9f3a59e815576dc1335609c88a817c6b9f12823a0060e24eb745f0ecc721"
+      "sha256": "9a50294f945153a8cb6f1952db04c22a90fbb6de15ac6eb011362954865ee608"
     },
     {
       "order": 82,
@@ -505,25 +505,25 @@
       "order": 83,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "5daf06408d8082fafb0f7947c9634949353558a001b56a2a442fcbd8239713f1"
+      "sha256": "175b09127aafc883a3a32428181029cd37dc1aada493050bc497002b64517832"
     },
     {
       "order": 84,
       "path": "src/js/40-app/18-notification-center.js",
       "section": "NOTIFICATIONS · central local de avisos e mensagens de sessao",
-      "sha256": "b84073d5e520742d1d55cfd2e3a67dd5c74d11aa9aa390dc78c6127076160013"
+      "sha256": "7b18da5c8a5fb859001525a2afa935c1164533d1f22f7f99936c4c8130a6e8e3"
     },
     {
       "path": "src/js/40-app/19-calendar-agenda.js",
       "section": "CALENDAR AND AGENDA · monthly shared presentation",
-      "sha256": "da6c6738fe5776c5c75e9728176cb47812d2c594f130f9c3025a31969870a53c",
+      "sha256": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518",
       "order": 85
     },
     {
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 86,
-      "sha256": "fb3290a475ba57d58a9793a60ffc2fc335fbde9f37eba54a416f29cd71d6c4b0"
+      "sha256": "8b7c6853601c6bb9d12ea8045a9050c6520004e799d098887df9d3d10c09ee9c"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
@@ -547,7 +547,7 @@
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 90,
-      "sha256": "23a09f27f0e2d7069ad838cde454407dd9b36bc53fdd2fa8c9b208aaef7d0723"
+      "sha256": "3826ef8e955dca348101bc21dd87781c2ecd34734a53588cc3837cce24ceaef4"
     },
     {
       "path": "src/js/10-domain/19-execution-market.js",
@@ -664,76 +664,106 @@
       "sha256": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37"
     },
     {
+      "path": "src/js/40-app/32-prop-firms/01-engine.js",
+      "section": "HEDGE PROP · pure educational endpoint model",
+      "sha256": "c6b2c73296bcdbc97a3cbfc6b9be5581fe7d54ee6a295625dd7b0d5b6307640f",
+      "order": 110
+    },
+    {
+      "path": "src/js/40-app/32-prop-firms/02-ui.js",
+      "section": "HEDGE PROP · memory-only presentation",
+      "sha256": "f7a5021242b1f8d5638f23cec22a891387bf1d39ad6a534cecbed896cce01c66",
+      "order": 111
+    },
+    {
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Ferramentas e Serviços · shared workspace",
-      "order": 110,
-      "sha256": "f2b49d302191fc18c20169556e7bc13ac016340c77cdb02bba0aa463bd5a5a12"
+      "order": 112,
+      "sha256": "7b890d504e97b3e9dffe7bd87b0b2acc2a4a50662055ed768fb4e87fb5e54cf2"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",
       "section": "Estrutura Normativa · local PDF reader",
-      "order": 111,
+      "order": 113,
       "sha256": "beaf00bb9f531496914d7147fd619bb6448cb761df6a6c6bc44a47f3dd3d3f8d"
     },
     {
       "path": "src/js/20-ui/31-forex-accounts.js",
       "section": "Contas e Período · gestão contextual de contas CFDs",
-      "order": 112,
+      "order": 114,
       "sha256": "2aab5fda4525f02f8d9c701fee28fac733578028cc7020b444e5336cb4688fd5"
     },
     {
       "path": "src/js/20-ui/33-module-work.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 113,
-      "sha256": "9094a3651edbbaab009f627a43122bb6e2c32f6d337e3ae6723624c7d960edd2"
+      "order": 115,
+      "sha256": "cc034f19d594d26a04aa9ec9035387360c81ddb4f3d1612edf056258debcf9da"
     },
     {
       "path": "src/js/20-ui/32-module-availability.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 114,
-      "sha256": "d3d4516fc2087e69d57e2053f0b9b2d54d70d38d3585f4dcbe421ac54c6f6a0a"
+      "order": 116,
+      "sha256": "15d68d3ec4416f45f7e0048f1b6aeb927c124045806c20631290c4127b8780c4"
     },
     {
       "path": "src/js/40-app/26-learning-catalog.js",
       "section": "GUIA DO SITE · catálogo editorial local",
-      "order": 115,
-      "sha256": "784f0bbf6dba081bd647eaf6f353d3bc707b13f6fc019f47f72b38a125923f7c"
+      "order": 117,
+      "sha256": "f6b5dde8480febea20f5e3094bb1eabdcb9064006b872e5170ff134fa369a4ac"
     },
     {
       "path": "src/js/00-core/09-learning-progress.js",
       "section": "GUIA DO SITE · progresso auxiliar validado",
-      "order": 116,
-      "sha256": "782cdd7f7d726eac8ac5d6a00cfddd055ac5ad7cbcd4d9e39ab7bb523fc699d0"
+      "order": 118,
+      "sha256": "04991df6b2c03fb8b932a9be1af7dfa797ecf3551b257daa7b62f999fedb05eb"
     },
     {
       "path": "src/js/40-app/27-learning-view.js",
       "section": "GUIA DO SITE · central e orientação contextual",
-      "order": 117,
+      "order": 119,
       "sha256": "ffc4f41c980d1e534e9493ba0b69fc3de0ed877c8b9efeedfe0fccd9bed91fa3"
     },
     {
       "path": "src/js/40-app/28-learning-guide.js",
       "section": "GUIA DO SITE · controlador de observação",
-      "order": 118,
-      "sha256": "0710b7083e0353f3b11d83cfaef96f03c2c3804d97aac818c6c6661f45e08a64"
+      "order": 120,
+      "sha256": "1cc4bdf50b48c572f30623e16c8b5836c64be0bb6552990a0e8694fc546322df"
     },
     {
       "path": "src/js/30-accounting/06-planning/01-engine.js",
       "section": "Planejamento patrimonial independente",
-      "order": 119,
+      "order": 121,
       "sha256": "d698bf884e8dce907c255f20170f76e5919938cde755f575847f63ce7dbba5b2"
     },
     {
       "path": "src/js/30-accounting/06-planning/02-state.js",
       "section": "Planejamento patrimonial independente",
-      "order": 120,
+      "order": 122,
       "sha256": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0"
     },
     {
       "path": "src/js/30-accounting/06-planning/03-ui.js",
       "section": "Planejamento patrimonial independente",
-      "order": 121,
+      "order": 123,
       "sha256": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f"
+    },
+    {
+      "path": "src/js/30-accounting/07-management/01-engine.js",
+      "section": "GERENCIAMENTO · annual workbook pure engine",
+      "sha256": "b98b8d45f18084986947553dd8ab60129ba5fdb89c08a80c0791fc155c3982bb",
+      "order": 124
+    },
+    {
+      "path": "src/js/30-accounting/07-management/02-state.js",
+      "section": "GERENCIAMENTO · annual workbook confirmed state",
+      "sha256": "21ddb1b256c579132d0b7212f8428b6d2dba488426c0bed40e7067f7768bee71",
+      "order": 125
+    },
+    {
+      "path": "src/js/30-accounting/07-management/03-ui.js",
+      "section": "GERENCIAMENTO · annual workbook presentation",
+      "sha256": "00587fd09e36616eb607332647256ff9010d140c35841605dc8a29483d46ca5c",
+      "order": 126
     }
   ],
   "runtimeAssets": [

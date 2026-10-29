@@ -1,0 +1,12 @@
+{
+  "classification": "PASS",
+  "base": "3e24f60",
+  "unchanged_critical_files": 170,
+  "categories": [
+    "normative",
+    "MT5 sources",
+    "existing domain engines and canonical Forex writer",
+    "approved Planning engine/state/UI"
+  ],
+  "workbook_sha256": "621a4e5bdefc467bede301b94e2c6f60aa05c78df3613cfac3908ef8d0c9084a"
+}

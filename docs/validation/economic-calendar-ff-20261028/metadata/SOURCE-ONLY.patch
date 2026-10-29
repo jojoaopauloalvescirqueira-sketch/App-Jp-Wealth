@@ -1,0 +1,256 @@
+--- a/infra/monthly-economic-feed/build_package.py
++++ b/infra/monthly-economic-feed/build_package.py
+@@ -27,6 +27,35 @@
+     familyKey links can join a FF observation to an official event; title/date
+     similarity never establishes a revision or a cancellation.
+     """
++    # These statements describe only the original official collection. Keep
++    # their evidence and review dates intact, without applying them to FF data.
++    base['officialBaseMetadata'] = dict(
++        scope='official-base-before-public-feed',
++        generatedAt=base.get('generatedAt'), updatedAt=base.get('updatedAt'),
++        currencies=list(dict.fromkeys(row['currency'] for row in base['sources'])),
++        sourceIds=[row['id'] for row in base['sources']],
++        editorialPolicy=base.get('editorialPolicy'), limitations=base.get('limitations', []))
++    base['editorialPolicy'] = dict(
++        id='jpw-impact-origins-v2', publisher='JP Wealth',
++        publisherRole='composition-policy', kind='mixed',
++        origins=[dict(id='forexfactory', publisher='Forex Factory', kind='provider'),
++                 dict(id='jpw-editorial', publisher='JP Wealth', kind='editorial')],
++        disclaimer='O impacto conserva a origem por evento: classificação Forex Factory ou curadoria editorial JP Wealth; não representa autorização operacional.',
++        dateOnly=base['officialBaseMetadata']['editorialPolicy'].get('dateOnly') if isinstance(base['officialBaseMetadata']['editorialPolicy'], dict) else None)
++    base['updatePolicy'] = dict(
++        queryMode='synchronous-snapshot', refreshMode='shared-public-feed-adapter',
++        sourceAgeBasis='collectedAt', forexFactoryMaxAgeSeconds=7200,
++        officialExpiryBasis='coverage.validUntil', externalSchedule='not-asserted')
++    base['limitations'] = [
++        'Cobertura parcial por fonte e intervalo nas moedas disponibilizadas; não comprova mês econômico completo.',
++        'O export Forex Factory é semanal; snapshots acumulados não comprovam meses ou eventos ausentes.',
++        'A origem do impacto é individual: classificação Forex Factory ou curadoria editorial JP Wealth; eventos sem classificação não recebem impacto presumido.',
++        'Campos anteriores e consenso podem estar presentes no export; dados ausentes e resultados realizados não são presumidos.',
++        'A consulta síncrona usa um snapshot validado; atualização assíncrona depende do produtor compartilhado e do endpoint disponível. Publicação ou execução externa não são comprovadas por estes metadados.',
++        'Forex Factory fica desatualizado após duas horas sem nova coleta válida; consulta recente não renova collectedAt. Fontes oficiais mantêm seus prazos individuais de coverage.validUntil.',
++        'Status scheduled em calendário passado não comprova publicação; não inferir published pela passagem do tempo.',
++        'Curadoria documental assistida por IA não é aceite ou revisão humana.',
++        'Identidades locais de observação FF não comprovam ID nativo, reagendamento ou cancelamento; identidades oficiais e suas fontes são preservadas.']
+     sources = {row['id']: row for row in base['sources']}
+     sources.update({row['id']: row for row in public['sources']})
+     by_id = {row['id']: row for row in base['events']}
+--- a/src/js/40-app/16-monthly-economic-data.js
++++ b/src/js/40-app/16-monthly-economic-data.js
+@@ -1,4 +1,4 @@
+-/* Public official-source schedule. Pure model: no DOM, requests, cache or state. */
++/* Public economic snapshots. Pure model: no DOM, requests, cache or state. */
+ (function (root) {
+   'use strict';
+   const packet = /* JPW_MONTHLY_DATA_BEGIN */
+@@ -4999,5 +4999,68 @@
+     }
+     return {events:selected,coverage,updatedAt:model.feed.collectedAt||packet.updatedAt||null,feed:copy(model.feed)};
+   }
+-  root.JPWEconomicCalendar=Object.freeze({queryRange,sources:()=>copy(combined().sources),metadata:()=>{const model=combined();return copy({schemaVersion:packet.schemaVersion,updatedAt:model.feed.collectedAt||packet.updatedAt||null,generatedAt:packet.generatedAt||null,currencies:model.currencies,months:[...new Set([...(packet.months||[]),...model.events.map(e=>e.date.slice(0,7))])],coverageScope:'source-and-interval',editorialPolicy:packet.editorialPolicy||null,provenance:packet.provenance||[],limitations:packet.limitations||[],rejectedSources:[...model.damaged],feed:model.feed});}});
++  // Old official-only packets can receive a shared v1/v2 snapshot at runtime.
++  // Keep their metadata scoped too; Model22 checks parity with the compiler.
++  const compositionMetadataFallback = {
++  "editorialPolicy": {
++    "id": "jpw-impact-origins-v2",
++    "publisher": "JP Wealth",
++    "publisherRole": "composition-policy",
++    "kind": "mixed",
++    "origins": [
++      {
++        "id": "forexfactory",
++        "publisher": "Forex Factory",
++        "kind": "provider"
++      },
++      {
++        "id": "jpw-editorial",
++        "publisher": "JP Wealth",
++        "kind": "editorial"
++      }
++    ],
++    "disclaimer": "O impacto conserva a origem por evento: classificação Forex Factory ou curadoria editorial JP Wealth; não representa autorização operacional.",
++    "dateOnly": null
++  },
++  "updatePolicy": {
++    "queryMode": "synchronous-snapshot",
++    "refreshMode": "shared-public-feed-adapter",
++    "sourceAgeBasis": "collectedAt",
++    "forexFactoryMaxAgeSeconds": 7200,
++    "officialExpiryBasis": "coverage.validUntil",
++    "externalSchedule": "not-asserted"
++  },
++  "limitations": [
++    "Cobertura parcial por fonte e intervalo nas moedas disponibilizadas; não comprova mês econômico completo.",
++    "O export Forex Factory é semanal; snapshots acumulados não comprovam meses ou eventos ausentes.",
++    "A origem do impacto é individual: classificação Forex Factory ou curadoria editorial JP Wealth; eventos sem classificação não recebem impacto presumido.",
++    "Campos anteriores e consenso podem estar presentes no export; dados ausentes e resultados realizados não são presumidos.",
++    "A consulta síncrona usa um snapshot validado; atualização assíncrona depende do produtor compartilhado e do endpoint disponível. Publicação ou execução externa não são comprovadas por estes metadados.",
++    "Forex Factory fica desatualizado após duas horas sem nova coleta válida; consulta recente não renova collectedAt. Fontes oficiais mantêm seus prazos individuais de coverage.validUntil.",
++    "Status scheduled em calendário passado não comprova publicação; não inferir published pela passagem do tempo.",
++    "Curadoria documental assistida por IA não é aceite ou revisão humana.",
++    "Identidades locais de observação FF não comprovam ID nativo, reagendamento ou cancelamento; identidades oficiais e suas fontes são preservadas."
++  ]
++};
++  function metadata(){
++    const model=combined(),hasProvider=model.sources.some(s=>String(s.id).startsWith('ff-'));
++    const officialSources=(packet.sources||[]).filter(s=>!String(s.id).startsWith('ff-'));
++    const officialBaseMetadata=packet.officialBaseMetadata||(hasProvider?{
++      scope:'official-base-before-public-feed',generatedAt:packet.generatedAt||null,updatedAt:packet.updatedAt||null,
++      currencies:[...new Set(officialSources.map(s=>s.currency))],sourceIds:officialSources.map(s=>s.id),
++      editorialPolicy:packet.editorialPolicy||null,limitations:packet.limitations||[]
++    }:null);
++    const composition=hasProvider?(packet.officialBaseMetadata?{
++      editorialPolicy:packet.editorialPolicy,updatePolicy:packet.updatePolicy,limitations:packet.limitations
++    }:{...compositionMetadataFallback,editorialPolicy:{...compositionMetadataFallback.editorialPolicy,dateOnly:packet.editorialPolicy?.dateOnly||null}}):{
++      editorialPolicy:packet.editorialPolicy||null,updatePolicy:packet.updatePolicy||null,limitations:packet.limitations||[]
++    };
++    return copy({schemaVersion:packet.schemaVersion,updatedAt:model.feed.collectedAt||packet.updatedAt||null,
++      generatedAt:packet.generatedAt||null,generatedAtScope:officialBaseMetadata?'official-base':'packet',
++      currencies:model.currencies,months:[...new Set([...(packet.months||[]),...model.events.map(e=>e.date.slice(0,7))])],
++      coverageScope:'source-and-interval',...composition,officialBaseMetadata,
++      provenance:packet.provenance||[],publicFeedProvenance:packet.publicFeedProvenance||null,
++      rejectedSources:[...model.damaged],feed:model.feed});
++  }
++  root.JPWEconomicCalendar=Object.freeze({queryRange,sources:()=>copy(combined().sources),metadata});
+ })(window);
+--- a/tools/monthly_economic_feed_test.py
++++ b/tools/monthly_economic_feed_test.py
+@@ -56,10 +56,22 @@
+ for(const key of ['fetch','document','localStorage','sessionStorage','S'])
+  Object.defineProperty(c,key,{get(){throw new Error('Forbidden IO: '+key);}});
+ vm.createContext(c);vm.runInContext(source,c,{timeout:2000});
++if(input.runtimePayload){
++ const payload=input.runtimePayload,stamp=payload.collectedAt||payload.generated_at;
++ const mode=payload.version===1?'legacy-partial':'normalized';
++ c.JPWCalendarFeed={snapshot:()=>({payload,revision:'SYN runtime',fetchedAt:Date.parse(stamp),mode}),status:()=>({mode,collectedAt:stamp})};
++}
+ const api=c.JPWEconomicCalendar;
+ let result;
+ try {
+  if(input.action==='metadata') result={sources:api.sources(),metadata:api.metadata()};
++ else if(input.action==='metadata-immutability'){
++   const first=api.metadata();first.limitations.push('MUTATED');
++   first.editorialPolicy.origins[0].publisher='MUTATED';
++   first.officialBaseMetadata.limitations.push('MUTATED');
++   first.updatePolicy.forexFactoryMaxAgeSeconds=-1;
++   result={metadata:api.metadata()};
++ }
+  else if(input.action==='immutability'){
+    const first=api.queryRange(input.query);first.events[0].title='MUTATED';
+    const sources=api.sources();sources[0].name='MUTATED';
+@@ -71,13 +83,14 @@
+ 
+ 
+ class ModelContract(unittest.TestCase):
+-    def call(self, events=None, query=None, action=None, package=None):
++    def call(self, events=None, query=None, action=None, package=None, runtime_payload=None):
+         self.assertTrue(MODEL.exists(), 'Monthly public economic model is not implemented')
+         data = {'model': str(MODEL), 'query': query or {
+             'from': '2026-10-01', 'to': '2026-10-31', 'timeZone': 'UTC'}}
+         if package is not None or events is not None:
+             data['fixture'] = package if package is not None else fixture(events)
+         if action: data['action'] = action
++        if runtime_payload is not None: data['runtimePayload'] = runtime_payload
+         p = subprocess.run([NODE, '-e', NODE_PROBE], input=json.dumps(data), text=True,
+                            capture_output=True, timeout=8)
+         self.assertEqual(p.returncode, 0, p.stderr)
+@@ -192,6 +205,98 @@
+         self.assertFalse(any(row['status']=='confirmed' for row in outside['coverage']),outside)
+         inside=self.call(package=package,query={'from':'2026-10-28','to':'2026-10-28','currencies':['USD'],'timeZone':'UTC'})['result']
+         self.assertTrue(any(row['status']=='confirmed' for row in inside['coverage']),inside)
++
++
++    def test_22_composed_metadata_scopes_original_official_policy(self):
++        canonical = json.loads((ROOT / 'infra/monthly-economic-feed/data/monthly-economic-2026-10.json').read_text())
++        metadata = self.call(action='metadata')['result']['metadata']
++        policy = metadata['editorialPolicy']
++        self.assertEqual(policy['kind'], 'mixed', 'Composed events cannot be described as solely JP editorial impact')
++        self.assertEqual(policy['publisherRole'], 'composition-policy')
++        self.assertEqual(policy['origins'], [
++            {'id':'forexfactory','publisher':'Forex Factory','kind':'provider'},
++            {'id':'jpw-editorial','publisher':'JP Wealth','kind':'editorial'}])
++        self.assertEqual(set(metadata['currencies']), {'USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'})
++        self.assertEqual(metadata['updatePolicy'], {
++            'queryMode':'synchronous-snapshot', 'refreshMode':'shared-public-feed-adapter',
++            'sourceAgeBasis':'collectedAt', 'forexFactoryMaxAgeSeconds':7200,
++            'officialExpiryBasis':'coverage.validUntil', 'externalSchedule':'not-asserted'})
++        original = metadata['officialBaseMetadata']
++        self.assertEqual(original['scope'], 'official-base-before-public-feed')
++        self.assertEqual(set(original['currencies']), {'USD','GBP','JPY','NZD','CHF'})
++        self.assertEqual(len(original['sourceIds']), 11)
++        self.assertFalse(any(source_id.startswith('ff-') for source_id in original['sourceIds']))
++        self.assertEqual(original['editorialPolicy']['id'], 'jpw-macro-impact-v1')
++        self.assertEqual(original['editorialPolicy']['kind'], 'editorial')
++        self.assertEqual(original['generatedAt'], '2026-10-23T15:52:12Z')
++        self.assertEqual(original['updatedAt'], '2026-10-23T15:52:12Z')
++        self.assertEqual(metadata['generatedAtScope'], 'official-base')
++        self.assertEqual(metadata['generatedAt'], original['generatedAt'])
++        old_claims = [
++            'Entrega parcial por fontes/famílias; não comprova mês completo de todas as cinco moedas.',
++            'Não contém valores anteriores, consenso, resultado, surpresa ou impacto nativo de provedor.',
++            'Sem atualização automática no app; pacote estático revisado, validade de cobertura de 48 horas.']
++        for claim in old_claims:
++            self.assertIn(claim, original['limitations'], 'Original official metadata must remain recoverable in its own scope')
++            self.assertNotIn(claim, metadata['limitations'], 'An old official-base claim cannot describe the combined feed')
++        self.assertEqual(metadata['officialBaseMetadata'], canonical['officialBaseMetadata'])
++        self.assertEqual(metadata['editorialPolicy'], canonical['editorialPolicy'])
++        self.assertEqual(metadata['updatePolicy'], canonical['updatePolicy'])
++        self.assertEqual(metadata['publicFeedProvenance'], canonical['publicFeedProvenance'])
++        self.assertEqual(self.call(action='metadata-immutability')['result']['metadata'], metadata)
++        # The official-only control stays honest without acquiring an FF policy.
++        official = fixture([event('SYN official', '2026-10-02T12:00:00Z')])
++        official.update(currencies=['USD'], months=['2026-10'],
++                        editorialPolicy={'id':'SYN-official-only','publisher':'JP Wealth','kind':'editorial','dateOnly':'SYN civil date'},
++                        limitations=['SYN original official scope'])
++        control = self.call(package=official, action='metadata')['result']['metadata']
++        self.assertEqual(control['editorialPolicy'], official['editorialPolicy'])
++        self.assertEqual(control['limitations'], official['limitations'])
++        self.assertIsNone(control['officialBaseMetadata'])
++        self.assertIsNone(control['updatePolicy'])
++        self.assertEqual(control['generatedAtScope'], 'packet')
++        legacy = {'version':1,'generated_at':STAMP,'events':[{
++            'title':'SYN runtime FF','country':'USD','date':'2026-10-23T12:00:00Z','impact':'High'}]}
++        for payload in [legacy, {'schemaVersion':2,'collectedAt':STAMP,'packagePublishedAt':STAMP,
++                'sourcePublishedAt':None,'currencies':['USD'],'sources':[{'id':'ff-USD',
++                'currency':'USD','name':'Synthetic FF','url':'https://www.forexfactory.com/calendar'}],
++                'events':[],'coverage':[]}]:
++            dynamic = self.call(package=official, action='metadata', runtime_payload=payload)['result']['metadata']
++            self.assertEqual(dynamic['editorialPolicy']['kind'], 'mixed')
++            self.assertEqual(dynamic['editorialPolicy']['origins'], policy['origins'])
++            self.assertEqual(dynamic['editorialPolicy']['dateOnly'], official['editorialPolicy']['dateOnly'])
++            self.assertEqual(dynamic['updatePolicy'], metadata['updatePolicy'])
++            self.assertEqual(dynamic['limitations'], metadata['limitations'], 'Runtime compatibility and shipped composition need the same truthful global limits')
++            self.assertEqual(dynamic['officialBaseMetadata'], {
++                'scope':'official-base-before-public-feed','generatedAt':STAMP,'updatedAt':STAMP,
++                'currencies':['USD'],'sourceIds':['fixture'],
++                'editorialPolicy':official['editorialPolicy'],'limitations':official['limitations']})
++            self.assertEqual(dynamic['feed']['mode'], 'legacy-partial' if payload.get('version')==1 else 'normalized')
++        # Exercise the compiler with an independent synthetic old policy. Only
++        # composition may add metadata; actual event/coverage records retain identity.
++        script = ROOT / 'infra/monthly-economic-feed/build_package.py'
++        spec = importlib.util.spec_from_file_location('metadata_composition_builder', script)
++        builder = importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
++        snapshot = json.loads(json.dumps(official))
++        ff = event('SYN FF', '2026-10-28T17:00:00Z')
++        ff.update(sourceId='ff-USD', sourceUrl='https://www.forexfactory.com/calendar',
++                  provider='Forex Factory', providerImpact='High', impactOrigin='provider')
++        public = {'schemaVersion':2,'collectedAt':'2026-10-28T20:00:00Z',
++                  'packagePublishedAt':'2026-10-28T20:01:00Z','sourcePublishedAt':None,
++                  'currentWeekFrom':'2026-10-25','currencies':['USD'],
++                  'sources':[{'id':'ff-USD','currency':'USD','name':'Synthetic FF','url':'https://www.forexfactory.com/calendar'}],
++                  'events':[ff], 'coverage':[{'sourceId':'ff-USD','currency':'USD','month':'2026-10',
++                    'from':'2026-10-25','to':'2026-10-31','status':'partial','reviewedAt':'2026-10-28T20:00:00Z'}]}
++        merged = builder.merge_public_packet(official, public)
++        self.assertEqual(merged['officialBaseMetadata'], {
++            'scope':'official-base-before-public-feed','generatedAt':snapshot['generatedAt'],
++            'updatedAt':snapshot['updatedAt'],'currencies':['USD'],'sourceIds':['fixture'],
++            'editorialPolicy':snapshot['editorialPolicy'],'limitations':snapshot['limitations']})
++        self.assertEqual(merged['events'], snapshot['events'] + public['events'])
++        self.assertEqual(merged['sources'], snapshot['sources'] + public['sources'])
++        self.assertEqual(merged['coverage'], snapshot['coverage'] + public['coverage'])
++        self.assertEqual(public['events'], [ff])
++        self.assertEqual(self.call(package=merged, action='metadata')['result']['metadata']['editorialPolicy']['kind'], 'mixed')
+ 
+ 
+ class CollectorContract(unittest.TestCase):

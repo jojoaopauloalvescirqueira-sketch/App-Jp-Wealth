@@ -1,0 +1,36 @@
+{
+  "build": "bc08298ef8320bb0",
+  "source": "Pacote econômico distribuído sem alteração; bootstrap nominal de rede isolado, sem dados pessoais.",
+  "captures": [
+    {
+      "host": "execEcal",
+      "width": 1440,
+      "theme": "light",
+      "file": "docs/validation/economic-calendar-table-20261028/captures/execEcal-1440-light.png",
+      "sha256": "343f5411c4ac275ba11aae3272ec3a8b467c802fd7c207df58ab0af1a30b5cee",
+      "rows": 8,
+      "horizontalOverflow": false,
+      "currentBuild": "bc08298ef8320bb0"
+    },
+    {
+      "host": "calendarDialog",
+      "width": 390,
+      "theme": "dark",
+      "file": "docs/validation/economic-calendar-table-20261028/captures/calendarDialog-390-dark.png",
+      "sha256": "74e8a6f810aaad73f3ec949827a1fce7422b017f952750d2f549ffe59de22381",
+      "rows": 8,
+      "horizontalOverflow": false,
+      "currentBuild": "bc08298ef8320bb0"
+    },
+    {
+      "host": "execEcal",
+      "width": 320,
+      "theme": "light",
+      "file": "docs/validation/economic-calendar-table-20261028/captures/execEcal-320-light.png",
+      "sha256": "37fcdaa7e33ccaa18509293454e7acfb6762b60857279c3c962c8c99fe0bdc19",
+      "rows": 8,
+      "horizontalOverflow": false,
+      "currentBuild": "bc08298ef8320bb0"
+    }
+  ]
+}

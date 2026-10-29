@@ -1,0 +1,53 @@
+{
+  "port": 58911,
+  "pid": 34240,
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "build": "5b4ef1141c9583bf",
+  "url": "http://127.0.0.1:58911/index.html?v=5b4ef1141c9583bf",
+  "scope": "isolated local preview; origin contains no transferred user data",
+  "result": "PASS",
+  "verifiedHTTP": [
+    {
+      "path": "index.html",
+      "http": 200,
+      "bytes": 538332,
+      "sha256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3"
+    },
+    {
+      "path": "build-id.js",
+      "http": 200,
+      "bytes": 37228,
+      "sha256": "5a92c19927124f9607d24501afe2c4d06c4b05e4715ff10a66936fe8b10ee9df"
+    },
+    {
+      "path": "src/js/40-app/15-ff-news.js",
+      "http": 200,
+      "bytes": 20671,
+      "sha256": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d"
+    },
+    {
+      "path": "src/js/40-app/16-monthly-economic-data.js",
+      "http": 200,
+      "bytes": 217339,
+      "sha256": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10"
+    },
+    {
+      "path": "src/js/40-app/19-calendar-agenda.js",
+      "http": 200,
+      "bytes": 47163,
+      "sha256": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4"
+    },
+    {
+      "path": "src/styles/app.css",
+      "http": 200,
+      "bytes": 942988,
+      "sha256": "3bc75488d2013b5b5febc435a05c6cd5183317fb353a6c2cbaaf8396f7255b47"
+    },
+    {
+      "path": "infra/monthly-economic-feed/data/monthly-economic-2026-10.json",
+      "http": 200,
+      "bytes": 199748,
+      "sha256": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f"
+    }
+  ]
+}

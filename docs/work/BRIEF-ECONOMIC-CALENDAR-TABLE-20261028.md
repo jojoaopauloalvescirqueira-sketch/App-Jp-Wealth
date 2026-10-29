@@ -1,0 +1,18 @@
+# Calendário econômico — tabela compacta
+
+Plano humano aprovado em 28/10/2026. Branch `codex/calendario-tabela-ff-20261028` autorizada na resposta `call_92a14e6d4fd8404bae411a67e918903b`: criar e usar o isolamento preservando todas as 133 alterações. HEAD `3e24f60f8cfe87f79335f40e95a0927379a9f834`, candidato inicial `5b4ef1141c9583bf`. Baseline de 3.578 arquivos conferido antes da branch e da edição. Arquivo das pendências: `/private/tmp/jpw-economic-calendar-table-20261028/baseline-pending.tar.gz`, SHA256 `5c50501d04c0207027e1f9a9d43bc6980b25dad88fd827433d9058af7c3d9d3d`.
+
+Objetivo N1/A2: substituir somente os cartões econômicos das duas superfícies mensais por sete campos, com apresentação compacta adaptável e detalhes locais. [Contrato de produto](CHG-JPW-ECONOMIC-CALENDAR-TABLE-PRODUCT-20261028.md), [plano](../superpowers/plans/2026-10-28-economic-calendar-table.md), [contrato do calendário](../architecture/CALENDAR-AGENDA.md). Os controles N3 possuem proposta e aprovação próprias; não inferir essa autoridade da autorização da branch.
+
+Arquivos permitidos de produto: `src/js/40-app/19-calendar-agenda.js`, CSS local em `src/styles/app.css`, contrato do calendário, este brief/CHGs, plano, ponteiro ACTIVE-TASK e evidências em `docs/validation/economic-calendar-table-20261028`. Rebuild pelos geradores oficiais pode atualizar somente as saídas derivadas usuais. Verificadores somente após autorização exata dos cinco arquivos propostos.
+
+Invariantes: APIs `queryRange/sources/metadata`, alimentação, coletor, cache, preferências, backup e todos os escritores financeiros preservados. Atual não existe no export utilizado e permanece ausente, sem inferência por tempo/publicação. Projeção e Anterior conservam texto e zero explícito. Calendário e Bolsas Globais continuam independentes; fontes e avisos não são apagados. Nenhum dado pessoal é usado em provas. Estado da expansão é só memória, por superfície e observação exata; rascunho, foco e rolagem sobrevivem a atualizações. Sem segundo motor de calendário.
+
+Fonte de engenharia obrigatória conferida: cópia do Harness em CloudDocs/CODEX/Skills/jp-ai-engineering/1.0.0-candidate-20261011/sources, SHA256 `b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95`. O caminho antigo do AGENTS não foi alterado. Preflight edit PASS com dirty133 e aviso histórico de frescor; somente os materiais desta tarefa serão reconciliados.
+
+Provas: RED anterior real; focais permanentes/contraprovas após autorização, medição de espaço útil, quatro layouts/dois temas/320–1.440 px/zoom nativo200%, HTTP/PWA-offline/file/portátil, FULL final, revisão independente. O gate116/visual413 anterior é histórico. Avaliação humana de uso/visual separada. Resposta `call_600f049bf1d445a1ab0252e1600218e1` autoriza reservar60–75min sem uso do Mac após aviso; não iniciar janelas reais sem avisar.
+
+Rollback limitado ao delta desta tarefa e às cópias/hash-base, preservando todos os trabalhos anteriores. Sem reset/stash, limpeza de armazenamento, novas dependências, Actual novo, ativação externa, commit, merge, push, publicação, alteração de AGENTS, skills ou memória global. Demais pedidos do anexo ficam fora do escopo.
+
+
+Atualização de autoridade29/10: o proprietário autorizou os cinco arquivos do pacote37 na resposta call_e7eccb4435e94736b3b509201cf41e8a e o deltaFFfinalV3 na resposta call_9750abf485524af2b6709be09677412e. Aplicações guardadas porSHA, testes/gates e produto revisados separadamente. Relatório final e resultados do FULL somente nos recibos desta tarefa; nenhuma autorização de Git/publicação/ativação externa foi acrescentada. O compromisso de janela nativa60–75min continua condicionado ao aviso de início.

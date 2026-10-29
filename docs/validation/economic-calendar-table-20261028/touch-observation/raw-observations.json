@@ -1,0 +1,3632 @@
+{
+  "collection_state": "completed",
+  "product_validation": "NOT_JUDGED",
+  "purpose": "Raw exploratory evidence for independent assessment; no new Harness oracle, gate or acceptance result",
+  "script_sha256": "3f5d6091f3bad0767e842d5e0fdca411807d393c7e46c91d4a78459806c5281b",
+  "product_sha256": {
+    "src/js/40-app/19-calendar-agenda.js": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518",
+    "src/styles/app.css": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e"
+  },
+  "probe_sha256": "39fb08f84973c61771da8923bc8e5bc9e7a6b93637bebf355e78f6f71c2b5283",
+  "fixture": {
+    "events": 6,
+    "clock": "2026-10-28T20:05:00+00:00",
+    "kind": "same synthetic RED fixture; fresh isolated contexts, no operator profile or financial fixture"
+  },
+  "shell_sha256": {
+    "index.html": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+    "build-id.js": "e09a14541af933658c25e929e5ff712ebcc79c8f55ea5605c4ac573894f36247",
+    "src/js/manifest.json": "baa7671404747d22ee815d065f4cdf42398cb1f716ae7813645f4ab3057c1360",
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10"
+  },
+  "observations": [
+    {
+      "width": 390,
+      "height": 900,
+      "host": "execEcal",
+      "has_touch": true,
+      "collection_state": "completed",
+      "states": [
+        {
+          "stage": "initial",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 309,
+            "y": 821.875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": null,
+            "label": null
+          },
+          "events_to_date": []
+        },
+        {
+          "stage": "after_native_tap_open_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 309,
+            "y": 427.875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 774,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_close_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 309,
+            "y": 427.875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 774,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 926,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 927,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 928,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_reopen_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 309,
+            "y": 427.875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 774,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 926,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 927,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 928,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1025,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1025,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1026,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_escape",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 309,
+            "y": 427.875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 774,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 926,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 927,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 928,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1025,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1025,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1026,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "keydown",
+              "key": "Escape",
+              "isTrusted": true,
+              "timeStamp": 1070
+            }
+          ]
+        },
+        {
+          "stage": "after_workspace_final_native_tap",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 309,
+            "y": 427.875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 772,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 774,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 926,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 927,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 928,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1025,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1025,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1026,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "keydown",
+              "key": "Escape",
+              "isTrusted": true,
+              "timeStamp": 1070
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1143,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1143,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 331,
+                  "y": 449.8699951171875
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1144,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        }
+      ],
+      "domain": [
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:0",
+          "title": "SYN TABLE 1",
+          "forecast": "0",
+          "previous": "0.0%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:1",
+          "title": "SYN TABLE 2",
+          "forecast": "−0.5%",
+          "previous": "1.2M"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:2",
+          "title": "SYN TABLE 3",
+          "forecast": "",
+          "previous": ""
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:3",
+          "title": "SYN TABLE 4",
+          "forecast": "1.2M",
+          "previous": "0"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:4",
+          "title": "SYN TABLE 5",
+          "forecast": "0.0%",
+          "previous": "−0.5%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:5",
+          "title": "SYN TABLE 6",
+          "forecast": "2.5%",
+          "previous": "3.5%"
+        }
+      ],
+      "touch_capabilities": {
+        "maxTouchPoints": 1,
+        "touchStartProperty": true,
+        "coarsePointer": true,
+        "hover": false
+      },
+      "before_finance_sha256": "b8a585c9f1d84ce8f6a67b5986bfeef4b00c317577e3ee389a6b7f55ca8a0723",
+      "open_viewport_capture": {
+        "file": "390-execEcal-after-open-tap.png",
+        "sha256": "b7978a04407ff700ce79062459a09b50b482c409d512f6dc009948ec7bc2ed05"
+      },
+      "after_finance_sha256": "b8a585c9f1d84ce8f6a67b5986bfeef4b00c317577e3ee389a6b7f55ca8a0723",
+      "financial_bytes_equal_observation": true,
+      "raw_events": [
+        {
+          "type": "touchstart",
+          "timeStamp": 772,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 772,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 774,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 926,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 927,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 928,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 1025,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 1025,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 1026,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "keydown",
+          "key": "Escape",
+          "isTrusted": true,
+          "timeStamp": 1070
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 1143,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 1143,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 331,
+              "y": 449.8699951171875
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 1144,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "host": "calendarDialog",
+      "has_touch": true,
+      "collection_state": "completed",
+      "states": [
+        {
+          "stage": "initial",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 317,
+            "y": 547.078125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "close",
+            "label": "Fechar calendário"
+          },
+          "events_to_date": []
+        },
+        {
+          "stage": "after_native_tap_open_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 317,
+            "y": 547.078125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 639,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 640,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 641,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_close_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 317,
+            "y": 547.078125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 639,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 640,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 641,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 789,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 789,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 790,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_reopen_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 317,
+            "y": 547.078125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 639,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 640,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 641,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 789,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 789,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 790,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 889,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 889,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 890,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_escape",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": false,
+          "toggle_box": null,
+          "panel_visible": false,
+          "dialog_open": false,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": "headerCalendarBtn",
+            "action": null,
+            "label": "Abrir Calendário e Agenda"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 639,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 640,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 641,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 789,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 789,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 790,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 889,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 889,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 339,
+                  "y": 569.0700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 890,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "keydown",
+              "key": "Escape",
+              "isTrusted": true,
+              "timeStamp": 934
+            }
+          ]
+        }
+      ],
+      "domain": [
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:0",
+          "title": "SYN TABLE 1",
+          "forecast": "0",
+          "previous": "0.0%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:1",
+          "title": "SYN TABLE 2",
+          "forecast": "−0.5%",
+          "previous": "1.2M"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:2",
+          "title": "SYN TABLE 3",
+          "forecast": "",
+          "previous": ""
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:3",
+          "title": "SYN TABLE 4",
+          "forecast": "1.2M",
+          "previous": "0"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:4",
+          "title": "SYN TABLE 5",
+          "forecast": "0.0%",
+          "previous": "−0.5%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:5",
+          "title": "SYN TABLE 6",
+          "forecast": "2.5%",
+          "previous": "3.5%"
+        }
+      ],
+      "touch_capabilities": {
+        "maxTouchPoints": 1,
+        "touchStartProperty": true,
+        "coarsePointer": true,
+        "hover": false
+      },
+      "before_finance_sha256": "73135864a19eea504041aeb971e067b2a9a312dfd72f118fc21f697fc21362dd",
+      "open_viewport_capture": {
+        "file": "390-calendarDialog-after-open-tap.png",
+        "sha256": "6fa64f5b51595f783f6727bcfacef0136c77bc03e1272e8c1922e718a28cc028"
+      },
+      "after_finance_sha256": "73135864a19eea504041aeb971e067b2a9a312dfd72f118fc21f697fc21362dd",
+      "financial_bytes_equal_observation": true,
+      "raw_events": [
+        {
+          "type": "touchstart",
+          "timeStamp": 639,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 640,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 641,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 789,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 789,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 790,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 889,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 889,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 339,
+              "y": 569.0700073242188
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 890,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "keydown",
+          "key": "Escape",
+          "isTrusted": true,
+          "timeStamp": 934
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "width": 320,
+      "height": 900,
+      "host": "execEcal",
+      "has_touch": true,
+      "collection_state": "completed",
+      "states": [
+        {
+          "stage": "initial",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 840.671875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": null,
+            "label": null
+          },
+          "events_to_date": []
+        },
+        {
+          "stage": "after_native_tap_open_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 427.671875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 591,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_close_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 427.671875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 591,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 717,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_reopen_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 427.671875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 591,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 717,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 784,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 784,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 785,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_escape",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 427.671875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 591,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 717,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 784,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 784,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 785,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "keydown",
+              "key": "Escape",
+              "isTrusted": true,
+              "timeStamp": 842
+            }
+          ]
+        },
+        {
+          "stage": "after_workspace_final_native_tap",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarWorkspaceEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 427.671875,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": null,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 591,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 592,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 717,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 718,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 784,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 784,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 785,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "keydown",
+              "key": "Escape",
+              "isTrusted": true,
+              "timeStamp": 842
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 900,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 900,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 449.6700439453125
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 901,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        }
+      ],
+      "domain": [
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:0",
+          "title": "SYN TABLE 1",
+          "forecast": "0",
+          "previous": "0.0%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:1",
+          "title": "SYN TABLE 2",
+          "forecast": "−0.5%",
+          "previous": "1.2M"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:2",
+          "title": "SYN TABLE 3",
+          "forecast": "",
+          "previous": ""
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:3",
+          "title": "SYN TABLE 4",
+          "forecast": "1.2M",
+          "previous": "0"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:4",
+          "title": "SYN TABLE 5",
+          "forecast": "0.0%",
+          "previous": "−0.5%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:5",
+          "title": "SYN TABLE 6",
+          "forecast": "2.5%",
+          "previous": "3.5%"
+        }
+      ],
+      "touch_capabilities": {
+        "maxTouchPoints": 1,
+        "touchStartProperty": true,
+        "coarsePointer": true,
+        "hover": false
+      },
+      "before_finance_sha256": "7babe416299ef0fff830de8de3743cc1f83eec0d062bc848711d87dd1fd4e6be",
+      "open_viewport_capture": {
+        "file": "320-execEcal-after-open-tap.png",
+        "sha256": "a6005ff178c0c9d1792c8bddb4450ed57abc02cb927acb6959cb00ed4eefd899"
+      },
+      "after_finance_sha256": "7babe416299ef0fff830de8de3743cc1f83eec0d062bc848711d87dd1fd4e6be",
+      "financial_bytes_equal_observation": true,
+      "raw_events": [
+        {
+          "type": "touchstart",
+          "timeStamp": 591,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 592,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 592,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 717,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 718,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 718,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 784,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 784,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 785,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "keydown",
+          "key": "Escape",
+          "isTrusted": true,
+          "timeStamp": 842
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 900,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 900,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 449.6700439453125
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 901,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "width": 320,
+      "height": 900,
+      "host": "calendarDialog",
+      "has_touch": true,
+      "collection_state": "completed",
+      "states": [
+        {
+          "stage": "initial",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 558.578125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "close",
+            "label": "Fechar calendário"
+          },
+          "events_to_date": []
+        },
+        {
+          "stage": "after_native_tap_open_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 558.578125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 871,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 872,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 873,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_close_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "false",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 558.578125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 871,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 872,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 873,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1004,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1004,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1005,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_tap_reopen_attempt",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": true,
+          "toggle_box": {
+            "x": 270,
+            "y": 558.578125,
+            "width": 44,
+            "height": 44
+          },
+          "panel_visible": true,
+          "dialog_open": true,
+          "detail_count": 1,
+          "detail_visible": true,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": true
+            }
+          ],
+          "active": {
+            "id": null,
+            "action": "economic-detail",
+            "label": "Detalhes de SYN TABLE 1"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 871,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 872,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 873,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1004,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1004,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1005,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1071,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1071,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1072,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            }
+          ]
+        },
+        {
+          "stage": "after_native_escape",
+          "toggle_label": "Detalhes de SYN TABLE 1",
+          "aria_expanded": "true",
+          "aria_controls": "calendarDialogEconomicDetail0",
+          "toggle_visible": false,
+          "toggle_box": null,
+          "panel_visible": false,
+          "dialog_open": false,
+          "detail_count": 1,
+          "detail_visible": false,
+          "source_links": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ],
+          "active": {
+            "id": "headerCalendarBtn",
+            "action": null,
+            "label": "Abrir Calendário e Agenda"
+          },
+          "events_to_date": [
+            {
+              "type": "touchstart",
+              "timeStamp": 871,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 872,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 873,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1004,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1004,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1005,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "touchstart",
+              "timeStamp": 1071,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "touchend",
+              "timeStamp": 1071,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": [
+                {
+                  "identifier": 0,
+                  "x": 292,
+                  "y": 580.5700073242188
+                }
+              ]
+            },
+            {
+              "type": "click",
+              "timeStamp": 1072,
+              "isTrusted": true,
+              "action": "economic-detail",
+              "label": "Detalhes de SYN TABLE 1",
+              "touches": [],
+              "changedTouches": []
+            },
+            {
+              "type": "keydown",
+              "key": "Escape",
+              "isTrusted": true,
+              "timeStamp": 1115
+            }
+          ]
+        }
+      ],
+      "domain": [
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:0",
+          "title": "SYN TABLE 1",
+          "forecast": "0",
+          "previous": "0.0%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:1",
+          "title": "SYN TABLE 2",
+          "forecast": "−0.5%",
+          "previous": "1.2M"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:2",
+          "title": "SYN TABLE 3",
+          "forecast": "",
+          "previous": ""
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:3",
+          "title": "SYN TABLE 4",
+          "forecast": "1.2M",
+          "previous": "0"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:4",
+          "title": "SYN TABLE 5",
+          "forecast": "0.0%",
+          "previous": "−0.5%"
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:5",
+          "title": "SYN TABLE 6",
+          "forecast": "2.5%",
+          "previous": "3.5%"
+        }
+      ],
+      "touch_capabilities": {
+        "maxTouchPoints": 1,
+        "touchStartProperty": true,
+        "coarsePointer": true,
+        "hover": false
+      },
+      "before_finance_sha256": "6efb4e613b4229ba5c2e3b035a08795db6346a3ff844596a0f61e320c1d91129",
+      "open_viewport_capture": {
+        "file": "320-calendarDialog-after-open-tap.png",
+        "sha256": "6223c8d095a3f0d2f460c31435ec020dc35f71220acb98be896d8f3c08e7da8c"
+      },
+      "after_finance_sha256": "6efb4e613b4229ba5c2e3b035a08795db6346a3ff844596a0f61e320c1d91129",
+      "financial_bytes_equal_observation": true,
+      "raw_events": [
+        {
+          "type": "touchstart",
+          "timeStamp": 871,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 872,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 873,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 1004,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 1004,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 1005,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "touchstart",
+          "timeStamp": 1071,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ]
+        },
+        {
+          "type": "touchend",
+          "timeStamp": 1071,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": [
+            {
+              "identifier": 0,
+              "x": 292,
+              "y": 580.5700073242188
+            }
+          ]
+        },
+        {
+          "type": "click",
+          "timeStamp": 1072,
+          "isTrusted": true,
+          "action": "economic-detail",
+          "label": "Detalhes de SYN TABLE 1",
+          "touches": [],
+          "changedTouches": []
+        },
+        {
+          "type": "keydown",
+          "key": "Escape",
+          "isTrusted": true,
+          "timeStamp": 1115
+        }
+      ],
+      "page_errors": []
+    }
+  ],
+  "limits": [
+    "Emulated Chromium touch only; not physical device acceptance",
+    "No modifications to repository, controls, thresholds, timeouts or required checks",
+    "No product PASS/FAIL computed from observed aria, visibility, events or focus"
+  ],
+  "browser": "156.0.8078.48",
+  "sources_still_frozen": {
+    "src/js/40-app/19-calendar-agenda.js": true,
+    "src/styles/app.css": true
+  },
+  "shell_still_frozen": {
+    "index.html": true,
+    "build-id.js": true,
+    "src/js/manifest.json": true,
+    "src/js/40-app/15-ff-news.js": true,
+    "src/js/40-app/16-monthly-economic-data.js": true
+  }
+}

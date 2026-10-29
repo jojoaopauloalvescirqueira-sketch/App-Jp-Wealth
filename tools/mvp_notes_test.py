@@ -291,9 +291,13 @@ try:
           window.URL.revokeObjectURL = () => {};
           HTMLAnchorElement.prototype.click = function(){};
         }""")
-        click_id(page, 'exportAuditBtn')
+        # The accepted legacy route now exposes the preserved financial export
+        # in Management history, including an empty base without a plan.
+        page.locator('#management [data-mg-action="history"]').click()
+        page.locator('dialog[open] [data-mg-action="export-audit"]').click()
         audit_payload = json.loads(page.evaluate("window.__auditBlob.text()"))
         assert 'mvpNotes' not in audit_payload, 'log de auditoria financeira não deve conter notas'
+        page.locator('dialog[open] [data-mg-action="close-dialog"]').first.click()
         page.evaluate("navigateToScreen('dash')")
 
         # ---- 8. persistência após reload ----

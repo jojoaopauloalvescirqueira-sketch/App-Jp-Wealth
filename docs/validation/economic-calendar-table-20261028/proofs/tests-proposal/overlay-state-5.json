@@ -1,0 +1,1218 @@
+{
+  "results": [
+    {
+      "case": "calendar-economic-focus-320-light",
+      "result": "PASS",
+      "geometry": {
+        "exactObservationFocusPreserved": true,
+        "changedObservationNotConflated": true,
+        "financialUnchanged": true
+      }
+    },
+    {
+      "case": "calendar-table-state-1440-light",
+      "result": "PASS",
+      "geometry": {
+        "geometry": {
+          "panel": {
+            "x": 284,
+            "y": 213.796875,
+            "width": 1124,
+            "height": 572,
+            "top": 213.796875,
+            "right": 1408,
+            "bottom": 785.796875,
+            "left": 284
+          },
+          "body": {
+            "x": 285,
+            "y": 282.796875,
+            "width": 1122,
+            "height": 502,
+            "top": 282.796875,
+            "right": 1407,
+            "bottom": 784.796875,
+            "left": 285
+          },
+          "month": {
+            "x": 305,
+            "y": 290.796875,
+            "width": 308,
+            "height": 303.9375,
+            "top": 290.796875,
+            "right": 613,
+            "bottom": 594.734375,
+            "left": 305
+          },
+          "agenda": {
+            "x": 637,
+            "y": 290.796875,
+            "width": 750,
+            "height": 470,
+            "top": 290.796875,
+            "right": 1387,
+            "bottom": 760.796875,
+            "left": 637
+          },
+          "useful": 1082,
+          "agendaUseful": 735,
+          "headings": [
+            "Horário",
+            "Moeda",
+            "Impacto",
+            "Evento",
+            "Atual",
+            "Projeção",
+            "Anterior"
+          ],
+          "headerBoxes": [
+            {
+              "x": 637,
+              "y": 393.9375,
+              "width": 64,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 701,
+              "bottom": 409.875,
+              "left": 637
+            },
+            {
+              "x": 709,
+              "y": 393.9375,
+              "width": 44,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 753,
+              "bottom": 409.875,
+              "left": 709
+            },
+            {
+              "x": 761,
+              "y": 393.9375,
+              "width": 52,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 813,
+              "bottom": 409.875,
+              "left": 761
+            },
+            {
+              "x": 821,
+              "y": 393.9375,
+              "width": 198.859375,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 1019.859375,
+              "bottom": 409.875,
+              "left": 821
+            },
+            {
+              "x": 1027.859375,
+              "y": 393.9375,
+              "width": 109.375,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 1137.234375,
+              "bottom": 409.875,
+              "left": 1027.859375
+            },
+            {
+              "x": 1145.234375,
+              "y": 393.9375,
+              "width": 109.375,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 1254.609375,
+              "bottom": 409.875,
+              "left": 1145.234375
+            },
+            {
+              "x": 1262.609375,
+              "y": 393.9375,
+              "width": 109.390625,
+              "height": 15.9375,
+              "top": 393.9375,
+              "right": 1372,
+              "bottom": 409.875,
+              "left": 1262.609375
+            }
+          ],
+          "overflow": [
+            {
+              "name": "calendar-panel",
+              "scroll": 1122,
+              "client": 1122
+            },
+            {
+              "name": "calendar-body",
+              "scroll": 1122,
+              "client": 1122
+            },
+            {
+              "name": "calendar-agenda",
+              "scroll": 735,
+              "client": 735
+            },
+            {
+              "name": "calendar-event-economic",
+              "scroll": 735,
+              "client": 735
+            },
+            {
+              "name": "calendar-event-economic",
+              "scroll": 735,
+              "client": 735
+            },
+            {
+              "name": "calendar-event-economic",
+              "scroll": 735,
+              "client": 735
+            },
+            {
+              "name": "calendar-event-economic",
+              "scroll": 735,
+              "client": 735
+            },
+            {
+              "name": "calendar-event-economic",
+              "scroll": 735,
+              "client": 735
+            },
+            {
+              "name": "calendar-event-economic",
+              "scroll": 735,
+              "client": 735
+            }
+          ],
+          "rows": [
+            {
+              "box": {
+                "x": 637,
+                "y": 417.875,
+                "width": 735,
+                "height": 91,
+                "top": 417.875,
+                "right": 1372,
+                "bottom": 508.875,
+                "left": 637
+              },
+              "fields": [
+                {
+                  "name": "time",
+                  "box": {
+                    "x": 637,
+                    "y": 428.875,
+                    "width": 64,
+                    "height": 29.390625,
+                    "top": 428.875,
+                    "right": 701,
+                    "bottom": 458.265625,
+                    "left": 637
+                  },
+                  "text": "11:00",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "currency",
+                  "box": {
+                    "x": 709,
+                    "y": 428.875,
+                    "width": 44,
+                    "height": 29.390625,
+                    "top": 428.875,
+                    "right": 753,
+                    "bottom": 458.265625,
+                    "left": 709
+                  },
+                  "text": "USD",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "impact",
+                  "box": {
+                    "x": 761,
+                    "y": 428.875,
+                    "width": 52,
+                    "height": 36.390625,
+                    "top": 428.875,
+                    "right": 813,
+                    "bottom": 465.265625,
+                    "left": 761
+                  },
+                  "text": "",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "",
+                    "",
+                    "",
+                    ""
+                  ]
+                },
+                {
+                  "name": "event",
+                  "box": {
+                    "x": 821,
+                    "y": 428.875,
+                    "width": 198.859375,
+                    "height": 70,
+                    "top": 428.875,
+                    "right": 1019.859375,
+                    "bottom": 498.875,
+                    "left": 821
+                  },
+                  "text": "SYN table event 0\n\nHorário a confirmar.",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "SYN table event 0",
+                    "SYN table event 0",
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Horário a confirmar."
+                  ]
+                },
+                {
+                  "name": "actual",
+                  "box": {
+                    "x": 1027.859375,
+                    "y": 428.875,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 428.875,
+                    "right": 1137.234375,
+                    "bottom": 460.375,
+                    "left": 1027.859375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1137.234375,
+                    "expectedRight": 1137.234375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "forecast",
+                  "box": {
+                    "x": 1145.234375,
+                    "y": 428.875,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 428.875,
+                    "right": 1254.609375,
+                    "bottom": 460.375,
+                    "left": 1145.234375
+                  },
+                  "text": "0",
+                  "numericInk": {
+                    "right": 1254.609375,
+                    "expectedRight": 1254.609375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "0"
+                  ]
+                },
+                {
+                  "name": "previous",
+                  "box": {
+                    "x": 1262.609375,
+                    "y": 428.875,
+                    "width": 109.390625,
+                    "height": 31.5,
+                    "top": 428.875,
+                    "right": 1372,
+                    "bottom": 460.375,
+                    "left": 1262.609375
+                  },
+                  "text": "0.0%",
+                  "numericInk": {
+                    "right": 1372,
+                    "expectedRight": 1372
+                  },
+                  "label": null,
+                  "labelText": [
+                    "0.0%"
+                  ]
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 637,
+                "y": 508.875,
+                "width": 735,
+                "height": 160.0625,
+                "top": 508.875,
+                "right": 1372,
+                "bottom": 668.9375,
+                "left": 637
+              },
+              "fields": [
+                {
+                  "name": "time",
+                  "box": {
+                    "x": 637,
+                    "y": 519.875,
+                    "width": 64,
+                    "height": 29.390625,
+                    "top": 519.875,
+                    "right": 701,
+                    "bottom": 549.265625,
+                    "left": 637
+                  },
+                  "text": "12:00",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "currency",
+                  "box": {
+                    "x": 709,
+                    "y": 519.875,
+                    "width": 44,
+                    "height": 29.390625,
+                    "top": 519.875,
+                    "right": 753,
+                    "bottom": 549.265625,
+                    "left": 709
+                  },
+                  "text": "USD",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "impact",
+                  "box": {
+                    "x": 761,
+                    "y": 519.875,
+                    "width": 52,
+                    "height": 36.390625,
+                    "top": 519.875,
+                    "right": 813,
+                    "bottom": 556.265625,
+                    "left": 761
+                  },
+                  "text": "",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "",
+                    "",
+                    "",
+                    ""
+                  ]
+                },
+                {
+                  "name": "event",
+                  "box": {
+                    "x": 821,
+                    "y": 519.875,
+                    "width": 198.859375,
+                    "height": 139.0625,
+                    "top": 519.875,
+                    "right": 1019.859375,
+                    "bottom": 658.9375,
+                    "left": 821
+                  },
+                  "text": "SYN long economic event with a deliberately extended title to wrap without clipping or hiding any values\n\nHorário a confirmar.",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "SYN long economic event with a deliberately extended title to wrap without clipping or hiding any values",
+                    "SYN long economic event with a deliberately extended title to wrap without clipping or hiding any values",
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Horário a confirmar."
+                  ]
+                },
+                {
+                  "name": "actual",
+                  "box": {
+                    "x": 1027.859375,
+                    "y": 519.875,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 519.875,
+                    "right": 1137.234375,
+                    "bottom": 551.375,
+                    "left": 1027.859375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1137.234375,
+                    "expectedRight": 1137.234375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "forecast",
+                  "box": {
+                    "x": 1145.234375,
+                    "y": 519.875,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 519.875,
+                    "right": 1254.609375,
+                    "bottom": 551.375,
+                    "left": 1145.234375
+                  },
+                  "text": "−0.5%",
+                  "numericInk": {
+                    "right": 1254.609375,
+                    "expectedRight": 1254.609375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "−0.5%"
+                  ]
+                },
+                {
+                  "name": "previous",
+                  "box": {
+                    "x": 1262.609375,
+                    "y": 519.875,
+                    "width": 109.390625,
+                    "height": 31.5,
+                    "top": 519.875,
+                    "right": 1372,
+                    "bottom": 551.375,
+                    "left": 1262.609375
+                  },
+                  "text": "1.2M",
+                  "numericInk": {
+                    "right": 1372,
+                    "expectedRight": 1372
+                  },
+                  "label": null,
+                  "labelText": [
+                    "1.2M"
+                  ]
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 637,
+                "y": 668.9375,
+                "width": 735,
+                "height": 115,
+                "top": 668.9375,
+                "right": 1372,
+                "bottom": 783.9375,
+                "left": 637
+              },
+              "fields": [
+                {
+                  "name": "time",
+                  "box": {
+                    "x": 637,
+                    "y": 679.9375,
+                    "width": 64,
+                    "height": 29.390625,
+                    "top": 679.9375,
+                    "right": 701,
+                    "bottom": 709.328125,
+                    "left": 637
+                  },
+                  "text": "13:00",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "currency",
+                  "box": {
+                    "x": 709,
+                    "y": 679.9375,
+                    "width": 44,
+                    "height": 29.390625,
+                    "top": 679.9375,
+                    "right": 753,
+                    "bottom": 709.328125,
+                    "left": 709
+                  },
+                  "text": "USD",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "impact",
+                  "box": {
+                    "x": 761,
+                    "y": 679.9375,
+                    "width": 52,
+                    "height": 36.390625,
+                    "top": 679.9375,
+                    "right": 813,
+                    "bottom": 716.328125,
+                    "left": 761
+                  },
+                  "text": "",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "",
+                    "",
+                    "",
+                    ""
+                  ]
+                },
+                {
+                  "name": "event",
+                  "box": {
+                    "x": 821,
+                    "y": 679.9375,
+                    "width": 198.859375,
+                    "height": 94,
+                    "top": 679.9375,
+                    "right": 1019.859375,
+                    "bottom": 773.9375,
+                    "left": 821
+                  },
+                  "text": "SYN table event 2\n\nHorário a confirmar. Cancelado na fonte.",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "SYN table event 2",
+                    "SYN table event 2",
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Horário a confirmar. Cancelado na fonte."
+                  ]
+                },
+                {
+                  "name": "actual",
+                  "box": {
+                    "x": 1027.859375,
+                    "y": 679.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 679.9375,
+                    "right": 1137.234375,
+                    "bottom": 711.4375,
+                    "left": 1027.859375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1137.234375,
+                    "expectedRight": 1137.234375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "forecast",
+                  "box": {
+                    "x": 1145.234375,
+                    "y": 679.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 679.9375,
+                    "right": 1254.609375,
+                    "bottom": 711.4375,
+                    "left": 1145.234375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1254.609375,
+                    "expectedRight": 1254.609375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "previous",
+                  "box": {
+                    "x": 1262.609375,
+                    "y": 679.9375,
+                    "width": 109.390625,
+                    "height": 31.5,
+                    "top": 679.9375,
+                    "right": 1372,
+                    "bottom": 711.4375,
+                    "left": 1262.609375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1372,
+                    "expectedRight": 1372
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 637,
+                "y": 783.9375,
+                "width": 735,
+                "height": 139,
+                "top": 783.9375,
+                "right": 1372,
+                "bottom": 922.9375,
+                "left": 637
+              },
+              "fields": [
+                {
+                  "name": "time",
+                  "box": {
+                    "x": 637,
+                    "y": 794.9375,
+                    "width": 64,
+                    "height": 29.390625,
+                    "top": 794.9375,
+                    "right": 701,
+                    "bottom": 824.328125,
+                    "left": 637
+                  },
+                  "text": "14:00",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "currency",
+                  "box": {
+                    "x": 709,
+                    "y": 794.9375,
+                    "width": 44,
+                    "height": 29.390625,
+                    "top": 794.9375,
+                    "right": 753,
+                    "bottom": 824.328125,
+                    "left": 709
+                  },
+                  "text": "USD",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "impact",
+                  "box": {
+                    "x": 761,
+                    "y": 794.9375,
+                    "width": 52,
+                    "height": 36.390625,
+                    "top": 794.9375,
+                    "right": 813,
+                    "bottom": 831.328125,
+                    "left": 761
+                  },
+                  "text": "",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "",
+                    "",
+                    "",
+                    ""
+                  ]
+                },
+                {
+                  "name": "event",
+                  "box": {
+                    "x": 821,
+                    "y": 794.9375,
+                    "width": 198.859375,
+                    "height": 118,
+                    "top": 794.9375,
+                    "right": 1019.859375,
+                    "bottom": 912.9375,
+                    "left": 821
+                  },
+                  "text": "SYN table event 3\n\nHorário a confirmar. Não consta na última coleta; não comprova cancelamento.",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "SYN table event 3",
+                    "SYN table event 3",
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Horário a confirmar. Não consta na última coleta; não comprova cancelamento."
+                  ]
+                },
+                {
+                  "name": "actual",
+                  "box": {
+                    "x": 1027.859375,
+                    "y": 794.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 794.9375,
+                    "right": 1137.234375,
+                    "bottom": 826.4375,
+                    "left": 1027.859375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1137.234375,
+                    "expectedRight": 1137.234375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "forecast",
+                  "box": {
+                    "x": 1145.234375,
+                    "y": 794.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 794.9375,
+                    "right": 1254.609375,
+                    "bottom": 826.4375,
+                    "left": 1145.234375
+                  },
+                  "text": "1.2M",
+                  "numericInk": {
+                    "right": 1254.609375,
+                    "expectedRight": 1254.609375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "1.2M"
+                  ]
+                },
+                {
+                  "name": "previous",
+                  "box": {
+                    "x": 1262.609375,
+                    "y": 794.9375,
+                    "width": 109.390625,
+                    "height": 31.5,
+                    "top": 794.9375,
+                    "right": 1372,
+                    "bottom": 826.4375,
+                    "left": 1262.609375
+                  },
+                  "text": "0",
+                  "numericInk": {
+                    "right": 1372,
+                    "expectedRight": 1372
+                  },
+                  "label": null,
+                  "labelText": [
+                    "0"
+                  ]
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 637,
+                "y": 922.9375,
+                "width": 735,
+                "height": 139,
+                "top": 922.9375,
+                "right": 1372,
+                "bottom": 1061.9375,
+                "left": 637
+              },
+              "fields": [
+                {
+                  "name": "time",
+                  "box": {
+                    "x": 637,
+                    "y": 933.9375,
+                    "width": 64,
+                    "height": 29.390625,
+                    "top": 933.9375,
+                    "right": 701,
+                    "bottom": 963.328125,
+                    "left": 637
+                  },
+                  "text": "15:00",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "currency",
+                  "box": {
+                    "x": 709,
+                    "y": 933.9375,
+                    "width": 44,
+                    "height": 29.390625,
+                    "top": 933.9375,
+                    "right": 753,
+                    "bottom": 963.328125,
+                    "left": 709
+                  },
+                  "text": "USD",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "impact",
+                  "box": {
+                    "x": 761,
+                    "y": 933.9375,
+                    "width": 52,
+                    "height": 36.390625,
+                    "top": 933.9375,
+                    "right": 813,
+                    "bottom": 970.328125,
+                    "left": 761
+                  },
+                  "text": "",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "",
+                    "",
+                    "",
+                    ""
+                  ]
+                },
+                {
+                  "name": "event",
+                  "box": {
+                    "x": 821,
+                    "y": 933.9375,
+                    "width": 198.859375,
+                    "height": 118,
+                    "top": 933.9375,
+                    "right": 1019.859375,
+                    "bottom": 1051.9375,
+                    "left": 821
+                  },
+                  "text": "SYN table event 4\n\nHorário a confirmar. As fontes divergem; data ou horário a confirmar.",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "SYN table event 4",
+                    "SYN table event 4",
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Horário a confirmar. As fontes divergem; data ou horário a confirmar."
+                  ]
+                },
+                {
+                  "name": "actual",
+                  "box": {
+                    "x": 1027.859375,
+                    "y": 933.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 933.9375,
+                    "right": 1137.234375,
+                    "bottom": 965.4375,
+                    "left": 1027.859375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1137.234375,
+                    "expectedRight": 1137.234375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "forecast",
+                  "box": {
+                    "x": 1145.234375,
+                    "y": 933.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 933.9375,
+                    "right": 1254.609375,
+                    "bottom": 965.4375,
+                    "left": 1145.234375
+                  },
+                  "text": "0.0%",
+                  "numericInk": {
+                    "right": 1254.609375,
+                    "expectedRight": 1254.609375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "0.0%"
+                  ]
+                },
+                {
+                  "name": "previous",
+                  "box": {
+                    "x": 1262.609375,
+                    "y": 933.9375,
+                    "width": 109.390625,
+                    "height": 31.5,
+                    "top": 933.9375,
+                    "right": 1372,
+                    "bottom": 965.4375,
+                    "left": 1262.609375
+                  },
+                  "text": "−0.5%",
+                  "numericInk": {
+                    "right": 1372,
+                    "expectedRight": 1372
+                  },
+                  "label": null,
+                  "labelText": [
+                    "−0.5%"
+                  ]
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 637,
+                "y": 1061.9375,
+                "width": 735,
+                "height": 91,
+                "top": 1061.9375,
+                "right": 1372,
+                "bottom": 1152.9375,
+                "left": 637
+              },
+              "fields": [
+                {
+                  "name": "time",
+                  "box": {
+                    "x": 637,
+                    "y": 1072.9375,
+                    "width": 64,
+                    "height": 29.390625,
+                    "top": 1072.9375,
+                    "right": 701,
+                    "bottom": 1102.328125,
+                    "left": 637
+                  },
+                  "text": "16:00",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "currency",
+                  "box": {
+                    "x": 709,
+                    "y": 1072.9375,
+                    "width": 44,
+                    "height": 29.390625,
+                    "top": 1072.9375,
+                    "right": 753,
+                    "bottom": 1102.328125,
+                    "left": 709
+                  },
+                  "text": "USD",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": []
+                },
+                {
+                  "name": "impact",
+                  "box": {
+                    "x": 761,
+                    "y": 1072.9375,
+                    "width": 52,
+                    "height": 36.390625,
+                    "top": 1072.9375,
+                    "right": 813,
+                    "bottom": 1109.328125,
+                    "left": 761
+                  },
+                  "text": "",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "",
+                    "",
+                    "",
+                    ""
+                  ]
+                },
+                {
+                  "name": "event",
+                  "box": {
+                    "x": 821,
+                    "y": 1072.9375,
+                    "width": 198.859375,
+                    "height": 70,
+                    "top": 1072.9375,
+                    "right": 1019.859375,
+                    "bottom": 1142.9375,
+                    "left": 821
+                  },
+                  "text": "SYN table event 5\n\nHorário a confirmar.",
+                  "numericInk": null,
+                  "label": null,
+                  "labelText": [
+                    "SYN table event 5",
+                    "SYN table event 5",
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Horário a confirmar."
+                  ]
+                },
+                {
+                  "name": "actual",
+                  "box": {
+                    "x": 1027.859375,
+                    "y": 1072.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 1072.9375,
+                    "right": 1137.234375,
+                    "bottom": 1104.4375,
+                    "left": 1027.859375
+                  },
+                  "text": "—",
+                  "numericInk": {
+                    "right": 1137.234375,
+                    "expectedRight": 1137.234375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "—"
+                  ]
+                },
+                {
+                  "name": "forecast",
+                  "box": {
+                    "x": 1145.234375,
+                    "y": 1072.9375,
+                    "width": 109.375,
+                    "height": 31.5,
+                    "top": 1072.9375,
+                    "right": 1254.609375,
+                    "bottom": 1104.4375,
+                    "left": 1145.234375
+                  },
+                  "text": "2.5%",
+                  "numericInk": {
+                    "right": 1254.609375,
+                    "expectedRight": 1254.609375
+                  },
+                  "label": null,
+                  "labelText": [
+                    "2.5%"
+                  ]
+                },
+                {
+                  "name": "previous",
+                  "box": {
+                    "x": 1262.609375,
+                    "y": 1072.9375,
+                    "width": 109.390625,
+                    "height": 31.5,
+                    "top": 1072.9375,
+                    "right": 1372,
+                    "bottom": 1104.4375,
+                    "left": 1262.609375
+                  },
+                  "text": "3.5%",
+                  "numericInk": {
+                    "right": 1372,
+                    "expectedRight": 1372
+                  },
+                  "label": null,
+                  "labelText": [
+                    "3.5%"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "values": [
+          {
+            "id": "SYN-table-1-0",
+            "forecast": "0",
+            "previous": "0.0%",
+            "actual": "—"
+          },
+          {
+            "id": "SYN-table-1-1",
+            "forecast": "−0.5%",
+            "previous": "1.2M",
+            "actual": "—"
+          },
+          {
+            "id": "SYN-table-1-2",
+            "forecast": "—",
+            "previous": "—",
+            "actual": "—"
+          },
+          {
+            "id": "SYN-table-1-3",
+            "forecast": "1.2M",
+            "previous": "0",
+            "actual": "—"
+          },
+          {
+            "id": "SYN-table-1-4",
+            "forecast": "0.0%",
+            "previous": "−0.5%",
+            "actual": "—"
+          },
+          {
+            "id": "SYN-table-1-5",
+            "forecast": "2.5%",
+            "previous": "3.5%",
+            "actual": "—"
+          }
+        ],
+        "kind": "table-state",
+        "readonly": "byte-exact"
+      }
+    }
+  ],
+  "scratch_input_hashes": {
+    "tests": {
+      "candidates/tools/calendar_distribution_test.py": "cbaf54be1a5dd0ebecf80773158a86453f849fbf0ab8734a1ad32376065003a9",
+      "candidates/tools/calendar_economic_table_contract.py": "35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a",
+      "candidates/tools/ff_news_cache_test.py": "f66f357830f04a2c9f6eeb92ac469d8e04c190b6aa1a42aad161f65ebde859a7",
+      "candidates/tools/calendar_visual_quality_test.py": "b883b966e1be638707da5c53999392cfc6ae02da36440500ddd18fc12970b95f",
+      "candidates/tools/calendar_agenda_test.py": "655556061f9fbbecd28f73de0861ac2e05741a658d7da0777b2591da28ab7ddd"
+    },
+    "overlay": {
+      "19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+      "app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38"
+    }
+  }
+}

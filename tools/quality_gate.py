@@ -29,6 +29,8 @@ FAST = (
     ("preflight-context", [sys.executable, "tools/preflight_context_test.py"]),
 )
 STANDARD = FAST + (
+    ("hedge-prop-engine", [os.environ.get("JPW_NODE", "node"), "tools/hedge_prop_engine_test.js"]),
+    ("hedge-prop-browser", [sys.executable, "tools/hedge_prop_browser_test.py", "--native-zoom", "--out", full_evidence("hedge-prop-browser")]),
     ("personal-agenda", [os.environ.get("JPW_NODE", "node"), "tools/personal_agenda_test.js"]),
     ("monthly-economic-feed", [sys.executable, "tools/monthly_economic_feed_test.py"]),
     ("calendar-agenda", [sys.executable, "tools/calendar_agenda_test.py", "--artifact", full_evidence("calendar-agenda.json")]),
@@ -84,6 +86,17 @@ STANDARD = FAST + (
     ("alladin-ui-ledger", [sys.executable, "tools/alladin_ui_ledger_test.py"]),
     ("alladin-ui-tx-write", [sys.executable, "tools/alladin_ui_tx_write_test.py"]),
     ("alladin-ui-tx-reverse", [sys.executable, "tools/alladin_ui_tx_reverse_test.py"]),
+
+    ("management-engine", [os.environ.get("JPW_NODE", "node"), "tools/management_annual_engine_test.js"]),
+    ("management-state", [os.environ.get("JPW_NODE", "node"), "tools/management_annual_state_test.js"]),
+    ("management-guide", [os.environ.get("JPW_NODE", "node"), "tools/management_guide_test.mjs"]),
+    ("management-dashboard-notes", [os.environ.get("JPW_NODE", "node"), "tools/management_dashboard_notes_test.js"]),
+    ("portfolio-management-navigation", [sys.executable, "tools/portfolio_management_navigation_test.py"]),
+    ("management-reserves-context", [sys.executable, "tools/management_reserves_context_test.py"]),
+    ("management-reserves-drafts", [sys.executable, "tools/management_reserves_draft_test.py"]),
+    ("management-account-flow", [sys.executable, "tools/management_account_flow_test.py"]),
+    ("management-annual-ui", [sys.executable, "tools/management_annual_ui_test.py", "--out", full_evidence("management-annual-ui")]),
+    ("management-visual-quality", [sys.executable, "tools/ui_visual_quality_test.py", "--case", "management", "--out", full_evidence("management-visual-quality")]),
 )
 FULL = STANDARD + (
     ("calendar-distribution", [sys.executable, "tools/calendar_distribution_test.py", "--receipt", full_evidence("calendar-distribution.json")]),
@@ -129,6 +142,8 @@ FULL = STANDARD + (
     ("time-twins-unit", [os.environ.get("JPW_NODE", "node"), "tools/time_twins_unit_test.js"]),
     ("time-twins-browser", [sys.executable, "tools/time_twins_browser_test.py", "--mode", "all", "--out-dir", full_evidence('time-twins')]),
     ("minigames", [sys.executable, "tools/minigames_test.py"]),
+    ("hedge-prop-distribution", [sys.executable, "tools/hedge_prop_distribution_test.py", "--out", full_evidence("hedge-prop-distribution")]),
+    ("management-distribution", [sys.executable, "tools/management_distribution_test.py", "--out", full_evidence("management-distribution")]),
 )
 TIERS = {"fast": FAST, "standard": STANDARD, "full": FULL}
 ENVIRONMENT_MARKERS = (

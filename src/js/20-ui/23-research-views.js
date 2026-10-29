@@ -3,14 +3,7 @@
 // IDs e renderizadores; somente o owner DOM/navegação muda. A seleção é
 // efêmera: não toca S, storage, schema, backup ou persistência.
 
-const RESEARCH_VIEWS = [
-  ['nocoda', 'execNocoda'],
-  ['pivots', 'execPivots'],
-  ['stocks-br', 'researchStocksBr'],
-  ['stocks-global', 'researchStocksGlobal'],
-  ['reits', 'researchReits'],
-  ['others', 'researchOthers']
-];
+const RESEARCH_VIEWS = [['nocoda','execNocoda'],['pivots','execPivots']];
 
 const RESEARCH_VIEW_RENDERERS = {
   nocoda: () => {
@@ -34,6 +27,7 @@ function researchApplyView(view){
 }
 
 function researchSelectView(view){
+  if(['stocks-br','stocks-global','reits','others'].includes(view))view='nocoda';
   // Aliases antigos do laboratório abrem a folha independente de Research.
   if(view==='probability-lab'||view==='galton-board'){
     return window.JPWNavigation?window.JPWNavigation.navigate('probability-lab'):false;

@@ -13,7 +13,7 @@ from notes_launcher_test import launch_options
 from dashboard_forex_relocation_test import PREF, IDS, MOVED, KEY, swap
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED=["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-reserves"]
+EXPECTED=["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history"]
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,default=ROOT);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--entry-only',action='store_true');args=ap.parse_args()
@@ -42,7 +42,7 @@ def main():
             }''')
             page.evaluate('render();window.__journeyBefore=JSON.stringify(S);window.__journeyRaw=localStorage.getItem(LSKEY);window.__checkNode=document.querySelector("#checkWidgetGrid");window.__overviewNode=document.querySelector("#execOverview");')
             def go(target):require(page.evaluate('(t)=>JPWNavigation.navigate(t)',target));page.wait_for_timeout(60)
-            test('six Forex destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
+            test('four operational Forex destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
             page.locator('#execNavTrigger').click()
             assert page.evaluate("JPWNavigation.current().canonical==='dashboard'"), 'Parent exploration navigated'
             page.locator('#execNavSubmenu [data-nav-child="forex-consolidated"]').click()
@@ -106,8 +106,8 @@ def main():
                 test('pending order guards history',lambda:require(page.evaluate("!JPWNavigation.navigate('history')&&document.querySelector('#executionBoardDialog')?.open")))
                 page.locator('#ebLeaveDiscard').click();page.wait_for_timeout(80)
                 test('explicit discard completes requested history navigation',lambda:require(page.evaluate("JPWExec.ui.getView()==='history'&&!document.querySelector('#executionBoardDialog').open")))
-                test('operation history has independent workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='history'&&document.querySelector('#execHistory').parentElement.id==='exec'&&document.querySelector('#contab').hidden&&document.querySelector('#executionBoard').hidden&&!document.querySelector('#execHistory').hidden")))
-                go('forex-reconciliation');test('canonical accounting opens its own workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#contab').closest('#exec')")))
+                test('operation history has independent workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='history'&&document.querySelector('#execHistory').parentElement.id==='exec'&&!document.querySelector('#contab')&&document.querySelector('#executionBoard').hidden&&!document.querySelector('#execHistory').hidden")))
+                go('forex-reconciliation');test('canonical accounting opens its own workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='management'&&JPWNavigation.current().primary==='management'&&!document.querySelector('#contab')")))
                 # Existing customized v6 preference: moved widgets retain identity/order.
                 go('forex-overview')
                 expected_order=[i for i in IDS if i in MOVED]

@@ -1,3 +1,13 @@
+# Gerenciamento anual — complemento vigente 26/10/2026
+
+O novo agregado opcional `S.managementAnnual` tem `schemaVersion:1`, `revision`, `plans[]` e `audit[]`. Cada plano identifica conta, período e ano e preserva `config`, `openingSource`, revisões em `history[]`, declarações explícitas em `declarations[]` e retratos anuais imutáveis em `snapshots[]`. Ausência do agregado em backup antigo é válida e consultas não o criam. Versão futura ou conteúdo inválido seguem recuperação, preservando os bytes de origem.
+
+Resultados reais permanecem exclusivamente no ledger canônico dos períodos Forex, escritos por `recordAccountLedger`. Um retrato anual contém cópias históricas identificadas para auditoria; não é uma segunda fonte de resultados ativos. A moeda do plano deve corresponder à moeda confirmada do período; ausência e divergência impedem leitura/ativação como fato confirmado.
+
+Backup Completo inclui o agregado confirmado e a finalização da sessão o preserva pelo documento longitudinal existente. Rascunhos são trabalho em memória recuperável como texto, sem autorização reutilizável para gravar. Seleção e layout de Gerenciamento não persistem dados financeiros. [Contrato, APIs e compatibilidade](MANAGEMENT-ANNUAL.md).
+
+## Fotografias anteriores preservadas
+
 # Estado persistido — visão inicial
 
 ## Primeiro acesso vazio — contrato24/10/2026

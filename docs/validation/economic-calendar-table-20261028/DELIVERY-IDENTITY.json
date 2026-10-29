@@ -1,0 +1,24 @@
+{
+  "createdAt": "2026-10-29T15:18:04.767578+00:00",
+  "build": "aabc8d09faff4aee",
+  "head": "3e24f60f8cfe87f79335f40e95a0927379a9f834",
+  "branch": "codex/calendario-tabela-ff-20261028",
+  "inputCount": 1648,
+  "modifiedInputs": [],
+  "addedInputs": [],
+  "removedInputs": [],
+  "fullCounts": {
+    "PASS": 116
+  },
+  "fullRecordCount": 116,
+  "fullSHA256": "e9486e1b91770a9afb5178b3e835d4bd1233967d0408604c7fd79c9a390ff71b",
+  "freezeSHA256": "7ddf4ffba54e577148bad52a7a7a4a30251fdb9653d9030d05aeb7b31c653693",
+  "supervisorReceiptSHA256": "9841398ee1511d974824209e8be76875400609921af83e1a5877bcb32c9aea98",
+  "gateExitCode": 0,
+  "supervisorExitCodeObserved": 0,
+  "historicalReceiptRestoredSHA256": "1bc9e6ce6908fb46c4f1721eb2d1b2b488ebad05c22e75caca507aaf747e3fc3",
+  "ownedProcessesStillPresent": "",
+  "scope": "Material input identity; evidence output files under docs/validation intentionally excluded, ignored dependencies/environment not frozen",
+  "humanAcceptance": "PENDING",
+  "gitOperationsInThisDelivery": "Only specifically authorized branch creation; no commit/merge/push/publication"
+}

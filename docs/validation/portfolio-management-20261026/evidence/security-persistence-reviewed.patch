@@ -1,0 +1,242 @@
+--- a/tools/persistence_failure_test.py
++++ b/tools/persistence_failure_test.py
+@@ -123,8 +123,12 @@
+     assert page.evaluate("document.getElementById('persistenceAlert').querySelectorAll('button').length") == 1
+     assert page.evaluate('jpWealthPersistenceFailure.count') == 6, 'contagem interna deveria acumular'
+     # o aplicativo continua utilizável: navegação e drawer de Notas respondem
++    navigation_state=page.evaluate('JSON.stringify(S)')
++    navigation_disk=page.evaluate('localStorage.getItem(LSKEY)')
+     page.evaluate("navigateToScreen('contab')")
+-    assert page.evaluate("document.getElementById('exec').classList.contains('active') && !document.getElementById('contab').hidden && JPWExec.ui.getView()==='accounting'")
++    assert page.evaluate("JPWNavigation.current().canonical==='management-accounting' && JPWNavigation.current().primary==='management' && document.getElementById('management').classList.contains('active') && !document.getElementById('contab') && !document.getElementById('exec').classList.contains('active')")
++    assert page.evaluate('JSON.stringify(S)')==navigation_state
++    assert page.evaluate('localStorage.getItem(LSKEY)')==navigation_disk
+     page.evaluate("navigateToScreen('dash')")
+     page.locator('#headerNotesBtn').click()
+     assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')")
+--- a/tools/import_xss_security_test.py
++++ b/tools/import_xss_security_test.py
+@@ -484,16 +484,23 @@
+     }""", fixture)
+ 
+ 
+-def f01_sink_dom(page):
++def f01_sink_dom(page, unsafe_escape=False):
+     """Unit DOM boundary, NOT the complete-backup integration proof above.
+ 
+-    The real renderLedger runs against a controlled readable projection. The
+-    reader is restored in finally. Exact row/cell/financial text checks rule out
+-    a renderer that throws, renders nothing or silently deletes the version.
++    The still-distributed JPWLedger.render compatibility API runs in a literal,
++    test-only host because its former public Contabilidade host was removed.
++    This characterizes that renderer, NOT the new Management UI. The complete
++    import cases and the separate real-Management sink below cover live flows.
++    Exact row/cell/financial/version checks and reader restoration stay intact.
+     """
+-    return page.evaluate("""async payload => {
+-      const original=ledgerScopedRead,selected=ledgerUI.selected,
+-        month=ledgerUI.month,filter=ledgerUI.filter;
++    return page.evaluate("""async ({payload,unsafeEscape}) => {
++      const original=ledgerScopedRead,originalRenderer=window.JPWLedger.render,selected=ledgerUI.selected,
++        month=ledgerUI.month,filter=ledgerUI.filter,
++        stateBefore=JSON.stringify(S),diskBefore=localStorage.getItem(LSKEY);
++      if(document.getElementById('ledgerBody'))throw Error('Compatibility fixture would duplicate an existing ledger host');
++      const host=document.createElement('section');host.dataset.f01LedgerFixture='';
++      host.innerHTML='<table><tbody id="ledgerBody"></tbody></table>';
++      document.body.append(host);
+       window.__JPW_XSS__=0;
+       const row={id:'F01-SINK',accountId:'F01-ACCOUNT',periodId:'F01-SINK-PERIOD',currency:'USD',
+         data:'2026-09-02',resultado:400,saldo:10400,referenceBalance:10000,
+@@ -502,7 +509,12 @@
+       try{
+         ledgerScopedRead=()=>({status:'OK',value:[structuredClone(row)]});
+         ledgerUI.month='';ledgerUI.filter='';ledgerUI.selected=null;
+-        renderLedger();
++        if(unsafeEscape){
++          const source=originalRenderer.toString(),needle='esc(r.version)';
++          if(source.split(needle).length!==2)throw Error('Expected exactly one real version escape to mutate');
++          window.JPWLedger.render=eval('('+source.replace(needle,'String(r.version)')+')');
++        }
++        window.JPWLedger.render();
+         await new Promise(resolve=>setTimeout(resolve,50));
+         const body=document.getElementById('ledgerBody'),rows=body.querySelectorAll('tr'),
+           cells=rows[0]?.querySelectorAll('td'),small=rows[0]?.querySelector('small'),
+@@ -516,12 +528,72 @@
+           executed:window.__JPW_XSS__===1,images:body.querySelectorAll('img[src="x"]').length,
+           handlers:live.length};
+       }finally{
+-        ledgerScopedRead=original;ledgerUI.selected=selected;
+-        ledgerUI.month=month;ledgerUI.filter=filter;
++        ledgerScopedRead=original;window.JPWLedger.render=originalRenderer;ledgerUI.selected=selected;
++        ledgerUI.month=month;ledgerUI.filter=filter;host.remove();
+       }
+-      result.readerRestored=ledgerScopedRead===original;
++      result.readerRestored=ledgerScopedRead===original&&window.JPWLedger.render===originalRenderer;
++      result.fixtureRemoved=!document.querySelector('[data-f01-ledger-fixture]');
++      result.stateUnchanged=stateBefore===JSON.stringify(S);
++      result.diskUnchanged=diskBefore===localStorage.getItem(LSKEY);
+       return result;
+-    }""", PAYLOAD)
++    }""", {'payload':PAYLOAD,'unsafeEscape':unsafe_escape})
++
++
++def assert_f01_compat_sink(result):
++    assert result['rows']==1 and result['cells']==6 and result['date']=='2026-09-02',result
++    assert result['resultText']==result['expectedResult'] and result['balanceText']==result['expectedBalance'],result
++    assert result['note']=='Fechamento sintético F01' and result['readerRestored'],result
++    assert result['fixtureRemoved'] and result['stateUnchanged'] and result['diskUnchanged'],result
++    assert not result['executed'] and result['images']==0 and result['handlers']==0,result
++    assert result['versionText']=='v'+PAYLOAD,result
++
++
++def f01_management_dom(page, fixture):
++    """Real imported names/notes reach current Management controls as text.
++
++    Version remains numeric in this integration case; Management deliberately
++    does not show the compatibility renderer's version field. No reader,
++    renderer, policy or financial writer is replaced here.
++    """
++    payload=f01_assinar(page,fixture,1)
++    payload=page.evaluate("""({full,scope,name,note})=>{
++      full.state.accounts.find(a=>a.forexAccountId===scope.accountId).nome=name;
++      full.state.forex.accountContexts.accounts[scope.accountId].periods[scope.periodId].ledger[0].nota=note;
++      delete full.integrity;full.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(full))};
++      return full;
++    }""",{'full':payload,'scope':fixture['scope'],'name':PAYLOAD,'note':PAYLOAD_ATTR})
++    imported=f01_importar(page,payload)
++    assert any('com sucesso' in m for m in imported['alerts']),imported
++    assert not imported['executed'] and imported['images']==0,imported
++    setup=page.evaluate("""scope=>{
++      const target={accountId:scope.accountId,periodId:scope.periodId,year:2026},api=JPWManagementAnnual;
++      return api.commands.savePlan({...target,startDate:'2026-09-01',annualTarget:0.25,daysPerWeek:5,monthsPerYear:12,excludedDates:[]},
++        {token:api.queries.token(target),confirmOpening:true,reason:'Synthetic current Management XSS consumer fixture'});
++    }""",fixture['scope'])
++    assert setup['ok'] and setup['status']=='CONFIRMED',setup
++    before=page.evaluate('({state:JSON.stringify(S),disk:localStorage.getItem(LSKEY),operational:JSON.stringify(JPWForex.state.operationalSelection())})')
++    assert page.evaluate("JPWNavigation.navigate('management-accounting')")
++    page.locator('#management [data-mg-account]').select_option(fixture['scope']['accountId'])
++    page.locator('#management [data-mg-period]').select_option(fixture['scope']['periodId'])
++    page.locator('#management [data-mg-year]').fill('2026')
++    page.locator('#management [data-mg-year]').dispatch_event('change')
++    row=page.locator('#management .mg-day[data-mg-date="2026-09-02"]')
++    row.scroll_into_view_if_needed()
++    assert row.is_visible() and row.locator('td,th').count()==11
++    expected=page.evaluate("({result:new Intl.NumberFormat('pt-BR',{style:'currency',currency:'USD'}).format(400),balance:new Intl.NumberFormat('pt-BR',{style:'currency',currency:'USD'}).format(10400)})")
++    assert expected['result'] in row.inner_text() and expected['balance'] in row.inner_text()
++    assert page.locator('#management [data-mg-account] option:checked').inner_text()==PAYLOAD
++    row.locator('[data-mg-detail]').click()
++    page.locator('#mg-details-2026-09-02 [data-mg-action=edit-day]').click()
++    assert page.locator('#management [data-mg-editor=day] input[name=note]').input_value()==PAYLOAD_ATTR
++    result=page.evaluate("""()=>({
++      executed:window.__JPW_XSS__===1,images:document.querySelectorAll('img[src="x"]').length,
++      handlers:[...document.querySelectorAll('*')].filter(el=>[...el.attributes].some(at=>/^on/i.test(at.name)&&at.value.includes('__JPW_XSS__'))).length
++    })""")
++    assert not result['executed'] and result['images']==0 and result['handlers']==0,result
++    page.locator('#management [data-mg-action=cancel-edit]').click()
++    assert page.evaluate('({state:JSON.stringify(S),disk:localStorage.getItem(LSKEY),operational:JSON.stringify(JPWForex.state.operationalSelection())})')==before
++    return {**result,'rows':1,'cells':11,'nameAsText':True,'noteAsValue':True,'cancelPreservesState':True}
+ 
+ 
+ def suite_f01(browser, url, rotulo):
+@@ -583,16 +655,28 @@
+     ctx,page=abrir(browser,url)
+     try:
+         result=f01_sink_dom(page)
+-        assert result['rows']==1 and result['cells']==6 and result['date']=='2026-09-02',result
+-        assert result['resultText']==result['expectedResult'] and result['balanceText']==result['expectedBalance'],result
+-        assert result['note']=='Fechamento sintético F01' and result['readerRestored'],result
+-        assert not result['executed'] and result['images']==0 and result['handlers']==0,result
+-        assert result['versionText']=='v'+PAYLOAD,result
++        assert_f01_compat_sink(result)
++        unsafe=f01_sink_dom(page,unsafe_escape=True)
++        assert unsafe['images']>=1 and unsafe['handlers']>=1, 'Unsafe mutation did not reach the actual renderer sink'
++        try:assert_f01_compat_sink(unsafe)
++        except AssertionError:pass
++        else:raise AssertionError('The exact same sink oracle accepted a renderer with version escaping disabled')
++        assert_f01_compat_sink(f01_sink_dom(page))
+         assert_fixture_requests(ctx)
+-        print(f'PASS {rotulo}/F01-D01-SINK: real renderer keeps version as text; unit DOM boundary only',flush=True)
++        print(f'PASS {rotulo}/F01-D01-SINK: compatibility API keeps version as text in isolated literal host; not Management UI coverage',flush=True)
+     except AssertionError as error:
+         failures.append(f'{rotulo}/F01-D01-SINK: {error}')
+         print(f'FAIL {rotulo}/F01-D01-SINK: {error}',flush=True)
++    finally:
++        ctx.close()
++    ctx,page=abrir(browser,url)
++    try:
++        result=f01_management_dom(page,fixture)
++        assert_fixture_requests(ctx)
++        print(f'PASS {rotulo}/F01-D02-MANAGEMENT: real imported name/note remain text; financial values and cancel preserved',flush=True)
++    except AssertionError as error:
++        failures.append(f'{rotulo}/F01-D02-MANAGEMENT: {error}')
++        print(f'FAIL {rotulo}/F01-D02-MANAGEMENT: {error}',flush=True)
+     finally:
+         ctx.close()
+     return failures
+--- a/tools/usd_brl_quote_test.py
++++ b/tools/usd_brl_quote_test.py
+@@ -453,7 +453,7 @@
+         context.close()
+ 
+ 
+-# Three reviewed V11 uses of the word, confined to the portable bundle.
++# Reviewed exact comments/secret-rejection expressions in the portable bundle.
+ # Mask only the word's exact span; keep every other byte under the same scan.
+ USDBRL_BENIGN_AUTH_LINES = (
+     "// Forex V11: grade containers are records, never execution authorization.",
+@@ -463,6 +463,8 @@
+     "  const secretKey = key => /password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key);",
+     "        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key))throw new Error('Backup de planejamento contém campo de segredo. Preserve o original e remova credenciais antes de importar ou exportar.');",
+     "    for(const key of Object.keys(value))if(['__proto__','prototype','constructor'].includes(key)||/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||!safeTree(value[key],seen))return false;",
++    "      if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||['__proto__','prototype','constructor'].includes(key))fail();",
++    "    for(const key of Object.keys(value)){requireThat(!/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)&&!['__proto__','constructor','prototype'].includes(key),'Campo de segredo ou controle não permitido.');safe(value[key],seen);}seen.delete(value);",
+ )
+ 
+ 
+@@ -482,25 +484,31 @@
+     return texto.lower()
+ 
+ 
++def usd_brl_static_guard_counterproofs(suspeitos):
++    # Retain the original changed-return-false proof and test both new guards
++    # through this same exact-line scanner. Never strip whole regular expressions.
++    guards=USDBRL_BENIGN_AUTH_LINES[-3:]
++    changes=[guards[0].replace('return false;','return true;'),
++             guards[1].replace(')fail();',')void 0;'),
++             guards[2].replace('requireThat(!','requireThat(true||',1)]
++    for benign,changed in zip(guards,changes):
++        assert benign!=changed and 'authorization' in changed
++        assert 'authorization' not in usd_brl_static_credential_text(benign+'\n','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
++        for term in suspeitos:
++            candidate=benign+'\nconst syntheticProbe = '+json.dumps(term+' SYNTHETIC-NOT-A-CREDENTIAL')+';\n'
++            assert term in usd_brl_static_credential_text(candidate,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'),'exact exception masked an added credential marker'
++        assert 'authorization' in usd_brl_static_credential_text(changed,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'),'changed guard accepted as benign'
++        try:usd_brl_static_credential_text(benign+'\n'+benign+'\n','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
++        except AssertionError:pass
++        else:raise AssertionError('duplicate benign-looking lines must be rejected')
++    return {'reviewedGuards':len(guards),'injectedCredentialMarkers':len(guards)*len(suspeitos),'modifiedGuards':len(changes),'duplicateGuards':len(guards)}
++
++
+ def caso_seguranca(browser, url):
+     """TESTE 16 — nenhuma credencial no bundle, no HTML ou no armazenamento."""
+     suspeitos = ("api_key", "apikey", "api-key", "access_token",
+                  "authorization", "bearer ", "x-api-key", "client_secret")
+-    # An exact, unique secret-rejection expression is not a credential. Its
+-    # exception must never hide added values, altered lines or duplicates.
+-    benign = USDBRL_BENIGN_AUTH_LINES[-1]
+-    assert 'authorization' not in usd_brl_static_credential_text(benign + '\n', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+-    for term in suspeitos:
+-        candidate = benign + '\nconst syntheticProbe = ' + json.dumps(term + ' SYNTHETIC-NOT-A-CREDENTIAL') + ';\n'
+-        assert term in usd_brl_static_credential_text(candidate, 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'), 'exact exception masked an added credential marker'
+-    changed = benign.replace('return false;', 'return true;')
+-    assert 'authorization' in usd_brl_static_credential_text(changed, 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'), 'changed guard accepted as benign'
+-    try:
+-        usd_brl_static_credential_text(benign + '\n' + benign + '\n', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+-    except AssertionError:
+-        pass
+-    else:
+-        raise AssertionError('duplicate benign-looking lines must be rejected')
++    usd_brl_static_guard_counterproofs(suspeitos)
+     for nome in ("index.html", "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+                  "src/js/10-domain/08-usd-brl-quote.js", "sw.js"):
+         texto = usd_brl_static_credential_text((ROOT / nome).read_text(encoding="utf-8"), nome)

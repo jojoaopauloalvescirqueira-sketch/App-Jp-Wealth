@@ -1,0 +1,19 @@
+# CHG dedicado — verificadores do calendário FF
+
+N3 de control plane, autoridade específica: seção Provas e entrega do plano humano aprovado em 28/10/2026 exige novas regressões, substituição somente de expectativas deliberadamente superadas, contrato separado, contraprovas e revisão independente; a seção Alimentação e atualização também autoriza preparar o agendamento de 30 minutos, sem ativação externa. Não altera política de autorização, gates ou limites. Produto descrito no [brief](BRIEF-ECONOMIC-CALENDAR-FF-20261028.md).
+
+Superfície delimitada: tools/monthly_economic_feed_test.py, calendar_agenda_test.py, calendar_recovery_test.py, calendar_distribution_test.py, ff_news_cache_test.py, nocuda_tools_test.py e casos focais novos de alimentador/runtime chamados pelo check mensal existente. ui_visual_quality_test.py somente se a superfície adicionada não estiver coberta, preservando o catálogo e a tolerância de 2 px. tools/regression-memory.json recebe fatos comprovados dos novos casos. Não remover nenhum dos 116 IDs atuais nem mudar timeouts, tolerâncias, critérios financeiros ou quantidade de casos existentes.
+
+Expectativas substituídas: cinco moedas iniciais passam a nove para instalação nova; preferências salvas de cinco continuam íntegras. Atualização FF pode renovar dados do mensal sem reconstruir seu host, perder data/foco/filtros/rascunho ou inserir o renderizador semanal na área mensal. Widget/overlay legado preservam seu recorte High/quatro moedas. A fonte de impacto passa a ser individual, sem atribuir FF a curadoria JP.
+
+RED deve reproduzir ausência CAD/FOMC, falta de atualização mensal e cobertura por mês em vez de intervalo. Contraprovas devem rejeitar omissão CAD, feed de semana como mês completo, GET recente de pacote antigo, cancelamento presumido, mescla por coincidência, dupla gravação, dados pessoais no feed e preferências antigas recusadas. Falha de ambiente ou estímulo sem efeito não será apresentada como RED. Casos novos verificam fluxos/saídas, não apenas presença de palavras.
+
+Revisão independente compara juízes e produto com o contrato, prova representativa rejeitada e vínculo real a standard/full. FULL no candidato reconstruído, com fingerprint congelado e recibo próprio. Achados históricos não são apagados por nova rodada. Qualquer alteração adicional de critério ou limite fica fora desta autorização.
+
+## Template de agendamento externo — N3 de CI
+
+Arquivo delimitado: `infra/ff-news-feed/.github/workflows/update-news.yml`. Preparação local já prevista no plano; não é um workflow do CI principal nem está sendo executado nesta entrega. Preservar `actions/checkout@v4`, `contents: write` e o cron original de 30 minutos; adaptar somente a chamada explícita do coletor v2 e as saídas de dados, com guarda externa `JPW_ECONOMIC_FEED_V2_ENABLED == 'true'`. Não definir essa variável, publicar arquivos, disparar Actions, usar credenciais ou executar os comandos Git do template. A ativação futura dependerá de autorização específica, conferência da permissão informada e dos artefatos iniciais. Revisão independente dos bytes do template e de sua não descoberta pelo CI principal é prova de preparação, não de execução agendada.
+
+## Metadados compostos — regressão de auditoria
+
+O caso permanente Model22 foi acrescentado ao verificador mensal no mesmo escopo aprovado. Rejeita aplicar à composição os textos históricos de cinco moedas/impacto somente editorial/pacote estático; conserva o namespace oficial e prova base sem feed e base recebendo v1/v2. Não altera os casos anteriores, Node24, o coletor32, o catálogo116, tolerâncias ou900s. RED do produto atual,14ModelContract e oito contraprovas no mesmo juiz foram executados em scratch; revisão por agente distinto do autor antes da aplicação. Geração e FULL novos seguem obrigatórios.

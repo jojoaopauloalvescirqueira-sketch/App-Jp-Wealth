@@ -1,0 +1,55 @@
+{
+  "source": "/private/tmp/jpw-hedge-prop-20261027/full6-environment-triage",
+  "files": [
+    {
+      "name": "FINAL.md",
+      "sha256": "6a2feeca9001dd0219e5742b3f6109fea2eb465cdd61afade7dd399559017dbf",
+      "bytes": 1379
+    },
+    {
+      "name": "README.md",
+      "sha256": "2127ed09c9266a1e07a5f9209846560e1afd908f439986250d227b46ca0be493",
+      "bytes": 954
+    },
+    {
+      "name": "final-guard-status.txt",
+      "sha256": "9bdb61a3024a998fe1f28379199a62d94b4f4aee67d5c9f7c196be7d18e7fdc2",
+      "bytes": 1557
+    },
+    {
+      "name": "final-pmset-sleepwake-guard.txt",
+      "sha256": "de632798e1061f220616bf81cbbc5877752ac09f3cf9cd0d12841457a38cfd5c",
+      "bytes": 2698
+    },
+    {
+      "name": "final-powerd-chrome-dock-events.txt",
+      "sha256": "96b9f3d11e00f2feaa1eee975414ab57fa42649ade683f4d782b5eb36e8ef2e3",
+      "bytes": 602
+    },
+    {
+      "name": "final-triage.json",
+      "sha256": "2aa15990e45229dd4d129efb7734263d545d929da6d4e0f2f4374e3dbace5040",
+      "bytes": 4347
+    },
+    {
+      "name": "pmset-current-assertions.txt",
+      "sha256": "f349e4dd2754affd12787818725429530627bed210c97992622bc3f972fc6b4f",
+      "bytes": 1927
+    },
+    {
+      "name": "pmset-sleep-wake.txt",
+      "sha256": "a854a1d1f919c53231fdc925373caa390ae3d973b3e1ee37e6ab7085c01869d2",
+      "bytes": 180
+    },
+    {
+      "name": "powerd-chrome-dock-events.txt",
+      "sha256": "d50c5c0c35e64bad9681263ce679d9fd9a386c89b0941325a335fa6e224fbf8c",
+      "bytes": 602
+    },
+    {
+      "name": "triage.json",
+      "sha256": "cea86bb18697f27adad284a0883cd3e72759a516dd5a53aae130b94ebe0dfc0f",
+      "bytes": 2035
+    }
+  ]
+}

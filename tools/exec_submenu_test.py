@@ -28,15 +28,15 @@ from notes_launcher_test import launch_options
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-history", "forex-operation", "forex-management-accounts", "forex-accounting", "forex-reserves"]
-EXPECTED_LABELS = ["Desempenho", "Histórico de operações", "Operação", "Contas e Períodos", "Contabilidade", "Reservas"]
-EXPECTED_VIEWS = ["panel", "accounting", "history", "accounts", "motor"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-history", "forex-operation", "forex-management-accounts"]
+EXPECTED_LABELS = ["Desempenho", "Histórico de operações", "Operação", "Contas e Períodos"]
+EXPECTED_VIEWS = ["panel", "history", "accounts", "motor"]
 EXPECTED_CONTEXT = {
     "forex-management-accounts": ["accounts", "motor"],
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execWidgetGrid", "contab", "execHistory", "contas", "motorWidgetGrid"]
+EXPECTED_CONTAINERS = ["execWidgetGrid", "execHistory", "contas", "motorWidgetGrid"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -122,7 +122,7 @@ def run_structure(page):
     assert contract["panelInsideSidebar"], "N2 fora da navegacao lateral unica"
     assert contract["localOutsideSidebar"], "N3 duplicado na lateral ou ausente na area de trabalho"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
-    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu", "researchNavSubmenu", "toolsNavSubmenu"], contract["panelsInShell"]
+    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu", "researchNavSubmenu", "managementNavSubmenu", "toolsNavSubmenu"], contract["panelsInShell"]
     assert contract["keys"] == EXPECTED_CHILDREN, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
     assert contract["contexts"] == EXPECTED_CONTEXT, f"terceiro nivel divergente: {contract['contexts']}"
@@ -594,10 +594,10 @@ def run_motor_migration(page):
 
 
 def run_no_regression(page):
-    """As sete rotas globais ativam seus destinos físicos declarados."""
+    """As oito rotas globais ativam seus destinos físicos declarados."""
     routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
     # A10 changes only the default visual order; exact route/activation checks remain.
-    expected = {"dashboard": "dash", "research-forex": "research", "planning": "planning",
+    expected = {"dashboard": "dash", "research-forex": "research", "management-reserves": "fxreserves", "planning": "planning",
                 "forex-consolidated": "fxconsolidated", "personal-finance": "finpes", "alladin": "alladin", "tools-calendar": "tools"}
     assert routes == list(expected), f"rotas globais mudaram: {routes}"
     for route, screen in expected.items():

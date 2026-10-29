@@ -1,0 +1,26 @@
+{
+  "kind": "SYNTHETIC_DELIVERY_CAPTURES_NOT_HUMAN_ACCEPTANCE",
+  "url": "http://127.0.0.1:62421/index.html?v=abbcd8b5e67be657",
+  "expected_build": "abbcd8b5e67be657",
+  "synthetic_only": true,
+  "user_profile_accessed": false,
+  "files": [
+    {
+      "path": "accounting-desktop-overview.png",
+      "sha256": "99f34625690c13a54486c02b0c1bf870ec604e5737e58e6a222b237206d517a2"
+    },
+    {
+      "path": "accounting-mobile-overview.png",
+      "sha256": "7c7c0a5da8bf1cc69b7d8ef0c184c8a8aa7f09fe758231d2201aa1057a3c120b"
+    },
+    {
+      "path": "accounting-mobile-table.png",
+      "sha256": "092fa9f26f7c83eac8fef9d9ce4ebe5fdf9a159a917e32b556748806bfd4c145"
+    },
+    {
+      "path": "accounting-mobile-details.png",
+      "sha256": "972e37c34359e82a0807f2e7b3904e8917dfedbebbf6c1b21cffab660882ae6a"
+    }
+  ],
+  "observed_build": "abbcd8b5e67be657"
+}

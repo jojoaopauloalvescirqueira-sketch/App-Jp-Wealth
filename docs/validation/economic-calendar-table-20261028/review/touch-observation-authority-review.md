@@ -1,0 +1,11 @@
+# Delimitação da observação exploratória de toque
+
+A autorização presente é suficiente para a coleta exploratória descrita, depois do FULL e sem concorrência de browser. Trata-se de observar a UX N1 já autorizada, não de alterar o control plane. Esta conclusão é interpretação do escopo documental lido e da autorização humana encaminhada pelo coordenador; não cria nova autorização nem ativa exceção do Harness.
+
+Fundamento: AGENTS.md:67 manda reutilizar autorização inequívoca do plano; linha77 classifica navegação/acessibilidade/UX como N1. O plano aprovado, linha6, inclui explicitamente “teclado/toque emulado”; linha7 separa aceite humano. AGENTS.md:81 reserva N3 aos controles/validadores/testes do Harness, e linhas93–95 impedem inferir outras ações da autoridade recebida. A autorização específica dos cinco controles e do delta FF não é ampliada por este parecer.
+
+A fronteira depende da função, não da pasta: scratch sozinho não torna um validador N1. Neste caso, é admissível um roteiro descartável que gere eventos reais de toque em contexto has_touch, registre touchstart/end, aria-expanded, estado visível/href, recolhimento e resultado de Escape como observações brutas, sem modificar código do produto, arquivos congelados, cinco controles, gates, IDs, thresholds ou resultados do FULL. Preservar falhas e exceções como dados; não emitir PASS/FAIL automático nem usar a coleta para dispensar falha obrigatória. Contadores/eventos devem distinguir toque emulado de click programático. A coleta pode informar a revisão do comportamento previsto, mas não se soma aos116checks/413casos.
+
+Se o roteiro passar a validar automaticamente critérios, receber papel permanente no Harness, alterar critérios de aprovação ou substituir controle obrigatório, será proposta N3 específica sujeita a CHG/diff/revisão/aceite próprios; não está coberto como mera observação. Nenhuma exceção ao AGENTS:85 foi solicitada ou necessária.
+
+Limites de relato: evidência de toque emulado no calendário; não prova dispositivo físico, navegador móvel nativo, responsividade de hardware nem aceite humano. Os413 casos de Planejamento não devem ser apresentados como prova de toque do calendário. Resultado ainda não coletado. Esta revisão foi somente leitura, sem browser ou edição do repositório.

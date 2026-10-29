@@ -1,0 +1,20 @@
+2026-10-27 14:35:05.191 Df powerd[414:24035df] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Idle Sleep'
+2026-10-27 14:35:07.981 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25325963625383
+2026-10-27 14:35:08.159 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25325967913025
+2026-10-27 14:35:08.194 Df powerd[414:2405f49] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-27 14:35:18.450 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-27 14:35:25.802 Df powerd[414:2404e0a] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25326258359820
+2026-10-27 14:35:25.976 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25326262533324
+2026-10-27 14:35:26.012 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-27 14:35:35.026 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Dark Wake Thermal Emergency'
+2026-10-27 14:44:17.646 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25326524970410
+2026-10-27 14:44:17.833 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25326529463044
+2026-10-27 14:44:17.865 Df powerd[414:24072f0] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to NUB.SPMI0Sw3IRQ nub-spmi0.0x02 rtc/Maintenance
+2026-10-27 14:44:33.707 Df powerd[414:24074d6] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-27 14:45:07.093 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25326957626475
+2026-10-27 14:45:07.261 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25326961651323
+2026-10-27 14:45:07.297 Df powerd[414:2407eff] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty bluetooth-pcie/
+2026-10-27 14:45:42.658 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-27 14:51:55.194 Df powerd[414:2408a0a] [com.apple.powerd:sleepWake] Updating wake start timestamp to 25327858679814
+2026-10-27 14:51:55.383 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] Updating wake end timestamp to 25327862828427
+2026-10-27 14:51:55.385 Df powerd[414:2405abd] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNPB] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/

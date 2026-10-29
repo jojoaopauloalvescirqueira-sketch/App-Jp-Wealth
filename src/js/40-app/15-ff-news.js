@@ -24,6 +24,95 @@ let ffNewsInFlight=false;
 let ffNewsLastError=false;
 let ffNewsCacheWriteFailed=false;
 let ffNewsCacheReadFailed=false;
+let ffNewsDomainTimers=[];
+let ffNewsDomainOnlineBound=false;
+
+
+// Shared public economic snapshot. Storage, requests and lifecycle stay outside
+// JPWEconomicCalendar's synchronous, financial-state-free query model.
+(function initCalendarFeed(root){
+  if(root.JPWCalendarFeed)return;
+  const MAX_BYTES=8000000,MAX_ROWS=12000,MAX_SOURCE_AGE=2*60*60*1000;
+  const currencies=['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'];
+  const impacts=['high','medium','low','unclassified'],states=['scheduled','published','cancelled'];
+  const copy=value=>JSON.parse(JSON.stringify(value));
+  const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
+  const date=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
+  const instant=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)&&date(value.slice(0,10))&&Number.isFinite(Date.parse(value));
+  const url=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname;}catch(_){return false;}};
+  let current=null,cacheText=null,cacheEnvelope=null,disposed=false,request=0,revision=0,controller=null;
+  function validate(payload){
+    if(!object(payload)||JSON.stringify(payload).length>MAX_BYTES)return null;
+    if(payload.version===1){
+      if(!Array.isArray(payload.events)||payload.events.length>MAX_ROWS)return null;
+      // Compatibility v1 is deliberately limited. It never establishes broad
+      // currency/impact/month coverage, even when the GET just succeeded.
+      const events=payload.events.filter(e=>object(e)&&typeof e.title==='string'&&e.title.length<=600&&typeof e.country==='string'&&typeof e.date==='string'&&Number.isFinite(Date.parse(e.date))&&e.impact==='High'&&FF_NEWS_CURRENCIES.includes(e.country));
+      return {...copy(payload),events:copy(events)};
+    }
+    if(payload.schemaVersion!==2||!instant(payload.collectedAt)||!instant(payload.packagePublishedAt)||!(payload.sourcePublishedAt===null||instant(payload.sourcePublishedAt))||Date.parse(payload.collectedAt)>Date.now()+5*60*1000)return null;
+    if(!Array.isArray(payload.currencies)||!payload.currencies.length||payload.currencies.some(v=>!currencies.includes(v))||new Set(payload.currencies).size!==payload.currencies.length||!Array.isArray(payload.sources)||!Array.isArray(payload.events)||payload.events.length>MAX_ROWS||!Array.isArray(payload.coverage))return null;
+    const ids=new Set(),sourceIds=new Set(),sourceCurrencies=new Map(),zones=new Set();
+    for(const source of payload.sources){if(!object(source)||typeof source.id!=='string'||sourceIds.has(source.id)||typeof source.name!=='string'||!url(source.url)||(!currencies.includes(source.currency)||!payload.currencies.includes(source.currency)))return null;sourceIds.add(source.id);sourceCurrencies.set(source.id,source.currency);}
+    for(const e of payload.events){
+      if(!object(e)||typeof e.id!=='string'||!e.id||e.id.length>300||ids.has(e.id)||typeof e.title!=='string'||!e.title.trim()||e.title.length>600||!currencies.includes(e.currency)||(!sourceIds.has(e.sourceId)||sourceCurrencies.get(e.sourceId)!==e.currency||!payload.currencies.includes(e.currency))||!impacts.includes(e.impact)||!date(e.date)||!url(e.sourceUrl)||!states.includes(e.status)||!instant(e.reviewedAt)||!((e.precision==='date'&&e.at===null)||(e.precision==='instant'&&instant(e.at))))return null;
+      if(e.observationStatus!==undefined&&!['present','not-in-latest'].includes(e.observationStatus))return null;
+      if(!zones.has(e.timeZone)){try{new Intl.DateTimeFormat('en',{timeZone:e.timeZone});zones.add(e.timeZone);}catch(_){return null;}}
+      ids.add(e.id);
+    }
+    for(const row of payload.coverage){if(!object(row)||(!sourceIds.has(row.sourceId)||sourceCurrencies.get(row.sourceId)!==row.currency||!payload.currencies.includes(row.currency))||!currencies.includes(row.currency)||!date(row.from)||!date(row.to)||row.from>row.to||!['confirmed','partial','pending','stale','unavailable'].includes(row.status)||!instant(row.reviewedAt)||(row.validUntil!==undefined&&!instant(row.validUntil)))return null;}
+    return copy(payload);
+  }
+  function sourceStamp(payload){return payload?.schemaVersion===2?payload.collectedAt:(typeof payload?.generated_at==='string'&&instant(payload.generated_at)?payload.generated_at:null);}
+  function adopt(envelope){if(current!==envelope)revision++;current=envelope;return current;}
+  function read(){
+    let raw;try{raw=localStorage.getItem(FF_NEWS_CACHE_KEY);ffNewsCacheReadFailed=false;}catch(_){ffNewsCacheReadFailed=true;return null;}
+    if(raw===null){cacheText=null;cacheEnvelope=null;adopt(null);return null;}
+    if(raw===cacheText&&cacheEnvelope)return adopt(cacheEnvelope);
+    try{const parsed=JSON.parse(raw);if(!object(parsed)||typeof parsed.fetchedAt!=='number'||!Number.isFinite(parsed.fetchedAt)||parsed.fetchedAt<0){ffNewsCacheReadFailed=true;return null;}
+      const payload=validate(parsed.payload);if(!payload){ffNewsCacheReadFailed=true;return null;}
+      cacheText=raw;cacheEnvelope={fetchedAt:parsed.fetchedAt,payload};return adopt(cacheEnvelope);
+    }catch(_){ffNewsCacheReadFailed=true;return null;}
+  }
+  function write(payload){
+    const clean=validate(payload);if(!clean||disposed)return false;
+    const envelope={fetchedAt:Date.now(),payload:clean},raw=JSON.stringify(envelope);
+    try{localStorage.setItem(FF_NEWS_CACHE_KEY,raw);}catch(_){ffNewsCacheWriteFailed=true;return false;}
+    ffNewsCacheWriteFailed=false;cacheText=raw;cacheEnvelope=envelope;adopt(envelope);return true;
+  }
+  function legacy(payload){
+    const clean=validate(payload);if(!clean)return null;
+    const events=clean.schemaVersion===2?clean.events.filter(e=>String(e.sourceId).startsWith('ff-')&&e.precision==='instant'&&FF_NEWS_CURRENCIES.includes(e.currency)&&e.impact==='high'&&e.observationStatus!=='not-in-latest'&&e.status!=='cancelled').map(e=>({title:e.title,country:e.currency,date:e.at,forecast:typeof e.forecast==='string'?e.forecast:'',previous:typeof e.previous==='string'?e.previous:''})):clean.events.map(e=>({title:e.title,country:e.country,date:e.date,forecast:typeof e.forecast==='string'?e.forecast:'',previous:typeof e.previous==='string'?e.previous:''}));
+    return {generatedAt:sourceStamp(clean)||'',collectedAt:sourceStamp(clean),mode:clean.schemaVersion===2?'normalized':'legacy-partial',events};
+  }
+  function snapshot(){return current?copy({...current,revision,mode:current.payload.schemaVersion===2?'normalized':'legacy-partial'}):null;}
+  function status(){const at=sourceStamp(current?.payload);return {mode:current?(current.payload.schemaVersion===2?'normalized':'legacy-partial'):'unavailable',collectedAt:at,packagePublishedAt:current?.payload?.packagePublishedAt||null,sourcePublishedAt:current?.payload?.sourcePublishedAt||null,stale:!at||Date.now()-Date.parse(at)>MAX_SOURCE_AGE,fetchFailed:ffNewsLastError,readFailed:ffNewsCacheReadFailed,writeFailed:ffNewsCacheWriteFailed,disposed};}
+  function notify(){if(disposed)return;try{root.dispatchEvent(new CustomEvent('jpw-economic-calendar-updated'));}catch(_){} }
+  function finish(){ffNewsInFlight=false;controller=null;const b=document.getElementById('gdNewsRefreshBtn');if(b)b.disabled=false;ffNewsRenderAll();notify();}
+  async function refresh(force=false){
+    if(disposed||ffNewsInFlight)return false;
+    const cached=read();if(!force&&cached&&Date.now()-cached.fetchedAt<FF_NEWS_MAX_AGE_MS)return false;
+    const generation=++request;ffNewsInFlight=true;const b=document.getElementById('gdNewsRefreshBtn');if(b)b.disabled=true;
+    const s=document.getElementById('gdNewsStatus');if(s)s.textContent='Atualizando…';
+    try{
+      const endpoint=ffNewsSourceUrl();if(!url(endpoint))throw new Error('Fonte pública inválida');
+      controller=typeof AbortController==='function'?new AbortController():null;
+      const response=await fetch(endpoint,{cache:'no-store',...(controller?{signal:controller.signal}:{})});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      const payload=await response.json();if(disposed||generation!==request||endpoint!==ffNewsSourceUrl())return false;
+      if(!validate(payload))throw new Error('Carga pública inválida');
+      const saved=write(payload);ffNewsLastError=false;return saved;
+    }catch(_){if(!disposed&&generation===request)ffNewsLastError=true;return false;}
+    finally{if(!disposed&&generation===request)finish();}
+  }
+  function disposeForSession(){disposed=true;++request;controller?.abort();controller=null;ffNewsInFlight=false;ffNewsDomainTimers.forEach(id=>clearInterval(id));ffNewsDomainTimers=[];}
+  // Only an accepted surface entry resumes a disposed session. Refresh and
+  // queued network callbacks never reactivate this controller by themselves.
+  function resumeForSession(){if(!disposed)return false;disposed=false;++request;read();initFfNewsDomain();return true;}
+  root.JPWCalendarFeed=Object.freeze({snapshot,status,refresh,read,write,legacy,validate,disposeForSession,resumeForSession});
+  root.addEventListener('storage',event=>{if(event.key===FF_NEWS_CACHE_KEY&&!disposed){read();ffNewsRenderAll();notify();}});
+  read();
+})(window);
 
 function ffNewsSourceUrl(){
   try{ return localStorage.getItem(FF_NEWS_URL_OVERRIDE_KEY) || FF_NEWS_DEFAULT_URL; }
@@ -32,43 +121,12 @@ function ffNewsSourceUrl(){
 
 // Revalida a carga mesmo vinda do alimentador já filtrado — se o repositório
 // público for editado à mão ou servido truncado, lixo não chega à tela.
-function ffNewsSanitizeEvents(payload){
-  if(!payload || typeof payload!=='object' || payload.version!==1 || !Array.isArray(payload.events)) return null;
-  const events=[];
-  for(const e of payload.events){
-    if(!e || typeof e!=='object') continue;
-    if(typeof e.title!=='string' || typeof e.country!=='string' || typeof e.date!=='string') continue;
-    if(e.impact!=='High' || !FF_NEWS_CURRENCIES.includes(e.country)) continue;
-    const when=new Date(e.date);
-    if(isNaN(when.getTime())) continue;
-    events.push({title:e.title, country:e.country, date:e.date,
-      forecast:typeof e.forecast==='string'?e.forecast:'',
-      previous:typeof e.previous==='string'?e.previous:''});
-  }
-  return {generatedAt:typeof payload.generated_at==='string'?payload.generated_at:'', events};
-}
-
+function ffNewsSanitizeEvents(payload){return window.JPWCalendarFeed.legacy(payload);}
 function ffNewsReadCache(){
-  let raw;
-  try{
-    raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
-    ffNewsCacheReadFailed=false;
-  }catch(_){ ffNewsCacheReadFailed=true; return null; }
-  try{
-    if(!raw) return null;
-    const parsed=JSON.parse(raw);
-    if(!parsed || typeof parsed!=='object' || typeof parsed.fetchedAt!=='number') return null;
-    const clean=ffNewsSanitizeEvents(parsed.payload);
-    if(!clean) return null;
-    return {fetchedAt:parsed.fetchedAt, ...clean};
-  }catch(_){ return null; }
+  const cached=window.JPWCalendarFeed.read();if(!cached)return null;
+  const clean=ffNewsSanitizeEvents(cached.payload);return clean?{fetchedAt:cached.fetchedAt,...clean}:null;
 }
-function ffNewsWriteCache(payload){
-  try{
-    localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload}));
-    return true;
-  }catch(_){ return false; }
-}
+function ffNewsWriteCache(payload){const saved=window.JPWCalendarFeed.write(payload);if(saved)window.dispatchEvent(new CustomEvent('jpw-economic-calendar-updated'));return saved;}
 
 // Estado técnico da tentativa, sem payload paralelo nem alteração do cache antigo.
 function ffNewsCacheIssue(){
@@ -87,10 +145,10 @@ function ffNewsStatusText(cache){
   if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : ffNewsInFlight?'Sem dados — carregando calendário econômico…':'Sem dados — atualize o calendário econômico.';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
-    ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    ? gen.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
     : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  const stale=Date.now()-cache.fetchedAt>FF_NEWS_MAX_AGE_MS;
-  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : stale?'Dados desatualizados de ':'Dados de ')+stamp;
+  const stale=!gen||isNaN(gen.getTime())||Date.now()-gen.getTime()>2*60*60*1000;
+  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : stale?'Dados desatualizados de ':'Dados de ')+stamp+(cache.mode==='legacy-partial'?' · Feed legado: quatro moedas, alto impacto.':'');
 }
 
 // Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,
@@ -213,28 +271,7 @@ function ffNewsCacheStale(){
   return !cache || (Date.now()-cache.fetchedAt)>FF_NEWS_MAX_AGE_MS;
 }
 
-function ffNewsFetch(force){
-  if(ffNewsInFlight) return;
-  if(!force && !ffNewsCacheStale()) return;
-  const btn=document.getElementById('gdNewsRefreshBtn');
-  const status=document.getElementById('gdNewsStatus');
-  ffNewsInFlight=true;
-  if(btn) btn.disabled=true;
-  if(status) status.textContent='Atualizando…';
-  fetch(ffNewsSourceUrl(),{cache:'no-store'})
-    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(payload=>{
-      if(!ffNewsSanitizeEvents(payload)) throw new Error('carga inválida');
-      ffNewsCacheWriteFailed=!ffNewsWriteCache(payload);
-      ffNewsLastError=false;
-    })
-    .catch(()=>{ ffNewsLastError=true; })
-    .finally(()=>{
-      ffNewsInFlight=false;
-      if(btn) btn.disabled=false;
-      ffNewsRenderAll();
-    });
-}
+function ffNewsFetch(force){return window.JPWCalendarFeed.refresh(!!force);}
 
 // Inicialização em DUAS partes, deliberadamente separadas.
 //
@@ -262,19 +299,20 @@ function initFfNewsWidget(){
 // Até esta separação, o `if(!card) return` de initFfNews() matava junto os dois
 // intervalos, o listener 'online' e o fetch inicial: sem o card, nada
 // revalidava e o calendário exibiria cache velho indefinidamente, em silêncio.
-// Fonte, frequência, TTL, formato do cache e timezone permanecem intocados —
-// só a condição de partida mudou.
+// Fonte e cadência existentes são compartilhadas pelo semanal e pelo mensal.
+// A validade econômica depende da coleta da fonte, não da hora deste GET.
 function initFfNewsDomain(){
-  window.addEventListener('online',()=>ffNewsFetch(false));
+  if(window.JPWCalendarFeed?.status().disposed||ffNewsDomainTimers.length)return;
+  if(!ffNewsDomainOnlineBound){window.addEventListener('online',()=>ffNewsFetch(false));ffNewsDomainOnlineBound=true;}
   // Poll leve: re-render cobre a virada do dia; fetch só quando o cache
   // envelheceu e a aba está visível — respeita o rate-limit da fonte.
-  setInterval(()=>{
+  ffNewsDomainTimers.push(setInterval(()=>{
     ffNewsRenderAll();
     if(document.visibilityState==='visible') ffNewsFetch(false);
-  },FF_NEWS_POLL_MS);
+  },FF_NEWS_POLL_MS));
   // Tique de 1 min só de render: mantém a contagem regressiva e a transição
   // próximo→passado precisas sem nenhum consumo adicional da fonte.
-  setInterval(ffNewsRenderAll,FF_NEWS_TICK_MS);
+  ffNewsDomainTimers.push(setInterval(ffNewsRenderAll,FF_NEWS_TICK_MS));
   ffNewsRenderAll();
   ffNewsFetch(false);
 }

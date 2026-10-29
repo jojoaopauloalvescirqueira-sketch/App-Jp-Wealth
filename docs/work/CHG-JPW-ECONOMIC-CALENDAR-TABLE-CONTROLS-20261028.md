@@ -1,0 +1,19 @@
+# Atualização29/10/2026 — deltaFFV3 expressamente autorizado
+
+Resposta humana call_9750abf485524af2b6709be09677412e: **Autorizar o delta final e concluir a validação**. Aplicado somente tools/ff_news_cache_test.py, de f66f357830f04a2c9f6eeb92ac469d8e04c190b6aa1a42aad161f65ebde859a7 para **a3f3a00c5a1ff8e1059bc7eb1fd8c69870a5ecf48d1ea2020b8033503194862a**, deltaSHA25660a06bce255bd10370c43e9f6fa31855fa703f60da6d69050d66da45ff5004de. Outros quatro controles permanecem idênticos ao pacote37 e àV3 consolidada7c9ca1442b18cbd5081ee2a56179a3697062637da3be119825a983d53cec9159. [Recibo de aplicação](../validation/economic-calendar-table-20261028/APPLIED-V3.json).
+
+Proveniência por evento consultada no i, detalhe inicialmente recolhido e aviso de horário explicitamente visível são verificações do desenho humano aprovado. Contraprova de aviso oculto e revisão independenteV3 preservadas. Não houve retirada de proteção nem alteração dos116checks/413casos/900s/2px. A validação integral é executada pelo quality_gate.py original no candidato congelado; resultados exclusivamente no [relatório corrente](../validation/economic-calendar-table-20261028/README.md) e recibos associados. Autorização não representa PASS ou aceite visual humano.
+
+## Contrato e fotografia anteriores preservados
+
+# CHG — tabela econômica — controles N3
+
+Autoridade recebida em29/10/2026: resposta humana `call_e7eccb4435e94736b3b509201cf41e8a`, **Autorizar os cinco arquivos de testes e a validação**, vinculada ao patch37a46edb. O plano e a branch já estavam autorizados. A autorização foi aplicada somente ao pacote exato SHA256 `37a46edbd8e2c56e6327ce8dc8e42cc034c1063c2ef6a55520effa53bc8a39c3`, conferido em cada arquivo. Não inclui implicitamente a revisão posteriorV3, operações Git ou publicação.
+
+Arquivos autorizados: helper novo `tools/calendar_economic_table_contract.py`; extensões de `calendar_agenda_test.py`, `calendar_distribution_test.py`, `calendar_visual_quality_test.py` e `ff_news_cache_test.py`. Finalidade: sete campos, valores exatos/zero/ausência, DOM adaptável, detalhes e identidade/foco/rascunho, geometria e distribuições. Nenhuma mudança em quality_gate.py, ui_visual_quality_test.py,116checks,413casos,900segundos,2px, schemas ou fixtures financeiras.
+
+Comparação antes/depois e hashes em docs/validation/economic-calendar-table-20261028/APPLIED-CONTROLS-37.json. Revisões, REDs, GREENs e contraprovas scratch preservados no relatório próprio. O pacote37 contém duas expectativas antigas da integraçãoFF incompatíveis com o desenho aprovado; seus184PASS/2FAIL brutos permanecem históricos. A adaptação isolada de um único arquivo naV3 (fontes através do i e aviso explicitamente visível) tem proposta e auditoria próprias, mas aguarda autorização específica do delta e não foi aplicada. Não executar FULL sabidamente incompatível nem declarar esse gate aprovado.
+
+Desvio de execução do responsável: o patch37 foi aplicado após um preflightBLOCKED por hash19stale, antes de tratar o bloqueio. Reconhecido ao usuário e registrado, sem apagar recibos. A causa foi ausência de --refresh-manifest no rebuild anterior. A recuperação usa exclusivamente o gerador oficial autorizado, atualizando só o hash do renderizador;127entradas/ordem/metadados e produto preservados, sem mudar o verificador. Preflightedit posteriorPASS; revisão independente e recibo MANIFEST-REFRESH-RECOVERY.json documentam a separação entre manifesto do produto e expectativaFF do juiz.
+
+Depois do delta autorizado, executar focais atuais e FULL no candidato reconstruído estável, com aviso da janela nativa e preservação das fontes. Contraprovas devem rejeitar a propriedade pretendida; falha do launcher nunca conta como RED/GREEN de produto. Histórico e limitações não são apagados por uma repetição. Aceite humano visual permanece separado; sem nova dependência, commit, merge, push, publicação ou ativação externa.

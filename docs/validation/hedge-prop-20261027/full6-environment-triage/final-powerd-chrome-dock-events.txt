@@ -1,0 +1,4 @@
+window_local: 2026-10-28 10:21:39..2026-10-28 11:15:25
+exit: 0
+predicate: (process == "powerd" AND category == "sleepWake") OR (((process == "Dock" AND eventMessage CONTAINS[c] "Google Chrome") OR process == "Google Chrome") AND (eventMessage CONTAINS[c] "AESendMessage(aevt,quit" OR eventMessage CONTAINS[c] "RECEIVED:(aevt,quit)" OR eventMessage CONTAINS[c] "Handling Quit AppleEvent" OR eventMessage CONTAINS[c] "termination approved" OR eventMessage CONTAINS[c] "force quit" OR eventMessage CONTAINS[c] "forcibly" OR eventMessage CONTAINS[c] "SIGKILL"))
+Timestamp               Ty Process[PID:TID]

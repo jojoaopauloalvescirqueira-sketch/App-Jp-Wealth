@@ -1,0 +1,9 @@
+{
+  "checked_at_client": "2026-10-28T00:56:22.385813-03:00",
+  "url": "http://127.0.0.1:51757/build-id.js",
+  "httpStatus": 200,
+  "sha256": "0eec814afb46e5ceda16f27728f6795fb6357b686d5e42bad327c232fe646363",
+  "equalsCandidateBytes": true,
+  "build": "09cfa4f7b8a8dbed",
+  "scope": "HTTP identity only; no browser interaction or human acceptance"
+}

@@ -1,0 +1,40 @@
+PASS HEDGE-ORACLE-ONE-PHASE
+PASS HEDGE-ORACLE-TWO-PHASES-AND-COST-PATHS
+PASS HEDGE-REFUND-ZERO
+PASS HEDGE-COSTS-DO-NOT-RESIZE
+PASS HEDGE-MISSING-COSTS-ARE-PENDING-PER-PATH
+PASS HEDGE-INVALID-COST-ONLY-AFFECTS-ITS-PATHS
+PASS HEDGE-COST-TOPOLOGY-AND-EXTRA-ROWS
+PASS HEDGE-ZERO-FEE-VALID-WITH-COSTS
+PASS HEDGE-MISSING-STRICT-NUMBERS-AND-LIMITS
+PASS HEDGE-INFEASIBLE-NO-INFINITE-OR-NEGATIVE-TARGET
+PASS HEDGE-UNREPRESENTABLE-IS-EXPLICIT
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'drawdownUSD'
+- 'payoutPercent'
+
+    at /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:162:53
+    at test (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:27:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:160:1)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'drawdownUSD',
+  expected: 'payoutPercent',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

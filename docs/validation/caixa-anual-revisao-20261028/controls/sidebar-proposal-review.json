@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "scope": "A0 proposal review only; fourth judge remains unmodified pending specific authorization",
+  "path": "tools/contextual_sidebar_test.py",
+  "sourceSha256": "8be84e75dbd2e7575ea93974a7f25b2a81370c8216e4b3dad4f1480cdc28bc15",
+  "candidateSha256": "137039c2b53065acaa72f61cf01f8352ee16d1fd4223029f0a1e47afd6541493",
+  "patchSha256": "60f66f8cecffc27ba6e636317e617dfc18cc4eb1e7a61142d5210cbb25f0bae3",
+  "patchShape": "one removed line / one added line",
+  "astChange": [
+    {
+      "line": 363,
+      "old": "Contabilidade",
+      "new": "Caixa Anual"
+    }
+  ],
+  "allOtherSyntaxIdentical": true,
+  "sameAssert": "all(word in location for word in words) at current line369",
+  "case": "python3 tools/contextual_sidebar_test.py --only lifecycle [same environment/artifact arguments as executor]",
+  "observedOriginalFailure": {
+    "classification": "TEST_HARNESS_FAIL",
+    "reason": "old expected name on authorized renamed product",
+    "evidence": "sidebar-old-expectation.log",
+    "exactAssertionMatched": true,
+    "executedByReviewer": false
+  },
+  "qualityGateHashUnchanged": true,
+  "protocolSufficientIf": [
+    "specific fourth-judge authorization arrives before repository modification",
+    "same lifecycle case executes after one-literal patch and passes",
+    "the exact new judge bytes then run against an isolated old-breadcrumb-label product mutation and fail at this expected-name assertion",
+    "failing old-label mutation does not modify judge, omit lifecycle groups, or substitute environment/earlier failure as rejection",
+    "final candidate and full catalog116 remain byte-bound and full result is reported separately"
+  ],
+  "reviewerBrowserExecution": "NOT_RUN",
+  "productChangesByReviewer": false,
+  "authorizationState": "PENDING as reported by root; review does not grant it",
+  "legacyOutOfFullLabels": "not changed by this proposal"
+}

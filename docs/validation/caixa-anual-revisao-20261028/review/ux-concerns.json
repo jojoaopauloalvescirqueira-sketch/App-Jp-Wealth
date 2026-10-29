@@ -1,0 +1,127 @@
+{
+  "bytes": {
+    "index.html": {
+      "match": true,
+      "sha256": "06749243b2ac7585cf016b37007274a74228099d5a66e0c14cb5ad54702f0944"
+    },
+    "build-id.js": {
+      "match": true,
+      "sha256": "0eec814afb46e5ceda16f27728f6795fb6357b686d5e42bad327c232fe646363"
+    },
+    "src/js/30-accounting/07-management/03-ui.js": {
+      "match": true,
+      "sha256": "83472c25acd443838c98b0f236403193ed0bdcbc12f203869e0dfd41ec4d27db"
+    }
+  },
+  "corrected_source": {
+    "summary": {
+      "status": "COMPLETE",
+      "referenceDate": "2025-12-31",
+      "reference": {
+        "years": 1,
+        "days": 364,
+        "daysPerMonth30": 12.133333333333333,
+        "calendarMonthDays": 30.333333333333332,
+        "weeks": 52,
+        "daysPerWeek": 7
+      },
+      "initialBalance": 1000,
+      "actualInitialBalance": 1200,
+      "currentBalance": 1212,
+      "balanceDate": "2025-12-31",
+      "accumulatedResult": 12,
+      "recordedResult": 12,
+      "realCumulative": 0.010000000000000009,
+      "annualEligibleDays": 261,
+      "eligibleDays": 1,
+      "elapsedDays": 1,
+      "recordedDays": 1,
+      "declaredDays": 0,
+      "pendingDays": 0,
+      "pendingDates": [],
+      "mismatches": 0,
+      "completeActual": true,
+      "fraction": 0.0038314176245210726,
+      "programmedDays": 260,
+      "partialProgrammedDays": 0.9961685823754789,
+      "partialMonths": 0.04597701149425287,
+      "annualTarget": 0.25,
+      "annualTargetAmount": 250,
+      "partialTarget": 0.0008553217144774282,
+      "partialTargetAmount": 0.8553217144774282,
+      "desiredBalance": 1000.8553217144773,
+      "projectedClosing": 1000.8586128252648,
+      "dailyTarget": 0.0008586128252648431,
+      "monthlyTarget": 0.018769265121506028,
+      "realDailyRate": 0.010000000000000009,
+      "projectedMonth": 0.22019003994796704,
+      "projectedYear": 9.892553653873623,
+      "targetDate": null,
+      "thermometer": {
+        "ok": true,
+        "equivalentDate": "2025-12-31",
+        "days": 0,
+        "color": "green",
+        "direction": "ON_PLAN",
+        "reason": null
+      }
+    },
+    "text": "Período e posição\nReferência\n31/12/2025\nInício 31/12/2025\nSaldo inicial\nUS$ 1.000,00\nAbertura conferida\nSaldo confirmado\nUS$ 1.212,00\nÚltimo fechamento: 31/12/2025\nResultado acumulado\nUS$ 12,00\nRegistros conferidos\nObjetivo e programação\nMeta anual\n25%\nValor integral US$ 250,00\nMeta neste ano\n0,0855%\n0,3831% do calendário disponível\nSaldo desejado\nUS$ 1.000,86\nMeta proporcional composta\nData final projetada\nNão alcançada\nBusca aproximada nos retornos acumulados projetados\nMeta diária\n0,0859%\nMeta mensal 1,8769%\nDias programados\n0,9962\nBase integral 260\nDatas disponíveis\n1\nSegunda a sexta, menos exclusões\nRealizado e acompanhamento\nDias decorridos\n1\nDias úteis desde o início\nDias com fechamento\n1\nDeclarações sem resultado: 0\nAcumulado realizado\n1%\nSaldo confirmado ÷ abertura − 1\nTaxa diária realizada\n1%\nBase completa\nExtrapolação mensal\n22,019%\nBase de 20 dias\nExtrapolação anual\n989,2554%\nBase fixa de 240 dias\nCalendário equivalente\nNo ritmo · 0 dias\n31/12/2025"
+  },
+  "mismatch": {
+    "summary": {
+      "status": "INCOMPLETE",
+      "referenceDate": "2025-12-31",
+      "reference": {
+        "years": 1,
+        "days": 364,
+        "daysPerMonth30": 12.133333333333333,
+        "calendarMonthDays": 30.333333333333332,
+        "weeks": 52,
+        "daysPerWeek": 7
+      },
+      "initialBalance": 1000,
+      "actualInitialBalance": 1200,
+      "currentBalance": 1300,
+      "balanceDate": "2025-12-31",
+      "accumulatedResult": 100,
+      "recordedResult": 12,
+      "realCumulative": 0.08333333333333326,
+      "annualEligibleDays": 261,
+      "eligibleDays": 1,
+      "elapsedDays": 1,
+      "recordedDays": 1,
+      "declaredDays": 0,
+      "pendingDays": 0,
+      "pendingDates": [],
+      "mismatches": 1,
+      "completeActual": false,
+      "fraction": 0.0038314176245210726,
+      "programmedDays": 260,
+      "partialProgrammedDays": 0.9961685823754789,
+      "partialMonths": 0.04597701149425287,
+      "annualTarget": 0.25,
+      "annualTargetAmount": 250,
+      "partialTarget": 0.0008553217144774282,
+      "partialTargetAmount": 0.8553217144774282,
+      "desiredBalance": 1000.8553217144773,
+      "projectedClosing": 1000.8586128252648,
+      "dailyTarget": 0.0008586128252648431,
+      "monthlyTarget": 0.018769265121506028,
+      "realDailyRate": null,
+      "projectedMonth": null,
+      "projectedYear": null,
+      "targetDate": null,
+      "thermometer": {
+        "ok": false,
+        "equivalentDate": null,
+        "days": null,
+        "color": null,
+        "direction": null,
+        "reason": "Há dias pendentes, abertura ausente ou saldos a reconciliar."
+      }
+    },
+    "text": "Registro confirmado.\nPeríodo e posição\nReferência\n31/12/2025\nInício 31/12/2025\nSaldo inicial\nUS$ 1.000,00\nAbertura conferida\nSaldo confirmado\nUS$ 1.300,00\nÚltimo fechamento: 31/12/2025\nResultado acumulado\nUS$ 100,00\nRegistros conferidos\nObjetivo e programação\nMeta anual\n25%\nValor integral US$ 250,00\nMeta neste ano\n0,0855%\n0,3831% do calendário disponível\nSaldo desejado\nUS$ 1.000,86\nMeta proporcional composta\nData final projetada\nNão alcançada\nBusca aproximada nos retornos acumulados projetados\nMeta diária\n0,0859%\nMeta mensal 1,8769%\nDias programados\n0,9962\nBase integral 260\nDatas disponíveis\n1\nSegunda a sexta, menos exclusões\nRealizado e acompanhamento\nDias decorridos\n1\nDias úteis desde o início\nDias com fechamento\n1\nDeclarações sem resultado: 0\nAcumulado realizado\n8,3333%\nSaldo confirmado ÷ abertura − 1\nTaxa diária realizada\n—\nAguardando pendências\nExtrapolação mensal\n—\nBase de 20 dias\nExtrapolação anual\n—\nBase fixa de 240 dias\nCalendário equivalente\nHá dias pendentes, abertura ausente ou saldos a reconciliar.\nReferências de dias da planilha\nRegistrar outra data\nRevisar programação\nRevisar fechamento anual\nAno aberto\n\nHá saldos observados diferentes da cadeia calculada. As observações foram preservadas; confira os detalhes antes do fechamento anual.\n\nPlanejamento anual e fechamentos diários de Conta anual sintética\nDias\tProjetado\tRealizado\nDia\tCorridos\tData\tInicial\tResultado\tFechamento\tAcumulado\tInicial\tResultado\tFechamento\tAcumulado\n1\t0\t31/12/2025\n✓ Fechado\n\tUS$ 1.000,00\tUS$ 0,86\tUS$ 1.000,86\t0,0859%\tUS$ 1.200,00\tUS$ 12,00\tUS$ 1.300,00\t8,3333%\nSubtotal da semana\t\tUS$ 0,86\t\t\t\tUS$ 12,00\t\t"
+  },
+  "loaded_build": "09cfa4f7b8a8dbed"
+}

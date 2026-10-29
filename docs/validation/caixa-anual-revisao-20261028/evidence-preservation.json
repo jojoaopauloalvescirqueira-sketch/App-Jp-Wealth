@@ -1,0 +1,137 @@
+{
+  "capturedAt": "2026-10-28T11:45:17.847158-03:00",
+  "sourceOriginalXLSXNotCopied": true,
+  "privateWorkbookRenderingNotCopied": true,
+  "files": [
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/math/REVIEW.md",
+      "copy": "review/MATH-REVIEW.md",
+      "sha256": "e92822859d9be22f936a273834b4702dcc6ad9cd8cf934bfeb52a4c3194bf84e"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/math/math-review-results.json",
+      "copy": "review/math-results.json",
+      "sha256": "4c3e012fad48e2f7d7904823e201f27e71fb92d4f4af793f263e1252c31f0708"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/math/math-review.js",
+      "copy": "review/math-review.js",
+      "sha256": "1a244668b2eeaebc25f83f65d02500a154bb010fa251e18451e7dbd173ad9f95"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/math/source-hashes.json",
+      "copy": "review/math-source-hashes.json",
+      "sha256": "85245424499f99b2c586bc780461dbeef5017b50a407afc1b2876ce3842f5c8e"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/ux/REPORT.md",
+      "copy": "review/UX-REVIEW.md",
+      "sha256": "a5cb1635eb6da73aa4a02cc778a760020d6f8ffaf1fe0f762e3bd2413c485881"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/ux/observations.json",
+      "copy": "review/ux-observations.json",
+      "sha256": "d58d7e2d36c791728e2012b0638584608ab4b8271479cd11fb9676591313071d"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/ux/concerns.json",
+      "copy": "review/ux-concerns.json",
+      "sha256": "a5a17ca96a65ede5387b64c957d2f5e97687cc5eb6d0787ab73b91b3e210e75c"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/ux/17-corrected-source-opening.png",
+      "copy": "review/opening-divergence.png",
+      "sha256": "bb5a93669ba0c7c01933058e106bfb983dc47a1b908b552b632f742756644e1c"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/ux/18-mismatch-confirmed-label.png",
+      "copy": "review/conflicting-status.png",
+      "sha256": "e46ddd4bd02343d7bf5149d983e8576aa8fdb3b9e87815be04489666bc33b253"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/ux/19-mismatch-warning.png",
+      "copy": "review/reconciliation-warning.png",
+      "sha256": "6a32caf6c44f18a1b34c7f58aba92b700e9795404a07bd28a0b2279dac9cc6ca"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/math/rename-applied-review.json",
+      "copy": "controls/independent-label-review.json",
+      "sha256": "12cd9eccc355ab4106b3b8ad66933e0f4720a9bacb2bfc4b8abc14c5e1380565"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/math/rename-proposal-review.json",
+      "copy": "controls/independent-proposal-review.json",
+      "sha256": "765e4a878a9a8d0c492e84f457d13e746797ff2bef9e5101a640f73a28049c98"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/red-ui.log",
+      "copy": "controls/red-ui.log",
+      "sha256": "e61e8d4decf1135dc0443c305ef41618fa98ae904af61f011ed8538c9d5cfb15"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/red-navigation.log",
+      "copy": "controls/red-navigation.log",
+      "sha256": "b654bbd2eb3252386d7536d0e6abbb5c79220f0d3b4d5fb40641ea1b35679c44"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/red-notes.log",
+      "copy": "controls/red-notes.log",
+      "sha256": "da76c76da831c72dc6ceb4825af517ac436150b0cd86d67e54bfb8bec450b431"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/green-ui.log",
+      "copy": "controls/green-ui.log",
+      "sha256": "fdab3b6b79fe13369ae68fe3f27b82f974c58665630ee7b6fc301693d331f52a"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/green-navigation.log",
+      "copy": "controls/green-navigation.log",
+      "sha256": "c57804c7daf5738b6d387effe1ecda317c5c7ef07020a74f57b7a160b340a9d9"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/green-notes.log",
+      "copy": "controls/green-notes.log",
+      "sha256": "5143c0e680a4ba2b97def2fdfcac82c55a3bab41fe39f49fca4bb5318a1266cd"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/counterproof-management.log",
+      "copy": "controls/counterproof-management.log",
+      "sha256": "cecab84040fd271baa19f096879bcc27b7aeca09d78a233510287ecbb68bd057"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/counterproof-contab.log",
+      "copy": "controls/counterproof-contab.log",
+      "sha256": "b7da8bb1043235892c7e8ec208f33f0eca66c623ea0f48975f112d7b8c946734"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/notes-counterproof.cjs",
+      "copy": "controls/notes-counterproof.cjs",
+      "sha256": "dbfd112969513934f823167ef5359113d75799fd0884c711c1b6f3732bc2acdc"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/green-ui/annual-desktop.png",
+      "copy": "caixa-anual-desktop.png",
+      "sha256": "47ed388c1d2511a2ba65a7eb993ce09dd6fa3b8a61cfa90e6eb76af4786f875c"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/green-ui/empty-desktop.png",
+      "copy": "caixa-anual-empty.png",
+      "sha256": "08e7ffea3c0973cf111bf071ead69429295d7504b45b9292aa0f86c09a886a9c"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/sidebar-old-expectation.log",
+      "copy": "controls/sidebar-old-expectation.log",
+      "sha256": "74e8743d550789fd927548edb6033e3e22bb949dc996d693b4f1d5accd68a271"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/SIDEBAR-NAME.patch",
+      "copy": "controls/SIDEBAR-NAME.patch",
+      "sha256": "60f66f8cecffc27ba6e636317e617dfc18cc4eb1e7a61142d5210cbb25f0bae3"
+    },
+    {
+      "source": "/private/tmp/jpw-caixa-anual-review-20261028/SIDEBAR-NAME-PROPOSAL.md",
+      "copy": "controls/SIDEBAR-NAME-PROPOSAL.md",
+      "sha256": "dd70bf8b93a4894fa516785385628f0a582d514ac61a4755b0f421ddb729ac62"
+    }
+  ]
+}

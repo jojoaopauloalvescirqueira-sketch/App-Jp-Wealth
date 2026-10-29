@@ -1,0 +1,10 @@
+{
+  "checked_at_client": "2026-10-28T00:50:19.508462-03:00",
+  "frozenInputs": 1621,
+  "frozenDeltas": [],
+  "protectedPaths": 86,
+  "protectedDeltas": [],
+  "branch": "codex/mesas-proprietarias-hedge-20261027",
+  "head": "3e24f60f8cfe87f79335f40e95a0927379a9f834",
+  "full5Result": "114PASS,1PRODUCT_FAIL,1TEST_HARNESS_FAIL; exit1; not approved"
+}

@@ -1,0 +1,1 @@
+TEST_HARNESS_FAIL: primeira captura desktop ficou coberta pelas boas-vindas agendadas, e screenshot do elemento modal maior que a viewport extrapolou o recorte visível. Recibos/capturas brutos preservados. Correção somente no launcher: flag de boas-vindas antes do boot, guarda de diálogo e captura da viewport para modal. Nenhuma alteração no produto.

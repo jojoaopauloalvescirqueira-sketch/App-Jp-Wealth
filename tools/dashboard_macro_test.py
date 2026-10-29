@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """DASH-MACRO-01 — Visao Executiva Macro do Dashboard.
 
-Prova que o Dashboard resume os quatro modulos globais consumindo a fronteira
+Prova que o Dashboard resume os modulos disponiveis consumindo a fronteira
 canonica de cada dominio, sem reproduzir formula, sem escrever estado e sem
 transformar recusa em zero. Cobre tambem a regressao CA-12 da marca: acionar o
 logo JA ESTANDO no Dashboard permanece correto e nao escreve em storage.
@@ -33,6 +33,7 @@ CARDS = [
     ("planning", "planning", "planning"),
     ("personal-finance", "personal-finance", "finpes"),
     ("research", "research-forex", "research"),
+    ("management", "management-reserves", "fxreserves"),
     ("alladin", "alladin", "alladin"),
 ]
 
@@ -102,7 +103,7 @@ def boot(browser, url, viewport=None, *, service_workers="allow", prepare_contex
     page.goto(url, wait_until="load")
     page.wait_for_function(
         "() => window.JPWDashMacro && window.JPWNavigation "
-        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(3 + int(alladin_active) + int(personal_finance_active))
+        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(4 + int(alladin_active) + int(personal_finance_active))
     )
     return context, page, observed
 
@@ -114,7 +115,7 @@ def storage_snapshot(page):
 # ---------------------------------------------------------------- ESTRUTURA --
 
 def assert_estrutura_e_isolamento_do_layout(page):
-    """Os quatro cards existem, e a camada macro esta FORA do motor de layout."""
+    """Os cards disponíveis existem; a camada macro fica FORA do motor de layout."""
     dados = page.evaluate("""() => {
       const shell = document.getElementById('dashMacro');
       const grid = document.getElementById('dashMacroGrid');
@@ -294,7 +295,7 @@ def assert_pf_mes_virtual(page):
 
 
 def assert_isolamento_de_falha(page):
-    """Falha de um dominio nao derruba os outros tres cards."""
+    """Falha de um dominio nao derruba os demais cards."""
     r = page.evaluate("""() => {
       const original = window.JPWAlladin.compat;
       window.JPWAlladin = Object.assign({}, window.JPWAlladin, {
@@ -311,7 +312,7 @@ def assert_isolamento_de_falha(page):
       window.JPWDashMacro.render();
       return out;
     }""")
-    assert r["total"] == 5, f"uma falha derrubou a grade: {r}"
+    assert r["total"] == 6, f"uma falha derrubou a grade: {r}"
     assert r["forexOk"], f"falha do Alladin contaminou o Forex: {r}"
     assert r["alladinDegradado"], f"falha deveria virar estado rotulado: {r}"
 
@@ -343,7 +344,7 @@ def assert_marca_estando_no_dashboard(page):
         assert depois["screen"] == "dash", f"[{rotulo}] saiu do dashboard: {depois}"
         assert depois["ativos"] == ["dash"], f"[{rotulo}] mais de uma tela ativa: {depois}"
         assert depois["canonical"] == "dashboard", f"[{rotulo}] rota canonica: {depois}"
-        assert depois["macro"] == 5, f"[{rotulo}] a visao macro se perdeu: {depois}"
+        assert depois["macro"] == 6, f"[{rotulo}] a visao macro se perdeu: {depois}"
         assert storage_snapshot(page) == antes_storage, f"[{rotulo}] escreveu em storage"
 
 
@@ -387,7 +388,7 @@ def assert_superficies_dashboard(page, rotulo):
     def inside(child, parent):
         return child['x'] >= parent['x']-1 and child['right'] <= parent['right']+1 and child['y'] >= parent['y']-1 and child['bottom'] <= parent['bottom']+1
     assert r['overflow'] <= 1, f'[{rotulo}] overflow horizontal da página: {r["overflow"]}'
-    expected=page.evaluate("['forex','planning','personal-finance','research','alladin'].filter(id=>JPWModuleAvailability.canAccess(id))")
+    expected=page.evaluate("['forex','planning','personal-finance','research','management','alladin'].filter(id=>JPWModuleAvailability.canAccess(id))")
     assert [card['id'] for card in r['cards']] == expected, f'[{rotulo}] painéis divergem da disponibilidade: {r["cards"]}, {expected}'
     previous = None
     for card in r['cards']:
@@ -510,7 +511,7 @@ def assert_responsividade(browser, url):
 
 
 def assert_atualizacao_agenda_e_foco(page):
-    """Regressão real: cache muda, hook do feed deve atualizar o macro aberto."""
+    """Cache muda: consumidor econômico existente atualiza sem roubar foco."""
     page.evaluate("""() => {
       JPWNavigation.navigate('dashboard');
       const btn=document.querySelector('[data-dm-card="research"] .dm-cta');
@@ -537,7 +538,8 @@ def assert_atualizacao_agenda_e_foco(page):
       S.forex.accountContexts={schemaVersion:1,revision:1,accounts:{MACRO_A:{accountId:'MACRO_A',
         currentPeriodId:'MACRO_P',periods:{MACRO_P:p}}},archivedAccounts:{},legacy:null};render();
     }""")
-    page.wait_for_function("() => document.querySelector('[data-dm-card=forex]').textContent.includes('02/01/2026')")
+    page.wait_for_function("() => document.querySelector('[data-dm-card=forex]').textContent.includes('Mestre sintética')")
+    assert '12.345' not in page.locator('[data-dm-card="management"]').inner_text(), 'Gerenciamento não agrega saldos no panorama'
     page.evaluate("() => { S.forex.accountContexts.accounts.MACRO_A.periods.MACRO_P.ledger.pop(); render(); }")
 
 
@@ -554,8 +556,10 @@ def assert_fuso_agenda(browser,url):
           ffNewsWriteCache({version:1,events:[{title:'Evento UTC',country:'USD',impact:'High',date:'2026-09-09T01:00:00Z'}]});
           JPWDashMacro.render();
           const text=document.querySelector('[data-dm-card=research]').textContent;
+          const event=ecalEvents().events[0];
+          const local=event.when.toLocaleDateString('pt-BR')+' · '+event.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
           Date.now=now;
-          return text.includes('08/09/2026 · 22:00')&&!text.includes('09/09/2026');
+          return local==='08/09/2026 · 22:00'&&text.includes('08/09/2026 · 22:00')&&text.includes('Evento UTC')&&!text.includes('09/09/2026');
         }""")
         assert r, 'data e horário divergiram no fuso local'
     finally:
@@ -565,7 +569,7 @@ def assert_fuso_agenda(browser,url):
 def assert_links_profundos(page):
     routes=[('finpes','mensal','finpes'),('finpes','dividas','finpes'),
             ('finpes','comparativo','finpes'),('finpes','cenarios','finpes'),
-            ('research','calendar','tools'),('research','nocoda','research'),
+            ('research','nocoda','research'),
             ('research','pivots','research'),('alladin','balances','alladin'),
             ('alladin','ledger','alladin'),('alladin','positions','alladin')]
     for surface,view,screen in routes:
@@ -581,6 +585,11 @@ def assert_links_profundos(page):
             current=page.evaluate("() => JPWNavigation.current().localView")
             assert current=={'surface':actual_surface,'view':view}, current
 
+    # Calendar is a shared informational consumer, not a restored Portfolio submenu.
+    page.evaluate("() => JPWNavigation.navigate('dashboard')")
+    page.locator('#dashMacro [data-dm-route="tools-calendar"]').click()
+    assert page.locator('#tools').evaluate("el=>el.classList.contains('active')")
+    assert page.evaluate("() => JPWNavigation.current().localView")=={'surface':'tools','view':'calendar'}
     page.evaluate("() => JPWNavigation.navigate('dashboard')")
 
 
@@ -652,11 +661,11 @@ def assert_frozen_projection(browser,url):
         page.locator('#dmTools').evaluate('el=>el.open=true')
         assert page.locator('[data-dm-card="alladin"],.cp-panorama-index [href="#dm-title-alladin"],'
                             '[data-dm-card="personal-finance"],.cp-panorama-index [href="#dm-title-personal-finance"]').count()==0
-        for module in ['forex','planning','personal-finance','research','alladin']:
+        for module in ['forex','planning','personal-finance','research','management','alladin']:
             page.evaluate("id=>JPWModuleAvailability.setState(id,'frozen')",module)
             page.evaluate("JPWNavigation.navigate('dashboard')")
             result=page.evaluate("""module=>{
-              const names=['dmForexHTML','dmPlanningHTML','dmFinpesHTML','dmResearchHTML','dmAlladinHTML'];
+              const names=['dmForexHTML','dmPlanningHTML','dmFinpesHTML','dmResearchHTML','dmManagementHTML','dmAlladinHTML'];
               const originals=names.map(name=>window[name]),calls=Object.fromEntries(names.map(name=>[name,0]));
               const govOriginal=getOnboardingCompletionState;let govCalls=0;
               names.forEach(name=>window[name]=(...args)=>{calls[name]++;return originals[names.indexOf(name)](...args);});
@@ -674,30 +683,33 @@ def assert_frozen_projection(browser,url):
                   health:['jpwSsPersist','jpwSsBackup','jpwSsQuotes'].every(id=>!document.getElementById(id).hidden)};
               }finally{names.forEach((name,index)=>window[name]=originals[index]);getOnboardingCompletionState=govOriginal;}
             }""",module)
-            reader={'forex':'dmForexHTML','planning':'dmPlanningHTML','personal-finance':'dmFinpesHTML','research':'dmResearchHTML','alladin':'dmAlladinHTML'}[module]
+            reader={'forex':'dmForexHTML','planning':'dmPlanningHTML','personal-finance':'dmFinpesHTML','research':'dmResearchHTML','management':'dmManagementHTML','alladin':'dmAlladinHTML'}[module]
             assert result['calls'][reader]==0,result
             assert module not in result['cards'] and '#dm-title-'+module not in result['links'],result
             assert result['stateStable'] and result['storageStable'] and result['health'],result
-            assert result['governanceHidden'] and result['accountingHidden'] and result['govCalls']==0,result
-            assert not result['governanceVisible'] and not result['accountingVisible'],result
+            assert result['governanceHidden'] and result['govCalls']==0,result
+            assert not result['governanceVisible'],result
+            management_active=page.evaluate("JPWModuleAvailability.canAccess('management')")
+            assert result['accountingHidden'] is (not management_active),result
+            assert result['accountingVisible'] is management_active,result
         assert page.locator('#dashMacroGrid [role="status"]').is_visible()
         assert page.locator('.cp-panorama-index').is_hidden()
         # Reativar é uma projeção, não uma entrada no módulo nem uma ação financeira.
         page.evaluate("JPWModuleAvailability.setState('forex','active')")
         assert page.locator('[data-dm-card="forex"]').count()==1
         assert page.locator('#jpwSsGov').is_visible()
-        assert page.locator('#gdFooter [data-dash-go="contab"]').is_visible()
+        assert page.locator('#gdFooter [data-dash-go="contab"]').is_hidden()
         page.locator('.cp-panorama-index a').focus()
         page.evaluate("JPWModuleAvailability.setState('forex','frozen')")
         assert page.evaluate("document.activeElement.id")=='dashMacroTitle'
         assert page.evaluate("JPWNavigation.current().primary")=='dashboard'
         remote=context.new_page()
         remote.goto(url.rsplit('/',1)[0]+'/build-id.js')
-        remote.evaluate("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{forex:'active',planning:'frozen','personal-finance':'frozen',research:'frozen',alladin:'frozen'}}))")
+        remote.evaluate("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{forex:'active',planning:'frozen','personal-finance':'frozen',research:'frozen',management:'frozen',alladin:'frozen'}}))")
         page.wait_for_function("JPWModuleAvailability.canAccess('forex')&&document.querySelector('[data-dm-card=\"forex\"]')")
         assert page.locator('.cp-panorama-index a').count()==1
         assert page.locator('#jpwSsGov').is_visible()
-        assert page.locator('#gdFooter [data-dash-go="contab"]').is_visible()
+        assert page.locator('#gdFooter [data-dash-go="contab"]').is_hidden()
         assert not observed['pageerror'] and not observed['console'],observed
     finally:
         context.close()
@@ -741,7 +753,7 @@ def main():
             browser.close()
     finally:
         server.shutdown()
-    print("DASHBOARD MACRO TEST PASS — cinco cards, layout isolado, semantica fail-closed, CA-12 e responsividade")
+    print("DASHBOARD MACRO TEST PASS — seis cards, ownership independente, layout isolado, semantica fail-closed, CA-12 e responsividade")
 
 
 if __name__ == "__main__":

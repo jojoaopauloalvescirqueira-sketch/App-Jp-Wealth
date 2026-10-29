@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "cases": 14,
+  "scope": "Independent synthetic pure-engine mathematical review; no full/browser/native Excel run",
+  "engineSha256": "b98b8d45f18084986947553dd8ab60129ba5fdb89c08a80c0791fc155c3982bb",
+  "tests": [
+    {
+      "name": "independent civil calendars and identical exclusion sets",
+      "status": "PASS"
+    },
+    {
+      "name": "partial compounding and fractional Q have no second redactor",
+      "status": "PASS"
+    },
+    {
+      "name": "programmed time versus grid divergence is material and preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "actual zero, sub-cent, loss and declarations preserve absence distinctions",
+      "status": "PASS"
+    },
+    {
+      "name": "missing date blocks extrapolations and annual close even with later observation",
+      "status": "PASS"
+    },
+    {
+      "name": "observed mismatch is preserved and blocks return-based claims",
+      "status": "PASS"
+    },
+    {
+      "name": "changed prior confirmed opening does not rewrite planned baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "off-calendar fact contributes to actual balance without additional planned growth",
+      "status": "PASS"
+    },
+    {
+      "name": "thermometer exact boundaries and negative sign match source opening lookup",
+      "status": "PASS"
+    },
+    {
+      "name": "thermometer below first opening is unavailable; zero/negative targets preserve actual facts",
+      "status": "PASS"
+    },
+    {
+      "name": "source target return lookup is approximate last <= target",
+      "status": "PASS"
+    },
+    {
+      "name": "civil weekly subtotals partition projected and realized results including explicit weekend",
+      "status": "PASS"
+    },
+    {
+      "name": "tiny partial target remains representable and invalid numeric domain is explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "closing requires complete resolved calendar after Dec31",
+      "status": "PASS"
+    }
+  ],
+  "evidence": [
+    {
+      "scenario": "approved-grid-divergence",
+      "daysPerWeek": 5,
+      "eligibleDays": 261,
+      "programmedDays": 260,
+      "desiredBalance": 1250,
+      "projectedClosing": 1251.0732660315828,
+      "targetDate": "2026-12-29"
+    },
+    {
+      "scenario": "approved-grid-divergence",
+      "daysPerWeek": 6,
+      "eligibleDays": 261,
+      "programmedDays": 312,
+      "desiredBalance": 1250,
+      "projectedClosing": 1205.227279823457,
+      "targetDate": "2026-12-31"
+    }
+  ]
+}

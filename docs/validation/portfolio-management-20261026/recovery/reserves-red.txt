@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/management_reserves_draft_test.py", line 127, in <module>
+    run()
+  File "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/management_reserves_draft_test.py", line 46, in run
+    assert account.input_value() == 'fx_A', 'The declined selection must remain displayed'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: The declined selection must remain displayed

@@ -1,0 +1,122 @@
+[
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/390-dark-calendarDialog-after.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/390-dark-calendarDialog-after.png",
+    "sha256": "678aec036116f05cc538a1748c36f049229f509d1ad64f51c302872b960db18f",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after-scroll-row4-detail-or-source-control.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after-scroll-row4-detail-or-source-control.png",
+    "sha256": "a98f9bb96bf1b90e2dfb8a798cc566ec1d71c3d589e08f48d3312f188c842779",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after.png",
+    "sha256": "08924e31be264c6b3564ae0a3caec0dd079b358f198ffc8cc18883902303fb70",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/390-dark-calendarDialog-before.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/390-dark-calendarDialog-before.png",
+    "sha256": "fe1fe2bdb8687872de4bb6aae0c86e1edac82ba1b936df53019bfdb4dee3d63d",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after-scroll-row2-detail-or-source-control.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after-scroll-row2-detail-or-source-control.png",
+    "sha256": "9ee7d693f1184024fa604a44b45ab182377c050d89d74527b8db60f1724246b1",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/requests.jsonl",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/requests.jsonl",
+    "sha256": "7006a274ca4c5f371069f665098964563db42eb1bf7b62eccd30771d9962de30",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after-scroll-row1-detail-or-source-control.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after-scroll-row1-detail-or-source-control.png",
+    "sha256": "fbb77418f0b519b3b949d606f1492e568aea02a9541b812142d7362719358474",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/1440-light-execEcal-before.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/1440-light-execEcal-before.png",
+    "sha256": "32f1859fb7bcc7952d91a3dc14bd664d9afaa11863b9b2e7ff7c026ac280e89c",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after-scroll-row0-detail-or-source-control.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after-scroll-row0-detail-or-source-control.png",
+    "sha256": "72a72a37359347778256bb39d4e4caa81dc0eb3184514af84f92a7fbb4e5b617",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after-scroll-row3-detail-or-source-control.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after-scroll-row3-detail-or-source-control.png",
+    "sha256": "755d5a740a6d05207bd39c9859e7af05f9e5f093b9f4a888cd0036d4ae9125e3",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/inventory.json",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/inventory.json",
+    "sha256": "e23a2a0d15f82bc57a504d7b795d04fa5143154582c9ac1abede24cce91c674e",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-after-scroll-row5-detail-or-source-control.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-after-scroll-row5-detail-or-source-control.png",
+    "sha256": "b354bdb3a7ac3cd0902051cb0312b5e3ca3dcc0c58dbbf5774e020051243464b",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/320-light-execEcal-before.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/320-light-execEcal-before.png",
+    "sha256": "1c1fbbc70d423f2ab873b5a8d6557b34d66f7381ccd3c28566493d3da51788a2",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/comparison-final/1440-light-execEcal-after.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/comparison-final-20261029/1440-light-execEcal-after.png",
+    "sha256": "e5e12289434c5c25edbea278313e0164e65da0b86101d1bed7a4d65ce77dfa55",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/touch-observation/320-calendarDialog-after-open-tap.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/touch-final-20261029/320-calendarDialog-after-open-tap.png",
+    "sha256": "6223c8d095a3f0d2f460c31435ec020dc35f71220acb98be896d8f3c08e7da8c",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/touch-observation/390-calendarDialog-after-open-tap.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/touch-final-20261029/390-calendarDialog-after-open-tap.png",
+    "sha256": "6fa64f5b51595f783f6727bcfacef0136c77bc03e1272e8c1922e718a28cc028",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/touch-observation/requests.jsonl",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/touch-final-20261029/requests.jsonl",
+    "sha256": "a251e39fa31dea7ce6f842a8e216b81fa9ef7605af20cca38ce72dc386488a48",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/touch-observation/320-execEcal-after-open-tap.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/touch-final-20261029/320-execEcal-after-open-tap.png",
+    "sha256": "a6005ff178c0c9d1792c8bddb4450ed57abc02cb927acb6959cb00ed4eefd899",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/touch-observation/390-execEcal-after-open-tap.png",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/touch-final-20261029/390-execEcal-after-open-tap.png",
+    "sha256": "b7978a04407ff700ce79062459a09b50b482c409d512f6dc009948ec7bc2ed05",
+    "exact": true
+  },
+  {
+    "copy": "docs/validation/economic-calendar-table-20261028/touch-observation/raw-observations.json",
+    "source": "/private/tmp/jpw-economic-calendar-table-20261028/product-proposal/touch-final-20261029/raw-observations.json",
+    "sha256": "3b2ca8aef6fcf499daa5c759e19f65c0f3bad6d9f719cfe7e000388e163c6f43",
+    "exact": true
+  }
+]

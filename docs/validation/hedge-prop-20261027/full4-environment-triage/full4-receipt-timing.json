@@ -1,0 +1,712 @@
+{
+  "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/docs/validation/hedge-prop-20261027/full-attempt4-113pass-3fail.json",
+  "sha256": "f65c8e54c6a2b22d7182610d5fb7f59275ce50bc780d8e929580925f0331cdb0",
+  "started_at": "2026-10-27T14:11:26-03:00",
+  "finished_at": "2026-10-27T15:15:59-03:00",
+  "summary": {
+    "PASS": 113,
+    "PRODUCT_FAIL": 3,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "checks": [
+    {
+      "name": "preflight",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.84
+    },
+    {
+      "name": "structure",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.972
+    },
+    {
+      "name": "diff-check",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.324
+    },
+    {
+      "name": "preflight-context",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.824
+    },
+    {
+      "name": "hedge-prop-engine",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.395
+    },
+    {
+      "name": "hedge-prop-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 50.149
+    },
+    {
+      "name": "personal-agenda",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.19
+    },
+    {
+      "name": "monthly-economic-feed",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.936
+    },
+    {
+      "name": "calendar-agenda",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 45.997
+    },
+    {
+      "name": "calendar-recovery",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.503
+    },
+    {
+      "name": "ui-visual-quality",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 822.063
+    },
+    {
+      "name": "navigation-ia",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.825
+    },
+    {
+      "name": "dashboard-macro",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.486
+    },
+    {
+      "name": "research-navigation",
+      "result": "PRODUCT_FAIL",
+      "returncode": 1,
+      "duration_seconds": 7.638
+    },
+    {
+      "name": "smoke",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 10.687
+    },
+    {
+      "name": "settings",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 47.458
+    },
+    {
+      "name": "brand-identity-contract",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.73
+    },
+    {
+      "name": "brand-identity-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.667
+    },
+    {
+      "name": "statute-documentary",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.765
+    },
+    {
+      "name": "galton-board",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.63
+    },
+    {
+      "name": "planning-engine",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.838
+    },
+    {
+      "name": "planning-parity-engine",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.498
+    },
+    {
+      "name": "planning-state",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.287
+    },
+    {
+      "name": "planning-navigation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.036
+    },
+    {
+      "name": "planning-quote",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.036
+    },
+    {
+      "name": "planning-boundaries",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.035
+    },
+    {
+      "name": "planning-ui",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 47.312
+    },
+    {
+      "name": "planning-parity-ui",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 45.589
+    },
+    {
+      "name": "planning-reserve-compat",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.691
+    },
+    {
+      "name": "exec-submenu",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 11.272
+    },
+    {
+      "name": "nocoda",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.393
+    },
+    {
+      "name": "pivot-studies",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.452
+    },
+    {
+      "name": "order-guards",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.196
+    },
+    {
+      "name": "operation-identity",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.583
+    },
+    {
+      "name": "operation-finalize",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.115
+    },
+    {
+      "name": "operation-history",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.577
+    },
+    {
+      "name": "operation-wiring",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.117
+    },
+    {
+      "name": "phases-visibility",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.569
+    },
+    {
+      "name": "exec-three-column",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.823
+    },
+    {
+      "name": "finpes-foundation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.53
+    },
+    {
+      "name": "finpes-finalize-preservation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.499
+    },
+    {
+      "name": "finpes-backup-roundtrip",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.42
+    },
+    {
+      "name": "finpes-navigation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 2.894
+    },
+    {
+      "name": "finpes-budget",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 17.809
+    },
+    {
+      "name": "finpes-debt-credit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 15.252
+    },
+    {
+      "name": "finpes-comparison",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.017
+    },
+    {
+      "name": "finpes-scenarios",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 34.129
+    },
+    {
+      "name": "finpes-overview",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.603
+    },
+    {
+      "name": "usd-brl-quote",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 12.899
+    },
+    {
+      "name": "alladin-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.718
+    },
+    {
+      "name": "alladin-ledger",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.557
+    },
+    {
+      "name": "alladin-position",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.471
+    },
+    {
+      "name": "alladin-foundation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 25.799
+    },
+    {
+      "name": "alladin-finalize-preservation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 34.454
+    },
+    {
+      "name": "session-epoch-protocol",
+      "result": "PRODUCT_FAIL",
+      "returncode": 1,
+      "duration_seconds": 17.594
+    },
+    {
+      "name": "session-write-serialization",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 20.608
+    },
+    {
+      "name": "alladin-ui-readonly",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.849
+    },
+    {
+      "name": "alladin-ui-crud",
+      "result": "PRODUCT_FAIL",
+      "returncode": 1,
+      "duration_seconds": 43.19
+    },
+    {
+      "name": "alladin-ui-ledger",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 26.797
+    },
+    {
+      "name": "alladin-ui-tx-write",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.279
+    },
+    {
+      "name": "alladin-ui-tx-reverse",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.806
+    },
+    {
+      "name": "management-engine",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.178
+    },
+    {
+      "name": "management-state",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.216
+    },
+    {
+      "name": "management-guide",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.061
+    },
+    {
+      "name": "management-dashboard-notes",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.06
+    },
+    {
+      "name": "portfolio-management-navigation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.985
+    },
+    {
+      "name": "management-reserves-context",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 1.446
+    },
+    {
+      "name": "management-reserves-drafts",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.945
+    },
+    {
+      "name": "management-account-flow",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 3.555
+    },
+    {
+      "name": "management-annual-ui",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.429
+    },
+    {
+      "name": "management-visual-quality",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 19.875
+    },
+    {
+      "name": "calendar-distribution",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 16.469
+    },
+    {
+      "name": "ff-news-cache",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 13.916
+    },
+    {
+      "name": "planning-distribution",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.629
+    },
+    {
+      "name": "planning-three-tabs",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 9.257
+    },
+    {
+      "name": "planning-proportions",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 48.939
+    },
+    {
+      "name": "planning-parity-layout",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 18.869
+    },
+    {
+      "name": "session-finalization",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 50.512
+    },
+    {
+      "name": "storage-governance",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.819
+    },
+    {
+      "name": "persistence-failure",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.196
+    },
+    {
+      "name": "persistence-recovery",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 48.225
+    },
+    {
+      "name": "investor-password",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.767
+    },
+    {
+      "name": "import-xss",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 73.695
+    },
+    {
+      "name": "state-integrity",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 6.894
+    },
+    {
+      "name": "async-generation",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.93
+    },
+    {
+      "name": "build-reproducibility",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 34.415
+    },
+    {
+      "name": "service-worker-upgrade",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 84.623
+    },
+    {
+      "name": "mvp-notes",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 51.991
+    },
+    {
+      "name": "notes-launcher",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.575
+    },
+    {
+      "name": "notes-global-launcher",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 47.245
+    },
+    {
+      "name": "notification-center",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 24.201
+    },
+    {
+      "name": "notification-efficiency",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 22.165
+    },
+    {
+      "name": "consolidated-efficiency",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.255
+    },
+    {
+      "name": "consolidated-model",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.965
+    },
+    {
+      "name": "consolidated-storage",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 23.291
+    },
+    {
+      "name": "consolidated-ui",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.696
+    },
+    {
+      "name": "forex-professional-panel",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 50.98
+    },
+    {
+      "name": "execution-efficiency",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 16.05
+    },
+    {
+      "name": "execution-table",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 47.356
+    },
+    {
+      "name": "execution-workbook",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 50.04
+    },
+    {
+      "name": "execution-proportions",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.864
+    },
+    {
+      "name": "forex-context",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 5.396
+    },
+    {
+      "name": "forex-navigation-journey",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 14.025
+    },
+    {
+      "name": "learning-guide",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 210.675
+    },
+    {
+      "name": "nocuda-tools",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 10.836
+    },
+    {
+      "name": "stoikus-downloads",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.846
+    },
+    {
+      "name": "download-assets-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.057
+    },
+    {
+      "name": "download-assets-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 46.146
+    },
+    {
+      "name": "capital-currents-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.212
+    },
+    {
+      "name": "capital-currents-progress",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.031
+    },
+    {
+      "name": "capital-currents-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 57.388
+    },
+    {
+      "name": "time-twins-unit",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 0.153
+    },
+    {
+      "name": "time-twins-browser",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 84.259
+    },
+    {
+      "name": "minigames",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 8.808
+    },
+    {
+      "name": "hedge-prop-distribution",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 4.995
+    },
+    {
+      "name": "management-distribution",
+      "result": "PASS",
+      "returncode": 0,
+      "duration_seconds": 7.362
+    }
+  ]
+}

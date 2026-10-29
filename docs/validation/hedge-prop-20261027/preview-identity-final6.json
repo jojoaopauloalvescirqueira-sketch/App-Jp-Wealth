@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-28T11:17:43.509842-03:00",
+  "base": "http://127.0.0.1:51757",
+  "resources": [
+    {
+      "path": "index.html",
+      "http": 200,
+      "bytes": 538352,
+      "sha256": "06749243b2ac7585cf016b37007274a74228099d5a66e0c14cb5ad54702f0944",
+      "equalLocal": true
+    },
+    {
+      "path": "build-id.js",
+      "http": 200,
+      "bytes": 37228,
+      "sha256": "0eec814afb46e5ceda16f27728f6795fb6357b686d5e42bad327c232fe646363",
+      "equalLocal": true
+    },
+    {
+      "path": "src/js/40-app/32-prop-firms/01-engine.js",
+      "http": 200,
+      "bytes": 8335,
+      "sha256": "c6b2c73296bcdbc97a3cbfc6b9be5581fe7d54ee6a295625dd7b0d5b6307640f",
+      "equalLocal": true
+    },
+    {
+      "path": "src/js/40-app/32-prop-firms/02-ui.js",
+      "http": 200,
+      "bytes": 17900,
+      "sha256": "f7a5021242b1f8d5638f23cec22a891387bf1d39ad6a534cecbed896cce01c66",
+      "equalLocal": true
+    }
+  ]
+}

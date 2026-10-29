@@ -188,6 +188,7 @@ def frozen_exploration(browser,url,passed):
            ('personal-finance','finpes','expanded','hover',False),
            ('personal-finance','finpes','expanded','hover',True),
            ('research','research','expanded','pin',False),
+           ('management','management','expanded','pin',False),
            ('forex','exec','expanded','pin',False)]
     for module,surface,rail,gesture,valid_pin in cases:
       ctx,q,errors=boot(browser,url)

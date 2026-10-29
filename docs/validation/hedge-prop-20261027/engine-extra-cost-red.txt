@@ -1,0 +1,35 @@
+PASS HEDGE-ORACLE-ONE-PHASE
+PASS HEDGE-ORACLE-TWO-PHASES-AND-COST-PATHS
+PASS HEDGE-REFUND-ZERO
+PASS HEDGE-COSTS-DO-NOT-RESIZE
+PASS HEDGE-MISSING-COSTS-ARE-PENDING-PER-PATH
+PASS HEDGE-INVALID-COST-ONLY-AFFECTS-ITS-PATHS
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'COMPLETE'
+- 'INVALID'
+
+    at /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:122:40
+    at Array.forEach (<anonymous>)
+    at /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:122:16
+    at Array.forEach (<anonymous>)
+    at /Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:120:113
+    at test (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:27:25)
+    at Object.<anonymous> (/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/hedge_prop_engine_test.js:110:1)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'COMPLETE',
+  expected: 'INVALID',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

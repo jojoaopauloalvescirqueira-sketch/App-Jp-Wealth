@@ -1,0 +1,9 @@
+{
+  "path": "docs/validation/hedge-prop-20261027/engine-counterproofs.json",
+  "changedFields": [
+    "/timestampUTC"
+  ],
+  "beforeSHA256": "1bc9e6ce6908fb46c4f1721eb2d1b2b488ebad05c22e75caca507aaf747e3fc3",
+  "generatedSHA256": "6521b186bda12331e7f8dd06140a3d12711a4c22208ba3723ee38b380a254d0d",
+  "restoredExact": true
+}

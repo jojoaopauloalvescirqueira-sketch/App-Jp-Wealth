@@ -1,0 +1,29 @@
+{
+  "captured_at_utc": "2026-10-28T14:13:03.338224+00:00",
+  "window_local": "2026-10-28 11:04:00..11:11:42 America/Sao_Paulo UTC-03:00",
+  "scope": "A0 only bounded powerd sleepWake, Chrome/Dock Quit/force-quit markers, pmset log/assertions. No browser/test launch, protocol call, repository edit, process control, VM interaction or power change. Only this scratch directory written.",
+  "findings": {
+    "powerd_sleepwake_events": "No matching powerd sleepWake-category events in bounded unified-log query; command exit0.",
+    "pmset_historical_sleepwake": "No Sleep/DarkWake/Wake/WakeTime/SleepFailure/WakeFailure event rows in matching historical window; command exit0.",
+    "chrome_dock_quit": "No matching Chrome-relevant Quit AppleEvent, approved-termination or force-quit/SIGKILL marker events in bounded query; command exit0.",
+    "current_assertions_local": "2026-10-28 11:11:42-03:00",
+    "PreventUserIdleSystemSleep": 1,
+    "PreventUserIdleDisplaySleep": 1,
+    "guard_pid": 84806,
+    "guard_name": "caffeinate",
+    "guard_age": "00:50:02",
+    "guard_asserts_on_behalf_of_pid": 84802
+  },
+  "assessment": "No positive evidence in this requested scope explains the Download latency. Guard assertions are active and no host Sleep or Chrome Quit matches were found in the bounded window. No failure or specific cause is declared.",
+  "limits": [
+    "This is a bounded snapshot ending11:11:42, not continued monitoring.",
+    "Negative searches do not exclude an unlogged termination, another browser executable, browser/renderer stall, network wait, file/download dialog or internal test condition. Those were not investigated in this scope.",
+    "Current assertions prove present assertions at capture; historical absence is supported separately by pmset/powerd queries.",
+    "No test/browser/process/VM interventions were performed. The active FULL6 remains under root control."
+  ],
+  "evidence_files": [
+    "powerd-chrome-dock-events.txt",
+    "pmset-current-assertions.txt",
+    "pmset-sleep-wake.txt"
+  ]
+}

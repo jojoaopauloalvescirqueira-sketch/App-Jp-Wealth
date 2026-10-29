@@ -1,0 +1,101 @@
+{
+  "classification": "PASS",
+  "candidate_sha256": "a3f3a00c5a1ff8e1059bc7eb1fd8c69870a5ecf48d1ea2020b8033503194862a",
+  "helper_sha256": "35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a",
+  "launcher_sha256": "e369d606cb813cf27c04ddc4c4ef2e4fde2e348da1fbf2fc3005007d30558865",
+  "sources": {
+    "src/js/40-app/19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+    "src/styles/app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38",
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "index.html": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+    "build-id.js": "0e804ce239d1e1179db8260dde17776a7dcbfd0f23cb876fda13c76b018f18ad"
+  },
+  "cases": [
+    {
+      "case": "1440-light/shared-v3-pipeline",
+      "classification": "PASS",
+      "observed": {
+        "nineCurrencyTransport": true,
+        "CADAndUSDHighVisible": true,
+        "mediumExcluded": true,
+        "redDot": true,
+        "perEventProvenance": [
+          {
+            "event": "SYN-primeira-CAD",
+            "currency": "CAD",
+            "sourceUrl": "https://www.forexfactory.com/calendar"
+          },
+          {
+            "event": "SYN-primeira-USD",
+            "currency": "USD",
+            "sourceUrl": "https://www.forexfactory.com/calendar"
+          }
+        ],
+        "bothPendingTimeWarningsVisible": true,
+        "sourcesInitiallyCollapsed": true,
+        "legacyFourHighPreserved": true,
+        "oneFetchForConcurrentRefreshes": true,
+        "draftFocusCursorPreserved": true,
+        "monthSelectionHostPreserved": true,
+        "failedRefreshPreservesLastValid": true,
+        "financialUnchanged": true
+      }
+    },
+    {
+      "case": "390-dark/shared-v3-pipeline",
+      "classification": "PASS",
+      "observed": {
+        "nineCurrencyTransport": true,
+        "CADAndUSDHighVisible": true,
+        "mediumExcluded": true,
+        "redDot": true,
+        "perEventProvenance": [
+          {
+            "event": "SYN-primeira-CAD",
+            "currency": "CAD",
+            "sourceUrl": "https://www.forexfactory.com/calendar"
+          },
+          {
+            "event": "SYN-primeira-USD",
+            "currency": "USD",
+            "sourceUrl": "https://www.forexfactory.com/calendar"
+          }
+        ],
+        "bothPendingTimeWarningsVisible": true,
+        "sourcesInitiallyCollapsed": true,
+        "legacyFourHighPreserved": true,
+        "oneFetchForConcurrentRefreshes": true,
+        "draftFocusCursorPreserved": true,
+        "monthSelectionHostPreserved": true,
+        "failedRefreshPreservesLastValid": true,
+        "financialUnchanged": true
+      }
+    }
+  ],
+  "counterproof": {
+    "mutation": "[data-calendar-economic-id=\"SYN-primeira-CAD\"] .calendar-event-warning{display:none!important}",
+    "expected_function": "shared_calendar_pipeline",
+    "expected_line": 134,
+    "expected_source": "expect(event_row.locator('.calendar-event-warning')).to_be_visible()",
+    "classification": "PASS",
+    "violation": "REJECTED",
+    "rejection": "Locator expected to be visible\nActual value: hidden \nCall log:\n  - Expect \"to_be_visible\" with timeout 5000ms\n  - waiting for locator(\"#execEcal .calendar-panel\").locator(\"[data-calendar-economic-id=\\\"SYN-primeira-CAD\\\"]\").locator(\".calendar-event-warning\")\n    13 × locator resolved to <p class=\"calendar-event-warning\">Horário a confirmar.</p>\n       - unexpected value \"hidden\"\n",
+    "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-economic-calendar-table-20261028/tests-proposal/ff-expectation-v3/run_v3_pipeline.py\", line 33, in <module>\n    try:ff.shared_calendar_pipeline(browser,bootstrap,url,1440,'light')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/jpw-economic-calendar-table-20261028/tests-proposal/ff-expectation-v3/candidates/tools/ff_news_cache_test.py\", line 134, in shared_calendar_pipeline\n    expect(event_row.locator('.calendar-event-warning')).to_be_visible()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/sync_api/_generated.py\", line 22743, in to_be_visible\n    self._sync(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_assertions.py\", line 838, in to_be_visible\n    await self._expect_impl(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_assertions.py\", line 123, in _expect_impl\n    _record_soft_or_raise(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_assertions.py\", line 60, in _record_soft_or_raise\n    raise error\nAssertionError: Locator expected to be visible\nActual value: hidden \nCall log:\n  - Expect \"to_be_visible\" with timeout 5000ms\n  - waiting for locator(\"#execEcal .calendar-panel\").locator(\"[data-calendar-economic-id=\\\"SYN-primeira-CAD\\\"]\").locator(\".calendar-event-warning\")\n    13 × locator resolved to <p class=\"calendar-event-warning\">Horário a confirmar.</p>\n       - unexpected value \"hidden\"\n\n",
+    "observed_function": "shared_calendar_pipeline",
+    "observed_line": 134,
+    "observed_source": "expect(event_row.locator('.calendar-event-warning')).to_be_visible()",
+    "message_matched": true,
+    "frame_matched": true
+  },
+  "browser": "156.0.8078.48",
+  "sources_after": {
+    "src/js/40-app/19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+    "src/styles/app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38",
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "index.html": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+    "build-id.js": "0e804ce239d1e1179db8260dde17776a7dcbfd0f23cb876fda13c76b018f18ad"
+  },
+  "source_unchanged": true
+}

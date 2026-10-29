@@ -24,7 +24,7 @@ CASES = [
     ("exec", "panel", "forex-operation", "forex", "forex-operation"),
     ("exec", "accounts", "forex-management-accounts", "forex", "forex-management-accounts"),
     ("exec", "motor", "forex-operation", "forex", "forex-operation"),
-    ("exec", "accounting", "forex-accounting", "forex", "forex-accounting"),
+    ("exec", "accounting", "management-accounting", "management", "management-accounting"),
     ("exec", "history", "forex-history", "forex", "forex-history"),
     ("fxplan", "overview", "planning", "planning", None),
     ("fxplan", "planning", "planning", "planning", None),
@@ -50,10 +50,10 @@ CASES = [
     ("tools", "time-twins", "tools-minigames", "tools", "tools-minigames"),
     ("research", "nocoda", "research-forex", "research", "research-forex"),
     ("research", "pivots", "research-forex", "research", "research-forex"),
-    ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
-    ("research", "stocks-global", "research-stocks-global", "research", "research-stocks-global"),
-    ("research", "reits", "research-reits", "research", "research-reits"),
-    ("research", "others", "research-others", "research", "research-others"),
+    ("research", "stocks-br", "research-forex", "research", "research-forex"),
+    ("research", "stocks-global", "research-forex", "research", "research-forex"),
+    ("research", "reits", "research-forex", "research", "research-forex"),
+    ("research", "others", "research-forex", "research", "research-forex"),
 ]
 
 LEGACY_PLANNING_VIEWS = {"overview": "consolidated", "planning": "start",
@@ -117,6 +117,10 @@ window.__exercise=(surface,view)=>{
 
 def plan_for(case):
     surface, view, canonical, primary, child = case
+    if surface=="exec" and view=="accounting":
+        return dict(accepted=True,requested="management-accounting",source="canonical",canonical=canonical,primary=primary,child=child,screen="management",localView=None)
+    if surface=="research" and view in {"stocks-br","stocks-global","reits","others"}:
+        return dict(accepted=True,requested="research-forex",source="canonical",canonical=canonical,primary=primary,child=child,screen="research",localView=dict(surface="research",view="nocoda"))
     if surface == "fxplan":
         surface, view = "planning", LEGACY_PLANNING_VIEWS[view]
     if surface == "planning" and view in ("reference", "accounts"):
@@ -134,9 +138,18 @@ def plan_for(case):
 def check_success(result, case):
     plan = plan_for(case)
     applied_surface = plan["localView"]["surface"] if plan["localView"] else plan["screen"]
-    current = {k: v for k, v in plan.items() if k not in ("accepted", "action")}
+    current = {k: v for k, v in plan.items() if k not in ("accepted", "action", "leaf")}
     events = result["events"]
     assert result["accepted"] is True, result
+    if case[:2]==("exec","accounting") or case[0]=="research" and case[1] in {"stocks-br","stocks-global","reits","others"}:
+        is_accounting=case[:2]==("exec","accounting")
+        expected_kinds=["apply"]+([] if is_accounting else ["resolve","resolve","select"])+["pill","scroll","reminder","sub"]
+        assert [e['kind'] for e in events]==expected_kinds,events
+        assert events[0]==dict(kind='apply',plan=plan,target=plan['requested'],last=dict(accepted=False,reason='not-applied')),events
+        assert result['after']==dict(current=current,screens=[plan['screen']],primary=[case[3]],aria=[case[3]]),result
+        assert result['reads']==(0 if is_accounting else 2) and result['denied']==[]
+        assert result['lastAfter']==dict(accepted=True,reason=None)
+        return
     if case[:2] == ("exec", "overview"):
         assert [e["kind"] for e in events] == ["resolve","apply","pill","scroll","reminder","sub","context","active"], events
         assert events[1] == dict(kind="apply",plan=plan,target="exec",last=dict(accepted=False,reason="not-applied"))
@@ -201,10 +214,10 @@ def main():
             page.on("console", lambda message: failures.append(f"console: {message.text}")
                     if message.type == "error" else None)
             tabs = "".join(f'<button class="tab" data-primary="{p}" data-route="{p}">{p}</button>'
-                           for p in ("dashboard", "research", "forex", "planning", "personal-finance", "alladin", "tools"))
+                           for p in ("dashboard", "research", "management", "forex", "planning", "personal-finance", "alladin", "tools"))
             screens = "".join(f'<section class="screen{a}" id="{s}"><h1>{s}</h1></section>'
                               for s, a in [("dash", " active"), ("exec", ""), ("planning", ""),
-                                           ("finpes", ""), ("research", ""), ("contab", ""),
+                                           ("finpes", ""), ("research", ""), ("management", ""),
                                            ("alladin", ""), ("check", ""), ("contas", ""), ("fxconsolidated", ""), ("tools", "")])
             page.set_content(f'<nav id="nav">{tabs}</nav><main id="appMain">{screens}</main>')
             page.add_script_tag(content=PRELUDE)
@@ -324,9 +337,8 @@ def main():
             try:
                 assert p.evaluate("JPWNavigation.navigate('forex-reconciliation')") is True
                 assert p.evaluate("JPWNavigation.current()") == dict(
-                    canonical="forex-accounting", requested="forex-reconciliation", source="compatibility",
-                    primary="forex", child="forex-accounting", screen="exec",
-                    localView={"surface":"exec","view":"accounting"}), p.evaluate("JPWNavigation.current()")
+                    canonical="management-accounting", requested="forex-reconciliation", source="compatibility",
+                    primary="management", child="management-accounting", screen="management",localView=None), p.evaluate("JPWNavigation.current()")
                 result = p.evaluate("__exercise('exec','history')")
                 check_success(result, CASES[5])
                 records.append(dict(name="canonical-contab/local-exec", result=result))

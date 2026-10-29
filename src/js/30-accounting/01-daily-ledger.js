@@ -463,6 +463,7 @@ function dgBackupValidateTypedContainers(state){
     }
   }
   jpwValidateChecklist(state);
+  jpwValidateManagementAnnual(state);
   for(const [key,definition] of Object.entries(DEFAULTS)){
     if(!Object.prototype.hasOwnProperty.call(state,key))continue;
     if(Array.isArray(definition)){
@@ -687,7 +688,7 @@ function normalizeImportedState(raw){
   // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
   // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
   // por isso o null e testado a parte (ALD-03-H0 · D-2).
-  for(const key of ['alladin','personalFinance','fxPlanning','patrimonialPlanning','personalAgenda','nocoda','pivotStudies','mvpNotes','dataGovernance','fxConsolidated','operationHistory']){
+  for(const key of ['alladin','personalFinance','fxPlanning','patrimonialPlanning','managementAnnual','personalAgenda','nocoda','pivotStudies','mvpNotes','dataGovernance','fxConsolidated','operationHistory']){
     if(Object.prototype.hasOwnProperty.call(candidate,key) &&
        (candidate[key]===null || typeof candidate[key]!=='object' || Array.isArray(candidate[key])))
       throw new Error('Backup com '+key+' inválido: esperava objeto.');
@@ -747,7 +748,7 @@ function importFullBackupFile(file){
       catch(error){alert('Não foi possível conferir a disponibilidade atual. Nada foi importado.');return;}
       const previousAvailability=window.JPWModuleAvailability.inspect(availabilityBefore);
       const nextAvailability=window.JPWModuleAvailability.inspect(availabilityPreferences[availabilityKey]);
-      const names={research:'Research',forex:'Forex',planning:'Planejamento','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
+      const names={research:'Portfólio',management:'Gerenciamento',forex:'Forex',planning:'Planejamento','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
       const label=value=>value==='frozen'?'Congelado':'Ativo';
       const changes=Object.keys(names).filter(id=>!previousAvailability.valid||previousAvailability.states[id]!==nextAvailability.states[id]);
       availabilityMessage=changes.length?'\n\nDisponibilidade após restaurar:\n'+changes.map(id=>names[id]+': '+(previousAvailability.valid?label(previousAvailability.states[id]):'configuração incompatível')+' → '+label(nextAvailability.states[id])).join('\n')+'\nIsso pode descongelar acessos. Não autoriza desenvolvimento.':'';

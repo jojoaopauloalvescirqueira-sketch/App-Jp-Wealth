@@ -18,6 +18,7 @@ from apple_experience_test import CONTRAST
 from calendar_agenda_test import calendar_packet
 from notes_launcher_test import launch_options
 from playwright.sync_api import expect
+from calendar_economic_table_contract import assert_layout, controls
 
 LAYOUTS = ('sidebar', 'topbar', 'glass', 'submenu')
 THEMES = ('light', 'dark')
@@ -335,7 +336,12 @@ def geometry(page, visual, header=None):
     icons['today'] = visual.centered(today)
     for numeral in page.locator(PANEL + ' .calendar-day-number').all():
         visual.centered(numeral)
-    return {'dialog': data, 'header': header, 'icons': icons, 'markers': marker_geometry(page)}
+    economic=None
+    if page.locator(PANEL+' [data-calendar-economic-id]').count():
+        economic=assert_layout(page.locator(PANEL))
+        for index,toggle in enumerate(controls(page.locator(PANEL)).all()):
+            icons['economic-detail-'+str(index)]=visual.centered(toggle,'ink',True)
+    return {'dialog': data, 'header': header, 'icons': icons, 'markers': marker_geometry(page), 'economic_table':economic}
 
 
 def form_geometry(page, visual):

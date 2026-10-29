@@ -1,0 +1,12 @@
+--- a/tools/research_navigation_test.py
++++ b/tools/research_navigation_test.py
+@@ -243,6 +243,9 @@
+     page.locator('#nav > [data-route="dashboard"]').click()
+     assert page.evaluate("JPWNavigation.current().canonical") == 'dashboard'
+     if mobile:
++        # Accepted primary navigation closes the drawer in shellNavigationApplied's
++        # next frame; retain the exact state assertion after that completion point.
++        page.evaluate("() => new Promise(resolve => requestAnimationFrame(resolve))")
+         assert page.evaluate("document.documentElement.dataset.shellMenu") is None
+     context = page.locator('#navLocalSlot [data-nav-context="research-forex"]')
+     assert context.is_hidden()

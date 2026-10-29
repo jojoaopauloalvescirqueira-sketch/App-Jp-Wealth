@@ -1,0 +1,37 @@
+{
+  "build": "bc08298ef8320bb0",
+  "source": "Pacote econômico público local v2 inalterado, servido em vez da rede no contexto descartável; sem dados pessoais.",
+  "payloadSHA256": "6275de67ed8f13512941ac2f016bf9c7662d36c619551e4efb6c860a23492fcc",
+  "captures": [
+    {
+      "host": "execEcal",
+      "width": 1440,
+      "theme": "light",
+      "file": "docs/validation/economic-calendar-table-20261028/captures/execEcal-1440-light.png",
+      "sha256": "1cb894e101e147d6ed3882c985afff0654c1310b99cc6dbc6c01344b8a720459",
+      "rows": 8,
+      "horizontalOverflow": false,
+      "currentBuild": "bc08298ef8320bb0"
+    },
+    {
+      "host": "calendarDialog",
+      "width": 390,
+      "theme": "dark",
+      "file": "docs/validation/economic-calendar-table-20261028/captures/calendarDialog-390-dark.png",
+      "sha256": "db977acd553c4b4ee6e53fbaa0af3a78d9fd793055c4037703ddeb9027cf31dd",
+      "rows": 8,
+      "horizontalOverflow": false,
+      "currentBuild": "bc08298ef8320bb0"
+    },
+    {
+      "host": "execEcal",
+      "width": 320,
+      "theme": "light",
+      "file": "docs/validation/economic-calendar-table-20261028/captures/execEcal-320-light.png",
+      "sha256": "3b2f4b3b6919b4f1013a45b7e5b9664bc0fac3e74ebf966fac15070c17f80c06",
+      "rows": 8,
+      "horizontalOverflow": false,
+      "currentBuild": "bc08298ef8320bb0"
+    }
+  ]
+}

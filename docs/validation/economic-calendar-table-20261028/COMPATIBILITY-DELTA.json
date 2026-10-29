@@ -1,0 +1,18 @@
+{
+  "kind": "N1 compatibility; tests unchanged",
+  "red": "applied-calendar-agenda-37.json calendar-edges-320-light",
+  "preserved_contract": [
+    "Economia and Sua agenda grouping",
+    "civil date must never invent a time"
+  ],
+  "changes": [
+    "shared group marker on existing caption",
+    "shared time marker and prior unknown-time wording on same cell",
+    "neutralize inherited styling to preserve layout"
+  ],
+  "after": {
+    "src/js/40-app/19-calendar-agenda.js": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518",
+    "src/styles/app.css": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e"
+  },
+  "rebuilt_build": "aabc8d09faff4aee"
+}

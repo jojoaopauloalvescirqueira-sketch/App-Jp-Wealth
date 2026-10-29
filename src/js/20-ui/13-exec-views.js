@@ -69,6 +69,7 @@ function execSetView(view) {
 }
 
 function execSelectView(view) {
+  if(view==='accounting')return window.JPWNavigation?.navigate('management-accounting')===true;
   if(view==='overview') return window.JPWNavigation?.navigate('forex-overview')===true;
   // Old callers share the Board tool; they never mount the obsolete editor.
   if(view==='motor') return window.JPWNavigation?.navigate('motor')===true;

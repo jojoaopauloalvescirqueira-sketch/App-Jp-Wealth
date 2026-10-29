@@ -1,0 +1,66 @@
+{
+  "engine_and_journey_review": {
+    "math": {
+      "result": "PASS",
+      "cases": 14
+    },
+    "presentationFindings": [
+      {
+        "id": "UX-01",
+        "result": "PRODUCT_FAIL",
+        "scope": "review finding, not repaired by rename"
+      },
+      {
+        "id": "UX-02",
+        "result": "PRODUCT_FAIL",
+        "scope": "review finding, not repaired by rename"
+      }
+    ]
+  },
+  "labelFocals": {
+    "notes": {
+      "exit": 0,
+      "result": "PASS",
+      "cases": 12
+    },
+    "navigation": {
+      "exit": 0,
+      "result": "PASS",
+      "layouts": 4
+    },
+    "annualUI": {
+      "exit": 0,
+      "result": "PASS"
+    }
+  },
+  "fourthSupplemental": {
+    "wholeFocal": "BASELINE_FAIL",
+    "targetLabelAssertion": "PASS",
+    "notInFullBeforeOrAfter": true,
+    "oldNameDOMCounterproof": "PASS_REJECTION_EXPECTED_EXIT1",
+    "baselineComparison": "Original judge RAM+old label DOM reproduces same Research alias failure; not a full old checkout"
+  },
+  "full": {
+    "executionState": "COMPLETED",
+    "receipt": "full-final.json",
+    "receiptSHA256": "013522eba409dbaa97e64303725ffe46dfdb03f8b1bb51e84a91f51a71cc893c",
+    "supervision": "full-supervision.json",
+    "exitReceipt": "full-exit.json",
+    "runnerExit": 0,
+    "finalResult": "PASS",
+    "summary": {
+      "PASS": 116,
+      "PRODUCT_FAIL": 0,
+      "TEST_HARNESS_FAIL": 0,
+      "ENVIRONMENT_ERROR": 0,
+      "BASELINE_FAIL": 0,
+      "NOT_RUN": 0
+    },
+    "startedAt": "2026-10-28T11:58:13-03:00",
+    "finishedAt": "2026-10-28T12:48:37-03:00",
+    "scope": "116 declared checks; independent presentation findings and supplemental BASELINE_FAIL remain open"
+  },
+  "updatedAt": "2026-10-28T12:54:53.712913-03:00",
+  "humanAcceptance": "PENDING",
+  "overallReadiness": "NOT_DECLARED"
+}

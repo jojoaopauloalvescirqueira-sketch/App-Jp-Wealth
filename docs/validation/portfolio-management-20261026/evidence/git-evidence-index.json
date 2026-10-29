@@ -1,0 +1,27 @@
+{
+  "git-status.txt": {
+    "exit_code": 0,
+    "lines": 154,
+    "sha256": "a41906f5e1184ea19d859f19e6444d170deb66d7986dcd82ee614f27f114ea7a"
+  },
+  "git-diff-stat.txt": {
+    "exit_code": 0,
+    "lines": 72,
+    "sha256": "dc5dda9c96b015afbdea8a45042996df0889582782bbaf44d6eb3b0e5cf14bad"
+  },
+  "git-diff-name-only.txt": {
+    "exit_code": 0,
+    "lines": 71,
+    "sha256": "1984fcefc821483726448e8188d2af9d65166760c8b3873bcb14c2f86bc62eee"
+  },
+  "git-diff-check.txt": {
+    "exit_code": 0,
+    "lines": 0,
+    "sha256": "fa77ab6dcf895a30623113e37b6ee812c6cd35b0cbb9693a0c18de550e6b1cf6"
+  },
+  "final_frozen_recheck": {
+    "paths": 693,
+    "mismatches": [],
+    "after": "all delivery reports, captures and links verified"
+  }
+}

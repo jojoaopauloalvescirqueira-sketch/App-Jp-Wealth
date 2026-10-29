@@ -1,0 +1,36 @@
+{
+  "scope": "Read-only post-FULL verification; no own metadata approval.",
+  "build": "5b4ef1141c9583bf",
+  "sameFullNamesAndOrderAsBaseline": true,
+  "checkCount": 116,
+  "uniqueCheckCount": 116,
+  "allReturncodesZero": true,
+  "summary": {
+    "PASS": 116,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 0,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "exit": {
+    "gateExitCode": 0,
+    "durationSeconds": 3158.714,
+    "finishedAt": "2026-10-28T22:44:50.439045+00:00",
+    "inputs": 1643,
+    "changed": [],
+    "missing": [],
+    "caffeinateStopped": true,
+    "build": "5b4ef1141c9583bf"
+  },
+  "independentPostFreeze": {
+    "inputs": 1643,
+    "changed": [],
+    "missing": []
+  },
+  "receipts": {
+    "full-final.json": "7f5b53f5b96048c288d2f47e036e2e7cc59a909d2421682ab328a852d3e84b5e",
+    "full-exit.json": "f6bbe85836cde171ca221ea7deebc443c63cb4cc8f2c892ba9e17f71fc43a505",
+    "INPUT-FREEZE.json": "5282d5ca9b98f4f9e72035781c525d16d2eb1d7672967b68fbc9a29c337157b6"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "classification": "HISTORICAL_AND_FOCAL_EVIDENCE_NOT_FINAL_FULL",
+  "files": [
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/reserves-red.log",
+      "path": "recovery/reserves-red.txt",
+      "sha256": "2c44321c14b3e14352133db21334c1fc47dc1e1d81155d681ea9a2bb714a6328",
+      "bytes": 578
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/reserves-green.log",
+      "path": "recovery/reserves-green.txt",
+      "sha256": "20a1c523069345e58a08ebada7aab36dbb2c3e6a173ca8f1fc5c9a888fafb2bf",
+      "bytes": 374
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-red.log",
+      "path": "recovery/research-red.txt",
+      "sha256": "76be3f165d0334ed4730c9ad99561f5d5f19cc2a8aa3cd973cf9b91a055f10d4",
+      "bytes": 8495
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/research-green.log",
+      "path": "recovery/research-green.txt",
+      "sha256": "3c9838d01498b82560f81bfefe1798119b9bc6962628bc19c4d1657ff61fb35b",
+      "bytes": 1385
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/state-startup-red.log",
+      "path": "recovery/state-startup-red.txt",
+      "sha256": "a2f0d489a60a5688634c14a23b1a4fca6adc71916142e35163eee1f30bc6f03d",
+      "bytes": 4774
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/state-startup-green.log",
+      "path": "recovery/state-startup-green.txt",
+      "sha256": "c0ce970317486eff85c643d87e7c55e4083a17a2417c904ba4ea6a6e02ffc6c2",
+      "bytes": 3210
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/full-final.log",
+      "path": "evidence/previous-full-output.txt",
+      "sha256": "97d62f6bb212797254c2c35b638c860a3370649271b972c7393082043a57bb23",
+      "bytes": 34491
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/APPLIED.patch",
+      "path": "evidence/navigation-expectations-applied.patch",
+      "sha256": "1b0319460a1a08eec8520ec0873818af472adc16449e63a026e02349257360ae",
+      "bytes": 5449
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/persistence-xss-usd-proposal/PROPOSAL.patch",
+      "path": "evidence/security-persistence-reviewed.patch",
+      "sha256": "de6750ee3260ed15e34c9e71ba4cee1f61a4b41c645df3ee0f8b311d6aa33d3c",
+      "bytes": 16333
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/dashboard-economic-recovery-proposal/PRODUCT.patch",
+      "path": "evidence/dashboard-product-recovery.patch",
+      "sha256": "86613dbaf94ff79f08e65b790c9b78466041a8a10e55ab7182f1ecb2fdbcda6a",
+      "bytes": 1846
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/dashboard-economic-recovery-proposal/CONTROLS.patch",
+      "path": "evidence/dashboard-controls-recovery.patch",
+      "sha256": "2b93589d38849a8e7f58e6250b21f43b9486dec76074a6ebff43c344a5f53edb",
+      "bytes": 11266
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/persistence-xss-usd-proposal/APPLIED-PURE-PROOFS.json",
+      "path": "evidence/security-persistence-pure-proofs.json",
+      "sha256": "814e0e526d98497a4931110e2e34f0a7062fed6aa9e382b63a8f92801a638740",
+      "bytes": 534
+    },
+    {
+      "source": "/private/tmp/jpw-portfolio-management-20261026/navigation-stale-expectations-proposal/APPLIED-REPORT.json",
+      "path": "evidence/navigation-expectations-pure-proofs.json",
+      "sha256": "f3870293c4619d14fba4978000923aea54568996588b1e2b3d06ba05506289b8",
+      "bytes": 3712
+    }
+  ]
+}

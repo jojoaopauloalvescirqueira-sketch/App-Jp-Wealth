@@ -1,3 +1,43 @@
+# Calendário econômico — tabela compacta — candidato autorizado
+
+Branch codex/calendario-tabela-ff-20261028, HEAD3e24f60 e133alterações anteriores preservadas. ProdutoN1 e cinco controlesN3 autorizados; em29/10 o proprietário também aprovou expressamente o deltaFFV3. Build **aabc8d09faff4aee**, renderizador8cfa/CSS31e e testes consolidadosV3. [Brief](BRIEF-ECONOMIC-CALENDAR-TABLE-20261028.md), [produto](CHG-JPW-ECONOMIC-CALENDAR-TABLE-PRODUCT-20261028.md), [controles](CHG-JPW-ECONOMIC-CALENDAR-TABLE-CONTROLS-20261028.md). Estado técnico atual somente no [relatório e recibos desta entrega](../validation/economic-calendar-table-20261028/README.md), vinculados aos hashes; fotografias anteriores não aprovam este candidato. Sem commit, merge, push, publicação, ativação externa ou novas dependências. Aceite humano separado.
+
+## Fotografia anterior preservada
+
+# Calendário econômico — tabela compacta — 28/10/2026
+
+Plano de apresentação aprovado e branch específica `codex/calendario-tabela-ff-20261028` autorizada, preservando133alterações do candidato5b4ef1141c9583bf. [Brief](BRIEF-ECONOMIC-CALENDAR-TABLE-20261028.md), [produtoN1](CHG-JPW-ECONOMIC-CALENDAR-TABLE-PRODUCT-20261028.md) e [plano](../superpowers/plans/2026-10-28-economic-calendar-table.md). Em29/10, os [cinco verificadores do patch37](CHG-JPW-ECONOMIC-CALENDAR-TABLE-CONTROLS-20261028.md) foram autorizados e aplicados exatamente. O delta de um arquivo na [proposta V3](../validation/economic-calendar-table-20261028/PROPOSTA-CONTROLES-V3.md) ainda aguarda autorização específica. Após corrigir geração do manifesto pelo gerador oficial, produto aabc8d09faff4aee com compatibilidade de grupos/horário preservada e preflighteditPASS; FULL novo ainda não iniciado. Resultados somente nos recibos próprios em docs/validation/economic-calendar-table-20261028. Sem commit/merge/push/publicação/ativação externa. FULL anterior é histórico.
+
+## Fotografia anterior preservada
+
+# Calendário econômico — integração FF — 28/10/2026
+
+Plano humano aprovado; branch autorizada `codex/calendario-economico-ff-20261028`, candidato de partida `fc1a41530cdc4569` mais todos os trabalhos pendentes preservados. [Brief delimitado](BRIEF-ECONOMIC-CALENDAR-FF-20261028.md), [produto N1/N2](CHG-JPW-ECONOMIC-CALENDAR-FF-PRODUCT-20261028.md), [verificadores N3](CHG-JPW-ECONOMIC-CALENDAR-FF-CONTROLS-20261028.md). Implementação local em curso; nenhuma publicação/ativação externa ou operação Git além da branch está autorizada. Resultados correntes somente nos recibos próprios; FULL anterior é histórico.
+
+## Fotografia anterior preservada
+
+# Caixa Anual — tarefa delimitada28/10/2026
+
+Revisão da primeira aba Todas e renomeação pública, branch `codex/caixa-anual-revisao-20261028`, base `3e24f60` com candidato completo anterior preservado. [Brief](BRIEF-CAIXA-ANUAL-20261028.md), [produto](CHG-JPW-CAIXA-ANUAL-NAME-20261028.md), [controles de rótulo](CHG-JPW-CAIXA-ANUAL-LABEL-CONTROLS-20261028.md). Resultado e limitações no [relatório próprio](../validation/caixa-anual-revisao-20261028/README.md); nenhuma aprovação presumida. Sem alterações financeiras, correção automática dos achados, commit/merge/push/publicação.
+
+## Tarefa anterior preservada
+
+# Ativa — Mesas Proprietárias / Hedge Prop Firm —27/10/2026
+
+[Brief](BRIEF-HEDGE-PROP-20261027.md), [produto](CHG-JPW-HEDGE-PROP-PRODUCT-20261027.md), [controles](CHG-JPW-HEDGE-PROP-CONTROLS-20261027.md). Implementação autorizada na branch `codex/mesas-proprietarias-hedge-20261027`, preservando o candidato Portfólio/Gerenciamento. Build local `09cfa4f7b8a8dbed`; estado técnico, recibos e pendências no [relatório da entrega](../validation/hedge-prop-20261027/README.md), a conferir junto ao fingerprint. Resultados anteriores permanecem históricos; aceite humano separado. Sem commit/merge/push/publicação.
+
+## Fotografia anterior preservada
+
+# Portfólio e Gerenciamento — execução local 26/10/2026
+
+Plano humano aprovado; branch especificamente autorizada `codex/portfolio-gerenciamento-20261026`, base limpa `3e24f60f8cfe87f79335f40e95a0927379a9f834`. Contratos separados [produto N3/A4 (motor anual aprovado e schema N2)](CHG-JPW-PORTFOLIO-MANAGEMENT-PRODUCT-20261026.md) e [controles N3/A4](CHG-JPW-PORTFOLIO-MANAGEMENT-CONTROLS-20261026.md). Implementar navegação Portfólio/Análise e Gerenciamento independente, transferir Reservas sem alterar regras e substituir a interface contábil pela primeira aba do Excel, preservando o escritor canônico.
+
+Fonte Excel identificada no contrato anual, sem importação de seus dados pessoais. Calendário civil e proporcionalidade composta seguem decisões humanas explícitas. Consultas/digitação não gravam. **Entrega técnica local validada:** build `abbcd8b5e67be657`, FULL de 26/10/2026 às 22:18:05, São Paulo, **113/113 PASS**, saída 0; 693 inputs congelados sem divergências, conferidos também por revisão independente. Os 102 IDs anteriores foram mantidos e onze checks acrescentados. Resultado anterior 102 PASS/11 FAIL permanece histórico. Aceite visual humano/Excel nativo seguem pendentes; residual P3 e proposta de ponteiro global estão documentados. [Contrato](../architecture/MANAGEMENT-ANNUAL.md) e [evidências, capturas e prévia](../validation/portfolio-management-20261026/README.md).
+
+Sem novas dependências, política financeira, exclusão de dados, commit, merge, push ou publicação. Nenhuma memória global alterada.
+
+## Fotografia anterior preservada
+
 # Remoção do Nocuda Tool — 26/10/2026
 
 Branch autorizada `codex/remover-nocuda-tool-20261026`; HEAD a4bf278. Objetivo, produto e juiz têm contratos separados CHG-JPW-REMOVE-NOCUDA-PRODUCT/CONTROLS-20261026, aprovados pelo plano humano e autorização específica de branch. Preservar 94 pendências anteriores (525 arquivos no ZIP verificado em /private/tmp/jpw-remove-nocuda-20261026). N1 produto/A2; N3 controles/A4. Remover apenas ferramenta web exclusiva, preservar Research/Stoikus e dados. Focais, distribuições, revisão independente e FULL obrigatórios; resultado atual em docs/validation/remove-nocuda-20261026. Sem operações Git adicionais, dependências, publicação ou dados reais.

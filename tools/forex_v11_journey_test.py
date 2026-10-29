@@ -14,8 +14,12 @@ def inputs():
     paths=['index.html','src/styles/app.css','src/js/manifest.json','build-id.js']+[f['path'] for f in json.loads((ROOT/'src/js/manifest.json').read_text())['files']]
     return {p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
 
-def goto(page,target):
-    assert page.evaluate('(target)=>JPWNavigation.navigate(target)',target),target
+def goto(page,target,preserve_draft=False):
+    accepted=page.evaluate('(target)=>JPWNavigation.navigate(target)',target)
+    if preserve_draft:
+        assert not accepted, 'An unsaved Reserve draft must require an explicit navigation decision'
+        page.locator('dialog.mg-dialog[open] [data-mg-action=guard-preserve]').click()
+    else:assert accepted,target
     fixture.settle(page)
 
 def fill(form,fields):
@@ -77,6 +81,19 @@ def journey(page,out,label):
       return JPWForex.engine.computeVRM({atrShort:m.atr.short,atrLong:m.atr.long}).value;}""")==2
     assert page.evaluate('JPWForex.state.read().metrics.vrm.value') is None, 'no declared genesis: never assign ATR implicitly'
     page.evaluate('closeSettingsModal()');goto(page,'forex-reserves')
+    # The legacy route now opens Gerenciamento. Its examined account/period
+    # must be chosen explicitly; an operational selection is not authorization
+    # to populate the independent management context or record reserves there.
+    management_before=actual(page)
+    management_operational=page.evaluate('JPWForex.state.operationalSelection()')
+    assert page.evaluate('JPWNavigation.current().canonical')=='management-reserves'
+    assert page.locator('#fxreserves [data-mg-account]').input_value()==''
+    page.locator('#fxreserves [data-mg-account]').select_option('V11-SYNTHETIC')
+    page.locator('#fxreserves [data-mg-period]').select_option(page.evaluate('__v11scope.periodId'))
+    assert page.evaluate('JPWManagement.context().accountId')=='V11-SYNTHETIC'
+    assert page.evaluate('JPWManagement.context().periodId')==page.evaluate('__v11scope.periodId')
+    assert page.evaluate('JPWForex.state.operationalSelection()')==management_operational
+    assert actual(page)==management_before, 'Selecting the management context recorded financial facts'
     form=page.locator('#fxReserveFacts');form.evaluate("e=>e.closest('details').open=true");fill(form,{'capitalNominal':12000,'fcrConstituted':2600,'feoConstituted':3000,'sixMonthExpenseAmount':3000,'expensePeriod':'2026-03 to 2026-08','determinationReference':'Synthetic six-month approved expense ledger','fcrLiquidityDays':1,'feoLiquidityDays':2,'verifiedAt':'2026-09-14T12:00','source':'Synthetic reserve report','reason':'Synthetic reserve observation'})
     for key in ['determinationRecorded','expensesApproved','verificationRecorded']:form.locator('[name='+key+']').check()
     form.get_by_role('button',name='Registrar reservas',exact=True).click()
@@ -88,11 +105,11 @@ def journey(page,out,label):
     assert 'Requerido 3.000 USD' in page.locator('#forexReservesPanel').inner_text()
     # Unsubmitted draft survives leaving/return; navigation cannot persist it.
     form.locator('[name=reason]').fill('Unsubmitted synthetic draft');before=actual(page)
-    goto(page,'forex-overview');goto(page,'forex-reserves')
+    goto(page,'forex-overview',preserve_draft=True);goto(page,'forex-reserves')
     assert form.locator('[name=reason]').input_value()=='Unsubmitted synthetic draft'
     assert actual(page)==before
     page.screenshot(path=str(out/(label+'-reserves.png')),full_page=True)
-    goto(page,'forex-overview')
+    goto(page,'forex-overview',preserve_draft=True)
     assert page.locator('#hdrEquity').inner_text()==page.evaluate('fmtForexMoney(JPWForex.state.read().account.equity,JPWForex.state.read().account,0)'), 'context bar lost the observed equity on navigation'
     page.screenshot(path=str(out/(label+'-overview.png')),full_page=True)
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),'page overflow'

@@ -1,0 +1,61 @@
+{
+  "raw_result": "PRODUCT_FAIL",
+  "case": "1440-light/shared-v2-pipeline",
+  "frozen_test_sha256": "f66f357830f04a2c9f6eeb92ac469d8e04c190b6aa1a42aad161f65ebde859a7",
+  "sources": {
+    "src/js/40-app/19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+    "src/styles/app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38",
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "index.html": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3",
+    "build-id.js": "0e804ce239d1e1179db8260dde17776a7dcbfd0f23cb876fda13c76b018f18ad"
+  },
+  "observations": [
+    {
+      "events": [
+        {
+          "id": "SYN-primeira-CAD",
+          "rowText": "15:00\nCAD\nSYN FF primeira CAD\n\nHorário a confirmar.\n\n—\n0\n0.0%",
+          "expanded": "false",
+          "detailVisible": false,
+          "sourceLinks": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ]
+        },
+        {
+          "id": "SYN-primeira-USD",
+          "rowText": "15:00\nUSD\nSYN FF primeira USD\n\nHorário a confirmar.\n\n—\n−0.5%\n1.2M",
+          "expanded": "false",
+          "detailVisible": false,
+          "sourceLinks": [
+            {
+              "text": "Fonte: Forex Factory",
+              "href": "https://www.forexfactory.com/calendar",
+              "visible": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "browser": "156.0.8078.48",
+  "error": "",
+  "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/jpw-economic-calendar-table-20261028/tests-proposal/ff-expectation-v2/reproduce_shared_pipeline.py\", line 32, in <module>\n    ff.shared_calendar_pipeline(browser,bootstrap,url,1440,'light')\n  File \"/private/tmp/jpw-economic-calendar-table-20261028/tests-proposal/candidates/tools/ff_news_cache_test.py\", line 121, in shared_calendar_pipeline\n    assert panel.get_by_role('link',name='Fonte: Forex Factory',exact=True).count()>=2\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "final_frames": [
+    {
+      "file": "/private/tmp/jpw-economic-calendar-table-20261028/tests-proposal/ff-expectation-v2/reproduce_shared_pipeline.py",
+      "line": 32,
+      "function": "<module>",
+      "source": "ff.shared_calendar_pipeline(browser,bootstrap,url,1440,'light')"
+    },
+    {
+      "file": "/private/tmp/jpw-economic-calendar-table-20261028/tests-proposal/candidates/tools/ff_news_cache_test.py",
+      "line": 121,
+      "function": "shared_calendar_pipeline",
+      "source": "assert panel.get_by_role('link',name='Fonte: Forex Factory',exact=True).count()>=2"
+    }
+  ]
+}

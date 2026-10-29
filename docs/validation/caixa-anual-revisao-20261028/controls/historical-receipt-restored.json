@@ -1,0 +1,12 @@
+{
+  "restoredAt": "2026-10-28T12:50:29.178135-03:00",
+  "path": "docs/validation/hedge-prop-20261027/engine-counterproofs.json",
+  "newCurrentRunCopy": "controls/hedge-counterproofs-current-full.json",
+  "newCurrentRunSHA256": "f08d35edb716d724742c9bbc752622f421831e28052cb4d7c4f254cdca230319",
+  "restoredHistoricalSHA256": "1bc9e6ce6908fb46c4f1721eb2d1b2b488ebad05c22e75caca507aaf747e3fc3",
+  "changedFields": [
+    "timestampUTC"
+  ],
+  "sourceOrFinancialDataAltered": false,
+  "documentationCollectorFirstAttempt": "Stopped by overbroad timestamp-field substring guard before any historical restoration; this execution checks exact timestampUTC field and identical other content"
+}

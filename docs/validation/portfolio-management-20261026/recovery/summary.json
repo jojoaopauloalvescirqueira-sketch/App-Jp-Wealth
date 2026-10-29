@@ -1,0 +1,47 @@
+{
+  "classification": "FOCAL_RESULTS_NOT_FULL_APPROVAL",
+  "original_full": {
+    "build": "ae2189c2ba4ab31a",
+    "summary": {
+      "PASS": 102,
+      "PRODUCT_FAIL": 11
+    },
+    "frozen_paths": 693,
+    "frozen_mismatches": 0
+  },
+  "product_causes": [
+    "Context guard retained accepted selection but cached markup did not reset live select values",
+    "Dashboard economic consumer was removed by this delivery",
+    "Eager Management session ID failed when randomUUID was absent"
+  ],
+  "focals": {
+    "reserves": {
+      "result": "PASS",
+      "groups": 12,
+      "red": "reserves-red.txt",
+      "green": "reserves-green.txt"
+    },
+    "research": {
+      "result": "PASS",
+      "cause": "Test-only route dispatch did not close modal drawer; use actual available Dashboard leaf",
+      "red": "research-red.txt",
+      "green": "research-green.txt"
+    },
+    "state_startup": {
+      "result": "PASS",
+      "cases": 32,
+      "red": "state-startup-red.txt",
+      "green": "state-startup-green.txt"
+    },
+    "ff_cache": {
+      "PASS": 184,
+      "PRODUCT_FAIL": 0,
+      "receipt": "ff-news-cache-green.json"
+    }
+  },
+  "limits": [
+    "Previous FULL remains failed; new full not yet run",
+    "Batch1 smoke still failed on startup before UUID fix and portable rebuild; receipt retained",
+    "Focal correction does not close historical incidents or grant human acceptance"
+  ]
+}

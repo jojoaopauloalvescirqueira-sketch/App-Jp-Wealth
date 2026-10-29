@@ -1,0 +1,72 @@
+{
+  "at": "2026-10-27T00:16:25.878241+00:00",
+  "status": "STATIC_REVIEW_COMPLETE_NO_BLOCKING_FINDING_BROWSER_PENDING",
+  "scope": [
+    "tools/persistence_failure_test.py",
+    "tools/import_xss_security_test.py",
+    "tools/usd_brl_quote_test.py"
+  ],
+  "readOnly": true,
+  "browser": "NOT_RUN; parent owns current browser queue",
+  "approval": "Only the bounded applied test deltas meet the reviewed preservation criteria. Actual DOM, security integration and final FULL remain pending; this is not product/UI acceptance.",
+  "basis": [
+    "Current sources inspected to identify exact old contab expectation, already-documented F01 unit DOM boundary and eight-marker scanner.",
+    "Need the applying agent patch, final source hashes and pure counterproof receipts before independent acceptance."
+  ],
+  "requiredPreservations": {
+    "persistence": "Keep all storage failure/backup/Notes/focus oracles; only replace retired contab presentation expectation with canonical Management route and physical active screen.",
+    "importXss": "Retain six positive plus11negative complete-backup cases in both distributions, six-cell renderer output, active sink injection checks, exact financial/note/version preservation, reader restoration and imported data integrity. Static test DOM host is unit fixture only, not real Management UI/human acceptance.",
+    "usdBrl": "Allow only two complete exact unique additional anti-secret expressions in portable bundle; retain all8 markers, scope confinement, altered/duplicate lines and outside-exact-span detection. No broad ignore of token/authorization or regex text."
+  },
+  "observedPreProposalSHA256": {
+    "tools/persistence_failure_test.py": "f701382ebc016dfadb7d278b641a064c59b397f74be3c5bb7f2b05f0f4a3dba2",
+    "tools/import_xss_security_test.py": "21f2de93284f26a24277105fa166c37666c82c703197ce10f7c2836f4e866453",
+    "tools/usd_brl_quote_test.py": "41eabc1b5c3133f481ce54d37583cf71f8dbad45d89e91f25779afa831693afb"
+  },
+  "edits": [],
+  "findings": [
+    {
+      "id": "TEST-F01-CONST-ESC",
+      "severity": "BLOCKING_TEST_HARNESS",
+      "scope": "First un-applied F01 unsafe counterproof proposal",
+      "evidence": "src/js/00-core/05-helpers.js:26 declares const esc; first proposal attempted esc=value=>... and finally esc=originalEscape.",
+      "consequence": "Counterproof would throw on assignment before reaching mutated sink; restoration assignment also throws.",
+      "resolution": "Applying agent is preparing exact expression mutation in real renderer/API property instead; review final corrected bytes before application.",
+      "authority": "No change to product or test source performed by this reviewer.",
+      "status": "RESOLVED_IN_CORRECTED_PROPOSAL_NOT_YET_APPLIED",
+      "reviewedHash": "ab59301c698e5603f140072f230c7672ab97381e42b45f0d44072d253e9f070d"
+    }
+  ],
+  "updatedAt": "2026-10-27T00:14:46.809133+00:00",
+  "expectedAppliedSHA256": {
+    "persistence_failure_test.py": "3e460bcc64eacefe679ad9f39d5731afcf80a4eaec21ff149d2cf70d9e82175c",
+    "import_xss_security_test.py": "ab59301c698e5603f140072f230c7672ab97381e42b45f0d44072d253e9f070d",
+    "usd_brl_quote_test.py": "6553f397140c13306125783011bb1e89bfefcbecb26e493bc1ebe57b2b17fc65"
+  },
+  "appliedSHA256": {
+    "persistence_failure_test.py": "3e460bcc64eacefe679ad9f39d5731afcf80a4eaec21ff149d2cf70d9e82175c",
+    "import_xss_security_test.py": "ab59301c698e5603f140072f230c7672ab97381e42b45f0d44072d253e9f070d",
+    "usd_brl_quote_test.py": "6553f397140c13306125783011bb1e89bfefcbecb26e493bc1ebe57b2b17fc65"
+  },
+  "appliedBytesEqualReviewedProposal": true,
+  "actualInRepoPureScannerCounterproofs": {
+    "reviewedGuards": 3,
+    "injectedCredentialMarkers": 24,
+    "modifiedGuards": 3,
+    "duplicateGuards": 3
+  },
+  "preservedProofs": [
+    "17 complete-backup positive/negative imports and reload/refusal loops unchanged, across both original distributions.",
+    "Legacy renderer remains characterized through the real JPWLedger.render API and static literal six-cell unit host, not an invented Management DOM.",
+    "Unsafe exact version-expression mutation is reached through API; finally restores original renderer/reader/host, and same safe oracle replays afterward. Browser execution is still required.",
+    "New current-Management imported name/note case is additive and retains numeric version and financial values, without overriding real writers/readers.",
+    "Persistence keeps all refusal/readback/backup/focus assertions and now verifies the approved Management alias destination plus unchanged RAM/disk.",
+    "Scanner preserves same masking function, original7 exact literals plus only2 exact new guards, same8 markers and nonportable path protection."
+  ],
+  "limitations": [
+    "Independent execution here was limited to pure scanner/oracle extraction; no browser or application financial write.",
+    "Unit literal host is not real new Management UI; the adjoined real Management case has not run in this review.",
+    "Earlier raw FULL102PASS/11PRODUCT_FAIL remains unchanged historical evidence for its exact candidate.",
+    "No final FULL pass or human acceptance inferred."
+  ]
+}

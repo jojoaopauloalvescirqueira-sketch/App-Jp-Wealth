@@ -1,0 +1,33 @@
+PASS MANSTATE-01 absent optional aggregate remains absent on all queries
+PASS MANSTATE-02 preview derives confirmed opening; explicit save preserves whole document and canonical ledger
+PASS MANSTATE-03 config confirmation token cannot authorize another target or later root generation
+PASS MANSTATE-04 same scope updates one config with history and no financial writes
+PASS MANSTATE-05 refused and unknown config writes preserve memory; stale authorization and retries refused
+PASS MANSTATE-06 incompatible/future envelope preserved and all writes blocked
+PASS MANSTATE-07 canonical result zero remains explicit; no management duplicate; operational selection unchanged
+PASS MANSTATE-08 result preview and failed validation never save; fractional monetary precision is preserved
+PASS MANSTATE-09 canonical correction preserves IDs and observed later balances
+PASS MANSTATE-10 account/period/epoch revisions reject stale confirmation; independent target supported
+PASS MANSTATE-11 declare no result is explicit and does not change scheduled projection or canonical ledger
+PASS MANSTATE-12 existing financial record forbids contradictory no-result declaration
+PASS MANSTATE-13 annual close requires ended year and complete dates; snapshots immutable and reconference after correction
+PASS MANSTATE-14 opening correction before start affects live actual and invalidates snapshot without moving planned baseline
+PASS MANSTATE-15 confirmed source required; blank opening and unconfirmed RAM never saved
+PASS MANSTATE-16 void uses real canonical history, preserves records in audit and original snapshots
+PASS MANSTATE-17 early optional validator supports old backups and rejects malformed/future while retaining bytes
+PASS MANSTATE-18 unknown financial outcome blocks config and every command without blind retry
+PASS MANSTATE-19 declarations can be explicitly revoked with history before a real result is entered
+PASS MANSTATE-20 reference constants remain editable reference-only metadata
+PASS MANSTATE-21 real confirmed writer readback, quota, conflict and indeterminate outcomes
+PASS MANSTATE-22 a financially indeterminate write is never exposed as confirmed actual data by queries
+PASS MANSTATE-23 account currency is preserved without conversion and query DTOs are defensive
+PASS MANSTATE-24 root replacement rejects prior review even when content is identical
+PASS MANSTATE-25 repeated confirmation cannot duplicate a result or silently refresh its authorization
+PASS MANSTATE-26 optional inert notes are validated and preserved through canonical creation/correction
+PASS MANSTATE-27 imported history/snapshots cannot claim another identity or future revision
+PASS MANSTATE-28 preview and save reject duplicate excluded dates consistently
+PASS MANSTATE-29 restored cross-family currency disagreement is unavailable even without ledger rows
+PASS MANSTATE-30 context recovery is explicit confirmed-only, returns change flag and does not stale tokens on every render
+PASS MANSTATE-31 ordinary confirmed root replacements preserve UI drafts; a verified new epoch resets once
+PASS MANSTATE-32 startup without randomUUID stays read-only and identities retain session isolation
+{"cases":32,"passed":32,"failed":0}

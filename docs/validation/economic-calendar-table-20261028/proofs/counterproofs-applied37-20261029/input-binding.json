@@ -1,0 +1,64 @@
+{
+  "status": "EXECUTED ONCE; 12 counterproofs PASS; browser released",
+  "date": "2026-10-29",
+  "build": "aabc8d09faff4aee",
+  "inputs": {
+    "candidates/tools/calendar_agenda_test.py": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py",
+      "sha256": "655556061f9fbbecd28f73de0861ac2e05741a658d7da0777b2591da28ab7ddd",
+      "matches_authorized37": true
+    },
+    "candidates/tools/calendar_distribution_test.py": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_distribution_test.py",
+      "sha256": "cbaf54be1a5dd0ebecf80773158a86453f849fbf0ab8734a1ad32376065003a9",
+      "matches_authorized37": true
+    },
+    "candidates/tools/calendar_economic_table_contract.py": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_economic_table_contract.py",
+      "sha256": "35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a",
+      "matches_authorized37": true
+    },
+    "candidates/tools/calendar_visual_quality_test.py": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_visual_quality_test.py",
+      "sha256": "b883b966e1be638707da5c53999392cfc6ae02da36440500ddd18fc12970b95f",
+      "matches_authorized37": true
+    },
+    "candidates/tools/ff_news_cache_test.py": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/ff_news_cache_test.py",
+      "sha256": "f66f357830f04a2c9f6eeb92ac469d8e04c190b6aa1a42aad161f65ebde859a7",
+      "matches_authorized37": true
+    },
+    "product-inputs/19-calendar-agenda.js": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/src/js/40-app/19-calendar-agenda.js",
+      "sha256": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518"
+    },
+    "product-inputs/app.css": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/src/styles/app.css",
+      "sha256": "31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e"
+    },
+    "root-identity/build-id.js": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/build-id.js",
+      "sha256": "e09a14541af933658c25e929e5ff712ebcc79c8f55ea5605c4ac573894f36247"
+    },
+    "root-identity/index.html": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/index.html",
+      "sha256": "3c580ae13f67b9e4202aa8eeea2cc8e4ecf25ca18be1735ff228cdfad8e962b3"
+    },
+    "root-identity/src/js/manifest.json": {
+      "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/src/js/manifest.json",
+      "sha256": "baa7671404747d22ee815d065f4cdf42398cb1f716ae7813645f4ab3057c1360"
+    }
+  },
+  "launcher_sha256": "2d445a571a1c07f5d00c98e71832115aa8d540a66d1318b82994c61fdbb53516",
+  "prior_corrected_launcher_sha256": "9e1b4cff1b6c4c6e4eed37f6569165dba9066a555cbfc8331a29fb97faf55260",
+  "launcher_binding_diff_sha256": "c687137a58031200df99a76ec3a5d844f19a253d2d0168c70946fcc8f85f087c",
+  "only_binding_and_input_output_paths_changed": true,
+  "oracles_and_12_record_calls_AST_identical": true,
+  "helper_sha256": "35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a",
+  "FF_V3": "not copied or applied; original37 ff f66f retained",
+  "original37_patch_sha256": "37a46edbd8e2c56e6327ce8dc8e42cc034c1063c2ef6a55520effa53bc8a39c3",
+  "receipt": "results/receipt.json",
+  "all_message_and_frame_matches": true,
+  "same12_mutations_as_prior_corrected_run": true,
+  "frozen_candidates_unchanged": true
+}

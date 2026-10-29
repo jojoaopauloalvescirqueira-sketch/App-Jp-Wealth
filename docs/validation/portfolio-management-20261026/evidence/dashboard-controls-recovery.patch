@@ -1,0 +1,83 @@
+--- a/tools/management_dashboard_notes_test.js
++++ b/tools/management_dashboard_notes_test.js
+@@ -14,22 +14,23 @@
+   const state={nocoda:{studies:{}},pivotStudies:{studies:[]},accounts:[],mvpNotes:{items:[{id:'old-note',screenId:'fxreserves'}]}};
+   const context={console,S:state,control,esc:escape,document:{hidden:false,activeElement:{isConnected:true},getElementById:id=>id==='dashMacroGrid'?grid:id==='dmToday'?{}:null,querySelector:q=>q==='#dashMacro .cp-panorama-index'?index:null,addEventListener(){}},addEventListener(){},setInterval(){},requestAnimationFrame(){},MutationObserver:class{observe(){}},
+     compute(){control.policyReads++;return {};},ledgerSorted(){control.ledgerReads++;return [];},ecalEvents(){control.economicReads++;return null;},instrumentCatalog:()=>[{id:'i1'},{id:'i2'}],JPWModuleAvailability:{canAccess:id=>!frozen.includes(id)},
+-    JPWNavigation:{resolve:route=>({primary:route.startsWith('management-')?'management':route.startsWith('research')?'research':route==='planning'?'planning':route==='personal-finance'?'personal-finance':route==='alladin'?'alladin':'forex'})}};
++    JPWNavigation:{resolve:route=>({primary:route.startsWith('management-')?'management':route.startsWith('tools-')?'tools':route.startsWith('research')?'research':route==='planning'?'planning':route==='personal-finance'?'personal-finance':route==='alladin'?'alladin':'forex'})}};
+   context.window=context;vm.createContext(context);vm.runInContext(dash,context);
+   const notesPrefix=notes.slice(0,notes.indexOf('// ---- leitura/derivação de dados ----'));assert.ok(notesPrefix.length>100);vm.runInContext(notesPrefix,context);
+   return {context,control,state,grid,index,eval:code=>vm.runInContext(code,context)};
+ }
+ let count=0;function test(id,fn){fn();count++;console.log('PASS '+id);}
+ test('MGTDASH-01 Research identity remains stable while visible card becomes Portfolio',()=>{const h=harness();const m=h.eval('DM_MODULES.find(x=>x.id==="research")');assert.equal(m.label,'Portfólio');assert.equal(m.cta,'Abrir Portfólio');assert.equal(m.route,'research-forex');});
+-test('MGTDASH-02 Portfolio contains only active study destinations and no calendar collection',()=>{const h=harness(),s=h.eval('dmResearchHTML().html');assert.ok(s.includes('Estudos Nocuda'));assert.ok(s.includes('Estudos de Pivots'));assert.ok(s.includes('data-dm-view="nocoda"'));assert.ok(s.includes('data-dm-view="pivots"'));for(const old of ['research-stocks-br','research-stocks-global','research-reits','data-dm-view="calendar"','Áreas em preparação'])assert.ok(!s.includes(old),old);assert.equal(h.control.economicReads,0);});
++test('MGTDASH-02 Portfolio retains two active study destinations and the existing shared calendar consumer',()=>{const h=harness(),s=h.eval('dmResearchHTML().html');assert.ok(s.includes('Estudos Nocuda'));assert.ok(s.includes('Estudos de Pivots'));assert.ok(s.includes('data-dm-view="nocoda"'));assert.ok(s.includes('data-dm-view="pivots"'));for(const old of ['research-stocks-br','research-stocks-global','research-reits','data-dm-view="calendar"','Áreas em preparação'])assert.ok(!s.includes(old),old);assert.ok(s.includes('data-dm-route="tools-calendar"'));assert.ok(s.includes('dados ainda não carregados'));assert.equal(h.control.economicReads,1);});
+ test('MGTDASH-03 Management card provides its own destinations without factual or financial assumptions',()=>{const h=harness();const m=h.eval('DM_MODULES.find(x=>x.id==="management")');assert.ok(m);assert.equal(m.route,'management-reserves');const b=h.eval('dmManagementHTML().html');assert.ok(b.includes('management-reserves'));assert.ok(b.includes('management-accounting'));assert.ok(!/R\$|US\$|Jp Wealth MAM|Swissquote|Saldo|Patrimônio/.test(b));assert.equal(h.control.policyReads,0);assert.equal(h.control.ledgerReads,0);});
+ test('MGTDASH-04 frozen Management is removed from Dashboard and index',()=>{const h=harness(['management']);h.eval('dashMacroRender()');assert.ok(!h.grid.innerHTML.includes('data-dm-card="management"'));assert.ok(!h.index.innerHTML.includes('dm-title-management'));assert.ok(h.grid.innerHTML.includes('data-dm-card="forex"'));});
+ test('MGTDASH-05 Forex freeze does not remove Management or invoke Forex readers',()=>{const h=harness(['forex']);h.eval('dashMacroRender()');assert.ok(h.grid.innerHTML.includes('data-dm-card="management"'));assert.ok(!h.grid.innerHTML.includes('data-dm-card="forex"'));assert.equal(h.control.policyReads,0);assert.equal(h.control.ledgerReads,0);});
+-test('MGTDASH-06 Portfolio freeze removes its card independently',()=>{const h=harness(['research']);h.eval('dashMacroRender()');assert.ok(!h.grid.innerHTML.includes('data-dm-card="research"'));assert.ok(h.grid.innerHTML.includes('data-dm-card="management"'));});
++test('MGTDASH-06 Portfolio freeze removes its card independently',()=>{const h=harness(['research']);h.eval('dashMacroRender()');assert.ok(!h.grid.innerHTML.includes('data-dm-card="research"'));assert.ok(h.grid.innerHTML.includes('data-dm-card="management"'));assert.equal(h.control.economicReads,0,'Frozen Portfolio must be filtered before the shared cache reader');});
+ test('MGTDASH-07 management card icon references an existing shared symbol',()=>{const h=harness(),html=h.eval('dmCard("management","Gerenciamento",dmManagementHTML().html,"management-reserves","Abrir Gerenciamento")');assert.ok(html.includes('href="#shell-icon-briefcase-business"'));});
+ test('MGTDASH-08 note labels follow new ownership without rewriting saved IDs',()=>{const h=harness(),before=JSON.stringify(h.state);assert.equal(h.eval('mvpNotesScreenLabel("research")'),'Portfólio · Análise');assert.equal(h.eval('mvpNotesScreenLabel("management")'),'Gerenciamento · Contabilidade');assert.equal(h.eval('mvpNotesScreenLabel("fxreserves")'),'Gerenciamento · Reservas');assert.equal(h.eval('mvpNotesScreenLabel("contab")'),'Gerenciamento · Contabilidade');assert.equal(JSON.stringify(h.state),before);assert.equal(h.state.mvpNotes.items[0].screenId,'fxreserves');});
+ test('MGTDASH-09 note capture retains actual screen identity and settings precedence',()=>{const h=harness();h.context.document.querySelector=q=>q==='.screen.active'?{id:'management'}:null;assert.equal(h.eval('mvpNotesCurrentScreenId()'),'management');h.context.settingsIsOpen=()=>true;assert.equal(h.eval('mvpNotesCurrentScreenId()'),'config');assert.equal(h.eval('mvpNotesScreenLabel("unknown-legacy-id")'),'Geral');});
+ test('MGTDASH-10 read-only summaries and note labels never write state',()=>{const h=harness(),before=JSON.stringify(h.state);h.eval('dmResearchHTML();dmManagementHTML();dashMacroRender();mvpNotesScreenLabel("fxreserves")');assert.equal(JSON.stringify(h.state),before);assert.equal(h.control.writes,0);});
+ test('MGTDASH-11 public labels and module search reflect Portfolio and Management',()=>{for(const f of ['index.html','src/js/20-ui/14-nocoda-studies.js','src/js/20-ui/15-pivot-studies.js','src/js/30-accounting/01-daily-ledger.js']){const body=fs.readFileSync(path.join(ROOT,f),'utf8');assert.ok(!body.includes('>Research</option>')&&!body.includes('Research ·')&&!body.includes("research:'Research'"),'Public Portfolio label remained old: '+f);}
+ const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');assert.ok(html.includes('Portfólio Research Gerenciamento'),'Module search must include the new names and legacy alias');});
++test('MGTDASH-12 shared cache projection preserves source status, inert event text and read-only state',()=>{const h=harness(),before=JSON.stringify(h.state);h.context.ecalEvents=()=>{h.control.economicReads++;return {events:[{title:'Synthetic <img src=x onerror=bad()>',country:'USD',when:new Date(Date.now()+60000)}]};};h.context.ffNewsIsToday=()=>true;h.context.ffNewsStatusText=()=> 'Cache não atualizado — não foi possível gravar no armazenamento.';const s=h.eval('dmResearchHTML().html');assert.ok(s.includes('Próximo evento'));assert.ok(s.includes('Synthetic &lt;img'));assert.ok(!s.includes('<img'));assert.ok(s.includes('Cache não atualizado'));assert.ok(s.includes('armazenamento'));assert.equal(h.control.economicReads,1);assert.equal(JSON.stringify(h.state),before);});
+ console.log(JSON.stringify({status:'PASS',cases:count}));
+
+--- a/tools/dashboard_macro_test.py
++++ b/tools/dashboard_macro_test.py
+@@ -511,24 +511,22 @@
+ 
+ 
+ def assert_atualizacao_agenda_e_foco(page):
+-    """Feed preservado; conteúdo econômico não reaparece em Portfólio nem rouba foco."""
++    """Cache muda: consumidor econômico existente atualiza sem roubar foco."""
+     page.evaluate("""() => {
+       JPWNavigation.navigate('dashboard');
+       const btn=document.querySelector('[data-dm-card="research"] .dm-cta');
+       btn.focus();
+-      window.__dmPortfolioBefore=document.querySelector('[data-dm-card="research"]').textContent;
+       ffNewsWriteCache({version:1,generated_at:new Date().toISOString(),events:[
+         {title:'Agenda <img src=x onerror="window.__dmXss=1">',country:'USD',
+          date:new Date(Date.now()+60000).toISOString(),impact:'High'}]});
+       ffNewsRenderAll();
+     }""")
+-    page.wait_for_timeout(100)
++    page.wait_for_function("() => document.querySelector('[data-dm-card=research]').textContent.includes('Agenda <img')")
+     r=page.evaluate("""() => ({
+       foco:document.activeElement.matches('[data-dm-card="research"] .dm-cta'),
+-      xss:!!window.__dmXss, imgs:document.querySelectorAll('[data-dm-card="research"] img').length,
+-      isolated:document.querySelector('[data-dm-card="research"]').textContent===window.__dmPortfolioBefore
++      xss:!!window.__dmXss, imgs:document.querySelectorAll('[data-dm-card="research"] img').length
+     })""")
+-    assert r=={'foco':True,'xss':False,'imgs':0,'isolated':True},r
++    assert r=={'foco':True,'xss':False,'imgs':0},r
+     # Render geral também atualiza a macro, sem saída e reentrada.
+     page.evaluate("""() => {
+       S.accounts=[{forexAccountId:'MACRO_A',nome:'Mestre sintética',tipo:'MESTRE',platformCurrency:'USD'}];
+@@ -561,7 +559,7 @@
+           const event=ecalEvents().events[0];
+           const local=event.when.toLocaleDateString('pt-BR')+' · '+event.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+           Date.now=now;
+-          return local==='08/09/2026 · 22:00'&&!text.includes('Evento UTC')&&!text.includes('09/09/2026');
++          return local==='08/09/2026 · 22:00'&&text.includes('08/09/2026 · 22:00')&&text.includes('Evento UTC')&&!text.includes('09/09/2026');
+         }""")
+         assert r, 'data e horário divergiram no fuso local'
+     finally:
+@@ -587,6 +585,11 @@
+             current=page.evaluate("() => JPWNavigation.current().localView")
+             assert current=={'surface':actual_surface,'view':view}, current
+ 
++    # Calendar is a shared informational consumer, not a restored Portfolio submenu.
++    page.evaluate("() => JPWNavigation.navigate('dashboard')")
++    page.locator('#dashMacro [data-dm-route="tools-calendar"]').click()
++    assert page.locator('#tools').evaluate("el=>el.classList.contains('active')")
++    assert page.evaluate("() => JPWNavigation.current().localView")=={'surface':'tools','view':'calendar'}
+     page.evaluate("() => JPWNavigation.navigate('dashboard')")
+ 
+ 
+

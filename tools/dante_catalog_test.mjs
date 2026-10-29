@@ -23,21 +23,26 @@ const legacy = {
   alladin:'start instruments assets accounts cashAccounts ledger balances positions',
   general:'notes notes-save settings-general settings-account settings-appearance settings-interface settings-editor settings-statute settings-parameters settings-tool-params settings-tool-check settings-forex-consolidated settings-educational settings-probability-lab settings-storage settings-about backup session'
 };
+const retired=new Map(catalog.retiredSteps.map(item=>[item.id,item]));
+const moved=new Map(catalog.movedSteps.map(item=>[item.id,item]));
+assert.deepEqual(Array.from(retired.keys()).sort(),['tools-nocuda','research-stocks-br','research-stocks-global','research-reits','research-others'].sort());
+assert.deepEqual(Array.from(moved.keys()).sort(),['forex-accounting','forex-reserves'].sort());
 let legacyCount=0;
 for (const [owner,suffixes] of Object.entries(legacy)) for (const suffix of suffixes.split(' ')) {
-  const id=owner+'-'+suffix;if(id==='tools-nocuda')assert(!owners.has(id),'retired lesson absent from visible tracks');else assert.equal(owners.get(id),owner,'legacy owner '+id);legacyCount++;
+  const id=owner+'-'+suffix;if(retired.has(id)){assert(!owners.has(id),'retired lesson absent from visible tracks');assert.equal(retired.get(id).trackId,owner);}else if(moved.has(id)){assert.equal(moved.get(id).previousTrackId,owner);assert.equal(owners.get(id),moved.get(id).trackId);}else assert.equal(owners.get(id),owner,'legacy owner '+id);legacyCount++;
 }
 assert.equal(legacyCount,57);
-assert.deepEqual(JSON.parse(JSON.stringify(catalog.retiredSteps)),[{id:'tools-nocuda',trackId:'tools',replacementId:'tools-genetrix'}],'retired compatibility identities are separate from visible lessons');
+assert.deepEqual(JSON.parse(JSON.stringify(retired.get('tools-nocuda'))),{id:'tools-nocuda',trackId:'tools',replacementId:'tools-genetrix'},'Nocuda retirement compatibility unchanged');
+for(const item of retired.values())assert(owners.has(item.replacementId),'retired replacement exists');
 for(const [owner,suffixes] of Object.entries(legacy)) {
-  const expected=suffixes.split(' ').map(s=>owner+'-'+s).filter(id=>id!=='tools-nocuda');
+  const expected=suffixes.split(' ').map(s=>owner+'-'+s).filter(id=>!retired.has(id)&&!moved.has(id));
   const actual=catalog.tracks.find(t=>t.id===owner).steps;
   assert.equal(actual[0].id,expected[0],'legacy start '+owner);
   assert.deepEqual(Array.from(actual,s=>s.id).filter(id=>expected.includes(id)),expected,'relative legacy order '+owner);
 }
 assert.equal(catalog.version,1,'catalogVersion remains compatible');
 assert(Array.isArray(catalog.journey),'continuous journey is required');
-assert.deepEqual(Array.from(catalog.journey,c=>c.id),['basics','research','planning','forex','personal-finance','tools','alladin','general']);
+assert.deepEqual(Array.from(catalog.journey,c=>c.id),['basics','research','management','planning','forex','personal-finance','tools','alladin','general']);
 const journeyIds=[];
 for (const chapter of catalog.journey) {
   assert(chapter.title&&chapter.stepIds.length,'chapter requires title and lessons');

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "research-navigation",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/research_navigation_test.py"
+    ],
+    "exit": 0,
+    "seconds": 9.73,
+    "testSHA256": "bde95554a825b026eca744ce45d6c89f690bcd13b62c93a4d27a61013ee674ae",
+    "testUnchanged": true,
+    "log": "/private/tmp/jpw-hedge-prop-20261027/research-navigation-postfull4.log"
+  },
+  {
+    "name": "session-epoch-protocol",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/session_epoch_protocol_test.py"
+    ],
+    "exit": 0,
+    "seconds": 17.639,
+    "testSHA256": "a125d661906e3eb40d61353e801c9012c1817e1e44161f32fced4b81e25e2c49",
+    "testUnchanged": true,
+    "log": "/private/tmp/jpw-hedge-prop-20261027/session-epoch-protocol-postfull4.log"
+  },
+  {
+    "name": "alladin-ui-crud",
+    "command": [
+      "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+      "tools/alladin_ui_crud_test.py"
+    ],
+    "exit": 0,
+    "seconds": 42.388,
+    "testSHA256": "1b7f66d474c8094558577e0b833aa4f810272d28cb14313bbd9ac1a413514531",
+    "testUnchanged": true,
+    "log": "/private/tmp/jpw-hedge-prop-20261027/alladin-ui-crud-postfull4.log"
+  }
+]

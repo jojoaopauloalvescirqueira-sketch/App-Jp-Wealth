@@ -20,6 +20,98 @@ def load(path):
     return json.loads(path.read_text())
 
 
+def merge_public_packet(base, public):
+    """Deterministic composition; source snapshots and timestamps are unchanged.
+
+    Exact FF observations can repeat across snapshots. Only explicit curated
+    familyKey links can join a FF observation to an official event; title/date
+    similarity never establishes a revision or a cancellation.
+    """
+    # These statements describe only the original official collection. Keep
+    # their evidence and review dates intact, without applying them to FF data.
+    base['officialBaseMetadata'] = dict(
+        scope='official-base-before-public-feed',
+        generatedAt=base.get('generatedAt'), updatedAt=base.get('updatedAt'),
+        currencies=list(dict.fromkeys(row['currency'] for row in base['sources'])),
+        sourceIds=[row['id'] for row in base['sources']],
+        editorialPolicy=base.get('editorialPolicy'), limitations=base.get('limitations', []))
+    base['editorialPolicy'] = dict(
+        id='jpw-impact-origins-v2', publisher='JP Wealth',
+        publisherRole='composition-policy', kind='mixed',
+        origins=[dict(id='forexfactory', publisher='Forex Factory', kind='provider'),
+                 dict(id='jpw-editorial', publisher='JP Wealth', kind='editorial')],
+        disclaimer='O impacto conserva a origem por evento: classificação Forex Factory ou curadoria editorial JP Wealth; não representa autorização operacional.',
+        dateOnly=base['officialBaseMetadata']['editorialPolicy'].get('dateOnly') if isinstance(base['officialBaseMetadata']['editorialPolicy'], dict) else None)
+    base['updatePolicy'] = dict(
+        queryMode='synchronous-snapshot', refreshMode='shared-public-feed-adapter',
+        sourceAgeBasis='collectedAt', forexFactoryMaxAgeSeconds=7200,
+        officialExpiryBasis='coverage.validUntil', externalSchedule='not-asserted')
+    base['limitations'] = [
+        'Cobertura parcial por fonte e intervalo nas moedas disponibilizadas; não comprova mês econômico completo.',
+        'O export Forex Factory é semanal; snapshots acumulados não comprovam meses ou eventos ausentes.',
+        'A origem do impacto é individual: classificação Forex Factory ou curadoria editorial JP Wealth; eventos sem classificação não recebem impacto presumido.',
+        'Campos anteriores e consenso podem estar presentes no export; dados ausentes e resultados realizados não são presumidos.',
+        'A consulta síncrona usa um snapshot validado; atualização assíncrona depende do produtor compartilhado e do endpoint disponível. Publicação ou execução externa não são comprovadas por estes metadados.',
+        'Forex Factory fica desatualizado após duas horas sem nova coleta válida; consulta recente não renova collectedAt. Fontes oficiais mantêm seus prazos individuais de coverage.validUntil.',
+        'Status scheduled em calendário passado não comprova publicação; não inferir published pela passagem do tempo.',
+        'Curadoria documental assistida por IA não é aceite ou revisão humana.',
+        'Identidades locais de observação FF não comprovam ID nativo, reagendamento ou cancelamento; identidades oficiais e suas fontes são preservadas.']
+    sources = {row['id']: row for row in base['sources']}
+    sources.update({row['id']: row for row in public['sources']})
+    by_id = {row['id']: row for row in base['events']}
+    by_id.update({row['id']: row for row in public['events']})
+    observed, events = {}, []
+    def is_ff(row):
+        return row.get('sourceId', '').startswith('ff-')
+    for row in by_id.values():
+        if not is_ff(row):
+            events.append(row)
+            continue
+        key = (row['currency'], row['title'], row['precision'], row.get('at') or row['date'])
+        old = observed.get(key)
+        if old is None or row.get('observedAt', row['reviewedAt']) >= old.get('observedAt', old['reviewedAt']):
+            observed[key] = row
+    events.extend(observed.values())
+    families, merged = {}, []
+    for row in events:
+        family = row.get('familyKey')
+        if not family:
+            merged.append(row)
+        else:
+            families.setdefault(family, []).append(row)
+    def same_schedule(a, b):
+        if a['precision'] == b['precision'] == 'instant':
+            return datetime.fromisoformat(a['at'].replace('Z', '+00:00')) == datetime.fromisoformat(b['at'].replace('Z', '+00:00'))
+        if a['precision'] == 'date' or b['precision'] == 'date':
+            return a['date'] == b['date']
+        return False
+    for rows in families.values():
+        ff = sorted((row for row in rows if is_ff(row)), key=lambda row: (row.get('observationStatus') == 'present', row.get('observedAt', row['reviewedAt'])), reverse=True)
+        primary = dict(ff[0] if ff else rows[-1])
+        official = [row for row in rows if row['id'] != primary['id'] and not is_ff(row)]
+        if official:
+            primary['officialReferences'] = official
+            primary['sourceConflict'] = any((primary['status'] == 'cancelled') != (row['status'] == 'cancelled') or not same_schedule(primary, row) for row in official)
+            primary['timeConfirmed'] = not primary['sourceConflict'] and all(row['precision'] == primary['precision'] == 'instant' and row.get('timeConfirmed') is not False and same_schedule(primary, row) for row in official)
+        if len(ff) > 1:
+            primary['providerObservations'] = [row for row in ff if row['id'] != primary['id']]
+        merged.append(primary)
+    coverage = {}
+    for packet in (base, public):
+        groups = {}
+        for row in packet['coverage']:
+            key = (row['sourceId'], row['currency'], row.get('month', row['from'][:7]))
+            groups.setdefault(key, []).append(row)
+        coverage.update(groups)
+    base['sources'] = list(sources.values())
+    base['events'] = sorted(merged, key=lambda row: (row['date'], row.get('at') or '', row['id']))
+    base['coverage'] = [row for rows in coverage.values() for row in rows]
+    base['months'] = sorted(set(base['months']) | {row['date'][:7] for row in merged})
+    base['publicFeed'] = {key: public.get(key) for key in ('schemaVersion', 'collectedAt', 'packagePublishedAt', 'sourcePublishedAt', 'currentWeekFrom')}
+    base['publicFeed']['mode'] = 'local-snapshot'
+    return base
+
+
 def build_package(check=False):
     bea = load(HERE / 'data/bea-2026-10.json')
     captures = load(HERE / 'evidence/source-captures.json')
@@ -42,8 +134,8 @@ def build_package(check=False):
              scope='BEA release schedule; excludes BLS/Federal Reserve'),
         dict(id='bls', name='U.S. Bureau of Labor Statistics — pendente', currency='USD', timeZone='America/New_York',
              url='https://www.bls.gov/schedule/', scope='No reviewed package in this delivery'),
-        dict(id='fed', name='Federal Reserve — pendente', currency='USD', timeZone='America/New_York',
-             url='https://www.federalreserve.gov/newsevents/calendar.htm', scope='No reviewed package in this delivery'),
+        dict(id='fed', name='Federal Reserve — demais eventos pendentes', currency='USD', timeZone='America/New_York',
+             url='https://www.federalreserve.gov/newsevents/calendar.htm', scope='Other Federal Reserve releases; the separate fed-policy source covers only its explicitly curated FOMC dates'),
         dict(id='ons', name='Office for National Statistics', currency='GBP', timeZone='Europe/London',
              url='https://www.ons.gov.uk/releasecalendar', license='Open Government Licence v3.0',
              licenseUrl='https://www.ons.gov.uk/help/terms-conditions', attribution='Source: Office for National Statistics, © Crown copyright 2026; adapted by JP Wealth',
@@ -65,7 +157,7 @@ def build_package(check=False):
              url='https://www.stats.govt.nz/release-calendar/', scope='Calendar export not validated; no complete month claim'),
         dict(id='rbnz', name='Reserve Bank of New Zealand — pendente', currency='NZD', timeZone='Pacific/Auckland',
              url='https://www.rbnz.govt.nz/', scope='Automated access prohibited without permission; no automated collection or claimed human curation'),
-        dict(id='chf-pending', name='CHF — licença de agenda pendente', currency='CHF', timeZone='Europe/Zurich',
+        dict(id='chf-pending', name='CHF — agendas oficiais pendentes', currency='CHF', timeZone='Europe/Zurich',
              url='https://opendata.swiss/', scope='No official calendar commercial redistribution licence verified; no events shipped')
     ]
     events = list(bea['events'])
@@ -140,7 +232,7 @@ def build_package(check=False):
             **{'from':'2026-11-01','to':'2026-11-30'}, status='partial', reviewedAt=stamp, validUntil=valid_until,
             reason='Somente próxima divulgação SPI citada na publicação de setembro; demais eventos não revisados, horário não informado.'))
     packet = dict(schemaVersion=1, generatedAt=stamp, updatedAt=stamp,
-        currencies=['USD','GBP','JPY','NZD','CHF'], months=['2026-10'], sources=sources,
+        currencies=['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'], months=['2026-10'], sources=sources,
         editorialPolicy=dict(id='jpw-macro-impact-v1', publisher='JP Wealth', kind='editorial',
             disclaimer='Impacto editorial JP Wealth; não informado pelas fontes e não é autorização operacional.',
             dateOnly='Dia do calendário da fonte; horário não informado. A data não muda com o fuso do usuário.'),
@@ -153,6 +245,43 @@ def build_package(check=False):
             'Sem atualização automática no app; pacote estático revisado, validade de cobertura de 48 horas.',
             'Curadoria documental assistida por IA não é aceite ou revisão humana.',
             'Identidades SBJ por família/período; ONS por URI; BEA por UID. Nunca usar a data de divulgação como identidade.'])
+    # Public feeder snapshots are generated separately. This embeds the same
+    # reviewed bytes for file://, offline and portable use; it never collects or
+    # publishes data and never renews any source timestamp during a rebuild.
+    public_path = ROOT / 'infra/ff-news-feed/economic-calendar.json'
+    if public_path.exists():
+        raw_public = public_path.read_bytes()
+        if len(raw_public) > 8_000_000:
+            raise ValueError('Public economic snapshot exceeds 8 MB')
+        public = json.loads(raw_public)
+        if not isinstance(public, dict) or public.get('schemaVersion') != 2:
+            raise ValueError('Public economic snapshot requires schemaVersion 2')
+        for field in ('currencies', 'sources', 'events', 'coverage'):
+            if not isinstance(public.get(field), list):
+                raise ValueError('Public economic snapshot missing ' + field)
+        for field in ('collectedAt', 'packagePublishedAt'):
+            stamp_value = public.get(field)
+            if not isinstance(stamp_value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})', stamp_value):
+                raise ValueError('Public economic snapshot lacks explicit ' + field)
+            datetime.fromisoformat(stamp_value.replace('Z', '+00:00'))
+        if public.get('sourcePublishedAt') is not None:
+            datetime.fromisoformat(public['sourcePublishedAt'].replace('Z', '+00:00'))
+        if any(currency not in packet['currencies'] for currency in public['currencies']):
+            raise ValueError('Public economic snapshot has an unsupported currency')
+        source_currencies = {}
+        for source in public['sources']:
+            if not isinstance(source, dict) or not isinstance(source.get('id'), str) or source['id'] in source_currencies or source.get('currency') not in public['currencies']:
+                raise ValueError('Public economic snapshot has invalid/duplicate sources')
+            source_currencies[source['id']] = source['currency']
+        for field in ('events', 'coverage'):
+            for row in public[field]:
+                if not isinstance(row, dict) or row.get('currency') not in public['currencies'] or source_currencies.get(row.get('sourceId')) != row.get('currency'):
+                    raise ValueError('Public economic snapshot has inconsistent source/currency in ' + field)
+        identities = [event.get('id') for event in public['events'] if isinstance(event, dict)]
+        if len(identities) != len(public['events']) or any(not isinstance(identity, str) or not identity for identity in identities) or len(set(identities)) != len(identities):
+            raise ValueError('Public economic snapshot has invalid/duplicate identities')
+        merge_public_packet(packet, public)
+        packet['publicFeedProvenance'] = dict(path='infra/ff-news-feed/economic-calendar.json', sha256=hashlib.sha256(raw_public).hexdigest())
     encoded = json.dumps(packet,ensure_ascii=False,indent=2) + '\n'
     output = HERE / 'data/monthly-economic-2026-10.json'
     model = ROOT / 'src/js/40-app/16-monthly-economic-data.js'
@@ -167,11 +296,11 @@ def build_package(check=False):
     if check:
         if output.read_text() != encoded or model.read_text() != text:
             raise ValueError('Offline reproduction differs from canonical JSON or embedded block')
-        print('Offline package verified: %d events; no files written.' % len(events))
+        print('Offline package verified: %d public event records; no files written.' % len(packet['events']))
     else:
         output.write_text(encoded)
         model.write_text(text)
-        print('Embedded %d real events; source coverage stays explicit and partial.' % len(events))
+        print('Embedded %d public event records; source coverage stays explicit and partial.' % len(packet['events']))
     return packet
 
 

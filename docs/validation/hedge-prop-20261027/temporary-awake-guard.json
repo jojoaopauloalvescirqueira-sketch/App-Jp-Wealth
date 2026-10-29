@@ -1,0 +1,18 @@
+{
+  "captured_at_client": "2026-10-28T00:47:34.752672-03:00",
+  "command": "caffeinate -di -w 74810",
+  "guard_pid": 79125,
+  "gate_pid": 74810,
+  "observed_assertions": [
+    "   pid 79125(caffeinate): [0x0010943f00018d27] 00:12:52 PreventUserIdleSystemSleep named: \"caffeinate command-line tool\"  ",
+    "\tDetails: caffeinate asserting on behalf of Process ID 74810",
+    "\tCreated for PID: 74810. ",
+    "\tLocalized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.",
+    "   pid 79125(caffeinate): [0x0010943f00058d28] 00:12:52 PreventUserIdleDisplaySleep named: \"caffeinate command-line tool\"  ",
+    "\tDetails: caffeinate asserting on behalf of Process ID 74810",
+    "\tCreated for PID: 74810. ",
+    "\tLocalized=THE CAFFEINATE TOOL IS PREVENTING SLEEP."
+  ],
+  "permanent_settings_changed": false,
+  "scope": "Temporary owned test process; guard ends with gate. Started after two failures; no reclassification."
+}

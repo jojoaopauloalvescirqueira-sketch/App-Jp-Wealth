@@ -1,0 +1,15 @@
+{
+  "attempt": 3,
+  "status": "INCOMPLETE",
+  "build": "09cfa4f7b8a8dbed",
+  "gatePID": 61625,
+  "gate_exit": -2,
+  "raw_visual_receipt": "tools/.artifacts/app-efficiency-full-20261027T135829572192/ui-visual-quality/ui-visual-quality-results.json",
+  "raw_visual_classification": "ENVIRONMENT_ERROR",
+  "raw_gate_visual_classification": "TEST_HARNESS_FAIL",
+  "cases_before_interruption": 48,
+  "cause_evidence": "Chrome received Dock Quit AppleEvent14:02:25.434local; browser loss14:02:25.475887; user confirmed closing or restarting Chrome",
+  "response": "Stopped only owned gate/test/driver viaSIGINT; did not touch regular Chrome, VM or other sessions; no app/verifier modification",
+  "scope": "No FULL approval; all artifacts/logs retained",
+  "log": "/private/tmp/jpw-hedge-prop-20261027/full3-interrupted-external-chrome-quit.log"
+}

@@ -1,0 +1,15 @@
+command: pmset -g log
+exit: 0
+window_local:2026-10-28 10:21:39..11:15:25
+filtered Sleep/DarkWake/Wake/WakeTime/SleepFailure/WakeFailure and guard84806 rows only, excluding Wake Requests
+2026-10-28 10:21:39 -0300 Assertions          	PID 84806(caffeinate) Created PreventUserIdleDisplaySleep "caffeinate command-line tool" 00:00:00  id:0x0x500008959 [System: PrevIdle PrevDisp DeclUser kDisp]          
+2026-10-28 10:22:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleSystemSleep "caffeinate command-line tool" 00:01:00  id:0x0x100008958 [System: PrevIdle PrevDisp DeclUser SysAct IntPrevDisp kDisp]          
+2026-10-28 10:22:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleDisplaySleep "caffeinate command-line tool" 00:01:00  id:0x0x500008959 [System: PrevIdle PrevDisp DeclUser SysAct IntPrevDisp kDisp]          
+2026-10-28 10:37:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleSystemSleep "caffeinate command-line tool" 00:16:00  id:0x0x100008958 [System: PrevIdle PrevDisp DeclUser SysAct IntPrevDisp kDisp]          
+2026-10-28 10:37:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleDisplaySleep "caffeinate command-line tool" 00:16:00  id:0x0x500008959 [System: PrevIdle PrevDisp DeclUser SysAct IntPrevDisp kDisp]          
+2026-10-28 10:52:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleSystemSleep "caffeinate command-line tool" 00:31:00  id:0x0x100008958 [System: PrevIdle PrevDisp DeclUser IntPrevDisp kDisp]          
+2026-10-28 10:52:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleDisplaySleep "caffeinate command-line tool" 00:31:00  id:0x0x500008959 [System: PrevIdle PrevDisp DeclUser IntPrevDisp kDisp]          
+2026-10-28 11:07:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleSystemSleep "caffeinate command-line tool" 00:46:00  id:0x0x100008958 [System: PrevIdle PrevDisp IntPrevDisp kDisp]          
+2026-10-28 11:07:39 -0300 Assertions          	PID 84806(caffeinate) Summary PreventUserIdleDisplaySleep "caffeinate command-line tool" 00:46:00  id:0x0x500008959 [System: PrevIdle PrevDisp IntPrevDisp kDisp]          
+2026-10-28 11:15:24 -0300 Assertions          	PID 84806(caffeinate) ClientDied PreventUserIdleSystemSleep "caffeinate command-line tool" 00:53:45  id:0x0x100008958 [System: PrevIdle PrevDisp DeclUser SysAct IntPrevDisp kDisp]          
+2026-10-28 11:15:24 -0300 Assertions          	PID 84806(caffeinate) ClientDied PreventUserIdleDisplaySleep "caffeinate command-line tool" 00:53:45  id:0x0x500008959 [System: PrevIdle DeclUser SysAct IntPrevDisp kDisp]          

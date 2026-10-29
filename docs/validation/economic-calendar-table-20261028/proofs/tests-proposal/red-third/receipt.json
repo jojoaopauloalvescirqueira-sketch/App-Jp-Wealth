@@ -1,0 +1,779 @@
+{
+  "classification": "PRODUCT_FAIL",
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "test_sha256": "39fb08f84973c61771da8923bc8e5bc9e7a6b93637bebf355e78f6f71c2b5283",
+  "sources": {
+    "src/js/40-app/19-calendar-agenda.js": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+    "src/styles/app.css": "3bc75488d2013b5b5febc435a05c6cd5183317fb353a6c2cbaaf8396f7255b47",
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "tools/calendar_agenda_test.py": "3eaf710b4a63c5302a394bf905e2ffd094c7ab61303b5d64dc9223df3c3104de",
+    "tools/ff_news_cache_test.py": "5a2821e0330885af5b589cf0d3fdd66603be451eed3209190f65a5b1ac9a9f42",
+    "tools/calendar_visual_quality_test.py": "0c5c948231a87ec3ce5e1e51292c96ef1e58b0b6865faa161d63014c144da883",
+    "tools/calendar_distribution_test.py": "39b43a33a40d3f911f806b82364348c7a5498f0d542001b6ac8b06e6aa906570",
+    "tools/ui_visual_quality_test.py": "2dacc347c77eade52358e1342d223e619f3e40250a03e47f1e556cae67a7370a",
+    "tools/quality_gate.py": "51fae2e0a9b25972d68c9d8e70023d28536fb4f590e386e8a518eecc568ab84d",
+    "build-id.js": "5a92c19927124f9607d24501afe2c4d06c4b05e4715ff10a66936fe8b10ee9df"
+  },
+  "cases": [
+    {
+      "id": "workspace-wide-seven-columns",
+      "classification": "PRODUCT_FAIL",
+      "expected": [
+        "Horário",
+        "Moeda",
+        "Impacto",
+        "Evento",
+        "Atual",
+        "Projeção",
+        "Anterior"
+      ],
+      "observed": []
+    },
+    {
+      "id": "workspace-wide-values-1",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "0",
+        "previous": "0.0%"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "11:00 · A confirmar\nSYN TABLE 1\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "workspace-wide-values-2",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "−0.5%",
+        "previous": "1.2M"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "12:00 · A confirmar\nSYN TABLE 2\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "workspace-wide-values-3",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "—",
+        "previous": "—"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "13:00 · A confirmar\nSYN TABLE 3\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "workspace-wide-values-4",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "1.2M",
+        "previous": "0"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "14:00 · A confirmar\nSYN TABLE 4\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "workspace-wide-values-5",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "0.0%",
+        "previous": "−0.5%"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "15:00 · A confirmar\nSYN TABLE 5\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "workspace-wide-values-6",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "2.5%",
+        "previous": "3.5%"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "16:00 · A confirmar\nSYN TABLE 6\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "workspace-wide-provenance-collapsed",
+      "classification": "PRODUCT_FAIL",
+      "expected": "No source links/original time visible while details closed",
+      "observed": [
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:0",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 145.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:1",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 145.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:2",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 145.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:3",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 145.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:4",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 145.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:5",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 145.84375
+        }
+      ]
+    },
+    {
+      "id": "workspace-wide-no-horizontal-overflow",
+      "classification": "PASS",
+      "expected": "<=1 CSSpx overflow",
+      "observed": 0
+    },
+    {
+      "id": "dialog-narrow-values-1",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "0",
+        "previous": "0.0%"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "11:00 · A confirmar\nSYN TABLE 1\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "dialog-narrow-values-2",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "−0.5%",
+        "previous": "1.2M"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "12:00 · A confirmar\nSYN TABLE 2\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "dialog-narrow-values-3",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "—",
+        "previous": "—"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "13:00 · A confirmar\nSYN TABLE 3\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "dialog-narrow-values-4",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "1.2M",
+        "previous": "0"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "14:00 · A confirmar\nSYN TABLE 4\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "dialog-narrow-values-5",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "0.0%",
+        "previous": "−0.5%"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "15:00 · A confirmar\nSYN TABLE 5\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "dialog-narrow-values-6",
+      "classification": "PRODUCT_FAIL",
+      "expected": {
+        "actual": "—",
+        "forecast": "2.5%",
+        "previous": "3.5%"
+      },
+      "observed": {
+        "fields": {},
+        "rowText": "16:00 · A confirmar\nSYN TABLE 6\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte"
+      }
+    },
+    {
+      "id": "dialog-narrow-provenance-collapsed",
+      "classification": "PRODUCT_FAIL",
+      "expected": "No source links/original time visible while details closed",
+      "observed": [
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:0",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 181.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:1",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 181.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:2",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 181.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:3",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 181.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:4",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 181.84375
+        },
+        {
+          "id": "ff-compat:2026-10-28T20:00:00Z:5",
+          "sourceVisible": [
+            "Fonte: Forex Factory"
+          ],
+          "originalTimeVisible": [
+            "Horário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte"
+          ],
+          "height": 181.84375
+        }
+      ]
+    },
+    {
+      "id": "dialog-narrow-no-horizontal-overflow",
+      "classification": "PASS",
+      "expected": "<=1 CSSpx overflow",
+      "observed": 0
+    }
+  ],
+  "limits": {
+    "full": "NOT_RUN",
+    "native_windows": "NOT_RUN",
+    "generated_artifacts": "NOT_RUN",
+    "human_acceptance": "NOT_RUN"
+  },
+  "browser": "156.0.8078.48",
+  "observations": [
+    {
+      "width": 2400,
+      "host": "#execEcal",
+      "domain": [
+        {
+          "title": "SYN TABLE 1",
+          "forecast": "0",
+          "previous": "0.0%"
+        },
+        {
+          "title": "SYN TABLE 2",
+          "forecast": "−0.5%",
+          "previous": "1.2M"
+        },
+        {
+          "title": "SYN TABLE 3",
+          "forecast": "",
+          "previous": ""
+        },
+        {
+          "title": "SYN TABLE 4",
+          "forecast": "1.2M",
+          "previous": "0"
+        },
+        {
+          "title": "SYN TABLE 5",
+          "forecast": "0.0%",
+          "previous": "−0.5%"
+        },
+        {
+          "title": "SYN TABLE 6",
+          "forecast": "2.5%",
+          "previous": "3.5%"
+        }
+      ],
+      "geometry": {
+        "panel": {
+          "x": 626,
+          "y": 213.796875,
+          "width": 1800,
+          "height": 572,
+          "top": 213.796875,
+          "right": 2426,
+          "bottom": 785.796875,
+          "left": 626
+        },
+        "body": {
+          "x": 627,
+          "y": 282.796875,
+          "width": 1798,
+          "height": 502,
+          "top": 282.796875,
+          "right": 2425,
+          "bottom": 784.796875,
+          "left": 627
+        },
+        "month": {
+          "x": 647,
+          "y": 290.796875,
+          "width": 867,
+          "height": 303.9375,
+          "top": 290.796875,
+          "right": 1514,
+          "bottom": 594.734375,
+          "left": 647
+        },
+        "agenda": {
+          "x": 1538,
+          "y": 290.796875,
+          "width": 867,
+          "height": 470,
+          "top": 290.796875,
+          "right": 2405,
+          "bottom": 760.796875,
+          "left": 1538
+        },
+        "usefulWidth": 1758,
+        "overflow": 0,
+        "headers": [],
+        "rows": [
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:0",
+            "box": {
+              "x": 1538,
+              "y": 389.9375,
+              "width": 852,
+              "height": 145.84375,
+              "top": 389.9375,
+              "right": 2390,
+              "bottom": 535.78125,
+              "left": 1538
+            },
+            "text": "11:00 · A confirmar\nSYN TABLE 1\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "11:00 · A confirmarSYN TABLE 1USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:1",
+            "box": {
+              "x": 1538,
+              "y": 535.78125,
+              "width": 852,
+              "height": 145.84375,
+              "top": 535.78125,
+              "right": 2390,
+              "bottom": 681.625,
+              "left": 1538
+            },
+            "text": "12:00 · A confirmar\nSYN TABLE 2\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "12:00 · A confirmarSYN TABLE 2USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:2",
+            "box": {
+              "x": 1538,
+              "y": 681.625,
+              "width": 852,
+              "height": 145.84375,
+              "top": 681.625,
+              "right": 2390,
+              "bottom": 827.46875,
+              "left": 1538
+            },
+            "text": "13:00 · A confirmar\nSYN TABLE 3\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "13:00 · A confirmarSYN TABLE 3USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:3",
+            "box": {
+              "x": 1538,
+              "y": 827.46875,
+              "width": 852,
+              "height": 145.84375,
+              "top": 827.46875,
+              "right": 2390,
+              "bottom": 973.3125,
+              "left": 1538
+            },
+            "text": "14:00 · A confirmar\nSYN TABLE 4\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "14:00 · A confirmarSYN TABLE 4USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:4",
+            "box": {
+              "x": 1538,
+              "y": 973.3125,
+              "width": 852,
+              "height": 145.84375,
+              "top": 973.3125,
+              "right": 2390,
+              "bottom": 1119.15625,
+              "left": 1538
+            },
+            "text": "15:00 · A confirmar\nSYN TABLE 5\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "15:00 · A confirmarSYN TABLE 5USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:5",
+            "box": {
+              "x": 1538,
+              "y": 1119.15625,
+              "width": 852,
+              "height": 145.84375,
+              "top": 1119.15625,
+              "right": 2390,
+              "bottom": 1265,
+              "left": 1538
+            },
+            "text": "16:00 · A confirmar\nSYN TABLE 6\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "16:00 · A confirmarSYN TABLE 6USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          }
+        ],
+        "selected": "2026-10-28",
+        "mode": null
+      }
+    },
+    {
+      "width": 390,
+      "host": "#calendarDialog",
+      "domain": [
+        {
+          "title": "SYN TABLE 1",
+          "forecast": "0",
+          "previous": "0.0%"
+        },
+        {
+          "title": "SYN TABLE 2",
+          "forecast": "−0.5%",
+          "previous": "1.2M"
+        },
+        {
+          "title": "SYN TABLE 3",
+          "forecast": "",
+          "previous": ""
+        },
+        {
+          "title": "SYN TABLE 4",
+          "forecast": "1.2M",
+          "previous": "0"
+        },
+        {
+          "title": "SYN TABLE 5",
+          "forecast": "0.0%",
+          "previous": "−0.5%"
+        },
+        {
+          "title": "SYN TABLE 6",
+          "forecast": "2.5%",
+          "previous": "3.5%"
+        }
+      ],
+      "geometry": {
+        "panel": {
+          "x": 13,
+          "y": 21,
+          "width": 364,
+          "height": 1727.140625,
+          "top": 21,
+          "right": 377,
+          "bottom": 1748.140625,
+          "left": 13
+        },
+        "body": {
+          "x": 13,
+          "y": 81,
+          "width": 364,
+          "height": 1667.140625,
+          "top": 81,
+          "right": 377,
+          "bottom": 1748.140625,
+          "left": 13
+        },
+        "month": {
+          "x": 29,
+          "y": 89,
+          "width": 332,
+          "height": 303.9375,
+          "top": 89,
+          "right": 361,
+          "bottom": 392.9375,
+          "left": 29
+        },
+        "agenda": {
+          "x": 29,
+          "y": 406.9375,
+          "width": 332,
+          "height": 1321.203125,
+          "top": 406.9375,
+          "right": 361,
+          "bottom": 1728.140625,
+          "left": 29
+        },
+        "usefulWidth": 332,
+        "overflow": 0,
+        "headers": [],
+        "rows": [
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:0",
+            "box": {
+              "x": 29,
+              "y": 508.078125,
+              "width": 332,
+              "height": 181.84375,
+              "top": 508.078125,
+              "right": 361,
+              "bottom": 689.921875,
+              "left": 29
+            },
+            "text": "11:00 · A confirmar\nSYN TABLE 1\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "11:00 · A confirmarSYN TABLE 1USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 10:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:1",
+            "box": {
+              "x": 29,
+              "y": 689.921875,
+              "width": 332,
+              "height": 181.84375,
+              "top": 689.921875,
+              "right": 361,
+              "bottom": 871.765625,
+              "left": 29
+            },
+            "text": "12:00 · A confirmar\nSYN TABLE 2\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "12:00 · A confirmarSYN TABLE 2USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 11:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:2",
+            "box": {
+              "x": 29,
+              "y": 871.765625,
+              "width": 332,
+              "height": 181.84375,
+              "top": 871.765625,
+              "right": 361,
+              "bottom": 1053.609375,
+              "left": 29
+            },
+            "text": "13:00 · A confirmar\nSYN TABLE 3\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "13:00 · A confirmarSYN TABLE 3USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 12:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:3",
+            "box": {
+              "x": 29,
+              "y": 1053.609375,
+              "width": 332,
+              "height": 181.84375,
+              "top": 1053.609375,
+              "right": 361,
+              "bottom": 1235.453125,
+              "left": 29
+            },
+            "text": "14:00 · A confirmar\nSYN TABLE 4\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "14:00 · A confirmarSYN TABLE 4USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 13:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:4",
+            "box": {
+              "x": 29,
+              "y": 1235.453125,
+              "width": 332,
+              "height": 181.84375,
+              "top": 1235.453125,
+              "right": 361,
+              "bottom": 1417.296875,
+              "left": 29
+            },
+            "text": "15:00 · A confirmar\nSYN TABLE 5\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "15:00 · A confirmarSYN TABLE 5USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 14:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          },
+          {
+            "id": "ff-compat:2026-10-28T20:00:00Z:5",
+            "box": {
+              "x": 29,
+              "y": 1417.296875,
+              "width": 332,
+              "height": 181.84375,
+              "top": 1417.296875,
+              "right": 361,
+              "bottom": 1599.140625,
+              "left": 29
+            },
+            "text": "16:00 · A confirmar\nSYN TABLE 6\nUSD · Alto · Impacto: Forex Factory\nFonte: Forex Factory\nHorário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte",
+            "fullText": "16:00 · A confirmarSYN TABLE 6USD · Alto · Impacto: Forex FactoryFonte: Forex FactoryHorário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte",
+            "fields": [],
+            "sourceVisible": [
+              "Fonte: Forex Factory"
+            ],
+            "originalTimeVisible": [
+              "Horário original: 28/10/2026, 15:00 · America/New_York · indicativo, confirme na fonte"
+            ]
+          }
+        ],
+        "selected": "2026-10-28",
+        "mode": null
+      }
+    }
+  ]
+}

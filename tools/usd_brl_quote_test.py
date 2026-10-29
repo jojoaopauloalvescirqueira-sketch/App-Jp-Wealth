@@ -453,7 +453,7 @@ def caso_retry_apos_cooldown(browser, url):
         context.close()
 
 
-# Three reviewed V11 uses of the word, confined to the portable bundle.
+# Reviewed exact comments/secret-rejection expressions in the portable bundle.
 # Mask only the word's exact span; keep every other byte under the same scan.
 USDBRL_BENIGN_AUTH_LINES = (
     "// Forex V11: grade containers are records, never execution authorization.",
@@ -463,6 +463,8 @@ USDBRL_BENIGN_AUTH_LINES = (
     "  const secretKey = key => /password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key);",
     "        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key))throw new Error('Backup de planejamento contém campo de segredo. Preserve o original e remova credenciais antes de importar ou exportar.');",
     "    for(const key of Object.keys(value))if(['__proto__','prototype','constructor'].includes(key)||/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||!safeTree(value[key],seen))return false;",
+    "      if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||['__proto__','prototype','constructor'].includes(key))fail();",
+    "    for(const key of Object.keys(value)){requireThat(!/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)&&!['__proto__','constructor','prototype'].includes(key),'Campo de segredo ou controle não permitido.');safe(value[key],seen);}seen.delete(value);",
 )
 
 
@@ -482,25 +484,31 @@ def usd_brl_static_credential_text(texto, nome):
     return texto.lower()
 
 
+def usd_brl_static_guard_counterproofs(suspeitos):
+    # Retain the original changed-return-false proof and test both new guards
+    # through this same exact-line scanner. Never strip whole regular expressions.
+    guards=USDBRL_BENIGN_AUTH_LINES[-3:]
+    changes=[guards[0].replace('return false;','return true;'),
+             guards[1].replace(')fail();',')void 0;'),
+             guards[2].replace('requireThat(!','requireThat(true||',1)]
+    for benign,changed in zip(guards,changes):
+        assert benign!=changed and 'authorization' in changed
+        assert 'authorization' not in usd_brl_static_credential_text(benign+'\n','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+        for term in suspeitos:
+            candidate=benign+'\nconst syntheticProbe = '+json.dumps(term+' SYNTHETIC-NOT-A-CREDENTIAL')+';\n'
+            assert term in usd_brl_static_credential_text(candidate,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'),'exact exception masked an added credential marker'
+        assert 'authorization' in usd_brl_static_credential_text(changed,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'),'changed guard accepted as benign'
+        try:usd_brl_static_credential_text(benign+'\n'+benign+'\n','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+        except AssertionError:pass
+        else:raise AssertionError('duplicate benign-looking lines must be rejected')
+    return {'reviewedGuards':len(guards),'injectedCredentialMarkers':len(guards)*len(suspeitos),'modifiedGuards':len(changes),'duplicateGuards':len(guards)}
+
+
 def caso_seguranca(browser, url):
     """TESTE 16 — nenhuma credencial no bundle, no HTML ou no armazenamento."""
     suspeitos = ("api_key", "apikey", "api-key", "access_token",
                  "authorization", "bearer ", "x-api-key", "client_secret")
-    # An exact, unique secret-rejection expression is not a credential. Its
-    # exception must never hide added values, altered lines or duplicates.
-    benign = USDBRL_BENIGN_AUTH_LINES[-1]
-    assert 'authorization' not in usd_brl_static_credential_text(benign + '\n', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
-    for term in suspeitos:
-        candidate = benign + '\nconst syntheticProbe = ' + json.dumps(term + ' SYNTHETIC-NOT-A-CREDENTIAL') + ';\n'
-        assert term in usd_brl_static_credential_text(candidate, 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'), 'exact exception masked an added credential marker'
-    changed = benign.replace('return false;', 'return true;')
-    assert 'authorization' in usd_brl_static_credential_text(changed, 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'), 'changed guard accepted as benign'
-    try:
-        usd_brl_static_credential_text(benign + '\n' + benign + '\n', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
-    except AssertionError:
-        pass
-    else:
-        raise AssertionError('duplicate benign-looking lines must be rejected')
+    usd_brl_static_guard_counterproofs(suspeitos)
     for nome in ("index.html", "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
                  "src/js/10-domain/08-usd-brl-quote.js", "sw.js"):
         texto = usd_brl_static_credential_text((ROOT / nome).read_text(encoding="utf-8"), nome)

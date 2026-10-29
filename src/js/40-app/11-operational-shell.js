@@ -14,14 +14,15 @@ const sidebarUI = { route:null, pinned:null, preview:null, overlay:false, overla
 const SIDEBAR_TIMING=Object.freeze({open:400,leave:300,motion:180});
 const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','research-forex']);
 const SUBMENU_TITLES=Object.freeze({
-  exec:'Forex',finpes:'Finanças Pessoais',research:'Research',tools:'Ferramentas e Serviços',
-  'forex-management-accounts':'Contas e Períodos','research-forex':'Forex'
+  exec:'Forex',finpes:'Finanças Pessoais',research:'Portfólio',management:'Gerenciamento',tools:'Ferramentas e Serviços',
+  'forex-management-accounts':'Contas e Períodos','research-forex':'Análise'
 });
 const NAV_SUBMENU_SURFACES = {
   exec:()=>window.JPWExec&&window.JPWExec.ui,
   finpes:()=>window.JPWFin&&window.JPWFin.ui,
   research:()=>window.JPWResearch&&window.JPWResearch.ui,
-  tools:()=>window.JPWTools&&window.JPWTools.ui
+  tools:()=>window.JPWTools&&window.JPWTools.ui,
+  management:()=>window.JPWManagement?.ui||null
 };
 function shellEl(sel){return document.querySelector(sel);}
 function shellMobile(){return window.matchMedia('(max-width:900px)').matches;}
@@ -39,7 +40,7 @@ function sidebarBlocked(){
 function sidebarCollapsed(){return !shellMobile()&&document.documentElement.getAttribute('data-rail')==='collapsed';}
 function sidebarPrimary(surface){return document.querySelector('#nav > [data-nav-surface="'+surface+'"]');}
 function sidebarSurfaceForRoute(current){
-  return shellModuleAvailable(current.primary)?({forex:'exec','personal-finance':'finpes',research:'research',tools:'tools'})[current.primary]||null:null;
+  return shellModuleAvailable(current.primary)?({forex:'exec','personal-finance':'finpes',research:'research',management:'management',tools:'tools'})[current.primary]||null:null;
 }
 function sidebarClearTimers(){
   clearTimeout(sidebarUI.hoverTimer);clearTimeout(sidebarUI.leaveTimer);clearTimeout(sidebarUI.closeTimer);
@@ -506,7 +507,7 @@ function submenuResetExploration(){
   submenuUI.temporary=false;submenuUI.direction='back';
 }
 function submenuPrimaryForSurface(surface){
-  return ({exec:'forex',finpes:'personal-finance',research:'research',tools:'tools'})[surface]||null;
+  return ({exec:'forex',finpes:'personal-finance',research:'research',management:'management',tools:'tools'})[surface]||null;
 }
 function shellModuleAvailable(primary){
   return !primary||window.JPWModuleAvailability?.canAccess(primary)!==false;
@@ -633,7 +634,7 @@ function syncNavSubState(){
     return;
   }
   const c=window.JPWNavigation.current();
-  const key=shellModuleAvailable(c.primary)?({forex:'exec','personal-finance':'finpes',research:'research',tools:'tools'})[c.primary]||null:null;
+  const key=shellModuleAvailable(c.primary)?({forex:'exec','personal-finance':'finpes',research:'research',management:'management',tools:'tools'})[c.primary]||null:null;
   if(key!==navSubUI.screen){navSubUI.collapsed=null;navSubUI.screen=key;}
   navSubUI.open=!!key&&navSubUI.collapsed!==key;
   const shell=document.getElementById('navSubShell');

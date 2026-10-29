@@ -1,0 +1,57 @@
+{
+  "scope": "Synthetic, disposable Chromium headless contexts; no operator profile",
+  "attempts": [
+    {
+      "id": "browser-red",
+      "classification": "PRODUCT_FAIL",
+      "reason": "Approved new route absent before implementation. Exact command and output in results.json and agent execution log."
+    },
+    {
+      "id": "browser-green-attempt-1",
+      "classification": "TEST_HARNESS_FAIL",
+      "reason": "money() removed words but preserved sentence-final punctuation in multipleIncludingFee, raising ValueError for 3.43349754. The parser now extracts the first pt-BR numeric token and retains a preceding negative sign. No product defect established. Raw traceback is in the execution log; the run exited before writing results.json."
+    },
+    {
+      "id": "browser-green-attempt-2",
+      "classification": "TEST_HARNESS_FAIL",
+      "reason": "inner_text() on output inside a closed native details returned empty. The pending-cost assertion now reads text_content() before the explicit opening interaction. Raw results.json preserved unchanged."
+    },
+    {
+      "id": "browser-green-attempt-3",
+      "classification": "TEST_HARNESS_FAIL",
+      "reason": "Diagnostic replay of the same closed-details inner_text assertion, now with traceback. Raw results.json preserved unchanged."
+    },
+    {
+      "id": "browser-green-attempt-4",
+      "classification": "NOT_RUN",
+      "reason": "Executed assertions passed, including 80 layout/theme/size combinations and three rejected mutations, but a test edit during the process invalidates its end-of-run test hash as an identity of loaded Python bytes. Not final acceptance evidence; a stable final rerun is required."
+    },
+    {
+      "id": "browser-final",
+      "classification": "PRODUCT_FAIL",
+      "reason": "Expanded error-state geometry rejected real same-row input baseline displacement of 18.59375 CSS px when feeUSD=-1. Numerical, lifecycle and two-stage cost-path checks had passed before the failure."
+    },
+    {
+      "id": "browser-rounding-red",
+      "classification": "PRODUCT_FAIL",
+      "reason": "A failure-path additional cost of 0,005 displayed US$ 0,01 without a negative sign; expected minus US$ 0,01. Reproduction uses the actual input and output DOM."
+    },
+    {
+      "id": "browser-lifecycle-red",
+      "classification": "PRODUCT_FAIL",
+      "reason": "Accepted navigation while document.hidden was true, then disposeForSession and a visibilitychange restored a disposed simulation without another accepted entry. Uses a configurable hidden getter only in a disposable synthetic context."
+    },
+    {
+      "id": "browser-green-final",
+      "classification": "PASS",
+      "reason": "Post-fix stable bytes: 12 behavior groups, 80 layout/theme/size combinations with filled, open-details and invalid states; five representative mutations rejected by the same positive assertions. Includes corrected half-cent sign, semantic-parent input alignment and lifecycle no-resurrection. Native zoom remains separately NOT_RUN."
+    },
+    {
+      "id": "browser-distribution-final",
+      "classification": "PASS",
+      "reason": "Post-fix stable bytes: real HTTP, file, portable and controlled offline PWA contexts passed both numeric oracles, displayed independent route and discarded RAM draft on reload."
+    }
+  ],
+  "native_zoom": "NOT_RUN until an explicitly coordinated --native-zoom invocation",
+  "human_acceptance": "NOT_RUN; browser assertions and screenshot inspection do not replace owner acceptance"
+}

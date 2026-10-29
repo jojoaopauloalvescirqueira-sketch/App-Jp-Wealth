@@ -1,0 +1,193 @@
+{
+  "scope": "Read-only final checkpoint; no tests/browser/network/build/Git or tracked writes. Metadata product patch authored by this reviewer is excluded from independent approval and reviewed separately by calendar_coverage_audit.",
+  "baseline": {
+    "files": 3496,
+    "missing": [],
+    "changedPaths": [
+      "build-id.js",
+      "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
+      "docs/architecture/CALENDAR-AGENDA.md",
+      "docs/validation/hedge-prop-20261027/engine-counterproofs.json",
+      "docs/work/ACTIVE-TASK.md",
+      "infra/ff-news-feed/.github/workflows/update-news.yml",
+      "infra/ff-news-feed/README.md",
+      "infra/ff-news-feed/ff-high-impact.json",
+      "infra/ff-news-feed/scripts/fetch_news.py",
+      "infra/monthly-economic-feed/build_package.py",
+      "infra/monthly-economic-feed/data/monthly-economic-2026-10.json",
+      "src/js/00-core/07-workspace-backup.js",
+      "src/js/40-app/07-finalize-session.js",
+      "src/js/40-app/15-ff-news.js",
+      "src/js/40-app/16-monthly-economic-data.js",
+      "src/js/40-app/19-calendar-agenda.js",
+      "src/js/manifest.json",
+      "src/styles/app.css",
+      "src/vendor/downloads/leverage-daily-source-payload.js",
+      "src/vendor/downloads/leverage-native-kit-payload.js",
+      "src/vendor/downloads/leverage-native-pin-payload.js",
+      "src/vendor/downloads/leverage-preview-payload.js",
+      "src/vendor/downloads/leverage-preview-payload.json",
+      "src/vendor/downloads/leverage-source-payload.js",
+      "src/vendor/market-hours/runtime-payload.js",
+      "tools/calendar_agenda_test.py",
+      "tools/calendar_distribution_test.py",
+      "tools/calendar_recovery_test.py",
+      "tools/ff_news_cache_test.py",
+      "tools/monthly_economic_feed_test.py",
+      "tools/nocuda_tools_test.py",
+      "tools/regression-memory.json"
+    ],
+    "pendingEntries": 108,
+    "pendingPathsMissing": []
+  },
+  "freeze": {
+    "createdAt": "2026-10-28T21:52:11.680745+00:00",
+    "expectedBuild": "5b4ef1141c9583bf",
+    "actualBuild": "5b4ef1141c9583bf",
+    "inputs": 1643,
+    "mismatches": []
+  },
+  "sameAsPriorReviewed": {
+    "tools/quality_gate.py": {
+      "same": true,
+      "before": "51fae2e0a9b25972d68c9d8e70023d28536fb4f590e386e8a518eecc568ab84d",
+      "current": "51fae2e0a9b25972d68c9d8e70023d28536fb4f590e386e8a518eecc568ab84d"
+    },
+    "tools/ui_visual_quality_test.py": {
+      "same": true,
+      "before": "2dacc347c77eade52358e1342d223e619f3e40250a03e47f1e556cae67a7370a",
+      "current": "2dacc347c77eade52358e1342d223e619f3e40250a03e47f1e556cae67a7370a"
+    },
+    "tools/calendar_visual_quality_test.py": {
+      "same": true,
+      "before": "0c5c948231a87ec3ce5e1e51292c96ef1e58b0b6865faa161d63014c144da883",
+      "current": "0c5c948231a87ec3ce5e1e51292c96ef1e58b0b6865faa161d63014c144da883"
+    },
+    "AGENTS.md": {
+      "same": true,
+      "before": "05b7504d63a85aee41af9e7721f3d5a74f56a3905ccf023f69b1be2fcaf23ac0",
+      "current": "05b7504d63a85aee41af9e7721f3d5a74f56a3905ccf023f69b1be2fcaf23ac0"
+    },
+    "tools/monthly_economic_feed_test.py": {
+      "same": false,
+      "before": "7b38cea6b46e6134b6ea2ce7572ffcaafac76d432068d602133ff2bf5b1a2da3",
+      "current": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89"
+    },
+    "tools/calendar_agenda_test.py": {
+      "same": false,
+      "before": "f4e2f495c9501b832d0e21323d82628c8fae044d62f94be7a6affd89502cf46c",
+      "current": "3eaf710b4a63c5302a394bf905e2ffd094c7ab61303b5d64dc9223df3c3104de"
+    },
+    "tools/calendar_recovery_test.py": {
+      "same": true,
+      "before": "93a910911854a4a4cc889c9dd83e11cd4a41968b6238c2217845e37ee0839aad",
+      "current": "93a910911854a4a4cc889c9dd83e11cd4a41968b6238c2217845e37ee0839aad"
+    },
+    "tools/calendar_distribution_test.py": {
+      "same": false,
+      "before": "05628c8c6adf4ed35d9e53d8f949fbea2597dcdc0bc7d97e02b20ae939eeef3f",
+      "current": "39b43a33a40d3f911f806b82364348c7a5498f0d542001b6ac8b06e6aa906570"
+    },
+    "tools/ff_news_cache_test.py": {
+      "same": true,
+      "before": "5a2821e0330885af5b589cf0d3fdd66603be451eed3209190f65a5b1ac9a9f42",
+      "current": "5a2821e0330885af5b589cf0d3fdd66603be451eed3209190f65a5b1ac9a9f42"
+    },
+    "tools/economic_calendar_feed_runtime_test.js": {
+      "same": true,
+      "before": "2162c48cdd0b7d945a9e2dfb2c57a1fabf34191f4ff8d98f81f12acd9233b07f",
+      "current": "2162c48cdd0b7d945a9e2dfb2c57a1fabf34191f4ff8d98f81f12acd9233b07f"
+    },
+    "tools/ff_calendar_collector_test.py": {
+      "same": true,
+      "before": "cb07378716e41b1577a29b1cd9fe70b861b20b2e759e7c4085a69194decf20a7",
+      "current": "cb07378716e41b1577a29b1cd9fe70b861b20b2e759e7c4085a69194decf20a7"
+    },
+    "infra/ff-news-feed/scripts/fetch_news.py": {
+      "same": true,
+      "before": "955906fe8ad88b7e079b2f293112a19e7fe90335f83c89c6ff7278ae6af14d1a",
+      "current": "955906fe8ad88b7e079b2f293112a19e7fe90335f83c89c6ff7278ae6af14d1a"
+    },
+    "src/js/40-app/19-calendar-agenda.js": {
+      "same": true,
+      "before": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+      "current": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4"
+    },
+    "src/js/40-app/15-ff-news.js": {
+      "same": true,
+      "before": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+      "current": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d"
+    },
+    "src/js/40-app/16-monthly-economic-data.js": {
+      "same": false,
+      "before": "ae45bc1586eacd614234a782845fb0e438c05b785076ed27abb0c3e8c2b2f486",
+      "current": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10"
+    }
+  },
+  "gateAndVisualPreserved": {
+    "AGENTS.md": true,
+    "tools/quality_gate.py": true,
+    "tools/ui_visual_quality_test.py": true,
+    "tools/calendar_visual_quality_test.py": true
+  },
+  "payloads": {
+    "src/vendor/downloads/leverage-daily-source-payload.js": {
+      "onlyBuildIdChanged": true,
+      "sha256": "853d2b74abad0d43f9481a34d715d4738580061bdbd2ee98f91eff6602539229"
+    },
+    "src/vendor/downloads/leverage-native-kit-payload.js": {
+      "onlyBuildIdChanged": true,
+      "sha256": "77d1a44c14a654dfe7b2ddc16df985ebb5af3de23fc47dc4a2918f4a06e5ed8a"
+    },
+    "src/vendor/downloads/leverage-native-pin-payload.js": {
+      "onlyBuildIdChanged": true,
+      "sha256": "e01a7d8d5f344bc657bb6cbceea1f0e09538f715270ff30c4ff6b2cfba3d66f1"
+    },
+    "src/vendor/downloads/leverage-preview-payload.js": {
+      "onlyBuildIdChanged": true,
+      "sha256": "8ac3d9e9147c67e7138a7f308bff30391940dc9e6b3f21e77691fb4d06abf501"
+    },
+    "src/vendor/downloads/leverage-preview-payload.json": {
+      "onlyBuildIdChanged": true,
+      "sha256": "8bb5eb81d7f7d38f05cbfc5720c3c982c8e4c9c3eea958a275bf5ff63ce51289"
+    },
+    "src/vendor/downloads/leverage-source-payload.js": {
+      "onlyBuildIdChanged": true,
+      "sha256": "6d176829855d4803c33bc4107b01c9e20e1f324502f444105229d82c635a879a"
+    },
+    "src/vendor/market-hours/runtime-payload.js": {
+      "onlyBuildIdChanged": true,
+      "sha256": "d89e8fee6f4c2f2733054bb182f34f31c1b8c4db4dfc99983eaa1df84a946304"
+    }
+  },
+  "sourceHashes": {
+    "infra/ff-news-feed/.github/workflows/update-news.yml": "9ba37cdc7bd47a6d9bdbcdc8f43e294d4da73735a95b1a32e91d65f7d77dec48",
+    "infra/ff-news-feed/README.md": "2efebf90a2d533f6933fcdf2278117929cfeade7b8ccd6369be04dc0efc2fa82",
+    "infra/ff-news-feed/ff-high-impact.json": "afc5328b1f42bd5259cb735aa623af948703049901d338dee9d93d874d01c78b",
+    "infra/ff-news-feed/scripts/fetch_news.py": "955906fe8ad88b7e079b2f293112a19e7fe90335f83c89c6ff7278ae6af14d1a",
+    "infra/monthly-economic-feed/build_package.py": "58c371f6d363d8df007f9ce3f8228c403a80e0beb814f624efa84efad811cd41",
+    "infra/monthly-economic-feed/data/monthly-economic-2026-10.json": "7a447e68c8bb3dea3e413f4824428509d84befec9dd1a467b715b337991d427f",
+    "src/js/00-core/07-workspace-backup.js": "e7c9144ed5f48c4a169fdcbc483c0e59931b902c88b7a1d8fb79eee2a4509207",
+    "src/js/40-app/07-finalize-session.js": "3ed7107b6838d2e6388a66639c5231a2851a5c97238268761eb8f6e960a8d508",
+    "src/js/40-app/15-ff-news.js": "5da1ed66aada0b0526d3a364f3352b785a12aa60aaedc97f5e0460232b95ed8d",
+    "src/js/40-app/16-monthly-economic-data.js": "cea68b4fa3303582abc1431152258a3ef171973901c91e7a4ba558d6a903ff10",
+    "src/js/40-app/19-calendar-agenda.js": "75c783bde598e03012648695de2e923cecf93509124d6d377daefc3b757616c4",
+    "src/js/manifest.json": "11b6e2a9e8e510eb6163a3e12ad5bea56ccfc527032184b1bc8e0340f4e44223",
+    "src/styles/app.css": "3bc75488d2013b5b5febc435a05c6cd5183317fb353a6c2cbaaf8396f7255b47",
+    "src/vendor/downloads/leverage-daily-source-payload.js": "853d2b74abad0d43f9481a34d715d4738580061bdbd2ee98f91eff6602539229",
+    "src/vendor/downloads/leverage-native-kit-payload.js": "77d1a44c14a654dfe7b2ddc16df985ebb5af3de23fc47dc4a2918f4a06e5ed8a",
+    "src/vendor/downloads/leverage-native-pin-payload.js": "e01a7d8d5f344bc657bb6cbceea1f0e09538f715270ff30c4ff6b2cfba3d66f1",
+    "src/vendor/downloads/leverage-preview-payload.js": "8ac3d9e9147c67e7138a7f308bff30391940dc9e6b3f21e77691fb4d06abf501",
+    "src/vendor/downloads/leverage-preview-payload.json": "8bb5eb81d7f7d38f05cbfc5720c3c982c8e4c9c3eea958a275bf5ff63ce51289",
+    "src/vendor/downloads/leverage-source-payload.js": "6d176829855d4803c33bc4107b01c9e20e1f324502f444105229d82c635a879a",
+    "src/vendor/market-hours/runtime-payload.js": "d89e8fee6f4c2f2733054bb182f34f31c1b8c4db4dfc99983eaa1df84a946304",
+    "tools/calendar_agenda_test.py": "3eaf710b4a63c5302a394bf905e2ffd094c7ab61303b5d64dc9223df3c3104de",
+    "tools/calendar_distribution_test.py": "39b43a33a40d3f911f806b82364348c7a5498f0d542001b6ac8b06e6aa906570",
+    "tools/calendar_recovery_test.py": "93a910911854a4a4cc889c9dd83e11cd4a41968b6238c2217845e37ee0839aad",
+    "tools/ff_news_cache_test.py": "5a2821e0330885af5b589cf0d3fdd66603be451eed3209190f65a5b1ac9a9f42",
+    "tools/monthly_economic_feed_test.py": "9a0b8b35967aee84e269f2043855ee963ae317f0e1219de3141b14c6e1de0d89",
+    "tools/nocuda_tools_test.py": "b9a77e28c93c4df91dfba0ee2920348c914206653d159ed69b0fecf422fb187b",
+    "tools/regression-memory.json": "cfbbb90c05579a8a8678ea20849b9adaa96eb5615870fdf7e7e7b839a6cd13cd"
+  },
+  "independentScopeExcludesOwnMetadataPatch": true
+}

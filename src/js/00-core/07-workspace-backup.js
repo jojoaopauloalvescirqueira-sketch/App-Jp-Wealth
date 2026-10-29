@@ -82,7 +82,7 @@ function jpwWorkspaceValidate(value){
     if(raw===null)continue;
     if(key==='jpwealth_calendar_view_v1'){
       const preference=JSON.parse(raw);
-      const enums={currencies:['USD','GBP','JPY','NZD','CHF'],impacts:['high','medium','low','unclassified'],contents:['economic','personal','app']};
+      const enums={currencies:['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'],impacts:['high','medium','low','unclassified'],contents:['economic','personal','app']};
       if(!jpwWorkspaceObject(preference)||preference.schemaVersion!==1||Object.keys(preference).some(field=>!['schemaVersion',...Object.keys(enums)].includes(field))||
         Object.entries(enums).some(([field,allowed])=>!Array.isArray(preference[field])||preference[field].length>allowed.length||new Set(preference[field]).size!==preference[field].length||preference[field].some(value=>!allowed.includes(value))))
         throw new Error('Preferência do calendário inválida.');

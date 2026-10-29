@@ -49,9 +49,9 @@ def journey(page,row):
     assert cursor['progress']['steps']=={},'Starting is not proof of reading/practice'
     # Snapshot boundaries supplied by the catalog are independent of the controller.
     chapters=page.evaluate('JPWLearningCatalog.journey')
-    assert [c['id'] for c in chapters]==['basics','research','planning','forex','personal-finance','tools','alladin','general']
+    assert [c['id'] for c in chapters]==['basics','research','management','planning','forex','personal-finance','tools','alladin','general']
     before_ids=[]
-    for index in [0,1,2]:
+    for index in [0,1,2,3]:
         last=chapters[index]['stepIds'][-1];target=chapters[index+1]['stepIds'][0]
         assert page.evaluate('(stepId)=>JPWLearningGuide.startJourney({stepId})',last)
         page.locator('#jpwLearningSkip').click()

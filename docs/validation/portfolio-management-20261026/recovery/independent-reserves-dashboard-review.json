@@ -1,0 +1,94 @@
+{
+  "review": "Independent read-only critique of rejected native context selection fix and restored weekly cache consumer",
+  "created_at": "2026-10-27T00:02:04.735084+00:00",
+  "status": "NO_BLOCKING_FINDINGS_IN_BOUNDED_PATCHES; final FULL not rerun/approved by this review",
+  "findings": [],
+  "independence_limit": "Reviewer authored the earlier Reserve guard and navigation integration. This pass independently examines parent-authored cached-markup refusal fix and parent/other-agent Dashboard restoration; not independent certification of all underlying guard code.",
+  "reserves": {
+    "actual_red": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/reserves-red.log",
+    "red_observed": "Line46 declined native account selector still showed fx_B while accepted Management context remained fx_A",
+    "cause_confirmed_by_source": "installContext caches contextHTML by accepted selection; native select changes value without changing cached HTML string. Recalling installContext on refusal therefore cannot reset live value when markup is equal.",
+    "patch_references": [
+      "src/js/30-accounting/07-management/03-ui.js:77-83",
+      "src/js/30-accounting/07-management/03-ui.js:175-186"
+    ],
+    "review": "Only refusal branch restores current accepted account/period/year .value after existing installation. It does not replace matching markup nodes, set selection=next, clear Reserve/annual drafts, call financial commands or refresh captured epoch/revision. Focus return target remains the real control. The delayed apply closure still requires explicit guard resolution.",
+    "control_references": [
+      "tools/management_reserves_draft_test.py:41-52"
+    ],
+    "prior_parent_browser_focal": {
+      "receipt": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/reserves-green.log",
+      "groups": 12,
+      "status": "PASS as read from receipt; no browser executed by this reviewer"
+    },
+    "independent_pure_counterproof": {
+      "receipt": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/reserve-context-refusal-counterproof.json",
+      "script": "/private/tmp/jpw-portfolio-management-20261026/recovery-focals/reserve-context-refusal-counterproof.cjs",
+      "exit_code": 0,
+      "cases": 8,
+      "positive": 5,
+      "mutants_rejected": 3,
+      "limits": "Synthetic DOM-like control objects execute the actual extracted changeContext function; does not replace actual browser focus/selection regression."
+    }
+  },
+  "dashboard_weekly_economy": {
+    "actual_red": {
+      "full_raw": "/private/tmp/jpw-portfolio-management-20261026/full-final.json",
+      "ff_raw": "tools/.artifacts/app-efficiency-full-20261026T200833685908/ff-news-cache.json",
+      "ff_counts": {
+        "PASS": 152,
+        "PRODUCT_FAIL": 32
+      },
+      "example_failures": [
+        "1440-light/quota-old dashboard storage warning",
+        "1440-light/quota-old prior payload remains visible"
+      ],
+      "pure_red": "/private/tmp/jpw-portfolio-management-20261026/dashboard-economic-recovery-execution/red-pure.log"
+    },
+    "cause_and_scope": "Scoped Dashboard change removed an existing informational weekly/cache projection despite no approved replacement for that reader. Restoration consumes the existing ecalEvents/ffNewsStatusText and canonical Tools route while retaining only two Portfolio study destinations.",
+    "source_references": [
+      "src/js/20-ui/25-dash-macro.js:258-277",
+      "src/js/40-app/17-economic-calendar.js:27-33",
+      "src/js/40-app/15-ff-news.js:35-64",
+      "src/js/40-app/15-ff-news.js:73-94",
+      "src/js/40-app/15-ff-news.js:205-209"
+    ],
+    "review": [
+      "Null or unreadable cache remains unknown, not zero events; issue text is kept through existing status reader.",
+      "Only existing sanitized high-impact/currency payload is read; no new feed/network/timer/cache writer or financial calculation added.",
+      "Title/country/date output is escaped, and Tools calendar CTA does not reintroduce a Portfolio calendar submenu.",
+      "Monthly calendar and filters are not falsely claimed as the source of this weekly informational summary.",
+      "Frozen Portfolio is removed before economic reader is invoked."
+    ],
+    "controls_review": [
+      "tools/management_dashboard_notes_test.js:24 preserves two studies/removal of placeholders and asserts one shared reader/canonical Tools CTA",
+      "tools/management_dashboard_notes_test.js:28 adds no-read when Portfolio frozen",
+      "tools/management_dashboard_notes_test.js:35 adds escaped event title/source warning and unchanged state",
+      "tools/dashboard_macro_test.py:513-529 restores actual refresh/focus/XSS behavior",
+      "tools/dashboard_macro_test.py:546-564 preserves exact local date/time/title with explicit canonical comparison",
+      "tools/dashboard_macro_test.py:585-592 proves full calendar CTA targets Tools"
+    ],
+    "critical_oracles_unchanged": {
+      "git_diff_quiet_HEAD_exit": 0,
+      "files": [
+        "tools/ff_news_cache_test.py",
+        "tools/notification_efficiency_test.py"
+      ]
+    },
+    "receipts_read_not_reexecuted": [
+      "/private/tmp/jpw-portfolio-management-20261026/dashboard-economic-recovery-execution/receipt.json",
+      "/private/tmp/jpw-portfolio-management-20261026/dashboard-economic-recovery-execution/green-pure.log"
+    ],
+    "pending": "Browser FF/cache and Dashboard macro focals plus final stable FULL still required; pure source review is not an override."
+  },
+  "operations": "No product/test/gate/generated artifact edited; only scratch independent counterproof and receipt written. No browser or full suite started.",
+  "source_sha256": {
+    "src/js/30-accounting/07-management/03-ui.js": "83472c25acd443838c98b0f236403193ed0bdcbc12f203869e0dfd41ec4d27db",
+    "tools/management_reserves_draft_test.py": "33ce486c5f07d1345d266a9065dd0ca62196a07a33d20dad70e4ca9f94f27cac",
+    "src/js/20-ui/25-dash-macro.js": "f25b50180ed1f3ddfed8bcb38e9bee950703eecae0f9b8fbfe11c71f7317b882",
+    "tools/dashboard_macro_test.py": "2180e0a007906272413a797fc6f287270e40391c8f4c742769b1f2fadcf861a6",
+    "tools/management_dashboard_notes_test.js": "9e85afa776f72b3fcab21be875e4df7c66a4259b8dde8508331ccaad470608ba",
+    "tools/ff_news_cache_test.py": "6030fb4d00c2da7ef53589b892d9bbcc9d077bd170e5d128532d192de307c132",
+    "tools/notification_efficiency_test.py": "e29a094f59d70c2d885164167c5f707061f31785bcc7b3b833cabf9a5a923b8d"
+  }
+}

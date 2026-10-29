@@ -1,0 +1,7 @@
+{
+  "classification": "TEST_HARNESS_FAIL",
+  "cause": "Frozen gate catalog113 does not yet declare the three approved Hedge checks",
+  "error": "('approved gate sequence changed; preflight and tier boundaries must be preserved', 'STANDARD')",
+  "oldchecksPreserved": 113,
+  "newtotal": 116
+}

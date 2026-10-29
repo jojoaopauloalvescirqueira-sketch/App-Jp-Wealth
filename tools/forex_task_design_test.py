@@ -22,7 +22,7 @@ def geometry(p):
 def safe(p):
  d=geometry(p);assert d['scroll']<=d['width']+1,d
  assert d['notes'],'Global Notes must remain available in Forex when Mostrar is enabled'
- assert p.locator('#forexNotesToggle').is_visible()
+ assert p.locator('#forexNotesToggle').is_visible()==p.evaluate("JPWNavigation.current().primary==='forex'"),'Forex Notes shortcut follows its owner; global Notes remains available'
  return d
 def planning_safe(p):
  d=geometry(p);assert d['scroll']<=d['width']+1,d
@@ -105,7 +105,7 @@ def main():
     for route in ['planning','forex-planning','fxplan']:
      go(p,route);planning_safe(p)
      assert p.evaluate("JPWPlanning.ui.getView()==='start'&&JPWPlanning.queries.snapshot().accounts.length===0")
-    assert p.evaluate("JPWNavigation.children('forex').map(r=>r.id)")==['forex-consolidated','forex-management-accounts','forex-operation','forex-history','forex-accounting','forex-reserves']
+    assert p.evaluate("JPWNavigation.children('forex').map(r=>r.id)")==['forex-consolidated','forex-management-accounts','forex-operation','forex-history']
     assert financial(p)==before and p.evaluate('JSON.stringify(S)')==document
     assert p.evaluate('JPWForex.state.operationalSelection()')==operational
     return {'owner':'planning','aliases':['forex-planning','fxplan'],'operationalUnchanged':True,'noAutomaticAccountImport':True}
@@ -113,7 +113,7 @@ def main():
    def cross_area_keyboard():
     p.set_viewport_size({'width':390,'height':844});p.evaluate("mountNavigationLayout('topbar')");settle(p)
     before=financial(p);results=[]
-    for key,expected in [('ArrowDown','forex-consolidated'),('ArrowUp','forex-reserves')]:
+    for key,expected in [('ArrowDown','forex-consolidated'),('ArrowUp','forex-management-accounts')]:
      go(p,'research-forex')
      p.locator('[data-shell-menu-toggle]').click();p.locator('#execNavTrigger').focus();p.keyboard.press(key);settle(p)
      assert p.evaluate('JPWNavigation.current().primary')=='forex'

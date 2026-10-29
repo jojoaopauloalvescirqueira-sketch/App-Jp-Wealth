@@ -1,0 +1,28 @@
+{
+  "attempt": 6,
+  "started_at_client": "2026-10-28T10:21:39.639380-03:00",
+  "supervisor_pid": 84802,
+  "guard_pid": 84806,
+  "awake_assertions_before_gate": [
+    "   pid 84806(caffeinate): [0x001117ac00018958] 00:00:00 PreventUserIdleSystemSleep named: \"caffeinate command-line tool\"  ",
+    "\tDetails: caffeinate asserting on behalf of Process ID 84802",
+    "\tCreated for PID: 84802. ",
+    "\tLocalized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.",
+    "   pid 84806(caffeinate): [0x001117ac00058959] 00:00:00 PreventUserIdleDisplaySleep named: \"caffeinate command-line tool\"  ",
+    "\tDetails: caffeinate asserting on behalf of Process ID 84802",
+    "\tCreated for PID: 84802. ",
+    "\tLocalized=THE CAFFEINATE TOOL IS PREVENTING SLEEP."
+  ],
+  "command": [
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+    "tools/quality_gate.py",
+    "--tier",
+    "full",
+    "--artifact",
+    "docs/validation/hedge-prop-20261027/full-final.json"
+  ],
+  "frozen_inputs": 1621,
+  "build": "09cfa4f7b8a8dbed",
+  "permanent_power_settings_changed": false,
+  "gate_pid": 84808
+}

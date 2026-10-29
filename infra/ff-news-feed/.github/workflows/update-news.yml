@@ -1,10 +1,6 @@
-# Atualiza ff-high-impact.json a cada 30 minutos com o calendário de alto
-# impacto do Forex Factory (filtrado em scripts/fetch_news.py). Só commita
-# quando o conteúdo realmente mudou — semanas quietas não geram ruído.
-#
-# Nota: o GitHub pausa agendamentos após ~60 dias sem atividade no repositório;
-# se o widget mostrar dado velho, entre em Actions e clique "Run workflow".
-name: Atualizar notícias de alto impacto
+# TEMPLATE LOCAL para o repositório público de dados, sem ativação nesta entrega.
+# O job exige habilitação externa explícita após revisão da permissão e do deploy.
+name: Atualizar calendário econômico público
 
 on:
   schedule:
@@ -16,21 +12,22 @@ permissions:
 
 jobs:
   update:
+    if: vars.JPW_ECONOMIC_FEED_V2_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Buscar e filtrar o feed
-        run: python3 scripts/fetch_news.py
+      - name: Capturar uma vez e derivar os dois recortes
+        run: python3 scripts/fetch_news.py --fetch-ff
 
-      - name: Commitar somente se houve mudança
+      - name: Publicar somente dados validados após habilitação
         run: |
-          if git diff --quiet -- ff-high-impact.json; then
+          if git diff --quiet -- ff-high-impact.json economic-calendar.json data/snapshots; then
             echo "sem mudanças — nada a commitar"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ff-high-impact.json
-          git commit -m "chore: atualizar notícias de alto impacto"
+          git add ff-high-impact.json economic-calendar.json data/snapshots
+          git commit -m "chore: atualizar calendário econômico público"
           git push

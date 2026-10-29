@@ -1,0 +1,38 @@
+{
+  "visual": {
+    "rawPath": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261029T112325182239/ui-visual-quality/ui-visual-quality-results.json",
+    "rawSHA256": "218942eec221236b38efdb335c91d2a5c45c5b199cea908614782b6c952e8b60",
+    "rawBytes": 20916323,
+    "compressedCopy": "visual-raw.json.gz",
+    "compressedSHA256": "c1a40d375315a8cbc9a5e2df2434b8fd9ac3461e114f5c9e12b760d11c9d81cc",
+    "compressedBytes": 1261851,
+    "roundtripExact": true
+  },
+  "calendar": {
+    "rawPath": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261029T112325182239/calendar-agenda.json",
+    "rawSHA256": "5c324f0cd03dc35c138592345fb8dfebe966344f0a5b86a0cc8e6d0ea6f01349",
+    "rawBytes": 458852,
+    "compressedCopy": "calendar-raw.json.gz",
+    "compressedSHA256": "eab94581845e19ca431f54e611ab73953ba14dd103ffd5f08ced3df85c46d56a",
+    "compressedBytes": 23061,
+    "roundtripExact": true
+  },
+  "distribution": {
+    "rawPath": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261029T112325182239/calendar-distribution.json",
+    "rawSHA256": "26553f036d06f3784af4fec69ddc03a28198c32906a8cebe3f021bd082248da4",
+    "rawBytes": 235958,
+    "compressedCopy": "distribution-raw.json.gz",
+    "compressedSHA256": "9ca6f41b1b17769c8efa4b9f14363026b0652cb839de72577b5b9586a69bc83d",
+    "compressedBytes": 22440,
+    "roundtripExact": true
+  },
+  "ff": {
+    "rawPath": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261029T112325182239/ff-news-cache.json",
+    "rawSHA256": "2b99ed88702460907f71fca0564104088c8130d7e3d66e1ce195499741c216dc",
+    "rawBytes": 3312918,
+    "compressedCopy": "ff-raw.json.gz",
+    "compressedSHA256": "b52a6c7206b5ae0af11e172f197d1c954a2dc5e49e1827b3d63bc5f62d56b300",
+    "compressedBytes": 318708,
+    "roundtripExact": true
+  }
+}

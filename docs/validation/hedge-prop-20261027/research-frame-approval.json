@@ -1,0 +1,7 @@
+{
+  "authorization": "Human user call_7c89767f19364792a2af99d97b9ce7c5: Autorizar ajuste delimitado e validação",
+  "applied_sha256": "2315d2aaf8c41ebfd36e0d3571a821ce80923566bc41f6a931d41c5c2add0dc7",
+  "candidate_matches_reviewed": true,
+  "application_changes": false,
+  "independentPostApplyAudit": "PASS: only Research changed among1620 frozen inputs; exact reviewed candidate/AST/patch and counterproof hashes match; no browser run by reviewer"
+}

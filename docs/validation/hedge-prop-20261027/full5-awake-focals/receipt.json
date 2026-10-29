@@ -1,0 +1,37 @@
+{
+  "started_at_client": "2026-10-28T00:51:20.596862-03:00",
+  "scope": "Sequential original tests after FULL5; no assertions/source/timeouts changed",
+  "supervisor_pid": 81072,
+  "awake_guard_pid": 81074,
+  "checks": [
+    {
+      "name": "alladin-ui-crud",
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/alladin_ui_crud_test.py"
+      ],
+      "started_at_client": "2026-10-28T00:51:20.596996-03:00",
+      "finished_at_client": "2026-10-28T00:52:03.585756-03:00",
+      "exit": 0,
+      "active_seconds": 42.988913249999996,
+      "log": "/private/tmp/jpw-hedge-prop-20261027/full5-awake-focals/alladin-ui-crud.log",
+      "log_sha256": "64c5fb863342883533bbed1f461be525fe357bde5d75fc269f37c620029c4b79"
+    },
+    {
+      "name": "planning-proportions",
+      "command": [
+        "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/bin/python3",
+        "tools/planning_proportions_test.py",
+        "--out",
+        "/private/tmp/jpw-hedge-prop-20261027/full5-awake-focals/planning-proportions"
+      ],
+      "started_at_client": "2026-10-28T00:52:03.586903-03:00",
+      "finished_at_client": "2026-10-28T00:52:55.742749-03:00",
+      "exit": 0,
+      "active_seconds": 52.155845334000006,
+      "log": "/private/tmp/jpw-hedge-prop-20261027/full5-awake-focals/planning-proportions.log",
+      "log_sha256": "b1c3fc5f8d1ef2f1f35bc9fdb0030c8c0017858632dd010d75ea7731d022cd65"
+    }
+  ],
+  "finished_at_client": "2026-10-28T00:52:55.743199-03:00"
+}

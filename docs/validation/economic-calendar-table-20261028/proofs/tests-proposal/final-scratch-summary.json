@@ -1,0 +1,95 @@
+{
+  "classification": "PASS; current final five and corrected counterproof v2 only",
+  "all_five_candidates_match_frozen_manifest": true,
+  "five_cases": {
+    "calendar-table-natural-1440-light": "PASS",
+    "calendar-table-compact-390-dark": "PASS",
+    "calendar-table-wide-2400-light": "PASS",
+    "calendar-table-state-1440-light": "PASS",
+    "calendar-table-boundaries-1440-light": "PASS"
+  },
+  "counterproofs": {
+    "CP01-zero-is-not-absence": {
+      "result": "PASS",
+      "oracle_function": "assert_values",
+      "oracle_line": 58
+    },
+    "CP02-actual-not-invented": {
+      "result": "PASS",
+      "oracle_function": "assert_values",
+      "oracle_line": 58
+    },
+    "CP03-all-values-visible-compact": {
+      "result": "PASS",
+      "oracle_function": "assert_layout",
+      "oracle_line": 93
+    },
+    "CP04-actual-explanation": {
+      "result": "PASS",
+      "oracle_function": "assert_values",
+      "oracle_line": 66
+    },
+    "CP05-header-real-bounds": {
+      "result": "PASS",
+      "oracle_function": "assert_layout",
+      "oracle_line": 101
+    },
+    "CP06-numeric-ink-right": {
+      "result": "PASS",
+      "oracle_function": "assert_layout",
+      "oracle_line": 97
+    },
+    "CP07-no-seven-columns-at719": {
+      "result": "PASS",
+      "oracle_function": "assert_layout",
+      "oracle_line": 91
+    },
+    "CP08-critical-warning-stays-visible": {
+      "result": "PASS",
+      "oracle_function": "table_case",
+      "oracle_line": 171
+    },
+    "CP09-only-one-detail": {
+      "result": "PASS",
+      "oracle_function": "table_case",
+      "oracle_line": 179
+    },
+    "CP10-controls-target-own-host": {
+      "result": "PASS",
+      "oracle_function": "details",
+      "oracle_line": 33
+    },
+    "CP11-changed-instant-not-same-observation": {
+      "result": "PASS",
+      "oracle_function": "table_case",
+      "oracle_line": 193
+    },
+    "CP12-draft-cursor-survives-refresh": {
+      "result": "PASS",
+      "oracle_function": "table_case",
+      "oracle_line": 215
+    }
+  },
+  "economic_focus_existing_case": {
+    "result": "PASS",
+    "receipt": "overlay-state-5.json",
+    "same_overlay_as_final": true,
+    "same_candidate_tests_as_final": true
+  },
+  "product_root_hashes": {
+    "src/js/40-app/19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+    "src/styles/app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38"
+  },
+  "limits": {
+    "new_five_files_applied_by_this_agent": false,
+    "repo_edits": false,
+    "FULL": "NOT_RUN",
+    "native": "NOT_RUN",
+    "generators": "NOT_RUN",
+    "distribution": "NOT_RUN"
+  },
+  "counterproofs_v1_effective_classification": "TEST_HARNESS_FAIL; original12/12 does not approve12properties; raw preserved",
+  "counterproofs_v2_receipt": "counterproofs-final-v2/receipt.json",
+  "v2_launcher_sha256": "9e1b4cff1b6c4c6e4eed37f6569165dba9066a555cbfc8331a29fb97faf55260",
+  "frozen_candidates_unchanged": true
+}

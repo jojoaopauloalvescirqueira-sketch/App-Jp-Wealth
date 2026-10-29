@@ -1,0 +1,500 @@
+{
+  "results": [
+    {
+      "case": "calendar-ui-1440-light",
+      "result": "PASS",
+      "geometry": {
+        "w": 758,
+        "sw": 758,
+        "cw": 758,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-1440-dark",
+      "result": "PASS",
+      "geometry": {
+        "w": 758,
+        "sw": 758,
+        "cw": 758,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-390-light",
+      "result": "PASS",
+      "geometry": {
+        "w": 364,
+        "sw": 364,
+        "cw": 364,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-390-dark",
+      "result": "PASS",
+      "geometry": {
+        "w": 364,
+        "sw": 364,
+        "cw": 364,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-320-light",
+      "result": "PASS",
+      "geometry": {
+        "w": 320,
+        "sw": 320,
+        "cw": 320,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-ui-320-dark",
+      "result": "PASS",
+      "geometry": {
+        "w": 320,
+        "sw": 320,
+        "cw": 320,
+        "icons": [
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "w": 44,
+            "h": 44,
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "workflows": [
+          "keyboard",
+          "dismiss-draft",
+          "filters",
+          "overlay-guard",
+          "task-save-complete",
+          "focus-cursor-refresh",
+          "stale-review",
+          "explicit-DST-choice",
+          "exclusive-midnight"
+        ]
+      }
+    },
+    {
+      "case": "calendar-edges-320-light",
+      "result": "PRODUCT_FAIL",
+      "evidence": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py\", line 479, in main\n    details=include_new_currencies(page) if kind=='include-new' else economic_focus(page) if kind=='economic-focus' else info_focus(page) if kind=='info-focus' else preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)\n                                                                                                                                                                                                                                                                                   ^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py\", line 268, in edges\n    assert 'classificação editorial JP Wealth' in panel.locator('.calendar-info').inner_text()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "case": "calendar-lifecycle-320-light",
+      "result": "PASS",
+      "geometry": {
+        "header": {
+          "id": "headerCalendarBtn",
+          "label": "Abrir Calendário e Agenda",
+          "title": "Calendário e Agenda",
+          "expanded": "true",
+          "width": 44,
+          "height": 44,
+          "svg": 1
+        },
+        "priorCloseEvents": [
+          {
+            "open": true
+          }
+        ],
+        "reopenedActive": true,
+        "futureBackupMarkerRemoved": true,
+        "financialUnchangedExceptExplicitFixtureTimestamp": true,
+        "closeCounterproofs": {
+          "header": {
+            "id": "headerCalendarBtn",
+            "label": "Abrir Calendário e Agenda",
+            "title": "Calendário e Agenda",
+            "expanded": "true",
+            "width": 44,
+            "height": 44,
+            "svg": 1
+          },
+          "realClosures": [
+            {
+              "method": "original-button",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "Escape",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            },
+            {
+              "method": "native-close-event",
+              "open": false,
+              "timers": 0,
+              "activeRefreshes": 0,
+              "expanded": "false"
+            }
+          ],
+          "financialUnchanged": true
+        }
+      }
+    },
+    {
+      "case": "calendar-pref-read-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-read"
+      }
+    },
+    {
+      "case": "calendar-pref-extension-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-extension"
+      }
+    },
+    {
+      "case": "calendar-pref-duplicates-320-light",
+      "result": "PASS",
+      "geometry": {
+        "raw_bytes": "preserved",
+        "filter_interaction": "real checkbox",
+        "case": "pref-duplicates"
+      }
+    },
+    {
+      "case": "calendar-adjacent-selection-320-light",
+      "result": "PASS",
+      "geometry": {
+        "visible_month": "October retained",
+        "selected_adjacent": "2026-09-28",
+        "single_roving_focus": true,
+        "displayed_range": "selection only",
+        "read_only": true
+      }
+    },
+    {
+      "case": "calendar-adjacent-range-320-light",
+      "result": "PASS",
+      "geometry": {
+        "visible_month": "October retained",
+        "selected_adjacent": "2026-09-28",
+        "single_roving_focus": true,
+        "displayed_range": "2026-09-28 through 2026-11-01",
+        "read_only": true
+      }
+    },
+    {
+      "case": "calendar-feed-recovery-320-light",
+      "result": "PRODUCT_FAIL",
+      "evidence": "Locator expected to have count '5'\nActual value: 9 \nCall log:\n  - Expect \"to_have_count\" with timeout 5000ms\n  - waiting for locator(\"#calendarDialog .calendar-panel\").locator(\".calendar-info\").locator(\"[data-calendar-source]\")\n    14 × locator resolved to 9 elements\n       - unexpected value \"9\"\n",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py\", line 479, in main\n    details=include_new_currencies(page) if kind=='include-new' else economic_focus(page) if kind=='economic-focus' else info_focus(page) if kind=='info-focus' else preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)\n                                                                                                                                                                                                                                                                                                                                                                                                          ^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/calendar_agenda_test.py\", line 214, in feed_recovery\n    expect(info.locator('[data-calendar-source]')).to_have_count(5)\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/sync_api/_generated.py\", line 21776, in to_have_count\n    self._sync(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_assertions.py\", line 451, in to_have_count\n    await self._expect_impl(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_assertions.py\", line 123, in _expect_impl\n    _record_soft_or_raise(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_assertions.py\", line 60, in _record_soft_or_raise\n    raise error\nAssertionError: Locator expected to have count '5'\nActual value: 9 \nCall log:\n  - Expect \"to_have_count\" with timeout 5000ms\n  - waiting for locator(\"#calendarDialog .calendar-panel\").locator(\".calendar-info\").locator(\"[data-calendar-source]\")\n    14 × locator resolved to 9 elements\n       - unexpected value \"9\"\n\n"
+    },
+    {
+      "case": "calendar-info-focus-320-light",
+      "result": "PASS",
+      "geometry": {
+        "sourceLinkFocus": true,
+        "refreshButtonFocus": true,
+        "asyncRefreshFocus": true,
+        "financialUnchanged": true
+      }
+    },
+    {
+      "case": "calendar-economic-focus-320-light",
+      "result": "PASS",
+      "geometry": {
+        "exactObservationFocusPreserved": true,
+        "changedObservationNotConflated": true,
+        "financialUnchanged": true
+      }
+    },
+    {
+      "case": "calendar-include-new-320-light",
+      "result": "PASS",
+      "geometry": {
+        "oldFiveUnchangedOnOpen": true,
+        "explicitInclusionNine": true,
+        "otherPreferencesPreserved": true,
+        "financialUnchanged": true
+      }
+    }
+  ]
+}

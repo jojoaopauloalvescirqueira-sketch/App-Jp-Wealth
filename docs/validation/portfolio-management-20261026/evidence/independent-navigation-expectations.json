@@ -1,0 +1,49 @@
+{
+  "at": "2026-10-27T00:00:44.765616+00:00",
+  "scope": "Independent read-only critique of smoke/planning/PF test-only adaptation",
+  "verdict": "NO_BLOCKING_FINDING",
+  "findings": [],
+  "source": {
+    "tools/smoke_test.py": {
+      "sha256": "3d8bd4a4df6a088e1076076fc925c5b18e8aa31f2dfab5f874f527af3d979ff3",
+      "assertsBefore": 61,
+      "assertsAfter": 61,
+      "changedAssertions": 1
+    },
+    "tools/planning_navigation_test.js": {
+      "sha256": "881fdb669dcbba92b31f82bb37ce23aedfadaf85e47a9e82ce231044cb4bccb1",
+      "exactlyTwoArraysChanged": true,
+      "helperAndNoWriteOraclesUnchanged": true
+    },
+    "tools/finpes_navigation_test.py": {
+      "sha256": "208358931daf2ae71e1fe874abff33d542b1bb2470ea2f52c99574104d3ecd54",
+      "assertsBefore": 0,
+      "assertsAfter": 0,
+      "changedAssertions": 0
+    }
+  },
+  "evidence": [
+    "Actual raw FULL retained at102PASS/11PRODUCT_FAIL; three failures contain direct mismatch to exactly these approved changed navigation expectations.",
+    "Scratch AST normalization of approved scalar/route changes makes all other Python test statements identical to HEAD; planning text becomes identical after reverting exactly two arrays.",
+    "Real runtime source already declares eight identities/order and Management reserves screen; expected values come from the approved navigation contract, not an invented count."
+  ],
+  "counterproofs": {
+    "planningActualSuiteCases": 5,
+    "presentationActualOracleCases": 11,
+    "independentReplayExitCodes": [
+      0,
+      0
+    ],
+    "limitations": "Presentation counterproofs extract actual AST checks and feed synthetic objects. They verify oracle rejection, not real DOM, clicks, focus, hidden/inert or no-write browser behavior. Planning counterproofs execute actual code/functions and catch an injected write through the missing writer method of its read-only fixture, not browser storage."
+  },
+  "preserved": [
+    "Smoke exact primary identities/order and unique physical/canonical screen per route, header actions, storage, welcome, reset/wipe, financial fixture and Notes flows.",
+    "Planning legacy aliases, independent owner, six-item original raw preference equality and same production function extraction.",
+    "PF five views, exact label, domain boundary, hidden/inert, keyboard and no-financial-write functions; only current default ordinal changes05→06."
+  ],
+  "remaining": [
+    "Actual smoke and PF browser focals remain NOT_RUN in this independent review and are still required.",
+    "No claim that all eleven FULL failures are fixed by this three-file test adaptation.",
+    "No source, generated artifact, timeout/tolerance, gate identity, financial policy or application data edit performed."
+  ]
+}

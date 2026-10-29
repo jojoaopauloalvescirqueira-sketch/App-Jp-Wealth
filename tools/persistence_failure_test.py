@@ -123,8 +123,12 @@ def run_suite(browser, url, rotulo):
     assert page.evaluate("document.getElementById('persistenceAlert').querySelectorAll('button').length") == 1
     assert page.evaluate('jpWealthPersistenceFailure.count') == 6, 'contagem interna deveria acumular'
     # o aplicativo continua utilizável: navegação e drawer de Notas respondem
+    navigation_state=page.evaluate('JSON.stringify(S)')
+    navigation_disk=page.evaluate('localStorage.getItem(LSKEY)')
     page.evaluate("navigateToScreen('contab')")
-    assert page.evaluate("document.getElementById('exec').classList.contains('active') && !document.getElementById('contab').hidden && JPWExec.ui.getView()==='accounting'")
+    assert page.evaluate("JPWNavigation.current().canonical==='management-accounting' && JPWNavigation.current().primary==='management' && document.getElementById('management').classList.contains('active') && !document.getElementById('contab') && !document.getElementById('exec').classList.contains('active')")
+    assert page.evaluate('JSON.stringify(S)')==navigation_state
+    assert page.evaluate('localStorage.getItem(LSKEY)')==navigation_disk
     page.evaluate("navigateToScreen('dash')")
     page.locator('#headerNotesBtn').click()
     assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')")

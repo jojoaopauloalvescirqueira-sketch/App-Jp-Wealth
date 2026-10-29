@@ -1,0 +1,220 @@
+{
+  "source": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/.artifacts/app-efficiency-full-20261027T233826678834/planning-proportions/proporcoes-results.json",
+  "source_sha256": "9c1193340a0c856dcf3b8121aed671706e0808bc963aa762072e1cc20456a35e",
+  "classification": "TEST_HARNESS_FAIL",
+  "started_at": "2026-10-28T03:14:35.652800+00:00",
+  "finished_at": "2026-10-28T03:30:37.205629+00:00",
+  "source_unchanged": true,
+  "case_counts": {
+    "PASS": 93,
+    "TEST_HARNESS_FAIL": 1
+  },
+  "failed_case": {
+    "id": "matrix-submenu-light-1099x720",
+    "classification": "TEST_HARNESS_FAIL",
+    "started_at": "2026-10-28T03:14:49.336620+00:00",
+    "error": "Locator.click: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator(\"#pl-native-stopOpen\")\n    - locator resolved to <button type=\"button\" class=\"stop-link\" id=\"pl-native-stopOpen\">Planejar quando parar de aportar ↗</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n",
+    "trace": "Traceback (most recent call last):\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_proportions_test.py\", line 290, in execute\n    case['evidence'] = action()\n                       ^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_proportions_test.py\", line 451, in <lambda>\n    lambda: geometry_journey(page, width, height), page, out)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/tools/planning_proportions_test.py\", line 359, in geometry_journey\n    page.locator('#pl-native-stopOpen').click()\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/sync_api/_generated.py\", line 17422, in click\n    self._sync(\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_locator.py\", line 163, in click\n    return await self._frame._click(self._selector, strict=True, **params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_frame.py\", line 569, in _click\n    await self._channel.send(\"click\", self._timeout, locals_to_params(locals()))\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 69, in send\n    return await self._connection.wrap_api_call(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS/.superpowers/sdd/2026-10-21-planning-monthly-inline/runtime/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 559, in wrap_api_call\n    raise rewrite_error(error, f\"{parsed_st['apiName']}: {error}\") from None\nplaywright._impl._errors.TimeoutError: Locator.click: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator(\"#pl-native-stopOpen\")\n    - locator resolved to <button type=\"button\" class=\"stop-link\" id=\"pl-native-stopOpen\">Planejar quando parar de aportar ↗</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n\n",
+    "finished_at": "2026-10-28T03:30:01.658675+00:00"
+  },
+  "previous_case": {
+    "id": "matrix-glass-dark-1099x720",
+    "classification": "PASS",
+    "started_at": "2026-10-28T03:14:49.072573+00:00",
+    "evidence": {
+      "viewport": [
+        1099,
+        720
+      ],
+      "form": {
+        "left": 189.5,
+        "right": 909.5,
+        "top": 24,
+        "bottom": 696,
+        "width": 720,
+        "height": 672
+      },
+      "header": {
+        "header": {
+          "left": 190.5,
+          "right": 908.5,
+          "top": 25,
+          "bottom": 123.078125,
+          "width": 718,
+          "height": 98.078125
+        },
+        "title": {
+          "left": 216.5,
+          "right": 822.5,
+          "top": 75.1875,
+          "bottom": 105.078125,
+          "width": 606,
+          "height": 29.890625
+        },
+        "close": {
+          "left": 838.5,
+          "right": 882.5,
+          "top": 55.03125,
+          "bottom": 99.03125,
+          "width": 44,
+          "height": 44
+        }
+      },
+      "money": [
+        {
+          "currency": {
+            "left": 216.5,
+            "right": 300.5,
+            "top": 672.640625,
+            "bottom": 716.640625,
+            "width": 84,
+            "height": 44
+          },
+          "value": {
+            "left": 318.5,
+            "right": 882.5,
+            "top": 672.640625,
+            "bottom": 716.640625,
+            "width": 564,
+            "height": 44
+          }
+        },
+        {
+          "currency": {
+            "left": 216.5,
+            "right": 300.5,
+            "top": 863.234375,
+            "bottom": 907.234375,
+            "width": 84,
+            "height": 44
+          },
+          "value": {
+            "left": 318.5,
+            "right": 882.5,
+            "top": 863.234375,
+            "bottom": 907.234375,
+            "width": 564,
+            "height": 44
+          }
+        }
+      ],
+      "profiles": {
+        "left": 149.5,
+        "right": 949.5,
+        "top": 24,
+        "bottom": 696,
+        "width": 800,
+        "height": 672
+      },
+      "stop": {
+        "left": 149.5,
+        "right": 949.5,
+        "top": 24,
+        "bottom": 696,
+        "width": 800,
+        "height": 672
+      }
+    },
+    "finished_at": "2026-10-28T03:14:49.328836+00:00"
+  },
+  "next_case": {
+    "id": "matrix-submenu-dark-1099x720",
+    "classification": "PASS",
+    "started_at": "2026-10-28T03:30:01.740044+00:00",
+    "evidence": {
+      "viewport": [
+        1099,
+        720
+      ],
+      "form": {
+        "left": 189.5,
+        "right": 909.5,
+        "top": 24,
+        "bottom": 696,
+        "width": 720,
+        "height": 672
+      },
+      "header": {
+        "header": {
+          "left": 190.5,
+          "right": 908.5,
+          "top": 25,
+          "bottom": 123.078125,
+          "width": 718,
+          "height": 98.078125
+        },
+        "title": {
+          "left": 216.5,
+          "right": 822.5,
+          "top": 75.1875,
+          "bottom": 105.078125,
+          "width": 606,
+          "height": 29.890625
+        },
+        "close": {
+          "left": 838.5,
+          "right": 882.5,
+          "top": 55.03125,
+          "bottom": 99.03125,
+          "width": 44,
+          "height": 44
+        }
+      },
+      "money": [
+        {
+          "currency": {
+            "left": 216.5,
+            "right": 300.5,
+            "top": 672.640625,
+            "bottom": 716.640625,
+            "width": 84,
+            "height": 44
+          },
+          "value": {
+            "left": 318.5,
+            "right": 882.5,
+            "top": 672.640625,
+            "bottom": 716.640625,
+            "width": 564,
+            "height": 44
+          }
+        },
+        {
+          "currency": {
+            "left": 216.5,
+            "right": 300.5,
+            "top": 863.234375,
+            "bottom": 907.234375,
+            "width": 84,
+            "height": 44
+          },
+          "value": {
+            "left": 318.5,
+            "right": 882.5,
+            "top": 863.234375,
+            "bottom": 907.234375,
+            "width": 564,
+            "height": 44
+          }
+        }
+      ],
+      "profiles": {
+        "left": 149.5,
+        "right": 949.5,
+        "top": 24,
+        "bottom": 696,
+        "width": 800,
+        "height": 672
+      },
+      "stop": {
+        "left": 149.5,
+        "right": 949.5,
+        "top": 24,
+        "bottom": 696,
+        "width": 800,
+        "height": 672
+      }
+    },
+    "finished_at": "2026-10-28T03:30:02.016214+00:00"
+  }
+}

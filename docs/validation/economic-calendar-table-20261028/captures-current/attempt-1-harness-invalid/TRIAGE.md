@@ -1,0 +1,1 @@
+Arquivo de tentativas próprias anteriores, quando houver. Primeiro erro desta execução foi diretório pai ausente, preservado em capture-current-first-harness-error.log; correção somente no launcher/preparo de captura, sem alteração no produto.

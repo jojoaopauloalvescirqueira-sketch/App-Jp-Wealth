@@ -1,0 +1,249 @@
+{
+  "positive": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "zero_cases": {
+    "rejected": true,
+    "measurement_failure": "empty coverage is invalid"
+  },
+  "zero_expected": {
+    "rejected": true,
+    "measurement_failure": "empty coverage is invalid"
+  },
+  "missing": {
+    "rejected": true,
+    "measurement_failure": "('missing/unexpected cases', ['missing'], [])"
+  },
+  "not_run": {
+    "rejected": true,
+    "measurement_failure": "unexecuted/unknown classification"
+  },
+  "gate_wiring": {
+    "positive": {
+      "STANDARD": {
+        "entries": 71,
+        "visual_entries": 1,
+        "historical_entries": 55,
+        "calendar_entries": [
+          "personal-agenda",
+          "monthly-economic-feed",
+          "calendar-agenda",
+          "calendar-recovery"
+        ],
+        "historical_ast_sha256": "dec6559f92a890524f149680b953b2f777fde61d820fe96b27251b1e0f68f767",
+        "calendar_ast_sha256": "5721964a401d84d682a2d7ef30ac04a768df2730b25883c704c238aa6ecf7e00",
+        "management_entries": 10,
+        "management_ast_sha256": "f5010648fa4ef9a3cb12425c31f83da77a478793cb24f76d169a0c55b6927364",
+        "hedge_entries": 2,
+        "hedge_ast_sha256": "c278ff10689677fcab390284a1e41340124bcf298533ad68ee302672dbcbd3da"
+      },
+      "FULL": {
+        "entries": 116,
+        "visual_entries": 1,
+        "historical_entries": 96,
+        "calendar_entries": [
+          "personal-agenda",
+          "monthly-economic-feed",
+          "calendar-agenda",
+          "calendar-recovery",
+          "calendar-distribution",
+          "ff-news-cache"
+        ],
+        "historical_ast_sha256": "43c6cec6702b768a4229f828c5d20edf138f16b99f25563d343d684415190cd9",
+        "calendar_ast_sha256": "b9048ab67f72eac35122f39080c17910ba0ffdac0c1125bbc4d9bf16c733af4d",
+        "management_entries": 11,
+        "management_ast_sha256": "13185d30e6efb6fe9a767711fad5385acdf9ca5d31504d840817e58fa1ff27d5",
+        "hedge_entries": 3,
+        "hedge_ast_sha256": "7454a486ed99235a9e87f00b69f3c12fa71af4923706f0bbf5c42784006e511f"
+      }
+    },
+    "removed_visual_other115_preserved": {
+      "rejected": true,
+      "measurement_failure": "('visual check must run exactly once', 'STANDARD', 0)"
+    },
+    "focal_instead_of_default": {
+      "rejected": true,
+      "measurement_failure": "('visual gate must invoke default complete CLI and unique output', 'STANDARD')"
+    },
+    "each_calendar_check_omitted": {
+      "personal-agenda": {
+        "rejected": true,
+        "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+      },
+      "monthly-economic-feed": {
+        "rejected": true,
+        "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+      },
+      "calendar-agenda": {
+        "rejected": true,
+        "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+      },
+      "calendar-recovery": {
+        "rejected": true,
+        "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+      },
+      "calendar-distribution": {
+        "rejected": true,
+        "measurement_failure": "('approved calendar identities/order missing or substituted', 'FULL')"
+      },
+      "ff-news-cache": {
+        "rejected": true,
+        "measurement_failure": "('approved calendar identities/order missing or substituted', 'FULL')"
+      }
+    },
+    "historical96_without_calendar": {
+      "rejected": true,
+      "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+    },
+    "standard_subset_as_full": {
+      "rejected": true,
+      "measurement_failure": "('historical gate identities/order changed', 'FULL')"
+    },
+    "historical_check_omitted": {
+      "rejected": true,
+      "measurement_failure": "('historical gate identities/order changed', 'FULL')"
+    },
+    "historical_identity_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('historical gate identities/order changed', 'STANDARD')"
+    },
+    "calendar_identity_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('approved calendar identities/order missing or substituted', 'STANDARD')"
+    },
+    "historical_command_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('historical gate command declarations changed', 'STANDARD')"
+    },
+    "calendar_focal_instead_of_complete": {
+      "rejected": true,
+      "measurement_failure": "('approved calendar gate command declarations changed', 'STANDARD')"
+    },
+    "calendar_checks_before_preflight": {
+      "rejected": true,
+      "measurement_failure": "('approved gate sequence changed; preflight and tier boundaries must be preserved', 'STANDARD')"
+    },
+    "duplicate_tier_declaration": {
+      "rejected": true,
+      "measurement_failure": "('duplicate tier declaration', 'STANDARD')"
+    },
+    "each_management_check_omitted": {
+      "management-engine": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-state": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-guide": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-dashboard-notes": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "portfolio-management-navigation": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-reserves-context": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-reserves-drafts": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-account-flow": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-annual-ui": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-visual-quality": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+      },
+      "management-distribution": {
+        "rejected": true,
+        "measurement_failure": "('management identities missing or substituted', 'FULL')"
+      }
+    },
+    "old102_without_management": {
+      "rejected": true,
+      "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+    },
+    "each_hedge_check_omitted": {
+      "hedge-prop-engine": {
+        "rejected": true,
+        "measurement_failure": "('hedge identities missing or substituted', 'STANDARD')"
+      },
+      "hedge-prop-browser": {
+        "rejected": true,
+        "measurement_failure": "('hedge identities missing or substituted', 'STANDARD')"
+      },
+      "hedge-prop-distribution": {
+        "rejected": true,
+        "measurement_failure": "('hedge identities missing or substituted', 'FULL')"
+      }
+    },
+    "old113_without_hedge": {
+      "rejected": true,
+      "measurement_failure": "('hedge identities missing or substituted', 'STANDARD')"
+    },
+    "hedge_identity_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('hedge identities missing or substituted', 'STANDARD')"
+    },
+    "hedge_command_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('hedge command declarations changed', 'STANDARD')"
+    },
+    "hedge_focal_instead_of_complete": {
+      "rejected": true,
+      "measurement_failure": "('hedge command declarations changed', 'STANDARD')"
+    },
+    "hedge_native_removed": {
+      "rejected": true,
+      "measurement_failure": "('hedge command declarations changed', 'STANDARD')"
+    },
+    "management_identity_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('management identities missing or substituted', 'STANDARD')"
+    },
+    "management_command_substituted_same116": {
+      "rejected": true,
+      "measurement_failure": "('management command declarations changed', 'STANDARD')"
+    }
+  },
+  "matrix_dimensions": {
+    "positive": {
+      "layouts": 4,
+      "themes": 2,
+      "viewports": 10,
+      "native_zoom": 200
+    },
+    "empty_layouts": {
+      "rejected": true,
+      "measurement_failure": "('four approved layout identities required', [])"
+    },
+    "empty_themes": {
+      "rejected": true,
+      "measurement_failure": "('both approved themes required', [])"
+    },
+    "empty_sizes": {
+      "rejected": true,
+      "measurement_failure": "('nonempty valid viewport pairs required', [])"
+    },
+    "missing_short_size": {
+      "rejected": true,
+      "measurement_failure": "('approved320..1440/short/boundary viewports required', [(320, 700), (390, 844), (700, 600), (701, 601), (1099, 720), (1100, 719), (1100, 720), (1101, 721), (1440, 1000)])"
+    }
+  }
+}

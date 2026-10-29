@@ -1,0 +1,33 @@
+{
+  "authority": "Resposta humana call_e7eccb4435e94736b3b509201cf41e8a: cinco arquivos do patch37 e validação",
+  "applied_patch_sha256": "37a46edbd8e2c56e6327ce8dc8e42cc034c1063c2ef6a55520effa53bc8a39c3",
+  "files": {
+    "tools/calendar_agenda_test.py": {
+      "base_sha256": "3eaf710b4a63c5302a394bf905e2ffd094c7ab61303b5d64dc9223df3c3104de",
+      "candidate_sha256": "655556061f9fbbecd28f73de0861ac2e05741a658d7da0777b2591da28ab7ddd",
+      "bytes": 41232
+    },
+    "tools/calendar_distribution_test.py": {
+      "base_sha256": "39b43a33a40d3f911f806b82364348c7a5498f0d542001b6ac8b06e6aa906570",
+      "candidate_sha256": "cbaf54be1a5dd0ebecf80773158a86453f849fbf0ab8734a1ad32376065003a9",
+      "bytes": 25603
+    },
+    "tools/calendar_economic_table_contract.py": {
+      "base_sha256": null,
+      "candidate_sha256": "35ea10d57ed2c8c4e6042ce14a88033cc232214f28790de9eacb9e9baf85c80a",
+      "bytes": 17649
+    },
+    "tools/calendar_visual_quality_test.py": {
+      "base_sha256": "0c5c948231a87ec3ce5e1e51292c96ef1e58b0b6865faa161d63014c144da883",
+      "candidate_sha256": "b883b966e1be638707da5c53999392cfc6ae02da36440500ddd18fc12970b95f",
+      "bytes": 35286
+    },
+    "tools/ff_news_cache_test.py": {
+      "base_sha256": "5a2821e0330885af5b589cf0d3fdd66603be451eed3209190f65a5b1ac9a9f42",
+      "candidate_sha256": "f66f357830f04a2c9f6eeb92ac469d8e04c190b6aa1a42aad161f65ebde859a7",
+      "bytes": 21599
+    }
+  },
+  "v3_ff_delta_status": "PROPOSTA; não aplicado",
+  "unrelated_baseline_changes": []
+}

@@ -10,8 +10,10 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+from datetime import datetime, timezone
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
+from calendar_economic_table_contract import assert_values, assert_layout, collapsed
 
 
 def load(root, name):
@@ -63,8 +65,115 @@ SNAPSHOT = """() => {
     emptyNodes:['#ecalEmpty'].map(selector=>{
       const el=document.querySelector(selector);return {selector,hidden:el.hidden,display:getComputedStyle(el).display,text:el.textContent};}),
     dataAvailable:ecalEvents()!==null,
-    filters:[ecalState.filter]};
+    filters:[ecalState.filter],monthlyIdentity:document.getElementById('execEcal')===c.monthlyHost,
+    monthlySelection:document.querySelector('#execEcal [data-calendar-date][aria-selected="true"]')?.dataset.calendarDate,
+    monthlyMonth:document.querySelector('#execEcal .calendar-month-label')?.textContent};
 }"""
+
+
+def public_fixture(label):
+    currencies=['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY']
+    stamp='2026-10-28T20:00:00Z'
+    sources=[dict(id='ff-'+c,name='Forex Factory · '+c,currency=c,url='https://www.forexfactory.com/calendar',timeZone='America/New_York',provider='forexfactory') for c in currencies]
+    events=[]
+    for currency,impact in [('CAD','high'),('USD','high'),('EUR','medium'),('GBP','low'),('JPY','unclassified')]:
+        events.append(dict(id='SYN-'+label+'-'+currency,title='SYN FF '+label+' '+currency,currency=currency,
+            impact=impact,date='2026-10-28',at='2026-10-28T18:00:00Z',precision='instant',
+            sourceId='ff-'+currency,sourceUrl='https://www.forexfactory.com/calendar',timeZone='America/New_York',
+            forecast='0' if currency=='CAD' else '−0.5%' if currency=='USD' else '',previous='0.0%' if currency=='CAD' else '1.2M' if currency=='USD' else '',
+            provider='forexfactory',providerImpact={'high':'High','medium':'Medium','low':'Low','unclassified':'Holiday'}[impact],impactOrigin='provider',status='scheduled',
+            reviewedAt=stamp,observedAt=stamp,timeConfirmed=False,observationStatus='present',snapshotId='SYN-'+label))
+    coverage=[dict(sourceId='ff-'+c,currency=c,month='2026-10',from_='2026-10-25',to='2026-10-31',
+                  status='partial',reviewedAt=stamp,validUntil='2026-10-28T22:00:00Z',scope='weekly-snapshot',reason='Synthetic week only') for c in currencies]
+    for row in coverage:row['from']=row.pop('from_')
+    return dict(schemaVersion=2,currencies=currencies,sources=sources,events=events,coverage=coverage,
+                collectedAt=stamp,packagePublishedAt=stamp,sourcePublishedAt=None,currentWeekFrom='2026-10-25',updatedAt=stamp)
+
+
+def shared_calendar_pipeline(browser, bootstrap, url, width, theme):
+    context=browser.new_context(viewport={'width':width,'height':900},timezone_id='America/Sao_Paulo',service_workers='block')
+    bootstrap.install_bootstrap(context);context.add_init_script('window.__onbShown=true')
+    mode={'status':200,'payload':{'version':1,'generated_at':'2026-10-28T19:00:00Z','events':[]},'calls':0}
+    def respond(route):
+        mode['calls']+=1;route.fulfill(status=mode['status'],content_type='application/json',body=json.dumps(mode['payload']))
+    context.route(bootstrap.FEED_URL,respond)
+    try:
+        page=context.new_page();page.clock.set_fixed_time(datetime(2026,10,28,20,5,tzinfo=timezone.utc))
+        errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+        page.goto(url,wait_until='load');bootstrap.wait_bootstrap(page)
+        page.evaluate("theme=>{closeModal();window.__onbShown=true;document.documentElement.dataset.theme=theme;JPWNavigation.navigate('tools-calendar')}",theme)
+        panel=page.locator('#execEcal .calendar-panel');expect(panel).to_be_visible()
+        page.evaluate('window.__economicPipelineHost=document.getElementById("execEcal")')
+        before=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')
+        cell=panel.locator('[data-calendar-date="2026-10-28"]');cell.click()
+        selected=cell.get_attribute('data-calendar-date');month=panel.locator('.calendar-month-label').inner_text()
+        panel.locator('.calendar-header [data-calendar-action="info"]').click()
+        mode['payload']=public_fixture('primeira');mode['calls']=0
+        panel.locator('[data-calendar-action="refresh-economic"]').click()
+        page.wait_for_function("window.JPWCalendarFeed.snapshot()?.payload.schemaVersion===2 && !ffNewsInFlight")
+        expect(panel.locator('.calendar-event-title').filter(has_text='SYN FF primeira CAD')).to_have_count(1)
+        # Real v2 producer -> domain -> both table values; zero is a string fact.
+        table_events=[e for e in mode['payload']['events'] if e['impact']=='high']
+        assert_values(panel,table_events);assert_layout(panel);collapsed(panel)
+        expect(panel.locator('.calendar-event-title').filter(has_text='SYN FF primeira USD')).to_have_count(1)
+        assert mode['calls']==1,mode['calls']
+        assert not panel.locator('.calendar-event-title').filter(has_text='SYN FF primeira EUR').count()
+        # Approved table contract: provenance starts collapsed. Verify the
+        # actual source for each synthetic CAD/USD observation through its i,
+        # preserving both provenances and both visible pending-time warnings.
+        provenance=[]
+        for event in table_events:
+            event_row=panel.locator('[data-calendar-economic-id='+json.dumps(event['id'])+']')
+            expect(event_row).to_have_count(1)
+            toggle=event_row.locator('[data-calendar-action="economic-detail"]')
+            expect(toggle).to_have_attribute('aria-expanded','false')
+            detail_id=toggle.get_attribute('aria-controls')
+            assert detail_id, 'Each event must control its own provenance detail'
+            detail=panel.locator('[id='+json.dumps(detail_id)+']')
+            expect(detail).not_to_be_visible()
+            expect(event_row.locator('.calendar-event-warning')).to_be_visible()
+            expect(event_row.locator('.calendar-event-warning')).to_contain_text('Horário a confirmar.')
+            toggle.click()
+            expect(detail).to_be_visible()
+            expect(panel.locator('[data-calendar-action="economic-detail"][aria-expanded="true"]')).to_have_count(1)
+            source=detail.get_by_role('link',name='Fonte: Forex Factory',exact=True)
+            expect(source).to_have_count(1);expect(source).to_have_attribute('href',event['sourceUrl'])
+            expect(detail).to_contain_text('Horário original:')
+            expect(detail).to_contain_text(event['timeZone'])
+            provenance.append({'event':event['id'],'currency':event['currency'],'sourceUrl':source.get_attribute('href')})
+            toggle.click()
+            expect(toggle).to_have_attribute('aria-expanded','false');expect(detail).not_to_be_visible()
+        assert {row['currency'] for row in provenance}=={'CAD','USD'}, provenance
+        collapsed(panel)
+        assert set(page.evaluate('ffNewsReadCache().events.map(e=>e.country)'))=={'USD'},'Weekly view must retain High/four-currency cut'
+        assert cell.locator('.calendar-economic-dot').count()==1
+        panel.locator('.calendar-header [data-calendar-action="info"]').click()
+        panel.locator('[data-calendar-action="new"]').click()
+        title=panel.locator('[name="title"]');title.fill('SYN rascunho durante notícia')
+        title.evaluate('node=>{node.focus();node.setSelectionRange(4,10)}')
+        mode['payload']=public_fixture('segunda');mode['calls']=0
+        page.evaluate('async()=>{await Promise.all([JPWCalendarFeed.refresh(true),JPWCalendarFeed.refresh(true)])}')
+        assert mode['calls']==1,mode['calls']
+        expect(title).to_be_focused();expect(title).to_have_value('SYN rascunho durante notícia')
+        assert title.evaluate('node=>[node.selectionStart,node.selectionEnd]')==[4,10]
+        panel.locator('[data-calendar-action="cancel-form"]').click()
+        expect(panel.locator('.calendar-event-title').filter(has_text='SYN FF segunda CAD')).to_have_count(1)
+        assert panel.locator('.calendar-month-label').inner_text()==month
+        assert panel.locator('[data-calendar-date][aria-selected="true"]').get_attribute('data-calendar-date')==selected
+        assert page.evaluate('document.getElementById("execEcal")===__economicPipelineHost')
+        saved=page.evaluate('localStorage.getItem("jpwealth.ui.ffNews.v1")');mode['status']=500
+        page.evaluate('async()=>{await JPWCalendarFeed.refresh(true)}')
+        assert page.evaluate('localStorage.getItem("jpwealth.ui.ffNews.v1")')==saved
+        expect(panel.locator('.calendar-event-title').filter(has_text='SYN FF segunda CAD')).to_have_count(1)
+        panel.locator('.calendar-header [data-calendar-action="info"]').click()
+        expect(panel.locator('.calendar-info')).to_contain_text('Não foi possível atualizar')
+        assert page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')==before
+        assert not errors,errors
+        return {'nineCurrencyTransport':True,'CADAndUSDHighVisible':True,'mediumExcluded':True,'redDot':True,
+                'perEventProvenance':provenance,'bothPendingTimeWarningsVisible':True,'sourcesInitiallyCollapsed':True,
+                'legacyFourHighPreserved':True,'oneFetchForConcurrentRefreshes':True,'draftFocusCursorPreserved':True,
+                'monthSelectionHostPreserved':True,'failedRefreshPreservesLastValid':True,'financialUnchanged':True}
+    finally:context.close()
 
 
 def main():
@@ -74,7 +183,7 @@ def main():
     args=parser.parse_args(); root=args.root.resolve()
     research=load(root,'research_navigation_test')
     bootstrap=load(root,'browser_bootstrap_fixture')
-    sources=['src/js/40-app/15-ff-news.js','src/js/40-app/17-economic-calendar.js','src/js/20-ui/25-dash-macro.js','index.html','src/styles/app.css','tools/browser_bootstrap_fixture.py']
+    sources=['src/js/40-app/15-ff-news.js','src/js/40-app/16-monthly-economic-data.js','src/js/40-app/19-calendar-agenda.js','src/js/40-app/17-economic-calendar.js','src/js/20-ui/25-dash-macro.js','index.html','src/styles/app.css','tools/browser_bootstrap_fixture.py']
     result={'root':str(root),'test_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
       'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in sources},'checks':[],'cases':[]}
 
@@ -110,6 +219,7 @@ def main():
                             page.evaluate('(theme)=>document.documentElement.setAttribute("data-theme",theme)',theme)
                             page.locator('#ecalFilters [data-ecal-cur="USD"]').click()
                             page.evaluate("() => JPWCalendar.mountWorkspace()")
+                            page.evaluate('window.__cacheTest.monthlyHost=document.getElementById("execEcal")')
                             before=page.evaluate(SNAPSHOT); mode['calls']=0
                             if case=='quota-empty':
                                 page.evaluate('() => __cacheTest.remove.call(localStorage,__cacheTest.key)')
@@ -150,7 +260,7 @@ def main():
                             else:
                                 check(label+' duplicate inflight calls coalesced',mode['calls']==1,mode['calls'])
                             check(label+' filter state preserved',after['filters']==['USD'],after['filters'])
-                            check(label+' FF does not mutate monthly workspace',after['monthly']==before['monthly'])
+                            check(label+' shared FF preserves monthly host and selection',after['monthlyIdentity'] and after['monthlySelection']==before['monthlySelection'] and after['monthlyMonth']==before['monthlyMonth'])
                             check(label+' financial and unrelated state preserved',all(after[x]==before[x] for x in ['state','main','unrelated','source']))
                             check(label+' writes limited to cache',all(x[1]=='jpwealth.ui.ffNews.v1' for x in after['ops']),after['ops'])
                             if case=='quota-old':
@@ -174,6 +284,13 @@ def main():
                             bootstrap.assert_fixture_requests(context)
                             result['cases'].append({'case':label,'observed':after,'recovered':recovered,'feed_calls':mode['calls']})
                         finally:context.close()
+                for width,theme in [(1440,'light'),(390,'dark')]:
+                    label=f'{width}-{theme}/shared-v2-pipeline'
+                    try:
+                        details=shared_calendar_pipeline(browser,bootstrap,url,width,theme)
+                        check(label,True,details);result['cases'].append({'case':label,'observed':details})
+                    except AssertionError as error:
+                        check(label,False,str(error))
             finally:browser.close()
     except Exception as exc:
         result['environment_error']={'type':type(exc).__name__,'message':str(exc)}

@@ -337,8 +337,10 @@
   }
   function resume(){
     init();if(disposed||blocked)return false;
+    const moved=(catalog.movedSteps||[]).find(item=>item.id===progress.stepId&&item.previousTrackId===progress.trackId);
+    if(moved){progress.trackId=moved.trackId;notice='Essa orientação agora fica em Gerenciamento. Seu progresso foi preservado, sem nova conclusão ou prática.';}
     const retired=(catalog.retiredSteps||[]).find(item=>item.id===progress.stepId&&item.trackId===progress.trackId);
-    if(retired){progress.stepId=retired.replacementId;notice='A ferramenta anterior foi descontinuada. Você pode conhecer o Stoikus, sem conclusão automática.';}
+    if(retired){progress.stepId=retired.replacementId;notice=retired.notice||'A ferramenta anterior foi descontinuada. Você pode conhecer o Stoikus, sem conclusão automática.';}
     if(!step())return false;
     progress.paused=false;if(!persist())return false;
     if(isOwnCenter()&&typeof closeSettingsModal==='function')closeSettingsModal({restoreFocus:false});

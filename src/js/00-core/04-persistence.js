@@ -122,6 +122,41 @@ function jpwValidateChecklist(documento){
     }
   }
 }
+// Optional annual management family: absent is compatible; incompatible data
+// is preserved by the existing recovery/import boundary, never normalized.
+function jpwValidateManagementAnnual(documento){
+  if(!Object.prototype.hasOwnProperty.call(documento,'managementAnnual'))return;
+  const object=v=>!!v&&typeof v==='object'&&!Array.isArray(v),text=v=>typeof v==='string'&&!!v.trim(),
+    finite=v=>typeof v==='number'&&Number.isFinite(v),revision=v=>Number.isSafeInteger(v)&&v>=0,
+    date=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&Number.isFinite(Date.parse(v+'T00:00:00Z'))&&new Date(v+'T00:00:00Z').toISOString().slice(0,10)===v,
+    instant=v=>text(v)&&Number.isFinite(Date.parse(v));
+  const fail=()=>{throw new Error('Gerenciamento anual incompatível. Preserve a base original para recuperação.');};
+  const aggregate=documento.managementAnnual;
+  if(!object(aggregate)||aggregate.schemaVersion!==1||!revision(aggregate.revision)||!Array.isArray(aggregate.plans)||!Array.isArray(aggregate.audit))fail();
+  const pending=[aggregate],seen=new Set();
+  while(pending.length){const v=pending.pop();if(!object(v)&&!Array.isArray(v))continue;if(seen.has(v))fail();seen.add(v);
+    for(const key of Object.keys(v)){
+      if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||['__proto__','prototype','constructor'].includes(key))fail();
+      const item=v[key];if(item&&typeof item==='object')pending.push(item);else if(item!==null&&!['string','boolean'].includes(typeof item)&&!finite(item))fail();
+    }
+  }
+  const config=c=>object(c)&&text(c.accountId)&&text(c.periodId)&&Number.isInteger(c.year)&&c.year>=1&&c.year<=9999&&
+    date(c.startDate)&&c.startDate.slice(0,4)===String(c.year).padStart(4,'0')&&finite(c.initialBalance)&&c.initialBalance>0&&/^[A-Z]{3}$/.test(c.currency)&&
+    finite(c.annualTarget)&&c.annualTarget>-1&&finite(c.daysPerWeek)&&c.daysPerWeek>0&&c.daysPerWeek<=7&&finite(c.monthsPerYear)&&c.monthsPerYear>0&&c.monthsPerYear<=12&&
+    (c.referenceYears===undefined||finite(c.referenceYears)&&c.referenceYears>0)&&(c.referenceDays===undefined||finite(c.referenceDays)&&c.referenceDays>0)&&
+    Array.isArray(c.excludedDates)&&c.excludedDates.every(d=>date(d)&&d.slice(0,4)===String(c.year))&&new Set(c.excludedDates).size===c.excludedDates.length;
+  const ids=new Set(),scopes=new Set();
+  for(const plan of aggregate.plans){
+    if(!object(plan)||!text(plan.id)||ids.has(plan.id)||!text(plan.accountId)||!text(plan.periodId)||!config(plan.config)||plan.accountId!==plan.config.accountId||plan.periodId!==plan.config.periodId||plan.year!==plan.config.year||!revision(plan.revision)||plan.revision<1||!instant(plan.createdAt)||!instant(plan.updatedAt)||!object(plan.openingSource)||!Array.isArray(plan.history)||!Array.isArray(plan.declarations)||!Array.isArray(plan.snapshots))fail();
+    ids.add(plan.id);const key=JSON.stringify([plan.accountId,plan.periodId,plan.year]);if(scopes.has(key))fail();scopes.add(key);
+    if(!plan.history.length||plan.history.some((h,i)=>!object(h)||h.revision!==i+1||!instant(h.at)||!config(h.config)||h.config.accountId!==plan.accountId||h.config.periodId!==plan.periodId||h.config.year!==plan.year||!object(h.openingSource)||typeof h.reason!=='string')||plan.history.length!==plan.revision)fail();
+    const declarations=new Set();
+    for(const d of plan.declarations){if(!object(d)||d.kind!=='NO_RESULT'||!date(d.date)||d.date.slice(0,4)!==String(plan.year)||d.date<plan.config.startDate||!text(d.reason)||!instant(d.at)||!revision(d.revision)||d.revision<1||declarations.has(d.date))fail();declarations.add(d.date);}
+    const snapshots=new Set();
+    for(const snapshot of plan.snapshots){if(!object(snapshot)||!text(snapshot.id)||snapshots.has(snapshot.id)||!instant(snapshot.at)||!revision(snapshot.planRevision)||snapshot.planRevision<1||snapshot.planRevision>plan.revision||!text(snapshot.dependencies)||!object(snapshot.summary)||!Array.isArray(snapshot.rows))fail();snapshots.add(snapshot.id);}
+  }
+  if(aggregate.audit.some(a=>!object(a)||!text(a.id)||!instant(a.at)||!text(a.type)||!text(a.planId)||typeof a.reason!=='string'))fail();
+}
 function load(){
   let raw=null, readError=null;
   try{ raw=localStorage.getItem(LSKEY); }catch(e){ readError=e; }
@@ -1248,6 +1283,7 @@ function paramsNormalizeState(){
 }
 function migrate(){ // garante chaves novas se schema evoluir
   if(!S || typeof S!=='object' || Array.isArray(S)) throw new Error('A base deve ser um documento JSON, não uma lista.');
+  jpwValidateManagementAnnual(S); // optional aggregate is checked before defaults can hide incompatibility
   jpwValidateChecklist(S); // refuse before any default/normalization can hide the original structure
   // Optional documentary metadata is validated before normalization, never inferred from global profiles.
   if(!jpwValidateAccountProfileExtensions(S))

@@ -1,0 +1,29 @@
+--- a/src/js/20-ui/25-dash-macro.js
++++ b/src/js/20-ui/25-dash-macro.js
+@@ -255,8 +255,25 @@
+     + dmFact('Estudos dos Pivots', pv.length ? String(pv.length) : '<span class="dm-aux">nenhum</span>',
+              pv.length ? 'amostras registradas' : null)
+   );
++  // Cache nulo = "sem cache válido", NUNCA "zero eventos": zero não pode ser
++  // afirmado sem prova. Portfólio conserva este consumidor informacional
++  // do calendário semanal compartilhado; a agenda completa pertence a Tools.
++  // Somente leitura, sem rede própria ou nova fonte de eventos.
++  const cal = (typeof ecalEvents === 'function') ? ecalEvents() : null;
++  if(!cal){
++    corpo += dmRow('Calendário de hoje', dmAux('dados ainda não carregados'));
++  } else {
++    const hoje = cal.events.filter(e => typeof ffNewsIsToday === 'function' && ffNewsIsToday(e.when));
++    corpo += dmRow('Calendário de hoje', hoje.length
++      ? '<b>' + hoje.length + '</b> ' + dmAux('evento(s) de alto impacto')
++      : dmAux('nenhum evento de alto impacto'));
++    const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
++    if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
++  }
++  if(typeof ffNewsStatusText==='function') corpo += dmRow('Cache',dmAux(ffNewsStatusText(cal)));
+   corpo += '</div>';
+-  corpo += dmLinks(dmLink('Estudos Nocuda','research-forex','research','nocoda')
++  corpo += dmLinks(dmLink('Calendário e Mercados','tools-calendar')
++    +dmLink('Estudos Nocuda','research-forex','research','nocoda')
+     +dmLink('Estudos de Pivots','research-forex','research','pivots'));
+   return {html: corpo, tom: null};
+ }

@@ -1,0 +1,20 @@
+Source: https://www.bankofcanada.ca/2025/08/bank-canada-publishes-2026-schedule-policy-interest-rate-announcements-other-major-publications/
+Captured: 2026-10-28T20:22:56Z
+Method: explicit-public-GET, excerpted by JP Wealth; not human acceptance.
+
+The scheduled dates for the interest rate announcements for 2026 are as follows:
+Wednesday, January 28
+Wednesday, March 18
+Wednesday, April 29
+Wednesday, June 10
+Wednesday, July 15
+Wednesday, September 2
+Wednesday, October 28
+Wednesday, December 9
+The scheduled dates for the interest rate announcements from September 2025 through December 2025 are reconfirmed as follows:
+Wednesday, September 17
+Wednesday, October 29
+Wednesday, December 10
+All interest rate announcements will take place at 09:45 (ET), and the
+Monetary Policy Report
+will be published concurrently with the January, April, July and October rate announcements.

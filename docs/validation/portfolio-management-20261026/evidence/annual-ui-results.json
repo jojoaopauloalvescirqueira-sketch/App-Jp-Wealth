@@ -1,0 +1,37 @@
+{
+  "cases": [
+    {
+      "id": "management-empty-no-assumptions",
+      "classification": "PASS"
+    },
+    {
+      "id": "management-plan-and-daily-confirmation",
+      "classification": "PASS"
+    },
+    {
+      "id": "explicit-zero-loss-correction-note",
+      "classification": "PASS"
+    },
+    {
+      "id": "no-result-and-explicit-revocation",
+      "classification": "PASS"
+    },
+    {
+      "id": "off-calendar-daily-entry",
+      "classification": "PASS"
+    },
+    {
+      "id": "draft-navigation-resize-cancel-focus",
+      "classification": "PASS"
+    },
+    {
+      "id": "external-change-explicit-review-refresh",
+      "classification": "PASS"
+    },
+    {
+      "id": "annual-close-reconfirm-immutable-snapshots",
+      "classification": "PASS"
+    }
+  ],
+  "source": "approved human plan / workbook Todas"
+}

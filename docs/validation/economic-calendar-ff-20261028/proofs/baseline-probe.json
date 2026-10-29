@@ -1,0 +1,89 @@
+{
+  "command": [
+    "/Users/joaoalvescirqueira/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/private/tmp/jpw-economic-calendar-ff-20261028/control-review/read_only_probe.cjs",
+    "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS"
+  ],
+  "exit": 0,
+  "priorInvocation": "TEST_HARNESS_FAIL: missing required root argument, no product stimulus; not RED",
+  "probe": {
+    "kind": "A0 read-only independent synthetic Node probe; no repo writes, browser or live source",
+    "modelSha256": "6b9a065651028270af8de9ccbd2ecc5f3768e6056b2bc153395b77b659435d90",
+    "cases": [
+      {
+        "id": "ECON-BASELINE-COVERAGE-DISJOINT",
+        "result": "PRODUCT_FAIL",
+        "oracle": "A week beginning Oct25 cannot confirm Oct20",
+        "actual": {
+          "events": [],
+          "coverage": [
+            {
+              "currency": "USD",
+              "sourceId": "synthetic",
+              "month": "2026-10",
+              "from": "2026-10-25",
+              "to": "2026-10-31",
+              "status": "confirmed",
+              "reviewedAt": "2026-10-28T12:00:00Z",
+              "validUntil": "2026-10-28T14:00:00Z",
+              "reason": "Synthetic isolated week only"
+            }
+          ],
+          "updatedAt": "2026-10-28T12:00:00Z"
+        }
+      },
+      {
+        "id": "ECON-BASELINE-COVERAGE-CONTROL",
+        "result": "PASS",
+        "oracle": "Synthetic complete-week row confirms an included day",
+        "actual": {
+          "events": [],
+          "coverage": [
+            {
+              "currency": "USD",
+              "sourceId": "synthetic",
+              "month": "2026-10",
+              "from": "2026-10-25",
+              "to": "2026-10-31",
+              "status": "confirmed",
+              "reviewedAt": "2026-10-28T12:00:00Z",
+              "validUntil": "2026-10-28T14:00:00Z",
+              "reason": "Synthetic isolated week only"
+            }
+          ],
+          "updatedAt": "2026-10-28T12:00:00Z"
+        }
+      },
+      {
+        "id": "ECON-BASELINE-CAD-UNDECLARED",
+        "result": "PRODUCT_FAIL",
+        "oracle": "Approved nine-currency calendar includes CAD",
+        "actualCurrencies": [
+          "USD",
+          "GBP",
+          "JPY",
+          "NZD",
+          "CHF"
+        ]
+      },
+      {
+        "id": "ECON-BASELINE-FED-MISSING",
+        "result": "PRODUCT_FAIL",
+        "oracle": "Approved local package includes verified Oct28 Fed event; old pack declares Fed pending",
+        "actualFed": [],
+        "source": [
+          {
+            "id": "fed",
+            "name": "Federal Reserve \u2014 pendente",
+            "currency": "USD",
+            "timeZone": "America/New_York",
+            "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
+            "scope": "No reviewed package in this delivery"
+          }
+        ]
+      }
+    ],
+    "scope": "New approved contract vs current source, not native browser/human review, no source modification",
+    "sourceUnchanged": true
+  }
+}

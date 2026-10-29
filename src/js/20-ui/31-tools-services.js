@@ -97,12 +97,24 @@
     if(visible&&!document.hidden&&!controller?.active)window.activateGaltonBoard?.();
     else if(!visible&&controller?.active)window.deactivateGaltonBoard?.({resume:false});
   }
+  function syncPropFirms(allowMount=false){
+    const slot=el('toolsPropFirmsSlot');if(!slot)return;
+    const inView=view==='prop-firms'&&el('tools').classList.contains('active');
+    // Construct only on an accepted entry, even if currently covered/hidden.
+    // There is no deferred mount intent that can outlive session disposal.
+    if(allowMount&&inView)window.JPWPropFirms?.mount(slot);
+    const visible=inView&&!openDialog()&&!document.hidden&&isVisible(slot);
+    if(!visible){window.JPWPropFirms?.deactivate();return;}
+    window.JPWPropFirms?.activate();
+  }
   window.JPWNavigation?.subscribe(({current})=>{
     cancelMarketAnchor();
+    syncPropFirms(current.primary==='tools'&&current.localView?.view==='prop-firms');
     el('nocudaRetirementNotice').hidden=current.requested!=='tools-nocuda';
     syncMarketHours(current.primary==='tools'&&['calendar','market-hours'].includes(current.localView?.view),current.localView?.view==='market-hours');
     syncMiniGames(current.primary==='tools'&&['time-twins','capital-currents'].includes(current.localView?.view));
     if(current.primary!=='tools'||openDialog())return;
+    if(current.localView?.view==='prop-firms')el('propFirmsTitle').focus({preventScroll:true});
     if(current.localView?.view==='galton')el('minigamesGaltonTitle').focus({preventScroll:true});
     if(current.localView?.view==='time-twins')el('minigamesTimeTwinsTitle').focus({preventScroll:true});
     if(current.localView?.view==='capital-currents')el('minigamesCapitalCurrentsTitle').focus({preventScroll:true});
@@ -127,14 +139,14 @@
     // canvas updates cannot trigger navigation or repeated activation.
     const containsDialog=node=>node instanceof Element&&(node.matches('dialog,[role="dialog"],[aria-modal="true"],'+overlaySelector)||!!node.querySelector('dialog,[role="dialog"],[aria-modal="true"],'+overlaySelector));
     const observer=new MutationObserver(records=>{
-      if(records.some(record=>record.type==='attributes'?containsDialog(record.target):[...record.addedNodes,...record.removedNodes].some(containsDialog))){syncMiniGames();syncMarketHours();}
+      if(records.some(record=>record.type==='attributes'?containsDialog(record.target):[...record.addedNodes,...record.removedNodes].some(containsDialog))){syncMiniGames();syncMarketHours();syncPropFirms();}
     });
-    document.addEventListener('visibilitychange',()=>{syncMiniGames();syncMarketHours();});
+    document.addEventListener('visibilitychange',()=>{syncMiniGames();syncMarketHours();syncPropFirms();});
     observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','inert','open','aria-hidden','role','aria-modal','style']});
   }
   function selectView(next){
     if(next==='nocuda')return window.JPWNavigation?.navigate('tools-nocuda');
-    if(!['calendar','market-hours','leverage','normative','minigames','galton','time-twins','capital-currents'].includes(next))return;
+    if(!['calendar','market-hours','leverage','normative','prop-firms','minigames','galton','time-twins','capital-currents'].includes(next))return;
     // market-hours is an entry intent; both domains share the calendar surface.
     if(next==='market-hours')next='calendar';
     if(view==='calendar'&&next!=='calendar')window.JPWCalendar?.deactivateWorkspace?.();
@@ -143,6 +155,7 @@
     if(view==='time-twins'&&next!=='time-twins')window.JPWTimeTwins?.deactivate(el('toolsTimeTwinsSlot'));
     if(view==='galton'&&next!=='galton')window.deactivateGaltonBoard?.({resume:false});
     if(view==='normative'&&next!=='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.leave();
+    if(view==='prop-firms'&&next!=='prop-firms')window.JPWPropFirms?.deactivate();
     view=next;
     document.querySelectorAll('#tools [data-tools-view]').forEach(node=>{
       node.hidden=node.dataset.toolsView!==next;node.inert=node.hidden;

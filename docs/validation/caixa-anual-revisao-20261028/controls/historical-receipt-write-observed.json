@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-10-28T12:02:21.674778-03:00",
+  "path": "docs/validation/hedge-prop-20261027/engine-counterproofs.json",
+  "baselineSHA256": "1bc9e6ce6908fb46c4f1721eb2d1b2b488ebad05c22e75caca507aaf747e3fc3",
+  "currentSHA256": "f08d35edb716d724742c9bbc752622f421831e28052cb4d7c4f254cdca230319",
+  "currentCopy": "docs/validation/caixa-anual-revisao-20261028/controls/hedge-counterproofs-current-full.json",
+  "writer": "tools/hedge_prop_engine_test.js:247-248",
+  "delta": "UTC timestamp only, per independent read-only comparison",
+  "restoreHistoricalBytesAfterFull": true,
+  "financialDataAffected": false
+}

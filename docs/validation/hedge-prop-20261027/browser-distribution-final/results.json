@@ -1,0 +1,35 @@
+{
+  "classification": "PASS",
+  "checks": [
+    {
+      "id": "http-shipped-oracles-and-ram-reload",
+      "classification": "PASS"
+    },
+    {
+      "id": "file-shipped-oracles-and-ram-reload",
+      "classification": "PASS"
+    },
+    {
+      "id": "portable-shipped-oracles-and-ram-reload",
+      "classification": "PASS"
+    },
+    {
+      "id": "pwa-controlled-offline-new-scripts-route-oracle-ram-reset",
+      "classification": "PASS"
+    }
+  ],
+  "headless": true,
+  "source_sha256": {
+    "index.html": "06749243b2ac7585cf016b37007274a74228099d5a66e0c14cb5ad54702f0944",
+    "src/js/manifest.json": "61ac1c4fdc5687815407d9468ec198176f8446166a822994d5bc646bb9cd6b81",
+    "src/styles/app.css": "157d086b68eecf36c2a42c43a71960b4414ad5017b8d1bddec2ee3e8fdc83cbf",
+    "build-id.js": "0eec814afb46e5ceda16f27728f6795fb6357b686d5e42bad327c232fe646363",
+    "sw.js": "2f0022d72f7042e1908d519c7ab9243b595b63a3c0ca9543256c2beb4a4f11b6",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "4e856c2ae0d731fc835619555ed98bb588baddceeafc9a3493980879af5da482",
+    "tools/hedge_prop_browser_test.py": "de749b8d1aead81ecae07b78adde84275e434b977a7d7b1b0b3d2344b981086d",
+    "tools/hedge_prop_distribution_test.py": "52b7c88e3b961cb8741a3f1e761ea8d94b3fc915e08fd823212b69b3e6d3908a",
+    "src/js/40-app/32-prop-firms/02-ui.js": "f7a5021242b1f8d5638f23cec22a891387bf1d39ad6a534cecbed896cce01c66",
+    "src/js/40-app/32-prop-firms/01-engine.js": "c6b2c73296bcdbc97a3cbfc6b9be5581fe7d54ee6a295625dd7b0d5b6307640f"
+  },
+  "bytes_stable": true
+}

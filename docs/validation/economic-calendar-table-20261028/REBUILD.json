@@ -1,0 +1,19 @@
+{
+  "build": "bc08298ef8320bb0",
+  "changed_from_preserved_baseline": {
+    "build-id.js": "0e804ce239d1e1179db8260dde17776a7dcbfd0f23cb876fda13c76b018f18ad",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "75e2e0cce78378fe510ea7d4e36786ee776410f91ae377de15860a35c36fafdb",
+    "docs/architecture/CALENDAR-AGENDA.md": "600aa91c82a7920e6f172cda9c24548b9fc00347b6216760be4494d69425bc6b",
+    "docs/work/ACTIVE-TASK.md": "d420d289791738a67425e104b39414026dfa93311ffb43bcec08c29df64b5d61",
+    "src/js/40-app/19-calendar-agenda.js": "1e2e518bef9dccca48790f9752c48ba62619cd64c128ec87c55c6c58c779c831",
+    "src/styles/app.css": "f1007dfe4122ac80aa2e8260b4db91079ad5291cec5f1b2dd6ab0aa3910beb38",
+    "src/vendor/downloads/leverage-daily-source-payload.js": "af5962ac2338abde3efd077f440b30c439c0f18bc1a1ecdb11380f3e71c9ff3e",
+    "src/vendor/downloads/leverage-native-kit-payload.js": "6c754f3aa53b7c96298b58a3ce12fe40460bcc2653ce4e66da1e876f56e2aa9c",
+    "src/vendor/downloads/leverage-native-pin-payload.js": "574bd44f3671c452954de930e68100b3c77d84c98288f1c3c479753a837672bd",
+    "src/vendor/downloads/leverage-preview-payload.js": "33e335a358e0c80840afc54e92170d1da994a7f0c603cdd25e1f051b833e1da6",
+    "src/vendor/downloads/leverage-preview-payload.json": "7bb3c502015368e4909ae6895a19d21644e7624f1ce114553d470e032fb212af",
+    "src/vendor/downloads/leverage-source-payload.js": "05a9f962e47d4ffe166a1023710fb50d926847df8c6fc5cf34fb07ee300ba614",
+    "src/vendor/market-hours/runtime-payload.js": "4a792873d0b8b10cc77255edfdd7848b1a866d6dbca9d91f5a25fb60eb1f9bbe"
+  },
+  "note": "Rebuild oficial concluído; controles não aplicados, FULL pendente."
+}

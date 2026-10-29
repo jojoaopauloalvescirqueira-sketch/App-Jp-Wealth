@@ -1,0 +1,106 @@
+{
+  "suite": "economic-calendar-feed-runtime",
+  "root": "/Users/joaoalvescirqueira/Library/Mobile Documents/com~apple~CloudDocs/SOFTWARES & EAS/JP Wealth OS",
+  "results": [
+    {
+      "id": "ECON-FEED-01-v1-partial-four-high",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-02-v2-nine-currencies-all-impacts",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-03-source-age-not-get-time",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-04-day-gaps-not-month-coverage",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-05-async-refresh-one-request-atomic-event",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-06-invalid-snapshot-preserves-prior",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-07-cache-refusal-no-adoption",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-08-dispose-refuses-late-response-and-timers",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-09-source-switch-refuses-old-response",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-10-omission-not-cancellation-and-return-copies",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-11-pure-query-no-dom-storage-financial",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-12-confirmed-official-family-retains-provider-impact",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-13-same-instant-different-offset-is-confirmed",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-14-conflicting-official-time-is-preserved",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-15-indicative-official-hour-does-not-confirm",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-16-flat-compiler-matches-explicit-family-oracle",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-17-live-compat-preserves-exact-curated-association",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-18-changed-hour-does-not-inherit-family",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-19-official-cancellation-is-a-source-conflict",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-20-incompatible-cache-preserves-with-diagnostic",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-21-source-currency-consistency",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-22-legacy-projects-provider-instants-only",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-23-local-source-currency-mismatch-is-not-exposed",
+      "classification": "PASS"
+    },
+    {
+      "id": "ECON-FEED-24-explicit-resume-after-session-dispose",
+      "classification": "PASS"
+    }
+  ],
+  "summary": {
+    "PASS": 24,
+    "PRODUCT_FAIL": 0
+  }
+}

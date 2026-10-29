@@ -239,8 +239,6 @@ SOFTWARE.
         <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Registro e acompanhamento das ordens</span></button>
         <p class="forex-nav-group" data-forex-nav-group="manage">Administrar</p>
         <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Contas e Períodos</span><span class="nav-sub-item-desc">Cadastro e contexto operacional</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-accounting"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Fechamentos e apuração do período</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
@@ -282,46 +280,27 @@ SOFTWARE.
         <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
       </button>
     </nav>
-    <!-- Research: quatro filhos N2. Laboratório vive em Configurações;
-         Others permanece apenas como destino interno de compatibilidade. -->
-    <nav class="nav-sub-menu nav-sub-menu-contextual" id="researchNavSubmenu" aria-labelledby="researchNavTrigger"
-         aria-hidden="true" hidden inert>
-      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Research">
-        <button type="button" data-nav-item data-nav-child="research-forex">
-          <span class="nav-sub-item-title">Forex</span>
-          <span class="nav-sub-item-desc">Estudos NoCoda e Pivots</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="research-stocks-br">
-          <span class="nav-sub-item-title">Ações</span>
-          <span class="nav-sub-item-desc">Brasil e B3</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="research-stocks-global">
-          <span class="nav-sub-item-title">Stocks</span>
-          <span class="nav-sub-item-desc">Mercado internacional</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="research-reits">
-          <span class="nav-sub-item-title">REITs</span>
-          <span class="nav-sub-item-desc">Pesquisa imobiliária internacional</span>
-        </button>
+    <!-- Portfólio conserva IDs de estudos e progresso, sem placeholders públicos. -->
+    <nav class="nav-sub-menu nav-sub-menu-contextual" id="researchNavSubmenu" aria-labelledby="researchNavTrigger" aria-hidden="true" hidden inert>
+      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Portfólio">
+        <button type="button" data-nav-item data-nav-child="research-forex"><span class="nav-sub-item-title">Análise</span><span class="nav-sub-item-desc">Estudos Nocuda e Pivots</span></button>
       </div>
-      <div class="nav-sub-contexts" aria-label="Opções do destino Research" hidden inert>
-        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
-             data-nav-context="research-forex" role="group" aria-label="Research Forex" hidden inert>
-          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="nocoda">
-            <span class="nav-sub-item-title">NoCoda</span>
-            <span class="nav-sub-item-desc">Estudos de canal por instrumento</span>
-          </button>
-          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="pivots">
-            <span class="nav-sub-item-title">Pivots</span>
-            <span class="nav-sub-item-desc">Estudos empíricos por período</span>
-          </button>
+      <div class="nav-sub-contexts" aria-label="Opções de Análise" hidden inert>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3" data-nav-context="research-forex" role="group" aria-label="Análise" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="nocoda"><span class="nav-sub-item-title">Estudos Nocuda</span><span class="nav-sub-item-desc">Canais por instrumento</span></button>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="pivots"><span class="nav-sub-item-title">Estudos de Pivots</span><span class="nav-sub-item-desc">Estudos por período</span></button>
         </div>
       </div>
+    </nav>
+    <nav class="nav-sub-menu" id="managementNavSubmenu" aria-labelledby="managementNavTrigger" aria-hidden="true" hidden inert>
+      <button type="button" data-nav-item data-nav-child="management-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
+      <button type="button" data-nav-item data-nav-child="management-accounting"><span class="nav-sub-item-title">Caixa Anual</span><span class="nav-sub-item-desc">Planejamento anual e caixa diário</span></button>
     </nav>
     <nav class="nav-sub-menu" id="toolsNavSubmenu" aria-labelledby="toolsNavTrigger" aria-hidden="true" hidden inert>
       <button type="button" data-nav-item data-nav-child="tools-calendar"><span class="nav-sub-item-title">Calendário e Mercados</span><span class="nav-sub-item-desc">Eventos, agenda e bolsas</span></button>
       <button type="button" data-nav-item data-nav-child="tools-leverage"><span class="nav-sub-item-title">Stoikus — MT5</span><span class="nav-sub-item-desc">Ferramentas e instalação</span></button>
       <button type="button" data-nav-item data-nav-child="tools-normative"><span class="nav-sub-item-title">Estrutura Normativa JP Wealth</span><span class="nav-sub-item-desc">Leitura do Estatuto V11</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-prop-firms"><span class="nav-sub-item-title">Mesas Proprietárias</span><span class="nav-sub-item-desc">Hedge Prop Firm · estudo e cenários</span></button>
       <button type="button" data-nav-item data-nav-child="tools-minigames"><span class="nav-sub-item-title">MiniGames</span><span class="nav-sub-item-desc">Experimentos e jogos</span></button>
     </nav>
   </div>
@@ -347,18 +326,20 @@ SOFTWARE.
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-layout-dashboard"/></svg><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-microscope"/></svg>
-    <span class="n">02</span><span class="lbl">Research</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Portfólio"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-microscope"/></svg>
+    <span class="n">02</span><span class="lbl">Portfólio</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" data-route="planning" data-primary="planning" title="Planejamento"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-target"/></svg><span class="n">03</span><span class="lbl">Planejamento</span></button>
+  <button class="tab nav-sub-trigger" id="managementNavTrigger" data-route="management-reserves" data-primary="management" data-nav-surface="management" title="Gerenciamento"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">03</span><span class="lbl">Gerenciamento</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="management" aria-controls="managementNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
+  <button class="tab" data-route="planning" data-primary="planning" title="Planejamento"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-target"/></svg><span class="n">04</span><span class="lbl">Planejamento</span></button>
   <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-consolidated" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chart-candlestick"/></svg>
-    <span class="n">04</span><span class="lbl">Forex</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
+    <span class="n">05</span><span class="lbl">Forex</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-wallet"/></svg>
-    <span class="n">05</span><span class="lbl">Finanças Pessoais</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
+    <span class="n">06</span><span class="lbl">Finanças Pessoais</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" hidden data-module-frozen="true" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">06</span><span class="lbl">Alladin</span></button>
-  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-wrench"/></svg><span class="n">07</span><span class="lbl">Ferramentas e Serviços</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
+  <button class="tab" hidden data-module-frozen="true" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">07</span><span class="lbl">Alladin</span></button>
+  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-wrench"/></svg><span class="n">08</span><span class="lbl">Ferramentas e Serviços</span><svg class="nav-disclosure-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-right"/></svg></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="tools" aria-controls="toolsNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral"><svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-panel-left-close"/></svg> <span class="lbl">Recolher</span></button>
@@ -611,68 +592,6 @@ SOFTWARE.
   <!-- History: somente operações completas finalizadas de S.operationHistory.
        O mesmo renderer é chamado a cada entrada; não cria outro histórico. -->
   <div class="exec-view" id="execHistory" role="region" aria-label="History — operações finalizadas" hidden inert></div>
-  <div class="exec-view" id="contab" role="region" aria-label="Contabilidade Forex" hidden inert>
-    <div class="jp-widget-grid" id="contabWidgetGrid">
-    <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 class="sr-only">Período &amp; Metas</h2>
-      <div id="acctPeriodSummary"></div>
-      <button class="acct-period-link" id="acctPeriodToggle">▸ Ver / editar Período &amp; Metas</button>
-      <div id="acctPeriodDetail" class="acct-period-detail" style="display:none">
-        <div id="acctProfileBtns" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px"></div>
-        <div id="acctProfileLockNote" style="margin-bottom:12px"></div>
-        <div class="params-grid">
-          <div class="field"><label>Data inicial do período <span class="art">Art. 3.4</span></label><input type="date" id="acStart"></div>
-          <div class="field"><label>Data atual <span class="art">hoje</span></label><input type="text" id="acToday" disabled></div>
-          <div class="field"><label>Data final projetada <span class="art">meta atingida</span></label><input type="text" id="acEnd" disabled></div>
-          <div class="field"><label>Saldo inicial ($)</label><input type="number" step="0.01" id="acSaldoIni"></div>
-          <div class="field"><label>Target anual <span class="art">pelo perfil</span></label><input type="text" id="acTarget" disabled></div>
-          <div class="field"><label>Saldo final desejado ($)</label><input type="text" id="acSaldoFim" disabled></div>
-          <div class="field"><label>Dias na semana <span class="art">programação</span></label><input type="number" step="0.5" id="acDiasSem"></div>
-          <div class="field"><label>Meses no ano <span class="art">programação</span></label><input type="number" step="0.5" id="acMesesAno"></div>
-          <div class="field"><label>Dias líquidos / ano</label><input type="text" id="acDiasAno" disabled></div>
-        </div>
-        <div id="acctMetas"></div>
-      </div>
-    </div>
-
-    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
-      <div class="params-grid">
-        <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
-        <div class="field"><label>Resultado do dia ($)</label><input type="number" step="0.01" id="ldResult" placeholder="0.00"><span class="note">Negativo se prejuízo. Zero é válido (dia neutro).</span></div>
-        <div class="field"><label>Saldo de fechamento ($)</label><input type="number" step="0.01" id="ldSaldo" placeholder="auto: anterior + resultado"><span class="note">Se vazio, calcula automaticamente. Atualiza o saldo contábil desta conta e período.</span></div>
-      </div>
-      <div class="field"><label>Nota (opcional)</label><input type="text" id="ldNota" placeholder="contexto do dia, eventos, decisões"></div>
-      <div style="display:flex; align-items:center; gap:12px">
-        <button class="unlock-phase-btn" id="ldAddBtn">Registrar fechamento do dia</button>
-        <span class="fx-status" id="ldStatus"></span>
-      </div>
-    </div>
-    <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Lançamentos <span class="art">mais recentes primeiro · inclui auditoria e simulação</span></h2>
-      <div class="jp-table-scroll">
-        <table class="dtable">
-          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>Queda do saldo book</th><th>Nota</th><th></th></tr></thead>
-          <tbody id="ledgerBody"></tbody>
-        </table>
-      </div>
-      <div class="acct-entry-details">
-        <details class="jp-p3"><summary>Simulação patrimonial (MEI-JP)</summary><div id="acctSimWrap"></div></details>
-        <details class="jp-p3"><summary>Log de auditoria</summary>
-          <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
-        </details>
-        <button class="reset-btn acct-export-audit" id="exportAuditBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
-      </div>
-    </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Planejamento patrimonial <span class="art">Projeção global, independente dos fechamentos desta conta</span></h2>
-      <div id="rvpChart" style="width:100%"></div>
-      <div id="acctProjWrap" hidden inert></div>
-    </div>
-    <div id="acctPace" hidden aria-hidden="true"></div>
-    </div>
-  </div>
-
     <!-- Gestão única de contas CFDs e períodos, preservando os hosts e IDs canônicos. -->
     <div class="exec-view" id="contas" role="region" aria-label="Contas Forex" hidden inert>
       <div class="jp-widget-grid" id="contasWidgetGrid">
@@ -765,7 +684,7 @@ SOFTWARE.
       <h2>Saldo e Ciclo <span class="art">leitura analítica</span></h2>
       <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
         <div class="metric"><div class="k">Saldo Inicial de Referência</div><div class="v sm" id="rpSaldoIni">—</div><div class="sub">base de cálculo do risco do ciclo</div></div>
-        <div class="metric"><div class="k">Saldo Atual da Conta Mestre</div><div class="v sm" id="rpSaldoAtu">—</div><div class="sub">equity exige observação própria; book está na Contabilidade</div></div>
+        <div class="metric"><div class="k">Saldo Atual da Conta Mestre</div><div class="v sm" id="rpSaldoAtu">—</div><div class="sub">equity exige observação própria; book está no Caixa Anual</div></div>
         <div class="metric"><div class="k">Início do Ciclo</div><div class="v sm" id="rpInicio">—</div><div class="sub">ciclo anual · Art. 3.4</div></div>
       </div>
     </div>
@@ -1163,6 +1082,11 @@ SOFTWARE.
   <!-- ================= 07 CONTABILIDADE ================= -->
   <section class="screen" id="fxreserves"><div id="forexReservesPanel" class="card fx-engine-workspace"></div></section>
 
+  <section class="screen mg-app" id="management" aria-label="Caixa Anual" data-module-work-owner="management">
+    <header class="mg-title"><div><p class="mg-eyebrow">GERENCIAMENTO</p><h1 data-route-focus>Caixa Anual</h1><p>Planejado e realizado, um dia de cada vez.</p></div><div class="mg-actions"><button type="button" class="mg-button" data-mg-action="history">Histórico e auditoria</button><button type="button" class="mg-info" data-mg-action="info" aria-label="Entender o planejamento anual">i</button></div></header>
+    <div id="managementContent"></div>
+  </section>
+
   <!-- ================= 07B PLANEJAMENTO FX ================= -->
   <!-- Planejamento independente: montagem sob demanda em 30-accounting/06-planning. -->
   <section class="screen" id="planning" aria-label="Planejamento" data-module-work-owner="planning"></section>
@@ -1206,23 +1130,11 @@ SOFTWARE.
 
   <!-- ================= 04 RESEARCH ================= -->
   <section class="screen" id="research">
-    <h1 class="sr-only" data-route-focus>Research</h1>
+    <h1 class="sr-only" data-route-focus>Portfólio</h1>
     <!-- NoCoda e Pivots preservam os mesmos IDs e renderizadores. O conteúdo
          continua montado sob demanda a partir do estado vivo. -->
     <div class="research-view" id="execNocoda" data-research-view="nocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
     <div class="research-view" id="execPivots" data-research-view="pivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
-    <div class="research-view" id="researchStocksBr" data-research-view="stocks-br" role="region" aria-label="Ações Brasil e B3" hidden>
-      <div class="card"><h2>Ações · Brasil / B3</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
-    </div>
-    <div class="research-view" id="researchStocksGlobal" data-research-view="stocks-global" role="region" aria-label="Stocks internacionais" hidden>
-      <div class="card"><h2>Stocks</h2><p class="expl">Área de pesquisa internacional em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
-    </div>
-    <div class="research-view" id="researchReits" data-research-view="reits" role="region" aria-label="REITs" hidden>
-      <div class="card"><h2>REITs</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
-    </div>
-    <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
-      <div class="card"><h2>Others</h2><p class="expl">Área reservada para outras linhas de pesquisa. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
-    </div>
   </section>
 
   <section class="screen" id="tools" aria-label="Ferramentas e Serviços">
@@ -1798,6 +1710,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
       <header><div class="mh-title-row"><h2 id="marketHoursTitle" data-route-focus tabindex="-1">Bolsas Globais — Agora</h2></div></header>
       <div id="toolsMarketHoursSlot"></div>
     </div>
+    <section class="tools-view" data-tools-view="prop-firms" id="propFirmsView" hidden inert aria-labelledby="propFirmsTitle"><h2 id="propFirmsTitle" tabindex="-1">Mesas Proprietárias</h2><div id="toolsPropFirmsSlot"></div></section>
     <div class="tools-view minigames-hub" id="minigamesHub" data-tools-view="minigames" role="region" aria-labelledby="minigamesTitle" hidden inert>
       <header class="minigames-header"><h2 id="minigamesTitle" data-route-focus tabindex="-1">MiniGames</h2><p>Explore ideias e padrões com jogos e experimentos interativos.</p></header>
       <div class="minigames-catalog">
@@ -1897,7 +1810,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
-    <div class="card module-availability-card" id="moduleAvailabilityCard" tabindex="-1" data-settings-category="editor" data-settings-search="módulos disponibilidade congelar descongelar Alladin Research Forex Finanças Pessoais">
+    <div class="card module-availability-card" id="moduleAvailabilityCard" tabindex="-1" data-settings-category="editor" data-settings-search="módulos disponibilidade congelar descongelar Alladin Portfólio Research Gerenciamento Forex Finanças Pessoais">
       <h2>Módulos e disponibilidade</h2>
       <p class="note note-live">Disponibilidade é diferente da ordem do menu. Congelar preserva código, dados e histórico. Dashboard, Ferramentas e Serviços, Configurações, Notas e Backup continuam disponíveis.</p>
       <div id="moduleAvailabilityList"></div>
@@ -2524,7 +2437,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
 <dialog id="notificationCenter" aria-labelledby="notificationTitle" aria-describedby="notificationPrivacy">
   <div class="notification-heading"><div><p class="notification-eyebrow">JP WEALTH</p><h2 id="notificationTitle">Notificações</h2></div><button type="button" id="notificationClose" aria-label="Fechar notificações"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
   <p id="notificationSummary" role="status" aria-live="polite"></p>
-  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="planning">Planejamento</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label></div>
+  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="planning">Planejamento</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Portfólio</option><option value="notes">Notas</option></select></label></div>
   <div class="notification-scroll"><p id="notificationEmpty" hidden>Nenhuma ação pendente identificada nesta área.</p><ul id="notificationList"></ul></div>
   <p id="notificationPrivacy">A contagem acompanha pendências ativas. Consultar um aviso não resolve sua causa. Sem alertas com o aplicativo fechado.</p>
 </dialog>
@@ -2554,6 +2467,8 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
 <script src="src/js/40-app/31-market-hours/02-assets.js"></script>
 <script src="src/js/40-app/31-market-hours/03-view.js"></script>
 <script src="src/js/40-app/31-market-hours/04-controller.js"></script>
+<script src="src/js/40-app/32-prop-firms/01-engine.js"></script>
+<script src="src/js/40-app/32-prop-firms/02-ui.js"></script>
 <script src="src/js/20-ui/31-tools-services.js"></script>
 <script src="src/js/20-ui/34-normative-reader.js"></script>
 <script src="src/js/20-ui/31-forex-accounts.js"></script>
@@ -2566,5 +2481,8 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
 <script src="src/js/30-accounting/06-planning/01-engine.js"></script>
 <script src="src/js/30-accounting/06-planning/02-state.js"></script>
 <script src="src/js/30-accounting/06-planning/03-ui.js"></script>
+<script src="src/js/30-accounting/07-management/01-engine.js"></script>
+<script src="src/js/30-accounting/07-management/02-state.js"></script>
+<script src="src/js/30-accounting/07-management/03-ui.js"></script>
 </body>
 </html>

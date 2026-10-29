@@ -1,0 +1,120 @@
+{
+  "development_controller": false,
+  "source_sha256": {
+    "src/js/10-domain/19-personal-agenda.js": "17a1d9467f7c6924c638d0e0af9f77567f3de9bca6dcbbcf23817b039a6a1ab0",
+    "src/js/00-core/07-workspace-backup.js": "e7c9144ed5f48c4a169fdcbc483c0e59931b902c88b7a1d8fb79eee2a4509207",
+    "src/js/30-accounting/01-daily-ledger.js": "b134acc15c59329bc27b7bd4b4f8107833287d97b0aa9e506233b6b0e2afeabf",
+    "src/js/40-app/07-finalize-session.js": "3ed7107b6838d2e6388a66639c5231a2851a5c97238268761eb8f6e960a8d508",
+    "tools/calendar_recovery_test.py": "93a910911854a4a4cc889c9dd83e11cd4a41968b6238c2217845e37ee0839aad"
+  },
+  "results": [
+    {
+      "case": "core-crud",
+      "result": "PASS",
+      "evidence": {
+        "created_updated_completed_removed_reloaded": "agenda_8a5bb614-0398-4ff4-94b2-fb2076058e0d"
+      }
+    },
+    {
+      "case": "import-containers",
+      "result": "PASS",
+      "evidence": {
+        "rejected": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "legacyAbsent": true,
+        "stateUnchanged": true,
+        "diskUnchanged": true
+      }
+    },
+    {
+      "case": "backup-roundtrip",
+      "result": "PASS",
+      "evidence": {
+        "blob_file_reader_normalizer_exact": true,
+        "nineCurrenciesPreferenceExact": true,
+        "publicCacheExcluded": true,
+        "item_id": "agenda_6c6f594f-6be7-4077-8bb9-9ec5525bd30b"
+      }
+    },
+    {
+      "case": "future-opaque",
+      "result": "PASS",
+      "evidence": {
+        "opaque_future_export_import_finalization_preserved": true
+      }
+    },
+    {
+      "case": "preference-boundary",
+      "result": "PASS",
+      "evidence": {
+        "valid": true,
+        "expanded": true,
+        "invalid": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "captured": "{\"schemaVersion\":1,\"currencies\":[\"USD\",\"GBP\",\"JPY\",\"NZD\",\"CHF\"],\"impacts\":[\"high\"],\"contents\":[\"economic\",\"personal\",\"app\"]}",
+        "captureError": null,
+        "stateUnchanged": true,
+        "diskUnchanged": true
+      }
+    },
+    {
+      "case": "draft-capture",
+      "result": "PASS",
+      "evidence": {
+        "single_closed_reopened_draft": {
+          "provider": "calendar-agenda",
+          "version": 1,
+          "label": "Agenda — rascunho não salvo (calendário)",
+          "text": "{\"kind\":\"task\",\"title\":\"SYN unsaved agenda draft\",\"notes\":\"SYN draft notes\",\"date\":\"2026-09-14\",\"allDay\":true,\"startTime\":\"09:00\",\"endDate\":\"2026-09-14\",\"endTime\":\"10:00\",\"timeZone\":\"America/Sao_Paulo\"}",
+          "baseReference": "{\"status\":\"OK\",\"revision\":0,\"items\":[]}",
+          "context": {
+            "kind": "calendar-agenda",
+            "id": null,
+            "surface": "dialog"
+          }
+        }
+      }
+    },
+    {
+      "case": "draft-recovery",
+      "result": "PASS",
+      "evidence": {
+        "reopened_without_writing": true,
+        "changed_context_refused": true,
+        "draft": {
+          "provider": "calendar-agenda",
+          "version": 1,
+          "label": "Agenda — rascunho não salvo (calendário)",
+          "text": "{\"kind\":\"task\",\"title\":\"SYN unsaved agenda draft\",\"notes\":\"SYN draft notes\",\"date\":\"2026-09-14\",\"allDay\":true,\"startTime\":\"09:00\",\"endDate\":\"2026-09-14\",\"endTime\":\"10:00\",\"timeZone\":\"America/Sao_Paulo\"}",
+          "baseReference": "{\"status\":\"OK\",\"revision\":0,\"items\":[]}",
+          "context": {
+            "kind": "calendar-agenda",
+            "id": null,
+            "surface": "dialog"
+          }
+        }
+      }
+    },
+    {
+      "case": "finalization-preservation",
+      "result": "PASS",
+      "evidence": {
+        "confirmed_agenda_and_preferences_preserved": true,
+        "draft_count": 1,
+        "stale_token_status": "CONFLICT",
+        "session_writer_blocked": true
+      }
+    }
+  ]
+}

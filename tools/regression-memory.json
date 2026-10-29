@@ -4658,6 +4658,613 @@
         "test_sha256": "9145dcbb9966e600112c50a30eba4086b318c4448e33c6fcf2edd401897993a6",
         "scope": "focais do ajuste de oráculo; sem mudança no aplicativo; FULL novo pendente"
       }
+    },
+    {
+      "id": "management_period_identity",
+      "state": "fixed_regression",
+      "summary": "Seletor anual usava id em vez de periodId e impedia escolher período confirmado.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Selecionar conta e período sintéticos pela UI.",
+      "expected": "Plano acessível sem mudar operationalSelection.",
+      "cause": "Seletor anual usava id em vez de periodId e impedia escolher período confirmado.",
+      "protection": {
+        "path": "tools/management_annual_ui_test.py",
+        "case": "management-plan-and-daily-confirmation",
+        "command": "python3 tools/management_annual_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-annual-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_no_result_payload",
+      "state": "fixed_regression",
+      "summary": "Declaração recebia NaN de campo inexistente.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Declarar, revogar e registrar perda na mesma data.",
+      "expected": "Declaração confirma sem ledger zero; revogação explícita libera resultado.",
+      "cause": "Declaração recebia NaN de campo inexistente.",
+      "protection": {
+        "path": "tools/management_annual_ui_test.py",
+        "case": "no-result-and-explicit-revocation",
+        "command": "python3 tools/management_annual_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-annual-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_review_refresh",
+      "state": "fixed_regression",
+      "summary": "Mudança externa invalidava token sem oferecer Atualizar revisão.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Digitar, revisar, marcar e receber storage event.",
+      "expected": "Campos preservados, revisão atualizável e nova conferência desmarcada.",
+      "cause": "Mudança externa invalidava token sem oferecer Atualizar revisão.",
+      "protection": {
+        "path": "tools/management_annual_ui_test.py",
+        "case": "external-change-explicit-review-refresh",
+        "command": "python3 tools/management_annual_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-annual-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_currency_mismatch",
+      "state": "fixed_regression",
+      "summary": "Plano podia ler moeda divergente do período sem ledger.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Plano USD e período EUR sintéticos com declarações.",
+      "expected": "Modelo e fechamento inválidos, sem conversão ou mudança histórica.",
+      "cause": "Plano podia ler moeda divergente do período sem ledger.",
+      "protection": {
+        "path": "tools/management_annual_state_test.js",
+        "case": "MANSTATE-29",
+        "command": "node tools/management_annual_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_reserve_draft_scope",
+      "state": "fixed_regression",
+      "summary": "Contexto de Reservas mudava sem resolver rascunho tocado.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Digitar e mudar conta/período/área.",
+      "expected": "Decisão explícita; rascunho por contexto e revisão original preservados.",
+      "cause": "Contexto de Reservas mudava sem resolver rascunho tocado.",
+      "protection": {
+        "path": "tools/management_reserves_draft_test.py",
+        "case": "12 context/draft scenarios",
+        "command": "python3 tools/management_reserves_draft_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-reserves-drafts"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_annual_immutable_history",
+      "state": "fixed_regression",
+      "summary": "Nova interface precisa preservar retratos anuais após correções.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Fechar ano passado, corrigir resultado e reconferir.",
+      "expected": "Retrato antigo intacto, reconferência e nova revisão após confirmação.",
+      "cause": "Nova interface precisa preservar retratos anuais após correções.",
+      "protection": {
+        "path": "tools/management_annual_ui_test.py",
+        "case": "annual-close-reconfirm-immutable-snapshots",
+        "command": "python3 tools/management_annual_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-annual-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_visual_layout",
+      "state": "fixed_regression",
+      "summary": "Nova apresentação exige geometria interna e acesso por largura útil.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contrato anual e integração"
+      },
+      "stimulus": "Quatro layouts, temas,320–1440,899/900/901 e zoom nativo200.",
+      "expected": "Onze/três colunas sem overflow,44px e≤2px; mutantes recusados.",
+      "cause": "Nova apresentação exige geometria interna e acesso por largura útil.",
+      "protection": {
+        "path": "tools/management_visual_quality_test.py",
+        "case": "management required coverage69",
+        "command": "python3 tools/management_visual_quality_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "Focais de construção existem; resultado final pendente de pacote congelado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-26",
+        "scope": "Permanent focal registered; final full pending",
+        "build": "WORKING_TREE_3e24f60"
+      }
+    },
+    {
+      "id": "management_off_calendar_declaration",
+      "state": "fixed_regression",
+      "summary": "Declaração fora da programação desaparecia e impedia sua revogação.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Calendário e edição explícita"
+      },
+      "stimulus": "MGT-35",
+      "expected": "Ato visível, recuperável, sem alterar dados ao consultar ou cancelar; foco retorna a controle presente.",
+      "cause": "Declaração fora da programação desaparecia e impedia sua revogação.",
+      "protection": {
+        "path": "tools/management_annual_engine_test.js",
+        "case": "MGT-35",
+        "command": "node tools/management_annual_engine_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-engine"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "RED/GREEN focal; integração final ainda pendente."
+        }
+      ],
+      "last_verified": {
+        "build": "WORKING_TREE_3e24f60",
+        "date": "2026-10-26",
+        "scope": "Focal construction only, final full pending"
+      }
+    },
+    {
+      "id": "management_plan_focus_return",
+      "state": "fixed_regression",
+      "summary": "Cancelar ou confirmar programação removia o controle focado.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Calendário e edição explícita"
+      },
+      "stimulus": "management-plan-and-daily-confirmation / annual-close-reconfirm-immutable-snapshots",
+      "expected": "Ato visível, recuperável, sem alterar dados ao consultar ou cancelar; foco retorna a controle presente.",
+      "cause": "Cancelar ou confirmar programação removia o controle focado.",
+      "protection": {
+        "path": "tools/management_annual_ui_test.py",
+        "case": "management-plan-and-daily-confirmation / annual-close-reconfirm-immutable-snapshots",
+        "command": "python3 tools/management_annual_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-annual-ui"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "RED/GREEN focal; integração final ainda pendente."
+        }
+      ],
+      "last_verified": {
+        "build": "WORKING_TREE_3e24f60",
+        "date": "2026-10-26",
+        "scope": "Focal construction only, final full pending"
+      }
+    },
+    {
+      "id": "management_account_flow_owner",
+      "state": "fixed_regression",
+      "summary": "Cadastro e preparação compartilhados dependiam de Forex ativo quando chamados por Gerenciamento.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Contas, períodos e disponibilidade independente"
+      },
+      "stimulus": "Gerenciamento ativo, Forex congelado: cadastrar/cancelar/preparar período, atualizar owner e congelar/retomar.",
+      "expected": "Fluxo usa owner capturado da rota aceita; escritores compartilhados e seleção operacional permanecem; chamadas fora da rota não burlam congelamento.",
+      "cause": "Guarda available() fixa no Forex e refresh sobrescrevia o owner dos diálogos compartilhados.",
+      "protection": {
+        "path": "tools/management_account_flow_test.py",
+        "case": "Management account owner/create/setup/selection/freeze",
+        "command": "python3 tools/management_account_flow_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-account-flow"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/README.md",
+          "result": "NOT_RUN",
+          "note": "RED/GREEN focal e revisão independente; FULL final ainda pendente."
+        }
+      ],
+      "last_verified": {
+        "build": "WORKING_TREE_3e24f60",
+        "date": "2026-10-26",
+        "scope": "Construction focal; no final full yet"
+      }
+    },
+    {
+      "id": "management_context_guard_live_value",
+      "state": "fixed_regression",
+      "summary": "O seletor mostrava a conta recusada apesar de o contexto continuar preservado.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Interfaces e ciclo de vida"
+      },
+      "stimulus": "Trocar conta com rascunho e recusar; conferir valor, identidade do controle, foco e estado.",
+      "expected": "Preservar os fatos, os rascunhos e a apresentação fiel do contexto; consulta não grava dados financeiros.",
+      "cause": "Markup em cache não restaura a propriedade value alterada pelo seletor nativo.",
+      "protection": {
+        "path": "tools/management_reserves_draft_test.py",
+        "case": "explicit Stay and returned focus",
+        "command": "python3 tools/management_reserves_draft_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-reserves-drafts"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/recovery/summary.json",
+          "result": "PASS",
+          "note": "RED/GREEN focal e revisão independente; FULL anterior falhou e repetição final permanece pendente."
+        }
+      ],
+      "last_verified": {
+        "build": "WORKING_TREE_3e24f60_RECOVERY",
+        "date": "2026-10-26",
+        "scope": "Focal only; no final FULL approval"
+      }
+    },
+    {
+      "id": "management_startup_optional_uuid",
+      "state": "fixed_regression",
+      "summary": "Gerenciamento não inicializava em contextos sem crypto.randomUUID.",
+      "source": {
+        "path": "docs/architecture/MANAGEMENT-ANNUAL.md",
+        "section": "Interfaces e ciclo de vida"
+      },
+      "stimulus": "Inicializar com crypto sem randomUUID e com crypto ausente; consultar sem escrita e recusar token de outra sessão.",
+      "expected": "Preservar os fatos, os rascunhos e a apresentação fiel do contexto; consulta não grava dados financeiros.",
+      "cause": "Criação incondicional da identidade no carregamento exigia uma API não disponível em todos os contextos.",
+      "protection": {
+        "path": "tools/management_annual_state_test.js",
+        "case": "MANSTATE-32",
+        "command": "node tools/management_annual_state_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "management-state"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/recovery/summary.json",
+          "result": "PASS",
+          "note": "RED/GREEN focal e revisão independente; FULL anterior falhou e repetição final permanece pendente."
+        }
+      ],
+      "last_verified": {
+        "build": "WORKING_TREE_3e24f60_RECOVERY",
+        "date": "2026-10-26",
+        "scope": "Focal only; no final FULL approval"
+      }
+    },
+    {
+      "id": "portfolio_dashboard_economic_consumer",
+      "state": "fixed_regression",
+      "summary": "Reorganizar Portfólio retirou o consumidor econômico e os avisos de cache do Dashboard.",
+      "source": {
+        "path": "docs/architecture/CODE-MAP.md",
+        "section": "Consumidor compartilhado ffNewsStatusText: widget, modal/workspace e Dashboard (linha389 na revisão de base)"
+      },
+      "stimulus": "Falhar gravação/leitura/consulta do cache e conferir widget, modal e Dashboard sem perda de dados ou falsa resolução.",
+      "expected": "Preservar os fatos, os rascunhos e a apresentação fiel do contexto; consulta não grava dados financeiros.",
+      "cause": "O bloco ecalEvents/ffNewsStatusText foi removido junto com os placeholders de Research.",
+      "protection": {
+        "path": "tools/ff_news_cache_test.py",
+        "case": "Dashboard cache warning, prior payload, failure and recovery across four layouts",
+        "command": "python3 tools/ff_news_cache_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "ff-news-cache"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/portfolio-management-20261026/recovery/summary.json",
+          "result": "PASS",
+          "note": "RED/GREEN focal e revisão independente; FULL anterior falhou e repetição final permanece pendente."
+        }
+      ],
+      "last_verified": {
+        "build": "WORKING_TREE_3e24f60_RECOVERY",
+        "date": "2026-10-26",
+        "scope": "Focal only; no final FULL approval"
+      }
+    },
+    {
+      "id": "hedge-prop-model-and-interface-20261027",
+      "state": "new_contract_regression",
+      "summary": "Pure conditional endpoint model, explicit refund, per-path cost impact and RAM-only Tools presentation",
+      "source": {
+        "path": "docs/architecture/HEDGE-PROP-FIRM.md",
+        "section": "Fonte matemática e custos somente como impacto"
+      },
+      "stimulus": "Load either explicit example; vary refund, costs, modes; navigate/dispose and inspect narrow/error states.",
+      "expected": "Known numerical oracles; absent costs pending; no real writes; 44px/2px/nooverflow.",
+      "cause": "New educational feature; half-cent negative sign and validation field alignment found during independent review.",
+      "protection": {
+        "path": "tools/hedge_prop_engine_test.js",
+        "case": "15 cases and four independent mutants plus browser/distribution checks",
+        "command": "quality_gate.py --tier full",
+        "full_gate": {
+          "included": true,
+          "check_id": "hedge-prop-engine;hedge-prop-browser;hedge-prop-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/hedge-prop-20261027/",
+          "result": "NOT_RUN",
+          "note": "Final integration pending, earlier focused receipts historical"
+        }
+      ]
+    },
+    {
+      "id": "economic_calendar_nine_currencies_and_policy_events",
+      "state": "fixed_regression_focal_verified",
+      "summary": "CAD não oferecido e decisões Fed/BoC ausentes do pacote mensal.",
+      "source": {
+        "path": "docs/architecture/CALENDAR-AGENDA.md",
+        "section": "Econômico mensal e legado semanal — revisão28/10/2026"
+      },
+      "stimulus": "Selecionar 28/10/2026 com CAD, USD e impacto Alto.",
+      "expected": "CAD e FOMC com fontes e horários preservados; nove moedas no padrão novo, sem reset de preferências.",
+      "protection": {
+        "path": "tools/monthly_economic_feed_test.py",
+        "case": "ModelContract.test_20_nine_currencies_and_verified_oct28_policy_events",
+        "full_gate": {
+          "included": true,
+          "check_id": "monthly-economic-feed"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/economic-calendar-ff-20261028/README.md",
+          "result": "FOCAL_PASS",
+          "note": "Recebidos focais; identidade final e FULL serão registrados separadamente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-28",
+        "scope": "Focais sintéticos e fontes públicas; aceite humano e ativação externa pendentes."
+      }
+    },
+    {
+      "id": "economic_calendar_shared_snapshot_and_interval",
+      "state": "fixed_regression_focal_verified",
+      "summary": "Consumidor mensal isolado do FF e cobertura semanal aplicada fora do intervalo.",
+      "source": {
+        "path": "docs/architecture/CALENDAR-AGENDA.md",
+        "section": "Econômico mensal e legado semanal — revisão28/10/2026"
+      },
+      "stimulus": "Atualizar FF v2 e consultar dias dentro e fora da semana recebida.",
+      "expected": "Mesmos eventos na lista e marcadores; frescor da coleta em duas horas, sem presumir cobertura mensal.",
+      "protection": {
+        "path": "tools/economic_calendar_feed_runtime_test.js",
+        "case": "ECON-FEED-02/03/04/05",
+        "full_gate": {
+          "included": true,
+          "check_id": "monthly-economic-feed"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/economic-calendar-ff-20261028/README.md",
+          "result": "FOCAL_PASS",
+          "note": "Recebidos focais; identidade final e FULL serão registrados separadamente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-28",
+        "scope": "Focais sintéticos e fontes públicas; aceite humano e ativação externa pendentes."
+      }
+    },
+    {
+      "id": "economic_calendar_refresh_focus_and_draft",
+      "state": "fixed_regression_focal_verified",
+      "summary": "Reconstrução do conteúdo perdia foco na fonte e no botão Atualizar.",
+      "source": {
+        "path": "docs/architecture/CALENDAR-AGENDA.md",
+        "section": "Econômico mensal e legado semanal — revisão28/10/2026"
+      },
+      "stimulus": "Focar uma fonte ou Atualizar, digitar na agenda e receber novas observações.",
+      "expected": "Conservar foco, cursor, rascunho, dia e host, sem gravações financeiras.",
+      "protection": {
+        "path": "tools/calendar_agenda_test.py",
+        "case": "info-focus/economic-focus/include-new",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-agenda"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/economic-calendar-ff-20261028/README.md",
+          "result": "FOCAL_PASS",
+          "note": "Recebidos focais; identidade final e FULL serão registrados separadamente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-28",
+        "scope": "Focais sintéticos e fontes públicas; aceite humano e ativação externa pendentes."
+      }
+    },
+    {
+      "id": "economic_calendar_session_resume",
+      "state": "fixed_regression_focal_verified",
+      "summary": "Adaptador descartado na finalização não possuía retomada explícita.",
+      "source": {
+        "path": "docs/architecture/CALENDAR-AGENDA.md",
+        "section": "Econômico mensal e legado semanal — revisão28/10/2026"
+      },
+      "stimulus": "Descartar com GET pendente, retomar por abertura aceita e receber resposta anterior.",
+      "expected": "Retomada somente explícita; resposta antiga não grava; timers e listener não duplicam.",
+      "protection": {
+        "path": "tools/economic_calendar_feed_runtime_test.js",
+        "case": "ECON-FEED-24",
+        "full_gate": {
+          "included": true,
+          "check_id": "monthly-economic-feed"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/economic-calendar-ff-20261028/README.md",
+          "result": "FOCAL_PASS",
+          "note": "Recebidos focais; identidade final e FULL serão registrados separadamente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-28",
+        "scope": "Focais sintéticos e fontes públicas; aceite humano e ativação externa pendentes."
+      }
+    },
+    {
+      "id": "economic_calendar_composed_metadata_scope",
+      "state": "fixed_regression_focal_verified",
+      "summary": "Metadados oficiais antigos descreviam incorretamente o conjunto com Forex Factory.",
+      "source": {
+        "path": "docs/architecture/CALENDAR-AGENDA.md",
+        "section": "Econômico mensal e legado semanal — revisão28/10/2026"
+      },
+      "stimulus": "Compor fontes oficiais com FF embarcado ou recebido em RAM; consultar e modificar uma cópia dos metadados.",
+      "expected": "Origens mistas e FF7200s; textos originais somente no escopo oficial; eventos, cobertura e cópias preservados.",
+      "protection": {
+        "path": "tools/monthly_economic_feed_test.py",
+        "case": "ModelContract.test_22_composed_metadata_scopes_original_official_policy",
+        "full_gate": {
+          "included": true,
+          "check_id": "monthly-economic-feed"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/economic-calendar-ff-20261028/metadata/independent-proof.json",
+          "result": "FOCAL_PASS",
+          "note": "RED/GREEN e oito contraprovas com revisão cruzada; FULL posterior em recibo próprio."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-28",
+        "scope": "Focais isolados; resultado final/humano separado."
+      }
     }
   ]
 }

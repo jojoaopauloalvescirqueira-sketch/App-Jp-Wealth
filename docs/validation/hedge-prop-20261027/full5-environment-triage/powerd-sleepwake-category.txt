@@ -1,0 +1,41 @@
+exit: 0
+predicate: process == "powerd" AND category == "sleepWake"
+Timestamp               Ty Process[PID:TID]
+2026-10-28 00:01:48.178 Df powerd[414:2496b7b] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 0
+2026-10-28 00:01:51.184 Df powerd[414:2496b7b] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x19
+2026-10-28 00:01:54.466 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] Updating wake end timestamp to 26064938733033
+2026-10-28 00:01:54.468 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x1f
+2026-10-28 00:01:54.471 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 0
+2026-10-28 00:01:58.390 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x19
+2026-10-28 00:02:03.424 Df powerd[414:24986a8] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Idle Sleep'
+2026-10-28 00:02:03.426 Df powerd[414:24986a8] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x44c
+2026-10-28 00:02:05.044 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] Wake scheduled by com.apple.alarm
+2026-10-28 00:02:33.847 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-28 00:02:33.937 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] Updating wake start timestamp to 26065204178920
+2026-10-28 00:02:34.035 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] Updating wake end timestamp to 26065206533125
+2026-10-28 00:02:34.076 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-28 00:02:34.077 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to smc.sysState.Wake(0x70070000) wifibt SMC.OutboxNotEmpty/
+2026-10-28 00:02:34.077 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-28 00:02:34.077 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] <private>
+2026-10-28 00:02:34.078 Df powerd[414:2497e4b] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x39
+2026-10-28 00:02:46.380 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-28 00:02:46.381 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x44d
+2026-10-28 00:02:47.911 Df powerd[414:24986a8] [com.apple.powerd:sleepWake] Wake scheduled by com.apple.alarm
+2026-10-28 00:11:47.653 Df powerd[414:24986a8] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-28 00:11:47.720 Df powerd[414:24986a8] [com.apple.powerd:sleepWake] Updating wake start timestamp to 26065550760123
+2026-10-28 00:11:47.838 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] Updating wake end timestamp to 26065553602386
+2026-10-28 00:11:47.846 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-28 00:11:47.846 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNP] : due to NUB.SPMI0Sw3IRQ nub-spmi0.0x02 rtc/Maintenance
+2026-10-28 00:11:47.846 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-28 00:11:47.847 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] <private>
+2026-10-28 00:11:47.848 Df powerd[414:24993b2] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x39
+2026-10-28 00:14:47.865 Df powerd[414:249d3c6] [com.apple.powerd:sleepWake] Entering Sleep state due to 'Maintenance Sleep'
+2026-10-28 00:14:47.865 Df powerd[414:249d3c6] [com.apple.powerd:sleepWake] connectionFireNotification: 0x0 gen 0x44e
+2026-10-28 00:30:01.643 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] sendNoRespNotification: 0x8019
+2026-10-28 00:30:01.655 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] Updating wake start timestamp to 26069920720768
+2026-10-28 00:30:01.823 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] Updating wake end timestamp to 26069924748173
+2026-10-28 00:30:01.854 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] vm.darkwake_mode: 0 -> 1
+2026-10-28 00:30:01.854 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi0.0x02 rtc/Maintenance
+2026-10-28 00:30:01.854 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] WakeDetails: <private>
+2026-10-28 00:30:01.854 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] <private>
+2026-10-28 00:30:01.855 Df powerd[414:249fcea] [com.apple.powerd:sleepWake] sendNoRespNotification: 0xf9

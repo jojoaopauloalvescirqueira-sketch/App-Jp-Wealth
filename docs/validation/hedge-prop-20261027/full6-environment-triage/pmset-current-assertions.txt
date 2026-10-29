@@ -1,0 +1,32 @@
+captured_local: 2026-10-28T11:11:42.543482-03:00
+exit: 0
+2026-10-28 11:11:42 -0300 
+Assertion status system-wide:
+   BackgroundTask                 0
+   ApplePushServiceTask           0
+   UserIsActive                   1
+   PreventUserIdleDisplaySleep    1
+   SoftwareUpdateTask             0
+   PreventSystemSleep             0
+   PreventSystemSleepSecurityIndicator 0
+   ExternalMedia                  0
+   InternalPreventDisplaySleep    1
+   PreventUserIdleSystemSleep     1
+   NetworkClientActive            0
+Listed by owning process:
+   pid 414(powerd): [0x001116f800018844] 00:53:03 PreventUserIdleSystemSleep named: "Powerd - Prevent sleep while display is on"  
+   pid 414(powerd): [0x001120cf00108771] 00:04:46 InternalPreventDisplaySleep named: "com.apple.powermanagement.delayDisplayOff"  
+	Timeout will fire in 13 secs Action=TimeoutActionTurnOff
+   pid 463(bluetoothd): [0x00112346000194df] 00:00:33 PreventUserIdleSystemSleep named: "com.apple.BTStack"  
+   pid 84806(caffeinate): [0x001117ac00018958] 00:50:02 PreventUserIdleSystemSleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting on behalf of Process ID 84802
+	Created for PID: 84802. 
+	Localized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.
+   pid 84806(caffeinate): [0x001117ac00058959] 00:50:02 PreventUserIdleDisplaySleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting on behalf of Process ID 84802
+	Created for PID: 84802. 
+	Localized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.
+   pid 470(WindowServer): [0x0011227800099449] 00:00:00 UserIsActive named: "com.apple.iohideventsystem.queue.tickle serviceID:100089dc5 service:AppleUserHIDEventService product:M720 Triathlon eventType:17"  
+	Timeout will fire in 600 secs Action=TimeoutActionRelease
+Kernel Assertions: 0x100=MAGICWAKE
+   id=556  level=255 0x100=MAGICWAKE creat=11/10/26, 17:54  mod=25/10/26, 22:12 description=en0 owner=IOSkywalkNetworkBSDClient
