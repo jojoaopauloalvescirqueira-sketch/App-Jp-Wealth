@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "tzdbVersion": "2026b",
+  "fromDate": "2026-01-01",
+  "untilDate": "2026-12-31",
+  "sources": [
+    "forex-com-local-convention"
+  ],
+  "venues": [
+    {
+      "id": "fx-sydney",
+      "name": "Sydney",
+      "city": "Sydney",
+      "country": "Austrália",
+      "region": "Forex indicativo",
+      "timeZone": "Australia/Sydney",
+      "lat": -33.8688,
+      "lng": 151.2093,
+      "groups": [
+        {
+          "id": "indicative",
+          "label": "Janela indicativa 07:00–16:00 local",
+          "verifiedAt": "2026-10-31",
+          "sourceIds": [
+            "forex-com-local-convention"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-01-01",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "forex-com-local-convention"
+              ],
+              "sessions": [
+                {
+                  "start": "07:00",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "Janela semanal indicativa FOREX.com; não confirma negociação, feriados ou horário da corretora."
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "id": "fx-tokyo",
+      "name": "Tokyo",
+      "city": "Tóquio",
+      "country": "Japão",
+      "region": "Forex indicativo",
+      "timeZone": "Asia/Tokyo",
+      "lat": 35.6762,
+      "lng": 139.6503,
+      "groups": [
+        {
+          "id": "indicative",
+          "label": "Janela indicativa 09:00–18:00 local",
+          "verifiedAt": "2026-10-31",
+          "sourceIds": [
+            "forex-com-local-convention"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-01-01",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "forex-com-local-convention"
+              ],
+              "sessions": [
+                {
+                  "start": "09:00",
+                  "end": "18:00",
+                  "phase": "continuous",
+                  "reason": "Janela semanal indicativa FOREX.com; não confirma negociação, feriados ou horário da corretora."
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "id": "fx-london",
+      "name": "London",
+      "city": "Londres",
+      "country": "Reino Unido",
+      "region": "Forex indicativo",
+      "timeZone": "Europe/London",
+      "lat": 51.5072,
+      "lng": -0.1276,
+      "groups": [
+        {
+          "id": "indicative",
+          "label": "Janela indicativa 08:00–16:00 local",
+          "verifiedAt": "2026-10-31",
+          "sourceIds": [
+            "forex-com-local-convention"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-01-01",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "forex-com-local-convention"
+              ],
+              "sessions": [
+                {
+                  "start": "08:00",
+                  "end": "16:00",
+                  "phase": "continuous",
+                  "reason": "Janela semanal indicativa FOREX.com; não confirma negociação, feriados ou horário da corretora."
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "id": "fx-new-york",
+      "name": "New York",
+      "city": "Nova York",
+      "country": "Estados Unidos",
+      "region": "Forex indicativo",
+      "timeZone": "America/New_York",
+      "lat": 40.7128,
+      "lng": -74.006,
+      "groups": [
+        {
+          "id": "indicative",
+          "label": "Janela indicativa 08:00–17:00 local",
+          "verifiedAt": "2026-10-31",
+          "sourceIds": [
+            "forex-com-local-convention"
+          ],
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "schedule": [
+            {
+              "validFrom": "2026-01-01",
+              "validUntil": "2026-12-31",
+              "sourceIds": [
+                "forex-com-local-convention"
+              ],
+              "sessions": [
+                {
+                  "start": "08:00",
+                  "end": "17:00",
+                  "phase": "continuous",
+                  "reason": "Janela semanal indicativa FOREX.com; não confirma negociação, feriados ou horário da corretora."
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        }
+      ]
+    }
+  ]
+}

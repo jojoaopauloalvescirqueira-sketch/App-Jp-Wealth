@@ -177,3 +177,52 @@
   }
   global.JPWMarketSessions = Object.freeze({prepare, at, isRegularOpen});
 })(globalThis);
+
+/* Independent indicative FX convention. Equity calendars and financial state remain separate. */
+(function(global){
+  'use strict';
+  const zones=Object.freeze(['device','UTC','Australia/Sydney','Asia/Tokyo','Europe/London','America/New_York','America/Sao_Paulo']);
+  function validate(raw){
+    if(typeof raw!=='string'||raw.length>256)throw Error('Preferência de fuso inválida.');
+    const value=JSON.parse(raw);
+    if(!value||Array.isArray(value)||typeof value!=='object'||value.schemaVersion!==1||!zones.includes(value.timeZone)||Object.keys(value).length!==2)throw Error('Preferência de fuso incompatível.');
+    return Object.freeze({schemaVersion:1,timeZone:value.timeZone});
+  }
+  const prepared=new WeakSet();
+  function prepare(raw){
+    if(raw?.convention?.id!=='forex-com-local-v1'||raw?.convention?.kind!=='indicative-fx-session'||!raw.displayDays)throw Error('Convenção Forex incompatível.');
+    const catalog=global.JPWMarketSessions.prepare(raw);
+    const ids=['fx-sydney','fx-tokyo','fx-london','fx-new-york'];
+    if(catalog.venues.length!==4||catalog.venues.some((v,i)=>v.id!==ids[i]))throw Error('Centros Forex incompatíveis.');
+    for(const zone of zones.filter(z=>z!=='device')){
+      const days=catalog.displayDays[zone];
+      if(!Array.isArray(days)||!days.length||days.some((d,i)=>!Number.isSafeInteger(d.fromUtc)||!Number.isSafeInteger(d.untilUtc)||d.untilUtc<=d.fromUtc||i&&days[i-1].untilUtc!==d.fromUtc||!Array.isArray(d.ticks)||d.ticks.some(t=>!Number.isSafeInteger(t.utc)||t.utc<d.fromUtc||t.utc>d.untilUtc||!/^\d{2}:\d{2}$/.test(t.label)||!/^[-+]\d{4}$/.test(t.offset))))throw Error('Dias de exibição Forex inválidos.');
+    }
+    prepared.add(catalog);return catalog;
+  }
+  function requirePrepared(catalog){if(!prepared.has(catalog))throw Error('Catálogo Forex não preparado.');}
+  function at(catalog,utcMs){requirePrepared(catalog);return global.JPWMarketSessions.at(catalog,utcMs);}
+  const deviceDayCache=new Map();
+  function browserDay(utcMs,zone){
+    const formatter=new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+    function parts(at){return Object.fromEntries(formatter.formatToParts(at).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));}
+    function dateAt(at){const p=parts(at);return p.year+'-'+p.month+'-'+p.day;}
+    const day=dateAt(utcMs),key=zone+'|'+day;if(deviceDayCache.has(key))return deviceDayCache.get(key);
+    function boundary(target){let lo=utcMs-129600000,hi=utcMs+129600000;while(lo<hi){const mid=Math.floor((lo+hi)/2);if(dateAt(mid)<target)lo=mid+1;else hi=mid;}return lo;}
+    const next=new Date(Date.parse(day+'T00:00:00Z')+86400000).toISOString().slice(0,10),fromUtc=boundary(day),untilUtc=boundary(next);
+    if(!(fromUtc<=utcMs&&utcMs<untilUtc))throw Error('Dia civil do dispositivo não pôde ser determinado.');
+    const ticks=[];
+    function tick(utc){const p=parts(utc),local=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second),offset=Math.round((local-Math.floor(utc/1000)*1000)/60000),absolute=Math.abs(offset);return Object.freeze({utc,label:p.hour+':'+p.minute,offset:(offset<0?'-':'+')+String(Math.floor(absolute/60)).padStart(2,'0')+String(absolute%60).padStart(2,'0')});}
+    for(let utc=fromUtc;utc<=untilUtc;utc+=3600000)ticks.push(tick(utc));if(ticks[ticks.length-1].utc!==untilUtc)ticks.push(tick(untilUtc));
+    const value=Object.freeze({date:day,fromUtc,untilUtc,ticks:Object.freeze(ticks),displaySource:'browser-intl'});deviceDayCache.set(key,value);if(deviceDayCache.size>8)deviceDayCache.delete(deviceDayCache.keys().next().value);return value;
+  }
+  function timeline(catalog,utcMs,zone,options){
+    requirePrepared(catalog);if(!Number.isSafeInteger(utcMs))throw Error('Instante Forex inválido.');
+    const compiled=Object.hasOwn(catalog.displayDays,zone);if(!compiled&&!options?.device)throw Error('Fuso fora do catálogo temporal.');
+    const day=compiled?catalog.displayDays[zone].find(d=>utcMs>=d.fromUtc&&utcMs<d.untilUtc):browserDay(utcMs,zone);if(!day)return null;
+    const horizon=catalog.displayDays.UTC;if(!compiled&&(day.date<horizon[0].date||day.date>horizon[horizon.length-1].date))return null;
+    return {...day,rows:catalog.venues.map(v=>({id:v.id,segments:v.groups.flatMap(g=>g.periods.filter(p=>p.phase==='continuous'&&p.endUtc>day.fromUtc&&p.startUtc<day.untilUtc).map(p=>({fromUtc:Math.max(day.fromUtc,p.startUtc),untilUtc:Math.min(day.untilUtc,p.endUtc)})))}))};
+  }
+  global.JPWMarketSessionsViewPreference=Object.freeze({key:'jpwealth_market_sessions_view_v1',validate,zones});
+  global.JPWForexSessions=Object.freeze({prepare,at,timeline});
+})(globalThis);

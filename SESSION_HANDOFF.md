@@ -1,3 +1,14 @@
+# Candidato Calendário — 31/10/2026
+
+Data da fotografia: 2026-10-31
+Source revision representada: `69b6cb677de2486be5c30681e4b2e02d4180d704`
+
+Esta fotografia descreve somente a frente local codex/calendario-proporcoes-20261031 e seu delta ainda sem commit. A base integrada é69b6cb6; os contratos novos e o diff identificam as alterações locais, não se afirma integração. Hojevermelho/negrito, seleção32/alvo44, capitalização de frase nas duas superfícies. Matriz focal32PASS; primeira falha de ambiente e primeira matriz16PASS/16FAIL preservadas. FULL/revisão/aceite humano têm recibos próprios externos. Outras três frentes em worktrees separadas; principal preservada.
+
+Fonte de engenharia: contratos versionados, por autorização humana específica diante do Harness externo ausente na migração; gates preservados. Sem mudança permanente de autoridade ou instruções. Nenhuma operação Git final/publicação autorizada neste candidato.
+
+## Fotografias históricas preservadas
+
 # Calendário e Agenda — candidato local de 23/10/2026
 
 Implementação autorizada na branch `codex/calendario-agenda-20261023`, base `d517be0748f886085b3029c809bd68046e5c0f77`, preservando as pendências anteriores de Planejamento e Notificações. Acesso mensal imediatamente antes do sino, agenda pessoal confirmada, filtros e pacote econômico público local; calendário semanal FF preservado. Contrato e evidências: docs/architecture/CALENDAR-AGENDA.md e docs/validation/calendar-agenda-20261023/README.md.

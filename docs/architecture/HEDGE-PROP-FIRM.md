@@ -1,3 +1,31 @@
+# Hedge didático — evolução de 31/10/2026
+
+O motor financeiro de 27/10 é preservado byte a byte. Redesign altera apresentação e acrescenta acompanhamento independente confirmado; os contratos históricos abaixo continuam fontes matemáticas.
+
+## Apresentação e catálogo
+
+Modos uma fase, duas fases e Instant. Sliders e campos numéricos atualizam a mesma entrada em RAM, sem arredondar intermediários nem substituir o nó ativo. O campo aceita precisão superior ao passo sugerido do slider. Instantes não passam pelo motor de avaliação: mostram fluxo conta→regras→elegibilidade→Reward e ausência de hedge de aprovação, sem prometer ausência de risco.
+
+Fluxo visual separa taxa, reserva dos hedges e orçamento total. Resultados de cenário são teóricos e condicionados ao recebimento; razões de exposição não são lotes executáveis. Custos continuam impactos separados, sem recalcular tamanho do hedge.
+
+Catálogo factual consultado em 31/10/2026, sem preenchimento automático, homologação ou recomendação operacional. FTMO: https://ftmo.com/en/comparison-table/ e https://ftmo.com/en/trading-objectives/ . TTP: https://support.thetradingpit.com/en/articles/835084-cfd-prime-rules , https://support.thetradingpit.com/en/articles/835083-cfd-prime-how-it-works , https://support.thetradingpit.com/en/articles/835093-cfd-prime-rewards e https://support.thetradingpit.com/en/articles/835380-cfd-instant-rules . Valores variáveis por oferta/conta permanecem pendentes. Restrições a hedge coordenado ficam visíveis; não esconder a condição no “i”. Os limites fixos do laboratório não reproduzem regras diárias/trailing das mesas.
+
+## Guia confirmado, separado dos fatos financeiros
+
+`JPWHedgeGuide` é exportado antes da UI no mesmo script clássico `02-ui.js`, preservando a ordem dos 127 scripts. API: `KEY`, `validate(raw)` puro (retorna clone ou lança), `inspect(raw)`, `read()`, `write(document,{expectedRaw,replacePlan,signal})` assíncrono (Promise), `stages(mode)`.
+
+Chave `jpwealth_hedge_guide_v1`, schema1, até 64 KiB e 500 marcos. Documento: `{schemaVersion,revision,plan:{mode,catalogId,catalogVersion,input},stage,confirmedAt,updatedAt,milestones:[{stage,confirmedAt}]}`. `mode` é one/two/instant; catálogo custom/ftmo/ttp por modo e versão2026-10-31. Snapshots do motor incluem valores finitos explícitos e custos `number|null`; null não vira zero. Instant guarda apenas nominalUSD/feeUSD, sem metas/exposição fictícias. Cada etapa é confirmação declarada pelo usuário, não verificação da mesa ou negociação.
+
+Somente botões explícitos escrevem. Leitura inválida/futura não é substituída. Escrita compara o raw esperado e confere releitura: confirmado, recusado, conflito ou desconhecido. Desconhecido bloqueia retry até conferência. Histórico da mesma configuração é append-only; o snapshot inteiro de parâmetros/catálogo é imutável fora de substituição explicitamente confirmada. A escrita usa o mesmo Web Lock `jpwealth_state_writer_v1` de importação/finalização (`sessionAcquireWriteLock`), com expectedRaw e releitura dentro da seção serializada. Sem Web Locks seguro a gravação é recusada e a UI orienta usar o inicializador local; não existe fallback best-effort anunciado como atômico. UI aguarda o resultado, expõe busy, impede duplo envio e cancela requisição ainda enfileirada ao descartar/finalizar seu controlador. A coordenação é entre escritores cooperantes da mesma origem, não CAS universal de localStorage. Substituir plano/histórico exige confirmação própria e gravação verificada; trocar modo não substitui nada. Restabelecer campos de um plano salvo é gesto explícito; recarga apenas mostra o guia confirmado. Não cria fatos no ledger, ordens, LIFO, lotes, cadastro ou permissões.
+
+Integração Backup Completo workspace3 reutiliza `validate(raw)` na frente N2 de backup. Ausência da família em backups antigos preserva destino. Até a integração combinada, o store existe separadamente e não autoriza dizer cobertura integral.
+
+Testes permanentes `hedge_guide_store_test.js` e `hedge_redesign_browser_test.py`, encadeados pelas entradas de Hedge já existentes. FULL/revisão independente e aceite humano são etapas separadas. Contrato/autoridade: `BRIEF-HEDGE-REDESIGN-20261031.md`; controles em CHG próprio.
+
+---
+
+## Histórico preservado
+
 # Hedge Prop Firm — contrato educativo
 
 Fonte: plano humano aprovado27/10/2026 e CHGs PRODUCT/CONTROLS HEDGE-PROP-20261027. Modelos inspirados nas capturas fornecidas da Cortex; não houve acesso ao código autenticado e não se afirma paridade universal.

@@ -1,3 +1,19 @@
+# Pacote único de backup — 31/10/2026
+
+Contrato N2 autorizado: `CHG-JPW-BACKUP-UNIFICADO-20261031`. A exportação padrão gera `jpwealth_portable_backup` v1, ZIP STORE com `manifest.json`, `backup.json`, `evidence-manifest.json` e `originals/<sha256>.pdf|html`. O JSON interno mantém `jpwealth_full_backup`/formatVersion2 e amplia workspace para3. Leitor novo conserva JSON/workspace1/2 e ZIP de originais legados; builds antigos não compreendem workspace3 nem o pacote único. Não prometer compatibilidade reversa sem perdas.
+
+Workspace3 inclui as22preferências anteriores mais progresso de Dante, Gêmeos do Tempo, Correntes de Capital e preferências do Mensal; plano didático de Hedge e fuso de Sessões usam validadores públicos das respectivas frentes. Ausência em arquivo antigo conserva o destino; null significa preferência explicitamente ausente no snapshot. Progresso inválido/futuro e `jpwealth_capital_currents_v1` legado são preservados como rascunhos opacos para consulta, nunca aplicados automaticamente. A captura não enumera arbitrariamente o armazenamento da origem.
+
+Limites independentes: ZIP168MiB/203entradas; JSON32MiB; até200originais de32MiB cada, total128MiB; dois manifestos de2MiB cada; total expandido164MiB. Somente STORE; diretório central/cabeçalhos/caminhos/tamanhos são conferidos antes de unzip. ZIP64 (inclusive extra ID0x0001 com tamanhos de32bits normais), cifra, nomes duplicados, divergência local/central e regiões sobrepostas são recusados. Checksums por entrada, manifesto e JSON são conferidos antes da primeira escrita. HTML arquivado não executa. Originais ausentes nos comprovantes exigem confirmação explícita de exportação com lacunas identificadas.
+
+Exportar revalida base confirmada, epoch e fingerprint de workspace após preparar os originais. Importar confirma substituição da base e adição de originais. A transação IndexedDB é aditiva/idempotente e ocorre antes da adoção financeira; falha em IndexedDB impede a substituição financeira. Os dois stores não constituem uma transação única: falha financeira posterior informa restauração parcial e conserva os originais adicionados. UNKNOWN bloqueia novas gravações. O journal `workspaceRecovery.package` identifica pacote/etapa e a projeção de preferências segue retomável por recarga; não contém blobs.
+
+O lembrete vigente de30dias permanece, dispensável por sessão; download solicitado não é arquivo fisicamente conferido nem confirmação automática de backup. Caches, credenciais, permissões de pasta, foco/rolagem e simulações em andamento continuam excluídos. A pasta do programa/Git não é base financeira nem sincronização de dados.
+
+Testes focais permanentes: `workspace_backup_v3_test.js`, `unified_backup_contract_test.js`, `unified_backup_test.py`; testes anteriores e FULL continuam obrigatórios. Resultados atuais somente no relatório do candidato e recibos por hash; não herdar PASS históricos abaixo.
+
+---
+
 # Contrato vigente — Backup Completo v2 e evidências (2026-10-06)
 
 Produto N2: [CHG-JPW-SAVING-INTEGRITY](../work/CHG-JPW-SAVING-INTEGRITY-20261006.md). Interface e testes possuem contratos separados. Este candidate não é publicação ou aprovação operacional.

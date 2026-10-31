@@ -113,7 +113,7 @@ def main():
           const r = {};
           const metaA = await exportFullBackup();               // confirm()=false → sem senhas
           r.A = {dest: metaA.destination, seq: S.dataGovernance.export.lastSequence,
-                 nomeOk: /^JP_WEALTH_DB_000001_\\d{4}-\\d{2}-\\d{2}_\\d{4}_[0-9a-f-]{36}\\.json$/.test(metaA.filename),
+                 nomeOk: /^JP_WEALTH_DB_000001_\\d{4}-\\d{2}-\\d{2}_\\d{4}_[0-9a-f-]{36}\\.zip$/.test(metaA.filename),
                  log: S.dataGovernance.changeLog.length};
           const origDl = dgDownloadViaAnchor;
           dgDownloadViaAnchor = () => { throw new Error('falha simulada'); };
@@ -263,7 +263,7 @@ def main():
               // T1 — identidade interna do arquivo
               const m1 = await exportFullBackup({quiet:true});
               const ult = () => capturado[capturado.length-1];
-              const p1 = JSON.parse(await ult().blob.text());
+              const p1 = (await JPWBackup.inspectPackage(ult().blob)).payload;
               const dg1 = p1.state.dataGovernance.export;
               r.T1 = { nomeFisico: ult().nome,
                        igualAoMeta: ult().nome === m1.filename,
@@ -274,12 +274,12 @@ def main():
                                         && S.dataGovernance.export.lastSequence === m1.sequence
                                         && S.dataGovernance.export.lastExportFile === m1.filename };
               // T2/T3 — restore em destino vazio, caminho Downloads (sem sondagem)
-              const backupTxt = await ult().blob.text();
+              const backupBlob = ult().blob;
               const seqDoArquivo = m1.sequence;
               S.storageRestoreProbe='changed after export';
               if(save()!==true)throw new Error('Contraprova de restore não confirmada');
               window.confirm=()=>true;
-              const f = new File([backupTxt], m1.filename, {type:'application/json'});
+              const f = new File([backupBlob], m1.filename, {type:'application/zip'});
               importFullBackupFile(f);
               for(let i=0;i<100&&S.storageRestoreProbe!=='saved export source';i++)
                 await new Promise(res=>setTimeout(res,20));
@@ -295,8 +295,8 @@ def main():
                        ok: m2.sequence === seqDoArquivo + 1,
                        semColisaoDisponivel: true };
               // T6 — monotonicidade por duas gerações: N → N+1 → N+2
-              const txt2 = await ult().blob.text();
-              const f2 = new File([txt2], m2.filename, {type:'application/json'});
+              const blob2 = ult().blob;
+              const f2 = new File([blob2], m2.filename, {type:'application/zip'});
               importFullBackupFile(f2);
               await new Promise(res => setTimeout(res, 700));
               S.dataGovernance.storage = {configured:false, folderName:'', folderDisplayPath:'', configuredAt:''};
@@ -499,3 +499,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # The existing FULL entry owns the complete-backup chain; child failures
+    # propagate without removing storage assertions or adding a gate entry.
+    import subprocess, sys
+    subprocess.run([sys.executable, str(ROOT / 'tools/complete_backup_test.py')], cwd=ROOT, check=True)

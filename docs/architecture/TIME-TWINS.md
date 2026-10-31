@@ -1,3 +1,7 @@
+# Atualização de backup — workspace3 — 31/10/2026
+
+O [pacote único aprovado](COMPLETE-BACKUP.md) inclui o raw confirmado de `jpwealth_time_twins_v1` somente em `workspace.preferences`; continua fora de S e dos fatos financeiros. Restaurar não concede novas demonstrações nem inicia uma missão. Arquivo antigo sem a chave preserva o destino; incompatível/futuro verificável é consulta opaca, sem ativação. Esta nota substitui somente a exclusão de Backup Completo descrita abaixo; esquema, motor, perfis/parâmetros e evidências históricas permanecem sob seus contratos.
+
 # Gêmeos do Tempo
 
 Candidate local de 15/10/2026. Ferramentas e Serviços → MiniGames apresenta dois cartões: Galton Board e Gêmeos do Tempo. Cada Abrir seleciona uma visão local do mesmo child `tools-minigames`. Não há novo submenu. `time-twins` é um alias direto para `tools/time-twins`; os aliases antigos continuam abrindo exclusivamente Galton Board.

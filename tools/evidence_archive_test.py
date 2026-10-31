@@ -2,6 +2,7 @@
 """Synthetic exact-source browser probe for the independent evidence archive."""
 import argparse, functools, hashlib, http.server, json, pathlib, tempfile, threading, traceback
 from playwright.sync_api import sync_playwright
+from dashboard_macro_test import launch_browser
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 JS=ROOT/'src/js/00-core/09-evidence-archive.js'
 VENDOR=ROOT/'src/vendor/fflate/fflate-0.8.2.min.js'
@@ -21,7 +22,7 @@ def run(out):
             rows.append({'case':name,'status':'PRODUCT_FAIL','error':str(error)});raise
     try:
         with sync_playwright() as pw:
-            browser=pw.chromium.launch(executable_path='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless=True,args=['--no-sandbox'])
+            browser=launch_browser(pw)
             context=browser.new_context(accept_downloads=True);page=context.new_page()
             def setup(p):
                 p.goto(url+'src/vendor/fflate/')

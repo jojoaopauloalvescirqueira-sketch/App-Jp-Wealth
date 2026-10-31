@@ -473,7 +473,101 @@ function dgBackupValidateTypedContainers(state){
     }
   }
 }
-window.JPWBackup=Object.freeze({status:()=>({...dgBackupLastStatus}),inspect:dgBackupInspect,sha256:dgBackupSha256,maxBytes:JPW_BACKUP_MAX_BYTES});
+// Unified portable package. JSON and evidence readers keep their legacy formats.
+const JPW_PACKAGE_LIMITS=Object.freeze({zip:168*1024*1024,total:164*1024*1024,manifest:2*1024*1024,entries:203});
+const jpwPreparedPackages=new WeakMap();
+function dgPackageCoverage(payload,evidence){
+  const found=new Set(evidence.entries.map(row=>row.fileHash));
+  const missingOriginals=(payload.state.fxConsolidated?.receipts||[]).filter(row=>!row.fileHash||!found.has(row.fileHash)).map(row=>({receiptId:String(row.id||''),fileHash:row.fileHash||null}));
+  return {originalsPresent:evidence.entries.length,missingOriginals};
+}
+async function dgBuildBackupPackage(blob,evidence){
+  if(!window.fflate?.zipSync||!window.JPWEvidence)throw Error('Preparação ZIP de backup indisponível.');
+  if(blob.size>JPW_BACKUP_MAX_BYTES)throw Error('JSON acima de 32 MiB.');
+  const jsonBytes=new Uint8Array(await blob.arrayBuffer()),payload=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(jsonBytes));
+  dgBackupInspect(payload);
+  const checkedEvidence=await JPWEvidence.inspectArchiveEntries(evidence.files);
+  const files=Object.create(null);files['backup.json']=jsonBytes;
+  for(const [path,data]of Object.entries(evidence.files))files[path==='manifest.json'?'evidence-manifest.json':path]=data;
+  const coverage=dgPackageCoverage(payload,checkedEvidence.manifest),entries=[];
+  for(const [path,bytes]of Object.entries(files))entries.push({path,size:bytes.length,sha256:await JPWEvidence.digest(bytes)});
+  const body={format:'jpwealth_portable_backup',formatVersion:1,exportId:payload.exportId||crypto.randomUUID(),createdAt:new Date().toISOString(),build:payload.build||null,coverage,entries};
+  const manifest={...body,integrity:{algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(body))}};
+  files['manifest.json']=new TextEncoder().encode(JSON.stringify(manifest));
+  if(files['manifest.json'].length>JPW_PACKAGE_LIMITS.manifest||Object.values(files).reduce((n,b)=>n+b.length,0)>JPW_PACKAGE_LIMITS.total)throw Error('Pacote acima do limite de conteúdo.');
+  const bytes=fflate.zipSync(files,{level:0});
+  if(bytes.length>JPW_PACKAGE_LIMITS.zip)throw Error('Pacote acima de 168 MiB.');
+  const result=new Blob([bytes],{type:'application/zip'});
+  result.workspaceFingerprint=blob.workspaceFingerprint;result.confirmedSourceFingerprint=blob.confirmedSourceFingerprint;
+  result.checksum=manifest.integrity.checksum;result.fileChecksum=await JPWEvidence.digest(bytes);result.coverage=coverage;
+  return result;
+}
+function dgPackageDirectory(bytes){
+  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength),length=bytes.length;
+  const inspectExtra=(from,size)=>{
+    const limit=from+size;
+    for(let at=from;at<limit;){
+      if(at+4>limit)throw Error('Campo extra ZIP truncado.');
+      const id=view.getUint16(at,true),size=view.getUint16(at+2,true);
+      if(id===0x0001)throw Error('ZIP64 não é aceito neste pacote.');
+      if(at+4+size>limit)throw Error('Campo extra ZIP fora dos limites.');
+      at+=4+size;
+    }
+  };
+  let end=-1;
+  for(let pos=length-22;pos>=Math.max(0,length-65557);pos--)if(view.getUint32(pos,true)===0x06054b50&&pos+22+view.getUint16(pos+20,true)===length){end=pos;break;}
+  if(end<0)throw Error('ZIP inválido ou truncado.');
+  const count=view.getUint16(end+10,true),size=view.getUint32(end+12,true),offset=view.getUint32(end+16,true);
+  if(view.getUint16(end+4,true)||view.getUint16(end+6,true)||view.getUint16(end+8,true)!==count||count<3||count>JPW_PACKAGE_LIMITS.entries||offset+size!==end)throw Error('Diretório ZIP inválido ou acima dos limites.');
+  const entries=new Map(),ranges=[];let pos=offset,total=0;
+  for(let i=0;i<count;i++){
+    if(pos+46>end||view.getUint32(pos,true)!==0x02014b50)throw Error('Diretório ZIP incompleto.');
+    const flags=view.getUint16(pos+8,true),method=view.getUint16(pos+10,true),packed=view.getUint32(pos+20,true),expanded=view.getUint32(pos+24,true),nl=view.getUint16(pos+28,true),el=view.getUint16(pos+30,true),cl=view.getUint16(pos+32,true),local=view.getUint32(pos+42,true);
+    if(pos+46+nl+el+cl>end)throw Error('Nome ZIP fora dos limites.');
+    inspectExtra(pos+46+nl,el);
+    const path=new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(pos+46,pos+46+nl)),json=path==='backup.json',manifest=['manifest.json','evidence-manifest.json'].includes(path);
+    if(entries.has(path)||!(json||manifest||/^originals\/[a-f0-9]{64}\.(pdf|html)$/.test(path))||flags&~0x808||method!==0||packed!==expanded||view.getUint16(pos+34,true)||((view.getUint32(pos+38,true)>>>16)&0xf000)===0xa000||expanded>(manifest?JPW_PACKAGE_LIMITS.manifest:JPW_BACKUP_MAX_BYTES)||local+30>offset||view.getUint32(local,true)!==0x04034b50)throw Error('Entrada ZIP recusada: caminho, duplicação, tamanho, compressão ou link.');
+    const lnl=view.getUint16(local+26,true),lel=view.getUint16(local+28,true),start=local+30+lnl+lel;
+    if(start+packed>offset||view.getUint16(local+6,true)!==flags||view.getUint16(local+8,true)!==method||(!(flags&8)&&(view.getUint32(local+18,true)!==packed||view.getUint32(local+22,true)!==expanded))||new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(local+30,local+30+lnl))!==path||ranges.some(([from,to])=>local<to&&start+packed>from))throw Error('Cabeçalho ZIP divergente ou sobreposto.');
+    inspectExtra(local+30+lnl,lel);
+    total+=expanded;if(total>JPW_PACKAGE_LIMITS.total)throw Error('Conteúdo expandido acima de 164 MiB.');
+    entries.set(path,expanded);ranges.push([local,start+packed]);pos+=46+nl+el+cl;
+  }
+  if(pos!==end||!['manifest.json','backup.json','evidence-manifest.json'].every(path=>entries.has(path)))throw Error('Pacote incompleto.');
+  return entries;
+}
+async function dgInspectBackupPackage(file){
+  if(!file||!Number.isSafeInteger(file.size)||file.size<22||file.size>JPW_PACKAGE_LIMITS.zip)throw Error('Pacote fora do limite de 168 MiB.');
+  if(!window.fflate?.unzipSync||!window.JPWEvidence)throw Error('Leitor de pacote indisponível.');
+  const bytes=new Uint8Array(await file.arrayBuffer()),directory=dgPackageDirectory(bytes),files=fflate.unzipSync(bytes,{filter:entry=>directory.has(entry.name)&&entry.originalSize===directory.get(entry.name)});
+  if(Object.keys(files).length!==directory.size||Object.entries(files).some(([path,data])=>data.length!==directory.get(path)))throw Error('Conteúdo ZIP divergente.');
+  const decode=data=>JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data)),manifest=decode(files['manifest.json']);
+  dgBackupCheckTree(manifest);
+  if(manifest.format!=='jpwealth_portable_backup'||manifest.formatVersion!==1||!Array.isArray(manifest.entries)||manifest.entries.length!==directory.size-1||manifest.integrity?.algorithm!=='SHA-256'||manifest.integrity.canonicalization!=='JPW_SORTED_JSON_V1')throw Error('Formato de pacote incompatível.');
+  const body={...manifest};delete body.integrity;
+  if(dgBackupSha256(dgBackupCanonical(body))!==manifest.integrity.checksum)throw Error('Checksum do pacote divergente.');
+  const seen=new Set();
+  for(const entry of manifest.entries){
+    if(!entry||typeof entry.path!=='string'||entry.path==='manifest.json'||seen.has(entry.path)||!files[entry.path]||entry.size!==files[entry.path].length||await JPWEvidence.digest(files[entry.path])!==entry.sha256)throw Error('Hash, tamanho ou cobertura de entrada divergente.');
+    seen.add(entry.path);
+  }
+  const payload=decode(files['backup.json']);dgBackupInspect(payload);
+  const evidenceFiles=Object.create(null);
+  for(const [path,data]of Object.entries(files))if(path==='evidence-manifest.json'||path.startsWith('originals/'))evidenceFiles[path==='evidence-manifest.json'?'manifest.json':path]=data;
+  const evidence=await JPWEvidence.inspectArchiveEntries(evidenceFiles);
+  if(dgBackupCanonical(manifest.coverage)!==dgBackupCanonical(dgPackageCoverage(payload,evidence.manifest)))throw Error('Cobertura de originais divergente.');
+  const prepared=Object.freeze({payload,evidenceCount:evidence.count,coverage:manifest.coverage,packageId:manifest.exportId});
+  jpwPreparedPackages.set(prepared,{evidence,payloadText:new TextDecoder().decode(files['backup.json'])});return prepared;
+}
+async function dgBuildExportArtifact(seq,filename,when,source){
+  const raw=localStorage.getItem(LSKEY),epoch=jpWealthPersistenceEpoch(),blob=dgBuildBackupBlob(seq,filename,when,source);
+  const evidence=await JPWEvidence.prepareArchive(),pack=await dgBuildBackupPackage(blob,evidence);
+  if(localStorage.getItem(LSKEY)!==raw||jpWealthPersistenceEpoch()!==epoch||jpwWorkspaceFingerprint()!==blob.workspaceFingerprint)throw Error('A base ou as preferências mudaram durante a exportação. Nenhum pacote foi entregue.');
+  if(pack.coverage.missingOriginals.length&&!confirm('Este pacote preservará os dados e preferências, mas '+pack.coverage.missingOriginals.length+' comprovante(s) não possuem original PDF/HTML arquivado. Exportar com essas ausências identificadas? Nenhum original será inventado.'))throw Error('Exportação cancelada; originais indisponíveis.');
+  if(localStorage.getItem(LSKEY)!==raw||jpWealthPersistenceEpoch()!==epoch||jpwWorkspaceFingerprint()!==blob.workspaceFingerprint)throw Error('A base ou as preferências mudaram durante a confirmação. Nenhum pacote foi entregue.');
+  return pack;
+}
+window.JPWBackup=Object.freeze({status:()=>({...dgBackupLastStatus}),inspect:dgBackupInspect,sha256:dgBackupSha256,maxBytes:JPW_BACKUP_MAX_BYTES,packageLimits:JPW_PACKAGE_LIMITS,buildPackage:dgBuildBackupPackage,inspectPackage:dgInspectBackupPackage,restorePackage:dgImportBackupPackage});
 // Download tradicional (fallback §15 e escolha excepcional §7). Padrão endurecido:
 // âncora no DOM e revogação adiada — revogar de forma síncrona após click() corta o
 // download em alguns navegadores.
@@ -527,7 +621,7 @@ function dgFinishExport(meta,quiet){
 // nome de arquivo: a segunda gravação sobrescrevia a primeira, violando o §8.3.
 // Serializar por recusa é a correção honesta: a segunda tentativa não exporta nada,
 // diz o porquê, e nenhum estado é tocado.
-function dgBackupUniqueFileName(seq,when){return dgExportFileName(seq,when).replace(/\.json$/,'_'+crypto.randomUUID()+'.json');}
+function dgBackupUniqueFileName(seq,when){return dgExportFileName(seq,when).replace(/\.json$/,'_'+crypto.randomUUID()+'.zip');}
 let dgExportEmAndamento=false;
 async function exportFullBackup(opts){
   const quiet=!!(opts&&opts.quiet);
@@ -561,7 +655,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
     if(!supported || !configured){
       const seq=baseSeq+1;
       const filename=dgBackupUniqueFileName(seq,new Date());
-      const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+      const blob=await dgBuildExportArtifact(seq,filename,exportadoEm,estadoFonte);
       dgDownloadViaAnchor(filename,blob);
       return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads',workspaceFingerprint:blob.workspaceFingerprint,checksum:blob.checksum},quiet);
     }
@@ -582,12 +676,12 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
-          const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+          const blob=await dgBuildExportArtifact(seq,filename,exportadoEm,estadoFonte);
           workspaceFingerprint=blob.workspaceFingerprint;checksum=blob.checksum;
           writeAttempted=true;
           await dgFsWriteFile(handle,filename,blob);
           const readBack=await (await handle.getFileHandle(filename,{create:false})).getFile();
-          if(readBack.size!==blob.size||dgBackupSha256(await readBack.text())!==blob.fileChecksum)throw new Error('Arquivo da pasta não corresponde ao conteúdo gerado.');
+          if(readBack.size!==blob.size||await JPWEvidence.digest(await readBack.arrayBuffer())!==blob.fileChecksum)throw new Error('Arquivo da pasta não corresponde ao conteúdo gerado.');
           dgBackupSetStatus('FILE_VERIFIED',{filename,checksum,reason:null});
         }catch(e){
           if(writeAttempted){
@@ -612,7 +706,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
       if(decision==='downloads'){
         const seq=baseSeq+1;
         const filename=dgBackupUniqueFileName(seq,new Date());
-        const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+        const blob=await dgBuildExportArtifact(seq,filename,exportadoEm,estadoFonte);
       dgDownloadViaAnchor(filename,blob);
         return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception',workspaceFingerprint:blob.workspaceFingerprint,checksum:blob.checksum},quiet);
       }
@@ -716,8 +810,19 @@ function normalizeImportedState(raw){
   }
   return imported;
 }
-function importFullBackupFile(file){
+async function dgImportBackupPackage(file){
+  const epoch=jpWealthPersistenceEpoch();
+  try{
+    const prepared=await dgInspectBackupPackage(file);
+    if(epoch!==jpWealthPersistenceEpoch())return;
+    const data=jpwPreparedPackages.get(prepared);
+    return importFullBackupFile(new File([data.payloadText],file.name,{type:'application/json'}),prepared);
+  }catch(error){alert('Pacote de backup recusado: '+error.message+' Nenhum dado foi alterado.');return null;}
+}
+function importFullBackupFile(file,preparedPackage){
   if(!file)return;
+  if(!preparedPackage&&(/\.zip$/i.test(file.name||'')||file.type==='application/zip'))return dgImportBackupPackage(file);
+  if(preparedPackage&&!jpwPreparedPackages.has(preparedPackage)){alert('Pacote não validado. Nada foi importado.');return;}
   if(!Number.isFinite(file.size)||file.size<2||file.size>JPW_BACKUP_MAX_BYTES){alert('Arquivo de backup fora do limite permitido (até 32 MiB). Nada foi lido ou alterado.');return;}
   // TRANSACIONAL: nenhum portão muda antes de o candidato estar lido, validado,
   // normalizado E confirmado. A versão anterior chamava resumeJPWealthPersistence()
@@ -739,6 +844,10 @@ function importFullBackupFile(file){
       alert('Backup inválido: '+(e&&e.message?e.message:'não foi possível ler o JSON.')+'\n\nNada foi alterado: o estado atual e as proteções de gravação permanecem exatamente como estavam.');
       return;
     }
+    if(preparedPackage){
+      if(!imported.workspaceRecovery){alert('Pacote sem workspace restaurável. Nada foi importado.');return;}
+      imported.workspaceRecovery.package={id:preparedPackage.packageId,stage:'PREFERENCES_PENDING',originals:preparedPackage.evidenceCount};
+    }
     const availabilityKey=window.JPWModuleAvailability.KEY;
     const availabilityPreferences=imported.workspaceRecovery?.snapshot?.preferences;
     const changesAvailability=!!availabilityPreferences&&Object.prototype.hasOwnProperty.call(availabilityPreferences,availabilityKey);
@@ -754,7 +863,8 @@ function importFullBackupFile(file){
       availabilityMessage=changes.length?'\n\nDisponibilidade após restaurar:\n'+changes.map(id=>names[id]+': '+(previousAvailability.valid?label(previousAvailability.states[id]):'configuração incompatível')+' → '+label(nextAvailability.states[id])).join('\n')+'\nIsso pode descongelar acessos. Não autoriza desenvolvimento.':'';
     }
     const preview=inspection.legacy?'Backup legado sem checksum: '+inspection.kind+'.\nFamílias presentes: '+inspection.sections.join(', ')+'.\nFamílias ausentes desta versão: '+(inspection.missing.join(', ')||'nenhuma')+'.\nConfira este conteúdo: os dados ausentes não estão no arquivo; campos introduzidos em versões posteriores receberão a estrutura inicial identificada.':'Backup Completo v2: checksum SHA-256 conferido. Registros confirmados e rascunhos permanecem separados.';
-    if(!confirm(preview+'\n\nImportar e substituir o estado atual deste navegador?'+availabilityMessage))return;
+    const packageMessage=preparedPackage?'\n\nPacote único conferido: '+preparedPackage.evidenceCount+' original(is). Ausências identificadas: '+preparedPackage.coverage.missingOriginals.length+'. Os originais serão adicionados sem excluir os existentes. Falhas entre IndexedDB e a base serão informadas como restauração parcial.':'';
+    if(!confirm(preview+packageMessage+'\n\nImportar e substituir o estado atual deste navegador?'+availabilityMessage))return;
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
     // ALD-C3-PRE-PERSISTENCE: a substituição da base inteira roda dentro do writer
     // lock cross-tab (mesma serialização da finalização e do wipe). O corpo nunca
@@ -781,13 +891,22 @@ function importFullBackupFile(file){
     let before;
     try{ before=localStorage.getItem(LSKEY); }
     catch(e){ alert('Não foi possível ler a base atual. O backup não foi aplicado.'); return; }
+    if(preparedPackage){
+      try{
+        const result=await JPWEvidence.restorePrepared(jpwPreparedPackages.get(preparedPackage).evidence);
+        if(result.status!=='CONFIRMED')throw Error(result.reason||'Transação de originais não confirmada.');
+      }catch(error){alert('Originais não restaurados: '+error.message+' A base financeira não foi substituída.');return;}
+      let unchanged=false;
+      try{unchanged=requestEpoch===jpWealthPersistenceEpoch()&&localStorage.getItem(LSKEY)===before&&(!changesAvailability||localStorage.getItem(availabilityKey)===availabilityBefore);}catch(_){}
+      if(!unchanged){alert('Restauração parcial: os originais foram adicionados, mas a base mudou durante a transação. Nenhum dado financeiro foi substituído. Preserve o pacote e confira a sessão.');return;}
+    }
     // ALD-C3-PRE-EPOCH: o backup já foi lido e validado integralmente acima. A nova
     // geração é firmada AQUI, antes de a base ser substituída — nunca depois, porque
     // uma base nova sob geração antiga deixaria uma finalização pendente atuar sobre
     // ela. Falhando a rotação, a importação é abortada e a base atual fica intacta.
     const novaEpoch=(typeof sessionEpochRotate==='function')?sessionEpochRotate():null;
     if(!novaEpoch){
-      alert('Não foi possível estabelecer uma nova geração da base neste navegador. O backup NÃO foi aplicado — recarregue a página e tente novamente.');
+      alert(preparedPackage?'Restauração parcial: os originais foram adicionados, mas não foi possível estabelecer uma nova geração da base. Nenhum dado financeiro foi substituído. Preserve o pacote e confira a sessão.':'Não foi possível estabelecer uma nova geração da base neste navegador. O backup NÃO foi aplicado — recarregue a página e tente novamente.');
       return;
     }
     // Só a partir daqui a operação se aplica — candidato validado e confirmado.
@@ -833,7 +952,7 @@ function importFullBackupFile(file){
     // chegou ao disco faria as outras abas recarregarem o estado errado.
     if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported(novaEpoch);
     if(gravou && workspaceComplete){jpwWorkspaceAdoptImport();boot();jpwWorkspaceRender();markSessionCheckpoint();}
-    alert(gravou?(workspaceComplete?'Backup importado com sucesso. Recarregue para aplicar todas as preferências visuais.':'Base importada; restauração das preferências pendente. Confira o aviso e recarregue para concluir.'):jpWealthPersistenceOutcomeIsUnknown()?'Importação com resultado desconhecido — novas gravações bloqueadas. Preserve o arquivo e verifique a recuperação; não repita às cegas.':'A gravação do backup foi recusada. O estado anterior foi preservado; verifique o armazenamento antes de tentar novamente.');
+    alert(gravou?(workspaceComplete?'Backup importado com sucesso. Recarregue para aplicar todas as preferências visuais.':'Base importada; restauração das preferências pendente. Confira o aviso e recarregue para concluir.'):jpWealthPersistenceOutcomeIsUnknown()?'Importação com resultado desconhecido — novas gravações bloqueadas. Preserve o arquivo e verifique a recuperação; não repita às cegas.':(preparedPackage?'Restauração parcial: originais adicionados; a gravação da base foi recusada e o estado financeiro anterior foi preservado. Preserve o pacote e confira o armazenamento.':'A gravação do backup foi recusada. O estado anterior foi preservado; verifique o armazenamento antes de tentar novamente.'));
     };
     if(typeof sessionAcquireWriteLock==='function'){ sessionAcquireWriteLock(aplicar); }
     else{ aplicar(); }

@@ -15,6 +15,7 @@ import hashlib
 from http.server import SimpleHTTPRequestHandler
 import json
 from pathlib import Path
+from backup_package_fixture import read_backup_package
 import subprocess
 import threading
 import traceback
@@ -36,6 +37,7 @@ SOURCE_PATHS = (
     'src/js/20-ui/28-fx-consolidated.js',
     'src/js/40-app/04-onboarding.js', 'src/js/40-app/06-boot.js',
     'src/js/40-app/24-fx-consolidated-import.js',
+    'tools/backup_package_fixture.py',
 )
 
 
@@ -630,9 +632,9 @@ def main():
         if page.locator('#sessionExport').is_visible():
             with page.expect_download() as info:
                 page.locator('#sessionExport').click()
-            backup_path = out / 'session-generated-synthetic-backup.json'
+            backup_path = out / 'session-generated-synthetic-backup.zip'
             info.value.save_as(str(backup_path))
-            payload = json.loads(backup_path.read_text())
+            payload = read_backup_package(backup_path).payload
             assert page.evaluate('payload => !!JPWBackup.inspect(payload)', payload), 'Generated safety backup did not pass its actual format inspector'
             page.locator('#sessionExportAcknowledged').check()
             page.locator('#sessionExportContinue').click()

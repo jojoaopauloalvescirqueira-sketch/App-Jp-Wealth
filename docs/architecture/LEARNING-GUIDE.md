@@ -1,3 +1,7 @@
+# Atualização de backup — workspace3 — 31/10/2026
+
+O [pacote único aprovado](COMPLETE-BACKUP.md) inclui o raw confirmado de `jpwealth_learning_guide_v1` em `workspace.preferences`, separado dos fatos financeiros. Importar workspace3 restaura exatamente esse snapshot, pausa a orientação e invalida observações pendentes, sem conceder prática ou iniciar navegação. Arquivo antigo sem a chave preserva o destino; incompatível/futuro é material opaco de consulta quando verificável. Esta atualização substitui somente as cláusulas de exclusão do Backup Completo e de não restauração do progresso abaixo. Schema do produtor, personalidade de Dante, privacidade e validações financeiras permanecem. As execuções históricas não comprovam este candidato.
+
 # Dante — guia interativo do JP Wealth
 
 O guia apresenta os controles reais do aplicativo. A entrada **Conhecer com Dante** na acolhida é opcional; começar do zero e restaurar continuam sendo escolhas separadas. Também é possível abrir **Configurações → Conhecimento → Guia do site**. A busca das Configurações encontra o guia por “tutorial”, “primeiros passos”, “aprender” ou “ajuda”. Abrir o aplicativo não inicia uma jornada nem cria um perfil.

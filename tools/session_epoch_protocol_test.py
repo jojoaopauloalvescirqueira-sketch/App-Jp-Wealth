@@ -31,6 +31,7 @@ ENVIRONMENT_ERROR, porque o ambiente nao esta quebrado: falta historico.
 """
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package, assert_members_absent, expect_assertion
 import io
 import json
 import os
@@ -456,22 +457,26 @@ def main() -> int:
             def e14():
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate(SEMEAR)
-                conteudo = page.evaluate("""async () => {
-                    let capturado=null;
-                    const origBlob = window.Blob;
-                    window.Blob = function(partes, opts){ capturado = String(partes && partes[0]); return new origBlob(partes, opts); };
+                delivered = page.evaluate("""async () => {
+                    window.__epochDelivered=null;
+                    const download=dgDownloadViaAnchor;
+                    dgDownloadViaAnchor=function(filename,blob){window.__epochDelivered=blob;return download(filename,blob);};
                     window.URL.createObjectURL = () => 'blob:teste';
                     window.URL.revokeObjectURL = () => {};
                     HTMLAnchorElement.prototype.click = function(){};
-                    await exportFullBackup({quiet:true});
-                    window.Blob = origBlob;
-                    return capturado;
+                    try{await exportFullBackup({quiet:true});return window.__epochDelivered instanceof Blob;}
+                    finally{dgDownloadViaAnchor=download;}
                 }""")
-                if conteudo is None:
-                    falhas.append("E14: nao foi possivel capturar o conteudo do backup")
+                if not delivered:
+                    falhas.append("E14: nao foi possivel capturar o artefato entregue do backup")
                 else:
-                    if EPOCH_KEY in conteudo or SENTINEL in conteudo:
-                        falhas.append("E14: a chave de geracao VAZOU para dentro do backup")
+                    package=read_backup_package(blob_bytes(page,'window.__epochDelivered'))
+                    assert_members_absent(package.members,EPOCH_KEY,SENTINEL)
+                    # Content guard counterproofs run after valid independent ZIP
+                    # decoding, so a bad checksum cannot stand in for epoch isolation.
+                    for marker in [EPOCH_KEY,SENTINEL]:
+                        contaminated={**package.members,'backup.json':package.members['backup.json']+marker.encode()}
+                        expect_assertion(lambda:assert_members_absent(contaminated,EPOCH_KEY,SENTINEL))
                 if erros:
                     falhas.append(f"E14 pageerror: {erros}")
             executar(falhas, "E14", e14)

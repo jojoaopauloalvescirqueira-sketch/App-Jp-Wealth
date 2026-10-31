@@ -103,7 +103,8 @@
   function renderNotice(inst){inst.notice.textContent=inst.st.notice;inst.notice.hidden=!inst.st.notice;}
   function renderMonth(inst){
     const {st,grid}=inst,focused=document.activeElement?.closest('[data-calendar-date]'),hadFocus=focused&&grid.contains(focused);
-    inst.label.textContent=dateAt(st.month).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    const monthLabel=dateAt(st.month).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    inst.label.textContent=monthLabel.charAt(0).toLocaleUpperCase('pt-BR')+monthLabel.slice(1);
     const {from:first,to:last,count}=gridBounds(st.month);
     const fragment=document.createDocumentFragment();
     if(st.focused<first||st.focused>last)st.focused=st.selected>=first&&st.selected<=last?st.selected:st.month;
@@ -133,7 +134,8 @@
     const {st,agenda}=inst,scroll=agenda.scrollTop,panelScroll=inst.panel.scrollTop,active=document.activeElement,focusRow=active?.closest('[data-calendar-personal-id]'),focusId=agenda.contains(active)?focusRow?.dataset.calendarPersonalId:null,focusKind=active?.hasAttribute('data-calendar-complete')?'complete':active?.dataset.calendarAction;
     const activeEconomic=agenda.contains(active)?active?.closest('[data-calendar-economic-id],.calendar-economic-detail-row'):null;
     const focusObservation=activeEconomic?.dataset.calendarEconomicObservation,focusHref=active?.tagName==='A'?active.href:null;
-    const heading=el('h3','calendar-agenda-heading',dayLabel(st.selected));heading.tabIndex=-1;
+    const selectedLabel=dayLabel(st.selected);
+    const heading=el('h3','calendar-agenda-heading',selectedLabel.charAt(0).toLocaleUpperCase('pt-BR')+selectedLabel.slice(1));heading.tabIndex=-1;
     const zone=el('p','calendar-meta calendar-agenda-summary'),list=el('div','calendar-agenda-list'),economic=st.content.includes('economic')?st.data.events.filter(e=>eventDay(e,st.timeZone)===st.selected&&st.currencies.includes(e.currency)&&st.impacts.includes(e.impact)):[],personal=st.content.includes('personal')?st.data.items.filter(i=>personalOn(i,st.selected,st.timeZone)):[],app=st.content.includes('app')?st.data.app.filter(i=>i.date===st.selected):[];
     const total=economic.length+personal.length+app.length,feed=st.data.feed;
     let update=st.economicRefreshing?'Atualizando eventos…':st.data.econFailed?economicFailure(st):feed?.fetchFailed?'Falha na atualização; dados anteriores preservados':feed?.stale?'Coleta desatualizada':'';

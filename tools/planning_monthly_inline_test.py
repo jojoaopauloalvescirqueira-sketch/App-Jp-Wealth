@@ -226,7 +226,7 @@ def preferences(page,fixture,harness):
     backup_isolation(page)
     page.locator('[data-pl-view=consolidated]').click();page.locator('[data-pl-view=monthly]').click();assert not page.locator('[data-pl-highlight-past]').is_checked() and page.locator('[data-pl-period]').input_value()=='current'
     harness.no_writes(page);assert financial(page)==before
-    return {'exact_envelope':stored,'outside_finance_backup':True,'reactivation_read':True}
+    return {'exact_envelope':stored,'outside_financial_state':True,'backed_up_only_in_workspace':True,'reactivation_read':True}
 
 
 def preference_failure(page,fixture,harness):
@@ -317,9 +317,17 @@ def removed_context(page,fixture,harness):
     harness.no_writes(page);assert financial(page)==before
     return {'removed_account_refused_draft_retained':True}
 def backup_isolation(page):
+    key='jpwealth_planning_monthly_view_v1'
+    expected=page.evaluate('(key)=>localStorage.getItem(key)',key)
     backup=page.evaluate('''async()=>await dgBuildBackupBlob(1,'synthetic.json',new Date().toISOString()).text()''')
-    assert 'jpwealth_planning_monthly_view_v1' not in backup,'preference excluded from actual serialized full backup'
-    return {'actual_serialized_backup_checked':True}
+    payload=json.loads(backup);workspace=payload.get('workspace',{});preferences=workspace.get('preferences',{})
+    assert workspace.get('schemaVersion')==3,'approved workspace3 carries monthly view preference'
+    assert key in preferences and preferences[key]==expected,'monthly preference has its exact confirmed raw value (or explicit null) only in workspace.preferences'
+    # Remove only its approved slot. This still rejects copies in financial state,
+    # aliases elsewhere in the envelope, and a key hidden inside serialized drafts.
+    remaining={**payload,'workspace':{**workspace,'preferences':{k:v for k,v in preferences.items() if k!=key}}}
+    assert key not in json.dumps(remaining),'monthly preference must stay outside financial state, drafts and every unapproved backup location'
+    return {'actual_serialized_backup_checked':True,'workspace_schema':3,'exact_raw':expected,'only_workspace_preferences':True}
 
 
 def readonly_values(page,fixture):
@@ -415,14 +423,25 @@ def counterproofs(browser,url,report,harness):
                 if case_id==COUNTERPROOFS[4]:
                     before=financial(page);harness.start_write_probe(page)
                     page.evaluate('()=>{S.patrimonialPlanning.inlineMutationPreference={highlightPast:true,fromCurrent:false}}')
-                    def finance_unchanged():assert financial(page)==before,'preference must stay outside financial S and backup'
+                    def finance_unchanged():assert financial(page)==before,'preference must stay outside financial S'
                     rejected=harness.rejected(finance_unchanged)
                     page.evaluate('()=>{delete S.patrimonialPlanning.inlineMutationPreference;}')
-                    backup_isolation(page)
-                    page.evaluate('''()=>{window.__inlineBackupOriginal=dgBuildBackupBlob;dgBuildBackupBlob=function(...args){const blob=window.__inlineBackupOriginal.apply(this,args);return {text:async()=>{const payload=JSON.parse(await blob.text());payload.workspace.preferences['jpwealth_planning_monthly_view_v1']={version:1,highlightPast:true,fromCurrent:false};return JSON.stringify(payload)}}}}''')
-                    try:backup_rejected=harness.rejected(lambda:backup_isolation(page))
-                    finally:page.evaluate('()=>{dgBuildBackupBlob=window.__inlineBackupOriginal;}')
-                    return {'rejected':rejected,'state_contamination_detected':True,'actual_backup_contamination_rejected':backup_rejected,'restored':backup_isolation(page)}
+                    assert financial(page)==before,'removing synthetic contamination restores exact financial facts'
+                    positive=backup_isolation(page);backup_rejected={}
+                    for mutation in ['state','drafts','root','missing','wrong-value','wrong-type']:
+                        page.evaluate('''mutation=>{window.__inlineBackupOriginal=dgBuildBackupBlob;dgBuildBackupBlob=function(...args){const blob=window.__inlineBackupOriginal.apply(this,args);return {text:async()=>{const payload=JSON.parse(await blob.text()),key='jpwealth_planning_monthly_view_v1',raw=localStorage.getItem(key);
+                            if(mutation==='state')payload.state.patrimonialPlanning[key]=raw;
+                            else if(mutation==='drafts')payload.workspace.drafts.push({provider:'inline-oracle-mutation',label:'Synthetic only',text:JSON.stringify({[key]:raw})});
+                            else if(mutation==='root')payload.inlineWrongPreference={[key]:raw};
+                            else if(mutation==='missing')delete payload.workspace.preferences[key];
+                            else if(mutation==='wrong-value')payload.workspace.preferences[key]=JSON.stringify({version:1,highlightPast:true,fromCurrent:true});
+                            else payload.workspace.preferences[key]=JSON.parse(raw||'{}');
+                            return JSON.stringify(payload)}}}}''',mutation)
+                        try:backup_rejected[mutation]=harness.rejected(lambda:backup_isolation(page))
+                        finally:page.evaluate('()=>{dgBuildBackupBlob=window.__inlineBackupOriginal;}')
+                        backup_isolation(page)
+                    harness.no_writes(page);assert financial(page)==before,'serialization counterproofs never write synthetic financial data'
+                    return {'positive':positive,'rejected':rejected,'state_contamination_detected':True,'actual_backup_contamination_rejected':backup_rejected,'restored':backup_isolation(page)}
                 if case_id in COUNTERPROOFS[7:]:
                     editor=open_editor(page,fixture);editor.locator('[name=value]').fill('3');editor.locator('[data-pl-inline-save]').click();positive=action_geometry(page,harness)
                     target=editor.locator('[data-pl-inline-save]');original=target.get_attribute('style')

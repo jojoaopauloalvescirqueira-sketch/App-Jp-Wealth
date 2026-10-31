@@ -27,6 +27,7 @@ const PRECACHE_URLS = [
   './src/js/40-app/31-market-hours/04-controller.js',
   './src/vendor/aisol-dot-globe/aisol-globe.iife.js',
   './src/data/market-hours/calendar-v1.json',
+  './src/data/market-hours/forex-sessions-v1.json',
 
   './src/js/40-app/30-capital-currents/01-engine.js',
   './src/js/40-app/30-capital-currents/02-scenarios.js',

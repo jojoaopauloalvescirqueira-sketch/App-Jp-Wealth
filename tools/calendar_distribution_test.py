@@ -50,7 +50,9 @@ def inventory(root):
         'index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js',
         'build-id.js', PORTABLE, 'tools/calendar_distribution_test.py',
         'tools/browser_bootstrap_fixture.py', 'tools/browser_fixture_server.py',
-        'tools/notes_launcher_test.py']))
+        'tools/notes_launcher_test.py','src/data/market-hours/forex-sessions-v1.json',
+        'src/data/market-hours/forex-rules.json','src/data/market-hours/forex-sources.json',
+        'tools/compile_forex_sessions.py','tools/forex_sessions_test.js','tools/forex_sessions_browser_test.py','tools/forex_sessions_review_test.py']))
     return {name: {'sha256': hashlib.sha256((root / name).read_bytes()).hexdigest(),
                    'bytes': (root / name).stat().st_size}
             if (root / name).is_file() else None for name in names}
@@ -338,6 +340,7 @@ def run_case(browser, root, url, name, packet, row):
         instrument(page)
         base = read_pack_and_filters(page,packet,row)
         crud(page,packet,row,base)
+        fx_sessions(page,row)
         if name=='portable-file':
             assert set(row['localFileRequests'])=={url}, 'Standalone portable used a local dependency outside its single copied HTML: '+json.dumps(row['localFileRequests'])
         assert_fixture_requests(context)
@@ -350,6 +353,37 @@ def run_case(browser, root, url, name, packet, row):
     finally:
         row['publicNetworkUnexpected'] = context._jpw_bootstrap_unexpected
         context.close()
+
+
+def fx_sessions(page,row):
+    """Current product: two independent calendars, five globe identities, no financial writes."""
+    before=page.evaluate('JSON.stringify(S)')
+    page.evaluate("""()=>{const assets=JPWMarketHoursAssets;window.__fxMarkerIds=null;window.JPWMarketHoursAssets=Object.freeze({...assets,getRenderer:async options=>{const factory=await assets.getRenderer(options);return {...factory,create(host,options){window.__fxMarkerIds=options.markers.map(m=>m.id);return factory.create(host,options)}}}})}""")
+    assert page.evaluate("JPWNavigation.navigate('tools-market-hours')")
+    page.wait_for_selector('[data-fx-session]',state='visible',timeout=20000)
+    assert page.locator('[data-fx-session]').count()==4
+    assert page.locator('[data-b3-session]').count()==1
+    assert page.locator('.mh-sessions [data-venue-id]').count()==5
+    globe=page.locator('.mh-sessions [data-mh=globe]');globe.scroll_into_view_if_needed()
+    toggle=page.locator('.mh-sessions [data-mh=map-toggle]')
+    if toggle.is_visible() and toggle.get_attribute('aria-expanded')=='false':toggle.click()
+    page.wait_for_function('Array.isArray(window.__fxMarkerIds)',timeout=20000)
+    assert page.evaluate('__fxMarkerIds')==['city-sydney','city-toquio','city-londres','city-nova-york','city-sao-paulo']
+    assert page.locator('.mh-sessions .jpw-aisol-root').count()==1
+    assert page.get_by_text('Sessões Forex · horários indicativos',exact=True).is_visible()
+    zone=page.locator('.mh-sessions [data-mh=timezone]')
+    zone.select_option('UTC')
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_market_sessions_view_v1')).timeZone")=='UTC'
+    assert page.evaluate('JSON.stringify(S)')==before
+    page.get_by_role('button',name='Sobre as sessões Forex e B3').click()
+    assert page.get_by_role('region',name='Sobre as sessões Forex e B3').is_visible()
+    page.keyboard.press('Escape')
+    assert page.get_by_role('button',name='Sobre as sessões Forex e B3').evaluate('(e)=>e===document.activeElement')
+    # The new FX resource must have traversed the actual distribution loader.
+    fx=page.evaluate('async()=>{const c=await JPWMarketHoursAssets.getForexCatalog();return {ids:c.venues.map(v=>v.id),kind:c.convention.kind}}')
+    assert fx=={'ids':['fx-sydney','fx-tokyo','fx-london','fx-new-york'],'kind':'indicative-fx-session'}
+    assert page.evaluate('async()=>(await JPWMarketHoursAssets.getCatalog()).venues.length')==16
+    row['forexSessions']={'result':'PASS','centres':fx['ids'],'separateB3':True,'equityCatalogPreserved':16,'preferenceSaved':'UTC','globeMarkers':page.evaluate('__fxMarkerIds')}
 
 
 def main():
@@ -401,6 +435,24 @@ def main():
                           for status in ('PASS','PRODUCT_FAIL','TEST_HARNESS_FAIL','ENVIRONMENT_ERROR','NOT_RUN')}
         report['result']='PASS' if report['cases'] and report['sourceUnchanged'] and not report.get('harnessError') and all(row['result']=='PASS' for row in report['cases']) else report['harnessError']['result'] if report.get('harnessError') else 'PRODUCT_FAIL' if any(row['result']=='PRODUCT_FAIL' for row in report['cases']) else 'TEST_HARNESS_FAIL'
         out.write_text(json.dumps(report,ensure_ascii=False,indent=2))
+    report['sessionFocals']=[]
+    commands=[['node','tools/forex_sessions_test.js'],[os.sys.executable,'tools/forex_sessions_browser_test.py','--out',str(out.with_suffix(''))+'-forex-session-ui'],[os.sys.executable,'tools/forex_sessions_review_test.py','--out',str(out.with_suffix(''))+'-forex-session-review']]
+    for command in commands:
+        try:
+            run=subprocess.run(command,cwd=root,text=True,capture_output=True,timeout=120)
+            report['sessionFocals'].append({'command':command,'exitCode':run.returncode,'stdout':run.stdout,'stderr':run.stderr})
+        except subprocess.TimeoutExpired as error:
+            report['sessionFocals'].append({'command':command,'exitCode':124,'stdout':str(error.stdout or ''),'stderr':'TEST_HARNESS_FAIL: focal excedeu 120s'})
+    if any(item['exitCode']!=0 for item in report['sessionFocals']):
+        if report['result']=='PASS':report['result']='PRODUCT_FAIL'
+    report['inputsAfterDistributions']=report['inputsAfter']
+    report['sourceUnchangedBeforeFocals']=report['sourceUnchanged']
+    report['inputsAfter']=inventory(root)
+    report['sourceUnchanged']=report['sourceUnchangedBeforeFocals'] and report.get('inputsBefore')==report['inputsAfter']
+    if not report['sourceUnchanged'] and report['result']=='PASS':report['result']='TEST_HARNESS_FAIL'
+    report['distributionDurationSeconds']=report['durationSeconds']
+    report['durationSeconds']=time.monotonic()-started
+    out.write_text(json.dumps(report,ensure_ascii=False,indent=2))
     print(report['result']+' '+str(out),flush=True)
     return 0 if report['result']=='PASS' else 1
 

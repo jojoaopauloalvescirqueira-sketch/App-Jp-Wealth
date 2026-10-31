@@ -2,6 +2,7 @@
 """Synthetic Planning distribution, confirmed backup round-trip and lifecycle proof."""
 import json, os, threading
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package
 from http.server import SimpleHTTPRequestHandler
 from playwright.sync_api import sync_playwright
 from browser_fixture_server import BrowserFixtureServer
@@ -45,10 +46,10 @@ def main():
    seeded=p.evaluate(SEED);check(p.evaluate("JPWNavigation.navigate('planning')"),'HTTP menu opens')
    p.evaluate("openSettingsModal('backup'); URL.createObjectURL=blob=>{window.__plBackup=blob;return 'blob:synthetic-planning'}; URL.revokeObjectURL=()=>{};HTMLAnchorElement.prototype.click=function(){};")
    p.locator('#exportFullBackupBtn').click();p.wait_for_function('window.__plBackup instanceof Blob')
-   text=p.evaluate('window.__plBackup.text()');payload=json.loads(text)
+   archive=blob_bytes(p,'window.__plBackup');payload=read_backup_package(archive).payload
    check(payload['tipo']=='jpwealth_full_backup' and payload['state']['patrimonialPlanning']==seeded['aggregate'],'real Backup Completo exports confirmed aggregate unchanged')
    check(payload['state']['fxPlanning']==seeded['legacy'],'full backup preserves legacy unchanged')
-   file=OUT/'synthetic-backup.json';file.write_text(text)
+   file=OUT/'synthetic-backup.zip';file.write_bytes(archive)
    c2,q,e2=boot(b,url);check(q.evaluate('S.patrimonialPlanning===undefined'),'fresh context has no planning data')
    q.evaluate("openSettingsModal('backup');window.confirm=()=>true;window.alert=()=>{};")
    q.locator('#importFullBackupInput').set_input_files(str(file));q.wait_for_function('S.patrimonialPlanning?.accounts.length===1')

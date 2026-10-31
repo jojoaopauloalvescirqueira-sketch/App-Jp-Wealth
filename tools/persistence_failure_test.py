@@ -8,6 +8,7 @@ acesso ao backup a partir do aviso — nas versões modular e portátil.
 from http.server import SimpleHTTPRequestHandler
 from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package
 import os, socket, threading
 from playwright.sync_api import sync_playwright
 
@@ -149,10 +150,10 @@ def run_suite(browser, url, rotulo):
     }""")
     page.locator('#persistenceAlertBackupBtn').click()
     page.wait_for_function('()=>window.__blob instanceof Blob')
-    exportado = page.evaluate("window.__blob ? window.__blob.text() : null")
+    exportado = blob_bytes(page, 'window.__blob')
     assert exportado, f'[{rotulo}] o botão do aviso deveria acionar a exportação existente'
     import json as _json
-    payload = _json.loads(exportado)
+    payload = read_backup_package(exportado).payload
     assert payload['state']['params']['saldoIni'] == 11111, 'fatos confirmados devem manter a última gravação'
     memory_chunks=[d['text'] for d in payload['workspace']['drafts'] if d.get('provider')=='unconfirmed-memory']
     assert memory_chunks and _json.loads(''.join(memory_chunks))['params']['saldoIni']==22222, 'RAM recusada deve ser recuperável separadamente'

@@ -1,3 +1,13 @@
+# Integração aprovada —31/10/2026
+
+As quatro frentes aceitas pelo proprietário foram conciliadas na branch `codex/backup-unificado-20261031`, base `69b6cb677de2486be5c30681e4b2e02d4180d704`. Artefatos reconstruídos pelo gerador oficial. FULL do conjunto:116/116PASS; UI413/413PASS; fontes executadas estáveis. Recibo bruto SHA256 `49e370152d380beac144ea14a0937f3d1aa6fbcae6197b4f12873b3a8f426633` em docs/validation/integrated-accepted-20261031/FULL-RESULT.json. Aceite visual e commit/merge/push foram autorizados na conversa. Resultados anteriores das frentes são históricos, preservados. Não houve mudança de motor financeiro, AGENTS, gate, norma ou workflow; limites documentais preexistentes permanecem.
+
+AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED. BASIS: contratos de backup, sessões e Hedge, calendário compartilhado e memória factual agora coexistem no mesmo runtime; seus contratos/fontes foram preservados da proposta aceita. Estado operacional/tarefa ativa apontam para esta integração e seu recibo; agentes, skills, routing, registries, guards e fontes normativas não mudam. Local action: somente registro factual delimitado, sem reconciliação global das2388referências históricas sinalizadas pelo preflight. INDEX NOT REQUIRED: nenhum backend de vetores/índice é alterado. Não declarar reconciliação global.
+
+Dados reais não foram lidos, migrados ou apagados; testes sintéticos. Backup novo exige leitor compatível após rollback. Reversão: reverter somente delta e reconstruir oficialmente, preservando stores/originais. Publicação de site e exclusão de worktrees não fazem parte desta operação. A verificação remota de Git/CI fica no recibo externo da operação, sem registrar intenção como resultado.
+
+## Fotografias anteriores preservadas
+
 # Calendário e Agenda — candidato local de 23/10/2026
 
 Implementação autorizada na branch `codex/calendario-agenda-20261023`, base `d517be0748f886085b3029c809bd68046e5c0f77`, preservando as pendências anteriores de Planejamento e Notificações. Acesso mensal imediatamente antes do sino, agenda pessoal confirmada, filtros e pacote econômico público local; calendário semanal FF preservado. Contrato e evidências: ../../docs/architecture/CALENDAR-AGENDA.md e ../../docs/validation/calendar-agenda-20261023/README.md.
@@ -90,3 +100,8 @@ Runner visual: alteração -O2 especificamente autorizada; casos, contraprovas, 
 FULL e host da combinação, operações Git finais, limpeza, execução pelo instalador no Windows ARM, Windows x64 independente e aceite humano possuem provas próprias. Resultados ainda não executados permanecem NOT_RUN. O usuário dispõe de Parallels ARM; não há ambiente Windows x64 independente comprovado. Não há publicação do site ou EXE nesta tarefa.
 
 [Contrato atual](../work/CHG-JPW-CONSOLIDACAO-INTEGRAL-20261018.md). Fotografias completas das três trilhas ficam em docs/work/HISTORY-CONSOLIDATION-*.md; histórico correto permanece histórico. Não modificar dados reais, fórmulas, MQL, locks, estudos, gráficos ou preferências para produzir aprovação.
+
+
+## Candidato backup unificado — verificação de 31/10/2026
+
+Worktree isolada `codex/backup-unificado-20261031`, build `a12473da33d804a4`: FULL116/116 PASS e UI413 PASS, recibo literal em `docs/validation/backup-unificado-20261031/FULL-RESULT.json`. Fontes executáveis/testes preservados após o gate. Registro documental posterior; não promove o contexto histórico global nem confirma merge, publicação ou aceite humano. Ver `docs/validation/backup-unificado-20261031/FINAL-VALIDATION.md` para limites e tentativas anteriores.

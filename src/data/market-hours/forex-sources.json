@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "forex-com-local-convention",
+      "title": "FOREX.com — local indicative session convention",
+      "url": "https://www.forex.com/en-uk/trading-guides/forex-market-hours/",
+      "publishedAt": null,
+      "verifiedAt": "2026-10-31"
+    }
+  ]
+}

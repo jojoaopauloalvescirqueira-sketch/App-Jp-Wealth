@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const jobs=new Map(),encoder=new TextEncoder();let sequence=0,payloadJob=null;
-  const paths=Object.freeze({catalog:'src/data/market-hours/calendar-v1.json',renderer:'src/vendor/aisol-dot-globe/aisol-globe.iife.js'});
+  const paths=Object.freeze({catalog:'src/data/market-hours/calendar-v1.json',forexCatalog:'src/data/market-hours/forex-sessions-v1.json',renderer:'src/vendor/aisol-dot-globe/aisol-globe.iife.js'});
   const abort=()=>new DOMException('Carregamento cancelado.','AbortError');
   function manifest(id){
     const m=window.JPW_MARKET_HOURS_MANIFEST,e=m?.resources?.[id];
@@ -67,9 +67,9 @@
       if(job.cancelled)throw abort();
       const data=await bytes(id,job);if(job.cancelled)throw abort();
       const text=new TextDecoder('utf-8',{fatal:true}).decode(data);
-      if(id==='catalog'){
+      if(id==='catalog'||id==='forexCatalog'){
         if(typeof window.JPWMarketSessions?.prepare!=='function')throw Error('Motor de sessões não está disponível.');
-        return window.JPWMarketSessions.prepare(JSON.parse(text));
+        return (id==='forexCatalog'?window.JPWForexSessions:window.JPWMarketSessions).prepare(JSON.parse(text));
       }
       return execute(text);
     });
@@ -90,7 +90,7 @@
     });
   }
   window.JPWMarketHoursAssets=Object.freeze({
-    getCatalog:options=>consume('catalog',options),getRenderer:options=>consume('renderer',options),
+    getCatalog:options=>consume('catalog',options),getForexCatalog:options=>consume('forexCatalog',options),getRenderer:options=>consume('renderer',options),
     register(envelope){const job=payloadJob,script=document.currentScript;
       if(!job||script!==job.script||script?.dataset.jpwMarketToken!==job.token)return false;
       try{job.resolve(checkEnvelope(envelope));}catch(error){job.reject(error);}return true;}

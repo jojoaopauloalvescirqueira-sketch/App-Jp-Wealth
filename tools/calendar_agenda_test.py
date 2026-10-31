@@ -2,7 +2,7 @@
 """CALENDAR-AGENDA-UI-01: approved calendar UI in synthetic browser contexts.
 Real product APIs/writers are exercised where loaded; no operator profile is used.
 """
-import argparse, functools, json, os, re, threading, traceback
+import argparse, functools, json, os, re, threading, traceback, subprocess, sys, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler
@@ -504,4 +504,17 @@ def main():
     out=json.dumps({'results':results},ensure_ascii=False,indent=2);print(out)
     if args.artifact:Path(args.artifact).write_text(out)
     raise SystemExit(0 if results and all(r['result']=='PASS' for r in results) else 1)
-if __name__=='__main__':main()
+if __name__=='__main__':
+    # Preserve the original main, including every assertion and its nonzero exit.
+    # Only its successful exit continues to the additive proportions matrix.
+    try:
+        main()
+    except SystemExit as outcome:
+        if outcome.code not in (None, 0) or any(flag in sys.argv[1:] for flag in ('-h', '--help')):
+            raise
+    evidence = ROOT / 'tools/.artifacts'
+    evidence.mkdir(parents=True, exist_ok=True)
+    proportions_out = Path(tempfile.mkdtemp(prefix='calendar-proportions-', dir=evidence)) / 'matrix'
+    print('CALENDAR_PROPORTIONS_RECEIPT=' + str(proportions_out / 'report.json'), flush=True)
+    subprocess.run([sys.executable, str(ROOT / 'tools/calendar_proportions_contract.py'),
+                    '--root', str(ROOT), '--out', str(proportions_out)], check=True)

@@ -1,3 +1,7 @@
+# Atualização de backup da preferência mensal — 31/10/2026
+
+O [contrato de Backup Completo workspace3](COMPLETE-BACKUP.md) aprovado inclui o valor confirmado exato de `jpwealth_planning_monthly_view_v1` somente em `workspace.preferences`. A preferência continua fora do estado financeiro e de rascunhos; não cria fatos, lançamentos ou gravações financeiras. Este delta substitui exclusivamente a exclusão total de Backup Completo indicada no contrato histórico mensal abaixo. Fonte e critérios do ajuste do oráculo: [CHG dedicado](../work/CHG-JPW-BACKUP-MONTHLY-PREFERENCE-ORACLE-20261031.md). Fórmulas, escritores, casos e tolerâncias visuais permanecem.
+
 # Planejamento — fechamento guiado e recuperação de revisão
 
 Fonte: plano aprovado22/10/2026, `2026-10-22-planning-monthly-close.md`. A falta de resultado realizado oferece entrada explícita em percentual/US$ na própria janela. Prévia não grava; Salvar resultado e revisar fechamento confirma somente `recordResult` e então prepara revisão nova, com conferência desmarcada. Confirmar fechamento usa `finalizeMonth` existente. Cancelar após salvar informa resultado registrado e mês aberto. Não presume zero, aporte previsto ou fechamento em lote.

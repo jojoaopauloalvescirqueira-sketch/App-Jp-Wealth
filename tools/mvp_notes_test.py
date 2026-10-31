@@ -3,6 +3,7 @@
 Sessão, Zona de Perigo, backup/importação real e migração de estado legado."""
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package
 import json, os, re, tempfile, threading
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -330,8 +331,8 @@ try:
         }""")
         click_id(page, 'exportFullBackupBtn')
         page.wait_for_function('window.__lastBlob instanceof Blob')
-        exported = page.evaluate("window.__lastBlob.text()")
-        payload = json.loads(exported)
+        exported = blob_bytes(page, 'window.__lastBlob')
+        payload = read_backup_package(exported).payload
         assert 'mvpNotes' in payload['state']
         assert payload['state']['mvpNotes']['items'], 'backup deveria incluir os itens de notas'
         exported_notes = payload['state']['mvpNotes']
@@ -359,7 +360,7 @@ try:
         assert page.locator('#settingsOverlay').is_visible(), 'Central deveria continuar aberta e usável após o reset'
         assert page.locator('#settingsModal').evaluate('el => !el.inert') is True
 
-        with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as fixture:
+        with tempfile.NamedTemporaryFile('wb', suffix='.zip', delete=False) as fixture:
             fixture.write(exported)
             fixture_path = fixture.name
         try:
@@ -545,14 +546,14 @@ try:
         }""")
         click_id(page, 'exportFullBackupBtn')
         page.wait_for_function('window.__foldersBlob instanceof Blob && !dgExportEmAndamento')
-        exported_folders = page.evaluate("window.__foldersBlob.text()")
-        payload_folders = json.loads(exported_folders)
+        exported_folders = blob_bytes(page, 'window.__foldersBlob')
+        payload_folders = read_backup_package(exported_folders).payload
         assert payload_folders['state']['mvpNotes']['folders'], 'backup deveria incluir as pastas'
         page.evaluate("""async () => { window.prompt = () => 'APAGAR'; window.alert = () => {}; await wipeAllData(); }""")
         assert page.evaluate('S.mvpNotes.folders.length') == 0, 'reset deveria apagar as pastas'
         page.wait_for_timeout(500)
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")
-        with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as fixture:
+        with tempfile.NamedTemporaryFile('wb', suffix='.zip', delete=False) as fixture:
             fixture.write(exported_folders)
             folders_fixture = fixture.name
         try:

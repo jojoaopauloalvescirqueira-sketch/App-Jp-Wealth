@@ -201,7 +201,8 @@ def journeys(page, report):
     page.locator('#hedgePropHelp summary').focus();page.keyboard.press('Enter')
     assert page.locator('#hedgePropHelp').get_attribute('open') is not None
     allowed={'https://ftmo.com/en/forbidden-trading-practices/','https://www.thetradingpit.com/general-terms-and-conditions',
-             'https://ftmo.com/en/faq/is-the-entry-fee-refunded/','https://cortextradings.com/hedge-prop-firm/'}
+             'https://ftmo.com/en/faq/is-the-entry-fee-refunded/','https://cortextradings.com/hedge-prop-firm/',
+             'https://ftmo.com/en/comparison-table/'}
     external=set()
     for link in page.locator('#hedgePropRoot a').all():
         href=link.get_attribute('href')
@@ -231,7 +232,7 @@ def geometry(page):
     data = page.locator('#hedgePropRoot').evaluate('''root=>{
       const visible=n=>!!n.getClientRects().length&&!n.closest('[hidden],[inert]');
       const controls=Array.from(root.querySelectorAll('button,input,summary,.hp-section-head>a')).filter(visible);
-      const rect=n=>{const r=n.getBoundingClientRect(),p=n.closest('.hp-field')?.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom,tag:n.tagName,field:n.dataset.hedgeField||null,fieldTop:p?.top,fieldBottom:p?.bottom}};
+      const rect=n=>{const r=n.getBoundingClientRect(),f=n.closest('.hp-field'),p=f?.getBoundingClientRect(),label=f?.querySelector('span:first-child')?.getBoundingClientRect(),numeric=f?.querySelector('[data-hedge-field]')?.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom,tag:n.tagName,type:n.type||null,field:n.dataset.hedgeField||null,fieldTop:p?.top,fieldBottom:p?.bottom,labelBottom:label?.bottom,numericBottom:numeric?.bottom,rowGap:f?parseFloat(getComputedStyle(f).rowGap):null}};
       return {viewport:innerWidth,root:rect(root),overflow:document.documentElement.scrollWidth>innerWidth,
         controls:controls.map(rect),bad:controls.filter(n=>{const r=n.getBoundingClientRect();return r.width<44||r.height<44||r.right>innerWidth+.25||r.x<-.25}).map(rect)};
     }''')
@@ -244,7 +245,9 @@ def geometry(page):
     for control in data['controls']:
         if control['tag'] == 'INPUT':
             assert control['y']>=control['fieldTop']-.25 and control['bottom']<=control['fieldBottom']+.25,('input escaped semantic field',control)
-            row = next((k for k in grouped if abs(k-control['fieldTop']) <= 2), control['fieldTop'])
+            expected_top=(control['numericBottom'] if control['type']=='range' else control['labelBottom'])+control['rowGap']
+            assert abs(control['y']-expected_top)<=2,('input escaped its label/control track',control,expected_top)
+            row = next((k for k in grouped if k[0]==control['type'] and abs(k[1]-control['fieldTop']) <= 2), (control['type'],control['fieldTop']))
             grouped.setdefault(row, []).append(control)
     for row in grouped.values():
         assert max(n['y'] for n in row)-min(n['y'] for n in row) <= 2, ('input row baseline exceeds2CSSpx', row)
@@ -359,7 +362,7 @@ def guards(browser, url, report):
 
 def run(args):
     args.out.mkdir(parents=True, exist_ok=True)
-    source_files = ['index.html','src/styles/app.css','src/js/40-app/01-navigation.js','src/js/40-app/07-finalize-session.js','src/js/20-ui/31-tools-services.js','src/js/manifest.json','tools/ui_visual_quality_test.py']
+    source_files = ['index.html','src/styles/app.css','src/js/40-app/01-navigation.js','src/js/40-app/07-finalize-session.js','src/js/20-ui/31-tools-services.js','src/js/manifest.json','tools/ui_visual_quality_test.py','tools/hedge_guide_store_test.js','tools/hedge_redesign_browser_test.py']
     source_files += [str(path.relative_to(ROOT)) for path in (ROOT/'src/js/40-app/32-prop-firms').glob('*.js')]
     hash_sources=lambda:{name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files}
     test_hash=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
@@ -394,6 +397,13 @@ def run(args):
     if not result['bytes_stable']:
         result['classification']='TEST_HARNESS_FAIL'
         result['failure']='Candidate or test bytes changed while assertions were executing; repeat on a frozen candidate'
+    if result['classification']=='PASS' and not any([args.smoke,args.rounding_only,args.lifecycle_only]):
+        from hedge_redesign_browser_test import run as run_redesign
+        redesign_exit=run_redesign(argparse.Namespace(out=args.out/'redesign'))
+        result['redesign_exit']=redesign_exit
+        if redesign_exit!=0:
+            result['classification']='PRODUCT_FAIL'
+            result['failure']='Accumulated Hedge redesign journey failed; see redesign/results.json'
     (args.out / 'results.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result['classification'] == 'PASS' else 1

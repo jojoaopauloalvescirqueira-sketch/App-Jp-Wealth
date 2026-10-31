@@ -1,3 +1,13 @@
+## Atualização factual — pacote único31/10/2026
+
+O Backup Completo agora é exportado em um único pacote ZIP STORE: dados confirmados, workspace3 com preferências/progresso e originais PDF/HTML disponíveis. O JSON interno continua formato2; os leitores novos aceitam JSON/workspace1/2 e ZIPs de evidências legados. As referências abaixo a21preferências ou ZIP separado descrevem fotografias/formatos anteriores, não a cobertura ampliada atual.
+
+As22preferências anteriores são acrescidas dos quatro stores de progresso Dante/Gêmeos/Correntes e visual Mensal, além dos contratos de plano didático Hedge/fuso Sessões quando integrados. Conteúdo incompatível/futuro e progresso legado são material opaco para consulta, sem aplicação automática; conteúdo não verificável não é exportado como se estivesse saneado. Nenhum cache, senha, permissão de pasta ou controle de sessão é transportado.
+
+Antes de limpar todo o armazenamento do navegador, exporte e confira externamente o pacote. Ausências de originais são identificadas e exigem confirmação, nunca preenchidas. Se restaurar falhar entre a transação de originais e a gravação financeira, a restauração é parcial; UNKNOWN bloqueia nova escrita. Contrato atual: [COMPLETE-BACKUP](COMPLETE-BACKUP.md), CHG-JPW-BACKUP-UNIFICADO-20261031.
+
+## Fotografia anterior preservada
+
 # Matriz de salvamento, backup e recuperação
 
 Candidate local 2026-10-06. A [matriz CSV](SAVING-COVERAGE.csv) possui 139 atributos/grupos explícitos. Caminhos funcionais resumem famílias; não constituem novos schemas. O Backup Completo exporta o documento confirmado integral, inclusive extensões compatíveis desconhecidas, e sua cobertura enumera as chaves efetivamente presentes.

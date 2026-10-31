@@ -19,11 +19,11 @@ INPUTS = (
     *(VENDOR+name for name in ('aisol-globe.iife.js', 'component.original.js',
       'build-lock.json', 'build-meta.json', 'build-receipt.json', 'NOTICES.md',
       'THREE-LICENSE.txt', 'ESBUILD-LICENSE.txt')),
-    *(DATA+name for name in ('calendar-v1.json', 'rules.json', 'sources.json', 'zoneinfo/manifest.json')),
+    *(DATA+name for name in ('calendar-v1.json', 'forex-sessions-v1.json', 'forex-rules.json', 'forex-sources.json', 'rules.json', 'sources.json', 'zoneinfo/manifest.json')),
     *(DATA+'zoneinfo/'+zone for zone in ('UTC', 'America/Sao_Paulo', 'America/New_York',
       'America/Toronto', 'Europe/London', 'Europe/Berlin', 'Europe/Paris', 'Asia/Tokyo',
       'Asia/Hong_Kong', 'Asia/Shanghai', 'Asia/Kolkata', 'Asia/Seoul', 'Asia/Riyadh', 'Australia/Sydney')),
-    'tools/compile_market_hours.py', 'tools/build_market_globe.py',
+    'tools/compile_market_hours.py', 'tools/compile_forex_sessions.py', 'tools/build_market_globe.py',
 )
 
 
@@ -53,7 +53,7 @@ def inspect(root):
     assert '<' not in inert[1], 'raw HTML delimiter in inert JSON'
     assert json.loads(inert[1]) == envelope
     assert envelope['schemaVersion'] == 1 and envelope['buildId'] == build_id
-    for key, relative in [('catalog', DATA+'calendar-v1.json'), ('renderer', VENDOR+'aisol-globe.iife.js')]:
+    for key, relative in [('catalog', DATA+'calendar-v1.json'), ('forexCatalog', DATA+'forex-sessions-v1.json'), ('renderer', VENDOR+'aisol-globe.iife.js')]:
         original = (root/relative).read_bytes()
         assert envelope['files'][key].encode() == original, key
         assert manifest['resources'][key] == dict(path=relative, bytes=len(original), sha256=hashlib.sha256(original).hexdigest())

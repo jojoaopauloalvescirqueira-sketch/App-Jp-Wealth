@@ -2,6 +2,7 @@
 """Real field regression CLI. Disposable synthetic contexts; no operator profile."""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from backup_package_fixture import assert_workspace_progress, assert_opaque_progress, expect_assertion
 import argparse, hashlib, json, os, shutil, subprocess, sys, tempfile, threading, traceback
 from playwright.sync_api import sync_playwright, TimeoutError as BrowserTimeout
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -11,7 +12,7 @@ FILES=[f'src/js/40-app/30-capital-currents/{n}.js' for n in ('01-engine','02-sce
 KEY='jpwealth_capital_field_v1'
 OLD='jpwealth_capital_currents_v1'
 CHROMIUM=os.environ.get('JP_WEALTH_CHROMIUM') or None
-INPUTS=FILES+['src/styles/app.css','index.html','src/js/manifest.json','src/js/20-ui/31-tools-services.js','src/js/40-app/01-navigation.js','src/js/40-app/07-finalize-session.js','src/js/40-app/26-learning-catalog.js','src/js/00-core/07-workspace-backup.js','sw.js','build-id.js','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html','tools/capital_currents_unit_test.js','tools/capital_currents_progress_test.js','tools/capital_currents_browser_test.py','tools/capital_field_browser_test.py','tools/capital_field_unit_test.js','tools/capital_field_catalog_test.js','tools/learning_guide_test.py','tools/quality_gate.py']
+INPUTS=FILES+['src/styles/app.css','index.html','src/js/manifest.json','src/js/20-ui/31-tools-services.js','src/js/40-app/01-navigation.js','src/js/40-app/07-finalize-session.js','src/js/40-app/26-learning-catalog.js','src/js/00-core/07-workspace-backup.js','sw.js','build-id.js','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html','tools/capital_currents_unit_test.js','tools/capital_currents_progress_test.js','tools/capital_currents_browser_test.py','tools/capital_field_browser_test.py','tools/capital_field_unit_test.js','tools/capital_field_catalog_test.js','tools/learning_guide_test.py','tools/quality_gate.py','tools/backup_package_fixture.py']
 class SuiteFailure(Exception):
     def __init__(self,status,details):
         super().__init__(str(details));self.status=status
@@ -68,7 +69,7 @@ def run(args):
                     p=c.new_page();p.errors=[];p.console_errors=[];p.set_default_timeout(6000)
                     p.on('pageerror',lambda e:p.errors.append(str(e)));p.on('console',lambda m:p.console_errors.append(m.text) if m.type=='error' else None)
                     p.goto(target or url,wait_until='load');wait_bootstrap(p);p.evaluate('closeModal();sessionEpochCurrent()')
-                    p.evaluate('''()=>{for(const [k,v] of Object.entries({'jpwealth_capital_currents_v1':'old-campaign-synthetic','foreign-synthetic':'protected-foreign','jpwealth_galton_preferences_v1':'{"synthetic":true}','jpwealth_time_twins_v1':'synthetic-twins'}))localStorage.setItem(k,v);S.params.saldoIni=12345;S.params.saldoAtu=12345;localStorage.setItem(LSKEY,JSON.stringify(S));sessionEpochCurrent();window.fieldWrites=[];window.rafCount=0;const set=Storage.prototype.setItem,raf=requestAnimationFrame;Storage.prototype.setItem=function(k,v){fieldWrites.push(k);return set.call(this,k,v)};window.requestAnimationFrame=function(fn){return raf.call(window,t=>{rafCount++;fn(t)})}}''')
+                    p.evaluate('''()=>{for(const [k,v] of Object.entries({'jpwealth_capital_currents_v1':JSON.stringify({legacy:'old-campaign-synthetic'}),'foreign-synthetic':'protected-foreign','jpwealth_galton_preferences_v1':'{"synthetic":true}','jpwealth_time_twins_v1':JSON.stringify({legacy:'synthetic-twins'})}))localStorage.setItem(k,v);S.params.saldoIni=12345;S.params.saldoAtu=12345;localStorage.setItem(LSKEY,JSON.stringify(S));sessionEpochCurrent();window.fieldWrites=[];window.rafCount=0;const set=Storage.prototype.setItem,raf=requestAnimationFrame;Storage.prototype.setItem=function(k,v){fieldWrites.push(k);return set.call(this,k,v)};window.requestAnimationFrame=function(fn){return raf.call(window,t=>{rafCount++;fn(t)})}}''')
                     return c,p
                 def clean(p):
                     assert not p.errors,p.errors;assert not p.console_errors,p.console_errors;assert_fixture_requests(p.context)
@@ -127,13 +128,40 @@ def run(args):
                     payload=p.evaluate('''async()=>{localStorage.setItem(LSKEY,JSON.stringify(S));sessionEpochCurrent();const blob=dgBuildBackupBlob(1,'synthetic-field.json',new Date().toISOString(),S);const payload=JSON.parse(await blob.text());return {payload,inspected:dgBackupInspect(payload),source:JSON.parse(localStorage.getItem(LSKEY)),capture:jpwWorkspaceCapture({recoverAvailability:true})}}''')
                     data=payload['payload'];assert data['tipo']=='jpwealth_full_backup' and data['integrity']['algorithm']=='SHA-256'
                     assert data['state']['params']==payload['source']['params']
-                    def keys(value):
-                        if isinstance(value,dict):return set(value).union(*(keys(v) for v in value.values()))
-                        if isinstance(value,list):return set().union(*(keys(v) for v in value))
-                        return set()
-                    assert not {KEY,OLD}&keys(data) and not {KEY,OLD}&keys(payload['capture'])
-                    serialized=json.dumps(data);assert 'old-campaign-synthetic' not in serialized and raw(p,KEY) not in serialized
-                    return {'onlyNewProgressWrites':True,'actualFullBackupChecksumValidated':True,'financialParamsPreserved':True,'progressAbsentFromPayloadAndWorkspace':True}
+                    progress_raw,legacy_raw=raw(p,KEY),raw(p,OLD)
+                    assert_workspace_progress(data,KEY,progress_raw);assert_opaque_progress(data,OLD,legacy_raw)
+                    captured={'state':data['state'],'workspace':payload['capture']}
+                    assert_workspace_progress(captured,KEY,progress_raw);assert_opaque_progress(captured,OLD,legacy_raw)
+                    without_metadata=lambda state:{k:v for k,v in state.items() if k not in ['dataGovernance','workspaceRecovery']}
+                    assert without_metadata(data['state'])==without_metadata(json.loads(before)['state'])
+                    assert financial(p)==before,'capture and validation preserve financial and foreign bytes'
+                    counterproofs={}
+                    for mutation in ['missing-new','financial-copy','legacy-activated','opaque-corrupt']:
+                        changed=json.loads(json.dumps(data))
+                        if mutation=='missing-new':del changed['workspace']['preferences'][KEY]
+                        elif mutation=='financial-copy':changed['state'][KEY]=progress_raw
+                        elif mutation=='legacy-activated':changed['workspace']['preferences'][OLD]=legacy_raw
+                        else:next(item for item in changed['workspace']['drafts'] if OLD in item['label'])['text']='{}'
+                        counterproofs[mutation]=expect_assertion(lambda:(assert_workspace_progress(changed,KEY,progress_raw),assert_opaque_progress(changed,OLD,legacy_raw)))
+                    # Real restore into a fresh origin context: legacy text becomes
+                    # recovered consultation material, never a destination store.
+                    destination,target=page()
+                    try:
+                        destination_legacy=json.dumps({'legacy':'DESTINATION_OLD_UNCHANGED'},separators=(',',':'))
+                        target.evaluate('''([key,legacy])=>{localStorage.setItem(key,legacy);jpWealthAdoptPersistedRaw(localStorage.getItem(LSKEY));window.__capitalImportAlerts=[];window.alert=message=>__capitalImportAlerts.push(message);window.confirm=()=>true;}''',[OLD,destination_legacy])
+                        target.evaluate('data=>importFullBackupFile(new File([JSON.stringify(data)],"synthetic-field.json",{type:"application/json"}))',data)
+                        target.wait_for_function('__capitalImportAlerts.length>0')
+                        assert target.evaluate('__capitalImportAlerts.some(message=>message.includes("Backup importado com sucesso"))')
+                        assert raw(target,KEY)==progress_raw and raw(target,OLD)==destination_legacy
+                        assert target.locator('[data-capital-currents-root]').count()==0,'import never activates a campaign or starts the field'
+                        recovered=target.evaluate('S.workspaceRecovery.drafts')
+                        assert any(item.get('provider')=='opaque-preference' and OLD in item['label'] and item['text']==legacy_raw for item in recovered)
+                        assert without_metadata(target.evaluate('S'))==without_metadata(data['state'])
+                        open_game(target);assert not snap(target)['running'] and not snap(target)['loopScheduled']
+                        assert raw(target,KEY)==progress_raw and raw(target,OLD)==destination_legacy
+                        clean(target)
+                    finally:destination.close()
+                    return {'onlyNewProgressWrites':True,'actualFullBackupChecksumValidated':True,'financialParamsPreserved':True,'newProgressRawExact':True,'legacyOpaqueRecoverableWithoutActivation':True,'destinationLegacyBytesPreserved':True,'decodedContentCounterproofs':counterproofs}
                 def games(p):
                     open_game(p);p.locator('#minigamesCapitalCurrentsBack').click();p.locator('#minigamesOpenGalton').click()
                     assert p.evaluate('!!document.querySelector("[data-galton-root]").__galtonController && !document.querySelector("[data-galton-root]").__galtonController.snapshot().running')

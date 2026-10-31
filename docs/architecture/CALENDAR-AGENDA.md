@@ -71,3 +71,8 @@ A permissão não comercial FF foi declarada pelo proprietário e não auditada 
 ## Validação
 
 Casos permanentes em personal_agenda_test.js,calendar_recovery_test.py,monthly_economic_feed_test.py,calendar_agenda_test.py e extensõesui_visual_quality_test.py; distribuição própriaHTTP/PWA/file/portátil. Verificadoreslegados de população4→5 e workspaceFFsubstituído reconciliados por contrato, mantendo coberturaEUR/cache/recusa/readonly. RED/GREEN/counterproofs e gates vinculados aos bytes finais. Aceite humano, compreensão, toque físico e leitor de tela têm provas separadas. Recibos históricos em docs/validation/calendar-agenda-20261023/. A integração FF de 28/10 possui recibos próprios em docs/validation/economic-calendar-ff-20261028/; resultados anteriores não aprovam os novos bytes.
+
+
+## Proporções aprovadas — 31/10/2026
+
+A grade mantém alvos44x44. O numeral recebe disco32x32 somente quando selecionado, azul com texto branco. Hoje usa numeral vermelho/negrito sem contorno; selecionado, usa branco/negrito, mantendo aria-current. Foco visível permanece no alvo externo; marcadores econômicos/pessoais ficam abaixo do disco, vermelhos/azuis. Mês e dia usam capitalização de frase em português. Duas superfícies reutilizam o mesmo renderizador. Fontes, tabela econômica e escritores permanecem. Contrato:CHG-JPW-CALENDAR-PROPORTIONS-20261031; resultado somente nos recibos novos.

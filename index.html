@@ -1140,7 +1140,7 @@ SOFTWARE.
   <section class="screen" id="tools" aria-label="Ferramentas e Serviços">
     <div class="tools-view calendar-markets-heading" data-tools-view="calendar">
       <h2 id="calendarMarketsTitle" tabindex="-1">Calendário e Mercados</h2>
-      <button id="calendarMarketsJump" type="button" aria-controls="marketHoursTool">Bolsas agora <span aria-hidden="true">↓</span></button>
+      <button id="calendarMarketsJump" type="button" aria-controls="marketHoursTool">Sessões e B3 agora <span aria-hidden="true">↓</span></button>
     </div>
     <div class="tools-view" id="execEcal" data-tools-view="calendar" role="region" aria-label="Calendário e Agenda"></div>
     <div class="tools-view leverage-tool genetrix-site stoikus-learning" id="jpwLeveragePage" data-tools-view="leverage" role="region" aria-labelledby="jpwLeverageTitle" hidden inert>
@@ -1707,7 +1707,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
     </div>
 
     <div class="tools-view market-hours-tool" id="marketHoursTool" data-tools-view="calendar" role="region" aria-labelledby="marketHoursTitle" hidden inert>
-      <header><div class="mh-title-row"><h2 id="marketHoursTitle" data-route-focus tabindex="-1">Bolsas Globais — Agora</h2></div></header>
+      <header><div class="mh-title-row"><h2 id="marketHoursTitle" data-route-focus tabindex="-1">Sessões Forex e B3 — Agora</h2></div></header>
       <div id="toolsMarketHoursSlot"></div>
     </div>
     <section class="tools-view" data-tools-view="prop-firms" id="propFirmsView" hidden inert aria-labelledby="propFirmsTitle"><h2 id="propFirmsTitle" tabindex="-1">Mesas Proprietárias</h2><div id="toolsPropFirmsSlot"></div></section>
@@ -1969,11 +1969,11 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
     </details>
     <div class="card" data-settings-category="backup" data-settings-search="backup exportar importar recuperar compatibilidade base">
       <h2>Backup Completo <span class="art">estado local do painel</span></h2>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Exporta ou restaura o estado completo salvo neste navegador. A importação valida o JSON, pede confirmação e aplica a migração de compatibilidade antes de sobrescrever os dados atuais.</p>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Exporta um pacote ZIP com dados confirmados, preferências, progresso e originais disponíveis. A restauração confere a integridade e pede confirmação antes de substituir a base. Backups JSON anteriores continuam aceitos.</p>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
         <button class="reset-btn" id="exportFullBackupBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar backup completo</button>
         <button class="reset-btn" id="importFullBackupBtn" style="color:var(--ink); border-color:var(--line)"><span class="jp-legacy-glyph" aria-hidden="true">⬆</span><svg class="jp-icon" aria-hidden="true"><use href="#i-import"/></svg>Importar backup completo</button>
-        <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
+        <input type="file" id="importFullBackupInput" accept="application/json,.json,application/zip,.zip" style="display:none">
       </div>
     </div>
     <!-- Governança de armazenamento (JPW-HJFGDE): pasta padrão de exportação, sequência
@@ -1993,7 +1993,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
            removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
            locais de interface (escala da fonte, estado da navegação, ícone do app) e não
            toca em cópias de recuperação existentes. -->
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, cópias de recuperação existentes e originais PDF/HTML do arquivo de evidências são preservados. A remoção de todo o armazenamento da origem pelo navegador exige exportar antes o Backup Completo e o ZIP de evidências. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, cópias de recuperação existentes e originais PDF/HTML do arquivo de evidências são preservados. Antes de remover todo o armazenamento da origem pelo navegador, exporte e confira o pacote ZIP de Backup Completo com os originais disponíveis e as lacunas identificadas. JSON e ZIP separado de evidências anteriores continuam aceitos para recuperação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar base principal</button>
     </div>
   </section>

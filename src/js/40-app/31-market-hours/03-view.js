@@ -354,3 +354,112 @@
   }
   global.JPWMarketHoursView=Object.freeze({create,createOverview,labels:LABELS});
 })(globalThis);
+
+/* Five-place consultation: four indicative FX centres and an independently sourced B3. */
+(function(global){
+  'use strict';
+  const legacy=global.JPWMarketHoursView;
+  function node(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
+  const flags={'fx-sydney':'🇦🇺','fx-tokyo':'🇯🇵','fx-london':'🇬🇧','fx-new-york':'🇺🇸',b3:'🇧🇷'};
+  const zoneLabels={'device':'Dispositivo','UTC':'UTC','Australia/Sydney':'Sydney','Asia/Tokyo':'Tóquio','Europe/London':'Londres','America/New_York':'Nova York','America/Sao_Paulo':'São Paulo'};
+  function clock(utc,zone){return new Intl.DateTimeFormat('pt-BR',{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(utc);}
+  function wait(ms){const n=Math.max(0,Math.ceil(ms/60000)),h=Math.floor(n/60),m=n%60;return h?h+' h'+(m?' '+m+' min':''):m+' min';}
+  function statusText(s,now,indicative){
+    if(!s||s.phase==='unknown')return 'Sem confirmação na cobertura';
+    const active=global.JPWMarketSessions.isRegularOpen(s),t=s.nextTransition;
+    const state=indicative?(active?'Na janela indicativa':'Fora da janela indicativa'):(active?'Aberta conforme calendário':legacy.labels[s.phase]||'Sem confirmação');
+    return state+(t&&t.earliestUtc===t.latestUtc?' · '+(t.nextPhase==='continuous'?'inicia':'termina')+' em '+wait(t.earliestUtc-now):'');
+  }
+  function preference(){
+    const api=global.JPWMarketSessionsViewPreference;
+    try{const raw=localStorage.getItem(api.key);return {raw,value:raw===null?{schemaVersion:1,timeZone:'device'}:api.validate(raw),blocked:false};}
+    catch(_){return {raw:null,value:{schemaVersion:1,timeZone:'device'},blocked:true};}
+  }
+  function fxSummary(states,catalog,compact){
+    const unknown=states.venues.filter(v=>v.phase==='unknown'),active=states.venues.filter(global.JPWMarketSessions.isRegularOpen);
+    if(unknown.length===states.venues.length)return 'Horários não confirmados para esta data';
+    const activeNames=active.map(v=>catalog.venues.find(c=>c.id===v.id).city).join(' · ');
+    if(unknown.length)return 'Cobertura parcial: '+(active.length?activeNames+' na janela indicativa; ':'nenhuma janela ativa entre os horários confirmados; ')+unknown.length+' horário(s) não confirmado(s)';
+    return compact?active.length+' janelas Forex indicativas ativas':active.length?activeNames+' na janela indicativa':'Nenhuma das quatro janelas indicativas ativa agora';
+  }
+  function create(host,catalog,select,retryRenderer,mapVisibilityChanged,options){
+    if(!options?.forexCatalog)return legacy.create(host,catalog,select,retryRenderer,mapVisibilityChanged);
+    const fx=options.forexCatalog,pref=preference();let expectedRaw=pref.raw,chosen=pref.value.timeZone,current=null,selected='b3',popover=null,mapExpanded=false;
+    const root=node('section',undefined,'market-hours mh-sessions');root.setAttribute('aria-label','Sessões Forex indicativas e B3');
+    const toolbar=node('div',undefined,'mh-sessions-toolbar'),title=node('h3','Sessões Forex · horários indicativos');
+    const info=node('button','i','mh-info-button');info.type='button';info.setAttribute('aria-label','Sobre as sessões Forex e B3');info.setAttribute('aria-expanded','false');
+    const zoneLabel=node('label','Exibir fuso horário','mh-zone-label'),zone=node('select');zone.dataset.mh='timezone';
+    Object.entries(zoneLabels).forEach(([id,label])=>zone.append(new Option(label,id)));zone.value=chosen;zone.disabled=pref.blocked;zoneLabel.append(zone);
+    toolbar.append(title,info,zoneLabel);
+    const warning=node('p',pref.blocked?'Preferência de fuso incompatível ou inacessível. Conteúdo preservado para recuperação; exibição temporária sem alterar os dados.':'','mh-note');warning.hidden=!pref.blocked;warning.setAttribute('role','status');const zoneWarning=node('p',undefined,'mh-note');zoneWarning.hidden=true;zoneWarning.setAttribute('role','status');
+    const grid=node('div',undefined,'mh-sessions-grid'),map=node('section',undefined,'mh-globe-panel'),toggle=node('button','Explorar mapa');toggle.type='button';toggle.dataset.mh='map-toggle';toggle.setAttribute('aria-expanded','false');
+    const mapContent=node('div'),globe=node('div',undefined,'mh-globe'),globeNote=node('p',undefined,'mh-note'),retry=node('button','Tentar carregar o globo novamente');globe.dataset.mh='globe';mapContent.dataset.mh='map-content';retry.type='button';retry.hidden=true;retry.addEventListener('click',()=>{if(document.activeElement===retry)(rows.get(selected)?.button||zone).focus({preventScroll:true});retryRenderer();});mapContent.append(globe,globeNote,retry);map.append(toggle,mapContent);
+    const list=node('div',undefined,'mh-sessions-list'),dateLabel=node('p',undefined,'mh-note'),axis=node('div',undefined,'mh-session-axis'),rows=new Map();
+    const fxGroup=node('section');fxGroup.setAttribute('aria-label','Quatro sessões Forex indicativas');fxGroup.append(dateLabel,axis);
+    function row(v,isFX){
+      const e=node('div',undefined,'mh-session-row');if(isFX)e.dataset.fxSession=v.id;else e.dataset.b3Session='';e.dataset.venueId=v.id;
+      const button=node('button',undefined,'mh-session-identity'),flag=node('span',flags[v.id],'mh-session-flag'),name=node('span',v.city),text=node('span',undefined,'mh-session-state'),track=node('div',undefined,'mh-session-track'),now=node('span',undefined,'mh-session-now');
+      flag.setAttribute('aria-hidden','true');button.type='button';button.setAttribute('aria-label',(isFX?'Sessão indicativa ':'Bolsa ')+v.name+' · '+v.country);button.append(flag,name);button.addEventListener('click',()=>select(v.id,'table'));track.setAttribute('aria-hidden','true');now.hidden=true;track.append(now);e.append(button,track,text);return {e,button,track,now,text,v};
+    }
+    fx.venues.forEach(v=>{const r=row(v,true);rows.set(v.id,r);fxGroup.append(r.e);});
+    const b3Group=node('section',undefined,'mh-b3-group'),b3=catalog.venues.find(v=>v.id==='b3');b3Group.append(node('h4','B3 · ações conforme calendário'));if(b3){const r=row(b3,false);rows.set('b3',r);b3Group.append(r.e);}
+    const summary=node('p',undefined,'mh-session-summary');summary.setAttribute('role','status');const note=node('p','Janelas Forex indicativas. A disponibilidade de negociação depende da corretora.','mh-note');
+    list.append(fxGroup,b3Group,summary,note);grid.append(map,list);root.append(toolbar,warning,zoneWarning,grid);host.append(root);
+    function closeHelp(returnFocus=false){if(!popover)return;popover.remove();popover=null;info.setAttribute('aria-expanded','false');document.removeEventListener('keydown',helpKey,true);document.removeEventListener('pointerdown',outside,true);if(returnFocus)info.focus({preventScroll:true});}
+    function helpKey(e){if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeHelp(true);}}
+    function outside(e){if(popover&&!popover.contains(e.target)&&e.target!==info)closeHelp();}
+    info.addEventListener('click',()=>{
+      if(popover){closeHelp(true);return;}
+      const layer=document.getElementById('jpPopoverLayer');if(!layer)return;
+      popover=node('section',undefined,'jp-popover mh-info-popover mh-sessions-help');popover.setAttribute('role','region');popover.setAttribute('aria-label','Sobre as sessões Forex e B3');
+      popover.append(node('h4','Sessões Forex indicativas'),node('p','Convenção FOREX.com, segunda a sexta em cada cidade: Sydney 07:00–16:00; Tokyo 09:00–18:00; London 08:00–16:00; New York 08:00–17:00. Cada fuso considera seu próprio horário de verão.'),node('p','Estas janelas não confirmam a abertura global do Forex, liquidez, feriados ou execução de ordens. Não aplicamos horários de bolsas às sessões cambiais. Confira o instrumento e os horários da sua corretora.'));
+      const source=node('a','Fonte da convenção · consulta 31/10/2026');source.href='https://www.forex.com/en-uk/trading-guides/forex-market-hours/';source.target='_blank';source.rel='noopener noreferrer';popover.append(source,node('h4','B3 separada'),node('p','B3 usa seu calendário de ações original, com fases, feriados e lacunas explícitas. A cobertura dos catálogos termina em 31/12/2026; fora dela não inferimos horários.'),node('p','O relógio vem deste dispositivo. Os segmentos são projetados a partir de instantes UTC e TZif 2026b. Dias de mudança de horário podem ter 23 ou 25 horas. A projeção do fuso do dispositivo fora dos presets usa Intl do navegador; os instantes das sessões continuam compilados pela TZif 2026b.'));
+      const close=node('button','Fechar');close.type='button';close.addEventListener('click',()=>closeHelp(true));popover.append(close);layer.append(popover);info.setAttribute('aria-expanded','true');
+      document.addEventListener('keydown',helpKey,true);document.addEventListener('pointerdown',outside,true);
+    });
+    function displayZone(){const requested=chosen==='device'?Intl.DateTimeFormat().resolvedOptions().timeZone:chosen;try{new Intl.DateTimeFormat('pt-BR',{timeZone:requested}).format(current?.asOf||Date.now());return requested;}catch(_){return 'UTC';}}
+    function resized(){const compact=root.clientWidth<600;root.dataset.compact=String(compact);if(!compact&&document.activeElement===toggle)zone.focus({preventScroll:true});if(compact&&!mapExpanded&&mapContent.contains(document.activeElement))toggle.focus({preventScroll:true});toggle.hidden=!compact;mapContent.hidden=compact&&!mapExpanded;toggle.setAttribute('aria-expanded',String(!mapContent.hidden));toggle.textContent=mapContent.hidden?'Explorar mapa':'Recolher mapa';if(mapContent.hidden)closeHelp();if(mapVisibilityChanged)mapVisibilityChanged();}
+    toggle.addEventListener('click',()=>{mapExpanded=!mapExpanded;resized();});const observer=new ResizeObserver(resized);observer.observe(root);resized();
+    function blockPreference(message){pref.blocked=true;zone.disabled=true;zone.value=chosen;warning.hidden=false;warning.textContent=message;}
+    function observePreference(raw,message){
+      let value;try{value=raw===null?{schemaVersion:1,timeZone:'device'}:global.JPWMarketSessionsViewPreference.validate(raw);}
+      catch(_){blockPreference('Preferência de fuso incompatível. O conteúdo atual foi preservado para recuperação; gravação bloqueada.');return false;}
+      expectedRaw=raw;chosen=value.timeZone;zone.value=chosen;warning.hidden=false;warning.textContent=message;if(current)render(current,selected);return true;
+    }
+    zone.addEventListener('change',()=>{
+      const old=chosen,api=global.JPWMarketSessionsViewPreference,key=api.key;
+      let desired,stored;
+      try{desired=api.validate(JSON.stringify({schemaVersion:1,timeZone:zone.value}));stored=localStorage.getItem(key);}
+      catch(_){blockPreference('Não foi possível conferir a preferência atual. Conteúdo preservado; gravação bloqueada.');return;}
+      if(stored!==null){try{api.validate(stored);}catch(_){blockPreference('Preferência de fuso incompatível. O conteúdo atual foi preservado para recuperação; gravação bloqueada.');return;}}
+      if(stored!==expectedRaw){observePreference(stored,'Preferência alterada em outra aba ou restauração. A escolha atual foi preservada; confira antes de tentar novamente.');return;}
+      let immediatelyBefore;
+      try{immediatelyBefore=localStorage.getItem(key);}catch(_){blockPreference('Não foi possível reconferir a preferência atual. Conteúdo preservado; gravação bloqueada.');return;}
+      if(immediatelyBefore!==stored){observePreference(immediatelyBefore,'Preferência alterada em outra aba durante a edição. O conteúdo atual foi preservado.');return;}
+      const serialized=JSON.stringify(desired);
+      try{localStorage.setItem(key,serialized);}
+      catch(_){chosen=old;zone.value=old;warning.hidden=false;warning.textContent='Não foi possível salvar o fuso. A preferência anterior foi preservada.';return;}
+      let after;try{after=localStorage.getItem(key);}catch(_){blockPreference('Não foi possível confirmar a gravação. O conteúdo foi preservado; confira a recuperação antes de continuar.');return;}
+      if(after!==serialized){observePreference(after,'Preferência alterada em outra aba após a gravação. O conteúdo atual foi preservado; a sua alteração não foi confirmada.');return;}
+      expectedRaw=serialized;chosen=desired.timeZone;warning.hidden=true;if(current)render(current,selected);
+    });
+    function bars(r,segments,window){r.track.querySelectorAll('.mh-session-segment').forEach(e=>e.remove());const length=window.untilUtc-window.fromUtc;segments.forEach(s=>{const el=node('span',undefined,'mh-session-segment');el.style.left=(100*(s.fromUtc-window.fromUtc)/length)+'%';el.style.width=(100*(s.untilUtc-s.fromUtc)/length)+'%';r.track.insertBefore(el,r.now);});r.now.hidden=false;r.now.style.left=(100*(current.asOf-window.fromUtc)/length)+'%';}
+    function render(snapshot,selectedId){
+      current=snapshot;selected=selectedId;const display=displayZone(),window=global.JPWForexSessions.timeline(fx,snapshot.asOf,display,{device:chosen==='device'}),states=global.JPWForexSessions.at(fx,snapshot.asOf);
+      const requested=chosen==='device'?Intl.DateTimeFormat().resolvedOptions().timeZone:chosen;
+      zoneWarning.hidden=requested===display;zoneWarning.textContent=requested===display?'':'Fuso do dispositivo ('+requested+') não reconhecido pelo navegador. Exibindo UTC sem alterar sua preferência.';
+      dateLabel.textContent=window?window.date.split('-').reverse().join('/')+' · '+(zoneLabels[display]||display)+' · '+clock(snapshot.asOf,display):'Fora da cobertura temporal · sem confirmação';axis.replaceChildren();
+      if(window){const span=window.untilUtc-window.fromUtc;window.ticks.filter((t,i)=>i%6===0||i===window.ticks.length-1).forEach(t=>{const label=node('span',t.label);label.style.left=100*(t.utc-window.fromUtc)/span+'%';label.title='UTC'+t.offset;axis.append(label);});}
+      for(const [id,r] of rows){const isFX=id!=='b3',s=(isFX?states:snapshot).venues.find(v=>v.id===id);r.button.setAttribute('aria-pressed',String(id===selectedId));r.e.dataset.selected=String(id===selectedId);r.e.dataset.phase=s?.phase||'unknown';r.text.textContent=statusText(s,snapshot.asOf,isFX);r.track.querySelectorAll('.mh-session-segment').forEach(e=>e.remove());r.now.hidden=true;
+        if(window){let segments;if(isFX)segments=window.rows.find(v=>v.id===id).segments;else segments=r.v.groups.flatMap(g=>g.periods.filter(p=>p.phase==='continuous'&&p.endUtc>window.fromUtc&&p.startUtc<window.untilUtc).map(p=>({fromUtc:Math.max(window.fromUtc,p.startUtc),untilUtc:Math.min(window.untilUtc,p.endUtc)})));bars(r,segments,window);}}
+      summary.textContent=fxSummary(states,fx,false);
+    }
+    return Object.freeze({root,globe,render,focusSelected(){(rows.get(selected)?.button||zone).focus({preventScroll:true});},containsFocus(){return root.contains(document.activeElement)||!!popover?.contains(document.activeElement);},closeHelp,setExpanded(value){root.hidden=!value;if(!value)closeHelp();else resized();},get mapVisible(){return !mapContent.hidden;},globeStatus(message,canRetry=false){globeNote.textContent=message;globeNote.hidden=!message;retry.hidden=!canRetry;},dispose(){closeHelp();observer.disconnect();root.remove();}});
+  }
+  function createOverview(host,toggleExpansion,select,retry,options){
+    if(!options?.forexCatalog)return legacy.createOverview(host,toggleExpansion,select,retry);
+    const root=node('section',undefined,'mh-overview-shell'),summary=node('div'),text=node('p'),toggle=node('button','Explorar sessões e mapa'),message=node('p'),retryButton=node('button','Tentar carregar o calendário novamente');retryButton.type='button';retryButton.dataset.mh='catalog-retry';retryButton.hidden=true;retryButton.addEventListener('click',retry);toggle.type='button';toggle.dataset.mh='expansion-toggle';toggle.addEventListener('click',toggleExpansion);summary.append(node('h3','Sessões Forex e B3'),text);root.append(summary,toggle,message,retryButton);host.append(root);
+    return Object.freeze({root,summary,toggle,render(snapshot){const states=global.JPWForexSessions.at(options.forexCatalog,snapshot.asOf);text.textContent=fxSummary(states,options.forexCatalog,true)+' · B3: '+statusText(snapshot.venues.find(v=>v.id==='b3'),snapshot.asOf,false);},message(value,canRetry=false){message.textContent=value;message.hidden=!value;retryButton.hidden=!canRetry;},setExpanded(value){summary.hidden=value;toggle.textContent=value?'Recolher sessões':'Explorar sessões e mapa';toggle.setAttribute('aria-expanded',String(value));},dispose(){root.remove();}});
+  }
+  global.JPWMarketHoursView=Object.freeze({...legacy,create,createOverview});
+})(globalThis);

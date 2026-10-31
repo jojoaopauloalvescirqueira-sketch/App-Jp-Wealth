@@ -1,3 +1,7 @@
+# Candidato de proporções do Calendário — 31/10/2026
+
+Hoje e seleção têm apresentação independente: numeral vermelho/negrito e disco azul32px dentro do alvo44px. Cabeçalho e workspace compartilham o renderizador; fontes, agenda e dados preservados. [Contrato desta frente](docs/work/CHG-JPW-CALENDAR-PROPORTIONS-20261031.md). Resultado integral somente nos recibos novos do candidato. Sem commit/integração/publicação; fotografias abaixo são históricas.
+
 # Planejamento — fechamento guiado e revisão de uso —22/10/2026
 
 Contrato aprovado: resolver resultado pendente na própria janela, revisar novamente dados alterados, conferir fluxos e finalizar explicitamente. Resultado e fechamento são gravações distintas; zero não é presumido. Meses anteriores pendentes têm orientação recuperável. Dados, fórmulas, histórico e backup preservados.

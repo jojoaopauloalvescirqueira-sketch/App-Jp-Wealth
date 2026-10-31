@@ -5,8 +5,31 @@ const JPW_WORKSPACE_KEYS=Object.freeze([
   'jpwealth.ui.widgetLayouts.v6','jpwealth.ui.widgetLayouts.v5','jpwealth.ui.widgetLayouts.v4',
   'jpwealth.ui.widgetLayouts.v3','jpwealth.ui.widgetLayout.v2',
   'jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_galton_preferences_v1',
-  'jpwealth.ui.ffNews.sourceUrl','jpwealth_calendar_view_v1'
+  'jpwealth.ui.ffNews.sourceUrl','jpwealth_calendar_view_v1',
+  'jpwealth_learning_guide_v1','jpwealth_time_twins_v1','jpwealth_capital_field_v1',
+  'jpwealth_planning_monthly_view_v1','jpwealth_hedge_guide_v1','jpwealth_market_sessions_view_v1'
 ]);
+const JPW_WORKSPACE_PROGRESS_KEYS=Object.freeze(JPW_WORKSPACE_KEYS.slice(-6));
+function jpwWorkspaceProgressValidate(key,raw){
+  if(raw===null)return;
+  const value=JSON.parse(raw);jpwWorkspaceCheckTree(value);
+  const invalid=()=>{throw new Error('Preferência/progresso incompatível: '+key);};
+  if(key==='jpwealth_learning_guide_v1'){
+    if(!window.JPWLearningProgress?.inspect(raw,window.JPWLearningCatalog)?.ok)invalid();
+  }else if(key==='jpwealth_time_twins_v1'){
+    if(!window.JPWTimeTwins?.progress?.read({getItem:()=>raw})?.ok)invalid();
+  }else if(key==='jpwealth_capital_field_v1'){
+    if(window.JPWCapitalCurrents?.progress?.load({getItem:()=>raw})?.mode!=='ok')invalid();
+  }else if(key==='jpwealth_planning_monthly_view_v1'){
+    if(!jpwWorkspaceObject(value)||value.version!==1||typeof value.highlightPast!=='boolean'||typeof value.fromCurrent!=='boolean'||Object.keys(value).sort().join(',')!=='fromCurrent,highlightPast,version')invalid();
+  }else if(key==='jpwealth_hedge_guide_v1'){
+    if(!window.JPWHedgeGuide?.validate)invalid();
+    window.JPWHedgeGuide.validate(raw);
+  }else if(key==='jpwealth_market_sessions_view_v1'){
+    if(!window.JPWMarketSessionsViewPreference?.validate)invalid();
+    window.JPWMarketSessionsViewPreference.validate(raw);
+  }
+}
 const jpwWorkspaceEdited=new Map();
 let jpwWorkspaceRestoring=false;
 const jpwWorkspaceDraftProviders=new Map();
@@ -74,12 +97,13 @@ function jpwWorkspaceJpegHeader(bytes){
   throw new Error('Dimensões JPEG indisponíveis.');
 }
 function jpwWorkspaceValidate(value){
-  if(!jpwWorkspaceObject(value)||![1,2].includes(value.schemaVersion)||!jpwWorkspaceObject(value.preferences)||!Array.isArray(value.drafts))throw new Error('Formato de retomada incompatível.');
+  if(!jpwWorkspaceObject(value)||![1,2,3].includes(value.schemaVersion)||!jpwWorkspaceObject(value.preferences)||!Array.isArray(value.drafts))throw new Error('Formato de retomada incompatível.');
   const text=JSON.stringify(value);if(text.length>4000000)throw new Error('Retomada excede 4 MB.');
   jpwWorkspaceCheckTree(value);
   for(const [key,raw] of Object.entries(value.preferences)){
     if(!JPW_WORKSPACE_KEYS.includes(key)||!(raw===null||typeof raw==='string')||(raw&&raw.length>2000000))throw new Error('Preferência de retomada inválida.');
     if(raw===null)continue;
+    if(JPW_WORKSPACE_PROGRESS_KEYS.includes(key)){jpwWorkspaceProgressValidate(key,raw);continue;}
     if(key==='jpwealth_calendar_view_v1'){
       const preference=JSON.parse(raw);
       const enums={currencies:['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'],impacts:['high','medium','low','unclassified'],contents:['economic','personal','app']};
@@ -140,7 +164,8 @@ function jpwWorkspaceSourceSnapshot(){
   if(S?.workspaceRecovery?.pending)return jpwWorkspaceValidate(S.workspaceRecovery.snapshot);
   const preferences={};
   for(const key of JPW_WORKSPACE_KEYS)preferences[key]=localStorage.getItem(key);
-  return {schemaVersion:2,preferences,drafts:jpwWorkspaceDrafts()};
+  const legacy=localStorage.getItem('jpwealth_capital_currents_v1');
+  return {schemaVersion:3,preferences,drafts:jpwWorkspaceDrafts(),legacyProgress:legacy};
 }
 // A checkpoint records source strings, including an invalid preference awaiting
 // explicit recovery. It does not validate, apply or silently repair that value.
@@ -151,6 +176,30 @@ function jpwWorkspaceCapture(options={}){
     Object.defineProperty(source,'sourceFingerprint',{value:fingerprint});return source;
   }
   const {preferences,drafts}=source;
+  function opaque(key,raw){
+    // Known progress stores only. Never enumerate arbitrary origin storage.
+    if(raw===null)return;
+    let parsed;
+    try{parsed=JSON.parse(raw);}catch(_){throw new Error('Progresso opaco não pôde ser verificado; preserve a origem sem exportá-lo.');}
+    jpwWorkspaceCheckTree(parsed);
+    const pending=[parsed];
+    while(pending.length){
+      const item=pending.pop();if(!item||typeof item!=='object')continue;
+      for(const field of Object.keys(item)){
+        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(field))throw new Error('Progresso contém campo de segredo; preserve a origem sem exportá-lo.');
+        if(item[field]&&typeof item[field]==='object')pending.push(item[field]);
+      }
+    }
+    for(let at=0;at<Math.max(raw.length,1);at+=900000){
+      const item={provider:'opaque-preference',version:1,label:'Progresso preservado somente para consulta: '+key+' (parte '+(1+at/900000)+')',text:raw.slice(at,at+900000)};
+      if(!drafts.some(previous=>previous.provider===item.provider&&previous.label===item.label&&previous.text===item.text))drafts.push(item);
+    }
+  }
+  for(const preferenceKey of JPW_WORKSPACE_PROGRESS_KEYS){
+    try{jpwWorkspaceProgressValidate(preferenceKey,preferences[preferenceKey]);}
+    catch(error){opaque(preferenceKey,preferences[preferenceKey]);delete preferences[preferenceKey];}
+  }
+  opaque('jpwealth_capital_currents_v1',source.legacyProgress);
   const key=window.JPWModuleAvailability.KEY,raw=preferences[key];
   if(!window.JPWModuleAvailability.inspect(raw).valid){
     if(!options.recoverAvailability)throw new Error('Disponibilidade de módulos inválida. Use o Backup Completo para exportar uma cópia de recuperação, com confirmação.');
@@ -158,7 +207,7 @@ function jpwWorkspaceCapture(options={}){
     delete preferences[key];
     for(let at=0;at<Math.max(raw.length,1);at+=900000)drafts.push({label:'Configuração de disponibilidade inválida — não aplicada (parte '+(1+at/900000)+')',text:raw.slice(at,at+900000)});
   }
-  const snapshot=jpwWorkspaceValidate({schemaVersion:2,preferences,drafts});
+  const snapshot=jpwWorkspaceValidate({schemaVersion:3,preferences,drafts});
   Object.defineProperty(snapshot,'sourceFingerprint',{value:fingerprint});
   return snapshot;
 }
@@ -186,7 +235,7 @@ function jpwWorkspaceResume(){
       if(localStorage.getItem(key)!==value)throw new Error('Preferência não confirmada: '+key);
     }
     const previous=S.workspaceRecovery;
-    S.workspaceRecovery={...previous,schemaVersion:1,pending:false,drafts:snapshot.drafts};
+    S.workspaceRecovery={...previous,schemaVersion:1,pending:false,drafts:snapshot.drafts,...(previous.package?{package:{...previous.package,stage:'COMPLETE'}}:{})};
     delete S.workspaceRecovery.snapshot;
     if(save()!==true||localStorage.getItem(LSKEY)!==jpWealthLastPersistedRawGet()){
       S.workspaceRecovery=previous;

@@ -28,6 +28,35 @@ def shipped(page, label, report):
     report['checks'].append({'id':label+'-shipped-oracles-and-ram-reload','classification':'PASS'})
 
 
+
+def confirmed_guide(page,label,report):
+    # Test the shipped UI/storage boundary in this actual origin, including file.
+    mode(page,1);action(page,'example').click();values(page,ONE)
+    prior=page.evaluate("localStorage.getItem('jpwealth_hedge_guide_v1')")
+    assert prior is None,(label,'fresh synthetic origin expected')
+    action(page,'save-plan').click()
+    page.wait_for_function("!document.querySelector('.hp-guide').matches('[aria-busy=true]') && !document.querySelector('#hedgePropGuideStatus').textContent.includes('Aguardando')")
+    note=page.locator('#hedgePropGuideStatus').inner_text()
+    if 'Plano confirmado e guardado' not in note:
+        assert 'inicializador local' in note,(label,'Unsafe origin must explicitly explain its refusal',note)
+        assert page.evaluate("localStorage.getItem('jpwealth_hedge_guide_v1')")==prior
+        assert page.locator('[data-hedge-field="feeUSD"]').input_value()=='1200'
+        report['checks'].append({'id':label+'-guide-safe-lock-unavailable-explicit-refusal-no-loss','classification':'PASS'})
+        return
+    saved=page.evaluate("JSON.parse(localStorage.getItem('jpwealth_hedge_guide_v1'))")
+    assert saved['stage']=='planned' and saved['plan']['input']['feeUSD']==1200,(label,saved)
+    page.locator('#hedgePropGuideStage').select_option('phase1');action(page,'confirm-stage').click()
+    page.wait_for_function("document.querySelector('#hedgePropGuideStatus').textContent.includes('Etapa confirmada')")
+    saved=page.evaluate("JSON.parse(localStorage.getItem('jpwealth_hedge_guide_v1'))")
+    assert saved['stage']=='phase1' and saved['milestones'][-1]['stage']=='phase1' and len(saved['milestones'])==2
+    raw=page.evaluate("localStorage.getItem('jpwealth_hedge_guide_v1')")
+    page.reload();wait_bootstrap(page);page.evaluate('closeModal()');route(page);blanks(page)
+    assert page.evaluate("localStorage.getItem('jpwealth_hedge_guide_v1')")==raw
+    assert 'Avaliação 1 em andamento' in page.locator('#hedgePropGuideCurrent').inner_text()
+    action(page,'load-plan').click();values(page,ONE)
+    report['checks'].append({'id':label+'-confirmed-guide-plan-stage-reload-explicit-resume','classification':'PASS'})
+
+
 def run(args):
     args.out.mkdir(parents=True,exist_ok=True)
     files=['index.html','src/js/manifest.json','src/styles/app.css','build-id.js','sw.js',
@@ -45,6 +74,7 @@ def run(args):
                 context,page,errors=boot(browser,target)
                 try:
                     shipped(page,label,report)
+                    confirmed_guide(page,label,report)
                     assert not errors,(label,errors)
                 finally:context.close()
             context,page,errors=boot(browser,url,workers='allow')
@@ -63,6 +93,7 @@ def run(args):
                 assert page.locator('#hedgePropRoot').is_visible()
                 assert not errors,errors
                 report['checks'].append({'id':'pwa-controlled-offline-new-scripts-route-oracle-ram-reset','classification':'PASS'})
+                confirmed_guide(page,'pwa-offline',report)
             finally:context.close()
             report['classification']='PASS'
         except (AssertionError,PlaywrightError) as exc:

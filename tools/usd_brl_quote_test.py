@@ -465,12 +465,23 @@ USDBRL_BENIGN_AUTH_LINES = (
     "    for(const key of Object.keys(value))if(['__proto__','prototype','constructor'].includes(key)||/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||!safeTree(value[key],seen))return false;",
     "      if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)||['__proto__','prototype','constructor'].includes(key))fail();",
     "    for(const key of Object.keys(value)){requireThat(!/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(key)&&!['__proto__','constructor','prototype'].includes(key),'Campo de segredo ou controle não permitido.');safe(value[key],seen);}seen.delete(value);",
+    "        if(/password|passwd|senha|secret|token|credential|authorization|api[-_]?key|private[-_]?key/i.test(field))throw new Error('Progresso contém campo de segredo; preserve a origem sem exportá-lo.');",
+)
+# Keep the three original guards explicitly; appending an exception must not
+# silently drop an old counterproof through a moving tail slice.
+USDBRL_REVIEWED_SECRET_GUARDS = (
+    USDBRL_BENIGN_AUTH_LINES[6],
+    USDBRL_BENIGN_AUTH_LINES[7],
+    USDBRL_BENIGN_AUTH_LINES[8],
+    USDBRL_BENIGN_AUTH_LINES[9],
 )
 
 
 def usd_brl_static_credential_text(texto, nome):
     if nome == "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html":
         linhas = texto.splitlines(keepends=True)
+        for guard in USDBRL_REVIEWED_SECRET_GUARDS:
+            assert sum(linha.rstrip("\r\n") == guard for linha in linhas) == 1, "guard revisado ausente, modificado ou duplicado no portátil"
         for benigna in USDBRL_BENIGN_AUTH_LINES:
             indices = [i for i, linha in enumerate(linhas)
                        if linha.rstrip("\r\n") == benigna]
@@ -485,23 +496,26 @@ def usd_brl_static_credential_text(texto, nome):
 
 
 def usd_brl_static_guard_counterproofs(suspeitos):
-    # Retain the original changed-return-false proof and test both new guards
-    # through this same exact-line scanner. Never strip whole regular expressions.
-    guards=USDBRL_BENIGN_AUTH_LINES[-3:]
+    # Exact four-guard fixture also proves complete removal is refused; all old
+    # mutation/injection/duplicate counterproofs remain in this same scanner.
+    guards=USDBRL_REVIEWED_SECRET_GUARDS
+    reviewed='\n'.join(guards)+'\n'
     changes=[guards[0].replace('return false;','return true;'),
              guards[1].replace(')fail();',')void 0;'),
-             guards[2].replace('requireThat(!','requireThat(true||',1)]
+             guards[2].replace('requireThat(!','requireThat(true||',1),
+             guards[3].replace('throw new Error(', 'void(', 1)]
+    assert len(guards)==4 and len(set(guards))==4
     for benign,changed in zip(guards,changes):
         assert benign!=changed and 'authorization' in changed
-        assert 'authorization' not in usd_brl_static_credential_text(benign+'\n','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+        assert 'authorization' not in usd_brl_static_credential_text(reviewed,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         for term in suspeitos:
-            candidate=benign+'\nconst syntheticProbe = '+json.dumps(term+' SYNTHETIC-NOT-A-CREDENTIAL')+';\n'
+            candidate=reviewed+'const syntheticProbe = '+json.dumps(term+' SYNTHETIC-NOT-A-CREDENTIAL')+';\n'
             assert term in usd_brl_static_credential_text(candidate,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'),'exact exception masked an added credential marker'
-        assert 'authorization' in usd_brl_static_credential_text(changed,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'),'changed guard accepted as benign'
-        try:usd_brl_static_credential_text(benign+'\n'+benign+'\n','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
-        except AssertionError:pass
-        else:raise AssertionError('duplicate benign-looking lines must be rejected')
-    return {'reviewedGuards':len(guards),'injectedCredentialMarkers':len(guards)*len(suspeitos),'modifiedGuards':len(changes),'duplicateGuards':len(guards)}
+        for violation in [reviewed.replace(benign,changed,1),reviewed.replace(benign+'\n','',1),reviewed+benign+'\n']:
+            try:usd_brl_static_credential_text(violation,'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+            except AssertionError:pass
+            else:raise AssertionError('modified, removed or duplicate reviewed guard must be rejected')
+    return {'reviewedGuards':len(guards),'injectedCredentialMarkers':len(guards)*len(suspeitos),'modifiedGuards':len(changes),'removedGuards':len(guards),'duplicateGuards':len(guards)}
 
 
 def caso_seguranca(browser, url):

@@ -19,6 +19,7 @@ from calendar_agenda_test import calendar_packet
 from notes_launcher_test import launch_options
 from playwright.sync_api import expect
 from calendar_economic_table_contract import assert_layout, controls
+from calendar_proportions_contract import assert_proportions
 
 LAYOUTS = ('sidebar', 'topbar', 'glass', 'submenu')
 THEMES = ('light', 'dark')
@@ -246,17 +247,12 @@ def reachable(locator):
 
 
 def selection_geometry(page):
-    data = page.locator(PANEL + ' .calendar-grid').evaluate('''grid=>{
-      const selected=[...grid.querySelectorAll('[aria-selected="true"]')],current=[...grid.querySelectorAll('[aria-current="date"]')];
-      const treatment=n=>{const s=getComputedStyle(n),v=getComputedStyle(n.querySelector('.calendar-day-number'));return {date:n.dataset.calendarDate,background:s.backgroundColor,outline:v.outlineStyle,outlineWidth:parseFloat(v.outlineWidth),outlineColor:v.outlineColor};};
-      return {selected:selected.map(treatment),today:current.map(treatment)};
-    }''')
-    assert len(data['selected']) == 1 and len(data['today']) == 1, ('One selected date and one current civil date', data)
-    selected, today = data['selected'][0], data['today'][0]
-    assert today['date'] == '2026-10-23' and selected['date'] != today['date'], ('Today must remain independent from another selected date', data)
-    assert selected['background'] != today['background'] and rgba(selected['background'])[3] > 0, ('Selected date needs visible treatment distinct from today', data)
-    assert today['outline'] != 'none' and today['outlineWidth'] > 0 and rgba(today['outlineColor'])[3] > 0, ('Unselected today must retain its visible numeral outline', data)
-    return data
+    data = assert_proportions(page.locator(PANEL))
+    selected = [row for row in data['cells'] if row['selected']]
+    current = [row for row in data['cells'] if row['current']]
+    assert len(selected) == 1 and len(current) == 1, ('One selected date and one current date', data)
+    assert current[0]['date'] == '2026-10-23' and selected[0]['date'] != current[0]['date'], ('Today remains independent from selection', data)
+    return {'selected': selected, 'today': current}
 
 
 def capture_viewport(page, path):
@@ -280,6 +276,7 @@ def text_contrast(page, selector):
 
 
 def geometry(page, visual, header=None):
+    proportions = assert_proportions(page.locator(PANEL))
     dialog = page.locator(DIALOG)
     assert dialog.evaluate("e=>e.open&&e.matches(':modal')"), 'Calendar must use a native modal dialog'
     data = dialog.evaluate('''e=>{
@@ -341,7 +338,7 @@ def geometry(page, visual, header=None):
         economic=assert_layout(page.locator(PANEL))
         for index,toggle in enumerate(controls(page.locator(PANEL)).all()):
             icons['economic-detail-'+str(index)]=visual.centered(toggle,'ink',True)
-    return {'dialog': data, 'header': header, 'icons': icons, 'markers': marker_geometry(page), 'economic_table':economic}
+    return {'dialog': data, 'header': header, 'icons': icons, 'markers': marker_geometry(page), 'economic_table':economic, 'proportions':proportions}
 
 
 def form_geometry(page, visual):
@@ -503,8 +500,8 @@ def matrix(browser, url, report, visual):
             "document.querySelector('#calendarDialog [data-calendar-date=\"2026-10-23\"] .calendar-economic-dot').style.opacity='0'",
             "document.querySelector('#calendarDialog [data-calendar-date=\"2026-10-24\"] .calendar-personal-dot').style.backgroundColor='red'")),
         ('today-selection', (
-            "document.querySelector('#calendarDialog [data-calendar-date=\"2026-10-23\"] .calendar-day-number').style.outline='none'",
-            "()=>{const b=document.querySelector('#calendarDialog .calendar-grid [aria-selected=true]');b.style.setProperty('color','#fff','important');b.style.setProperty('background-color','#409cff','important')}",
+            "document.querySelector('#calendarDialog [data-calendar-date=\"2026-10-23\"] .calendar-day-number').style.fontWeight='400'",
+            "()=>{const b=document.querySelector('#calendarDialog .calendar-grid [aria-selected=true] .calendar-day-number');b.style.setProperty('color','#fff','important');b.style.setProperty('background-color','#409cff','important')}",
             {'prepare': "document.querySelector('#calendarDialog [data-calendar-action=new]').click()", 'oracle': 'form',
              'mutation': "()=>{const b=document.querySelector('#calendarDialog .calendar-form .calendar-primary');b.style.setProperty('color','#fff','important');b.style.setProperty('background-color','#409cff','important')}"})),
         ('vertical-clipping', "Object.assign(document.querySelector('#calendarDialog .calendar-grid').style,{height:'44px',overflow:'hidden'})"),

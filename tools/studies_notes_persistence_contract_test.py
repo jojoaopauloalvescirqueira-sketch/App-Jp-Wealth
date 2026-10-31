@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package
 import sys
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -522,7 +523,7 @@ def run_banner_keyboard(browser,url,theme,width,height,artifact):
         if page.evaluate('document.activeElement.id')=='persistenceAlertBackupBtn':
             page.keyboard.press('Enter')
             page.wait_for_function('window.__blob!==null && !dgExportEmAndamento')
-            backup=json.loads(page.evaluate('window.__blob.text()'))
+            backup=read_backup_package(blob_bytes(page,'window.__blob')).payload
             check(backup['state']['mvpNotes']==before['aggregate'],'backup exported transient or altered Notes',failures)
             after_export=preserved('backup')
             # Export bookkeeping persists its confirmed candidate directly;
@@ -647,7 +648,7 @@ def main():
                 try:record=run_case(browser,f'http://127.0.0.1:{server.server_port}/index.html',case,mode)
                 except Exception as error:record={'case':case,'mode':mode,'classification':'TEST_HARNESS_FAIL','error':str(error)}
                 results.append(record)
-                args.artifact.write_text(json.dumps({'root':str(root),'suite_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'results':results},ensure_ascii=False,indent=2))
+                args.artifact.write_text(json.dumps({'root':str(root),'suite_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'helper_sha256':hashlib.sha256(Path(__file__).with_name('backup_package_fixture.py').read_bytes()).hexdigest(),'results':results},ensure_ascii=False,indent=2))
                 print(json.dumps({k:v for k,v in record.items() if k not in ('before','after','action_return')},ensure_ascii=False),flush=True)
             if args.mode=='full' and args.only in (None,'ui'):
                 for case in ('nc-edit','pv-create','note-create','note-edit'):
@@ -683,7 +684,7 @@ def main():
                         except Exception as error:record={'case':'note-dirty-keyboard','mode':f'keyboard-{theme}-{width}x{height}','classification':'TEST_HARNESS_FAIL','error':str(error)}
                         results.append(record)
                         print(json.dumps({k:v for k,v in record.items() if k in ('case','mode','classification','violations','error')},ensure_ascii=False),flush=True)
-            args.artifact.write_text(json.dumps({'root':str(root),'suite_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'results':results},ensure_ascii=False,indent=2))
+            args.artifact.write_text(json.dumps({'root':str(root),'suite_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'helper_sha256':hashlib.sha256(Path(__file__).with_name('backup_package_fixture.py').read_bytes()).hexdigest(),'results':results},ensure_ascii=False,indent=2))
             browser.close()
     finally:server.shutdown()
     return 0 if all(r['classification']=='PASS' for r in results) else 1

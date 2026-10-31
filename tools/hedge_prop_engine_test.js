@@ -244,6 +244,10 @@ const receipt = {
   testSha256: crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex'),
   counterproofs: rejectionResults
 };
-const receiptPath = path.resolve(__dirname, '../docs/validation/hedge-prop-20261027/engine-counterproofs.json');
+const receiptPath = path.resolve(__dirname, '../tools/.artifacts/hedge-prop-engine/engine-counterproofs.json');
+fs.mkdirSync(path.dirname(receiptPath), {recursive:true});
 fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + '\n');
 console.log(`HEDGE PROP ENGINE: ${count}/${count} PASS; COUNTERPROOFS ${rejectionResults.length}/${counterproofs.length} PASS`);
+
+// Approved accumulated guide contracts use the same mandatory Hedge entry.
+require('./hedge_guide_store_test.js');

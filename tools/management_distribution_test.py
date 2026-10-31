@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from functools import partial
 import json
 from pathlib import Path
+from backup_package_fixture import read_backup_package
 import threading
 from playwright.sync_api import sync_playwright
 from browser_fixture_server import BrowserFixtureServer
@@ -57,7 +58,7 @@ def run(out):
             checked('HTTP-confirmed-reload',page.evaluate('JPWManagementAnnual.queries.snapshot()')==expected['aggregate'])
             page.evaluate("openSettingsModal('backup')")
             with page.expect_download() as pending:page.locator('#exportFullBackupBtn').click()
-            backup=out/'synthetic-management-backup.json';pending.value.save_as(str(backup));payload=json.loads(backup.read_text())
+            backup=out/'synthetic-management-backup.zip';pending.value.save_as(str(backup));payload=read_backup_package(backup).payload
             checked('Backup-Completo-confirmed-aggregate',payload['state']['managementAnnual']==expected['aggregate'])
             checked('Backup-canonical-real-results',len(payload['state']['forex']['accountContexts']['accounts'][expected['scope']['accountId']]['periods'][expected['scope']['periodId']]['ledger'])==1)
             restored,q,restore_errors=boot(browser,url)

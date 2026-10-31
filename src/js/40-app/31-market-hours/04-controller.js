@@ -1,7 +1,7 @@
 /* Ephemeral market-hours lifecycle. No account state, storage or live data feed. */
 (function (global) {
   'use strict';
-  let host=null, view=null, overview=null, catalog=null, snapshot=null, renderer=null, rendererFactory=null;
+  let host=null, view=null, overview=null, catalog=null, forexCatalog=null, snapshot=null, renderer=null, rendererFactory=null;
   let selectedVenueId='b3', desiredActive=false, disposed=false, loading=null, rendererLoading=null;
   let timer=null, signature='', observer=null, focused=true, catalogState='idle', rendererState='idle', loadingNote=null;
   let expanded=true, viewportObserver=null, mapInViewport=false, snapshotError=false, buildingView=false, contextVersion=0;
@@ -13,8 +13,10 @@
   function live() { return !!(desiredActive && !disposed && catalog && !document.hidden && focused && visibleHost()); }
   function mapLive() { return !!(live() && expanded && view && view.mapVisible && mapInViewport && !snapshotError); }
   function theme() { return document.documentElement.dataset.theme==='dark' ? 'dark':'light'; }
+  function displayVenues(){return forexCatalog?[...forexCatalog.venues,catalog.venues.find(v=>v.id==='b3')].filter(Boolean):catalog.venues;}
+  function displayStatuses(){return forexCatalog?[...global.JPWForexSessions.at(forexCatalog,snapshot.asOf).venues,...snapshot.venues.filter(v=>v.id==='b3')]:snapshot.venues;}
   function buildCities() {
-    catalog.venues.forEach(v=>{
+    displayVenues().forEach(v=>{
       let city=cities.find(c=>c.city===v.city && c.country===v.country);
       if(!city){city={id:'city-'+slug(v.city),city:v.city,country:v.country,lat:v.lat,lng:v.lng,venueIds:[]};if(cities.some(c=>c.id===city.id))city.id+='-'+slug(v.country);cities.push(city);}
       city.venueIds.push(v.id);markerByVenue.set(v.id,city.id);
@@ -23,7 +25,7 @@
   function markerData() {
     const css=getComputedStyle(view.root);
     return cities.map(city=>{
-      const statuses=city.venueIds.map(id=>snapshot.venues.find(v=>v.id===id));
+      const statuses=city.venueIds.map(id=>displayStatuses().find(v=>v.id===id));
       const phase=statuses.some(s=>s.phase==='unknown') ? 'unknown':statuses.every(s=>s.phase===statuses[0].phase) ? statuses[0].phase:'mixed';
       const token=phase==='continuous' ? '--good':phase==='closed' || phase==='unknown' ? '--ink-dim':'--warn';
       return {id:city.id,venueIds:city.venueIds.slice(),lat:city.lat,lng:city.lng,label:city.city+' '+(phase==='unknown' ? '?':phase==='closed' ? '○':phase==='continuous' ? '●':'◐'),phase,color:css.getPropertyValue(token).trim() || '#526071'};
@@ -31,7 +33,7 @@
   }
   function updateRenderer() {
     if(!renderer || !snapshot || !mapLive())return;
-    const next=JSON.stringify([snapshot.venues.map(v=>[v.id,v.phase]),selectedVenueId,theme()]);
+    const next=JSON.stringify([displayStatuses().map(v=>[v.id,v.phase]),selectedVenueId,theme()]);
     if(next===signature)return;
     signature=next;renderer.update({markers:markerData(),selectedMarkerId:markerByVenue.get(selectedVenueId),theme:theme()});
   }
@@ -67,7 +69,7 @@
     syncCamera();
   }
   function select(id,source) {
-    if(disposed || !catalog || !catalog.venues.some(v=>v.id===id))return;
+    if(disposed || !catalog || !displayVenues().some(v=>v.id===id))return;
     selectedVenueId=id;
     if(source!=='marker'){
       cameraMode='manual';gestureHeld=false;cameraDeadline=performance.now()+explorationMs;pendingMarker=markerByVenue.get(id);
@@ -173,7 +175,7 @@
     if(overview)return;
     overview=global.JPWMarketHoursView.createOverview(host,()=>setExpanded(!expanded),id=>{
       setExpanded(true).then(accepted=>{if(accepted && live() && expanded){select(id,'summary');view.focusSelected();}});
-    },retryCalendar);
+    },retryCalendar,forexCatalog?{forexCatalog}:undefined);
     if(loadingNote){loadingNote.remove();loadingNote=null;}
     if(view){overview.toggle.setAttribute('aria-controls',view.root.id);const summary=view.root.querySelector?.('[data-mh="summary"]');if(summary)summary.dataset.mh='exploration-summary';}
     overview.setExpanded(expanded,!!view);
@@ -181,7 +183,7 @@
   function ensureView() {
     if(view || !expanded || !catalog || !visibleHost() || disposed)return;
     buildingView=true;
-    try{view=global.JPWMarketHoursView.create(host,catalog,select,retryRenderer,sync);}finally{buildingView=false;}
+    try{view=global.JPWMarketHoursView.create(host,catalog,select,retryRenderer,sync,forexCatalog?{forexCatalog}:undefined);}finally{buildingView=false;}
     view.root.dataset.mh='exploration';view.root.id='marketHoursExploration';
     if(overview){overview.toggle.setAttribute('aria-controls',view.root.id);overview.setExpanded(expanded);const summary=view.root.querySelector?.('[data-mh="summary"]');if(summary)summary.dataset.mh='exploration-summary';}
     mapInViewport=typeof global.IntersectionObserver!=='function';
@@ -219,13 +221,13 @@
     const job={controller:new AbortController(),promise:null,contextVersion};loading=job;
     job.promise=Promise.resolve().then(()=>{
       if(loading!==job || job.controller.signal.aborted)return null;
-      return global.JPWMarketHoursAssets.getCatalog({signal:job.controller.signal});
+      return Promise.all([global.JPWMarketHoursAssets.getCatalog({signal:job.controller.signal}),global.JPWMarketHoursAssets.getForexCatalog?global.JPWMarketHoursAssets.getForexCatalog({signal:job.controller.signal}):null]);
     }).then(raw=>{
       if(disposed || loading!==job || job.controller.signal.aborted || !visibleHost() || document.hidden || !focused)return false;
       const restoreFocus=focusTarget && focusTarget.isConnected && document.activeElement===focusTarget && !focusTarget.closest('[hidden],[inert]') && job.contextVersion===contextVersion;
-      catalog=global.JPWMarketSessions.prepare(raw);cities.length=0;markerByVenue.clear();buildCities();
-      if(!catalog.venues.some(v=>v.id===selectedVenueId))selectedVenueId=catalog.venues[0].id;
-      catalogState='ready';ensureView();
+      catalog=global.JPWMarketSessions.prepare(raw[0]);forexCatalog=raw[1]?global.JPWForexSessions.prepare(raw[1]):null;cities.length=0;markerByVenue.clear();buildCities();
+      if(!displayVenues().some(v=>v.id===selectedVenueId))selectedVenueId='b3';
+      catalogState='ready';if(forexCatalog&&overview){const focusedOverview=overview.root.contains(document.activeElement);overview.dispose();overview=null;ensureOverview();if(focusedOverview)overview.toggle.focus({preventScroll:true});}ensureView();
       snapshot=global.JPWMarketSessions.at(catalog,Date.now());snapshotError=false;renderSnapshot();
       if(loadingNote){loadingNote.remove();loadingNote=null;}if(overview)overview.message('');
       if(restoreFocus){if(expanded && view)view.focusSelected();else if(overview)overview.toggle.focus({preventScroll:true});}
@@ -255,7 +257,7 @@
     document.removeEventListener('visibilitychange',visibility);global.removeEventListener('blur',blur);global.removeEventListener('focus',focus);
     if(renderer)renderer.dispose();renderer=null;
     if(view)view.dispose();if(overview)overview.dispose();else if(loadingNote)loadingNote.remove();loadingNote=null;overview=null;
-    view=null;catalog=null;snapshot=null;rendererFactory=null;host=null;cities.length=0;markerByVenue.clear();
+    view=null;catalog=null;forexCatalog=null;snapshot=null;rendererFactory=null;host=null;cities.length=0;markerByVenue.clear();
   }
   global.JPWMarketHours=Object.freeze({mount,setExpanded,activate,deactivate,dispose});
 })(globalThis);

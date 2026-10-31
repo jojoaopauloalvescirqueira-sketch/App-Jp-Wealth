@@ -24,6 +24,7 @@ L (mixed-build) vive em session_epoch_protocol_test.py E6/E15 — nao duplicados
 from http.server import SimpleHTTPRequestHandler
 from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package, assert_disk_source, expect_assertion
 import json
 import os
 import socket
@@ -326,25 +327,29 @@ def main() -> int:
                     localStorage.setItem('%s', JSON.stringify(doc));
                 }""" % (LSKEY, LSKEY))
                 page.locator("#finalizeSessionBtn").click(); page.wait_for_timeout(400)
-                blob = page.evaluate("""async () => {
-                    let capturado=null;
-                    const OrigBlob = window.Blob;
-                    window.Blob = function(partes, opts){ capturado = String(partes && partes[0]); return new OrigBlob(partes, opts); };
+                delivered = page.evaluate("""async () => {
+                    window.__serialDelivered=null;
+                    const download=dgDownloadViaAnchor;
+                    dgDownloadViaAnchor=function(filename,blob){window.__serialDelivered=blob;return download(filename,blob);};
                     window.URL.createObjectURL = () => 'blob:t'; window.URL.revokeObjectURL = () => {};
                     HTMLAnchorElement.prototype.click = function(){};
-                    if(document.getElementById('sessionExport')) document.getElementById('sessionExport').click();
-                    else if(document.getElementById('sessionExportNow')) document.getElementById('sessionExportNow').click();
-                    await new Promise(r => setTimeout(r, 600));
-                    window.Blob = OrigBlob;
-                    return capturado;
+                    try{
+                        if(document.getElementById('sessionExport')) document.getElementById('sessionExport').click();
+                        else if(document.getElementById('sessionExportNow')) document.getElementById('sessionExportNow').click();
+                        await new Promise(r => setTimeout(r, 600));
+                        return window.__serialDelivered instanceof Blob;
+                    }finally{dgDownloadViaAnchor=download;}
                 }""")
-                if not blob:
-                    falhas.append("SA2: nao foi possivel capturar o blob do export")
+                if not delivered:
+                    falhas.append("SA2: nao foi possivel capturar o artefato efetivamente entregue")
                 else:
-                    if "aldi_DO_DISCO" not in blob:
-                        falhas.append("SA2: o backup NAO representa o documento autoritativo do disco")
-                    if "aldi_fx_petr4" in blob:
-                        falhas.append("SA2: o backup carregou o S obsoleto da aba em vez do disco")
+                    payload=read_backup_package(blob_bytes(page,'window.__serialDelivered')).payload
+                    assert_disk_source(payload,'aldi_DO_DISCO','aldi_fx_petr4')
+                    # These mutate decoded domain content, not ZIP/checksums.
+                    missing={'state':json.loads(json.dumps(payload['state']).replace('aldi_DO_DISCO','SYNTHETIC_MISSING_SOURCE'))}
+                    stale={'state':{**payload['state'],'syntheticStaleRAM':'aldi_fx_petr4'}}
+                    expect_assertion(lambda:assert_disk_source(missing,'aldi_DO_DISCO','aldi_fx_petr4'))
+                    expect_assertion(lambda:assert_disk_source(stale,'aldi_DO_DISCO','aldi_fx_petr4'))
             executar(falhas, "SA2", sa2)
 
             # ---- SI: early-returns remotos deixam a aba utilizavel ----

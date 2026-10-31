@@ -173,7 +173,7 @@ def main():
                 print('PASS preferences changed during export / before finalization are refused',flush=True)
                 for change in ['future','unknown-key','bad-image','bad-drafts','nested-pollution','bad-glass-tint','bad-submenu-rail']:
                     bad=json.loads(json.dumps(payload))
-                    if change=='future':bad['workspace']['schemaVersion']=3
+                    if change=='future':bad['workspace']['schemaVersion']=4
                     if change=='unknown-key':bad['workspace']['preferences']['foreign_app']='x'
                     if change=='bad-image':bad['workspace']['preferences']['jpwealth_local_profile_v1']=json.dumps(dict(schemaVersion=1,displayName='x',avatarDataUrl='data:image/jpeg;base64,YWJj'))
                     if change=='bad-drafts':bad['workspace']['drafts']=[{'label':'x','text':{}}]
@@ -187,4 +187,14 @@ def main():
                 print('PASS invalid workspace rejected before mutation',flush=True)
         browser.close()
     server.shutdown()
-if __name__=='__main__':main()
+if __name__=='__main__':
+    main()
+    # Approved workspace3/unified package protections extend this existing gate;
+    # every historical assertion above remains active and nonzero propagates.
+    import os,subprocess,sys,tempfile
+    node=os.environ.get('JPW_NODE','node')
+    subprocess.run([node,str(ROOT/'tools/workspace_backup_v3_test.js')],check=True)
+    subprocess.run([node,str(ROOT/'tools/unified_backup_contract_test.js')],check=True)
+    evidence=Path(os.environ.get('JPW_BACKUP_EVIDENCE_DIR') or tempfile.mkdtemp(prefix='jpw-unified-backup-'))
+    subprocess.run([sys.executable,str(ROOT/'tools/unified_backup_test.py'),'--out',str(evidence)],check=True)
+    print('PASS accumulated unified-backup protections; receipt:',evidence/'receipt.json',flush=True)

@@ -1,3 +1,7 @@
+# Atualização de backup — workspace3 — 31/10/2026
+
+O [pacote único aprovado](COMPLETE-BACKUP.md) inclui o raw confirmado de `jpwealth_capital_field_v1` em `workspace.preferences`, fora dos fatos financeiros. `jpwealth_capital_currents_v1` legado é preservado, quando JSON verificável e sem segredos, somente em rascunhos opacos recuperáveis para consulta; nunca é aplicado à chave de destino nem ativa campanha. Restaurar o progresso novo não cria prática adicional nem inicia o campo. Esta nota substitui as exclusões/afirmações de formato das fatias históricas abaixo exclusivamente quanto ao backup; motores, perfis, parâmetros, esquemas produtores e finanças não mudam. As validações anteriores permanecem históricas.
+
 # Contrato atual — Correntes de Capital: campo vivo com aprendizado
 
 Candidate local em validação, 15/10/2026. A direção visual da primeira fatia foi confirmada pelo proprietário com “sim”; isso não homologa o conjunto ou demonstra aprendizado/diversão. O motor e o renderer do campo aceito são preservados.

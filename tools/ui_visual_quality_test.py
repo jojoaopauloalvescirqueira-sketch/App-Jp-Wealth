@@ -59,6 +59,7 @@ SOURCE_FILES = sorted(set(planning.SOURCES + [
     'tools/notification_visual_quality_test.py','tools/notification_center_test.py',
     'src/js/40-app/18-notification-center.js',
     'tools/calendar_visual_quality_test.py','tools/calendar_agenda_test.py',
+    'tools/calendar_proportions_contract.py',
     'src/js/40-app/19-calendar-agenda.js','src/js/40-app/16-monthly-economic-data.js',
     'src/js/10-domain/19-personal-agenda.js',
     'tools/dante_visual_quality_test.py','assets/dante-guide.png',

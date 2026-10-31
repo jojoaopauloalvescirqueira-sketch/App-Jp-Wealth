@@ -5265,6 +5265,813 @@
         "date": "2026-10-28",
         "scope": "Focais isolados; resultado final/humano separado."
       }
+    },
+    {
+      "id": "backup_workspace3_progress_20261031",
+      "state": "new_contract_regression",
+      "summary": "Quatro famílias de progresso/preferência não acompanhavam o backup.",
+      "source": {
+        "path": "docs/architecture/COMPLETE-BACKUP.md",
+        "section": "Pacote único31/10/2026"
+      },
+      "stimulus": "Preencher Dante/Gêmeos/Correntes/Mensal e exportar/restaurar em origem sintética nova.",
+      "expected": "Workspace3 transporta valores confirmados; futuro/legado opaco é consulta, sem segredos decodificados.",
+      "protection": {
+        "path": "tools/workspace_backup_v3_test.js",
+        "case": "4 families + escaped secret keys",
+        "command": "python3 tools/storage_governance_test.py",
+        "full_gate": {
+          "status": "bound_existing_entry",
+          "entry": "storage-governance",
+          "note": "Cadeia permanente: quality_gate → storage_governance_test.py → complete_backup_test.py → três focais. Âncora adicionada na rodada3; a afirmação anterior de alcance FULL não estava comprovada.",
+          "included": true,
+          "check_id": "storage-governance"
+        }
+      },
+      "evidence": [
+        {
+          "kind": "red",
+          "note": "workspace2!=3; buildPackage ausente; escaped secret missing exception; progress reload pending; epoch partial message missing",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "kind": "green",
+          "note": "Focais Node e Chromium modular13casos; ver recibos do candidato, FULL integrado pendente.",
+          "result": "FOCAL_PASS"
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "limits": "Fixtures sintéticas; não prova dados reais, pasta física, Safari nativo ou deploy.",
+      "cause": "Allowlist anterior omitia quatro famílias de progresso/preferência do snapshot portátil.",
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "backup_unified_package_20261031",
+      "state": "new_contract_regression",
+      "summary": "JSON financeiro e ZIP de originais eram operações separadas.",
+      "source": {
+        "path": "docs/architecture/COMPLETE-BACKUP.md",
+        "section": "Pacote único31/10/2026"
+      },
+      "stimulus": "Exportar pacote com HTML sintético; restaurar, repetir e simular falhas IDB/financeiro/epoch.",
+      "expected": "ZIP único íntegro, IDB aditivo antes da base; falha parcial identificada e UNKNOWN bloqueado.",
+      "protection": {
+        "path": "tools/unified_backup_test.py",
+        "case": "package roundtrip + transaction failure + epoch partial",
+        "command": "python3 tools/storage_governance_test.py",
+        "full_gate": {
+          "status": "bound_existing_entry",
+          "entry": "storage-governance",
+          "note": "Cadeia permanente: quality_gate → storage_governance_test.py → complete_backup_test.py → três focais. Âncora adicionada na rodada3; a afirmação anterior de alcance FULL não estava comprovada.",
+          "included": true,
+          "check_id": "storage-governance"
+        }
+      },
+      "evidence": [
+        {
+          "kind": "red",
+          "note": "workspace2!=3; buildPackage ausente; escaped secret missing exception; progress reload pending; epoch partial message missing",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "kind": "green",
+          "note": "Focais Node e Chromium modular13casos; ver recibos do candidato, FULL integrado pendente.",
+          "result": "FOCAL_PASS"
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "limits": "Fixtures sintéticas; não prova dados reais, pasta física, Safari nativo ou deploy.",
+      "cause": "Requisito novo aprovado substitui exportações separadas por pacote único com dados e originais.",
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "backup_progress_bootstrap_20261031",
+      "state": "new_contract_regression",
+      "summary": "Retomada do journal validava progressos antes dos módulos tardios estarem carregados.",
+      "source": {
+        "path": "docs/architecture/COMPLETE-BACKUP.md",
+        "section": "Pacote único31/10/2026"
+      },
+      "stimulus": "Restaurar três progressos e preferência com recusa sintética de projeção; recarregar.",
+      "expected": "Bootstrap pendente aguarda DOMContentLoaded uma vez e valida pelos proprietários sem alterar a ordem dos scripts.",
+      "protection": {
+        "path": "tools/unified_backup_test.py",
+        "case": "reload resumes projection without duplicate original",
+        "command": "python3 tools/storage_governance_test.py",
+        "full_gate": {
+          "status": "bound_existing_entry",
+          "entry": "storage-governance",
+          "note": "Cadeia permanente: quality_gate → storage_governance_test.py → complete_backup_test.py → três focais. Âncora adicionada na rodada3; a afirmação anterior de alcance FULL não estava comprovada.",
+          "included": true,
+          "check_id": "storage-governance"
+        }
+      },
+      "evidence": [
+        {
+          "kind": "red",
+          "note": "workspace2!=3; buildPackage ausente; escaped secret missing exception; progress reload pending; epoch partial message missing",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "kind": "green",
+          "note": "Focais Node e Chromium modular13casos; ver recibos do candidato, FULL integrado pendente.",
+          "result": "FOCAL_PASS"
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "limits": "Fixtures sintéticas; não prova dados reais, pasta física, Safari nativo ou deploy.",
+      "cause": "Retomada do journal chamava validadores de progressos antes do carregamento de seus módulos.",
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "backup_zip_directory_replay_guards_20261031",
+      "state": "new_contract_regression",
+      "summary": "Extra ZIP64 com tamanhos32normais era aceito; count1/pendingfalse herdados não demonstravam replay concluído.",
+      "source": {
+        "path": "docs/architecture/COMPLETE-BACKUP.md",
+        "section": "Pacote único31/10/2026"
+      },
+      "stimulus": "ZIPs sintéticos duplicado/cifra/ZIP64extra/mismatch/sobreposto; replay com estado/pref alterados; base/epoch/UNKNOWN durante awaitIDB e UNKNOWN após escrita.",
+      "expected": "Parser recusa ZIP64 antes de unzip; segunda importação tem conclusão própria e restaura geração/bytes/vínculos; guardas impedem adoção financeira indevida e UNKNOWN bloqueia retries.",
+      "protection": {
+        "path": "tools/unified_backup_test.py",
+        "case": "second import completes + awaiting IDB guards + combined UNKNOWN; unified_backup_contract_test.js directory fixtures",
+        "command": "python3 tools/storage_governance_test.py",
+        "full_gate": {
+          "status": "bound_existing_entry",
+          "entry": "storage-governance",
+          "note": "Cadeia permanente: quality_gate → storage_governance_test.py → complete_backup_test.py → três focais. Âncora adicionada na rodada3; a afirmação anterior de alcance FULL não estava comprovada.",
+          "included": true,
+          "check_id": "storage-governance"
+        }
+      },
+      "evidence": [
+        {
+          "kind": "red",
+          "note": "central ZIP64 extra with normal sizes: refusedfalse/directoryRefusedfalse; contraprova refusereplay falha em conclusão terminal específica.",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "kind": "green",
+          "note": "Node12recusas e Chromium modular18PASS; fingerprints/logs na rodada2; FULL integrado continua pendente.",
+          "result": "FOCAL_PASS"
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "limits": "Contextos sintéticos; sem Safari nativo, armazenamento real, near-limit browser, Git ou FULL nesta rodada.",
+      "cause": "Parser não inspecionava extras ZIP64; oráculo de replay aceitava estado herdado sem segunda conclusão.",
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "backup_monthly_preference_workspace3_oracle_20261031",
+      "state": "new_contract_regression",
+      "summary": "Requisito aprovado de workspace3 inclui preferência mensal; oráculo histórico ainda proibia sua presença em todo Backup Completo.",
+      "source": {
+        "path": "docs/work/CHG-JPW-BACKUP-MONTHLY-PREFERENCE-ORACLE-20261031.md",
+        "section": "Delta mínimo e critérios"
+      },
+      "stimulus": "Preferência mensal confirmada e serialização real; contaminação financeira, cópias em estado/rascunhos/raiz, slot ausente, valor/tipo divergentes.",
+      "expected": "Somente workspace.preferences contém raw exato ou null explícito; fatos financeiros e rascunhos continuam isolados, sem escrita indevida.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-preferences-isolation + inline-counterproof-preference-finance-backup (IDs preservados)",
+        "command": "python3 tools/planning_monthly_inline_test.py --out <evidência>",
+        "full_gate": {
+          "status": "bound_existing_entry",
+          "entry": "ui-visual-quality",
+          "note": "A mesma importação permanente no UI413 existente; preservar 413IDs, 2px, 44px, zoom nativo200 e runner116.",
+          "included": true,
+          "check_id": "ui-visual-quality"
+        }
+      },
+      "evidence": [
+        {
+          "kind": "red",
+          "note": "UI413 executados/sourceUnchangedtrue: duas PRODUCT_FAIL no oráculo de exclusão total; snapshot workspace3 válido é recusado pelo mesmo oráculo antigo.",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "kind": "green",
+          "note": "Probe do oráculo novo aceita raw/null válidos e recusa seis mutações; focal inline/reauditoria/UI completo/FULL têm recibos próprios, sem herdar PASS.",
+          "result": "FOCAL_PASS"
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "limits": "Somente delta de teste/documentação autorizado pelo requisito novo aprovado; nenhum produto/cálculo/store alterado, nenhum dado real ou Git.",
+      "cause": "Requisito novo aprovado inclui raw mensal no workspace3, invalidando exclusão histórica de todo o backup.",
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "backup_zip_progress_consumer_compatibility_20261031",
+      "state": "new_contract_regression",
+      "summary": "Consumidores históricos liam entregaZIP como JSON ou excluíam progressos agora aprovados no workspace3.",
+      "source": {
+        "path": "docs/work/CHG-JPW-BACKUP-CONSUMER-COMPATIBILITY-20261031.md",
+        "section": "Escopo e invariantes"
+      },
+      "stimulus": "Download real, roundtrip ZIP real, Guide raw confirmado, Capital novo e legado opaco, fonte DISCO/RAM, epoch e quatro famílias após restore/reload.",
+      "expected": "Leitor zipfile independente confere arquivo entregue; raws exatos só no workspace, legado só consulta sem ativação; mesmas finanças/IDs/guardas; domínio rejeita contaminações após decodingválido.",
+      "protection": {
+        "path": "tools/backup_package_fixture.py",
+        "case": "10 consumidores existentes + unified18/3distribuições; IDs mantidos",
+        "command": "entradas focais originais listadas no recibo da rodada5",
+        "full_gate": {
+          "status": "bound_existing_entry",
+          "entry": "learning-guide / capital-currents-browser / finpes-backup-roundtrip / demais consumidores existentes",
+          "note": "Runner116/tolerâncias preservados; unified já alcançado por storage-governance→complete_backup.",
+          "included": true,
+          "check_id": "learning-guide;capital-currents-browser;finpes-backup-roundtrip;storage-governance"
+        }
+      },
+      "evidence": [
+        {
+          "kind": "red",
+          "note": "Guia2casos e Capital1caso falham no contrato antigo/sentinela ilegível, com logs preservados; critérios de exclusão antigos rejeitam workspace3 aprovado.",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "kind": "green",
+          "note": "Resultados e fingerprints somente nos recibos próprios de cada consumidor e dos18casos modular/portátil/file; revisão/UI/FULL do coordenador separados.",
+          "result": "FOCAL_PASS"
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "limits": "Somente requisitos de formato/cobertura aprovados. Nenhum produtor/motor/store alterado, nenhum dado real, Git ou FULL nesta frente.",
+      "cause": "Requisito novo de transporte/cobertura aprovados deixou consumidores de teste com leitores JSON e exclusões históricas.",
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "backup_indirect_persistence_export_consumers_20261031",
+      "state": "new_contract_regression",
+      "summary": "Dois consumidores indiretos do aviso de persistência ainda tratavam a entrega normal ZIP como JSON.",
+      "source": {
+        "path": "docs/work/CHG-JPW-BACKUP-INDIRECT-CONSUMERS-20261031.md",
+        "section": "Leitores indiretos e oráculos preservados"
+      },
+      "stimulus": "Click/Enter no botão de backup do aviso, preservando disco confirmado, RAM suja, Notas, teclado e bookkeeping recusado.",
+      "expected": "ZIP entregue lido por helper independente; fatos/RAM separados e Notas confirmadas intactas, mantendo recuperação bruta como texto.",
+      "cause": "Handler persistenceAlertExportBackup encaminha ao exportFullBackup; varredura literal anterior omitiu estes dois aliases.",
+      "protection": {
+        "path": "tools/studies_notes_persistence_contract_test.py",
+        "case": "note-dirty-keyboard e persistence_failure_test modular/portátil, IDs intactos",
+        "command": "dois scripts integrais; recibos da rodada6",
+        "full_gate": {
+          "included": true,
+          "check_id": "persistence-failure",
+          "note": "persistence-failure é entrada direta existente; o script studies-notes também foi executado integralmente como focal. Nenhuma nova âncora/gate é reivindicada ou criada."
+        }
+      },
+      "evidence": [
+        {
+          "result": "PRODUCT_FAIL",
+          "kind": "red",
+          "note": "Dois scripts/oráculos antigos recebem ZIP no botão indireto e falham na leitura JSON; logs originais preservados."
+        },
+        {
+          "result": "FOCAL_PASS",
+          "kind": "green",
+          "note": "Resultados somente nos recibos próprios contemporâneos; revisão e FULL do coordenador são gates separados."
+        },
+        {
+          "kind": "final_full",
+          "result": "PASS",
+          "path": "docs/validation/backup-unificado-20261031/FULL-RESULT.json",
+          "sha256": "bab1673aa2a42f2af479543730eb6efbdca3be145364d0fe4c23e981b364f13e",
+          "note": "116 entradas obrigatórias da worktree isolada; metadados registrados após execução."
+        }
+      ],
+      "last_verified": {
+        "build": "a12473da33d804a4",
+        "date": "2026-10-31",
+        "scope": "FULL final isolado116/116 e UI413; fontes executadas estáveis. Não comprova merge das quatro frentes nem aceite humano.",
+        "evidence": "docs/validation/backup-unificado-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "calendar_proportions_20261031",
+      "state": "fixed_regression",
+      "summary": "Hoje vermelho/negrito sem contorno e seleção em disco32px dentro do alvo44px nas duas superfícies.",
+      "source": {
+        "path": "docs/work/CHG-JPW-CALENDAR-PROPORTIONS-20261031.md",
+        "section": "Compreensão e contrato"
+      },
+      "stimulus": "Contextos sintéticos em23out2026; hoje/seleção/outside/hover,32combinações e duas superfícies.",
+      "expected": "Disco32; alvo44; numeral hoje vermelho/peso700 ou branco no disco; capitalização de frase; marcadores independentes.",
+      "cause": "Fundo da seleção no botão inteiro, numeral hoje com outline e text-transform capitalize.",
+      "protection": {
+        "path": "tools/calendar_proportions_contract.py",
+        "case": "calendar-proportions-*",
+        "command": "python3 tools/calendar_proportions_contract.py --root . --out <evidence> --matrix",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-agenda",
+          "via": "calendar-agenda -> calendar_proportions_contract; ui-visual-quality executes the full shared calendar matrix"
+        }
+      },
+      "evidence": [
+        {
+          "path": "Codex/work/implementation/calendar-red-native/report.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED do produto anterior; inicialização sandbox anterior foi ENVIRONMENT_ERROR separada."
+        },
+        {
+          "path": "Codex/work/implementation/calendar-green/report.json",
+          "result": "PRODUCT_FAIL",
+          "note": "16PASS/16FAIL de texto branco no tema escuro, preservados."
+        },
+        {
+          "path": "Codex/work/implementation/calendar-green2/report.json",
+          "result": "PASS",
+          "note": "32casos com duas superfícies e8contraprovas por caso; não substituiFULL."
+        },
+        {
+          "kind": "current_candidate_full",
+          "path": "docs/validation/calendar-proportions-20261031/FULL-RESULT.json",
+          "sha256": "b3fbd0f3216ffe2154eee6907965547fe7ebc453d68a9e3790c1654f2b0fd953",
+          "result": "PASS",
+          "checks": 116
+        }
+      ],
+      "limitations": [
+        "Aceite humano e FULL do próprio candidato têm recibos separados."
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "9e5a2f721c444e22",
+        "scope": "Current isolated candidate: actual FULL116/116PASS, zero failures; code/tests frozen during execution. Human acceptance and Git remain separate.",
+        "artifact": "docs/validation/calendar-proportions-20261031/FULL-RESULT.json"
+      }
+    },
+    {
+      "id": "forex_sessions_indicative_calendar_separation_20261031",
+      "state": "new_contract_regression",
+      "summary": "Quatro sessõesFXindicativas têm convençãoIANA própria, separada das16bolsas e daB3; preferência corrompida não é regravada.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Sessões Forex e B3 —31/10/2026"
+      },
+      "stimulus": "Consultar fronteiras,domingoUTC,DST23/25h e janela fora da cobertura; selecionar fuso e simular erroquota/corrupção.",
+      "expected": "Intervalos e projeção consistentes sem afirmar negociação; B3 e dados financeiros preservados; erro não vira sucesso nemreset.",
+      "protection": {
+        "path": "tools/forex_sessions_test.js",
+        "case": "indicative convention, timezone boundaries, preference validation",
+        "command": "node tools/forex_sessions_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution",
+          "via": "tools/calendar_distribution_test.py -> four real distributions and model/UI/review focals"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-red-model.log",
+          "result": "PRODUCT_FAIL",
+          "note": "API de sessões ausente antes da implementação."
+        },
+        {
+          "path": "work/implementation/sessoes-green-model.log",
+          "result": "PASS",
+          "note": "Mesmo estímulo/oráculo passou no modelo implementado; FULL separado."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "Requisito novo: a consulta anterior representava bolsas de ações e não tinha o catálogo independente de quatro convenções Forex, sua projeção de dia civil ou esta preferência. O RED por API ausente caracteriza contrato novo; não é regressão de regra financeira."
+    },
+    {
+      "id": "forex_sessions_unknown_not_zero_20261031",
+      "state": "fixed_regression",
+      "summary": "Resumo Forex não converte ausência de cobertura em zero sessões ativas.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Correções da revisão independente — 31/10/2026"
+      },
+      "stimulus": "Consultar 2027-01-05 e cobertura parcial em 2025-12-31T22:00Z, expandido e recolhido.",
+      "expected": "Indisponível ou cobertura parcial explícita; zero somente com todos os horários conhecidos.",
+      "protection": {
+        "path": "tools/forex_sessions_review_test.py",
+        "case": "unknown and partial coverage stay distinct from known zero in expanded/collapsed view",
+        "command": "python tools/forex_sessions_review_test.py --out <diretorio>",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-review-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Achado reproduzido antes da correção."
+        },
+        {
+          "path": "work/implementation/sessoes-review-green-1/result.json",
+          "result": "PASS",
+          "note": "Mesmo estímulo/oráculo; FULL e reauditoria independentes pendentes."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "O resumo filtrava apenas centros contínuos e interpretava lista ativa vazia como zero conhecido, sem considerar os estados unknown nem a cobertura parcial."
+    },
+    {
+      "id": "forex_sessions_preference_concurrency_20261031",
+      "state": "fixed_regression",
+      "summary": "Seletor relê a preferência atual e preserva schema futuro, corrupção e escrita concorrente após montagem.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Correções da revisão independente — 31/10/2026"
+      },
+      "stimulus": "Montar view, inserir schema2/corrupção ou preferência válida por outra origem e selecionar outro fuso; competir no readback.",
+      "expected": "Conteúdo incompatível permanece opaco; concorrência válida é preservada para nova decisão; nenhum rollback sobrescreve a escrita concorrente.",
+      "protection": {
+        "path": "tools/forex_sessions_review_test.py",
+        "case": "future/corrupt preference introduced after mount remains opaque and blocks writes",
+        "command": "python tools/forex_sessions_review_test.py --out <diretorio>",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-review-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Achado reproduzido antes da correção."
+        },
+        {
+          "path": "work/implementation/sessoes-review-green-1/result.json",
+          "result": "PASS",
+          "note": "Mesmo estímulo/oráculo; FULL e reauditoria independentes pendentes."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "O handler de mudança confiava no raw observado durante a montagem e gravava a escolha sem reler/revalidar o registro presente nem confirmar o readback, permitindo sobrescrever alterações posteriores de outra aba ou restauração."
+    },
+    {
+      "id": "forex_sessions_delayed_focus_20261031",
+      "state": "fixed_regression",
+      "summary": "Conclusão assíncrona do catálogo preserva a ação de resumo ainda focada.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Correções da revisão independente — 31/10/2026"
+      },
+      "stimulus": "Focar o botão de exploração enquanto o catálogo está pendente e resolver a carga.",
+      "expected": "Foco em ação visível equivalente; ausência de captura se o usuário já saiu do resumo.",
+      "protection": {
+        "path": "tools/forex_sessions_review_test.py",
+        "case": "delayed catalog completion preserves focused keyboard overview action",
+        "command": "python tools/forex_sessions_review_test.py --out <diretorio>",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-review-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Achado reproduzido antes da correção."
+        },
+        {
+          "path": "work/implementation/sessoes-review-green-1/result.json",
+          "result": "PASS",
+          "note": "Mesmo estímulo/oráculo; FULL e reauditoria independentes pendentes."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "A conclusão assíncrona do catálogo descartava e recriava o overview, removendo o botão ainda focado sem preservar ou restaurar uma ação visível equivalente."
+    },
+    {
+      "id": "forex_sessions_device_civil_horizon_20261031",
+      "summary": "Horizonte do Dispositivo segue a data civil projetada, incluindo bordas de ano anteriores à meia-noite UTC.",
+      "stimulus": "Consultar Paris/Kolkata no milissegundo anterior e no instante exato do início2026 e fim2026, incluindo31/12/2025T23:30Z emParis.",
+      "expected": "Primeiro dia civil2026 disponível; primeiro dia civil2027 indisponível, sem extrapolar a convenção.",
+      "protection": {
+        "path": "tools/forex_sessions_test.js",
+        "case": "Device timeline horizon must follow the projected civil date, not the UTC calendar year",
+        "command": "node tools/forex_sessions_test.js",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-civil-boundary-red.log",
+          "result": "PRODUCT_FAIL",
+          "note": "Quatro fronteiras incorretas reproduzidas no candidato anterior."
+        },
+        {
+          "path": "work/implementation/sessoes-civil-boundary-green.log",
+          "result": "PASS",
+          "note": "Mesmo oráculo após comparar a data civil."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "state": "fixed_regression",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Correções da revisão independente — 31/10/2026"
+      },
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "A timeline do modo Dispositivo aplicava o horizonte ao instante/ano UTC antes de projetar o dia civil, rejeitando início local2026 e aceitando início local2027 em zonas adiantadas."
+    },
+    {
+      "id": "forex_sessions_help_target_20261031",
+      "summary": "Link de fonte e botão da ajuda externa respeitam alvos44px.",
+      "stimulus": "Abrir ajuda fora de.mh-sessions nos dois temas, quatro larguras e zoom nativo200.",
+      "expected": "Todos links e controles visíveis têm largura/altura>=44px;Escape retorna foco sem overflow.",
+      "protection": {
+        "path": "tools/forex_sessions_review_test.py",
+        "case": "help layer links and controls outside sessions root have 44px targets in both themes and four widths",
+        "command": "python tools/forex_sessions_review_test.py --out <diretorio>",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-boundary-review-red/result.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Link medido254x42px em320px."
+        },
+        {
+          "path": "work/implementation/sessoes-boundary-review-green/result.json",
+          "result": "PASS",
+          "note": "Dez grupos passaram; link/botão44px nas medidas externas, inclusive zoom nativo200."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "state": "fixed_regression",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Correções da revisão independente — 31/10/2026"
+      },
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "O mínimo44px da ajuda externa era aplicado ao botão, mas não ao link de fonte; o link foi medido com42px de altura em320px de largura."
+    },
+    {
+      "id": "calendar_distribution_final_source_inventory_20261031",
+      "summary": "Recibo confere insumos também após os três focais obrigatórios.",
+      "stimulus": "Alterar insumo observado durante o terceiro subprocesso focal.",
+      "expected": "inputsAfter final reflete a alteração;sourceUnchanged=false e retorno nãozero, preservando checkpoint e falhas anteriores.",
+      "protection": {
+        "path": "tools/calendar_distribution_test.py",
+        "case": "final inputsAfter and sourceUnchanged after sessionFocals",
+        "command": "python tools/calendar_distribution_test.py --receipt <arquivo>",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-distribution"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/sessoes-distribution-integrity-red.log",
+          "result": "TEST_HARNESS_FAIL",
+          "note": "Contraprova do fluxo real com inventário/navegador/subprocessos sintéticos: mutação durante terceiro focal foi aceita antes da correção; não é teste de renderização."
+        },
+        {
+          "path": "work/implementation/sessoes-distribution-integrity-green.log",
+          "result": "PASS",
+          "note": "Mesma injeção agora exige e observa nãozero/sourceUnchanged=false, resultTEST_HARNESS_FAIL no recibo negativo."
+        },
+        {
+          "path": "docs/validation/forex-sessions-20261031/FULL-RESULT.json",
+          "result": "PASS",
+          "date": "2026-10-31",
+          "note": "FULL atual116/116 PASS concluído 2026-10-31T12:03:28-03:00, build1cad00952882d28b; check calendar-distribution com quatro distribuições, três focais obrigatórios e dez grupos de revisão. Evidência automatizada do candidato; aceite humano e Git permanecem separados.",
+          "sha256": "7d2d9ccea22e9b2cf5a803f0e2f26d0f938300e29609fe99e5c9a439dd9a95c7"
+        }
+      ],
+      "state": "fixed_regression",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Correções da revisão independente — 31/10/2026"
+      },
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "1cad00952882d28b",
+        "scope": "Candidato codex/sessoes-forex-b3-20261031, HEAD69b6cb677de2486be5c30681e4b2e02d4180d704; FULL116/116 PASS e focais encadeados no calendar-distribution. Fontes congeladas durante a execução; atualização documental posterior. Não representa aceite humano, commit, merge ou push.",
+        "receipt": "docs/validation/forex-sessions-20261031/FULL-RESULT.json"
+      },
+      "cause": "O runner coletava inputsAfter/sourceUnchanged antes dos três subprocessos focais e não conferia novamente após eles, aceitando indevidamente uma mutação introduzida durante o terceiro focal."
+    },
+    {
+      "id": "hedge_redesign_confirmed_guide_20261031",
+      "state": "new_contract_regression",
+      "summary": "Hedge não oferecia controle range, modo Instant nem retomada confirmada de plano e marcos.",
+      "source": {
+        "path": "docs/work/BRIEF-HEDGE-REDESIGN-20261031.md",
+        "section": "Compreensão e fronteiras"
+      },
+      "stimulus": "Ajustar range/campo com precisão, confirmar plano/etapa, recarregar, tentar gravação obsoleta em duas abas e substituir por Instant confirmado.",
+      "expected": "Motor financeiro preservado, nenhuma escrita ao simular, confirmação por releitura, histórico append-only, futuro/conflito/quota/UNKNOWN não viram sucesso, Instant não executa motor de avaliação.",
+      "protection": {
+        "path": "tools/hedge_redesign_browser_test.py",
+        "case": "ten-real-browser-journeys",
+        "full_gate": {
+          "included": true,
+          "check_id": "hedge-prop-browser"
+        },
+        "command": "python3 tools/hedge_redesign_browser_test.py --out <evidence>"
+      },
+      "evidence": [
+        {
+          "path": "tools/hedge_guide_store_test.js",
+          "result": "13_CONTRACTS_FOCAL_PASS",
+          "note": "RED API ausente e substituição não suportada; GREEN13. Engine15+4mutantes preservados. Browserlegado80contextos e5contraprovasPASS; FULL e nativezoom pertencem a recibos próprios."
+        },
+        {
+          "kind": "current_candidate_full",
+          "path": "docs/validation/hedge-redesign-20261031/FULL-RESULT.json",
+          "sha256": "38d97bc341b2460956c21b647032a5410c50ac9cc58ad33127c3124631765dfe",
+          "result": "PASS",
+          "checks": 116
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "99684efe1c9d04db",
+        "scope": "Current isolated candidate: actual FULL116/116PASS, zero failures; code/tests frozen during execution. Human acceptance and Git remain separate.",
+        "artifact": "docs/validation/hedge-redesign-20261031/FULL-RESULT.json"
+      },
+      "cause": "A superfície anterior não oferecia ranges, modo Instant ou confirmação persistida do plano e seus marcos."
+    },
+    {
+      "id": "hedge_guide_immutable_locked_writer_20261031",
+      "state": "fixed_regression",
+      "summary": "Revisão independente encontrou alteração de snapshot no mesmo modo sem substituição e ausência de serialização da janela getItem/setItem.",
+      "source": {
+        "path": "docs/architecture/HEDGE-PROP-FIRM.md",
+        "section": "Guia confirmado, separado dos fatos financeiros"
+      },
+      "stimulus": "Modificar taxa/catálogo fora replacePlan; reter Web Lock da base em terceira aba e enfileirar duas confirmações da mesma revisão; descartar um controlador enfileirado; retirar capacidade Web Locks do contexto sintético.",
+      "expected": "Snapshot integral imutável; somente uma confirmação de mesma revisão, conflito na outra, nenhum marco confirmado perdido; cancelamento sem escrita; sem lock seguro recusar e orientar inicializador preservando parâmetros/raw.",
+      "protection": {
+        "path": "tools/hedge_redesign_browser_test.py",
+        "case": "shared-import-lock-serializes-two-tabs-no-lost-confirmed-milestone",
+        "full_gate": {
+          "included": true,
+          "check_id": "hedge-prop-browser"
+        },
+        "command": "python3 tools/hedge_redesign_browser_test.py --out <evidence>"
+      },
+      "evidence": [
+        {
+          "path": "tools/hedge_guide_store_test.js",
+          "result": "17_STORE_CONTRACTS_FOCAL_PASS",
+          "note": "RED same-mode snapshot mutation; RED lock held ignored. GREEN17contratos,14jornadas e8checks de quatro distribuições; FULL combinado e revisão final separados."
+        },
+        {
+          "kind": "current_candidate_full",
+          "path": "docs/validation/hedge-redesign-20261031/FULL-RESULT.json",
+          "sha256": "38d97bc341b2460956c21b647032a5410c50ac9cc58ad33127c3124631765dfe",
+          "result": "PASS",
+          "checks": 116
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "99684efe1c9d04db",
+        "scope": "Current isolated candidate: actual FULL116/116PASS, zero failures; code/tests frozen during execution. Human acceptance and Git remain separate.",
+        "artifact": "docs/validation/hedge-redesign-20261031/FULL-RESULT.json"
+      },
+      "cause": "A janela de leitura/escrita do guia não era serializada e o snapshot do plano podia mudar no mesmo modo sem substituição explícita."
     }
   ]
 }

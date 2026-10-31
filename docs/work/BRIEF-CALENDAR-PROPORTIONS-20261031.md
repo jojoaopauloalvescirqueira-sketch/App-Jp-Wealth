@@ -1,0 +1,11 @@
+# Fontes da frente Calendário — 31/10/2026
+
+BASE_SHA:69b6cb677de2486be5c30681e4b2e02d4180d704. Contrato:CHG-JPW-CALENDAR-PROPORTIONS-20261031.md.
+
+|Fonte na base|SHA256|
+|---|---|
+|AGENTS.md|05b7504d63a85aee41af9e7721f3d5a74f56a3905ccf023f69b1be2fcaf23ac0|
+|docs/architecture/CALENDAR-AGENDA.md|600aa91c82a7920e6f172cda9c24548b9fc00347b6216760be4494d69425bc6b|
+|docs/governance/UI-VISUAL-QUALITY.md|13da3722e323d5770bba7915d6cba558317d0819285084ddc4bb12a4ba7b1393|
+|src/js/40-app/19-calendar-agenda.js|8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518|
+|src/styles/app.css|31e7659038d380c2348919a7ffa4229be125c5893d03540a89f728e3ad3aed5e|

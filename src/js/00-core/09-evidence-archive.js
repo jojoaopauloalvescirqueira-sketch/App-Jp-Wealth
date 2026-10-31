@@ -133,26 +133,30 @@
     const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');
     a.href=url;a.download=filename;a.hidden=true;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
   }
+  async function prepareArchive(){
+    const rows=await records(),files=Object.create(null),entries=[];
+    for(const row of rows){
+      const meta=metadata(row),bytes=new Uint8Array(await row.blob.arrayBuffer());
+      if(await digest(bytes)!==meta.fileHash)throw Error('Original armazenado corrompido. A exportação não foi concluída.');
+      if(kind(meta.fileName,bytes)!==meta.kind)throw Error('Tipo do original divergente.');
+      const path='originals/'+meta.fileHash+'.'+meta.kind;
+      entries.push({...meta,path});files[path]=bytes;
+    }
+    const body={format:'jpwealth_original_evidence',formatVersion:1,createdAt:new Date().toISOString(),coverage:'original-pdf-html-only',entries};
+    const manifest={...body,checksum:{algorithm:'SHA-256',value:await digest(encode(body))}};
+    files['manifest.json']=encode(manifest);
+    return {manifest,files};
+  }
   async function exportArchive(){
     if(busy)return refusal('Outra operação de evidências está em andamento.');
     busy=true;
     try{
       if(!root.fflate?.zipSync)throw Error('Biblioteca ZIP local indisponível. Nenhum arquivo foi gerado.');
-      const rows=await records(),files=Object.create(null),entries=[];
-      for(const row of rows){
-        const meta=metadata(row),bytes=new Uint8Array(await row.blob.arrayBuffer());
-        if(await digest(bytes)!==meta.fileHash)throw Error('Original armazenado corrompido. A exportação não foi concluída.');
-        if(kind(meta.fileName,bytes)!==meta.kind)throw Error('Tipo do original divergente.');
-        const path='originals/'+meta.fileHash+'.'+meta.kind;
-        entries.push({...meta,path});files[path]=[bytes,{level:0}];
-      }
-      const body={format:'jpwealth_original_evidence',formatVersion:1,createdAt:new Date().toISOString(),coverage:'original-pdf-html-only',entries};
-      const manifest={...body,checksum:{algorithm:'SHA-256',value:await digest(encode(body))}};
-      files['manifest.json']=[encode(manifest),{level:0}];
-      const zip=root.fflate.zipSync(files,{level:0}),filename='JP_WEALTH_EVIDENCES_'+new Date().toISOString().replace(/[:.]/g,'-')+'_'+crypto.randomUUID()+'.zip';
+      const prepared=await prepareArchive();
+      const zip=root.fflate.zipSync(prepared.files,{level:0}),filename='JP_WEALTH_EVIDENCES_'+new Date().toISOString().replace(/[:.]/g,'-')+'_'+crypto.randomUUID()+'.zip';
       if(zip.length>LIMITS.zip)throw Error('Arquivo ZIP excedeu o limite de 144 MiB.');
       download(zip,filename,'application/zip');
-      return publish(result('DOWNLOAD_REQUESTED','ZIP gerado e download solicitado. Confira o arquivo fora do navegador.',{filename,count:entries.length,bytes:zip.length}));
+      return publish(result('DOWNLOAD_REQUESTED','ZIP gerado e download solicitado. Confira o arquivo fora do navegador.',{filename,count:prepared.manifest.entries.length,bytes:zip.length}));
     }catch(error){return refusal(error.message||'Exportação de evidências não concluída.');}
     finally{busy=false;}
   }
@@ -188,6 +192,38 @@
     if(pos!==end||!names.has('manifest.json'))throw Error('Manifesto ZIP ausente ou diretório divergente.');
     return expected;
   }
+  const preparedRows=new WeakMap();
+  async function inspectArchiveEntries(entries){
+    if(!object(entries)||!entries['manifest.json']||entries['manifest.json'].length>LIMITS.manifest)throw Error('Manifesto de evidências ausente ou acima do limite.');
+    if(Object.keys(entries).length>LIMITS.entries||Object.entries(entries).some(([path,data])=>!(data instanceof Uint8Array)||!(path==='manifest.json'||/^originals\/[a-f0-9]{64}\.(pdf|html)$/.test(path))))throw Error('Entradas de evidências incompatíveis.');
+    if(Object.values(entries).reduce((sum,data)=>sum+data.length,0)>LIMITS.total+LIMITS.manifest)throw Error('Evidências acima do limite total.');
+    const manifest=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(entries['manifest.json']));
+    if(!object(manifest)||manifest.format!=='jpwealth_original_evidence'||manifest.formatVersion!==1||manifest.coverage!=='original-pdf-html-only'||
+      !Array.isArray(manifest.entries)||manifest.entries.length>200||manifest.entries.length+1!==Object.keys(entries).length||
+      !object(manifest.checksum)||manifest.checksum.algorithm!=='SHA-256'||!HASH.test(manifest.checksum.value||''))throw Error('Formato ou cobertura do manifesto incompatível.');
+    const {checksum,...body}=manifest;if(await digest(encode(body))!==checksum.value)throw Error('Checksum do manifesto divergente.');
+    const rows=[],seen=new Set();let originalsTotal=0;
+    for(const item of manifest.entries){
+      if(!object(item)||!HASH.test(item.fileHash||'')||seen.has(item.fileHash)||item.path!=='originals/'+item.fileHash+'.'+item.kind||
+        !Number.isSafeInteger(item.size)||item.size<=0||item.size>LIMITS.file||!['pdf','html'].includes(item.kind)||
+        !Array.isArray(item.receiptIds)||item.receiptIds.length>2000||item.receiptIds.some(id=>typeof id!=='string'||!id||id.length>255)||
+        typeof item.storedAt!=='string'||!Number.isFinite(Date.parse(item.storedAt)))throw Error('Metadados do original incompatíveis.');
+      name(item.fileName);
+      originalsTotal+=item.size;if(originalsTotal>LIMITS.total)throw Error('Originais acima de 128 MiB.');
+      const data=entries[item.path];
+      if(!data||data.length!==item.size||await digest(data)!==item.fileHash||kind(item.fileName,data)!==item.kind)throw Error('Original não corresponde ao hash/tamanho/tipo do manifesto.');
+      seen.add(item.fileHash);rows.push({...item,path:undefined,blob:new Blob([data],{type:item.kind==='pdf'?'application/pdf':'text/html'})});
+    }
+    const prepared=Object.freeze({count:rows.length,manifest:structuredClone(manifest)});
+    preparedRows.set(prepared,rows);return prepared;
+  }
+  async function restorePrepared(prepared){
+    const rows=preparedRows.get(prepared);
+    if(!rows)throw Error('Evidências não passaram pela validação integral.');
+    if(busy)throw Error('Outra operação de evidências está em andamento.');
+    busy=true;
+    try{return publish(await writeBatch(rows));}finally{busy=false;}
+  }
   async function restoreArchive(file){
     if(busy)return refusal('Outra operação de evidências está em andamento.');
     busy=true;
@@ -197,22 +233,8 @@
       const bytes=new Uint8Array(await file.arrayBuffer()),expected=inspectZip(bytes);
       const entries=root.fflate.unzipSync(bytes,{filter:entry=>expected.has(entry.name)&&entry.originalSize===expected.get(entry.name)});
       if(Object.keys(entries).length!==expected.size||Object.entries(entries).some(([p,b])=>b.length!==expected.get(p)))throw Error('Conteúdo ZIP divergente do diretório.');
-      const manifest=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(entries['manifest.json']));
-      if(!object(manifest)||manifest.format!=='jpwealth_original_evidence'||manifest.formatVersion!==1||manifest.coverage!=='original-pdf-html-only'||
-        !Array.isArray(manifest.entries)||manifest.entries.length>200||manifest.entries.length+1!==expected.size||
-        !object(manifest.checksum)||manifest.checksum.algorithm!=='SHA-256'||!HASH.test(manifest.checksum.value||''))throw Error('Formato ou cobertura do manifesto incompatível.');
-      const {checksum,...body}=manifest;if(await digest(encode(body))!==checksum.value)throw Error('Checksum do manifesto divergente.');
-      const rows=[],seen=new Set();
-      for(const item of manifest.entries){
-        if(!object(item)||!HASH.test(item.fileHash||'')||seen.has(item.fileHash)||item.path!=='originals/'+item.fileHash+'.'+item.kind||
-          !Number.isSafeInteger(item.size)||item.size<=0||item.size>LIMITS.file||!['pdf','html'].includes(item.kind)||
-          !Array.isArray(item.receiptIds)||item.receiptIds.length>2000||item.receiptIds.some(id=>typeof id!=='string'||!id||id.length>255)||
-          typeof item.storedAt!=='string'||!Number.isFinite(Date.parse(item.storedAt)))throw Error('Metadados do original incompatíveis.');
-        name(item.fileName);
-        const data=entries[item.path];
-        if(!data||data.length!==item.size||await digest(data)!==item.fileHash||kind(item.fileName,data)!==item.kind)throw Error('Original não corresponde ao hash/tamanho/tipo do manifesto.');
-        seen.add(item.fileHash);rows.push({...item,path:undefined,blob:new Blob([data],{type:item.kind==='pdf'?'application/pdf':'text/html'})});
-      }
+      const prepared=await inspectArchiveEntries(entries);
+      const rows=preparedRows.get(prepared);
       // No writes occurred before every entry and checksum passed.
       const saved=await writeBatch(rows);
       return publish({...saved,reason:'ZIP conferido; originais restaurados. A base financeira e os rascunhos não foram alterados.'});
@@ -223,5 +245,5 @@
     if(!object(receipt)||!HASH.test(receipt.fileHash||'')||typeof receipt.id!=='string')return refusal('Comprovante original sem hash válido.');
     return putOriginal(file,{fileHash:receipt.fileHash,receiptId:receipt.id});
   }
-  root.JPWEvidence=Object.freeze({formatVersion:VERSION,limits:LIMITS,digest,putOriginal,summary,status,exportArchive,restoreArchive,reassociate,lastResult:()=>({...last})});
+  root.JPWEvidence=Object.freeze({formatVersion:VERSION,limits:LIMITS,digest,putOriginal,summary,status,prepareArchive,inspectArchiveEntries,restorePrepared,exportArchive,restoreArchive,reassociate,lastResult:()=>({...last})});
 })(window);

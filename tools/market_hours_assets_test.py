@@ -14,7 +14,7 @@ def main():
     try:
       with tempfile.TemporaryDirectory(prefix='jpw-market-assets-') as tmp,sync_playwright() as pw:
         base=Path(tmp)
-        paths={'catalog':'src/data/market-hours/calendar-v1.json','renderer':'src/vendor/aisol-dot-globe/aisol-globe.iife.js'}
+        paths={'catalog':'src/data/market-hours/calendar-v1.json','forexCatalog':'src/data/market-hours/forex-sessions-v1.json','renderer':'src/vendor/aisol-dot-globe/aisol-globe.iife.js'}
         resources={}
         for key,path in paths.items():
           data=(ROOT/path).read_bytes();target=base/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data);resources[key]={'path':path,'bytes':len(data),'sha256':sha(data)}

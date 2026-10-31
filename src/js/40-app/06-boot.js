@@ -206,4 +206,12 @@ document.addEventListener('keydown',e=>{
 });
 load();
 jpwFirstAccessEmptyAtLoad=jpWealthLastPersistedRawGet()===null&&!jpWealthPersistenceIsBlocked();
-if(S?.workspaceRecovery?.pending)jpwWorkspaceResume(); if(typeof initSessionCheckpoint==='function') initSessionCheckpoint(); bindParams(); bindContab(); bindConfig(); bindAcct(); bindFieldNotes(); boot();
+function jpwFinishInitialBoot(){
+  if(S?.workspaceRecovery?.pending)jpwWorkspaceResume();
+  if(typeof initSessionCheckpoint==='function')initSessionCheckpoint();
+  bindParams();bindContab();bindConfig();bindAcct();bindFieldNotes();boot();
+}
+// Recovery validates progress with its owning module, loaded later in the same
+// classic-script order. Wait for those modules before projecting any preference.
+if(S?.workspaceRecovery?.pending&&document.readyState==='loading')document.addEventListener('DOMContentLoaded',jpwFinishInitialBoot,{once:true});
+else jpwFinishInitialBoot();

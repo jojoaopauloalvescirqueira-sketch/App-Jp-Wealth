@@ -117,6 +117,10 @@ MARKET_HOURS_BUILD_INPUTS = (
     'src/vendor/aisol-dot-globe/THREE-LICENSE.txt',
     'src/vendor/aisol-dot-globe/ESBUILD-LICENSE.txt',
     'src/data/market-hours/calendar-v1.json',
+    'src/data/market-hours/forex-sessions-v1.json',
+    'src/data/market-hours/forex-rules.json',
+    'src/data/market-hours/forex-sources.json',
+    'tools/compile_forex_sessions.py',
     'src/data/market-hours/rules.json',
     'src/data/market-hours/sources.json',
     'src/data/market-hours/zoneinfo/manifest.json',
@@ -295,6 +299,7 @@ build_id_source += 'if (typeof self !== "undefined" && typeof window === "undefi
 # Catalog/renderer text remains outside executable bootstrap. file:// loads a
 # separate lazy script; the standalone portable carries the same inert envelope.
 market_paths = dict(catalog='src/data/market-hours/calendar-v1.json',
+                    forexCatalog='src/data/market-hours/forex-sessions-v1.json',
                     renderer='src/vendor/aisol-dot-globe/aisol-globe.iife.js')
 market_files = {key: (ROOT / relative).read_bytes().decode('utf-8')
                 for key, relative in market_paths.items()}

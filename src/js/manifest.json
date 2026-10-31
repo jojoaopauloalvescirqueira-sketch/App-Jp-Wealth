@@ -62,7 +62,7 @@
       "path": "src/js/00-core/07-workspace-backup.js",
       "section": "Portable workspace backup",
       "order": 9,
-      "sha256": "e7c9144ed5f48c4a169fdcbc483c0e59931b902c88b7a1d8fb79eee2a4509207"
+      "sha256": "8cd6d72f0fd31fff88f572890d8829719429b39d5174f4cd572cf621f415e37d"
     },
     {
       "order": 10,
@@ -86,7 +86,7 @@
       "path": "src/js/00-core/09-evidence-archive.js",
       "section": "Local original-evidence archive",
       "order": 13,
-      "sha256": "0a2741062e89b1992abd23accea74fbae0cc193f39eb1c5f6282de0b55a14a0a"
+      "sha256": "407a6511864561e89adae2ee6299e2181dcab5f58903f01e49879c7dfd0a9bb0"
     },
     {
       "order": 14,
@@ -176,7 +176,7 @@
       "order": 28,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "b134acc15c59329bc27b7bd4b4f8107833287d97b0aa9e506233b6b0e2afeabf"
+      "sha256": "5dd53ed99bec0b77aa710d4ad5a81296464b9608e5565580543e6a98f9524186"
     },
     {
       "order": 29,
@@ -278,7 +278,7 @@
       "order": 45,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "4604b77cac47fe6c8c3048cf99f620107961740a9aa4a1f03e9d8331bf1d32cc"
+      "sha256": "8716479a37ab8a67ed0517ce0d855a6f5543b3cb1ab57cf73547b72059abf4f3"
     },
     {
       "order": 46,
@@ -344,7 +344,7 @@
       "order": 56,
       "path": "src/js/40-app/16-storage-governance.js",
       "section": "GOVERNANÇA DE ARMAZENAMENTO — UI (JPW-HJFGDE)",
-      "sha256": "f14c6c5f55557a6b9e98426301fb09ad5de8984052964c6267182d4bf6e950be"
+      "sha256": "3bd9eb8e9bdf5aad82aa59e1486ef3df5ef36a261c97a06344767a1e118121ee"
     },
     {
       "order": 57,
@@ -516,7 +516,7 @@
     {
       "path": "src/js/40-app/19-calendar-agenda.js",
       "section": "CALENDAR AND AGENDA · monthly shared presentation",
-      "sha256": "8cfaec067a59ba393ff2aa53ad097196460e64e6de111945d92d3da21c47a518",
+      "sha256": "f5be69e9000f4e6f2e5bfac8e0baad4dceebc743ac41e2fe44a4452aaf33ab5f",
       "order": 85
     },
     {
@@ -643,25 +643,25 @@
       "path": "src/js/40-app/31-market-hours/01-sessions.js",
       "section": "BOLSAS GLOBAIS · 01-sessions",
       "order": 106,
-      "sha256": "08276a5daeda18da57f6f91e100e27427b892eec40d4f8908d69c81c0f453e27"
+      "sha256": "4c9babb6a17a9954458096df7d0a81daafd5014547814dbe8d74851e70e5712f"
     },
     {
       "path": "src/js/40-app/31-market-hours/02-assets.js",
       "section": "BOLSAS GLOBAIS · 02-assets",
       "order": 107,
-      "sha256": "8b738a41e7ad2c625c1f7fac9afb770117df941970c46d55af140f2aabec8309"
+      "sha256": "6786b921e74cc380537e66ffef4a578112c3663d3cad861aab0a23a1c1cf51ff"
     },
     {
       "path": "src/js/40-app/31-market-hours/03-view.js",
       "section": "BOLSAS GLOBAIS · 03-view",
       "order": 108,
-      "sha256": "9b22c1efb7d919d82cd3a62a9800394c6a8a68a7d633e881e4e92940386c0760"
+      "sha256": "598fce0160703f7a360a127c9c235596f7c9a39a6edf0cdea39eb4dfcc9e56d5"
     },
     {
       "path": "src/js/40-app/31-market-hours/04-controller.js",
       "section": "BOLSAS GLOBAIS · 04-controller",
       "order": 109,
-      "sha256": "f5a09614f31345a118e858c0ecd9ff424c45b62382a916db3a727674145cec37"
+      "sha256": "bf84e85fbf6187c92bf6d53f5d644c91594088f091b8f84fbac114ed93753ed1"
     },
     {
       "path": "src/js/40-app/32-prop-firms/01-engine.js",
@@ -672,7 +672,7 @@
     {
       "path": "src/js/40-app/32-prop-firms/02-ui.js",
       "section": "HEDGE PROP · memory-only presentation",
-      "sha256": "f7a5021242b1f8d5638f23cec22a891387bf1d39ad6a534cecbed896cce01c66",
+      "sha256": "87ba9f4b464f6cc612aa35dcbd19d4a7bb2992ce597226675a3cd6548a9063ac",
       "order": 111
     },
     {

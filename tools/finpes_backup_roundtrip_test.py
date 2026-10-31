@@ -20,6 +20,7 @@ Fixture: tools/fixtures/personal_finance_v1.json (100% sintetica).
 from http.server import SimpleHTTPRequestHandler
 from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
+from backup_package_fixture import blob_bytes, read_backup_package
 import json
 import os
 import socket
@@ -89,15 +90,15 @@ def main():
             page_a.locator('#exportFullBackupBtn').click()
             # Cooperative Web Locks export is async; wait for actual Blob delivery.
             page_a.wait_for_function('()=>window.__pfBlob instanceof Blob')
-            exportado = page_a.evaluate("window.__pfBlob.text()")
-            payload = json.loads(exportado)
+            exportado = blob_bytes(page_a, 'window.__pfBlob')
+            payload = read_backup_package(exportado).payload
             if payload.get("tipo") != "jpwealth_full_backup":
                 falhas.append(f"envelope normativo violado: tipo={payload.get('tipo')}")
             if json_norm(payload.get("state", {}).get("personalFinance")) != json_norm(FIXTURE):
                 falhas.append("o EXPORT ja perdeu ou alterou o agregado — antes mesmo do import")
             ctx_a.close()
 
-            with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
+            with tempfile.NamedTemporaryFile("wb", suffix=".zip", delete=False) as f:
                 f.write(exportado)
                 caminho_backup = f.name
 

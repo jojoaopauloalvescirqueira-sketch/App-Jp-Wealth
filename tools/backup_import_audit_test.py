@@ -3,10 +3,11 @@
 import argparse,functools,hashlib,json,subprocess,tempfile,threading
 from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
 from pathlib import Path
+from backup_package_fixture import read_backup_package
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
 
-SOURCE_FILES=['src/js/00-core/04-persistence.js','src/js/30-accounting/01-daily-ledger.js']
+SOURCE_FILES=['src/js/00-core/04-persistence.js','src/js/30-accounting/01-daily-ledger.js','tools/backup_package_fixture.py']
 FEED='https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json'
 FX='https://api.frankfurter.dev/v2/rate/'
 PAIRS={'EUR/USD','GBP/USD','AUD/USD','NZD/USD','USD/JPY','USD/CHF','USD/CAD','AUD/CAD','USD/BRL'}
@@ -86,8 +87,11 @@ def main():
             return json.loads(p.evaluate("""rawText => {const raw=JSON.parse(rawText);delete raw.integrity;if(raw.formatVersion===2)raw.integrity={algorithm:'SHA-256',canonicalization:'JPW_SORTED_JSON_V1',checksum:dgBackupSha256(dgBackupCanonical(raw))};return JSON.stringify(raw);}""",json.dumps(payload,ensure_ascii=False)))
         def close_page(p):
             context=p.context;context.close();contexts.remove(context)
-        def import_file(p,trace,payload,label,cancelled=False):
-            file=work/(label+'.json');file.write_text(json.dumps(payload,ensure_ascii=False));start_d=len(trace['dialogs']);start_e=len(trace['errors'])
+        def import_file(p,trace,payload,label,cancelled=False,source_package=None):
+            file=work/(label+('.zip' if source_package is not None else '.json'))
+            if source_package is not None:file.write_bytes(source_package)
+            else:file.write_text(json.dumps(payload,ensure_ascii=False))
+            start_d=len(trace['dialogs']);start_e=len(trace['errors'])
             p.locator('#importFullBackupInput').set_input_files(str(file))
             for at in range(80):
                 if any(d['type']=='alert' or cancelled and d['type']=='confirm' for d in trace['dialogs'][start_d:]) or trace['errors'][start_e:]:break
@@ -107,9 +111,9 @@ def main():
               if(save()!==true)throw Error('History not saved');return JSON.stringify(a.riskProfileAssignment);
             }""",count)
             with p.expect_download(timeout=10000) as pending:p.evaluate('exportFullBackup({quiet:true})')
-            download=pending.value;file=work/('history-'+str(count)+'.json');download.save_as(str(file));payload=json.loads(file.read_text())
+            download=pending.value;file=work/('history-'+str(count)+'.zip');download.save_as(str(file));payload=read_backup_package(file).payload
             p.evaluate("S.auditFixture='destination';if(save()!==true)throw Error('Destination not confirmed');")
-            observation=import_file(p,trace,payload,'history-import-'+str(count))
+            observation=import_file(p,trace,payload,'history-import-'+str(count),source_package=file.read_bytes())
             result=p.evaluate("""() => ({marker:S.auditFixture,history:JSON.stringify(S.accounts[0].riskProfileAssignment),pending:S.workspaceRecovery?.pending,extension:S.futureAuditExtension})""")
             error_start=len(trace['errors']);p.reload(wait_until='load');p.wait_for_timeout(100)
             reloaded=p.evaluate("({marker:S.auditFixture,history:JSON.stringify(S.accounts[0].riskProfileAssignment),recovery:jpWealthLoadRecoveryActive()})")

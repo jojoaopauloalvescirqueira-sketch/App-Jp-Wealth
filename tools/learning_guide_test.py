@@ -13,6 +13,7 @@ import json
 import math
 import os
 from pathlib import Path
+from backup_package_fixture import read_backup_package, assert_workspace_progress, expect_assertion
 import shutil
 import tempfile
 import threading
@@ -64,7 +65,7 @@ SOURCES = MODULES + PLANNING_MODULES + MANAGEMENT_MODULES + HEDGE_MODULES + CALE
     'src/js/40-app/14-mvp-notes.js', 'src/js/manifest.json', 'index.html',
     'sw.js', 'build-id.js', PORTABLE, 'assets/dante-guide.png',
     'tools/dante_guide_test.py', 'tools/dante_profile_test.py', 'tools/dante_catalog_test.mjs',
-    'tools/learning_foundation_test.mjs', 'tools/learning_controller_test.mjs']
+    'tools/learning_foundation_test.mjs', 'tools/learning_controller_test.mjs','tools/backup_package_fixture.py']
 
 def hashes(root):
     return {name: hashlib.sha256((root/name).read_bytes()).hexdigest()
@@ -612,21 +613,32 @@ def backup(page,row):
     with page.expect_download() as download:
         keyboard_click(page,'#exportFullBackupBtn')
     artifact=download.value;path=artifact.path();assert path and artifact.failure() is None
-    payload=json.loads(Path(path).read_text())
+    package=read_backup_package(Path(path));payload=package.payload
     inspected=page.evaluate('async value=>await JPWBackup.inspect(value)',payload)
     assert inspected.get('kind')=='FULL_V2' and inspected.get('legacy') is False and inspected.get('missing')==[],inspected
-    assert payload['formatVersion']==2
-    assert GUIDE_KEY not in payload['workspace']['preferences']
-    assert GUIDE_KEY not in page.evaluate('JPW_WORKSPACE_KEYS')
-    text=json.dumps(payload);assert GUIDE_KEY not in text and 'basics-home' not in text
+    assert payload['formatVersion']==2 and artifact.suggested_filename.endswith('.zip')
+    assert_workspace_progress(payload,GUIDE_KEY,guide_raw)
+    assert GUIDE_KEY in page.evaluate('JPW_WORKSPACE_KEYS')
+    assert 'basics-home' not in json.dumps(payload['state']),'guide lesson IDs stay outside financial state'
+    counterproofs={}
+    for mutation in ['missing','wrong-raw','financial-copy']:
+        changed=json.loads(json.dumps(payload))
+        if mutation=='missing':del changed['workspace']['preferences'][GUIDE_KEY]
+        elif mutation=='wrong-raw':changed['workspace']['preferences'][GUIDE_KEY]='{}'
+        else:changed['state'][GUIDE_KEY]=guide_raw
+        counterproofs[mutation]=expect_assertion(lambda:assert_workspace_progress(changed,GUIDE_KEY,guide_raw))
     assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)==guide_raw
-    row.update(actualDownload=artifact.suggested_filename,backupInspection=inspected)
+    private_free_progress(page)
+    row.update(actualDownload=artifact.suggested_filename,backupInspection=inspected,guideRawExactInWorkspace=True,independentZipReader=True,decodedProgressCounterproofs=counterproofs)
 
 def import_revalidation(page,row):
     pf_fixture(page)
+    start(page,'basics');acknowledge_reading(page);central(page)
     exported=page.evaluate("async()=>await dgBuildBackupBlob(1,'synthetic-guide-import.json',new Date().toISOString()).text()")
     payload=json.loads(exported)
-    assert payload['formatVersion']==2 and GUIDE_KEY not in exported
+    guide_snapshot=page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)
+    assert payload['formatVersion']==2 and guide_snapshot is not None
+    assert_workspace_progress(payload,GUIDE_KEY,guide_snapshot)
     page.evaluate("""() => {S.personalFinance.months[pfCurrentMonthKey()].incomes[0].projectedAmount=20000;
       if(save()!==true)throw Error('HARNESS_SETUP: synthetic alternate base refused');}""")
     reach(page,'personal-finance','personal-finance-budget');click(page,'#jpwLearningPracticeStart')
@@ -634,6 +646,7 @@ def import_revalidation(page,row):
     field.fill('987,65');assert page.evaluate('fbPendingFields.size')>0
     old_receipt=receipt(page);old_base_epoch=page.evaluate("localStorage.getItem('jpwealth_base_epoch_v1')")
     old_raw=page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)
+    assert old_raw!=guide_snapshot,'destination practice must differ from the exported guide snapshot'
     dialogs=[]
     def decide(dialog):
         dialogs.append({'type':dialog.type,'message':dialog.message});dialog.accept()
@@ -650,14 +663,14 @@ def import_revalidation(page,row):
     # rotates the durable session base generation through its native protocol.
     assert row['postImportBaseEpoch'] and row['postImportBaseEpoch']!=old_base_epoch
     assert snap(page)['paused'] and record(page,'personal-finance-budget') is None
-    assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)==old_raw
+    assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)==guide_snapshot
     assert not page.locator('#jpwLearningCoach').is_visible()
     page.evaluate("window.dispatchEvent(new StorageEvent('storage',{key:'jpwealth_v9_state',newValue:localStorage.getItem('jpwealth_v9_state')}))")
     settle(page);assert record(page,'personal-finance-budget') is None
-    row.update(nativeImportDialogs=dialogs,preImportReceipt=old_receipt,preImportBaseEpoch=old_base_epoch,guideRawPreserved=True)
+    row.update(nativeImportDialogs=dialogs,preImportReceipt=old_receipt,preImportBaseEpoch=old_base_epoch,guideSnapshotRawRestored=True,preImportProgressWasDistinct=True)
     page.reload();wait_bootstrap(page);settle(page)
     assert snap(page)['paused'] and record(page,'personal-finance-budget') is None
-    assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)==old_raw
+    assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)==guide_snapshot
 
 def account_guard(page,row):
     # Original fixture declaration only; strip its storage instrumentation and

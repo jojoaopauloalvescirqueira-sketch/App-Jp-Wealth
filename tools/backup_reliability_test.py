@@ -518,7 +518,12 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
                  and bool(expected['personalFinance']['months']))
     with page.expect_download():
         meta = page.evaluate('async()=>await exportFullBackup({quiet:true})')
-    body = page.evaluate('async()=>await __br.exportPayload.text()')
+    import io,zipfile
+    archive_bytes=bytes(page.evaluate('async()=>Array.from(new Uint8Array(await __br.exportPayload.arrayBuffer()))'))
+    case.require('exported transport is the approved ZIP package',archive_bytes.startswith(b'PK'))
+    with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
+        body=archive.read('backup.json').decode('utf-8')
+        case.check('secret absent from every package entry',all(b'BR-SYNTHETIC-SECRET' not in archive.read(name) for name in archive.namelist()))
     payload = json.loads(body)
     after = page.evaluate(FACTS)
     case.check('existing envelope retains identity version and timestamp', payload.get('tipo') == 'jpwealth_full_backup'
@@ -552,7 +557,7 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
         target.evaluate('aux=>Object.entries(aux).forEach(([key,value])=>__br.nativeSet.call(localStorage,key,value))', target_aux)
         local_before = target.evaluate(FACTS)['aux']
         case.require('real import control exists in disposable target', target.locator('#importFullBackupInput').count() == 1)
-        target.locator('#importFullBackupInput').set_input_files({'name': 'synthetic-multimodule.json', 'mimeType': 'application/json', 'buffer': body.encode()})
+        target.locator('#importFullBackupInput').set_input_files({'name': 'synthetic-multimodule.zip', 'mimeType': 'application/zip', 'buffer': archive_bytes})
         target.wait_for_function("__br.alerts.some(text=>text.toLowerCase().includes('importado com sucesso'))")
         settle(target)
         actual = target.evaluate('(keys)=>Object.fromEntries(keys.map(key=>[key,S[key]]))', list(DOMAINS))
