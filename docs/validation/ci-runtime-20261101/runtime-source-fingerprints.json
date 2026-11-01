@@ -1,0 +1,33 @@
+{
+  "base": "9e050a1cf832ce52aa69e4b72680686f1faf6a66",
+  "beforeAfterWorkflow": {
+    "status": "PROPOSED_NOT_APPLIED",
+    "baseCommit": "9e050a1cf832ce52aa69e4b72680686f1faf6a66",
+    "file": ".github/workflows/quality-gate.yml",
+    "beforeSha256": "0e171b0a0b7a5f7c61e3f97fb13ed93c9d14fe46c0ed247e3acbd3edfc1dafc4",
+    "proposedSha256": "e9d5dcbd6fcf8301b37893398dbcc19e0eaaaf4eb31dc5cc1122c89ec4b3eb87",
+    "preserved": [
+      "90 minutes overall",
+      "900 seconds per check",
+      "7-day diagnostic retention",
+      "all checks, cases, assertions and native 200% zoom",
+      "triggers, permissions and concurrency"
+    ],
+    "doesNotClaim": [
+      "visual timeout fixed",
+      "inline review focus fixed",
+      "remote suite approved"
+    ],
+    "authorization": "New specific A4 required by AGENTS.md; previous approval covered only budget/retention proposal."
+  },
+  "sources": {
+    "AGENTS.md": "05b7504d63a85aee41af9e7721f3d5a74f56a3905ccf023f69b1be2fcaf23ac0",
+    "docs/governance/CHANGE-PROCESS.md": "5240dac3196ebeb74805be4864465e0037c8d58d7e09068a7db77f99554b6fcd",
+    "docs/governance/QUALITY-GATES.md": "985139e137bb7b18185933255498280a4d3ddcf96fb21ce22e44a8238be72902",
+    "tools/quality_gate.py": "51fae2e0a9b25972d68c9d8e70023d28536fb4f590e386e8a518eecc568ab84d",
+    "tools/notes_launcher_test.py": "603586aa2cecc4f8596e1eb628c2ecfad8ba8effb3f3f0f8d8b582f7c061c911",
+    "tools/hedge_prop_browser_test.py": "993ea787ca8747825d8c51707567888a42c0f74d76fd07af862d174caa92582d",
+    "tools/management_visual_quality_test.py": "3a5d68162eafcd5fe03bc1650e1f89dc97ee601d03116466e6addc31d5bb9453",
+    "tools/ui_visual_quality_test.py": "39f7bc9f33fca2421a2deac23180e2e54b2dd61280ec89a8090cfad95491afc8"
+  }
+}

@@ -62,7 +62,13 @@ jobs:
         env:
           QUALITY_TIER: ${{ inputs.tier || 'standard' }}
           PYTHONUNBUFFERED: "1"
-        run: python tools/quality_gate.py --tier "$QUALITY_TIER"
+        run: |
+          # Use the Chromium installed for the pinned Playwright runtime.
+          export JP_WEALTH_CHROMIUM="$(python -c 'from playwright.sync_api import sync_playwright; p = sync_playwright().start(); print(p.chromium.executable_path); p.stop()')"
+          "$JP_WEALTH_CHROMIUM" --version
+          # Native 200% zoom requires a real display, provided by Xvfb on Linux.
+          xvfb-run --auto-servernum --server-args="-screen 0 1440x1000x24" \
+            python tools/quality_gate.py --tier "$QUALITY_TIER"
 
       - name: Explain failed session finalization
         if: failure()

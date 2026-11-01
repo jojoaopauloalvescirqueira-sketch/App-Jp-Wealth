@@ -6163,6 +6163,94 @@
         "build": "a123ebfbe4970c4b",
         "scope": "Suíte suplementar completa62/62PASS; arquivo de distribuição63PASS; continuidade14PASS; MT5nativoNOT_RUN;CIremotoseparado."
       }
+    },
+    {
+      "id": "ci_native_display_runtime_20261101",
+      "state": "open_incident",
+      "summary": "CI sem display impede checks obrigatórios de zoom nativo; patch de runtime aprovado, validação Linux pendente.",
+      "cause": "Hedge e Gerenciamento lançam Chromium headed; workflow não iniciou XServer e launcher selecionou /usr/bin/chromium em vez do runtime instalado. Causa de foco/timeout UI permanece aberta.",
+      "source": {
+        "path": "docs/work/CHG-CI-RUNTIME-DISPLAY-20261101.md",
+        "section": "Compreensão e contrato delimitado"
+      },
+      "stimulus": "Executar checks acumulados hedge-prop-browser --native-zoom e management-visual-quality no runner Ubuntu.",
+      "expected": "Zoom nativo200% é executado com display, sem skip/CSS zoom; todos os oráculos e900s/check permanecem.",
+      "protection": {
+        "path": "tools/hedge_prop_browser_test.py",
+        "case": "native_zoom; management_visual_quality_test.native_cases",
+        "command": "python3 tools/quality_gate.py --tier full",
+        "full_gate": {
+          "included": true,
+          "check_id": "hedge-prop-browser / management-visual-quality",
+          "note": "Casos acumulados já existentes, sem alteração de teste ou gate."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ci-runtime-20261101/CI-RED-RESULT.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Recibo bruto68PASS/2PRODUCT_FAIL/1NOT_RUN; não reclassificado."
+        },
+        {
+          "path": "docs/validation/ci-runtime-20261101/INLINE-LOCAL-RESULT.json",
+          "result": "PASS",
+          "note": "25 casos locais direcionados; não é GREEN dos casos nativos Linux."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-01",
+        "build": "a123ebfbe4970c4b",
+        "scope": "Diagnóstico e aplicação literal de proposta N3; GREEN e fechamento do incidente ainda pendentes."
+      }
+    },
+    {
+      "id": "planning_ui_local_month_fixture_20261101",
+      "state": "fixed_regression",
+      "summary": "Fixture funcional de Planning UI usava mês UTC enquanto diálogo usa calendário local.",
+      "cause": "toISOString().slice(0,7) seleciona novembro durante noite local de outubro; comparação de min/max usava meses diferentes.",
+      "source": {
+        "path": "docs/work/CHG-PLANNING-UI-LOCAL-MONTH-FIXTURE-20261101.md",
+        "section": "Fixture de mês local"
+      },
+      "stimulus": "Congelar cinco instantes mensais/anuais em about:blank com timezone SaoPaulo/Tokyo/UTC/NewYork/Auckland e executar browser_month real usado nos três estímulos.",
+      "expected": "Leitor retorna mês local literal; UTC defeituoso é rejeitado; limites/asserções de native_stop continuam iguais à implementação anterior.",
+      "protection": {
+        "path": "tools/planning_ui_test.py",
+        "case": "calendar_month_boundary_cases; all existing main journeys/native_stop",
+        "command": "python3 tools/planning_ui_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "planning-ui",
+          "note": "Mesma entrada standard/full; cinco casos acumulados, nenhum removido."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/planning-ui-local-month-20261101/original-repro-red.txt",
+          "result": "PRODUCT_FAIL",
+          "note": "Falha bruta do fixtureoriginal na asserção bounds; triagem identifica fixture."
+        },
+        {
+          "path": "docs/validation/planning-ui-local-month-20261101/boundary-red.txt",
+          "result": "TEST_HARNESS_FAIL",
+          "note": "Mesmo leitorUTC rejeitado deterministicamente pelo novo caso: esperadoOct/observadoNov."
+        },
+        {
+          "path": "docs/validation/planning-ui-local-month-20261101/green.txt",
+          "result": "PASS",
+          "note": "Processo exit0,149linhasPASS incluindo5clockcases e jornada anterior; FULL separado."
+        },
+        {
+          "path": "docs/validation/ci-runtime-20261101/FULL-LOCAL-RESULT.json",
+          "result": "PASS",
+          "note": "Candidate combinado116/116PASS eUI413/413PASS; Linuxseparado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-01",
+        "build": "a123ebfbe4970c4b",
+        "scope": "Focal149PASS eFULLlocal116/116PASS, UI413/413estável; LinuxeincidenteUI900/foco permanecemseparados."
+      }
     }
   ]
 }

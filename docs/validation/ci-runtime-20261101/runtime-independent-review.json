@@ -1,0 +1,12 @@
+{
+  "reviewer": "/root/review_ci_runtime",
+  "scope": "Read-only independent static review of exact approved CI runtime delta and associated records",
+  "workflowSha256": "e9d5dcbd6fcf8301b37893398dbcc19e0eaaaf4eb31dc5cc1122c89ec4b3eb87",
+  "baseWorkflowSha256": "0e171b0a0b7a5f7c61e3f97fb13ed93c9d14fe46c0ed247e3acbd3edfc1dafc4",
+  "critical": [],
+  "important": [],
+  "minorRequiringChange": [],
+  "performed": ["Exact immutable-base/proposal/applied workflow comparison", "bash -n extracted run script", "Ruby YAML parse", "Source fingerprints", "Preserved triggers/permissions/pins/90minutes/7days/900seconds and all checks", "Read current diff, CHG, receipts and open_incident record"],
+  "notPerformed": ["Suites", "Linux runtime", "Browser runtime"],
+  "remaining": ["Current-candidate FULL", "Linux Xvfb/xauth execution", "Visual timeout and inline focus investigation"]
+}
