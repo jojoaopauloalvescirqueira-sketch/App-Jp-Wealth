@@ -6251,6 +6251,146 @@
         "build": "a123ebfbe4970c4b",
         "scope": "Focal149PASS eFULLlocal116/116PASS, UI413/413estável; LinuxeincidenteUI900/foco permanecemseparados."
       }
+    },
+    {
+      "id": "planning_review_fallback_font_geometry_20261101",
+      "state": "open_incident",
+      "summary": "Título da revisão mensal visível com fontes de fallback; Linux final pendente.",
+      "cause": "nearest deixava0.3125px do título fora do viewport comArial; centralização preserva a visibilidade sem alterar confirmação.",
+      "source": {
+        "path": "docs/work/CHG-UI-FONT-GEOMETRY-20261101.md",
+        "section": "Geometria com fontes de fallback"
+      },
+      "stimulus": "Mesma revisão financeira com fonte padrão/Arial e3tamanhos; campo em390pxCSSzoom2 comArial/claro/escuro.",
+      "expected": "Título focado totalmente visível, confirmação deliberada; root sem overflow, canvas mínimo e alvos44px; zero mudança financeira.",
+      "protection": {
+        "path": "tools/planning_monthly_inline_test.py",
+        "case": "inline-review-input-opening",
+        "command": "python3 tools/quality_gate.py --tier full",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality",
+          "note": "Mesmo caso dentro dos413, com6fixtures; critério0.25preservado."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ui-font-geometry-20261101/planning-RED.json",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "path": "docs/validation/ui-font-geometry-20261101/planning-GREEN.json",
+          "result": "PASS",
+          "note": "1caso,6cenários locais; não Linux."
+        },
+        {
+          "path": "docs/validation/ui-font-geometry-20261101/planning-RELEASE-GREEN.json",
+          "result": "PASS",
+          "note": "6cenários no bundlefinal; financialzero."
+        },
+        {
+          "path": "docs/validation/ci-matrix-budget-20261101/FULL-LOCAL-RESULT.json",
+          "result": "PASS",
+          "note": "Candidato local116/116 eUI413/413, fontesestáveis; Linuxseparado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-01",
+        "build": "e65a0f5397d4553c",
+        "scope": "FULL local116/116 eUI413/413, builde65a0f5397d4553c; novoLinux ainda necessário."
+      }
+    },
+    {
+      "id": "capital_header_fallback_font_geometry_20261101",
+      "state": "open_incident",
+      "summary": "Cabeçalho Capital sem overflow com fontes de fallback; Linux final pendente.",
+      "cause": "Palavra não quebrável transbordava rootestreito. Wrap/fullrow corrige; padding local ainda é sobreposto no shellTesla, sem claimde remoção efetiva.",
+      "source": {
+        "path": "docs/work/CHG-UI-FONT-GEOMETRY-20261101.md",
+        "section": "Geometria com fontes de fallback"
+      },
+      "stimulus": "Mesma revisão financeira com fonte padrão/Arial e3tamanhos; campo em390pxCSSzoom2 comArial/claro/escuro.",
+      "expected": "Título focado totalmente visível, confirmação deliberada; root sem overflow, canvas mínimo e alvos44px; zero mudança financeira.",
+      "protection": {
+        "path": "tools/capital_currents_browser_test.py",
+        "case": "matrix compact typography fallback preserves geometry and controls",
+        "command": "python3 tools/quality_gate.py --tier full",
+        "full_gate": {
+          "included": true,
+          "check_id": "capital-currents-browser",
+          "note": "Matriz48original mantida, mais nova tipografia claro/escuro e44px/hit sem finwrites."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ui-font-geometry-20261101/capital-RED.json",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "path": "docs/validation/ui-font-geometry-20261101/capital-GREEN.json",
+          "result": "PASS",
+          "note": "9grupos locais; sem reduzir48matrizoriginal."
+        },
+        {
+          "path": "docs/validation/ui-font-geometry-20261101/capital-RELEASE-GREEN.json",
+          "result": "PASS",
+          "note": "9grupos no bundlefinal; original48+nova fonte; HTTP/file/portátil/offline."
+        },
+        {
+          "path": "docs/validation/ci-matrix-budget-20261101/FULL-LOCAL-RESULT.json",
+          "result": "PASS",
+          "note": "Candidato local116/116 eUI413/413, fontesestáveis; Linuxseparado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-01",
+        "build": "e65a0f5397d4553c",
+        "scope": "FULL local116/116 eUI413/413, builde65a0f5397d4553c; novoLinux ainda necessário."
+      }
+    },
+    {
+      "id": "ui_matrix_process_budget_20261101",
+      "state": "open_incident",
+      "summary": "NovoA4 autoriza somente matrizUI1800s; execução integral Linux pendente.",
+      "cause": "Matriz monolítica413casos não conclui900s no runnerLinux; falhas visuais reais são tratadas emdeltaN1 separado.",
+      "source": {
+        "path": "docs/work/CHG-CI-VISUAL-MATRIX-BUDGET-20261101.md",
+        "section": "Orçamento da matriz visual"
+      },
+      "stimulus": "Executar matriz completa no Linux e manter default900para demais nomes; probecontrolado mede chamada real de subprocesso.",
+      "expected": "UI1800, outros900, mensagens timeoutcorretas; todos413casos executados sem skips e critérios intactos.",
+      "protection": {
+        "path": "tools/quality_gate.py",
+        "case": "run_check budget; ui-visual-quality full413",
+        "command": "python3 tools/quality_gate.py --tier full",
+        "full_gate": {
+          "included": true,
+          "check_id": "ui-visual-quality",
+          "note": "Probecontrolado é evidência adicional, não novo check; execução413Linuxéprova final."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ci-matrix-budget-20261101/before-controlled-probe.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Orçamento anterior rejeitado pelo oráculo novo proposto, não um defeito financeiro."
+        },
+        {
+          "path": "docs/validation/ci-matrix-budget-20261101/applied-controlled-probe.json",
+          "result": "PASS",
+          "note": "117nomes e2mensagens sintéticos; sem esperarwallclock ou executarbrowser."
+        },
+        {
+          "path": "docs/validation/ci-matrix-budget-20261101/FULL-LOCAL-RESULT.json",
+          "result": "PASS",
+          "note": "Candidato local116/116 eUI413/413, fontesestáveis; Linuxseparado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-01",
+        "build": "e65a0f5397d4553c",
+        "scope": "FULL local116/116 eUI413/413, builde65a0f5397d4553c; novoLinux ainda necessário."
+      }
     }
   ]
 }

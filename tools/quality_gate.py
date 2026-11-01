@@ -177,6 +177,7 @@ def classify(returncode: int, output: str) -> str:
 
 def run_check(name: str, command: list[str]) -> dict[str, object]:
     started = time.monotonic()
+    timeout_seconds = 1800 if name == "ui-visual-quality" else 900
     try:
         completed = subprocess.run(
             command,
@@ -184,7 +185,7 @@ def run_check(name: str, command: list[str]) -> dict[str, object]:
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            timeout=900,
+            timeout=timeout_seconds,
             check=False,
         )
         output = completed.stdout or ""
@@ -195,7 +196,7 @@ def run_check(name: str, command: list[str]) -> dict[str, object]:
         partial = exc.stdout or ""
         if isinstance(partial, bytes):
             partial = partial.decode("utf-8", errors="replace")
-        output = partial + "\nENVIRONMENT_ERROR: timeout apos 900s"
+        output = partial + f"\nENVIRONMENT_ERROR: timeout apos {timeout_seconds}s"
         returncode = 124
     duration = round(time.monotonic() - started, 3)
     return {

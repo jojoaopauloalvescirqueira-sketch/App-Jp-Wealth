@@ -1,3 +1,11 @@
+# Correções visuais e orçamento da matriz — 01/11/2026
+
+Candidate na branchcodex/backup-unificado-20261031, base21db450. Duas correçõesN1: título da revisão mensal centralizado no scroll e palavras do cabeçalho Capital quebráveis emcontainerestreito. Focais: revisão6cenáriosPASS eCapital9gruposPASS(incluindo48matriz efile/portátil/PWA). Fontes/provas em docs/work/CHG-UI-FONT-GEOMETRY-20261101.md e docs/validation/ui-font-geometry-20261101/.
+
+NovoA4 específico autoriza apenas ui-visual-quality1800s; demais900s/job90min. Aplicação literal75e0eaf..., auditoria independente semCritical/Important, ver docs/work/CHG-CI-VISUAL-MATRIX-BUDGET-20261101.md. Full/Linux final ainda necessários. Resultado anterior local116/413 eLinux114/2 são históricos, não aprovam estesbytes. Mainoficialpermanece9e05 atévalidação/merge. Dados e motores preservados; sem publicação de site/exclusões.
+
+## Fotografias anteriores preservadas
+
 # Integração aprovada —31/10/2026
 
 As quatro frentes aceitas pelo proprietário foram conciliadas na branch `codex/backup-unificado-20261031`, base `69b6cb677de2486be5c30681e4b2e02d4180d704`. Artefatos reconstruídos pelo gerador oficial. FULL do conjunto:116/116PASS; UI413/413PASS; fontes executadas estáveis. Recibo bruto SHA256 `49e370152d380beac144ea14a0937f3d1aa6fbcae6197b4f12873b3a8f426633` em docs/validation/integrated-accepted-20261031/FULL-RESULT.json. Aceite visual e commit/merge/push foram autorizados na conversa. Resultados anteriores das frentes são históricos, preservados. Não houve mudança de motor financeiro, AGENTS, gate, norma ou workflow; limites documentais preexistentes permanecem.
@@ -117,3 +125,9 @@ Fixture mensalN1: planning_ui_test usava UTC contra mês local da UI; RED determ
 
 
 Validação local final do candidate combinado: FULL116/116PASS eUI413/413PASS, fontes estáveis, concluída31/10/2026às23:26-03:00. Recibos em docs/validation/ci-runtime-20261101/. PrimeiroFULLinterrompido e resultadosCIanteriores preservados separadamente. Próxima ação: branchpush autorizada eCI Linux do mesmoSHA antes de integrar este ajuste àmain; não declarar GREEN remoto ou foco/timeout resolvido sem prova.
+
+
+Candidate final congelado: builde65a0f5397d4553c, CSS5a6cf370..., Planning031a2880..., Gate75e0eaf... eworkflowe9d5dcbd.... Focais finais6cenários revisãoPASS/Capital9gruposPASS com48matrizpreservada, fontesestáveis. Revisão independente final semCritical/Important/Minor. FullfinalenovoLinuxaindapendentes; não promover resultados anteriores.
+
+
+FULL local final:116/116PASS eUI413/413PASS, fontes estáveis, builde65a0f5397d4553c. Recibos em docs/validation/ci-matrix-budget-20261101/. Resultado antigoLinux114/2 preservado em validation/ui-font-geometry. Próximo gate: LinuxFULL/Host no SHA final antes do merge; não fechar incidenteLinux por prova local.

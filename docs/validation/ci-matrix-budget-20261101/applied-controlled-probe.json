@@ -1,0 +1,620 @@
+{
+  "sourceSha256": "75e0eaf082f2fe99ea3f6f0a87a2c67340e76f578fa4e8aafbe0032fb838a0b4",
+  "scope": "Actual run_check function with controlled subprocess spy/TimeoutExpired; not wall-clock/browser execution",
+  "rows": [
+    {
+      "name": "preflight",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "structure",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "diff-check",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "preflight-context",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "hedge-prop-engine",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "hedge-prop-browser",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "personal-agenda",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "monthly-economic-feed",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "calendar-agenda",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "calendar-recovery",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "ui-visual-quality",
+      "expected": 1800,
+      "observed": 1800
+    },
+    {
+      "name": "navigation-ia",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "dashboard-macro",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "research-navigation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "smoke",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "settings",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "brand-identity-contract",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "brand-identity-browser",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "statute-documentary",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "galton-board",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-engine",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-parity-engine",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-state",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-navigation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-quote",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-boundaries",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-ui",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-parity-ui",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-reserve-compat",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "exec-submenu",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "nocoda",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "pivot-studies",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "order-guards",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "operation-identity",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "operation-finalize",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "operation-history",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "operation-wiring",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "phases-visibility",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "exec-three-column",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-foundation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-finalize-preservation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-backup-roundtrip",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-navigation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-budget",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-debt-credit",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-comparison",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-scenarios",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "finpes-overview",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "usd-brl-quote",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-unit",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-ledger",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-position",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-foundation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-finalize-preservation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "session-epoch-protocol",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "session-write-serialization",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-ui-readonly",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-ui-crud",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-ui-ledger",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-ui-tx-write",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "alladin-ui-tx-reverse",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-engine",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-state",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-guide",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-dashboard-notes",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "portfolio-management-navigation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-reserves-context",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-reserves-drafts",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-account-flow",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-annual-ui",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-visual-quality",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "calendar-distribution",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "ff-news-cache",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-distribution",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-three-tabs",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-proportions",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "planning-parity-layout",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "session-finalization",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "storage-governance",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "persistence-failure",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "persistence-recovery",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "investor-password",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "import-xss",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "state-integrity",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "async-generation",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "build-reproducibility",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "service-worker-upgrade",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "mvp-notes",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "notes-launcher",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "notes-global-launcher",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "notification-center",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "notification-efficiency",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "consolidated-efficiency",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "consolidated-model",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "consolidated-storage",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "consolidated-ui",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "forex-professional-panel",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "execution-efficiency",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "execution-table",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "execution-workbook",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "execution-proportions",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "forex-context",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "forex-navigation-journey",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "learning-guide",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "nocuda-tools",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "stoikus-downloads",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "download-assets-unit",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "download-assets-browser",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "capital-currents-unit",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "capital-currents-progress",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "capital-currents-browser",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "time-twins-unit",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "time-twins-browser",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "minigames",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "hedge-prop-distribution",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "management-distribution",
+      "expected": 900,
+      "observed": 900
+    },
+    {
+      "name": "unknown-control",
+      "expected": 900,
+      "observed": 900
+    }
+  ],
+  "mismatches": [],
+  "timeoutMessageCases": [
+    {
+      "name": "ui-visual-quality",
+      "expected": 1800,
+      "result": {
+        "name": "ui-visual-quality",
+        "command": "synthetic-child-not-executed",
+        "result": "ENVIRONMENT_ERROR",
+        "returncode": 124,
+        "duration_seconds": 0.0,
+        "output_tail": "synthetic partial\nENVIRONMENT_ERROR: timeout apos 1800s"
+      },
+      "matches": true
+    },
+    {
+      "name": "preflight",
+      "expected": 900,
+      "result": {
+        "name": "preflight",
+        "command": "synthetic-child-not-executed",
+        "result": "ENVIRONMENT_ERROR",
+        "returncode": 124,
+        "duration_seconds": 0.0,
+        "output_tail": "synthetic partial\nENVIRONMENT_ERROR: timeout apos 900s"
+      },
+      "matches": true
+    }
+  ]
+}
