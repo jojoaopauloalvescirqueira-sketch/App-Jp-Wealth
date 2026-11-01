@@ -1,0 +1,11 @@
+{
+  "scope": "read-only independent static review plus logs; no suites executed by reviewer",
+  "reviewer": "/root/review_ci_runtime",
+  "testSha256": "3881063ba1f99b6ec93aee60a86f65981e5ed97ff990f4d98b15e1a7679e6e82",
+  "workflowSha256": "e9d5dcbd6fcf8301b37893398dbcc19e0eaaaf4eb31dc5cc1122c89ec4b3eb87",
+  "critical": [],
+  "important": [],
+  "minorRequiringChange": [],
+  "N1Basis": "CHANGE-PROCESS functional fixture correction, local-calendar contract; original native_stop/helper and financial assertions retained structurally",
+  "full": "pending"
+}

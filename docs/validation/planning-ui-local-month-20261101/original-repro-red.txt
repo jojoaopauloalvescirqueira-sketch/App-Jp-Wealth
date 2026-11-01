@@ -1,0 +1,39 @@
+PASS independent section#planning exists
+PASS source default view is Comece aqui
+PASS empty view has no financial drafts
+PASS empty legacy container does not claim that prior records exist
+PASS split initial year/month questions expose the approved calendar range
+PASS out-of-range initial month remains invalid before preview
+PASS invalid initial month cannot preview or create an account
+PASS account creation requires an engine preview
+PASS explicit create writes one account
+PASS result dialog explains USD total, profit/loss sign, excluded flows and replacement semantics
+PASS financial result instructions are readable inside the dialog
+PASS result field is labeled as the total monthly USD amount
+PASS render preserves focused financial draft
+PASS closing dialog retains draft
+PASS ordinary boot does not discard a closed planning draft
+PASS Backup Completo captures financial drafts after Escape
+PASS closed draft backup retains exact typed value
+PASS closed draft backup excludes operational tokens
+PASS imported financial draft remains read-only until reviewed
+PASS reopened field restores original draft
+PASS result and end-of-month contribution match independent oracle
+PASS old reference view resolves to Consolidado
+PASS immutable reference remains readable internally
+PASS graph contains prepared trajectories
+PASS single confirmed month remains visible on the graph
+PASS goal states use clear Portuguese labels
+PASS temporary contribution simulation returns an available financial result
+PASS temporary increase simulation does not save financial data
+PASS native stop impact limit defaults to five percent
+Traceback (most recent call last):
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 569, in <module>
+    if __name__=='__main__':main()
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 376, in main
+    native_stop(page,current)
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 252, in native_stop
+    check(month.get_attribute('min')==bounds['min'] and month.get_attribute('max')==bounds['max'],'native manual stop month respects existing-plan calendar bounds')
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 20, in check
+    assert value,message
+AssertionError: native manual stop month respects existing-plan calendar bounds

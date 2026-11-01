@@ -1,0 +1,149 @@
+PASS local month fixture at 2026-11-01T01:00:00Z in America/Sao_Paulo: expected 2026-10, observed 2026-10
+PASS local month fixture at 2026-10-31T16:00:00Z in Asia/Tokyo: expected 2026-11, observed 2026-11
+PASS local month fixture at 2026-11-01T01:00:00Z in UTC: expected 2026-11, observed 2026-11
+PASS local month fixture at 2027-01-01T02:00:00Z in America/New_York: expected 2026-12, observed 2026-12
+PASS local month fixture at 2026-12-31T12:00:00Z in Pacific/Auckland: expected 2027-01, observed 2027-01
+PASS independent section#planning exists
+PASS source default view is Comece aqui
+PASS empty view has no financial drafts
+PASS empty legacy container does not claim that prior records exist
+PASS split initial year/month questions expose the approved calendar range
+PASS out-of-range initial month remains invalid before preview
+PASS invalid initial month cannot preview or create an account
+PASS account creation requires an engine preview
+PASS explicit create writes one account
+PASS result dialog explains USD total, profit/loss sign, excluded flows and replacement semantics
+PASS financial result instructions are readable inside the dialog
+PASS result field is labeled as the total monthly USD amount
+PASS render preserves focused financial draft
+PASS closing dialog retains draft
+PASS ordinary boot does not discard a closed planning draft
+PASS Backup Completo captures financial drafts after Escape
+PASS closed draft backup retains exact typed value
+PASS closed draft backup excludes operational tokens
+PASS imported financial draft remains read-only until reviewed
+PASS reopened field restores original draft
+PASS result and end-of-month contribution match independent oracle
+PASS old reference view resolves to Consolidado
+PASS immutable reference remains readable internally
+PASS graph contains prepared trajectories
+PASS single confirmed month remains visible on the graph
+PASS goal states use clear Portuguese labels
+PASS temporary contribution simulation returns an available financial result
+PASS temporary increase simulation does not save financial data
+PASS native stop impact limit defaults to five percent
+PASS native manual stop month respects existing-plan calendar bounds
+PASS five percent cap blocks an excessive early stop
+PASS native stop explains excess impact before accepting the date
+PASS native search selects the first stop month within the impact cap
+PASS eligible native stop communicates its impact cap
+PASS native stop search remains a temporary simulation with zero writes
+PASS using a stop date returns to the unsaved form
+PASS using the native date does not save before complete form confirmation
+PASS native review includes the pending stop choice
+PASS confirmed native stop matches the searched financial result
+PASS native stop preserves actual contributions
+PASS native stop preserves actual withdrawals
+PASS native stop preserves actual results
+PASS explicit native form confirmation saves the future stop
+PASS annual summary uses the domain read model
+PASS past BRL quote is available on demand
+PASS historical FX lookup does not save financial data
+PASS past BRL reading uses the month reference
+PASS historical lookup is requested only by explicit action
+PASS late historical response cannot redraw a hidden/reset UI
+PASS late historical response cannot write financial state
+PASS desktop navigation retains its usable width after dialogs
+PASS PDF action opens native print: 1
+PASS print stylesheet keeps the planning report visible
+PASS print stylesheet removes global navigation
+PASS internal tabs support keyboard arrows
+PASS mobile month selector is visible
+PASS planning surface fits mobile width
+PASS reopen requires a reason and invalidates closure
+PASS correction preserves original flow by ID
+PASS native aporte questionnaire rejects a zero-dollar purchase correction
+PASS rejected zero aporte correction preserves the previous purchase and its history
+PASS withdrawal accepts optional BRL without coercing it to zero
+PASS future zero rate remains explicit zero
+PASS explicit zero projection reopens as zero
+PASS blank projection saves as provisional null
+PASS provisional rate reopens blank instead of a calculated zero
+PASS editing only contribution preserves provisional null rate
+PASS monthly table distinguishes provisional blank from explicit zero
+PASS native future contribution preserves an explicitly blank cell
+PASS saved blank contribution stays visually blank rather than showing zero
+PASS blank future contribution calculates as zero without creating a ledger entry
+PASS metadata review preserves ledger, future overrides and contribution stop
+PASS edit preview performs zero financial writes
+PASS saved metadata edit matches the previewed financial timeline
+PASS recorded facts block initial calendar changes at review
+PASS rejected initial edit preserves recorded facts
+PASS metadata edit preserves initial reference
+PASS unchanged BRL goal remains editable offline with its original quote
+PASS offline metadata edit preserves exact BRL goal snapshot
+PASS native reset requires its original explicit account confirmation phrase
+PASS native reset understanding confirmation starts unchecked
+PASS correct reset phrase leaves confirmation disabled until the understanding choice
+PASS correct reset phrase cannot bypass the separate unchecked understanding confirmation
+PASS dedicated account reset archives the former identity and clears effective facts
+PASS dedicated reset preserves the financial reference and retargets only its plan association
+PASS native Iniciar outro plano requires its explicit checked archive choice
+PASS restart creates a new plan identity
+PASS restart archives the prior plan in addition to prior reset history
+PASS archive preserves the account as inactive
+PASS archived account plan remains readable internally for recovery
+PASS hidden render does not write financial state
+PASS no browser page errors: []
+PASS confirmed account archive survives a page reload
+PASS storage refusal keeps the account draft open
+PASS storage refusal preserves the typed account draft
+PASS storage refusal cannot adopt an unconfirmed account
+PASS storage refusal explains the unconfirmed result
+PASS storage refusal cannot leave a misleading success notice
+PASS import/finalization provider reset clears drafts and invalidates their callbacks
+PASS malformed future aggregate displays a blocking read state
+PASS incompatible aggregate cannot offer a misleading create action
+PASS current month qualifies its expected USD100 contribution
+PASS current unclosed balance remains explicitly unfinished
+PASS actual USD20 replaces the expected contribution and has confirmed acquisition cost
+PASS finalization preview with USD20 ledger shows effective USD1050
+PASS confirmed USD balance remains separate from current projection
+PASS finalization preview excludes the unrecorded USD100 planned contribution
+PASS effective-flow confirmation remains an explicit unchecked choice
+PASS effective USD finalization preview performs zero financial writes
+PASS closure without actual contribution saves effective USD1030
+PASS isolated planning journey has no page errors: []
+PASS form preview explains nine past months without closure
+PASS plan review repeats the past-months notice
+PASS past-months notice performs zero financial writes
+PASS Consolidado waits for past records instead of a day-one delay
+PASS closing every past month restores the plan comparison
+PASS counterproof: current-month start shows no past-months notice
+PASS counterproof: current-month review has no past-months line
+PASS past-start journey has no page errors: []
+PASS native stop impact limit defaults to five percent
+PASS native manual stop month respects existing-plan calendar bounds
+PASS five percent cap blocks an excessive early stop
+PASS native stop explains excess impact before accepting the date
+PASS native search selects the first stop month within the impact cap
+PASS eligible native stop communicates its impact cap
+PASS native stop search remains a temporary simulation with zero writes
+PASS using a stop date returns to the unsaved form
+PASS using the native date does not save before complete form confirmation
+PASS native review includes the pending stop choice
+PASS confirmed native stop matches the searched financial result
+PASS native stop preserves actual contributions
+PASS native stop preserves actual withdrawals
+PASS native stop preserves actual results
+PASS isolated native stop journey has no page errors: []
+PASS account form identifies current monthly cost and desired monthly income separately
+PASS 390px review heading is readable between the dialog header and footer
+PASS 390px dialog title and close control remain entirely above the scroll body
+PASS 390px dialog footer and all its controls remain entirely below the scroll body
+PASS Review preview explicitly focuses the preview region
+PASS ordinary rendering preserves focus in the reviewed preview
+PASS ordinary rendering cannot steal focus from an account field
+PASS ordinary rendering preserves the focused form scroll position
+PASS reviewing and focusing the preview do not create an account
+PASS mobile preview journey has no page errors: []

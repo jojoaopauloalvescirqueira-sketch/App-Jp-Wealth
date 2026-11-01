@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 595, in <module>
+    if __name__=='__main__':main()
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 325, in main
+    calendar_month_boundary_cases(browser)
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 42, in calendar_month_boundary_cases
+    check(observed == expected,
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_ui_test.py", line 20, in check
+    assert value,message
+AssertionError: local month fixture at 2026-11-01T01:00:00Z in America/Sao_Paulo: expected 2026-10, observed 2026-11

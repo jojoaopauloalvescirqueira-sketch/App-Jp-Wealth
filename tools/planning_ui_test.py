@@ -20,6 +20,31 @@ def check(value,message):
     assert value,message
     print('PASS '+message,flush=True)
 
+def browser_month(page):
+    """Calendar fixture matching Planning's local month, never UTC timestamps."""
+    return page.evaluate("(() => {const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')})()")
+
+
+def calendar_month_boundary_cases(browser):
+    cases = [
+        ('America/Sao_Paulo', '2026-11-01T01:00:00Z', '2026-10'),
+        ('Asia/Tokyo', '2026-10-31T16:00:00Z', '2026-11'),
+        ('UTC', '2026-11-01T01:00:00Z', '2026-11'),
+        ('America/New_York', '2027-01-01T02:00:00Z', '2026-12'),
+        ('Pacific/Auckland', '2026-12-31T12:00:00Z', '2027-01'),
+    ]
+    for zone, instant, expected in cases:
+        context = browser.new_context(timezone_id=zone)
+        try:
+            page = context.new_page()
+            page.clock.install(time=instant)
+            observed = browser_month(page)
+            check(observed == expected,
+                  f'local month fixture at {instant} in {zone}: expected {expected}, observed {observed}')
+        finally:
+            context.close()
+
+
 def account_field(page,name,value):
     """Questionnaire field mapping, not a product adapter or a writer."""
     if name=='startMonth':
@@ -297,6 +322,7 @@ def main():
             opts={'headless':True}
             if os.environ.get('JP_WEALTH_CHROMIUM'):opts['executable_path']=os.environ['JP_WEALTH_CHROMIUM']
             browser=pw.chromium.launch(**opts)
+            calendar_month_boundary_cases(browser)
             ctx=browser.new_context(viewport={'width':1440,'height':1000},service_workers='block')
             ctx.add_init_script('window.__onbShown=true;')
             install_bootstrap(ctx,{'USDBRL':5})
@@ -369,10 +395,10 @@ def main():
             check(page.locator('#planning svg[data-pl-chart] .pl-confirmed-dot').count()==1,'single confirmed month remains visible on the graph')
             check('NOT_INFORMED' not in page.locator('#planning').inner_text(),'goal states use clear Portuguese labels')
             before_sim=page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')
-            temporary=page.evaluate('()=>JPWPlanning.engine.simulate(JPWPlanning.queries.snapshot().accounts[0].plan,{month:new Date().toISOString().slice(0,7),increasePct:5})')
+            current=browser_month(page)
+            temporary=page.evaluate('(month)=>JPWPlanning.engine.simulate(JPWPlanning.queries.snapshot().accounts[0].plan,{month,increasePct:5})',current)
             check(temporary['finalUsd'] is not None,'temporary contribution simulation returns an available financial result')
             check(page.evaluate('JSON.stringify(JPWPlanning.queries.snapshot())')==before_sim,'temporary increase simulation does not save financial data')
-            current=page.evaluate("new Date().toISOString().slice(0,7)")
             native_stop(page,current)
             check(page.evaluate('JPWPlanning.queries.snapshot().accounts[0].plan.stopAfter') is not None,'explicit native form confirmation saves the future stop')
             page.get_by_role('tab',name='Preenchimento mensal',exact=True).click()
@@ -446,7 +472,7 @@ def main():
             confirm_flow(page)
             page.get_by_role('dialog').wait_for(state='hidden')
             check(page.evaluate('JPWPlanning.queries.snapshot().accounts[0].plan.withdrawals[0].usd')==1,'withdrawal accepts optional BRL without coercing it to zero')
-            future=page.evaluate("JPWPlanning.engine.addMonths(new Date().toISOString().slice(0,7),1)")
+            future=page.evaluate("(month)=>JPWPlanning.engine.addMonths(month,1)",browser_month(page))
             page.locator('#planning [data-pl-month]').select_option(future)
             future_cell(page,future,'rate','0')
             future_cell(page,future,'contributionUsd','0')

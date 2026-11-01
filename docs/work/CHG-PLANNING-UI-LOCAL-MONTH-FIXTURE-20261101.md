@@ -1,0 +1,19 @@
+# Fixture de mês local — Planning UI — 01/11/2026
+
+Delta N1 de fixture funcional necessário à validação em andamento autorizada pelo proprietário (“Aprovar patch de runtime e continuar”), separado do patch N3 literal de runtime. Não altera gate, critério/oráculo, engine, regra financeira ou UI. Branch codex/backup-unificado-20261031, base9e050a1; preservar todo delta CI já autorizado e fingerprint e9d5dcbd6fcf8301b37893398dbcc19e0eaaaf4eb31dc5cc1122c89ec4b3eb87.
+
+Compreensão: o app usa calendário local para selecionar mês da interface; o teste compara os limites da simulação com o mesmo mês. O teste planning_ui_test.py usava UTC em3estímulos enquanto a UI usa getFullYear/getMonth em monthNow. Às01:xxUTC de1/11, SãoPaulo ainda está31/10; o teste esperava bounds de novembro para um diálogo de outubro. Reprodução integral dedicada falhou na mesma asserção, sem mudança de produto.
+
+Fonte de contrato: docs/architecture/PLANNING.md (“Ano calendário local vigente”), source src/js/30-accounting/06-planning/03-ui.js::monthNow (SHA256 e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f); tools/planning_ui_test.py::native_stop mantém asserção de igualdade de min/max e oráculos financeiros. Escopo: helper de mês local para fixtures e3chamadores, casos determinísticos de virada mensal/anual em contextos sintéticos de browser; documentação e memória factual. Data real e o usuário não são consultados.
+
+RED: executar o novo caso permanente com o helper contendo a expressão UTC antiga deve rejeitar SãoPaulo2026-11-01T01Z (esperado2026-10). GREEN: helper local e os mesmos casos + toda jornada planning-ui devem passar. Cobrir SãoPaulo, Tóquio, UTC e virada de ano de NovaYork com expectativas literais. O clock é congelado somente em contextos about:blank descartáveis; não na jornada do produto.
+
+PrimeiroFULL local interrompido por SIGINT após52checks registrados e falha reproduzida; não é FULL aprovado. Log e recibo parcial externos preservados. Reexecutar FULL inteiro no candidate corrigido; preservar histórico de falhas e não chamar retry de correção. Arquivos permitidos: tools/planning_ui_test.py, esteCHG, docs/validation/planning-ui-local-month-20261101/, registros focais já usados. Sem rebuild: nenhuma entrada do gerador alterada. Git segue autorização humana prévia e gates; não publicar site ou excluir worktrees.
+
+Rollback: reverter somente fixture/regressão documental, preservando dados, motores e demais alterações. Segurança: clock simulado não acessa perfis/dados reais, rede ou credenciais. AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED. BASIS: resultado factual da validação/fixture consumido por agentes muda, sem mudar contratos/calendário do produto; atualizar somente esteCHG, tarefa/estado e memória. AGENTS, skills, routing, gates, normas, índices e revisão global permanecem. Sem reindexação.
+
+
+Focal executado: expressão UTC antiga rejeitada no caso permanente SãoPaulo (exit1, esperado2026-10/observado2026-11); corrigido local, mesma entrada planning_ui_test.py concluiu exit0 com149linhas PASS, incluindo5casos de clock e toda jornada anterior. Test SHA2563881063ba1f99b6ec93aee60a86f65981e5ed97ff990f4d98b15e1a7679e6e82. Revisão independente confirmou N1, todos helpers anteriores/asserções financeiras preservados e nenhum Critical/Important. FULL final ainda requerido; não confundir este focal com suíte completa ou fechamento do foco Linux. Provas em docs/validation/planning-ui-local-month-20261101/.
+
+
+Validação local final do candidate combinado: FULL116/116PASS eUI413/413PASS, fontes estáveis, concluída31/10/2026às23:26-03:00. Recibos em docs/validation/ci-runtime-20261101/. PrimeiroFULLinterrompido e resultadosCIanteriores preservados separadamente. Próxima ação: branchpush autorizada eCI Linux do mesmoSHA antes de integrar este ajuste àmain; não declarar GREEN remoto ou foco/timeout resolvido sem prova.
