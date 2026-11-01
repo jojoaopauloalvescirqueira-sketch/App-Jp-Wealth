@@ -105,3 +105,6 @@ FULL e host da combinação, operações Git finais, limpeza, execução pelo in
 ## Candidato backup unificado — verificação de 31/10/2026
 
 Worktree isolada `codex/backup-unificado-20261031`, build `a12473da33d804a4`: FULL116/116 PASS e UI413 PASS, recibo literal em `docs/validation/backup-unificado-20261031/FULL-RESULT.json`. Fontes executáveis/testes preservados após o gate. Registro documental posterior; não promove o contexto histórico global nem confirma merge, publicação ou aceite humano. Ver `docs/validation/backup-unificado-20261031/FINAL-VALIDATION.md` para limites e tentativas anteriores.
+
+
+CI: A4específico recebido para proposta literal de orçamento/diagnósticos, ver docs/work/CHG-CI-RESOURCE-DIAGNOSTICS-20261031.md. SuplementarMT5local62/62PASS; novoCIremotoaindapendente. Dados/regras e fontesexecutáveiswebpreservados.

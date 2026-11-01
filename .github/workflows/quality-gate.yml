@@ -28,7 +28,7 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 90
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -61,6 +61,7 @@ jobs:
       - name: Run quality gate
         env:
           QUALITY_TIER: ${{ inputs.tier || 'standard' }}
+          PYTHONUNBUFFERED: "1"
         run: python tools/quality_gate.py --tier "$QUALITY_TIER"
 
       - name: Explain failed session finalization
@@ -99,3 +100,13 @@ jobs:
           if check['result'] != 'PASS':
               emit(check['output_tail'][-12000:])
           PY_DIAGNOSTIC
+
+      - name: Preserve quality receipts and diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quality-${{ github.sha }}
+          path: tools/.artifacts/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7

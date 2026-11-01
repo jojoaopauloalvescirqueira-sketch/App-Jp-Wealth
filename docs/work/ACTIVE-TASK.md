@@ -4,3 +4,6 @@ O proprietário confirmou aceite visual e commit, merge e push das quatro frente
 
 
 FULL integrado116/116PASS eUI413/413PASS; ver docs/validation/integrated-accepted-20261031/README.md. Git autorizado; resultado remoto será verificado no recibo externo.
+
+
+CI: A4específico recebido para proposta literal de orçamento/diagnósticos, ver docs/work/CHG-CI-RESOURCE-DIAGNOSTICS-20261031.md. SuplementarMT5local62/62PASS; novoCIremotoaindapendente. Dados/regras e fontesexecutáveiswebpreservados.
