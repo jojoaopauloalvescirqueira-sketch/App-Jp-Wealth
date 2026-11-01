@@ -1,0 +1,7 @@
+actual BUSY exit 73  EARLY_VISIBLE_PAYLOAD
+Traceback (most recent call last):
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/continuity_gate_publication_test.py", line 48, in <module>
+    if __name__=='__main__':main()
+  File "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/continuity_gate_publication_test.py", line 44, in main
+    assert result.returncode==expected,(name,value,result.stdout,result.stderr)
+AssertionError: ('actual', 'BUSY', '', 'EARLY_VISIBLE_PAYLOAD\n')

@@ -1,0 +1,135 @@
+{
+  "schema": "jpw-personal-history-continuity-host/v1",
+  "baseline": false,
+  "baseline_product_commit": null,
+  "status": "PASS",
+  "native": "NOT_RUN",
+  "sources": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Core.mqh": "247a7d99b51a7fb63620edec9c92d7338924c73a4967b88e2f68eb4ae814c3e6",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Store.mqh": "be42ab65bd9885937acf3df22f1ab71f5372e36c74252febe58b1b9fdd7dc3c4",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Export.mqh": "8173c91a2fe3e4c1d3a6b5b5d6ce55fafb6f6571b1fd58eec7e0fe7bcf81206a",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_UI.mqh": "ca5d5220c762e1eb1752d213114292a25915e9e172b9d8d2bc872095dc001d8f",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Controller.mqh": "6fcdc1075adbc89427ed23c98457818b3ce080b8f53cf087570a3eac0ab7fb6a",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "d1f9b262c511a2667cd365c52f2ee6757063b70ead1ff639834b884238cf4456",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Actions.mqh": "9bae77fe6a57c88f2eed9e7a612d25e2a770423275a6b3ccca0faf09ad74d5ee",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_PersonalHistory_Terminal.mqh": "d164c5af97d8a982891b330d02bd79870123b196e7917e50a5f99d8a46e5dd00",
+    "tools/personal_history_host/compat.hpp": "d147a0b672ea7bd737a77db88591cb314fce8d9da45d37ac36ae042bbabbc45a",
+    "tools/personal_history_host/drain.hpp": "939cdb22e6a738b8fd552b1e8fe11de8741a99a75aff8dbceb1ce4273ca8dc55",
+    "tools/personal_history_host/export_drain.hpp": "4ecd40071873a537ea446aaefcbc3dd2f6015561e558e734b79c723c59213ff4",
+    "tools/personal_history_host/store_cases.cpp": "d2bacbced4c96aa71e8f05e2015d740639bcbbdcd1064f1dae0285da8a171548",
+    "tools/personal_history_host/ui_cases.cpp": "95e345141e0c29d5854af663a0352a1448208144bd097f90b42f0ece9318bf84",
+    "tools/personal_history_host/controller_cases.cpp": "613c64a19e896592f907c7d737f0232b0d1f47de0904d6c249e30f9ff47441a3",
+    "tools/personal_history_host/ui_seams.cpp": "817b9a6938b5021b38098b5f4fe61ad74a5706ccf3d120fdf3eaa5a9c3e66975",
+    "tools/personal_history_host/controller_seams.cpp": "1e8643388c53215c7b568c05c981e4ddeeb1ead56503cbe67e11179de654d97d",
+    "tools/personal_history_host/continuity_cases.cpp": "b81a69660ce72eb2951ae7d7d9970b0801d2b92d736f5003e021bef2e1aa4d00",
+    "tools/personal_history_host/continuity_process.hpp": "6746a9972efa9f08d6a0f781129df4c7fff4bdaf6736b376698e1420fcb64bba",
+    "tools/personal_history_host/continuity_baseline_cases.cpp": "bc0854a5ef63b4d54478d383a6b0ec0bac91ef4f8afb02b78f8a2ecde7d19f37",
+    "tools/jpw_personal_history_continuity_test.py": "2e73d348d812ed047c77ac3fb5cd11514b90c52078511947f55fe136ae9d060f",
+    "tools/jpw_personal_history_test.py": "b5c4528fba5f1877c58c5ab3262896ddc22b3b101d9d3ca7db885146e9e23a54",
+    "tools/continuity_gate_publication_test.py": "7ffa8dc066fb6418e8ad873c6dc89ebbf5a7ed5390fbc606a57f7571f95b245b"
+  },
+  "compiled_source_sha256": "a243a165ea93b1be328d5456a87c4adbf93284fd4ee8ebbb86981af5aa7caaa0",
+  "sources_unchanged_during_execution": true,
+  "compile_exit": 0,
+  "attempt": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/continuity-atomic-green-2/host-8wfas4yn",
+  "cases": [
+    {
+      "id": "HOST-GATE-PUBLICATION",
+      "status": "PASS",
+      "exit": 0
+    },
+    {
+      "id": "CONT-01",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 2.9647583749999997,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-02",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.03612250000000028,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-03",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 6.9925595,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-04",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.12791554200000022,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-05",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.10263912499999961,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-06",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.08087049999999962,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-07",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.08102325000000121,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-08",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.06528766699999977,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-09",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.1171445000000002,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-10",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.15406579099999895,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-11",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 6.48932975,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-12",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 47.321404125,
+      "independent_failure": null
+    },
+    {
+      "id": "CONT-13",
+      "status": "PASS",
+      "exit": 0,
+      "seconds": 0.03672220800000048,
+      "independent_failure": null
+    }
+  ]
+}

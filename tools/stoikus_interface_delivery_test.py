@@ -228,7 +228,7 @@ class DeliveryTest(unittest.TestCase):
             'downloads/nocuda/MT5-LEIA-ME.md', 'README.md', 'CHANGELOG.md',
             'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
             'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png',
-            'assets/jp-wealth-logo.png', 'assets/nocuda-tradingview.png',
+            'assets/jp-wealth-logo.png', 'assets/dante-guide.png', 'assets/nocuda-tradingview.png',
             'assets/nocuda-metatrader.png', 'assets/pwa-icon-primary.png',
             'assets/pwa-icon-primary-192.png', 'assets/pwa-icon-primary-512.png',
             'assets/pwa-icon-secondary.png', 'assets/pwa-icon-secondary-192.png',
@@ -254,6 +254,17 @@ class DeliveryTest(unittest.TestCase):
 
     def tearDown(self):
         self.tmp.cleanup()
+
+    def test_dante_static_input_remains_mandatory(self):
+        asset = self.root / 'assets/dante-guide.png'
+        original = asset.read_bytes()
+        asset.unlink()
+        refused = self.build()
+        self.assertNotEqual(refused.returncode, 0)
+        self.assertIn('assets/dante-guide.png', refused.stderr)
+        self.assertFalse((self.root / 'build-id.js').exists())
+        self.write('assets/dante-guide.png', original)
+        self.assertEqual(self.build().returncode, 0)
 
     def write(self, relative, raw):
         path = self.root / relative

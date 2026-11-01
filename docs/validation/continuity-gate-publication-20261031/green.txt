@@ -1,0 +1,5 @@
+actual BUSY exit 0 COMPLETE_FIRST_VISIBILITY BUSY 
+actual PASS exit 0 COMPLETE_FIRST_VISIBILITY PASS 
+open-before-write-counterproof BUSY exit 73  EARLY_VISIBLE_PAYLOAD
+open-before-write-counterproof PASS exit 73  EARLY_VISIBLE_PAYLOAD
+{"result": "PASS", "helperSha256": "6746a9972efa9f08d6a0f781129df4c7fff4bdaf6736b376698e1420fcb64bba", "cases": [{"publisher": "actual", "payload": "BUSY", "exit": 0}, {"publisher": "actual", "payload": "PASS", "exit": 0}, {"publisher": "open-before-write-counterproof", "payload": "BUSY", "exit": 73}, {"publisher": "open-before-write-counterproof", "payload": "PASS", "exit": 73}]}

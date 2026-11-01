@@ -1,0 +1,9 @@
+# Publicação do IPC no harness —31/10/2026
+
+Durante a validação suplementar da integração autorizada, a suíte local registrou61PASS/1PRODUCT_FAIL noCONT-05. O processo pai recusou commit-status, mas o arquivo final continhaBUSY, valor esperado. O helper publicava existência antes de gravar o conteúdo. Reprodução controlada substitui somente a abertura do stream por uma fronteira lenta: publisher real anterior retornou73EARLY_VISIBLE_PAYLOAD.
+
+CorreçãoN1 em suporte de testes: gravar/fechar arquivo temporário no mesmo diretório e publicar por rename. Não altera produtoMQL, SQLite, fórmulas, expectedBUSY/PASS, timeouts nem casos financeiros. Nova proteção compila o helper real e seu publisher antigo como contraprova; emBUSY ePASS, atual0 e antigo73. Âncora permanente no script de continuidade: novoHOST-GATE-PUBLICATION e todos13casos anteriores, com fontes/hashes no recibo. GREEN14PASS. Nenhuma falha histórica é fechada por retry: o defeito foi reproduzido e o publisher defeituoso continua recusado pelo mesmo oráculo.
+
+Revisão independente somente leitura conferiu24/24fontes e source.cpp compilado, preservação dos oráculos e ausência de deltaMQL, sem achadosCritical/Important. WebFULL116/UI413 preservam mesmos insumos/oráculos de c301; não são apresentados como execução nova. Suite MT5 suplementar62entradas será reexecutada no candidato completo antes do próximo commit. Logs e recibo em docs/validation/continuity-gate-publication-20261031/. Compilação e terminal MT5 reais permanecem NOT_RUN.
+
+AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED. BASIS: memória factual e contrato deste teste passam a representar publicação atômica. Local action delimitada a registro/proteção, sem normas, políticas, routing, CI ou guards de qualidade. INDEX NOT REQUIRED. WorkflowCI90min é proposta separada não aplicada e depende deA4 específico. Rollback deste delta somente no suporte de testes; não tocar dados/stores/originais.

@@ -10,6 +10,7 @@ import hashlib
 import json
 import platform
 import subprocess
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -43,6 +44,9 @@ def main():
                'controller_cases.cpp', 'ui_seams.cpp', 'controller_seams.cpp', 'continuity_cases.cpp',
                'continuity_process.hpp', 'continuity_baseline_cases.cpp']
     dependencies = product + [support / name for name in helpers] + [Path(__file__), Path(h.__file__)]
+    publication_probe = Path(__file__).with_name('continuity_gate_publication_test.py')
+    if not args.baseline:
+        dependencies.append(publication_probe)
     actual = {}
 
     def source(path):
@@ -83,6 +87,12 @@ def main():
     build = subprocess.run(command, text=True, capture_output=True)
     (attempt / 'compile.log').write_text(build.stdout + build.stderr)
     results = []
+    if not args.baseline:
+        probe = subprocess.run([sys.executable, str(publication_probe)], text=True, capture_output=True)
+        (attempt / 'gate-publication.log').write_text(probe.stdout + probe.stderr)
+        results.append({'id': 'HOST-GATE-PUBLICATION',
+                        'status': 'PASS' if probe.returncode == 0 else 'TEST_HARNESS_FAIL',
+                        'exit': probe.returncode})
     if build.returncode == 0:
         for case in ids:
             directory = attempt / case

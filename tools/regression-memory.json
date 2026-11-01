@@ -6072,6 +6072,97 @@
         "artifact": "docs/validation/hedge-redesign-20261031/FULL-RESULT.json"
       },
       "cause": "A janela de leitura/escrita do guia não era serializada e o snapshot do plano podia mudar no mesmo modo sem substituição explícita."
+    },
+    {
+      "id": "stoikus_delivery_dante_fixture_20261031",
+      "state": "fixed_regression",
+      "summary": "Fixture de distribuição omitia asset obrigatório do gerador.",
+      "cause": "Lista independente static_files não continha assets/dante-guide.png; o builder recusava corretamente a fixture incompleta.",
+      "source": {
+        "path": "docs/work/CHG-STOIKUS-DELIVERY-FIXTURE-DANTE-20261031.md",
+        "section": "DeltaN1 e preservação dos guardas"
+      },
+      "stimulus": "Executar60testes anteriores e, após correção, retirar/restaurar o asset nos três modos de entrega.",
+      "expected": "Fixture completa constrói; asset ausente continua recusado antes de build-id; todos os oráculos de integridade/offline anteriores preservados.",
+      "protection": {
+        "path": "tools/stoikus_interface_delivery_test.py",
+        "case": "test_dante_static_input_remains_mandatory",
+        "command": "python3 tools/stoikus_interface_delivery_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "stoikus_interface_delivery_test",
+          "note": "Suite suplementar leverage_suite --scope all do workflow MT5 Host Verification; não integra as116entradas web."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/stoikus-delivery-fixture-20261031/red.txt",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "path": "docs/validation/stoikus-delivery-fixture-20261031/green.txt",
+          "result": "PASS",
+          "note": "63testes; runtime/oráculos web inalterados;CI remoto é prova separada."
+        },
+        {
+          "path": "docs/validation/ci-followup-20261031/MT5-FULL-RESULT.json",
+          "result": "PASS",
+          "note": "Suíte suplementar completa62/62, sem alterar produtoMQL;CIremoto do follow-up separado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "a123ebfbe4970c4b",
+        "scope": "Suíte suplementar completa62/62PASS; arquivo de distribuição63PASS; continuidade14PASS; MT5nativoNOT_RUN;CIremotoseparado."
+      }
+    },
+    {
+      "id": "continuity_gate_atomic_publication_20261031",
+      "state": "fixed_regression",
+      "summary": "IPC do harness expunha arquivo antes de o payload estar completo.",
+      "cause": "std::ofstream criava commit-status antes da escrita; o leitor aguardava só existência e podia consumir vazio apesar de BUSY aparecer depois.",
+      "source": {
+        "path": "docs/work/CHG-CONTINUITY-GATE-PUBLICATION-20261031.md",
+        "section": "Publicação atômica sem alterar oráculos financeiros"
+      },
+      "stimulus": "Pausar a fronteira de abertura de stream antes da escrita, em processos novos, com payloads BUSY/PASS; contrastar helper real e publisher anterior.",
+      "expected": "Primeira visibilidade contém payload inteiro; publisher antigo rejeitado deterministicamente com73; todos13casos de continuidade continuam executados.",
+      "protection": {
+        "path": "tools/continuity_gate_publication_test.py",
+        "case": "actual and open-before-write-counterproof BUSY/PASS",
+        "command": "python3 tools/jpw_personal_history_continuity_test.py --output <new-evidence>",
+        "full_gate": {
+          "included": true,
+          "check_id": "jpw_personal_history_continuity_test",
+          "note": "leverage_suite --scope all / MT5 Host Verification suplementar; não é entradaweb116."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/continuity-gate-publication-20261031/red.txt",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "path": "docs/validation/continuity-gate-publication-20261031/green.txt",
+          "result": "PASS",
+          "note": "Helper atual0 e publisher defeituoso73 nos2payloads."
+        },
+        {
+          "path": "docs/validation/continuity-gate-publication-20261031/continuity-receipt.json",
+          "result": "PASS",
+          "note": "14casos; hashesfontes/source.cpp conferidos independentemente."
+        },
+        {
+          "path": "docs/validation/ci-followup-20261031/MT5-FULL-RESULT.json",
+          "result": "PASS",
+          "note": "Suíte suplementar completa62/62, sem alterar produtoMQL;CIremoto do follow-up separado."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-10-31",
+        "build": "a123ebfbe4970c4b",
+        "scope": "Suíte suplementar completa62/62PASS; arquivo de distribuição63PASS; continuidade14PASS; MT5nativoNOT_RUN;CIremotoseparado."
+      }
     }
   ]
 }
