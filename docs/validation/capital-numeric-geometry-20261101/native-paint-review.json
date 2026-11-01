@@ -1,0 +1,16 @@
+{
+  "readableObserved": true,
+  "cssSha256": "49c49a4483e0e0a7c261d89a0126f19bdf821691a39dfeea9bd1013817b698d7",
+  "verifiedArtifacts": [
+    "01-baseline.png"
+  ],
+  "artifactSha256": {
+    "01-baseline.png": "c9e95790918104b23426da99b0ac54345c871fea497576712082bdd85d82c103"
+  },
+  "scriptSha256": "467411f89ea453258836afd0b81ab49016555ac1a54da182764b711366e2eb04",
+  "captureReportSha256": "2df0c2415f858b79c4663c60d3580af21f4f3564064ac6f9019ae7dfcbd5b0cb",
+  "method": "Root visually inspected saved raw native-view PNG using view_image. Direct documented CDP fromSurface=false before Playwright screenshot.",
+  "observed": "Pressão aplicada +0,40 is fully painted, readable and within its visible row. Actual native200% outer640/inner320, CSSzoom1; light/sidebar/requestedVerdana.",
+  "scope": "One painted numeric-row sample; original32cases are DOMgeometry/hit/keyboard checks. Does not claim32pixel comparisons or whole-app fidelity.",
+  "history": "Earlier blank/cropped surface captures preserved separately, not used as visual proof. Obtaining a usable view capture does not establish the exact prior capture failure cause."
+}

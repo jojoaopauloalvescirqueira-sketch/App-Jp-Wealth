@@ -1,0 +1,8 @@
+{
+  "artifact": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/capital-numeric-native/native200-numeric.png",
+  "sha256": "1f93ad451c9f0053d2e8a31a21aa5d6e0282e0d77b25c00e2c367fe1755d533f",
+  "observation": "Root visually inspected: blank uniform app background; not usable as visual proof.",
+  "nativeMeasurements": "32 cases PASS independently; DOM geometry/hit/keyboard and scoped source stability only.",
+  "cause": "Not established; viewport capture after deep scroll may be a capture-coordinate issue, but product blank rendering is not ruled out until direct follow-up.",
+  "next": "After active FULL finishes, one isolated native capture with foreground/settled viewport and full-page/direct app screenshot as needed. No product/source change; preserve raw original image."
+}

@@ -6391,6 +6391,54 @@
         "build": "e65a0f5397d4553c",
         "scope": "FULL local116/116 eUI413/413, builde65a0f5397d4553c; novoLinux ainda necessário."
       }
+    },
+    {
+      "id": "capital_numeric_flex_shrink_geometry_20261101",
+      "state": "open_incident",
+      "summary": "Valores numéricos íntegros no campo estreito; Linux final pendente.",
+      "cause": "Flex items output/dd encolhiam além do texto: Verdana reproduziu root155/scroll158, corrigido por flex-shrink0 local.",
+      "source": {
+        "path": "docs/work/CHG-CAPITAL-NUMERIC-GEOMETRY-20261101.md",
+        "section": "Finalidade e compreensão"
+      },
+      "stimulus": "Capital sidebar390CSSzoom2, matriz48original e Arial/Verdana em claro/escuro.",
+      "expected": "Root sem overflow, números presentes e sem cortes, canvas/44px/hit/foco/finanças preservados.",
+      "protection": {
+        "path": "tools/capital_currents_browser_test.py",
+        "case": "matrix compact typography fallback preserves geometry and controls",
+        "command": "python3 tools/quality_gate.py --tier full",
+        "full_gate": {
+          "included": true,
+          "check_id": "capital-currents-browser",
+          "note": "48original preservados;4cenários tipográficos com valores presentes e integralmente contidos."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/capital-numeric-geometry-20261101/LINUX-BEFORE-FULL.json",
+          "result": "PRODUCT_FAIL",
+          "note": "115/116, falhaCapital155/158."
+        },
+        {
+          "path": "docs/validation/capital-numeric-geometry-20261101/RED.json",
+          "result": "PRODUCT_FAIL"
+        },
+        {
+          "path": "docs/validation/capital-numeric-geometry-20261101/GREEN.json",
+          "result": "PASS",
+          "note": "9grupos locais,48original+4tipográficos, fontesestáveis; novoLinuxpendente."
+        },
+        {
+          "path": "docs/validation/capital-numeric-geometry-20261101/FULL-LOCAL.json",
+          "result": "PASS",
+          "note": "116/116 eUI413, fontesestáveis; Linuxnovoaindapendente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-01",
+        "build": "33e26b5d9bb45c0b",
+        "scope": "FULLlocal116/116 eUI413/413, fontesestáveis; novoLinux pendente."
+      }
     }
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "controlledNotes": {
+    "result": "PASS",
+    "checks": 19,
+    "identicalInputAndTestHashesToInterruptedAttempt": true,
+    "sourceUnchanged": true
+  },
+  "nativeCapital": {
+    "result": "PASS",
+    "presentations": 32,
+    "fingerprintScope": "CSS and Capital browser test only"
+  },
+  "condition": "User informed to keep pointer stationary while native Chromium windows active",
+  "interpretation": "Unchanged focused test completed under controlled input. Earlier ENV receipt remains unchanged; no Notes product fix or proved external root cause claimed. Fresh full runner required; no composite PASS.",
+  "previousIncidentSha256": "6280ee3ff74f8120341503d068e042970178e2110917340b8121fb79f90df935"
+}

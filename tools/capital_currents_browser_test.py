@@ -263,18 +263,22 @@ def run(args):
                     session=p.context.new_cdp_session(p)
                     try:
                         session.send('Emulation.setPageScaleFactor',{'pageScaleFactor':1})
-                        for theme in ['light','dark']:
-                            p.evaluate("theme=>{document.documentElement.dataset.theme=theme;document.documentElement.style.zoom=2;window.dispatchEvent(new Event('resize'));window.visualViewport?.dispatchEvent(new Event('resize'))}",theme)
-                            open_game(p)
-                            p.locator('[data-capital-currents-root]').evaluate("root=>root.style.setProperty('--sans','Arial, sans-serif')")
-                            p.evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
-                            facts=geometry(p);row={'theme':theme,'font':'Arial, sans-serif','geometry':facts}
-                            assert facts['canvas']['w']>=140 and facts['canvas']['h']>=180 and facts['root']['scroll']<=facts['root']['client']+1,row
-                            assert facts['overflow']<=1,row
-                            for action in ['play','step','reset']:
-                                node=p.locator(f'[data-capital-currents-root] [data-action={action}]');node.evaluate('e=>e.scrollIntoView({block:"center"})');p.wait_for_timeout(150);bounds=hit(node)
-                                assert min(bounds['w'],bounds['h'])>=44 and all(x['own'] for x in bounds['points']),{**row,'action':action,'hit':bounds}
-                            records.append(row)
+                        for font in ['Arial, sans-serif','Verdana, sans-serif']:
+                            for theme in ['light','dark']:
+                                p.evaluate("theme=>{document.documentElement.dataset.theme=theme;document.documentElement.style.zoom=2;window.dispatchEvent(new Event('resize'));window.visualViewport?.dispatchEvent(new Event('resize'))}",theme)
+                                open_game(p)
+                                p.locator('[data-capital-currents-root]').evaluate("(root,font)=>root.style.setProperty('--sans',font)",font)
+                                p.evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
+                                facts=geometry(p);row={'theme':theme,'font':font,'geometry':facts}
+                                assert facts['canvas']['w']>=140 and facts['canvas']['h']>=180 and facts['root']['scroll']<=facts['root']['client']+1,row
+                                assert facts['overflow']<=1,row
+                                row['numeric']=p.locator('[data-capital-currents-root] output,[data-capital-currents-root] dd').evaluate_all('nodes=>nodes.map(n=>({text:n.textContent,client:n.clientWidth,scroll:n.scrollWidth}))')
+                                assert row['numeric'],'field numeric values must be present'
+                                assert all(n['scroll']<=n['client']+1 for n in row['numeric']),row
+                                for action in ['play','step','reset']:
+                                    node=p.locator(f'[data-capital-currents-root] [data-action={action}]');node.evaluate('e=>e.scrollIntoView({block:"center"})');p.wait_for_timeout(150);bounds=hit(node)
+                                    assert min(bounds['w'],bounds['h'])>=44 and all(x['own'] for x in bounds['points']),{**row,'action':action,'hit':bounds}
+                                records.append(row)
                         assert financial(p)==before,'font presentation never changes financial facts'
                         return {'presentations':records,'financialBytesUnchanged':True}
                     finally:session.detach()

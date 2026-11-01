@@ -1,3 +1,11 @@
+# FULL local final da correção numérica —01/11/2026
+
+116/116PASS, UI413/413PASS, fontes estáveis; build33e26b5d9bb45c0b. Linux novoSHA e merge ainda pendentes. As fotografias abaixo preservam as etapas anteriores.
+
+# Correção focal de geometria numérica —01/11/2026
+
+Branchcodex/backup-unificado-20261031, base7d216f4; main9e050a1 ainda sem novo merge. Linuxbase115/116: matrizUI413PASS, Capital155/scroll158PRODUCT_FAIL; Host62PASS. CorreçãoN1CSS local flex-shrink0 em output/dd, sem gates/finanças. REDVerdanareproduz3px; GREENlocal9grupos inclui48original+4tipográficos. Revisão independente semfindings; build33e26b5d9bb45c0b. FULLlocalnovo/LinuxnovoSHA pendentes. [CHG](CHG-CAPITAL-NUMERIC-GEOMETRY-20261101.md). Fotografias anteriores abaixo preservadas.
+
 # Correções visuais e orçamento da matriz — 01/11/2026
 
 Candidate na branchcodex/backup-unificado-20261031, base21db450. Duas correçõesN1: título da revisão mensal centralizado no scroll e palavras do cabeçalho Capital quebráveis emcontainerestreito. Focais: revisão6cenáriosPASS eCapital9gruposPASS(incluindo48matriz efile/portátil/PWA). Fontes/provas em docs/work/CHG-UI-FONT-GEOMETRY-20261101.md e docs/validation/ui-font-geometry-20261101/.

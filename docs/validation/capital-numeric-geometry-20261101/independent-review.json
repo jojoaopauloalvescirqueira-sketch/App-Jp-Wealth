@@ -1,0 +1,17 @@
+{
+  "kind": "Independent static review; no suites executed by reviewer",
+  "reviewer": "/root/review_ci_runtime",
+  "critical": [],
+  "important": [],
+  "minor": [],
+  "resolved": "Explicit nonempty numeric selection assertion added before all().",
+  "fingerprints": {
+    "src/styles/app.css": "49c49a4483e0e0a7c261d89a0126f19bdf821691a39dfeea9bd1013817b698d7",
+    "tools/capital_currents_browser_test.py": "0e5586c0085638a13cd49a13e340a58e562cb4ce96b80bfb11a7f9e940b2c3a3",
+    "tools/quality_gate.py": "75e0eaf082f2fe99ea3f6f0a87a2c67340e76f578fa4e8aafbe0032fb838a0b4",
+    ".github/workflows/quality-gate.yml": "e9d5dcbd6fcf8301b37893398dbcc19e0eaaaf4eb31dc5cc1122c89ec4b3eb87"
+  },
+  "build": "33e26b5d9bb45c0b",
+  "localFull": "NOT_RUN",
+  "newLinux": "NOT_RUN"
+}

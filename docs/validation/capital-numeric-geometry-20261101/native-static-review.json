@@ -1,0 +1,9 @@
+{
+  "reviewer": "/root/review_ci_runtime",
+  "critical": [],
+  "important": [],
+  "minor": [],
+  "scriptSha256": "9ad9a6fd014600a79306b978e494757d9a0815dc2abaffaf6baf5ee87013a830",
+  "scope": "Additional Capital component check only; sourceUnchanged fingerprints CSS and Capital test, not whole application",
+  "execution": "NOT_RUN by reviewer; run separately after FULL"
+}

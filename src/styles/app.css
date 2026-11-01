@@ -10723,6 +10723,7 @@ html[data-theme="dark"] .time-twins{--time-twins-a:#b8a4ff;--time-twins-b:#e5ab4
 }
 
 @container (max-width:280px){
+.capital-field .capital-field-label[for]>output,.capital-field .capital-field-readouts dd{flex-shrink:0}
 .capital-field .capital-field-header{flex-wrap:wrap;overflow-wrap:anywhere;padding-inline:0}
 .capital-field .capital-field-header>div:first-child{flex-basis:100%}
 .capital-field .capital-field-clock{text-align:left}

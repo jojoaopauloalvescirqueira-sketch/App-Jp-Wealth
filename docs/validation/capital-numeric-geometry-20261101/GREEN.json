@@ -1,0 +1,423 @@
+{
+  "suite": "capital_currents_browser",
+  "mode": "all",
+  "passed": 9,
+  "failed": 0,
+  "rows": [
+    {
+      "name": "standalone actual field learning lifecycle persistence touch and numeric suite",
+      "status": "PASS",
+      "details": {
+        "command": [
+          "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/runtime/venv/bin/python",
+          "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/capital_field_browser_test.py"
+        ],
+        "returncode": 0,
+        "log": "work/implementation/capital-numeric-release-green/focused-field.log",
+        "assertions": 108
+      }
+    },
+    {
+      "name": "integrated lazy singleton real dialogs numerical engine and financial isolation",
+      "status": "PASS",
+      "details": {
+        "singleton": true,
+        "actualNumeric15Ticks": true,
+        "threeRealDialogsZeroRAF": true,
+        "noAutoplay": true,
+        "financialBytesUnchanged": true
+      }
+    },
+    {
+      "name": "integrated refused navigation pending draft frozen availability",
+      "status": "PASS",
+      "details": {
+        "pendingDraftPreserved": true,
+        "realModalRefusal": 2,
+        "researchFrozenIndependent": true
+      }
+    },
+    {
+      "name": "integrated deliberate progress and actual complete backup exclusions",
+      "status": "PASS",
+      "details": {
+        "onlyNewProgressWrites": true,
+        "actualFullBackupChecksumValidated": true,
+        "financialParamsPreserved": true,
+        "newProgressRawExact": true,
+        "legacyOpaqueRecoverableWithoutActivation": true,
+        "destinationLegacyBytesPreserved": true,
+        "decodedContentCounterproofs": {
+          "missing-new": "confirmed progress must retain its exact raw snapshot",
+          "financial-copy": "progress leaked outside its approved workspace preference slot",
+          "legacy-activated": "legacy opaque progress must never be an active preference",
+          "opaque-corrupt": "opaque legacy bytes must be recoverable exactly"
+        }
+      }
+    },
+    {
+      "name": "integrated disposal and explicit auxiliary cleanup key",
+      "status": "PASS",
+      "details": {
+        "newAndOldExplicitlyRemoved": true,
+        "removeAuxiliaryFalsePreservesBoth": true,
+        "staleControllerCannotWrite": true,
+        "mainAndForeignPreserved": true
+      }
+    },
+    {
+      "name": "integrated real Galton and Time Twins remain functional",
+      "status": "PASS",
+      "details": {
+        "actualGaltonPaused": true,
+        "actualTwinsFreeYear": 12
+      }
+    },
+    {
+      "name": "matrix 48 layouts themes widths zoom focus touch targets strict field delta",
+      "status": "PASS",
+      "details": {
+        "presentations": 48,
+        "fieldDeltaAndControlsPass": true,
+        "sharedHeaderBaselineCount": 0,
+        "nativeZoom": "NOT_RUN"
+      }
+    },
+    {
+      "name": "matrix compact typography fallback preserves geometry and controls",
+      "status": "PASS",
+      "details": {
+        "presentations": [
+          {
+            "theme": "light",
+            "font": "Arial, sans-serif",
+            "geometry": {
+              "overflow": 0,
+              "canvas": {
+                "x": 58,
+                "right": 332,
+                "w": 274,
+                "h": 700
+              },
+              "root": {
+                "client": 155,
+                "scroll": 155
+              },
+              "wide": []
+            },
+            "numeric": [
+              {
+                "text": "+0,40",
+                "client": 40,
+                "scroll": 40
+              },
+              {
+                "text": "0,000",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "0,000",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "1,000",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "0,400",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "0,000",
+                "client": 30,
+                "scroll": 30
+              }
+            ]
+          },
+          {
+            "theme": "dark",
+            "font": "Arial, sans-serif",
+            "geometry": {
+              "overflow": 0,
+              "canvas": {
+                "x": 58,
+                "right": 332,
+                "w": 274,
+                "h": 700
+              },
+              "root": {
+                "client": 155,
+                "scroll": 155
+              },
+              "wide": []
+            },
+            "numeric": [
+              {
+                "text": "+0,40",
+                "client": 40,
+                "scroll": 40
+              },
+              {
+                "text": "0,000",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "0,000",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "1,000",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "0,400",
+                "client": 30,
+                "scroll": 30
+              },
+              {
+                "text": "0,000",
+                "client": 30,
+                "scroll": 30
+              }
+            ]
+          },
+          {
+            "theme": "light",
+            "font": "Verdana, sans-serif",
+            "geometry": {
+              "overflow": 0,
+              "canvas": {
+                "x": 58,
+                "right": 332,
+                "w": 274,
+                "h": 700
+              },
+              "root": {
+                "client": 155,
+                "scroll": 155
+              },
+              "wide": []
+            },
+            "numeric": [
+              {
+                "text": "+0,40",
+                "client": 54,
+                "scroll": 54
+              },
+              {
+                "text": "0,000",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "0,000",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "1,000",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "0,400",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "0,000",
+                "client": 38,
+                "scroll": 38
+              }
+            ]
+          },
+          {
+            "theme": "dark",
+            "font": "Verdana, sans-serif",
+            "geometry": {
+              "overflow": 0,
+              "canvas": {
+                "x": 58,
+                "right": 332,
+                "w": 274,
+                "h": 700
+              },
+              "root": {
+                "client": 155,
+                "scroll": 155
+              },
+              "wide": []
+            },
+            "numeric": [
+              {
+                "text": "+0,40",
+                "client": 54,
+                "scroll": 54
+              },
+              {
+                "text": "0,000",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "0,000",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "1,000",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "0,400",
+                "client": 38,
+                "scroll": 38
+              },
+              {
+                "text": "0,000",
+                "client": 38,
+                "scroll": 38
+              }
+            ]
+          }
+        ],
+        "financialBytesUnchanged": true
+      }
+    },
+    {
+      "name": "distributions HTTP modular file detached portable native SW offline",
+      "status": "PASS",
+      "details": [
+        {
+          "mode": "http",
+          "actualStepTick": 15,
+          "numericOutcome": {
+            "q": 0.08847968677143803,
+            "p": 0.023040626452382848,
+            "t": 0.24999999999999997
+          },
+          "cachedSixSources": false,
+          "progressReload": true,
+          "fileRAMWarning": false
+        },
+        {
+          "mode": "modular-file",
+          "actualStepTick": 15,
+          "numericOutcome": {
+            "q": 0.08847968677143803,
+            "p": 0.023040626452382848,
+            "t": 0.24999999999999997
+          },
+          "cachedSixSources": false,
+          "progressReload": true,
+          "fileRAMWarning": false
+        },
+        {
+          "mode": "portable-alone",
+          "actualStepTick": 15,
+          "numericOutcome": {
+            "q": 0.08847968677143803,
+            "p": 0.023040626452382848,
+            "t": 0.24999999999999997
+          },
+          "cachedSixSources": false,
+          "progressReload": true,
+          "fileRAMWarning": false
+        },
+        {
+          "mode": "pwa-offline",
+          "actualStepTick": 15,
+          "numericOutcome": {
+            "q": 0.08847968677143803,
+            "p": 0.023040626452382848,
+            "t": 0.24999999999999997
+          },
+          "cachedSixSources": true,
+          "progressReload": true,
+          "fileRAMWarning": false
+        }
+      ]
+    }
+  ],
+  "candidateBefore": {
+    "src/js/40-app/30-capital-currents/01-engine.js": "55f6409cc25e6bfc3eee02d581c9b2b9d6f083485937b805e298d17075c69b1b",
+    "src/js/40-app/30-capital-currents/02-scenarios.js": "fdab0dd90693d4278b24c5643788bf4768266b96332b6d9d21257862441ce7ea",
+    "src/js/40-app/30-capital-currents/03-progress.js": "2c5511293709f599ed26f5bb850ada2273f36ddbed56f6c1a262b321d5df7b55",
+    "src/js/40-app/30-capital-currents/04-field-renderer.js": "4bd8fbdf99c8c22e57de1724bf13570009a569f9e4b26f6b93b83476d164a3c4",
+    "src/js/40-app/30-capital-currents/04-view.js": "89ca1fc0ab82c60067ff25be55cc8a32ed2a6ea3c519eca2696ea09b3921a868",
+    "src/js/40-app/30-capital-currents/05-controller.js": "f1feb9ea39cfea07e5b1bd285fbf42bb390ba5f6fab39286ef32681f6cac72de",
+    "src/styles/app.css": "49c49a4483e0e0a7c261d89a0126f19bdf821691a39dfeea9bd1013817b698d7",
+    "index.html": "160b4a2e0ba36d2fdb42bcc0405b2e2cf253c5ad357067c35e77b241a9ffd69f",
+    "src/js/manifest.json": "6fec82c46dd9903a4043c6cd57729e9932dc141ffa63c405f436224bcf24b972",
+    "src/js/20-ui/31-tools-services.js": "7b890d504e97b3e9dffe7bd87b0b2acc2a4a50662055ed768fb4e87fb5e54cf2",
+    "src/js/40-app/01-navigation.js": "bfb1e5a556ff34bdd07725a169725ef30aeb62b83a3cf9d225fdc482d1c78eb9",
+    "src/js/40-app/07-finalize-session.js": "3ed7107b6838d2e6388a66639c5231a2851a5c97238268761eb8f6e960a8d508",
+    "src/js/40-app/26-learning-catalog.js": "f6b5dde8480febea20f5e3094bb1eabdcb9064006b872e5170ff134fa369a4ac",
+    "src/js/00-core/07-workspace-backup.js": "8cd6d72f0fd31fff88f572890d8829719429b39d5174f4cd572cf621f415e37d",
+    "sw.js": "a39c1a98042091b9c6e70357eb6f6317e2a0b27ce851ae56c16461448219b606",
+    "build-id.js": "1b9a40e41d6a4f1e2ebd33ccd22092dff2e53eef4de58239203418292bc433cb",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "afeaeb2944e07a04b031b6d1eb48460685b4098a13a35913e5a6f608ff82cc05",
+    "tools/capital_currents_unit_test.js": "5e99064d5fc07261848aca96c4c76b889628741ddd3ae0dafaa192fc14b6ac4f",
+    "tools/capital_currents_progress_test.js": "7f16144cbf8beafc7f65503b75f06f19331ec64dbb4d165f9fa02d9cadd1ca03",
+    "tools/capital_currents_browser_test.py": "0e5586c0085638a13cd49a13e340a58e562cb4ce96b80bfb11a7f9e940b2c3a3",
+    "tools/capital_field_browser_test.py": "4e9c94430988793d78205f9846006f851451d0b7ffbe6d4fd7edb7dee1b4eec4",
+    "tools/capital_field_unit_test.js": "446159cec4b1a66fda845a9b669740631f51a5a862460dc52067d3c15590115a",
+    "tools/capital_field_catalog_test.js": "e81c244a1b8d00ac2036ac0cfccaae2cb1ab56d95090159d36b3b259682d3950",
+    "tools/learning_guide_test.py": "d6453ffe2731564c945a800637d2397fd6102fdb6c8f738b78555e390cd87b51",
+    "tools/quality_gate.py": "75e0eaf082f2fe99ea3f6f0a87a2c67340e76f578fa4e8aafbe0032fb838a0b4",
+    "tools/backup_package_fixture.py": "c86cc4eef14bf3fc0276cacb75b39d04c3448c4ecd739405dcbeb4873bb6615e"
+  },
+  "candidateAfter": {
+    "src/js/40-app/30-capital-currents/01-engine.js": "55f6409cc25e6bfc3eee02d581c9b2b9d6f083485937b805e298d17075c69b1b",
+    "src/js/40-app/30-capital-currents/02-scenarios.js": "fdab0dd90693d4278b24c5643788bf4768266b96332b6d9d21257862441ce7ea",
+    "src/js/40-app/30-capital-currents/03-progress.js": "2c5511293709f599ed26f5bb850ada2273f36ddbed56f6c1a262b321d5df7b55",
+    "src/js/40-app/30-capital-currents/04-field-renderer.js": "4bd8fbdf99c8c22e57de1724bf13570009a569f9e4b26f6b93b83476d164a3c4",
+    "src/js/40-app/30-capital-currents/04-view.js": "89ca1fc0ab82c60067ff25be55cc8a32ed2a6ea3c519eca2696ea09b3921a868",
+    "src/js/40-app/30-capital-currents/05-controller.js": "f1feb9ea39cfea07e5b1bd285fbf42bb390ba5f6fab39286ef32681f6cac72de",
+    "src/styles/app.css": "49c49a4483e0e0a7c261d89a0126f19bdf821691a39dfeea9bd1013817b698d7",
+    "index.html": "160b4a2e0ba36d2fdb42bcc0405b2e2cf253c5ad357067c35e77b241a9ffd69f",
+    "src/js/manifest.json": "6fec82c46dd9903a4043c6cd57729e9932dc141ffa63c405f436224bcf24b972",
+    "src/js/20-ui/31-tools-services.js": "7b890d504e97b3e9dffe7bd87b0b2acc2a4a50662055ed768fb4e87fb5e54cf2",
+    "src/js/40-app/01-navigation.js": "bfb1e5a556ff34bdd07725a169725ef30aeb62b83a3cf9d225fdc482d1c78eb9",
+    "src/js/40-app/07-finalize-session.js": "3ed7107b6838d2e6388a66639c5231a2851a5c97238268761eb8f6e960a8d508",
+    "src/js/40-app/26-learning-catalog.js": "f6b5dde8480febea20f5e3094bb1eabdcb9064006b872e5170ff134fa369a4ac",
+    "src/js/00-core/07-workspace-backup.js": "8cd6d72f0fd31fff88f572890d8829719429b39d5174f4cd572cf621f415e37d",
+    "sw.js": "a39c1a98042091b9c6e70357eb6f6317e2a0b27ce851ae56c16461448219b606",
+    "build-id.js": "1b9a40e41d6a4f1e2ebd33ccd22092dff2e53eef4de58239203418292bc433cb",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "afeaeb2944e07a04b031b6d1eb48460685b4098a13a35913e5a6f608ff82cc05",
+    "tools/capital_currents_unit_test.js": "5e99064d5fc07261848aca96c4c76b889628741ddd3ae0dafaa192fc14b6ac4f",
+    "tools/capital_currents_progress_test.js": "7f16144cbf8beafc7f65503b75f06f19331ec64dbb4d165f9fa02d9cadd1ca03",
+    "tools/capital_currents_browser_test.py": "0e5586c0085638a13cd49a13e340a58e562cb4ce96b80bfb11a7f9e940b2c3a3",
+    "tools/capital_field_browser_test.py": "4e9c94430988793d78205f9846006f851451d0b7ffbe6d4fd7edb7dee1b4eec4",
+    "tools/capital_field_unit_test.js": "446159cec4b1a66fda845a9b669740631f51a5a862460dc52067d3c15590115a",
+    "tools/capital_field_catalog_test.js": "e81c244a1b8d00ac2036ac0cfccaae2cb1ab56d95090159d36b3b259682d3950",
+    "tools/learning_guide_test.py": "d6453ffe2731564c945a800637d2397fd6102fdb6c8f738b78555e390cd87b51",
+    "tools/quality_gate.py": "75e0eaf082f2fe99ea3f6f0a87a2c67340e76f578fa4e8aafbe0032fb838a0b4",
+    "tools/backup_package_fixture.py": "c86cc4eef14bf3fc0276cacb75b39d04c3448c4ecd739405dcbeb4873bb6615e"
+  },
+  "environment": {
+    "python": "3.9.6 (default, Oct 19 2026, 19:18:13) \n[Clang 21.0.0 (clang-2100.4.1.1)]",
+    "chromium": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/runtime/browsers/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "browserVersion": "148.0.7778.96",
+    "command": [
+      "work/trees/backup/tools/capital_currents_browser_test.py",
+      "--mode",
+      "all",
+      "--out-dir",
+      "work/implementation/capital-numeric-release-green"
+    ]
+  },
+  "limits": [
+    "Disposable synthetic contexts only",
+    "CSS zoom reflow; native browser zoom NOT_RUN",
+    "Human comprehension, screen reader and physical touch NOT_RUN"
+  ]
+}

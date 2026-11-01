@@ -1,0 +1,11 @@
+{
+  "reviewer": "/root/review_ci_runtime",
+  "critical": [],
+  "important": [],
+  "minor": [],
+  "fingerprints": {
+    "capital_native_paint_probe.py": "467411f89ea453258836afd0b81ab49016555ac1a54da182764b711366e2eb04",
+    "finalize_capital_numeric.py": "6d3b52191c12490a88710e0f86197cf956f4615ac70b35c4ea1ca7dd16ac2374"
+  },
+  "scope": "Finalizer pixel binding reviewed; capture-method delta static reviewed, no execution by reviewer. Actual pixels separately inspected by root."
+}

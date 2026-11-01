@@ -1,0 +1,762 @@
+{
+  "started_at": "2026-11-01T20:51:58.712253+00:00",
+  "root": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup",
+  "inputs_before": {
+    "index.html": "160b4a2e0ba36d2fdb42bcc0405b2e2cf253c5ad357067c35e77b241a9ffd69f",
+    "src/styles/app.css": "49c49a4483e0e0a7c261d89a0126f19bdf821691a39dfeea9bd1013817b698d7",
+    "src/js/40-app/14-mvp-notes.js": "bd610654670371b43194dfb1840ed5edfb6cfbd9465849f6d6bf15597460310a",
+    "src/js/40-app/09-settings-modal.js": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+    "build-id.js": "1b9a40e41d6a4f1e2ebd33ccd22092dff2e53eef4de58239203418292bc433cb",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "afeaeb2944e07a04b031b6d1eb48460685b4098a13a35913e5a6f608ff82cc05"
+  },
+  "test_sha256": "603586aa2cecc4f8596e1eb628c2ecfad8ba8effb3f3f0f8d8b582f7c061c911",
+  "checks": [
+    {
+      "name": "index.html/icon-background-contrast",
+      "result": "PASS",
+      "measurements": [
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            0,
+            122,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 4.016975780478911,
+          "theme": "light",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            0,
+            131.76000000000002,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6639612362201044,
+          "theme": "light",
+          "state": "hover"
+        },
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            10,
+            132,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6474724026721494,
+          "theme": "dark",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            10.8,
+            142.56,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.301590090239824,
+          "theme": "dark",
+          "state": "hover"
+        }
+      ]
+    },
+    {
+      "name": "index.html/click-keyboard",
+      "result": "PASS"
+    },
+    {
+      "name": "index.html/movement-cancellation",
+      "result": "PASS"
+    },
+    {
+      "name": "index.html/settings-ranges-focus",
+      "result": "PASS"
+    },
+    {
+      "name": "index.html/overlay-isolation",
+      "result": "PASS"
+    },
+    {
+      "name": "index.html/render-navigation-resize",
+      "result": "PASS"
+    },
+    {
+      "name": "index.html/visibility-reload-schema",
+      "result": "PASS"
+    },
+    {
+      "name": "index.html/390/light",
+      "result": "PASS",
+      "icon_contrast": [
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            0,
+            122,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 4.016975780478911,
+          "theme": "light",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            0,
+            131.76000000000002,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6639612362201044,
+          "theme": "light",
+          "state": "hover"
+        }
+      ]
+    },
+    {
+      "name": "index.html/320/dark",
+      "result": "PASS",
+      "icon_contrast": [
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            10,
+            132,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6474724026721494,
+          "theme": "dark",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            10.8,
+            142.56,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.301590090239824,
+          "theme": "dark",
+          "state": "hover"
+        }
+      ]
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/icon-background-contrast",
+      "result": "PASS",
+      "measurements": [
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            0,
+            122,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 4.016975780478911,
+          "theme": "light",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            0,
+            131.76000000000002,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6639612362201044,
+          "theme": "light",
+          "state": "hover"
+        },
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            10,
+            132,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6474724026721494,
+          "theme": "dark",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            10.8,
+            142.56,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.301590090239824,
+          "theme": "dark",
+          "state": "hover"
+        }
+      ]
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/click-keyboard",
+      "result": "PASS"
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/movement-cancellation",
+      "result": "PASS"
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/settings-ranges-focus",
+      "result": "PASS"
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/overlay-isolation",
+      "result": "PASS"
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/render-navigation-resize",
+      "result": "PASS"
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/visibility-reload-schema",
+      "result": "PASS"
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/390/light",
+      "result": "PASS",
+      "icon_contrast": [
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            0,
+            122,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 4.016975780478911,
+          "theme": "light",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(0, 122, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            0,
+            131.76000000000002,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6639612362201044,
+          "theme": "light",
+          "state": "hover"
+        }
+      ]
+    },
+    {
+      "name": "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html/320/dark",
+      "result": "PASS",
+      "icon_contrast": [
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "none",
+          "effectiveBackground": [
+            10,
+            132,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.6474724026721494,
+          "theme": "dark",
+          "state": "normal"
+        },
+        {
+          "sourceBackground": "rgb(10, 132, 255)",
+          "sourceIcon": "rgb(255, 255, 255)",
+          "filter": "brightness(1.08)",
+          "effectiveBackground": [
+            10.8,
+            142.56,
+            255
+          ],
+          "effectiveIcon": [
+            255,
+            255,
+            255
+          ],
+          "ratio": 3.301590090239824,
+          "theme": "dark",
+          "state": "hover"
+        }
+      ]
+    },
+    {
+      "name": "native-200/dark",
+      "result": "ENVIRONMENT_ERROR",
+      "detail": "{\"reason\": \"input precondition interrupted; external versus product cause not established\", \"trace\": [{\"type\": \"pointerdown\", \"time\": 896.9000000059605, \"target\": \"headerNotesBtn\", \"launcherTarget\": true, \"x\": 664.95703125, \"y\": 408.765625, \"pointerId\": 1, \"dragActive\": false, \"focus\": true, \"hit\": \"headerNotesBtn\", \"capture\": false, \"geometry\": {\"x\": 636.95703125, \"y\": 380.765625, \"width\": 56, \"height\": 56, \"top\": 380.765625, \"right\": 692.95703125, \"bottom\": 436.765625, \"left\": 636.95703125}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}, {\"type\": \"lostpointercapture\", \"time\": 951.2000000029802, \"target\": \"headerNotesBtn\", \"launcherTarget\": true, \"x\": 704, \"y\": 259.490234375, \"pointerId\": 1, \"dragActive\": true, \"focus\": true, \"hit\": \"appMain\", \"capture\": false, \"geometry\": {\"x\": 614.44140625, \"y\": 365.12890625, \"width\": 56, \"height\": 56, \"top\": 365.12890625, \"right\": 670.44140625, \"bottom\": 421.12890625, \"left\": 614.44140625}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}, {\"type\": \"pointerup\", \"time\": 1059.7000000029802, \"target\": \"HTMLAnchorElement\", \"launcherTarget\": false, \"x\": 484.95703125, \"y\": 283.765625, \"pointerId\": 1, \"dragActive\": false, \"focus\": true, \"hit\": \"\", \"capture\": false, \"geometry\": {\"x\": 636.95703125, \"y\": 380.765625, \"width\": 56, \"height\": 56, \"top\": 380.765625, \"right\": 692.95703125, \"bottom\": 436.765625, \"left\": 636.95703125}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}, {\"type\": \"click\", \"time\": 1059.7999999970198, \"target\": \"HTMLBodyElement\", \"launcherTarget\": false, \"x\": 484, \"y\": 283, \"pointerId\": 1, \"dragActive\": false, \"focus\": true, \"hit\": \"\", \"capture\": false, \"geometry\": {\"x\": 636.95703125, \"y\": 380.765625, \"width\": 56, \"height\": 56, \"top\": 380.765625, \"right\": 692.95703125, \"bottom\": 436.765625, \"left\": 636.95703125}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}]}",
+      "gesture_trace": [
+        {
+          "type": "pointerdown",
+          "time": 896.9000000059605,
+          "target": "headerNotesBtn",
+          "launcherTarget": true,
+          "x": 664.95703125,
+          "y": 408.765625,
+          "pointerId": 1,
+          "dragActive": false,
+          "focus": true,
+          "hit": "headerNotesBtn",
+          "capture": false,
+          "geometry": {
+            "x": 636.95703125,
+            "y": 380.765625,
+            "width": 56,
+            "height": 56,
+            "top": 380.765625,
+            "right": 692.95703125,
+            "bottom": 436.765625,
+            "left": 636.95703125
+          },
+          "viewport": {
+            "w": 720,
+            "h": 456,
+            "dpr": 4
+          }
+        },
+        {
+          "type": "lostpointercapture",
+          "time": 951.2000000029802,
+          "target": "headerNotesBtn",
+          "launcherTarget": true,
+          "x": 704,
+          "y": 259.490234375,
+          "pointerId": 1,
+          "dragActive": true,
+          "focus": true,
+          "hit": "appMain",
+          "capture": false,
+          "geometry": {
+            "x": 614.44140625,
+            "y": 365.12890625,
+            "width": 56,
+            "height": 56,
+            "top": 365.12890625,
+            "right": 670.44140625,
+            "bottom": 421.12890625,
+            "left": 614.44140625
+          },
+          "viewport": {
+            "w": 720,
+            "h": 456,
+            "dpr": 4
+          }
+        },
+        {
+          "type": "pointerup",
+          "time": 1059.7000000029802,
+          "target": "HTMLAnchorElement",
+          "launcherTarget": false,
+          "x": 484.95703125,
+          "y": 283.765625,
+          "pointerId": 1,
+          "dragActive": false,
+          "focus": true,
+          "hit": "",
+          "capture": false,
+          "geometry": {
+            "x": 636.95703125,
+            "y": 380.765625,
+            "width": 56,
+            "height": 56,
+            "top": 380.765625,
+            "right": 692.95703125,
+            "bottom": 436.765625,
+            "left": 636.95703125
+          },
+          "viewport": {
+            "w": 720,
+            "h": 456,
+            "dpr": 4
+          }
+        },
+        {
+          "type": "click",
+          "time": 1059.7999999970198,
+          "target": "HTMLBodyElement",
+          "launcherTarget": false,
+          "x": 484,
+          "y": 283,
+          "pointerId": 1,
+          "dragActive": false,
+          "focus": true,
+          "hit": "",
+          "capture": false,
+          "geometry": {
+            "x": 636.95703125,
+            "y": 380.765625,
+            "width": 56,
+            "height": 56,
+            "top": 380.765625,
+            "right": 692.95703125,
+            "bottom": 436.765625,
+            "left": 636.95703125
+          },
+          "viewport": {
+            "w": 720,
+            "h": 456,
+            "dpr": 4
+          }
+        }
+      ],
+      "diagnostics": {
+        "case": "native-200/dark",
+        "browser_observed": {
+          "pageerror": [],
+          "console": []
+        },
+        "dom": {
+          "url": "http://127.0.0.1:57881/index.html",
+          "time": 1093.7000000029802,
+          "html": {
+            "lang": "pt-BR",
+            "data-theme": "dark",
+            "data-ui-version": "tesla-inspired",
+            "data-shell": "global-dashboard",
+            "data-custom-layout": "enabled",
+            "data-navigation": "sidebar",
+            "data-experience": "completion",
+            "data-brand-choice": "primary",
+            "data-rail": "expanded",
+            "data-submenu-rail": "expanded",
+            "data-nav-style": "classic",
+            "data-route-screen": "dash",
+            "data-active-screen": "",
+            "data-active-primary": "dashboard",
+            "style": "--nav-glass-tint: 0.6; --nav-glass-alpha: 0.672; --nav-glass-blur: 21.20px; --nav-glass-saturation: 1.208; --nav-glass-reflection: 0.340; --nav-glass-contrast: 1.100;"
+          },
+          "body": {},
+          "viewport": {
+            "innerWidth": 720,
+            "innerHeight": 456,
+            "outerWidth": 1440,
+            "outerHeight": 1000,
+            "scrollX": 0,
+            "scrollY": 0,
+            "dpr": 4,
+            "visual": {
+              "width": 712.5,
+              "height": 456.5,
+              "scale": 1,
+              "left": 0,
+              "top": 0
+            }
+          },
+          "media": {
+            "mobile": true,
+            "glassCompact": true
+          },
+          "navigation": {
+            "canonical": "dashboard",
+            "requested": "dashboard",
+            "source": "canonical",
+            "primary": "dashboard",
+            "child": null,
+            "screen": "dash",
+            "localView": null
+          },
+          "active": {
+            "tag": "BUTTON",
+            "id": "headerNotesBtn",
+            "attributes": {
+              "type": "button",
+              "id": "headerNotesBtn",
+              "class": "mvpn-launcher-button",
+              "title": "Notas",
+              "aria-label": "Abrir notas",
+              "aria-controls": "mvpNotesOverlay",
+              "aria-haspopup": "dialog",
+              "aria-describedby": "mvpNotesLauncherHelp",
+              "data-notes-launcher-ready": "true",
+              "style": "left: 616.958px; top: 360.768px;"
+            },
+            "rect": {
+              "x": 636.95703125,
+              "y": 380.765625,
+              "width": 56,
+              "height": 56,
+              "top": 380.765625,
+              "right": 692.95703125,
+              "bottom": 436.765625,
+              "left": 636.95703125
+            },
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1",
+            "position": "absolute",
+            "overflow": "visible",
+            "inert": false,
+            "hidden": false
+          },
+          "toggles": [
+            [
+              {
+                "tag": "BUTTON",
+                "id": "",
+                "attributes": {
+                  "type": "button",
+                  "class": "shell-menu-btn",
+                  "data-shell-menu-toggle": "",
+                  "aria-expanded": "false",
+                  "aria-controls": "appSidebar",
+                  "aria-label": "Abrir menu de telas"
+                },
+                "rect": {
+                  "x": 365.1328125,
+                  "y": 14.5,
+                  "width": 67.3671875,
+                  "height": 36,
+                  "top": 14.5,
+                  "right": 432.5,
+                  "bottom": 50.5,
+                  "left": 365.1328125
+                },
+                "display": "flex",
+                "visibility": "visible",
+                "opacity": "1",
+                "position": "static",
+                "overflow": "visible",
+                "inert": false,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "headerActions",
+                "attributes": {
+                  "class": "header-actions",
+                  "id": "headerActions",
+                  "aria-label": "Ações do aplicativo"
+                },
+                "rect": {
+                  "x": 355.1328125,
+                  "y": 10.5,
+                  "width": 337.3671875,
+                  "height": 44,
+                  "top": 10.5,
+                  "right": 692.5,
+                  "bottom": 54.5,
+                  "left": 355.1328125
+                },
+                "display": "flex",
+                "visibility": "visible",
+                "opacity": "1",
+                "position": "static",
+                "overflow": "visible",
+                "inert": false,
+                "hidden": false
+              },
+              {
+                "tag": "HEADER",
+                "id": "",
+                "attributes": {},
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 712.5,
+                  "height": 64,
+                  "top": 0,
+                  "right": 712.5,
+                  "bottom": 64,
+                  "left": 0
+                },
+                "display": "flex",
+                "visibility": "visible",
+                "opacity": "1",
+                "position": "relative",
+                "overflow": "visible",
+                "inert": false,
+                "hidden": false
+              },
+              {
+                "tag": "BODY",
+                "id": "",
+                "attributes": {},
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 712.5,
+                  "height": 1719.0078125,
+                  "top": 0,
+                  "right": 712.5,
+                  "bottom": 1719.0078125,
+                  "left": 0
+                },
+                "display": "grid",
+                "visibility": "visible",
+                "opacity": "1",
+                "position": "static",
+                "overflow": "visible",
+                "inert": false,
+                "hidden": false
+              },
+              {
+                "tag": "HTML",
+                "id": "",
+                "attributes": {
+                  "lang": "pt-BR",
+                  "data-theme": "dark",
+                  "data-ui-version": "tesla-inspired",
+                  "data-shell": "global-dashboard",
+                  "data-custom-layout": "enabled",
+                  "data-navigation": "sidebar",
+                  "data-experience": "completion",
+                  "data-brand-choice": "primary",
+                  "data-rail": "expanded",
+                  "data-submenu-rail": "expanded",
+                  "data-nav-style": "classic",
+                  "data-route-screen": "dash",
+                  "data-active-screen": "",
+                  "data-active-primary": "dashboard",
+                  "style": "--nav-glass-tint: 0.6; --nav-glass-alpha: 0.672; --nav-glass-blur: 21.20px; --nav-glass-saturation: 1.208; --nav-glass-reflection: 0.340; --nav-glass-contrast: 1.100;"
+                },
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 712.5,
+                  "height": 1719.0078125,
+                  "top": 0,
+                  "right": 712.5,
+                  "bottom": 1719.0078125,
+                  "left": 0
+                },
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "position": "static",
+                "overflow": "visible",
+                "inert": false,
+                "hidden": false
+              }
+            ]
+          ],
+          "overlays": [],
+          "shell": {
+            "open": false,
+            "overflow": ""
+          }
+        },
+        "screenshot": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/.artifacts/app-efficiency-full-20261101T171835587988/notes-launcher-native-200_dark-failure.png",
+        "html": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/.artifacts/app-efficiency-full-20261101T171835587988/notes-launcher-native-200_dark-failure.html"
+      }
+    }
+  ],
+  "limits": [
+    "Synthetic Chromium contexts only; no user browser or personal data.",
+    "Alladin/calendar overlay probes test the launcher boundary, not their domain workflows.",
+    "Native 200% runs only with --native-zoom; CSS zoom is never substituted.",
+    "ENVIRONMENT_ERROR for interrupted input marks an unmet input precondition, not proof of an external root cause."
+  ],
+  "inputs_after": {
+    "index.html": "160b4a2e0ba36d2fdb42bcc0405b2e2cf253c5ad357067c35e77b241a9ffd69f",
+    "src/styles/app.css": "49c49a4483e0e0a7c261d89a0126f19bdf821691a39dfeea9bd1013817b698d7",
+    "src/js/40-app/14-mvp-notes.js": "bd610654670371b43194dfb1840ed5edfb6cfbd9465849f6d6bf15597460310a",
+    "src/js/40-app/09-settings-modal.js": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0",
+    "build-id.js": "1b9a40e41d6a4f1e2ebd33ccd22092dff2e53eef4de58239203418292bc433cb",
+    "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html": "afeaeb2944e07a04b031b6d1eb48460685b4098a13a35913e5a6f608ff82cc05"
+  },
+  "source_unchanged": true,
+  "finished_at": "2026-11-01T20:52:18.870191+00:00",
+  "result": "ENVIRONMENT_ERROR"
+}

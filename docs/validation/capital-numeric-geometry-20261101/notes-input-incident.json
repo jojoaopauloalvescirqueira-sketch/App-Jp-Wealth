@@ -1,0 +1,25 @@
+{
+  "classificationAsRecorded": "ENVIRONMENT_ERROR",
+  "fullSummary": {
+    "PASS": 115,
+    "PRODUCT_FAIL": 0,
+    "TEST_HARNESS_FAIL": 0,
+    "ENVIRONMENT_ERROR": 1,
+    "BASELINE_FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "failingCase": "native-200/dark",
+  "detail": "{\"reason\": \"input precondition interrupted; external versus product cause not established\", \"trace\": [{\"type\": \"pointerdown\", \"time\": 896.9000000059605, \"target\": \"headerNotesBtn\", \"launcherTarget\": true, \"x\": 664.95703125, \"y\": 408.765625, \"pointerId\": 1, \"dragActive\": false, \"focus\": true, \"hit\": \"headerNotesBtn\", \"capture\": false, \"geometry\": {\"x\": 636.95703125, \"y\": 380.765625, \"width\": 56, \"height\": 56, \"top\": 380.765625, \"right\": 692.95703125, \"bottom\": 436.765625, \"left\": 636.95703125}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}, {\"type\": \"lostpointercapture\", \"time\": 951.2000000029802, \"target\": \"headerNotesBtn\", \"launcherTarget\": true, \"x\": 704, \"y\": 259.490234375, \"pointerId\": 1, \"dragActive\": true, \"focus\": true, \"hit\": \"appMain\", \"capture\": false, \"geometry\": {\"x\": 614.44140625, \"y\": 365.12890625, \"width\": 56, \"height\": 56, \"top\": 365.12890625, \"right\": 670.44140625, \"bottom\": 421.12890625, \"left\": 614.44140625}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}, {\"type\": \"pointerup\", \"time\": 1059.7000000029802, \"target\": \"HTMLAnchorElement\", \"launcherTarget\": false, \"x\": 484.95703125, \"y\": 283.765625, \"pointerId\": 1, \"dragActive\": false, \"focus\": true, \"hit\": \"\", \"capture\": false, \"geometry\": {\"x\": 636.95703125, \"y\": 380.765625, \"width\": 56, \"height\": 56, \"top\": 380.765625, \"right\": 692.95703125, \"bottom\": 436.765625, \"left\": 636.95703125}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}, {\"type\": \"click\", \"time\": 1059.7999999970198, \"target\": \"HTMLBodyElement\", \"launcherTarget\": false, \"x\": 484, \"y\": 283, \"pointerId\": 1, \"dragActive\": false, \"focus\": true, \"hit\": \"\", \"capture\": false, \"geometry\": {\"x\": 636.95703125, \"y\": 380.765625, \"width\": 56, \"height\": 56, \"top\": 380.765625, \"right\": 692.95703125, \"bottom\": 436.765625, \"left\": 636.95703125}, \"viewport\": {\"w\": 720, \"h\": 456, \"dpr\": 4}}]}",
+  "userObservation": {
+    "questionId": "call_6a9a3595bc454c46aa19a5a8caaa6b64",
+    "question": "Mouse/trackpad use around17:52",
+    "answer": "Sim, estava usando"
+  },
+  "interpretation": "Compatible with input interference; user statement alone does not establish external versus product root cause. Unmet uninterrupted-pointer precondition is recorded, not waived.",
+  "notesCodeAndTestByteIdenticalToBase": {
+    "src/js/40-app/14-mvp-notes.js": true,
+    "tools/notes_launcher_test.py": true
+  },
+  "capitalElementsInFailureDom": 0,
+  "remediation": "One controlled unchanged focal after informing user to keep pointer stationary during native window; fresh full gate still required. No source/test/gate change."
+}
