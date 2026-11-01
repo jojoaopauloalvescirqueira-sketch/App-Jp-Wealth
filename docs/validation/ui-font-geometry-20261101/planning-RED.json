@@ -1,0 +1,37 @@
+{
+  "out": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/font-review-red",
+  "started_at": "2026-11-01T17:33:22.657281+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/styles/app.css": "cb277c17eb7f0c14f64c41ce0c15d6ae22f50993c7743587a3eb352551936ed0",
+    "tools/planning_monthly_inline_test.py": "6069c1bf523bdfc2cca39eac28d10ada72f28f489930ed4bd232267511d73cfa"
+  },
+  "cases": [
+    {
+      "id": "inline-review-input-opening",
+      "classification": "PRODUCT_FAIL",
+      "criteria": "inline-review-input-opening",
+      "started_at": "2026-11-01T17:33:25.302842+00:00",
+      "error": "('review heading is visible inside pane and viewport', {'active': True, 'tabindex': -1, 'rect': {'x': 77, 'y': 823.3125, 'width': 236, 'height': 21, 'top': 823.3125, 'right': 313, 'bottom': 844.3125, 'left': 77}, 'pane': {'x': 46, 'y': 305.59375, 'width': 298, 'height': 560, 'top': 305.59375, 'right': 344, 'bottom': 865.59375, 'left': 46}, 'viewport': [390, 844], 'hit': True})",
+      "trace": "Traceback (most recent call last):\n  File \"/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/ui_visual_quality_test.py\", line 872, in record\n    case['evidence'] = action()\n  File \"/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_monthly_inline_test.py\", line 712, in <lambda>\n    run=(lambda:compact.guard(page,harness,lambda:action(page,fixture))) if action in read_only else lambda:action(page,fixture,harness)\n  File \"/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/backup/tools/planning_monthly_inline_test.py\", line 283, in review_details\n    r,pane=geometry['rect'],geometry['pane'];assert r['top']>=max(0,pane['top'])-.25 and r['bottom']<=min(height,pane['bottom'])+.25 and geometry['hit'],('review heading is visible inside pane and viewport',geometry)\nAssertionError: ('review heading is visible inside pane and viewport', {'active': True, 'tabindex': -1, 'rect': {'x': 77, 'y': 823.3125, 'width': 236, 'height': 21, 'top': 823.3125, 'right': 313, 'bottom': 844.3125, 'left': 77}, 'pane': {'x': 46, 'y': 305.59375, 'width': 298, 'height': 560, 'top': 305.59375, 'right': 344, 'bottom': 865.59375, 'left': 46}, 'viewport': [390, 844], 'hit': True})\n",
+      "finished_at": "2026-11-01T17:33:26.388190+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-review-input-opening"
+  ],
+  "only": [
+    "inline-review-input-opening"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PRODUCT_FAIL",
+  "source_unchanged": true,
+  "finished_at": "2026-11-01T17:33:26.872238+00:00"
+}

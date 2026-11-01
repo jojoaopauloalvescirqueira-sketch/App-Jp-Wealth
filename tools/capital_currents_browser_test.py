@@ -256,6 +256,29 @@ def run(args):
                     finally:
                         session.detach()
                 if args.mode in ('matrix','all'):case('matrix 48 layouts themes widths zoom focus touch targets strict field delta',lambda:with_page(matrix,mobile=True))
+                def typography(p):
+                    before=financial(p);records=[]
+                    p.set_viewport_size({'width':390,'height':844})
+                    p.evaluate("mountNavigationLayout('sidebar')")
+                    session=p.context.new_cdp_session(p)
+                    try:
+                        session.send('Emulation.setPageScaleFactor',{'pageScaleFactor':1})
+                        for theme in ['light','dark']:
+                            p.evaluate("theme=>{document.documentElement.dataset.theme=theme;document.documentElement.style.zoom=2;window.dispatchEvent(new Event('resize'));window.visualViewport?.dispatchEvent(new Event('resize'))}",theme)
+                            open_game(p)
+                            p.locator('[data-capital-currents-root]').evaluate("root=>root.style.setProperty('--sans','Arial, sans-serif')")
+                            p.evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
+                            facts=geometry(p);row={'theme':theme,'font':'Arial, sans-serif','geometry':facts}
+                            assert facts['canvas']['w']>=140 and facts['canvas']['h']>=180 and facts['root']['scroll']<=facts['root']['client']+1,row
+                            assert facts['overflow']<=1,row
+                            for action in ['play','step','reset']:
+                                node=p.locator(f'[data-capital-currents-root] [data-action={action}]');node.evaluate('e=>e.scrollIntoView({block:"center"})');p.wait_for_timeout(150);bounds=hit(node)
+                                assert min(bounds['w'],bounds['h'])>=44 and all(x['own'] for x in bounds['points']),{**row,'action':action,'hit':bounds}
+                            records.append(row)
+                        assert financial(p)==before,'font presentation never changes financial facts'
+                        return {'presentations':records,'financialBytesUnchanged':True}
+                    finally:session.detach()
+                if args.mode in ('matrix','all'):case('matrix compact typography fallback preserves geometry and controls',lambda:with_page(typography,mobile=True))
                 def distributions():
                     results=[]
                     with tempfile.TemporaryDirectory(prefix='jpw-field-portable-') as temp:

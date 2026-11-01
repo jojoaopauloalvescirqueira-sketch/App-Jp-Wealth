@@ -267,18 +267,26 @@ def lifecycle(page,fixture,harness):
 
 def review_details(page,fixture,harness):
     before=financial(page);harness.start_write_probe(page);observed=[]
-    for width,height in [(1440,1000),(390,844),(1440,480)]:
-        page.set_viewport_size({'width':width,'height':height});planning.settle(page)
-        editor=open_editor(page,fixture);editor.locator('[name=value]').fill('3');editor.locator('[data-pl-inline-save]').click()
-        review=editor.locator('[data-pl-inline-review]');text=review.inner_text()
-        assert 'Saldo de abertura' in text and '1.065,00' in text,('review shows opening',text)
-        assert 'Informado' in text and '3%' in text and '31,95' in text,('review shows entered representation and converted USD',text)
-        heading=review.locator('h4');geometry=heading.evaluate("""n=>{const r=n.getBoundingClientRect(),p=n.closest('[data-pl-monthly-viewport]').getBoundingClientRect();return {active:document.activeElement===n,tabindex:n.tabIndex,rect:r.toJSON(),pane:p.toJSON(),viewport:[innerWidth,innerHeight],hit:n.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2))}}""")
-        assert geometry['active'] and geometry['tabindex']==-1,('Save visibly focuses noninteractive review heading',geometry)
-        r,pane=geometry['rect'],geometry['pane'];assert r['top']>=max(0,pane['top'])-.25 and r['bottom']<=min(height,pane['bottom'])+.25 and geometry['hit'],('review heading is visible inside pane and viewport',geometry)
-        assert not editor.locator('[data-pl-action=inline-confirm]').evaluate('n=>n===document.activeElement'),'confirmation must remain deliberate'
-        harness.no_writes(page);assert financial(page)==before
-        observed.append({'viewport':[width,height],'review':text,'geometry':geometry});editor.locator('[data-pl-action=inline-cancel]').click()
+    completed=False
+    font_styles=page.evaluate("['--sans','--mono'].map(k=>[k,document.documentElement.style.getPropertyValue(k),document.documentElement.style.getPropertyPriority(k)])")
+    try:
+        for font in [None,'Arial, sans-serif']:
+            if font:page.evaluate("font=>{for(const k of ['--sans','--mono'])document.documentElement.style.setProperty(k,font)}",font)
+            for width,height in [(1440,1000),(390,844),(1440,480)]:
+                page.set_viewport_size({'width':width,'height':height});planning.settle(page)
+                editor=open_editor(page,fixture);editor.locator('[name=value]').fill('3');editor.locator('[data-pl-inline-save]').click()
+                review=editor.locator('[data-pl-inline-review]');text=review.inner_text()
+                assert 'Saldo de abertura' in text and '1.065,00' in text,('review shows opening',text)
+                assert 'Informado' in text and '3%' in text and '31,95' in text,('review shows entered representation and converted USD',text)
+                heading=review.locator('h4');geometry=heading.evaluate("""n=>{const r=n.getBoundingClientRect(),p=n.closest('[data-pl-monthly-viewport]').getBoundingClientRect();return {active:document.activeElement===n,tabindex:n.tabIndex,rect:r.toJSON(),pane:p.toJSON(),viewport:[innerWidth,innerHeight],hit:n.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2))}}""")
+                assert geometry['active'] and geometry['tabindex']==-1,('Save visibly focuses noninteractive review heading',geometry)
+                r,pane=geometry['rect'],geometry['pane'];assert r['top']>=max(0,pane['top'])-.25 and r['bottom']<=min(height,pane['bottom'])+.25 and geometry['hit'],('review heading is visible inside pane and viewport',geometry)
+                assert not editor.locator('[data-pl-action=inline-confirm]').evaluate('n=>n===document.activeElement'),'confirmation must remain deliberate'
+                harness.no_writes(page);assert financial(page)==before
+                observed.append({'font':font,'viewport':[width,height],'review':text,'geometry':geometry});editor.locator('[data-pl-action=inline-cancel]').click()
+        completed=True
+    finally:
+        if completed:page.evaluate("rows=>rows.forEach(([k,v,p])=>v?document.documentElement.style.setProperty(k,v,p):document.documentElement.style.removeProperty(k))",font_styles)
     return observed
 
 

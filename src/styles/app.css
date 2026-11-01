@@ -10723,7 +10723,8 @@ html[data-theme="dark"] .time-twins{--time-twins-a:#b8a4ff;--time-twins-b:#e5ab4
 }
 
 @container (max-width:280px){
-.capital-field .capital-field-header{flex-wrap:wrap}
+.capital-field .capital-field-header{flex-wrap:wrap;overflow-wrap:anywhere;padding-inline:0}
+.capital-field .capital-field-header>div:first-child{flex-basis:100%}
 .capital-field .capital-field-clock{text-align:left}
 .capital-field .capital-field-transport{display:grid;grid-template-columns:1fr}
 .capital-field .capital-field-transport button{white-space:normal;overflow-wrap:anywhere}

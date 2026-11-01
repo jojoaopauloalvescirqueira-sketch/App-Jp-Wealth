@@ -1,0 +1,25 @@
+{
+  "html": "<header class=\"capital-field-header\"><div><p class=\"capital-field-eyebrow\">LABORATÓRIO VISUAL · MODELO ILUSTRATIVO</p><h3>Correntes de Capital</h3></div><span class=\"capital-field-clock\">Tempo simulado <strong data-output=\"time\">0,00 s</strong></span></header>",
+  "padding": "6px 20px 4px",
+  "width": 139,
+  "children": [
+    {
+      "tag": "DIV",
+      "cls": "",
+      "width": 99,
+      "scroll": 99,
+      "basis": "100%",
+      "font": "14px",
+      "letter": "normal"
+    },
+    {
+      "tag": "SPAN",
+      "cls": "capital-field-clock",
+      "width": 73,
+      "scroll": 73,
+      "basis": "auto",
+      "font": "10px",
+      "letter": "normal"
+    }
+  ]
+}

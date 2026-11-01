@@ -1,0 +1,259 @@
+{
+  "out": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/font-review-green",
+  "started_at": "2026-11-01T17:35:41.471417+00:00",
+  "source_sha256": {
+    "src/js/30-accounting/06-planning/03-ui.js": "031a28804ef3695cdbf6ed7d20e564c00eb153c2c17092022aca38c64553267d",
+    "src/js/30-accounting/06-planning/02-state.js": "f45e90bd8d913ac25e5f0d7fecf217d295ab70c00fd169ee4c291212e8b822c0",
+    "src/styles/app.css": "432f501d5b9fa18b263ee1e8d98da921ebec79aae9e69c7f805d4becd31e03e9",
+    "tools/planning_monthly_inline_test.py": "6069c1bf523bdfc2cca39eac28d10ada72f28f489930ed4bd232267511d73cfa"
+  },
+  "cases": [
+    {
+      "id": "inline-review-input-opening",
+      "classification": "PASS",
+      "criteria": "inline-review-input-opening",
+      "started_at": "2026-11-01T17:35:43.735256+00:00",
+      "evidence": [
+        {
+          "font": null,
+          "viewport": [
+            1440,
+            1000
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 388.1875,
+              "y": 489.21875,
+              "width": 915.625,
+              "height": 21,
+              "top": 489.21875,
+              "right": 1303.8125,
+              "bottom": 510.21875,
+              "left": 388.1875
+            },
+            "pane": {
+              "x": 357.1875,
+              "y": 153.828125,
+              "width": 977.625,
+              "height": 650,
+              "top": 153.828125,
+              "right": 1334.8125,
+              "bottom": 803.828125,
+              "left": 357.1875
+            },
+            "viewport": [
+              1440,
+              1000
+            ],
+            "hit": true
+          }
+        },
+        {
+          "font": null,
+          "viewport": [
+            390,
+            844
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 77,
+              "y": 411.5,
+              "width": 236,
+              "height": 21,
+              "top": 411.5,
+              "right": 313,
+              "bottom": 432.5,
+              "left": 77
+            },
+            "pane": {
+              "x": 46,
+              "y": 120.59375,
+              "width": 298,
+              "height": 560,
+              "top": 120.59375,
+              "right": 344,
+              "bottom": 680.59375,
+              "left": 46
+            },
+            "viewport": [
+              390,
+              844
+            ],
+            "hit": true
+          }
+        },
+        {
+          "font": null,
+          "viewport": [
+            1440,
+            480
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 388.1875,
+              "y": 229.21875,
+              "width": 915.625,
+              "height": 21,
+              "top": 229.21875,
+              "right": 1303.8125,
+              "bottom": 250.21875,
+              "left": 388.1875
+            },
+            "pane": {
+              "x": 357.1875,
+              "y": -106.171875,
+              "width": 977.625,
+              "height": 650,
+              "top": -106.171875,
+              "right": 1334.8125,
+              "bottom": 543.828125,
+              "left": 357.1875
+            },
+            "viewport": [
+              1440,
+              480
+            ],
+            "hit": true
+          }
+        },
+        {
+          "font": "Arial, sans-serif",
+          "viewport": [
+            1440,
+            1000
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 388.1875,
+              "y": 489.21875,
+              "width": 915.625,
+              "height": 21,
+              "top": 489.21875,
+              "right": 1303.8125,
+              "bottom": 510.21875,
+              "left": 388.1875
+            },
+            "pane": {
+              "x": 357.1875,
+              "y": 153.828125,
+              "width": 977.625,
+              "height": 650,
+              "top": 153.828125,
+              "right": 1334.8125,
+              "bottom": 803.828125,
+              "left": 357.1875
+            },
+            "viewport": [
+              1440,
+              1000
+            ],
+            "hit": true
+          }
+        },
+        {
+          "font": "Arial, sans-serif",
+          "viewport": [
+            390,
+            844
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 77,
+              "y": 411.3125,
+              "width": 236,
+              "height": 21,
+              "top": 411.3125,
+              "right": 313,
+              "bottom": 432.3125,
+              "left": 77
+            },
+            "pane": {
+              "x": 46,
+              "y": 120.59375,
+              "width": 298,
+              "height": 560,
+              "top": 120.59375,
+              "right": 344,
+              "bottom": 680.59375,
+              "left": 46
+            },
+            "viewport": [
+              390,
+              844
+            ],
+            "hit": true
+          }
+        },
+        {
+          "font": "Arial, sans-serif",
+          "viewport": [
+            1440,
+            480
+          ],
+          "review": "Confira antes de confirmar\n\nSaldo de abertura: US$ 1.065,00\n\nInformado: 3%\n\nResultado / lançamento: US$ 31,95 · taxa 3%\n\nConfirmar registro",
+          "geometry": {
+            "active": true,
+            "tabindex": -1,
+            "rect": {
+              "x": 388.1875,
+              "y": 229.21875,
+              "width": 915.625,
+              "height": 21,
+              "top": 229.21875,
+              "right": 1303.8125,
+              "bottom": 250.21875,
+              "left": 388.1875
+            },
+            "pane": {
+              "x": 357.1875,
+              "y": -106.171875,
+              "width": 977.625,
+              "height": 650,
+              "top": -106.171875,
+              "right": 1334.8125,
+              "bottom": 543.828125,
+              "left": 357.1875
+            },
+            "viewport": [
+              1440,
+              480
+            ],
+            "hit": true
+          }
+        }
+      ],
+      "finished_at": "2026-11-01T17:35:45.101039+00:00",
+      "page_errors": []
+    }
+  ],
+  "required_case_ids": [
+    "inline-review-input-opening"
+  ],
+  "only": [
+    "inline-review-input-opening"
+  ],
+  "browser": "148.0.7778.96",
+  "coverage": {
+    "executed": 1,
+    "required": 1,
+    "unique": true
+  },
+  "classification": "PASS",
+  "source_unchanged": true,
+  "finished_at": "2026-11-01T17:35:45.299438+00:00"
+}

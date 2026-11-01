@@ -745,7 +745,7 @@
       "path": "src/js/30-accounting/06-planning/03-ui.js",
       "section": "Planejamento patrimonial independente",
       "order": 123,
-      "sha256": "e0275fe407da8a1e41d2267294c2de3ab0c1b19ad8f87dcc4271f62a4f2b389f"
+      "sha256": "031a28804ef3695cdbf6ed7d20e564c00eb153c2c17092022aca38c64553267d"
     },
     {
       "path": "src/js/30-accounting/07-management/01-engine.js",

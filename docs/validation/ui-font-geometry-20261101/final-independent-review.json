@@ -1,0 +1,28 @@
+{
+  "reviewer": "/root/review_ci_runtime",
+  "kind": "independent static review; no suites executed",
+  "critical": [],
+  "important": [],
+  "minor": "none outstanding",
+  "fingerprints": {
+    "src/js/30-accounting/06-planning/03-ui.js": "031a28804ef3695cdbf6ed7d20e564c00eb153c2c17092022aca38c64553267d",
+    "src/styles/app.css": "5a6cf3700729c1a8df76de35e999bf0e52b948cbb7180f530b2370d93d7ba052",
+    "tools/planning_monthly_inline_test.py": "6069c1bf523bdfc2cca39eac28d10ada72f28f489930ed4bd232267511d73cfa",
+    "tools/capital_currents_browser_test.py": "fbdb145bdfcc6d298a71c26a9bc2775e2ffacc1012c6ef3e65c8860382d54ea9",
+    "tools/quality_gate.py": "75e0eaf082f2fe99ea3f6f0a87a2c67340e76f578fa4e8aafbe0032fb838a0b4",
+    ".github/workflows/quality-gate.yml": "e9d5dcbd6fcf8301b37893398dbcc19e0eaaaf4eb31dc5cc1122c89ec4b3eb87"
+  },
+  "focalReceiptInspection": {
+    "planning": {
+      "PASS": 1,
+      "scenarios": 6
+    },
+    "capital": {
+      "PASS": 9,
+      "FAIL": 0
+    }
+  },
+  "remaining": "Local FULL and Linux finalcandidate required",
+  "finalCssReview": "padding-inline0, captionfullrow andwrapping scoped≤280; globalheader/verticalpadding/criteria preserved",
+  "build": "e65a0f5397d4553c"
+}
