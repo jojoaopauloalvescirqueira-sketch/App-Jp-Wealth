@@ -220,13 +220,10 @@ try:
         page.locator('#mvpNotesNewFolderBtn').click()
         assert page.evaluate('S.mvpNotes.folders.length')==1, 'pasta deveria ter sido criada'
         page.locator('#mvpNotesNewBtn').click()
-        # Configuração inicial (JPW-CBA987): o "+" abre o modal; o editor vem depois
-        # de "Criar Nota". Aqui aceitamos os padrões já pré-selecionados.
-        assert page.locator('#mvpNotesNewOverlay').is_visible(), 'modal de nova nota deveria abrir'
-        page.locator('#mvpNotesNewConfirmBtn').click()
+        assert page.locator('#mvpNoteContent').is_visible() and not page.locator('#mvpNotesNewOverlay').is_visible(), 'Nova nota deve abrir o editor diretamente'
         page.locator('#mvpNoteContent').fill('Nota de fumaça')
         assert page.evaluate('mvpNotesUI.draft.folderId')==page.evaluate('S.mvpNotes.folders[0].id'), 'nota nova em pasta ativa deveria herdar a pasta'
-        page.locator('#mvpNotesSaveBtn').click()
+        page.wait_for_function("mvpNotesUI.selectedId && !mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
         assert page.evaluate('S.mvpNotes.items.length')==1, 'nota deveria ter sido criada'
         assert page.evaluate('S.mvpNotes.items[0].folderId')==page.evaluate('S.mvpNotes.folders[0].id'), 'nota deveria estar vinculada à pasta'
         assert page.locator('#headerNotesBadge').inner_text()=='1', 'badge deveria contar a nota ativa'

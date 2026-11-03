@@ -1,3 +1,11 @@
+# Gêmeos do Tempo em Configurações — sucessão de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) sucede a localização em Tools descrita nas fotografias abaixo: **Configurações → MiniGames → Gêmeos do Tempo**, com MiniGames após Conhecimento e central com os três jogos. Os mesmos nós `#minigamesTimeTwinsGame` / `#toolsTimeTwinsSlot` são transportados uma vez aos painéis Settings; instâncias, motor, preferências e progresso permanecem. Abrir é explícito, monta sob demanda e não inicia simulação; Voltar pausa e retorna à central com foco em `#minigamesOpenTimeTwins`.
+
+Settings é o proprietário e não pausa seu próprio jogo por estar aberto. Sair/ocultar ou cobrir com outro diálogo pausa; retorno conserva a instância e requer continuação explícita conforme o controlador. Observadores não remontam controlador descartado: somente nova entrada aceita. Aliases antigos passam pelo resolvedor, disponibilidade e guardas de rascunho/conta/execução, mantendo a rota financeira de fundo e a intenção de Back/Forward; recusa não altera histórico/categoria nem descarta texto. A central não monta os jogos por consulta. Ver [hierarquia corrente](NAVIGATION-HIERARCHY.md) e [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Atualização de backup — workspace3 — 31/10/2026
 
 O [pacote único aprovado](COMPLETE-BACKUP.md) inclui o raw confirmado de `jpwealth_time_twins_v1` somente em `workspace.preferences`; continua fora de S e dos fatos financeiros. Restaurar não concede novas demonstrações nem inicia uma missão. Arquivo antigo sem a chave preserva o destino; incompatível/futuro verificável é consulta opaca, sem ativação. Esta nota substitui somente a exclusão de Backup Completo descrita abaixo; esquema, motor, perfis/parâmetros e evidências históricas permanecem sob seus contratos.

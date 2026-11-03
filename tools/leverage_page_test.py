@@ -392,7 +392,7 @@ def route_and_inspect(page):
     assert signature.locator('.stoikus-name').text_content() == 'Stoikus'
     assert signature.locator('.stoikus-attribution > span').text_content() == 'by'
     assert signature.evaluate("n=>getComputedStyle(n).fontWeight==='400'&&getComputedStyle(n).fontSize==='24px'")
-    assert page.evaluate("JPWNavigation.children('tools').find(r=>r.id==='tools-leverage').label") == 'Stoikus — MT5'
+    assert page.evaluate("JPWNavigation.children('tools').find(r=>r.id==='tools-leverage').label") == 'Stoikus EA'
     assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
     assert 'Este site não recebe posições, patrimônio da conta (equity), credenciais, resultados ou estudos' in page.locator('#jpwLeveragePage').text_content()
     assert 'O site não lê nem distribui o arquivo' in page.locator('#jpwLeverageHow').text_content()

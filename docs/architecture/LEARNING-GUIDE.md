@@ -1,3 +1,13 @@
+# Prática de Notas e destinos — sucessão de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) sucede a exigência anterior de clicar Salvar para praticar Notas. O observador recebe pares transitórios `jpw-notes-save` (before/PENDING e after do mesmo token de edição confiável), mas evento sozinho não comprova gravação. Exige recibo novo do escritor `notes`, `CONFIRMED`/`READBACK_MATCH`, mesmo contexto/epoch, conteúdo durável e original confirmado do editor. Sucesso concede uma prática e encerra a observação; duplicatas/autosaves seguintes não acumulam créditos.
+
+Metadados isolados, vazio novo intocado, no-op, evento não confiável/despareado, recibo antigo, conflito, `REFUSED`, `UNKNOWN`, pausa ou mudança de base não concedem prática. Nota existente esvaziada pode contar quando realmente confirmada. Reabrir rascunho recuperado não conta. Tokens/provas, conteúdo e IDs de nota ficam transitórios e não são persistidos no progresso; somente estados do progresso existente são gravados. Política de IA e controles originais continuam independentes.
+
+O catálogo preserva os IDs antigos e `catalogVersion:1`. MiniGames aponta a Configurações; sair de um jogo permite usar Fechar original de Settings e depois Ir explicitamente, sem o guia descartar rascunhos. Rótulos seguem Estatuto JP Wealth, Stoikus EA, Calendário e Sessões, Sessões Abertas e Planejamento de Patrimônio a Longo Prazo; menu principal Planejamento permanece curto. Backup workspace3 segue o complemento de31/10 acima de suas fotografias. Ver [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Atualização de backup — workspace3 — 31/10/2026
 
 O [pacote único aprovado](COMPLETE-BACKUP.md) inclui o raw confirmado de `jpwealth_learning_guide_v1` em `workspace.preferences`, separado dos fatos financeiros. Importar workspace3 restaura exatamente esse snapshot, pausa a orientação e invalida observações pendentes, sem conceder prática ou iniciar navegação. Arquivo antigo sem a chave preserva o destino; incompatível/futuro é material opaco de consulta quando verificável. Esta atualização substitui somente as cláusulas de exclusão do Backup Completo e de não restauração do progresso abaixo. Schema do produtor, personalidade de Dante, privacidade e validações financeiras permanecem. As execuções históricas não comprovam este candidato.

@@ -1,3 +1,13 @@
+# UX Notas, navegação e sessões — atualização focal de 02/11/2026
+
+Conforme [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md), Notas passa ao editor direto com texto autosalvo pelo delta sobre base confirmada; metadados/política mantêm confirmação própria. Formato v5 e backup permanecem, com nota vazia identificada preservada e conteúdo string explícito autoritativo. Rascunho recuperado não é fato confirmado. Limitação legada: nota/pasta sem identidade estável é legível/exportável, mas edição isolada recusa sem migrar IDs automaticamente.
+
+MiniGames pertence a Configurações após Conhecimento, com os mesmos três jogos/nós/controladores e progresso; aliases e guardas preservam a rota financeira de fundo. Calendário e Sessões mostra Sessões Abertas completas (quatro centros Forex e B3); mapa móvel é opcional. Nomes externos atualizados não alteram fontes normativas, motores ou disponibilidade operacional. Prática de Notas no guia depende de recibo real e é concedida uma vez, sem persistir provas/conteúdo/ID.
+
+Esta atualização descreve somente o delta corrente; não revalida todo o contexto histórico. Contratos e [proveniência focal](../validation/ux-notas-menus-20261102/README.md) distinguem revisão de fonte e execução; [CURRENT-STATE](CURRENT-STATE.md) mantém o estado de validação. Sem alteração de autoridade, skills, gates ou índice global.
+
+## Fotografias anteriores preservadas
+
 # Planejamento — contrato visual e jornada de três abas
 
 A finalidade e os cálculos permanecem no [contrato Planejamento](../architecture/PLANNING.md). A correção de21/10 exige centralização, alinhamento moeda/valor, cabeçalhos responsivos, previsão sem repetição e legenda/data da Parada; [plano aprovado](../superpowers/plans/2026-10-21-planning-proportions.md). O [estado operacional e provas](CURRENT-STATE.md) identifica a revisão realmente validada. Não altera perguntas, perfis, escritores, finanças, backup ou norma. Históricos preservados abaixo.

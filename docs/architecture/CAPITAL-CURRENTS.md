@@ -1,3 +1,11 @@
+# Correntes de Capital em Configurações — sucessão de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) sucede a localização em Tools descrita nas fotografias abaixo: **Configurações → MiniGames → Correntes de Capital**, com MiniGames após Conhecimento e central com os três jogos. Os mesmos nós `#minigamesCapitalCurrentsGame` / `#toolsCapitalCurrentsSlot` são transportados uma vez aos painéis Settings; instâncias, motor, preferências e progresso permanecem. Abrir é explícito, monta sob demanda e não inicia simulação; Voltar pausa e retorna à central com foco em `#minigamesOpenCapitalCurrents`.
+
+Settings é o proprietário e não pausa seu próprio jogo por estar aberto. Sair/ocultar ou cobrir com outro diálogo pausa; retorno conserva a instância e requer continuação explícita conforme o controlador. Observadores não remontam controlador descartado: somente nova entrada aceita. Aliases antigos passam pelo resolvedor, disponibilidade e guardas de rascunho/conta/execução, mantendo a rota financeira de fundo e a intenção de Back/Forward; recusa não altera histórico/categoria nem descarta texto. A central não monta os jogos por consulta. Ver [hierarquia corrente](NAVIGATION-HIERARCHY.md) e [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Atualização de backup — workspace3 — 31/10/2026
 
 O [pacote único aprovado](COMPLETE-BACKUP.md) inclui o raw confirmado de `jpwealth_capital_field_v1` em `workspace.preferences`, fora dos fatos financeiros. `jpwealth_capital_currents_v1` legado é preservado, quando JSON verificável e sem segredos, somente em rascunhos opacos recuperáveis para consulta; nunca é aplicado à chave de destino nem ativa campanha. Restaurar o progresso novo não cria prática adicional nem inicia o campo. Esta nota substitui as exclusões/afirmações de formato das fatias históricas abaixo exclusivamente quanto ao backup; motores, perfis, parâmetros, esquemas produtores e finanças não mudam. As validações anteriores permanecem históricas.

@@ -6439,6 +6439,295 @@
         "build": "33e26b5d9bb45c0b",
         "scope": "FULLlocal116/116 eUI413/413, fontesestáveis; novoLinux pendente."
       }
+    },
+    {
+      "id": "calendar_news_compact_20261102",
+      "state": "fixed_regression",
+      "summary": "Notícias em uma linha44px e tabela860px com rolagem restrita, mantendo mês e sete campos.",
+      "source": {
+        "path": "docs/work/CHG-CALENDAR-NEWS-COMPACT-20261102.md",
+        "section": "contrato humano aprovado02/11/2026"
+      },
+      "stimulus": "Seis eventos sintéticos com título longo, zero, negativo, ausências e avisos; modal/workspace, temas/larguras e refresh com foco/scroll.",
+      "expected": "Sete cabeçalhos sempre; linhas44px comuns; overflow só na região econômica; dados/estado e calendário preservados.",
+      "cause": "Coluna do modal nunca alcança720px, ativando cartões altos em vez das sete colunas.",
+      "protection": {
+        "path": "tools/calendar_economic_table_contract.py",
+        "case": "table-compact/table-state/table-natural/table-wide/table-boundaries",
+        "command": "python3 tools/calendar_agenda_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-agenda"
+        }
+      },
+      "evidence": [
+        {
+          "path": "work/implementation/calendar-news-20261102/red-permanent.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED pelo comportamento antigo antes da alteração; ambiente inicial e erros de sequência de teste preservados separadamente."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "fdeb721f75b8bf2c",
+        "scope": "Focais22/22PASS e matrizUI413/413PASS; produto preservado. FULL anterior115/116 com expectativa textual antiga; novoFULL candidato final pendente, assim como Linux/aceite. Sem fechamento de incidentes históricos.",
+        "artifact": "outputs/calendar-news-20261102/relatorio.md"
+      }
+    },
+    {
+      "id": "notes_scoped_autosave_20261102",
+      "state": "fixed_regression",
+      "summary": "Editor direto, autosave delimitado e Salvo apenas confirmado, sem promover RAM adjacente.",
+      "source": {
+        "path": "docs/architecture/DB-STORAGE-GOVERNANCE.md",
+        "section": "Notas — escritor delimitado — 02/11/2026"
+      },
+      "stimulus": "Criar primeiro conteúdo; editar/reverter; REFUSED/UNKNOWN; recuperar rascunho; dirty financeiro e metadados pendentes.",
+      "expected": "Uma criação; debounce500ms/máximo2s/flush; base raw/epoch/contexto confirmada; recusa preserva e retry explícito; UNKNOWN bloqueia; recuperação em RAM.",
+      "cause": "Salvar manual e save(S) genérico não sustentam o novo autosave; no-op divergente não pode confirmar RAM.",
+      "protection": {
+        "path": "tools/notes_experience_test.py",
+        "case": "autosave-direct,autosave-scoped,autosave-reverted,autosave-divergent-ram,autosave-refused,autosave-recovered-draft",
+        "command": "python3 tools/notes_experience_test.py --artifact source --cases autosave-direct,autosave-scoped,autosave-divergent-ram",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "notes/red-01.json e notes/fix-1-red.json; hashes e resultados no recibo compacto."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "notes/fix-1-green.json5/5 e notes/fix-1-pertinent-green.json7/7; não é FULL nem cobertura direta desta suíte no runner."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "5b37ea66dcd12fc7",
+        "scope": "Build identifica o candidato reconstruído corrente, conferido em build-id.js; os recibos focais anteriores permanecem vinculados pelos hashes de fonte em provenance.json (43/43 correspondentes), sem alegar execução integral deste build. A qualificação é focal, não conclusão de FULL, distribuições, release ou aceite humano; esta correção verifica somente os dados do índice pelo checker existente.",
+        "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
+      }
+    },
+    {
+      "id": "notes_empty_legacy_content_20261102",
+      "state": "fixed_regression",
+      "summary": "String content vazia prevalece sobre extensão legada; datas ausentes estáveis por página e limite semIDs explícito.",
+      "source": {
+        "path": "docs/architecture/STATE-SCHEMA.md",
+        "section": "Notas — sucessão corrente de 02/11/2026"
+      },
+      "stimulus": "Importar v4 title/description, apagar texto, confirmar/recarregar/reimportar; normalizar datas ausentes; editar item/pasta semIDs.",
+      "expected": "Nota identificada vazia persiste sem ressuscitar description; fallback aproximado não muda por comparação; semIDs recusa edição/rename e preserva raw/texto sem migrar identidade.",
+      "cause": "Fallback por texto não vazio ressuscitava legado; datas novas por normalização quebravam a base confirmada.",
+      "protection": {
+        "path": "tools/notes_experience_test.py",
+        "case": "autosave-legacy-erasure,autosave-legacy-missing-dates,autosave-legacy-missing-ids-refused",
+        "command": "python3 tools/notes_experience_test.py --artifact source --cases autosave-legacy-erasure,autosave-legacy-missing-dates,autosave-legacy-missing-ids-refused",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "notes/fix-1-red.json tem três falhas e recusa segura semIDs já PASS."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "notes/fix-1-green.json5/5; task-1-rereview-1.md mantém limitação semIDs, sem certificar exportação ou recuperação completa."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "5b37ea66dcd12fc7",
+        "scope": "Build identifica o candidato reconstruído corrente, conferido em build-id.js; os recibos focais anteriores permanecem vinculados pelos hashes de fonte em provenance.json (43/43 correspondentes), sem alegar execução integral deste build. A qualificação é focal, não conclusão de FULL, distribuições, release ou aceite humano; esta correção verifica somente os dados do índice pelo checker existente.",
+        "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
+      }
+    },
+    {
+      "id": "minigames_settings_owner_guards_20261102",
+      "state": "fixed_regression",
+      "summary": "MiniGames em Settings reutiliza nós/controladores e conserva guardas reais, fundo e histórico. Host visual conserva canvas legível e chrome/hitpoints sob zoom CSS.",
+      "source": {
+        "path": "docs/architecture/NAVIGATION-HIERARCHY.md",
+        "section": "Menus e MiniGames — sucessão corrente de 02/11/2026"
+      },
+      "stimulus": "Entrar por aliases/folha/histórico com formulários reais sujos; alternar três jogos e diálogo externo; descartar controlador. FULL1: canvas estreito em Settings desktop;48casos Capital+tipografia sob CSSzoom;32chegadas TimeTwins com Settings em foreground.",
+      "expected": "Settings próprio não pausa; outro diálogo/saída pausa; não autoplay/duplicação;12recusas preservam formulário/foco/stack; observador não recria. Canvas desktop>500 quando há largura; modal/chrome próprios contidos, histórico e Back44 atingíveis; chegada usa clip/header do owner, mantendo números/progresso/lifecycle.",
+      "cause": "Exceção action:settings nas guardas exigia projetar a intenção antiga de sair do workspace para MiniGames. Na emenda visual, grid baseado na viewport reservava310px lateral; altura100dvh ignorava o overlay escalado; padding fixo do histórico não cabia no pane; oracle confundia header inerte do fundo com foreground.",
+      "protection": {
+        "path": "tools/minigames_test.py",
+        "case": "check_settings_host,check_real_dirty_guards",
+        "command": "python3 tools/minigames_test.py",
+        "full_gate": {
+          "included": true,
+          "check_id": "minigames"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "task-2-red.log e task-2-dirty-red.log preservados por SHA256."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "task-2-dirty-owned-green.log e task-2-aliases-green.log focais; task-2-rereview-1.md aprova fix de descarte1/0. Check existente no FULL, sem afirmar execução FULL final."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "FULL1 anterior à emenda retém113PASS/3PRODUCT_FAIL;3falhas de host/oracle preservadas no bruto."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "Emenda fonte: tools/galton_board_test.py:test_real_ui >500; tools/capital_currents_browser_test.py:matrix48+typography4, owner_geometry e Back44/native; tools/time_twins_browser_test.py:matrix32 arrival owner/clip, sem relaxar os demais critérios. Rebuild/FULL2/native/distribuições não presumidos."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "BASELINE_FAIL",
+          "note": "320/CSS2 root8px já antes de Settings; fora da correção de host. Não declarar contenção visual estrita desse baseline."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "5b37ea66dcd12fc7",
+        "scope": "Build5b37ea66dcd12fc7 identifica somente o último artefato oficial anterior à emenda pós-FULL1. GREEN atual é de fonte modular: Galton UI >500, Capital48+4 e TimeTwins32, hashes atuais por3overrides explícitos em provenance.json. FULL1 continua113PASS/3PRODUCT_FAIL histórico; rereview, rebuild, whole3/distribuições/native200/FULL2, Linux e aceite humano não são presumidos. O índice não encerra o baseline320 nem outras pendências.",
+        "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
+      }
+    },
+    {
+      "id": "notes_guide_confirmed_one_shot_20261102",
+      "state": "fixed_regression",
+      "summary": "Prática do guia depende do recibo durável pareado e é concedida uma vez, sem persistir prova/conteúdo/ID.",
+      "source": {
+        "path": "docs/architecture/LEARNING-GUIDE.md",
+        "section": "Prática de Notas e destinos — sucessão de 02/11/2026"
+      },
+      "stimulus": "Before/after confiável, metadados isolados, recibo velho, REFUSED/UNKNOWN, contextos e autosaves repetidos.",
+      "expected": "Somente CONFIRMED/READBACK_MATCH novo e mesma base/conteúdo credita uma prática; eventos isolados/metadados não contam.",
+      "cause": "Observação de Salvar manual não acompanha autosave; evento não é prova durável.",
+      "protection": {
+        "path": "tools/learning_guide_test.py",
+        "case": "native-notes/ (inclui metadata-only e one-shot)",
+        "command": "python3 tools/learning_guide_test.py --case native-notes/ --out /private/tmp/jpw-guide-focal.json",
+        "full_gate": {
+          "included": true,
+          "check_id": "learning-guide"
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "task-3-controller-red.log e task-3-first-write-red.log preservados."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "task-3-guide-current.json6/6, compatibility7/7 e controller-final133/0 relatado no log; não é execução final FULL."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "5b37ea66dcd12fc7",
+        "scope": "Build identifica o candidato reconstruído corrente, conferido em build-id.js; os recibos focais anteriores permanecem vinculados pelos hashes de fonte em provenance.json (43/43 correspondentes), sem alegar execução integral deste build. A qualificação é focal, não conclusão de FULL, distribuições, release ou aceite humano; esta correção verifica somente os dados do índice pelo checker existente.",
+        "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
+      }
+    },
+    {
+      "id": "sessions_full_real_host_20261102",
+      "state": "fixed_regression",
+      "summary": "Sessões Abertas expõe4FX+B3 sem recolhimento integral; agenda permanece independente.",
+      "source": {
+        "path": "docs/architecture/MARKET-HOURS.md",
+        "section": "Sessões Abertas — apresentação corrente de 02/11/2026"
+      },
+      "stimulus": "Abrir host real, variar dia da agenda e inspecionar sessões/marker; manter fixture API collapsed explícita.",
+      "expected": "Quatro centros e B3 incluindo fechados/desconhecidos; mapa móvel só sob demanda; host integral e API legada preservada.",
+      "cause": "Host montava collapsed:true; nome externo não deve ocultar centros fechados ou desconhecidos.",
+      "protection": {
+        "path": "tools/calendar_markets_test.py",
+        "case": "CM-HOST-03,CM-HOST-04,CM-API-01",
+        "command": "python3 tools/calendar_markets_test.py --only CM-HOST-04 --out-dir /private/tmp/jpw-sessions-host",
+        "full_gate": {
+          "included": false,
+          "check_id": null
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "task-3-presentation-red-attempt3.log preserva RED do host recolhido."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "task-3-calendar-reference-final/report.json CM-HOST-04; focal standalone não está diretamente no FULL116. calendar-distribution mantém focais Forex diferentes."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "5b37ea66dcd12fc7",
+        "scope": "Build identifica o candidato reconstruído corrente, conferido em build-id.js; os recibos focais anteriores permanecem vinculados pelos hashes de fonte em provenance.json (43/43 correspondentes), sem alegar execução integral deste build. A qualificação é focal, não conclusão de FULL, distribuições, release ou aceite humano; esta correção verifica somente os dados do índice pelo checker existente.",
+        "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
+      }
+    },
+    {
+      "id": "notes_launcher_outside_release_recovery_20261102",
+      "state": "open_incident",
+      "summary": "Recuperação de arraste de Notas após pointerup fora do botão implementada; causa inicial da ausência de captura nativa em FULL2 ainda não esclarecida.",
+      "source": {
+        "path": "docs/validation/ux-notas-menus-20261102/README.md",
+        "section": "Recuperação do launcher após FULL2 — incidente aberto"
+      },
+      "stimulus": "FULL2: primeiro movimento nativo com captura ausente e pointerup correspondente fora. Regressão sintética: bypass da solicitação de captura apenas da instância; down/move/up reais, ID alheio e identidade/reentrada do botão.",
+      "expected": "Liberação correspondente fora cancela, restaura origem, limpa classe/arraste e não grava; próximo clique/Enter/Space recupera. ID alheio e listener de botão obsoleto não cancelam; gesto capturado normal continua confirmando. Não declarar causa inicial nativa resolvida.",
+      "cause": "Exposição comprovada: finalização de pointerup era exclusiva do botão; sem captura e com liberação fora, estado permanecia ativo. Por que a captura inicial não ativou/foi entregue no FULL2 continua UNKNOWN; captura:false no trace de pointerdown anterior ao handler não demonstra falha da solicitação.",
+      "protection": {
+        "path": "tools/notes_launcher_test.py",
+        "case": "capture_loss_recovery; movement e native_resize_cancellation originais preservados",
+        "command": "python3 tools/notes_launcher_test.py --root . --artifact both --native-zoom --out /private/tmp/jpw-notes-launcher-new.json",
+        "full_gate": {
+          "included": true,
+          "check_id": "notes-launcher",
+          "note": "Novo cenário no desktop source/portable do script já incluído; não afirma execução FULL nova pelo implementador."
+        }
+      },
+      "evidence": [
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "TEST_HARNESS_FAIL",
+          "note": "FULL2 bruto115PASS/1TEST_HARNESS_FAIL e notes-launcher original preservados; classificação não atribui causa externa."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PRODUCT_FAIL",
+          "note": "RED03 fonte anterior servida uma vez; arraste ativo após mouseup externo. RED direto inicial preservado; tentativas de override inválidas não são RED."
+        },
+        {
+          "path": "docs/validation/ux-notas-menus-20261102/provenance.json",
+          "result": "PASS",
+          "note": "GREEN final headless fonte4/4 (movement original, regressão com wrongID/staleDOM/rebind/clique/teclado, navigation e overlays), source_unchanged; não prova resolução da captura nativa."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "9676cf9fc0e38695",
+        "scope": "ID oficial corrente informado pelo root e conferido em build-id.js. Execução do implementador é fonte/headless4/4 mais syntax/AST, congelada por dois hashes em provenance. Native/portable/FULL novos são do coordenador; incidente inicial permanece OPEN/UNKNOWN. Linux e aceite humano separados.",
+        "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
+      }
     }
   ]
 }

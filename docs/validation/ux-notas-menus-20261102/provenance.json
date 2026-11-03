@@ -1,0 +1,461 @@
+{
+  "kind": "factual_documentation_receipt",
+  "date": "2026-11-02",
+  "scope": "Inspeção documental, hashes e resultados focais já existentes; nenhuma suíte executada por Task4 documental. Não é recibo de FULL/rebuild/native/aceite. Emenda final: correção do handler de metadados de Notas e regressão UI focal executada em fonte; hashes efetivos usam override final. Recibos históricos não validam estes novos bytes. Emenda pós-FULL1 MiniGames:3defeitos de host/oracle corrigidos com focais reais em fonte; não valida rebuild/FULL2/distribuições/native200%. O FULL1 histórico retém113PASS/3PRODUCT_FAIL.",
+  "authority": {
+    "path": "docs/work/CHG-UX-NOTES-MENUS-20261102.md",
+    "sha256": "47eb7542aff0f3a4d6dda42f036a2fa12172421497089a06ff9efaa7c11b81e1"
+  },
+  "external_evidence_root": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/ux-notas-menus-20261102",
+  "availability": "Raw logs/JSON/capturas permanecem externos; clone pode não conter os caminhos externos. Hashes identificam os originais inspecionados; este recibo é somente resumo.",
+  "source_provenance_inputs": [
+    {
+      "path": "task-1-fix-1-review-final-inputs.json",
+      "sha256": "f76d1bee52d859c54f36b9ba3db6ca0f36e82ee7a9ac344180077477daa461a6"
+    },
+    {
+      "path": "task-2-fix-1-hashes.json",
+      "sha256": "2fcdbecbe11906f5842f8eb629bb4413461617533471bc488c1ed9c80ac1404c"
+    },
+    {
+      "path": "task-3-final-hashes.json",
+      "sha256": "c0e1464c11563965ff168b35b932661607d26c9d6f1b8c74581f6a1676f1649e"
+    },
+    {
+      "path": "final-fix-code-hashes.json",
+      "sha256": "39db114f78c3c0c01e441600513bee6703bd66ec37805868c5051ba284f95a0e",
+      "scope": "Override final somente dos dois arquivos de código/teste; não contém hashes destes documentos ou do relatório, evitando circularidade."
+    },
+    {
+      "path": "games-full-fix-code-hashes.json",
+      "sha256": "ef6994ad374c20fc864c59af401e6e925183d69eb293a3c15bef585cfdb9554b",
+      "scope": "Override pós-FULL1 somente app.css e os dois testes de host; fontes/controladores/motores/progresso/armazenamento permanecem. Não inclui hashes deste recibo ou da memória, evitando circularidade."
+    }
+  ],
+  "source_sha256": {
+    "index.html": "4cd2e79e99dd6697273b7e1a07b9e83c82f6ae1f31cd28949509032631bea712",
+    "src/js/00-core/04-persistence.js": "6d5bc5dc1262ffbb64c0708285a7f076fb093cc6ec9d7a0b002fdefb13e2e345",
+    "src/js/20-ui/25-dash-macro.js": "20a744f7591f0a3ae7873918710a52a4389728eb4608e4acdc900d2fb17a5da5",
+    "src/js/20-ui/31-tools-services.js": "610fd55e1417b29d382a7b1f0438290c72880d74377fa60af4f235598bdabcd7",
+    "src/js/30-accounting/06-planning/03-ui.js": "b1e617185ab4e924fee4cf822b7c755206d60ce2ac63fdaf01015a34e2dd64c0",
+    "src/js/40-app/01-navigation.js": "ce35ac99948fee89c28230c23a0dbc83ac34eac29b4696c9a48b89859776ed86",
+    "src/js/40-app/09-settings-modal.js": "6763aeab09b4161c5a4a78ae804ac505f8e71dcf68bf45ae43c42dd2a4552f94",
+    "src/js/40-app/14-mvp-notes.js": "04c3314850c7d5669d4b4e31d09833ce258620584c33d00a6f8d827c1cabcda7",
+    "src/js/40-app/18-galton-board/06-controller.js": "1439457dd5f2e6cad8918cabc5f044fc30ee03dc29977038fedf46366b556141",
+    "src/js/40-app/26-learning-catalog.js": "6101d79259f0dc03914cacece723be600a4519bff1cc8a565fb50cc2b9c8d113",
+    "src/js/40-app/28-learning-guide.js": "f470bb3ec422dd08a91f5c9f309f20be558570ac8c8de913993c2fa74d5591cb",
+    "src/js/40-app/29-time-twins/05-controller.js": "331473c0a627f4d18e85f7c472ee818394c2e5f0546cbbb16420feb9c53016d8",
+    "src/js/40-app/30-capital-currents/05-controller.js": "6d1b06314352cde5d5536860a5fb564ab5cf5845f973cbc262840adfaa2b9357",
+    "src/styles/app.css": "6d2515bd7d0cc3132205c55445ab18fd25d4dccdd55a2c25ad14fee349dc167b",
+    "tools/apple_experience_test.py": "5ec182cea9c18794919949051764a5afbebee1d1b5020b1918b58dc4331ebd72",
+    "tools/apple_notes_match_test.py": "f71fc3aaf7da7047b6c0a7644d68ddf7921d69ed8ce7ff48a8f2056e1cf5380d",
+    "tools/audit_ui_recovery_test.py": "ffb04c1dfd784bf4b784a344816a64e972d6f0d8d637cc1fef68882f656e2b14",
+    "tools/calendar_markets_test.py": "c93c0f6b745b3915bc4f0e61044699184ac5e3c0a6eff0625ad8a9ed116bca7d",
+    "tools/capital_currents_browser_test.py": "4bcd0ed5f43266795d95f9738e962130fe1259cad956c1018bbe79010cd8f59e",
+    "tools/contextual_sidebar_test.py": "d4e26cc44c91755d7d0a109589ed65ddde2fa75a3a63b7352700906bd0cae899",
+    "tools/dante_catalog_test.mjs": "e3c1486f774ae03f453a8245ab4875c3b8df827d48ced722c795f8858fe23aac",
+    "tools/design_experience_test.py": "414e28b14341d8d9d63734172b33763660f54b7da68cd748ac44b75ad9525d81",
+    "tools/finalize_session_test.py": "522b88985d249289df0ea60fb50d6f2ee3cd65541ad936f59bd4a5c1e4c8762c",
+    "tools/galton_board_test.py": "abe31b8a219563e045404d390a84c3d17b6dd8da74149111aa40382efc424b4a",
+    "tools/hedge_prop_browser_test.py": "ad48095faa29592c54c4dc4a1cf5ffae16596e709dbffdc8791856e4cb030110",
+    "tools/learning_controller_test.mjs": "e9000b59902961be97c9413ae32635b71798b70c6059d4ab6fdebfd546778869",
+    "tools/learning_guide_test.py": "3200ae0a0f4159c2b03f1ea6c4235fde023f8f145dad6cd117eeabf8a200534a",
+    "tools/leverage_page_test.py": "b82bb3c6e087efdcb1f13bfec79a9090093d4f271221c7b5a44a256813fb2e33",
+    "tools/market_hours_integration_test.py": "91f0c15a4f5643e5117200de8da6d6bcb3051efd5b6533a135d78d97350f41a0",
+    "tools/minigames_test.py": "34477f012e5e50bcf6d5060a122787462ce0838f7091464633d01930bc255e7e",
+    "tools/mvp_notes_test.py": "2dda4163e61f0f0706805ce7d66c452d2f1ffec22f31607cc9548d91e02df7ca",
+    "tools/navigation_ia_test.py": "97aabd401f91f8d560f0262e20e104d8521d114daacabbda96f0ffe90a421b33",
+    "tools/navigation_local_contract_test.py": "54e2cc5b24167126a811cf4ddb71a84aac60c0b31cf5871d8c3948645de82671",
+    "tools/nocuda_tools_test.py": "461e46759355be9e5ad3546f3baf7bbbc18edb23bf6bbc60742c8dfc4df434b6",
+    "tools/notes_experience_test.py": "61d4e778ca552acc84b696731f05625dd93c642dcbe29f4321d9e431f44726f1",
+    "tools/notes_launcher_test.py": "acbe54b4e4404593f5a0d2ad6c64832185b162ce0b41af9c792461ab11212196",
+    "tools/planning_navigation_test.js": "e853b1c59698b10f6d65206200830cd23cb900b803625d41420bc03ce917d91f",
+    "tools/research_navigation_test.py": "0712daf83bf2b3bf4cd3d99b9c012be59b1aaa922167b1b0d75a7be42795b6b5",
+    "tools/settings_modal_test.py": "640ba535f72a97c2204fa1cbb43a8c3f5752a3ec8730bb76cd98cbbcc58bc811",
+    "tools/smoke_test.py": "94426be4191e4e53fc253c3305f336b1d3090b599057d224bd5e57adb6b0e1bb",
+    "tools/studies_notes_persistence_contract_test.py": "ba6a430317a5315b1aa378a9e48d11844b6cfddc7ef2db48649a492213ec9d4b",
+    "tools/time_twins_browser_test.py": "d536a72491050d44e20791e2137c885d03b3b370716e4e2e651c1019a4bf8d00",
+    "tools/visual_proportion_test.py": "601b20bb5135ddfddf1b308bc6fcc4850b16822b69a2516212b997f85bf0c69a"
+  },
+  "source_union_matches": 43,
+  "reviews_and_reports": [
+    {
+      "path": "notes/task-1-report.md",
+      "sha256": "268f3c011051c1d9572ac806bd4c4217f40c09fd3226c41deef7c5f56a07b544"
+    },
+    {
+      "path": "task-1-rereview-1.md",
+      "sha256": "4d3591d397ae59a5138090dd77ed3d60d01693e8f98343c944249eb8671ce301"
+    },
+    {
+      "path": "task-2-report.md",
+      "sha256": "d4a8b6dc11d97ab4ff15fd101ae0aa3a4794766c03265f033b782e3272b49666"
+    },
+    {
+      "path": "task-2-rereview-1.md",
+      "sha256": "3acf94ddc518a74710fbcef5da7566c999d8544bf53045fbba0f67d3449784f9"
+    },
+    {
+      "path": "task-3-report.md",
+      "sha256": "4bf40b5ef2abd173cc395de87d2f306f3f7bc0b101285260316446f5690b3b65"
+    },
+    {
+      "path": "task-3-review.md",
+      "sha256": "e207570aca92d6f4169f90aaba7b5e89c04467066ba6b37dce4f7ffb2ab7a600"
+    }
+  ],
+  "existing_focal_evidence": [
+    {
+      "path": "notes/red-01.json",
+      "sha256": "234c7c3118f41462d115b05db72df2c34a0364c3e1be577ccd4a2864115661c4",
+      "recorded_result": "PRODUCT_FAIL",
+      "row_results": {
+        "PRODUCT_FAIL": 3
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "notes/fix-1-red.json",
+      "sha256": "70d56e2bae529b30813f7b8aa2c89b8035bc57ffabe96c349ad6ec63029bf549",
+      "recorded_result": "PRODUCT_FAIL",
+      "row_results": {
+        "PRODUCT_FAIL": 3,
+        "PASS": 1
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "notes/fix-1-green.json",
+      "sha256": "2136e863da90551cc6fd2c798f5dcbfe37ba28e88fe6135a905f6f6581b6119c",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 5
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "notes/fix-1-pertinent-green.json",
+      "sha256": "a0205787b130ef9e3e6e0df5fd2e7859eba35625c0a471f577a4fb3ebaf525b8",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 7
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "notes/fix-1-studies-folder-reference.json",
+      "sha256": "4358cae5ec23d312321d1f4ec33fff621886f87d3f819598541a98ab03f4047a",
+      "row_results": {
+        "PASS": 4
+      }
+    },
+    {
+      "path": "notes/fix-1-studies-unknown.json",
+      "sha256": "e163a5e5186e5ab64ce021e541819457adae7eacd5579b454a05aa7c53772d9f",
+      "row_results": {
+        "PASS": 4
+      }
+    },
+    {
+      "path": "notes/empty-import-green.json",
+      "sha256": "2e5005bc8be3f558e29d96e820cea684e5038a4f7e8c76df1e2b3f67ed75b7b5",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 1
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "task-2-fix-1-dispose/integrated-result.json",
+      "sha256": "28c3e7c33e01df30b9d69754e0f4e4190cc0b63e0a66d4c4cd3fba26e205ff00",
+      "recorded_counts": {
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    {
+      "path": "task-3-guide-current.json",
+      "sha256": "cecc2fc2f7e172919d7d267c01f2cd7d9cc48215d0b84be359b0a76cea8374d0",
+      "recorded_counts": {
+        "PASS": 6,
+        "PRODUCT_FAIL": 0,
+        "TEST_HARNESS_FAIL": 0,
+        "NOT_RUN": 0
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "task-3-guide-compatibility.json",
+      "sha256": "159b1e53b4f7d8b344fd4e0956db12c3784aa49cb59c254f995180f7f0444277",
+      "recorded_counts": {
+        "PASS": 7,
+        "PRODUCT_FAIL": 0,
+        "TEST_HARNESS_FAIL": 0,
+        "NOT_RUN": 0
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "task-3-notes-style-final.json",
+      "sha256": "5b073b0ebeb8c441f79fade7bf47e68768e1e1e61a67df9639e222fd5d27b5a0",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 10
+      },
+      "source_unchanged": true
+    },
+    {
+      "path": "task-3-calendar-reference-final/report.json",
+      "sha256": "5f14a52f66a54dab99273bca2231e297ff27ceec0519a14097dec5e27e4d1569",
+      "recorded_status": "PASS",
+      "row_results": {
+        "not_labelled": 1
+      },
+      "stableInputs": true
+    },
+    {
+      "path": "task-2-navigation-comparison.json",
+      "sha256": "150a2e28a10cd03f10beb16084872d37aba57a71d5bfaa4c3c4951785c7e2aa8",
+      "currentFailures": 13,
+      "baselineFailures": 17,
+      "byteIdenticalFailures": 13,
+      "newFailures": 0
+    },
+    {
+      "path": "task-2-red.log",
+      "sha256": "a0fa02e8179ac6a6ae5378a2396cbcf0e034ef5b392e182019872d8709975ece"
+    },
+    {
+      "path": "task-2-dirty-red.log",
+      "sha256": "fe49f4f33ef02035f511c41f925299f0f2917f8d47fe6396c320d483491df92f"
+    },
+    {
+      "path": "task-2-dirty-owned-green.log",
+      "sha256": "fe66b24c9bed2c086d189eff2faffbd5cabbf783e086c13884ec12efb9b80b68"
+    },
+    {
+      "path": "task-2-aliases-green.log",
+      "sha256": "16fe4fe9fe9d92f6a82c2468a71463c2ebdee9cba8fa22bef9ffbba0fa963d05"
+    },
+    {
+      "path": "task-3-controller-red.log",
+      "sha256": "395f4cbc5fa1ddb18b703602788f881b1c9b452dc17a3be9c547b6fb53c6745f"
+    },
+    {
+      "path": "task-3-first-write-red.log",
+      "sha256": "a6dd5f45554c2ea5c6c49c92dcfe1c0670b99cfdfd8b8f6e5e8b6e5dc4a44a12"
+    },
+    {
+      "path": "task-3-controller-final.log",
+      "sha256": "acdc26b236db01de9adf5cd1fcfe1df33f5aee12b264d48bc197c3704607f6e7"
+    },
+    {
+      "path": "task-3-presentation-red-attempt3.log",
+      "sha256": "f42010ab2312a00a983d703e5c992c138d77909de4076fa7f4a6bb7190fed78c"
+    },
+    {
+      "path": "task-3-market-baseline.log",
+      "sha256": "b3e751e4b1dd76d9d8a1e5bdf8fa9e1beb73155c123bae69bbd906ebfe15764e"
+    },
+    {
+      "path": "final-fix-red-04.json",
+      "sha256": "c8f4d8e7de3bad85df7102514fb8524e1f56a04ab9689df21c06954398e75dc3",
+      "recorded_result": "PRODUCT_FAIL",
+      "row_results": {
+        "PRODUCT_FAIL": 1
+      },
+      "source_unchanged": true,
+      "scope": "Final fix; artifact source only. RED usa produto anterior; GREEN usa override final. Build ID 021d é a identidade derivada anterior, não um rebuild da emenda."
+    },
+    {
+      "path": "final-fix-green.json",
+      "sha256": "2943b4e7d2e1ce8bc667b39f3a624bdeacea16b755f35b1b1728cb31d3a6d83a",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 1
+      },
+      "source_unchanged": true,
+      "scope": "Final fix; artifact source only. RED usa produto anterior; GREEN usa override final. Build ID 021d é a identidade derivada anterior, não um rebuild da emenda."
+    },
+    {
+      "path": "final-fix-pertinent-green.json",
+      "sha256": "692c7cd66770e817159646da45408e0d702813740f09ea447f40eb1235a6adf7",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 6
+      },
+      "source_unchanged": true,
+      "scope": "Final fix; artifact source only. RED usa produto anterior; GREEN usa override final. Build ID 021d é a identidade derivada anterior, não um rebuild da emenda."
+    },
+    {
+      "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/outputs/ux-notas-menus-20261102/full-local.json",
+      "sha256": "fd5c6a3496ae5335ada8d7f584a64d55f1c862c13beb6c185f3a80f2681cc55d",
+      "recorded_result": "PRODUCT_FAIL",
+      "row_results": {
+        "PASS": 113,
+        "PRODUCT_FAIL": 3
+      },
+      "scope": "FULL1 anterior à emenda; falhas reais galton-board, capital-currents-browser e time-twins-browser preservadas, sem reclassificação ou fechamento."
+    },
+    {
+      "path": "games-full-fix-capital-source/result.json",
+      "sha256": "f59dd9386f96c52e154de47be4d83bd9b338c11d6ec38697bec750301ac5f41c",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 2
+      },
+      "scope": "Emenda MiniGames; fonte modular atual, sem rebuild/portable/native/FULL2. 48 apresentações e4tipografias; chrome/hitpoints e Back44/clique nativo originais."
+    },
+    {
+      "path": "games-full-fix-twins-source/integrated-result.json",
+      "sha256": "271014800fe342d81580aea2547119c1d2402b63d67df927be54fd10ca70be20",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 1
+      },
+      "scope": "Emenda MiniGames; fonte modular atual, sem rebuild/portable/native/FULL2. 32 apresentações; header/clip do owner, foco/44px/contraste/hitpoints preservados."
+    },
+    {
+      "path": "games-full-fix-galton-source.json",
+      "sha256": "a41568f5939a5ee583bf46d39196942f11cdd0fc268f40f8ab55d8c6b08a23b4",
+      "recorded_result": "PASS",
+      "row_results": {
+        "PASS": 1
+      },
+      "scope": "Emenda MiniGames; fonte modular atual, sem rebuild/portable/native/FULL2. test_real_ui original completo sem CSS injetado; canvas583.4375px e critério>500 preservado."
+    },
+    {
+      "path": "minigames-320-baseline.json",
+      "sha256": "8cb7e1d607c10fe6b8482422f6fe7321d7621560abec0b44d5d9b90030a80079",
+      "recorded_result": "BASELINE_FAIL",
+      "scope": "320/CSS2: root scroll328 vs client320 e layout viewport328×866 já antes de Settings, iguais após abrir. Nenhuma correção de header global; projeção conserva hitpoints próprios, sem declarar contenção visual estrita dessa inflação herdada."
+    }
+  ],
+  "gate_inspection": {
+    "method": "Leitura de tools/quality_gate.py e subprocessos; contagem de tuplas por AST, sem importar/executar runner.",
+    "quality_gate_sha256": "75e0eaf082f2fe99ea3f6f0a87a2c67340e76f578fa4e8aafbe0032fb838a0b4",
+    "calendar_distribution_sha256": "4e0c7a16263406f385b2b4f09fcdaa6b0ee4d45cad3117e92936de33004ed145",
+    "counts": {
+      "fast": 4,
+      "standard": 71,
+      "full": 116
+    },
+    "direct_full_checks": [
+      "mvp-notes",
+      "notes-launcher",
+      "learning-guide",
+      "minigames"
+    ],
+    "not_direct_full": [
+      "notes_experience_test.py",
+      "studies_notes_persistence_contract_test.py",
+      "navigation_local_contract_test.py",
+      "market_hours_integration_test.py",
+      "calendar_markets_test.py"
+    ],
+    "calendar_distribution_subprocesses": [
+      "tools/forex_sessions_test.js",
+      "tools/forex_sessions_browser_test.py",
+      "tools/forex_sessions_review_test.py"
+    ],
+    "limit": "Importar helpers de experience/studies por outros testes não executa toda sua suíte; não se declara proteção CI adicional."
+  },
+  "open_limits": [
+    "31 problemas estruturais preexistentes da memória factual preservados; 158 entradas originais sem alteração.",
+    "13 falhas navigation_local byte-idênticas à base, nenhuma nova no comparativo; suite fora de FULL116.",
+    "Market integration standalone ainda falha na suposição de default-host acionário antigo; frozen fdeb e atual mostram 4FX+B3, fora de FULL116.",
+    "Legados aceitos sem IDs: recusa segura de edição isolada/renomeação; sem migração automática, sem alegar edição irrestrita.",
+    "Sem encerramento do incidente Hedge.",
+    "Resultados finais de rebuild/FULL/distribuições/native200% são do relatório externo da sessão; aprovações de tarefas não os substituem.",
+    "Linux indisponível no recheck do coordenador; NOT_RUN não é aprovação integral. Aceite humano separado."
+  ],
+  "linux_availability_receipt": {
+    "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/outputs/ux-notas-menus-20261102/linux-disponibilidade.json",
+    "sha256": "98a93007828c924e4d3d77a94bdc8f2949060db562526f7d475b6218b6972005",
+    "recorded_status": "NOT_RUN",
+    "recorded_checked_at_utc": "2026-11-02 17:40:25 UTC",
+    "scope": "Recibo de disponibilidade do coordenador inspecionado; não execução Linux."
+  },
+  "source_provenance_rule": "União histórica de Tasks1–3 na ordem listada (Task3 changed.after e frozenNotes), seguida pelo override explícito final-fix-code-hashes.json. source_union_matches=43 refere-se a esta união efetiva, não a igualdade dos novos bytes com os recibos antigos. Emenda pós-FULL1: aplicar por último games-full-fix-code-hashes.json, com3overrides explícitos; as43entradas efetivas continuam correspondentes. Os hashes dos recibos anteriores não foram alterados. Aplicar por último launcher-recovery-code-hashes.json: dois overrides finais de Notes14 e launcher test; união anterior e recibos preservados.",
+  "final_fix": {
+    "finding": "final-review.md: Important inspector metadata status bypass; Critical=0, Important=1 antes da correção.",
+    "code_fingerprint": "final-fix-code-hashes.json",
+    "regression": "autosave-metadata-status: sete cenários UI reais (confirmed, divergent, REFUSED, UNKNOWN, raw alterado, UNKNOWN externo após Salvo e recovered).",
+    "source_status": "Focal novo PASS 1/1 (sete cenários); pertinentes PASS 6/6; source_unchanged=true nos dois recibos GREEN.",
+    "acceptance_limits": "Emenda ainda sem rereview final, rebuild oficial, portable, native200% ou FULL neste recibo. Provisórios 36 source/portable da build021d são históricos e não validam a emenda. Coordenador executará gates finais; Linux NOT_RUN e aceite humano permanecem separados.",
+    "setup_attempts_preserved": [
+      "final-fix-red.json",
+      "final-fix-red-02.json",
+      "final-fix-red-03.json"
+    ],
+    "setup_attempt_limit": "As duas primeiras tentativas pararam no setup do inspector; a terceira reproduziu os quatro primeiros cenários e parou no clique após mudança de raw. RED completo é final-fix-red-04.json. Não usar tentativas interrompidas como recibo completo."
+  },
+  "games_full_fix": {
+    "brief": "games-full-fix-brief.md",
+    "code_fingerprint": "games-full-fix-code-hashes.json",
+    "red": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/outputs/ux-notas-menus-20261102/full-local.json",
+    "source_results": "Capital2/0 (48+4), TimeTwins1/0 (32), Galton test_real_ui PASS com583.4375px; somente fonte, CSS aplicado no produto e sem injeção nos GREEN.",
+    "historical_build_id": "5b37ea66dcd12fc7",
+    "build_qualification": "Último artefato oficial anterior à emenda; novo rebuild/ID, whole3scripts/distribuições/native200/FULL2 e rereview são do coordenador. Nenhum resultado novo desses gates presumido.",
+    "scope": "CSS de MiniGames ativo: Galton uma coluna, max-height do modal limitado ao overlay, histórico por largura efetiva, Back44; oracle TimeTwins usa header/clip do owner; Capital acrescenta chrome containment/hitpoints sem relaxar48/typografia/native-offset/números/progresso/lifecycle.",
+    "diagnosis": "minigames-full-diagnosis.md",
+    "diagnostic_limit": "Projeções DOM são diagnósticas e não PASS do candidato. Root/CSS2 overflow320 é herdado e não fechado."
+  },
+  "launcher_recovery": {
+    "brief": "launcher-recovery-brief.md",
+    "diagnosis": "launcher-native-diagnosis.md",
+    "report": "launcher-recovery-report.md",
+    "code_fingerprint": "launcher-recovery-code-hashes.json",
+    "current_source_overrides": {
+      "src/js/40-app/14-mvp-notes.js": "7fc5fdaabefd7dd6bd20e0ef5100d418474a6f70e994cbec8a830350c08ab68a",
+      "tools/notes_launcher_test.py": "21f1d476ff49ac1503dd11145dd6bcd63756789240677dd6effd301acc8ae880"
+    },
+    "actual_rebuild_id": "9676cf9fc0e38695",
+    "source_focal_results": {
+      "red": "launcher-recovery-final-red-03.json: PRODUCT_FAIL, actual prior source served once",
+      "green": "launcher-recovery-pertinent-green.json: PASS4/4, source_unchanged=true"
+    },
+    "scope": "Matching pointerup outside current connected launcher button cancels through the existing helper: origin restored, active state/class cleared, no writes. Wrong pointer ID, stale button and re-entry guarded. Normal captured button release and original gestures/assertions/classifications/timeouts unchanged.",
+    "diagnostics": "Permanent tracer adds gotpointercapture/pointermove/input flags and stable button identity/connectivity; archives earlier gestures before resets and retains them on success/failure. No prototype interception in permanent tracing.",
+    "open_incident": "FULL2 remains raw115PASS/1TEST_HARNESS_FAIL. Initial native capture activation/delivery cause UNKNOWN; recovery proof does not resolve that cause. Later unchanged native passes do not close it.",
+    "setup_attempts_preserved": [
+      "launcher-recovery-final-red.json",
+      "launcher-recovery-final-red-02.json"
+    ],
+    "setup_attempt_limit": "External before-source context route was shadowed by bootstrap route: first attempt PASS did not load before source; second attempt asserted missing override. Neither is the valid RED. Final RED03 uses page route and proves served_count=1; initial direct RED also remains.",
+    "qualification": "Implementer executed source-only headless focals and syntax/AST checks. New official build ID supplied by root and verified in build-id.js; no implementer native, portable, FULL, rebuild, Git or delegation. Root owns new final gates. Linux/acceptance remain separate.",
+    "evidence": [
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/ux-notas-menus-20261102/launcher-native-diagnosis.md",
+        "sha256": "9c65e4e81f071850e164a4017c82072a37b39bc3e5e428a110b0e1c856211c4e"
+      },
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/ux-notas-menus-20261102/launcher-recovery-final-red-03.json",
+        "sha256": "844e342f6e4a5f6e5c0c1a172ebec11b7652d523938d632234aca06bf6551457"
+      },
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/ux-notas-menus-20261102/launcher-recovery-pertinent-green.json",
+        "sha256": "67250e619b395923bc1e071d9252a596b2b7311390a4e3399d8de9391c681afe"
+      },
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/ux-notas-menus-20261102/launcher-recovery-code-hashes.json",
+        "sha256": "614862c6c15916e112a230a792dcfe33c4278abc00d002a7eb525b4ac5a38319"
+      },
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/outputs/ux-notas-menus-20261102/full-local-2.json",
+        "sha256": "0e904255042ef918b645ba8f18b9c075c56cb9f9f05e9a439ece645878aefd7f"
+      },
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/trees/ux-notas-menus/tools/.artifacts/app-efficiency-full-20261102T164458021109/notes-launcher.json",
+        "sha256": "2a5a9da512988d1c67db6330df6be9bed248f9c8735aa02c5ff6d1f855b886f4"
+      },
+      {
+        "path": "/Users/joaopaulo/Documents/Codex/2026-10-30/files-mentioned-by-the-user-jp/work/implementation/ux-notas-menus-20261102/launcher-recovery-memory-check.json",
+        "sha256": "d2e1ad5888165594e7ad39bc4a7d0eec11086756a34cae988fb5ea6787c43110",
+        "result": "BASELINE_FAIL",
+        "new_errors": 0,
+        "preserved_errors": 31
+      }
+    ]
+  }
+}

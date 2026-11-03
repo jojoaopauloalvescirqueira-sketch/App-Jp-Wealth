@@ -1,3 +1,11 @@
+# Galton Board em Configurações — sucessão de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) sucede a localização em Tools descrita nas fotografias abaixo: **Configurações → MiniGames → Galton Board**, com MiniGames após Conhecimento e central com os três jogos. Os mesmos nós `#minigamesGame` / `#toolsGaltonSlot` são transportados uma vez aos painéis Settings; instâncias, motor, preferências e progresso permanecem. Abrir é explícito, monta sob demanda e não inicia simulação; Voltar pausa e retorna à central com foco em `#minigamesOpenGalton`.
+
+Settings é o proprietário e não pausa seu próprio jogo por estar aberto. Sair/ocultar ou cobrir com outro diálogo pausa; retorno conserva a instância e requer continuação explícita conforme o controlador. Observadores não remontam controlador descartado: somente nova entrada aceita. Aliases antigos passam pelo resolvedor, disponibilidade e guardas de rascunho/conta/execução, mantendo a rota financeira de fundo e a intenção de Back/Forward; recusa não altera histórico/categoria nem descarta texto. A central não monta os jogos por consulta. Ver [hierarquia corrente](NAVIGATION-HIERARCHY.md) e [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Arquitetura de MiniGames — Galton Board
 
 ## Objetivo e fronteira

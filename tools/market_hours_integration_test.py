@@ -19,7 +19,7 @@ def _inspect(page):
     # Approved 2026-10-24 contract: one combined entry; the legacy target stays
     # accepted and opens this same tool expanded through the canonical child.
     assert page.locator('[data-nav-child="tools-market-hours"]').count()==0, 'PRODUCT_FAIL: duplicate legacy submenu entry'
-    assert page.locator('[data-nav-child="tools-calendar"] .nav-sub-item-title').inner_text().strip()=='Calendário e Mercados', 'PRODUCT_FAIL: combined submenu entry absent'
+    assert page.locator('[data-nav-child="tools-calendar"] .nav-sub-item-title').inner_text().strip()=='Calendário e Sessões', 'PRODUCT_FAIL: combined submenu entry absent'
     assert page.evaluate("!window.JPWAisolGlobeRuntime"), 'renderer executed at bootstrap'
     assert page.locator('.market-hours').count()==0
     assert page.evaluate('sessionEpochCurrent()')
@@ -98,6 +98,7 @@ def _inspect(page):
     page.wait_for_timeout(1150)
     assert page.locator('[data-mh="clock"]').get_attribute('datetime')==clock, 'hidden tool clock did not pause'
     assert page.locator('#minigamesHub article').count()==3
+    page.evaluate("closeSettingsModal()")
     assert page.evaluate("JPWNavigation.navigateLocal('tools','market-hours')")
     assert page.locator('[data-mh="detail-title"]').inner_text()=='NYSE'
     assert page.locator('.jpw-aisol-root').count()==1
@@ -108,7 +109,7 @@ def _inspect(page):
         page.evaluate('(v)=>mountNavigationLayout(v)',layout)
         page.evaluate("shellSubmenu()?submenuOpenSurface(document.getElementById('toolsNavTrigger'),{focus:true}):openNavSub('tools',{focus:true})")
         entry=page.locator('[data-nav-child="tools-calendar"]')
-        assert entry.is_visible(),('Calendário e Mercados submenu hidden',layout)
+        assert entry.is_visible(),('Calendário e Sessões submenu hidden',layout)
         entry.focus();entry.press('Enter')
         assert page.evaluate("JPWNavigation.current().child==='tools-calendar'")
         assert entry.get_attribute('aria-current')=='page'

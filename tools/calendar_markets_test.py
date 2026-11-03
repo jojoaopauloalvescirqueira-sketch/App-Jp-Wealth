@@ -138,9 +138,15 @@ def run(args):
 
             def names(p):
                 entry = p.locator('[data-nav-child=tools-calendar]')
-                assert entry.count() == 1 and entry.locator('.nav-sub-item-title').inner_text().strip() == 'Calendário e Mercados', 'PRODUCT_FAIL: combined submenu name absent'
+                assert entry.count() == 1 and entry.locator('.nav-sub-item-title').inner_text().strip() == 'Calendário e Sessões', 'PRODUCT_FAIL: combined submenu name absent'
                 assert p.locator('[data-nav-child=tools-market-hours]').count() == 0, 'PRODUCT_FAIL: duplicate market-hours submenu remains'
-            check('CM-HOST-01', 'single named calendar and markets submenu', lambda: host(names))
+                expected={'tools-calendar':'Calendário e Sessões','tools-leverage':'Stoikus EA','tools-normative':'Estatuto JP Wealth'}
+                for route,label in expected.items():
+                    assert p.locator('[data-nav-child='+route+'] .nav-sub-item-title').inner_text().strip()==label
+                    assert p.evaluate('(id)=>JPWNavigation.children("tools").find(r=>r.id===id).label',route)==label
+                assert p.locator('#nrTitle').inner_text()=='Estatuto JP Wealth'
+                assert p.locator('#calendarMarketsJump').inner_text().strip().startswith('Sessões Abertas')
+            check('CM-HOST-01', 'single named calendar and sessions submenu', lambda: host(names))
 
             def canonical(p):
                 assert p.evaluate("(()=>{const r=JPWNavigation.resolve('tools-market-hours');return r.accepted&&r.child==='tools-calendar'&&r.localView?.view==='market-hours'})()"), 'PRODUCT_FAIL: legacy market route does not canonicalize to calendar child'
@@ -152,10 +158,14 @@ def run(args):
 
             def host_overview(p):
                 assert p.evaluate("JPWNavigation.navigate('tools-calendar')")
-                assert p.locator('#marketHoursTool').is_visible(), 'PRODUCT_FAIL: market overview absent from calendar'
-                assert p.locator('#toolsMarketHoursSlot [data-mh=summary]').is_visible(), 'PRODUCT_FAIL: collapsed overview absent'
-                assert p.locator('#toolsMarketHoursSlot .market-hours').count() == 0, 'PRODUCT_FAIL: full consultation mounted before expansion'
-            check('CM-HOST-03', 'normal calendar entry exposes collapsed market overview', lambda: host(host_overview))
+                p.wait_for_selector('#toolsMarketHoursSlot [data-fx-session]',state='visible')
+                assert p.locator('#marketHoursTool').is_visible(), 'PRODUCT_FAIL: sessions absent from calendar'
+                assert p.locator('#toolsMarketHoursSlot [data-fx-session]').count()==4, 'PRODUCT_FAIL: all four FX centers must remain exposed'
+                assert p.locator('#toolsMarketHoursSlot [data-b3-session]').count()==1, 'PRODUCT_FAIL: separate B3 row absent'
+                assert p.locator('#toolsMarketHoursSlot [data-mh=expansion-toggle]').count()==0, 'PRODUCT_FAIL: integral collapse toggle remains in default host'
+                assert p.locator('#marketHoursTitle').inner_text()=='Sessões Abertas'
+                assert p.locator('#toolsMarketHoursSlot h3').filter(has_text='Sessões Forex · horários indicativos').is_visible()
+            check('CM-HOST-03', 'normal calendar entry always exposes four Forex centers and B3 without integral collapse', lambda: host(host_overview))
 
             def api():
                 page.goto(fixture.as_uri())
@@ -515,23 +525,29 @@ def run(args):
             check('CM-UI-03', 'native engine zoom200 across four layouts two themes summary exploration selection and focus', native_zoom_200)
 
             def independent(p):
+                p.clock.install(time=datetime(2026,11,2,12,0,tzinfo=timezone.utc))
                 assert p.evaluate("JPWNavigation.navigate('tools-calendar')")
                 p.wait_for_selector('#execEcal [data-calendar-date]')
-                p.wait_for_selector('#toolsMarketHoursSlot [data-mh=summary-clock]')
-                before = p.locator('[data-mh=summary-clock]').get_attribute('datetime')
+                p.wait_for_selector('#toolsMarketHoursSlot [data-fx-session]',state='visible')
+                reference=p.locator('#toolsMarketHoursSlot [aria-label="Quatro sessões Forex indicativas"] > p').first
+                expected_now=p.evaluate("new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}).format(Date.now())")
+                assert reference.inner_text().startswith(expected_now), 'Session reference is not the actual current civil date'
+                marker=p.locator('#toolsMarketHoursSlot .mh-session-now').first
+                before_marker=marker.evaluate('e=>parseFloat(e.style.left)')
                 p.locator('#execEcal [data-calendar-date]').first.click()
-                p.evaluate("window.__calendarPanel=document.querySelector('#execEcal .calendar-panel');window.__calendarDate=document.querySelector('#execEcal [aria-selected=true]').dataset.calendarDate;window.__agenda=document.querySelector('#execEcal .calendar-agenda');window.__agendaHTML=__agenda.innerHTML;window.__financeBefore=JSON.stringify(S)")
+                p.evaluate("window.__calendarPanel=document.querySelector('#execEcal .calendar-panel');window.__calendarDate=document.querySelector('#execEcal [aria-selected=true]').dataset.calendarDate;window.__agenda=document.querySelector('#execEcal .calendar-agenda');window.__agendaHTML=__agenda.innerHTML;window.__financeBefore=JSON.stringify(S);window.__rows=[...document.querySelectorAll('[data-fx-session],[data-b3-session]')]")
                 p.locator('#calendarMarketsJump').click()
-                assert p.locator('#marketHoursTitle').evaluate('e=>e===document.activeElement'), 'Quicklink did not anchor the market section'
-                if p.locator('.market-hours:visible').count() == 0:
-                    p.locator('[data-mh=expansion-toggle]').click()
-                p.wait_for_selector('.market-hours', state='visible')
+                assert p.locator('#marketHoursTitle').evaluate('e=>e===document.activeElement'), 'Quicklink did not anchor the sessions section'
                 p.wait_for_timeout(1100)
-                assert p.evaluate("__calendarPanel===document.querySelector('#execEcal .calendar-panel') && __agenda===document.querySelector('#execEcal .calendar-agenda') && __agendaHTML===__agenda.innerHTML && __calendarDate===document.querySelector('#execEcal [aria-selected=true]').dataset.calendarDate"), 'Market expansion/tick reconstructed or changed selected calendar agenda'
-                assert p.evaluate('JSON.stringify(S)===__financeBefore'), 'Market tick changed financial state'
-                p.locator('[data-mh=expansion-toggle]').click()
-                after = p.locator('[data-mh=summary-clock]').get_attribute('datetime')
-                assert after >= before and after[:10] != p.evaluate('__calendarDate'), 'Selected calendar date replaced market now reference'
+                assert p.evaluate("__calendarPanel===document.querySelector('#execEcal .calendar-panel') && __agenda===document.querySelector('#execEcal .calendar-agenda') && __agendaHTML===__agenda.innerHTML && __calendarDate===document.querySelector('#execEcal [aria-selected=true]').dataset.calendarDate"), 'Session tick reconstructed or changed selected calendar agenda'
+                assert p.evaluate('JSON.stringify(S)===__financeBefore'), 'Session tick changed financial state'
+                assert p.evaluate("__rows.length===5&&__rows.every(e=>e.isConnected&&e.getClientRects().length)"), 'Tick removed a center or replaced stable rows'
+                # The current session timeline follows Date.now in the selected display zone,
+                # never the selected agenda day. Four centers and B3 retain known/unknown states.
+                assert p.locator('#toolsMarketHoursSlot [data-fx-session][data-phase],#toolsMarketHoursSlot [data-b3-session][data-phase]').count()==5
+                assert p.locator('#toolsMarketHoursSlot [data-mh=expansion-toggle]').count()==0
+                assert reference.inner_text().startswith(expected_now), 'Selected calendar day replaced the real session reference'
+                assert marker.evaluate('e=>parseFloat(e.style.left)')>=before_marker, 'Session reference moved backwards to the selected agenda day'
             check('CM-HOST-04', 'calendar selected date and agenda nodes remain independent of current market time', lambda: host(independent))
 
             context.close()

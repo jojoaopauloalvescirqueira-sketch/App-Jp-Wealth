@@ -10,14 +10,15 @@
   function downloadAction(){const controller=new AbortController(),generation=downloadGeneration,base=epoch();downloadControllers.add(controller);
     return {signal:controller.signal,current:()=>!controller.signal.aborted&&generation===downloadGeneration&&base===epoch(),done:()=>downloadControllers.delete(controller)};}
 
-  // The Tools workspace owns visibility; the existing Galton controller owns
+  // Settings owns MiniGames visibility; the existing Galton controller owns
   // physics, preferences and session epochs. Never rebuild a mounted board.
   const dialogSelector='dialog[open],[role="dialog"],[aria-modal="true"]';
   const overlaySelector='#settingsOverlay,#modalOverlay,#mvpNotesOverlay,#ecalOverlay,#alladinModalOverlay';
   const isVisible=node=>!node.closest('[hidden],[inert],[aria-hidden="true"]')&&node.getClientRects().length>0&&getComputedStyle(node).visibility!=='hidden';
-  function openDialog(){
-    return [...document.querySelectorAll(dialogSelector)].find(isVisible)||
-      [...document.querySelectorAll(overlaySelector.split(',').map(selector=>selector+'.show').join(','))].find(isVisible)||null;
+  function openDialog(owner=null){
+    const foreign=node=>isVisible(node)&&(!owner||!node.contains(owner));
+    return [...document.querySelectorAll(dialogSelector)].find(foreign)||
+      [...document.querySelectorAll(overlaySelector.split(',').map(selector=>selector+'.show').join(','))].find(foreign)||null;
   }
   function canNavigateRetired(){
     const dialog=openDialog();if(!dialog)return true;
@@ -26,7 +27,7 @@
     notice.textContent='Feche a janela atual pelos controles originais antes de abrir o Stoikus.';return false;
   }
   function canNavigateToGame(){
-    const dialog=openDialog();if(!dialog)return true;
+    const dialog=openDialog(el('settingsContent'));if(!dialog)return true;
     let notice=dialog.querySelector('[data-minigames-navigation-status]');
     if(!notice){notice=document.createElement('p');notice.dataset.minigamesNavigationStatus='';notice.className='minigames-navigation-status';notice.setAttribute('role','status');dialog.append(notice);}
     notice.textContent='Feche a janela atual antes de abrir um jogo em MiniGames';
@@ -60,15 +61,16 @@
     if(!visible){window.JPWMarketHours?.deactivate();return;}
     // Only accepted navigation may mount. Visibility observers cannot recreate
     // a finalized controller, and async completion must recheck the real host.
-    if(marketEntryPending){marketEntryPending=false;window.JPWMarketHours?.mount(slot,{collapsed:true}).then(()=>{syncMarketHours();finishMarketAnchor();}).catch(()=>{});}
+    if(marketEntryPending){marketEntryPending=false;window.JPWMarketHours?.mount(slot).then(()=>{syncMarketHours();finishMarketAnchor();}).catch(()=>{});}
     if(marketExpandPending){marketExpandPending=false;window.JPWMarketHours?.setExpanded(true);}
     if(marketFocusPending){marketFocusPending=false;focusMarketSection(true);}
     window.JPWMarketHours?.activate();
   }
   function syncMiniGames(allowMount=false){
+    const gameView=typeof settingsMiniGamesView==='function'?settingsMiniGamesView():null;
     const capitalSlot=el('toolsCapitalCurrentsSlot');
     if(capitalSlot){
-      const capitalVisible=view==='capital-currents'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&!capitalSlot.closest('[hidden],[inert]')&&capitalSlot.getClientRects().length>0;
+      const capitalVisible=gameView==='capital-currents'&&!openDialog(capitalSlot)&&!document.hidden&&!capitalSlot.closest('[hidden],[inert]')&&capitalSlot.getClientRects().length>0;
       let capital=capitalSlot.__capitalCurrentsController;
       if(capital?.snapshot().destroyed)capital=null;
       if(capitalVisible&&allowMount&&!capital)capital=window.JPWCapitalCurrents?.mount(capitalSlot);
@@ -77,7 +79,7 @@
     }
     const twinsSlot=el('toolsTimeTwinsSlot');
     if(twinsSlot){
-      const twinsVisible=view==='time-twins'&&el('tools').classList.contains('active')&&!openDialog()&&!document.hidden&&!twinsSlot.closest('[hidden],[inert]')&&twinsSlot.getClientRects().length>0;
+      const twinsVisible=gameView==='time-twins'&&!openDialog(twinsSlot)&&!document.hidden&&!twinsSlot.closest('[hidden],[inert]')&&twinsSlot.getClientRects().length>0;
       let twins=twinsSlot.__timeTwinsController;
       if(twins?.snapshot().destroyed)twins=null;
       // Only a newly accepted entry may create an instance. Dialog/visibility
@@ -87,14 +89,18 @@
       else if(!twinsVisible&&twins?.snapshot().active)twins.deactivate();
     }
     const slot=el('toolsGaltonSlot');if(!slot)return;
-    const visible=view==='galton'&&el('tools').classList.contains('active')&&!openDialog()&&!slot.closest('[hidden],[inert]')&&slot.getClientRects().length>0;
-    if(visible&&!slot.querySelector('[data-galton-root]')){
+    const visible=gameView==='galton'&&!openDialog(slot)&&!slot.closest('[hidden],[inert]')&&slot.getClientRects().length>0;
+    if(visible&&allowMount&&!slot.querySelector('[data-galton-root]')){
       slot.innerHTML=typeof galtonBoardPanelHTML==='function'?galtonBoardPanelHTML():'<p role="alert">Galton Board não pôde ser carregado.</p>';
     }
-    const controller=slot.querySelector('[data-galton-root]')?.__galtonController;
+    const candidate=slot.querySelector('[data-galton-root]')?.__galtonController;
+    const controller=candidate&&!candidate.destroyed?candidate:null;
     // Browser visibility remains with onVisibility; UI departure always requires
     // explicit Continuar, including when a dialog closes over the same route.
-    if(visible&&!document.hidden&&!controller?.active)window.activateGaltonBoard?.();
+    if(visible&&!document.hidden&&!controller?.active){
+      if(controller)controller.activate();
+      else if(allowMount)window.activateGaltonBoard?.();
+    }
     else if(!visible&&controller?.active)window.deactivateGaltonBoard?.({resume:false});
   }
   function syncPropFirms(allowMount=false){
@@ -112,12 +118,9 @@
     syncPropFirms(current.primary==='tools'&&current.localView?.view==='prop-firms');
     el('nocudaRetirementNotice').hidden=current.requested!=='tools-nocuda';
     syncMarketHours(current.primary==='tools'&&['calendar','market-hours'].includes(current.localView?.view),current.localView?.view==='market-hours');
-    syncMiniGames(current.primary==='tools'&&['time-twins','capital-currents'].includes(current.localView?.view));
+    syncMiniGames();
     if(current.primary!=='tools'||openDialog())return;
     if(current.localView?.view==='prop-firms')el('propFirmsTitle').focus({preventScroll:true});
-    if(current.localView?.view==='galton')el('minigamesGaltonTitle').focus({preventScroll:true});
-    if(current.localView?.view==='time-twins')el('minigamesTimeTwinsTitle').focus({preventScroll:true});
-    if(current.localView?.view==='capital-currents')el('minigamesCapitalCurrentsTitle').focus({preventScroll:true});
   });
   function initMiniGames(){
     el('calendarMarketsJump').addEventListener('click',()=>focusMarketSection());
@@ -146,7 +149,8 @@
   }
   function selectView(next){
     if(next==='nocuda')return window.JPWNavigation?.navigate('tools-nocuda');
-    if(!['calendar','market-hours','leverage','normative','prop-firms','minigames','galton','time-twins','capital-currents'].includes(next))return;
+    if(['minigames','galton','time-twins','capital-currents'].includes(next))return window.JPWNavigation?.navigateLocal('tools',next);
+    if(!['calendar','market-hours','leverage','normative','prop-firms'].includes(next))return;
     // market-hours is an entry intent; both domains share the calendar surface.
     if(next==='market-hours')next='calendar';
     if(view==='calendar'&&next!=='calendar')window.JPWCalendar?.deactivateWorkspace?.();
@@ -404,5 +408,5 @@
   // Publish the existing Tools facade before resolving an initial deep link.
   // JPWNavigation needs that facade to reveal its outer Tools view.
   const genetrix=initGenetrixUI();
-  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view,canNavigateRetired}),genetrix,minigames:Object.freeze({canNavigate:canNavigateToGame})});selectView(view);
+  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view,canNavigateRetired}),genetrix,minigames:Object.freeze({canNavigate:canNavigateToGame,sync:syncMiniGames})});selectView(view);
 })();

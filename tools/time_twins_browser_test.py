@@ -667,10 +667,10 @@ def run_integrated(out_dir, case=""):
                 assert p.locator('#minigamesHub').get_by_role('button',name='Abrir',exact=True).count()==3
                 assert p.locator('#minigamesTimeTwinsCard').get_by_role('heading',name='Gêmeos do Tempo').is_visible()
                 assert p.locator('[data-time-twins-root],[data-galton-root]').count()==0
-                p.evaluate("JPWNavigation.navigateLocal('research','nocoda')")
+                p.evaluate("closeSettingsModal();JPWNavigation.navigateLocal('research','nocoda')")
                 p.locator('#ncPrice1').fill('1,23412')
-                p.evaluate("openSettingsModal('knowledge')")
-                p.locator('#settingsPageTitle').focus()
+                p.evaluate("openSettingsModal('knowledge');window.__miniCover=document.createElement('dialog');__miniCover.innerHTML='<button>Fechar</button>';document.body.append(__miniCover);__miniCover.showModal()")
+                p.locator('dialog[open] button').focus()
                 before_route=p.evaluate('JPWNavigation.current()');focus=p.evaluate('document.activeElement.id')
                 for call in ["JPWNavigation.navigateLocal('tools','time-twins')","JPWNavigation.navigate('time-twins')","JPWNavigation.navigate('galton-board')"]:
                     assert p.evaluate(call) is False
@@ -680,7 +680,7 @@ def run_integrated(out_dir, case=""):
                     assert p.locator('#ncPrice1').input_value()=='1,23412'
                     assert p.locator('[data-time-twins-root],[data-galton-root]').count()==0
                     assert p.locator('[data-minigames-navigation-status]').inner_text()=='Feche a janela atual antes de abrir um jogo em MiniGames'
-                p.evaluate('closeSettingsModal()');settle(p)
+                p.evaluate('__miniCover.close();__miniCover.remove();closeSettingsModal()');settle(p)
                 assert p.evaluate('JPWNavigation.current()')==before_route
                 assert p.locator('[data-time-twins-root]').count()==0
                 p.evaluate("JPWModuleAvailability.setState('research','frozen')")
@@ -714,7 +714,7 @@ def run_integrated(out_dir, case=""):
                     act(p,'play');p.evaluate(call);settle(p)
                     assert not snap(p)['active'] and not snap(p)['running']
                     m=snap(p)['month'];p.wait_for_timeout(90);assert snap(p)['month']==m
-                    p.evaluate(close);settle(p)
+                    p.evaluate(close);open_game(p);settle(p)
                     assert snap(p)['active'] and not snap(p)['running']
                 act(p,'play')
                 p.evaluate("Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))")
@@ -831,8 +831,11 @@ def run_integrated(out_dir, case=""):
                       const first=document.querySelector('[aria-label="Preparar experimento"]').querySelector('button:not(:disabled),input:not(:disabled),select:not(:disabled)');
                       const box=e=>{const r=e.getBoundingClientRect();return {y:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height}};
                       const hits=e=>{const r=e.getBoundingClientRect();return [.2,.5,.8].map(f=>{const x=r.left+r.width*f,y=r.top+r.height*.5,hit=document.elementFromPoint(x,y);return {x,y,own:hit===e||e.contains(hit),hit:hit?.outerHTML.slice(0,180)}})};
-                      const h=document.querySelector('body > header'),r=h?.getBoundingClientRect(),pos=h&&getComputedStyle(h).position;
-                      return {focus:document.activeElement===title,title:box(title),description:box(description),control:{field:first.dataset.field,...box(first)},titleHits:hits(title),descriptionHits:hits(description),controlHits:hits(first),header:h&&box(h),navShell:document.getElementById('navSubShell')&&box(document.getElementById('navSubShell')),toolsNav:document.getElementById('toolsNavSubmenu')&&box(document.getElementById('toolsNavSubmenu')),height:innerHeight,obstruction:r&&['sticky','fixed'].includes(pos)&&r.top<innerHeight?Math.max(0,r.bottom):0,overflow:document.documentElement.scrollWidth-innerWidth};
+                      const owner=title.closest('#settingsModal'),scrollOwner=owner&&title.closest('#settingsContent');
+                      const h=owner?owner.querySelector('.settings-page-nav'):document.querySelector('body > header'),r=h?.getBoundingClientRect(),pos=h&&getComputedStyle(h).position;
+                      const vv=visualViewport,clip={top:vv?.offsetTop||0,left:vv?.offsetLeft||0,bottom:(vv?.offsetTop||0)+(vv?.height||innerHeight),right:(vv?.offsetLeft||0)+(vv?.width||innerWidth)};
+                      for(const node of [owner,scrollOwner].filter(Boolean)){const bounds=node.getBoundingClientRect();clip.top=Math.max(clip.top,bounds.top);clip.left=Math.max(clip.left,bounds.left);clip.bottom=Math.min(clip.bottom,bounds.bottom);clip.right=Math.min(clip.right,bounds.right);}
+                      return {focus:document.activeElement===title,title:box(title),description:box(description),control:{field:first.dataset.field,...box(first)},titleHits:hits(title),descriptionHits:hits(description),controlHits:hits(first),header:h&&box(h),settingsOwner:!!owner,clip,navShell:document.getElementById('navSubShell')&&box(document.getElementById('navSubShell')),toolsNav:document.getElementById('toolsNavSubmenu')&&box(document.getElementById('toolsNavSubmenu')),height:innerHeight,obstruction:r&&['sticky','fixed'].includes(pos)&&r.top<clip.bottom?Math.max(clip.top,r.bottom):clip.top,overflow:document.documentElement.scrollWidth-innerWidth};
                     }''')
                     facts.update(layout=layout,width=width,theme=theme,cssZoom=zoom)
                     if facts['control']['bottom']>facts['height']+1:
@@ -842,6 +845,12 @@ def run_integrated(out_dir, case=""):
                     assert facts['title']['y']>=facts['obstruction']-1 and facts['control']['y']>=facts['obstruction']-1,facts
                     assert facts['title']['bottom']<=facts['height']+1 and facts['control']['bottom']<=facts['height']+1,facts
                     assert facts['description']['y']>=facts['obstruction']-1 and facts['description']['bottom']<=facts['height']+1,facts
+                    # Foreground ownership strengthens clipping; the inert app header
+                    # remains the original oracle only outside a Settings owner.
+                    for name in ['title','description','control']:
+                        bounds=facts[name];clip=facts['clip']
+                        assert bounds['y']>=max(clip['top'],facts['obstruction'])-1 and bounds['bottom']<=clip['bottom']+1,facts
+                        assert bounds['left']>=clip['left']-1 and bounds['right']<=clip['right']+1,facts
                     assert facts['control']['height']>=44,facts
                     assert all(point['own'] for key in ['titleHits','descriptionHits','controlHits'] for point in facts[key]),facts
                     return facts

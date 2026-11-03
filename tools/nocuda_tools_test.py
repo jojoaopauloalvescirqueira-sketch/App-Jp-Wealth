@@ -50,7 +50,7 @@ try:
         check(mode+' retired submenu absent',page.locator('[data-nav-child="tools-nocuda"]').count()==0)
         check(mode+' retired panel absent',page.locator('#nocudaTool,#nocudaPayload,[data-nocuda-file]').count()==0)
         check(mode+' retired globals absent',page.evaluate("typeof JPWNocudaTransfer==='undefined'&&typeof JPWTools.generateEditable==='undefined'"))
-        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-leverage','tools-normative','tools-prop-firms','tools-minigames'])
+        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-leverage','tools-normative','tools-prop-firms'])
         check(mode+' ordinary Stoikus entry',page.evaluate("JPWNavigation.navigate('tools-leverage')"))
         check(mode+' ordinary entry has no retirement notice',page.locator('#nocudaRetirementNotice').is_hidden())
         for local in [False,True]:

@@ -134,7 +134,16 @@ def assert_registry(page):
     assert [(child["id"], child["localView"]["view"]) for child in tools] == [
         ("tools-calendar", "calendar"),
         ("tools-leverage", "leverage"), ("tools-normative", "normative"),
-        ("tools-prop-firms", "prop-firms"), ("tools-minigames", "minigames")], tools
+        ("tools-prop-firms", "prop-firms")], tools
+    # MiniGames is a Settings action; its historical IDs stay compatible
+    # without claiming a Tools child or changing the underlying route.
+    assert page.locator('#toolsNavSubmenu [data-nav-child="tools-minigames"]').count()==0
+    for alias,leaf in [('tools-minigames','minigames'),('probability-lab','galton'),
+                       ('galton-board','galton'),('research-probability-lab','galton'),
+                       ('time-twins','time-twins'),('capital-currents','capital-currents')]:
+        game=page.evaluate('alias=>JPWNavigation.resolve(alias)',alias)
+        assert game['accepted'] and game['action']=='settings' and game['leaf']==leaf,game
+        assert game['primary']=='tools' and game['canonical'] is None and game['child'] is None and game['screen'] is None and game['localView'] is None,game
     # Approved combined product entry keeps old market targets compatible while
     # marking the single calendar child current and preserving requested intent.
     market_compat = page.evaluate("() => JPWNavigation.resolve('tools-market-hours')")

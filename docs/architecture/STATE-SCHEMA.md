@@ -1,3 +1,13 @@
+# Notas — sucessão corrente de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) sucede somente as descrições anteriores de salvamento/normalização de Notas. `S.mvpNotes` conserva o formato v5; não há nova versão de backup. `content` explicitamente string, inclusive `''`, é autoritativo sobre `title`/`description` legados. Nota existente válida com identidade e conteúdo string permanece quando esvaziada; o título é derivado e “Nota sem título” é apenas apresentação. Objeto novo vazio sem identidade/conteúdo válido não vira nota.
+
+Extensões compatíveis e metadados existentes são preservados. Datas existentes não mudam; quando faltam datas de nota/pasta legada, o fallback de normalização é estável nesta página e representa aproximadamente a migração, sem comprovar criação histórica. Registros legados aceitos sem IDs podem ser lidos/exportados, mas a edição isolada de nota e renomeação de pasta recusam uma base sem identidade estável, preservando raw/texto; não há migração automática de identidade. A regressão comprova a recusa/preservação, sem certificar uma jornada completa de exportação/recuperação desses registros.
+
+O escritor de Notas aplica apenas seu delta à base confirmada, com raw/epoch/contexto e comparação das entidades afetadas. RAM financeira adjacente e metadados/política ainda não confirmados não são promovidos pelo texto. `CONFIRMED`, `REFUSED` e `UNKNOWN` mantêm o contrato do escritor existente; não há CAS universal. Rascunhos recuperados são RAM até confirmação explícita ou nova edição de conteúdo; a política de IA continua cautelosa e exige confirmação própria. Rollback precisa manter leitor compatível com notas vazias já gravadas. Ver [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Gerenciamento anual — complemento vigente 26/10/2026
 
 O novo agregado opcional `S.managementAnnual` tem `schemaVersion:1`, `revision`, `plans[]` e `audit[]`. Cada plano identifica conta, período e ano e preserva `config`, `openingSource`, revisões em `history[]`, declarações explícitas em `declarations[]` e retratos anuais imutáveis em `snapshots[]`. Ausência do agregado em backup antigo é válida e consultas não o criam. Versão futura ou conteúdo inválido seguem recuperação, preservando os bytes de origem.

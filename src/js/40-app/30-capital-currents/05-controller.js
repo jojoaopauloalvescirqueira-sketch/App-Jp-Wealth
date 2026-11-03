@@ -155,7 +155,7 @@
       if (message) notice(message); q('[data-action="play"]').textContent = tick ? 'Continuar' : 'Iniciar';
     }
     function foreignDialog() {
-      return Array.from(document.querySelectorAll('dialog[open],[role="dialog"]')).some(function (dialog) { return !root.contains(dialog) && !dialog.closest('[hidden],[inert],[aria-hidden="true"]') && dialog.getClientRects().length > 0 && global.getComputedStyle(dialog).visibility !== 'hidden'; });
+      return Array.from(document.querySelectorAll('dialog[open],[role="dialog"],[aria-modal="true"]')).some(function (dialog) { return !dialog.contains(root) && !dialog.closest('[hidden],[inert],[aria-hidden="true"]') && dialog.getClientRects().length > 0 && global.getComputedStyle(dialog).visibility !== 'hidden'; });
     }
     function inside(s) { return s.q >= -1 && s.q <= 1 && s.p >= -6 && s.p <= 6; }
     function advance(count) {
@@ -239,7 +239,7 @@
     var resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(onResize) : null;
     var dialogObserver = new MutationObserver(function (records) {
       if (!active || destroyed) return;
-      var relevant = records.some(function (r) { return r.type === 'attributes' || Array.from(r.addedNodes).some(function (node) { return node.nodeType === 1 && (node.matches('dialog,[role="dialog"]') || node.querySelector('dialog,[role="dialog"]')); }); });
+      var relevant = records.some(function (r) { return r.type === 'attributes' || Array.from(r.addedNodes).some(function (node) { return node.nodeType === 1 && (node.matches('dialog,[role="dialog"],[aria-modal="true"]') || node.querySelector('dialog,[role="dialog"],[aria-modal="true"]')); }); });
       if (relevant && foreignDialog()) { suspendLearning(); pause('Pausado enquanto outra janela está aberta. Retome explicitamente.'); }
     });
     function activate() { if (destroyed || active) return controller; active = true; root.hidden = false; renderer.resize(); patch(); return controller; }
@@ -257,7 +257,7 @@
     host.__capitalCurrentsController = root.__capitalCurrentsController = controller; instances.add(controller);
     root.addEventListener('click', onClick); root.addEventListener('input', onInput); root.addEventListener('change', onChange); global.addEventListener('pointerdown', onPointerDown); global.addEventListener('pointermove', onPointerMove); global.addEventListener('pointerup', onPointerUp); global.addEventListener('pointercancel', onPointerCancel); canvas.addEventListener('lostpointercapture', onPointerCancel);
     document.addEventListener('keydown', onKey); document.addEventListener('visibilitychange', onVisibility); global.addEventListener('blur', onBlur); global.addEventListener('resize', onResize); global.addEventListener('storage', onStorage);
-    if (resizeObserver) resizeObserver.observe(canvas); dialogObserver.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open', 'hidden', 'inert', 'style', 'class'], childList: true });
+    if (resizeObserver) resizeObserver.observe(canvas); dialogObserver.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open', 'hidden', 'inert', 'style', 'class', 'aria-hidden', 'role', 'aria-modal'], childList: true });
     refreshParticles(); renderLearning(); patch(); return controller;
   }
   ns.mount = mount; ns.activate = function (host) { return mount(host).activate(); }; ns.deactivate = function (host) { if (host && host.__capitalCurrentsController) host.__capitalCurrentsController.deactivate(); }; ns.dispose = function () { Array.from(instances).forEach(function (controller) { controller.destroy(); }); };

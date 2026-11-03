@@ -676,38 +676,92 @@ function mvpNotesPersistenceMessage(unknown){
 }
 // Notas e pastas compartilham referências folderId. A recusa restaura só este
 // agregado, preservando o rascunho efêmero e os demais módulos do documento.
+// Aplica somente o delta explícito deste comando à base confirmada. A RAM dos
+// outros módulos e alterações Notes alheias ao comando nunca viram fatos salvos.
+function mvpNotesApplyDelta(base,before,after,comparisonBase=base){
+  const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+  const result=structuredClone(base);
+  for(const key of new Set([...Object.keys(before),...Object.keys(after)])){
+    if(equal(before[key],after[key]))continue;
+    if(key==='items'||key==='folders'){
+      const old=before[key]||[],next=after[key]||[],stored=result[key]||[];
+      const ids=new Set([...old,...next].map(item=>item.id));
+      for(const id of ids){
+        const was=old.find(item=>item.id===id),now=next.find(item=>item.id===id);
+        if(equal(was,now))continue;
+        const index=stored.findIndex(item=>item.id===id);
+        if(!equal(was,(comparisonBase[key]||[]).find(item=>item.id===id)))throw Error('NOTE_BASE_CHANGED');
+        if(now){if(index<0)stored.push(structuredClone(now));else stored[index]=structuredClone(now);}
+        else if(index>=0)stored.splice(index,1);
+      }
+      if(!equal(old.map(item=>item.id),next.map(item=>item.id))){
+        const order=new Map(next.map((item,index)=>[item.id,index]));
+        stored.sort((a,b)=>(order.get(a.id)??Number.MAX_SAFE_INTEGER)-(order.get(b.id)??Number.MAX_SAFE_INTEGER));
+      }
+      result[key]=stored;
+    }else{
+      if(!equal(before[key],comparisonBase[key]))throw Error('NOTES_BASE_CHANGED');
+      result[key]=structuredClone(after[key]);
+    }
+  }
+  return result;
+}
 function mvpNotesMutate(change){
   if(jpWealthPersistenceOutcomeIsUnknown()){ mvpNotesPersistenceMessage(true); return null; }
-  let before;
-  try { before=structuredClone(S.mvpNotes); }
-  catch(e){ mvpNotesPersistenceMessage(false); return null; }
-  let value;
-  try { value=change(); }
-  catch(e){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
-  let persisted;
-  try { persisted=save(); }
-  catch(e){
+  const root=S,epoch=jpWealthPersistenceEpoch(),expectedRaw=jpWealthLastPersistedRaw;
+  let before,value,candidate;
+  try{
+    before=structuredClone(S.mvpNotes);
+    // Sem base persistida, a única base permitida é a fonte inicial vazia.
+    // Nunca usar S como fallback: pode conter edição financeira não confirmada.
+    candidate=jpWealthConfirmedStateSnapshot();
+    if(!candidate){
+      if(expectedRaw!==null)throw Error('INVALID_CONFIRMED_BASE');
+      candidate=structuredClone(DEFAULTS);
+    }
+    const comparison=structuredClone(candidate);mvpNotesNormalizeState(comparison);
+    value=change();
+    candidate.mvpNotes=mvpNotesApplyDelta(candidate.mvpNotes||structuredClone(DEFAULTS.mvpNotes),before,S.mvpNotes,comparison.mvpNotes);
+    if(candidate.mvpNotes.items.some(item=>item.folderId&&!(candidate.mvpNotes.folders||[]).some(folder=>folder.id===item.folderId)))throw Error('FOLDER_BASE_CHANGED');
+  }catch(error){if(before)S.mvpNotes=before;mvpNotesPersistenceMessage(false);return null;}
+  let result;
+  try{
+    if(root!==S||epoch!==jpWealthPersistenceEpoch())throw Error('CONTEXT_CHANGED');
+    result=jpWealthPersistDocument(candidate,{component:'notes',expectedRaw,expectedEpoch:epoch});
+  }catch(error){
     markJPWealthPersistenceOutcomeUnknown('notas e pastas');
-    mvpNotesPersistenceMessage(true); return null;
+    mvpNotesPersistenceMessage(true);return null;
   }
-  if(persisted===false){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
-  if(persisted!==true){
+  if(!result||!['CONFIRMED','REFUSED','UNKNOWN'].includes(result.status)){
     markJPWealthPersistenceOutcomeUnknown('retorno indeterminado de notas e pastas');
-    mvpNotesPersistenceMessage(true); return null;
+    mvpNotesPersistenceMessage(true);return null;
+  }
+  if(result.status!=='CONFIRMED'){
+    // REFUSED permite rollback. UNKNOWN conserva a tentativa e a barreira global;
+    // o rascunho continua sujo e nenhum selo local anuncia confirmação.
+    if(result.status==='REFUSED')S.mvpNotes=before;
+    mvpNotesPersistenceMessage(result.status==='UNKNOWN');return null;
+  }
+  if(mvpNotesAutosave.session&&mvpNotesAutosaveCurrent()){
+    const id=mvpNotesAutosave.session.identity.id;
+    const was=before.items.find(it=>it.id===id)||null;
+    if(JSON.stringify(was)===JSON.stringify(mvpNotesAutosave.session.base)){
+      mvpNotesAutosave.session.base=structuredClone(S.mvpNotes.items.find(it=>it.id===id)||null);
+    }
   }
   renderMvpNotesHeader();
   return value;
 }
-function mvpNotesCreate(draft){
+function mvpNotesCreate(draft,identity){
   const now=new Date().toISOString();
-  const id=mvpNotesId();
+  const id=identity?.id||mvpNotesId();
   // Ticket derivado do id na criação, com o MESMO resolvedor da normalização (inclusive a
   // checagem de colisão contra os códigos já em uso) — criar uma nota e reimportá-la de um
   // backup produzem exatamente o mesmo código.
   const seenTickets=new Set(mvpNotesItems().map(it=>it.ticket).filter(Boolean));
   const content=String(draft.content||'').slice(0,20000);
   const item={
-    id, ticket:mvpNotesResolveTicket(null,id,seenTickets),
+    id, ticket:identity?.ticket||mvpNotesResolveTicket(null,id,seenTickets),
     type:draft.type,
     content, title:mvpNotesDeriveTitle(content), // título sempre derivado, nunca digitado
     aiImplementationPolicy:MVP_NOTES_AI_POLICIES.includes(draft.aiImplementationPolicy)?draft.aiImplementationPolicy:MVP_NOTES_AI_POLICY_DEFAULT,
@@ -751,10 +805,14 @@ function mvpNotesUpdate(id,draft){
   });
 }
 function mvpNotesDelete(id){
-  return mvpNotesMutate(()=>{
+  const deleted=mvpNotesMutate(()=>{
     S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
     return true;
   });
+  // A API também é usada fora dos handlers visuais. Nenhum timer retido pode
+  // recriar a identidade que o operador acabou de excluir explicitamente.
+  if(deleted&&mvpNotesUI.selectedId===id)mvpNotesCloseEditor();
+  return deleted;
 }
 
 // ---- acionador flutuante + card de Configurações ----
@@ -861,6 +919,7 @@ function mvpNotesResetWidths(){
   return !!ok;
 }
 function handleMvpNotesAppearanceSessionWipe(){
+  mvpNotesCancelAutosave();mvpNotesAutosave.session=null;mvpNotesAutosave.blocked=true;
   const state=mvpNotesAppearanceState;++state.serial;state.saving=false;state.editing=false;
   state.confirmed={...MVP_NOTES_APPEARANCE_DEFAULTS};state.draft={...state.confirmed};state.viewSidebar=null;
   state.reset=false;state.blocked=true;state.reason='epoch';
@@ -1096,6 +1155,11 @@ function bindMvpNotesLauncher(){
     mvpNotesPlaceLauncher();
   });
   btn.addEventListener('pointerup',event=>{if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(false);});
+  // Sem captura, a liberação fora do botão cancela; não confirma a posição.
+  document.addEventListener('pointerup',event=>{
+    if(!btn.isConnected || mvpn('headerNotesBtn')!==btn || btn.contains(event.target))return;
+    if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(true);
+  },true);
   ['pointercancel','lostpointercapture'].forEach(type=>btn.addEventListener(type,event=>{
     if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(true);
   }));
@@ -1164,8 +1228,8 @@ function bindMvpNotesSettingsCard(){
   bindMvpNotesAppearance();
   const seg=mvpn('mvpNotesVisibilitySeg');
   if(seg) seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
-    S.mvpNotes.showHeaderIcon=b.dataset.mvpNotesVisibility==='show';
-    save(); renderMvpNotesHeader();
+    mvpNotesMutate(()=>{S.mvpNotes.showHeaderIcon=b.dataset.mvpNotesVisibility==='show';return true;});
+    renderMvpNotesHeader();
   }));
   const openBtn=mvpn('mvpNotesOpenFromSettingsBtn');
   if(openBtn) openBtn.addEventListener('click',()=>{
@@ -1208,7 +1272,7 @@ function mvpNotesCardHTML(item){
     <button type="button" class="mvpn-card" data-mvp-note-id="${esc(item.id)}"
       data-status="${esc(item.status)}" data-priority="${esc(item.priority)}" data-type="${esc(item.type)}"
       ${selecionada?'aria-current="true"':''}>
-      <div class="mvpn-card-title">${esc(item.title)}</div>
+      <div class="mvpn-card-title">${esc(item.title||'Nota sem título')}</div>
       <div class="mvpn-card-excerpt"><span class="mvpn-card-date">${esc(mvpNotesFormatDate(item.status==='done'&&item.completedAt?item.completedAt:item.updatedAt))}</span>
         ${preview?`<span class="mvpn-card-preview">${preview}</span>`:''}</div>
       ${mostraPasta?`<div class="mvpn-card-meta"><span class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</span></div>`:''}
@@ -1805,14 +1869,14 @@ function mvpNotesRecomputeDirty(){
   const bar=mvpn('mvpNotesEditorBar');
   if(bar) bar.dataset.dirty=String(mvpNotesUI.draftDirty);
   const saveBtn=mvpn('mvpNotesSaveBtn');
-  if(saveBtn) saveBtn.hidden=!mvpNotesUI.draftDirty;
+  if(saveBtn) saveBtn.hidden=!mvpNotesUI.draftDirty&&!mvpNotesAutosave.blocked;
 }
 // Título mostrado ao vivo enquanto se digita — derivado da mesma função que a persistência
 // usa, então o que a lista mostrará depois de salvar é exatamente o que se vê agora.
 function mvpNotesUpdateLiveTitle(){
   const el=mvpn('mvpNotesEditorTitle'); if(!el) return;
   const t=mvpNotesDeriveTitle(mvpNotesUI.draft?mvpNotesUI.draft.content:'');
-  el.textContent=t||'Nova nota';       // placeholder VISUAL — nunca entra no conteúdo
+  el.textContent=t||(mvpNotesUI.selectedId?'Nota sem título':'Nova nota');       // placeholder VISUAL — nunca entra no conteúdo
   el.classList.toggle('mvpn-title-placeholder',!t);
 }
 // Pinta o painel da direita a partir do rascunho corrente (ou o estado vazio).
@@ -1858,6 +1922,7 @@ function mvpNotesInspectorHTML(){
       <select id="mvpNotePolicy">${opt(MVP_NOTES_POLICY_LABELS,d.aiImplementationPolicy)}</select>
       <span class="mvpn-hint" id="mvpNotePolicyHint">${esc(MVP_NOTES_POLICY_HINT[d.aiImplementationPolicy]||'')}</span>
     </div>
+    <button type="button" class="save-btn" id="mvpNotesConfirmMetadataBtn">Confirmar detalhes</button>
     ${item?`<dl class="mvpn-meta-facts">
       ${fato('Trace ID',`<code>${esc(item.ticket)}</code>`)}
       ${fato('Build ID',esc(item.buildId||'não disponível'))}
@@ -1899,14 +1964,22 @@ function mvpNotesSetInspectorOpen(open){
   }
 }
 function bindMvpNotesInspector(){
+  mvpn('mvpNotesConfirmMetadataBtn')?.addEventListener('click',mvpNotesConfirmMetadata);
   // Cada select altera SÓ o rascunho e recalcula o dirty — nada é salvo aqui. O botão
-  // Salvar do editor persiste conteúdo + metadados como uma alteração única.
+  // Confirmar detalhes é separado do salvamento automático do texto.
   const liga=(id,campo)=>{ const el=mvpn(id); if(!el) return;
     el.addEventListener('change',()=>{
       if(!mvpNotesUI.draft) return;
       mvpNotesUI.draft[campo]=(id==='mvpNoteFolder')?(el.value||null):el.value;
       if(id==='mvpNotePolicy'){ const h=mvpn('mvpNotePolicyHint'); if(h) h.textContent=MVP_NOTES_POLICY_HINT[el.value]||''; }
       mvpNotesRecomputeDirty();
+      // Alterar detalhes não é retry nem confirmação de rascunho recuperado.
+      // UNKNOWN pode surgir em outro fluxo após o último status desta nota.
+      if(jpWealthPersistenceOutcomeIsUnknown())mvpNotesUnconfirmedBaseStatus();
+      else if(!mvpNotesAutosave.blocked&&!mvpNotesAutosave.recovered){
+        if(mvpNotesUI.draftDirty)mvpNotesAutosaveStatus('Detalhes não confirmados');
+        else mvpNotesCurrentSaveStatus();
+      }
     });
   };
   liga('mvpNoteType','type'); liga('mvpNotePriority','priority'); liga('mvpNoteStatus','status');
@@ -1936,6 +2009,7 @@ function mvpNotesSelectNote(id){
     mvpNotesUI.draft=mvpNotesDraftFromItem(item);
     mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
     mvpNotesUI.draftDirty=false;
+    mvpNotesBeginAutosave();
     mvpNotesUI.stage='editor';   // mobile avança de camada; desktop ignora
     renderMvpNotesList();        // atualiza o destaque da nota selecionada
     renderMvpNotesEditor();
@@ -1948,12 +2022,19 @@ function mvpNotesSelectNote(id){
 // mvpNotesNewDraft() com o que o operador escolheu no modal de configuração inicial.
 // SEM guarda de rascunho sujo: quem chama já decidiu (ver mvpNotesStartNewNote).
 function mvpNotesBeginNewNote(meta){
+  // Uma criação explícita abre um recorte onde a nota segura padrão é visível.
+  // Limpa somente busca/filtros efêmeros, preservando a pasta real atual.
+  mvpNotesClearAllFilters();mvpNotesUI.query='';
+  const search=mvpn('mvpNotesSearch');if(search)search.value='';
+  if(mvpNotesUI.activeFolder==='done')mvpNotesUI.activeFolder='all';
+  ['Type','Status','Priority','Folder','Period','Policy'].forEach(name=>{const el=mvpn('mvpNotesFilter'+name);if(el)el.value='all';});
   mvpNotesUI.selectedId=null;
   mvpNotesUI.draft=Object.assign(mvpNotesNewDraft(),meta||null);
   // draftOriginal recebe os MESMOS metadados: a nota nasce limpa, não "não salva". Escolher
   // no modal não é edição pendente — o rascunho só fica sujo quando se escreve.
   mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
   mvpNotesUI.draftDirty=false;
+  mvpNotesBeginAutosave();
   mvpNotesUI.stage='editor';
   renderMvpNotesList();
   renderMvpNotesEditor();
@@ -2027,7 +2108,7 @@ function mvpNotesSetNewNoteModalOpen(open){
 // Entrada do botão "+": respeita rascunho sujo ANTES de abrir o formulário, para não
 // descobrir a pendência só depois de o operador ter preenchido tudo.
 function mvpNotesOpenNewNoteModal(){
-  mvpNotesConfirmDiscardIfDirty(()=>mvpNotesSetNewNoteModalOpen(true));
+  mvpNotesStartNewNote();
 }
 function mvpNotesConfirmNewNote(){
   const meta=mvpNotesReadNewNoteModal();
@@ -2043,33 +2124,132 @@ function mvpNotesConfirmNewNote(){
   mvpNotesBeginNewNote(meta);
   return meta;
 }
-// Salvar: cria ou atualiza conforme haja nota selecionada. Nota sem nenhum texto não é
-// persistida — não há o que rastrear, e o título derivado seria vazio.
-function mvpNotesSaveDraft(){
-  if(!mvpNotesUI.draft) return;
-  if(!mvpNotesDeriveTitle(mvpNotesUI.draft.content)){
-    const live=mvpn('mvpNotesCopyLive');
-    if(live) live.textContent='Escreva ao menos uma linha: a primeira vira o título.';
-    const a=mvpn('mvpNoteContent'); if(a) a.focus();
+// O controlador mantém a identidade e a base do item durante uma única edição.
+// Não há promessa de CAS universal: o escritor conserva sua limitação entre abas.
+const mvpNotesAutosave={session:null,timer:null,maxTimer:null,composing:false,blocked:false,status:'',editSerial:0,editToken:null,trustedEdit:false,recovered:false,recoveredContent:null};
+function mvpNotesCancelAutosave(){
+  clearTimeout(mvpNotesAutosave.timer);clearTimeout(mvpNotesAutosave.maxTimer);
+  mvpNotesAutosave.timer=null;mvpNotesAutosave.maxTimer=null;
+}
+function mvpNotesAutosaveStatus(text){
+  mvpNotesAutosave.status=text;
+  let live=mvpn('mvpNotesSaveStatus');
+  if(!live&&mvpn('mvpNotesEditorBar')){
+    live=document.createElement('span');live.id='mvpNotesSaveStatus';live.setAttribute('role','status');live.setAttribute('aria-live','polite');
+    mvpn('mvpNotesEditorBar').append(live);
+  }
+  if(live)live.textContent=text;
+  const btn=mvpn('mvpNotesSaveBtn');
+  if(btn){btn.textContent=mvpNotesAutosave.blocked?'Tentar novamente':mvpNotesAutosave.recovered?'Confirmar rascunho recuperado':'Salvar';btn.disabled=jpWealthPersistenceOutcomeIsUnknown();}
+}
+function mvpNotesBeginAutosave(){
+  mvpNotesCancelAutosave();mvpNotesAutosave.composing=false;mvpNotesAutosave.blocked=false;mvpNotesAutosave.editToken=null;mvpNotesAutosave.trustedEdit=false;mvpNotesAutosave.recovered=false;mvpNotesAutosave.recoveredContent=null;
+  const item=mvpNotesItems().find(it=>it.id===mvpNotesUI.selectedId);
+  const id=item?.id||mvpNotesId();
+  mvpNotesAutosave.session={root:S,epoch:jpWealthPersistenceEpoch(),context:jpWealthPersistenceContextId,
+    baseEpoch:sessionEpochRead(),base:item?structuredClone(item):null,
+    identity:{id,ticket:item?.ticket||mvpNotesResolveTicket(null,id,new Set(mvpNotesItems().map(it=>it.ticket)))}};
+  const confirmed=mvpNotesConfirmedSessionBaseMatches();
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    hideStaleSavedTag();mvpNotesAutosave.blocked=true;mvpNotesAutosaveStatus('Gravação não confirmada. Confira a recuperação antes de repetir.');
+  }else if(!confirmed){
+    mvpNotesAutosave.blocked=true;mvpNotesAutosaveStatus('Não foi possível confirmar a nota. Preserve o rascunho e confira a base.');
+  }else mvpNotesAutosaveStatus(item?'Salvo':'');
+}
+function mvpNotesAutosaveCurrent(){
+  const session=mvpNotesAutosave.session;
+  return session&&session.root===S&&session.epoch===jpWealthPersistenceEpoch()&&
+    session.context===jpWealthPersistenceContextId&&session.baseEpoch!==undefined&&session.baseEpoch===sessionEpochRead();
+}
+// A mesma base deve ser comprovada também nos caminhos sem escrita. Um no-op
+// de RAM não é confirmação, e uma tentativa explícita não pode contornar conflito.
+function mvpNotesConfirmedSessionBaseMatches(){
+  if(jpWealthPersistenceOutcomeIsUnknown()||!mvpNotesAutosaveCurrent())return false;
+  try{
+    if(localStorage.getItem(LSKEY)!==jpWealthLastPersistedRaw)return false;
+    const snapshot=jpWealthConfirmedStateSnapshot(),session=mvpNotesAutosave.session;
+    if(!snapshot)return jpWealthLastPersistedRaw===null&&session.base===null;
+    mvpNotesNormalizeState(snapshot);
+    const current=snapshot.mvpNotes.items.find(item=>item.id===session.identity.id)||null;
+    return JSON.stringify(current)===JSON.stringify(session.base);
+  }catch(error){return false;}
+}
+function mvpNotesUnconfirmedBaseStatus(){
+  mvpNotesAutosave.blocked=true;hideStaleSavedTag();
+  mvpNotesAutosaveStatus(jpWealthPersistenceOutcomeIsUnknown()
+    ?'Gravação não confirmada. Confira a recuperação antes de repetir.'
+    :'Não foi possível salvar. Confira a nota e a base; o rascunho permanece nesta sessão.');
+  return false;
+}
+function mvpNotesCurrentSaveStatus(){
+  if(!mvpNotesConfirmedSessionBaseMatches())return mvpNotesUnconfirmedBaseStatus();
+  mvpNotesAutosave.blocked=false;
+  mvpNotesAutosaveStatus(mvpNotesUI.selectedId?(mvpNotesUI.draftDirty?'Texto salvo · detalhes não confirmados':'Salvo'):'');
+  mvpNotesRecomputeDirty();return true;
+}
+function mvpNotesQueueAutosave(event){
+  const state=mvpNotesAutosave;
+  if(event){state.editToken='notes-edit-'+(++state.editSerial);state.trustedEdit=event.isTrusted===true;}
+  if(!mvpNotesUI.draft||state.composing||state.blocked)return;
+  if(state.recovered&&(!state.trustedEdit||mvpNotesUI.draft.content===state.recoveredContent)){mvpNotesCancelAutosave();mvpNotesAutosaveStatus('Rascunho recuperado · ainda não confirmado');return;}
+  if(!mvpNotesAutosaveCurrent()){mvpNotesCancelAutosave();state.blocked=true;mvpNotesAutosaveStatus('Não foi possível salvar. A sessão mudou; confira a recuperação.');return;}
+  const content=mvpNotesUI.draft.content;
+  if(!state.session.base){
+    if(mvpNotesDeriveTitle(content))mvpNotesFlushAutosave();
     return;
   }
-  const salvo=mvpNotesUI.selectedId
-    ? mvpNotesUpdate(mvpNotesUI.selectedId,mvpNotesUI.draft)
-    : mvpNotesCreate(mvpNotesUI.draft);
-  if(!salvo) return false;
-  if(salvo){
-    mvpNotesUI.selectedId=salvo.id;
-    mvpNotesUI.draft=mvpNotesDraftFromItem(salvo);
-    mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
-  }
-  mvpNotesUI.draftDirty=false;
-  renderMvpNotesList();
-  renderMvpNotesEditor();
-  if(mvpNotesUI.inspectorOpen) mvpNotesSetInspectorOpen(true); // fatos atualizados pós-gravação
+  if(content===mvpNotesUI.draftOriginal.content){mvpNotesCancelAutosave();mvpNotesCurrentSaveStatus();return;}
+  mvpNotesAutosaveStatus('Salvando…');
+  clearTimeout(state.timer);state.timer=setTimeout(()=>mvpNotesFlushAutosave(),500);
+  if(!state.maxTimer)state.maxTimer=setTimeout(()=>mvpNotesFlushAutosave(),2000);
 }
+function mvpNotesFlushAutosave(explicit=false,metadata=false){
+  const state=mvpNotesAutosave,draft=mvpNotesUI.draft;
+  mvpNotesCancelAutosave();
+  if(!draft)return true;
+  if(state.composing)return false;
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    if(!state.blocked)mvpNotesPersistenceMessage(true);
+    state.blocked=true;mvpNotesAutosaveStatus('Gravação não confirmada. Confira a recuperação antes de repetir.');return false;
+  }
+  if(state.blocked&&!explicit)return false;
+  if(!mvpNotesAutosaveCurrent()){
+    state.blocked=true;mvpNotesAutosaveStatus('Não foi possível salvar. A sessão mudou; confira a recuperação.');return false;
+  }
+  if(state.recovered&&!explicit&&(!state.trustedEdit||draft.content===state.recoveredContent)){mvpNotesAutosaveStatus('Rascunho recuperado · ainda não confirmado');return false;}
+  if(!mvpNotesConfirmedSessionBaseMatches())return mvpNotesUnconfirmedBaseStatus();
+  if(!state.session.base&&!mvpNotesDeriveTitle(draft.content)){
+    if(metadata){mvpNotesUI.draftOriginal={...draft};mvpNotesRecomputeDirty();mvpNotesAutosaveStatus('Detalhes confirmados · escreva para criar a nota');}
+    return true;
+  }
+  if((!metadata&&draft.content===mvpNotesUI.draftOriginal.content)||(metadata&&mvpNotesDraftEqual(draft,mvpNotesUI.draftOriginal))){return mvpNotesCurrentSaveStatus();}
+  // Texto automático só inclui metadados confirmados (ou padrões seguros iniciais).
+  const next=metadata?{...draft}:{...mvpNotesUI.draftOriginal,content:draft.content};
+  const textChanged=next.content!==mvpNotesUI.draftOriginal.content;
+  const receipt={editToken:textChanged?state.editToken:null,trustedEdit:textChanged&&state.trustedEdit};
+  const notify=(phase,status)=>document.dispatchEvent(new CustomEvent('jpw-notes-save',{detail:{phase,...receipt,status}}));
+  notify('before','PENDING');
+  mvpNotesAutosaveStatus('Salvando…');
+  const saved=state.session.base?mvpNotesUpdate(state.session.identity.id,next):mvpNotesCreate(next,state.session.identity);
+  if(!saved){notify('after',jpWealthPersistenceOutcomeIsUnknown()?'UNKNOWN':'REFUSED');state.blocked=true;mvpNotesAutosaveStatus(jpWealthPersistenceOutcomeIsUnknown()?'Gravação não confirmada. Confira a recuperação antes de repetir.':'Não foi possível salvar. Tente novamente após resolver o aviso.');mvpNotesRecomputeDirty();return false;}
+  state.blocked=false;state.recovered=false;state.recoveredContent=null;state.session.base=structuredClone(saved);mvpNotesUI.selectedId=saved.id;
+  mvpNotesUI.draftOriginal=mvpNotesDraftFromItem(saved);
+  // Preserve o draft administrativo, o elemento textarea, foco, seleção e scroll.
+  mvpNotesRecomputeDirty();renderMvpNotesList();renderMvpNotesEditor();
+  mvpNotesAutosaveStatus(mvpNotesUI.draftDirty?'Texto salvo · detalhes não confirmados':'Salvo');
+  notify('after','CONFIRMED');return true;
+}
+function mvpNotesConfirmMetadata(){
+  if(!mvpNotesUI.draft)return false;
+  const original=mvpNotesUI.draftOriginal,policy=mvpNotesUI.draft.aiImplementationPolicy;
+  if(policy!==original.aiImplementationPolicy&&!confirm('Confirmar a política de IA “'+MVP_NOTES_POLICY_LABELS[policy]+'”? '+MVP_NOTES_POLICY_HINT[policy]))return false;
+  return mvpNotesFlushAutosave(true,true);
+}
+function mvpNotesSaveDraft(){return mvpNotesAutosave.blocked?mvpNotesFlushAutosave(true):mvpNotesConfirmMetadata();}
 // Fecha a nota aberta (usado pelo "voltar" do mobile). No desktop o painel volta ao
 // estado vazio — as três colunas continuam onde estão.
 function mvpNotesCloseEditor(){
+  mvpNotesCancelAutosave();mvpNotesAutosave.session=null;
   if(mvpNotesUI.inspectorOpen) mvpNotesSetInspectorOpen(false);
   mvpNotesUI.selectedId=null;
   mvpNotesUI.draft=null; mvpNotesUI.draftOriginal=null; mvpNotesUI.draftDirty=false;
@@ -2079,6 +2259,7 @@ function mvpNotesCloseEditor(){
   mvpNotesApplyStage();
 }
 function mvpNotesConfirmDiscardIfDirty(proceed){
+  if(!mvpNotesFlushAutosave())return;
   if(mvpNotesUI.draftDirty){
     if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
   }
@@ -2223,15 +2404,13 @@ function mvpNotesPersistPaneWidth(chave,valor){
     : [MVP_NOTES_LIST_MIN,MVP_NOTES_LIST_MAX];
   const v=Math.min(Math.max(Math.round(valor),min),max);
   if(S.mvpNotes.ui[chave]===v) return;
-  S.mvpNotes.ui[chave]=v;
-  save();
+  return mvpNotesMutate(()=>{S.mvpNotes.ui[chave]=v;return true;});
 }
 function mvpNotesPersistDrawerWidth(w){
   if(!S.mvpNotes.ui || typeof S.mvpNotes.ui!=='object') S.mvpNotes.ui={};
   const v=mvpNotesClampPersistable(w); // estado nunca recebe valor fora da faixa canônica
   if(S.mvpNotes.ui.drawerWidth===v) return;
-  S.mvpNotes.ui.drawerWidth=v;
-  save();
+  return mvpNotesMutate(()=>{S.mvpNotes.ui.drawerWidth=v;return true;});
 }
 // ---- separadores internos: Pastas | Lista e Lista | Editor (Fase D) ---------------
 // Semântica das setas: a seta representa o MOVIMENTO FÍSICO do separador na tela.
@@ -2518,6 +2697,7 @@ function openMvpNotesDrawer(opener){
   const closeBtn=mvpn('mvpNotesCloseBtn'); if(closeBtn) closeBtn.focus();
 }
 function closeMvpNotesDrawerNow(){
+  mvpNotesCancelAutosave();
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
@@ -2580,15 +2760,27 @@ function bindMvpNotesDrawer(){
   const policyFilter=mvpn('mvpNotesFilterPolicy');
   if(policyFilter) policyFilter.addEventListener('change',e=>{ mvpNotesUI.filterPolicy=e.target.value; renderMvpNotesList(); });
   // Editor de conteúdo único: cada tecla atualiza o rascunho, o título ao vivo e o
-  // estado de "não salvo". A gravação continua explícita (botão Salvar), que é o que
-  // sustenta a proteção contra descarte silencioso.
+  // estado de gravação; conteúdo é confirmado sem transportar detalhes pendentes.
   const area=mvpn('mvpNoteContent');
-  if(area) area.addEventListener('input',()=>{
+  if(area) area.addEventListener('input',event=>{
     if(!mvpNotesUI.draft) return;
     mvpNotesUI.draft.content=area.value;
     mvpNotesUpdateLiveTitle();
     mvpNotesRecomputeDirty();
+    mvpNotesQueueAutosave(event);
   });
+  if(area){
+    area.addEventListener('compositionstart',()=>{mvpNotesAutosave.composing=true;mvpNotesCancelAutosave();});
+    area.addEventListener('compositionend',event=>{mvpNotesAutosave.composing=false;mvpNotesUI.draft&&(mvpNotesUI.draft.content=area.value);mvpNotesRecomputeDirty();mvpNotesQueueAutosave(event);});
+    area.addEventListener('blur',event=>{
+      // O botão que recebeu o foco vai confirmar texto+detalhes explicitamente.
+      // Repintar a barra entre pointerdown e mouseup perderia esse mesmo clique.
+      if(['mvpNotesSaveBtn','mvpNotesConfirmMetadataBtn'].includes(event.relatedTarget?.id))return;
+      mvpNotesFlushAutosave();
+    });
+  }
+  window.addEventListener('blur',()=>mvpNotesFlushAutosave());
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)mvpNotesFlushAutosave();});
   const saveBtn=mvpn('mvpNotesSaveBtn');
   if(saveBtn) saveBtn.addEventListener('click',mvpNotesSaveDraft);
   // Ctrl/Cmd+S salva sem tirar as mãos do teclado.
@@ -2631,6 +2823,7 @@ function bindMvpNotesDrawer(){
     }
   });
   window.addEventListener('beforeunload',event=>{
+    mvpNotesFlushAutosave();
     if(!mvpNotesUI.open || !mvpNotesUI.draftDirty)return;
     event.preventDefault();event.returnValue='';
   });
@@ -2710,7 +2903,7 @@ window.JPWWorkspaceDrafts.registerRestorer('notes',{
     const selectedId=value.selectedId;delete value.selectedId;
     const original=selectedId?mvpNotesItems().find(row=>row.id===selectedId):null;
     if(selectedId&&!original)throw new Error('Nota original indisponível.');
-    mvpNotesUI.selectedId=selectedId||null;mvpNotesUI.draftOriginal=original?mvpNotesDraftFromItem(original):mvpNotesNewDraft();mvpNotesUI.draft=value;mvpNotesUI.draftDirty=true;mvpNotesUI.stage='editor';
+    mvpNotesUI.selectedId=selectedId||null;mvpNotesUI.draftOriginal=original?mvpNotesDraftFromItem(original):mvpNotesNewDraft();mvpNotesUI.draft=value;mvpNotesUI.draftDirty=true;mvpNotesBeginAutosave();mvpNotesAutosave.recovered=true;mvpNotesAutosave.recoveredContent=value.content;mvpNotesAutosaveStatus('Rascunho recuperado · ainda não confirmado');mvpNotesUI.stage='editor';
     renderMvpNotesList();renderMvpNotesEditor();mvpNotesApplyStage();mvpn('mvpNoteContent')?.focus();
   }
 });

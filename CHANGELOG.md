@@ -1,3 +1,13 @@
+# 02/11/2026 — Notas automáticas, menus e sessões — candidato local
+
+Texto de Notas com editor direto, primeira criação única, autosave500ms/máximo2s e flush; confirmação real antes de “Salvo”, retry explícito em recusa e barreira em resultado desconhecido. Notas vazias identificadas e `content` string explícito preservados no formato v5; delta sobre base confirmada conserva RAM adjacente. Metadados/política e rascunhos recuperados mantêm confirmação própria. Legados sem IDs têm limite de edição isolada, sem migração automática.
+
+MiniGames realocado para Configurações após Conhecimento, reutilizando central/três jogos e progresso; aliases, guardas e pausa por diálogo externo preservados. Sessões Abertas sempre completas, com mapa móvel sob demanda. Rótulos: Estatuto JP Wealth, Stoikus EA, Calendário e Sessões e Planejamento de Patrimônio a Longo Prazo; menu Planejamento permanece curto. Guia credita prática de Notas uma vez por confirmação durável, sem persistir prova/conteúdo/ID.
+
+[CHG aprovado](docs/work/CHG-UX-NOTES-MENUS-20261102.md) e [proveniência focal](docs/validation/ux-notas-menus-20261102/README.md). Fonte das Tasks1–3 aprovada em revisão independente; validação final do conjunto ainda é relatada externamente, sem antecipar FULL/Linux/portátil/zoom nativo ou aceite humano. Pendências legadas e incidente Hedge preservados. Sem Git/publicação nesta consolidação documental.
+
+## Fotografias anteriores preservadas
+
 # Calendário e Agenda — candidato local de 23/10/2026
 
 Implementação autorizada na branch `codex/calendario-agenda-20261023`, base `d517be0748f886085b3029c809bd68046e5c0f77`, preservando as pendências anteriores de Planejamento e Notificações. Acesso mensal imediatamente antes do sino, agenda pessoal confirmada, filtros e pacote econômico público local; calendário semanal FF preservado. Contrato e evidências: docs/architecture/CALENDAR-AGENDA.md e docs/validation/calendar-agenda-20261023/README.md.

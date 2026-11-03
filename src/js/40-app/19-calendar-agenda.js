@@ -134,6 +134,7 @@
     const {st,agenda}=inst,scroll=agenda.scrollTop,panelScroll=inst.panel.scrollTop,active=document.activeElement,focusRow=active?.closest('[data-calendar-personal-id]'),focusId=agenda.contains(active)?focusRow?.dataset.calendarPersonalId:null,focusKind=active?.hasAttribute('data-calendar-complete')?'complete':active?.dataset.calendarAction;
     const activeEconomic=agenda.contains(active)?active?.closest('[data-calendar-economic-id],.calendar-economic-detail-row'):null;
     const focusObservation=activeEconomic?.dataset.calendarEconomicObservation,focusHref=active?.tagName==='A'?active.href:null;
+    const oldRegion=agenda.querySelector('.calendar-economic-scroll'),horizontal=oldRegion?.scrollLeft||0,regionFocused=active===oldRegion;
     const selectedLabel=dayLabel(st.selected);
     const heading=el('h3','calendar-agenda-heading',selectedLabel.charAt(0).toLocaleUpperCase('pt-BR')+selectedLabel.slice(1));heading.tabIndex=-1;
     const zone=el('p','calendar-meta calendar-agenda-summary'),list=el('div','calendar-agenda-list'),economic=st.content.includes('economic')?st.data.events.filter(e=>eventDay(e,st.timeZone)===st.selected&&st.currencies.includes(e.currency)&&st.impacts.includes(e.impact)):[],personal=st.content.includes('personal')?st.data.items.filter(i=>personalOn(i,st.selected,st.timeZone)):[],app=st.content.includes('app')?st.data.app.filter(i=>i.date===st.selected):[];
@@ -150,12 +151,14 @@
       const table=el('table','calendar-economic-table'),caption=el('caption','calendar-economic-caption calendar-agenda-group','Economia'),thead=el('thead'),head=el('tr'),tbody=el('tbody');thead.setAttribute('role','rowgroup');tbody.setAttribute('role','rowgroup');head.setAttribute('role','row');
       table.setAttribute('role','table');
       for(const label of ['Horário','Moeda','Impacto','Evento','Atual','Projeção','Anterior']){const th=el('th','',label);th.scope='col';th.setAttribute('role','columnheader');head.append(th);}
-      thead.append(head);table.append(caption,thead,tbody);list.append(table);
+      const region=el('div','calendar-economic-scroll');region.tabIndex=0;region.setAttribute('role','region');region.setAttribute('aria-label','Notícias econômicas — tabela com rolagem horizontal');
+      const hint=el('p','calendar-economic-scroll-hint','Role horizontalmente para ver todos os campos.');hint.id=st.id+'EconomicScrollHint';region.setAttribute('aria-describedby',hint.id);
+      thead.append(head);table.append(caption,thead,tbody);region.append(table);list.append(hint,region);
       for(const [index,event] of economic.entries()){
         const row=el('tr','calendar-event-economic'),observation=economicObservation(event);row.setAttribute('role','row');row.dataset.calendarEconomicId=event.id;row.dataset.calendarEconomicObservation=observation;
         const cell=(field,cls,text)=>{const td=el('td',cls,text);td.setAttribute('role','cell');td.dataset.calendarEconomicField=field;row.append(td);return td;};
         const fromFF=event.provider==='forexfactory'||String(event.sourceId||'').startsWith('ff-');
-        const time=cell('time','calendar-economic-time calendar-event-time',event.precision==='date'?'Data · horário não informado':new Date(event.at).toLocaleTimeString('pt-BR',{timeZone:st.timeZone,hour:'2-digit',minute:'2-digit'}));
+        const time=cell('time','calendar-economic-time calendar-event-time',event.precision==='date'?'Não informado':new Date(event.at).toLocaleTimeString('pt-BR',{timeZone:st.timeZone,hour:'2-digit',minute:'2-digit'}));
         cell('currency','calendar-economic-currency',event.currency);
         const impact=cell('impact','calendar-economic-impact'),symbol=el('span','calendar-impact-symbol calendar-impact-'+(Object.hasOwn(IMPACTS,event.impact)?event.impact:'unclassified'));
         symbol.setAttribute('role','img');symbol.setAttribute('aria-label','Impacto: '+(IMPACTS[event.impact]||IMPACTS.unclassified)+' · '+(fromFF?'Forex Factory':'editorial JP Wealth'));symbol.title=symbol.getAttribute('aria-label');
@@ -168,7 +171,12 @@
         if(event.status==='published')warnings.push('Publicado na fonte.');
         if(event.observationStatus==='not-in-latest')warnings.push('Não consta na última coleta; não comprova cancelamento.');
         if(event.sourceConflict)warnings.push('As fontes divergem; data ou horário a confirmar.');
-        if(warnings.length)title.append(el('p','calendar-event-warning',warnings.join(' ')));
+        if(warnings.length){
+          const badges=el('span','calendar-economic-warnings');
+          const labels={'Horário a confirmar.':'Horário a confirmar','Cancelado na fonte.':'Cancelado','Publicado na fonte.':'Publicado','Não consta na última coleta; não comprova cancelamento.':'Ausente na última coleta','As fontes divergem; data ou horário a confirmar.':'Fontes divergem'};
+          for(const warning of warnings){const badge=el('span','calendar-event-warning',labels[warning]);badge.title=warning;badge.setAttribute('aria-label',warning);badges.append(badge);}
+          titleLine.insertBefore(badges,info);
+        }
         for(const [field,label] of [['actual','Atual'],['forecast','Projeção'],['previous','Anterior']]){
           const td=cell(field,'calendar-economic-number'),value=field==='actual'?'—':typeof event[field]==='string'&&event[field].trim()!==''?event[field]:'—';
           const labelNode=el('span','calendar-economic-value-label',label);labelNode.setAttribute('aria-hidden','true');const number=el('span','calendar-economic-value',value);number.dataset.calendarEconomicValue=field;
@@ -176,6 +184,8 @@
         }
         const detailRow=el('tr','calendar-economic-detail-row');detailRow.dataset.calendarEconomicObservation=observation;detailRow.hidden=!expanded;
         const detailCell=el('td'),detail=el('div','calendar-economic-detail');detailRow.setAttribute('role','row');detailCell.setAttribute('role','cell');detailCell.colSpan=7;detail.id=detailId;detail.setAttribute('role','region');detail.setAttribute('aria-label','Detalhes de '+event.title);
+        detail.append(el('strong','calendar-economic-detail-title',event.title));
+        if(warnings.length)detail.append(el('p','calendar-meta',warnings.join(' ')));
         detail.append(el('p','calendar-meta','Impacto: '+(fromFF?'classificação Forex Factory':'editorial JP Wealth')));
         if(event.sourceUrl)economicLink(detail,event.sourceUrl,fromFF?'Fonte: Forex Factory':'Fonte oficial');
         if(event.precision==='instant'&&event.at){try{detail.append(el('p','calendar-meta','Horário original: '+new Date(event.at).toLocaleString('pt-BR',{timeZone:event.timeZone||'UTC',dateStyle:'short',timeStyle:'short'})+' · '+(event.timeZone||'UTC')+(event.timeConfirmed===false?' · indicativo, confirme na fonte':'')));}catch(_){}}
@@ -206,6 +216,9 @@
       if(rows.length===1){const row=rows[0],detail=row.nextElementSibling;target=focusHref?[...row.querySelectorAll('a'),...(!detail.hidden?detail.querySelectorAll('a'):[])].find(a=>a.href===focusHref):row.querySelector('[data-calendar-action="economic-detail"]');}
       (target||heading).focus({preventScroll:true});
     }
+    const newRegion=agenda.querySelector('.calendar-economic-scroll');
+    if(regionFocused)(newRegion||heading).focus({preventScroll:true});
+    if(newRegion)newRegion.scrollLeft=horizontal;
     agenda.scrollTop=scroll;inst.panel.scrollTop=panelScroll;
   }
 

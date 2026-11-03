@@ -121,7 +121,7 @@ def journeys(page, report):
     page.locator('[data-nav-child="tools-prop-firms"]').click()
     assert page.locator('#hedgePropRoot').is_visible()
     ordered=page.locator('#toolsNavSubmenu [data-nav-child]').evaluate_all('ns=>ns.map(n=>n.dataset.navChild)')
-    assert ordered.index('tools-prop-firms') < ordered.index('tools-minigames'), ordered
+    assert ordered[-1]=='tools-prop-firms' and 'tools-minigames' not in ordered, ordered
     assert page.evaluate("JPWModuleAvailability.setState('forex','frozen').ok")
     assert page.evaluate("JPWNavigation.navigate('dashboard')")
     route(page)

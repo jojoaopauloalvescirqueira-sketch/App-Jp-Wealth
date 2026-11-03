@@ -1,3 +1,11 @@
+# Sessões Abertas — apresentação corrente de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) denomina a área **Calendário e Sessões** e o acesso/título externo **Sessões Abertas**. O host real chama `JPWMarketHours.mount(slot)` e expõe integralmente os quatro centros Forex e B3 separada, incluindo fechados/desconhecidos, sem recolhimento integral. O título interno continua identificando sessões Forex indicativas. O nome externo não filtra praças e não autoriza negociar.
+
+Abaixo de 600px, somente o mapa é sob demanda; lista e sessões permanecem expostas. Relógio Agora, cobertura/fusos/fontes, ajuda, estados desconhecidos e pausa fora de uso conservam seus contratos, independentes do dia selecionado na agenda. A API pública legada continua disponível: `mount(host,{collapsed:true})`/`setExpanded` e consulta acionária original não foram removidas. Os relatos históricos de host recolhido não descrevem mais a montagem do produto. [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Bolsas Globais — ações conforme calendário
 
 ## Bolsas Globais dentro de Calendário e Mercados —24/10/2026

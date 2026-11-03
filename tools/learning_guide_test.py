@@ -507,61 +507,92 @@ def pf_practice(page,row,kind):
     private_free_progress(page);row['nativePF']=kind
 
 def notes_new(page):
-    keyboard_click(page,'#mvpNotesNewBtn');page.locator('#mvpNotesNewBox').wait_for(state='visible')
-    defaults=page.evaluate("[mvpNotesNewType.value,mvpNotesNewPriority.value,mvpNotesNewStatus.value,mvpNotesNewFolder.value,mvpNotesNewPolicy.value]")
-    assert defaults==['task','medium','open','','analysis_only'],defaults
-    for selector,value in [('#mvpNotesNewType','bug'),('#mvpNotesNewPriority','critical'),('#mvpNotesNewStatus','in_progress'),('#mvpNotesNewFolder',''),('#mvpNotesNewPolicy','blocked')]:
-        page.locator(selector).select_option(value)
-    keyboard_click(page,'#mvpNotesNewConfirmBtn');page.locator('#mvpNoteContent').wait_for(state='visible')
+    keyboard_click(page,'#mvpNotesNewBtn');page.locator('#mvpNoteContent').wait_for(state='visible')
+    assert not page.locator('#mvpNotesNewBox').is_visible()
+    assert page.evaluate("document.activeElement===mvpNoteContent"),'Direct editor must own initial keyboard focus'
+    assert page.evaluate('mvpNotesUI.draft.aiImplementationPolicy')=='analysis_only'
 
 def notes_practice(page,row,kind):
     reach(page,'general','general-notes-save')
     instrument(page);before=financial(page);click(page,'#jpwLearningPracticeStart')
     notes_new(page);invariant(page,before)
     metadata=page.evaluate('structuredClone(mvpNotesUI.draft)')
-    assert metadata=={'content':'','type':'bug','priority':'critical','status':'in_progress','folderId':None,'aiImplementationPolicy':'blocked'},metadata
+    assert metadata=={'content':'','type':'task','priority':'medium','status':'open','folderId':None,'aiImplementationPolicy':'analysis_only'},metadata
     assert page.evaluate('S.mvpNotes.items.length')==0
+    # First nonempty input writes immediately: inject the storage fault first.
+    if kind in ['refused','unknown','dirty-refusal']:fault(page,'refused' if kind=='dirty-refusal' else kind,MAIN_KEY)
+    prior=receipt(page)
     page.locator('#mvpNoteContent').fill('Synthetic native note\nSecond fixture line')
-    assert page.evaluate('mvpNotesUI.draftDirty')
+    got=receipt(page);draft=page.evaluate('structuredClone(mvpNotesUI.draft)')
     if kind=='dirty-refusal':
-        dialogs=[]
-        def dismiss(dialog):dialogs.append(dialog.message);dialog.dismiss()
-        page.on('dialog',dismiss);draft=page.evaluate('structuredClone(mvpNotesUI.draft)')
         keyboard_click(page,'#mvpNotesCloseBtn')
-        assert dialogs and page.evaluate('mvpNotesUI.open&&mvpNotesUI.draftDirty')
+        assert page.evaluate('mvpNotesUI.open&&mvpNotesUI.draftDirty')
         assert page.evaluate('structuredClone(mvpNotesUI.draft)')==draft
-        invariant(page,before);assert record(page,'general-notes-save') is None
+        assert financial(page)['raw']==before['raw'] and record(page,'general-notes-save') is None
         page.locator('#mvpNoteContent').press('Escape');settle(page)
         assert page.evaluate('mvpNotesUI.draftDirty') and page.locator('#mvpNotesOverlay').is_visible()
-        invariant(page,before);row['nativeDiscardDialogs']=dialogs
+        row['nativeCloseRefusedWithFailedWriter']=True
+    elif kind=='confirmed':
+        assert got['status']=='CONFIRMED' and got['reason']=='READBACK_MATCH' and got!=prior,got
+        assert got['context']==prior['context'] and got['epoch']==prior['epoch']
+        item=page.evaluate('S.mvpNotes.items.find(x=>x.id===mvpNotesUI.selectedId)')
+        assert item and all(item.get(k)==v for k,v in draft.items()) and item['title']=='Synthetic native note',item
+        assert not page.evaluate('mvpNotesUI.draftDirty');seen(page,'general-notes-save','confirmed')
+        page.reload();wait_bootstrap(page);settle(page)
+        assert page.evaluate('(id)=>S.mvpNotes.items.find(x=>x.id===id)',item['id'])==item
+        row['durableNote']=item
+    elif kind=='refused':
+        assert got['status']=='REFUSED',got
+        assert financial(page)['raw']==before['raw'] and page.evaluate('S.mvpNotes.items.length')==0
+        assert page.evaluate('mvpNotesUI.draftDirty') and page.evaluate('structuredClone(mvpNotesUI.draft)')==draft
+        assert record(page,'general-notes-save') is None
+        fault(page,'normal',None);keyboard_click(page,'#mvpNotesSaveBtn');seen(page,'general-notes-save','confirmed')
     else:
-        if kind in ['refused','unknown']:fault(page,kind,MAIN_KEY)
-        prior=receipt(page);draft=page.evaluate('structuredClone(mvpNotesUI.draft)')
-        keyboard_click(page,'#mvpNotesSaveBtn');got=receipt(page)
-        if kind=='confirmed':
-            assert got['status']=='CONFIRMED' and got['reason']=='READBACK_MATCH' and got!=prior,got
-            assert got['context']==prior['context'] and got['epoch']==prior['epoch']
-            item=page.evaluate('S.mvpNotes.items.find(x=>x.id===mvpNotesUI.selectedId)')
-            assert item and all(item.get(k)==v for k,v in draft.items()) and item['title']=='Synthetic native note',item
-            assert not page.evaluate('mvpNotesUI.draftDirty');seen(page,'general-notes-save','confirmed')
-            page.reload();wait_bootstrap(page);settle(page)
-            assert page.evaluate('(id)=>S.mvpNotes.items.find(x=>x.id===id)',item['id'])==item
-            row['durableNote']=item
-        elif kind=='refused':
-            assert got['status']=='REFUSED',got
-            assert financial(page)['raw']==before['raw'] and page.evaluate('S.mvpNotes.items.length')==0
-            assert page.evaluate('mvpNotesUI.draftDirty') and page.evaluate('structuredClone(mvpNotesUI.draft)')==draft
-            assert record(page,'general-notes-save') is None
-            fault(page,'normal',None);keyboard_click(page,'#mvpNotesSaveBtn');seen(page,'general-notes-save','confirmed')
-        else:
-            assert got['status']=='UNKNOWN' and got['reason']=='READ_AFTER_WRITE',got
-            assert record(page,'general-notes-save') is None and page.evaluate('jpWealthPersistenceOutcomeIsUnknown()')
-        row.update(receipt=got,priorReceipt=prior)
+        assert got['status']=='UNKNOWN' and got['reason']=='READ_AFTER_WRITE',got
+        assert record(page,'general-notes-save') is None and page.evaluate('jpWealthPersistenceOutcomeIsUnknown()')
+        attempts=len(financial(page)['writes']);page.locator('#mvpNoteContent').fill('Synthetic subsequent blocked edit');settle(page)
+        assert len(financial(page)['writes'])==attempts,'UNKNOWN must not retry automatically'
+    row.update(receipt=got,priorReceipt=prior)
     private_free_progress(page);row['nativeNotes']=kind
+
+
+def notes_first_write(page,row):
+    # Native boot can create its initial document; this case adds no financial checkpoint.
+    assert page.evaluate('S.mvpNotes.items.length')==0
+    reach(page,'general','general-notes-save');instrument(page)
+    click(page,'#jpwLearningPracticeStart');notes_new(page)
+    assert page.evaluate('S.mvpNotes.items.length')==0
+    page.locator('#mvpNoteContent').fill('Synthetic first durable note on fresh origin')
+    seen(page,'general-notes-save','confirmed')
+    assert receipt(page)['status']=='CONFIRMED' and page.evaluate('S.mvpNotes.items.length')==1
+    private_free_progress(page);row['firstNoteWithoutManualCheckpointConfirmed']=True
+
+
+def notes_metadata_only(page,row):
+    reach(page,'general','general-notes-save');instrument(page);notes_new(page)
+    page.locator('#mvpNoteContent').fill('Synthetic existing content before practice')
+    assert page.evaluate("jpWealthPersistenceLastResult().status==='CONFIRMED'")
+    assert record(page,'general-notes-save') is None
+    click(page,'#jpwLearningPracticeStart')
+    keyboard_click(page,'#mvpNotesInspectorBtn');page.locator('#mvpNotePriority').select_option('critical')
+    keyboard_click(page,'#mvpNotesConfirmMetadataBtn')
+    assert page.evaluate("jpWealthPersistenceLastResult().status==='CONFIRMED' && !mvpNotesUI.draftDirty")
+    assert record(page,'general-notes-save') is None,'Metadata-only write must not confirm text practice'
+    keyboard_click(page,'#mvpNotesInspectorBtn')
+    page.locator('#mvpNoteContent').fill('Synthetic trusted autosave practice')
+    page.wait_for_function("JPWLearningGuide.snapshot().progress.steps['general-notes-save']?.practice==='confirmed'")
+    seen(page,'general-notes-save','confirmed')
+    progress=page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)
+    page.locator('#mvpNoteContent').fill('Synthetic subsequent autosave after confirmed practice')
+    page.wait_for_function("mvpNotesUI.draftOriginal.content==='Synthetic subsequent autosave after confirmed practice'")
+    assert page.evaluate('(k)=>localStorage.getItem(k)',GUIDE_KEY)==progress,'Further autosave rewrote confirmed progress'
+    private_free_progress(page);row['metadataOnlyRejected']=True;row['subsequentAutosaveNoGuideWrite']=True
+
 
 def notes_cancel(page,row,kind):
     reach(page,'general','general-notes-save');instrument(page);before=financial(page)
     click(page,'#jpwLearningPracticeStart');keyboard_click(page,'#mvpNotesNewBtn')
+    page.evaluate('mvpNotesSetNewNoteModalOpen(true)')  # retained nested-dialog compatibility surface
     page.locator('#mvpNotesNewBox').wait_for(state='visible')
     for _ in range(9):
         page.keyboard.press('Tab')
@@ -595,7 +626,7 @@ def native_backdrop_focus(page):
         original=context.new_page();original.set_default_timeout(7000)
         original.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(original)
         original.evaluate('S.mvpNotes.showHeaderIcon=true;renderMvpNotesHeader()')
-        keyboard_click(original,'#headerNotesBtn');keyboard_click(original,'#mvpNotesNewBtn')
+        keyboard_click(original,'#headerNotesBtn');keyboard_click(original,'#mvpNotesNewBtn');original.evaluate('mvpNotesSetNewNoteModalOpen(true)')
         for _ in range(9):original.keyboard.press('Tab')
         original.keyboard.press('Shift+Tab')
         original.locator('#mvpNotesNewOverlay').click(position={'x':2,'y':2});settle(original)
@@ -905,6 +936,7 @@ def startup_surface(page,row):
     if page.locator('#minigamesTimeTwinsCard').count():
         entry=page.evaluate("JPWLearningCatalog.tracks.flatMap(t=>t.steps).find(s=>s.id==='general-settings-probability-lab')")
         assert 'Gêmeos do Tempo' in entry['instruction'] and 'Galton Board' in entry['instruction']
+        assert entry['destination']=={'settings':'minigames'} and 'Configurações → MiniGames' in entry['instruction'],entry
         assert ('três cartões' if page.locator('#minigamesCapitalCurrentsCard').count() else 'dois cartões') in entry['expected']
         if page.locator('#minigamesCapitalCurrentsCard').count():
             assert 'Correntes de Capital' in entry['instruction'] and 'Correntes de Capital' in entry['expected']
@@ -973,7 +1005,7 @@ def contextual_help(page,row):
 
 def metadata_guide_keyboard(page,row):
     reach(page,'general','general-notes-save');click(page,'#jpwLearningPracticeStart')
-    keyboard_click(page,'#mvpNotesNewBtn');page.locator('#mvpNotesNewBox').wait_for(state='visible')
+    keyboard_click(page,'#mvpNotesNewBtn');page.evaluate('mvpNotesSetNewNoteModalOpen(true)');page.locator('#mvpNotesNewBox').wait_for(state='visible')
     assert page.locator('#mvpNotesNewBox #jpwLearningCoach').is_visible()
     before=financial(page);draft=page.evaluate('mvpNotesUI.draft?structuredClone(mvpNotesUI.draft):null')
     page.locator('#mvpNotesNewBox #jpwLearningPause').focus();page.keyboard.press('Enter');settle(page)
@@ -986,7 +1018,7 @@ def native_metadata_geometry(page,row):
     """Original form usability with an active, real guide in its native host."""
     reach(page,'general','general-notes-save');visible_practice_instruction(page,row)
     click(page,'#jpwLearningPracticeStart')
-    keyboard_click(page,'#mvpNotesNewBtn');page.locator('#mvpNotesNewBox').wait_for(state='visible')
+    keyboard_click(page,'#mvpNotesNewBtn');page.evaluate('mvpNotesSetNewNoteModalOpen(true)');page.locator('#mvpNotesNewBox').wait_for(state='visible')
     page.locator('#mvpNotesNewBox #jpwLearningCoach').wait_for(state='visible')
     instrument(page);before=financial(page)
     native_ids=['mvpNotesNewType','mvpNotesNewPriority','mvpNotesNewStatus','mvpNotesNewFolder',
@@ -1062,10 +1094,11 @@ def prepare(context,url,row,welcome_case=False):
         page.wait_for_function('window.JPWLearningGuide && window.JPWLearningCatalog')
         # Establish the native document/receipt and causal epoch before the
         # behavioral checkpoint, then let native reload normalization settle.
-        page.evaluate("""() => {S.onboarding.done=true;S.mvpNotes.showHeaderIcon=true;
-          if(save()!==true)throw Error('HARNESS_SETUP: native checkpoint refused');
-          sessionEpochCurrent();markSessionCheckpoint();}""")
-        page.reload();wait_bootstrap(page);settle(page)
+        if not row.get('config',{}).get('virginNotes'):
+            page.evaluate("""() => {S.onboarding.done=true;S.mvpNotes.showHeaderIcon=true;
+              if(save()!==true)throw Error('HARNESS_SETUP: native checkpoint refused');
+              sessionEpochCurrent();markSessionCheckpoint();}""")
+            page.reload();wait_bootstrap(page);settle(page)
     return page
 
 def case_list():
@@ -1081,7 +1114,8 @@ def case_list():
       for kind in ['confirmed','refused','unknown','escape']]
     cases += [(f'native-notes/{kind}',lambda p,r,k=kind:notes_practice(p,r,k),{})
       for kind in ['confirmed','refused','unknown','dirty-refusal']]
-    cases += [(f'native-notes-metadata-cancel/{kind}',lambda p,r,k=kind:notes_cancel(p,r,k),{})
+    cases += [('native-notes/metadata-only-and-one-shot',notes_metadata_only,{}),('native-notes/first-document-write',notes_first_write,{'virginNotes':True})]
+    cases += [(f'native-notes-compatibility-metadata-cancel/{kind}',lambda p,r,k=kind:notes_cancel(p,r,k),{})
       for kind in ['button','escape','backdrop']]
     cases += [('native-contextual-help',contextual_help,{}),('native-pending-account-guard',account_guard,{}),
       ('native-research-draft-preservation-local-refusal',research_drafts,{}),('actual-backup-excludes-guide',backup,{}),
@@ -1091,8 +1125,8 @@ def case_list():
     cases += [(kind,lambda p,r,k=kind:viewport_events(p,r,k),{})
       for kind in ['nested-scroll','reflow-200-equivalent','visualViewport-shrink']]
     cases += [('native-browser-zoom-200',geometry,{'nativeZoom':True,'theme':'dark'}),
-      ('guide-controls-in-metadata-own-enter',metadata_guide_keyboard,{})]
-    cases += [(f'native-metadata-geometry/{width}x{height}',native_metadata_geometry,{'width':width,'height':height})
+      ('guide-controls-in-compatibility-metadata-own-enter',metadata_guide_keyboard,{})]
+    cases += [(f'native-compatibility-metadata-geometry/{width}x{height}',native_metadata_geometry,{'width':width,'height':height})
       for width,height in [(1440,900),(390,844),(320,640)]]
     cases += [(f'readonly-all-64-native-actions/mobile-{width}x{height}',readonly,
       {'width':width,'height':height,'active_alladin':True,'active_pf':True}) for width,height in [(390,844),(320,700)]]

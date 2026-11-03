@@ -358,7 +358,7 @@ def assert_calendar_refresh_guidance(page):
 
 
 def assert_lab_relocation(page):
-    # Tools owns the hub/game; unchanged preferences and financial state survive.
+    # Settings owns the hub/game; unchanged preferences and financial state survive.
     old_pref=json.loads((ROOT/'data/samples/galton-preferences-v1.json').read_text())
     old_pref['a13SyntheticExtension']={'preserve':True}
     raw=json.dumps(old_pref,separators=(',',':'))
@@ -376,13 +376,13 @@ def assert_lab_relocation(page):
             page.wait_for_function("document.querySelector('#toolsGaltonSlot [data-galton-root]')?.__galtonController?.active")
             row=page.evaluate("""() => ({
               primary:JPWNavigation.current().primary,roots:document.querySelectorAll('[data-galton-root]').length,
-              inTools:!!document.querySelector('#toolsGaltonSlot [data-galton-root]'),
+              inSettings:!!document.querySelector('#settingsModal #toolsGaltonSlot [data-galton-root]'),
               active:!!document.querySelector('[data-galton-root]')?.__galtonController?.active,
               focusTitle:document.getElementById('minigamesGaltonTitle')===document.activeElement,
               title:document.getElementById('minigamesGaltonTitle').textContent,
               overflow:document.documentElement.scrollWidth-innerWidth
             })""")
-            assert row['primary']=='tools' and row['roots']==1 and row['inTools'] and row['active'] and row['focusTitle'],row
+            assert row['primary']=='dashboard' and row['roots']==1 and row['inSettings'] and row['active'] and row['focusTitle'],row
             assert row['title']=='Galton Board' and row['overflow']<=1,row
             rows.append({'mode':mode,'width':width,**row})
             left=page.evaluate("""() => {
@@ -406,27 +406,29 @@ def assert_lab_relocation(page):
         page.evaluate("JPWNavigation.navigate('dashboard')")
         page.evaluate(entry)
         page.evaluate("() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))")
-        assert not page.locator('#settingsOverlay').is_visible(),entry
-        assert page.evaluate("JPWNavigation.current().primary==='tools' && JPWNavigation.current().localView.view==='galton'"),entry
+        assert page.locator('#settingsOverlay').is_visible(),entry
+        assert page.evaluate("JPWNavigation.current().primary==='dashboard' && settingsState.active==='galton'"),entry
         assert page.evaluate("document.activeElement===document.getElementById('minigamesGaltonTitle')"),entry
         assert page.locator('#toolsGaltonSlot [data-galton-root]').count()==1
         assert page.locator('#settingsMenu [data-settings-category="probability-lab"]').count()==0
         assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController.snapshot().running") is False
-    # Every legacy entry refuses while Settings is open; it cannot queue a route.
-    page.evaluate("JPWNavigation.navigate('dashboard');openSettingsModal('knowledge')")
+    # Settings owns the games; only a foreign dialog refuses legacy entry.
+    page.evaluate("JPWNavigation.navigate('dashboard');openSettingsModal('knowledge');window.__labCover=document.createElement('dialog');__labCover.innerHTML='<button>Fechar</button>';document.body.append(__labCover);__labCover.showModal()")
     page.locator('#settingsPageTitle').focus()
     for entry in entries:
         snapshot=page.evaluate("({route:JPWNavigation.current(),html:document.getElementById('settingsContent').innerHTML,focus:document.activeElement.id,leaf:settingsState.active})")
         page.evaluate(entry)
         assert page.evaluate("({route:JPWNavigation.current(),html:document.getElementById('settingsContent').innerHTML,focus:document.activeElement.id,leaf:settingsState.active})")==snapshot,entry
-    page.evaluate("closeSettingsModal()")
+    page.evaluate("__labCover.close();__labCover.remove();closeSettingsModal()")
     assert page.evaluate("JPWNavigation.current().primary")=='dashboard'
     page.evaluate("JPWModuleAvailability.setState('research','active');JPWNavigation.navigate('research-forex');openSettingsModal('probability-lab')")
     page.evaluate("window.__independentLab=document.querySelector('[data-galton-root]').__galtonController;JPWModuleAvailability.setState('research','frozen')")
-    assert not page.locator('#settingsOverlay').is_visible()
-    assert page.evaluate("JPWNavigation.current().primary")=='tools'
+    assert page.locator('#settingsOverlay').is_visible()
+    # Freezing the underlying Research page applies its original Dashboard fallback;
+    # the independent Settings game remains active over that accepted background.
+    assert page.evaluate("JPWNavigation.current().primary")=='dashboard'
     assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController===window.__independentLab&&__independentLab.active")
-    page.evaluate("JPWNavigation.navigate('dashboard');JPWModuleAvailability.setState('research','active')")
+    page.evaluate("closeSettingsModal();JPWNavigation.navigate('dashboard');JPWModuleAvailability.setState('research','active')")
     assert page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")==raw
     assert page.evaluate("JSON.stringify(S)")==before
     print('MINIGAMES_LAB_RELOCATION '+json.dumps(rows,ensure_ascii=False),flush=True)

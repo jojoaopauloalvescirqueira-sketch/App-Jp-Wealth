@@ -36,6 +36,22 @@ def open_game(p):
     assert p.locator('#minigamesCapitalCurrentsTitle').evaluate('e=>e===document.activeElement')
 def hit(node):return node.evaluate('''e=>{const r=e.getBoundingClientRect();return {w:r.width,h:r.height,points:[.2,.5,.8].flatMap(x=>[.25,.75].map(y=>{const px=r.x+r.width*x,py=r.y+r.height*y,h=document.elementFromPoint(px,py);return {x:px,y:py,own:h===e||e.contains(h),hit:h?.id||h?.tagName}}))}}''')
 def geometry(p):return p.evaluate('''()=>{const root=document.querySelector('[data-capital-currents-root]'),c=root?.querySelector('canvas'),r=c?.getBoundingClientRect();return {overflow:Math.max(0,document.documentElement.scrollWidth-innerWidth),canvas:r?{x:r.x,right:r.right,w:r.width,h:r.height}:null,root:root?{client:root.clientWidth,scroll:root.scrollWidth}:null,wide:[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,id:e.id,cls:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width})).filter(e=>e.right>innerWidth+1&&e.width>0).slice(0,30)}}''')
+def owner_geometry(p):
+    facts=p.evaluate("""()=>{
+      const box=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,w:r.width,h:r.height}};
+      const hits=e=>{const r=e.getBoundingClientRect();return [.2,.5,.8].flatMap(x=>[.25,.75].map(y=>{const node=document.elementFromPoint(r.x+r.width*x,r.y+r.height*y);return node===e||e.contains(node)}))};
+      const vv=visualViewport,viewport={x:vv?.offsetLeft||0,y:vv?.offsetTop||0,right:(vv?.offsetLeft||0)+(vv?.width||innerWidth),bottom:(vv?.offsetTop||0)+(vv?.height||innerHeight)};
+      return {viewport,modal:box(document.getElementById('settingsModal')),history:box(document.querySelector('.settings-history')),mobile:matchMedia('(max-width:760px)').matches,chrome:['settingsCloseBtn','settingsBackBtn','settingsForwardBtn'].map(id=>{const node=document.getElementById(id);return {id,...box(node),hits:hits(node)}})};
+    }""")
+    v=facts['viewport'];m=facts['modal']
+    assert m['x']>=v['x']-1 and m['right']<=v['right']+1 and m['y']>=v['y']-1 and m['bottom']<=v['bottom']+1,facts
+    history=facts['history'];assert history['x']>=m['x']-1 and history['right']<=m['right']+1,facts
+    for control in facts['chrome']:
+        assert control['x']>=v['x']-1 and control['right']<=v['right']+1 and control['y']>=v['y']-1 and control['bottom']<=v['bottom']+1 and all(control['hits']),facts
+        if facts['mobile']:assert min(control['w'],control['h'])>=44,facts
+    return facts
+
+
 def run(args):
     out=args.out_dir;out.mkdir(parents=True,exist_ok=True);before=fingerprint();rows=[];server=None;version=None
     def case(name,fn):
@@ -102,19 +118,19 @@ def run(args):
                     for opener,closer in [("openSettingsModal('general')",'closeSettingsModal()'),('openMvpNotesDrawer()',"document.getElementById('mvpNotesCloseBtn').click()"),('openFinalizeSessionFlow()',"document.getElementById('sessionCancel').click()")]:
                         act(p,'play');p.wait_for_timeout(70);p.evaluate(opener);p.wait_for_timeout(70)
                         assert not snap(p)['running'] and not snap(p)['loopScheduled'];tick=snap(p)['tick'];raf=p.evaluate('rafCount')
-                        p.wait_for_timeout(70);assert p.evaluate('rafCount')==raf;p.evaluate(closer);p.wait_for_timeout(70);assert snap(p)['tick']==tick and not snap(p)['running']
+                        p.wait_for_timeout(70);assert p.evaluate('rafCount')==raf;p.evaluate(closer);open_game(p);p.wait_for_timeout(70);assert snap(p)['tick']==tick and not snap(p)['running']
                     assert financial(p)==before and raw(p,KEY) is None
-                    assert p.evaluate("JPWNavigation.navigate('dashboard')") and not snap(p)['active']
+                    p.evaluate('closeSettingsModal()');assert p.evaluate("JPWNavigation.navigate('dashboard')") and not snap(p)['active']
                     return {'singleton':True,'actualNumeric15Ticks':True,'threeRealDialogsZeroRAF':True,'noAutoplay':True,'financialBytesUnchanged':True}
                 def navigation(p):
                     p.evaluate("JPWNavigation.navigateLocal('research','nocoda')");p.locator('#ncPrice1').fill('1,23412')
-                    p.evaluate("openSettingsModal('knowledge')");route=p.evaluate('JPWNavigation.current()');p.wait_for_timeout(150);p.locator('#settingsPageTitle').focus();focus=p.evaluate('document.activeElement.id')
+                    p.evaluate("openSettingsModal('knowledge');window.__miniCover=document.createElement('dialog');__miniCover.innerHTML='<button>Fechar</button>';document.body.append(__miniCover);__miniCover.showModal()");route=p.evaluate('JPWNavigation.current()');p.wait_for_timeout(150);p.locator('dialog[open] button').focus();focus=p.evaluate('document.activeElement.id')
                     for call in ["JPWNavigation.navigate('capital-currents')","JPWNavigation.navigateLocal('tools','capital-currents')"]:
                         assert p.evaluate(call) is False and p.evaluate('JPWNavigation.current()')==route
                         assert p.locator('#ncPrice1').input_value()=='1,23412' and p.locator('[data-capital-currents-root]').count()==0
                         assert p.locator('#settingsOverlay').evaluate('(e)=>e.classList.contains("show")')
                         assert p.evaluate('document.activeElement.id')==focus,{'before':focus,'after':p.evaluate('document.activeElement.id')}
-                    p.evaluate('closeSettingsModal()');before=financial(p);p.evaluate("JPWModuleAvailability.setState('research','frozen')")
+                    p.evaluate('__miniCover.close();__miniCover.remove();closeSettingsModal()');before=financial(p);p.evaluate("JPWModuleAvailability.setState('research','frozen')")
                     open_game(p);assert not snap(p)['running'] and financial(p)==before
                     return {'pendingDraftPreserved':True,'realModalRefusal':2,'researchFrozenIndependent':True}
                 def learning_backup(p):
@@ -190,6 +206,7 @@ def run(args):
                         assert back.evaluate('e=>e.isConnected') and back.is_visible() and back.is_enabled()
                         measure='''e=>{const r=e.getBoundingClientRect(),v=visualViewport,cx=r.x+r.width/2,cy=r.y+r.height/2,h=document.elementFromPoint(cx,cy);return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},viewport:{scale:v.scale,offsetLeft:v.offsetLeft,offsetTop:v.offsetTop,width:v.width,height:v.height},center:{x:cx,y:cy},own:h===e||e.contains(h)}}'''
                         state=back.evaluate(measure);viewport=state['viewport'];center=state['center']
+                        assert min(state['rect']['width'],state['rect']['height'])>=44 and all(point['own'] for point in hit(back)['points']),state
                         assert viewport['scale']==1,state
                         offset=viewport['offsetLeft']!=0 or viewport['offsetTop']!=0
                         mode='native-visual-offset' if offset else 'locator'
@@ -212,7 +229,7 @@ def run(args):
                             if offset:
                                 assert abs(event['clientX']-center['x'])<=1 and abs(event['clientY']-center['y'])<=1,record
                             assert p.locator('#minigamesHub').is_visible() and p.locator('#minigamesCapitalCurrentsGame').is_hidden(),record
-                            assert p.evaluate("JPWNavigation.current().canonical==='tools-minigames' && JPWNavigation.current().localView.view==='minigames'"),record
+                            assert p.evaluate("settingsState.open && settingsState.active==='minigames'"),record
                             return viewport,record
                         finally:
                             back.evaluate("e=>{e.removeEventListener('click',e.__matrixBackListener);delete e.__matrixBackListener;delete e.__matrixBackEvent}")
@@ -231,6 +248,7 @@ def run(args):
                                         initial_viewport=css_viewport('initial')
                                         p.evaluate("JPWNavigation.navigate('tools-minigames')");hub=geometry(p);hub['notes']=p.locator('#headerNotesBtn').evaluate('e=>e.getBoundingClientRect().toJSON()');open_game(p);facts=geometry(p)
                                         row={'layout':layout,'width':width,'theme':theme,'cssZoom':zoom,'hub':hub,'field':facts,'visualViewportInitial':initial_viewport}
+                                        row['owner']=owner_geometry(p)
                                         assert facts['canvas']['w']>=140 and facts['canvas']['h']>=180 and facts['root']['scroll']<=facts['root']['client']+1,row
                                         assert facts['overflow']<=hub['overflow']+1,row
                                         if width==390 and zoom==2 and hub['overflow']>1:baseline.append(row)
@@ -270,6 +288,7 @@ def run(args):
                                 p.locator('[data-capital-currents-root]').evaluate("(root,font)=>root.style.setProperty('--sans',font)",font)
                                 p.evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
                                 facts=geometry(p);row={'theme':theme,'font':font,'geometry':facts}
+                                row['owner']=owner_geometry(p)
                                 assert facts['canvas']['w']>=140 and facts['canvas']['h']>=180 and facts['root']['scroll']<=facts['root']['client']+1,row
                                 assert facts['overflow']<=1,row
                                 row['numeric']=p.locator('[data-capital-currents-root] output,[data-capital-currents-root] dd').evaluate_all('nodes=>nodes.map(n=>({text:n.textContent,client:n.clientWidth,scroll:n.scrollWidth}))')

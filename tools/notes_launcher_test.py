@@ -24,7 +24,7 @@ from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_
 
 ROOT = Path(__file__).resolve().parents[1]
 POSITION_KEY = 'jpwealth_notes_launcher_position_v1'
-SOURCE_FILES = ('index.html', 'src/styles/app.css', 'src/js/40-app/14-mvp-notes.js',
+SOURCE_FILES = ('src/js/00-core/04-persistence.js', 'index.html', 'src/styles/app.css', 'src/js/40-app/14-mvp-notes.js',
                 'src/js/40-app/09-settings-modal.js', 'build-id.js',
                 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
 
@@ -313,6 +313,7 @@ def failure_evidence(page, observed, output, label):
         except Exception as error:
             errors[name] = str(error)
 
+    collect('gesture_traces', lambda: page.evaluate('window.__launcherGestureArchive||[]'))
     collect('gesture_trace', lambda: page.evaluate('window.__launcherGestureTrace||[]'))
     evidence['gesture_trace'] = diagnostics.pop('gesture_trace', [])
     collect('browser_observed', lambda: observed)
@@ -347,20 +348,30 @@ def failure_evidence(page, observed, output, label):
 
 def gesture_trace_start(page):
     page.evaluate("""() => {
+      window.__launcherGestureArchive ||= [];
+      if(window.__launcherGestureTrace?.length)
+        window.__launcherGestureArchive.push(window.__launcherGestureTrace);
       window.__launcherGestureTrace=[];
       if(window.__launcherTraceInstalled)return;
       window.__launcherTraceInstalled=true;
+      const identities=new WeakMap();let nextIdentity=1;
+      const identity=e=>{if(!e)return null;if(!identities.has(e))identities.set(e,nextIdentity++);return identities.get(e)};
+      const originalButton=document.getElementById('headerNotesBtn');
       const record=e=>{
         const b=document.getElementById('headerNotesBtn');
         const drag=mvpNotesUI.launcherDrag;
         __launcherGestureTrace.push({type:e.type,time:performance.now(),
           target:e.target.id||e.target.constructor.name,launcherTarget:!!e.target.closest?.('#headerNotesBtn'),x:e.clientX,y:e.clientY,
-          pointerId:e.pointerId,dragActive:!!drag,focus:document.hasFocus(),
+          pointerId:e.pointerId,pointerType:e.pointerType,isPrimary:e.isPrimary,isTrusted:e.isTrusted,
+          button:e.button,buttons:e.buttons,dragActive:!!drag,focus:document.hasFocus(),
+          buttonIdentity:identity(b),buttonConnected:b?.isConnected??false,
+          originalButtonIdentity:identity(originalButton),originalButtonConnected:originalButton.isConnected,
+          sameButton:b===originalButton,
           hit:Number.isFinite(e.clientX)?document.elementFromPoint(e.clientX,e.clientY)?.id:null,
-          capture:!!(e.pointerId&&b.hasPointerCapture(e.pointerId)),
-          geometry:b.getBoundingClientRect().toJSON(),viewport:{w:innerWidth,h:innerHeight,dpr:devicePixelRatio}});
+          capture:!!(e.pointerId&&b?.hasPointerCapture(e.pointerId)),
+          geometry:b?.getBoundingClientRect().toJSON(),viewport:{w:innerWidth,h:innerHeight,dpr:devicePixelRatio}});
       };
-      for(const type of ['pointerdown','pointerup','pointercancel','lostpointercapture','click'])
+      for(const type of ['pointerdown','gotpointercapture','pointermove','pointerup','pointercancel','lostpointercapture','click'])
         document.addEventListener(type,record,true);
       window.addEventListener('blur',record);
       for(const target of [window,visualViewport])for(const type of ['resize','scroll'])target.addEventListener(type,record);
@@ -441,6 +452,74 @@ def movement(page):
     position_keypress(page, button, 'Alt+Home')
     default_position(page)
     expect(page.locator('#mvpNotesOverlay')).to_be_hidden()
+
+
+
+def capture_loss_recovery(page):
+    """Synthetic capture-request fault; actual mouse release outside must cancel.
+
+    This proves recovery only, not why native capture was absent in FULL2.
+    The instance method and held mouse input are always restored.
+    """
+    button = page.locator('#headerNotesBtn')
+    before = snapshot(page)
+    origin = geometry(page)
+    origin_position = page.evaluate('({...mvpNotesUI.launcherPosition})')
+    gesture_trace_start(page)
+    button.evaluate("""e=>{
+      window.__launcherCaptureFault={button:e,descriptor:Object.getOwnPropertyDescriptor(e,'setPointerCapture')};
+      Object.defineProperty(e,'setPointerCapture',{configurable:true,value:()=>{}});
+      // Re-entry must keep one binding and preserve normal launch input.
+      bindMvpNotesLauncher();bindMvpNotesLauncher();
+    }""")
+    try:
+        x, y = origin['x'] + origin['w']/2, origin['y'] + origin['h']/2
+        page.mouse.move(x, y)
+        page.mouse.down()
+        page.mouse.move(x - 12, y - 10)
+        assert page.evaluate('!!mvpNotesUI.launcherDrag?.moved')
+        pointer_id = page.evaluate('mvpNotesUI.launcherDrag.id')
+        assert not button.evaluate('(e,id)=>e.hasPointerCapture(id)', pointer_id)
+        assert button.evaluate("e=>e.classList.contains('is-dragging')")
+        # An unrelated release must not cancel the active pointer.
+        page.locator('body').dispatch_event('pointerup', {'pointerId': pointer_id + 99})
+        assert page.evaluate('(id)=>mvpNotesUI.launcherDrag?.id===id', pointer_id)
+        unchanged(page, before, 'wrong pointer release during capture fault')
+        # A detached button's document listener cannot cancel a replacement's
+        # interaction. Restore the exact original node before real release.
+        button.evaluate("""(e,id)=>{
+          const replacement=e.cloneNode(true);
+          e.replaceWith(replacement);
+          try{
+            replacement.dispatchEvent(new PointerEvent('pointerup',{pointerId:id,bubbles:true}));
+            if(mvpNotesUI.launcherDrag?.id!==id)throw Error('Stale launcher listener cancelled after replacement');
+          }finally{replacement.replaceWith(e);}
+        }""", pointer_id)
+        page.mouse.move(x - 130, y - 100)
+        assert not page.evaluate("""({x,y})=>!!document.elementFromPoint(x,y)?.closest('#headerNotesBtn')""",
+                                {'x': x - 130, 'y': y - 100})
+        page.mouse.up()
+        settle(page)
+        trace = require_uninterrupted(page)
+        assert any(e['type'] == 'pointerup' and e.get('pointerId') == pointer_id
+                   and e.get('isTrusted') and not e.get('launcherTarget') for e in trace), trace
+        assert page.evaluate('mvpNotesUI.launcherDrag===null'), 'capture fault: outside release left launcherDrag active'
+        assert not button.evaluate("e=>e.classList.contains('is-dragging')")
+        assert page.evaluate('({...mvpNotesUI.launcherPosition})') == origin_position
+        same_position(origin, geometry(page))
+        expect(page.locator('#mvpNotesOverlay')).to_be_hidden()
+        unchanged(page, before, 'outside release cancels without writes')
+    finally:
+        # Release input even after an assertion, then restore the exact method.
+        page.mouse.up()
+        page.evaluate("""()=>{
+          const fault=window.__launcherCaptureFault;
+          if(fault.descriptor)Object.defineProperty(fault.button,'setPointerCapture',fault.descriptor);
+          else delete fault.button.setPointerCapture;
+          delete window.__launcherCaptureFault;
+        }""")
+    click_and_keyboard(page)
+    unchanged(page, before, 'capture fault recovery click and keyboard')
 
 
 def native_resize_cancellation(context, page):
@@ -643,7 +722,7 @@ def run(args):
                         raise AssertionError('Baseline unexpectedly already has the floating launcher')
                     for name, test in [('icon-background-contrast', launcher_icon_contrast), ('click-keyboard', click_and_keyboard), ('movement-cancellation', movement),
                             ('settings-ranges-focus', settings_flow), ('overlay-isolation', overlay_isolation),
-                            ('render-navigation-resize', rendering_navigation)]:
+                            ('render-navigation-resize', rendering_navigation), ('capture-loss-recovery', capture_loss_recovery)]:
                         if name == 'render-navigation-resize':
                             assert page.evaluate("JPWModuleAvailability.setState('personal-finance','active').ok")
                         before = snapshot(page)
@@ -655,7 +734,8 @@ def run(args):
                         else:
                             position_only(page, before, name, expected_writes=allowed_writes)
                         report['checks'].append({'name': artifact + '/' + name, 'result': 'PASS',
-                            **({'measurements': measurements} if measurements is not None else {})})
+                            **({'measurements': measurements} if measurements is not None else {}),
+                            'gesture_traces': page.evaluate('(window.__launcherGestureArchive||[]).concat(window.__launcherGestureTrace?.length?[window.__launcherGestureTrace]:[])')})
                     visibility_and_reload(page)
                     assert_clean(context, observed)
                     report['checks'].append({'name': artifact + '/visibility-reload-schema', 'result': 'PASS'})
@@ -714,7 +794,8 @@ def run(args):
                         position_only(page, before, 'native-200', expected_writes=4)
                         trace=native_resize_cancellation(context,page)
                         assert_clean(context, observed)
-                        report['checks'].append({'name': 'native-200/' + theme, 'result': 'PASS', 'interruption_trace':trace})
+                        report['checks'].append({'name': 'native-200/' + theme, 'result': 'PASS', 'interruption_trace':trace,
+                            'gesture_traces':page.evaluate('(window.__launcherGestureArchive||[]).concat([window.__launcherGestureTrace||[]])')})
                     except Exception as error:
                         report['checks'].append({'name': 'native-200/' + theme, 'result': failure_result(error), 'detail': str(error),
                             **failure_evidence(page, observed, args.out, 'native-200/' + theme)})

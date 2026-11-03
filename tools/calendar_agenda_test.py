@@ -266,7 +266,7 @@ def edges(page):
     expect(panel.locator('[data-calendar-date="2026-10-24"] .calendar-economic-dot')).to_have_count(1)
     panel.locator('[data-calendar-action="filters"]').click()
     panel.locator('[data-calendar-date="2026-10-25"]').click()
-    expect(panel.locator('.calendar-event-time').filter(has_text='Data · horário não informado')).to_have_count(1)
+    expect(panel.locator('.calendar-event-time').filter(has_text='Não informado')).to_have_count(1)
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     assert 'CHF' in panel.locator('.calendar-source-list').inner_text() and 'Pendente' in panel.locator('.calendar-source-list').inner_text()
     assert 'classificação Forex Factory' in panel.locator('.calendar-info').inner_text() and 'curadoria editorial JP Wealth' in panel.locator('.calendar-info').inner_text()

@@ -1,3 +1,13 @@
+# UX Notas, menus e sessões — candidato local de 02/11/2026
+
+Nova nota abre o editor diretamente; primeiro conteúdo cria uma vez, depois o texto salva após500ms de pausa, no máximo2s, com flush na saída e “Salvo” somente após confirmação. Vazio novo não grava; nota existente esvaziada permanece. Metadados e política de IA mantêm confirmação própria. Recusa conserva texto para retry explícito; resultado desconhecido bloqueia repetição. O escritor aplica somente delta de Notas sobre base confirmada, sem promover RAM financeira adjacente. Rascunho recuperado precisa de confirmação ou nova edição. Legados aceitos sem IDs têm edição isolada recusada, sem migração automática de identidade.
+
+MiniGames fica em **Configurações → MiniGames**, após Conhecimento, com os mesmos três jogos/progressos e sem autoplay. A janela Settings é o owner; outros diálogos e saída pausam. **Calendário e Sessões → Sessões Abertas** expõe os quatro centros Forex e B3, inclusive fechados/desconhecidos; somente o mapa móvel é sob demanda. Nomes atuais: **Estatuto JP Wealth**, **Stoikus EA** e **Planejamento de Patrimônio a Longo Prazo**; menu principal **Planejamento** continua curto. IDs históricos/normativos preservados.
+
+[Plano aprovado](docs/work/CHG-UX-NOTES-MENUS-20261102.md), [contratos e proveniência focal](docs/validation/ux-notas-menus-20261102/README.md). Candidato em validação final; recibos externos da sessão determinam FULL/distribuição/zoom nativo. Linux inicialmente indisponível não constitui aprovação; aceite humano e Git são separados. As fotografias datadas seguintes mantêm seus resultados e nomes originais.
+
+## Fotografias anteriores preservadas
+
 # Candidato de proporções do Calendário — 31/10/2026
 
 Hoje e seleção têm apresentação independente: numeral vermelho/negrito e disco azul32px dentro do alvo44px. Cabeçalho e workspace compartilham o renderizador; fontes, agenda e dados preservados. [Contrato desta frente](docs/work/CHG-JPW-CALENDAR-PROPORTIONS-20261031.md). Resultado integral somente nos recibos novos do candidato. Sem commit/integração/publicação; fotografias abaixo são históricas.
@@ -283,7 +293,7 @@ Questionário de início em etapas — parâmetros, calibração e a etapa **Bas
 
 ### Notas operacionais
 
-Janela central de Notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, acessível pelo botão flutuante e pelas Configurações, inclusive no HTML portátil. O mesmo controlador apresenta três regiões no desktop, duas progressivas no tablet e uma etapa por vez no celular; uma janela estreita no desktop também usa duas regiões. Notas, pastas e larguras existentes continuam incluídas no backup. O salvamento permanece explícito, com os mesmos contratos de recusa e nova tentativa; rascunhos do editor permanecem em memória enquanto se trabalha, com confirmação ao descartá-los. Backup Completo e Finalizar sessão capturam os rascunhos recuperáveis em uma seção própria; a recuperação exige conferência e não promove o texto a nota confirmada. Uma recarga sem captura não confirma nem salva a edição.
+Janela central de Notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, acessível pelo botão flutuante e pelas Configurações, inclusive no HTML portátil. O mesmo controlador apresenta três regiões no desktop, duas progressivas no tablet e uma etapa por vez no celular; uma janela estreita no desktop também usa duas regiões. Notas, pastas e larguras existentes continuam incluídas no backup. Na revisão de02/11/2026, texto usa autosave delimitado e confirmado; metadados/política mantêm confirmação explícita. Recusa conserva texto para nova tentativa explícita; resultado desconhecido bloqueia repetição. Backup Completo e Finalizar sessão capturam os rascunhos recuperáveis em uma seção própria; a recuperação exige conferência e não promove o texto a nota confirmada. Uma recarga não confirma conteúdo que ainda não foi gravado.
 
 A posição proporcional do botão fica em uma preferência local separada, `jpwealth_notes_launcher_position_v1`, com `schemaVersion: 1` e coordenadas `x`/`y` entre 0 e 1. Movimentos e ajustes concluídos confirmam a gravação por releitura; recarregar restaura a posição, e redimensionar apenas a projeta na área disponível. **Restaurar posição** remove somente essa preferência. **Finalizar sessão** preserva a posição confirmada, notas, pastas e larguras; a posição integra `workspace.preferences` do Backup Completo, separada dos fatos financeiros. A exportação Markdown de Notas é parcial e não transporta preferências. Contrato local em [NIGHT PENDING RECONCILIATION](docs/work/CHG-NIGHT-PENDING-RECONCILIATION-20260914.md), com cobertura focal em [notes_experience_test.py](tools/notes_experience_test.py).
 
@@ -300,7 +310,7 @@ operacionais** do usuário.
 
 ### MiniGames — Galton Board
 
-Em `Ferramentas e Serviços → MiniGames`, escolha **Abrir** no cartão Galton Board.
+Em `Configurações → MiniGames`, escolha **Abrir** no cartão Galton Board (host corrente de02/11/2026).
 **Voltar para MiniGames** retorna ao catálogo e pausa o jogo. Uma placa física
 2D permite observar como um histograma empírico emerge de colisões reais. O motor
 Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,

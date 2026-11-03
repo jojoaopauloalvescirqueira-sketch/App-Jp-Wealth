@@ -11,6 +11,8 @@ for(const target of ['planning','forex-planning','fxplan']){
 assert(nav.routes().some(r=>r.id==='planning'));
 assert(!nav.children('forex').some(r=>r.id==='forex-planning'));
 assert.equal(nav.resolve('tools-minigames').primary,'tools');
+assert.equal(nav.resolve('tools-minigames').action,'settings');
+assert.equal(nav.resolve('tools-minigames').leaf,'minigames');
 console.log('PASS planning independent primary and legacy aliases');
 const source=fs.readFileSync('src/js/20-ui/12-nav-style.js','utf8');
 let raw=null;const d={localStorage:{getItem:()=>raw}};vm.createContext(d);

@@ -297,11 +297,10 @@ SOFTWARE.
       <button type="button" data-nav-item data-nav-child="management-accounting"><span class="nav-sub-item-title">Caixa Anual</span><span class="nav-sub-item-desc">Planejamento anual e caixa diário</span></button>
     </nav>
     <nav class="nav-sub-menu" id="toolsNavSubmenu" aria-labelledby="toolsNavTrigger" aria-hidden="true" hidden inert>
-      <button type="button" data-nav-item data-nav-child="tools-calendar"><span class="nav-sub-item-title">Calendário e Mercados</span><span class="nav-sub-item-desc">Eventos, agenda e bolsas</span></button>
-      <button type="button" data-nav-item data-nav-child="tools-leverage"><span class="nav-sub-item-title">Stoikus — MT5</span><span class="nav-sub-item-desc">Ferramentas e instalação</span></button>
-      <button type="button" data-nav-item data-nav-child="tools-normative"><span class="nav-sub-item-title">Estrutura Normativa JP Wealth</span><span class="nav-sub-item-desc">Leitura do Estatuto V11</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-calendar"><span class="nav-sub-item-title">Calendário e Sessões</span><span class="nav-sub-item-desc">Eventos, agenda e sessões</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-leverage"><span class="nav-sub-item-title">Stoikus EA</span><span class="nav-sub-item-desc">Ferramentas e instalação</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-normative"><span class="nav-sub-item-title">Estatuto JP Wealth</span><span class="nav-sub-item-desc">Leitura do Estatuto V11</span></button>
       <button type="button" data-nav-item data-nav-child="tools-prop-firms"><span class="nav-sub-item-title">Mesas Proprietárias</span><span class="nav-sub-item-desc">Hedge Prop Firm · estudo e cenários</span></button>
-      <button type="button" data-nav-item data-nav-child="tools-minigames"><span class="nav-sub-item-title">MiniGames</span><span class="nav-sub-item-desc">Experimentos e jogos</span></button>
     </nav>
   </div>
 </div>
@@ -1139,8 +1138,8 @@ SOFTWARE.
 
   <section class="screen" id="tools" aria-label="Ferramentas e Serviços">
     <div class="tools-view calendar-markets-heading" data-tools-view="calendar">
-      <h2 id="calendarMarketsTitle" tabindex="-1">Calendário e Mercados</h2>
-      <button id="calendarMarketsJump" type="button" aria-controls="marketHoursTool">Sessões e B3 agora <span aria-hidden="true">↓</span></button>
+      <h2 id="calendarMarketsTitle" tabindex="-1">Calendário e Sessões</h2>
+      <button id="calendarMarketsJump" type="button" aria-controls="marketHoursTool">Sessões Abertas <span aria-hidden="true">↓</span></button>
     </div>
     <div class="tools-view" id="execEcal" data-tools-view="calendar" role="region" aria-label="Calendário e Agenda"></div>
     <div class="tools-view leverage-tool genetrix-site stoikus-learning" id="jpwLeveragePage" data-tools-view="leverage" role="region" aria-labelledby="jpwLeverageTitle" hidden inert>
@@ -1678,7 +1677,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
     </div>
     <div class="tools-view normative-reader" id="jpwNormativePage" data-tools-view="normative" role="region" aria-labelledby="nrTitle" hidden inert>
       <header class="nr-header">
-        <div><h2 id="nrTitle">Estrutura Normativa JP Wealth</h2><p>Estatuto JP Wealth V11.0</p><span id="nrIntegrity" class="nr-integrity" data-state="pending">Original V11 · 125 páginas</span></div>
+        <div><h2 id="nrTitle">Estatuto JP Wealth</h2><p>Estatuto JP Wealth V11.0</p><span id="nrIntegrity" class="nr-integrity" data-state="pending">Original V11 · 125 páginas</span></div>
         <div class="nr-file-actions">
           <a id="nrOriginal" href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener" aria-disabled="true">Abrir original</a>
           <button id="nrDownload" type="button" disabled>Baixar PDF</button>
@@ -1707,7 +1706,7 @@ Write-Host 'PASS: recibo R5 vinculado ao freeze, ZIP e quatro fontes. Agora copi
     </div>
 
     <div class="tools-view market-hours-tool" id="marketHoursTool" data-tools-view="calendar" role="region" aria-labelledby="marketHoursTitle" hidden inert>
-      <header><div class="mh-title-row"><h2 id="marketHoursTitle" data-route-focus tabindex="-1">Sessões Forex e B3 — Agora</h2></div></header>
+      <header><div class="mh-title-row"><h2 id="marketHoursTitle" data-route-focus tabindex="-1">Sessões Abertas</h2></div></header>
       <div id="toolsMarketHoursSlot"></div>
     </div>
     <section class="tools-view" data-tools-view="prop-firms" id="propFirmsView" hidden inert aria-labelledby="propFirmsTitle"><h2 id="propFirmsTitle" tabindex="-1">Mesas Proprietárias</h2><div id="toolsPropFirmsSlot"></div></section>

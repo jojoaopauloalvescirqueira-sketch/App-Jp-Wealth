@@ -703,7 +703,7 @@ def test_navigation_continuity(page):
           const project=()=>{const s=c.engine.snapshot();delete s.running;delete s.paused;return JSON.stringify(s);};
           const before=project(),prefs=JSON.stringify(c.preferences),staged=c.staged;
           closeSettingsModal({restoreFocus:false});
-          const navigated=JPWNavigation.navigate(route);
+          closeSettingsModal({restoreFocus:false});const navigated=JPWNavigation.navigate(route);
           const same=document.querySelector('[data-galton-root]').__galtonController===c;
           const out={same,destroyed:c.destroyed,active:c.active,raf:c.raf,
             observers:window.__galtonDebug.resizeObservers,debugRaf:window.__galtonDebug.activeRaf,
@@ -737,7 +737,7 @@ def test_navigation_continuity(page):
         assert out['preserved'] and out['stayedPreserved'] and out['prefsPreserved'] and out['stagedPreserved'],row
         assert back['same'] and back['active'] and back['paused'] and not back['running'],row
         assert back['preserved'] and back['label']=='Continuar' and back['lastAt']==back['raf']==0,row
-        assert back['observers']==back['roots']==1 and not back['headerInert'],row
+        assert back['observers']==back['roots']==1 and back['headerInert'],row
         assert row['stateUnchanged'] and row['storageUnchanged'],row
         page.wait_for_timeout(100)
         assert page.evaluate("JSON.stringify(window.__continuityController.engine.snapshot())===window.__continuityPaused"),route
@@ -774,7 +774,7 @@ def test_navigation_continuity(page):
           const c=window.__continuityController;
           if(c.snapshot().running!==running)c.root.querySelector('[data-galton-action="pause"]').click();
           openSettingsModal('general');
-          // New Tools owner observes visibility mutations at the microtask boundary.
+          // Settings owns visibility and synchronizes category changes immediately.
           await Promise.resolve();
           return {snapshot:JSON.stringify(c.engine.snapshot()),active:c.active,raf:c.raf,
             observers:window.__galtonDebug.resizeObservers};
@@ -859,10 +859,11 @@ def test_navigation_continuity(page):
 
 
 def test_real_ui(page):
+    background=page.evaluate("JPWNavigation.current()")
     enter_galton(page)
-    assert not page.locator("#settingsOverlay").is_visible()
+    assert page.locator("#settingsOverlay").is_visible()
     assert page.locator("#minigamesGaltonTitle").inner_text() == "Galton Board"
-    assert page.evaluate("JPWNavigation.current().primary") == "tools"
+    assert page.evaluate("JPWNavigation.current()") == background
     assert page.locator("[data-galton-add]").count() == 4
     assert page.locator("[data-galton-speed]").count() == 4
     assert page.locator("[data-galton-canvas]").get_attribute("role") == "img"
@@ -1118,7 +1119,7 @@ def test_real_ui(page):
       owner:JPWNavigation.current().primary,
       rootInSettings:!!document.querySelector('#settingsModal [data-galton-root]')
     })""")
-    assert covered == {"same":True,"active":False,"raf":0,"observers":0,"owner":"tools","rootInSettings":False}, covered
+    assert covered == {"same":True,"active":False,"raf":0,"observers":0,"owner":"research","rootInSettings":True}, covered
     page.evaluate("closeSettingsModal();settingsNavigate('probability-lab')")
     assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController && window.__a13CoveredController.active")
 
@@ -1177,7 +1178,7 @@ def test_real_ui(page):
     assert reopened["speed"] == expected_preferences["speed"]
     leave_galton(page)
 
-    # Geometria mobile: jogo em Ferramentas, canvas contido horizontalmente.
+    # Geometria mobile: jogo em Configurações, canvas contido horizontalmente.
     page.set_viewport_size({"width": 390, "height": 844})
     enter_galton(page)
     mobile = page.evaluate(

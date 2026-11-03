@@ -45,9 +45,9 @@ CASES = [
     ("tools", "calendar", "tools-calendar", "tools", "tools-calendar"),
     ("tools", "nocuda", "tools-nocuda", "tools", "tools-nocuda"),
     ("tools", "leverage", "tools-leverage", "tools", "tools-leverage"),
-    ("tools", "minigames", "tools-minigames", "tools", "tools-minigames"),
-    ("tools", "galton", "tools-minigames", "tools", "tools-minigames"),
-    ("tools", "time-twins", "tools-minigames", "tools", "tools-minigames"),
+    ("tools", "minigames", None, "tools", None),
+    ("tools", "galton", None, "tools", None),
+    ("tools", "time-twins", None, "tools", None),
     ("research", "nocoda", "research-forex", "research", "research-forex"),
     ("research", "pivots", "research-forex", "research", "research-forex"),
     ("research", "stocks-br", "research-forex", "research", "research-forex"),
@@ -117,6 +117,8 @@ window.__exercise=(surface,view)=>{
 
 def plan_for(case):
     surface, view, canonical, primary, child = case
+    if surface=="tools" and view in {"minigames","galton","time-twins"}:
+        return dict(accepted=True,requested={"minigames":"tools-minigames","galton":"galton-board","time-twins":"time-twins"}[view],source="compatibility",canonical=None,primary="tools",child=None,screen=None,localView=None,action="settings",leaf=view)
     if surface=="exec" and view=="accounting":
         return dict(accepted=True,requested="management-accounting",source="canonical",canonical=canonical,primary=primary,child=child,screen="management",localView=None)
     if surface=="research" and view in {"stocks-br","stocks-global","reits","others"}:
@@ -137,6 +139,11 @@ def plan_for(case):
 
 def check_success(result, case):
     plan = plan_for(case)
+    if plan.get('action')=='settings':
+        assert result['accepted'] is True and result['after']==result['before'],result
+        assert result['events']==[dict(kind='apply',plan=plan,target=plan['requested'],last=dict(accepted=False,reason='not-applied')),dict(kind='settings',leaf=plan['leaf'])],result
+        assert result['reads']==0 and result['denied']==[] and result['lastAfter']==dict(accepted=True,reason=None),result
+        return
     applied_surface = plan["localView"]["surface"] if plan["localView"] else plan["screen"]
     current = {k: v for k, v in plan.items() if k not in ("accepted", "action", "leaf")}
     events = result["events"]
@@ -250,18 +257,13 @@ def main():
             p=new_page()
             try:
                 result=p.evaluate("__exercise('research','probability-lab')")
-                records.append(dict(name='research:probability-lab Tools relocation',result=result))
-                expected=dict(canonical='tools-minigames',requested='probability-lab',source='compatibility',
-                              primary='tools',child='tools-minigames',screen='tools',
-                              localView=dict(surface='tools',view='galton'))
-                assert result['accepted'] is True
-                assert result['after']==dict(current=expected,screens=['tools'],primary=['tools'],aria=['tools']),result
-                assert [e['kind'] for e in result['events']]==['apply','resolve','resolve','select','pill','scroll','reminder','sub'],result
-                assert result['events'][0]==dict(kind='apply',plan=dict(accepted=True,**expected,action=None,leaf=None),target='probability-lab',last=dict(accepted=False,reason='not-applied')),result
-                assert result['events'][3]['surface']=='tools' and result['events'][3]['view']=='galton',result
-                assert result['reads']==2 and result['denied']==[] and result['lastAfter']==dict(accepted=True,reason=None)
+                records.append(dict(name='research:probability-lab Settings relocation',result=result))
+                expected=dict(accepted=True,requested='probability-lab',source='compatibility',canonical=None,primary='tools',child=None,screen=None,localView=None,action='settings',leaf='galton')
+                assert result['accepted'] is True and result['after']==result['before'],result
+                assert result['events']==[dict(kind='apply',plan=expected,target='probability-lab',last=dict(accepted=False,reason='not-applied')),dict(kind='settings',leaf='galton')],result
+                assert result['reads']==0 and result['denied']==[] and result['lastAfter']==dict(accepted=True,reason=None),result
             finally:p.close()
-        run('legacy Lab opens Tools game without data access',relocated_lab_alias)
+        run('legacy Lab opens Settings game without data access',relocated_lab_alias)
 
         def relocated_calendar_alias():
             p = new_page()

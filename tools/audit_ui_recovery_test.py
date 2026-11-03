@@ -190,11 +190,17 @@ def note_state(page):
 def notes_case(page, case, out, decision, kind):
     open_notes(page)
     page.locator('#mvpNotesNewBtn').click()
-    page.locator('#mvpNotesNewConfirmBtn').click()
     if kind=='existing':
         page.locator('#mvpNoteContent').fill('Synthetic note\nOriginal saved content')
-        page.locator('#mvpNotesSaveBtn').click()
-    page.locator('#mvpNoteContent').fill('Synthetic note\nUnsaved content to discard')
+        page.wait_for_function("mvpNotesUI.selectedId && !mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
+    page.locator('#mvpNoteContent').fill('Synthetic note\nConfirmed content with pending administrative details')
+    page.wait_for_function("!mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
+    # Administrative edits remain genuinely pending after automatic text confirmation.
+    page.locator('#mvpNotesInspectorBtn').click()
+    page.locator('#mvpNotePriority').select_option('critical')
+    page.locator('#mvpNotesInspectorBtn').click()
+    assert page.evaluate('mvpNotesUI.draftDirty && mvpNotesUI.draft.priority!==mvpNotesUI.draftOriginal.priority')
+    page.locator('#mvpNoteContent').focus()  # selection belongs to the editor after inspector use
     page.locator('#mvpNoteContent').evaluate('e=>e.setSelectionRange(4,9)')
     if not page.locator('[data-mvp-folder="unfiled"]:visible').count():
         requested=page.viewport_size

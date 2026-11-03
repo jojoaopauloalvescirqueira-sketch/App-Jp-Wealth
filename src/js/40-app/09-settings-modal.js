@@ -12,10 +12,15 @@ const SETTINGS_GROUPS=[
   {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
   {id:'forex-preferences', label:'Forex', desc:'Preferências de consulta do Consolidado FX.', icon:'operations', children:['forex-consolidated']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational','learning-guide']},
+  {id:'minigames', label:'MiniGames', desc:'Jogos e experimentos educacionais.', icon:'probability'},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
 ];
 const SETTINGS_LEAVES={
+  minigames:{label:'MiniGames',group:null,desc:'Jogos e experimentos educacionais.',terms:['jogos','experimentos','Galton Board','Gêmeos do Tempo','Correntes de Capital']},
+  galton:{label:'Galton Board',group:'minigames',desc:'Probabilidade e distribuição.',terms:['probabilidade','galton','laboratório']},
+  'time-twins':{label:'Gêmeos do Tempo',group:'minigames',desc:'Explore o tempo e os juros compostos.',terms:['gêmeos','tempo','juros']},
+  'capital-currents':{label:'Correntes de Capital',group:'minigames',desc:'Explore pressão e trajetórias.',terms:['correntes','capital','pressão']},
   account:{label:'JP Wealth Account', group:null, desc:'Sua identidade local neste navegador.', terms:['perfil','conta local','nome de exibição','foto','avatar','galeria','JP Wealth Account']},
   about:{label:'Sobre', group:null, terms:['sobre','versão','build','offline','armazenamento','documentação','changelog']},
   appearance:{label:'Aparência', group:'appearance-interface', desc:'Tema e ícone do aplicativo.', terms:['tema','aparência','ícone','paleta','contraste']},
@@ -550,6 +555,14 @@ function buildSettingsContent(){
   createSettingsPanel('account',settingsAccountPanel());
   SETTINGS_GROUPS.filter(g=>g.children).forEach(g=>createSettingsPanel(g.id,groupPanel(g)));
   createSettingsPanel('about',aboutPanel());
+  // Persistent original nodes leave the inert appMain once; no canvas or
+  // controller is cloned, rebuilt on category changes, or returned on close.
+  Object.entries({minigames:'minigamesHub',galton:'minigamesGame','time-twins':'minigamesTimeTwinsGame','capital-currents':'minigamesCapitalCurrentsGame'}).forEach(([id,nodeId])=>{
+    const panel=createSettingsPanel(id,''),node=settingsEl(nodeId);
+    panel.classList.add('settings-minigames-panel');
+    panel.querySelector('[data-settings-hero]')?.remove();
+    if(node){node.hidden=false;node.inert=false;panel.append(node);}
+  });
   createSettingsPanel('appearance','<p class="settings-lead">Escolha o tema e a aparência de leitura para este navegador.</p><div data-settings-slot="appearance"></div>');
   createSettingsPanel('interface','<p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
   createSettingsPanel('editor','<p class="settings-lead">Preferências de edição e de apresentação da interface neste navegador.</p><div data-settings-slot="editor"></div>');
@@ -632,7 +645,7 @@ function restoreLegacySettingsNodes(){
 // Mantida com este nome e assinatura para compatibilidade com chamadas diretas existentes.
 function activateSettingsCategory(id,options={}){
   id=settingsNormalizeCategory(id);
-  if(id==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
+  if(settingsIsMiniGames(id)&&!options.accepted)return settingsOpenMiniGames(id);
   const exists=document.querySelector(`[data-settings-panel="${id}"]`);
   const targetId=exists?id:'general';
   if(targetId==='forex-consolidated'&&window.JPWFXConsolidated?.bindSettings)window.JPWFXConsolidated.bindSettings();
@@ -649,6 +662,7 @@ function activateSettingsCategory(id,options={}){
   settingsUpdatePageHeader(targetId);
   if(targetId==='backup' && typeof renderDgStorageCard==='function') renderDgStorageCard();
   if(targetId==='learning-guide')window.JPWLearningGuide?.renderCenter?.(exists);
+  window.JPWTools?.minigames?.sync(options.accepted===true&&settingsIsMiniGames(targetId));
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
 
@@ -673,12 +687,12 @@ function settingsRenderCurrent(options={}){
   const id=settingsState.navStack[settingsState.navIndex];
   const modal=settingsEl('settingsModal');
   if(modal) modal.classList.toggle('settings-mobile-detail',!settingsState.mobileListVisible);
-  activateSettingsCategory(id,{focus:options.focus});
+  activateSettingsCategory(id,{focus:options.focus,accepted:true});
   if(id==='tool-params'&&window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
 }
 function settingsNavigate(id,options={}){
   id=settingsNormalizeCategory(id);
-  if(id==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
+  if(settingsIsMiniGames(id)&&!options.accepted)return settingsOpenMiniGames(id);
   const push=options.push!==false;
   if(push){
     if(settingsState.navStack[settingsState.navIndex]!==id){
@@ -695,12 +709,22 @@ function settingsNavigate(id,options={}){
   if(settingsState.active==='tool-check') fxOpenChecklist(settingsEl('settingsOpenChecklist'));
 }
 function settingsNavigateTopLevel(id){
-  if(settingsNormalizeCategory(id)==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
+  if(settingsIsMiniGames(settingsNormalizeCategory(id)))return settingsOpenMiniGames(settingsNormalizeCategory(id));
   settingsState.mobileListVisible=false;
   settingsNavigate(id,{push:true,focus:true});
 }
+function settingsMiniGamesHistory(index){
+  const button=settingsEl(index<settingsState.navIndex?'settingsBackBtn':'settingsForwardBtn');
+  const before=button.getAttribute('data-route'),id=settingsState.navStack[index];
+  // Reuse the original button as navigation target, so guarded asynchronous
+  // acceptance retains the history intent without any deferred mount flag.
+  button.dataset.route=({minigames:'tools-minigames',galton:'galton-board'})[id]||id;
+  try{return window.JPWNavigation?.navigate(button)===true;}
+  finally{if(before===null)button.removeAttribute('data-route');else button.setAttribute('data-route',before);}
+}
 function settingsGoBack(){
   if(settingsState.navIndex>0){
+    if(settingsIsMiniGames(settingsState.navStack[settingsState.navIndex-1]))return settingsMiniGamesHistory(settingsState.navIndex-1);
     settingsState.navIndex--;
     if(settingsState.navIndex===0){
       // topo da pilha: no mobile, voltar ao topo significa voltar à lista de categorias,
@@ -716,11 +740,12 @@ function settingsGoBack(){
   if(!settingsState.mobileListVisible){ settingsState.mobileListVisible=true; const modal=settingsEl('settingsModal'); if(modal) modal.classList.remove('settings-mobile-detail'); settingsEl('settingsSearch').focus({preventScroll:true}); }
 }
 function settingsGoForward(){
+  if(settingsState.navIndex<settingsState.navStack.length-1&&settingsIsMiniGames(settingsState.navStack[settingsState.navIndex+1]))return settingsMiniGamesHistory(settingsState.navIndex+1);
   if(settingsState.navIndex<settingsState.navStack.length-1){ settingsState.navIndex++; settingsState.mobileListVisible=false; settingsRenderCurrent({focus:true}); }
 }
 function settingsNavigateToLeaf(leafId,options={}){
   leafId=settingsNormalizeCategory(leafId);
-  if(leafId==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
+  if(settingsIsMiniGames(leafId)&&!options.accepted)return settingsOpenMiniGames(leafId);
   const leaf=SETTINGS_LEAVES[leafId];
   settingsState.navStack=['general'];
   if(leaf&&leaf.group) settingsState.navStack.push(leaf.group);
@@ -820,19 +845,38 @@ function settingsSetAppInert(on){
   }
 }
 // Entradas antigas preservam a intenção sem criar uma folha concorrente.
-function settingsNormalizeCategory(id){return ['probability-lab','galton-board','research-probability-lab'].includes(id)?'probability-lab':id;}
-function openSettingsModal(category='general', opener){
+function settingsNormalizeCategory(id){return ['probability-lab','galton-board','research-probability-lab'].includes(id)?'galton':id==='tools-minigames'?'minigames':id;}
+function settingsIsMiniGames(id){return ['minigames','galton','time-twins','capital-currents'].includes(id);}
+function settingsOpenMiniGames(id){return window.JPWNavigation?.navigate(({minigames:'tools-minigames',galton:'galton-board'})[id]||id)===true;}
+function settingsMiniGamesView(){return settingsState.open&&!settingsState.suspended&&settingsIsMiniGames(settingsState.active)?settingsState.active:null;}
+function settingsFocusMiniGames(){
+  const id=({minigames:'minigamesTitle',galton:'minigamesGaltonTitle','time-twins':'minigamesTimeTwinsTitle','capital-currents':'minigamesCapitalCurrentsTitle'})[settingsMiniGamesView()];
+  if(id)settingsEl(id)?.focus({preventScroll:true});
+}
+function openSettingsModal(category='general', opener, options={}){
   category=settingsNormalizeCategory(category);
-  if(category==='probability-lab')return window.JPWNavigation?.navigate('galton-board')===true;
+  if(settingsIsMiniGames(category)&&!options.accepted)return settingsOpenMiniGames(category);
+  if(settingsIsMiniGames(category)&&window.JPWTools?.minigames?.canNavigate?.()===false)return false;
+  if(settingsState.open&&settingsIsMiniGames(category)){
+    const historyStep=opener===settingsEl('settingsBackBtn')?-1:opener===settingsEl('settingsForwardBtn')?1:0;
+    const historyIndex=settingsState.navIndex+historyStep;
+    if(historyStep&&settingsState.navStack[historyIndex]===category){
+      settingsState.navIndex=historyIndex;settingsState.mobileListVisible=false;settingsRenderCurrent({focus:false});
+    }else settingsNavigateToLeaf(category,{accepted:true,focus:false});
+    settingsFocusMiniGames();return true;
+  }
   buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;
   settingsState.navStack=['general']; settingsState.navIndex=0; settingsState.mobileListVisible=true;
   moveLegacySettingsNodes(); settingsEl('settingsOverlay').classList.add('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','false'); settingsSetAppInert(true);
-  if(category==='learning-guide') settingsNavigateToLeaf(category,{focus:false});
+  if(settingsIsMiniGames(category))settingsNavigateToLeaf(category,{accepted:true,focus:false});
+  else if(category==='learning-guide') settingsNavigateToLeaf(category,{focus:false});
   else if(category&&category!=='general') settingsNavigate(category,{push:true,focus:false});
   else settingsRenderCurrent({focus:false});
+  if(settingsIsMiniGames(category))settingsFocusMiniGames();
   window.__settingsModalDebug.opens++;
   requestAnimationFrame(()=>{
     if(!settingsState.open||settingsState.suspended) return;
+    if(settingsIsMiniGames(settingsState.active)){settingsFocusMiniGames();return;}
     const search=settingsEl('settingsSearch');
     (search&&search.getClientRects().length?search:settingsEl('settingsContent')).focus({preventScroll:true});
   });
@@ -843,17 +887,17 @@ function closeSettingsModal(options={}){
   cancelSettingsProfileDraft();
   if(window.JPWForex&&JPWForex.state)JPWForex.state.lockEditor();
   if(typeof mvpNotesCancelAppearance==='function')mvpNotesCancelAppearance();
-  settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
+  settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes(); window.JPWTools?.minigames?.sync();
   if(typeof renderPresentation==='function')renderPresentation();
   const opener=settingsState.opener; settingsState.opener=null;
   if(options.restoreFocus!==false) shellRestoreHeaderFocus(opener);
 }
 function settingsMarkSubdialogLauncher(element){ settingsState.subdialogLauncher=element; }
 function suspendSettingsForSubdialog(){
-  if(!settingsState.open||settingsState.suspended) return; settingsState.suspended=true; settingsEl('settingsModal').inert=true; settingsEl('settingsModal').setAttribute('aria-hidden','true'); window.__settingsModalDebug.focusTrapActive=false;
+  if(!settingsState.open||settingsState.suspended) return; settingsState.suspended=true; settingsEl('settingsModal').inert=true; settingsEl('settingsModal').setAttribute('aria-hidden','true'); window.__settingsModalDebug.focusTrapActive=false; window.JPWTools?.minigames?.sync();
 }
 function restoreSettingsAfterSubdialog(){
-  if(!settingsState.open||!settingsState.suspended) return; settingsState.suspended=false; settingsEl('settingsModal').inert=false; settingsEl('settingsModal').removeAttribute('aria-hidden'); const target=settingsState.subdialogLauncher; settingsState.subdialogLauncher=null; if(target&&document.contains(target)) requestAnimationFrame(()=>target.focus());
+  if(!settingsState.open||!settingsState.suspended) return; settingsState.suspended=false; settingsEl('settingsModal').inert=false; settingsEl('settingsModal').removeAttribute('aria-hidden'); window.JPWTools?.minigames?.sync(); const target=settingsState.subdialogLauncher; settingsState.subdialogLauncher=null; if(target&&document.contains(target)) requestAnimationFrame(()=>target.focus());
 }
 function settingsFocusables(root){ return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&!el.closest('[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'); }
 function settingsTrapFocus(event){

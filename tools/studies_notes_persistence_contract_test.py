@@ -55,11 +55,13 @@ PREPARE = r"""({caseName,nc,pv}) => {
     openMvpNotesDrawer();
     if(caseName==='note-create') mvpNotesBeginNewNote();
     else mvpNotesSelectNote(note.id);
-    mvpNotesUI.draft.content='Modified\nRecoverable draft';mvpNotesUI.draftDirty=true;
+    if(caseName.startsWith('note-')){mvpNotesUI.draft.content='Modified\nRecoverable draft';mvpNotesUI.draftDirty=true;}
     renderMvpNotesEditor();
   }
   if(save()!==true) throw Error('Synthetic checkpoint failed');
+  if(!caseName.startsWith('nc-')&&!caseName.startsWith('pv-'))mvpNotesBeginAutosave();
   window.__realSave=save;window.__realSet=Storage.prototype.setItem;window.__saveCalls=[];
+  window.__realNotesPersist=jpWealthPersistDocument;
   window.__storageWriteAttempts=0;window.__storageCommittedWrites=0;
   window.__operation=caseName;window.__mode='normal';
   Storage.prototype.setItem=function(k,v){
@@ -75,6 +77,17 @@ PREPARE = r"""({caseName,nc,pv}) => {
     if(window.__mode==='throw-before')throw Error('synthetic exception before write');
     const r=window.__realSave();window.__saveCalls.push(r);
     if(window.__mode==='throw-after')throw Error('synthetic exception after confirmed native write');
+    if(window.__mode==='unexpected')return undefined;
+    return r;
+  };
+  // Notes now writes a scoped candidate through the existing writer; fault the
+  // same public boundary instead of the obsolete whole-S save() dispatch.
+  jpWealthPersistDocument=function(state,opt){
+    if(opt?.component!=='notes')return window.__realNotesPersist(state,opt);
+    if(window.__mode==='false'){window.__saveCalls.push(false);return {status:'REFUSED',reason:'SYNTHETIC_REFUSAL'};}
+    if(window.__mode==='throw-before')throw Error('synthetic exception before Notes write');
+    const r=window.__realNotesPersist(state,opt);window.__saveCalls.push(r.status==='CONFIRMED');
+    if(window.__mode==='throw-after')throw Error('synthetic exception after confirmed Notes write');
     if(window.__mode==='unexpected')return undefined;
     return r;
   };
@@ -242,10 +255,11 @@ def run_ui(browser,url,case,width,artifact):
     page.evaluate('(theme)=>{S.theme=theme;applyTheme();}', 'dark' if width==1440 else 'light')
     field,button=('#ncPrice1','#ncSaveBtn') if case.startswith('nc-') else ('#pv_startPrice','#pvSavePivotBtn') if case.startswith('pv-') else ('#mvpNoteContent','#mvpNotesSaveBtn')
     value='1.23512' if case.startswith('nc-') else '1.09' if case.startswith('pv-') else 'Modified\nRecoverable draft'
-    page.locator(field).fill(value)
+    if case.startswith('note-'):page.evaluate('window.__mode="quota"')
     before=page.evaluate(SNAPSHOT)
+    page.locator(field).fill(value)
     page.evaluate('window.__mode="quota"')
-    page.locator(button).click()
+    if case!='note-create':page.locator(button).click()
     refused=page.evaluate(SNAPSHOT);failures=[]
     check(refused['aggregate']==before['aggregate'] and refused['raw']==before['raw'],'button refusal changed confirmed state',failures)
     check(refused['ui']['dirty'] and refused['ui']['draft']==before['ui']['draft'],'button refusal lost draft',failures)
@@ -506,11 +520,12 @@ def run_banner_keyboard(browser,url,theme,width,height,artifact):
         check(all(f['sameNode'] and f['sameModal'] and f['role']=='alert' and f['live']=='assertive' for f in facts),
               label+': live notices do not belong to the editor modal',failures)
 
+    page.evaluate('window.__mode="quota"')
     page.locator('#mvpNoteContent').click()
     for _ in range(35):
         page.keyboard.press('Tab')
         check(page.evaluate(active)['inNotes'],'empty notices: focus escaped Notes',failures)
-    page.evaluate('window.__mode="quota"');page.locator('#mvpNotesSaveBtn').click()
+    if page.evaluate('window.__saveCalls.length')==0:page.locator('#mvpNotesSaveBtn').click()
     refused=preserved('save refused')
     check(refused['calls']==[False],'ticket refusal was not exactly one save',failures)
     semantics('single notice')
@@ -536,7 +551,7 @@ def run_banner_keyboard(browser,url,theme,width,height,artifact):
                   and bookkeeping['stage']=='DOWNLOAD_REQUESTED',
                   'backup bookkeeping did not make exactly one refused storage write',failures)
     page.keyboard.press('Escape');preserved('cancel discard')
-    check(page.evaluate('window.__confirms.length')==1,'Escape did not retain explicit dirty-discard protection',failures)
+    check(page.evaluate('window.__confirms.length')==0,'Blocked autosave must retain the draft without offering an unsafe discard',failures)
     page.evaluate("jpWealthLoadRecovery.active=true;jpWealthLoadRecovery.raw='{\"synthetic\":true}';renderLoadRecoveryWarning()")
     semantics('two notices')
     for target in ('persistenceRecoveryDownloadBtn','persistenceRecoveryImportBtn','persistenceRecoveryResetBtn','persistenceAlertBackupBtn'):
@@ -556,7 +571,7 @@ def run_banner_keyboard(browser,url,theme,width,height,artifact):
     page.evaluate("jpWealthPersistenceFailure.active=true;jpWealthPersistenceFailure.kind='storage';renderPersistenceFailureWarning()")
     semantics('notice reappeared');route('persistenceAlertBackupBtn','Tab','reappeared')
     preserved('visibility transitions')
-    check(page.evaluate('window.__confirms.length')==1,'keyboard recovery requested another discard',failures)
+    check(page.evaluate('window.__confirms.length')==0,'keyboard recovery requested a discard of a blocked draft',failures)
     # Resolve the storage fixture and save the same draft with the actual UI.
     page.evaluate('window.__mode="normal"');page.locator('#mvpNotesSaveBtn').click()
     saved=page.evaluate(SNAPSHOT)
@@ -564,7 +579,7 @@ def run_banner_keyboard(browser,url,theme,width,height,artifact):
           'explicit retry did not save retained ticket',failures)
     check(json.loads(saved['raw'])['mvpNotes']==saved['aggregate'],'retry was not durable',failures)
     page.evaluate("jpWealthLoadRecovery.active=true;jpWealthLoadRecovery.raw='{\"synthetic\":true}';renderLoadRecoveryWarning()")
-    page.locator('#mvpNotesNewBtn').click()
+    page.evaluate('mvpNotesSetNewNoteModalOpen(true)')
     nested=[]
     for key in ('Tab','Shift+Tab'):
         for _ in range(18):
@@ -600,6 +615,7 @@ def run_folder_reference(browser,url,mode):
         page.evaluate('mvpNotesUI.draft=mvpNotesDraftFromItem(S.mvpNotes.items[0]);mvpNotesUI.draftOriginal={...mvpNotesUI.draft};mvpNotesUI.draftDirty=false;renderMvpNotesEditor()')
     if mode=='other-folder':page.evaluate('mvpNotesUI.draft.folderId="folder-second"')
     if mode=='quota':page.evaluate('window.__mode="quota"')
+    saved=None
     before=page.evaluate(SNAPSHOT)
     page.evaluate('mvpNotesDeleteFolder("folder-existing")')
     after=page.evaluate(SNAPSHOT);failures=[]
@@ -611,14 +627,16 @@ def run_folder_reference(browser,url,mode):
         check(after['ui']['draft']['folderId']==expected,'open draft retained deleted folder reference',failures)
         check(after['ui']['draft']['content']==before['ui']['draft']['content'],'reference alignment overwrote draft text',failures)
         check(after['ui']['dirty']==before['ui']['dirty'],'reference alignment changed unrelated dirty state',failures)
+        page.evaluate("()=>{window.__refClicks=[];document.getElementById('mvpNotesSaveBtn').addEventListener('click',()=>window.__refClicks.push({draft:structuredClone(mvpNotesUI.draft),blocked:mvpNotesAutosave.blocked,focused:document.activeElement.id}),true);}")
         page.locator('#mvpNoteContent').fill('Reference contract\nLater saved body')
         page.locator('#mvpNotesSaveBtn').click()
-        saved=page.evaluate('({item:S.mvpNotes.items[0],disk:JSON.parse(localStorage.getItem(LSKEY)).mvpNotes.items[0]})')
+        saved=page.evaluate('({item:S.mvpNotes.items[0],disk:JSON.parse(localStorage.getItem(LSKEY)).mvpNotes.items[0],draft:mvpNotesUI.draft,original:mvpNotesUI.draftOriginal,blocked:mvpNotesAutosave.blocked,clicks:window.__refClicks,result:jpWealthPersistenceLastResult()})')
+        check(len(saved['clicks'])==1 and saved['clicks'][0]['focused']=='mvpNotesSaveBtn','explicit save lost its real click or focus during textarea blur',failures)
         check(saved['item']['folderId']==expected and saved['disk']['folderId']==expected,'later note save resurrected deleted folder',failures)
         page.reload(wait_until='load');wait_bootstrap(page)
         check(page.evaluate('S.mvpNotes.items[0].folderId')==expected,'reload changed supposedly confirmed folder reference',failures)
     context.close()
-    return {'case':'folder-reference','mode':mode,'classification':'PRODUCT_FAIL' if failures else 'PASS','violations':failures,'before':before,'after':after}
+    return {'case':'folder-reference','mode':mode,'classification':'PRODUCT_FAIL' if failures else 'PASS','violations':failures,'before':before,'after':after,'saved':saved}
 
 
 def main():
@@ -626,7 +644,7 @@ def main():
     parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1])
     parser.add_argument('--artifact',type=Path,required=True)
     parser.add_argument('--mode',choices=['baseline','full'],default='full')
-    parser.add_argument('--only',choices=['conflict','ui','missing','folders','recovered-unknown','folder-reference','banner','keyboard'])
+    parser.add_argument('--only',choices=['conflict','quota','unknown','ui','missing','folders','recovered-unknown','folder-reference','banner','keyboard'])
     args=parser.parse_args();root=args.root.resolve();os.chdir(root)
     class Quiet(SimpleHTTPRequestHandler):
         def log_message(self,*args):pass

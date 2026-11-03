@@ -68,6 +68,11 @@ def assert_values(panel, events):
     return observed
 
 
+def assert_compact_rows(panel):
+    heights=panel.locator('[data-calendar-economic-id]').evaluate_all('ns=>ns.map(n=>n.getBoundingClientRect().height)')
+    assert heights and all(abs(n-44)<=TOLERANCE for n in heights), ('Compact single-line44px news rows',heights)
+
+
 def assert_layout(panel, *, natural_wide=False):
     data=panel.evaluate('''panel=>{
       const box=e=>e.getBoundingClientRect().toJSON(),visible=e=>e.getClientRects().length&&!e.hidden&&getComputedStyle(e).visibility!=='hidden';
@@ -77,7 +82,9 @@ def assert_layout(panel, *, natural_wide=False):
         agendaUseful:agenda.clientWidth-parseFloat(getComputedStyle(agenda).paddingLeft)-parseFloat(getComputedStyle(agenda).paddingRight),
         headings:[...agenda.querySelectorAll('th,[role="columnheader"]')].filter(e=>visible(e)&&e.getBoundingClientRect().width>2&&e.getBoundingClientRect().height>2).map(e=>e.textContent.trim()),
         headerBoxes:[...agenda.querySelectorAll('th,[role="columnheader"]')].filter(e=>visible(e)&&e.getBoundingClientRect().width>2&&e.getBoundingClientRect().height>2).map(box),
-        overflow:[panel,body,agenda,...agenda.querySelectorAll('[data-calendar-economic-id]')].map(e=>({name:e.id||e.className,scroll:e.scrollWidth,client:e.clientWidth})),
+        scrollRegion:(()=>{const n=agenda.querySelector('.calendar-economic-scroll');return n?{box:box(n),client:n.clientWidth,scroll:n.scrollWidth,tabIndex:n.tabIndex,role:n.getAttribute('role'),label:n.getAttribute('aria-label')}:null})(),
+        table:box(agenda.querySelector('.calendar-economic-table')),
+        overflow:[panel,body,agenda].map(e=>({name:e.id||e.className,scroll:e.scrollWidth,client:e.clientWidth})),
         rows:[...agenda.querySelectorAll('[data-calendar-economic-id]')].map(e=>({box:box(e),fields:[...e.querySelectorAll('[data-calendar-economic-field]')].filter(visible).map(n=>({name:n.dataset.calendarEconomicField,box:box(n),text:n.innerText,numericInk:(()=>{const v=n.querySelector('[data-calendar-economic-value]');if(!v)return null;const range=document.createRange();range.selectNodeContents(v);const ink=[...range.getClientRects()].filter(r=>r.width>0);return {right:Math.max(...ink.map(r=>r.right)),expectedRight:n.getBoundingClientRect().right-parseFloat(getComputedStyle(n).paddingRight)};})(),label:n.getAttribute('data-label'),labelText:[...n.querySelectorAll('*')].filter(visible).map(x=>x.innerText)}))}))};
     }''')
     assert all(o['scroll']<=o['client']+1 for o in data['overflow']), ('No horizontal overflow',data['overflow'])
@@ -86,28 +93,23 @@ def assert_layout(panel, *, natural_wide=False):
     else:
         assert abs(data['month']['width']-308)<=TOLERANCE, ('Month grid gets308 CSSpx beside economic area',data)
         assert data['agenda']['left']>=data['month']['right']-TOLERANCE, ('Agenda beside month',data)
-    wide=data['agendaUseful']>=720-EPSILON
-    if natural_wide:assert wide, ('Seven columns must be reachable in natural wide workspace',data)
-    assert data['headings']==(list(HEADERS) if wide else []), ('Seven headers only when economic area>=720',data)
+    region=data['scrollRegion']
+    assert region and region['tabIndex']==0 and region['role']=='region' and region['label'], ('Named keyboard scroll region',data)
+    assert data['table']['width']>=860-EPSILON, ('Economic table minimum860px',data)
+    assert region['scroll']>=860-EPSILON and region['box']['width']<=data['agenda']['width']+TOLERANCE, ('Overflow contained by economic region',data)
+    assert data['headings']==list(HEADERS), ('Seven headers at all widths',data)
     for row in data['rows']:
         assert len(row['fields'])==7, ('All fields visible',row)
+        assert row['box']['height']>=44-EPSILON, ('Rows retain44px target',row)
         fields={f['name']:f for f in row['fields']}
         for key in FIELDS[4:]:
             ink=fields[key]['numericInk']
             assert ink and abs(ink['right']-ink['expectedRight'])<=TOLERANCE, ('Numeric ink must align right within its own cell',key,ink)
-        if wide:
-            for key,header in zip(FIELDS,data['headerBoxes']):
-                cell=fields[key]['box']
-                assert abs(header['left']-cell['left'])<=TOLERANCE and abs(header['right']-cell['right'])<=TOLERANCE, ('Real header and cell column bounds align within2 CSSpx',key,header,cell)
-            assert max(f['box']['top'] for f in fields.values())-min(f['box']['top'] for f in fields.values())<=TOLERANCE, ('Wide fields align in one row',row)
-            for first,second in zip(FIELDS,FIELDS[1:]):assert fields[first]['box']['right']<=fields[second]['box']['left']+TOLERANCE, ('Seven ordered columns',row)
-        else:
-            top=[fields[k]['box'] for k in FIELDS[:4]];bottom=[fields[k]['box'] for k in FIELDS[4:]]
-            assert min(b['top'] for b in bottom)>=max(b['bottom'] for b in top)-TOLERANCE, ('Identity above all values',row)
-            assert max(b['top'] for b in bottom)-min(b['top'] for b in bottom)<=TOLERANCE, ('Three values share the second band',row)
-            for key in FIELDS[4:]:
-                f=fields[key];label=LABELS[key]
-                assert label in f['text'] or (f['label']==label and panel.locator('[data-calendar-economic-field="'+key+'"]').first.evaluate('n=>getComputedStyle(n,"::before").content').strip('"') in (label,label+':')), ('Compact values need visible labels',key,f)
+        for key,header in zip(FIELDS,data['headerBoxes']):
+            cell=fields[key]['box']
+            assert abs(header['left']-cell['left'])<=TOLERANCE and abs(header['right']-cell['right'])<=TOLERANCE, ('Real header and cell column bounds align within2 CSSpx',key,header,cell)
+        assert max(f['box']['top'] for f in fields.values())-min(f['box']['top'] for f in fields.values())<=TOLERANCE, ('Fields align in one row',row)
+        for first,second in zip(FIELDS,FIELDS[1:]):assert fields[first]['box']['right']<=fields[second]['box']['left']+TOLERANCE, ('Seven ordered columns',row)
     for toggle in controls(panel).all():
         b=toggle.bounding_box();assert b and b['width']>=44-EPSILON and b['height']>=44-EPSILON, ('44px detail target',b)
         parent=toggle.locator('xpath=..')
@@ -135,6 +137,7 @@ def setup(page):
 
 
 def table_case(page,width,theme,kind):
+    page.evaluate('(theme)=>document.documentElement.dataset.theme=theme',theme)
     before=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),cache:localStorage.getItem("jpwealth.ui.ffNews.v1")})')
     panel=setup(page)
     expected=page.evaluate("JPWEconomicCalendar.queryRange({}).events")
@@ -150,6 +153,26 @@ def table_case(page,width,theme,kind):
         geometry={'natural':natural}
     else:geometry=assert_layout(panel)
     values=assert_values(panel,expected);collapsed(panel)
+    assert_compact_rows(panel)
+    fonts=panel.locator('.calendar-event-economic td,.calendar-event-title,.calendar-economic-value,.calendar-event-warning').evaluate_all('ns=>ns.map(n=>parseFloat(getComputedStyle(n).fontSize))')
+    assert fonts and all(12<=size<=13 for size in fonts), ('Compact typography12–13px',fonts)
+    scroller=panel.locator('.calendar-economic-scroll')
+    if scroller.evaluate('n=>n.scrollWidth>n.clientWidth'):
+        scroller.focus();page.keyboard.press('ArrowRight')
+        page.wait_for_function('n=>n.scrollLeft>0',arg=scroller.element_handle())
+        # ArrowRight uses the browser's animated scroll. Its stimulus must finish
+        # before an exact-position refresh assertion; resetting scrollLeft alone
+        # does not cancel the UA animation on the still-connected old region.
+        scroller.evaluate('''n=>new Promise((resolve,reject)=>{
+          let last=n.scrollLeft,stable=0;const start=performance.now();
+          function frame(){const now=n.scrollLeft;stable=Math.abs(now-last)<.1?stable+1:0;last=now;
+            if(stable>=4)return resolve();
+            if(performance.now()-start>3000)return reject(new Error('Keyboard scroll did not settle'));
+            requestAnimationFrame(frame);
+          }requestAnimationFrame(frame);
+        })''')
+        scroller.evaluate('n=>n.scrollLeft=0')
+
     if kind=='table-boundaries':
         boundaries=[]
         host=page.locator('#execEcal')
@@ -163,7 +186,22 @@ def table_case(page,width,theme,kind):
             measured=assert_layout(panel)
             assert abs(measured[area]-target)<=EPSILON,(area,target,measured)
             boundaries.append({'area':area,'target':target,'observed':measured})
-        geometry={'boundaries':boundaries}
+        row=panel.locator('[data-calendar-economic-id]').first
+        row.evaluate('n=>n.style.height="88px"')
+        rejected=False
+        try:assert_compact_rows(panel)
+        except AssertionError:rejected=True
+        finally:row.evaluate('n=>n.style.height=""')
+        assert rejected,'Row-height oracle must reject an88px regression'
+        assert_compact_rows(panel)
+        geometry={'boundaries':boundaries,'tall_row_counterproof':'rejected'}
+    scroller=panel.locator('.calendar-economic-scroll')
+    scroller.focus();scroller.evaluate('n=>n.scrollLeft=37')
+    preserved=scroller.evaluate('n=>n.scrollLeft')
+    scroll_before=scroller.evaluate('n=>({left:n.scrollLeft,width:n.clientWidth,scroll:n.scrollWidth,fonts:document.fonts.status,active:document.activeElement===n,table:n.firstElementChild.getBoundingClientRect().width})')
+    page.evaluate('async()=>{await JPWCalendar.refresh()}')
+    expect(panel.locator('.calendar-economic-scroll')).to_be_focused()
+    assert panel.locator('.calendar-economic-scroll').evaluate('n=>n.scrollLeft')==preserved, ('Refresh preserves focused news region and scroll',scroll_before,panel.locator('.calendar-economic-scroll').evaluate('n=>({left:n.scrollLeft,width:n.clientWidth,scroll:n.scrollWidth,fonts:document.fonts.status,active:document.activeElement===n,table:n.firstElementChild.getBoundingClientRect().width})'))
     if kind=='table-state':
         # Critical statuses remain legible while secondary provenance is closed.
         rows=panel.locator('[data-calendar-economic-id]')
@@ -173,17 +211,23 @@ def table_case(page,width,theme,kind):
         toggles=controls(panel);targets=details(panel)
         first=toggles.nth(0);first.focus();page.keyboard.press('Enter')
         expect(first).to_have_attribute('aria-expanded','true');expect(targets[0]).to_be_visible()
+        expect(targets[0]).to_contain_text(expected[0]['title'])
         expect(targets[0]).to_contain_text('Horário original')
         assert targets[0].get_by_role('link').count()>=2, 'FF and official references remain available'
         toggles.nth(1).focus();page.keyboard.press('Space')
         expect(toggles.nth(1)).to_have_attribute('aria-expanded','true');expect(targets[0]).not_to_be_visible()
+        expect(targets[1]).to_contain_text(expected[1]['title'])
         assert sum(t.is_visible() for t in details(panel))==1, 'Only one expanded detail per host'
         first.click();first.focus()
         # Constrain only the scroll viewport, then use a real nonzero scroll.
         agenda=panel.locator('.calendar-agenda');agenda.evaluate("n=>{n.style.maxHeight='160px';n.scrollTop=48}")
         scrolled=agenda.evaluate('n=>n.scrollTop');assert scrolled>0,'Scroll stimulus must be nonzero'
+        region=panel.locator('.calendar-economic-scroll')
+        region.evaluate('n=>n.scrollLeft=95');horizontal=region.evaluate('n=>n.scrollLeft')
+        assert horizontal>0,'Horizontal refresh stimulus must be nonzero'
         marker_count=panel.locator('.calendar-economic-dot').count()
         page.evaluate('async()=>{__table.generation++;await JPWCalendar.refresh()}')
+        assert panel.locator('.calendar-economic-scroll').evaluate('n=>n.scrollLeft')==horizontal,'Refresh preserves horizontal news scroll'
         assert agenda.evaluate('n=>n.scrollTop')==scrolled,'Refresh preserves exact agenda scroll'
         assert panel.locator('.calendar-economic-dot').count()==marker_count
         expect(controls(panel).nth(0)).to_be_focused();expect(controls(panel).nth(0)).to_have_attribute('aria-expanded','true')

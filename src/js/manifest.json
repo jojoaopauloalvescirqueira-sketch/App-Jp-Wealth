@@ -44,7 +44,7 @@
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "ba06dbc855979fc2b6d2423f5220ea72230d877c31e81f002d4ba994726e039d"
+      "sha256": "6d5bc5dc1262ffbb64c0708285a7f076fb093cc6ec9d7a0b002fdefb13e2e345"
     },
     {
       "path": "src/js/10-domain/19-personal-agenda.js",
@@ -206,7 +206,7 @@
       "order": 33,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "bfb1e5a556ff34bdd07725a169725ef30aeb62b83a3cf9d225fdc482d1c78eb9"
+      "sha256": "ce35ac99948fee89c28230c23a0dbc83ac34eac29b4696c9a48b89859776ed86"
     },
     {
       "order": 34,
@@ -296,7 +296,7 @@
       "order": 48,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "b1de3cdb9ec28c6983301f784f3ce0b3654a94c117998cf674cd85fcf98be0f0"
+      "sha256": "6763aeab09b4161c5a4a78ae804ac505f8e71dcf68bf45ae43c42dd2a4552f94"
     },
     {
       "order": 49,
@@ -326,7 +326,7 @@
       "order": 53,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "bd610654670371b43194dfb1840ed5edfb6cfbd9465849f6d6bf15597460310a"
+      "sha256": "7fc5fdaabefd7dd6bd20e0ef5100d418474a6f70e994cbec8a830350c08ab68a"
     },
     {
       "order": 54,
@@ -505,7 +505,7 @@
       "order": 83,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "175b09127aafc883a3a32428181029cd37dc1aada493050bc497002b64517832"
+      "sha256": "20a744f7591f0a3ae7873918710a52a4389728eb4608e4acdc900d2fb17a5da5"
     },
     {
       "order": 84,
@@ -516,7 +516,7 @@
     {
       "path": "src/js/40-app/19-calendar-agenda.js",
       "section": "CALENDAR AND AGENDA · monthly shared presentation",
-      "sha256": "f5be69e9000f4e6f2e5bfac8e0baad4dceebc743ac41e2fe44a4452aaf33ab5f",
+      "sha256": "0fca407acd0c2e7a6b171ff932193b20843da1af599e6844729e7ea9abe32bc9",
       "order": 85
     },
     {
@@ -631,7 +631,7 @@
       "path": "src/js/40-app/30-capital-currents/05-controller.js",
       "section": "CAPITAL CURRENTS · isolated educational game",
       "order": 104,
-      "sha256": "f1feb9ea39cfea07e5b1bd285fbf42bb390ba5f6fab39286ef32681f6cac72de"
+      "sha256": "6d1b06314352cde5d5536860a5fb564ab5cf5845f973cbc262840adfaa2b9357"
     },
     {
       "path": "src/js/00-core/10-download-assets.js",
@@ -679,7 +679,7 @@
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Ferramentas e Serviços · shared workspace",
       "order": 112,
-      "sha256": "7b890d504e97b3e9dffe7bd87b0b2acc2a4a50662055ed768fb4e87fb5e54cf2"
+      "sha256": "610fd55e1417b29d382a7b1f0438290c72880d74377fa60af4f235598bdabcd7"
     },
     {
       "path": "src/js/20-ui/34-normative-reader.js",
@@ -709,7 +709,7 @@
       "path": "src/js/40-app/26-learning-catalog.js",
       "section": "GUIA DO SITE · catálogo editorial local",
       "order": 117,
-      "sha256": "f6b5dde8480febea20f5e3094bb1eabdcb9064006b872e5170ff134fa369a4ac"
+      "sha256": "6101d79259f0dc03914cacece723be600a4519bff1cc8a565fb50cc2b9c8d113"
     },
     {
       "path": "src/js/00-core/09-learning-progress.js",
@@ -727,7 +727,7 @@
       "path": "src/js/40-app/28-learning-guide.js",
       "section": "GUIA DO SITE · controlador de observação",
       "order": 120,
-      "sha256": "1cc4bdf50b48c572f30623e16c8b5836c64be0bb6552990a0e8694fc546322df"
+      "sha256": "f470bb3ec422dd08a91f5c9f309f20be558570ac8c8de913993c2fa74d5591cb"
     },
     {
       "path": "src/js/30-accounting/06-planning/01-engine.js",
@@ -745,7 +745,7 @@
       "path": "src/js/30-accounting/06-planning/03-ui.js",
       "section": "Planejamento patrimonial independente",
       "order": 123,
-      "sha256": "031a28804ef3695cdbf6ed7d20e564c00eb153c2c17092022aca38c64553267d"
+      "sha256": "b1e617185ab4e924fee4cf822b7c755206d60ce2ac63fdaf01015a34e2dd64c0"
     },
     {
       "path": "src/js/30-accounting/07-management/01-engine.js",

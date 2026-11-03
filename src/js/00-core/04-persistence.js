@@ -316,7 +316,9 @@ function mvpNotesDeriveTitle(content){
 // Migração v≤4 → v5: title e description viram um único content, nesta ordem e sem
 // perder um caractere. Um backup antigo com título "X" e descrição "Y" produz "X\nY".
 function mvpNotesMigrateContent(raw){
-  if(typeof raw.content==='string' && raw.content) return raw.content.slice(0,20000);
+  // Em v5 a presença de content, inclusive vazio, é a fonte da verdade.
+  // Campos legados preservados como extensão não podem ressuscitar texto apagado.
+  if(typeof raw.content==='string') return raw.content.slice(0,20000);
   const titulo=String(raw.title||'').trim();
   const desc=String(raw.description||'');
   if(titulo && desc.trim()) return (titulo+'\n'+desc).slice(0,20000);
@@ -326,6 +328,12 @@ function mvpNotesMigrateContent(raw){
 // ---- pastas (schemaVersion 2; ordem manual em v5) — normalizadas ANTES dos itens:
 // mvpNotesNormalizeItem() precisa do conjunto de IDs válidos/ambíguos resultante para
 // reconciliar item.folderId. ----
+// Data de fallback da migração, não uma data histórica comprovada. A base
+// legada aceita deve receber o mesmo fallback em toda comparação nesta página.
+function mvpNotesLegacyNormalizationTimestamp(){
+  if(!mvpNotesLegacyNormalizationTimestamp.at)mvpNotesLegacyNormalizationTimestamp.at=new Date().toISOString();
+  return mvpNotesLegacyNormalizationTimestamp.at;
+}
 function mvpNotesNormalizeFolders(rawList){
   const seenIds=new Set();
   const ambiguousIds=new Set(); // ID original que apareceu mais de uma vez no backup — uma
@@ -342,12 +350,12 @@ function mvpNotesNormalizeFolders(rawList){
       id=mvpNotesFolderId();
     }
     seenIds.add(id);
-    const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+    const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:mvpNotesLegacyNormalizationTimestamp();
     const updatedAt=(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt;
     // position (v5): ordem manual escolhida pelo operador. Número finito qualquer é
     // aceito na entrada; a reindexação abaixo o converte em inteiros contíguos 0..n-1.
     const rawPos=Number(raw.position);
-    folders.push({id, name:name.slice(0,80), position:Number.isFinite(rawPos)?rawPos:Number.MAX_SAFE_INTEGER, createdAt, updatedAt});
+    folders.push({...raw,id, name:name.slice(0,80), position:Number.isFinite(rawPos)?rawPos:Number.MAX_SAFE_INTEGER, createdAt, updatedAt});
   });
   // Ordena pela posição declarada (pastas sem posição — backups v≤4 — vão para o fim,
   // preservando entre si a ordem original do array) e reindexa contíguo. Assim a ordem
@@ -370,11 +378,13 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds,see
   // title+description e são fundidos aqui (mvpNotesMigrateContent) sem perda.
   const content=mvpNotesMigrateContent(raw);
   const title=mvpNotesDeriveTitle(content);
-  if(!title) return null; // nota sem nenhum texto não é preservada — nada a rastrear
+  // Uma nota identificada já existente pode ser esvaziada. Objetos vazios sem
+  // identidade/conteúdo continuam inválidos; o placeholder nunca vira conteúdo.
+  if(!title && !(typeof raw.id==='string' && raw.id.trim() && typeof raw.content==='string')) return null;
   let id=String(raw.id||'').trim();
   if(!id || seenIds.has(id)) id=mvpNotesId(); // impede ID ausente/duplicado
   seenIds.add(id);
-  const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+  const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:mvpNotesLegacyNormalizationTimestamp();
   const updatedAt=(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt;
   const status=MVP_NOTES_STATUSES.includes(raw.status)?raw.status:'open';
   // completedAt: só existe enquanto status==='done'. Migração determinística de notas
@@ -386,6 +396,7 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds,see
   if(status==='done' && !completedAt) completedAt=updatedAt;
   if(status!=='done') completedAt=null;
   return {
+    ...raw, // extensões compatíveis viajam com a nota, sem conceder autoridade
     id,
     ticket:mvpNotesResolveTicket(raw.ticket,id,seenTickets,reservedTickets),
     type:MVP_NOTES_TYPES.includes(raw.type)?raw.type:'task',
@@ -416,8 +427,8 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds,see
     completedAt
   };
 }
-function mvpNotesNormalizeState(){
-  if(!S.mvpNotes || typeof S.mvpNotes!=='object') S.mvpNotes=structuredClone(DEFAULTS.mvpNotes);
+function mvpNotesNormalizeState(state=S){
+  if(!state.mvpNotes || typeof state.mvpNotes!=='object') state.mvpNotes=structuredClone(DEFAULTS.mvpNotes);
   // Histórico do schema deste módulo:
   //   v1 = notas soltas, sem pastas (items[] apenas);
   //   v2 = pastas reais (folders[]) + item.folderId;
@@ -436,10 +447,10 @@ function mvpNotesNormalizeState(){
   // title+description fundidos em content e recebe política de IA no padrão cauteloso e
   // posição de pasta pela ordem vigente). Rodar de novo sobre um estado já v5 não altera
   // mais nada — todas as derivações são funções puras do dado já normalizado.
-  S.mvpNotes.schemaVersion=5;
-  S.mvpNotes.showHeaderIcon=S.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
+  state.mvpNotes.schemaVersion=5;
+  state.mvpNotes.showHeaderIcon=state.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
   // Preferências de interface do módulo (v3) — viajam no estado principal, logo entram no
-  // backup/importação e sobrevivem a Finalizar Sessão como o resto de S.mvpNotes.
+  // backup/importação e sobrevivem a Finalizar Sessão como o resto de state.mvpNotes.
   // REGRA (v5/Fase D): estas três larguras são PREFERÊNCIAS. A normalização valida cada uma
   // na sua própria faixa e nada além disso; a geometria que cabe na tela é decidida no
   // desenho por mvpNotesFitPanes(), sem nunca reescrever o que está guardado aqui.
@@ -448,7 +459,7 @@ function mvpNotesNormalizeState(){
   // não descartado; só valor ausente/não-numérico cai no padrão. A viewport ainda limita
   // a renderização ao vivo (min(persistido, 80vw, MAX) no CSS/motor de resize) sem
   // reescrever o valor guardado — telas menores não destroem a preferência.
-  if(!S.mvpNotes.ui || typeof S.mvpNotes.ui!=='object') S.mvpNotes.ui={};
+  if(!state.mvpNotes.ui || typeof state.mvpNotes.ui!=='object') state.mvpNotes.ui={};
   // null/''/booleano são AUSÊNCIA, não "zero": sem esta guarda Number(null)===0 seria
   // finito e cairia no mínimo (420) em vez do padrão — divergindo de undefined (460).
   // Mesma regra para as três larguras: ausência (null/''/booleano/undefined) cai no
@@ -457,26 +468,26 @@ function mvpNotesNormalizeState(){
     const n=(bruto===null || bruto==='' || typeof bruto==='boolean') ? NaN : Number(bruto);
     return Number.isFinite(n) ? Math.min(Math.max(Math.round(n),min),max) : padrao;
   };
-  S.mvpNotes.ui.drawerWidth=larguraValida(S.mvpNotes.ui.drawerWidth,MVP_NOTES_DRAWER_MIN,MVP_NOTES_DRAWER_MAX,MVP_NOTES_DRAWER_DEFAULT);
-  S.mvpNotes.ui.foldersPaneWidth=larguraValida(S.mvpNotes.ui.foldersPaneWidth,MVP_NOTES_FOLDERS_MIN,MVP_NOTES_FOLDERS_MAX,MVP_NOTES_FOLDERS_DEFAULT);
-  S.mvpNotes.ui.notesPaneWidth=larguraValida(S.mvpNotes.ui.notesPaneWidth,MVP_NOTES_LIST_MIN,MVP_NOTES_LIST_MAX,MVP_NOTES_LIST_DEFAULT);
+  state.mvpNotes.ui.drawerWidth=larguraValida(state.mvpNotes.ui.drawerWidth,MVP_NOTES_DRAWER_MIN,MVP_NOTES_DRAWER_MAX,MVP_NOTES_DRAWER_DEFAULT);
+  state.mvpNotes.ui.foldersPaneWidth=larguraValida(state.mvpNotes.ui.foldersPaneWidth,MVP_NOTES_FOLDERS_MIN,MVP_NOTES_FOLDERS_MAX,MVP_NOTES_FOLDERS_DEFAULT);
+  state.mvpNotes.ui.notesPaneWidth=larguraValida(state.mvpNotes.ui.notesPaneWidth,MVP_NOTES_LIST_MIN,MVP_NOTES_LIST_MAX,MVP_NOTES_LIST_DEFAULT);
   // E PARA por aqui, deliberadamente: cada preferência é validada isoladamente, nunca a
   // combinação. Um estado 721/190/300 é legítimo — significa "gosto de 190 e 300, hoje meu
   // painel está no mínimo". Reduzir 190/300 para 150/240 aqui apagaria a escolha do operador
   // por causa de uma condição passageira, e ao alargar o painel de novo não haveria o que
   // restaurar. Quem faz as três colunas caberem é mvpNotesFitPanes(), no desenho.
-  // Estado v1 (sem folders) chega aqui com S.mvpNotes.folders===undefined — normaliza para []
+  // Estado v1 (sem folders) chega aqui com state.mvpNotes.folders===undefined — normaliza para []
   // e cada nota, sem folderId prévio, resolve para null (Sem pasta) abaixo. Sem tela de
   // migração: o operador só vê o resultado (tudo em "Sem pasta") ao abrir o painel.
-  const {folders,validIds,ambiguousIds}=mvpNotesNormalizeFolders(S.mvpNotes.folders);
-  S.mvpNotes.folders=folders;
+  const {folders,validIds,ambiguousIds}=mvpNotesNormalizeFolders(state.mvpNotes.folders);
+  state.mvpNotes.folders=folders;
   const seenIds=new Set(), seenTickets=new Set();
-  const rawItems=Array.isArray(S.mvpNotes.items)?S.mvpNotes.items:[];
+  const rawItems=Array.isArray(state.mvpNotes.items)?state.mvpNotes.items:[];
   // Duas passadas: primeiro RESERVA todo ticket válido já persistido, depois normaliza.
   // Assim um código derivado nunca rouba o código imutável de outra nota do mesmo lote.
   const reserved=new Set();
   rawItems.forEach(it=>{ if(it && typeof it==='object' && mvpNotesTicketIsValid(it.ticket)) reserved.add(it.ticket); });
-  S.mvpNotes.items=rawItems
+  state.mvpNotes.items=rawItems
     .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds,seenTickets,reserved))
     .filter(Boolean);
 }

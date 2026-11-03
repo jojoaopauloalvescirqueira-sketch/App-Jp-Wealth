@@ -1,3 +1,23 @@
+# Tarefa ativa — UX Notas/menus/sessões02/11/2026
+
+Plano humano aprovado e autoridadeN2/N1 delimitada em [CHG-UX-NOTES-MENUS-20261102](CHG-UX-NOTES-MENUS-20261102.md). Basefdeb721f75b8bf2c preservada; branchcodex/ux-notas-menus-20261102. SemGitfinal/CI/plugin; somente dados sintéticos. Recuperação e ledger externos da sessão em work/implementation/ux-notas-menus-20261102/. Resultado técnico somente nos recibos novos e aceitehumano separado.
+
+## Estado de consolidação documental
+
+Tasks1–3 aprovadas em revisão independente no escopo de fonte; candidato combinado em validação final. [Proveniência e limites](../validation/ux-notas-menus-20261102/README.md) registra fontes e recibos focais sem antecipar FULL, portátil/PWA ou zoom nativo200%. Relatório final externo da sessão identifica os resultados efetivamente executados. Linux inicialmente indisponível é NOT_RUN; aceite humano e Git continuam separados. Permanecem31pendências da memória factual,13falhas baseline de navigation_local e o mismatch standalone de market integration fora do FULL116; incidente Hedge não encerrado.
+
+## Histórico preservado
+
+## Resultado da validação deste candidato
+
+Consultar o recibo e o relatório atuais da sessão em outputs/calendar-news-20261102/. Estados de preparação abaixo são históricos; não comprovam resultado atual nem aceite. Gates e autoridade permanecem.
+
+# Tarefa ativa — notícias compactas 02/11/2026
+
+Implementar o plano humano da tabela860px/linhas44px, somente área econômica. Contrato/autoridade/escopo/testes/rollback em [CHG-CALENDAR-NEWS-COMPACT-20261102](CHG-CALENDAR-NEWS-COMPACT-20261102.md). Base4bdb67a; branchcodex/calendario-noticias-compactas-20261102; candidato sem Git final. Trabalho Swing/CI preservado em outras worktrees.
+
+## Histórico preservado
+
 # FULL local final da correção numérica —01/11/2026
 
 116/116PASS, UI413/413PASS, fontes estáveis; build33e26b5d9bb45c0b. Linux novoSHA e merge ainda pendentes. As fotografias abaixo preservam as etapas anteriores.

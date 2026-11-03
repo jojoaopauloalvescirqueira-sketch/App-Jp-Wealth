@@ -210,6 +210,11 @@ def preview_preserves_editor(page):
     open_from_settings(page)
     experience.select_first(page)
     page.locator('#mvpNoteContent').fill(experience.LONG_BODY)
+    page.wait_for_function("!mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
+    page.locator('#mvpNotesInspectorBtn').click()
+    page.locator('#mvpNotePriority').select_option('critical')
+    page.locator('#mvpNotesInspectorBtn').click()
+    assert page.evaluate('mvpNotesUI.draftDirty'), 'Preview must preserve genuine pending administrative metadata'
     page.locator('#mvpNoteContent').evaluate('e=>{e.focus();e.setSelectionRange(18,37);e.scrollTop=130;}')
     before = experience.draft_snapshot(page); stored = snapshot(page)
     page.evaluate('window.__matchEditor=document.getElementById("mvpNoteContent")')
@@ -281,6 +286,7 @@ def display_choices(page):
     page.evaluate('mvpNotesPersistDrawerWidth(1600)')
     settings(page); open_from_settings(page); experience.select_first(page)
     page.locator('#mvpNoteContent').fill(experience.LONG_BODY)
+    page.wait_for_function("!mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
     stored = snapshot(page)
     sizes = []
     for value in CHOICES['text']:
@@ -651,8 +657,54 @@ def finalize_cleanup(page):
         peer.close()
 
 
+def editor_focus_status(page):
+    """Approved neutral focus, truthful status and measurable original controls."""
+    from ui_visual_quality_test import centered
+    settings(page);open_from_settings(page);experience.select_first(page)
+    content=page.locator('#mvpNoteContent')
+    content.focus();page.keyboard.press('Tab');page.keyboard.press('Shift+Tab')
+    content.focus()
+    focus=content.evaluate("""e=>{const s=getComputedStyle(e),root=getComputedStyle(document.getElementById('mvpNotesDrawer'));return {visible:e.matches(':focus-visible'),outline:s.outlineStyle,width:parseFloat(s.outlineWidth),color:s.outlineColor,paper:s.backgroundColor,accent:root.getPropertyValue('--mvpn-accent').trim(),transition:s.transitionDuration};}""")
+    assert focus['visible'] and focus['outline']!='none' and 0<focus['width']<=1,focus
+    def rgb(value):
+        import re
+        return [int(n)/255 for n in re.findall(r'\d+',value)[:3]]
+    def contrast(a,b):
+        def light(c):
+            r,g,b=rgb(c);return sum(v*k for v,k in zip([x/12.92 if x<=.04045 else ((x+.055)/1.055)**2.4 for x in (r,g,b)],[.2126,.7152,.0722]))
+        x,y=sorted([light(a),light(b)]);return (y+.05)/(x+.05)
+    assert contrast(focus['color'],focus['paper'])>=3,focus
+    # A content write settles before presentation checkpoints. This is the real
+    # automatic writer, never a hidden Save click or artificial successful event.
+    content.fill('Synthetic focus and status note')
+    page.wait_for_function("!mvpNotesUI.draftDirty && mvpNotesAutosave.status==='Salvo'")
+    assert page.locator('#mvpNotesSaveStatus').inner_text()=='Salvo'
+    confirmed=page.evaluate("({receipt:jpWealthPersistenceLastResult(),id:mvpNotesUI.selectedId})")
+    assert confirmed['receipt']['status']=='CONFIRMED'
+    page.locator('#mvpNotesInspectorBtn').click();page.locator('#mvpNotePriority').select_option('critical')
+    metadata=centered(page.locator('#mvpNotesConfirmMetadataBtn'))
+    assert metadata['outer']['width']>=44 and metadata['outer']['height']>=44,metadata
+    page.locator('#mvpNotesInspectorBtn').click()
+    # A failed automatic write retains the real editor and exposes Retry/status.
+    page.evaluate("""()=>{const put=Storage.prototype.setItem;window.__focusPut=put;Storage.prototype.setItem=function(k,v){if(k===LSKEY)throw new DOMException('Synthetic focus quota','QuotaExceededError');return put.call(this,k,v);};}""")
+    content.fill('Synthetic retained failed draft')
+    page.wait_for_function('mvpNotesAutosave.blocked')
+    assert page.locator('#mvpNotesSaveStatus').inner_text().startswith('Não foi possível salvar')
+    assert content.input_value()=='Synthetic retained failed draft' and page.evaluate('mvpNotesUI.draftDirty')
+    retry=centered(page.locator('#mvpNotesSaveBtn'))
+    assert retry['outer']['width']>=44 and retry['outer']['height']>=44,retry
+    status=page.locator('#mvpNotesSaveStatus').evaluate("e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect(),bar=e.parentElement.getBoundingClientRect();return {role:e.getAttribute('role'),live:e.getAttribute('aria-live'),color:s.color,paper:getComputedStyle(e.parentElement).backgroundColor,left:r.left,right:r.right,width:r.width,barLeft:bar.left,barRight:bar.right};}")
+    assert status['role']=='status' and status['live']=='polite' and status['left']>=status['barLeft']-.25 and status['right']<=status['barRight']+.25,status
+    assert contrast(status['color'],status['paper'])>=4.5,status
+    page.evaluate('()=>{Storage.prototype.setItem=window.__focusPut;}')
+    page.locator('#mvpNotesSaveBtn').click()
+    assert page.evaluate("jpWealthPersistenceLastResult().status==='CONFIRMED' && mvpNotesUI.draft.content===mvpNotesUI.draftOriginal.content")
+    assert not page.locator('#mvpNotesNewBox').is_visible()
+    return dict(focus=focus,focusContrast=contrast(focus['color'],focus['paper']),status=status,statusContrast=contrast(status['color'],status['paper']),metadata=metadata,retry=retry)
+
+
 CASES = {
-    'anatomy': anatomy, 'responsive': responsive,
+    'anatomy': anatomy, 'responsive': responsive, 'editor-focus-status':editor_focus_status,
     'preview-preserves-editor': preview_preserves_editor,
     'no-write-cancel-navigation': no_write_cancel_navigation, 'save-reload': save_reload,
     'theme-override': theme_override, 'display-choices': display_choices,
@@ -727,6 +779,11 @@ def run(args):
                 row['native_notes_geometry'] = experience.usable(page)
                 experience.select_first(page)
                 page.locator('#mvpNoteContent').fill(experience.LONG_BODY)
+                page.wait_for_function("!mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
+                page.locator('#mvpNotesInspectorBtn').click()
+                page.locator('#mvpNotePriority').select_option('critical' if page.evaluate('mvpNotesUI.draft.priority')!='critical' else 'low')
+                page.locator('#mvpNotesInspectorBtn').click()
+                assert page.evaluate('mvpNotesUI.draftDirty'), 'Administrative metadata must remain pending'
                 original = experience.draft_snapshot(page)
                 assert page.locator('#mvpNoteContent').evaluate('e=>e.scrollHeight>e.clientHeight')
                 page.locator('#mvpNotesCloseBtn').click()
@@ -736,10 +793,18 @@ def run(args):
                     for _ in range(12):
                         page.keyboard.press(key)
                         assert page.evaluate('document.getElementById("mvpNotesOverlay").contains(document.activeElement)')
-                page.locator('#mvpNotesSaveBtn').click()
+                page.locator('#mvpNotesInspectorBtn').click()
+                page.locator('#mvpNotesConfirmMetadataBtn').click()
+                assert page.evaluate("jpWealthPersistenceLastResult().status==='CONFIRMED'")
+                page.locator('#mvpNotesInspectorBtn').click()
                 assert not page.evaluate('mvpNotesUI.draftDirty')
                 assert page.locator('#mvpNoteContent').input_value() == experience.LONG_BODY
                 close_notes(page)
+            if name=='editor-focus-status':
+                expected=[message for message in observed['console'] if message=='JP Wealth: falha ao gravar o estado no armazenamento local. QuotaExceededError: Synthetic focus quota']
+                assert len(expected)==1,('Named synthetic storage fault must emit one original diagnostic',observed)
+                row['expectedFaultConsole']=expected
+                observed['console']=[message for message in observed['console'] if message not in expected]
             launcher.assert_clean(context,observed)
             row.update(result='PASS',detail=detail)
         except Exception as error:
@@ -763,7 +828,7 @@ def run(args):
                 for artifact in artifacts:
                     for name in selected:
                         configs = [(1440,'light')]
-                        if name=='responsive':
+                        if name in ('responsive','editor-focus-status'):
                             configs = [(width,theme) for width in (320,390,768,1024,1440) for theme in ('light','dark')]
                         elif name=='anatomy':
                             configs = [(1440,theme) for theme in ('light','dark')]

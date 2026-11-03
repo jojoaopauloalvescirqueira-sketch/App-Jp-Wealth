@@ -48,7 +48,7 @@ function dmRow(nome, valorHTML){
 function dmAux(texto){ return '<span class="dm-aux">'+esc(texto)+'</span>'; }
 const DM_AREAS = {
   forex: ['01', 'Risco e operação'],
-  planning: ['05', 'Planejamento patrimonial'],
+  planning: ['05', 'Planejamento de Patrimônio a Longo Prazo'],
   'personal-finance': ['02', 'Orçamento e crédito'],
   research: ['03', 'Estudos e análises'],
   management: ['06', 'Reservas e caixa diário'],
@@ -272,7 +272,7 @@ function dmResearchHTML(){
   }
   if(typeof ffNewsStatusText==='function') corpo += dmRow('Cache',dmAux(ffNewsStatusText(cal)));
   corpo += '</div>';
-  corpo += dmLinks(dmLink('Calendário e Mercados','tools-calendar')
+  corpo += dmLinks(dmLink('Calendário e Sessões','tools-calendar')
     +dmLink('Estudos Nocuda','research-forex','research','nocoda')
     +dmLink('Estudos de Pivots','research-forex','research','pivots'));
   return {html: corpo, tom: null};

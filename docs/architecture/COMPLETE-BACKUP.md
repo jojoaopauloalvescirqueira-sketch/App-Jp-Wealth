@@ -1,3 +1,13 @@
+# Notas vazias e recuperação — sucessão de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) mantém o pacote de backup e o formato v5 de Notas. Normalização/importação conservam nota existente válida identificada cujo `content` é string vazia; a string explícita prevalece sobre campos legados preservados como extensão. “Nota sem título” não é conteúdo. Ausência de data recebe fallback estável nesta página, aproximado da migração, sem atribuir criação histórica.
+
+Backup de fatos confirmados e seção de rascunhos recuperáveis continuam separados. Reabrir rascunho não confirma texto: fica em RAM até confirmação explícita ou nova edição de conteúdo; política de IA pendente exige confirmação própria. `REFUSED` conserva o rascunho para retry explícito; `UNKNOWN` não autoriza repetição. Texto autosalvo usa apenas delta de Notas sobre base confirmada, sem incluir RAM financeira adjacente.
+
+Legados sem IDs aceitos para leitura/exportação não ganham identidade persistida automaticamente; editar nota/renomear pasta por caminho isolado recusa a base instável e conserva raw/texto. Não se declara compatibilidade irrestrita de edição legada. Reverter somente o delta próprio e conservar leitor compatível com notas vazias e backup existente; leitor antigo que as descarta não é rollback compatível. [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Pacote único de backup — 31/10/2026
 
 Contrato N2 autorizado: `CHG-JPW-BACKUP-UNIFICADO-20261031`. A exportação padrão gera `jpwealth_portable_backup` v1, ZIP STORE com `manifest.json`, `backup.json`, `evidence-manifest.json` e `originals/<sha256>.pdf|html`. O JSON interno mantém `jpwealth_full_backup`/formatVersion2 e amplia workspace para3. Leitor novo conserva JSON/workspace1/2 e ZIP de originais legados; builds antigos não compreendem workspace3 nem o pacote único. Não prometer compatibilidade reversa sem perdas.

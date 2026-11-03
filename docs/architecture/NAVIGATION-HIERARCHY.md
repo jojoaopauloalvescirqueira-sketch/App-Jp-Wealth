@@ -1,3 +1,13 @@
+# Menus e MiniGames — sucessão corrente de 02/11/2026
+
+O [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md) altera os rótulos para **Estatuto JP Wealth**, **Stoikus EA**, **Calendário e Sessões**, **Sessões Abertas** e **Planejamento de Patrimônio a Longo Prazo**. A navegação principal conserva **Planejamento**. IDs/aliases e fontes normativas/históricas conservam suas identidades.
+
+MiniGames é entrada direta de Configurações após Conhecimento, sem child no submenu global de Ferramentas. A central reúne Galton Board, Gêmeos do Tempo e Correntes de Capital. Settings transporta os mesmos quatro nós de central/jogos para seus painéis persistentes; preserva IDs/controladores/progresso. Abrir monta sob demanda, sem autoplay; Voltar retorna à central e ao Abrir original. O Settings proprietário não cobre seu próprio jogo. Saída, ocultação e diálogo externo pausam; observadores não recriam controlador descartado.
+
+Aliases antigos (inclusive `tools-minigames`, jogos, Research/Configurações e `navigateLocal('tools',...)`) encaminham pelo resolvedor para a folha Settings correspondente. Disponibilidade e guardas reais de rascunho/conta/execução continuam antes dos efeitos; a intenção antiga de sair do workspace é projetada às guardas apenas para MiniGames. Aceite mantém rota/tela financeira de fundo; recusa preserva foco, formulário, categoria e histórico. Back/Forward usa a intenção original e não avança histórico quando recusado. [proveniência e limites](../validation/ux-notas-menus-20261102/README.md).
+
+## Fotografias anteriores preservadas
+
 # Portfólio e Gerenciamento — contrato vigente 26/10/2026
 
 Plano humano e isolamento `codex/portfolio-gerenciamento-20261026`, base `3e24f60`. Ordem padrão: Dashboard → Portfólio → Gerenciamento → Planejamento → Forex → Finanças Pessoais → Alladin → Ferramentas e Serviços, respeitando congelamento. Preferências personalizadas válidas conservam a ordem relativa; Gerenciamento é inserido após Portfólio em memória, sem regravação automática.

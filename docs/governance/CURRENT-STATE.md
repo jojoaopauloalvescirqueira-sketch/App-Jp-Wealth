@@ -1,3 +1,23 @@
+# Candidato UX Notas/menus/sessões — validação final — 02/11/2026
+
+Branch autorizada `codex/ux-notas-menus-20261102`, base `4bdb67aa750e838c870437fe31869284415aa2df`, preservando o delta de notícias compactas `fdeb721f75b8bf2c`. [CHG](../work/CHG-UX-NOTES-MENUS-20261102.md) e [recibo documental focal](../validation/ux-notas-menus-20261102/README.md). Tasks1–3 têm revisão independente aprovada para seus escopos; isso não é aceite do candidato combinado.
+
+Candidato local em validação final. Resultados finais de rebuild, focais acumulados, FULL, portátil/PWA e zoom nativo200% pertencem ao relatório externo da sessão `work/implementation/ux-notas-menus-20261102/`; não se transfere PASS das fotografias abaixo. O executor Linux foi inicialmente indisponível (NOT_RUN); ausência de execução não é aprovação integral. Aceite visual/humano e Git/publicação permanecem separados.
+
+Persistem31problemas legados do verificador da memória factual; seus158registros anteriores permanecem. As13falhas `navigation_local` byte-idênticas à base e o teste standalone de market integration com suposição de host obsoleta continuam abertos e fora dos116checks FULL. Incidente Hedge não é encerrado por esta entrega. Limitação semIDs de Notas permanece explícita nos contratos; nenhum dado real foi lido/migrado/apagado. Esta documentação não amplia gates/CI, controla o executor ou fixa resultados futuros.
+
+## Fotografias anteriores preservadas
+
+## Resultado da validação deste candidato
+
+Consultar o recibo e o relatório atuais da sessão em outputs/calendar-news-20261102/. Estados de preparação abaixo são históricos; não comprovam resultado atual nem aceite. Gates e autoridade permanecem.
+
+# Candidato de notícias compactas —02/11/2026
+
+Branchcodex/calendario-noticias-compactas-20261102, base4bdb67a. DeltaN1 somente notícias econômicas: tabela860px/linhas44px, região horizontal focável, avisos inline e detalhe completo. Mês e dados preservados. Focais de desenvolvimento5casos+estado3PASS; FULL local/Linux, inspeção final e aceite humano pendentes. Sem commit/merge/push. Contrato: [CHG](../work/CHG-CALENDAR-NEWS-COMPACT-20261102.md). Swing/CI em outras worktrees não incorporados. Resultados novos somente nos recibos externos da entrega; histórico abaixo não aprova estesbytes.
+
+## Histórico preservado
+
 # FULL local final da correção numérica —01/11/2026
 
 116/116PASS, UI413/413PASS, fontes estáveis; build33e26b5d9bb45c0b. Linux novoSHA e merge ainda pendentes. As fotografias abaixo preservam as etapas anteriores.

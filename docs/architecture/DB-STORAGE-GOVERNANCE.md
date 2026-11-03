@@ -1,3 +1,13 @@
+# Notas — escritor delimitado — 02/11/2026
+
+Pelo [CHG aprovado](../work/CHG-UX-NOTES-MENUS-20261102.md), Notas usa `jpWealthPersistDocument` sobre snapshot confirmado, com `expectedRaw`/`expectedEpoch`, contexto e comparação da base/entidade; aplica somente o delta de Notas. Não usa o `save(S)` genérico para promover RAM adjacente. Isso não transforma localStorage em CAS universal, nem garante gravação em encerramento abrupto.
+
+Nova nota abre diretamente o editor; vazio novo não grava, primeiro conteúdo não vazio cria uma vez com identidade estável. Edições seguintes aguardam pausa de 500ms, com máximo de 2s; troca/saída/fechamento fazem flush respeitando IME. “Salvo” depende de confirmação/readback real, inclusive no caminho sem alteração. `REFUSED` mantém texto/identidade e requer retry explícito; conflito de raw/item/epoch/contexto conserva rascunho sem sucesso falso. `UNKNOWN` mantém a barreira existente e não repete automaticamente. Reabrir rascunho recuperado, blur ou navegar não o confirma; confirmação explícita ou nova edição de conteúdo pode adotá-lo, sem autorizar política de IA pendente.
+
+O formato v5 e o escritor compartilhado permanecem. Conteúdo string explicitamente vazio é autoritativo; notas vazias identificadas sobrevivem. Datas legadas ausentes usam fallback estável por página, aproximado. Legados sem IDs continuam legíveis/exportáveis, mas o caminho de edição isolada recusa sem identidade confirmada estável; nenhuma migração de identidade foi introduzida. Rollback mantém leitor de vazio compatível. Escopo e evidência focal em [proveniência e limites](../validation/ux-notas-menus-20261102/README.md); gates finais pertencem ao candidato consolidado.
+
+## Fotografias anteriores preservadas
+
 ## Atualização factual — pacote único31/10/2026
 
 O Backup Completo agora é exportado em um único pacote ZIP STORE: dados confirmados, workspace3 com preferências/progresso e originais PDF/HTML disponíveis. O JSON interno continua formato2; os leitores novos aceitam JSON/workspace1/2 e ZIPs de evidências legados. As referências abaixo a21preferências ou ZIP separado descrevem fotografias/formatos anteriores, não a cobertura ampliada atual.

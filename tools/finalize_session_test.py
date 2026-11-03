@@ -628,11 +628,9 @@ def run_mvp_notes_survival(browser, url):
     page.locator('#mvpNotesNewFolderBtn').click()
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'pasta deveria ter sido criada'
     page.locator('#mvpNotesNewBtn').click()
-    # Configuração inicial (JPW-CBA987): o "+" abre o modal antes do editor.
-    assert page.locator('#mvpNotesNewOverlay').is_visible(), 'modal de nova nota deveria abrir'
-    page.locator('#mvpNotesNewConfirmBtn').click()
+    assert page.locator('#mvpNoteContent').is_visible() and not page.locator('#mvpNotesNewOverlay').is_visible(), 'Nova nota deve abrir o editor diretamente'
     page.locator('#mvpNoteContent').fill('Nota que sobrevive a Finalizar Sessão')
-    page.locator('#mvpNotesSaveBtn').click()
+    page.wait_for_function("mvpNotesUI.selectedId && !mvpNotesUI.draftDirty && jpWealthPersistenceLastResult().status==='CONFIRMED'")
     assert page.evaluate('S.mvpNotes.items.length') == 1, 'nota deveria ter sido criada'
     assert page.evaluate('S.mvpNotes.items[0].folderId') == page.evaluate('S.mvpNotes.folders[0].id'), \
         'nota criada com a pasta ativa deveria ficar vinculada a ela'

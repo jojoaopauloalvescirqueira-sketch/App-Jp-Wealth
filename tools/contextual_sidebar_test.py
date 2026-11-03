@@ -111,6 +111,7 @@ def preference_ops(page):
 
 
 def go(page, route):
+    page.evaluate("closeSettingsModal()")
     assert page.evaluate("route=>JPWNavigation.navigate(route)", route) is True, route
     settle(page)
 

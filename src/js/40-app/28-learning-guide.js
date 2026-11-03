@@ -5,7 +5,7 @@
   if(!catalog||!store||!view||root.JPWLearningGuide)return;
   let progress=store.empty(catalog),raw=null,storage='local',blocked=false,notice='',active=false,paused=true,initialized=false,disposed=false,generation=0;
   let cleanup=[],lifecycleCleanup=[],observer=null,centerRoot=null,anchor=null,practicing=false,actionProof=null,frame=0,initialEpoch=null,observedRoute=null,transitionMode=null,pausedTarget=null,deliberateEntry=null;
-  let speechIndex=0,speechStep=null,speechResume=false;
+  let speechIndex=0,speechStep=null,speechResume=false,notesPracticeBinding=-1;
   const clone=value=>JSON.parse(JSON.stringify(value));
   const track=()=>catalog.tracks.find(t=>t.id===progress.trackId);
   const step=()=>track()?.steps.find(s=>s.id===progress.stepId);
@@ -169,7 +169,12 @@
   function unknown(){return typeof jpWealthPersistenceOutcomeIsUnknown==='function'&&jpWealthPersistenceOutcomeIsUnknown();}
   function scopedBudget(state,context){return state?.personalFinance?.months?.[context.month]?.[context.collection]?.find(row=>row.id===context.id)?.[context.field];}
   function capturePractice(target){
-    const s=step(),before=financialRaw(),beforeResult=result();if(!practicing||!before||!beforeResult||unknown())return null;
+    const s=step(),before=financialRaw(),beforeResult=result();
+    // A first Notes write can start from an absent document. Corrupt or unreadable
+    // bytes are not absence and cannot supply a valid before proof.
+    let absentNotesBase=false;
+    if(!before&&s.practice==='notes'){try{absentNotesBase=root.localStorage.getItem('jpwealth_v9_state')===null;}catch(_){}}
+    if(!practicing||(!before&&!absentNotesBase)||!beforeResult||unknown())return null;
     if(s.practice==='budget'){
       if(typeof fbFieldIdentity!=='function'||typeof fbCurrentKey!=='function')return null;
       const context=fbFieldIdentity(target,fbCurrentKey());if(!context||!['incomes','expenses'].includes(context.collection))return null;
@@ -184,8 +189,8 @@
     if(s.practice==='notes'){
       if(typeof mvpNotesUI==='undefined'||!mvpNotesUI.draft||!mvpNotesUI.draftDirty)return null;
       const draft=clone(mvpNotesUI.draft),id=mvpNotesUI.selectedId||null;
-      if(!draft.content?.trim())return null;
-      return {kind:'notes',id,draft,previous:clone(before.mvpNotes?.items||[]),beforeResult,resultEpoch:typeof jpWealthPersistenceEpoch==='function'?jpWealthPersistenceEpoch():beforeResult.epoch,epoch:epoch(),token:generation};
+      if(!id&&!draft.content?.trim())return null;
+      return {kind:'notes',id,draft,previous:clone(before?.mvpNotes?.items||[]),beforeResult,resultEpoch:typeof jpWealthPersistenceEpoch==='function'?jpWealthPersistenceEpoch():beforeResult.epoch,epoch:epoch(),token:generation};
     }
     return null;
   }
@@ -199,14 +204,33 @@
       const id=typeof mvpNotesUI!=='undefined'?mvpNotesUI.selectedId:null;
       const row=after.mvpNotes?.items?.find(item=>item.id===id);
       const before=proof.previous.find(item=>item.id===id);
-      const fields=Object.keys(proof.draft).filter(key=>!['id','createdAt','updatedAt','title'].includes(key));
-      confirmed=!!row&&(!proof.id||proof.id===id)&&fields.every(key=>JSON.stringify(row[key]??null)===JSON.stringify(proof.draft[key]??null))&&JSON.stringify(before??null)!==JSON.stringify(row)&&mvpNotesUI.draftDirty===false;
+      const fields=['content'];
+      confirmed=receipt.component==='notes'&&!!row&&(!proof.id||proof.id===id)&&fields.every(key=>JSON.stringify(row[key]??null)===JSON.stringify(proof.draft[key]??null))&&JSON.stringify(before??null)!==JSON.stringify(row)&&mvpNotesUI.draftOriginal?.content===proof.draft.content;
     }
-    if(confirmed){if(!mark('seen','confirmed'))return;practicing=false;draw('ready','Prática confirmada: o controle original gravou e a base relida contém a alteração desta etapa.',anchor);}
+    if(confirmed){if(!mark('seen','confirmed'))return;practicing=false;draw('ready','Prática confirmada: o controle original gravou e a base relida contém a alteração desta etapa.',anchor);return true;}
+    return false;
   }
   function bindPractice(){
     const s=step();if(!practicing)return;
-    const selector=s.practice==='budget'?'[data-fi-campo],[data-fe-campo]':'#mvpNotesSaveBtn';
+    if(s.practice==='notes'){
+      if(notesPracticeBinding===generation)return;
+      notesPracticeBinding=generation;
+      const pending=new Map(),consumed=new Set();
+      listen(document,'jpw-notes-save',event=>{
+        const detail=event.detail;
+        if(!practicing||paused||!accessible()||!detail||detail.trustedEdit!==true||typeof detail.editToken!=='string'||!detail.editToken||consumed.has(detail.editToken))return;
+        if(detail.phase==='before'&&detail.status==='PENDING'){
+          const proof=capturePractice(null);
+          if(proof)pending.set(detail.editToken,proof);
+        }else if(detail.phase==='after'){
+          const proof=pending.get(detail.editToken);pending.delete(detail.editToken);
+          if(detail.status==='CONFIRMED'&&proof&&verifyPractice(proof))consumed.add(detail.editToken);
+        }
+      });
+      cleanup.push(()=>{pending.clear();consumed.clear();});
+      return;
+    }
+    const selector='[data-fi-campo],[data-fe-campo]';
     const rootEl=document.querySelector(s.anchor);
     const targets=s.practice==='budget'?(rootEl?.querySelectorAll?.(selector)||document.querySelectorAll(selector)):document.querySelectorAll(selector);
     for(const target of targets){
@@ -271,7 +295,7 @@
     const s=step();if(!s)return;
     if(blocked){suspend(notice);return;}
     if(!accessible()){if(progress.mode==='journey'){const host=view.selectHost(null,s);if(host.foreign){suspend('Resolva o diálogo atual pelos controles originais antes de retomar.');return;}paused=false;progress.paused=false;initialEpoch=epoch();observedRoute=JSON.stringify(root.JPWNavigation.current());draw('unavailable','Área congelada. Seguir não registra leitura, pulo ou prática.',null);observe();return;}suspend('Este módulo está congelado. O guia não altera a disponibilidade. Escolha outra trilha na central.');return;}
-    if(!matchesDestination(s)){suspend('Você está em outra tela. Use Ir para esta tela quando quiser continuar; os guardas originais continuam valendo.');return;}
+    if(!matchesDestination(s)){suspend('Você está em outra tela. Use Ir para esta tela quando quiser continuar; os guardas originais continuam valendo.',exitMode(s));return;}
     const target=targetFor(s),host=view.selectHost(target,s);
     if(host.foreign){suspend('Outro diálogo está aberto. Resolva o diálogo pelos controles originais e retome o guia.');return;}
     if(!view.visible(target)&&!s.allowRead){suspend('O controle desta etapa ainda não está disponível. Retome quando a tela estiver pronta ou escolha outra trilha.');return;}

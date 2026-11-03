@@ -122,7 +122,7 @@ def forex(page,c):
     c.check('Forex context shown',page.locator('#gdContextRow').is_visible())
     before=page.evaluate('JPWNavigation.current()')
     navigate(page,'research-probability-lab')
-    c.check('Lab Tools host has no Forex context',page.locator('#tools #gdContextRow').count()==0 and page.evaluate("JPWNavigation.current().primary==='tools' && JPWNavigation.current().localView.view==='galton'") and page.locator('#toolsGaltonSlot').is_visible())
+    c.check('Lab Settings host preserves Forex background',page.locator('#settingsModal #gdContextRow').count()==0 and page.evaluate("settingsState.open && settingsState.active==='galton'") and page.evaluate('JPWNavigation.current()')==before and page.locator('#toolsGaltonSlot').is_visible())
     navigate(page,'dashboard')
     c.check('Forex context absent dashboard',not page.locator('#gdContextRow').is_visible())
 
@@ -219,8 +219,8 @@ def settings_visual_pages(page,check,observe=None,long=False):
         page.locator('#settingsMenu .settings-menu-item>span:not(.settings-menu-symbol)').evaluate_all("es=>es.forEach(e=>e.textContent+=' · identificação sintética extensa')")
         name=page.locator('#settingsProfileName').evaluate("e=>{const r=e.getBoundingClientRect(),p=e.closest('button').getBoundingClientRect(),s=getComputedStyle(e);return {inside:r.right<=p.right,overflow:s.overflow,whiteSpace:s.whiteSpace,ellipsis:s.textOverflow}}")
         check('Settings long profile name remains inside sidebar',name['inside'] and name['overflow']=='hidden' and name['whiteSpace']=='nowrap' and name['ellipsis']=='ellipsis',name)
-    expected=['general','appearance-interface','method-governance','operations','forex-preferences','knowledge','data-security','about']
-    check('Settings keeps eight current primary categories',page.locator('#settingsMenu [data-settings-category]').evaluate_all('es=>es.map(e=>e.dataset.settingsCategory)')==expected)
+    expected=['general','appearance-interface','method-governance','operations','forex-preferences','knowledge','minigames','data-security','about']
+    check('Settings keeps nine current primary categories',page.locator('#settingsMenu [data-settings-category]').evaluate_all('es=>es.map(e=>e.dataset.settingsCategory)')==expected)
     g=settings_geometry_checks(page,check,'Settings list')
     if observe:observe('categories',g)
     for target in SETTINGS_PAGES:
