@@ -1,0 +1,4 @@
+HOST_SQLITE_RECOVERY: rolled-back empty DB retryable; unknown view refused
+CORE_SHA256: db48686d3ca3cf23d7f683fb1589ae8cd2fea21213b35ffedfdf66f5b7fc20fb
+HOST_SYNTHETIC: exact stop-risk core under C++ MQL shim
+HOST_STOP_RISK: 9 PASS / 0 FAIL; native MT5 compilation/execution NOT_RUN

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "scope": "production MQL core via host API shim",
+  "native": "NOT_RUN",
+  "parity": "UNVERIFIED_NATIVE",
+  "sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5": "a70aae42b8be574654b5b306bfa7515ee79a37b264ee7b0b3d026cb48bc6cf24"
+  },
+  "compiler_log": "",
+  "output": "JPW NoCuda Fibo core: 97 asserts; failures=0. NATIVE PARITY NOT TESTED; measurements remain UNVERIFIED_NATIVE.\n"
+}

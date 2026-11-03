@@ -2816,7 +2816,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -2836,6 +2845,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -2872,7 +2887,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -2892,6 +2916,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -2928,7 +2958,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -2948,6 +2987,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -2984,7 +3029,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3004,6 +3058,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -3040,7 +3100,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3060,6 +3129,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -3096,7 +3171,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3116,6 +3200,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -3152,7 +3242,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3172,6 +3271,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -3208,7 +3313,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3228,6 +3342,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -3264,7 +3384,16 @@
           "accumulated_candidate_build": "3cb90b07c0ed5002483049067db34831aca3f4835995ba86665ec023e7e55a54",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/authorized-validation-20261021/mt5-all.json",
           "accumulated_receipt_sha256": "570216b4537ef2684493129d3499bc7cf08a6a67d5c4066a9fbdb2f49754f9f5",
-          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente."
+          "scope_note": "Apenas o check stoikus_custom_panel_hud_test PASS no C4; suíte completa C4 não aprovada. C5 focal PASS separado; suíte final C5 pendente.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3284,6 +3413,12 @@
           "result": "PASS",
           "availability": "private_external_receipt_not_guaranteed_in_clone",
           "note": "Focal C5; Build406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161; HUDaa50eb2291ec722c03e19a1e4c999757bf3604257424a01edb718ca1866e3481. Não transfere aprovação ao gate integral."
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_custom_panel_hud_test.log",
+          "result": "PASS",
+          "sha256": "41013ef2e7ffdde8eddd347eff4faa33abb690cadec5fd706093baf4ec8c2e8a",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {
@@ -3320,7 +3455,16 @@
           "accumulated_candidate_build": "406f16e7265f93dbd76f1c2b063090fa05520fdafc4322ca13ab5e0e0ae82161",
           "accumulated_receipt": "/Users/joaoalvescirqueira/.codex/visualizations/2026/10/12/01a13231-0786-7d03-82d0-0eb0231584dd/stoikus-painel-personalizavel-20261021/final-validation-C5/mt5-all.json",
           "accumulated_receipt_sha256": "d8fc9db14301face2e2fec2bd187bd87b7ef147ee2898b4f6708234e1460c4e8",
-          "scope_note": "Somente check risk PASS na suíte C5; três falhas de distribuição mantidas. Compilação e execução MT5 NOT_RUN."
+          "scope_note": "Somente check risk PASS na suíte C5; três falhas de distribuição mantidas. Compilação e execução MT5 NOT_RUN.",
+          "c5_rerun_20261024": {
+            "execution": "PASS",
+            "candidate_commit": "79160d982d57606b158d0d720f61fc7bd10b4bce",
+            "input_fingerprint": "17a215048a9f4e0990124973b22fc0ef4afae87b140fb050ec893986cb9eee19",
+            "suite_summary": "MT5-all --scope all: 62 PASS, 0 PRODUCT_FAIL, 0 outros",
+            "receipt": "docs/validation/stoikus-mt5-all-20261024/mt5-all.json",
+            "receipt_sha256": "322cf311acdb8da88d9bce5ebb972f05de45ee9a472b151ce0cb9ff395b4276c",
+            "scope_note": "Reexecução da suíte completa no commit C5 limpo; fontes mt5 idênticas ao main a4bf278. As três PRODUCT_FAIL de distribuição anteriores não se reproduziram; seus logs não estão mais disponíveis e a causa não foi comprovada. Campos accumulated_* acima preservados como histórico. Compilação e execução MT5 NOT_RUN."
+          }
         }
       },
       "evidence": [
@@ -3335,6 +3479,12 @@
           "result": "PASS",
           "sha256": "f73a87354983f077e92589f02de304d42efac238f4266aaa0393f64655dd2124",
           "availability": "private_external_receipt_not_guaranteed_in_clone"
+        },
+        {
+          "path": "docs/validation/stoikus-mt5-all-20261024/mt5-all.logs/stoikus_risk_presentation_test.log",
+          "result": "PASS",
+          "sha256": "e80386cc513d92d6d1f19a3596dbc019e6e0ca6ff21a7ba59155890d8d61a628",
+          "availability": "repository_copy_byte_identical_to_session_original"
         }
       ],
       "last_verified": {

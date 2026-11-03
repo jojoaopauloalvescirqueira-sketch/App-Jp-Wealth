@@ -1,0 +1,25 @@
+{
+  "kind": "HOST_PRODUCTION_CORE_REPLAY",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Samples.mqh": "3fdc0d03bc39672313ffe5fa89e43cdd4d5fd73bb601d891bde2828c0b048bc2",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_StopRisk_Core.mqh": "db48686d3ca3cf23d7f683fb1589ae8cd2fea21213b35ffedfdf66f5b7fc20fb"
+  }
+}
+HOST_RELIABILITY_REPLAY: 44 PASS / 0 FAIL
+EXPANDED_INDICATOR_SHA256: d82d59ad0455f8be8957f856ea73f5e3e682733b4cc5725d9ac2a4bcc372fa3f
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-presentation-replay-vq_0b8ih/render.cpp:209:29: warning: unused parameter 'value' [-Wunused-parameter]
+  209 | void JPWRender(const string value,const string state=""){
+      |                             ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-presentation-replay-vq_0b8ih/render.cpp:209:48: warning: unused parameter 'state' [-Wunused-parameter]
+  209 | void JPWRender(const string value,const string state=""){
+      |                                                ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-presentation-replay-vq_0b8ih/render.cpp:14:16: warning: unused variable 'ACCOUNT_MARGIN_MODE_RETAIL_HEDGING' [-Wunused-const-variable]
+   14 | constexpr long ACCOUNT_MARGIN_MODE_RETAIL_HEDGING=2;
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-presentation-replay-vq_0b8ih/render.cpp:15:16: warning: unused variable 'ACCOUNT_MARGIN_MODE_RETAIL_NETTING' [-Wunused-const-variable]
+   15 | constexpr long ACCOUNT_MARGIN_MODE_RETAIL_NETTING=0;
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4 warnings generated.
+HOST_PRESENTATION_REPLAY: actual renderer preserves ID/value across 11 draws; elapsed expiry and clock regression become N/A
+NATIVE_MT5: NOT_RUN

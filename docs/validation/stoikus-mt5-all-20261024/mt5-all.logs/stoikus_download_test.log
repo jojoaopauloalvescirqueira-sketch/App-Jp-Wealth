@@ -1,0 +1,8 @@
+PASS installer release guard, version, filename, native receipt, MIME, size/hash and portable exclusion
+PASS hosted preview pinned bytes despite 307/injected HTML; missing/wrong MIME/corrupt embedded preview refused without network fallback on HTTP/HTTPS/file
+PASS R4 nativeKit/nativePin/preview real bytes and MIME; size/hash/corruption/path refusal; offline and network errors; no crypto; optional metadata; page URL; concurrent double click
+PASS daily/source/compiled online; daily offline; corrupt size/hash; legacy and invalid manifests; unsafe records; absent button
+PASS installer release guard, version, filename, native receipt, MIME, size/hash and portable exclusion
+PASS hosted preview pinned bytes despite 307/injected HTML; missing/wrong MIME/corrupt embedded preview refused without network fallback on HTTP/HTTPS/file
+PASS R5 nativeKit/nativePin/preview real bytes and MIME; size/hash/corruption/path refusal; offline and network errors; no crypto; optional metadata; page URL; concurrent double click
+PASS daily/source/compiled online; daily offline; corrupt size/hash; legacy and invalid manifests; unsafe records; absent button

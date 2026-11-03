@@ -1,0 +1,4 @@
+SOURCE_SHA256: 472f31cf5656c36d2561b098b8efb69ea405bfe9fd83c67eeaa3eefbd6211260
+HOST_SYNTHETIC: production Cockpit.mqh with C++ MQL string shim
+HOST_COCKPIT: 9249 PASS / 0 FAIL; chart/template lifecycle and MT5 clicks NOT_RUN
+EXIT_CODE: 0

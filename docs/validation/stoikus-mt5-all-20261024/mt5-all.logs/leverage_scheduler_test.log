@@ -1,0 +1,46 @@
+MARKER_HELPER_SOURCE_SHA256: ffb2b5c2701cca7846cdaeef57a97aee639d147d87ca622112b5e34b56142c97
+EA_SOURCE_SHA256: a357c1850931d6515f2f9d7c341df741f57e3ace328694ae2ac16963504edf2c
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-scheduler-pmbrugj0/scheduler.cpp:19:40: warning: unused parameter 'args' [-Wunused-parameter]
+   19 | template<typename... A> void Print(A...args){}
+      |                                        ^
+1 warning generated.
+HOST_SCHEDULER_REPLAY: 17 PASS / 0 FAIL
+NATIVE_MT5_TIMERS: NOT_RUN
+COORDINATOR_SOURCE_SHA256: f6b37d3d98a3a2e8f217d20e5a9f86b307b46111f53990f854fee62e52252fb3
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-indicator-scheduler-92lt1xxr/scheduler.cpp:19:40: warning: unused parameter 'args' [-Wunused-parameter]
+   19 | template<typename... A> void Print(A...args){}
+      |                                        ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-indicator-scheduler-92lt1xxr/scheduler.cpp:13:15: warning: unused variable 'INVALID_HANDLE' [-Wunused-const-variable]
+   13 | constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+      |               ^~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-indicator-scheduler-92lt1xxr/scheduler.cpp:13:55: warning: unused variable 'POSITION_TYPE' [-Wunused-const-variable]
+   13 | constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+      |                                                       ^~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-indicator-scheduler-92lt1xxr/scheduler.cpp:13:71: warning: unused variable 'POSITION_SYMBOL' [-Wunused-const-variable]
+   13 | constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+      |                                                                       ^~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-indicator-scheduler-92lt1xxr/scheduler.cpp:14:15: warning: unused variable 'JPW_PERSONAL_UNAVAILABLE' [-Wunused-const-variable]
+   14 | constexpr int JPW_PERSONAL_UNAVAILABLE=0;
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+5 warnings generated.
+HOST_INDICATOR_COORDINATOR: 17 PASS / 0 FAIL
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-marker-isolation-gxzizsv1/marker.cpp:19:40: warning: unused parameter 'args' [-Wunused-parameter]
+   19 | template<typename... A> void Print(A...args){}
+      |                                        ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-marker-isolation-gxzizsv1/marker.cpp:13:15: warning: unused variable 'INVALID_HANDLE' [-Wunused-const-variable]
+   13 | constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+      |               ^~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-marker-isolation-gxzizsv1/marker.cpp:13:55: warning: unused variable 'POSITION_TYPE' [-Wunused-const-variable]
+   13 | constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+      |                                                       ^~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-marker-isolation-gxzizsv1/marker.cpp:13:71: warning: unused variable 'POSITION_SYMBOL' [-Wunused-const-variable]
+   13 | constexpr int INVALID_HANDLE=-1,POSITION_IDENTIFIER=1,POSITION_TYPE=2,POSITION_SYMBOL=3,POSITION_TYPE_BUY=0;
+      |                                                                       ^~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-marker-isolation-gxzizsv1/marker.cpp:14:15: warning: unused variable 'JPW_PERSONAL_UNAVAILABLE' [-Wunused-const-variable]
+   14 | constexpr int JPW_PERSONAL_UNAVAILABLE=0;
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+5 warnings generated.
+HOST_MARKER_ISOLATION: 12 PASS / 0 FAIL; native CAS scheduling NOT_RUN
+HOST_OBSERVER_PRESENCE_RECOVERY: transient CAS retry, deleted-marker recreation and changed-owner refusal PASS; MT5 NOT_RUN
+PRESENCE_HELPER_SOURCE_SHA256: efb047a162c0fd0df409483dbdc81983e82d4181e1ce4a6e7fba17bca1394bcd
+HOST_OBSERVER_OWNED_MARKER: exact-value CAS retry, changed-writer refusal, atomic invalidation and zero-tombstone restart PASS; MT5 NOT_RUN

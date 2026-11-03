@@ -48,6 +48,18 @@ Fontes por responsabilidade e consumidores estão no [mapa de contexto](CONTEXT-
 e no [mapa do código](../architecture/CODE-MAP.md). A leitura deve alcançar os
 contratos compartilhados pertinentes, mesmo quando atravessam pastas ou módulos.
 
+## Projeto complementar — Stoikus (MetaTrader 5)
+
+Delimitação aprovada em 22/10/2026: [decisão](../decisions/2026-10-22-stoikus-escopo-projeto-independente.md).
+
+**Stoikus é um projeto independente do JP Wealth para MetaTrader 5, escrito em MQL5, que complementa o JP Wealth OS.** Não é um sexto módulo do aplicativo web.
+
+- **O que é:** sistema de gerenciamento e monitoramento de conta no MT5. Componentes atuais: Monitor da conta (observador, não negocia), Stoikus · Conta, NoCuda · Gráficos (componente com identidade própria), Abrir Painéis e Supervisor opcional de proteção 7x.
+- **Independência:** versão própria (hoje 1.23.0, produto C5, cálculo 1.9.0), separada do build do aplicativo; fontes, compilação, distribuição e aceite são estados distintos dos do aplicativo; instruções e harness próprios em `mt5/jpw-alavancagem-atual/AGENTS.md`, subordinados às regras do repositório. Os programas rodam no MT5; o aplicativo não os executa, compila nem certifica.
+- **Complementaridade:** o aplicativo explica e distribui o Stoikus (área "Stoikus — MT5", downloads e instalador). Ambos partilham a base normativa do Estatuto; o Stoikus não comprova conformidade de operações nem substitui o motor Forex, e o motor Forex não executa o Stoikus. Não há troca de dados em execução entre os dois; integração futura exige contrato próprio e autorização.
+- **Localização:** `mt5/jpw-alavancagem-atual/` (nome de pasta legado), no mesmo repositório.
+- **Exceção de nome:** o botão "Stoikus ▾" do Planejamento patrimonial é um menu do aplicativo web e não pertence a este projeto.
+
 ## Fontes de autoridade
 
 - Norma vigente indicada pelo proprietário: `docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf` (V11).

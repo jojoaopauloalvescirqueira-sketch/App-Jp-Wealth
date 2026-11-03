@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "production MQL store control flow; host SQLite+SHA256 API adapters",
+  "native": "NOT_RUN",
+  "sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd"
+  },
+  "compiler_log": "",
+  "output": "Store production flow: 69 asserts; failures=0; native NOT_RUN\n"
+}

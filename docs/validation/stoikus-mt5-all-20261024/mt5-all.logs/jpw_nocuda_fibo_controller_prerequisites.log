@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "scope": "production controller + capture + core + sync + store + main context reset; host SQLite/SHA256; UI and MT5 API seams; legacy key/clear real; legacy loading/drawing outside scope",
+  "native": "NOT_RUN",
+  "sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Store.mqh": "bfe7b21e0d9074553fa6ddeedcc31fce6965e6c3c3657e7d183c97e04c266edd",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Sync.mqh": "2fca05f5fe15d67089d462c503536d9a8000df9088dad1222f3bb502df05f42d",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Controller.mqh": "c0525b71a0be9823722c1fe920f673ae04f95b722adf1404627adea4f48f4930",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5": "536ce92438412c6e260faab48187242191c539d1f23e92e82d602376f33cb68c",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh": "e8c3ce116c46fece71f5affc4c5ec6a07a09f087340c0017326d64d687f9f36e",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_UI.mqh": "8a92b48a7593b0b9a96a962bdaddae44fdd03179bb197ff9639f76c155ef0ee4",
+    "tools/stoikus_window_nocuda_host.py": "927afb095592bc0a565df5db82271cf94d3c6c1a549b27b70d26a09f604df6c0",
+    "tools/jpw_nocuda_fibo_controller_test.py": "0a9ed3df113d9940d950e83c1a01860b7021b2b61c3bf1cc2dbd453b542572f4"
+  },
+  "compiler_log": "",
+  "output": "R1 targeted controller: 41 asserts; failures=0; native NOT_RUN\n"
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "HOST_SYNTHETIC_NOT_MT5",
+  "source_sha256": "8754f794016f906d86023195a2c9ef9deb1e024dc07db07a718d4838db7c9ce2"
+}
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-details-ep8jwwnz/details.cpp:1721:76: warning: unused parameter 'dparam' [-Wunused-parameter]
+ 1721 | void JPWHandleChartEventBody(const int id,const long &lparam,const double &dparam,const string &sparam){
+      |                                                                            ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-details-ep8jwwnz/details.cpp:549:15: warning: unused variable 'TA_LEFT' [-Wunused-const-variable]
+  549 | constexpr int TA_LEFT=0;
+      |               ^~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-details-ep8jwwnz/details.cpp:550:15: warning: unused variable 'TA_TOP' [-Wunused-const-variable]
+  550 | constexpr int TA_TOP=0;
+      |               ^~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-details-ep8jwwnz/details.cpp:551:15: warning: unused variable 'COLOR_FORMAT_ARGB_NORMALIZE' [-Wunused-const-variable]
+  551 | constexpr int COLOR_FORMAT_ARGB_NORMALIZE=0;
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+4 warnings generated.
+HOST_DETAILS_EVENT: 92 PASS / 0 FAIL
+NATIVE_MT5_CLICKS: NOT_RUN
+EXIT_CODE: 0

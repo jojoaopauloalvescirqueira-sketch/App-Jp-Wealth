@@ -246,6 +246,7 @@ distinção não dispensa autorização nem permite reinterpretar o Estatuto.
   critério de correção, estatística descritiva e o agregado `S.pivotStudies`.
 - Finanças Pessoais: `docs/architecture/PERSONAL-FINANCE.md` — contrato do agregado `S.personalFinance` (schema v1 congelado, BRL_CENTS, materialização de mês, dívida temporal).
 - Alladin: `docs/architecture/ALLADIN.md` — contrato do agregado `S.alladin` (schema **v6**, quatro entidades cadastrais + ledger econômico, dinheiro em unidade mínima, write gate transacional, fail-closed). Código em `src/js/10-domain/13-alladin.js` (domínio, cadastral E econômico), `src/js/20-ui/24-alladin-views.js` (superfície cadastral do C3 **e a superfície econômica read-only do ALD-05 S1**) e `src/js/00-core/04-persistence.js`; suítes `tools/alladin_*_test.py`. Spec canônica: JPW-ALLADIN-SPEC V1.2.1 (vault de arquitetura, externa ao repo). **Existente**: o C3 — cadastro — CONCLUÍDO (leitura, criação, edição e `recordStatus` das quatro entidades pela interface real); o **ledger ALD-03 S1/S2/S3/S4 PUBLICADO** — Cash Ledger (`DEPOSIT`/`WITHDRAWAL`/`TRANSFER`/`REVERSAL`), trades (`BUY`/`SELL`, fato único de duas pernas), **despesas standalone** (`FEE`/`TAX`, só-caixa, sem `flowScope` e sem vínculo a trade) e **ajustes de reconciliação** (`ADJUSTMENT_CREDIT`/`ADJUSTMENT_DEBIT`, só-caixa bidirecional, `reason` obrigatório, sem vínculo a transação), com saldo de caixa derivado fail-closed e **completude do cash delta** (tipo legível sem entrada na tabela vira BLOCKING, nunca delta zero implícito); a **superfície econômica ALD-05 S1/S2/S3 PUBLICADA** — Lançamentos, Saldos e Posições visíveis na aplicação, projetando os read-models sem aritmética própria, com BLOCKING que jamais vira zero/vazio/tela normal, **criação de lançamento pela UI** (S2: os nove `eventType` criáveis num modal único — `dedupeKey` fora — payload sem campos do domínio) e **estorno pela UI** (S3: ação por linha só em `POSTED` não-estornado, `reverseTransaction` como única porta, economia copiada pelo domínio, original read-only no modal); e o **Position Quantity Engine ALD-04 S1 PUBLICADO** — posição por quantidade **derivada** via `leitura.posicoes()`, identidade `instrumentId + accountId`, aritmética decimal exata, nada persistido. **Não existente** (fronteira que não se antecipa sem gate humano): Reconciliation Engine, matemática de performance (que **deve** segregar `ADJUSTMENT` explicitamente, jamais absorvê-lo no residual), holding persistido, consolidated position, cost basis, valuation, P&L, performance e **edição de lançamento** (não existe e não existirá — ledger é append-only; correção é estorno) — não reconstruir o que já existe nem antecipar o que não foi autorizado.
+- Stoikus (projeto complementar MT5): [decisão de escopo](../decisions/2026-10-22-stoikus-escopo-projeto-independente.md), `mt5/jpw-alavancagem-atual/AGENTS.md`, `mt5/jpw-alavancagem-atual/README.md` e `STOIKUS_USO_DIARIO.md`. Distribuição pelo aplicativo: `src/js/20-ui/31-tools-services.js`, `src/js/00-core/10-download-assets.js` e `tools/rebuild_monolith.py`.
 - MEI-JP: fonte normativa aplicavel, implementacao MEI, historico patrimonial e auditoria matematica registrada.
 - Governanca/agentes: `AGENTS.md`, esta pagina, `AI-WORKFLOW.md`, `QUALITY-GATES.md` e skills locais.
 
@@ -324,6 +325,23 @@ editado: correção usa estorno. Preserve uma chamada por submit, rascunho após
 recusa e a distinção entre aviso após gravação e erro sem gravação. O descarte
 de DOM inativo é próprio deste módulo; não aplique por analogia o lifecycle de
 Forex ou Research.
+
+### Stoikus (projeto complementar MT5)
+
+Stoikus é um projeto independente para MetaTrader 5, em MQL5, que complementa
+o JP Wealth OS; não é módulo do aplicativo web. Leia a decisão de escopo e as
+instruções locais em `mt5/jpw-alavancagem-atual/`. Versão, compilação,
+distribuição e aceite são estados próprios: prova do aplicativo não comprova
+execução no MT5. O aplicativo apenas explica e distribui; não há troca de dados
+em execução, e integração nova exige contrato e autorização. O botão
+"Stoikus ▾" do Planejamento patrimonial é exceção de nome do aplicativo web e
+segue a rota do Planejamento.
+
+**Aviso (24/10/2026):** o "Mapa ativo" de `mt5/jpw-alavancagem-atual/AGENTS.md`
+descreve GENETRIX 1.20.0 e cita `JPW_Genetrix_Monitor`/`JPW_Genetrix_Supervisor`,
+renomeados para `JPW_Stoikus_*` na 1.22.0. O estado vigente é 1.23.0/C5, no topo
+do `README.md` da pasta. A reescrita fica para a próxima versão, porque o
+arquivo está no ZIP selado do C5 ([plano](../superpowers/plans/2026-10-24-stoikus-pasta-mt5-stoikus.md)).
 
 ## Fronteiras compartilhadas e verificação dirigida
 

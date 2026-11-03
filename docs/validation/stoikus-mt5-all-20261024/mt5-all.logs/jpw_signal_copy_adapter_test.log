@@ -1,0 +1,118 @@
+{
+  "test": "jpw_signal_copy_adapter",
+  "kind": "HOST_SYNTHETIC_NOT_MQL5",
+  "compiler": "/usr/bin/clang++",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh": "329fede70dec11c0f8b046c20ef70b4406b27e700313d8e48c76616435a41db5",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh": "2c8f4284da8eee97e794cd9cbf7efb9d78808a97f859ef1752c48bb730f71601",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Profile.mqh": "67d2f05789b52152d426ea2f795978298e41957cc9f73240ceef93395444cf44",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Genesis_Store.mqh": "beaed74ea4915d8edea8e2d0dbf34d1c81d805b31ef82e4ea349b088cfa32cc8",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Store.mqh": "d9ede1cc0bcda749c0245f136331aa08efc0d71760873a8b629eb4fc7456b61f",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh": "a34156a4e0d69d1516d6ecd1a2580948020be2ad326476f9f9639c79349a2653",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Live.mqh": "04f1b3ecdac6a0877f11a369d753ce7bdaacc0418457eacf25a1d3ff31224a8f",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh": "cee189d989148d6cd2f5979bf2a0d4a73a5dd47789c6b86c0cdb2b853f7ec623",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Terminal.mqh": "b1667783a6f262c0731b2e867c46cab073975ec0fa6df284a6cdbcb9e66950c9"
+  },
+  "limitations": "Synthetic native APIs; exact collectors, stores, routes, live ATR and math bodies. No real account, native MT5, OS-lock/crash proof or clipboard."
+}
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin27.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+PASS: full catalog includes TP and remaining pending volume
+PASS: opaque context and transient reference initialized
+PASS: enumeration order is not composition identity
+PASS: equity/profit movement allowed, accepted equity frozen
+PASS: TP change rejects prepared/export snapshot
+PASS: remaining pending volume change rejects snapshot
+PASS: balance/context change rejects snapshot
+PASS: full tuple mutation fixture accepted
+PASS: pending fulltuple field mutation 0 invalidates export
+PASS: pending fulltuple field mutation 1 invalidates export
+PASS: pending fulltuple field mutation 2 invalidates export
+PASS: pending fulltuple field mutation 3 invalidates export
+PASS: pending fulltuple field mutation 4 invalidates export
+PASS: pending fulltuple field mutation 5 invalidates export
+PASS: pending fulltuple field mutation 6 invalidates export
+PASS: pending fulltuple field mutation 7 invalidates export
+PASS: restored full tuple revalidates
+PASS: definitive read error is not stale typed deferment
+PASS: one bounded repeat converges after TP race
+PASS: persistent composition race rejected after one retry
+PASS: read error rejected rather than artificial zero
+PASS: account race repeated once and accepted new stable context
+PASS: balance race repeated with coherent new sample
+PASS: 500ms budget exposes typed deferment
+PASS: metrics fixture accepted
+PASS: exact metrics adapter with real financial and RootN kernels
+PASS: whole-account gross and ONLY selected remaining pending hypothetical fill
+PASS: floating currency units cancel, absent preference F1.5, counted 24/7 horizons
+PASS: initial cached quote has no new-tick Current claim; projected calendar Estimated
+PASS: both horizons use selected exact symbol same ATR and Bid/Ask
+PASS: metrics and collection do not write financial files or hold locks
+PASS: selected existing position not duplicated; new quote restores current leverage
+PASS: new symbol tick confirmed, future weekly calendar still Estimated
+PASS: selected symbol differing chart owns independent ATR/price context
+PASS: exact-symbol calendar/ATR and released previous handle
+PASS: offline complete sample estimated independently
+PASS: reconnection requires fresh selected-symbol tick
+PASS: reconnection fresh tick restores quote quality
+PASS: insufficient ATR independent from valid account metrics
+PASS: ATR H4 rollover race rejected
+PASS: netting opposite pending reduces aggregate rather than blindly adds
+PASS: netting hypothetical flatten yields confirmed zero gross
+PASS: netting reversal uses remaining opposite signed volume
+PASS: reference fixture accepted
+PASS: absent Genesis permits only inference
+PASS: synthetic Genesis record created solely by fixture setup
+PASS: read-only existing reference stable identifier, no save
+PASS: other-symbol reference excluded without redefining account operation
+PASS: fixture transitions reference to closed
+PASS: closed reference retained without promoting oldest remaining position
+PASS: busy Genesis blocks fictitious successor inference
+PASS: factor fixture accepted
+PASS: fixture writes explicit F1.8 via real versioned store
+PASS: selected-symbol F preference read-only respected
+PASS: busy F record produces RootN N/A without fallback, independent metrics valid
+PASS: corrupt F refuses silent default and leaves financial bytes untouched
+PASS: USC normalization is account property, not broker suffix
+PASS: unconfirmed USC contract blocks leverage only
+PASS: fixture verifies normal contract unit scales using real profile store
+PASS: USD1000 and USC100000 equity equivalent without unilateral factor100
+PASS: heterogeneous USC fixture accepted
+PASS: per-symbol scales100000cent and1000units without duplicate normalization
+PASS: contract change invalidates USC profile without masking selected RootN
+PASS: catalog deferred fixture accepted
+PASS: partial catalog is typed deferred, not a final subtotal or false-ready response
+PASS: lazy catalog progresses across bounded timer requests then completes
+PASS: catalog metadata drift invalidates cached edges and requests recollection
+PASS: failure independence fixture accepted
+PASS: whole-account conversion/quote failure never reports partial leverage
+PASS: incomplete H4 calendar refuses RootN independently
+PASS: nonpositive equity blocks leverage while balance/profit remain valid
+PASS: exchange pending hypothetical fill unsupported, no invented aggregate transformation
+PASS: direct/indirect quote route fixture accepted
+PASS: fresh two-leg conversion preferred over stale direct cached route
+PASS: inverse conversion preserves entire-account gross denominator units
+PASS: nonfinite TP property fails closed
+PASS: age invalidation fixture accepted
+PASS: expired accepted capture cannot prepare/export
+PASS: expiry crossing fixture accepted
+PASS: capture expiring DURING revalidation rejects prepare/export definitively
+PASS: composition-only monitor remains valid across30s boundary
+PASS: renewal fixture accepted with frozen metrics
+PASS: default revalidate still rejects31s frozen reading
+PASS: composition-only monitor tolerates age without changing frozen capture/metrics
+PASS: first-preview renewal updates BEPC/times with identical composition and preserves reference
+PASS: renewal cannot mutate existing metrics; renewed reading fresh
+PASS: TP drift refuses renewal and keeps previous capture intact
+PASS: account change refuses renewal atomically
+PASS: renewal deadline is typed deferred without partial update
+PASS: reused output starts with full catalogue
+PASS: reused output shrinks to exact live composition
+PASS: reused output becomes coherently empty without stale tails
+PASS: deinitialization releases private ATR handles
+HOST_SIGNAL_COPY_ADAPTER: 93 PASS / 0 FAIL
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN; NATIVE_COPY: NOT_RUN

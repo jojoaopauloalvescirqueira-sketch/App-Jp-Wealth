@@ -1,0 +1,21 @@
+{
+  "kind": "HOST_SYNTHETIC_NOT_MT5",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Presentation.mqh": "d1f9b262c511a2667cd365c52f2ee6757063b70ead1ff639834b884238cf4456",
+    "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5": "8754f794016f906d86023195a2c9ef9deb1e024dc07db07a718d4838db7c9ce2"
+  }
+}
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-mt5-ui-focus-bxqi_7pj/focus.cpp:52:15: warning: unused variable 'TA_LEFT' [-Wunused-const-variable]
+   52 | constexpr int TA_LEFT=0;
+      |               ^~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-mt5-ui-focus-bxqi_7pj/focus.cpp:53:15: warning: unused variable 'TA_TOP' [-Wunused-const-variable]
+   53 | constexpr int TA_TOP=0;
+      |               ^~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-mt5-ui-focus-bxqi_7pj/focus.cpp:54:15: warning: unused variable 'COLOR_FORMAT_ARGB_NORMALIZE' [-Wunused-const-variable]
+   54 | constexpr int COLOR_FORMAT_ARGB_NORMALIZE=0;
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-mt5-ui-focus-bxqi_7pj/focus.cpp:988:11: warning: unused variable 'JPW_ACTION_PANEL_CUSTOMIZE' [-Wunused-const-variable]
+  988 | const int JPW_ACTION_PANEL_CUSTOMIZE=901;
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+4 warnings generated.
+HOST_MT5_UI_FOCUS: 20 PASS / 0 FAIL; native MT5 interaction NOT_RUN

@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "actual production MQL terminal adapter; deterministic chart API seams",
+  "native": "NOT_RUN",
+  "sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Core.mqh": "562fc531ffca9d5c83fc8db1c9faa94df026cd528ba1358ee87823646a8271af",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_NoCuda_Fibo_Terminal.mqh": "235b66db3f5f753ee7e792cb7ed6ff869b1dbd41d116687abe0b9b82c7d3ded1"
+  },
+  "compiler_log": "",
+  "output": "Terminal adapter: 18 asserts; failures=0; native NOT_RUN\n"
+}

@@ -1,0 +1,5 @@
+PASS immutable 1.22.1 SDK/daily archives and size/hash counterexamples
+PASS separate frozen inventories; bytes/hash; reproduction and idempotence
+PASS absent guide/script/dependencies, traversal, unsafe resources, symlink and unproved EX5 rejected
+PASS C5 SDK142/daily89, exact pins and documentary native derivative; native NOT_RUN
+PASS actual candidate inventories, bytes, source parity, immutable historical archives

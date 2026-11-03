@@ -1,0 +1,25 @@
+{
+  "test": "jpw_signal_copy",
+  "kind": "HOST_SYNTHETIC_NOT_MQL5",
+  "compiler": "/usr/bin/clang++",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh": "8d4c6c7e6564a53ea4a56825b21840df45b25bf9a4748354900a490945e4e055",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Core.mqh": "a8291f2e8aaf08a507109ed3abe90006ed486693431839056a46762edd64a537",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Types.mqh": "329fede70dec11c0f8b046c20ef70b4406b27e700313d8e48c76616435a41db5",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_SignalCopy_Core.mqh": "2c8f4284da8eee97e794cd9cbf7efb9d78808a97f859ef1752c48bb730f71601",
+    "mt5/jpw-alavancagem-atual/MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4"
+  },
+  "limitations": "Exact pure core under host MQL primitive compatibility; Unicode string/golden host bytes only; no native compilation, terminal account, chart, clipboard or send."
+}
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin27.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-signal-copy-synthetic-rd9_5bh6/signal_copy.cpp:29:18: warning: unused variable 'EMPTY_VALUE' [-Wunused-const-variable]
+   29 | constexpr double EMPTY_VALUE=2147483647.0;
+      |                  ^~~~~~~~~~~
+1 warning generated.
+JPW_SIGNAL_COPY: 65 PASS / 0 FAIL
+HOST_SIGNAL_COPY: 65 PASS / 0 FAIL
+MQL5_NATIVE_COMPILATION: NOT_RUN; MQL5_NATIVE_EXECUTION: NOT_RUN; NATIVE_COPY: NOT_RUN
+HOST_SIGNAL_COPY_RESULT: PASS; native MT5 and clipboard NOT_RUN

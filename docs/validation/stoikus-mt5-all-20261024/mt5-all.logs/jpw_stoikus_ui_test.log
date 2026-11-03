@@ -1,0 +1,18 @@
+JPW_Stoikus_UI.mqh SHA256 0fe1ffab6cc837397445b0f26a48abc3391ec33e7e38be9b1950b06687e59a0a
+JPW_Alavancagem_Cockpit.mqh SHA256 472f31cf5656c36d2561b098b8efb69ea405bfe9fd83c67eeaa3eefbd6211260
+JPW_Alavancagem_Presentation.mqh SHA256 d1f9b262c511a2667cd365c52f2ee6757063b70ead1ff639834b884238cf4456
+JPW_Alavancagem_Atual.mq5 SHA256 8754f794016f906d86023195a2c9ef9deb1e024dc07db07a718d4838db7c9ce2
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-genetrix-ui-host-lf0tszmq/ui.cpp:698:24: warning: unused parameter 'action' [-Wunused-parameter]
+  698 | bool JPWFocusValid(int action){return target_exists;}
+      |                        ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-genetrix-ui-host-lf0tszmq/ui.cpp:699:44: warning: unused parameter 'n' [-Wunused-parameter]
+  699 | bool JPWPresentationSetString(const string&n,int p,const string&s){return true;}
+      |                                            ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-genetrix-ui-host-lf0tszmq/ui.cpp:699:50: warning: unused parameter 'p' [-Wunused-parameter]
+  699 | bool JPWPresentationSetString(const string&n,int p,const string&s){return true;}
+      |                                                  ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-genetrix-ui-host-lf0tszmq/ui.cpp:699:65: warning: unused parameter 's' [-Wunused-parameter]
+  699 | bool JPWPresentationSetString(const string&n,int p,const string&s){return true;}
+      |                                                                 ^
+4 warnings generated.
+GENETRIX_UI_HOST: 10396 PASS / 0 FAIL; native MT5 compile/chart/template/demo NOT_RUN

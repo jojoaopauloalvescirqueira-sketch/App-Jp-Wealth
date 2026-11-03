@@ -1,0 +1,22 @@
+{
+  "kind": "HOST_PRODUCTION_SQLITE_REPLAY",
+  "source_sha256": {
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Version.mqh": "a4c62738d56c3974ca939d7c3a76635492b11007fdd5f9ade91cc2b39cf2d71d",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Store_Result.mqh": "003e51cafb1adce22d5b2447df6f2c7c7bbee6e27b8b0c3819ec4cd9b4d1ee60",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics_Core.mqh": "98c47b0526c772846d1e70b048f01deab7881c8be879ba0e0ca9693902534418",
+    "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_Diagnostics.mqh": "a2155822afe2bd921b6ce088edd2b64e04e5c7aedb53dbd5c3e1ce8f1368bf7b"
+  }
+}
+LINKED_REPLAY_INDICATOR_SHA256: d82d59ad0455f8be8957f856ea73f5e3e682733b4cc5725d9ac2a4bcc372fa3f
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-diagnostics-sgag7ioj/diagnostics.cpp:737:29: warning: unused parameter 'value' [-Wunused-parameter]
+  737 | void JPWRender(const string value,const string state=""){
+      |                             ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-diagnostics-sgag7ioj/diagnostics.cpp:737:48: warning: unused parameter 'state' [-Wunused-parameter]
+  737 | void JPWRender(const string value,const string state=""){
+      |                                                ^
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-diagnostics-sgag7ioj/diagnostics.cpp:746:14: warning: unused parameter 'argc' [-Wunused-parameter]
+  746 | int main(int argc,char** argv){sandbox=argv[1];string context(64,'a'),other(64,'b'),reason;
+      |              ^
+3 warnings generated.
+HOST_DIAGNOSTICS_SQLITE: 34 PASS / 0 FAIL
+NATIVE_MT5_SQLITE_AND_LOCKS: NOT_RUN

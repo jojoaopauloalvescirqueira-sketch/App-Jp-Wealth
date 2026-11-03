@@ -1,0 +1,31 @@
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:12:35: warning: unused variable 'CORNER_LEFT_LOWER' [-Wunused-const-variable]
+   12 | constexpr int CORNER_LEFT_UPPER=0,CORNER_LEFT_LOWER=1,CORNER_RIGHT_UPPER=2,CORNER_RIGHT_LOWER=3;
+      |                                   ^~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:12:55: warning: unused variable 'CORNER_RIGHT_UPPER' [-Wunused-const-variable]
+   12 | constexpr int CORNER_LEFT_UPPER=0,CORNER_LEFT_LOWER=1,CORNER_RIGHT_UPPER=2,CORNER_RIGHT_LOWER=3;
+      |                                                       ^~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:12:76: warning: unused variable 'CORNER_RIGHT_LOWER' [-Wunused-const-variable]
+   12 | constexpr int CORNER_LEFT_UPPER=0,CORNER_LEFT_LOWER=1,CORNER_RIGHT_UPPER=2,CORNER_RIGHT_LOWER=3;
+      |                                                                            ^~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:44:42: warning: unused variable 'JPW_OBSERVER_NOT_CONFIRMED' [-Wunused-const-variable]
+   44 | constexpr int JPW_COCKPIT_METRIC_COUNT=7,JPW_OBSERVER_NOT_CONFIRMED=1;
+      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:419:35: warning: unused variable 'POSITION_TYPE_SELL' [-Wunused-const-variable]
+  419 | constexpr int POSITION_TYPE_BUY=0,POSITION_TYPE_SELL=1,JPW_STOP_RISK_POSITION=1,JPW_STOP_RISK_PENDING=2;
+      |                                   ^~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:419:81: warning: unused variable 'JPW_STOP_RISK_PENDING' [-Wunused-const-variable]
+  419 | constexpr int POSITION_TYPE_BUY=0,POSITION_TYPE_SELL=1,JPW_STOP_RISK_POSITION=1,JPW_STOP_RISK_PENDING=2;
+      |                                                                                 ^~~~~~~~~~~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:420:32: warning: unused variable 'TIME_DATE' [-Wunused-const-variable]
+  420 | constexpr int OBJPROP_STATE=23,TIME_DATE=1,TIME_SECONDS=2;
+      |                                ^~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:420:44: warning: unused variable 'TIME_SECONDS' [-Wunused-const-variable]
+  420 | constexpr int OBJPROP_STATE=23,TIME_DATE=1,TIME_SECONDS=2;
+      |                                            ^~~~~~~~~~~~
+/var/folders/gh/p7qkmxw10xx31spcdd2j0sxh0000gn/T/jpw-positions-ui-xavleq1o/ui.cpp:876:11: warning: unused variable 'JPW_ACTION_PANEL_CUSTOMIZE' [-Wunused-const-variable]
+  876 | const int JPW_ACTION_PANEL_CUSTOMIZE=901;
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+9 warnings generated.
+COMPACT_SECTIONS: 4 DPI cases PASS when no failed assertions above; native NOT_RUN
+POSITIONS_UI_RENDER: 1448 PASS / 0 FAIL; 192 font/DPI/viewports; native MT5 NOT_RUN
+SOURCE_SHA256: d1f9b262c511a2667cd365c52f2ee6757063b70ead1ff639834b884238cf4456

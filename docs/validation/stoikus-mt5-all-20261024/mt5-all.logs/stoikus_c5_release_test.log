@@ -1,0 +1,16 @@
+test_absent_contract_keeps_default_names_and_archive_bytes (__main__.C5ReleaseTests) ... ok
+test_artifact_inventory_metadata_and_unsafe_paths_rejected (__main__.C5ReleaseTests) ... ok
+test_cross_version_revision_and_native_promotions_rejected (__main__.C5ReleaseTests) ... ok
+test_exact_panel_header_inventory_rejects_each_omission_and_substitution (__main__.C5ReleaseTests) ... ok
+test_interface_names_sealed_bytes_and_idempotence (__main__.C5ReleaseTests) ... ok
+test_interface_rejects_native_promotion_and_unproved_ex5 (__main__.C5ReleaseTests) ... ok
+test_invalid_release_values_and_unbounded_keys_rejected (__main__.C5ReleaseTests) ... ok
+test_missing_corrupt_and_symlink_assets_rejected_even_with_coherent_metadata (__main__.C5ReleaseTests) ... ok
+test_source_identity_and_guide_corruption_rejected (__main__.C5ReleaseTests) ... ok
+test_standalone_preview_preserves_current_html_and_brand_bytes (__main__.C5ReleaseTests) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 13.214s
+
+OK
+PASS C5 SDK142/daily89, exact pins and documentary native derivative; native NOT_RUN
