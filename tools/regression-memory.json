@@ -6768,6 +6768,96 @@
         "scope": "RED dos novos oráculos executado na base integrada. Candidato corrigido e GREEN têm identificação própria nos recibos externos; sem transferir FULL histórico.",
         "artifact": "docs/work/CHG-NOTES-QUIET-20261102.md"
       }
+    },
+    {
+      "id": "calendar_news_fluid_fit_20261103",
+      "state": "fixed_regression",
+      "summary": "Notícias se ajustam ao painel sem rolagem horizontal; janela até20% maior e valores no detalhe em painéis estreitos.",
+      "source": {
+        "path": "docs/work/CHG-CALENDAR-FIT-20261103.md",
+        "section": "Pedido03/11/2026 e escolha responsiva humana"
+      },
+      "stimulus": "Abrir modal/workspace com seis eventos, títulos longos, horários incertos, zero, ausência e números negativos; larguras320–1440px e limites499/500px de notícias.",
+      "expected": "Janela máxima912px, calendário mensal308px preservado, notícias44px e sem overflow; sete campos a partir de500px úteis e quatro abaixo, valores integrais rotulados no i; foco/refresh, estados críticos e dados preservados.",
+      "cause": "Mínimo860px da tabela, mínimos intrínsecos de título/avisos e larguras por célula excediam o painel disponível.",
+      "protection": {
+        "path": "tools/calendar_economic_table_contract.py",
+        "case": "assert_layout/assert_values; table-fit, table-state e table-boundaries via calendar_agenda_test.py",
+        "command": "python3 tools/calendar_agenda_test.py --case table-fit --case table-state --case table-boundaries --artifact /private/tmp/calendar-fit.json",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-agenda",
+          "note": "Casos adicionados à entrada já existente, sem alterar runner/CI/gates. FULL novo não executado; revisão focal humana."
+        }
+      },
+      "evidence": [
+        {
+          "path": "outputs/calendar-fit-20261103/red.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Recibo externo da sessão: dois hosts reproduziram overflow na expectativa sem rolagem."
+        },
+        {
+          "path": "outputs/calendar-fit-20261103/source-iteration1.json",
+          "result": "PASS",
+          "note": "Primeira iteração:14casos focais PASS. Ajuste posterior de avisos/cobertura exige recibos finais próprios; não transferir esse PASS."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-03",
+        "build": "source-iteration1",
+        "scope": "Focais sintéticos de fonte na primeira iteração; candidato final identificado em recibos externos, fonte/portátil. Nenhuma alegação de FULL/Linux novo.",
+        "artifact": "docs/work/CHG-CALENDAR-FIT-20261103.md"
+      }
+    },
+    {
+      "id": "calendar_modal_clean_day_panel_20261103",
+      "state": "fixed_regression",
+      "summary": "Painel do dia do modal com hierarquia por tokens/peso, linhas acionáveis, pontos de impacto, títulos2linhas e metadados no rodapé; workspace preservado.",
+      "source": {
+        "path": "docs/work/CHG-CALENDAR-MODAL-REFINE-20261103.md",
+        "section": "Pedido03/11/2026, Gate Zero e exceções humanas"
+      },
+      "stimulus": "Modal com1/12/0eventos, título longo, cobertura completa/parcial/falha, coleta ausente, temas e larguras320–1440; Tab/Enter/Space e clique em célula.",
+      "expected": "Nome integral no caso Congressional Elections; linha inteira abre o mesmo detalhe com foco; valores/rótulos preservados; cobertura nas mesmas condições e erro não vira ausência; mês/header/workspace e financeiro intactos.",
+      "cause": "Apresentação anterior usava fundos/barras/ícone por linha, resumo de metadados extenso e títulos limitados a uma linha. O primeiro nativo200% também demonstrou perda de scroll do dialog na reconstrução por refresh; a posição externa não era preservada.",
+      "protection": {
+        "path": "tools/calendar_economic_table_contract.py",
+        "case": "modal_presentation_case: modal-visual/modal-many/modal-empty/modal-states; contratos existentes de tabela/estados mantidos",
+        "command": "python3 tools/calendar_agenda_test.py --case modal-visual --case modal-many --case modal-empty --case modal-states --artifact /private/tmp/calendar-modal.json",
+        "full_gate": {
+          "included": true,
+          "check_id": "calendar-agenda",
+          "note": "Casos acrescentados à entrada existente. Nenhum gate/runner/CI alterado; FULL novo não executado."
+        }
+      },
+      "evidence": [
+        {
+          "path": "outputs/calendar-modal-refine-20261103/red.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Seis reproduções reais: a linha não era a ação de teclado."
+        },
+        {
+          "path": "outputs/calendar-modal-refine-20261103/iteration2.json",
+          "result": "TEST_HARNESS_FAIL",
+          "note": "Quatro consumidores estreitos buscaram o antigo botão dentro da linha; falhas brutas mantidas, seletor corrigido sem mudar fonte."
+        },
+        {
+          "path": "outputs/calendar-modal-refine-20261103/iteration3.json",
+          "result": "PASS",
+          "note": "37casos focais de fonte passaram na iteração. Candidato/portátil finais exigem seus próprios recibos externos."
+        },
+        {
+          "path": "outputs/calendar-modal-refine-20261103/native-final/report.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Primeiro nativo7c04792accccfb3d falhou na igualdade exata da rolagem externa após refresh; correção limitada ao scrollTop do modal requer recibo novo."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-03",
+        "build": "source-iteration3",
+        "scope": "Fonte focal e contrato de interação; sem alegação de FULL/CI/Safari. Candidato final identificado em recibo externo.",
+        "artifact": "docs/work/CHG-CALENDAR-MODAL-REFINE-20261103.md"
+      }
     }
   ]
 }

@@ -10,7 +10,7 @@ from browser_fixture_server import BrowserFixtureServer
 from browser_bootstrap_fixture import FEED_URL, install_bootstrap, wait_bootstrap
 from dashboard_macro_test import launch_browser
 from playwright.sync_api import sync_playwright, expect
-from calendar_economic_table_contract import table_case
+from calendar_economic_table_contract import table_case, modal_presentation_case
 ROOT=Path(__file__).resolve().parents[1]
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*_): pass
@@ -36,7 +36,7 @@ def run(page, width, theme):
     assert panel.locator('[data-calendar-date][aria-selected="true"]').count()==1
     geometry=panel.evaluate("e=>({w:e.getBoundingClientRect().width,sw:e.scrollWidth,cw:e.clientWidth})")
     assert geometry['sw']<=geometry['cw']+1, geometry
-    assert geometry['w']<=min(760,width)+1, geometry
+    assert geometry['w']<=min(912,width)+1, geometry
     bounds=page.locator('#calendarDialog').bounding_box();assert bounds['x']>=0 and bounds['y']>=0 and bounds['x']+bounds['width']<=width+1,bounds
     if width>700:
         anchor=page.locator('#headerCalendarBtn').bounding_box()
@@ -195,7 +195,7 @@ def adjacent_selection(page, range_only=False):
         for currency in ['USD','EUR','JPY','CHF','CAD','AUD','NZD','CNY']:
             panel.locator(f'[data-calendar-currency="{currency}"]').uncheck()
         page.evaluate('JPWCalendar.refresh()')
-        expect(panel.locator('.calendar-agenda .calendar-coverage-note')).to_contain_text('confirmação')
+        assert 'confirmação' in panel.locator('.calendar-footer-coverage').get_attribute('aria-label')
         panel.locator('.calendar-header [data-calendar-action="info"]').click()
         assert 'setembro de 2026' in panel.locator('.calendar-info').inner_text()
         assert 'Indisponível' in panel.locator('.calendar-source-list').inner_text()
@@ -210,7 +210,7 @@ def feed_recovery(page):
     expect(panel.locator('[data-calendar-economic-id="SYN-high-1"]')).to_have_count(1)
     page.evaluate('__calendarQuery.fail=true;JPWCalendar.refresh()')
     expect(panel.locator('[data-calendar-economic-id="SYN-high-1"]')).to_have_count(1)
-    expect(panel.locator('.calendar-agenda .calendar-coverage-note')).to_contain_text('desatualizados')
+    assert 'desatualizados' in panel.locator('.calendar-footer-coverage').get_attribute('aria-label')
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     info=panel.locator('.calendar-info')
     assert 'Referência do pacote:' in info.inner_text(),'Last valid source revision must survive query failure'
@@ -223,7 +223,7 @@ def feed_recovery(page):
     page.evaluate('JPWCalendar.refresh()')
     expect(panel.locator('[data-calendar-economic-id]')).to_have_count(0)
     assert panel.locator('.calendar-economic-dot').count()==0
-    expect(panel.locator('.calendar-agenda .calendar-coverage-note')).to_contain_text('Não foi possível')
+    assert 'Não foi possível' in panel.locator('.calendar-footer-coverage').get_attribute('aria-label')
     assert 'Nenhum item' not in panel.locator('.calendar-agenda').inner_text(),'A failed query must not announce absence'
     assert 'Referência do pacote:' not in info.inner_text(),'A new failed context must not inherit another context revision'
     # Returning to the exact original filter recovers its prior values as stale.
@@ -255,7 +255,7 @@ def edges(page):
     panel.locator('[data-calendar-action="new"]').click();panel.locator('[name="title"]').fill('SYN marcador pessoal');panel.locator('[data-calendar-action="save-form"]').click()
     expect(panel.locator('[name="title"]')).to_have_count(0)
     cell=panel.locator('[data-calendar-date="2026-10-23"]');expect(cell.locator('.calendar-personal-dot')).to_have_count(1)
-    expect(panel.locator('.calendar-agenda-summary')).to_contain_text('3 itens')
+    expect(panel.locator('.calendar-agenda-summary')).to_contain_text('3 eventos')
     assert panel.locator('.calendar-agenda-group').all_text_contents()==['Economia','Sua agenda']
     assert '1 item da agenda' in cell.get_attribute('aria-label')
     dot=cell.locator('.calendar-economic-dot').bounding_box();num=cell.locator('.calendar-day-number').bounding_box()
@@ -266,7 +266,7 @@ def edges(page):
     expect(panel.locator('[data-calendar-date="2026-10-24"] .calendar-economic-dot')).to_have_count(1)
     panel.locator('[data-calendar-action="filters"]').click()
     panel.locator('[data-calendar-date="2026-10-25"]').click()
-    expect(panel.locator('.calendar-event-time').filter(has_text='Não informado')).to_have_count(1)
+    expect(panel.locator('.calendar-event-time').filter(has_text='Sem hora')).to_have_count(1)
     panel.locator('.calendar-header [data-calendar-action="info"]').click()
     assert 'CHF' in panel.locator('.calendar-source-list').inner_text() and 'Pendente' in panel.locator('.calendar-source-list').inner_text()
     assert 'classificação Forex Factory' in panel.locator('.calendar-info').inner_text() and 'curadoria editorial JP Wealth' in panel.locator('.calendar-info').inner_text()
@@ -478,19 +478,21 @@ def main():
             browser=launch_browser(pw)
             cases=[(1440,'light','baseline')] if args.baseline else [(w,t,'ui') for w in ([args.width] if args.width else [1440,390,320]) for t in ['light','dark']]
             if not args.baseline and args.path=='index.html':cases.extend([(320,'light',kind) for kind in ['edges','lifecycle','pref-read','pref-extension','pref-duplicates','adjacent-selection','adjacent-range','feed-recovery','info-focus','economic-focus','include-new']])
-            if not args.baseline and args.path=='index.html':
+            if not args.baseline:
                 cases.extend([(1440,'light','table-natural'),(390,'dark','table-compact'),(2400,'light','table-wide'),(1440,'light','table-state'),(1440,'light','table-boundaries')])
+                cases.extend([(w,t,'table-fit') for w in [320,390,820,1024,1440] for t in ['light','dark']])
+                cases.extend([(w,t,kind) for w in [1440,390,320] for t in ['light','dark'] for kind in ['modal-visual','modal-many','modal-empty','modal-states']])
             if args.case:cases=[case for case in cases if case[2] in args.case]
             for width,theme,kind in cases:
                 ctx=browser.new_context(viewport={'width':width,'height':900},timezone_id='America/New_York' if kind in ['edges','lifecycle'] else 'America/Sao_Paulo',service_workers='block');install_bootstrap(ctx);ctx.add_init_script('window.__onbShown=true')
                 if kind=='edges' or kind.startswith('adjacent-') or kind=='feed-recovery':calendar_packet(ctx,adjacent=kind.startswith('adjacent-'))
                 page=ctx.new_page()
                 if kind in ['edges','lifecycle']:page.clock.install(time=datetime(2026,10,23,15,tzinfo=timezone.utc))
-                else:page.clock.set_fixed_time(datetime(2026,10,23,15,tzinfo=timezone.utc))
+                else:page.clock.set_fixed_time(datetime(2026,11,3,20,tzinfo=timezone.utc) if kind.startswith('modal-') else datetime(2026,10,23,15,tzinfo=timezone.utc))
                 errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
                 try:
                     page.goto(f'http://127.0.0.1:{server.server_port}/{args.path}',wait_until='load');wait_bootstrap(page)
-                    details=table_case(page,width,theme,kind) if kind.startswith('table-') else include_new_currencies(page) if kind=='include-new' else economic_focus(page) if kind=='economic-focus' else info_focus(page) if kind=='info-focus' else preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)
+                    details=modal_presentation_case(page,width,theme,kind) if kind.startswith('modal-') else table_case(page,width,theme,kind) if kind.startswith('table-') else include_new_currencies(page) if kind=='include-new' else economic_focus(page) if kind=='economic-focus' else info_focus(page) if kind=='info-focus' else preference_preservation(page,kind) if kind.startswith('pref-') else lifecycle(page) if kind=='lifecycle' else edges(page) if kind=='edges' else adjacent_selection(page,kind=='adjacent-range') if kind.startswith('adjacent-') else feed_recovery(page) if kind=='feed-recovery' else run(page,width,theme)
                     assert not errors,errors
                     results.append({'case':f'calendar-{kind}-{width}-{theme}','result':'PASS','geometry':details})
                     if args.artifact:

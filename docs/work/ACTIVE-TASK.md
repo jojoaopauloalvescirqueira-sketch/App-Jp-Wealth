@@ -1,3 +1,15 @@
+# Tarefa ativa — Painel direito do modal Calendário
+
+Refinamento visual autorizado em [CHG-CALENDAR-MODAL-REFINE-20261103](CHG-CALENDAR-MODAL-REFINE-20261103.md), sobre o candidato local258f4afd6a3dfbd3 preservado. Gate Zero e três exceções confirmadas. Somente modal; workspace, mês, cabeçalho, coleta e persistência preservados. Revisão focal, sem novo Git/publicação ou FULL geral. Inventário, critérios e recibos em outputs/calendar-modal-refine-20261103/ da sessão.
+
+## Histórico preservado
+
+# Tarefa ativa — Calendário sem rolagem horizontal
+
+Pedido03/11/2026 e escolha responsiva aprovados em [CHG-CALENDAR-FIT-20261103](CHG-CALENDAR-FIT-20261103.md). Basecd445e9; branch existente. Revisão focal somente da ferramenta, janela até20% maior, linhas compactas, quatro colunas e valores no “i” abaixo de500px úteis. Sem mudanças de dados/fontes/CI/skills ou novo Git/publicação. Recibos em outputs/calendar-fit-20261103/ da sessão. Fotografias anteriores preservadas abaixo.
+
+## Histórico preservado
+
 # Tarefa ativa — Notas sem moldura e sem controles intermitentes
 
 Base88f413d já integrada. Ajuste local N0-V/N1 na branch existente `codex/ux-notas-menus-20261102`, conforme [CHG-NOTES-QUIET-20261102](CHG-NOTES-QUIET-20261102.md). Somente apresentação e revisões focais solicitadas; autosave, dados e política de IA preservados. FULL anterior não valida estes novos bytes. Sem nova operação Git/publicação autorizada. Recibos e comparações em outputs/notes-quiet-20261102/ da sessão.

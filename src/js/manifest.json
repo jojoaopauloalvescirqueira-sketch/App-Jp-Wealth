@@ -326,7 +326,7 @@
       "order": 53,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "7fc5fdaabefd7dd6bd20e0ef5100d418474a6f70e994cbec8a830350c08ab68a"
+      "sha256": "b4d49dcb8b23dc89eec16529becdd4f66120f470f686fd67679795bac9affb78"
     },
     {
       "order": 54,
@@ -516,7 +516,7 @@
     {
       "path": "src/js/40-app/19-calendar-agenda.js",
       "section": "CALENDAR AND AGENDA · monthly shared presentation",
-      "sha256": "0fca407acd0c2e7a6b171ff932193b20843da1af599e6844729e7ea9abe32bc9",
+      "sha256": "5a9984d8fe8d12cf4b6aaceb4a8a14478e3c98ecda3479cc6ab5df10c04b875f",
       "order": 85
     },
     {

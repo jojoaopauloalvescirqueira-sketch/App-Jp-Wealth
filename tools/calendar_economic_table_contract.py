@@ -48,14 +48,25 @@ def collapsed(panel):
 def assert_values(panel, events):
     """String oracle declared by fixture/source input, independent of product output."""
     observed=[]
+    missing='–' if panel.evaluate('p=>!!p.closest("#calendarDialog")') else '—'
     for event in events:
         row=panel.locator('[data-calendar-economic-id='+json.dumps(event['id'])+']')
         expect(row).to_have_count(1)
         assert set(row.locator('[data-calendar-economic-field]').evaluate_all('ns=>ns.map(n=>n.dataset.calendarEconomicField)'))==set(FIELDS), 'Every row retains all7 fields'
-        for field,expected in [('actual','—'),('forecast',event.get('forecast') or '—'),('previous',event.get('previous') or '—')]:
+        detail=None
+        for field,expected in [('actual',missing),('forecast',event.get('forecast') or missing),('previous',event.get('previous') or missing)]:
             cell=row.locator('[data-calendar-economic-field="'+field+'"]')
-            expect(cell).to_be_visible()
             assert value(cell,LABELS[field])==expected, (event['id'],field,expected,cell.inner_text())
+            if not cell.is_visible():
+                if detail is None:
+                    toggle=row if row.get_attribute('data-calendar-action')=='economic-detail' else row.locator('[data-calendar-action="economic-detail"]')
+                    toggle.click()
+                    detail=panel.locator('#'+toggle.get_attribute('aria-controls'))
+                number=detail.locator('[data-calendar-detail-value="'+field+'"]')
+                expect(number).to_be_visible();expect(number).to_have_text(expected)
+                assert LABELS[field] in detail.inner_text(), 'Hidden table values retain their labels in the accessible detail'
+            else:expect(cell).to_be_visible()
+        if detail is not None:toggle.click()
         # Absence is explained accessibly without assuming the source publishes Actual.
         actual=row.locator('[data-calendar-economic-field="actual"]')
         explanation=actual.evaluate(r'''n=>{
@@ -64,13 +75,14 @@ def assert_values(panel, events):
           return [n.getAttribute('aria-label')||'',referenced,visibleNotes].join(' ').toLowerCase();
         }''')
         assert 'atual' in explanation and ('não colet' in explanation or 'não dispon' in explanation or 'sem resultado' in explanation or 'não fornecid' in explanation), ('Actual absence needs a clear accessible explanation',explanation)
-        observed.append({'id':event['id'],'forecast':event.get('forecast') or '—','previous':event.get('previous') or '—','actual':'—'})
+        observed.append({'id':event['id'],'forecast':event.get('forecast') or missing,'previous':event.get('previous') or missing,'actual':missing})
     return observed
 
 
 def assert_compact_rows(panel):
     heights=panel.locator('[data-calendar-economic-id]').evaluate_all('ns=>ns.map(n=>n.getBoundingClientRect().height)')
-    assert heights and all(abs(n-44)<=TOLERANCE for n in heights), ('Compact single-line44px news rows',heights)
+    modal=panel.evaluate('p=>!!p.closest("#calendarDialog")')
+    assert heights and all(44-EPSILON<=n<=56+TOLERANCE if modal else abs(n-44)<=TOLERANCE for n in heights), ('44px minimum; modal permits two-line titles; workspace remains44px',heights)
 
 
 def assert_layout(panel, *, natural_wide=False):
@@ -95,25 +107,32 @@ def assert_layout(panel, *, natural_wide=False):
         assert data['agenda']['left']>=data['month']['right']-TOLERANCE, ('Agenda beside month',data)
     region=data['scrollRegion']
     assert region and region['tabIndex']==0 and region['role']=='region' and region['label'], ('Named keyboard scroll region',data)
-    assert data['table']['width']>=860-EPSILON, ('Economic table minimum860px',data)
-    assert region['scroll']>=860-EPSILON and region['box']['width']<=data['agenda']['width']+TOLERANCE, ('Overflow contained by economic region',data)
-    assert data['headings']==list(HEADERS), ('Seven headers at all widths',data)
+    assert region['scroll']<=region['client']+1, ('News must fit without horizontal scrolling',data)
+    assert abs(data['table']['width']-region['box']['width'])<=TOLERANCE, ('Fluid news table fills its region',data)
+    compact=region['box']['width']<500
+    visible_fields=FIELDS[:4] if compact else FIELDS
+    assert data['headings']==list(HEADERS[:4] if compact else HEADERS), ('Four headers below500px, seven otherwise',data)
     for row in data['rows']:
-        assert len(row['fields'])==7, ('All fields visible',row)
+        assert len(row['fields'])==len(visible_fields), ('Fields appropriate to available news width',row)
         assert row['box']['height']>=44-EPSILON, ('Rows retain44px target',row)
         fields={f['name']:f for f in row['fields']}
-        for key in FIELDS[4:]:
+        for key in (() if compact else FIELDS[4:]):
             ink=fields[key]['numericInk']
             assert ink and abs(ink['right']-ink['expectedRight'])<=TOLERANCE, ('Numeric ink must align right within its own cell',key,ink)
-        for key,header in zip(FIELDS,data['headerBoxes']):
+        for key,header in zip(visible_fields,data['headerBoxes']):
             cell=fields[key]['box']
             assert abs(header['left']-cell['left'])<=TOLERANCE and abs(header['right']-cell['right'])<=TOLERANCE, ('Real header and cell column bounds align within2 CSSpx',key,header,cell)
         assert max(f['box']['top'] for f in fields.values())-min(f['box']['top'] for f in fields.values())<=TOLERANCE, ('Fields align in one row',row)
-        for first,second in zip(FIELDS,FIELDS[1:]):assert fields[first]['box']['right']<=fields[second]['box']['left']+TOLERANCE, ('Seven ordered columns',row)
+        for first,second in zip(visible_fields,visible_fields[1:]):assert fields[first]['box']['right']<=fields[second]['box']['left']+TOLERANCE, ('Ordered columns',row)
+        assert all(f['box']['left']>=region['box']['left']-TOLERANCE and f['box']['right']<=region['box']['right']+TOLERANCE for f in row['fields']), ('Every visible cell is inside the region',row)
     for toggle in controls(panel).all():
         b=toggle.bounding_box();assert b and b['width']>=44-EPSILON and b['height']>=44-EPSILON, ('44px detail target',b)
-        parent=toggle.locator('xpath=..')
-        assert parent.locator('[data-calendar-economic-field="event"]').count() or toggle.locator('xpath=ancestor::*[@data-calendar-economic-field="event"]').count(), 'i belongs to Evento cell'
+        if toggle.get_attribute('data-calendar-economic-id'):
+            assert toggle.locator('[data-calendar-economic-field="event"]').count()==1, 'Clickable row retains its event cell'
+        else:
+            parent=toggle.locator('xpath=..')
+            assert parent.locator('[data-calendar-economic-field="event"]').count() or toggle.locator('xpath=ancestor::*[@data-calendar-economic-field="event"]').count(), 'Workspace i belongs to Evento cell'
+    assert panel.locator('.calendar-event-warning').evaluate_all('nodes=>nodes.every(n=>n.scrollWidth<=n.clientWidth+1)'), 'Compact warning labels must remain fully readable'
     return data
 
 
@@ -141,8 +160,15 @@ def table_case(page,width,theme,kind):
     before=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),cache:localStorage.getItem("jpwealth.ui.ffNews.v1")})')
     panel=setup(page)
     expected=page.evaluate("JPWEconomicCalendar.queryRange({}).events")
-    if kind=='table-compact':
+    if kind in ('table-compact','table-fit'):
         page.locator('#headerCalendarBtn').click();panel=page.locator('#calendarDialog .calendar-panel')
+    if kind=='table-fit':
+        expected_width=width if width<=360 else width-24 if width<=700 else min(912,width-32)
+        measured=page.locator('#calendarDialog').bounding_box()
+        assert abs(measured['width']-expected_width)<=TOLERANCE, ('Dialog is20% wider, bounded by viewport',width,measured)
+        if width>=1024:
+            agenda=panel.locator('.calendar-agenda')
+            assert agenda.evaluate('n=>n.scrollHeight<=n.clientHeight+1'), 'Six compact news rows and coverage fit without adding a vertical news scroller'
     if kind=='table-wide':
         page.locator('#execEcal').evaluate("e=>{e.style.width='1800px';e.style.maxWidth='none'}")
     if kind=='table-natural':
@@ -176,7 +202,7 @@ def table_case(page,width,theme,kind):
     if kind=='table-boundaries':
         boundaries=[]
         host=page.locator('#execEcal')
-        for area,target in [('useful',699),('useful',700),('agendaUseful',719),('agendaUseful',720)]:
+        for area,target in [('useful',699),('useful',700),('agendaUseful',499),('agendaUseful',500),('agendaUseful',719),('agendaUseful',720)]:
             # Resize the container with a fixed viewport. This does not force
             # columns, visibility, media queries or the product's resize observer.
             for adjustment in range(2):
@@ -206,8 +232,11 @@ def table_case(page,width,theme,kind):
         # Critical statuses remain legible while secondary provenance is closed.
         rows=panel.locator('[data-calendar-economic-id]')
         assert 'Cancelado' in rows.nth(2).inner_text()
-        assert 'última coleta' in rows.nth(3).inner_text()
-        assert 'diverg' in rows.nth(4).inner_text().lower()
+        expect(rows.nth(3).locator('.calendar-event-warning')).to_have_text('Ausente')
+        assert 'não comprova cancelamento' in rows.nth(3).locator('.calendar-event-warning').get_attribute('aria-label')
+        expect(rows.nth(4).locator('.calendar-event-warning')).to_have_text('Diverge')
+        assert 'fontes divergem' in rows.nth(4).locator('.calendar-event-warning').get_attribute('aria-label').lower()
+        assert 'Horário a confirmar' in rows.first.locator('.calendar-economic-time').get_attribute('aria-label')
         toggles=controls(panel);targets=details(panel)
         first=toggles.nth(0);first.focus();page.keyboard.press('Enter')
         expect(first).to_have_attribute('aria-expanded','true');expect(targets[0]).to_be_visible()
@@ -224,7 +253,7 @@ def table_case(page,width,theme,kind):
         scrolled=agenda.evaluate('n=>n.scrollTop');assert scrolled>0,'Scroll stimulus must be nonzero'
         region=panel.locator('.calendar-economic-scroll')
         region.evaluate('n=>n.scrollLeft=95');horizontal=region.evaluate('n=>n.scrollLeft')
-        assert horizontal>0,'Horizontal refresh stimulus must be nonzero'
+        assert horizontal==0,'News must not acquire horizontal scroll even while details are open'
         marker_count=panel.locator('.calendar-economic-dot').count()
         page.evaluate('async()=>{__table.generation++;await JPWCalendar.refresh()}')
         assert panel.locator('.calendar-economic-scroll').evaluate('n=>n.scrollLeft')==horizontal,'Refresh preserves horizontal news scroll'
@@ -264,3 +293,107 @@ def table_case(page,width,theme,kind):
     after=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY),cache:localStorage.getItem("jpwealth.ui.ffNews.v1")})')
     assert before==after, 'Table reading/details/refresh cannot change finance or public cache'
     return {'geometry':geometry,'values':values,'kind':kind,'readonly':'byte-exact'}
+
+
+def modal_presentation_case(page,width,theme,kind):
+    """Human visual contract03/11; controlled data seam, actual modal actions."""
+    page.evaluate('''theme=>{
+      closeModal();window.__onbShown=true;document.documentElement.dataset.theme=theme;
+      localStorage.setItem('jpwealth_calendar_view_v1',JSON.stringify({schemaVersion:1,currencies:['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'],impacts:['high','medium','low','unclassified'],contents:['economic']}));
+      JPWCalendar.resetContext();
+      window.__modalVisual={count:1,complete:true,failed:false,stale:false,collected:true,precision:'date'};
+      const original=JPWEconomicCalendar;
+      window.JPWEconomicCalendar={...original,queryRange(){
+        const m=__modalVisual;if(m.failed)throw Error('Synthetic calendar query failure');
+        const events=Array.from({length:m.count},(_,i)=>({id:'SYN-modal-'+i,title:i===0?'Congressional Elections':i===1?'Exemplo de evento econômico com nome suficientemente longo para ocupar duas linhas sem deslocar os valores numéricos':'Evento sintético '+i,
+          currency:i%2?'EUR':'USD',impact:i===11?'unclassified':['high','medium','low'][i%3],date:'2026-11-03',at:m.precision==='date'?null:'2026-11-03T'+String(10+i%12).padStart(2,'0')+':30:00Z',precision:m.precision,timeConfirmed:false,timeZone:'America/New_York',
+          provider:'forexfactory',sourceId:i%2?'ff-EUR':'ff-USD',sourceUrl:'https://www.forexfactory.com/calendar',status:'scheduled',forecast:m.count===1?'':['0','−0.5%','2.0%'][i%3],previous:m.count===1?'':['0','1.8%','1.2M'][i%3]}));
+        const coverage=['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'].map(currency=>({currency,month:'2026-11',from:'2026-11-01',to:'2026-11-30',status:m.complete?'confirmed':'partial'}));
+        return {events,coverage,updatedAt:'2026-11-03T18:00:00Z',feed:{collectedAt:m.collected?'2026-11-03T18:12:00Z':null,stale:m.stale,fetchFailed:false}};
+      }};
+      JPWNavigation.navigate('tools-calendar');
+    }''',theme)
+    work=page.locator('#execEcal .calendar-panel');expect(work.locator('[data-calendar-economic-id]')).to_have_count(1)
+    expect(work.locator('button[data-calendar-action="economic-detail"]')).to_have_count(1)
+    assert work.locator('.calendar-impact-bar').evaluate_all('ns=>ns.map(n=>n.getBoundingClientRect().height)')==[7,12,17], 'Workspace retains its original impact bars'
+    assert 'America/Sao_Paulo' in work.locator('.calendar-agenda-summary').inner_text()
+    workspace=work.evaluate('p=>p.outerHTML')
+    page.locator('#headerCalendarBtn').click();panel=page.locator('#calendarDialog .calendar-panel')
+    row=panel.locator('[data-calendar-economic-id]').first
+    expect(row).to_be_visible()
+    assert row.get_attribute('tabindex')=='0' and row.get_attribute('data-calendar-action')=='economic-detail', 'Entire row must be the keyboard detail action'
+    expect(row.locator('button')).to_have_count(0)
+    expect(panel.locator('.calendar-agenda-summary')).to_have_text('1 evento')
+    title=row.locator('.calendar-event-title');expect(title).to_have_text('Congressional Elections')
+    assert title.get_attribute('title')=='Congressional Elections'
+    assert title.evaluate('n=>n.scrollHeight<=n.clientHeight+1'), 'The single event name must be fully visible'
+    expect(row.locator('.calendar-economic-time')).to_have_text('Sem hora')
+    assert row.locator('.calendar-impact-bar').count()==3
+    assert row.locator('.calendar-impact-symbol').get_attribute('aria-label').lower().startswith('impacto alto')
+    circles=row.locator('.calendar-impact-bar').evaluate_all('nodes=>nodes.map(n=>{const s=getComputedStyle(n);return {w:n.getBoundingClientRect().width,h:n.getBoundingClientRect().height,r:s.borderRadius}})')
+    assert all(abs(n['w']-6)<=EPSILON and abs(n['h']-6)<=EPSILON and n['r']=='50%' for n in circles),circles
+    footer=panel.locator('.calendar-agenda-footer');expect(footer).to_be_visible()
+    expect(footer).to_contain_text('Horários de');expect(footer).to_contain_text('15:12')
+    expect(footer.locator('.calendar-footer-coverage')).to_have_count(0)
+    month=panel.locator('.calendar-month').evaluate('n=>({html:n.outerHTML,width:n.getBoundingClientRect().width})')
+    header=panel.locator('.calendar-header').evaluate('n=>n.outerHTML')
+    saved=page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')
+    panel.locator('.calendar-economic-scroll').focus();page.keyboard.press('Tab')
+    expect(row).to_be_focused()
+    assert row.evaluate('n=>{const s=getComputedStyle(n);return s.outlineStyle!=="none"&&parseFloat(s.outlineWidth)>=2}'), 'Keyboard row focus is visible'
+    page.keyboard.press('Enter')
+    expect(row).to_have_attribute('aria-expanded','true')
+    target=panel.locator('#'+row.get_attribute('aria-controls'));expect(target).to_be_visible()
+    expect(target).to_contain_text('Congressional Elections')
+    for field in ['actual','forecast','previous']:expect(target.locator('[data-calendar-detail-value="'+field+'"]')).to_have_text('–')
+    page.keyboard.press('Space');expect(row).to_have_attribute('aria-expanded','false')
+    row.locator('.calendar-economic-currency').click();expect(row).to_have_attribute('aria-expanded','true')
+    row.click();expect(row).to_have_attribute('aria-expanded','false')
+    assert panel.locator('.calendar-month').evaluate('n=>({html:n.outerHTML,width:n.getBoundingClientRect().width})')==month
+    assert panel.locator('.calendar-header').evaluate('n=>n.outerHTML')==header
+    assert work.evaluate('p=>p.outerHTML')==workspace, 'Modal reading must leave the workspace unchanged'
+    footer.get_by_role('button',name='Fontes e cobertura ›').click()
+    expect(panel.locator('.calendar-info')).to_be_visible()
+    footer.get_by_role('button',name='Fontes e cobertura ›').click()
+    expect(panel.locator('.calendar-info')).not_to_be_visible()
+    geometry=assert_layout(panel);assert_compact_rows(panel)
+    if kind=='modal-many':
+        page.evaluate('async()=>{__modalVisual.count=12;__modalVisual.precision="instant";await JPWCalendar.refresh()}')
+        expect(panel.locator('[data-calendar-economic-id]')).to_have_count(12)
+        expect(panel.locator('.calendar-agenda-summary')).to_have_text('12 eventos')
+        geometry=assert_layout(panel);assert_compact_rows(panel)
+        long=panel.locator('.calendar-event-title').nth(1)
+        assert long.evaluate('n=>{const s=getComputedStyle(n);return n.clientHeight<=2*parseFloat(s.lineHeight)+1 && getComputedStyle(n).webkitLineClamp==="2"}'), 'Long names clamp only after two lines'
+        expect(panel.locator('.calendar-economic-time-note').first).to_have_attribute('title','Horário não confirmado')
+        for i,filled in enumerate([3,2,1]):assert panel.locator('[data-calendar-economic-id]').nth(i).locator('.calendar-impact-filled').count()==filled
+        expect(panel.locator('.calendar-impact-unclassified')).to_have_attribute('aria-label','Impacto não classificado · Forex Factory')
+        panel.locator('[data-calendar-economic-id]').last.scroll_into_view_if_needed()
+        panel.locator('[data-calendar-economic-id]').last.focus()
+        scroll_host=panel.locator('.calendar-agenda') if panel.locator('.calendar-agenda').evaluate('n=>n.scrollHeight>n.clientHeight+1') else page.locator('#calendarDialog')
+        scroll=scroll_host.evaluate('n=>n.scrollTop')
+        assert scroll>0,'Twelve events exercise genuine vertical scrolling'
+        page.evaluate('async()=>{await JPWCalendar.refresh()}')
+        expect(panel.locator('[data-calendar-economic-id]').last).to_be_focused()
+        after_scroll=scroll_host.evaluate('n=>n.scrollTop')
+        assert after_scroll==scroll, {'owner':scroll_host.get_attribute('id') or 'agenda','before':scroll,'after':after_scroll}
+        assert_values(panel,page.evaluate('JPWEconomicCalendar.queryRange({}).events'))
+    if kind=='modal-empty':
+        page.evaluate('async()=>{__modalVisual.count=0;await JPWCalendar.refresh()}')
+        expect(panel.locator('.calendar-empty')).to_have_text('Nenhum evento')
+        expect(panel.locator('.calendar-economic-table')).to_have_count(0)
+        page.evaluate('async()=>{__modalVisual.complete=false;await JPWCalendar.refresh()}')
+        expect(panel.locator('.calendar-empty')).not_to_have_text('Nenhum evento')
+        expect(footer.locator('.calendar-footer-coverage')).to_contain_text('Cobertura parcial')
+        page.evaluate('async()=>{__modalVisual.failed=true;await JPWCalendar.refresh()}')
+        expect(panel.locator('.calendar-empty')).to_contain_text('Não foi possível')
+    if kind=='modal-states':
+        page.evaluate('async()=>{__modalVisual.complete=false;__modalVisual.stale=true;await JPWCalendar.refresh()}')
+        expect(footer.locator('.calendar-footer-coverage')).to_contain_text('Cobertura parcial')
+        expect(footer).to_contain_text('Coleta desatualizada')
+        page.evaluate('async()=>{__modalVisual.collected=false;await JPWCalendar.refresh()}')
+        expect(footer).to_contain_text('Coleta não informada')
+        assert '15:12' not in footer.inner_text(), 'Package reference cannot invent a collection time'
+        page.evaluate('async()=>{__modalVisual.failed=true;await JPWCalendar.refresh()}')
+        expect(footer).to_contain_text('Falha')
+    assert page.evaluate('({state:JSON.stringify(S),raw:localStorage.getItem(LSKEY)})')==saved, 'Presentation must not write financial state'
+    return {'geometry':geometry,'impact_points':circles,'workspace_initial_read_unchanged':True,'financial_readonly':True,'kind':kind}
