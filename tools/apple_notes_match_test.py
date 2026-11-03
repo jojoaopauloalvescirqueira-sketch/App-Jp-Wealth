@@ -658,14 +658,14 @@ def finalize_cleanup(page):
 
 
 def editor_focus_status(page):
-    """Approved neutral focus, truthful status and measurable original controls."""
+    """Borderless writing, quiet autosave and visible recovery controls."""
     from ui_visual_quality_test import centered
     settings(page);open_from_settings(page);experience.select_first(page)
     content=page.locator('#mvpNoteContent')
     content.focus();page.keyboard.press('Tab');page.keyboard.press('Shift+Tab')
     content.focus()
-    focus=content.evaluate("""e=>{const s=getComputedStyle(e),root=getComputedStyle(document.getElementById('mvpNotesDrawer'));return {visible:e.matches(':focus-visible'),outline:s.outlineStyle,width:parseFloat(s.outlineWidth),color:s.outlineColor,paper:s.backgroundColor,accent:root.getPropertyValue('--mvpn-accent').trim(),transition:s.transitionDuration};}""")
-    assert focus['visible'] and focus['outline']!='none' and 0<focus['width']<=1,focus
+    focus=content.evaluate("""e=>{const s=getComputedStyle(e);return {active:document.activeElement===e,outline:s.outlineStyle,width:parseFloat(s.outlineWidth),border:s.borderWidth,shadow:s.boxShadow,color:s.caretColor,paper:s.backgroundColor,transition:s.transitionDuration};}""")
+    assert focus['active'] and focus['outline']=='none' and focus['border']=='0px' and focus['shadow']=='none',focus
     def rgb(value):
         import re
         return [int(n)/255 for n in re.findall(r'\d+',value)[:3]]
@@ -679,6 +679,8 @@ def editor_focus_status(page):
     content.fill('Synthetic focus and status note')
     page.wait_for_function("!mvpNotesUI.draftDirty && mvpNotesAutosave.status==='Salvo'")
     assert page.locator('#mvpNotesSaveStatus').inner_text()=='Salvo'
+    assert not page.locator('#mvpNotesSaveStatus').is_visible()
+    assert not page.locator('#mvpNotesSaveBtn').is_visible()
     confirmed=page.evaluate("({receipt:jpWealthPersistenceLastResult(),id:mvpNotesUI.selectedId})")
     assert confirmed['receipt']['status']=='CONFIRMED'
     page.locator('#mvpNotesInspectorBtn').click();page.locator('#mvpNotePriority').select_option('critical')
@@ -690,6 +692,7 @@ def editor_focus_status(page):
     content.fill('Synthetic retained failed draft')
     page.wait_for_function('mvpNotesAutosave.blocked')
     assert page.locator('#mvpNotesSaveStatus').inner_text().startswith('Não foi possível salvar')
+    assert page.locator('#mvpNotesSaveStatus').is_visible()
     assert content.input_value()=='Synthetic retained failed draft' and page.evaluate('mvpNotesUI.draftDirty')
     retry=centered(page.locator('#mvpNotesSaveBtn'))
     assert retry['outer']['width']>=44 and retry['outer']['height']>=44,retry

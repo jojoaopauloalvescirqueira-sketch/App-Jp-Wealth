@@ -7481,8 +7481,8 @@ html[data-shell="global-dashboard"] #headerActions #notificationBadge{right:-8px
   font:400 calc(var(--mvpn-reading-size) * var(--fs-scale,1))/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 #mvpNotesDrawer .mvpn-content-area::placeholder{color:var(--mvpn-muted);opacity:1}
-/* A slim neutral inset identifies keyboard focus without framing the page in brown. */
-#mvpNotesDrawer .mvpn-content-area:focus-visible{outline:1px solid var(--mvpn-muted);outline-offset:-1px}
+/* The writing surface stays borderless; surrounding controls retain keyboard focus. */
+#mvpNotesDrawer .mvpn-content-area:is(:focus,:focus-visible){outline:none;box-shadow:none}
 #mvpNotesDrawer #mvpNotesSaveStatus{flex:0 1 auto;min-width:0;color:var(--mvpn-muted);font:400 12px/1.4 var(--sans);overflow-wrap:anywhere}
 #mvpNotesDrawer #mvpNotesConfirmMetadataBtn,#mvpNotesDrawer #mvpNotesSaveBtn{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;text-align:center}
 #mvpNotesDrawer #mvpNotesSaveStatus:empty{display:none}

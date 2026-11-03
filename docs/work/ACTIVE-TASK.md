@@ -1,3 +1,9 @@
+# Tarefa ativa — Notas sem moldura e sem controles intermitentes
+
+Base88f413d já integrada. Ajuste local N0-V/N1 na branch existente `codex/ux-notas-menus-20261102`, conforme [CHG-NOTES-QUIET-20261102](CHG-NOTES-QUIET-20261102.md). Somente apresentação e revisões focais solicitadas; autosave, dados e política de IA preservados. FULL anterior não valida estes novos bytes. Sem nova operação Git/publicação autorizada. Recibos e comparações em outputs/notes-quiet-20261102/ da sessão.
+
+## Histórico preservado
+
 # Tarefa ativa — UX Notas/menus/sessões02/11/2026
 
 Plano humano aprovado e autoridadeN2/N1 delimitada em [CHG-UX-NOTES-MENUS-20261102](CHG-UX-NOTES-MENUS-20261102.md). Basefdeb721f75b8bf2c preservada; branchcodex/ux-notas-menus-20261102. SemGitfinal/CI/plugin; somente dados sintéticos. Recuperação e ledger externos da sessão em work/implementation/ux-notas-menus-20261102/. Resultado técnico somente nos recibos novos e aceitehumano separado.

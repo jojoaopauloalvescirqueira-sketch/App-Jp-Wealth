@@ -1869,7 +1869,7 @@ function mvpNotesRecomputeDirty(){
   const bar=mvpn('mvpNotesEditorBar');
   if(bar) bar.dataset.dirty=String(mvpNotesUI.draftDirty);
   const saveBtn=mvpn('mvpNotesSaveBtn');
-  if(saveBtn) saveBtn.hidden=!mvpNotesUI.draftDirty&&!mvpNotesAutosave.blocked;
+  if(saveBtn) saveBtn.hidden=!mvpNotesAutosave.blocked&&!mvpNotesAutosave.recovered;
 }
 // Título mostrado ao vivo enquanto se digita — derivado da mesma função que a persistência
 // usa, então o que a lista mostrará depois de salvar é exatamente o que se vê agora.
@@ -2138,9 +2138,9 @@ function mvpNotesAutosaveStatus(text){
     live=document.createElement('span');live.id='mvpNotesSaveStatus';live.setAttribute('role','status');live.setAttribute('aria-live','polite');
     mvpn('mvpNotesEditorBar').append(live);
   }
-  if(live)live.textContent=text;
+  if(live){live.textContent=text;live.hidden=!text||text==='Salvo'||text==='Salvando…';}
   const btn=mvpn('mvpNotesSaveBtn');
-  if(btn){btn.textContent=mvpNotesAutosave.blocked?'Tentar novamente':mvpNotesAutosave.recovered?'Confirmar rascunho recuperado':'Salvar';btn.disabled=jpWealthPersistenceOutcomeIsUnknown();}
+  if(btn){btn.textContent=mvpNotesAutosave.blocked?'Tentar novamente':mvpNotesAutosave.recovered?'Confirmar rascunho recuperado':'Salvar';btn.disabled=jpWealthPersistenceOutcomeIsUnknown();btn.hidden=!mvpNotesAutosave.blocked&&!mvpNotesAutosave.recovered;}
 }
 function mvpNotesBeginAutosave(){
   mvpNotesCancelAutosave();mvpNotesAutosave.composing=false;mvpNotesAutosave.blocked=false;mvpNotesAutosave.editToken=null;mvpNotesAutosave.trustedEdit=false;mvpNotesAutosave.recovered=false;mvpNotesAutosave.recoveredContent=null;

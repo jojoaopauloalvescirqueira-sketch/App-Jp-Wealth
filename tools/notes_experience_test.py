@@ -1198,7 +1198,38 @@ def autosave_legacy_missing_ids_refused(page):
     return {'accepted_missing_identity_safe_refusal':True,'unidentified_folder_rename_refused':True,'automatic_identity_migration_not_claimed':True}
 
 
+def autosave_quiet_chrome(page):
+    """Typing never exposes manual Save or a flashing routine status."""
+    open_notes(page);select_first(page)
+    content=page.locator('#mvpNoteContent')
+    identity=page.evaluate('mvpNotesUI.selectedId')
+    content.focus()
+    before=page.locator('#mvpNotesInspectorBtn').bounding_box()
+    for i in range(8):
+        content.fill('Escrita automática sem controles intermitentes '+str(i))
+        assert not page.locator('#mvpNotesSaveBtn').is_visible(), 'Typing exposed a manual Save button'
+        assert not page.locator('#mvpNotesSaveStatus').is_visible(), 'Routine autosave status must stay out of the visual toolbar'
+        assert content.evaluate('e=>document.activeElement===e'), 'Autosave moved editor focus'
+        page.wait_for_timeout(120)
+    page.wait_for_function("!mvpNotesUI.draftDirty && mvpNotesAutosave.status==='Salvo'")
+    assert not page.locator('#mvpNotesSaveBtn').is_visible()
+    assert not page.locator('#mvpNotesSaveStatus').is_visible()
+    assert page.evaluate('(id)=>JSON.parse(localStorage.getItem(LSKEY)).mvpNotes.items.find(n=>n.id===id).content',identity).endswith('7')
+    assert page.evaluate('(id)=>S.mvpNotes.items.filter(n=>n.id===id).length',identity)==1
+    after=page.locator('#mvpNotesInspectorBtn').bounding_box()
+    assert abs(before['x']-after['x'])<=2 and abs(before['y']-after['y'])<=2, (before,after)
+    content.focus();page.keyboard.press('Tab');page.keyboard.press('Shift+Tab');content.focus()
+    style=content.evaluate('e=>{const s=getComputedStyle(e);return {outline:s.outlineStyle,border:s.borderWidth,shadow:s.boxShadow}}')
+    assert style=={'outline':'none','border':'0px','shadow':'none'},style
+    button=page.locator('#mvpNotesInspectorBtn')
+    button.focus()
+    keyboard=button.evaluate("e=>{const s=getComputedStyle(e);return {active:document.activeElement===e,outline:s.outlineStyle,width:parseFloat(s.outlineWidth)}}")
+    assert keyboard['active'] and keyboard['outline']!='none' and keyboard['width']>0,keyboard
+    return {'single_note':identity,'toolbar_stable':True,'borderless_editor':style,'button_keyboard_focus':keyboard}
+
+
 CASES = {
+    'autosave-quiet-chrome':autosave_quiet_chrome,
     'autosave-legacy-erasure':autosave_legacy_erasure,'autosave-legacy-missing-dates':autosave_legacy_missing_dates,'autosave-legacy-missing-ids-refused':autosave_legacy_missing_ids_refused,
     'autosave-recovered-draft':autosave_recovered_draft,
     'autosave-delete-dispose':autosave_delete_dispose,
@@ -1253,6 +1284,7 @@ def run(args):
                     for name in selected:
                         configs=[(1440,'light')]
                         if name=='responsive':configs=[(w,t) for w in (1440,1024,390,320) for t in ('light','dark')]
+                        elif name=='autosave-quiet-chrome':configs=[(w,t) for w in (1440,320) for t in ('light','dark')]
                         elif name in ('center','focus-settings'):configs=[(1440,t) for t in ('light','dark')]
                         for width,theme in configs:
                             label=f'{artifact}/{name}/{width}/{theme}'

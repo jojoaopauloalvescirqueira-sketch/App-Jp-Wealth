@@ -6728,6 +6728,46 @@
         "scope": "ID oficial corrente informado pelo root e conferido em build-id.js. Execução do implementador é fonte/headless4/4 mais syntax/AST, congelada por dois hashes em provenance. Native/portable/FULL novos são do coordenador; incidente inicial permanece OPEN/UNKNOWN. Linux e aceite humano separados.",
         "artifact": "docs/validation/ux-notas-menus-20261102/provenance.json"
       }
+    },
+    {
+      "id": "notes_quiet_borderless_editor_20261102",
+      "state": "fixed_regression",
+      "summary": "Notas sem botão Salvar intermitente, indicadores rotineiros visuais ou contorno do editor; recuperação e avisos continuam explícitos.",
+      "source": {
+        "path": "docs/work/CHG-NOTES-QUIET-20261102.md",
+        "section": "Pedido humano de02/11/2026 e escopo de apresentação"
+      },
+      "stimulus": "Digitar continuamente numa nota existente, aguardar confirmação, focar editor por teclado e provocar recusa de gravação em fixture sintética.",
+      "expected": "Salvar e Salvo/Salvando nunca ocupam a barra na escrita normal; toolbar estável, cursor/foco preservados, editor sem border/outline/shadow; avisos e retry continuam visíveis e controles retêm foco de teclado.",
+      "cause": "Visibilidade de Salvar estava ligada a draftDirty durante debounce; textarea:focus-visible desenhava outline neutro de1px.",
+      "protection": {
+        "path": "tools/notes_experience_test.py",
+        "case": "autosave-quiet-chrome; tools/apple_notes_match_test.py editor-focus-status",
+        "command": "python3 tools/notes_experience_test.py --artifact both --cases autosave-quiet-chrome --output /private/tmp/jpw-notes-quiet.json",
+        "full_gate": {
+          "included": false,
+          "check_id": null,
+          "note": "Focais existentes; não foi alterado o inventário do FULL. Execução completa nova fora do escopo de revisão solicitado."
+        }
+      },
+      "evidence": [
+        {
+          "path": "outputs/notes-quiet-20261102/red-quiet.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Recibo externo à worktree:4/4 cenários reproduzem botão Salvar durante escrita."
+        },
+        {
+          "path": "outputs/notes-quiet-20261102/red-border.json",
+          "result": "PRODUCT_FAIL",
+          "note": "Recibo externo à worktree:10/10 cenários reproduzem outline1px no editor. GREEN final deve ser conferido nos recibos externos; este registro não comprova sua execução."
+        }
+      ],
+      "last_verified": {
+        "date": "2026-11-02",
+        "build": "9676cf9fc0e38695",
+        "scope": "RED dos novos oráculos executado na base integrada. Candidato corrigido e GREEN têm identificação própria nos recibos externos; sem transferir FULL histórico.",
+        "artifact": "docs/work/CHG-NOTES-QUIET-20261102.md"
+      }
     }
   ]
 }
